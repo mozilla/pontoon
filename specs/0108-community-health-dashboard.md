@@ -22,21 +22,44 @@ A new "Insights" tab is made available on the Team page, positioned next to the 
 
 ## Active users
 
-Pie charts showing ratios of active vs. all managers, reviewers and contributors. See the existing scripts ([1](https://github.com/flodolo/scripts/blob/954fa85/pontoon/active_contributors.py), [2](https://github.com/flodolo/scripts/blob/954fa85/pontoon/list_reviewers_with_contribution_stats.py)) for criteria of defining active users and for details on how to retrieve data. Active managers are managers who logged into Pontoon within a selected time frame.
+Pie charts showing ratios of active vs. all managers, reviewers and contributors. The observed period of active users can be changed between 12 months (default), 6 months, 3 months, and 1 month.
+
+All managers and all reviewers are taken from the team permissions form. All contributors include all users that have ever submitted a translation for the given team, with system users like Pontoon Sync excluded.
+
+Active users within a selected time frame are defined like this:
+* Active managers have logged into Pontoon.
+* Active reviewers have performed a review activity (approve, unapprove, reject, or unreject a translation).
+* Active contributors have submitted a translation.
+
+Note that only users included in the all users counts can be active users. If a project contact person rejects a suggestion or submits a translation, it doesn't count as an active reviewer or contributor of the team.
 
 ## Unreviewed suggestion lifespan
 
-A line chart showing time before suggestion gets approved or rejected. See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/unreviewed_suggestions_lifespan.py) for details on how to retrieve data. A tooltip showing the exact data at a given time appears when hovering over a chart.
+A line chart showing the average age of the unreviewed suggestions in a particular month for a period of last 12 months.
+
+Data is available for each day, but aggregated by month in the chart.
+
+A tooltip showing the exact data at a given month appears when hovering over a chart.
 
 ## Translation activity
 
-A combination of a line chart showing completion over time and a column chart showing approved translation submissions in a stack of two columns - human translations (`Translation.machinery_sources` not set) and Machinery translations (`Translation.machinery_sources` set). Source string additions are plotted in a separate column, which is hidden by default. A tooltip showing the exact data and ratios at a given time appears when hovering over a chart.
+A combination of two charts:
+1. A line chart showing overall completion of team projects over time.
+1. A column chart showing translation submissions over time in a stack of two columns - human translations and machinery translations (submitted as unchanged copies of suggestions from Machinery). Translation submissions also include imported translation by sync. New source string additions are plotted in a separate column, which is hidden by default.
+
+Data is available for each day, but aggregated by month in the chart.
+
+A tooltip showing the exact data and ratios at a given month appears when hovering over a chart.
 
 ## Review activity
 
-A combination of a line chart showing the number of unreviewed suggestions over time and a column chart showing review actions in a stack of three columns - peer-approvals, self-approvals and rejections. Suggestion submissions are plotted in a separate column, which is hidden by default. The review actions column is A tooltip showing the exact data and ratios at a given time appears when hovering over a chart.
+A combination of two charts:
+1. A line chart showing the number of unreviewed suggestions of the team over time.
+1. A column chart showing review actions over time in a stack of three columns - peer-approvals, self-approvals (translation approvals by their authors, both at the time of submission or later) and rejections. Approvals and rejections performed by sync are excluded. New suggestion submissions are plotted in a separate column, which is hidden by default.
 
-See the [existing script](https://github.com/flodolo/scripts/blob/954fa85/pontoon/self_approval_ratio.py) for calculating self-approval ratio.
+Data is available for each day, but aggregated by month in the chart.
+
+A tooltip showing the exact data and ratios at a given month appears when hovering over a chart.
 
 # Retrieving data
 
