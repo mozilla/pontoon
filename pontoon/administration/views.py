@@ -233,7 +233,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
             }
         )
 
-    locales_available = Locale.objects.exclude(pk__in=locales_selected)
+    locales_available = Locale.objects.exclude(pk__in=locales_readonly).exclude(
+        pk__in=locales_selected
+    )
 
     # Admins reason in terms of locale codes (see bug 1394194)
     locales_readonly = locales_readonly.order_by("code")
