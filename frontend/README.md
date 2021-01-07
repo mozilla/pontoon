@@ -261,3 +261,4 @@ You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.
 - [reselect](https://github.com/reduxjs/reselect)
 - [ReactTimeAgo](https://github.com/catamphetamine/react-time-ago)
 - [react-tabs](https://github.com/reactjs/react-tabs)
+- [Slate](https://docs.slatejs.org/)
