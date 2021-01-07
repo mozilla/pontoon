@@ -1,5 +1,6 @@
 /* @flow */
 
+import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
@@ -15,6 +16,7 @@ export default function useHandleShortcuts() {
     const clearEditor = editor.useClearEditor();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
     const updateTranslationStatus = editor.useUpdateTranslationStatus();
+    const updateTranslation = editor.useUpdateTranslation();
 
     const editorState = useSelector((state) => state.editor);
     const unsavedChangesShown = useSelector(
@@ -25,6 +27,11 @@ export default function useHandleShortcuts() {
     );
     const sameExistingTranslation = useSelector((state) =>
         editor.selectors.sameExistingTranslation(state),
+    );
+
+    let machineryTabIdx = useRef(-1);
+    const machineryTranslations = useSelector(
+        (state) => state.machinery.translations,
     );
 
     return (
@@ -110,6 +117,25 @@ export default function useHandleShortcuts() {
         if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
             handledEvent = true;
             clearEditorFn();
+        }
+
+        // On (Shift+) Tab, copy TM matches into translation.
+        if (key === 9) {
+            const numTranslations = machineryTranslations.length;
+            if (!numTranslations) {
+                return;
+            }
+            const currentIdx = machineryTabIdx.current;
+            let nextIdx;
+            if (!event.shiftKey) {
+                nextIdx = (currentIdx + 1) % numTranslations;
+            } else {
+                nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
+            }
+            const newTranslation = machineryTranslations[nextIdx].translation;
+            machineryTabIdx.current = nextIdx;
+            handledEvent = true;
+            updateTranslation(newTranslation, 'machinery');
         }
 
         if (handledEvent) {
