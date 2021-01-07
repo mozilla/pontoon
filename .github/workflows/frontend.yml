@@ -50,4 +50,4 @@ jobs:
         run: yarn test --coverage
         working-directory: frontend
       - name: codecov.io
-        run: codecov
+        run: codecov -F frontend
