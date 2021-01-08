@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test jest pytest black flow lint-frontend loaddb build-frontend build-frontend-w
+.PHONY: build setup run clean shell test jest pytest black flow lint-frontend loaddb build-frontend build-frontend-w requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -33,7 +33,8 @@ help:
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change"
-	@echo "  sync-projects    Runs the synchronization task on all projects\n"
+	@echo "  sync-projects    Runs the synchronization task on all projects"
+	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
 .docker-build:
 	make build
@@ -110,3 +111,6 @@ build-frontend-w:
 
 sync-projects:
 	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)
+
+requirements:
+	"${DC}" run --rm webapp //app/docker/compile_requirements.sh
