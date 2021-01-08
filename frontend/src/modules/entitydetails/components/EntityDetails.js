@@ -28,7 +28,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { Entity, SourceType } from 'core/api';
+import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { TermState } from 'core/term';
@@ -296,18 +296,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         this.props.dispatch(editor.actions.update(translation, changeSource));
     };
 
-    updateMachinerySources = (
-        machinerySources: Array<SourceType>,
-        machineryTranslation: string,
-    ) => {
-        this.props.dispatch(
-            editor.actions.updateMachinerySources(
-                machinerySources,
-                machineryTranslation,
-            ),
-        );
-    };
-
     addTextToEditorTranslation = (content: string, changeSource?: string) => {
         this.props.dispatch(
             editor.actions.updateSelection(content, changeSource),
@@ -468,7 +456,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         parameters={state.parameters}
                         user={state.user}
                         updateEditorTranslation={this.updateEditorTranslation}
-                        updateMachinerySources={this.updateMachinerySources}
                         searchMachinery={this.searchMachinery}
                         addTextToEditorTranslation={
                             this.addTextToEditorTranslation

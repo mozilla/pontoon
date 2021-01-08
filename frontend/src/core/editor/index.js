@@ -10,7 +10,9 @@ export { default as FailedChecks } from './components/FailedChecks';
 export { default as KeyboardShortcuts } from './components/KeyboardShortcuts';
 export { default as TranslationLength } from './components/TranslationLength';
 
+export { default as useAddTextToTranslation } from './hooks/useAddTextToTranslation';
 export { default as useClearEditor } from './hooks/useClearEditor';
+export { default as useCopyMachineryTranslation } from './hooks/useCopyMachineryTranslation';
 export { default as useCopyOriginalIntoEditor } from './hooks/useCopyOriginalIntoEditor';
 export { default as useHandleShortcuts } from './hooks/useHandleShortcuts';
 export { default as useLoadTranslation } from './hooks/useLoadTranslation';
