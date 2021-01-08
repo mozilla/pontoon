@@ -1,4 +1,4 @@
-FROM python:3.8.3-buster
+FROM python:3.8-buster
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
