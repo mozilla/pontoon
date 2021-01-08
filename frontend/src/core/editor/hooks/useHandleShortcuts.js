@@ -14,9 +14,9 @@ export default function useHandleShortcuts() {
     const dispatch = useDispatch();
 
     const clearEditor = editor.useClearEditor();
+    const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
     const updateTranslationStatus = editor.useUpdateTranslationStatus();
-    const updateTranslation = editor.useUpdateTranslation();
 
     const editorState = useSelector((state) => state.editor);
     const unsavedChangesShown = useSelector(
@@ -132,10 +132,10 @@ export default function useHandleShortcuts() {
             } else {
                 nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
             }
-            const newTranslation = machineryTranslations[nextIdx].translation;
+            const newMachineryTranslation = machineryTranslations[nextIdx];
             machineryTabIdx.current = nextIdx;
             handledEvent = true;
-            updateTranslation(newTranslation, 'machinery');
+            copyMachineryTranslation(newMachineryTranslation);
         }
 
         if (handledEvent) {
