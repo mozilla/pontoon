@@ -20,3 +20,4 @@ dj.debug==0.0.2
 django-debug-toolbar==2.2
 django-extensions==3.0.9
 django-sslserver==0.19
+pip-tools==5.5.0

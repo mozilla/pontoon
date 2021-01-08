@@ -206,16 +206,15 @@ Direct dependencies for Pontoon are distributed across three files:
 In order to pin and hash the direct and indirect dependencies, we use `pip-compile <https://pypi.org/project/pip-tools/>`_,
 which yields corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and indirect dependencies,
 and can be used for installation with ``pip``. After any change to the ``*.in`` files,
-you should run the following script to update all ``requirements/*.txt`` files.
+you should run the following command to update all ``requirements/*.txt`` files.
 
 .. code-block:: shell
 
-    $ ./requirements/compile_all.sh
+    $ make requirements
 
 When adding a new requirement, add it to the appropriate ``requirements/*.in`` file.
 For example, to add the development dependency ``foobar`` version 5, add ``foobar==5`` to ``requirements/dev.in``,
-and then run the script from above. Make sure to run it in the same environment (operating system, Python version)
-as the docker and production environment!
+and then run the command from above.
 
 Once you are done adding, removing or updating requirements, rebuild your docker environment:
 
