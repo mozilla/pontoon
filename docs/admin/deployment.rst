@@ -110,8 +110,17 @@ you create:
    will be empty. See `the spec`_ for more information.
 
 ``ERROR_PAGE_URL``
-   Optional. URL to the page displayed to your users when the application encounters
-   a system error. See `Heroku Reference`_ for more information.
+   Optional. URL to the `Error Page`_ displayed to your users when the application encounters
+   a system error.
+
+   Set this to ``https://mozilla.github.io/pontoon-error-pages/application-error.html``.
+
+   .. _Error Page: https://mozilla.github.io/pontoon-error-pages/application-error.html
+
+   You can set the ``ERROR_PAGE_URL`` by following the instructions given on this `Heroku Article`_.
+
+   .. _Heroku Article: https://devcenter.heroku.com/articles/error-pages#configure-your-application
+   
 
 ``GOOGLE_ANALYTICS_KEY``
    Optional. Set your `Google Analytics key`_ to use Google Analytics.
@@ -124,8 +133,17 @@ you create:
    Optional. Requests for new project locales are sent from this email.
 
 ``MAINTENANCE_PAGE_URL``
-   Optional. URL to the page displayed to your users when the application is placed
-   in the maintenance state. See `Heroku Reference`_ for more information.
+   Optional. URL to the `Maintenance Page`_ displayed to your users when the application is placed
+   in the maintenance state.
+
+   Set this to ``https://mozilla.github.io/pontoon-error-pages/maintenance-mode.html``.
+   
+   .. _Maintenance Page: https://mozilla.github.io/pontoon-error-pages/maintenance-mode.html
+
+   You can set the ``MAINTENANCE_PAGE_URL`` by following the instructions given on this `Heroku Article`_.
+
+   .. _Heroku Article: https://devcenter.heroku.com/articles/error-pages#configure-your-application
+   
 
 ``MANUAL_SYNC``
    Optional. Enable Sync button in project Admin.
