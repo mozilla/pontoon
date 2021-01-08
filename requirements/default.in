@@ -35,7 +35,7 @@ graphene-django==2.13.0
 gunicorn==19.9.0
 jsonfield==3.1.0
 jsonschema==2.6.0
-lxml==4.3.3
+lxml==4.6.2
 mercurial==5.2.2
 newrelic==2.106.1.88
 parsimonious==0.6.2
