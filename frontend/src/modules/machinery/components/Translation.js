@@ -45,6 +45,15 @@ export default function Translation(props: Props) {
         className += ' cannot-copy';
     }
 
+    const editorState = useSelector((state) => state[editor.NAME]);
+    const isSelected =
+        editorState.changeSource === 'machinery' &&
+        editorState.machineryTranslation === translation.translation;
+    if (isSelected) {
+        // Highlight Machinery entries upon selection
+        className += ' selected';
+    }
+
     return (
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
             <li
