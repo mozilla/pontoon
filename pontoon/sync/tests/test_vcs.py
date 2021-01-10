@@ -1,6 +1,7 @@
 from textwrap import dedent
 from unittest.mock import patch
 
+from pontoon.base.models import Repository
 from pontoon.sync.vcs.repositories import VCSRepository
 from pontoon.base.tests import CONTAINS, TestCase
 
@@ -11,7 +12,7 @@ class VCSRepositoryTests(TestCase):
         If the return code from execute is non-zero and log_errors is
         True, log an error message.
         """
-        repo = VCSRepository("/path")
+        repo = VCSRepository.for_type(Repository.Type.GIT, "/path")
 
         with patch("pontoon.sync.vcs.repositories.execute") as mock_execute, patch(
             "pontoon.sync.vcs.repositories.log"
@@ -91,7 +92,7 @@ class VCSChangedFilesTests(object):
 
 
 class GitChangedFilesTest(VCSChangedFilesTests, TestCase):
-    repository_type = "git"
+    repository_type = Repository.Type.GIT
     shell_output = dedent(
         """
         M changed_file1.properties
@@ -103,7 +104,7 @@ class GitChangedFilesTest(VCSChangedFilesTests, TestCase):
 
 
 class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
-    repository_type = "hg"
+    repository_type = Repository.Type.HG
     shell_output = dedent(
         """
         M changed_file1.properties
@@ -115,7 +116,7 @@ class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
 
 
 class SVNChangedFilesTest(VCSChangedFilesTests, TestCase):
-    repository_type = "svn"
+    repository_type = Repository.Type.SVN
     shell_output = dedent(
         """
         M changed_file1.properties

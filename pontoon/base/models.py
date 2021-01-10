@@ -49,12 +49,6 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
 from pontoon.sync import KEY_SEPARATOR
-from pontoon.sync.vcs.repositories import (
-    commit_to_vcs,
-    get_revision,
-    update_from_vcs,
-    PullFromRepositoryException,
-)
 
 log = logging.getLogger(__name__)
 
@@ -1770,14 +1764,13 @@ class Repository(models.Model):
     A remote VCS repository that stores resource files for a project.
     """
 
-    TYPE_CHOICES = (
-        ("git", "Git"),
-        ("hg", "HG"),
-        ("svn", "SVN"),
-    )
+    class Type(models.TextChoices):
+        GIT = "git", "Git"
+        HG = "hg", "HG"
+        SVN = "svn", "SVN"
 
     project = models.ForeignKey(Project, models.CASCADE, related_name="repositories")
-    type = models.CharField(max_length=255, default="git", choices=TYPE_CHOICES)
+    type = models.CharField(max_length=255, default=Type.GIT, choices=Type.choices)
     url = models.CharField("URL", max_length=2000)
     branch = models.CharField("Branch", blank=True, max_length=2000)
 
@@ -1868,7 +1861,7 @@ class Repository(models.Model):
     @property
     def can_commit(self):
         """True if we can commit strings back to this repo."""
-        return self.type in ("svn", "git", "hg")
+        return self.type in (self.Type.SVN, self.Type.GIT, self.Type.HG)
 
     @cached_property
     def api_config(self):
@@ -1944,6 +1937,12 @@ class Repository(models.Model):
         Pull changes from VCS. Returns the revision(s) of the repo after
         pulling.
         """
+        from pontoon.sync.vcs.repositories import (
+            get_revision,
+            PullFromRepositoryException,
+            update_from_vcs,
+        )
+
         if not self.multi_locale:
             update_from_vcs(self.type, self.url, self.checkout_path, self.branch)
             return {"single_locale": get_revision(self.type, self.checkout_path)}
@@ -1975,14 +1974,17 @@ class Repository(models.Model):
         if self.multi_locale:
             url = self.url_for_path(path)
 
+        from pontoon.sync.vcs.repositories import commit_to_vcs
+
         return commit_to_vcs(self.type, path, message, author, self.branch, url)
 
-    """
-    Set last_synced_revisions to a dictionary of revisions
-    that are currently downloaded on the disk.
-    """
-
     def set_last_synced_revisions(self, locales=None):
+        """
+        Set last_synced_revisions to a dictionary of revisions
+        that are currently downloaded on the disk.
+        """
+        from pontoon.sync.vcs.repositories import get_revision
+
         current_revisions = {}
 
         if self.multi_locale:
@@ -2005,11 +2007,10 @@ class Repository(models.Model):
         self.last_synced_revisions = current_revisions
         self.save(update_fields=["last_synced_revisions"])
 
-    """
-    Get revision from the last_synced_revisions dictionary if exists.
-    """
-
     def get_last_synced_revisions(self, locale=None):
+        """
+        Get revision from the last_synced_revisions dictionary if exists.
+        """
         if self.last_synced_revisions:
             key = locale or "single_locale"
             return self.last_synced_revisions.get(key)
