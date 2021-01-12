@@ -6,6 +6,8 @@ import {
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
     RESET_EDITOR,
+    RESET_HELPER_INDEX,
+    SELECT_HELPER_INDEX,
     SET_INITIAL_TRANSLATION,
     START_UPDATE_TRANSLATION,
     UPDATE,
@@ -78,6 +80,9 @@ export type EditorState = {|
     // otherwise. Used to prevent duplicate actions from users spamming their
     // keyboard or mouse.
     +isRunningRequest: boolean,
+
+    // Index of selected item in the helpers box
+    +selectedHelperIndex: number,
 |};
 
 /**
@@ -112,6 +117,7 @@ const initial: EditorState = {
     warnings: [],
     source: '',
     isRunningRequest: false,
+    selectedHelperIndex: -1,
 };
 
 export default function reducer(
@@ -184,6 +190,16 @@ export default function reducer(
                 ...state,
                 machineryTranslation: action.machineryTranslation,
                 machinerySources: action.machinerySources,
+            };
+        case RESET_HELPER_INDEX:
+            return {
+                ...state,
+                selectedHelperIndex: -1,
+            };
+        case SELECT_HELPER_INDEX:
+            return {
+                ...state,
+                selectedHelperIndex: action.index,
             };
         default:
             return state;

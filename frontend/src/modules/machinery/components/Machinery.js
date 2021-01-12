@@ -100,6 +100,7 @@ export default class Machinery extends React.Component<Props> {
                     {machinery.translations.map((translation, index) => {
                         return (
                             <Translation
+                                index={index}
                                 sourceString={machinery.sourceString}
                                 translation={translation}
                                 key={index}

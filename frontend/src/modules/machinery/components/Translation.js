@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './Translation.css';
@@ -17,6 +17,7 @@ import type { MachineryTranslation } from 'core/api';
 type Props = {|
     sourceString: string,
     translation: MachineryTranslation,
+    index: number,
 |};
 
 /**
@@ -27,8 +28,9 @@ type Props = {|
  * and their sources are merged.
  */
 export default function Translation(props: Props) {
-    const { sourceString, translation } = props;
+    const { index, sourceString, translation } = props;
 
+    const dispatch = useDispatch();
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
@@ -36,8 +38,9 @@ export default function Translation(props: Props) {
 
     const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
+        dispatch(editor.actions.selectHelperIndex(index));
         copyMachineryTranslation(translation);
-    }, [translation, copyMachineryTranslation]);
+    }, [dispatch, index, translation, copyMachineryTranslation]);
 
     let className = 'translation';
     if (isReadOnlyEditor) {

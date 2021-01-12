@@ -129,6 +129,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return;
         }
 
+        dispatch(editor.actions.resetHelperIndex());
+
         if (
             selectedEntity.pk !== this.props.history.entity ||
             pluralForm !== this.props.history.pluralForm ||

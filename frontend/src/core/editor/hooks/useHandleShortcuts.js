@@ -1,6 +1,5 @@
 /* @flow */
 
-import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as editor from 'core/editor';
@@ -29,7 +28,6 @@ export default function useHandleShortcuts() {
         editor.selectors.sameExistingTranslation(state),
     );
 
-    let machineryTabIdx = useRef(-1);
     const machineryTranslations = useSelector(
         (state) => state.machinery.translations,
     );
@@ -125,7 +123,7 @@ export default function useHandleShortcuts() {
             if (!numTranslations) {
                 return;
             }
-            const currentIdx = machineryTabIdx.current;
+            const currentIdx = editorState.selectedHelperIndex;
             let nextIdx;
             if (!event.shiftKey) {
                 nextIdx = (currentIdx + 1) % numTranslations;
@@ -133,7 +131,7 @@ export default function useHandleShortcuts() {
                 nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
             }
             const newMachineryTranslation = machineryTranslations[nextIdx];
-            machineryTabIdx.current = nextIdx;
+            dispatch(editor.actions.selectHelperIndex(nextIdx));
             handledEvent = true;
             copyMachineryTranslation(newMachineryTranslation);
         }
