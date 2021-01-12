@@ -3037,7 +3037,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     )
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
-    class Source(models.TextChoices):
+    class MachinerySource(models.TextChoices):
         TRANSLATION_MEMORY = "translation-memory", "Translation Memory"
         GOOGLE_TRANSLATE = "google-translate", "Google Translate"
         MICROSOFT_TRANSLATOR = "microsoft-translator", "Microsoft Translator"
@@ -3047,7 +3047,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         CAIGHDEAN = "caighdean", "Caighdean"
 
     machinery_sources = ArrayField(
-        models.CharField(max_length=30, choices=Source.choices),
+        models.CharField(max_length=30, choices=MachinerySource.choices),
         default=list,
         blank=True,
     )
