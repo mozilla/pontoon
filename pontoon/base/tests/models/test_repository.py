@@ -1,25 +1,25 @@
 import os
 from unittest.mock import call, patch, Mock
+from urllib.parse import urlparse
 
 import pytest
-from urllib.parse import urlparse
 
 from pontoon.test.factories import ProjectLocaleFactory
 
 
 @pytest.mark.django_db
-def test_repo_checkout_path(repo_file, settings):
+def test_repo_checkout_path(repo_git, settings):
     """checkout_path should be determined by the repo URL."""
     # im a bit unclear about the mix of os.path and urlparse here
     # how would this work on windows <> linux ?
-    assert repo_file.checkout_path == os.path.join(
-        *[repo_file.project.checkout_path] + urlparse(repo_file.url).path.split("/")
+    assert repo_git.checkout_path == os.path.join(
+        *[repo_git.project.checkout_path] + urlparse(repo_git.url).path.split("/")
     )
     settings.MEDIA_ROOT = "/media/root"
-    assert repo_file.checkout_path == os.path.join(
-        *[repo_file.project.checkout_path] + urlparse(repo_file.url).path.split("/")
+    assert repo_git.checkout_path == os.path.join(
+        *[repo_git.project.checkout_path] + urlparse(repo_git.url).path.split("/")
     )
-    assert repo_file.project.checkout_path.startswith("/media/root")
+    assert repo_git.project.checkout_path.startswith("/media/root")
 
 
 @pytest.mark.django_db
@@ -123,8 +123,10 @@ def test_repo_url_for_path_no_match(repo_git, locale_a, settings):
 
 @pytest.mark.django_db
 def test_repo_pull(repo_git):
-    with patch("pontoon.base.models.update_from_vcs") as m_update_from_vcs, patch(
-        "pontoon.base.models.get_revision"
+    with patch(
+        "pontoon.sync.vcs.repositories.update_from_vcs"
+    ) as m_update_from_vcs, patch(
+        "pontoon.sync.vcs.repositories.get_revision"
     ) as m_get_revision:
         repo_git.url = "https://example.com"
         m_get_revision.return_value = "asdf"
@@ -148,8 +150,8 @@ def test_repo_pull_multi_locale(project_locale_a, repo_git, locale_b):
         project=repo_git.project, locale=locale_b,
     )
 
-    with patch("pontoon.base.models.update_from_vcs") as m_update_from_vcs:
-        with patch("pontoon.base.models.get_revision") as m_get_revision:
+    with patch("pontoon.sync.vcs.repositories.update_from_vcs") as m_update_from_vcs:
+        with patch("pontoon.sync.vcs.repositories.get_revision") as m_get_revision:
             repo_git.url = "https://example.com/{locale_code}/"
             repo_git.locale_url = lambda locale: "https://example.com/%s" % locale.code
             repo_git.locale_checkout_path = lambda locale: "/media/%s" % locale.code
@@ -181,7 +183,7 @@ def test_repo_pull_multi_locale(project_locale_a, repo_git, locale_b):
 def test_repo_commit(repo_git):
     repo_git.url = "https://example.com"
 
-    with patch("pontoon.base.models.commit_to_vcs") as m:
+    with patch("pontoon.sync.vcs.repositories.commit_to_vcs") as m:
         repo_git.commit("message", "author", "path")
         assert m.call_args[0] == (
             "git",
@@ -203,7 +205,7 @@ def test_repo_commit_multi_locale(repo_git):
 
     repo_git.url_for_path = Mock(return_value="https://example.com/for_path")
 
-    with patch("pontoon.base.models.commit_to_vcs") as m:
+    with patch("pontoon.sync.vcs.repositories.commit_to_vcs") as m:
         repo_git.commit("message", "author", "path")
         assert m.call_args[0] == (
             "git",

@@ -1,6 +1,6 @@
 from django.db import models
 
-from pontoon.base.models import PRIORITY_CHOICES, Project, Resource
+from pontoon.base.models import Priority, Project, Resource
 
 
 class TagQuerySet(models.QuerySet):
@@ -13,7 +13,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=30)
     project = models.ForeignKey(Project, models.CASCADE, blank=True, null=True)
     resources = models.ManyToManyField(Resource)
-    priority = models.IntegerField(blank=True, null=True, choices=PRIORITY_CHOICES)
+    priority = models.IntegerField(blank=True, null=True, choices=Priority.choices)
 
     objects = TagQuerySet.as_manager()
 

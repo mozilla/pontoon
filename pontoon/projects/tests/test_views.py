@@ -4,6 +4,7 @@ import pytest
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from pontoon.base.models import Project
 from pontoon.base.tests import (
     ProjectFactory,
     ResourceFactory,
@@ -27,7 +28,7 @@ def test_project_view(client):
     """
     Checks if project page is returned properly.
     """
-    project = ProjectFactory.create(visibility="public")
+    project = ProjectFactory.create(visibility=Project.Visibility.PUBLIC)
     ResourceFactory.create(project=project)
 
     with patch("pontoon.projects.views.render", wraps=render) as mock_render:
@@ -40,13 +41,13 @@ def test_project_top_contributors(client):
     """
     Tests if view returns top contributors specific for given project.
     """
-    first_project = ProjectFactory.create(visibility="public")
+    first_project = ProjectFactory.create(visibility=Project.Visibility.PUBLIC)
     ResourceFactory.create(project=first_project)
     first_project_contributor = TranslationFactory.create(
         entity__resource__project=first_project
     ).user
 
-    second_project = ProjectFactory.create(visibility="public")
+    second_project = ProjectFactory.create(visibility=Project.Visibility.PUBLIC)
     ResourceFactory.create(project=second_project)
     second_project_contributor = TranslationFactory.create(
         entity__resource__project=second_project

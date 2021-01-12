@@ -5,6 +5,7 @@ from pontoon.base.tests import TranslationFactory
 from pontoon.checks.models import (
     Warning,
     Error,
+    FailedCheck,
 )
 from pontoon.sync.tests import FakeCheckoutTestCase
 
@@ -83,7 +84,7 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
 
         (error,) = Error.objects.all()
 
-        assert error.library == "p"
+        assert error.library == FailedCheck.Library.PONTOON
         assert error.message == "Newline characters are not allowed"
         assert error.translation == invalid_translation
 

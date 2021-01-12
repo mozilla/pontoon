@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from abc import ABC, abstractmethod
 import logging
 import os
 import scandir
@@ -6,6 +7,7 @@ import subprocess
 
 from django.conf import settings
 
+from pontoon.base.models import Repository
 
 log = logging.getLogger(__name__)
 
@@ -296,7 +298,7 @@ def get_svn_env():
         return None
 
 
-class VCSRepository(object):
+class VCSRepository(ABC):
     @classmethod
     def for_type(cls, repo_type, path):
         SubClass = cls.REPO_TYPES.get(repo_type)
@@ -319,13 +321,20 @@ class VCSRepository(object):
             )
         return code, output, error
 
-    def get_changed_files(self, path, from_revision, statueses=None):
+    @abstractmethod
+    def get_changed_files(self, path, from_revision, statuses=None):
         """Get a list of changed files in the repository."""
-        raise NotImplementedError
+        pass
 
-    def get_removed_files(self, from_revision):
+    @abstractmethod
+    def get_removed_files(self, path, from_revision):
         """Get a list of removed files in the repository."""
-        raise NotImplementedError
+        pass
+
+    @property
+    @abstractmethod
+    def revision(self):
+        pass
 
 
 class SvnRepository(VCSRepository):
@@ -431,11 +440,10 @@ class HgRepository(VCSRepository):
         return self.get_changed_files(path, self._strip(from_revision), ("R",))
 
 
-# TODO: Tie these to the same constants that the Repository model uses.
 VCSRepository.REPO_TYPES = {
-    "hg": HgRepository,
-    "svn": SvnRepository,
-    "git": GitRepository,
+    Repository.Type.HG: HgRepository,
+    Repository.Type.SVN: SvnRepository,
+    Repository.Type.GIT: GitRepository,
 }
 
 
