@@ -1,6 +1,6 @@
 import pytest
 
-from pontoon.base.models import Translation
+from pontoon.base.models import Translation, Resource
 from pontoon.checks.utils import (
     save_failed_checks,
     get_failed_checks_db_objects,
@@ -9,6 +9,7 @@ from pontoon.checks.utils import (
 from pontoon.checks.models import (
     Error,
     Warning,
+    FailedCheck,
 )
 
 
@@ -16,7 +17,7 @@ from pontoon.checks.models import (
 def translation_properties(translation_a):
     resource = translation_a.entity.resource
     resource.path = "test.properties"
-    resource.format = "properties"
+    resource.format = Resource.Format.PROPERTIES
     resource.save()
 
     yield translation_a
@@ -58,7 +59,7 @@ def translation_pontoon_error(translation_a):
 
     resource = translation.entity.resource
     resource.path = "test.po"
-    resource.format = "po"
+    resource.format = Resource.Format.PO
     resource.save()
 
     translation.string = ""
@@ -83,14 +84,14 @@ def test_save_failed_checks(translation_a):
 
     error1, error2 = Error.objects.order_by("message")
 
-    assert error1.library == "cl"
+    assert error1.library == FailedCheck.Library.COMPARE_LOCALES
     assert error1.message == "compare-locales error 1"
-    assert error2.library == "cl"
+    assert error2.library == FailedCheck.Library.COMPARE_LOCALES
     assert error2.message == "compare-locales error 2"
 
     (cl_warning,) = Warning.objects.order_by("library", "message")
 
-    assert cl_warning.library == "cl"
+    assert cl_warning.library == FailedCheck.Library.COMPARE_LOCALES
     assert cl_warning.message == "compare-locales warning 1"
 
 
@@ -130,17 +131,17 @@ def test_bulk_run_checks(
     p_error, cl_error = errors
 
     assert cl_warning.pk is not None
-    assert cl_warning.library == "cl"
+    assert cl_warning.library == FailedCheck.Library.COMPARE_LOCALES
     assert cl_warning.message == "unknown escape sequence, \\q"
     assert cl_warning.translation == translation_compare_locales_warning
 
     assert cl_error.pk is not None
-    assert cl_error.library == "cl"
+    assert cl_error.library == FailedCheck.Library.COMPARE_LOCALES
     assert cl_error.message == "Found single %"
     assert cl_error.translation == translation_compare_locales_error
 
     assert p_error.pk is not None
-    assert p_error.library == "p"
+    assert p_error.library == FailedCheck.Library.PONTOON
     assert p_error.message == "Empty translations are not allowed"
     assert p_error.translation == translation_pontoon_error
 
@@ -168,14 +169,14 @@ def test_get_failed_checks_db_objects(translation_a):
     (cl_warning,) = warnings
     cl_error, p_error = sorted(errors, key=lambda e: e.library)
 
-    assert cl_warning.library == "cl"
+    assert cl_warning.library == FailedCheck.Library.COMPARE_LOCALES
     assert cl_warning.message == "compare-locales warning 1"
     assert cl_warning.translation == translation_a
 
-    assert cl_error.library == "cl"
+    assert cl_error.library == FailedCheck.Library.COMPARE_LOCALES
     assert cl_error.message == "compare-locales error 1"
     assert cl_error.translation == translation_a
 
-    assert p_error.library == "p"
+    assert p_error.library == FailedCheck.Library.PONTOON
     assert p_error.message == "pontoon error 1"
     assert p_error.translation == translation_a

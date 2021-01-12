@@ -57,25 +57,27 @@ class Term(models.Model):
     text = models.CharField(max_length=255)
     entity = models.OneToOneField("base.Entity", models.SET_NULL, null=True, blank=True)
 
-    PARTS_OF_SPEECH = (
-        ("adjective", "Adjective"),
-        ("adverb", "Adverb"),
-        ("noun", "Noun"),
-        ("verb", "Verb"),
-    )
-    part_of_speech = models.CharField(max_length=50, choices=PARTS_OF_SPEECH)
+    class PartOfSpeech(models.TextChoices):
+        ADJECTIVE = "adjective", "Adjective"
+        ADVERB = "adverb", "Adverb"
+        NOUN = "noun", "Noun"
+        VERB = "verb", "Verb"
+
+    part_of_speech = models.CharField(max_length=50, choices=PartOfSpeech.choices)
 
     definition = models.TextField(blank=True)
     usage = models.TextField(blank=True)
     notes = models.TextField(blank=True)
 
-    STATUSES = (
-        ("approved", "Approved"),
-        ("new", "New"),
-        ("obsolete", "Obsolete"),
-        ("review", "Review"),
+    class Status(models.TextChoices):
+        APPROVED = "approved", "Approved"
+        NEW = "new", "New"
+        OBSOLETE = "obsolete", "Obsolete"
+        REVIEW = "review", "Review"
+
+    status = models.CharField(
+        max_length=20, choices=Status.choices, null=True, blank=True
     )
-    status = models.CharField(max_length=20, choices=STATUSES, null=True, blank=True)
 
     case_sensitive = models.BooleanField(default=False)
     exact_match = models.BooleanField(default=False)

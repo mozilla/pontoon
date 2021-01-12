@@ -8,7 +8,7 @@ def log_action(
 
     :arg string action:
         The type of action that was performed.
-        See models.ActionLog.ACTIONS_TYPES for choices.
+        See models.ActionLog.ActionType for choices.
     :arg User user: The User who performed the action.
     :arg Translation translation: The Translation the action was performed on.
     :arg Entity entity:

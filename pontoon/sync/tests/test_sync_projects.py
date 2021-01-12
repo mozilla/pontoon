@@ -50,8 +50,8 @@ class CommandTests(TestCase):
 
     def test_non_repository_projects(self):
         """Only sync projects with data_source=repository."""
-        ProjectFactory.create(data_source="database")
-        repo_project = ProjectFactory.create(data_source="repository")
+        ProjectFactory.create(data_source=Project.DataSource.DATABASE)
+        repo_project = ProjectFactory.create(data_source=Project.DataSource.REPOSITORY)
 
         self.execute_command()
         self.mock_sync_project.delay.assert_called_with(

@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from django.utils import timezone
 
-from pontoon.base.models import Entity
+from pontoon.base.models import Entity, Resource
 from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.libraries import run_checks
@@ -96,7 +96,7 @@ def find_and_replace(translations, find, replace, user):
         # Cache the old value to identify changed translations
         new_translation = deepcopy(translation)
 
-        if translation.entity.resource.format == "ftl":
+        if translation.entity.resource.format == Resource.Format.FTL:
             new_translation.string = ftl_find_and_replace(
                 translation.string, find, replace
             )

@@ -43,7 +43,7 @@ class ProjectFactory(DjangoModelFactory):
     name = Sequence(lambda n: "Project {0}".format(n))
     slug = LazyAttribute(lambda p: slugify(p.name))
     links = False
-    visibility = "public"
+    visibility = Project.Visibility.PUBLIC
 
     class Meta:
         model = Project
@@ -76,7 +76,7 @@ class ProjectLocaleFactory(DjangoModelFactory):
 
 class RepositoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    type = "git"
+    type = Repository.Type.GIT
     url = Sequence(lambda n: "https://example.com/url_{0}.git".format(n))
 
     class Meta:
@@ -86,7 +86,7 @@ class RepositoryFactory(DjangoModelFactory):
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     path = Sequence(lambda n: "/fake/path{0}.po".format(n))
-    format = "po"
+    format = Resource.Format.PO
     total_strings = 1
 
     class Meta:

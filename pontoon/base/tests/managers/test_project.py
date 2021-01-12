@@ -5,7 +5,7 @@ from pontoon.base.models import Project, ProjectLocale
 
 @pytest.fixture
 def public_project():
-    yield ProjectFactory.create(visibility="public")
+    yield ProjectFactory.create(visibility=Project.Visibility.PUBLIC)
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def private_project():
 
 @pytest.fixture
 def public_project_locale():
-    yield ProjectLocaleFactory.create(project__visibility="public")
+    yield ProjectLocaleFactory.create(project__visibility=Project.Visibility.PUBLIC)
 
 
 @pytest.fixture

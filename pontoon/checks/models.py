@@ -10,11 +10,11 @@ class FailedCheck(models.Model):
     Severity of failed checks are expressed by subclasses of this model.
     """
 
-    library = models.CharField(
-        max_length=20,
-        choices=(("p", "pontoon"), ("cl", "compare-locales"),),
-        db_index=True,
-    )
+    class Library(models.TextChoices):
+        PONTOON = "p", "pontoon"
+        COMPARE_LOCALES = "cl", "compare-locales"
+
+    library = models.CharField(max_length=20, choices=Library.choices, db_index=True,)
     message = models.TextField()
 
     class Meta:

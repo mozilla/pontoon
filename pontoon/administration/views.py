@@ -181,7 +181,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     tag_formset.save()
 
                 # If the data source is database and there are new strings, save them.
-                if project.data_source == "database":
+                if project.data_source == Project.DataSource.DATABASE:
                     _save_new_strings(project, request.POST.get("new_strings", ""))
                     _create_or_update_translated_resources(project, locales)
 
@@ -406,7 +406,7 @@ def manage_project_strings(request, slug=None):
     except Project.DoesNotExist:
         raise Http404
 
-    if project.data_source != "database":
+    if project.data_source != Project.DataSource.DATABASE:
         return HttpResponseForbidden(
             "Project %s's strings come from a repository, managing strings is forbidden."
             % project.name

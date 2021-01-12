@@ -41,6 +41,7 @@ from django.utils.functional import cached_property
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.templatetags.helpers import as_simple_translation
@@ -48,12 +49,6 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
 from pontoon.sync import KEY_SEPARATOR
-from pontoon.sync.vcs.repositories import (
-    commit_to_vcs,
-    get_revision,
-    update_from_vcs,
-    PullFromRepositoryException,
-)
 
 log = logging.getLogger(__name__)
 
@@ -388,14 +383,13 @@ class PermissionChangelog(models.Model):
     """
 
     # Managers can perform various action on a user.
-    ACTIONS_TYPES = (
+    class ActionType(models.TextChoices):
         # User has been added to a group (e.g. translators, managers).
-        ("added", "Added"),
+        ADDED = "added", "Added"
         # User has been removed from a group (e.g. translators, managers).
-        ("removed", "Removed"),
-    )
+        REMOVED = "removed", "Removed"
 
-    action_type = models.CharField(max_length=20, choices=ACTIONS_TYPES)
+    action_type = models.CharField(max_length=20, choices=ActionType.choices)
     performed_by = models.ForeignKey(
         User, models.SET_NULL, null=True, related_name="changed_permissions_log"
     )
@@ -744,14 +738,14 @@ class Locale(AggregatedStats):
     )
 
     # Writing direction
-    DIRECTION = (
-        ("ltr", "left-to-right"),
-        ("rtl", "right-to-left"),
-    )
+    class Direction(models.TextChoices):
+        LEFT_TO_RIGHT = "ltr", "left-to-right"
+        RIGHT_TO_LEFT = "rtl", "right-to-left"
+
     direction = models.CharField(
         max_length=3,
-        default="ltr",
-        choices=DIRECTION,
+        default=Direction.LEFT_TO_RIGHT,
+        choices=Direction.choices,
         help_text="""
         Writing direction of the script. Set to "right-to-left" if "rtl" value
         for the locale script is set to "YES" in
@@ -951,7 +945,7 @@ class Locale(AggregatedStats):
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
             resource__project__system_project=False,
-            resource__project__visibility="public",
+            resource__project__visibility=Project.Visibility.PUBLIC,
             locale=self,
         ).aggregate_stats(self)
 
@@ -1151,7 +1145,7 @@ class ProjectQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.filter(visibility="public")
+        return self.filter(visibility=Project.Visibility.PUBLIC)
 
     def available(self):
         """
@@ -1171,7 +1165,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         Projects that can be force-synced are not disabled and use repository as their data source type.
         """
-        return self.filter(disabled=False, data_source="repository")
+        return self.filter(disabled=False, data_source=Project.DataSource.REPOSITORY)
 
     def syncable(self):
         """
@@ -1208,13 +1202,12 @@ class ProjectQuerySet(models.QuerySet):
         return AggregatedStats.get_top_instances(self)
 
 
-PRIORITY_CHOICES = (
-    (1, "Lowest"),
-    (2, "Low"),
-    (3, "Normal"),
-    (4, "High"),
-    (5, "Highest"),
-)
+class Priority(models.IntegerChoices):
+    LOWEST = 1, "Lowest"
+    LOW = 2, "Low"
+    NORMAL = 3, "Normal"
+    HIGH = 4, "High"
+    HIGHEST = 5, "Highest"
 
 
 class Project(AggregatedStats):
@@ -1222,10 +1215,12 @@ class Project(AggregatedStats):
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
 
+    class DataSource(models.TextChoices):
+        REPOSITORY = "repository", "Repository"
+        DATABASE = "database", "Database"
+
     data_source = models.CharField(
-        max_length=255,
-        default="repository",
-        choices=(("repository", "Repository"), ("database", "Database"),),
+        max_length=255, default=DataSource.REPOSITORY, choices=DataSource.choices,
     )
     can_be_requested = models.BooleanField(
         default=True,
@@ -1271,12 +1266,12 @@ class Project(AggregatedStats):
     """,
     )
 
-    VISIBILITY_TYPES = (
-        ("private", "Private"),
-        ("public", "Public"),
-    )
+    class Visibility(models.TextChoices):
+        PRIVATE = "private", "Private"
+        PUBLIC = "public", "Public"
+
     visibility = models.CharField(
-        max_length=20, default=VISIBILITY_TYPES[0][0], choices=VISIBILITY_TYPES,
+        max_length=20, default=Visibility.PRIVATE, choices=Visibility.choices,
     )
 
     # Website for in place localization
@@ -1306,7 +1301,7 @@ class Project(AggregatedStats):
     # Project info
     info = models.TextField("Project info", blank=True)
     deadline = models.DateField(blank=True, null=True)
-    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=1)
+    priority = models.IntegerField(choices=Priority.choices, default=Priority.LOWEST)
     contact = models.ForeignKey(
         User,
         models.SET_NULL,
@@ -1622,7 +1617,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        return self.filter(project__visibility="public",)
+        return self.filter(project__visibility=Project.Visibility.PUBLIC,)
 
     def visible(self):
         """
@@ -1769,14 +1764,13 @@ class Repository(models.Model):
     A remote VCS repository that stores resource files for a project.
     """
 
-    TYPE_CHOICES = (
-        ("git", "Git"),
-        ("hg", "HG"),
-        ("svn", "SVN"),
-    )
+    class Type(models.TextChoices):
+        GIT = "git", "Git"
+        HG = "hg", "HG"
+        SVN = "svn", "SVN"
 
     project = models.ForeignKey(Project, models.CASCADE, related_name="repositories")
-    type = models.CharField(max_length=255, default="git", choices=TYPE_CHOICES)
+    type = models.CharField(max_length=255, default=Type.GIT, choices=Type.choices)
     url = models.CharField("URL", max_length=2000)
     branch = models.CharField("Branch", blank=True, max_length=2000)
 
@@ -1867,7 +1861,7 @@ class Repository(models.Model):
     @property
     def can_commit(self):
         """True if we can commit strings back to this repo."""
-        return self.type in ("svn", "git", "hg")
+        return self.type in (self.Type.SVN, self.Type.GIT, self.Type.HG)
 
     @cached_property
     def api_config(self):
@@ -1943,6 +1937,12 @@ class Repository(models.Model):
         Pull changes from VCS. Returns the revision(s) of the repo after
         pulling.
         """
+        from pontoon.sync.vcs.repositories import (
+            get_revision,
+            PullFromRepositoryException,
+            update_from_vcs,
+        )
+
         if not self.multi_locale:
             update_from_vcs(self.type, self.url, self.checkout_path, self.branch)
             return {"single_locale": get_revision(self.type, self.checkout_path)}
@@ -1974,14 +1974,17 @@ class Repository(models.Model):
         if self.multi_locale:
             url = self.url_for_path(path)
 
+        from pontoon.sync.vcs.repositories import commit_to_vcs
+
         return commit_to_vcs(self.type, path, message, author, self.branch, url)
 
-    """
-    Set last_synced_revisions to a dictionary of revisions
-    that are currently downloaded on the disk.
-    """
-
     def set_last_synced_revisions(self, locales=None):
+        """
+        Set last_synced_revisions to a dictionary of revisions
+        that are currently downloaded on the disk.
+        """
+        from pontoon.sync.vcs.repositories import get_revision
+
         current_revisions = {}
 
         if self.multi_locale:
@@ -2004,11 +2007,10 @@ class Repository(models.Model):
         self.last_synced_revisions = current_revisions
         self.save(update_fields=["last_synced_revisions"])
 
-    """
-    Get revision from the last_synced_revisions dictionary if exists.
-    """
-
     def get_last_synced_revisions(self, locale=None):
+        """
+        Get revision from the last_synced_revisions dictionary if exists.
+        """
         if self.last_synced_revisions:
             key = locale or "single_locale"
             return self.last_synced_revisions.get(key)
@@ -2035,46 +2037,46 @@ class Resource(models.Model):
     date_obsoleted = models.DateTimeField(null=True, blank=True)
 
     # Format
-    FORMAT_CHOICES = (
-        ("dtd", "dtd"),
-        ("ftl", "ftl"),
-        ("inc", "inc"),
-        ("ini", "ini"),
-        ("json", "json"),
-        ("lang", "lang"),
-        ("po", "po"),
-        ("properties", "properties"),
-        ("xlf", "xliff"),
-        ("xliff", "xliff"),
-        ("xml", "xml"),
-    )
+    class Format(models.TextChoices):
+        DTD = "dtd", "dtd"
+        FTL = "ftl", "ftl"
+        INC = "inc", "inc"
+        INI = "ini", "ini"
+        JSON = "json", "json"
+        LANG = "lang", "lang"
+        PO = "po", "po"
+        PROPERTIES = "properties", "properties"
+        XLF = "xlf", "xliff"
+        XLIFF = "xliff", "xliff"
+        XML = "xml", "xml"
+
     format = models.CharField(
-        "Format", max_length=20, blank=True, choices=FORMAT_CHOICES
+        "Format", max_length=20, blank=True, choices=Format.choices
     )
 
     deadline = models.DateField(blank=True, null=True)
 
     SOURCE_EXTENSIONS = ["pot"]  # Extensions of source-only formats.
-    ALLOWED_EXTENSIONS = [f[0] for f in FORMAT_CHOICES] + SOURCE_EXTENSIONS
+    ALLOWED_EXTENSIONS = Format.values + SOURCE_EXTENSIONS
 
-    ASYMMETRIC_FORMATS = (
-        "dtd",
-        "ftl",
-        "inc",
-        "ini",
-        "json",
-        "properties",
-        "xml",
-    )
+    ASYMMETRIC_FORMATS = {
+        Format.DTD,
+        Format.FTL,
+        Format.INC,
+        Format.INI,
+        Format.JSON,
+        Format.PROPERTIES,
+        Format.XML,
+    }
 
     # Formats that allow empty translations
-    EMPTY_TRANSLATION_FORMATS = (
-        "dtd",
-        "inc",
-        "ini",
-        "properties",
-        "xml",
-    )
+    EMPTY_TRANSLATION_FORMATS = {
+        Format.DTD,
+        Format.INC,
+        Format.INI,
+        Format.PROPERTIES,
+        Format.XML,
+    }
 
     objects = ResourceQuerySet.as_manager()
 
@@ -3035,18 +3037,19 @@ class Translation(DirtyFieldsMixin, models.Model):
     )
     unrejected_date = models.DateTimeField(null=True, blank=True)
 
-    SOURCE_TYPES = (
-        ("translation-memory", "Translation Memory"),
-        ("google-translate", "Google Translate"),
-        ("microsoft-translator", "Microsoft Translator"),
-        ("systran-translate", "Systran Translate"),
-        ("microsoft-terminology", "Microsoft"),
-        ("transvision", "Mozilla"),
-        ("caighdean", "Caighdean"),
-    )
+    class MachinerySource(models.TextChoices):
+        TRANSLATION_MEMORY = "translation-memory", "Translation Memory"
+        GOOGLE_TRANSLATE = "google-translate", "Google Translate"
+        MICROSOFT_TRANSLATOR = "microsoft-translator", "Microsoft Translator"
+        SYSTRAN_TRANSLATE = "systran-translate", "Systran Translate"
+        MICROSOFT_TERMINOLOGY = "microsoft-terminology", "Microsoft"
+        TRANSVISION = "transvision", "Mozilla"
+        CAIGHDEAN = "caighdean", "Caighdean"
 
     machinery_sources = ArrayField(
-        models.CharField(max_length=30, choices=SOURCE_TYPES), default=list, blank=True,
+        models.CharField(max_length=30, choices=MachinerySource.choices),
+        default=list,
+        blank=True,
     )
 
     objects = TranslationQuerySet.as_manager()
@@ -3119,16 +3122,14 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Returns the corresponding comma-separated machinery_sources values
         """
-        choices = dict(self.SOURCE_TYPES)
-        result = [choices[key] for key in self.machinery_sources]
-
+        result = [self.Source(source).label for source in self.machinery_sources]
         return ", ".join(result)
 
     @property
     def tm_source(self):
         source = self.entity.string
 
-        if self.entity.resource.format == "ftl":
+        if self.entity.resource.format == Resource.Format.FTL:
             return as_simple_translation(source)
 
         return source
@@ -3137,7 +3138,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     def tm_target(self):
         target = self.string
 
-        if self.entity.resource.format == "ftl":
+        if self.entity.resource.format == Resource.Format.FTL:
             return as_simple_translation(target)
 
         return target
@@ -3167,7 +3168,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             # Log that all those translations are rejected.
             for t in approved_translations:
                 log_action(
-                    "translation:rejected",
+                    ActionLog.ActionType.TRANSLATION_REJECTED,
                     self.approved_user or self.user,
                     translation=t,
                 )
@@ -3507,7 +3508,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         if project.slug == "all-projects":
             translated_resources = translated_resources.filter(
                 resource__project__system_project=False,
-                resource__project__visibility="public",
+                resource__project__visibility=Project.Visibility.PUBLIC,
             )
         else:
             translated_resources = translated_resources.filter(
