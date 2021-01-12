@@ -76,20 +76,11 @@ class Command(BaseCommand):
             )
 
         for project in projects:
-            if not project.can_commit:
-                self.stdout.write(
-                    u"Skipping project {0}, cannot commit to repository.".format(
-                        project.name
-                    )
-                )
-            else:
-                self.stdout.write(
-                    u"Scheduling sync for project {0}.".format(project.name)
-                )
-                sync_project.delay(
-                    project.pk,
-                    sync_log.pk,
-                    no_pull=options["no_pull"],
-                    no_commit=options["no_commit"],
-                    force=options["force"],
-                )
+            self.stdout.write(u"Scheduling sync for project {0}.".format(project.name))
+            sync_project.delay(
+                project.pk,
+                sync_log.pk,
+                no_pull=options["no_pull"],
+                no_commit=options["no_commit"],
+                force=options["force"],
+            )
