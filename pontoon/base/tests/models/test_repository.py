@@ -1,9 +1,25 @@
 import os
 from unittest.mock import call, patch, Mock
+from urllib.parse import urlparse
 
 import pytest
 
 from pontoon.test.factories import ProjectLocaleFactory
+
+
+@pytest.mark.django_db
+def test_repo_checkout_path(repo_git, settings):
+    """checkout_path should be determined by the repo URL."""
+    # im a bit unclear about the mix of os.path and urlparse here
+    # how would this work on windows <> linux ?
+    assert repo_git.checkout_path == os.path.join(
+        *[repo_git.project.checkout_path] + urlparse(repo_git.url).path.split("/")
+    )
+    settings.MEDIA_ROOT = "/media/root"
+    assert repo_git.checkout_path == os.path.join(
+        *[repo_git.project.checkout_path] + urlparse(repo_git.url).path.split("/")
+    )
+    assert repo_git.project.checkout_path.startswith("/media/root")
 
 
 @pytest.mark.django_db
