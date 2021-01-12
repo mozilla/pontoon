@@ -1,5 +1,5 @@
 import io
-from unittest.mock import ANY, patch, PropertyMock
+from unittest.mock import ANY, patch
 
 from django.core.management.base import CommandError
 
@@ -94,18 +94,6 @@ class CommandTests(TestCase):
             self.command.stderr.getvalue()
             == "Couldn't find projects to sync with following slugs: aaa, bbb"
         )
-
-    def test_cant_commit(self):
-        """If project.can_commit is False, do not sync it."""
-        project = ProjectFactory.create()
-
-        with patch.object(
-            Project, "can_commit", new_callable=PropertyMock
-        ) as can_commit:
-            can_commit.return_value = False
-
-            self.execute_command(projects=project.slug)
-            assert not self.mock_sync_project.delay.called
 
     def test_options(self):
         project = ProjectFactory.create()

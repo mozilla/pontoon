@@ -18,24 +18,6 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
-def test_project_commit_no_repos(project_a):
-    """can_commit should be False if there are no repos."""
-
-    assert project_a.repositories.count() == 0
-    assert not project_a.can_commit
-
-
-@pytest.mark.django_db
-def test_project_commit_true(project_a, repo_git):
-    """
-    can_commit should be True if there is a repo that can be
-    committed to.
-    """
-    assert project_a.repositories.first().type == Repository.Type.GIT
-    assert project_a.can_commit
-
-
-@pytest.mark.django_db
 def test_project_type_no_repos(project_a):
     """If a project has no repos, repository_type should be None."""
     assert project_a.repository_type is None

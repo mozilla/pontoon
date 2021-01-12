@@ -1423,14 +1423,6 @@ class Project(AggregatedStats):
         return changes.exists() or self.unsynced_locales
 
     @property
-    def can_commit(self):
-        """
-        True if we can commit strings back to the repository this
-        project is hosted in, False otherwise.
-        """
-        return utils.first(self.repositories.all(), lambda r: r.can_commit) is not None
-
-    @property
     def checkout_path(self):
         """Path where this project's VCS checkouts are located."""
         return os.path.join(settings.MEDIA_ROOT, "projects", self.slug)
@@ -1857,11 +1849,6 @@ class Repository(models.Model):
 
         # Remove trailing separator for consistency.
         return os.path.join(*path_components).rstrip(os.sep)
-
-    @property
-    def can_commit(self):
-        """True if we can commit strings back to this repo."""
-        return self.type in (self.Type.SVN, self.Type.GIT, self.Type.HG)
 
     @cached_property
     def api_config(self):
