@@ -57,12 +57,26 @@ export default function Translation(props: Props) {
         className += ' selected';
     }
 
+    const translationRef = React.useRef();
+    React.useEffect(() => {
+        if (
+            editorState.selectedHelperIndex === index &&
+            translationRef.current
+        ) {
+            translationRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
+        }
+    }, [editorState.selectedHelperIndex, index]);
+
     return (
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
             <li
                 className={className}
                 title='Copy Into Translation (Tab)'
                 onClick={copyTranslationIntoEditor}
+                ref={translationRef}
             >
                 <header>
                     {!translation.quality ? null : (
