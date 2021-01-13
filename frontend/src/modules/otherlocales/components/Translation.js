@@ -40,6 +40,15 @@ export default function Translation(props: Props) {
         className += ' cannot-copy';
     }
 
+    const editorState = useSelector((state) => state[editor.NAME]);
+    const isSelected =
+        editorState.changeSource === 'otherlocales' &&
+        editorState.translation === translation.translation;
+    if (isSelected) {
+        // Highlight other locale entries upon selection
+        className += ' selected';
+    }
+
     const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
         copyOtherLocaleTranslation(translation);
