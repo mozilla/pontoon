@@ -1,25 +1,23 @@
 /* @flow */
 
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './Translation.css';
 
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { GenericTranslation } from 'core/translation';
 
 import TranslationSource from './TranslationSource';
 
-import type { MachineryTranslation, SourceType } from 'core/api';
+import type { MachineryTranslation } from 'core/api';
 
 type Props = {|
     sourceString: string,
     translation: MachineryTranslation,
-    entity: ?number,
-    addTextToEditorTranslation: (string, ?string) => void,
-    updateEditorTranslation: (string, string) => void,
-    updateMachinerySources: (Array<SourceType>, string) => void,
+    index: number,
 |};
 
 /**
@@ -30,55 +28,19 @@ type Props = {|
  * and their sources are merged.
  */
 export default function Translation(props: Props) {
-    const {
-        addTextToEditorTranslation,
-        updateEditorTranslation,
-        updateMachinerySources,
-        sourceString,
-        translation,
-        entity,
-    } = props;
+    const { index, sourceString, translation } = props;
 
-    const editorContent = useSelector((state) => state.editor.translation);
+    const dispatch = useDispatch();
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
     const locale = useSelector((state) => state.locale);
 
+    const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
-        if (isReadOnlyEditor) {
-            return;
-        }
-
-        // Ignore if selecting text
-        if (window.getSelection().toString()) {
-            return;
-        }
-
-        // If there is no entity then it is a search term and it is
-        // added to the editor instead of replacing the editor content
-        if (!entity) {
-            addTextToEditorTranslation(translation.translation);
-        }
-        // This is a Fluent Message, thus we are in the RichEditor.
-        // Handle machinery differently.
-        else if (typeof editorContent !== 'string') {
-            addTextToEditorTranslation(translation.translation, 'machinery');
-        }
-        // By default replace editor content
-        else {
-            updateEditorTranslation(translation.translation, 'machinery');
-        }
-        updateMachinerySources(translation.sources, translation.translation);
-    }, [
-        isReadOnlyEditor,
-        translation,
-        entity,
-        editorContent,
-        addTextToEditorTranslation,
-        updateEditorTranslation,
-        updateMachinerySources,
-    ]);
+        dispatch(editor.actions.selectHelperIndex(index));
+        copyMachineryTranslation(translation);
+    }, [dispatch, index, translation, copyMachineryTranslation]);
 
     let className = 'translation';
     if (isReadOnlyEditor) {
@@ -86,11 +48,20 @@ export default function Translation(props: Props) {
         className += ' cannot-copy';
     }
 
+    const editorState = useSelector((state) => state[editor.NAME]);
+    const isSelected =
+        editorState.changeSource === 'machinery' &&
+        editorState.machineryTranslation === translation.translation;
+    if (isSelected) {
+        // Highlight Machinery entries upon selection
+        className += ' selected';
+    }
+
     return (
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
             <li
                 className={className}
-                title='Copy Into Translation'
+                title='Copy Into Translation (Tab)'
                 onClick={copyTranslationIntoEditor}
             >
                 <header>

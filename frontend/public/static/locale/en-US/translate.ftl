@@ -454,7 +454,7 @@ machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
 ## Machinery Translation
 ## Shows a specific translation from machinery.
 machinery-Translation--copy =
-    .title = Copy Into Translation
+    .title = Copy Into Translation (Tab)
 
 
 ## Machinery Translation Memory
