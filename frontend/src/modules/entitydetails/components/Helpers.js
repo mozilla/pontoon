@@ -1,11 +1,13 @@
 /* @flow */
 
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
+import * as editor from 'core/editor';
 import { TeamComments, CommentCount } from 'modules/teamcomments';
 import { Terms, TermCount } from 'modules/terms';
 import { Machinery, MachineryCount } from 'modules/machinery';
@@ -71,6 +73,7 @@ export default function Helpers(props: Props) {
         setCommentTabIndex,
         resetContactPerson,
     } = props;
+    const dispatch = useDispatch();
 
     return (
         <>
@@ -123,7 +126,12 @@ export default function Helpers(props: Props) {
                 </Tabs>
             </div>
             <div className='bottom'>
-                <Tabs>
+                <Tabs onSelect={(index, lastIndex) => {
+                    if (index === lastIndex) {
+                        return false;
+                    }
+                    dispatch(editor.actions.resetHelperIndex());
+                }}>
                     <TabList>
                         <Tab>
                             <Localized id='entitydetails-Helpers--machinery'>

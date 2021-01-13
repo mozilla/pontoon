@@ -36,6 +36,7 @@ export default class OtherLocales extends React.Component<Props> {
     renderTranslations(translation: OtherLocaleTranslation, index: number) {
         return (
             <Translation
+                index={index}
                 entity={this.props.entity}
                 translation={translation}
                 parameters={this.props.parameters}
@@ -67,7 +68,11 @@ export default class OtherLocales extends React.Component<Props> {
 
                 <ul>
                     {translations.other.map((translation, index) => {
-                        return this.renderTranslations(translation, index);
+                        return this.renderTranslations(
+                            translation,
+                            // offset by the amount of preferred translations
+                            translations.preferred.length + index,
+                        );
                     })}
                 </ul>
             </section>

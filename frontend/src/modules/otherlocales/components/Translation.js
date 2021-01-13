@@ -18,6 +18,7 @@ type Props = {|
     entity: Entity,
     translation: Object,
     parameters: NavigationParams,
+    index: number,
 |};
 
 /**
@@ -27,7 +28,7 @@ type Props = {|
  * locale and its code.
  */
 export default function Translation(props: Props) {
-    const { entity, translation, parameters } = props;
+    const { entity, translation, parameters, index } = props;
 
     const dispatch = useDispatch();
     const isReadOnlyEditor = useSelector((state) =>
@@ -51,8 +52,9 @@ export default function Translation(props: Props) {
 
     const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
+        dispatch(editor.actions.selectHelperIndex(index));
         copyOtherLocaleTranslation(translation);
-    }, [dispatch, translation, copyOtherLocaleTranslation]);
+    }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
     return (
         <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
