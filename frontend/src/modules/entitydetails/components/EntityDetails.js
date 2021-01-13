@@ -129,7 +129,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             return;
         }
 
-        dispatch(editor.actions.resetHelperIndex());
+        dispatch(editor.actions.resetHelperElementIndex());
 
         if (
             selectedEntity.pk !== this.props.history.entity ||

@@ -123,7 +123,7 @@ export default function useHandleShortcuts() {
             if (!numTranslations) {
                 return;
             }
-            const currentIdx = editorState.selectedHelperIndex;
+            const currentIdx = editorState.selectedHelperElementIndex;
             let nextIdx;
             if (!event.shiftKey) {
                 nextIdx = (currentIdx + 1) % numTranslations;
@@ -131,7 +131,7 @@ export default function useHandleShortcuts() {
                 nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
             }
             const newMachineryTranslation = machineryTranslations[nextIdx];
-            dispatch(editor.actions.selectHelperIndex(nextIdx));
+            dispatch(editor.actions.selectHelperElementIndex(nextIdx));
             handledEvent = true;
             copyMachineryTranslation(newMachineryTranslation);
         }

@@ -130,7 +130,7 @@ export default function Helpers(props: Props) {
                     if (index === lastIndex) {
                         return false;
                     }
-                    dispatch(editor.actions.resetHelperIndex());
+                    dispatch(editor.actions.resetHelperElementIndex());
                 }}>
                     <TabList>
                         <Tab>

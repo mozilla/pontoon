@@ -52,7 +52,7 @@ export default function Translation(props: Props) {
 
     const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
-        dispatch(editor.actions.selectHelperIndex(index));
+        dispatch(editor.actions.selectHelperElementIndex(index));
         copyOtherLocaleTranslation(translation);
     }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
