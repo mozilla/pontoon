@@ -14,11 +14,9 @@ import type { LocalesState } from '..';
 
 type Props = {|
     entity: Entity,
-    isReadOnlyEditor: boolean,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
-    updateEditorTranslation: (string, string) => void,
 |};
 
 /**
@@ -39,10 +37,8 @@ export default class OtherLocales extends React.Component<Props> {
         return (
             <Translation
                 entity={this.props.entity}
-                isReadOnlyEditor={this.props.isReadOnlyEditor}
                 translation={translation}
                 parameters={this.props.parameters}
-                updateEditorTranslation={this.props.updateEditorTranslation}
                 key={index}
             />
         );

@@ -14,6 +14,7 @@ export { default as useAddTextToTranslation } from './hooks/useAddTextToTranslat
 export { default as useClearEditor } from './hooks/useClearEditor';
 export { default as useCopyMachineryTranslation } from './hooks/useCopyMachineryTranslation';
 export { default as useCopyOriginalIntoEditor } from './hooks/useCopyOriginalIntoEditor';
+export { default as useCopyOtherLocaleTranslation } from './hooks/useCopyOtherLocaleTranslation';
 export { default as useHandleShortcuts } from './hooks/useHandleShortcuts';
 export { default as useLoadTranslation } from './hooks/useLoadTranslation';
 export { default as useSendTranslation } from './hooks/useSendTranslation';

@@ -34,7 +34,6 @@ type Props = {|
     commentTabRef: Object,
     commentTabIndex: number,
     contactPerson: string,
-    updateEditorTranslation: (string, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
     togglePinnedStatus: (boolean, number) => void,
@@ -65,7 +64,6 @@ export default class Helpers extends React.Component<Props> {
             commentTabRef,
             commentTabIndex,
             contactPerson,
-            updateEditorTranslation,
             searchMachinery,
             addComment,
             togglePinnedStatus,
@@ -153,13 +151,9 @@ export default class Helpers extends React.Component<Props> {
                         <TabPanel>
                             <OtherLocales
                                 entity={entity}
-                                isReadOnlyEditor={isReadOnlyEditor}
                                 otherlocales={otherlocales}
                                 user={user}
                                 parameters={parameters}
-                                updateEditorTranslation={
-                                    updateEditorTranslation
-                                }
                             />
                         </TabPanel>
                     </Tabs>

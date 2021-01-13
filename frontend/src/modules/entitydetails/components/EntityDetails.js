@@ -457,7 +457,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         users={state.users}
                         parameters={state.parameters}
                         user={state.user}
-                        updateEditorTranslation={this.updateEditorTranslation}
                         searchMachinery={this.searchMachinery}
                         addTextToEditorTranslation={
                             this.addTextToEditorTranslation
