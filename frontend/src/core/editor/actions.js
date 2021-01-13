@@ -26,6 +26,8 @@ export const RESET_SELECTION: 'editor/RESET_SELECTION' =
     'editor/RESET_SELECTION';
 export const SELECT_HELPER_ELEMENT_INDEX: 'editor/SELECT_HELPER_ELEMENT_INDEX' =
     'editor/SELECT_HELPER_ELEMENT_INDEX';
+export const SELECT_HELPER_TAB_INDEX: 'editor/SELECT_HELPER_TAB_INDEX' =
+    'editor/SELECT_HELPER_TAB_INDEX';
 export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' =
     'editor/SET_INITIAL_TRANSLATION';
 export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' =
@@ -117,9 +119,25 @@ export type SelectHelperElementIndexAction = {|
     +type: typeof SELECT_HELPER_ELEMENT_INDEX,
     +index: number,
 |};
-function selectHelperElementIndex(index: number): SelectHelperElementIndexAction {
+function selectHelperElementIndex(
+    index: number,
+): SelectHelperElementIndexAction {
     return {
         type: SELECT_HELPER_ELEMENT_INDEX,
+        index,
+    };
+}
+
+/**
+ * Set selected helper tab index to a specific value.
+ */
+export type SelectHelperTabIndexAction = {|
+    +type: typeof SELECT_HELPER_TAB_INDEX,
+    +index: number,
+|};
+function selectHelperTabIndex(index: number): SelectHelperTabIndexAction {
+    return {
+        type: SELECT_HELPER_TAB_INDEX,
         index,
     };
 }
@@ -320,6 +338,7 @@ export default {
     resetSelection,
     sendTranslation,
     selectHelperElementIndex,
+    selectHelperTabIndex,
     setInitialTranslation,
     startUpdateTranslation,
     update,

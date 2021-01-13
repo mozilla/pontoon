@@ -126,12 +126,15 @@ export default function Helpers(props: Props) {
                 </Tabs>
             </div>
             <div className='bottom'>
-                <Tabs onSelect={(index, lastIndex) => {
-                    if (index === lastIndex) {
-                        return false;
-                    }
-                    dispatch(editor.actions.resetHelperElementIndex());
-                }}>
+                <Tabs
+                    onSelect={(index, lastIndex) => {
+                        if (index === lastIndex) {
+                            return false;
+                        }
+                        dispatch(editor.actions.selectHelperTabIndex(index));
+                        dispatch(editor.actions.resetHelperElementIndex());
+                    }}
+                >
                     <TabList>
                         <Tab>
                             <Localized id='entitydetails-Helpers--machinery'>
@@ -143,9 +146,7 @@ export default function Helpers(props: Props) {
                             <Localized id='entitydetails-Helpers--locales'>
                                 {'LOCALES'}
                             </Localized>
-                            <OtherLocalesCount
-                                otherlocales={otherlocales}
-                            />
+                            <OtherLocalesCount otherlocales={otherlocales} />
                         </Tab>
                     </TabList>
                     <TabPanel>

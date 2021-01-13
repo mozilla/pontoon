@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as unsavedchanges from 'modules/unsavedchanges';
+import * as otherlocales from 'modules/otherlocales';
 
 /**
  * Return a function to handle shortcuts in a translation form.
@@ -15,6 +16,7 @@ export default function useHandleShortcuts() {
     const clearEditor = editor.useClearEditor();
     const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
+    const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
     const updateTranslationStatus = editor.useUpdateTranslationStatus();
 
     const editorState = useSelector((state) => state.editor);
@@ -30,6 +32,9 @@ export default function useHandleShortcuts() {
 
     const machineryTranslations = useSelector(
         (state) => state.machinery.translations,
+    );
+    const otherLocaleTranslations = useSelector((state) =>
+        otherlocales.selectors.getTranslationsFlatList(state),
     );
 
     return (
@@ -119,7 +124,17 @@ export default function useHandleShortcuts() {
 
         // On (Shift+) Tab, copy TM matches into translation.
         if (key === 9) {
-            const numTranslations = machineryTranslations.length;
+            let translations;
+            let copyTranslationFn;
+            if (editorState.selectedHelperTabIndex === 0) {
+                translations = machineryTranslations;
+                copyTranslationFn = copyMachineryTranslation;
+            } else {
+                translations = otherLocaleTranslations;
+                copyTranslationFn = copyOtherLocaleTranslation;
+            }
+
+            const numTranslations = translations.length;
             if (!numTranslations) {
                 return;
             }
@@ -130,10 +145,10 @@ export default function useHandleShortcuts() {
             } else {
                 nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
             }
-            const newMachineryTranslation = machineryTranslations[nextIdx];
+            const newTranslation = translations[nextIdx];
             dispatch(editor.actions.selectHelperElementIndex(nextIdx));
             handledEvent = true;
-            copyMachineryTranslation(newMachineryTranslation);
+            copyTranslationFn(newTranslation);
         }
 
         if (handledEvent) {

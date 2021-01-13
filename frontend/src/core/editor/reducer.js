@@ -8,6 +8,7 @@ import {
     RESET_EDITOR,
     RESET_HELPER_ELEMENT_INDEX,
     SELECT_HELPER_ELEMENT_INDEX,
+    SELECT_HELPER_TAB_INDEX,
     SET_INITIAL_TRANSLATION,
     START_UPDATE_TRANSLATION,
     UPDATE,
@@ -25,6 +26,7 @@ import type {
     ResetFailedChecksAction,
     ResetSelectionAction,
     SelectHelperElementIndexAction,
+    SelectHelperTabIndexAction,
     StartUpdateTranslationAction,
     Translation,
     UpdateAction,
@@ -41,6 +43,7 @@ type Action =
     | ResetFailedChecksAction
     | ResetSelectionAction
     | SelectHelperElementIndexAction
+    | SelectHelperTabIndexAction
     | StartUpdateTranslationAction
     | UpdateAction
     | UpdateFailedChecksAction
@@ -87,6 +90,10 @@ export type EditorState = {|
 
     // Index of selected item in the helpers box
     +selectedHelperElementIndex: number,
+    // Index of selected tab in the helpers box. Assumes the following:
+    //  0 -> Machinery
+    //  1 -> Other Locales
+    +selectedHelperTabIndex: number,
 |};
 
 /**
@@ -122,6 +129,7 @@ const initial: EditorState = {
     source: '',
     isRunningRequest: false,
     selectedHelperElementIndex: -1,
+    selectedHelperTabIndex: 0,
 };
 
 export default function reducer(
@@ -204,6 +212,11 @@ export default function reducer(
             return {
                 ...state,
                 selectedHelperElementIndex: action.index,
+            };
+        case SELECT_HELPER_TAB_INDEX:
+            return {
+                ...state,
+                selectedHelperTabIndex: action.index,
             };
         default:
             return state;
