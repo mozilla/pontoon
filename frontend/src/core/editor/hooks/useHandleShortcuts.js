@@ -13,6 +13,7 @@ export default function useHandleShortcuts() {
     const dispatch = useDispatch();
 
     const clearEditor = editor.useClearEditor();
+    const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
     const updateTranslationStatus = editor.useUpdateTranslationStatus();
 
@@ -25,6 +26,10 @@ export default function useHandleShortcuts() {
     );
     const sameExistingTranslation = useSelector((state) =>
         editor.selectors.sameExistingTranslation(state),
+    );
+
+    const machineryTranslations = useSelector(
+        (state) => state.machinery.translations,
     );
 
     return (
@@ -110,6 +115,25 @@ export default function useHandleShortcuts() {
         if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
             handledEvent = true;
             clearEditorFn();
+        }
+
+        // On (Shift+) Tab, copy TM matches into translation.
+        if (key === 9) {
+            const numTranslations = machineryTranslations.length;
+            if (!numTranslations) {
+                return;
+            }
+            const currentIdx = editorState.selectedHelperIndex;
+            let nextIdx;
+            if (!event.shiftKey) {
+                nextIdx = (currentIdx + 1) % numTranslations;
+            } else {
+                nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
+            }
+            const newMachineryTranslation = machineryTranslations[nextIdx];
+            dispatch(editor.actions.selectHelperIndex(nextIdx));
+            handledEvent = true;
+            copyMachineryTranslation(newMachineryTranslation);
         }
 
         if (handledEvent) {

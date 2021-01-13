@@ -11,7 +11,7 @@ import { Terms, TermCount } from 'modules/terms';
 import { Machinery, MachineryCount } from 'modules/machinery';
 import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
 
-import type { Entity, SourceType } from 'core/api';
+import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
 import type { Locale } from 'core/locale';
@@ -35,7 +35,6 @@ type Props = {|
     commentTabIndex: number,
     contactPerson: string,
     updateEditorTranslation: (string, string) => void,
-    updateMachinerySources: (Array<SourceType>, string) => void,
     searchMachinery: (string) => void,
     addComment: (string, ?number) => void,
     togglePinnedStatus: (boolean, number) => void,
@@ -67,7 +66,6 @@ export default class Helpers extends React.Component<Props> {
             commentTabIndex,
             contactPerson,
             updateEditorTranslation,
-            updateMachinerySources,
             searchMachinery,
             addComment,
             togglePinnedStatus,
@@ -147,16 +145,8 @@ export default class Helpers extends React.Component<Props> {
                         </TabList>
                         <TabPanel>
                             <Machinery
-                                isReadOnlyEditor={isReadOnlyEditor}
                                 locale={locale}
                                 machinery={machinery}
-                                addTextToEditorTranslation={
-                                    addTextToEditorTranslation
-                                }
-                                updateEditorTranslation={
-                                    updateEditorTranslation
-                                }
-                                updateMachinerySources={updateMachinerySources}
                                 searchMachinery={searchMachinery}
                             />
                         </TabPanel>

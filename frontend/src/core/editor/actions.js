@@ -20,8 +20,12 @@ export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
 export const RESET_EDITOR: 'editor/RESET_EDITOR' = 'editor/RESET_EDITOR';
 export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' =
     'editor/RESET_FAILED_CHECKS';
+export const RESET_HELPER_INDEX: 'editor/RESET_HELPER_INDEX' =
+    'editor/RESET_HELPER_INDEX';
 export const RESET_SELECTION: 'editor/RESET_SELECTION' =
     'editor/RESET_SELECTION';
+export const SELECT_HELPER_INDEX: 'editor/SELECT_HELPER_INDEX' =
+    'editor/SELECT_HELPER_INDEX';
 export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' =
     'editor/SET_INITIAL_TRANSLATION';
 export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' =
@@ -91,6 +95,29 @@ export function updateMachinerySources(
         type: UPDATE_MACHINERY_SOURCES,
         machinerySources,
         machineryTranslation,
+    };
+}
+
+/**
+ * Reset selected helpers index to its initial value.
+ */
+export type ResetHelperIndexAction = {|
+    +type: typeof RESET_HELPER_INDEX,
+|};
+export function resetHelperIndex(): ResetHelperIndexAction {
+    return {
+        type: RESET_HELPER_INDEX,
+    };
+}
+
+export type SelectHelperIndexAction = {|
+    +type: typeof SELECT_HELPER_INDEX,
+    +index: number,
+|};
+function selectHelperIndex(index: number): SelectHelperIndexAction {
+    return {
+        type: SELECT_HELPER_INDEX,
+        index,
     };
 }
 
@@ -286,8 +313,10 @@ export default {
     endUpdateTranslation,
     reset,
     resetFailedChecks,
+    resetHelperIndex,
     resetSelection,
     sendTranslation,
+    selectHelperIndex,
     setInitialTranslation,
     startUpdateTranslation,
     update,

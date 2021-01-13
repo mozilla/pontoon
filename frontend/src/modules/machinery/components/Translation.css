@@ -8,7 +8,8 @@
     pointer-events: none;
 }
 
-.machinery .translation:not(.cannot-copy):hover {
+.machinery .translation:not(.cannot-copy):hover,
+.machinery .translation.selected {
     background: #4d5967;
 }
 
