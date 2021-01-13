@@ -3109,7 +3109,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Returns the corresponding comma-separated machinery_sources values
         """
-        result = [self.Source(source).label for source in self.machinery_sources]
+        result = [
+            self.MachinerySource(source).label for source in self.machinery_sources
+        ]
         return ", ".join(result)
 
     @property
