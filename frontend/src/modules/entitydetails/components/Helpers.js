@@ -48,117 +48,115 @@ type Props = {|
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export default class Helpers extends React.Component<Props> {
-    render() {
-        const {
-            entity,
-            isReadOnlyEditor,
-            locale,
-            machinery,
-            otherlocales,
-            teamComments,
-            terms,
-            parameters,
-            user,
-            users,
-            commentTabRef,
-            commentTabIndex,
-            contactPerson,
-            searchMachinery,
-            addComment,
-            togglePinnedStatus,
-            addTextToEditorTranslation,
-            navigateToPath,
-            setCommentTabIndex,
-            resetContactPerson,
-        } = this.props;
+export default function Helpers(props: Props) {
+    const {
+        entity,
+        isReadOnlyEditor,
+        locale,
+        machinery,
+        otherlocales,
+        teamComments,
+        terms,
+        parameters,
+        user,
+        users,
+        commentTabRef,
+        commentTabIndex,
+        contactPerson,
+        searchMachinery,
+        addComment,
+        togglePinnedStatus,
+        addTextToEditorTranslation,
+        navigateToPath,
+        setCommentTabIndex,
+        resetContactPerson,
+    } = props;
 
-        return (
-            <>
-                <div className='top'>
-                    <Tabs
-                        selectedIndex={commentTabIndex}
-                        onSelect={(tab) => setCommentTabIndex(tab)}
-                    >
-                        <TabList>
-                            {parameters.project === 'terminology' ? null : (
-                                <Tab>
-                                    <Localized id='entitydetails-Helpers--terms'>
-                                        {'TERMS'}
-                                    </Localized>
-                                    <TermCount terms={terms} />
-                                </Tab>
-                            )}
-                            <Tab ref={commentTabRef}>
-                                <Localized id='entitydetails-Helpers--comments'>
-                                    {'COMMENTS'}
-                                </Localized>
-                                <CommentCount teamComments={teamComments} />
-                            </Tab>
-                        </TabList>
+    return (
+        <>
+            <div className='top'>
+                <Tabs
+                    selectedIndex={commentTabIndex}
+                    onSelect={(tab) => setCommentTabIndex(tab)}
+                >
+                    <TabList>
                         {parameters.project === 'terminology' ? null : (
-                            <TabPanel>
-                                <Terms
-                                    isReadOnlyEditor={isReadOnlyEditor}
-                                    locale={locale.code}
-                                    terms={terms}
-                                    addTextToEditorTranslation={
-                                        addTextToEditorTranslation
-                                    }
-                                    navigateToPath={navigateToPath}
-                                />
-                            </TabPanel>
+                            <Tab>
+                                <Localized id='entitydetails-Helpers--terms'>
+                                    {'TERMS'}
+                                </Localized>
+                                <TermCount terms={terms} />
+                            </Tab>
                         )}
+                        <Tab ref={commentTabRef}>
+                            <Localized id='entitydetails-Helpers--comments'>
+                                {'COMMENTS'}
+                            </Localized>
+                            <CommentCount teamComments={teamComments} />
+                        </Tab>
+                    </TabList>
+                    {parameters.project === 'terminology' ? null : (
                         <TabPanel>
-                            <TeamComments
-                                parameters={parameters}
-                                teamComments={teamComments}
-                                user={user}
-                                addComment={addComment}
-                                users={users}
-                                togglePinnedStatus={togglePinnedStatus}
-                                contactPerson={contactPerson}
-                                resetContactPerson={resetContactPerson}
+                            <Terms
+                                isReadOnlyEditor={isReadOnlyEditor}
+                                locale={locale.code}
+                                terms={terms}
+                                addTextToEditorTranslation={
+                                    addTextToEditorTranslation
+                                }
+                                navigateToPath={navigateToPath}
                             />
                         </TabPanel>
-                    </Tabs>
-                </div>
-                <div className='bottom'>
-                    <Tabs>
-                        <TabList>
-                            <Tab>
-                                <Localized id='entitydetails-Helpers--machinery'>
-                                    {'MACHINERY'}
-                                </Localized>
-                                <MachineryCount machinery={machinery} />
-                            </Tab>
-                            <Tab>
-                                <Localized id='entitydetails-Helpers--locales'>
-                                    {'LOCALES'}
-                                </Localized>
-                                <OtherLocalesCount
-                                    otherlocales={otherlocales}
-                                />
-                            </Tab>
-                        </TabList>
-                        <TabPanel>
-                            <Machinery
-                                locale={locale}
-                                machinery={machinery}
-                                searchMachinery={searchMachinery}
-                            />
-                        </TabPanel>
-                        <TabPanel>
-                            <OtherLocales
-                                entity={entity}
+                    )}
+                    <TabPanel>
+                        <TeamComments
+                            parameters={parameters}
+                            teamComments={teamComments}
+                            user={user}
+                            addComment={addComment}
+                            users={users}
+                            togglePinnedStatus={togglePinnedStatus}
+                            contactPerson={contactPerson}
+                            resetContactPerson={resetContactPerson}
+                        />
+                    </TabPanel>
+                </Tabs>
+            </div>
+            <div className='bottom'>
+                <Tabs>
+                    <TabList>
+                        <Tab>
+                            <Localized id='entitydetails-Helpers--machinery'>
+                                {'MACHINERY'}
+                            </Localized>
+                            <MachineryCount machinery={machinery} />
+                        </Tab>
+                        <Tab>
+                            <Localized id='entitydetails-Helpers--locales'>
+                                {'LOCALES'}
+                            </Localized>
+                            <OtherLocalesCount
                                 otherlocales={otherlocales}
-                                user={user}
-                                parameters={parameters}
                             />
-                        </TabPanel>
-                    </Tabs>
-                </div>
-            </>
-        );
-    }
+                        </Tab>
+                    </TabList>
+                    <TabPanel>
+                        <Machinery
+                            locale={locale}
+                            machinery={machinery}
+                            searchMachinery={searchMachinery}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <OtherLocales
+                            entity={entity}
+                            otherlocales={otherlocales}
+                            user={user}
+                            parameters={parameters}
+                        />
+                    </TabPanel>
+                </Tabs>
+            </div>
+        </>
+    );
 }
