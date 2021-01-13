@@ -56,12 +56,26 @@ export default function Translation(props: Props) {
         copyOtherLocaleTranslation(translation);
     }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
+    const translationRef = React.useRef();
+    React.useEffect(() => {
+        if (
+            editorState.selectedHelperElementIndex === index &&
+            translationRef.current
+        ) {
+            translationRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
+        }
+    }, [editorState.selectedHelperElementIndex, index]);
+
     return (
         <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
             <li
                 className={className}
                 title='Copy Into Translation'
                 onClick={copyTranslationIntoEditor}
+                ref={translationRef}
             >
                 <header>
                     {translation.locale.code === 'en-US' ? (
