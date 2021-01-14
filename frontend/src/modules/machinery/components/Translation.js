@@ -38,7 +38,7 @@ export default function Translation(props: Props) {
 
     const copyMachineryTranslation = editor.useCopyMachineryTranslation();
     const copyTranslationIntoEditor = React.useCallback(() => {
-        dispatch(editor.actions.selectHelperIndex(index));
+        dispatch(editor.actions.selectHelperElementIndex(index));
         copyMachineryTranslation(translation);
     }, [dispatch, index, translation, copyMachineryTranslation]);
 
@@ -51,7 +51,7 @@ export default function Translation(props: Props) {
     const editorState = useSelector((state) => state[editor.NAME]);
     const isSelected =
         editorState.changeSource === 'machinery' &&
-        editorState.machineryTranslation === translation.translation;
+        editorState.selectedHelperElementIndex === index;
     if (isSelected) {
         // Highlight Machinery entries upon selection
         className += ' selected';
@@ -60,7 +60,7 @@ export default function Translation(props: Props) {
     const translationRef = React.useRef();
     React.useEffect(() => {
         if (
-            editorState.selectedHelperIndex === index &&
+            editorState.selectedHelperElementIndex === index &&
             translationRef.current
         ) {
             translationRef.current.scrollIntoView({
@@ -68,7 +68,7 @@ export default function Translation(props: Props) {
                 block: 'nearest',
             });
         }
-    }, [editorState.selectedHelperIndex, index]);
+    }, [editorState.selectedHelperElementIndex, index]);
 
     return (
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>

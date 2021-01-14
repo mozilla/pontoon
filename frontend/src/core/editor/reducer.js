@@ -6,8 +6,9 @@ import {
     RESET_FAILED_CHECKS,
     RESET_SELECTION,
     RESET_EDITOR,
-    RESET_HELPER_INDEX,
-    SELECT_HELPER_INDEX,
+    RESET_HELPER_ELEMENT_INDEX,
+    SELECT_HELPER_ELEMENT_INDEX,
+    SELECT_HELPER_TAB_INDEX,
     SET_INITIAL_TRANSLATION,
     START_UPDATE_TRANSLATION,
     UPDATE,
@@ -21,8 +22,11 @@ import type {
     EndUpdateTranslationAction,
     InitialTranslationAction,
     ResetEditorAction,
+    ResetHelperElementIndexAction,
     ResetFailedChecksAction,
     ResetSelectionAction,
+    SelectHelperElementIndexAction,
+    SelectHelperTabIndexAction,
     StartUpdateTranslationAction,
     Translation,
     UpdateAction,
@@ -35,8 +39,11 @@ type Action =
     | EndUpdateTranslationAction
     | InitialTranslationAction
     | ResetEditorAction
+    | ResetHelperElementIndexAction
     | ResetFailedChecksAction
     | ResetSelectionAction
+    | SelectHelperElementIndexAction
+    | SelectHelperTabIndexAction
     | StartUpdateTranslationAction
     | UpdateAction
     | UpdateFailedChecksAction
@@ -82,7 +89,11 @@ export type EditorState = {|
     +isRunningRequest: boolean,
 
     // Index of selected item in the helpers box
-    +selectedHelperIndex: number,
+    +selectedHelperElementIndex: number,
+    // Index of selected tab in the helpers box. Assumes the following:
+    //  0 -> Machinery
+    //  1 -> Other Locales
+    +selectedHelperTabIndex: number,
 |};
 
 /**
@@ -117,7 +128,8 @@ const initial: EditorState = {
     warnings: [],
     source: '',
     isRunningRequest: false,
-    selectedHelperIndex: -1,
+    selectedHelperElementIndex: -1,
+    selectedHelperTabIndex: 0,
 };
 
 export default function reducer(
@@ -191,15 +203,20 @@ export default function reducer(
                 machineryTranslation: action.machineryTranslation,
                 machinerySources: action.machinerySources,
             };
-        case RESET_HELPER_INDEX:
+        case RESET_HELPER_ELEMENT_INDEX:
             return {
                 ...state,
-                selectedHelperIndex: -1,
+                selectedHelperElementIndex: -1,
             };
-        case SELECT_HELPER_INDEX:
+        case SELECT_HELPER_ELEMENT_INDEX:
             return {
                 ...state,
-                selectedHelperIndex: action.index,
+                selectedHelperElementIndex: action.index,
+            };
+        case SELECT_HELPER_TAB_INDEX:
+            return {
+                ...state,
+                selectedHelperTabIndex: action.index,
             };
         default:
             return state;
