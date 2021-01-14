@@ -122,7 +122,7 @@ export default function useHandleShortcuts() {
             clearEditorFn();
         }
 
-        // On (Shift+) Tab, copy TM matches into translation.
+        // On (Shift+) Tab, copy Machinery/Locales matches into translation.
         if (key === 9) {
             let translations;
             let copyTranslationFn;
