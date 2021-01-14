@@ -2,7 +2,7 @@ from unittest.mock import patch, call
 
 import pytest
 
-from pontoon.base.models import Project, TranslationMemoryEntry
+from pontoon.base.models import Project, Translation, TranslationMemoryEntry
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -288,7 +288,10 @@ def test_machinery_sources_values(locale_a, entity_a):
     translation = TranslationFactory.create(
         locale=locale_a,
         entity=entity_a,
-        machinery_sources=["translation-memory", "google-translate"],
+        machinery_sources=[
+            Translation.MachinerySource.TRANSLATION_MEMORY,
+            Translation.MachinerySource.GOOGLE_TRANSLATE,
+        ],
     )
     assert (
         translation.machinery_sources_values == "Translation Memory, Google Translate"
