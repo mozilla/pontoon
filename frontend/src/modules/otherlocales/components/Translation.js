@@ -44,7 +44,7 @@ export default function Translation(props: Props) {
     const editorState = useSelector((state) => state[editor.NAME]);
     const isSelected =
         editorState.changeSource === 'otherlocales' &&
-        editorState.translation === translation.translation;
+        editorState.selectedHelperElementIndex === index;
     if (isSelected) {
         // Highlight other locale entries upon selection
         className += ' selected';

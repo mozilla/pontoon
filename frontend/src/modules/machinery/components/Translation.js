@@ -51,7 +51,7 @@ export default function Translation(props: Props) {
     const editorState = useSelector((state) => state[editor.NAME]);
     const isSelected =
         editorState.changeSource === 'machinery' &&
-        editorState.machineryTranslation === translation.translation;
+        editorState.selectedHelperElementIndex === index;
     if (isSelected) {
         // Highlight Machinery entries upon selection
         className += ' selected';
