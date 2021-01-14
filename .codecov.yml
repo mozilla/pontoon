@@ -2,17 +2,17 @@ comment: off
 
 flags:
   backend:
-    # paths:
-    #   - /pontoon/**.py
+    paths:
+      - /pontoon/**.py
     carryforward: true
 
   frontend:
-    # paths:
-    #   - /frontend/
+    paths:
+      - /frontend/
     carryforward: true
 
   non-frontend-js:
-    # paths:
-    #   - /tests/**.js
-    #   - /pontoon/static/js/
+    paths:
+      - /tests/**.js
+      - /pontoon/static/js/
     carryforward: true
