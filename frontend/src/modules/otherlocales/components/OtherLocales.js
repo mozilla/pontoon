@@ -14,11 +14,9 @@ import type { LocalesState } from '..';
 
 type Props = {|
     entity: Entity,
-    isReadOnlyEditor: boolean,
     otherlocales: LocalesState,
     parameters: NavigationParams,
     user: UserState,
-    updateEditorTranslation: (string, string) => void,
 |};
 
 /**
@@ -38,11 +36,10 @@ export default class OtherLocales extends React.Component<Props> {
     renderTranslations(translation: OtherLocaleTranslation, index: number) {
         return (
             <Translation
+                index={index}
                 entity={this.props.entity}
-                isReadOnlyEditor={this.props.isReadOnlyEditor}
                 translation={translation}
                 parameters={this.props.parameters}
-                updateEditorTranslation={this.props.updateEditorTranslation}
                 key={index}
             />
         );
@@ -71,7 +68,11 @@ export default class OtherLocales extends React.Component<Props> {
 
                 <ul>
                     {translations.other.map((translation, index) => {
-                        return this.renderTranslations(translation, index);
+                        return this.renderTranslations(
+                            translation,
+                            // offset by the amount of preferred translations
+                            translations.preferred.length + index,
+                        );
                     })}
                 </ul>
             </section>
