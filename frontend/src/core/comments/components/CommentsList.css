@@ -24,3 +24,8 @@
     flex-flow: column wrap;
     width: 100%;
 }
+
+.pinned-comments {
+    border-bottom: 1px solid #5e6475;
+    margin-bottom: 10px;
+}

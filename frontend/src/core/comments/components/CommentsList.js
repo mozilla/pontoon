@@ -41,17 +41,36 @@ export default function CommentsList(props: Props) {
     } = props;
 
     const translationId = translation ? translation.pk : null;
+    
+    const renderComment = (comment) => {
+        return (
+            <Comment
+                comment={comment}
+                canPin={canPin}
+                key={comment.id}
+                togglePinnedStatus={togglePinnedStatus}
+            />
+        );
+    }
+
+   const[pinnedComments, unpinnedComments] = 
+      comments.reduce((comment ,currentComment ) => {
+        comment[currentComment.pinned === true ? 0 : 1].push(currentComment);
+        return comment;
+    },
+        [[],[]]);
 
     return (
         <div className='comments-list'>
-            <ul>
-                {comments.map((comment) => (
-                    <Comment
-                        comment={comment}
-                        canPin={canPin}
-                        key={comment.id}
-                        togglePinnedStatus={togglePinnedStatus}
-                    />
+            <ul className='pinned-comments'>
+                {pinnedComments.map((comment) => (
+                    renderComment(comment)
+                ))}
+            </ul>
+                       
+            <ul className='unpinned-comments'>
+                {unpinnedComments.map((comment) => (
+                  renderComment(comment)
                 ))}
             </ul>
             {!canComment ? null : (
