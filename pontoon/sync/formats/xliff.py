@@ -23,7 +23,7 @@ class XLIFFEntity(VCSTranslation):
 
     @property
     def source_string(self):
-        return str(self.unit.get_rich_source()[0])
+        return str(self.unit.rich_source[0])
 
     @property
     def source_string_plural(self):
