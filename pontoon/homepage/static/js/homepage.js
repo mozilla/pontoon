@@ -1,20 +1,13 @@
-(function () {
-    /*
-     * fullPage plugin by Alvaro Trigo
-     * URL: https://github.com/alvarotrigo/fullPage.js/
-     */
-    new fullpage('#main', {
-        licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
+$(function () {
+    $('#main').fullpage({
         navigation: true,
         navigationPosition: 'left',
     });
-})();
 
-$(function () {
     // Scroll from Section 1 to Section 2
     $('#section-1 .footer .scroll').on('click', function (e) {
         e.preventDefault();
-        fullpage_api.moveSectionDown();
+        $.fn.fullpage.moveSectionDown();
     });
 
     // Show/hide header border on menu open/close
