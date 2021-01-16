@@ -41,7 +41,7 @@ export default function CommentsList(props: Props) {
     } = props;
 
     const translationId = translation ? translation.pk : null;
-    
+
     const renderComment = (comment) => {
         return (
             <Comment
@@ -51,27 +51,26 @@ export default function CommentsList(props: Props) {
                 togglePinnedStatus={togglePinnedStatus}
             />
         );
-    }
+    };
 
-   const[pinnedComments, unpinnedComments] = 
-      comments.reduce((comment ,currentComment ) => {
-        comment[currentComment.pinned === true ? 0 : 1].push(currentComment);
-        return comment;
-    },
-        [[],[]]);
+    const [pinnedComments, unpinnedComments] = comments.reduce(
+        (comment, currentComment) => {
+            comment[currentComment.pinned === true ? 0 : 1].push(
+                currentComment,
+            );
+            return comment;
+        },
+        [[], []],
+    );
 
     return (
         <div className='comments-list'>
             <ul className='pinned-comments'>
-                {pinnedComments.map((comment) => (
-                    renderComment(comment)
-                ))}
+                {pinnedComments.map((comment) => renderComment(comment))}
             </ul>
-                       
+
             <ul className='unpinned-comments'>
-                {unpinnedComments.map((comment) => (
-                  renderComment(comment)
-                ))}
+                {unpinnedComments.map((comment) => renderComment(comment))}
             </ul>
             {!canComment ? null : (
                 <AddComment
