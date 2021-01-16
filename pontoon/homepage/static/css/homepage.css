@@ -1,4 +1,10 @@
 /* General styles */
+
+:root {
+    --content-width: 980px;
+    --header-height: 60px;
+}
+
 body > header {
     background: transparent;
     border-color: transparent;
@@ -23,23 +29,33 @@ body > header.menu-opened {
     line-height: 1.5rem;
 }
 
+#main .section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+
+    background-image: url(../img/background.svg);
+    background-attachment: fixed;
+    background-size: cover;
+}
+
 .section {
     color: #f4f4f4;
 }
 
-.background {
-    background-image: url(../img/background.svg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    -webkit-background-size: cover;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-}
-
 .section .container {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.section .container.with-footer {
+    flex: 1;
 }
 
 .section .content-wrapper {
@@ -91,24 +107,78 @@ h2 {
 }
 
 /* Side Navigation */
-#fp-nav ul li a span {
-    background: #888888;
+nav#sections {
+    position: fixed;
+    left: 17px;
+    top: 50%;
+    opacity: 1;
+    transform: translate(0, -50%);
 }
 
-#fp-nav ul li a.active span {
-    background: #7bc876;
+nav#sections ul {
+    margin: 0;
+    padding: 0;
+}
+
+nav#sections ul li {
+    display: block;
+    width: 14px;
+    height: 13px;
+    margin: 7px;
+    position: relative;
+}
+
+nav#sections ul li a {
+    display: block;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+nav#sections ul li a.active span,
+nav#sections ul li:hover a.active span {
+    height: 12px;
+    width: 12px;
+    margin: -6px 0 0 -6px;
+    border-radius: 100%;
+    background-color: #7bc876;
+}
+
+nav#sections ul li a span {
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    height: 4px;
+    width: 4px;
+    border: 0;
+    background-color: #888888;
+    left: 50%;
+    top: 50%;
+    margin: -2px 0 0 -2px;
+    transition: all 0.1s ease-in-out;
+}
+
+nav#sections ul li:hover a span {
+    width: 10px;
+    height: 10px;
+    margin: -5px 0px 0px -5px;
 }
 
 /* Edit Homepage button */
 #edit-homepage {
+    position: fixed;
+    left: 0;
+    right: 0;
     margin: 0 auto;
-    width: 980px;
+    width: var(--content-width);
+    text-align: right;
 }
 
 #edit-homepage .select {
-    float: right;
-    top: 70px;
-    z-index: 5;
+    top: calc(var(--header-height) + 10px);
 }
 
 #edit-homepage .button {
@@ -121,12 +191,10 @@ h2 {
 }
 
 /* Section-1 */
-#section-1 {
-    text-align: left;
-}
-
 #section-1 .container {
-    display: block;
+    flex-direction: column;
+    flex: 1;
+    align-items: start;
 }
 
 #section-1 h1 {
@@ -151,22 +219,20 @@ h2 {
 
 /* Scroll for more animation */
 #section-1 .footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     text-align: center;
+    width: var(--content-width);
 }
 
 #section-1 .scroll {
-    display: inline-block;
+    display: block;
+    position: relative;
     font-size: 12px;
     height: 90px;
     letter-spacing: 3px;
     text-transform: uppercase;
 }
 
-#section-1 .scroll:after {
+#section-1 .scroll::after {
     content: '';
     border-right: 2px solid #7bc876;
     border-bottom: 2px solid #7bc876;
@@ -176,21 +242,8 @@ h2 {
     margin: auto;
     right: 0;
     left: 0;
-    -webkit-animation: 3s jump infinite ease;
     animation: 3s jump infinite ease;
-    -ms-transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
-}
-
-@-webkit-keyframes jump {
-    0%,
-    100% {
-        top: 20px;
-    }
-    50% {
-        top: 40px;
-    }
 }
 
 @keyframes jump {
@@ -303,12 +356,16 @@ h2 {
 }
 
 /* Section-6 */
+
 #section-6 .container {
-    display: block;
+    flex-direction: column;
+    flex: 1;
 }
 
 #section-6 .content-wrapper {
+    flex: 1;
     align-items: center;
+    justify-content: center;
     padding: 0;
 }
 
@@ -321,10 +378,8 @@ h2 {
 }
 
 #section-6 .footer {
-    position: absolute;
-    bottom: 0;
     height: 60px;
-    width: 980px;
+    width: var(--content-width);
     align-items: center;
     font-size: 14px;
 }
