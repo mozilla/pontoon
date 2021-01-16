@@ -18,8 +18,6 @@
 **/base/static/css/fontawesome-all.css
 **/base/static/css/jquery-ui.css
 **/base/static/css/nprogress.css
-**/homepage/static/css/fullpage.css
-**/homepage/static/js/lib/fullpage.js
 **/in_context/static/css/agency.css
 **/in_context/static/js/agency.js
 **/frontend/build*
