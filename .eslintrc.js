@@ -42,8 +42,6 @@ module.exports = {
         diff_match_patch: false,
         Highcharts: false,
         Sideshow: false,
-        fullpage: false,
-        fullpage_api: false,
         editor: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
