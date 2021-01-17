@@ -69,7 +69,7 @@ export default function CommentsList(props: Props) {
                 {pinnedComments.map((comment) => renderComment(comment))}
             </ul>
 
-            <ul className='unpinned-comments'>
+            <ul className='all-comments'>
                 {unpinnedComments.map((comment) => renderComment(comment))}
             </ul>
             {!canComment ? null : (

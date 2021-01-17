@@ -1,11 +1,18 @@
 .comments-list {
     line-height: 22px;
-    padding: 8px;
 }
 
 .comments-list .comment {
     display: flex;
     margin-left: 58px;
+}
+.comments-list ul li {
+    border-bottom: 1px solid #5e6475;
+    padding: 8px;
+}
+
+.comments-list ul.pinned-comments li:last-child {
+    border-bottom-color: #7bc876;
 }
 
 .comments-list .comment .user-avatar {
@@ -23,9 +30,4 @@
     display: flex;
     flex-flow: column wrap;
     width: 100%;
-}
-
-.pinned-comments {
-    border-bottom: 1px solid #5e6475;
-    margin-bottom: 10px;
 }
