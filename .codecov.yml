@@ -7,12 +7,12 @@ flags:
     carryforward: true
 
   frontend:
-    paths:
-      - /frontend/
+    # paths:
+    #   - /frontend/
     carryforward: true
 
   non-frontend-js:
-    paths:
-      - /tests/**.js
-      - /pontoon/static/js/
+    # paths:
+    #   - /tests/**.js
+    #   - /pontoon/static/js/
     carryforward: true
