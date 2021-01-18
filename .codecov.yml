@@ -3,7 +3,7 @@ comment: off
 flags:
   backend:
     paths:
-      - /pontoon/**.py
+      - pontoon/**.py
     carryforward: true
 
   frontend:
