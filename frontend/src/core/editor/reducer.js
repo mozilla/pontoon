@@ -196,6 +196,7 @@ export default function reducer(
             return {
                 ...initial,
                 isRunningRequest: state.isRunningRequest,
+                selectedHelperTabIndex: state.selectedHelperTabIndex,
             };
         case UPDATE_MACHINERY_SOURCES:
             return {
