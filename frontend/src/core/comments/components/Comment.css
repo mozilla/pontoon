@@ -1,6 +1,9 @@
 .comments-list ul .comment {
     padding-bottom: 10px;
 }
+.comments-list ul.all-comments li.comment:first-child{
+    padding-top: 10px;
+}
 
 .comments-list .comment a {
     color: #7bc876;
