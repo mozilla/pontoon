@@ -177,6 +177,9 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Sh
 editor-KeyboardShortcuts--select-all-strings = Select All Strings
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
 
+editor-KeyboardShortcuts--copy-from-helpers = Copy From Helpers
+editor-KeyboardShortcuts--copy-from-helpers-shortcut = <mod1>Alt</mod1> + <accel>Tab</accel>
+
 
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
@@ -454,7 +457,7 @@ machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
 ## Machinery Translation
 ## Shows a specific translation from machinery.
 machinery-Translation--copy =
-    .title = Copy Into Translation (Tab)
+    .title = Copy Into Translation (Alt + Tab)
 
 
 ## Machinery Translation Memory
@@ -500,7 +503,7 @@ notification--comment-added = Comment added
 ## Shows a specific translation from a different locale
 
 otherlocales-Translation--copy =
-    .title = Copy Into Translation
+    .title = Copy Into Translation (Alt + Tab)
 
 otherlocales-Translation--header-link =
     .title = Open string in { $locale } ({ $code })

@@ -122,8 +122,8 @@ export default function useHandleShortcuts() {
             clearEditorFn();
         }
 
-        // On (Shift+) Tab, copy Machinery/Locales matches into translation.
-        if (key === 9) {
+        // On Alt + Tab, copy Machinery/Locales matches into translation.
+        if (key === 9 && event.altKey) {
             let translations;
             let copyTranslationFn;
             if (editorState.selectedHelperTabIndex === 0) {

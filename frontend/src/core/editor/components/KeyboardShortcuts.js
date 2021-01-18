@@ -222,9 +222,14 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                         id='editor-KeyboardShortcuts--copy-from-helpers-shortcut'
                                         elems={{
                                             accel: <span />,
+                                            mod1: <span />,
                                         }}
                                     >
-                                        <td>{'<accel>Tab</accel>'}</td>
+                                        <td>
+                                            {
+                                                '<mod1>Alt</mod1> + <accel>Tab</accel>'
+                                            }
+                                        </td>
                                     </Localized>
                                 </tr>
                             </tbody>
