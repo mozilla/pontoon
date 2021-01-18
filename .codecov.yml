@@ -7,8 +7,8 @@ flags:
     carryforward: true
 
   frontend:
-    # paths:
-    #   - /frontend/
+    paths:
+      - frontend/
     carryforward: true
 
   non-frontend-js:
