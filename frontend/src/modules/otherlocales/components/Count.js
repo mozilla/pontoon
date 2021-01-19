@@ -15,12 +15,16 @@ export default function Count(props: Props) {
         return null;
     }
 
-    const otherlocalesCount = otherlocales.translations.other.length;
-    const preferredLocalesCount = otherlocales.translations.preferred.length;
-
-    if (!otherlocalesCount && !preferredLocalesCount) {
+    const totalCount = otherlocales.translations.length;
+    if (!totalCount) {
         return null;
     }
+
+    const preferredLocalesCount = otherlocales.translations.reduce(
+        (count, locale) => count + (locale.is_preferred ? 1 : 0),
+        0,
+    );
+    const otherlocalesCount = totalCount - preferredLocalesCount;
 
     const preferred = !preferredLocalesCount ? null : (
         <span className='preferred'>{preferredLocalesCount}</span>
