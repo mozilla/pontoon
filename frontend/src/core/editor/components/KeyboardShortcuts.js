@@ -215,19 +215,39 @@ export class KeyboardShortcutsBase extends React.Component<Props, State> {
                                     </Localized>
                                 </tr>
                                 <tr>
-                                    <Localized id='editor-KeyboardShortcuts--copy-from-helpers'>
-                                        <td>Copy From Helpers</td>
+                                    <Localized id='editor-KeyboardShortcuts--copy-from-next-helper'>
+                                        <td>Copy From Next Helper</td>
                                     </Localized>
                                     <Localized
-                                        id='editor-KeyboardShortcuts--copy-from-helpers-shortcut'
+                                        id='editor-KeyboardShortcuts--copy-from-next-helper-shortcut'
                                         elems={{
                                             accel: <span />,
                                             mod1: <span />,
+                                            mod2: <span />,
                                         }}
                                     >
                                         <td>
                                             {
-                                                '<mod1>Alt</mod1> + <accel>Tab</accel>'
+                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Down</accel>'
+                                            }
+                                        </td>
+                                    </Localized>
+                                </tr>
+                                <tr>
+                                    <Localized id='editor-KeyboardShortcuts--copy-from-previous-helper'>
+                                        <td>Copy From Previous Helper</td>
+                                    </Localized>
+                                    <Localized
+                                        id='editor-KeyboardShortcuts--copy-from-previous-helper-shortcut'
+                                        elems={{
+                                            accel: <span />,
+                                            mod1: <span />,
+                                            mod2: <span />,
+                                        }}
+                                    >
+                                        <td>
+                                            {
+                                                '<mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Up</accel>'
                                             }
                                         </td>
                                     </Localized>
