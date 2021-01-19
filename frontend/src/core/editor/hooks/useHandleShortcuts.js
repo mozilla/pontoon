@@ -122,8 +122,13 @@ export default function useHandleShortcuts() {
             clearEditorFn();
         }
 
-        // On (Shift+) Tab, copy Machinery/Locales matches into translation.
-        if (key === 9) {
+        // On Ctrl + Shift + Up/Down, copy next/previous entry from active
+        // helper tab (Machinery or Locales) into translation.
+        if (event.ctrlKey && event.shiftKey && !event.altKey) {
+            if (key !== 38 && key !== 40) {
+                return;
+            }
+
             let translations;
             let copyTranslationFn;
             if (editorState.selectedHelperTabIndex === 0) {
@@ -138,15 +143,18 @@ export default function useHandleShortcuts() {
             if (!numTranslations) {
                 return;
             }
+
             const currentIdx = editorState.selectedHelperElementIndex;
             let nextIdx;
-            if (!event.shiftKey) {
+            if (key === 40) {
                 nextIdx = (currentIdx + 1) % numTranslations;
             } else {
                 nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
             }
-            const newTranslation = translations[nextIdx];
+
             dispatch(editor.actions.selectHelperElementIndex(nextIdx));
+
+            const newTranslation = translations[nextIdx];
             handledEvent = true;
             copyTranslationFn(newTranslation);
         }

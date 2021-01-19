@@ -73,7 +73,7 @@ export default function Translation(props: Props) {
         <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>
             <li
                 className={className}
-                title='Copy Into Translation'
+                title='Copy Into Translation (Ctrl + Shift + Down)'
                 onClick={copyTranslationIntoEditor}
                 ref={translationRef}
             >

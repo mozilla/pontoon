@@ -74,7 +74,7 @@ export default function Translation(props: Props) {
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
             <li
                 className={className}
-                title='Copy Into Translation (Tab)'
+                title='Copy Into Translation (Ctrl + Shift + Down)'
                 onClick={copyTranslationIntoEditor}
                 ref={translationRef}
             >
