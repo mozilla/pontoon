@@ -159,11 +159,11 @@ editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
 editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
 editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
-editor-KeyboardShortcuts--go-to-next-string = Go To Next String
-editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
-
 editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
 editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
+
+editor-KeyboardShortcuts--go-to-next-string = Go To Next String
+editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
 
 editor-KeyboardShortcuts--copy-from-source = Copy From Source
 editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
@@ -176,6 +176,12 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Sh
 
 editor-KeyboardShortcuts--select-all-strings = Select All Strings
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
+
+editor-KeyboardShortcuts--copy-from-previous-helper = Copy From Previous Helper
+editor-KeyboardShortcuts--copy-from-previous-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Up</accel>
+
+editor-KeyboardShortcuts--copy-from-next-helper = Copy From Next Helper
+editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Down</accel>
 
 
 ## Editor Unsaved Changes
@@ -454,7 +460,7 @@ machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
 ## Machinery Translation
 ## Shows a specific translation from machinery.
 machinery-Translation--copy =
-    .title = Copy Into Translation (Tab)
+    .title = Copy Into Translation (Ctrl + Shift + Down)
 
 
 ## Machinery Translation Memory
@@ -500,7 +506,7 @@ notification--comment-added = Comment added
 ## Shows a specific translation from a different locale
 
 otherlocales-Translation--copy =
-    .title = Copy Into Translation
+    .title = Copy Into Translation (Ctrl + Shift + Down)
 
 otherlocales-Translation--header-link =
     .title = Open string in { $locale } ({ $code })
