@@ -475,11 +475,11 @@ PIPELINE_JS = {
 PIPELINE = {
     "STYLESHEETS": PIPELINE_CSS,
     "JAVASCRIPT": PIPELINE_JS,
+    "JS_COMPRESSOR": "pipeline.compressors.terser.TerserCompressor",
     "YUGLIFY_BINARY": path(
         os.environ.get("YUGLIFY_BINARY", "node_modules/.bin/yuglify")
     ),
-    "BABEL_BINARY": path("node_modules/.bin/babel"),
-    "BABEL_ARGUMENTS": "--modules ignore",
+    "TERSER_BINARY": path(os.environ.get("TERSER_BINARY", "node_modules/.bin/terser")),
     "DISABLE_WRAPPER": True,
 }
 
