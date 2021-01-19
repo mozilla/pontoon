@@ -14,6 +14,7 @@ ENV PYTHONPATH /app
 # JavaScript applications paths
 ENV WEBPACK_BINARY /app/node_modules/.bin/webpack
 ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
+ENV TERSER_BINARY /app/node_modules/.bin/terser
 
 # Install required software.
 RUN apt-get update \
