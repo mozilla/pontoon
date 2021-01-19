@@ -314,29 +314,22 @@ def entities(request):
     )
 
 
-def _serialize_translation_values(query):
-    translations = query.values(
-        "locale__pk",
-        "locale__code",
-        "locale__name",
-        "locale__direction",
-        "locale__script",
-        "string",
-    )
+def _serialize_translation_values(translation, preferred_values):
+    serialized = {
+        "locale": {
+            "pk": translation["locale__pk"],
+            "code": translation["locale__code"],
+            "name": translation["locale__name"],
+            "direction": translation["locale__direction"],
+            "script": translation["locale__script"],
+        },
+        "translation": translation["string"],
+    }
 
-    return [
-        {
-            "locale": {
-                "pk": translation["locale__pk"],
-                "code": translation["locale__code"],
-                "name": translation["locale__name"],
-                "direction": translation["locale__direction"],
-                "script": translation["locale__script"],
-            },
-            "translation": translation["string"],
-        }
-        for translation in translations
-    ]
+    if translation["locale__code"] in preferred_values:
+        serialized["is_preferred"] = True
+
+    return serialized
 
 
 @utils.require_AJAX
@@ -361,37 +354,25 @@ def get_translations_from_other_locales(request):
         )
         .exclude(locale=locale)
         .order_by("locale__name")
+    ).values(
+        "locale__pk",
+        "locale__code",
+        "locale__name",
+        "locale__direction",
+        "locale__script",
+        "string",
     )
 
+    preferred_locales = []
     if request.user.is_authenticated:
-        preferred_locales = request.user.profile.preferred_locales
-        preferred = translations.filter(locale__in=preferred_locales)
-        other = translations.exclude(locale__in=preferred_locales)
-
-        preferred_translations = sorted(
-            _serialize_translation_values(preferred),
-            key=lambda t: request.user.profile.locales_order.index(t["locale"]["pk"]),
+        preferred_locales = request.user.profile.preferred_locales.values_list(
+            "code", flat=True
         )
 
-        if request.user.profile.preferred_source_locale:
-            # TODO: De-hardcode as part of bug 1328879.
-            preferred_translations.insert(
-                0,
-                {
-                    "locale": Locale.objects.get(code="en-US").serialize(),
-                    "translation": entity.string,
-                },
-            )
-    else:
-        other = translations
-        preferred_translations = []
-
-    other_translations = _serialize_translation_values(other)
-
-    payload = {
-        "preferred": preferred_translations,
-        "other": other_translations,
-    }
+    payload = [
+        _serialize_translation_values(translation, preferred_locales)
+        for translation in translations
+    ]
 
     return JsonResponse(payload, safe=False)
 
