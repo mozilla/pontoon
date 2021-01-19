@@ -11,9 +11,9 @@ export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';
 
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +translations: ?OtherLocaleTranslations,
+    +translations: OtherLocaleTranslations,
 |};
-export function receive(translations: ?OtherLocaleTranslations): ReceiveAction {
+export function receive(translations: OtherLocaleTranslations): ReceiveAction {
     return {
         type: RECEIVE,
         translations,
@@ -43,7 +43,7 @@ export function get(entity: number, locale: string): Function {
         // The default return value of aborted requests is {},
         // which is incompatible with reducer
         if (isEmpty(content)) {
-            content = null;
+            content = [];
         }
 
         dispatch(receive(content));

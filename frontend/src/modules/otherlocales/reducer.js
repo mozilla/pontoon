@@ -10,13 +10,13 @@ type Action = ReceiveAction | RequestAction;
 export type LocalesState = {|
     +fetching: boolean,
     +entity: ?number,
-    +translations: ?OtherLocaleTranslations,
+    +translations: OtherLocaleTranslations,
 |};
 
 const initialState = {
     fetching: false,
     entity: null,
-    translations: null,
+    translations: [],
 };
 
 export default function reducer(
@@ -29,7 +29,7 @@ export default function reducer(
                 ...state,
                 fetching: true,
                 entity: action.entity,
-                translations: null,
+                translations: [],
             };
         case RECEIVE:
             return {

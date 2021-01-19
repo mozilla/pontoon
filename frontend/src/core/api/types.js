@@ -102,10 +102,7 @@ export type Entities = Array<Entity>;
  * A collection of translations of an entity to a locale other than
  * the currently selected locale.
  */
-export type OtherLocaleTranslations = {|
-    +preferred: Array<OtherLocaleTranslation>,
-    +other: Array<OtherLocaleTranslation>,
-|};
+export type OtherLocaleTranslations = Array<OtherLocaleTranslation>;
 
 /*
  * Translation of an entity in a locale other than the currently selected locale.
@@ -119,6 +116,7 @@ export type OtherLocaleTranslation = {|
         +script: string,
     |},
     +translation: string,
+    +is_preferred: ?boolean,
 |};
 
 /*

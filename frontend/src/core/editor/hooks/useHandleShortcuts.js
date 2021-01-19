@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as unsavedchanges from 'modules/unsavedchanges';
-import * as otherlocales from 'modules/otherlocales';
 
 /**
  * Return a function to handle shortcuts in a translation form.
@@ -33,8 +32,8 @@ export default function useHandleShortcuts() {
     const machineryTranslations = useSelector(
         (state) => state.machinery.translations,
     );
-    const otherLocaleTranslations = useSelector((state) =>
-        otherlocales.selectors.getTranslationsFlatList(state),
+    const otherLocaleTranslations = useSelector(
+        (state) => state.otherlocales.translations,
     );
 
     return (

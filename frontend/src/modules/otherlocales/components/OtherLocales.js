@@ -48,32 +48,32 @@ export default class OtherLocales extends React.Component<Props> {
     render() {
         const { otherlocales } = this.props;
 
-        if (otherlocales.fetching || !otherlocales.translations) {
+        if (otherlocales.fetching) {
             return null;
         }
 
         const translations = otherlocales.translations;
 
-        if (!translations.other.length && !translations.preferred.length) {
+        if (!translations.length) {
             return this.renderNoResults();
         }
 
         return (
             <section className='other-locales'>
                 <ul className='preferred-list'>
-                    {translations.preferred.map((translation, index) => {
-                        return this.renderTranslations(translation, index);
-                    })}
+                    {translations.map((translation, index) =>
+                        translation.is_preferred
+                            ? this.renderTranslations(translation, index)
+                            : null,
+                    )}
                 </ul>
 
                 <ul>
-                    {translations.other.map((translation, index) => {
-                        return this.renderTranslations(
-                            translation,
-                            // offset by the amount of preferred translations
-                            translations.preferred.length + index,
-                        );
-                    })}
+                    {translations.map((translation, index) =>
+                        !translation.is_preferred
+                            ? this.renderTranslations(translation, index)
+                            : null,
+                    )}
                 </ul>
             </section>
         );
