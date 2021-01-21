@@ -54,7 +54,7 @@ export default function CommentsList(props: Props) {
         );
     };
 
-    const pinnedComments = comments.filter((comment) => comment.pinned == true);
+    const pinnedComments = comments.filter((comment) => comment.pinned);
 
     return (
         <div className='comments-list'>
