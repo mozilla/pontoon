@@ -36,6 +36,6 @@ jobs:
       - name: Test
         run: npm test
       - name: codecov.io
-        run: codecov
+        run: codecov -F non-frontend-js
       - name: Ensure build
         run: ./node_modules/.bin/webpack
