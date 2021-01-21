@@ -53,7 +53,7 @@ export default function CommentsList(props: Props) {
         );
     };
 
-    const [pinnedComments, unpinnedComments] = comments.reduce(
+    const [pinnedComments, allComments] = comments.reduce(
         (comment, currentComment) => {
             comment[currentComment.pinned === true ? 0 : 1].push(
                 currentComment,
@@ -70,7 +70,7 @@ export default function CommentsList(props: Props) {
             </ul>
 
             <ul className='all-comments'>
-                {unpinnedComments.map((comment) => renderComment(comment))}
+                {allComments.map((comment) => renderComment(comment))}
             </ul>
             {!canComment ? null : (
                 <AddComment
