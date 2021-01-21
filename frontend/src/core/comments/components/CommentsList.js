@@ -42,6 +42,7 @@ export default function CommentsList(props: Props) {
 
     const translationId = translation ? translation.pk : null;
 
+    // rendering comment
     const renderComment = (comment) => {
         return (
             <Comment
@@ -53,15 +54,7 @@ export default function CommentsList(props: Props) {
         );
     };
 
-    const [pinnedComments, allComments] = comments.reduce(
-        (comment, currentComment) => {
-            comment[currentComment.pinned === true ? 0 : 1].push(
-                currentComment,
-            );
-            return comment;
-        },
-        [[], []],
-    );
+    const pinnedComments = comments.filter((comment) => comment.pinned == true);
 
     return (
         <div className='comments-list'>
@@ -69,8 +62,8 @@ export default function CommentsList(props: Props) {
                 {pinnedComments.map((comment) => renderComment(comment))}
             </ul>
 
-            <ul className='all-comments'>
-                {allComments.map((comment) => renderComment(comment))}
+            <ul className='comments'>
+                {comments.map((comment) => renderComment(comment))}
             </ul>
             {!canComment ? null : (
                 <AddComment
