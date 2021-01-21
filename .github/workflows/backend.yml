@@ -33,4 +33,4 @@ jobs:
       - name: Install codecov
         run: pip3 install codecov
       - name: codecov.io
-        run: python3 -m codecov
+        run: python3 -m codecov -F backend
