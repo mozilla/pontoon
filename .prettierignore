@@ -15,5 +15,4 @@
 # Prevent VSCode to reformat these files if "Format On Save" enabled
 *.html
 *.yml
-**/frontend/build*
 **/package.json*
