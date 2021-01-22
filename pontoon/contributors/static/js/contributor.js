@@ -27,7 +27,7 @@ $(function () {
                     Pontoon.endLoader("Couldn't load the timeline.");
                 }
                 $timelineLoader.hide();
-            }
+            },
         );
     }
 

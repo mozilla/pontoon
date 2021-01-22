@@ -32,14 +32,14 @@ $(function () {
             '.double-list-selector .select:nth-child(2) li',
             function (e) {
                 setArrow($(this), e);
-            }
+            },
         )
         .on(
             'mousemove',
             '.double-list-selector .select:nth-child(2) li',
             function (e) {
                 setArrow($(this), e);
-            }
+            },
         );
 
     // Move items between lists

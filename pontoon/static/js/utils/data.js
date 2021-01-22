@@ -39,7 +39,7 @@ export function dataManager(WrappedComponent, Manager, data) {
             return this.handleResponse(
                 await ajax.fetch(this.api, params, {
                     method: this.requestMethod,
-                })
+                }),
             );
         };
 
@@ -59,7 +59,7 @@ export function dataManager(WrappedComponent, Manager, data) {
             return this.handleResponse(
                 await ajax.fetch(this.api, params, {
                     method: this.submitMethod,
-                })
+                }),
             );
         };
 
