@@ -13,11 +13,11 @@ var Pontoon = (function (my) {
                     'click',
                     function () {
                         $(
-                            '#insights h3 .period-selector .selector'
+                            '#insights h3 .period-selector .selector',
                         ).removeClass('active');
                         $(this).addClass('active');
                         Pontoon.insights.renderActiveUsers();
-                    }
+                    },
                 );
 
                 // Set up canvas to be HiDPI display ready
@@ -92,7 +92,7 @@ var Pontoon = (function (my) {
                             y,
                             radius,
                             start * Math.PI,
-                            end * Math.PI
+                            end * Math.PI,
                         );
                         context.strokeStyle = color;
                         context.stroke();
@@ -295,7 +295,7 @@ var Pontoon = (function (my) {
                                             ' (' +
                                             Pontoon.insights.getPercent(
                                                 value,
-                                                total
+                                                total,
                                             ) +
                                             '% of all translations)';
                                     }
@@ -304,7 +304,7 @@ var Pontoon = (function (my) {
                                             ' (' +
                                             Pontoon.insights.getPercent(
                                                 value,
-                                                total
+                                                total,
                                             ) +
                                             '% of all translations)';
                                     }
@@ -380,11 +380,11 @@ var Pontoon = (function (my) {
 
                 // Render custom legend
                 $('#translation-activity-chart-legend').html(
-                    translationActivityChart.generateLegend()
+                    translationActivityChart.generateLegend(),
                 );
                 Pontoon.insights.attachCustomLegendHandler(
                     translationActivityChart,
-                    '#translation-activity-chart-legend .label'
+                    '#translation-activity-chart-legend .label',
                 );
             },
             renderReviewActivity: function () {
@@ -518,7 +518,7 @@ var Pontoon = (function (my) {
                                             ' (' +
                                             Pontoon.insights.getPercent(
                                                 value,
-                                                totalPeerReviews
+                                                totalPeerReviews,
                                             ) +
                                             '% of peer-reviews)';
                                     }
@@ -527,7 +527,7 @@ var Pontoon = (function (my) {
                                             ' (' +
                                             Pontoon.insights.getPercent(
                                                 value,
-                                                totalApprovals
+                                                totalApprovals,
                                             ) +
                                             '% of all approvals)';
                                     }
@@ -536,7 +536,7 @@ var Pontoon = (function (my) {
                                             ' (' +
                                             Pontoon.insights.getPercent(
                                                 value,
-                                                totalPeerReviews
+                                                totalPeerReviews,
                                             ) +
                                             '% of peer-reviews)';
                                     }
@@ -591,11 +591,11 @@ var Pontoon = (function (my) {
 
                 // Render custom legend
                 $('#review-activity-chart-legend').html(
-                    reviewActivityChart.generateLegend()
+                    reviewActivityChart.generateLegend(),
                 );
                 Pontoon.insights.attachCustomLegendHandler(
                     reviewActivityChart,
-                    '#review-activity-chart-legend .label'
+                    '#review-activity-chart-legend .label',
                 );
             },
             // Safely divide value by total, convert to percent

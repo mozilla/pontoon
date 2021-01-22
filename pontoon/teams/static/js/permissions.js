@@ -9,7 +9,7 @@ $(function () {
                 name +
                 '" value="' +
                 value +
-                '">'
+                '">',
         );
     }
 
@@ -31,8 +31,8 @@ $(function () {
                         inputHidden(
                             'general-' + value,
                             itemId,
-                            'permissions-form-item'
-                        )
+                            'permissions-form-item',
+                        ),
                     );
                 } else {
                     // We have to retrieve an index of parent project locale form
@@ -45,8 +45,8 @@ $(function () {
                                 localeProjectIndex +
                                 '-translators',
                             itemId,
-                            'permissions-form-item'
-                        )
+                            'permissions-form-item',
+                        ),
                     );
                 }
             });
@@ -92,7 +92,7 @@ $(function () {
             if (available.find('label a.contributors').is('.active')) {
                 available.find('li:not(".contributor")').hide();
             }
-        }
+        },
     );
 
     // Focus project selector search field
@@ -112,8 +112,8 @@ $(function () {
                 'project-locale-' +
                     $permsForm.data('index') +
                     '-has_custom_translators',
-                1
-            )
+                1,
+            ),
         );
 
         // Update menu (must be above Copying Translators)
@@ -125,11 +125,11 @@ $(function () {
         // Copy Translators from the General section
         // Reverse selector order to keep presentation order (prepend)
         $(
-            $('.permissions-groups.general .translators li').get().reverse()
+            $('.permissions-groups.general .translators li').get().reverse(),
         ).each(function () {
             $permsForm
                 .find(
-                    '.user.available li[data-id="' + $(this).data('id') + '"]'
+                    '.user.available li[data-id="' + $(this).data('id') + '"]',
                 )
                 .click();
         });
@@ -139,7 +139,7 @@ $(function () {
             {
                 scrollTop: $permsForm.offset().top,
             },
-            500
+            500,
         );
     });
 

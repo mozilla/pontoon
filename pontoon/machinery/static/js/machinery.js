@@ -18,7 +18,7 @@ $(function () {
 
     clipboard.on('success', function (event) {
         var successMessage = $(
-                '<span class="clipboard-success">Copied!</span>'
+                '<span class="clipboard-success">Copied!</span>',
             ),
             $trigger = $(event.trigger);
 

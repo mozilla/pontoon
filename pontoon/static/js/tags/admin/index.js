@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tag={node.dataset.tag}
                 api={node.dataset.api}
             />,
-            node
+            node,
         );
     });
 });

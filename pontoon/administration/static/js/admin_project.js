@@ -32,7 +32,7 @@ $(function () {
             'action',
             $('#admin-form').attr('action').split('/projects/')[0] +
                 '/projects/' +
-                slug
+                slug,
         );
     });
 
@@ -240,7 +240,7 @@ $(function () {
             .replace(/__prefix__/g, count[type]);
 
         $('.' + type + ':last').before(
-            '<div class="' + type + ' inline clearfix">' + form + '</div>'
+            '<div class="' + type + ' inline clearfix">' + form + '</div>',
         );
         count[type]++;
 
@@ -273,7 +273,7 @@ $(function () {
         var $emptyForm = $('.repository-empty');
         var form = $emptyForm.html().replace(/__prefix__/g, count);
         $('.repository:last').after(
-            '<div class="repository clearfix">' + form + '</div>'
+            '<div class="repository clearfix">' + form + '</div>',
         );
 
         toggleBranchInput($('.repository:last').find('.type-wrapper select'));

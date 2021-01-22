@@ -6,7 +6,7 @@ $(function () {
         // Show all notifications
         if (!notifications) {
             $(
-                '.right-column .notification-item, .right-column .horizontal-separator'
+                '.right-column .notification-item, .right-column .horizontal-separator',
             ).show();
             $('.right-column .horizontal-separator').show();
 
