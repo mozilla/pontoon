@@ -11,3 +11,9 @@
 **/base/templates/js/pontoon.js
 **/in_context/static/css/agency.css
 **/in_context/static/js/agency.js
+
+# Prevent VSCode to reformat these files if "Format On Save" enabled
+*.html
+*.yml
+**/frontend/build*
+**/package.json*
