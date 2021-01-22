@@ -83,19 +83,19 @@ var Pontoon = (function (my) {
                         Pontoon.endLoader(
                             'New ' + type + ' request sent.',
                             '',
-                            5000
+                            5000,
                         );
                     },
                     error: function () {
                         Pontoon.endLoader(
                             'Oops, something went wrong.',
-                            'error'
+                            'error',
                         );
                     },
                     complete: function () {
                         $('.items td.check').removeClass('enabled');
                         $('.items td.radio.enabled').toggleClass(
-                            'far fa fa-circle fa-dot-circle enabled'
+                            'far fa fa-circle fa-dot-circle enabled',
                         );
                         Pontoon.requestItem.toggleItem(true, 'locale-projects');
                         window.scrollTo(0, 0);
@@ -121,7 +121,7 @@ var Pontoon = (function (my) {
                         } else {
                             Pontoon.endLoader(
                                 'Oops, something went wrong.',
-                                'error'
+                                'error',
                             );
                         }
                     },
@@ -171,7 +171,7 @@ $(function () {
                 $(this).toggleClass('fa-circle fa-dot-circle');
             },
         },
-        '.items td.radio:not(.enabled)'
+        '.items td.radio:not(.enabled)',
     );
 
     // Select team
@@ -208,7 +208,7 @@ $(function () {
                 e.stopPropagation();
                 Pontoon.requestItem.toggleButton(true, (type = 'team'));
             }
-        }
+        },
     );
 
     // Request projects/team
@@ -232,7 +232,7 @@ $(function () {
                 Pontoon.requestItem.requestProjects(
                     locale,
                     projects,
-                    'projects'
+                    'projects',
                 );
 
                 $(this).removeClass('confirmed').html('Request new projects');
@@ -251,7 +251,7 @@ $(function () {
                 Pontoon.requestItem.requestProjects(
                     locale,
                     [project],
-                    'language'
+                    'language',
                 );
 
                 $(this).removeClass('confirmed').html('Request new language');

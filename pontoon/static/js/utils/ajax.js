@@ -114,7 +114,7 @@ export class DjangoAjax {
          */
         return Object.assign(
             { credentials: this.getCredentials(url), headers: this.headers },
-            options
+            options,
         );
     }
 

@@ -12,7 +12,7 @@ const Sections = {
 
     goToNext() {
         this.goTo(
-            Math.min(this.activeSectionIdx + 1, this.sections.length - 1)
+            Math.min(this.activeSectionIdx + 1, this.sections.length - 1),
         );
     },
 
@@ -96,7 +96,7 @@ const Sections = {
                     this.goToNext();
                 }
             },
-            { passive: true }
+            { passive: true },
         );
     },
 
@@ -131,7 +131,7 @@ const Sections = {
 
         const navElements = this.nav.querySelectorAll('.js-section-nav');
         navElements.forEach((el, idx) =>
-            el.classList.toggle('active', idx === this.activeSectionIdx)
+            el.classList.toggle('active', idx === this.activeSectionIdx),
         );
     },
 };

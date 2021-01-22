@@ -55,10 +55,10 @@ var Pontoon = (function (my) {
                 success: function () {
                     $('#notifications.unread .button .icon').animate(
                         { color: '#4D5967' },
-                        1000
+                        1000,
                     );
                     var unreadNotifications = $(
-                        '.notifications .menu ul.notification-list li.notification-item[data-unread="true"]'
+                        '.notifications .menu ul.notification-list li.notification-item[data-unread="true"]',
                     );
 
                     unreadNotifications.animate(
@@ -69,7 +69,7 @@ var Pontoon = (function (my) {
                             unreadNotifications
                                 .removeAttr('style')
                                 .removeAttr('data-unread');
-                        }
+                        },
                     );
                 },
             });
@@ -90,7 +90,7 @@ var Pontoon = (function (my) {
                 },
                 function () {
                     $(this).addClass('hide').empty();
-                }
+                },
             );
         },
 
@@ -112,7 +112,7 @@ var Pontoon = (function (my) {
                         },
                         {
                             duration: 200,
-                        }
+                        },
                     );
             }
 
@@ -226,7 +226,7 @@ var Pontoon = (function (my) {
             replacement = replacement || '$&';
             return string.replace(
                 regex,
-                this.getPlaceableMarkup(title, replacement)
+                this.getPlaceableMarkup(title, replacement),
             );
         },
 
@@ -244,12 +244,12 @@ var Pontoon = (function (my) {
             string = self.markPlaceable(
                 string,
                 /&nbsp;/gi,
-                'Non-breaking space'
+                'Non-breaking space',
             );
             string = self.markPlaceable(
                 string,
                 /[\u202F]/gi,
-                'Narrow non-breaking space'
+                'Narrow non-breaking space',
             );
             string = self.markPlaceable(string, /[\u2009]/gi, 'Thin space');
 
@@ -281,13 +281,13 @@ var Pontoon = (function (my) {
             /* Leading space */
             string = string.replace(
                 /^(<(ins|del)>)*( )/gim,
-                '$1' + this.getPlaceableMarkup('Leading space', ' ')
+                '$1' + this.getPlaceableMarkup('Leading space', ' '),
             );
 
             /* Trailing space */
             string = string.replace(
                 /( )(<\/(ins|del)>)*$/gim,
-                this.getPlaceableMarkup('Trailing space', ' ') + '$2'
+                this.getPlaceableMarkup('Trailing space', ' ') + '$2',
             );
 
             /* Newline */
@@ -295,7 +295,7 @@ var Pontoon = (function (my) {
                 string,
                 /\n/gi,
                 'Newline character',
-                '¶$&'
+                '¶$&',
             );
 
             /* Tab */
@@ -303,7 +303,7 @@ var Pontoon = (function (my) {
                 string,
                 /\t/gi,
                 'Tab character',
-                '&rarr;'
+                '&rarr;',
             );
             return string;
         },
@@ -365,11 +365,11 @@ var Pontoon = (function (my) {
             return this.doNotRender(string)
                 .replace(
                     urlPattern,
-                    '<a href="$&" target="_blank" rel="noopener noreferrer">$&</a>'
+                    '<a href="$&" target="_blank" rel="noopener noreferrer">$&</a>',
                 )
                 .replace(
                     pseudoUrlPattern,
-                    '$1<a href="http://$2" target="_blank" rel="noopener noreferrer">$2</a>'
+                    '$1<a href="http://$2" target="_blank" rel="noopener noreferrer">$2</a>',
                 );
         },
 
@@ -383,7 +383,7 @@ var Pontoon = (function (my) {
                 '<li class="disabled">' +
                     '<p>Content not available while offline.</p>' +
                     '<p>Check your connection and try again.</p>' +
-                    '</li>'
+                    '</li>',
             );
         },
 
@@ -437,7 +437,7 @@ var Pontoon = (function (my) {
                                   data.count +
                                   '</sup>'
                                 : '') +
-                            '</a></li>'
+                            '</a></li>',
                     );
 
                     if (
@@ -445,7 +445,7 @@ var Pontoon = (function (my) {
                         sources.siblings('.stress').length === 0
                     ) {
                         sources.prepend(
-                            '<span class="stress">' + data.quality + '</span>'
+                            '<span class="stress">' + data.quality + '</span>',
                         );
                     }
                 } else {
@@ -506,11 +506,11 @@ var Pontoon = (function (my) {
                             '<p class="translation-clipboard">' +
                             self.doNotRender(translationText) +
                             '</p>' +
-                            '</li>'
+                            '</li>',
                     );
                     ul.append(li);
                     sourcesMap[data.original + data.translation] = li.find(
-                        '.sources'
+                        '.sources',
                     );
                     if (data.source === 'Translation memory') {
                         preferred++;
@@ -539,7 +539,7 @@ var Pontoon = (function (my) {
                             Math,
                             $.map(sources, function (elem) {
                                 return sourceMap[$(elem).text()];
-                            })
+                            }),
                         );
                     } else {
                         return sourceMap[sources.text()];
@@ -632,7 +632,7 @@ var Pontoon = (function (my) {
                             ul.append(
                                 '<li class="disabled">' +
                                     '<p>No translations available.</p>' +
-                                    '</li>'
+                                    '</li>',
                             );
                         }
                     }
@@ -930,9 +930,9 @@ $(function () {
                 startSign = loginUrl.match(/\?/) ? '&' : '?';
             $this.prop(
                 'href',
-                loginUrl + startSign + 'next=' + getRedirectUrl()
+                loginUrl + startSign + 'next=' + getRedirectUrl(),
             );
-        }
+        },
     );
 
     // Sign out button action
@@ -1114,7 +1114,7 @@ $(function () {
                         ? ['first', 'last', -1]
                         : ['last', 'first', 1],
                 items = menu.find(
-                    'li:visible:not(.horizontal-separator, .time-range-toolbar, :has(li))'
+                    'li:visible:not(.horizontal-separator, .time-range-toolbar, :has(li))',
                 );
 
             if (

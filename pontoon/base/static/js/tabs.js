@@ -29,7 +29,7 @@ $(function () {
             var url = $(this).attr('href');
             loadTabContent(url);
             window.history.pushState({}, '', url);
-        }
+        },
     );
 
     function showTabMessage(text) {
@@ -96,7 +96,7 @@ $(function () {
                 container,
                 tab,
                 updateTabCount,
-                showTabMessage
+                showTabMessage,
             );
         }
     }
