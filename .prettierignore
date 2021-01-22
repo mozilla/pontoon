@@ -8,5 +8,6 @@
 **/base/static/css/fontawesome-all.css
 **/base/static/css/jquery-ui.css
 **/base/static/css/nprogress.css
+**/base/templates/js/pontoon.js
 **/in_context/static/css/agency.css
 **/in_context/static/js/agency.js
