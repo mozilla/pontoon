@@ -60,36 +60,37 @@ export default function CommentsList(props: Props) {
     return (
         <div className='comments-list'>
             {pinnedComments.length ? (
-                <Localized id='comments-CommentsList--pinned-comments'>
-                    <h2 className='title'>PINNED COMMENTS</h2>
-                </Localized>
+                <section className='pinned-comments'>
+                    <Localized id='comments-CommentsList--pinned-comments'>
+                        <h2 className='title'>PINNED COMMENTS</h2>
+                    </Localized>
+
+                    <ul>
+                        {pinnedComments.map((comment) =>
+                            renderComment(comment),
+                        )}
+                    </ul>
+
+                    <Localized id='comments-CommentsList--all-comments'>
+                        <h2 className='title'>ALL COMMENTS</h2>
+                    </Localized>
+                </section>
             ) : null}
-
-            <ul className='pinned-comments'>
-                {pinnedComments.map((comment) => renderComment(comment))}
-            </ul>
-
-            {pinnedComments.length ? (
-                <Localized id='comments-CommentsList--all-comments'>
-                    <h2 className='title'>ALL COMMENTS</h2>
-                </Localized>
-            ) : null}
-
-            <ul className='comments'>
-                {comments.map((comment) => renderComment(comment))}
-            </ul>
-            {!canComment ? null : (
-                <AddComment
-                    parameters={parameters}
-                    username={user.username}
-                    imageURL={user.gravatarURLSmall}
-                    translation={translationId}
-                    users={users}
-                    addComment={addComment}
-                    contactPerson={contactPerson}
-                    resetContactPerson={resetContactPerson}
-                />
-            )}
+            <section className='all-comments'>
+                <ul>{comments.map((comment) => renderComment(comment))}</ul>
+                {!canComment ? null : (
+                    <AddComment
+                        parameters={parameters}
+                        username={user.username}
+                        imageURL={user.gravatarURLSmall}
+                        translation={translationId}
+                        users={users}
+                        addComment={addComment}
+                        contactPerson={contactPerson}
+                        resetContactPerson={resetContactPerson}
+                    />
+                )}
+            </section>
         </div>
     );
 }
