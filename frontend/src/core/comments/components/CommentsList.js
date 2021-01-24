@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from '@fluent/react';
 
 import './CommentsList.css';
 
@@ -58,9 +59,21 @@ export default function CommentsList(props: Props) {
 
     return (
         <div className='comments-list'>
+            {pinnedComments.length ? (
+                <Localized id='comments-CommentsList--pinned-comments'>
+                    <h2 className='title'>PINNED COMMENTS</h2>
+                </Localized>
+            ) : null}
+
             <ul className='pinned-comments'>
                 {pinnedComments.map((comment) => renderComment(comment))}
             </ul>
+
+            {pinnedComments.length ? (
+                <Localized id='comments-CommentsList--all-comments'>
+                    <h2 className='title'>ALL COMMENTS</h2>
+                </Localized>
+            ) : null}
 
             <ul className='comments'>
                 {comments.map((comment) => renderComment(comment))}
