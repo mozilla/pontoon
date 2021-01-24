@@ -10,6 +10,7 @@
 
 .comments-list ul.pinned-comments li:last-child {
     border-bottom: 1px solid #7bc876;
+    margin-bottom: 10px;
 }
 
 .comments-list .comment .user-avatar {

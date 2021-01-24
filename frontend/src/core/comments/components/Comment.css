@@ -2,10 +2,6 @@
     padding-bottom: 10px;
 }
 
-.comments-list ul.comments li.comment:first-child {
-    padding-top: 10px;
-}
-
 .comments-list .comment a {
     color: #7bc876;
     font-weight: 400;
