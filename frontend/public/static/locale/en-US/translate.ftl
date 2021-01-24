@@ -94,6 +94,7 @@ comments-Comment--pin-button = PIN
     .title = Pin comment
 comments-Comment--unpin-button = UNPIN
     .title = Unpin comment
+comments-Comment--pinned = PINNED
 comments-CommentsList--pinned-comments = PINNED COMMENTS
 comments-CommentsList--all-comments = ALL COMMENTS
 
