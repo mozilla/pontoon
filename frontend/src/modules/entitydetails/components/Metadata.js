@@ -394,10 +394,10 @@ export default class Metadata extends React.Component<Props, State> {
                     hide={this.hidePopupTerms}
                     navigateToPath={this.props.navigateToPath}
                 />
+                {this.renderPinnedComments(teamComments)}
                 {this.renderComment(entity)}
                 {this.renderGroupComment(entity)}
                 {this.renderResourceComment(entity)}
-                {this.renderPinnedComments(teamComments)}
                 <FluentAttribute entity={entity} />
                 {this.renderContext(entity)}
                 {this.renderSources(entity)}

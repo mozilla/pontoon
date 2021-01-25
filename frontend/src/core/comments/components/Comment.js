@@ -66,7 +66,12 @@ export default function Comment(props: Props) {
                             <span dir='auto'>{parse(comment.content)}</span>
                         </Linkify>
                         {!comment.pinned ? null : (
-                            <div className='fa fa-thumbtack comment-pin'></div>
+                            <div className='comment-pin'>
+                                <div className='fa fa-thumbtack'></div>
+                                <Localized id='comments-Comment--pinned'>
+                                    <span className='pinned'>PINNED</span>
+                                </Localized>
+                            </div>
                         )}
                     </div>
                 </div>

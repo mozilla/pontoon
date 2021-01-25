@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
+import { Localized } from '@fluent/react';
 
 import './CommentsList.css';
 
@@ -42,30 +43,54 @@ export default function CommentsList(props: Props) {
 
     const translationId = translation ? translation.pk : null;
 
+    // rendering comment
+    const renderComment = (comment) => {
+        return (
+            <Comment
+                comment={comment}
+                canPin={canPin}
+                key={comment.id}
+                togglePinnedStatus={togglePinnedStatus}
+            />
+        );
+    };
+
+    const pinnedComments = comments.filter((comment) => comment.pinned);
+
     return (
         <div className='comments-list'>
-            <ul>
-                {comments.map((comment) => (
-                    <Comment
-                        comment={comment}
-                        canPin={canPin}
-                        key={comment.id}
-                        togglePinnedStatus={togglePinnedStatus}
+            {pinnedComments.length ? (
+                <section className='pinned-comments'>
+                    <Localized id='comments-CommentsList--pinned-comments'>
+                        <h2 className='title'>PINNED COMMENTS</h2>
+                    </Localized>
+
+                    <ul>
+                        {pinnedComments.map((comment) =>
+                            renderComment(comment),
+                        )}
+                    </ul>
+
+                    <Localized id='comments-CommentsList--all-comments'>
+                        <h2 className='title'>ALL COMMENTS</h2>
+                    </Localized>
+                </section>
+            ) : null}
+            <section className='all-comments'>
+                <ul>{comments.map((comment) => renderComment(comment))}</ul>
+                {!canComment ? null : (
+                    <AddComment
+                        parameters={parameters}
+                        username={user.username}
+                        imageURL={user.gravatarURLSmall}
+                        translation={translationId}
+                        users={users}
+                        addComment={addComment}
+                        contactPerson={contactPerson}
+                        resetContactPerson={resetContactPerson}
                     />
-                ))}
-            </ul>
-            {!canComment ? null : (
-                <AddComment
-                    parameters={parameters}
-                    username={user.username}
-                    imageURL={user.gravatarURLSmall}
-                    translation={translationId}
-                    users={users}
-                    addComment={addComment}
-                    contactPerson={contactPerson}
-                    resetContactPerson={resetContactPerson}
-                />
-            )}
+                )}
+            </section>
         </div>
     );
 }
