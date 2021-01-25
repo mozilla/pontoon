@@ -70,7 +70,12 @@
 
 .comments-list .comment .comment-pin {
     color: #7bc876;
+    font-size: 9px;
     position: absolute;
     right: 4px;
-    top: -6px;
+    top: -10px;
+}
+
+.comments-list .comment .comment-pin .fa {
+    padding-right: 2px;
 }

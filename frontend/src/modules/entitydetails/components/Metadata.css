@@ -30,7 +30,7 @@
 }
 
 .metadata .comment .content p {
-    display: inline-block;
+    display: inline;
 }
 
 .metadata div .divider {

@@ -82,7 +82,7 @@ resourceprogress-ResourceProgress--missing = MISSING
 
 
 ## Comments
-## Allows user to leave comments on translations
+## Allows user to leave comments on translations and source strings
 
 comments-AddComment--input =
     .placeholder = Write a comment…
@@ -94,6 +94,9 @@ comments-Comment--pin-button = PIN
     .title = Pin comment
 comments-Comment--unpin-button = UNPIN
     .title = Unpin comment
+comments-Comment--pinned = PINNED
+comments-CommentsList--pinned-comments = PINNED COMMENTS
+comments-CommentsList--all-comments = ALL COMMENTS
 
 
 ## Editor Menu
