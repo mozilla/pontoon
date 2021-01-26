@@ -145,6 +145,8 @@ def microsoft_translator(request):
 
     try:
         r = requests.post(url, params=payload, headers=headers, json=body)
+        r.raise_for_status()
+
         root = json.loads(r.content)
 
         if "error" in root:
@@ -161,8 +163,8 @@ def microsoft_translator(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
+            {"status": False, "message": "{error}".format(error=e)},
+            status=r.status_code,
         )
 
 
@@ -241,6 +243,7 @@ def systran_translate(request):
 
     try:
         r = requests.post(url, params=payload)
+        r.raise_for_status()
 
         root = json.loads(r.content)
 
@@ -258,8 +261,8 @@ def systran_translate(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
+            {"status": False, "message": "{error}".format(error=e)},
+            status=r.status_code,
         )
 
 
@@ -341,6 +344,8 @@ def microsoft_terminology(request):
 
     try:
         r = requests.post(url, data=payload, headers=headers)
+        r.raise_for_status()
+
         translations = []
         xpath = ".//{http://api.terminology.microsoft.com/terminology}"
         root = ET.fromstring(r.content)
@@ -363,8 +368,8 @@ def microsoft_terminology(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
+            {"status": False, "message": "{error}".format(error=e)},
+            status=r.status_code,
         )
 
 
@@ -398,6 +403,8 @@ def transvision(request):
 
     try:
         r = requests.get(url, params=payload)
+        r.raise_for_status()
+
         if "error" in r.json():
             error = r.json()["error"]
             log.error("Transvision error: {error}".format(error=error))
@@ -414,6 +421,6 @@ def transvision(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
+            {"status": False, "message": "{error}".format(error=e)},
+            status=r.status_code,
         )

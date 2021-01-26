@@ -37,6 +37,7 @@ def get_google_translate_data(text, locale_code):
 
     try:
         r = requests.post(url, params=payload)
+        r.raise_for_status()
         root = json.loads(r.content)
 
         if "data" not in root:
@@ -55,7 +56,7 @@ def get_google_translate_data(text, locale_code):
         log.error("Google Translate error: {error}".format(error=e))
         return {
             "status": False,
-            "message": "Bad Request: {error}".format(error=e),
+            "message": "{error}".format(error=e),
         }
 
 
