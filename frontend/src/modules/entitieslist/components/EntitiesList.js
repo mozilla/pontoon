@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
@@ -32,13 +32,12 @@ type Props = {|
     locale: Locale,
     parameters: NavigationParams,
     router: Object,
-    unsavedChangesExist: boolean,
-    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
     ...Props,
     dispatch: Function,
+    store: Object,
 |};
 
 /**
@@ -195,10 +194,14 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     selectEntity = (entity: EntityType, replaceHistory?: boolean) => {
         const { dispatch, router } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(batchactions.actions.resetSelection());
                     dispatch(editor.actions.reset());
@@ -218,10 +221,14 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         const props = this.props;
         const { dispatch } = props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     // If holding Shift, check all entities in the entity list between the
                     // lastCheckedEntity and the entity if entity not checked. If entity
@@ -377,18 +384,28 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        batchactions: state[batchactions.NAME],
-        entities: state[entities.NAME],
-        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
-        isTranslator: user.selectors.isTranslator(state),
-        parameters: navigation.selectors.getNavigationParams(state),
-        locale: state[locale.NAME],
-        router: state.router,
-        unsavedChangesExist: state[unsavedchanges.NAME].exist,
-        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
+export default function EntitiesList() {
+    const state = {
+        batchactions: useSelector((state) => state[batchactions.NAME]),
+        entities: useSelector((state) => state[entities.NAME]),
+        isReadOnlyEditor: useSelector((state) =>
+            entities.selectors.isReadOnlyEditor(state),
+        ),
+        isTranslator: useSelector((state) =>
+            user.selectors.isTranslator(state),
+        ),
+        parameters: useSelector((state) =>
+            navigation.selectors.getNavigationParams(state),
+        ),
+        locale: useSelector((state) => state[locale.NAME]),
+        router: useSelector((state) => state.router),
     };
-};
 
-export default connect(mapStateToProps)(EntitiesListBase);
+    return (
+        <EntitiesListBase
+            {...state}
+            dispatch={useDispatch()}
+            store={useStore()}
+        />
+    );
+}

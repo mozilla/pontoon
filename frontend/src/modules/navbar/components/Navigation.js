@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './Navigation.css';
@@ -22,13 +22,12 @@ type Props = {|
     parameters: NavigationParams,
     project: ProjectState,
     resources: ResourcesState,
-    unsavedChangesExist: boolean,
-    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
     ...Props,
     dispatch: Function,
+    store: Object,
 |};
 
 /**
@@ -79,10 +78,14 @@ export class NavigationBase extends React.Component<InternalProps> {
     navigateToPath = (path: string) => {
         const { dispatch } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(push(path));
                 },
@@ -133,15 +136,21 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        locale: state[locale.NAME],
-        parameters: navigation.selectors.getNavigationParams(state),
-        project: state[project.NAME],
-        resources: state[resource.NAME],
-        unsavedChangesExist: state[unsavedchanges.NAME].exist,
-        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
+export default function Navigation() {
+    const state = {
+        locale: useSelector((state) => state[locale.NAME]),
+        parameters: useSelector((state) =>
+            navigation.selectors.getNavigationParams(state),
+        ),
+        project: useSelector((state) => state[project.NAME]),
+        resources: useSelector((state) => state[resource.NAME]),
     };
-};
 
-export default connect(mapStateToProps)(NavigationBase);
+    return (
+        <NavigationBase
+            {...state}
+            dispatch={useDispatch()}
+            store={useStore()}
+        />
+    );
+}
