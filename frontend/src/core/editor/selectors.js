@@ -102,6 +102,19 @@ export const sameExistingTranslation: Function = createSelector(
     _existingTranslation,
 );
 
+function _isFluentMessage(editorState: EditorState) {
+    return typeof editorState.translation !== 'string';
+}
+
+/**
+ * Returns `true` if the current editor translation contains a Fluent message.
+ */
+const isFluentTranslationMessage = createSelector(
+    editorSelector,
+    _isFluentMessage,
+);
+
 export default {
     sameExistingTranslation,
+    isFluentTranslationMessage,
 };

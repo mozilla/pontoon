@@ -41,10 +41,14 @@ export default function Translation(props: Props) {
         className += ' cannot-copy';
     }
 
-    const editorState = useSelector((state) => state[editor.NAME]);
+    const selectedHelperElementIndex = useSelector(
+        (state) => state[editor.NAME].selectedHelperElementIndex,
+    );
+    const changeSource = useSelector(
+        (state) => state[editor.NAME].changeSource,
+    );
     const isSelected =
-        editorState.changeSource === 'otherlocales' &&
-        editorState.selectedHelperElementIndex === index;
+        changeSource === 'otherlocales' && selectedHelperElementIndex === index;
     if (isSelected) {
         // Highlight other locale entries upon selection
         className += ' selected';
@@ -58,16 +62,13 @@ export default function Translation(props: Props) {
 
     const translationRef = React.useRef();
     React.useEffect(() => {
-        if (
-            editorState.selectedHelperElementIndex === index &&
-            translationRef.current
-        ) {
+        if (selectedHelperElementIndex === index && translationRef.current) {
             translationRef.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'nearest',
             });
         }
-    }, [editorState.selectedHelperElementIndex, index]);
+    }, [selectedHelperElementIndex, index]);
 
     return (
         <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>

@@ -48,10 +48,14 @@ export default function Translation(props: Props) {
         className += ' cannot-copy';
     }
 
-    const editorState = useSelector((state) => state[editor.NAME]);
+    const selectedHelperElementIndex = useSelector(
+        (state) => state[editor.NAME].selectedHelperElementIndex,
+    );
+    const changeSource = useSelector(
+        (state) => state[editor.NAME].changeSource,
+    );
     const isSelected =
-        editorState.changeSource === 'machinery' &&
-        editorState.selectedHelperElementIndex === index;
+        changeSource === 'machinery' && selectedHelperElementIndex === index;
     if (isSelected) {
         // Highlight Machinery entries upon selection
         className += ' selected';
@@ -59,16 +63,13 @@ export default function Translation(props: Props) {
 
     const translationRef = React.useRef();
     React.useEffect(() => {
-        if (
-            editorState.selectedHelperElementIndex === index &&
-            translationRef.current
-        ) {
+        if (selectedHelperElementIndex === index && translationRef.current) {
             translationRef.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'nearest',
             });
         }
-    }, [editorState.selectedHelperElementIndex, index]);
+    }, [selectedHelperElementIndex, index]);
 
     return (
         <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
