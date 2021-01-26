@@ -37,11 +37,11 @@ type Props = {
 export default function withDiff<Config: Object>(
     WrappedComponent: React.AbstractComponent<Config>,
 ): React.AbstractComponent<Config> {
-    return function WithDiff(props: { ...Config, ...Props }) {
+    return React.memo(function WithDiff(props: { ...Config, ...Props }) {
         return (
             <WrappedComponent {...props}>
                 {getDiff(props.diffTarget, props.children)}
             </WrappedComponent>
         );
-    };
+    });
 }
