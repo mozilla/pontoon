@@ -1,14 +1,14 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
 import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
-import * as project from 'core/project';
+import { NAME as PROJECT_NAME } from 'core/project';
 import { NAME as STATS_NAME } from 'core/stats';
 import * as search from 'modules/search';
 import * as unsavedchanges from 'modules/unsavedchanges';
@@ -32,12 +32,11 @@ type Props = {|
     project: ProjectState,
     stats: Stats,
     router: Object,
-    unsavedChangesExist: boolean,
-    unsavedChangesIgnored: boolean,
 |};
 
 type InternalProps = {|
     ...Props,
+    store: Object,
     dispatch: Function,
 |};
 
@@ -390,10 +389,14 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     };
 
     update = () => {
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         this.props.dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 this._update,
             ),
         );
@@ -495,16 +498,18 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        searchAndFilters: state[search.NAME],
-        parameters: navigation.selectors.getNavigationParams(state),
-        project: state[project.NAME],
-        stats: state[STATS_NAME],
-        router: state.router,
-        unsavedChangesExist: state[unsavedchanges.NAME].exist,
-        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
+export default function SearchBox() {
+    const state = {
+        searchAndFilters: useSelector((state) => state[search.NAME]),
+        parameters: useSelector((state) =>
+            navigation.selectors.getNavigationParams(state),
+        ),
+        project: useSelector((state) => state[PROJECT_NAME]),
+        stats: useSelector((state) => state[STATS_NAME]),
+        router: useSelector((state) => state.router),
     };
-};
 
-export default connect(mapStateToProps)(SearchBoxBase);
+    return (
+        <SearchBoxBase {...state} dispatch={useDispatch()} store={useStore()} />
+    );
+}

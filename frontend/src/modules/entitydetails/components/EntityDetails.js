@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
@@ -54,8 +54,6 @@ type Props = {|
     pluralForm: number,
     router: Object,
     selectedEntity: Entity,
-    unsavedChangesExist: boolean,
-    unsavedChangesIgnored: boolean,
     user: UserState,
     users: UserState,
 |};
@@ -63,6 +61,7 @@ type Props = {|
 type InternalProps = {|
     ...Props,
     dispatch: Function,
+    store: Object,
 |};
 
 type State = {|
@@ -239,10 +238,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     goToNextEntity = () => {
         const { dispatch, nextEntity, router } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -259,10 +262,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     goToPreviousEntity = () => {
         const { dispatch, previousEntity, router } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(
                         navigation.actions.updateEntity(
@@ -279,10 +286,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     navigateToPath = (path: string) => {
         const { dispatch } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(push(path));
                 },
@@ -365,12 +376,17 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             selectedEntity,
             dispatch,
         } = this.props;
+
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
         // because it cannot be triggered for the use case of bug 1508474.
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     dispatch(
                         history.actions.updateStatus(
@@ -474,30 +490,47 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        activeTranslationString: plural.selectors.getTranslationStringForSelectedEntity(
-            state,
+export default function EntityDetails() {
+    const state = {
+        activeTranslationString: useSelector((state) =>
+            plural.selectors.getTranslationStringForSelectedEntity(state),
         ),
-        history: state[history.NAME],
-        isReadOnlyEditor: entities.selectors.isReadOnlyEditor(state),
-        isTranslator: user.selectors.isTranslator(state),
-        locale: state[locale.NAME],
-        machinery: state[machinery.NAME],
-        nextEntity: entities.selectors.getNextEntity(state),
-        previousEntity: entities.selectors.getPreviousEntity(state),
-        otherlocales: state[otherlocales.NAME],
-        teamComments: state[teamcomments.NAME],
-        terms: state[terms.NAME],
-        parameters: navigation.selectors.getNavigationParams(state),
-        pluralForm: plural.selectors.getPluralForm(state),
-        router: state.router,
-        selectedEntity: entities.selectors.getSelectedEntity(state),
-        unsavedChangesExist: state[unsavedchanges.NAME].exist,
-        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
-        user: state[user.NAME],
-        users: state[user.NAME],
+        history: useSelector((state) => state[history.NAME]),
+        isReadOnlyEditor: useSelector((state) =>
+            entities.selectors.isReadOnlyEditor(state),
+        ),
+        isTranslator: useSelector((state) =>
+            user.selectors.isTranslator(state),
+        ),
+        locale: useSelector((state) => state[locale.NAME]),
+        machinery: useSelector((state) => state[machinery.NAME]),
+        nextEntity: useSelector((state) =>
+            entities.selectors.getNextEntity(state),
+        ),
+        previousEntity: useSelector((state) =>
+            entities.selectors.getPreviousEntity(state),
+        ),
+        otherlocales: useSelector((state) => state[otherlocales.NAME]),
+        teamComments: useSelector((state) => state[teamcomments.NAME]),
+        terms: useSelector((state) => state[terms.NAME]),
+        parameters: useSelector((state) =>
+            navigation.selectors.getNavigationParams(state),
+        ),
+        pluralForm: useSelector((state) =>
+            plural.selectors.getPluralForm(state),
+        ),
+        router: useSelector((state) => state.router),
+        selectedEntity: useSelector((state) =>
+            entities.selectors.getSelectedEntity(state),
+        ),
+        user: useSelector((state) => state[user.NAME]),
+        users: useSelector((state) => state[user.NAME]),
     };
-};
-
-export default connect(mapStateToProps)(EntityDetailsBase);
+    return (
+        <EntityDetailsBase
+            {...state}
+            dispatch={useDispatch()}
+            store={useStore()}
+        />
+    );
+}

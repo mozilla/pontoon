@@ -31,7 +31,10 @@ export function createReduxStore(initialState = {}) {
 export function mountComponentWithStore(Component, store, props = {}) {
     return mount(
         <Provider store={store}>
-            <ConnectedRouter history={history}>
+            {/* `noInitialPop` is required to omit an initial navigation dispatch
+            from the router, which could have side-effects like resetting some
+            initial state passed to the root reducer factory function.*/}
+            <ConnectedRouter history={history} noInitialPop>
                 <Component {...props} />
             </ConnectedRouter>
         </Provider>,

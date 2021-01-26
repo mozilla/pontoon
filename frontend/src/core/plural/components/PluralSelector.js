@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import './PluralSelector.css';
 
@@ -15,14 +15,17 @@ import type { Locale } from 'core/locale';
 type Props = {|
     locale: Locale,
     pluralForm: number,
-    unsavedChangesExist: boolean,
-    unsavedChangesIgnored: boolean,
+|};
+
+type WrapperProps = {|
+    resetEditor: Function,
 |};
 
 type InternalProps = {|
     ...Props,
-    resetEditor: Function,
+    ...WrapperProps,
     dispatch: Function,
+    store: Object,
 |};
 
 /**
@@ -39,10 +42,14 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
 
         const { dispatch } = this.props;
 
+        const state = this.props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         dispatch(
             unsavedchanges.actions.check(
-                this.props.unsavedChangesExist,
-                this.props.unsavedChangesIgnored,
+                unsavedChangesExist,
+                unsavedChangesIgnored,
                 () => {
                     this.props.resetEditor();
                     dispatch(actions.select(pluralForm));
@@ -89,13 +96,18 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Object): Props => {
-    return {
-        locale: state[locale.NAME],
-        pluralForm: selectors.getPluralForm(state),
-        unsavedChangesExist: state[unsavedchanges.NAME].exist,
-        unsavedChangesIgnored: state[unsavedchanges.NAME].ignored,
+export default function PluralSelector(props: WrapperProps) {
+    const state = {
+        locale: useSelector((state) => state[locale.NAME]),
+        pluralForm: useSelector((state) => selectors.getPluralForm(state)),
     };
-};
 
-export default connect(mapStateToProps)(PluralSelectorBase);
+    return (
+        <PluralSelectorBase
+            {...props}
+            {...state}
+            dispatch={useDispatch()}
+            store={useStore()}
+        />
+    );
+}
