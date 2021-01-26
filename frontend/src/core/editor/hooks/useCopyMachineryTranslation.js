@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { actions } from '..';
 
+import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import type { MachineryTranslation, SourceType } from 'core/api';
 
@@ -31,12 +32,14 @@ export default function useCopyMachineryTranslation() {
         [dispatch],
     );
 
-    const editorContent = useSelector((state) => state.editor.translation);
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
     const entity = useSelector((state) =>
         entities.selectors.getSelectedEntity(state),
+    );
+    const isFluentTranslationMessage = useSelector((state) =>
+        editor.selectors.isFluentTranslationMessage(state),
     );
 
     return useCallback(
@@ -57,7 +60,7 @@ export default function useCopyMachineryTranslation() {
             }
             // This is a Fluent Message, thus we are in the RichEditor.
             // Handle machinery differently.
-            else if (typeof editorContent !== 'string') {
+            else if (isFluentTranslationMessage) {
                 addTextToTranslation(translation.translation, 'machinery');
             }
             // By default replace editor content
@@ -70,9 +73,9 @@ export default function useCopyMachineryTranslation() {
             );
         },
         [
+            isFluentTranslationMessage,
             isReadOnlyEditor,
             entity,
-            editorContent,
             addTextToTranslation,
             updateTranslation,
             updateMachinerySources,
