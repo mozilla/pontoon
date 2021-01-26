@@ -1,8 +1,6 @@
-import React from 'react';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
+import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import * as entities from 'core/entities';
 import * as navigation from 'core/navigation';
@@ -11,7 +9,10 @@ import * as batchactions from 'modules/batchactions';
 import EntitiesList, { EntitiesListBase } from './EntitiesList';
 
 // Entities shared between tests
-const ENTITIES = [{ pk: 1 }, { pk: 2 }];
+const ENTITIES = [
+    { pk: 1, translation: [{ string: '', errors: [], warnings: [] }] },
+    { pk: 2, translation: [{ string: '', errors: [], warnings: [] }] },
+];
 
 describe('<EntitiesList>', () => {
     beforeAll(() => {
@@ -47,13 +48,9 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, true));
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
-        const scroll = wrapper
-            .find('InfiniteScroll')
-            .shallow({ disableLifecycleMethods: true });
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
+        const scroll = wrapper.find('InfiniteScroll');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(1);
     });
@@ -63,13 +60,9 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, false));
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
-        const scroll = wrapper
-            .find('InfiniteScroll')
-            .shallow({ disableLifecycleMethods: true });
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
+        const scroll = wrapper.find('InfiniteScroll');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(0);
     });
@@ -79,13 +72,9 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.request());
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
-        const scroll = wrapper
-            .find('InfiniteScroll')
-            .shallow({ disableLifecycleMethods: true });
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
+        const scroll = wrapper.find('InfiniteScroll');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(1);
     });
@@ -95,10 +84,8 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, false));
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
 
         expect(wrapper.find('Entity')).toHaveLength(2);
     });
@@ -108,10 +95,8 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, false));
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
 
         wrapper.instance().getMoreEntities();
 
@@ -124,7 +109,7 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, false));
 
-        shallowUntilTarget(<EntitiesList store={store} />, EntitiesListBase);
+        mountComponentWithStore(EntitiesList, store);
 
         expect(batchactions.actions.resetSelection.calledOnce).toBeTruthy();
         expect(navigation.actions.updateEntity.calledOnce).toBeTruthy();
@@ -138,10 +123,8 @@ describe('<EntitiesList>', () => {
 
         store.dispatch(entities.actions.receive(ENTITIES, false));
 
-        const wrapper = shallowUntilTarget(
-            <EntitiesList store={store} />,
-            EntitiesListBase,
-        );
+        const root = mountComponentWithStore(EntitiesList, store);
+        const wrapper = root.find(EntitiesListBase);
 
         wrapper.instance().toggleForBatchEditing(ENTITIES[0].pk, false);
 
