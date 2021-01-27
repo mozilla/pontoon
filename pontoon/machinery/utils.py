@@ -7,7 +7,8 @@ from functools import reduce
 import Levenshtein
 import requests
 from django.conf import settings
-from django.db.models import F, Q
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 import pontoon.base as base
 
@@ -74,12 +75,8 @@ def get_concordance_search_data(text, locale):
 
     search_results = (
         base.models.TranslationMemoryEntry.objects.filter(search_query)
-        .annotate(
-            entity_pk=F("entity__pk"),
-            project_name=F("project__name"),
-            project_slug=F("project__slug"),
-        )
-        .values("source", "target", "entity_pk", "project_name", "project_slug")
+        .values("source", "target")
+        .annotate(project_names=ArrayAgg("project__name", distinct=True))
         .distinct()
     )
 
@@ -87,10 +84,18 @@ def get_concordance_search_data(text, locale):
         """Sort the results by their best Levenshtein distance from the search query"""
         return (
             max(
-                int(round(Levenshtein.ratio(text, entity["target"]) * 100)),
-                int(round(Levenshtein.ratio(text, entity["source"]) * 100)),
+                int(
+                    round(
+                        Levenshtein.ratio(text.lower(), entity["target"].lower()) * 100
+                    )
+                ),
+                int(
+                    round(
+                        Levenshtein.ratio(text.lower(), entity["source"].lower()) * 100
+                    )
+                ),
             ),
-            entity["target"],
+            len(entity["project_names"]),
         )
 
     return sorted(search_results, key=sort_by_quality, reverse=True)
