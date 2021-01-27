@@ -37,7 +37,7 @@ async function selectEntity(store, entityIndex) {
 }
 
 async function selectPlural(store, pluralForm) {
-    await store.dispatch(plural.actions.select(1));
+    await store.dispatch(plural.actions.select(pluralForm));
     store.dispatch(editor.actions.reset());
 }
 
