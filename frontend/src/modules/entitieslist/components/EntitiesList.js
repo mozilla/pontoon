@@ -113,7 +113,16 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             (!prevProps.entities.entities.length &&
                 this.props.entities.entities.length)
         ) {
-            this.scrollToSelectedElement();
+            const list = this.list.current;
+            const element = list.querySelector('li.selected');
+
+            if (!element) {
+                return;
+            } else
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                });
         }
     }
 
@@ -151,19 +160,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             );
         }
     };
-
-    scrollToSelectedElement() {
-        const list = this.list.current;
-        const element = list.querySelector('li.selected');
-
-        if (!element) {
-            return;
-        } else
-            element.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-            });
-    }
 
     /*
      * If entity not provided through a URL parameter, or if provided entity
