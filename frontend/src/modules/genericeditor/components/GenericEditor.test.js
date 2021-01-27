@@ -29,6 +29,18 @@ const ENTITIES = [
     },
 ];
 
+async function selectEntity(store, entityIndex) {
+    await store.dispatch(
+        navigation.actions.updateEntity(store.getState().router, entityIndex),
+    );
+    store.dispatch(editor.actions.reset());
+}
+
+async function selectPlural(store, pluralForm) {
+    await store.dispatch(plural.actions.select(pluralForm));
+    store.dispatch(editor.actions.reset());
+}
+
 async function createComponent(entityIndex = 0) {
     const store = createReduxStore();
     createDefaultUser(store);
@@ -36,9 +48,7 @@ async function createComponent(entityIndex = 0) {
     const wrapper = mountComponentWithStore(GenericEditor, store);
 
     store.dispatch(entities.actions.receive(ENTITIES));
-    await store.dispatch(
-        navigation.actions.updateEntity(store.getState().router, entityIndex),
-    );
+    await selectEntity(store, entityIndex);
 
     // Force a re-render.
     wrapper.setProps({});
@@ -62,12 +72,10 @@ describe('<Editor>', () => {
     it('updates translation when entity or plural change', async () => {
         const [wrapper, store] = await createComponent(1);
 
-        await store.dispatch(
-            navigation.actions.updateEntity(store.getState().router, 2),
-        );
+        await selectEntity(store, 2);
         expect(store.getState().editor.translation).toEqual('deuxième');
 
-        await store.dispatch(plural.actions.select(1));
+        await selectPlural(store, 1);
         wrapper.setProps({});
         expect(store.getState().editor.translation).toEqual('deuxièmes');
     });
@@ -75,12 +83,10 @@ describe('<Editor>', () => {
     it('sets initial translation when entity or plural change', async () => {
         const [wrapper, store] = await createComponent(1);
 
-        await store.dispatch(
-            navigation.actions.updateEntity(store.getState().router, 2),
-        );
+        await selectEntity(store, 2);
         expect(store.getState().editor.initialTranslation).toEqual('deuxième');
 
-        await store.dispatch(plural.actions.select(1));
+        await selectPlural(store, 1);
         wrapper.setProps({});
         expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
     });

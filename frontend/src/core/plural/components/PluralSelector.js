@@ -21,6 +21,7 @@ type Props = {|
 
 type InternalProps = {|
     ...Props,
+    resetEditor: Function,
     dispatch: Function,
 |};
 
@@ -43,6 +44,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
                 this.props.unsavedChangesExist,
                 this.props.unsavedChangesIgnored,
                 () => {
+                    this.props.resetEditor();
                     dispatch(actions.select(pluralForm));
                 },
             ),

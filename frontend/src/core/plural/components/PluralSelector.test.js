@@ -10,7 +10,13 @@ import { actions } from '..';
 import PluralSelector, { PluralSelectorBase } from './PluralSelector';
 
 function createShallowPluralSelector(plural, locale) {
-    return shallow(<PluralSelectorBase pluralForm={plural} locale={locale} />);
+    return shallow(
+        <PluralSelectorBase
+            pluralForm={plural}
+            locale={locale}
+            resetEditor={sinon.spy()}
+        />,
+    );
 }
 
 describe('<PluralSelectorBase>', () => {
@@ -81,7 +87,7 @@ describe('<PluralSelector>', () => {
         const dispatchSpy = sinon.spy(store, 'dispatch');
 
         const wrapper = shallowUntilTarget(
-            <PluralSelector store={store} />,
+            <PluralSelector store={store} resetEditor={sinon.spy()} />,
             PluralSelectorBase,
         );
 
