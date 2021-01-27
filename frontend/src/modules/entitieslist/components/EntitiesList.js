@@ -107,6 +107,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         // Scroll to selected entity when entity changes
         // and when entity list loads for the first time
+
         if (
             previous.entity !== current.entity ||
             (!prevProps.entities.entities.length &&
@@ -157,21 +158,11 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         if (!element) {
             return;
-        }
-
-        const listTop = list.scrollTop;
-        const listHeight = list.clientHeight;
-        const listBottom = listTop + listHeight;
-
-        const elementTop = element.offsetTop;
-        const elementHeight = element.offsetHeight;
-        const elementBottom = elementTop + elementHeight;
-
-        if (elementTop < listTop) {
-            list.scrollTop = elementTop;
-        } else if (elementBottom >= listBottom) {
-            list.scrollTop = Math.max(elementBottom - listHeight, 0);
-        }
+        } else
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
     }
 
     /*
