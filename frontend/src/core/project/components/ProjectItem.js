@@ -29,7 +29,9 @@ export default function ProjectItem(props: Props) {
                 href={`/${parameters.locale}/${project.slug}/all-resources/`}
                 onClick={navigateToPath}
             >
-                <span>{project.name}</span>
+                <span className='project' title={project.name}>
+                    {project.name}
+                </span>
                 <ProjectPercent localization={localization} />
             </a>
         </li>
