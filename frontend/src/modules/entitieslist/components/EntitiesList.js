@@ -115,6 +115,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             const list = this.list.current;
             const element = list.querySelector('li.selected');
 
+            if (!element) {
+                return;
+            }
             element.scrollIntoView({
                 behavior: 'smooth',
                 block: 'nearest',
