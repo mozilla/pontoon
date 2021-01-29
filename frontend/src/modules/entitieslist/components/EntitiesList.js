@@ -107,7 +107,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
         // Scroll to selected entity when entity changes
         // and when entity list loads for the first time
-
         if (
             previous.entity !== current.entity ||
             (!prevProps.entities.entities.length &&
@@ -116,13 +115,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             const list = this.list.current;
             const element = list.querySelector('li.selected');
 
-            if (!element) {
-                return;
-            } else
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                });
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
         }
     }
 
