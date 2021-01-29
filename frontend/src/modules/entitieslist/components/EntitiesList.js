@@ -112,7 +112,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             (!prevProps.entities.entities.length &&
                 this.props.entities.entities.length)
         ) {
-            this.scrollToSelectedElement();
+            const list = this.list.current;
+            const element = list.querySelector('li.selected');
+
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
         }
     }
 
@@ -150,29 +156,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             );
         }
     };
-
-    scrollToSelectedElement() {
-        const list = this.list.current;
-        const element = list.querySelector('li.selected');
-
-        if (!element) {
-            return;
-        }
-
-        const listTop = list.scrollTop;
-        const listHeight = list.clientHeight;
-        const listBottom = listTop + listHeight;
-
-        const elementTop = element.offsetTop;
-        const elementHeight = element.offsetHeight;
-        const elementBottom = elementTop + elementHeight;
-
-        if (elementTop < listTop) {
-            list.scrollTop = elementTop;
-        } else if (elementBottom >= listBottom) {
-            list.scrollTop = Math.max(elementBottom - listHeight, 0);
-        }
-    }
 
     /*
      * If entity not provided through a URL parameter, or if provided entity
