@@ -19,40 +19,53 @@ type InternalProps = {|
     dispatch: Function,
 |};
 
+type ContentProps = {|
+    image: string,
+    onClose: Function,
+|};
+
 /**
  * Shows an image on a grey background.
  *
  * Hides the UI behind a grey background and show a centered image.
  * Click or press a key to close.
  */
+function LightboxContent({ image, onClose }: ContentProps) {
+    const handleKeyDown = React.useCallback(
+        (event: SyntheticKeyboardEvent<>) => {
+            // On keys:
+            //   - 13: Enter
+            //   - 27: Escape
+            //   - 32: Space
+            if (
+                event.keyCode === 13 ||
+                event.keyCode === 27 ||
+                event.keyCode === 32
+            ) {
+                onClose();
+            }
+        },
+        [onClose],
+    );
+
+    React.useEffect(() => {
+        window.document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    return (
+        <div className='lightbox' onClick={onClose}>
+            <img src={image} alt='' />
+        </div>
+    );
+}
+
 export class LightboxBase extends React.Component<InternalProps> {
     close = () => {
         this.props.dispatch(close());
     };
-
-    closeOnKeys = (event: SyntheticKeyboardEvent<>) => {
-        // On keys:
-        //   - 13: Enter
-        //   - 27: Escape
-        //   - 32: Space
-        if (
-            event.keyCode === 13 ||
-            event.keyCode === 27 ||
-            event.keyCode === 32
-        ) {
-            this.close();
-        }
-    };
-
-    componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
-        document.addEventListener('keydown', this.closeOnKeys);
-    }
-
-    componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
-        document.removeEventListener('keydown', this.closeOnKeys);
-    }
 
     render() {
         const { lightbox } = this.props;
@@ -61,11 +74,7 @@ export class LightboxBase extends React.Component<InternalProps> {
             return null;
         }
 
-        return (
-            <div className='lightbox' onClick={this.close}>
-                <img src={lightbox.image} alt='' />
-            </div>
-        );
+        return <LightboxContent image={lightbox.image} onClose={this.close} />;
     }
 }
 

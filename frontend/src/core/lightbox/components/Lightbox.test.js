@@ -14,7 +14,7 @@ describe('<LightboxBase>', () => {
             image: 'http://example.org/empty.png',
             isOpen: true,
         };
-        const wrapper = shallow(<LightboxBase lightbox={state} />);
+        const wrapper = shallow(<LightboxBase lightbox={state} />).dive();
 
         expect(wrapper.find('img')).toHaveLength(1);
         expect(wrapper.find('img').props().src).toEqual(
@@ -71,8 +71,9 @@ describe('<LightboxEvents>', () => {
         expect(actions.close.calledOnce).toEqual(true);
     });
 
-    it('closes on key presses', () => {
+    it('closes on key presses if opened before', () => {
         const store = createReduxStore();
+        store.dispatch(actions.open('http://example.org/empty.png'));
 
         // Simulating the key presses on `document`.
         // See https://github.com/airbnb/enzyme/issues/426
