@@ -24,7 +24,7 @@ export function _getPluralForm(pluralForm: number, entity: ?Entity): number {
  */
 export const getPluralForm: Function = createSelector(
     pluralSelector,
-    entities.selectors.getSelectedEntity,
+    (state) => entities.selectors.getSelectedEntity(state),
     _getPluralForm,
 );
 
@@ -55,7 +55,7 @@ export function _getTranslationForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationForSelectedEntity: Function = createSelector(
-    entities.selectors.getSelectedEntity,
+    (state) => entities.selectors.getSelectedEntity(state),
     getPluralForm,
     _getTranslationForSelectedEntity,
 );
@@ -79,7 +79,7 @@ export function _getTranslationStringForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationStringForSelectedEntity: Function = createSelector(
-    entities.selectors.getSelectedEntity,
+    (state) => entities.selectors.getSelectedEntity(state),
     getPluralForm,
     _getTranslationStringForSelectedEntity,
 );
