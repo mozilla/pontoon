@@ -3,13 +3,12 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 import { Link } from 'react-router-dom';
-import onClickOutside from 'react-onclickoutside';
 
 import './ResourceProgress.css';
 
 import ProgressChart from './ProgressChart';
 
-import { asLocaleString } from 'core/utils';
+import { asLocaleString, useOnDiscard } from 'core/utils';
 
 import type { NavigationParams } from 'core/navigation';
 import type { Stats } from 'core/stats';
@@ -23,10 +22,152 @@ type State = {|
     visible: boolean,
 |};
 
+type ResourceProgressProps = {
+    currentPath: string,
+    percent: number,
+    stats: Stats,
+    onDiscard: (e: SyntheticEvent<any>) => void,
+};
+
+function ResourceProgress({
+    currentPath,
+    percent,
+    stats,
+    onDiscard,
+}: ResourceProgressProps) {
+    const {
+        approved,
+        fuzzy,
+        warnings,
+        errors,
+        missing,
+        unreviewed,
+        total,
+    } = stats;
+
+    const ref = React.useRef(null);
+    useOnDiscard(ref, onDiscard);
+
+    return (
+        <aside ref={ref} className='menu'>
+            <div className='main'>
+                <header>
+                    <h2>
+                        <Localized id='resourceprogress-ResourceProgress--all-strings'>
+                            ALL STRINGS
+                        </Localized>
+                        <span className='value'>{asLocaleString(total)}</span>
+                    </h2>
+                    <h2 className='small'>
+                        <Localized id='resourceprogress-ResourceProgress--unreviewed'>
+                            UNREVIEWED
+                        </Localized>
+                        <span className='value'>
+                            {asLocaleString(unreviewed)}
+                        </span>
+                    </h2>
+                </header>
+                <ProgressChart stats={stats} size={220} />
+                <span className='percent'>{percent}</span>
+            </div>
+            <div className='details'>
+                <div className='approved'>
+                    <span className='title'>
+                        <Localized id='resourceprogress-ResourceProgress--translated'>
+                            TRANSLATED
+                        </Localized>
+                    </span>
+                    <p className='value' onClick={onDiscard}>
+                        <Link
+                            to={{
+                                pathname: currentPath,
+                                search: '?status=translated',
+                            }}
+                        >
+                            {asLocaleString(approved)}
+                        </Link>
+                    </p>
+                </div>
+                <div className='fuzzy'>
+                    <span className='title'>
+                        <Localized id='resourceprogress-ResourceProgress--fuzzy'>
+                            FUZZY
+                        </Localized>
+                    </span>
+                    <p className='value' onClick={onDiscard}>
+                        <Link
+                            to={{
+                                pathname: currentPath,
+                                search: '?status=fuzzy',
+                            }}
+                        >
+                            {asLocaleString(fuzzy)}
+                        </Link>
+                    </p>
+                </div>
+                <div className='warnings'>
+                    <span className='title'>
+                        <Localized id='resourceprogress-ResourceProgress--warnings'>
+                            WARNINGS
+                        </Localized>
+                    </span>
+                    <p className='value' onClick={onDiscard}>
+                        <Link
+                            to={{
+                                pathname: currentPath,
+                                search: '?status=warnings',
+                            }}
+                        >
+                            {asLocaleString(warnings)}
+                        </Link>
+                    </p>
+                </div>
+                <div className='errors'>
+                    <span className='title'>
+                        <Localized id='resourceprogress-ResourceProgress--errors'>
+                            ERRORS
+                        </Localized>
+                    </span>
+                    <p className='value' onClick={onDiscard}>
+                        <Link
+                            to={{
+                                pathname: currentPath,
+                                search: '?status=errors',
+                            }}
+                        >
+                            {asLocaleString(errors)}
+                        </Link>
+                    </p>
+                </div>
+                <div className='missing'>
+                    <span className='title'>
+                        <Localized id='resourceprogress-ResourceProgress--missing'>
+                            MISSING
+                        </Localized>
+                    </span>
+                    <p className='value' onClick={onDiscard}>
+                        <Link
+                            to={{
+                                pathname: currentPath,
+                                search: '?status=missing',
+                            }}
+                        >
+                            {asLocaleString(missing)}
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        </aside>
+    );
+}
+
 /**
  * Show a panel with progress chart and stats for the current resource.
  */
-export class ResourceProgressBase extends React.Component<Props, State> {
+export default class ResourceProgressBase extends React.Component<
+    Props,
+    State,
+> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -40,9 +181,7 @@ export class ResourceProgressBase extends React.Component<Props, State> {
         });
     };
 
-    // This method is called by the Higher-Order Component `onClickOutside`
-    // when a user clicks outside the search panel.
-    handleClickOutside = () => {
+    handleDiscard = () => {
         this.setState({
             visible: false,
         });
@@ -50,167 +189,31 @@ export class ResourceProgressBase extends React.Component<Props, State> {
 
     render() {
         const { parameters, stats } = this.props;
-        const {
-            approved,
-            fuzzy,
-            warnings,
-            errors,
-            missing,
-            unreviewed,
-            total,
-        } = stats;
-        const currentPath = `/${parameters.locale}/${parameters.project}/${parameters.resource}/`;
-        const complete = approved + warnings;
 
-        let percent = 0;
-        if (total) {
-            percent = Math.floor((complete / total) * 100);
-        }
         // Do not show resource progress until stats are available
-        else {
+        if (!stats.total) {
             return null;
         }
+
+        const complete = stats.approved + stats.warnings;
+        const percent = Math.floor((complete / stats.total) * 100);
+        const currentPath = `/${parameters.locale}/${parameters.project}/${parameters.resource}/`;
 
         return (
             <div className='progress-chart'>
                 <div className='selector' onClick={this.toggleVisibility}>
-                    <ProgressChart stats={this.props.stats} size={44} />
+                    <ProgressChart stats={stats} size={44} />
                     <span className='percent unselectable'>{percent}</span>
                 </div>
-                {!this.state.visible ? null : (
-                    <aside className='menu'>
-                        <div className='main'>
-                            <header>
-                                <h2>
-                                    <Localized id='resourceprogress-ResourceProgress--all-strings'>
-                                        ALL STRINGS
-                                    </Localized>
-                                    <span className='value'>
-                                        {asLocaleString(total)}
-                                    </span>
-                                </h2>
-                                <h2 className='small'>
-                                    <Localized id='resourceprogress-ResourceProgress--unreviewed'>
-                                        UNREVIEWED
-                                    </Localized>
-                                    <span className='value'>
-                                        {asLocaleString(unreviewed)}
-                                    </span>
-                                </h2>
-                            </header>
-                            <ProgressChart
-                                stats={this.props.stats}
-                                size={220}
-                            />
-                            <span className='percent'>{percent}</span>
-                        </div>
-                        <div className='details'>
-                            <div className='approved'>
-                                <span className='title'>
-                                    <Localized id='resourceprogress-ResourceProgress--translated'>
-                                        TRANSLATED
-                                    </Localized>
-                                </span>
-                                <p
-                                    className='value'
-                                    onClick={this.toggleVisibility}
-                                >
-                                    <Link
-                                        to={{
-                                            pathname: currentPath,
-                                            search: '?status=translated',
-                                        }}
-                                    >
-                                        {asLocaleString(approved)}
-                                    </Link>
-                                </p>
-                            </div>
-                            <div className='fuzzy'>
-                                <span className='title'>
-                                    <Localized id='resourceprogress-ResourceProgress--fuzzy'>
-                                        FUZZY
-                                    </Localized>
-                                </span>
-                                <p
-                                    className='value'
-                                    onClick={this.toggleVisibility}
-                                >
-                                    <Link
-                                        to={{
-                                            pathname: currentPath,
-                                            search: '?status=fuzzy',
-                                        }}
-                                    >
-                                        {asLocaleString(fuzzy)}
-                                    </Link>
-                                </p>
-                            </div>
-                            <div className='warnings'>
-                                <span className='title'>
-                                    <Localized id='resourceprogress-ResourceProgress--warnings'>
-                                        WARNINGS
-                                    </Localized>
-                                </span>
-                                <p
-                                    className='value'
-                                    onClick={this.toggleVisibility}
-                                >
-                                    <Link
-                                        to={{
-                                            pathname: currentPath,
-                                            search: '?status=warnings',
-                                        }}
-                                    >
-                                        {asLocaleString(warnings)}
-                                    </Link>
-                                </p>
-                            </div>
-                            <div className='errors'>
-                                <span className='title'>
-                                    <Localized id='resourceprogress-ResourceProgress--errors'>
-                                        ERRORS
-                                    </Localized>
-                                </span>
-                                <p
-                                    className='value'
-                                    onClick={this.toggleVisibility}
-                                >
-                                    <Link
-                                        to={{
-                                            pathname: currentPath,
-                                            search: '?status=errors',
-                                        }}
-                                    >
-                                        {asLocaleString(errors)}
-                                    </Link>
-                                </p>
-                            </div>
-                            <div className='missing'>
-                                <span className='title'>
-                                    <Localized id='resourceprogress-ResourceProgress--missing'>
-                                        MISSING
-                                    </Localized>
-                                </span>
-                                <p
-                                    className='value'
-                                    onClick={this.toggleVisibility}
-                                >
-                                    <Link
-                                        to={{
-                                            pathname: currentPath,
-                                            search: '?status=missing',
-                                        }}
-                                    >
-                                        {asLocaleString(missing)}
-                                    </Link>
-                                </p>
-                            </div>
-                        </div>
-                    </aside>
+                {this.state.visible && (
+                    <ResourceProgress
+                        currentPath={currentPath}
+                        percent={percent}
+                        stats={stats}
+                        onDiscard={this.handleDiscard}
+                    />
                 )}
             </div>
         );
     }
 }
-
-export default onClickOutside(ResourceProgressBase);
