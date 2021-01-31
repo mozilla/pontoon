@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { ResourceProgressBase } from './ResourceProgress';
+import ResourceProgressBase from './ResourceProgress';
 
-describe('<ResourceProgress>', () => {
+describe('<ResourceProgressBase>', () => {
     const STATS = {
         approved: 5,
         fuzzy: 4,
@@ -28,7 +28,7 @@ describe('<ResourceProgress>', () => {
         );
 
         expect(wrapper.find('.selector').exists()).toBeTruthy();
-        expect(wrapper.find('.menu').exists()).toBeFalsy();
+        expect(wrapper.find('ResourceProgress').exists()).toBeFalsy();
     });
 
     it('shows the info menu after a click', () => {
@@ -37,6 +37,6 @@ describe('<ResourceProgress>', () => {
         );
         wrapper.find('.selector').simulate('click');
 
-        expect(wrapper.find('.menu').exists()).toBeTruthy();
+        expect(wrapper.find('ResourceProgress').exists()).toBeTruthy();
     });
 });
