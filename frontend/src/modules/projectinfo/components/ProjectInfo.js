@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import { Localized } from '@fluent/react';
-import onClickOutside from 'react-onclickoutside';
+
+import { useOnDiscard } from 'core/utils';
 
 import './ProjectInfo.css';
 
@@ -17,10 +18,34 @@ type State = {|
     visible: boolean,
 |};
 
+type ProjectInfoProps = {|
+    project: ProjectState,
+    onDiscard: (e: SyntheticEvent<any>) => void,
+|};
+
+export function ProjectInfo({ project, onDiscard }: ProjectInfoProps) {
+    const ref = React.useRef(null);
+    useOnDiscard(ref, onDiscard);
+    return (
+        <aside ref={ref} className='panel'>
+            <Localized id='projectinfo-ProjectInfo--project-info-title'>
+                <h2>PROJECT INFO</h2>
+            </Localized>
+            {/* We can safely use project.info because it is validated by
+                bleach before being saved into the database. */}
+            <p
+                dangerouslySetInnerHTML={{
+                    __html: project.info,
+                }}
+            />
+        </aside>
+    );
+}
+
 /**
  * Show a panel with the information provided for the current project.
  */
-export class ProjectInfoBase extends React.Component<Props, State> {
+export default class ProjectInfoBase extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -34,9 +59,7 @@ export class ProjectInfoBase extends React.Component<Props, State> {
         });
     };
 
-    // This method is called by the Higher-Order Component `onClickOutside`
-    // when a user clicks outside the search panel.
-    handleClickOutside = () => {
+    handleDiscard = () => {
         this.setState({
             visible: false,
         });
@@ -56,23 +79,13 @@ export class ProjectInfoBase extends React.Component<Props, State> {
                 <div className='button' onClick={this.toggleVisibility}>
                     <span className='fa fa-info'></span>
                 </div>
-                {!this.state.visible ? null : (
-                    <aside className='panel'>
-                        <Localized id='projectinfo-ProjectInfo--project-info-title'>
-                            <h2>PROJECT INFO</h2>
-                        </Localized>
-                        {/* We can safely use project.info because it is validated by
-                    bleach before being saved into the database. */}
-                        <p
-                            dangerouslySetInnerHTML={{
-                                __html: this.props.project.info,
-                            }}
-                        />
-                    </aside>
+                {this.state.visible && (
+                    <ProjectInfo
+                        project={this.props.project}
+                        onDiscard={this.handleDiscard}
+                    />
                 )}
             </div>
         );
     }
 }
-
-export default onClickOutside(ProjectInfoBase);
