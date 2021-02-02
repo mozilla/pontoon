@@ -1,7 +1,6 @@
 /* @flow */
 
 import * as React from 'react';
-import onClickOutside from 'react-onclickoutside';
 
 import { Localized } from '@fluent/react';
 
@@ -10,7 +9,7 @@ import './FiltersPanel.css';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import TimeRangeFilter from './TimeRangeFilter';
 
-import { asLocaleString } from 'core/utils';
+import { asLocaleString, useOnDiscard } from 'core/utils';
 
 import type { Author, TimeRangeType } from '..';
 import type { NavigationParams } from 'core/navigation';
@@ -45,12 +44,306 @@ type State = {|
     visible: boolean,
 |};
 
+type FiltersPanelProps = {|
+    authors: { [string]: boolean },
+    authorsData: Array<Author>,
+    extras: { [string]: boolean },
+    project: string,
+    resource: string,
+    selectedFiltersCount: number,
+    stats: Stats,
+    statuses: { [string]: boolean },
+    tags: { [string]: boolean },
+    tagsData: Array<Tag>,
+    timeRange: ?TimeRangeType,
+    timeRangeData: Array<Array<number>>,
+    updateTimeRange: (filter: string) => void,
+    onApplyFilter: (string, string) => void,
+    onApplyFilters: () => void,
+    onResetFilters: () => void,
+    onToggleFilter: (string, string, SyntheticMouseEvent<any>) => void,
+    onDiscard: (e: SyntheticEvent<any>) => void,
+|};
+
+export function FiltersPanel({
+    authors,
+    authorsData,
+    extras,
+    project,
+    resource,
+    selectedFiltersCount,
+    stats,
+    statuses,
+    tags,
+    tagsData,
+    timeRange,
+    timeRangeData,
+    updateTimeRange,
+    onApplyFilter,
+    onApplyFilters,
+    onResetFilters,
+    onToggleFilter,
+    onDiscard,
+}: FiltersPanelProps) {
+    const ref = React.useRef(null);
+    useOnDiscard(ref, onDiscard);
+
+    return (
+        <div className='menu' ref={ref}>
+            <ul>
+                <Localized id='search-FiltersPanel--heading-status'>
+                    <li className='horizontal-separator'>TRANSLATION STATUS</li>
+                </Localized>
+
+                {FILTERS_STATUS.map((status, i) => {
+                    const count = status.stat
+                        ? stats[status.stat]
+                        : stats[status.slug];
+                    const selected = statuses[status.slug];
+
+                    let className = status.slug;
+                    if (selected && status.slug !== 'all') {
+                        className += ' selected';
+                    }
+
+                    return (
+                        <li
+                            className={className}
+                            key={i}
+                            onClick={() =>
+                                onApplyFilter(status.slug, 'statuses')
+                            }
+                        >
+                            <span
+                                className='status fa'
+                                onClick={(e) =>
+                                    onToggleFilter(status.slug, 'statuses', e)
+                                }
+                            ></span>
+                            <Localized
+                                id={`search-FiltersPanel--status-name-${status.slug}`}
+                            >
+                                <span className='title'>{status.name}</span>
+                            </Localized>
+                            <span className='count'>
+                                {asLocaleString(count)}
+                            </span>
+                        </li>
+                    );
+                })}
+
+                {tagsData.length === 0 ||
+                resource !== 'all-resources' ? null : (
+                    <>
+                        <Localized id='search-FiltersPanel--heading-tags'>
+                            <li className='horizontal-separator'>TAGS</li>
+                        </Localized>
+
+                        {tagsData
+                            .sort((a, b) => {
+                                return b.priority - a.priority;
+                            })
+                            .map((tag, i) => {
+                                const selected = tags[tag.slug];
+
+                                let className = tag.slug;
+                                if (selected) {
+                                    className += ' selected';
+                                }
+
+                                return (
+                                    <li
+                                        className={`tag ${className}`}
+                                        key={i}
+                                        onClick={() =>
+                                            onApplyFilter(tag.slug, 'tags')
+                                        }
+                                    >
+                                        <span
+                                            className='status fa'
+                                            onClick={() =>
+                                                onApplyFilter(tag.slug, 'tags')
+                                            }
+                                        ></span>
+                                        <span className='title'>
+                                            {tag.name}
+                                        </span>
+                                        <span className='priority'>
+                                            {[1, 2, 3, 4, 5].map((index) => {
+                                                const active =
+                                                    index <= tag.priority
+                                                        ? 'active'
+                                                        : '';
+                                                return (
+                                                    <span
+                                                        className={`fa fa-star ${active}`}
+                                                        key={index}
+                                                    ></span>
+                                                );
+                                            })}
+                                        </span>
+                                    </li>
+                                );
+                            })}
+                    </>
+                )}
+
+                <Localized id='search-FiltersPanel--heading-extra'>
+                    <li className='horizontal-separator'>EXTRA FILTERS</li>
+                </Localized>
+
+                {FILTERS_EXTRA.map((extra, i) => {
+                    const selected = extras[extra.slug];
+
+                    let className = extra.slug;
+                    if (selected) {
+                        className += ' selected';
+                    }
+
+                    return (
+                        <li
+                            className={className}
+                            key={i}
+                            onClick={() => onApplyFilter(extra.slug, 'extras')}
+                        >
+                            <span
+                                className='status fa'
+                                onClick={(e) =>
+                                    onToggleFilter(extra.slug, 'extras', e)
+                                }
+                            ></span>
+                            <Localized
+                                id={`search-FiltersPanel--extra-name-${extra.slug}`}
+                            >
+                                <span className='title'>{extra.name}</span>
+                            </Localized>
+                        </li>
+                    );
+                })}
+
+                <TimeRangeFilter
+                    project={project}
+                    timeRange={timeRange}
+                    timeRangeData={timeRangeData}
+                    applySingleFilter={onApplyFilter}
+                    toggleFilter={onToggleFilter}
+                    updateTimeRange={updateTimeRange}
+                />
+
+                {authorsData.length === 0 ||
+                project === 'all-projects' ? null : (
+                    <>
+                        <Localized id='search-FiltersPanel--heading-authors'>
+                            <li className='horizontal-separator'>
+                                TRANSLATION AUTHORS
+                            </li>
+                        </Localized>
+
+                        {authorsData.map((author, i) => {
+                            const selected = authors[author.email];
+
+                            let className = 'author';
+                            if (selected) {
+                                className += ' selected';
+                            }
+
+                            return (
+                                <li
+                                    className={`${className}`}
+                                    key={i}
+                                    onClick={() =>
+                                        onApplyFilter(author.email, 'authors')
+                                    }
+                                >
+                                    <figure>
+                                        <span className='sel'>
+                                            <span
+                                                className='status fa'
+                                                onClick={(e) =>
+                                                    onToggleFilter(
+                                                        author.email,
+                                                        'authors',
+                                                        e,
+                                                    )
+                                                }
+                                            ></span>
+                                            <img
+                                                alt=''
+                                                className='rounded'
+                                                src={author.gravatar_url}
+                                                width='44'
+                                                height='44'
+                                            />
+                                        </span>
+                                        <figcaption>
+                                            <p className='name'>
+                                                {author.display_name}
+                                            </p>
+                                            <p className='role'>
+                                                {author.role}
+                                            </p>
+                                        </figcaption>
+                                        <span className='count'>
+                                            {asLocaleString(
+                                                author.translation_count,
+                                            )}
+                                        </span>
+                                    </figure>
+                                </li>
+                            );
+                        })}
+                    </>
+                )}
+            </ul>
+
+            {selectedFiltersCount === 0 ? null : (
+                <div className='toolbar clearfix'>
+                    <Localized
+                        id='search-FiltersPanel--clear-selection'
+                        attrs={{ title: true }}
+                        elems={{
+                            glyph: <i className='fa fa-times fa-lg' />,
+                        }}
+                    >
+                        <button
+                            title='Uncheck selected filters'
+                            onClick={onResetFilters}
+                            className='clear-selection'
+                        >
+                            {'<glyph></glyph> CLEAR'}
+                        </button>
+                    </Localized>
+                    <Localized
+                        id='search-FiltersPanel--apply-filters'
+                        attrs={{ title: true }}
+                        elems={{
+                            glyph: <i className='fa fa-check fa-lg' />,
+                            stress: <span className='applied-count' />,
+                        }}
+                        vars={{ count: selectedFiltersCount }}
+                    >
+                        <button
+                            title='Apply Selected Filters'
+                            onClick={onApplyFilters}
+                            className='apply-selected'
+                        >
+                            {
+                                '<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'
+                            }
+                        </button>
+                    </Localized>
+                </div>
+            )}
+        </div>
+    );
+}
+
 /**
  * Shows a list of filters, used to filter the list of entities.
  *
  * Changes to the filters will be reflected in the URL.
  */
-export class FiltersPanelBase extends React.Component<Props, State> {
+export default class FiltersPanelBase extends React.Component<Props, State> {
     menu: { current: ?HTMLDivElement };
 
     constructor(props: Props) {
@@ -60,7 +353,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
             visible: false,
         };
 
-        this.menu = React.createRef();
+        // this.menu = React.createRef();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -83,9 +376,7 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         this.props.updateFiltersFromURLParams();
     };
 
-    // This method is called by the Higher-Order Component `onClickOutside`
-    // when a user clicks outside the search panel.
-    handleClickOutside = () => {
+    handleDiscard = () => {
         this.setState({
             visible: false,
         });
@@ -99,30 +390,18 @@ export class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     };
 
-    createToggleFilter = (filter: string, type: string) => {
-        if (filter === 'all') {
-            return null;
-        }
-
-        return (event: SyntheticMouseEvent<>) => {
-            this.toggleFilter(filter, type, event);
-        };
-    };
-
     toggleFilter = (
         filter: string,
         type: string,
         event: SyntheticMouseEvent<>,
     ) => {
+        if (filter === 'all') {
+            return;
+        }
+
         event.stopPropagation();
         this.props.toggleFilter(filter, type);
     };
-
-    createApplySingleFilter(filter: string, type: string) {
-        return () => {
-            this.applySingleFilter(filter, type);
-        };
-    }
 
     applySingleFilter = (filter: string, type: string) => {
         this.toggleVisibility();
@@ -238,290 +517,29 @@ export class FiltersPanelBase extends React.Component<Props, State> {
                 >
                     <span className='status fa'></span>
                 </div>
-                {!this.state.visible ? null : (
-                    <div className='menu' ref={this.menu}>
-                        <ul>
-                            <Localized id='search-FiltersPanel--heading-status'>
-                                <li className='horizontal-separator'>
-                                    TRANSLATION STATUS
-                                </li>
-                            </Localized>
-
-                            {FILTERS_STATUS.map((status, i) => {
-                                const count = status.stat
-                                    ? props.stats[status.stat]
-                                    : props.stats[status.slug];
-                                const selected = props.statuses[status.slug];
-
-                                let className = status.slug;
-                                if (selected && status.slug !== 'all') {
-                                    className += ' selected';
-                                }
-
-                                return (
-                                    <li
-                                        className={className}
-                                        key={i}
-                                        onClick={this.createApplySingleFilter(
-                                            status.slug,
-                                            'statuses',
-                                        )}
-                                    >
-                                        <span
-                                            className='status fa'
-                                            onClick={this.createToggleFilter(
-                                                status.slug,
-                                                'statuses',
-                                            )}
-                                        ></span>
-                                        <Localized
-                                            id={`search-FiltersPanel--status-name-${status.slug}`}
-                                        >
-                                            <span className='title'>
-                                                {status.name}
-                                            </span>
-                                        </Localized>
-                                        <span className='count'>
-                                            {asLocaleString(count)}
-                                        </span>
-                                    </li>
-                                );
-                            })}
-
-                            {props.tagsData.length === 0 ||
-                            resource !== 'all-resources' ? null : (
-                                <>
-                                    <Localized id='search-FiltersPanel--heading-tags'>
-                                        <li className='horizontal-separator'>
-                                            TAGS
-                                        </li>
-                                    </Localized>
-
-                                    {props.tagsData
-                                        .sort((a, b) => {
-                                            return b.priority - a.priority;
-                                        })
-                                        .map((tag, i) => {
-                                            const selected =
-                                                props.tags[tag.slug];
-
-                                            let className = tag.slug;
-                                            if (selected) {
-                                                className += ' selected';
-                                            }
-
-                                            return (
-                                                <li
-                                                    className={`tag ${className}`}
-                                                    key={i}
-                                                    onClick={this.createApplySingleFilter(
-                                                        tag.slug,
-                                                        'tags',
-                                                    )}
-                                                >
-                                                    <span
-                                                        className='status fa'
-                                                        onClick={this.createToggleFilter(
-                                                            tag.slug,
-                                                            'tags',
-                                                        )}
-                                                    ></span>
-                                                    <span className='title'>
-                                                        {tag.name}
-                                                    </span>
-                                                    <span className='priority'>
-                                                        {[1, 2, 3, 4, 5].map(
-                                                            (index) => {
-                                                                const active =
-                                                                    index <=
-                                                                    tag.priority
-                                                                        ? 'active'
-                                                                        : '';
-                                                                return (
-                                                                    <span
-                                                                        className={`fa fa-star ${active}`}
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                    ></span>
-                                                                );
-                                                            },
-                                                        )}
-                                                    </span>
-                                                </li>
-                                            );
-                                        })}
-                                </>
-                            )}
-
-                            <Localized id='search-FiltersPanel--heading-extra'>
-                                <li className='horizontal-separator'>
-                                    EXTRA FILTERS
-                                </li>
-                            </Localized>
-
-                            {FILTERS_EXTRA.map((extra, i) => {
-                                const selected = props.extras[extra.slug];
-
-                                let className = extra.slug;
-                                if (selected) {
-                                    className += ' selected';
-                                }
-
-                                return (
-                                    <li
-                                        className={className}
-                                        key={i}
-                                        onClick={this.createApplySingleFilter(
-                                            extra.slug,
-                                            'extras',
-                                        )}
-                                    >
-                                        <span
-                                            className='status fa'
-                                            onClick={this.createToggleFilter(
-                                                extra.slug,
-                                                'extras',
-                                            )}
-                                        ></span>
-                                        <Localized
-                                            id={`search-FiltersPanel--extra-name-${extra.slug}`}
-                                        >
-                                            <span className='title'>
-                                                {extra.name}
-                                            </span>
-                                        </Localized>
-                                    </li>
-                                );
-                            })}
-
-                            <TimeRangeFilter
-                                project={project}
-                                timeRange={props.timeRange}
-                                timeRangeData={props.timeRangeData}
-                                applySingleFilter={this.applySingleFilter}
-                                toggleFilter={this.toggleFilter}
-                                updateTimeRange={props.updateTimeRange}
-                            />
-
-                            {props.authorsData.length === 0 ||
-                            project === 'all-projects' ? null : (
-                                <>
-                                    <Localized id='search-FiltersPanel--heading-authors'>
-                                        <li className='horizontal-separator'>
-                                            TRANSLATION AUTHORS
-                                        </li>
-                                    </Localized>
-
-                                    {props.authorsData.map((author, i) => {
-                                        const selected =
-                                            props.authors[author.email];
-
-                                        let className = 'author';
-                                        if (selected) {
-                                            className += ' selected';
-                                        }
-
-                                        return (
-                                            <li
-                                                className={`${className}`}
-                                                key={i}
-                                                onClick={this.createApplySingleFilter(
-                                                    author.email,
-                                                    'authors',
-                                                )}
-                                            >
-                                                <figure>
-                                                    <span className='sel'>
-                                                        <span
-                                                            className='status fa'
-                                                            onClick={this.createToggleFilter(
-                                                                author.email,
-                                                                'authors',
-                                                            )}
-                                                        ></span>
-                                                        <img
-                                                            alt=''
-                                                            className='rounded'
-                                                            src={
-                                                                author.gravatar_url
-                                                            }
-                                                            width='44'
-                                                            height='44'
-                                                        />
-                                                    </span>
-                                                    <figcaption>
-                                                        <p className='name'>
-                                                            {
-                                                                author.display_name
-                                                            }
-                                                        </p>
-                                                        <p className='role'>
-                                                            {author.role}
-                                                        </p>
-                                                    </figcaption>
-                                                    <span className='count'>
-                                                        {asLocaleString(
-                                                            author.translation_count,
-                                                        )}
-                                                    </span>
-                                                </figure>
-                                            </li>
-                                        );
-                                    })}
-                                </>
-                            )}
-                        </ul>
-
-                        {selectedFiltersCount === 0 ? null : (
-                            <div className='toolbar clearfix'>
-                                <Localized
-                                    id='search-FiltersPanel--clear-selection'
-                                    attrs={{ title: true }}
-                                    elems={{
-                                        glyph: (
-                                            <i className='fa fa-times fa-lg' />
-                                        ),
-                                    }}
-                                >
-                                    <button
-                                        title='Uncheck selected filters'
-                                        onClick={this.props.resetFilters}
-                                        className='clear-selection'
-                                    >
-                                        {'<glyph></glyph> CLEAR'}
-                                    </button>
-                                </Localized>
-                                <Localized
-                                    id='search-FiltersPanel--apply-filters'
-                                    attrs={{ title: true }}
-                                    elems={{
-                                        glyph: (
-                                            <i className='fa fa-check fa-lg' />
-                                        ),
-                                        stress: (
-                                            <span className='applied-count' />
-                                        ),
-                                    }}
-                                    vars={{ count: selectedFiltersCount }}
-                                >
-                                    <button
-                                        title='Apply Selected Filters'
-                                        onClick={this.applyFilters}
-                                        className='apply-selected'
-                                    >
-                                        {
-                                            '<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'
-                                        }
-                                    </button>
-                                </Localized>
-                            </div>
-                        )}
-                    </div>
+                {this.state.visible && (
+                    <FiltersPanel
+                        authors={props.authors}
+                        authorsData={props.authorsData}
+                        extras={props.extras}
+                        project={project}
+                        resource={resource}
+                        selectedFiltersCount={selectedFiltersCount}
+                        stats={props.stats}
+                        statuses={props.statuses}
+                        tags={props.tags}
+                        tagsData={props.tagsData}
+                        timeRange={props.timeRange}
+                        timeRangeData={props.timeRangeData}
+                        updateTimeRange={props.updateTimeRange}
+                        onApplyFilter={this.applySingleFilter}
+                        onApplyFilters={this.applyFilters}
+                        onDiscard={this.handleDiscard}
+                        onResetFilters={props.resetFilters}
+                        onToggleFilter={this.toggleFilter}
+                    />
                 )}
             </div>
         );
     }
 }
-
-export default onClickOutside(FiltersPanelBase);
