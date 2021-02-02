@@ -20,9 +20,9 @@ billiard==3.6.3.0 \
     --hash=sha256:bff575450859a6e0fbc2f9877d9b715b0bbc07c3565bb7ed2280526a0cdf5ede \
     --hash=sha256:d91725ce6425f33a97dfa72fb6bfef0e47d4652acd98a032bd1a7fbf06d5fa6a
     # via celery
-bleach==3.1.4 \
-    --hash=sha256:cc8da25076a1fe56c3ac63671e2194458e0c4d9c7becfd52ca251650d517903c \
-    --hash=sha256:e78e426105ac07026ba098f04de8abe9b6e3e98b5befbf89b51a5ef0a4292b03
+bleach==3.3.0 \
+    --hash=sha256:6123ddc1052673e52bab52cdc955bcb57a015264a1c57d37bea2f6b817af0125 \
+    --hash=sha256:98b3170739e5e83dd9dc19633f074727ad848cbedb6026708c8ac2d3b697a433
     # via -r requirements/default.in
 blinker==1.4 \
     --hash=sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6
@@ -267,6 +267,10 @@ oauthlib==3.1.0 \
     --hash=sha256:bee41cc35fcca6e988463cacc3bcb8a96224f470ca547e697b604cc697b2f889 \
     --hash=sha256:df884cd6cbe20e32633f1db1072e9356f53638e4361bef4e8b03c9127c9328ea
     # via requests-oauthlib
+packaging==20.9 \
+    --hash=sha256:5b327ac1320dc863dca72f4514ecc086f31186744b84a230374cc1fd776feae5 \
+    --hash=sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a
+    # via bleach
 parsimonious==0.6.2 \
     --hash=sha256:423ae2e16061504418ab7abf0a740e26a781f9bc7674a6cf5e2f11edb4ae8029
     # via -r requirements/default.in
@@ -295,6 +299,10 @@ psycopg2==2.8.5 \
     --hash=sha256:d3b29d717d39d3580efd760a9a46a7418408acebbb784717c90d708c9ed5f055 \
     --hash=sha256:f7d46240f7a1ae1dd95aab38bd74f7428d46531f69219954266d669da60c0818
     # via -r requirements/default.in
+pyparsing==2.4.7 \
+    --hash=sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1 \
+    --hash=sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b
+    # via packaging
 python-binary-memcached==0.30.1 \
     --hash=sha256:f91c3d79d022121c22ef733e9beee86e0598e29ffec67401c68cece1ba7f036a
     # via django-bmemcached

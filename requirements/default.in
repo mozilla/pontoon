@@ -13,7 +13,7 @@
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
-bleach==3.1.4
+bleach==3.3.0
 caighdean==0.0.4
 celery==4.3.0
 compare-locales==8.1.0
