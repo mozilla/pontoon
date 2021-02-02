@@ -12,13 +12,13 @@ import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-import type { Locale } from 'core/locale';
+import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { ResourcesState } from 'core/resource';
 
 type Props = {|
-    locale: Locale,
+    locale: LocaleState,
     parameters: NavigationParams,
     project: ProjectState,
     resources: ResourcesState,
