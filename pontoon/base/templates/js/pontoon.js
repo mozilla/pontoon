@@ -666,7 +666,7 @@
   }
 
   function fromTrustedSource(e) {
-    var trustedOrigins = {{ settings.JS_TRUSTED_ORIGINS | to_json() | safe }},
+    var trustedOrigins = { settings.JS_TRUSTED_ORIGINS | to_json() | safe },
         trusted = trustedOrigins.indexOf(e.origin) > -1;
 
     if (e.source === appWindow && trusted) {
