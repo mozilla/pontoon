@@ -420,41 +420,6 @@ $(function () {
             .show();
     });
 
-    // Toggle user profile attribute
-    $('.check-box').click(function () {
-        var self = $(this);
-
-        $.ajax({
-            url: '/api/v1/user/' + $('#server').data('username') + '/',
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: $('#server').data('csrf'),
-                attribute: self.data('attribute'),
-                value: !self.is('.enabled'),
-            },
-            success: function () {
-                self.toggleClass('enabled');
-                var is_enabled = self.is('.enabled'),
-                    status = is_enabled ? 'enabled' : 'disabled';
-
-                Pontoon.endLoader(self.text() + ' ' + status + '.');
-
-                if (self.is('.force-suggestions') && Pontoon.user) {
-                    Pontoon.user.forceSuggestions = is_enabled;
-                    Pontoon.postMessage('UPDATE-ATTRIBUTE', {
-                        object: 'user',
-                        attribute: 'forceSuggestions',
-                        value: is_enabled,
-                    });
-                    Pontoon.updateSaveButtons();
-                }
-            },
-            error: function () {
-                Pontoon.endLoader('Oops, something went wrong.', 'error');
-            },
-        });
-    });
-
     // General keyboard shortcuts
     generalShortcutsHandler = function (e) {
         function moveMenu(type) {
