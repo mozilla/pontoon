@@ -475,12 +475,6 @@ machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
 
 
-## Machinery Transvision Memory
-## Shows the translation source from Transvision.
-machinery-TransvisionMemory--visit-transvision = MOZILLA
-    .title = Visit Transvision
-
-
 ## Notification Messages
 ## Messages shown to users after they perform actions.
 

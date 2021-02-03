@@ -14,7 +14,6 @@ describe('<TranslationSource>', () => {
         ['google-translate', 'GoogleTranslation'],
         ['microsoft-translator', 'MicrosoftTranslation'],
         ['microsoft-terminology', 'MicrosoftTerminology'],
-        ['transvision', 'TransvisionMemory'],
         ['caighdean', 'CaighdeanTranslation'],
     ]).it(
         'renders `%s` type for `%s` component correctly',

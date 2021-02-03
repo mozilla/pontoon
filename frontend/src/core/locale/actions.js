@@ -26,7 +26,6 @@ export type Locale = {|
     +msTranslatorCode: string,
     +systranTranslateCode: string,
     +msTerminologyCode: string,
-    +transvision: boolean,
     +localizations: Array<Localization>,
 |};
 

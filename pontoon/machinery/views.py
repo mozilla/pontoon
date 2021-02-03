@@ -15,7 +15,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
-from django.utils.html import escape
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Translation
@@ -367,59 +366,6 @@ def microsoft_terminology(request):
 
             obj["translations"] = translations
         return JsonResponse(obj)
-
-    except requests.exceptions.RequestException as e:
-        return JsonResponse(
-            {"status": False, "message": "{error}".format(error=e)},
-            status=r.status_code,
-        )
-
-
-def transvision(request):
-    """Get Mozilla translations from Transvision service."""
-    try:
-        text = request.GET["text"]
-        locale = request.GET["locale"]
-    except MultiValueDictKeyError as e:
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
-        )
-
-    try:
-        text = quote(text.encode("utf-8"))
-    except KeyError as e:
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
-            status=400,
-        )
-
-    url = u"https://transvision.mozfr.org/api/v1/tm/global/en-US/{locale}/{text}/".format(
-        locale=locale, text=text
-    )
-
-    payload = {
-        "max_results": 5,
-        "min_quality": 70,
-    }
-
-    try:
-        r = requests.get(url, params=payload)
-        r.raise_for_status()
-
-        if "error" in r.json():
-            error = r.json()["error"]
-            log.error("Transvision error: {error}".format(error=error))
-            error = escape(error)
-            return JsonResponse(
-                {
-                    "status": False,
-                    "message": "Bad Request: {error}".format(error=error),
-                },
-                status=400,
-            )
-
-        return JsonResponse(r.json(), safe=False)
 
     except requests.exceptions.RequestException as e:
         return JsonResponse(
