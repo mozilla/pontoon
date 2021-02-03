@@ -269,28 +269,6 @@ $(function () {
             }
         });
 
-    // Tabs
-    $('.tabs nav a').click(function (e) {
-        e.preventDefault();
-
-        var tab = $(this),
-            section = tab.attr('href').substr(1);
-
-        tab.parents('li')
-            .siblings()
-            .removeClass('active')
-            .end()
-            .addClass('active')
-            .end()
-
-            .parents('.tabs')
-            .find('section')
-            .hide()
-            .end()
-            .find('section.' + section)
-            .show();
-    });
-
     // General keyboard shortcuts
     generalShortcutsHandler = function (e) {
         function moveMenu(type) {
