@@ -15,7 +15,6 @@ type Props = {|
     parameters: NavigationParams,
     teamComments: TeamCommentState,
     user: UserState,
-    users: UserState,
     contactPerson: string,
     addComment: (string, ?number) => void,
     togglePinnedStatus: (boolean, number) => void,
@@ -27,7 +26,6 @@ export default function TeamComments(props: Props) {
         teamComments,
         user,
         parameters,
-        users,
         addComment,
         togglePinnedStatus,
         contactPerson,
@@ -54,7 +52,6 @@ export default function TeamComments(props: Props) {
                     comments={comments}
                     parameters={parameters}
                     user={user}
-                    users={users}
                     canComment={canComment}
                     canPin={canPin}
                     addComment={addComment}

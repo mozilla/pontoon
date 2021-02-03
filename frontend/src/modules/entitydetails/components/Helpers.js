@@ -32,7 +32,6 @@ type Props = {|
     terms: TermState,
     parameters: NavigationParams,
     user: UserState,
-    users: UserState,
     commentTabRef: Object,
     commentTabIndex: number,
     contactPerson: string,
@@ -61,7 +60,6 @@ export default function Helpers(props: Props) {
         terms,
         parameters,
         user,
-        users,
         commentTabRef,
         commentTabIndex,
         contactPerson,
@@ -117,7 +115,6 @@ export default function Helpers(props: Props) {
                             teamComments={teamComments}
                             user={user}
                             addComment={addComment}
-                            users={users}
                             togglePinnedStatus={togglePinnedStatus}
                             contactPerson={contactPerson}
                             resetContactPerson={resetContactPerson}

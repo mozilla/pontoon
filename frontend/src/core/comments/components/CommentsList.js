@@ -17,7 +17,6 @@ type Props = {|
     parameters?: NavigationParams,
     translation?: HistoryTranslation,
     user: UserState,
-    users: UserState,
     contactPerson?: string,
     canComment: boolean,
     canPin?: boolean,
@@ -35,7 +34,6 @@ export default function CommentsList(props: Props) {
         canComment,
         canPin,
         addComment,
-        users,
         togglePinnedStatus,
         contactPerson,
         resetContactPerson,
@@ -81,10 +79,8 @@ export default function CommentsList(props: Props) {
                 {!canComment ? null : (
                     <AddComment
                         parameters={parameters}
-                        username={user.username}
-                        imageURL={user.gravatarURLSmall}
                         translation={translationId}
-                        users={users}
+                        user={user}
                         addComment={addComment}
                         contactPerson={contactPerson}
                         resetContactPerson={resetContactPerson}
