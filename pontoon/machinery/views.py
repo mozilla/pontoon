@@ -7,7 +7,6 @@ from urllib.parse import quote
 
 from caighdean import Translator
 from caighdean.exceptions import TranslationError
-from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -329,7 +328,7 @@ def microsoft_terminology(request):
         )
 
     obj = {}
-    url = "http://api.terminology.microsoft.com/Terminology.svc"
+    url = "https://api.terminology.microsoft.com/Terminology.svc"
     headers = {
         "SOAPAction": (
             '"http://api.terminology.microsoft.com/terminology/Terminology/GetTranslations"'
@@ -337,7 +336,6 @@ def microsoft_terminology(request):
         "Content-Type": "text/xml; charset=utf-8",
     }
     payload = {
-        "uuid": uuid4(),
         "text": quote(text.encode("utf-8")),
         "to": locale_code,
         "max_result": 5,
