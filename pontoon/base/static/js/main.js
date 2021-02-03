@@ -195,14 +195,12 @@ $(function () {
             e.stopPropagation();
             $('.menu:not(".permanent")').hide();
             $('.select').removeClass('opened');
-            $('#iframe-cover:not(".hidden")').hide(); // iframe fix
             $(this)
                 .siblings('.menu')
                 .show()
                 .end()
                 .parents('.select')
                 .addClass('opened');
-            $('#iframe-cover:not(".hidden")').show(); // iframe fix
             $('.menu:not(".permanent"):visible input[type=search]')
                 .focus()
                 .trigger('input');
