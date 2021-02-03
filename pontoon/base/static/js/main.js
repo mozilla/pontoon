@@ -400,42 +400,6 @@ $(function () {
                 return false;
             }
         }
-
-        if (
-            $('#sidebar').is(':visible') &&
-            (Pontoon.app.advanced || !$('#editor').is('.opened'))
-        ) {
-            // Ctrl + Shift + F: Focus Search
-            if (e.ctrlKey && e.shiftKey && key === 70) {
-                $('#search').focus();
-                return false;
-            }
-
-            // Ctrl + Shift + A: Select All Strings
-            if (
-                Pontoon.user.canTranslate() &&
-                e.ctrlKey &&
-                e.shiftKey &&
-                key === 65
-            ) {
-                Pontoon.selectAllEntities();
-                return false;
-            }
-
-            // Escape: Deselect entities and switch to first entity
-            if (
-                Pontoon.user.canTranslate() &&
-                $('#entitylist .entity.selected').length &&
-                key === 27
-            ) {
-                if (Pontoon.app.advanced) {
-                    Pontoon.openFirstEntity();
-                } else {
-                    Pontoon.goBackToEntityList();
-                }
-                return false;
-            }
-        }
     };
     $('html').on('keydown', generalShortcutsHandler);
 });
