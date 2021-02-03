@@ -216,22 +216,22 @@ $(function () {
 
     // Menu hover
     $('body')
-        .on('mouseenter', '.menu li, .menu .static-links div', function () {
+        .on('mouseenter', '.menu li', function () {
             // Ignore on nested menus
             if ($(this).parents('li').length) {
                 return false;
             }
 
-            $('.menu li.hover, .static-links div').removeClass('hover');
+            $('.menu li.hover').removeClass('hover');
             $(this).toggleClass('hover');
         })
-        .on('mouseleave', '.menu li, .menu .static-links div', function () {
+        .on('mouseleave', '.menu li', function () {
             // Ignore on nested menus
             if ($(this).parents('li').length) {
                 return false;
             }
 
-            $('.menu li.hover, .static-links div').removeClass('hover');
+            $('.menu li.hover').removeClass('hover');
         });
 
     // Menu search
