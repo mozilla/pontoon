@@ -325,7 +325,7 @@ def microsoft_terminology(request):
         )
 
     obj = {}
-    url = "http://api.terminology.microsoft.com/Terminology.svc"
+    url = "https://api.terminology.microsoft.com/Terminology.svc"
     headers = {
         "SOAPAction": (
             '"http://api.terminology.microsoft.com/terminology/Terminology/GetTranslations"'
