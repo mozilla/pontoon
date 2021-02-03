@@ -391,13 +391,11 @@ var Pontoon = (function (my) {
          * Get suggestions from machine translation and translation memory
          *
          * original Original string
-         * loader Loader element id
          */
-        getMachinery: function (original, loader) {
-            loader = loader || 'helpers li a[href="#machinery"]';
+        getMachinery: function (original) {
             var self = this,
                 ul = $('#helpers > .machinery').children('ul').empty(),
-                tab = $('#' + loader).addClass('loading'), // .loading class used on the /machinery page
+                tab = $('#search').addClass('loading'), // .loading class used on the /machinery page
                 requests = 0,
                 preferred = 0,
                 remaining = 0,
@@ -406,11 +404,7 @@ var Pontoon = (function (my) {
             self.NProgressUnbind();
 
             function append(data) {
-                var title =
-                        loader !== 'search'
-                            ? ' title="Copy Into Translation (Tab)"'
-                            : ' title="Copy to clipboard"',
-                    sources = sourcesMap[data.original + data.translation],
+                var sources = sourcesMap[data.original + data.translation],
                     occurrencesTitle = 'Number of translation occurrences',
                     originalText = data.original,
                     translationText = data.translation;
@@ -451,7 +445,7 @@ var Pontoon = (function (my) {
 
                     var li = $(
                         '<li class="suggestion"' +
-                            title +
+                            ' title="Copy to clipboard"' +
                             ' data-clipboard-text="' +
                             self.doNotRender(translationText) +
                             '">' +
@@ -616,7 +610,7 @@ var Pontoon = (function (my) {
                     // All requests complete
                     if (requests === 0) {
                         // Stop the loader
-                        $('#' + loader).removeClass('loading');
+                        $('#search').removeClass('loading');
 
                         // No match
                         if (ul.children('li').length === 0) {

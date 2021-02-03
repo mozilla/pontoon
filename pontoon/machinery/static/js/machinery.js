@@ -8,7 +8,7 @@ $(function () {
 
             if (e.which === 13 && value.length > 0) {
                 self.locale = $('.locale .selector .language').data();
-                self.getMachinery(value, true, 'search');
+                self.getMachinery(value);
                 return false;
             }
         });
