@@ -51,12 +51,22 @@ def translation_memory(request):
     try:
         text = request.GET["text"]
         locale = request.GET["locale"]
-        pk = int(request.GET["pk"])
-    except (MultiValueDictKeyError, ValueError) as e:
+        pk = request.GET.get("pk", None)
+    except MultiValueDictKeyError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
         )
+
+    # Validate interger
+    if pk is not None:
+        try:
+            pk = int(pk)
+        except ValueError as e:
+            return JsonResponse(
+                {"status": False, "message": "Bad Request: {error}".format(error=e)},
+                status=400,
+            )
 
     try:
         locale = Locale.objects.get(code=locale)

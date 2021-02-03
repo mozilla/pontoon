@@ -643,7 +643,6 @@ var Pontoon = (function (my) {
                 data: {
                     text: original,
                     locale: self.locale.code,
-                    pk: '',
                 },
             })
                 .success(function (data) {
