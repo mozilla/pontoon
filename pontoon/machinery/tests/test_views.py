@@ -18,13 +18,21 @@ from pontoon.test.factories import (
 
 
 @pytest.mark.django_db
-def test_view_microsoft_translator(client, ms_locale, ms_api_key):
+def test_view_microsoft_translator_not_logged_in(client, ms_locale, ms_api_key):
+    url = reverse("pontoon.microsoft_translator")
+    response = client.get(url, {"text": "text", "locale": ms_locale.ms_translator_code})
+
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_view_microsoft_translator(member, ms_locale, ms_api_key):
     url = reverse("pontoon.microsoft_translator")
 
     with requests_mock.mock() as m:
         data = [{"translations": [{"text": "target"}]}]
         m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
-        response = client.get(
+        response = member.client.get(
             url, {"text": "text", "locale": ms_locale.ms_translator_code},
         )
 
@@ -46,23 +54,35 @@ def test_view_microsoft_translator(client, ms_locale, ms_api_key):
 
 
 @pytest.mark.django_db
-def test_view_microsoft_translator_bad_locale(client, ms_locale, ms_api_key):
+def test_view_microsoft_translator_bad_locale(member, ms_locale, ms_api_key):
     url = reverse("pontoon.microsoft_translator")
-    response = client.get(url, {"text": "text", "locale": "bad"})
+    response = member.client.get(url, {"text": "text", "locale": "bad"})
 
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
-def test_view_google_translate(
+def test_view_google_translate_not_logged_in(
     client, google_translate_locale, google_translate_api_key
+):
+    url = reverse("pontoon.google_translate")
+    response = client.get(
+        url, {"text": "text", "locale": google_translate_locale.google_translate_code}
+    )
+
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_view_google_translate(
+    member, google_translate_locale, google_translate_api_key
 ):
     url = reverse("pontoon.google_translate")
 
     with requests_mock.mock() as m:
         data = {"data": {"translations": [{"translatedText": "target"}]}}
         m.post("https://translation.googleapis.com/language/translate/v2", json=data)
-        response = client.get(
+        response = member.client.get(
             url,
             {"text": "text", "locale": google_translate_locale.google_translate_code},
         )
@@ -86,10 +106,10 @@ def test_view_google_translate(
 
 @pytest.mark.django_db
 def test_view_google_translate_bad_locale(
-    client, google_translate_locale, google_translate_api_key,
+    member, google_translate_locale, google_translate_api_key,
 ):
     url = reverse("pontoon.google_translate")
-    response = client.get(url, {"text": "text", "locale": "bad"})
+    response = member.client.get(url, {"text": "text", "locale": "bad"})
 
     assert response.status_code == 404
 
