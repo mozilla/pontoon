@@ -33,18 +33,6 @@ var Pontoon = (function (my) {
         },
 
         /*
-         * Remove duplicate items from the array of numeric values
-         *
-         * TODO: Switch to ES6 and replace with Set
-         */
-        removeDuplicates: function (array) {
-            var seen = {};
-            return array.filter(function (item) {
-                return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-            });
-        },
-
-        /*
          * Mark all notifications as read and update UI accordingly
          */
         markAllNotificationsAsRead: function () {
@@ -151,84 +139,6 @@ var Pontoon = (function (my) {
          */
         doNotRender: function (string) {
             return $('<div/>').text(string).html();
-        },
-
-        /*
-         * Strip HTML tags from the given string
-         */
-        stripHTML: function (string) {
-            return $($.parseHTML(string)).text();
-        },
-
-        /*
-         * Converts a number to a string containing commas every three digits
-         */
-        numberWithCommas: function (number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        },
-
-        /*
-         * Markup XML Tags
-         *
-         * Find any XML Tags in a string and mark them up, while making sure
-         * the rest of the text in a string is displayed not rendered.
-         */
-        markXMLTags: function (string) {
-            var self = this;
-
-            var markedString = '';
-            var startMarker = '<mark class="placeable" title="XML Tag">';
-            var endMarker = '</mark>';
-
-            var re = /(<[^(><.)]+>)/gi;
-            var results;
-            var previousIndex = 0;
-
-            function doNotRenderSubstring(start, end) {
-                return self.doNotRender(string.substring(start, end));
-            }
-
-            // Find successive matches
-            while ((results = re.exec(string)) !== null) {
-                markedString +=
-                    // Substring between the previous and the current tag: do not render
-                    doNotRenderSubstring(previousIndex, results.index) +
-                    // Tag: do not render and wrap in markup
-                    startMarker +
-                    doNotRenderSubstring(results.index, re.lastIndex) +
-                    endMarker;
-                previousIndex = re.lastIndex;
-            }
-
-            // Substring between the last tag and the end of the string: do not render
-            markedString += doNotRenderSubstring(previousIndex, string.length);
-
-            return markedString;
-        },
-
-        /*
-         * Linkifies any traces of URLs present in a given string.
-         *
-         * Matches the URL Regex and parses the required matches.
-         * Can find more than one URL in the given string.
-         *
-         * Escapes HTML tags.
-         */
-        linkify: function (string) {
-            // http://, https://, ftp://
-            var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#/%?=~_|!:,.;]*[a-z0-9-+&@#/%=~_|]/gim;
-            // www. sans http:// or https://
-            var pseudoUrlPattern = /(^|[^/])(www\.[\S]+(\b|$))/gim;
-
-            return this.doNotRender(string)
-                .replace(
-                    urlPattern,
-                    '<a href="$&" target="_blank" rel="noopener noreferrer">$&</a>',
-                )
-                .replace(
-                    pseudoUrlPattern,
-                    '$1<a href="http://$2" target="_blank" rel="noopener noreferrer">$2</a>',
-                );
         },
     });
 })(Pontoon || {});
