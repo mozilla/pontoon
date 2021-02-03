@@ -29,11 +29,14 @@ export default class MachineryAPI extends APIBase {
         pk: ?number,
     ): Promise<Translations> {
         const url = '/translation-memory/';
-        const params = {
+        let params = {
             text: source,
             locale: locale.code,
-            pk: (pk || '').toString(),
         };
+
+        if (pk) {
+            params[pk] = pk;
+        }
 
         const results = await this._get(url, params);
 
