@@ -113,26 +113,6 @@ var Pontoon = (function (my) {
         },
 
         /*
-         * Update scrollbar position in the menu
-         *
-         * menu Menu element
-         */
-        updateScroll: function (menu) {
-            var hovered = menu.find('[class*=hover]'),
-                maxHeight = menu.height(),
-                visibleTop = menu.scrollTop(),
-                visibleBottom = visibleTop + maxHeight,
-                hoveredTop = visibleTop + hovered.position().top,
-                hoveredBottom = hoveredTop + hovered.outerHeight();
-
-            if (hoveredBottom >= visibleBottom) {
-                menu.scrollTop(Math.max(hoveredBottom - maxHeight, 0));
-            } else if (hoveredTop < visibleTop) {
-                menu.scrollTop(hoveredTop);
-            }
-        },
-
-        /*
          * Do not render HTML tags
          *
          * string String that has to be displayed as is instead of rendered
@@ -334,36 +314,39 @@ $(function () {
     generalShortcutsHandler = function (e) {
         function moveMenu(type) {
             var options =
-                    type === 'up'
-                        ? ['first', 'last', -1]
-                        : ['last', 'first', 1],
-                items = menu.find(
-                    'li:visible:not(.horizontal-separator, .time-range-toolbar, :has(li))',
-                );
+                type === 'up' ? ['first', 'last', -1] : ['last', 'first', 1];
+            var items = menu.find(
+                'li:visible:not(.horizontal-separator, :has(li))',
+            );
+            var element = null;
 
             if (
                 hovered.length === 0 ||
                 menu.find('li:not(:has(li)):visible:' + options[0]).is('.hover')
             ) {
                 menu.find('li.hover').removeClass('hover');
-                items[options[1]]().addClass('hover');
+                element = items[options[1]]();
             } else {
                 var current = menu.find('li.hover'),
                     next = items.index(current) + options[2];
 
                 current.removeClass('hover');
-                $(items.get(next)).addClass('hover');
+                element = $(items.get(next));
             }
 
-            if (menu.parent().is('.project, .part, .locale')) {
-                Pontoon.updateScroll(menu.find('ul'));
+            if (element) {
+                element.addClass('hover');
+                element[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                });
             }
         }
 
         var key = e.which;
 
         if ($('.menu:not(".permanent")').is(':visible')) {
-            var menu = $('.menu:visible'),
+            var menu = $('.menu:not(".permanent"):visible'),
                 hovered = menu.find('li.hover');
 
             // Skip for the tabs
