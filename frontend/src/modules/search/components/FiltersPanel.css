@@ -59,10 +59,6 @@
     position: relative;
 }
 
-.filters-panel.fixed .menu ul {
-    margin-bottom: 54px;
-}
-
 .filters-panel .menu li {
     color: #aaaaaa;
     cursor: pointer;
@@ -235,19 +231,14 @@
 }
 
 .filters-panel .toolbar {
+    position: sticky;
+    bottom: 0;
     background: #111111;
     border-top: 1px solid #5e6475;
     box-sizing: border-box;
     line-height: 23px;
     padding: 10px 12px;
     width: 100%;
-}
-
-.filters-panel.fixed .toolbar {
-    position: fixed;
-    bottom: 0;
-    width: 350px;
-    z-index: 10;
 }
 
 .filters-panel .toolbar button {
