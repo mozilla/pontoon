@@ -41,5 +41,4 @@ urlpatterns = [
         views.microsoft_terminology,
         name="pontoon.microsoft_terminology",
     ),
-    path("transvision/", views.transvision, name="pontoon.transvision"),
 ]

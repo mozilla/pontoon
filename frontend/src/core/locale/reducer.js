@@ -22,7 +22,6 @@ const initial: LocaleState = {
     msTranslatorCode: '',
     systranTranslateCode: '',
     msTerminologyCode: '',
-    transvision: false,
     localizations: [],
     fetching: false,
 };

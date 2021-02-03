@@ -166,31 +166,6 @@ export default class MachineryAPI extends APIBase {
     }
 
     /**
-     * Return translations from Transvision.
-     */
-    async getTransvisionMemory(
-        source: string,
-        locale: Locale,
-    ): Promise<Translations> {
-        const url = '/transvision/';
-        const params = {
-            text: source,
-            locale: locale.code,
-        };
-
-        const results = await this._get(url, params);
-
-        return results.map((item): MachineryTranslation => {
-            return {
-                sources: ['transvision'],
-                original: item.source,
-                translation: item.target,
-                quality: Math.round(item.quality),
-            };
-        });
-    }
-
-    /**
      * Return translation by Caighdean Machine Translation.
      *
      * Works only for the `ga-IE` locale.

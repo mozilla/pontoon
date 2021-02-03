@@ -9,7 +9,6 @@ import GoogleTranslation from './GoogleTranslation';
 import MicrosoftTranslation from './MicrosoftTranslation';
 import SystranTranslation from './SystranTranslation';
 import MicrosoftTerminology from './MicrosoftTerminology';
-import TransvisionMemory from './TransvisionMemory';
 import CaighdeanTranslation from './CaighdeanTranslation';
 import TranslationMemory from './TranslationMemory';
 
@@ -40,14 +39,6 @@ export default function TranslationSource({ translation, locale }: Props) {
             case 'microsoft-terminology':
                 return (
                     <MicrosoftTerminology
-                        original={translation.original}
-                        locale={locale}
-                        key={index}
-                    />
-                );
-            case 'transvision':
-                return (
-                    <TransvisionMemory
                         original={translation.original}
                         locale={locale}
                         key={index}

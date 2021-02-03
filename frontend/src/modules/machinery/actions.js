@@ -48,8 +48,8 @@ export function reset(entity: ?number, sourceString: string): ResetAction {
  *  - Translation Memory
  *  - Google Translate (if supported)
  *  - Microsoft Translator (if supported)
+ *  - Systran Translate (if supported)
  *  - Microsoft Terminology (if enabled for the locale)
- *  - Transvision (if enabled for the locale)
  *  - Caighdean (if enabled for the locale)
  */
 export function get(source: string, locale: Locale, pk: ?number): Function {
@@ -80,12 +80,6 @@ export function get(source: string, locale: Locale, pk: ?number): Function {
         if (locale.msTerminologyCode) {
             api.machinery
                 .getMicrosoftTerminology(source, locale)
-                .then((results) => dispatch(addTranslations(results)));
-        }
-
-        if (locale.transvision) {
-            api.machinery
-                .getTransvisionMemory(source, locale)
                 .then((results) => dispatch(addTranslations(results)));
         }
 

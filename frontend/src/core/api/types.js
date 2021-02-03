@@ -129,7 +129,6 @@ export type SourceType =
     | 'microsoft-translator'
     | 'systran-translate'
     | 'microsoft-terminology'
-    | 'transvision'
     | 'caighdean';
 
 export type MachineryTranslation = {|
