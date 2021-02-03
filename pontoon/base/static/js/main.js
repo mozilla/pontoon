@@ -391,10 +391,9 @@ var Pontoon = (function (my) {
          * Get suggestions from machine translation and translation memory
          *
          * original Original string
-         * customSearch Instead of source string, use custom search keyword as input
          * loader Loader element id
          */
-        getMachinery: function (original, customSearch, loader) {
+        getMachinery: function (original, loader) {
             loader = loader || 'helpers li a[href="#machinery"]';
             var self = this,
                 ul = $('#helpers > .machinery').children('ul').empty(),
@@ -403,10 +402,6 @@ var Pontoon = (function (my) {
                 preferred = 0,
                 remaining = 0,
                 sourcesMap = {};
-
-            if (!customSearch) {
-                var entity = self.getEditorEntity();
-            }
 
             self.NProgressUnbind();
 
@@ -648,7 +643,7 @@ var Pontoon = (function (my) {
                 data: {
                     text: original,
                     locale: self.locale.code,
-                    pk: !customSearch ? entity.pk : '',
+                    pk: '',
                 },
             })
                 .success(function (data) {
