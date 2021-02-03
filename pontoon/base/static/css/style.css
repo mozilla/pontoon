@@ -282,6 +282,10 @@ tfoot td a {
     z-index: 20; /* Must be higher than iframe-cover */
 }
 
+.select .menu.permanent {
+    z-index: 19; /* Must be lower than for the (popup) .menu */
+}
+
 .select > .button.breadcrumbs,
 #go {
     background: #3f4752;

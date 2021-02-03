@@ -236,23 +236,6 @@ $(function () {
         Pontoon.markAllNotificationsAsRead();
     });
 
-    // Profile menu
-    $('#profile .menu li').click(function (e) {
-        if ($(this).has('a').length) {
-            return;
-        }
-        e.preventDefault();
-
-        if ($(this).is('.download')) {
-            Pontoon.updateFormFields($('form#download-file'));
-            $('form#download-file').submit();
-        } else if ($(this).is('.upload')) {
-            $('#id_uploadfile').click();
-        } else if ($(this).is('.check-box')) {
-            e.stopPropagation();
-        }
-    });
-
     // Menu search
     $('body')
         .on('click', '.menu input[type=search]', function (e) {
