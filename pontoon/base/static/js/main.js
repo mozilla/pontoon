@@ -449,13 +449,11 @@ var Pontoon = (function (my) {
                         );
                     }
                 } else {
-                    if (data.source !== 'Caighdean') {
-                        var originalTextForDiff = originalText;
+                    var originalTextForDiff = originalText;
+                    originalText = originalText
+                        ? self.diff(original, originalTextForDiff)
+                        : '';
 
-                        originalText = originalText
-                            ? self.diff(original, originalTextForDiff)
-                            : '';
-                    }
                     var li = $(
                         '<li class="suggestion"' +
                             title +
@@ -528,7 +526,6 @@ var Pontoon = (function (my) {
                         'Systran Translate': 4,
                         'Google Translate': 5,
                         'Microsoft Translator': 6,
-                        Caighdean: 7,
                     };
 
                 function getTranslationSource(el) {
