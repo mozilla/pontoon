@@ -674,6 +674,8 @@ var Pontoon = (function (my) {
 
             // Google Translate
             if (
+                // Only make requests to paid services if user is authenticated
+                $('#server').data('is-authenticated') &&
                 $('#server').data('is-google-translate-supported') &&
                 self.locale.google_translate_code
             ) {
@@ -707,6 +709,8 @@ var Pontoon = (function (my) {
 
             // Microsoft Translator
             if (
+                // Only make requests to paid services if user is authenticated
+                $('#server').data('is-authenticated') &&
                 $('#server').data('is-microsoft-translator-supported') &&
                 self.locale.ms_translator_code
             ) {
@@ -740,6 +744,8 @@ var Pontoon = (function (my) {
 
             // Systran Translate
             if (
+                // Only make requests to paid services if user is authenticated
+                $('#server').data('is-authenticated') &&
                 $('#server').data('is-systran-translate-supported') &&
                 self.locale.systran_translate_code
             ) {

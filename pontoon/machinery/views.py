@@ -10,6 +10,7 @@ from caighdean.exceptions import TranslationError
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -104,6 +105,7 @@ def concordance_search(request):
     )
 
 
+@login_required(redirect_field_name="", login_url="/403")
 def microsoft_translator(request):
     """Get translation from Microsoft machine translation service."""
     try:
@@ -168,6 +170,7 @@ def microsoft_translator(request):
         )
 
 
+@login_required(redirect_field_name="", login_url="/403")
 def google_translate(request):
     """Get translation from Google machine translation service."""
     try:
@@ -197,6 +200,7 @@ def google_translate(request):
     return JsonResponse(data)
 
 
+@login_required(redirect_field_name="", login_url="/403")
 def systran_translate(request):
     """Get translations from SYSTRAN machine translation service."""
     try:
