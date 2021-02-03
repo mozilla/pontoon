@@ -16,11 +16,9 @@ import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
 type Props = {|
-    username: string,
-    imageURL: string,
     parameters: ?NavigationParams,
     translation?: ?number,
-    users: UserState,
+    user: UserState,
     contactPerson?: string,
     addComment: (string, ?number) => void,
     resetContactPerson?: () => void,
@@ -28,11 +26,9 @@ type Props = {|
 
 export default function AddComment(props: Props) {
     const {
-        username,
-        imageURL,
         parameters,
         translation,
-        users,
+        user,
         contactPerson,
         addComment,
         resetContactPerson,
@@ -49,7 +45,7 @@ export default function AddComment(props: Props) {
     );
     const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
     const [value, setValue] = React.useState(initialValue);
-    const usersList = users.users;
+    const users = user.users;
     const placeFocus = React.useCallback(() => {
         ReactEditor.focus(editor);
         Transforms.select(editor, Editor.end(editor, []));
@@ -66,7 +62,7 @@ export default function AddComment(props: Props) {
 
         if (contactPerson) {
             if (!isMentioned) {
-                insertMention(editor, contactPerson, usersList);
+                insertMention(editor, contactPerson, users);
             }
 
             if (resetContactPerson) {
@@ -74,7 +70,7 @@ export default function AddComment(props: Props) {
                 placeFocus();
             }
         }
-    }, [editor, contactPerson, usersList, resetContactPerson, placeFocus]);
+    }, [editor, contactPerson, users, resetContactPerson, placeFocus]);
 
     // Set focus on Editor
     React.useEffect(() => {
@@ -83,10 +79,10 @@ export default function AddComment(props: Props) {
         }
     }, [parameters, placeFocus]);
 
-    const USERS = usersList.map((user) => user.name);
-    const suggestedUsers = USERS.filter((c) =>
-        c.toLowerCase().startsWith(search.toLowerCase()),
-    ).slice(0, 5);
+    const userNames = users.map((user) => user.name);
+    const suggestedUsers = userNames
+        .filter((c) => c.toLowerCase().startsWith(search.toLowerCase()))
+        .slice(0, 5);
 
     // Set position of mentions suggestions
     React.useLayoutEffect(() => {
@@ -268,7 +264,7 @@ export default function AddComment(props: Props) {
             case 'Enter':
                 event.preventDefault();
                 Transforms.select(editor, target);
-                insertMention(editor, suggestedUsers[index], usersList);
+                insertMention(editor, suggestedUsers[index], users);
                 setTarget(null);
                 placeFocus();
                 break;
@@ -308,24 +304,20 @@ export default function AddComment(props: Props) {
                 event.currentTarget.innerText,
             );
             Transforms.select(editor, target);
-            insertMention(
-                editor,
-                suggestedUsers[suggestedUserIndex],
-                usersList,
-            );
+            insertMention(editor, suggestedUsers[suggestedUserIndex], users);
             return setTarget(null);
         }
     };
 
     const getUserGravatar = React.useCallback(
         (name: string) => {
-            const user = usersList.find((user) => user.name === name);
+            const user = users.find((user) => user.name === name);
             if (!user) {
                 return;
             }
             return user.gravatar;
         },
-        [usersList],
+        [users],
     );
 
     const handleEditorOnChange = (value) => {
@@ -420,7 +412,10 @@ export default function AddComment(props: Props) {
 
     return (
         <div className='comment add-comment'>
-            <UserAvatar username={username} imageUrl={imageURL} />
+            <UserAvatar
+                username={user.username}
+                imageUrl={user.gravatarURLSmall}
+            />
             <div className='container'>
                 <Slate
                     editor={editor}
