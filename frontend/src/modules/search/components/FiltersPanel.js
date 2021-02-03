@@ -352,8 +352,6 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         this.state = {
             visible: false,
         };
-
-        // this.menu = React.createRef();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -484,33 +482,15 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         return filterIcon;
     };
 
-    // Check if the filter toolbar is hidden
-    isToolbarHidden = () => {
-        const menu = this.menu.current;
-        const selectedFiltersCount = this.getSelectedFiltersCount();
-
-        let isScrollbarVisible = false;
-        if (menu) {
-            isScrollbarVisible = menu.scrollHeight > menu.clientHeight;
-        }
-
-        if (selectedFiltersCount > 0 && isScrollbarVisible) {
-            return true;
-        }
-
-        return false;
-    };
-
     render() {
         const props = this.props;
         const { project, resource } = this.props.parameters;
 
         const selectedFiltersCount = this.getSelectedFiltersCount();
         const filterIcon = this.getFilterIcon();
-        const fixedClass = this.isToolbarHidden() ? 'fixed' : '';
 
         return (
-            <div className={`filters-panel ${fixedClass}`}>
+            <div className='filters-panel'>
                 <div
                     className={`visibility-switch ${filterIcon}`}
                     onClick={this.toggleVisibility}
