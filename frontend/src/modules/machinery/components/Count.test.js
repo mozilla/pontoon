@@ -26,8 +26,8 @@ describe('<Count>', () => {
         const machinery = {
             translations: [
                 { sources: ['microsoft'] },
-                { sources: ['transvision'] },
-                { sources: ['transvision'] },
+                { sources: ['google'] },
+                { sources: ['google'] },
             ],
         };
         const wrapper = shallow(<Count machinery={machinery} />);
@@ -48,8 +48,8 @@ describe('<Count>', () => {
                 { sources: ['translation-memory'] },
                 { sources: ['translation-memory'] },
                 { sources: ['microsoft'] },
-                { sources: ['transvision'] },
-                { sources: ['transvision'] },
+                { sources: ['google'] },
+                { sources: ['google'] },
             ],
         };
         const wrapper = shallow(<Count machinery={machinery} />);

@@ -82,8 +82,7 @@ def combine_entity_filters(entities, filter_choices, filters, *args):
 
 
 def get_word_count(string):
-    """Compute the number of words in a given string.
-    """
+    """Compute the number of words in a given string."""
     return len(re.findall(r"[\w,.-]+", string))
 
 
@@ -662,14 +661,6 @@ class Locale(AggregatedStats):
         """,
     )
 
-    transvision = models.BooleanField(
-        default=False,
-        help_text="""
-        Enable Machinery suggestions from <a href="https://transvision.mozfr.org/">Transvision</a>.
-        Only useful for locales that don't translate all projects on Pontoon.
-    """,
-    )
-
     db_collation = models.CharField(
         max_length=20,
         blank=True,
@@ -801,7 +792,6 @@ class Locale(AggregatedStats):
             "ms_translator_code": self.ms_translator_code,
             "systran_translate_code": self.systran_translate_code,
             "ms_terminology_code": self.ms_terminology_code,
-            "transvision": json.dumps(self.transvision),
         }
 
     def cldr_id_list(self):
@@ -3030,7 +3020,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         MICROSOFT_TRANSLATOR = "microsoft-translator", "Microsoft Translator"
         SYSTRAN_TRANSLATE = "systran-translate", "Systran Translate"
         MICROSOFT_TERMINOLOGY = "microsoft-terminology", "Microsoft"
-        TRANSVISION = "transvision", "Mozilla"
         CAIGHDEAN = "caighdean", "Caighdean"
 
     machinery_sources = ArrayField(

@@ -99,7 +99,6 @@ class Locale(DjangoObjectType, Stats):
             "ms_translator_code",
             "systran_translate_code",
             "ms_terminology_code",
-            "transvision",
         )
 
     localizations = graphene.List(
