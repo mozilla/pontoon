@@ -122,6 +122,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             parameters,
             pluralForm,
             selectedEntity,
+            user,
         } = this.props;
 
         if (!parameters.entity || !selectedEntity || !locale) {
@@ -158,7 +159,14 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (selectedEntity.pk !== this.props.machinery.entity) {
-            dispatch(machinery.actions.get(source, locale, selectedEntity.pk));
+            dispatch(
+                machinery.actions.get(
+                    source,
+                    locale,
+                    user.isAuthenticated,
+                    selectedEntity.pk,
+                ),
+            );
         }
 
         if (selectedEntity.pk !== this.props.otherlocales.entity) {
@@ -206,7 +214,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 
     searchMachinery = (query: string) => {
-        const { dispatch, locale, selectedEntity } = this.props;
+        const { dispatch, locale, selectedEntity, user } = this.props;
 
         let source = query;
         let pk = null;
@@ -220,7 +228,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             pk = selectedEntity.pk;
         }
 
-        dispatch(machinery.actions.get(source, locale, pk));
+        dispatch(
+            machinery.actions.get(source, locale, user.isAuthenticated, pk),
+        );
     };
 
     copyLinkToClipboard = () => {
