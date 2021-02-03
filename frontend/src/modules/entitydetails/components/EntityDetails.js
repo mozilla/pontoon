@@ -55,7 +55,6 @@ type Props = {|
     router: Object,
     selectedEntity: Entity,
     user: UserState,
-    users: UserState,
 |};
 
 type InternalProps = {|
@@ -454,7 +453,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         user={state.user}
                         deleteTranslation={this.deleteTranslation}
                         addComment={this.addComment}
-                        users={state.users}
                         updateTranslationStatus={this.updateTranslationStatus}
                         updateEditorTranslation={this.updateEditorTranslation}
                     />
@@ -470,7 +468,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         terms={state.terms}
                         addComment={this.addComment}
                         togglePinnedStatus={this.togglePinnedStatus}
-                        users={state.users}
                         parameters={state.parameters}
                         user={state.user}
                         searchMachinery={this.searchMachinery}
@@ -524,7 +521,6 @@ export default function EntityDetails() {
             entities.selectors.getSelectedEntity(state),
         ),
         user: useSelector((state) => state[user.NAME]),
-        users: useSelector((state) => state[user.NAME]),
     };
     return (
         <EntityDetailsBase
