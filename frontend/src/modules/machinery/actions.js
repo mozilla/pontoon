@@ -52,7 +52,12 @@ export function reset(entity: ?number, sourceString: string): ResetAction {
  *  - Transvision (if enabled for the locale)
  *  - Caighdean (if enabled for the locale)
  */
-export function get(source: string, locale: Locale, pk: ?number): Function {
+export function get(
+    source: string,
+    locale: Locale,
+    isAuthenticated: boolean,
+    pk: ?number,
+): Function {
     return async (dispatch) => {
         dispatch(reset(pk, source));
 
@@ -63,18 +68,21 @@ export function get(source: string, locale: Locale, pk: ?number): Function {
             .getTranslationMemory(source, locale, pk)
             .then((results) => dispatch(addTranslations(results)));
 
-        api.machinery
-            .getGoogleTranslation(source, locale)
-            .then((results) => dispatch(addTranslations(results)));
-
-        api.machinery
-            .getMicrosoftTranslation(source, locale)
-            .then((results) => dispatch(addTranslations(results)));
-
-        if (locale.systranTranslateCode) {
+        // Only make requests to paid services if user is authenticated
+        if (isAuthenticated) {
             api.machinery
-                .getSystranTranslation(source, locale)
+                .getGoogleTranslation(source, locale)
                 .then((results) => dispatch(addTranslations(results)));
+
+            api.machinery
+                .getMicrosoftTranslation(source, locale)
+                .then((results) => dispatch(addTranslations(results)));
+
+            if (locale.systranTranslateCode) {
+                api.machinery
+                    .getSystranTranslation(source, locale)
+                    .then((results) => dispatch(addTranslations(results)));
+            }
         }
 
         if (locale.msTerminologyCode) {
