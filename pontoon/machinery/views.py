@@ -7,7 +7,6 @@ from urllib.parse import quote
 
 from caighdean import Translator
 from caighdean.exceptions import TranslationError
-from uuid import uuid4
 
 from django.conf import settings
 from django.core.paginator import EmptyPage, Paginator
@@ -333,7 +332,6 @@ def microsoft_terminology(request):
         "Content-Type": "text/xml; charset=utf-8",
     }
     payload = {
-        "uuid": uuid4(),
         "text": quote(text.encode("utf-8")),
         "to": locale_code,
         "max_result": 5,
