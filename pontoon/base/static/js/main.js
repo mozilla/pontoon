@@ -156,6 +156,11 @@ $(function () {
         Pontoon.closeNotification();
     });
 
+    // Mark notifications as read when notification menu opens
+    $('#notifications.unread .button .icon').click(function () {
+        Pontoon.markAllNotificationsAsRead();
+    });
+
     function getRedirectUrl() {
         return window.location.pathname + window.location.search;
     }
@@ -230,11 +235,6 @@ $(function () {
 
             $('.menu li.hover, .static-links div').removeClass('hover');
         });
-
-    // Mark notifications as read when notification menu opens
-    $('#notifications.unread .button .icon').click(function () {
-        Pontoon.markAllNotificationsAsRead();
-    });
 
     // Menu search
     $('body')
