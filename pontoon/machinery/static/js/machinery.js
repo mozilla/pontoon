@@ -81,7 +81,7 @@ $(function () {
             } else {
                 var originalTextForDiff = originalText;
                 originalText = originalText
-                    ? self.diff(original, originalTextForDiff)
+                    ? diff(original, originalTextForDiff)
                     : '';
 
                 var li = $(
@@ -127,7 +127,7 @@ $(function () {
                         '" data-script="' +
                         self.locale.script +
                         '">' +
-                        self.markPlaceables(translationText) +
+                        markPlaceables(translationText) +
                         '</p>' +
                         '<p class="translation-clipboard">' +
                         self.doNotRender(translationText) +
@@ -223,7 +223,7 @@ $(function () {
                 // Allows requesting Machinery again
                 editor.machinery = null;
                 if (ul.children('li').length === 0) {
-                    self.noConnectionError(ul);
+                    noConnectionError(ul);
                 }
             }
         }
@@ -436,5 +436,137 @@ $(function () {
         }
 
         self.NProgressBind();
+    }
+
+    /*
+     * Get markup for a placeable instance.
+     */
+    function getPlaceableMarkup(title, replacement) {
+        return (
+            '<mark class="placeable" title="' +
+            title +
+            '">' +
+            replacement +
+            '</mark>'
+        );
+    }
+
+    /*
+     * Mark single instance of a placeable in string
+     */
+    function markPlaceable(string, regex, title, replacement) {
+        replacement = replacement || '$&';
+        return string.replace(regex, getPlaceableMarkup(title, replacement));
+    }
+
+    /*
+     * Markup placeables
+     */
+    function markPlaceables(string, whiteSpaces) {
+        whiteSpaces = whiteSpaces !== false;
+
+        string = self.doNotRender(string);
+
+        /* Special spaces */
+        // Pontoon.doNotRender() replaces \u00A0 with &nbsp;
+        string = markPlaceable(string, /&nbsp;/gi, 'Non-breaking space');
+        string = markPlaceable(
+            string,
+            /[\u202F]/gi,
+            'Narrow non-breaking space',
+        );
+        string = markPlaceable(string, /[\u2009]/gi, 'Thin space');
+
+        /* Multiple spaces */
+        string = string.replace(/  +/gi, function (match) {
+            var title = 'Multiple spaces';
+            var replacement = '';
+
+            for (var i = 0; i < match.length; i++) {
+                replacement += ' &middot; ';
+            }
+            return getPlaceableMarkup(title, replacement);
+        });
+
+        if (whiteSpaces) {
+            string = markWhiteSpaces(string);
+        }
+
+        return string;
+    }
+
+    /*
+     * Mark leading/trailing spaces in multiline strings (that contain newlines inside).
+     * Should be applied to a fully concatenated string, doesn't handle substrings well.
+     */
+    function markWhiteSpaces(string) {
+        /* 'm' modifier makes regex applicable to every separate line in string, not the string as the whole. */
+
+        /* Leading space */
+        string = string.replace(
+            /^(<(ins|del)>)*( )/gim,
+            '$1' + getPlaceableMarkup('Leading space', ' '),
+        );
+
+        /* Trailing space */
+        string = string.replace(
+            /( )(<\/(ins|del)>)*$/gim,
+            getPlaceableMarkup('Trailing space', ' ') + '$2',
+        );
+
+        /* Newline */
+        string = markPlaceable(string, /\n/gi, 'Newline character', '¶$&');
+
+        /* Tab */
+        string = markPlaceable(string, /\t/gi, 'Tab character', '&rarr;');
+        return string;
+    }
+
+    /*
+     * Mark diff between the string and the reference string
+     */
+    function diff(reference, string) {
+        var diff_obj = new diff_match_patch();
+        var diff = diff_obj.diff_main(reference, string);
+        var output = '';
+
+        diff_obj.diff_cleanupSemantic(diff);
+        diff_obj.diff_cleanupEfficiency(diff);
+
+        $.each(diff, function () {
+            var type = this[0];
+            var slice = this[1];
+
+            switch (type) {
+                case DIFF_INSERT:
+                    output += '<ins>' + markPlaceables(slice, false) + '</ins>';
+                    break;
+
+                case DIFF_DELETE:
+                    output += '<del>' + markPlaceables(slice, false) + '</del>';
+                    break;
+
+                case DIFF_EQUAL:
+                    output += markPlaceables(slice, false);
+                    break;
+            }
+        });
+
+        /* Marking of leading/trailing spaces has to be the last step to avoid false positives. */
+        return markWhiteSpaces(output);
+    }
+
+    /*
+     * Show no connection error in helpers
+     *
+     * list List to append no connection error to
+     */
+    function noConnectionError(list) {
+        list.append(
+            '<li class="disabled">' +
+                '<p>Content not available while offline.</p>' +
+                '<p>Check your connection and try again.</p>' +
+                '</li>',
+        );
     }
 });
