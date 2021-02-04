@@ -279,7 +279,11 @@ tfoot td a {
     padding: 10px 12px;
     position: absolute;
     width: 150px;
-    z-index: 20; /* Must be higher than iframe-cover */
+    z-index: 20;
+}
+
+.select .menu.permanent {
+    z-index: 19; /* Must be lower than for the (popup) .menu */
 }
 
 .select > .button.breadcrumbs,
@@ -508,8 +512,7 @@ tfoot td a {
     padding: 2px 4px;
 }
 
-.menu li.hover,
-.menu .static-links div.hover {
+.menu li.hover {
     color: #ffffff;
     background: #3f4752;
 }

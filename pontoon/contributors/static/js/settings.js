@@ -1,4 +1,34 @@
 $(function () {
+    // Toggle user profile attribute
+    $('#check-boxes .check-box').click(function () {
+        var self = $(this);
+
+        $.ajax({
+            url: '/api/v1/user/' + $('#server').data('username') + '/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: $('#server').data('csrf'),
+                attribute: self.data('attribute'),
+                value: !self.is('.enabled'),
+            },
+            success: function () {
+                self.toggleClass('enabled');
+                var is_enabled = self.is('.enabled');
+                var status = is_enabled ? 'enabled' : 'disabled';
+
+                Pontoon.endLoader(self.text() + ' ' + status + '.');
+            },
+            error: function (request) {
+                if (request.responseText === 'error') {
+                    Pontoon.endLoader('Oops, something went wrong.', 'error');
+                } else {
+                    Pontoon.endLoader(request.responseText, 'error');
+                }
+            },
+        });
+    });
+
+    // Save custom homepage
     $('#homepage .locale .menu li:not(".no-match")').click(function () {
         var custom_homepage = $(this).find('.language').data('code');
 
@@ -23,9 +53,8 @@ $(function () {
             },
         });
     });
-});
 
-$(function () {
+    // Save preferred source locale
     $('#preferred-locale .locale .menu li:not(".no-match")').click(function () {
         var preferred_source_locale = $(this).find('.language').data('code');
 
