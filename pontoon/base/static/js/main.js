@@ -33,18 +33,6 @@ var Pontoon = (function (my) {
         },
 
         /*
-         * Remove duplicate items from the array of numeric values
-         *
-         * TODO: Switch to ES6 and replace with Set
-         */
-        removeDuplicates: function (array) {
-            var seen = {};
-            return array.filter(function (item) {
-                return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-            });
-        },
-
-        /*
          * Mark all notifications as read and update UI accordingly
          */
         markAllNotificationsAsRead: function () {
@@ -125,110 +113,12 @@ var Pontoon = (function (my) {
         },
 
         /*
-         * Update scrollbar position in the menu
-         *
-         * menu Menu element
-         */
-        updateScroll: function (menu) {
-            var hovered = menu.find('[class*=hover]'),
-                maxHeight = menu.height(),
-                visibleTop = menu.scrollTop(),
-                visibleBottom = visibleTop + maxHeight,
-                hoveredTop = visibleTop + hovered.position().top,
-                hoveredBottom = hoveredTop + hovered.outerHeight();
-
-            if (hoveredBottom >= visibleBottom) {
-                menu.scrollTop(Math.max(hoveredBottom - maxHeight, 0));
-            } else if (hoveredTop < visibleTop) {
-                menu.scrollTop(hoveredTop);
-            }
-        },
-
-        /*
          * Do not render HTML tags
          *
          * string String that has to be displayed as is instead of rendered
          */
         doNotRender: function (string) {
             return $('<div/>').text(string).html();
-        },
-
-        /*
-         * Strip HTML tags from the given string
-         */
-        stripHTML: function (string) {
-            return $($.parseHTML(string)).text();
-        },
-
-        /*
-         * Converts a number to a string containing commas every three digits
-         */
-        numberWithCommas: function (number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        },
-
-        /*
-         * Markup XML Tags
-         *
-         * Find any XML Tags in a string and mark them up, while making sure
-         * the rest of the text in a string is displayed not rendered.
-         */
-        markXMLTags: function (string) {
-            var self = this;
-
-            var markedString = '';
-            var startMarker = '<mark class="placeable" title="XML Tag">';
-            var endMarker = '</mark>';
-
-            var re = /(<[^(><.)]+>)/gi;
-            var results;
-            var previousIndex = 0;
-
-            function doNotRenderSubstring(start, end) {
-                return self.doNotRender(string.substring(start, end));
-            }
-
-            // Find successive matches
-            while ((results = re.exec(string)) !== null) {
-                markedString +=
-                    // Substring between the previous and the current tag: do not render
-                    doNotRenderSubstring(previousIndex, results.index) +
-                    // Tag: do not render and wrap in markup
-                    startMarker +
-                    doNotRenderSubstring(results.index, re.lastIndex) +
-                    endMarker;
-                previousIndex = re.lastIndex;
-            }
-
-            // Substring between the last tag and the end of the string: do not render
-            markedString += doNotRenderSubstring(previousIndex, string.length);
-
-            return markedString;
-        },
-
-        /*
-         * Linkifies any traces of URLs present in a given string.
-         *
-         * Matches the URL Regex and parses the required matches.
-         * Can find more than one URL in the given string.
-         *
-         * Escapes HTML tags.
-         */
-        linkify: function (string) {
-            // http://, https://, ftp://
-            var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#/%?=~_|!:,.;]*[a-z0-9-+&@#/%=~_|]/gim;
-            // www. sans http:// or https://
-            var pseudoUrlPattern = /(^|[^/])(www\.[\S]+(\b|$))/gim;
-
-            return this.doNotRender(string)
-                .replace(
-                    urlPattern,
-                    '<a href="$&" target="_blank" rel="noopener noreferrer">$&</a>',
-                )
-                .replace(
-                    pseudoUrlPattern,
-                    '$1<a href="http://$2" target="_blank" rel="noopener noreferrer">$2</a>',
-                );
         },
     });
 })(Pontoon || {});
@@ -266,6 +156,11 @@ $(function () {
         Pontoon.closeNotification();
     });
 
+    // Mark notifications as read when notification menu opens
+    $('#notifications.unread .button .icon').click(function () {
+        Pontoon.markAllNotificationsAsRead();
+    });
+
     function getRedirectUrl() {
         return window.location.pathname + window.location.search;
     }
@@ -300,14 +195,12 @@ $(function () {
             e.stopPropagation();
             $('.menu:not(".permanent")').hide();
             $('.select').removeClass('opened');
-            $('#iframe-cover:not(".hidden")').hide(); // iframe fix
             $(this)
                 .siblings('.menu')
                 .show()
                 .end()
                 .parents('.select')
                 .addClass('opened');
-            $('#iframe-cover:not(".hidden")').show(); // iframe fix
             $('.menu:not(".permanent"):visible input[type=search]')
                 .focus()
                 .trigger('input');
@@ -323,45 +216,23 @@ $(function () {
 
     // Menu hover
     $('body')
-        .on('mouseenter', '.menu li, .menu .static-links div', function () {
+        .on('mouseenter', '.menu li', function () {
             // Ignore on nested menus
             if ($(this).parents('li').length) {
                 return false;
             }
 
-            $('.menu li.hover, .static-links div').removeClass('hover');
+            $('.menu li.hover').removeClass('hover');
             $(this).toggleClass('hover');
         })
-        .on('mouseleave', '.menu li, .menu .static-links div', function () {
+        .on('mouseleave', '.menu li', function () {
             // Ignore on nested menus
             if ($(this).parents('li').length) {
                 return false;
             }
 
-            $('.menu li.hover, .static-links div').removeClass('hover');
+            $('.menu li.hover').removeClass('hover');
         });
-
-    // Mark notifications as read when notification menu opens
-    $('#notifications.unread .button .icon').click(function () {
-        Pontoon.markAllNotificationsAsRead();
-    });
-
-    // Profile menu
-    $('#profile .menu li').click(function (e) {
-        if ($(this).has('a').length) {
-            return;
-        }
-        e.preventDefault();
-
-        if ($(this).is('.download')) {
-            Pontoon.updateFormFields($('form#download-file'));
-            $('form#download-file').submit();
-        } else if ($(this).is('.upload')) {
-            $('#id_uploadfile').click();
-        } else if ($(this).is('.check-box')) {
-            e.stopPropagation();
-        }
-    });
 
     // Menu search
     $('body')
@@ -398,97 +269,43 @@ $(function () {
             }
         });
 
-    // Tabs
-    $('.tabs nav a').click(function (e) {
-        e.preventDefault();
-
-        var tab = $(this),
-            section = tab.attr('href').substr(1);
-
-        tab.parents('li')
-            .siblings()
-            .removeClass('active')
-            .end()
-            .addClass('active')
-            .end()
-
-            .parents('.tabs')
-            .find('section')
-            .hide()
-            .end()
-            .find('section.' + section)
-            .show();
-    });
-
-    // Toggle user profile attribute
-    $('.check-box').click(function () {
-        var self = $(this);
-
-        $.ajax({
-            url: '/api/v1/user/' + $('#server').data('username') + '/',
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: $('#server').data('csrf'),
-                attribute: self.data('attribute'),
-                value: !self.is('.enabled'),
-            },
-            success: function () {
-                self.toggleClass('enabled');
-                var is_enabled = self.is('.enabled'),
-                    status = is_enabled ? 'enabled' : 'disabled';
-
-                Pontoon.endLoader(self.text() + ' ' + status + '.');
-
-                if (self.is('.force-suggestions') && Pontoon.user) {
-                    Pontoon.user.forceSuggestions = is_enabled;
-                    Pontoon.postMessage('UPDATE-ATTRIBUTE', {
-                        object: 'user',
-                        attribute: 'forceSuggestions',
-                        value: is_enabled,
-                    });
-                    Pontoon.updateSaveButtons();
-                }
-            },
-            error: function () {
-                Pontoon.endLoader('Oops, something went wrong.', 'error');
-            },
-        });
-    });
-
     // General keyboard shortcuts
     generalShortcutsHandler = function (e) {
         function moveMenu(type) {
             var options =
-                    type === 'up'
-                        ? ['first', 'last', -1]
-                        : ['last', 'first', 1],
-                items = menu.find(
-                    'li:visible:not(.horizontal-separator, .time-range-toolbar, :has(li))',
-                );
+                type === 'up' ? ['first', 'last', -1] : ['last', 'first', 1];
+            var items = menu.find(
+                'li:visible:not(.horizontal-separator, :has(li))',
+            );
+            var element = null;
 
             if (
                 hovered.length === 0 ||
                 menu.find('li:not(:has(li)):visible:' + options[0]).is('.hover')
             ) {
                 menu.find('li.hover').removeClass('hover');
-                items[options[1]]().addClass('hover');
+                element = items[options[1]]();
             } else {
                 var current = menu.find('li.hover'),
                     next = items.index(current) + options[2];
 
                 current.removeClass('hover');
-                $(items.get(next)).addClass('hover');
+                element = $(items.get(next));
             }
 
-            if (menu.parent().is('.project, .part, .locale')) {
-                Pontoon.updateScroll(menu.find('ul'));
+            if (element) {
+                element.addClass('hover');
+                element[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                });
             }
         }
 
         var key = e.which;
 
         if ($('.menu:not(".permanent")').is(':visible')) {
-            var menu = $('.menu:visible'),
+            var menu = $('.menu:not(".permanent"):visible'),
                 hovered = menu.find('li.hover');
 
             // Skip for the tabs
@@ -522,42 +339,6 @@ $(function () {
             // Escape: close
             if (key === 27) {
                 $('body').click();
-                return false;
-            }
-        }
-
-        if (
-            $('#sidebar').is(':visible') &&
-            (Pontoon.app.advanced || !$('#editor').is('.opened'))
-        ) {
-            // Ctrl + Shift + F: Focus Search
-            if (e.ctrlKey && e.shiftKey && key === 70) {
-                $('#search').focus();
-                return false;
-            }
-
-            // Ctrl + Shift + A: Select All Strings
-            if (
-                Pontoon.user.canTranslate() &&
-                e.ctrlKey &&
-                e.shiftKey &&
-                key === 65
-            ) {
-                Pontoon.selectAllEntities();
-                return false;
-            }
-
-            // Escape: Deselect entities and switch to first entity
-            if (
-                Pontoon.user.canTranslate() &&
-                $('#entitylist .entity.selected').length &&
-                key === 27
-            ) {
-                if (Pontoon.app.advanced) {
-                    Pontoon.openFirstEntity();
-                } else {
-                    Pontoon.goBackToEntityList();
-                }
                 return false;
             }
         }
