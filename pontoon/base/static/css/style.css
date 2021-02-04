@@ -279,7 +279,7 @@ tfoot td a {
     padding: 10px 12px;
     position: absolute;
     width: 150px;
-    z-index: 20; /* Must be higher than iframe-cover */
+    z-index: 20;
 }
 
 .select .menu.permanent {
