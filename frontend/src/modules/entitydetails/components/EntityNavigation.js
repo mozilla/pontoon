@@ -30,22 +30,16 @@ export default class EntityNavigation extends React.Component<Props> {
     handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
-        let handledEvent = false;
-
         // On Alt + Up, move to the previous entity.
         if (key === 38 && event.altKey && !event.ctrlKey && !event.shiftKey) {
-            handledEvent = true;
+            event.preventDefault();
             this.props.goToPreviousEntity();
         }
 
         // On Alt + Down, move to the next entity.
         if (key === 40 && event.altKey && !event.ctrlKey && !event.shiftKey) {
-            handledEvent = true;
-            this.props.goToNextEntity();
-        }
-
-        if (handledEvent) {
             event.preventDefault();
+            this.props.goToNextEntity();
         }
     };
 
