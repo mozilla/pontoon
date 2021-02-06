@@ -50,7 +50,6 @@ export default function useHandleShortcuts() {
             copyOriginalIntoEditorCustom || copyOriginalIntoEditor;
 
         const key = event.keyCode;
-        let handledEvent = false;
 
         // Disable keyboard shortcuts when editor is in read only.
         if (isReadOnlyEditor) {
@@ -62,7 +61,7 @@ export default function useHandleShortcuts() {
         //   - If failed checks popup is shown after approving a translation, approve it anyway.
         //   - In other cases, send current translation.
         if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-            handledEvent = true;
+            event.preventDefault();
 
             const errors = editorState.errors;
             const warnings = editorState.warnings;
@@ -94,7 +93,7 @@ export default function useHandleShortcuts() {
 
         // On Esc, close unsaved changes and failed checks popups if open.
         if (key === 27) {
-            handledEvent = true;
+            event.preventDefault();
 
             const errors = editorState.errors;
             const warnings = editorState.warnings;
@@ -111,13 +110,13 @@ export default function useHandleShortcuts() {
 
         // On Ctrl + Shift + C, copy the original translation.
         if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
+            event.preventDefault();
             copyOriginalIntoEditorFn();
         }
 
         // On Ctrl + Shift + Backspace, clear the content.
         if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
-            handledEvent = true;
+            event.preventDefault();
             clearEditorFn();
         }
 
@@ -143,6 +142,8 @@ export default function useHandleShortcuts() {
                 return;
             }
 
+            event.preventDefault();
+
             const currentIdx = editorState.selectedHelperElementIndex;
             let nextIdx;
             if (key === 40) {
@@ -154,12 +155,7 @@ export default function useHandleShortcuts() {
             dispatch(editor.actions.selectHelperElementIndex(nextIdx));
 
             const newTranslation = translations[nextIdx];
-            handledEvent = true;
             copyTranslationFn(newTranslation);
-        }
-
-        if (handledEvent) {
-            event.preventDefault();
         }
     };
 }
