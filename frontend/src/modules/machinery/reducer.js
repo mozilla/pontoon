@@ -1,15 +1,25 @@
 /* @flow */
 
-import { ADD_TRANSLATIONS, REQUEST, RESET } from './actions';
+import {
+    CONCORDANCE_SEARCH,
+    ADD_TRANSLATIONS,
+    REQUEST,
+    RESET,
+} from './actions';
 
 import type { MachineryTranslation } from 'core/api';
 import type {
+    ConcordanceSearchAction,
     AddTranslationsAction,
     RequestAction,
     ResetAction,
 } from './actions';
 
-type Action = AddTranslationsAction | RequestAction | ResetAction;
+type Action =
+    | ConcordanceSearchAction
+    | AddTranslationsAction
+    | RequestAction
+    | ResetAction;
 
 type Translations = Array<MachineryTranslation>;
 
@@ -17,6 +27,7 @@ export type MachineryState = {|
     entity: ?number,
     sourceString: string,
     translations: Translations,
+    searchResults: Translations,
     fetching: boolean,
     hasMore?: boolean,
 |};
@@ -88,6 +99,7 @@ const initial: MachineryState = {
     entity: null,
     sourceString: '',
     translations: [],
+    searchResults: [],
     fetching: false,
     hasMore: false,
 };
@@ -97,6 +109,13 @@ export default function reducer(
     action: Action,
 ): MachineryState {
     switch (action.type) {
+        case CONCORDANCE_SEARCH:
+            return {
+                ...state,
+                searchResults: state.searchResults.concat(action.searchResults),
+                fetching: false,
+                hasMore: action.hasMore,
+            };
         case ADD_TRANSLATIONS:
             return {
                 ...state,
@@ -104,8 +123,6 @@ export default function reducer(
                     state.translations,
                     action.translations,
                 ),
-                fetching: false,
-                hasMore: action.hasMore,
             };
         case REQUEST:
             return {
@@ -119,6 +136,7 @@ export default function reducer(
                 entity: action.entity,
                 sourceString: action.sourceString,
                 translations: [],
+                searchResults: [],
             };
         default:
             return state;

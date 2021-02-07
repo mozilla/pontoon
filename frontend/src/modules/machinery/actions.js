@@ -7,6 +7,8 @@ import type { Locale } from 'core/locale';
 
 export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' =
     'machinery/ADD_TRANSLATIONS';
+export const CONCORDANCE_SEARCH: 'machinery/CONCORDANCE_SEARCH' =
+    'machinery/CONCORDANCE_SEARCH';
 export const REQUEST: 'machinery/REQUEST' = 'machinery/REQUEST';
 export const RESET: 'machinery/RESET' = 'machinery/RESET';
 
@@ -22,22 +24,36 @@ export function request(): RequestAction {
     };
 }
 
+/** Get a list of concordance search results */
+export type ConcordanceSearchAction = {
+    +type: typeof CONCORDANCE_SEARCH,
+    +searchResults: Array<MachineryTranslation>,
+    +hasMore: boolean,
+};
+export function concordanceSearch(
+    searchResults: Array<MachineryTranslation>,
+    hasMore: boolean,
+): ConcordanceSearchAction {
+    return {
+        type: CONCORDANCE_SEARCH,
+        searchResults: searchResults,
+        hasMore,
+    };
+}
+
 /**
  * Add a list of machine translations to the current list.
  */
 export type AddTranslationsAction = {
     +type: typeof ADD_TRANSLATIONS,
     +translations: Array<MachineryTranslation>,
-    +hasMore?: boolean,
 };
 export function addTranslations(
     translations: Array<MachineryTranslation>,
-    hasMore?: boolean,
 ): AddTranslationsAction {
     return {
         type: ADD_TRANSLATIONS,
         translations: translations,
-        hasMore,
     };
 }
 
@@ -54,6 +70,30 @@ export function reset(entity: ?number, sourceString: string): ResetAction {
         type: RESET,
         entity: entity,
         sourceString: sourceString,
+    };
+}
+
+/** Get concordance search results for a given source string and locale. */
+export function getConcordanceSearchResults(
+    source: string,
+    locale: Locale,
+    page?: number,
+): Function {
+    return async (dispatch) => {
+        if (!page) {
+            dispatch(reset(null, source));
+        }
+
+        dispatch(request());
+
+        // Abort all previously running requests.
+        await api.machinery.abort();
+
+        api.machinery
+            .getConcordanceResults(source, locale, page)
+            .then((results) =>
+                dispatch(concordanceSearch(results.results, results.hasMore)),
+            );
     };
 }
 
@@ -80,22 +120,12 @@ export function get(
             dispatch(reset(pk, source));
         }
 
-        dispatch(request());
-
         // Abort all previously running requests.
         await api.machinery.abort();
 
-        if (!pk) {
-            api.machinery
-                .getConcordanceResults(source, locale, page)
-                .then((results) =>
-                    dispatch(addTranslations(results.results, results.hasMore)),
-                );
-        } else {
-            api.machinery
-                .getTranslationMemory(source, locale, pk)
-                .then((results) => dispatch(addTranslations(results)));
-        }
+        api.machinery
+            .getTranslationMemory(source, locale, pk)
+            .then((results) => dispatch(addTranslations(results)));
 
         // Only make requests to paid services if user is authenticated
         if (isAuthenticated) {
@@ -133,6 +163,7 @@ export function get(
 }
 
 export default {
+    getConcordanceSearchResults,
     addTranslations,
     get,
     reset,

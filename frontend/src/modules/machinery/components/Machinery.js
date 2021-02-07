@@ -115,6 +115,18 @@ export default class Machinery extends React.Component<Props> {
                     </form>
                 </div>
                 <div className='list-wrapper'>
+                    <ul>
+                        {machinery.translations.map((translation, index) => {
+                            return (
+                                <Translation
+                                    index={index}
+                                    sourceString={machinery.sourceString}
+                                    translation={translation}
+                                    key={index}
+                                />
+                            );
+                        })}
+                    </ul>
                     <InfiniteScroll
                         pageStart={1}
                         loadMore={this.getMoreResults}
@@ -129,20 +141,16 @@ export default class Machinery extends React.Component<Props> {
                         threshold={300}
                     >
                         <ul>
-                            {machinery.translations.map(
-                                (translation, index) => {
-                                    return (
-                                        <Translation
-                                            index={index}
-                                            sourceString={
-                                                machinery.sourceString
-                                            }
-                                            translation={translation}
-                                            key={index}
-                                        />
-                                    );
-                                },
-                            )}
+                            {machinery.searchResults.map((result, index) => {
+                                return (
+                                    <Translation
+                                        index={index}
+                                        sourceString={machinery.sourceString}
+                                        translation={result}
+                                        key={index}
+                                    />
+                                );
+                            })}
                         </ul>
                     </InfiniteScroll>
                 </div>

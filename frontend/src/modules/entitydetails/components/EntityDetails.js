@@ -227,6 +227,16 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             pk = selectedEntity.pk;
         }
 
+        if (!pk) {
+            dispatch(
+                machinery.actions.getConcordanceSearchResults(
+                    source,
+                    locale,
+                    page,
+                ),
+            );
+        }
+
         dispatch(
             machinery.actions.get(
                 source,
