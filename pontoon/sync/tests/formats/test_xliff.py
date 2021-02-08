@@ -108,7 +108,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
         expected_string = self.generate_xliff(
             dedent(
                 """
-            <trans-unit id="Source String Key">
+            <trans-unit id="Source String Key" xml:space="preserve">
                 <source>Source String</source>
                 <target>New Translated String</target>
                 <note>Comment</note>
