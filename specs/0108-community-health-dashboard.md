@@ -51,6 +51,8 @@ In both cases, data is determined by looking at translations rejected or approve
 
 **Text for infobox**: The average number of days a contributor can expect to wait for their translation suggestions to be reviewed by managers and translators.
 
+The two bullett points above should be added to the infobar to describe the plotted data points.
+
 ## Translation activity
 
 A combination of two charts:
