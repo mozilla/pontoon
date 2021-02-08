@@ -1,7 +1,6 @@
 * Feature Name: Community Health Dashboard
 * Created: 2020-10-23
-* Last Updated: 2021-02-08
-* Associated Bugs: [original bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1672966), [review update](https://bugzilla.mozilla.org/show_bug.cgi?id=1687529)
+* Associated Bugs: [1672966](https://bugzilla.mozilla.org/show_bug.cgi?id=1672966), [1687529](https://bugzilla.mozilla.org/show_bug.cgi?id=1687529)
 
 # Summary
 
@@ -40,27 +39,23 @@ A line chart showing the average age of suggestions still unreviewed in a partic
 
 Data is available for each day, but aggregated by month in the chart. A tooltip showing the exact data at a given month appears when hovering over a chart.
 
-**Text for infobox**
-
-    How old are on average the suggestions currently unreviewed.
+**Text for infobox**: How old are on average the suggestions currently unreviewed.
 
 ## Time to review suggestions
 
 A line chart displaying two separate data points over the last 12 months:
-* *Monthly reviews*: the average age of suggestions reviewed during a specific month.
-* *Average 12 months*: the average age of suggestions reviewed in the 12 months before the month currently examined.
+* *Age of reviewed suggestions*: average age of suggestions reviewed during the specific month.
+* *12-month average*: average age of suggestions reviewed in the 12 months before the specific month.
 
 In both cases, data is determined by looking at translations rejected or approved, ignoring self-approved or self-rejected translations.
 
-**Text for infobox**
-
-    The average number of days a contributor can expect to wait for their translation suggestions to be reviewed by managers and translators.
+**Text for infobox**: The average number of days a contributor can expect to wait for their translation suggestions to be reviewed by managers and translators.
 
 ## Translation activity
 
 A combination of two charts:
 1. A line chart showing overall completion of team projects over time.
-1. A column chart showing translation submissions over time in a stack of two columns - human translations and machinery translations (submitted as unchanged copies of suggestions from Machinery). Translation submissions also include imported translation by sync. New source string additions are plotted in a separate column, which is hidden by default.
+2. A column chart showing translation submissions over time in a stack of two columns - human translations and machinery translations (submitted as unchanged copies of suggestions from Machinery). Translation submissions also include imported translation by sync. New source string additions are plotted in a separate column, which is hidden by default.
 
 Data is available for each day, but aggregated by month in the chart.
 
@@ -70,7 +65,7 @@ A tooltip showing the exact data and ratios at a given month appears when hoveri
 
 A combination of two charts:
 1. A line chart showing the number of unreviewed suggestions of the team over time.
-1. A column chart showing review actions over time in a stack of three columns - peer-approvals, self-approvals (translation approvals by their authors, both at the time of submission or later) and rejections. Approvals and rejections performed by sync are excluded. New suggestion submissions are plotted in a separate column, which is hidden by default.
+2. A column chart showing review actions over time in a stack of three columns - peer-approvals, self-approvals (translation approvals by their authors, both at the time of submission or later) and rejections. Approvals and rejections performed by sync are excluded. New suggestion submissions are plotted in a separate column, which is hidden by default.
 
 Data is available for each day, but aggregated by month in the chart.
 
