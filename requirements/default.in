@@ -46,7 +46,7 @@ python-levenshtein==0.12.2
 pytz==2019.3
 raygun4py==4.3.0
 scandir==1.5
-translate-toolkit==2.4.0
+translate-toolkit==3.3.2
 whitenoise==5.2.0
 wsgi-sslify==1.0.1
 
