@@ -57,7 +57,7 @@ The two bullett points above should be added to the infobar to describe the plot
 
 A combination of two charts:
 1. A line chart showing overall completion of team projects over time.
-2. A column chart showing translation submissions over time in a stack of two columns - human translations and machinery translations (submitted as unchanged copies of suggestions from Machinery). Translation submissions also include imported translation by sync. New source string additions are plotted in a separate column, which is hidden by default.
+1. A column chart showing translation submissions over time in a stack of two columns - human translations and machinery translations (submitted as unchanged copies of suggestions from Machinery). Translation submissions also include imported translation by sync. New source string additions are plotted in a separate column, which is hidden by default.
 
 Data is available for each day, but aggregated by month in the chart.
 
@@ -67,7 +67,7 @@ A tooltip showing the exact data and ratios at a given month appears when hoveri
 
 A combination of two charts:
 1. A line chart showing the number of unreviewed suggestions of the team over time.
-2. A column chart showing review actions over time in a stack of three columns - peer-approvals, self-approvals (translation approvals by their authors, both at the time of submission or later) and rejections. Approvals and rejections performed by sync are excluded. New suggestion submissions are plotted in a separate column, which is hidden by default.
+1. A column chart showing review actions over time in a stack of three columns - peer-approvals, self-approvals (translation approvals by their authors, both at the time of submission or later) and rejections. Approvals and rejections performed by sync are excluded. New suggestion submissions are plotted in a separate column, which is hidden by default.
 
 Data is available for each day, but aggregated by month in the chart.
 
