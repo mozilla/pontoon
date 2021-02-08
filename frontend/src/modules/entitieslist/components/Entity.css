@@ -102,3 +102,17 @@
 .entity.warnings .status:before {
     color: #ffa10f;
 }
+
+.entity .sibling-entities {
+    color: #aaa;
+    left: 19px;
+    top: 39px;
+    position: absolute;
+    margin: -13px -13px -13px -16px;
+    padding: 13px 13px 13px 16px;
+    font-size: 16px;
+}
+
+.entity .sibling-entities:hover {
+    color: #7bc876;
+}

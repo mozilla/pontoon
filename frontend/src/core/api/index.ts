@@ -22,6 +22,7 @@ export type {
     OtherLocaleTranslations,
     OtherLocaleTranslation,
     SourceType,
+    EntitySiblings,
 } from './types';
 
 export default {

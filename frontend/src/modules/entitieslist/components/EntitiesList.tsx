@@ -222,6 +222,16 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
+    getSiblingEntities = (entity: number) => {
+        const entityIds = this.props.entities.entities.map(
+            (entity) => entity.pk,
+        );
+        const { dispatch, locale } = this.props;
+        dispatch(
+            entities.actions.getSiblingEntities(entity, locale.code, entityIds),
+        );
+    };
+
     toggleForBatchEditing: (
         entity: number,
         shiftKeyPressed: boolean,
@@ -330,7 +340,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     render(): React.ReactElement<'div'> {
         const props = this.props;
-        const search = props.parameters.search;
+        const parameters = props.parameters;
 
         // InfiniteScroll will display information about loading during the request
         const hasMore = props.entities.fetching || props.entities.hasMore;
@@ -371,10 +381,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                         }
                                         isTranslator={props.isTranslator}
                                         locale={props.locale}
-                                        search={search}
                                         selected={selected}
                                         selectEntity={this.selectEntity}
                                         key={i}
+                                        getSiblingEntities={
+                                            this.getSiblingEntities
+                                        }
+                                        parameters={parameters}
                                     />
                                 );
                             })}

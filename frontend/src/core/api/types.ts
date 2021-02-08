@@ -74,6 +74,14 @@ export type Entity = {
 };
 
 /**
+ * Lists of preceding and succeeding entities
+ */
+export type EntitySiblings = {
+    readonly preceding: Array<Entity>,
+    readonly succeeding: Array<Entity>,
+};
+
+/**
  * List of Entity objects.
  */
 export type Entities = Array<Entity>;
@@ -111,6 +119,7 @@ export type SourceType =
     | 'systran-translate'
     | 'microsoft-terminology'
     | 'caighdean';
+
 export type MachineryTranslation = {
     sources: Array<SourceType>;
     itemCount?: number;
