@@ -80,8 +80,8 @@ The following is the `browser support matrix of Pontoon <https://browserl.ist/?q
 Code style
 ==========
 
-We use code formatters so that we cannot fight over code style.
-You are free to write code however you like, because in the end formatter is the one
+We use code formatters so that we do not have to fight over code style.
+You are free to write code however you like, because in the end the formatter is the one
 that will format it. We thus don't need to pay attention to style during
 code reviews, and are free from those never-ending code style discussions.
 
@@ -144,7 +144,7 @@ Additioanally, there are linting rules that are defined in our
     $ make lint-frontend
 
 In the rare case when you cannot fix an eslint error, use ``// eslint-disable`` to make the linter
-ignore that error. Note that in most cases, it is better to fix the issues than ignoring them.
+ignore that error. Note that in most cases, it is better to fix the issues than ignore them.
 
 For more specifics about the ```frontend`` folder, look at the README.md file there.
 
