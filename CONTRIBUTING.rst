@@ -77,6 +77,23 @@ The following is the `browser support matrix of Pontoon <https://browserl.ist/?q
     iOS >= 10.3
 
 
+Code style
+==========
+
+We use code formatters so that we cannot fight over code style.
+You are free to write code however you like, because in the end formatter is the one
+that will format it. We thus don't need to pay attention to style during
+code reviews, and are free from those never-ending code style discussions.
+
+To format the Python and the JavaScript code at once you can use:
+
+.. code-block:: shell
+
+    $ make format
+
+Code formatting is explained in more detail in the following sections.
+
+
 Python code conventions
 =======================
 
@@ -93,13 +110,6 @@ Alternatively, you can format your code using:
 
     $ make black
 
-.. note::
-
-    Using black on all Python code means that we cannot fight over code style anymore.
-    You are free to write code however you like, because in the end black is the one
-    that will format it. We thus don't need to pay any more attention to style during
-    code reviews, and are free from those never-ending code style discussions.
-
 Additionally, we use a linter to verify that imports are correct. You can run it with:
 
 .. code-block:: shell
@@ -113,10 +123,7 @@ ignore that error. Note that in most cases, it is better to fix the issues than 
 Javascript code conventions
 ===========================
 
-Outside the ``frontend`` folder, we don't follow strict rules other than using
-2-space indentation.
-
-Inside ``frontend`` (which contains the Translate app), our code is formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
+Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
 We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
@@ -130,24 +137,16 @@ Alternatively, you can format your code using:
     $ make prettier 
 
 Additioanally, there are linting rules that are defined in our
-``.eslintrc.js`` file.
-
-To run the linter, do:
+``.eslintrc.js`` file. To run the linter, do:
 
 .. code-block:: shell
 
     $ make lint-frontend
 
+In the rare case when you cannot fix an eslint error, use ``// eslint-disable`` to make the linter
+ignore that error. Note that in most cases, it is better to fix the issues than ignoring them.
+
 For more specifics about the ```frontend`` folder, look at the README.md file there.
-
-
-.. A note about formatting...::
-
-    To format both the frontend and Python code at once you can use:
-
-    .. code-block:: shell
-
-        $ make format
 
 
 Git conventions
