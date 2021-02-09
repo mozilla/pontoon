@@ -28,7 +28,12 @@ export function _isTranslator(
         return true;
     }
 
-    if (user.translatorForProjects.hasOwnProperty(localeProject)) {
+    if (
+        Object.prototype.hasOwnProperty.call(
+            user.translatorForProjects,
+            localeProject,
+        )
+    ) {
         return user.translatorForProjects[localeProject];
     }
 
