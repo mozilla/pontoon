@@ -32,7 +32,7 @@ export default function MicrosoftTerminology(props: Props) {
                     }
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <span>MICROSOFT</span>
                 </a>

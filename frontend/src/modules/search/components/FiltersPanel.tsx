@@ -406,11 +406,7 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         return this.props.update();
     };
 
-    toggleFilter = (
-        filter: string,
-        type: string,
-        event: React.MouseEvent<>,
-    ) => {
+    toggleFilter = (filter: string, type: string, event: React.MouseEvent) => {
         if (filter === 'all') {
             return;
         }

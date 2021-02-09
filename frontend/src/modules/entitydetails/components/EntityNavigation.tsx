@@ -23,7 +23,7 @@ export default class EntityNavigation extends React.Component<Props> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    handleShortcuts = (event: React.KeyboardEvent<>) => {
+    handleShortcuts = (event: React.KeyboardEvent) => {
         const key = event.keyCode;
 
         // On Alt + Up, move to the previous entity.

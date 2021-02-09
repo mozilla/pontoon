@@ -138,14 +138,14 @@ export class TranslationBase extends React.Component<InternalProps, State> {
                 title={this.getApprovalTitle()}
                 target='_blank'
                 rel='noopener noreferrer'
-                onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
                 {translation.user}
             </a>
         );
     }
 
-    toggleComments = (event: React.MouseEvent<>) => {
+    toggleComments = (event: React.MouseEvent) => {
         event.stopPropagation();
         this.setState((state) => {
             return { areCommentsVisible: !state.areCommentsVisible };
@@ -192,7 +192,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         }
     }
 
-    toggleDiff = (event: React.MouseEvent<>) => {
+    toggleDiff = (event: React.MouseEvent) => {
         event.stopPropagation();
         this.setState((state) => {
             return { isDiffVisible: !state.isDiffVisible };

@@ -272,7 +272,7 @@ export default function AddComment(props: Props) {
         }
     };
 
-    const handleEditorKeyDown = (event: React.KeyboardEvent<>) => {
+    const handleEditorKeyDown = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             submitComment();

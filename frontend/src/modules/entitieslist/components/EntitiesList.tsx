@@ -122,7 +122,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    handleShortcuts = (event: React.KeyboardEvent<>) => {
+    handleShortcuts = (event: React.KeyboardEvent) => {
         const key = event.keyCode;
 
         // On Ctrl + Shift + A, select all entities for batch editing.

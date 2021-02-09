@@ -17,7 +17,7 @@ export default function CaighdeanTranslation() {
                     title='Visit Caighdean Machine Translation'
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <span>CAIGHDEAN</span>
                 </a>

@@ -25,7 +25,7 @@ type Props = {
     toggleFilter: (
         filter: string,
         type: string,
-        event: React.MouseEvent<>,
+        event: React.MouseEvent,
     ) => void;
     updateTimeRange: (filter: string) => void;
 };
@@ -229,7 +229,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    toggleEditingTimeRange = (event: React.MouseEvent<>) => {
+    toggleEditingTimeRange = (event: React.MouseEvent) => {
         const { chartFrom, chartTo, visible } = this.state;
 
         // After Save Range is clicked...
@@ -257,7 +257,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    toggleTimeRangeFilter = (event: React.MouseEvent<>) => {
+    toggleTimeRangeFilter = (event: React.MouseEvent) => {
         const { chartFrom, chartTo, visible } = this.state;
 
         if (visible) {

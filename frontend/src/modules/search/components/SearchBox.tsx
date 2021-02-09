@@ -329,7 +329,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
     };
 
-    handleShortcuts = (event: React.KeyboardEvent<>) => {
+    handleShortcuts = (event: React.KeyboardEvent) => {
         const key = event.keyCode;
 
         // On Ctrl + Shift + F, set focus on the search input.

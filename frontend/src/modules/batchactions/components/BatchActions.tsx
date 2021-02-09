@@ -45,7 +45,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    handleShortcuts = (event: React.KeyboardEvent<>) => {
+    handleShortcuts = (event: React.KeyboardEvent) => {
         const key = event.keyCode;
 
         // On Esc, quit batch actions
@@ -162,7 +162,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    submitReplaceForm = (event: React.KeyboardEvent<>) => {
+    submitReplaceForm = (event: React.KeyboardEvent) => {
         event.preventDefault();
         this.replaceAll();
     };

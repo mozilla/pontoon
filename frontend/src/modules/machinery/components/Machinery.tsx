@@ -52,7 +52,7 @@ export default class Machinery extends React.Component<Props> {
         this.props.searchMachinery('');
     };
 
-    submitForm = (event: React.KeyboardEvent<>) => {
+    submitForm = (event: React.KeyboardEvent) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
     };

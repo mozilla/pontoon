@@ -21,7 +21,7 @@ export default function TranslationMemory(props: Props) {
                     title='Pontoon Homepage'
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <Localized id='machinery-TranslationMemory--translation-memory'>
                         <span>TRANSLATION MEMORY</span>

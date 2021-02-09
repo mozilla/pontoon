@@ -98,7 +98,7 @@ export default function Translation(props: Props) {
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 title='Open string in { $locale } ({ $code })'
-                                onClick={(e: React.MouseEvent<>) =>
+                                onClick={(e: React.MouseEvent) =>
                                     e.stopPropagation()
                                 }
                             >

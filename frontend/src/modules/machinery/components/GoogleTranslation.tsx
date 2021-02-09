@@ -17,7 +17,7 @@ export default function GoogleTranslation() {
                     title='Visit Google Translate'
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <span>GOOGLE TRANSLATE</span>
                 </a>

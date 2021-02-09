@@ -17,7 +17,7 @@ export default function UserAvatar(props: Props) {
                 title={!title ? null : title}
                 target='_blank'
                 rel='noopener noreferrer'
-                onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
                 <Localized id='user-UserAvatar--alt-text' attrs={{ alt: true }}>
                     <img

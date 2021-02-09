@@ -44,7 +44,7 @@ export default function Comment(props: Props) {
                             href={`/contributors/${comment.username}`}
                             target='_blank'
                             rel='noopener noreferrer'
-                            onClick={(e: React.MouseEvent<>) =>
+                            onClick={(e: React.MouseEvent) =>
                                 e.stopPropagation()
                             }
                         >

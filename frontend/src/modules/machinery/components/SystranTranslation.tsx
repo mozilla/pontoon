@@ -17,7 +17,7 @@ export default function SystranTranslation() {
                     title='Visit Systran Translate'
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <span>SYSTRAN TRANSLATE</span>
                 </a>

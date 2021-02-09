@@ -17,7 +17,7 @@ export default function MicrosoftTranslation() {
                     title='Visit Microsoft Translator'
                     target='_blank'
                     rel='noopener noreferrer'
-                    onClick={(e: React.MouseEvent<>) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                     <span>MICROSOFT TRANSLATOR</span>
                 </a>
