@@ -6,8 +6,8 @@ export { default as SignInLink } from './components/SignInLink';
 export { default as UserControls } from './components/UserControls';
 export { default as UserAvatar } from './components/UserAvatar';
 
-export { Settings } from './actions';
-export { SettingsState, UserState, Notification } from './reducer';
+export type { Settings } from './actions';
+export type { SettingsState, UserState, Notification } from './reducer';
 
 // Name of this module.
 // Used as the key to store this module's reducer.

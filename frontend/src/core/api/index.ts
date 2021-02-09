@@ -9,7 +9,7 @@ import TranslationAPI from './translation';
 import UserAPI from './user';
 import CommentAPI from './comment';
 
-export {
+export type {
     Entities,
     Entity,
     EntityTranslation,

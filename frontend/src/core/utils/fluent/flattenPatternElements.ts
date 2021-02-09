@@ -1,6 +1,6 @@
 import { TextElement, serializeExpression } from '@fluent/syntax';
 
-import { PatternElement } from './types';
+import type { PatternElement } from './types';
 
 /**
  * Return a flattened list of Pattern elements.

@@ -20,8 +20,8 @@ export { default as useUpdateTranslation } from './hooks/useUpdateTranslation';
 export { default as useUpdateTranslationStatus } from './hooks/useUpdateTranslationStatus';
 export { default as useUpdateUnsavedChanges } from './hooks/useUpdateUnsavedChanges';
 
-export { EditorState } from './reducer';
-export { Translation } from './actions';
+export type { EditorState } from './reducer';
+export type { Translation } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.

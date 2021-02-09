@@ -1,6 +1,6 @@
 import flattenPatternElements from './flattenPatternElements';
 
-import { FluentMessage } from './types';
+import type { FluentMessage } from './types';
 
 /**
  * Return a flattened Fluent message.

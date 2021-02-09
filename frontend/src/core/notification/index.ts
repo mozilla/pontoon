@@ -4,7 +4,7 @@ export { default as messages } from './messages';
 
 export { default as NotificationPanel } from './components/NotificationPanel';
 
-export { NotificationState } from './reducer';
+export type { NotificationState } from './reducer';
 
 // Name of this module.
 // Used as the key to store this module's reducer.

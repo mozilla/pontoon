@@ -4,7 +4,7 @@ export { default as selectors } from './selectors';
 
 export { default as PluralSelector } from './components/PluralSelector';
 
-export { PluralState } from './reducer';
+export type { PluralState } from './reducer';
 
 // List of available CLDR plural categories.
 export const CLDR_PLURALS: Array<string> = [
