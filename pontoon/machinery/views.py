@@ -134,7 +134,10 @@ def microsoft_translator(request):
         )
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(ms_translator_code=locale_code).exists():
+    if (
+        not locale_code
+        or not Locale.objects.filter(ms_translator_code=locale_code).exists()
+    ):
         return JsonResponse(
             {
                 "status": False,
@@ -191,7 +194,10 @@ def google_translate(request):
         )
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(google_translate_code=locale_code).exists():
+    if (
+        not locale_code
+        or not Locale.objects.filter(google_translate_code=locale_code).exists()
+    ):
         return JsonResponse(
             {
                 "status": False,
@@ -229,9 +235,10 @@ def systran_translate(request):
         )
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    try:
-        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
-    except Locale.DoesNotExist:
+    if (
+        not locale_code
+        or not Locale.objects.filter(systran_translate_code=locale_code).exists()
+    ):
         return JsonResponse(
             {
                 "status": False,
@@ -239,6 +246,8 @@ def systran_translate(request):
             },
             status=404,
         )
+
+    locale = Locale.objects.get(systran_translate_code=locale_code)
 
     url = (
         "https://translationpartners-spn9.mysystran.com:8904/translation/text/translate"
@@ -327,7 +336,10 @@ def microsoft_terminology(request):
         )
 
     # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(ms_terminology_code=locale_code).exists():
+    if (
+        not locale_code
+        or not Locale.objects.filter(ms_terminology_code=locale_code).exists()
+    ):
         return JsonResponse(
             {
                 "status": False,
