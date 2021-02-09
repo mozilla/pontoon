@@ -1,6 +1,6 @@
-- Feature Name: Community Health Dashboard
-- Created: 2020-10-23
-- Associated Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1672966
+* Feature Name: Community Health Dashboard
+* Created: 2020-10-23
+* Associated Bugs: [1672966](https://bugzilla.mozilla.org/show_bug.cgi?id=1672966), [1687529](https://bugzilla.mozilla.org/show_bug.cgi?id=1687529)
 
 # Summary
 
@@ -33,11 +33,25 @@ Active users within a selected time frame are defined like this:
 
 Note that only users included in the all users counts can be active users. If a project contact person rejects a suggestion or submits a translation, it doesn't count as an active reviewer or contributor of the team.
 
-## Unreviewed suggestion lifespan
+## Age of unreviewed suggestions
 
-A line chart showing the average age of the unreviewed suggestions in a particular month for a period of last 12 months.
+A line chart showing the average age of suggestions still unreviewed in a particular month, over the last 12 months.
 
-Data is available for each day, but aggregated by month in the chart.
+Data is available for each day, but aggregated by month in the chart. A tooltip showing the exact data at a given month appears when hovering over a chart.
+
+**Text for infobox**: How old are on average the suggestions currently unreviewed.
+
+## Time to review suggestions
+
+A line chart displaying two separate data points over the last 12 months:
+* *Age of reviewed suggestions*: average age of suggestions reviewed during the specific month.
+* *12-month average*: average age of suggestions reviewed in the 12 months before the specific month.
+
+In both cases, data is determined by looking at translations rejected or approved, ignoring self-approved or self-rejected translations.
+
+**Text for infobox**: The average number of days a contributor can expect to wait for their translation suggestions to be reviewed by managers and translators.
+
+The two bullet points above should be added to the infobar to describe the plotted data points.
 
 A tooltip showing the exact data at a given month appears when hovering over a chart.
 
