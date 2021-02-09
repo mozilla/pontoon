@@ -4,10 +4,8 @@ import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 import { withSearch } from 'modules/search';
 
-// $FLOW_IGNORE: I just can't get HOC working with Flow.
 const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
-// $FLOW_IGNORE: I just can't get HOC working with Flow.
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {

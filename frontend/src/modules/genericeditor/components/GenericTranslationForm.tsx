@@ -88,7 +88,7 @@ export default function GenericTranslationForm(props: Props) {
                     ? null
                     : 'Type translation and press Enter to save'
             }
-            readOnly={isReadOnlyEditor} // $FLOW_IGNORE: No idea why this is erroring out.
+            readOnly={isReadOnlyEditor}
             ref={textareaRef}
             value={translation}
             onKeyDown={handleShortcuts}

@@ -28,6 +28,6 @@ ReactDOM.render(
                 <App />
             </AppLocalizationProvider>
         </ConnectedRouter>
-    </Provider>, // $FLOW_IGNORE: we know that the 'root' element exists.
+    </Provider>,
     document.getElementById('root'),
 );

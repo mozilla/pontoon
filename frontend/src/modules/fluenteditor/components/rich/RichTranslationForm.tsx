@@ -219,7 +219,7 @@ export default function RichTranslationForm(props: Props) {
         }
 
         updateRichTranslation(
-            event.currentTarget.textContent, // $FLOW_IGNORE: Bug in Flow, again.
+            event.currentTarget.textContent,
             accessKeyElementIdRef.current.split('-'),
         );
     }

@@ -77,23 +77,15 @@ export default class Metadata extends React.Component<Props, State> {
     };
 
     handleClickOnPlaceable = (e: React.MouseEvent<HTMLParagraphElement>) => {
-        // Flow requires that we use `e.currentTarget` instead of `e.target`.
-        // However in this case, we do want to use that, so we're ignoring all
-        // errors Flow throws there.
-
-        // $FLOW_IGNORE
         if (e.target && e.target.classList.contains('placeable')) {
             if (this.props.isReadOnlyEditor) {
                 return;
             }
-            // $FLOW_IGNORE
             if (e.target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
-                    // $FLOW_IGNORE
                     e.target.dataset['match'],
                 );
-            } // $FLOW_IGNORE
-            else if (e.target.childNodes.length) {
+            } else if (e.target.childNodes.length) {
                 this.props.addTextToEditorTranslation(
                     e.target.childNodes[0].data,
                 );
@@ -102,7 +94,6 @@ export default class Metadata extends React.Component<Props, State> {
 
         // Handle click on Term
 
-        // $FLOW_IGNORE
         const markedTerm = e.target.dataset['term'];
         if (e.target && markedTerm) {
             const popupTerms = this.props.terms.terms.filter(

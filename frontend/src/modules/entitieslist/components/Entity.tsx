@@ -82,10 +82,6 @@ export default class Entity extends React.Component<Props> {
     }
 
     selectEntity = (e: React.MouseEvent<HTMLLIElement>) => {
-        // Flow requires that we use `e.currentTarget` instead of `e.target`.
-        // However in this case, we do want to use that, so I'm ignoring all
-        // errors Flow throws there.
-        // $FLOW_IGNORE
         if (e.target && e.target.classList.contains('status')) {
             return null;
         }

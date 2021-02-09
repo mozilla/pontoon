@@ -129,7 +129,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     };
 
     componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
         this.updateFiltersFromURLParams();
 
@@ -161,7 +160,6 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 

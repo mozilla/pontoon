@@ -57,14 +57,12 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 
     componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
 
         this.selectFirstEntityIfNoneSelected();
     }
 
     componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
