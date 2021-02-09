@@ -1,7 +1,11 @@
+/* eslint-env node */
 module.exports = {
+    root: true,
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        // TODO: enable recommended rules
+        // "plugin:@typescript-eslint/recommended",
     ],
     env: {
         es6: true,
