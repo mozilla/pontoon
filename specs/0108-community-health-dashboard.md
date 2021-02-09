@@ -33,7 +33,7 @@ Active users within a selected time frame are defined like this:
 
 Note that only users included in the all users counts can be active users. If a project contact person rejects a suggestion or submits a translation, it doesn't count as an active reviewer or contributor of the team.
 
-## Average age of currently unreviewed suggestions
+## Age of unreviewed suggestions
 
 A line chart showing the average age of suggestions still unreviewed in a particular month, over the last 12 months.
 
