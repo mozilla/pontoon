@@ -136,7 +136,7 @@ Alternatively, you can format your code using:
 
     $ make prettier 
 
-Additioanally, there are linting rules that are defined in our
+Additionally, there are linting rules that are defined in our
 ``.eslintrc.js`` file. To run the linter, do:
 
 .. code-block:: shell
