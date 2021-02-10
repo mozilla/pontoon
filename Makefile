@@ -117,4 +117,6 @@ sync-projects:
 	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)
 
 requirements:
-	"${DC}" run --rm webapp //app/docker/compile_requirements.sh
+	# Pass --upgrade to upgrade all dependencies
+	# The arguments are passed through to pip-compile
+	"${DC}" run --rm webapp //app/docker/compile_requirements.sh ${opts}
