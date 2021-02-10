@@ -52,8 +52,10 @@ export default function Term(props: Props) {
         isReadOnlyEditor || !term.translation ? 'cannot-copy' : '';
 
     return (
+        <Localized id='terms-Translation--copy' attrs={{ title: true }}>
         <li
             className={`term ${cannotCopy}`}
+            title='Copy Into Translation'
             onClick={() => copyTermIntoEditor(term.translation)}
         >
             <header>
@@ -80,5 +82,6 @@ export default function Term(props: Props) {
                 )}
             </div>
         </li>
+        </Localized>
     );
 }

@@ -459,6 +459,10 @@ machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
         Visit Microsoft Terminology Service API.
         © 2018 Microsoft Corporation. All rights reserved.
 
+## Machinery Microsoft Terminology
+## Shows the translation source from Microsoft Terminology.
+terms-MicrosoftTerminology--visit-microsoft = MICROSOFT
+    .title = Copy Into Translation
 
 ## Machinery Translation
 ## Shows a specific translation from machinery.
