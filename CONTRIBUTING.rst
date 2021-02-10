@@ -231,6 +231,12 @@ Once you are done adding, removing or updating requirements, rebuild your docker
 
 If there are problems, it'll tell you.
 
+To upgrade existing dependencies within the given constraints of the input
+files, you can pass options through to the ``pip-compile`` invocations, i.e.
+
+.. code-block:: shell
+
+    $ make requirements opts=--upgrade
 
 Documentation
 =============
