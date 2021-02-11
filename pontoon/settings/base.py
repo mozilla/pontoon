@@ -476,6 +476,7 @@ PIPELINE = {
     "STYLESHEETS": PIPELINE_CSS,
     "JAVASCRIPT": PIPELINE_JS,
     "JS_COMPRESSOR": "pipeline.compressors.terser.TerserCompressor",
+    "CSS_COMPRESSOR": "pipeline.compressors.terser.NoopCompressor",
     "YUGLIFY_BINARY": path(
         os.environ.get("YUGLIFY_BINARY", "node_modules/.bin/yuglify")
     ),
