@@ -2,7 +2,6 @@
 
 :root {
     --content-width: 980px;
-    --header-height: 60px;
 }
 
 body > header {
@@ -178,7 +177,7 @@ nav#sections ul li:hover a span {
 }
 
 #edit-homepage .select {
-    top: calc(var(--header-height) + 10px);
+    top: 70px;
 }
 
 #edit-homepage .button {
