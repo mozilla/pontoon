@@ -27,7 +27,7 @@
     "react": "16.13.1",
     "react-content-marker": "1.1.3",
     "react-dom": "16.13.1",
-    "react-infinite-scroller": "1.2.4",
+    "react-infinite-scroller": "https://github.com/abowler2/react-infinite-scroller.git",
     "react-linkify": "0.2.2",
     "react-redux": "7.1.3",
     "react-router": "5.2.0",
