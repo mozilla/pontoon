@@ -27,12 +27,10 @@ type Props = {|
  */
 export default class Machinery extends React.Component<Props> {
     searchInput: { current: any };
-    infiniteScrollRef: { current: any };
 
     constructor(props: Props) {
         super(props);
         this.searchInput = React.createRef();
-        this.infiniteScrollRef = React.createRef();
     }
 
     componentDidMount() {
@@ -55,10 +53,6 @@ export default class Machinery extends React.Component<Props> {
     }
 
     handleResetSearch = () => {
-        const scrollRef = this.infiniteScrollRef.current;
-        if (scrollRef) {
-            scrollRef.resetPage();
-        }
         this.props.searchMachinery('');
     };
 
@@ -134,7 +128,6 @@ export default class Machinery extends React.Component<Props> {
                         })}
                     </ul>
                     <InfiniteScroll
-                        scrollref={this.infiniteScrollRef}
                         pageStart={1}
                         loadMore={this.getMoreResults}
                         hasMore={hasMore}
