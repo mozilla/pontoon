@@ -9364,9 +9364,10 @@ react-focus-lock@2.0.5:
     react-clientside-effect "^1.2.2"
     use-sidecar "^1.0.1"
 
-"react-infinite-scroller@https://github.com/abowler2/react-infinite-scroller.git":
+react-infinite-scroller@1.2.4:
   version "1.2.4"
-  resolved "https://github.com/abowler2/react-infinite-scroller.git#329827e4101c9917e3cd3661022ea8799491b535"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.4.tgz#f67eaec4940a4ce6417bebdd6e3433bfc38826e9"
+  integrity sha512-/oOa0QhZjXPqaD6sictN2edFMsd3kkMiE19Vcz5JDgHpzEJVqYcmq+V3mkwO88087kvKGe1URNksHEOt839Ubw==
   dependencies:
     prop-types "^15.5.8"
 
