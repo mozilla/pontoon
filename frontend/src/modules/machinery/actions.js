@@ -70,13 +70,17 @@ export function get(
 
         // Only make requests to paid services if user is authenticated
         if (isAuthenticated) {
-            api.machinery
-                .getGoogleTranslation(source, locale)
-                .then((results) => dispatch(addTranslations(results)));
+            if (locale.googleTranslateCode) {
+                api.machinery
+                    .getGoogleTranslation(source, locale)
+                    .then((results) => dispatch(addTranslations(results)));
+            }
 
-            api.machinery
-                .getMicrosoftTranslation(source, locale)
-                .then((results) => dispatch(addTranslations(results)));
+            if (locale.msTranslatorCode) {
+                api.machinery
+                    .getMicrosoftTranslation(source, locale)
+                    .then((results) => dispatch(addTranslations(results)));
+            }
 
             if (locale.systranTranslateCode) {
                 api.machinery
