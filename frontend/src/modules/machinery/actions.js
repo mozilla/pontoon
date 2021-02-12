@@ -123,41 +123,41 @@ export function get(
         // Abort all previously running requests.
         await api.machinery.abort();
 
-        api.machinery
-            .getTranslationMemory(source, locale, pk)
-            .then((results) => dispatch(addTranslations(results)));
+        if (pk) {
+            api.machinery
+                .getTranslationMemory(source, locale, pk)
+                .then((results) => dispatch(addTranslations(results)));
+        }
 
-        // Only make requests to paid services if user is authenticated
-        if (isAuthenticated) {
-            if (locale.googleTranslateCode) {
+        if (!page) {
+            // Only make requests to paid services if user is authenticated
+            if (isAuthenticated) {
                 api.machinery
                     .getGoogleTranslation(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
-            }
 
-            if (locale.msTranslatorCode) {
                 api.machinery
                     .getMicrosoftTranslation(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
+
+                if (locale.systranTranslateCode) {
+                    api.machinery
+                        .getSystranTranslation(source, locale)
+                        .then((results) => dispatch(addTranslations(results)));
+                }
             }
 
-            if (locale.systranTranslateCode) {
+            if (locale.msTerminologyCode) {
                 api.machinery
-                    .getSystranTranslation(source, locale)
+                    .getMicrosoftTerminology(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
             }
-        }
 
-        if (locale.msTerminologyCode) {
-            api.machinery
-                .getMicrosoftTerminology(source, locale)
-                .then((results) => dispatch(addTranslations(results)));
-        }
-
-        if (locale.code === 'ga-IE' && pk) {
-            api.machinery
-                .getCaighdeanTranslation(pk)
-                .then((results) => dispatch(addTranslations(results)));
+            if (locale.code === 'ga-IE' && pk) {
+                api.machinery
+                    .getCaighdeanTranslation(pk)
+                    .then((results) => dispatch(addTranslations(results)));
+            }
         }
     };
 }

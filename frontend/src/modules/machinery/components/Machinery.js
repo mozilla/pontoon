@@ -1,13 +1,11 @@
 /* @flow */
 
 import React from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
 import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 
 import Translation from './Translation';
-import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
 import type { MachineryState } from '..';
@@ -18,6 +16,10 @@ type Props = {|
     searchMachinery: (string, ?number) => void,
 |};
 
+type State = {|
+    page: number,
+|};
+
 /**
  * Show translations from machines.
  *
@@ -25,12 +27,13 @@ type Props = {|
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export default class Machinery extends React.Component<Props> {
+export default class Machinery extends React.Component<Props, State> {
     searchInput: { current: any };
 
     constructor(props: Props) {
         super(props);
         this.searchInput = React.createRef();
+        this.state = { page: 1 };
     }
 
     componentDidMount() {
@@ -49,11 +52,13 @@ export default class Machinery extends React.Component<Props> {
         // Clear search field after switching to a different entity
         if (machinery.entity && !prevProps.machinery.entity) {
             this.searchInput.current.value = '';
+            this.setState({ page: 1 });
         }
     }
 
     handleResetSearch = () => {
         this.props.searchMachinery('');
+        this.setState({ page: 1 });
     };
 
     submitForm = (event: SyntheticKeyboardEvent<>) => {
@@ -61,18 +66,11 @@ export default class Machinery extends React.Component<Props> {
         this.props.searchMachinery(this.searchInput.current.value);
     };
 
-    getMoreResults = (page: number) => {
-        const { machinery } = this.props;
+    getMoreResults = () => {
+        const nextPage = this.state.page + 1;
+        this.setState({ page: nextPage });
 
-        // Temporary fix for the infinite number of requests from InfiniteScroller
-        // More info at:
-        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
-        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
-        if (machinery.fetching) {
-            return;
-        }
-
-        this.props.searchMachinery(this.searchInput.current.value, page);
+        this.props.searchMachinery(this.searchInput.current.value, nextPage);
     };
 
     render() {
@@ -127,32 +125,28 @@ export default class Machinery extends React.Component<Props> {
                             );
                         })}
                     </ul>
-                    <InfiniteScroll
-                        pageStart={1}
-                        loadMore={this.getMoreResults}
-                        hasMore={hasMore}
-                        loader={
-                            <SkeletonLoader
-                                key={0}
-                                items={machinery.translations}
-                            />
-                        }
-                        useWindow={false}
-                        threshold={300}
-                    >
-                        <ul>
-                            {machinery.searchResults.map((result, index) => {
-                                return (
-                                    <Translation
-                                        index={index}
-                                        sourceString={machinery.sourceString}
-                                        translation={result}
-                                        key={index}
-                                    />
-                                );
-                            })}
-                        </ul>
-                    </InfiniteScroll>
+                    <ul>
+                        {machinery.searchResults.map((result, index) => {
+                            return (
+                                <Translation
+                                    index={index}
+                                    sourceString={machinery.sourceString}
+                                    translation={result}
+                                    key={index}
+                                />
+                            );
+                        })}
+                        {hasMore && (
+                            <div className='load-more-container'>
+                                <button
+                                    className='load-more-button'
+                                    onClick={this.getMoreResults}
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        )}
+                    </ul>
                 </div>
             </section>
         );
