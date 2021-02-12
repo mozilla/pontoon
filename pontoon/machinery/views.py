@@ -180,17 +180,17 @@ def systran_translate(request):
         if not locale_code:
             raise ValueError("Locale code is empty")
 
+        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
+
         api_key = settings.SYSTRAN_TRANSLATE_API_KEY
         if not api_key:
             raise ValueError("Missing api key")
 
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
         )
-
-    locale = Locale.objects.get(systran_translate_code=locale_code)
 
     url = (
         "https://translationpartners-spn9.mysystran.com:8904/translation/text/translate"

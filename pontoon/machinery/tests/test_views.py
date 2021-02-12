@@ -170,7 +170,7 @@ def test_view_caighdean_bad(client, entity_a):
     assert response.get("Content-Type") == "application/json"
     assert (
         json.loads(response.content)["message"]
-        == "Not Found: Entity matching query does not exist."
+        == "Bad Request: Entity matching query does not exist."
     )
 
     translator = caighdean.Translator()
