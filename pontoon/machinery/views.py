@@ -119,7 +119,11 @@ def microsoft_translator(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
@@ -131,16 +135,6 @@ def microsoft_translator(request):
         log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
         return JsonResponse(
             {"status": False, "message": "Bad Request: Missing api key."}, status=400
-        )
-
-    # Validate if locale exists
-    if not locale_code:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
@@ -184,20 +178,14 @@ def google_translate(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate if locale exists
-    if not locale_code:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     data = get_google_translate_data(text, locale_code)
@@ -214,7 +202,11 @@ def systran_translate(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
@@ -226,16 +218,6 @@ def systran_translate(request):
         log.error("SYSTRAN_TRANSLATE_API_KEY not set")
         return JsonResponse(
             {"status": False, "message": "Bad Request: Missing api key."}, status=400
-        )
-
-    # Validate if locale exists
-    if not locale_code:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     locale = Locale.objects.get(systran_translate_code=locale_code)
@@ -320,20 +302,14 @@ def microsoft_terminology(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate if locale exists
-    if not locale_code:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     obj = {}
