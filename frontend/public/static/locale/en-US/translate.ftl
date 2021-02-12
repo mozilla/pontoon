@@ -630,6 +630,9 @@ search-TimeRangeFilter--save-range = SAVE RANGE
 ## Term
 ## Shows term entry with its metadata
 
+term-Term--copy = 
+    .title = Copy Into Translation
+
 term-Term--for-example = E.G.
 
 
