@@ -166,7 +166,7 @@ def test_view_caighdean_bad(client, entity_a):
 
     maxid = Entity.objects.values_list("id", flat=True).order_by("-id").first()
     response = client.get(url, dict(id=maxid + 1))
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.get("Content-Type") == "application/json"
     assert (
         json.loads(response.content)["message"]

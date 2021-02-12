@@ -50,30 +50,16 @@ def translation_memory(request):
     """Get translations from internal translations memory."""
     try:
         text = request.GET["text"]
-        locale = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
         pk = request.GET.get("pk", None)
-    except MultiValueDictKeyError as e:
+
+        if pk is not None:
+            pk = int(pk)
+
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate interger
-    if pk is not None:
-        try:
-            pk = int(pk)
-        except ValueError as e:
-            return JsonResponse(
-                {"status": False, "message": "Bad Request: {error}".format(error=e)},
-                status=400,
-            )
-
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     data = get_translation_memory_data(text, locale, pk)
@@ -84,21 +70,13 @@ def concordance_search(request):
     """Search for translations in the internal translations memory."""
     try:
         text = request.GET["text"]
-        locale = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
         page_results_limit = int(request.GET.get("limit", 100))
         page = int(request.GET.get("page", 1))
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     paginator = Paginator(get_concordance_search_data(text, locale), page_results_limit)
@@ -256,18 +234,11 @@ def caighdean(request):
     """Get translation from Caighdean machine translation service."""
     try:
         entityid = int(request.GET["id"])
-    except (MultiValueDictKeyError, ValueError) as e:
+        entity = Entity.objects.get(id=entityid)
+    except (Entity.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    try:
-        entity = Entity.objects.get(id=entityid)
-    except Entity.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     try:
