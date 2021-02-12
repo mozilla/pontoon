@@ -50,30 +50,16 @@ def translation_memory(request):
     """Get translations from internal translations memory."""
     try:
         text = request.GET["text"]
-        locale = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
         pk = request.GET.get("pk", None)
-    except MultiValueDictKeyError as e:
+
+        if pk is not None:
+            pk = int(pk)
+
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate interger
-    if pk is not None:
-        try:
-            pk = int(pk)
-        except ValueError as e:
-            return JsonResponse(
-                {"status": False, "message": "Bad Request: {error}".format(error=e)},
-                status=400,
-            )
-
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     data = get_translation_memory_data(text, locale, pk)
@@ -84,21 +70,13 @@ def concordance_search(request):
     """Search for translations in the internal translations memory."""
     try:
         text = request.GET["text"]
-        locale = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
         page_results_limit = int(request.GET.get("limit", 100))
         page = int(request.GET.get("page", 1))
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     paginator = Paginator(get_concordance_search_data(text, locale), page_results_limit)
@@ -119,28 +97,18 @@ def microsoft_translator(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+        api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
+        if not api_key:
+            raise ValueError("Missing api key")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    api_key = settings.MICROSOFT_TRANSLATOR_API_KEY
-
-    if not api_key:
-        log.error("MICROSOFT_TRANSLATOR_API_KEY not set")
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: Missing api key."}, status=400
-        )
-
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(ms_translator_code=locale_code).exists():
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
@@ -184,20 +152,14 @@ def google_translate(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(google_translate_code=locale_code).exists():
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     data = get_google_translate_data(text, locale_code)
@@ -214,30 +176,20 @@ def systran_translate(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
+
+        api_key = settings.SYSTRAN_TRANSLATE_API_KEY
+        if not api_key:
+            raise ValueError("Missing api key")
+
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    api_key = settings.SYSTRAN_TRANSLATE_API_KEY
-
-    if not api_key:
-        log.error("SYSTRAN_TRANSLATE_API_KEY not set")
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: Missing api key."}, status=400
-        )
-
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    try:
-        locale = Locale.objects.filter(systran_translate_code=locale_code).first()
-    except Locale.DoesNotExist:
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     url = (
@@ -282,18 +234,11 @@ def caighdean(request):
     """Get translation from Caighdean machine translation service."""
     try:
         entityid = int(request.GET["id"])
-    except (MultiValueDictKeyError, ValueError) as e:
+        entity = Entity.objects.get(id=entityid)
+    except (Entity.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    try:
-        entity = Entity.objects.get(id=entityid)
-    except Entity.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
-            status=404,
         )
 
     try:
@@ -320,20 +265,14 @@ def microsoft_terminology(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
-    except MultiValueDictKeyError as e:
+
+        if not locale_code:
+            raise ValueError("Locale code is empty")
+
+    except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: {error}".format(error=e)},
             status=400,
-        )
-
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if not Locale.objects.filter(ms_terminology_code=locale_code).exists():
-        return JsonResponse(
-            {
-                "status": False,
-                "message": "Not Found: {error}".format(error=locale_code),
-            },
-            status=404,
         )
 
     obj = {}
