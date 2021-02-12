@@ -133,11 +133,8 @@ def microsoft_translator(request):
             {"status": False, "message": "Bad Request: Missing api key."}, status=400
         )
 
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if (
-        not locale_code
-        or not Locale.objects.filter(ms_translator_code=locale_code).exists()
-    ):
+    # Validate if locale exists
+    if not locale_code:
         return JsonResponse(
             {
                 "status": False,
@@ -193,11 +190,8 @@ def google_translate(request):
             status=400,
         )
 
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if (
-        not locale_code
-        or not Locale.objects.filter(google_translate_code=locale_code).exists()
-    ):
+    # Validate if locale exists
+    if not locale_code:
         return JsonResponse(
             {
                 "status": False,
@@ -234,11 +228,8 @@ def systran_translate(request):
             {"status": False, "message": "Bad Request: Missing api key."}, status=400
         )
 
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if (
-        not locale_code
-        or not Locale.objects.filter(systran_translate_code=locale_code).exists()
-    ):
+    # Validate if locale exists
+    if not locale_code:
         return JsonResponse(
             {
                 "status": False,
@@ -335,11 +326,8 @@ def microsoft_terminology(request):
             status=400,
         )
 
-    # Validate if locale exists in the database to avoid any potential XSS attacks.
-    if (
-        not locale_code
-        or not Locale.objects.filter(ms_terminology_code=locale_code).exists()
-    ):
+    # Validate if locale exists
+    if not locale_code:
         return JsonResponse(
             {
                 "status": False,
