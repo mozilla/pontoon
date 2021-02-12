@@ -61,13 +61,6 @@ function dedupedTranslations(
             if (newT.quality && !translations[sameTranslation].quality) {
                 translations[sameTranslation].quality = newT.quality;
             }
-
-            if (
-                newT.projectNames &&
-                !translations[sameTranslation].projectNames
-            ) {
-                translations[sameTranslation].projectNames = newT.projectNames;
-            }
         } else {
             translations.push({ ...newT });
         }
