@@ -89,7 +89,7 @@ export default function Translation(props: Props) {
                 ) : (
                     <>
                         <header>
-                            {!translation.quality ? null : (
+                            {translation.quality && (
                                 <span className='quality'>
                                     {translation.quality + '%'}
                                 </span>
