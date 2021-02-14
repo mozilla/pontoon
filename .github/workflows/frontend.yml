@@ -15,22 +15,24 @@ on:
       - .github/workflows/frontend.yml
 
 jobs:
-  flow:
-    name: Flow & build
+  typecheck:
+    name: Type check & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install -g yarn
       - name: Install dependencies
-        run: npm install
+        run: yarn
         working-directory: frontend
-      - name: flow
-        run: npm run flow
+      - name: Type check
+        run: yarn run tsc
         working-directory: frontend
       - name: build
-        run: npm run build
+        run: yarn run build
         working-directory: frontend
 
   jest:
