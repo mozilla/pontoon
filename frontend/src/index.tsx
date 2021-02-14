@@ -12,7 +12,7 @@ import './index.css';
 
 import { AppLocalizationProvider } from 'core/l10n';
 
-import history from './history';
+import history from './createHistory';
 import store from './store';
 import App from './App';
 
