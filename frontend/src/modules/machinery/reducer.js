@@ -130,6 +130,7 @@ export default function reducer(
                 sourceString: action.sourceString,
                 translations: [],
                 searchResults: [],
+                hasMore: false,
             };
         default:
             return state;
