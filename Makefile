@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format lint-frontend dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format lint-frontend dumpdb loaddb build-frontend build-frontend-w sync-projects requirements typecheck
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -34,7 +34,9 @@ help:
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
-	@echo "  requirements     Compiles all requirements files with pip-compile\n"
+	@echo "  requirements     Compiles all requirements files with pip-compile"
+	@echo "  typecheck        Type checks the frontend code"
+	@echo "\n"
 
 .docker-build:
 	make build
@@ -116,3 +118,6 @@ requirements:
 	# Pass --upgrade to upgrade all dependencies
 	# The arguments are passed through to pip-compile
 	"${DC}" run --rm webapp //app/docker/compile_requirements.sh ${opts}
+
+typecheck:
+	"${DC}" run --rm -w //app/frontend webapp yarn typecheck

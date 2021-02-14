@@ -50,6 +50,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --modulePaths=src",
+    "typecheck": "tsc",
+    "typecheck:dev": "tsc --project tsconfig.json --watch",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
