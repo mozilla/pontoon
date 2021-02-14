@@ -427,6 +427,8 @@ interactivetour-InteractiveTour--end-footer =
 machinery-Machinery--search-placeholder =
     .placeholder = Concordance Search
 
+machinery-Machinery--load-more = LOAD MORE
+
 
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.

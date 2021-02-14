@@ -6,6 +6,7 @@ import { Localized } from '@fluent/react';
 import './Machinery.css';
 
 import Translation from './Translation';
+import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
 import type { MachineryState } from '..';
@@ -138,13 +139,21 @@ export default class Machinery extends React.Component<Props, State> {
                         })}
                         {hasMore && (
                             <div className='load-more-container'>
-                                <button
-                                    className='load-more-button'
-                                    onClick={this.getMoreResults}
-                                >
-                                    Load More
-                                </button>
+                                <Localized id='machinery-Machinery--load-more'>
+                                    <button
+                                        className='load-more-button'
+                                        onClick={this.getMoreResults}
+                                    >
+                                        LOAD MORE
+                                    </button>
+                                </Localized>
                             </div>
+                        )}
+                        {machinery.fetching && (
+                            <SkeletonLoader
+                                key={0}
+                                items={machinery.searchResults}
+                            />
                         )}
                     </ul>
                 </div>
