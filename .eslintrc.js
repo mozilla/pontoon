@@ -70,4 +70,9 @@ module.exports = {
         "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
         "no-console": 1,
     },
+    settings: {
+        react: {
+            version: "detect",
+        },
+    },
 };
