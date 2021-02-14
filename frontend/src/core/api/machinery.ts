@@ -2,6 +2,12 @@ import APIBase from './base';
 
 import type { Locale } from 'core/locale';
 import type { MachineryTranslation } from './types';
+import {
+    GetGoogleTranslateInputFormat,
+    GetGoogleTranslateInputText,
+    GetGoogleTranslateResponseText,
+    GetPlaceables,
+} from '../../modules/machinery/components/source/GoogleTranslation';
 
 type Translations = Array<MachineryTranslation>;
 
@@ -103,24 +109,30 @@ export default class MachineryAPI extends APIBase {
         locale: Locale,
     ): Promise<Translations> {
         const url = '/google-translate/';
+        const replaceLabels: Array<string> = GetPlaceables(source);
         const params = {
-            text: source,
+            text: GetGoogleTranslateInputText(source, replaceLabels),
             locale: locale.googleTranslateCode,
+            format: GetGoogleTranslateInputFormat(source),
         };
-
         const result = await this._get(url, params);
 
-        if (!result.translation) {
+        try {
+            const translation = GetGoogleTranslateResponseText(
+                result,
+                replaceLabels,
+            );
+            return [
+                {
+                    sources: ['google-translate'],
+                    original: source,
+                    translation: translation,
+                },
+            ];
+        } catch (e) {
+            console.log(e);
             return [];
         }
-
-        return [
-            {
-                sources: ['google-translate'],
-                original: source,
-                translation: result.translation,
-            },
-        ];
     }
 
     /**

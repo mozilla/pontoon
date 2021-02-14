@@ -1,3 +1,4 @@
+import html
 import json
 import logging
 import operator
@@ -16,7 +17,7 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale_code):
+def get_google_translate_data(text, locale_code, input_format):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -32,7 +33,7 @@ def get_google_translate_data(text, locale_code):
         "q": text,
         "source": "en",
         "target": locale_code,
-        "format": "text",
+        "format": input_format,
         "key": api_key,
     }
 
@@ -40,7 +41,6 @@ def get_google_translate_data(text, locale_code):
         r = requests.post(url, params=payload)
         r.raise_for_status()
         root = json.loads(r.content)
-
         if "data" not in root:
             log.error(f"Google Translate error: {root}")
             return {
@@ -48,10 +48,9 @@ def get_google_translate_data(text, locale_code):
                 "message": f"Bad Request: {root}",
             }
 
-        return {
-            "status": True,
-            "translation": root["data"]["translations"][0]["translatedText"],
-        }
+        translated_text = root["data"]["translations"][0]["translatedText"]
+
+        return {"status": True, "translation": translated_text}
 
     except requests.exceptions.RequestException as e:
         log.error(f"Google Translate error: {e}")

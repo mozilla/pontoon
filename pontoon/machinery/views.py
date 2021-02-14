@@ -149,6 +149,7 @@ def google_translate(request):
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
+        input_format = request.GET["format"]
 
         if not locale_code:
             raise ValueError("Locale code is empty")
@@ -158,7 +159,7 @@ def google_translate(request):
             {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
-    data = get_google_translate_data(text, locale_code)
+    data = get_google_translate_data(text, locale_code, input_format)
 
     if not data["status"]:
         return JsonResponse(data, status=400)
