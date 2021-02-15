@@ -173,15 +173,10 @@ export default class MachineryAPI extends APIBase {
      *
      * Works only for the `ga-IE` locale.
      */
-    async getCaighdeanTranslation(
-        source: string,
-        locale: Locale,
-        pk: number,
-    ): Promise<Translations> {
+    async getCaighdeanTranslation(pk: number): Promise<Translations> {
         const url = '/caighdean/';
         const params = {
             id: pk,
-            locale: locale.code,
         };
 
         const result = await this._get(url, params);
