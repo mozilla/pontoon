@@ -68,10 +68,14 @@ export default class Machinery extends React.Component<Props, State> {
     };
 
     getMoreResults = () => {
-        const nextPage = this.state.page + 1;
-        this.setState({ page: nextPage });
-
-        this.props.searchMachinery(this.searchInput.current.value, nextPage);
+        this.setState(
+            (state) => ({ page: state.page + 1 }),
+            () =>
+                this.props.searchMachinery(
+                    this.searchInput.current.value,
+                    this.state.page,
+                ),
+        );
     };
 
     render() {
