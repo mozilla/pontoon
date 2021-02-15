@@ -134,10 +134,12 @@ export default class Machinery extends React.Component<Props, State> {
                         {machinery.searchResults.map((result, index) => {
                             return (
                                 <Translation
-                                    index={index}
+                                    index={
+                                        index + machinery.translations.length
+                                    }
                                     sourceString={machinery.sourceString}
                                     translation={result}
-                                    key={index}
+                                    key={index + machinery.translations.length}
                                 />
                             );
                         })}
