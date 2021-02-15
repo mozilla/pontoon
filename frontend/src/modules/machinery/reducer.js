@@ -105,7 +105,10 @@ export default function reducer(
         case CONCORDANCE_SEARCH:
             return {
                 ...state,
-                searchResults: state.searchResults.concat(action.searchResults),
+                searchResults: [
+                    ...state.searchResults,
+                    ...action.searchResults,
+                ],
                 fetching: false,
                 hasMore: action.hasMore,
             };
