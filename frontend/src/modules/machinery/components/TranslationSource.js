@@ -65,5 +65,14 @@ export default function TranslationSource({ translation, locale }: Props) {
         }
     });
 
-    return <ul className='sources'>{translationSource}</ul>;
+    const isConcordanceSearch = 'projectNames' in translation;
+
+    return (
+        <ul
+            className={isConcordanceSearch ? 'sources projects' : 'sources'}
+            title={isConcordanceSearch && translation.projectNames?.join(' • ')}
+        >
+            {translationSource}
+        </ul>
+    );
 }

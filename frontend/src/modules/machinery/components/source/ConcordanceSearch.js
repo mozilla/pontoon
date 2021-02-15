@@ -17,14 +17,7 @@ export default function ConcordanceSearch(props: Props) {
                 id='machinery-ConcordanceSearch--pontoon-homepage'
                 attrs={{ title: true }}
             >
-                <a
-                    className='translation-source'
-                    href='/'
-                    title='Pontoon Homepage'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={(e: SyntheticMouseEvent<>) => e.stopPropagation()}
-                >
+                <span className='translation-source'>
                     {!props.projectName ? (
                         <Localized id='machinery-ConcordanceSearch--translation-memory'>
                             <span>TRANSLATION MEMORY</span>
@@ -32,7 +25,7 @@ export default function ConcordanceSearch(props: Props) {
                     ) : (
                         <span>{props.projectName.toUpperCase()}</span>
                     )}
-                </a>
+                </span>
             </Localized>
         </li>
     );
