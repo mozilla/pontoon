@@ -1,7 +1,6 @@
 import json
 import urllib.parse
 
-import caighdean
 import pytest
 import requests_mock
 from django.urls import reverse
@@ -131,10 +130,8 @@ def test_view_caighdean(client, entity_a):
     )
     entity_a.translation_set.add(translation)
 
-    translator = caighdean.Translator()
-
     with requests_mock.mock() as m:
-        m.post(translator.service_url, text='[["source", "target"]]')
+        m.post("https://cadhan.com/api/intergaelic/3.0", text='[["source", "target"]]')
         response = client.get(url, dict(id=entity_a.id))
 
     assert json.loads(response.content) == {
@@ -173,21 +170,20 @@ def test_view_caighdean_bad(client, entity_a):
         == "Bad Request: Entity matching query does not exist."
     )
 
-    translator = caighdean.Translator()
     translation = TranslationFactory.create(
         entity=entity_a, locale=gd, string="foo", plural_form=None, approved=True,
     )
     entity_a.translation_set.add(translation)
 
     with requests_mock.mock() as m:
-        m.post(translator.service_url, status_code=403)
+        m.post("https://cadhan.com/api/intergaelic/3.0", status_code=500)
         response = client.get(url, dict(id=entity_a.id))
 
     assert response.status_code == 500
     assert response.get("Content-Type") == "application/json"
     assert (
         json.loads(response.content)["message"]
-        == "Server Error: Unable to connect to translation service"
+        == "500 Server Error: None for url: https://cadhan.com/api/intergaelic/3.0"
     )
 
 

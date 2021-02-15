@@ -3,10 +3,8 @@ import logging
 import requests
 import xml.etree.ElementTree as ET
 
+from sacremoses import MosesDetokenizer
 from urllib.parse import quote
-
-from caighdean import Translator
-from caighdean.exceptions import TranslationError
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -250,13 +248,29 @@ def caighdean(request):
     except Translation.DoesNotExist:
         return JsonResponse({})
 
+    url = "https://cadhan.com/api/intergaelic/3.0"
+
+    data = {
+        "teacs": text,
+        "foinse": "gd",
+    }
+
     try:
-        translation = Translator().translate(text)
+        r = requests.post(url, data=data)
+        r.raise_for_status()
+
+        root = json.loads(r.content)
+        tokens = [x[1] for x in root]
+        translation = (
+            MosesDetokenizer().detokenize(tokens, return_str=True).replace("\\n", "\n")
+        )
+
         return JsonResponse({"original": text, "translation": translation})
-    except TranslationError as e:
+
+    except requests.exceptions.RequestException as e:
         return JsonResponse(
-            {"status": False, "message": "Server Error: {error}".format(error=e)},
-            status=500,
+            {"status": False, "message": "{error}".format(error=e)},
+            status=r.status_code,
         )
 
 
