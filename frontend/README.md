@@ -30,8 +30,8 @@
     </tr>
     <tr>
         <td>Type checking</td>
-        <td>Flow</td>
-        <td>https://flow.org/</td>
+        <td>TypeScript</td>
+        <td>https://www.typescriptlang.org/</td>
     </tr>
     <tr>
         <td>Localization</td>
@@ -80,7 +80,7 @@ The only required step for the front-end is to build static files with `yarn bui
 
 If you're using docker, `make run` automatically starts both a webpack server (on port 3000) and a Django server (on port 8000). Django is the server you want to hit, and it will then proxy appropriate requests to the webpack server.
 
-A common case during development is to have 3 terminals open: one for the dev servers, one for the tests and one for Flow:
+A common case during development is to have 3 terminals open: one for the dev servers, one for the tests and one for type checking:
 
 ```shell
     # terminal 1
@@ -90,7 +90,7 @@ A common case during development is to have 3 terminals open: one for the dev se
     $ make test-frontend
 
     # terminal 3
-    $ make flow
+    $ make typecheck
 ```
 
 #### Enabling websocket and warm-reloading for dev
@@ -137,17 +137,19 @@ Note that, in order to add new dependencies, you need to have `yarn` installed a
 
 ## Type checking
 
-Our code uses Flow to enforce type checking. This is a good way to significantly improve resilience to bugs, and it removes some burden from unit tests (because Flow ensures that we use functions and components correctly).
+Our code uses TypeScript to enforce type checking. This is a good way to significantly improve resilience to bugs, and it removes some burden from unit tests (because TypeScript ensures that we use functions and components correctly).
 
-To check for Flow issues during development while you edit files, run:
+To check for type checking issues during development while you edit files, run:
 
-    $ make flow
+    $ make typecheck
 
-To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [Flow documentation](https://flow.org/en/docs/). Additionally, you can read through the [web-ext guide](https://github.com/mozilla/web-ext/blob/master/CONTRIBUTING.md#check-for-flow-errors) for hints on how to solve common Flow errors.
+To learn more, you can read [Why use static types in JavaScript?](https://medium.freecodecamp.org/why-use-static-types-in-javascript-part-1-8382da1e0adb) or the official [TypeScript documentation](https://www.typescriptlang.org/docs/).
 
-Until we define our set of rules, please refer to the [addons team's Flow manifesto](https://github.com/mozilla/addons-frontend/#flow) regarding specific usage and edge cases.
+Please note that the TypeScript compiler looks for type definitions in imported
+packages — some npm packages bundle their own typings; others will need to be
+installed via `@types/<package-name>` packages:
 
-Note that Flow is good at extrapolating types from the standard library and common tools like React. Only put explicit types where needed. For example, it is not necessary to express that the `render` method of a component return a `React.Node`, as Flow will extrapolate that and check it even if you don't.
+  $ yarn add --dev @types/<package-name>
 
 
 ## Testing
@@ -252,7 +254,7 @@ You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.
 - [React](https://reactjs.org/docs/getting-started.html)
 - [Redux](https://redux.js.org/)
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
-- [Flow](https://flow.org/en/docs/)
+- [TypeScript](https://www.typescriptlang.org/docs/)
 - [Jest](http://jestjs.io/docs/en/getting-started)
 - [sinon](https://sinonjs.org/releases/v6.0.0/)
 - [connected-react-router](https://github.com/supasate/connected-react-router)
