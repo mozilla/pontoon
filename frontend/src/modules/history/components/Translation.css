@@ -13,7 +13,7 @@
 }
 
 .history .translation:not(.cannot-copy):hover {
-    background: #4d5967;
+    background: #272a2f;
 }
 
 .history .translation .user-avatar {
