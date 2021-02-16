@@ -14,7 +14,7 @@
 .entity.checked,
 .entity.selected,
 .entity:hover {
-    background-color: #4d5967;
+    background-color: #333941;
 }
 
 .entity > div {
