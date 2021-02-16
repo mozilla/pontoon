@@ -14,7 +14,7 @@
 
 .other-locales .translation:not(.cannot-copy):hover,
 .other-locales .translation.selected {
-    background: #272a2f;
+    background: #333941;
     border-color: #5e6475;
 }
 
