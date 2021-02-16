@@ -70,7 +70,11 @@ export default function TranslationSource({ translation, locale }: Props) {
     return (
         <ul
             className={isConcordanceSearch ? 'sources projects' : 'sources'}
-            title={isConcordanceSearch && translation.projectNames?.join(' • ')}
+            title={
+                translation.projectNames &&
+                isConcordanceSearch &&
+                translation.projectNames.join(' • ')
+            }
         >
             {translationSource}
         </ul>

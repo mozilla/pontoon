@@ -142,7 +142,8 @@ export default function useHandleShortcuts() {
                 copyTranslationFn = copyOtherLocaleTranslation;
             }
 
-            const numTranslations = translations.length + searchResults?.length;
+            const numTranslations =
+                translations.length + (searchResults && searchResults.length);
             if (!numTranslations) {
                 return;
             }
