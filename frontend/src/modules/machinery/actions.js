@@ -97,7 +97,7 @@ export function get(
 
         if (locale.code === 'ga-IE' && pk) {
             api.machinery
-                .getCaighdeanTranslation(source, locale, pk)
+                .getCaighdeanTranslation(pk)
                 .then((results) => dispatch(addTranslations(results)));
         }
     };

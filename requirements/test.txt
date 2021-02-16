@@ -54,10 +54,6 @@ blinker==1.4 \
     # via
     #   -r requirements/default.txt
     #   raygun4py
-caighdean==0.0.4 \
-    --hash=sha256:0aff328adac0faad0e42584a573512f4fc4d06a7d251e71bb9098f08c40456b6 \
-    --hash=sha256:a0a05b39f8e185a3698a4fb67dd2b388e7fb01b28f7f53c041e0857680655d4e
-    # via -r requirements/default.txt
 celery==4.3.0 \
     --hash=sha256:4c4532aa683f170f40bd76f928b70bc06ff171a959e06e71bf35f2f9d6031ef9 \
     --hash=sha256:528e56767ae7e43a16cfef24ee1062491f5754368d38fcfffa861cdb9ef219be
@@ -661,7 +657,6 @@ requests==2.25.1 \
     --hash=sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e
     # via
     #   -r requirements/default.txt
-    #   caighdean
     #   django-allauth
     #   raygun4py
     #   requests-mock
@@ -674,9 +669,7 @@ rx==1.6.1 \
     #   graphql-core
 sacremoses==0.0.43 \
     --hash=sha256:123c1bf2664351fb05e16f87d3786dbe44a050cfd7b85161c09ad9a63a8e2948
-    # via
-    #   -r requirements/default.txt
-    #   caighdean
+    # via -r requirements/default.txt
 scandir==1.5 \
     --hash=sha256:c2612d1a487d80fb4701b4a91ca1b8f8a695b1ae820570815e85e8c8b23f1283
     # via -r requirements/default.txt
