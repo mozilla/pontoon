@@ -5,28 +5,30 @@ import { Localized } from '@fluent/react';
 
 type Props = {|
     projectName?: ?string,
+    emptyList?: boolean,
 |};
 
 /**
  * Show the concordance search results from Pontoon's memory.
  */
 export default function ConcordanceSearch(props: Props) {
+    if (!props.projectName && !props.emptyList) {
+        return null;
+    }
+
     return (
         <li>
-            <Localized
-                id='machinery-ConcordanceSearch--pontoon-homepage'
-                attrs={{ title: true }}
-            >
-                <span className='translation-source'>
-                    {!props.projectName ? (
-                        <Localized id='machinery-ConcordanceSearch--translation-memory'>
-                            <span>TRANSLATION MEMORY</span>
-                        </Localized>
-                    ) : (
-                        <span>{props.projectName.toUpperCase()}</span>
-                    )}
-                </span>
-            </Localized>
+            <span className='translation-source'>
+                {props.emptyList ? (
+                    <Localized id='machinery-ConcordanceSearch--translation-memory'>
+                        <span>TRANSLATION MEMORY</span>
+                    </Localized>
+                ) : (
+                    <span>
+                        {props.projectName && props.projectName.toUpperCase()}
+                    </span>
+                )}
+            </span>
         </li>
     );
 }

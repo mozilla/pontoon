@@ -25,8 +25,11 @@ export default function TranslationSource({ translation, locale }: Props) {
     const translationSource = translation.sources.map((source, index) => {
         switch (source) {
             case 'concordance-search':
-                return !translation.projectNames ? (
-                    <ConcordanceSearch key={index} />
+                return !translation.projectNames ||
+                    translation.projectNames.every(
+                        (projectName) => !projectName,
+                    ) ? (
+                    <ConcordanceSearch key={index} emptyList={true} />
                 ) : (
                     translation.projectNames.map((project) => {
                         return (
@@ -66,15 +69,28 @@ export default function TranslationSource({ translation, locale }: Props) {
     });
 
     const isConcordanceSearch = 'projectNames' in translation;
+    const getProjectNames = () => {
+        if (!translation.projectNames) {
+            return;
+        }
+        if (translation.projectNames.every((projectName) => !projectName)) {
+            return 'Translation Memory';
+        }
+
+        return (
+            translation.projectNames &&
+            translation.projectNames
+                .filter((projectName) => {
+                    return projectName !== null;
+                })
+                .join(' • ')
+        );
+    };
 
     return (
         <ul
             className={isConcordanceSearch ? 'sources projects' : 'sources'}
-            title={
-                translation.projectNames &&
-                isConcordanceSearch &&
-                translation.projectNames.join(' • ')
-            }
+            title={isConcordanceSearch && getProjectNames()}
         >
             {translationSource}
         </ul>
