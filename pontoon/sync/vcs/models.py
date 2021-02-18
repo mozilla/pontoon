@@ -3,7 +3,6 @@ Models for working with remote translation data stored in a VCS.
 """
 import logging
 import os
-import scandir
 import shutil
 
 import requests
@@ -402,7 +401,7 @@ class VCSProject(object):
                     else:
                         shutil.copytree(source_directory, locale_directory)
 
-                        for root, dirnames, filenames in scandir.walk(locale_directory):
+                        for root, dirnames, filenames in os.walk(locale_directory):
                             for filename in filenames:
                                 path = os.path.join(root, filename)
                                 if is_resource(filename):
@@ -532,7 +531,7 @@ class VCSProject(object):
             return source_repository.checkout_path
 
         possible_sources = []
-        for root, dirnames, filenames in scandir.walk(self.checkout_path):
+        for root, dirnames, filenames in os.walk(self.checkout_path):
             for dirname in dirnames:
                 if dirname in self.SOURCE_DIR_NAMES:
                     score = self.SOURCE_DIR_SCORES[dirname]
@@ -577,7 +576,7 @@ class VCSProject(object):
         path = self.source_directory_path
         project_files = self.configuration.get_or_set_project_files(None)
 
-        for root, dirnames, filenames in scandir.walk(path):
+        for root, dirnames, filenames in os.walk(path):
             if is_hidden(root):
                 continue
 
@@ -593,7 +592,7 @@ class VCSProject(object):
         """
         path = self.source_directory_path
 
-        for root, dirnames, filenames in scandir.walk(path):
+        for root, dirnames, filenames in os.walk(path):
             if is_hidden(root):
                 continue
 

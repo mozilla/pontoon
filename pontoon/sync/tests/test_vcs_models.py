@@ -5,8 +5,6 @@ from http.client import HTTPException
 from pathlib import Path
 from unittest.mock import Mock, patch, PropertyMock, MagicMock
 
-import scandir
-
 from pontoon.base.models import (
     Locale,
     Project,
@@ -299,10 +297,10 @@ class VCSProjectTests(VCSTestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch(
-            "pontoon.sync.vcs.models.scandir", wraps=scandir
-        ) as mock_scandir, patch("pontoon.sync.vcs.models.MOZILLA_REPOS", [url]):
-            mock_scandir.walk.return_value = [
+        with patch("pontoon.sync.vcs.models.os", wraps=os) as mock_os, patch(
+            "pontoon.sync.vcs.models.MOZILLA_REPOS", [url]
+        ):
+            mock_os.walk.return_value = [
                 ("/root", [], ["foo.pot", "region.properties"])
             ]
 
@@ -323,9 +321,7 @@ class VCSProjectTests(VCSTestCase):
             ("/root/templates", [], ("foo.pot",)),
         )
         with patch(
-            "pontoon.sync.vcs.models.scandir.walk",
-            wraps=scandir,
-            return_value=hidden_paths,
+            "pontoon.sync.vcs.models.os.walk", wraps=os, return_value=hidden_paths,
         ):
             assert list(self.vcs_project.resource_paths_without_config()) == [
                 "/root/templates/foo.pot"
