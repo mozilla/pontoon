@@ -237,15 +237,11 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             );
         }
 
-        dispatch(
-            machinery.actions.get(
-                source,
-                locale,
-                user.isAuthenticated,
-                pk,
-                page,
-            ),
-        );
+        if (pk || !page) {
+            dispatch(
+                machinery.actions.get(source, locale, user.isAuthenticated, pk),
+            );
+        }
     };
 
     copyLinkToClipboard = () => {

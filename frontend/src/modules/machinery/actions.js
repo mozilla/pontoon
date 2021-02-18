@@ -24,7 +24,9 @@ export function request(): RequestAction {
     };
 }
 
-/** Get a list of concordance search results */
+/**
+ * Get a list of concordance search results
+ */
 export type ConcordanceSearchAction = {
     +type: typeof CONCORDANCE_SEARCH,
     +searchResults: Array<MachineryTranslation>,
@@ -73,7 +75,9 @@ export function reset(entity: ?number, sourceString: string): ResetAction {
     };
 }
 
-/** Get concordance search results for a given source string and locale. */
+/**
+ * Get concordance search results for a given source string and locale.
+ */
 export function getConcordanceSearchResults(
     source: string,
     locale: Locale,
@@ -113,12 +117,10 @@ export function get(
     locale: Locale,
     isAuthenticated: boolean,
     pk: ?number,
-    page?: number,
+    // page?: number,
 ): Function {
     return async (dispatch) => {
-        if (!page) {
-            dispatch(reset(pk, source));
-        }
+        dispatch(reset(pk, source));
 
         // Abort all previously running requests.
         await api.machinery.abort();
@@ -129,35 +131,37 @@ export function get(
                 .then((results) => dispatch(addTranslations(results)));
         }
 
-        if (!page) {
-            // Only make requests to paid services if user is authenticated
-            if (isAuthenticated) {
+        // Only make requests to paid services if user is authenticated
+        if (isAuthenticated) {
+            if (locale.googleTranslateCode) {
                 api.machinery
                     .getGoogleTranslation(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
+            }
 
+            if (locale.msTranslatorCode) {
                 api.machinery
                     .getMicrosoftTranslation(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
-
-                if (locale.systranTranslateCode) {
-                    api.machinery
-                        .getSystranTranslation(source, locale)
-                        .then((results) => dispatch(addTranslations(results)));
-                }
             }
 
-            if (locale.msTerminologyCode) {
+            if (locale.systranTranslateCode) {
                 api.machinery
-                    .getMicrosoftTerminology(source, locale)
+                    .getSystranTranslation(source, locale)
                     .then((results) => dispatch(addTranslations(results)));
             }
+        }
 
-            if (locale.code === 'ga-IE' && pk) {
-                api.machinery
-                    .getCaighdeanTranslation(pk)
-                    .then((results) => dispatch(addTranslations(results)));
-            }
+        if (locale.msTerminologyCode) {
+            api.machinery
+                .getMicrosoftTerminology(source, locale)
+                .then((results) => dispatch(addTranslations(results)));
+        }
+
+        if (locale.code === 'ga-IE' && pk) {
+            api.machinery
+                .getCaighdeanTranslation(pk)
+                .then((results) => dispatch(addTranslations(results)));
         }
     };
 }

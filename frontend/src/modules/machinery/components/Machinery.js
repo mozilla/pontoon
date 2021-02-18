@@ -143,25 +143,25 @@ export default class Machinery extends React.Component<Props, State> {
                                 />
                             );
                         })}
-                        {hasMore && (
-                            <div className='load-more-container'>
-                                <Localized id='machinery-Machinery--load-more'>
-                                    <button
-                                        className='load-more-button'
-                                        onClick={this.getMoreResults}
-                                    >
-                                        LOAD MORE
-                                    </button>
-                                </Localized>
-                            </div>
-                        )}
-                        {machinery.fetching && (
-                            <SkeletonLoader
-                                key={0}
-                                items={machinery.searchResults}
-                            />
-                        )}
                     </ul>
+                    {hasMore && (
+                        <div className='load-more-container'>
+                            <Localized id='machinery-Machinery--load-more'>
+                                <button
+                                    className='load-more-button'
+                                    onClick={this.getMoreResults}
+                                >
+                                    LOAD MORE
+                                </button>
+                            </Localized>
+                        </div>
+                    )}
+                    {machinery.fetching && (
+                        <SkeletonLoader
+                            key={0}
+                            items={machinery.searchResults}
+                        />
+                    )}
                 </div>
             </section>
         );

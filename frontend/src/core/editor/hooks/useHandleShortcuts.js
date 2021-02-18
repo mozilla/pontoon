@@ -32,11 +32,11 @@ export default function useHandleShortcuts() {
     const machineryTranslations = useSelector(
         (state) => state.machinery.translations,
     );
-    const otherLocaleTranslations = useSelector(
-        (state) => state.otherlocales.translations,
-    );
     const concordanceSearchResults = useSelector(
         (state) => state.machinery.searchResults,
+    );
+    const otherLocaleTranslations = useSelector(
+        (state) => state.otherlocales.translations,
     );
 
     return (
