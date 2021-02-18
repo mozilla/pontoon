@@ -5,7 +5,6 @@ import React from 'react';
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 
-import ConcordanceSearch from './source/ConcordanceSearch';
 import GoogleTranslation from './source/GoogleTranslation';
 import MicrosoftTranslation from './source/MicrosoftTranslation';
 import SystranTranslation from './source/SystranTranslation';
@@ -24,22 +23,6 @@ type Props = {|
 export default function TranslationSource({ translation, locale }: Props) {
     const translationSource = translation.sources.map((source, index) => {
         switch (source) {
-            case 'concordance-search':
-                return !translation.projectNames ||
-                    translation.projectNames.every(
-                        (projectName) => !projectName,
-                    ) ? (
-                    <ConcordanceSearch key={index} emptyList={true} />
-                ) : (
-                    translation.projectNames.map((project) => {
-                        return (
-                            <ConcordanceSearch
-                                projectName={project}
-                                key={project}
-                            />
-                        );
-                    })
-                );
             case 'translation-memory':
                 return (
                     <TranslationMemory
@@ -68,31 +51,5 @@ export default function TranslationSource({ translation, locale }: Props) {
         }
     });
 
-    const isConcordanceSearch = 'projectNames' in translation;
-    const getProjectNames = () => {
-        if (!translation.projectNames) {
-            return;
-        }
-        if (translation.projectNames.every((projectName) => !projectName)) {
-            return 'Translation Memory';
-        }
-
-        return (
-            translation.projectNames &&
-            translation.projectNames
-                .filter((projectName) => {
-                    return projectName !== null;
-                })
-                .join(' • ')
-        );
-    };
-
-    return (
-        <ul
-            className={isConcordanceSearch ? 'sources projects' : 'sources'}
-            title={isConcordanceSearch && getProjectNames()}
-        >
-            {translationSource}
-        </ul>
-    );
+    return <ul className='sources'>{translationSource}</ul>;
 }

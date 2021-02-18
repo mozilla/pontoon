@@ -4,8 +4,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { GenericTranslation } from 'core/translation';
-
-import TranslationSource from './TranslationSource';
+import TranslationMemory from './source/TranslationMemory';
 
 import type { MachineryTranslation } from 'core/api';
 
@@ -18,10 +17,49 @@ export default function ConcordanceSearch(props: Props) {
     const locale = useSelector((state) => state.locale);
     const { sourceString, translation } = props;
 
+    const createProjectList = () => {
+        if (!translation.projectNames) {
+            return null;
+        }
+
+        if (translation.projectNames.every((projectName) => !projectName)) {
+            return <TranslationMemory />;
+        }
+
+        return (
+            translation.projectNames &&
+            translation.projectNames.map((project) => {
+                return (
+                    project && (
+                        <li>
+                            <span className='translation-source'>
+                                <span>{project.toUpperCase()}</span>
+                            </span>
+                        </li>
+                    )
+                );
+            })
+        );
+    };
+
+    const getProjectNames = () => {
+        if (!translation.projectNames) {
+            return undefined;
+        }
+
+        return translation.projectNames
+            .filter((projectName) => {
+                return projectName !== null;
+            })
+            .join(' • ');
+    };
+
     return (
         <>
             <header>
-                <TranslationSource translation={translation} locale={locale} />
+                <ul className='sources projects' title={getProjectNames()}>
+                    {createProjectList()}
+                </ul>
             </header>
             <p className='original'>
                 <GenericTranslation
