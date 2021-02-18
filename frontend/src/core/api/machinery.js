@@ -27,7 +27,6 @@ export default class MachineryAPI extends APIBase {
     /**
      * Return results from Concordance search.
      */
-
     async getConcordanceResults(
         source: string,
         locale: Locale,
@@ -37,7 +36,7 @@ export default class MachineryAPI extends APIBase {
         const params = {
             text: source,
             locale: locale.code,
-            page: page ? page.toString() : 1,
+            page: (page || 1).toString(),
         };
 
         const results = await this._get(url, params);

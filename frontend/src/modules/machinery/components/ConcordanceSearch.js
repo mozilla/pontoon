@@ -31,7 +31,7 @@ export default function ConcordanceSearch(props: Props) {
             translation.projectNames.map((project) => {
                 return (
                     project && (
-                        <li>
+                        <li key={project}>
                             <span className='translation-source'>
                                 <span>{project.toUpperCase()}</span>
                             </span>
@@ -44,7 +44,7 @@ export default function ConcordanceSearch(props: Props) {
 
     const getProjectNames = () => {
         if (!translation.projectNames) {
-            return undefined;
+            return null;
         }
 
         return translation.projectNames

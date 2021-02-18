@@ -237,7 +237,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             );
         }
 
-        if (pk || !page) {
+        if (!page) {
             dispatch(
                 machinery.actions.get(source, locale, user.isAuthenticated, pk),
             );

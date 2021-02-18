@@ -117,7 +117,6 @@ export function get(
     locale: Locale,
     isAuthenticated: boolean,
     pk: ?number,
-    // page?: number,
 ): Function {
     return async (dispatch) => {
         dispatch(reset(pk, source));
