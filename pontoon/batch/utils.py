@@ -8,7 +8,6 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.libraries import run_checks
 
 from fluent.syntax import (
-    ast,
     FluentParser,
     FluentSerializer,
     visitor,

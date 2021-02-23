@@ -1,5 +1,4 @@
 from fluent.syntax import FluentParser, FluentSerializer
-from textwrap import dedent
 
 from pontoon.batch.utils import ftl_find_and_replace
 
