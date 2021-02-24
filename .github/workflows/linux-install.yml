@@ -1,0 +1,106 @@
+name: Linux Install Test
+
+on:
+  push:
+    branches:
+      - master
+      - 1694598-standard-linux-install
+
+jobs:
+
+  build-install:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Debian 10 (buster)"  # -> 2024-06
+            os: ubuntu-18.04
+            python-version: 3.7
+            node-version: 10
+            postgres-version: 11
+          - name: "Debian 11 (bullseye)"  # -> ?
+            os: ubuntu-20.04
+            python-version: 3.9
+            node-version: 12
+            postgres-version: 13
+          - name: "Ubuntu 18.04 LTS (bionic)"  # -> 2023-04
+            os: ubuntu-18.04
+            python-version: 3.7
+            node-version: 8
+            postgres-version: 10
+          - name: "Ubuntu 20.04 LTS (focal)"  # -> 2025-04
+            os: ubuntu-20.04
+            python-version: 3.8
+            node-version: 10
+            postgres-version: 12
+          - name: "Ubuntu 20.10 (groovy)"  # -> 2021-07
+            os: ubuntu-latest
+            python-version: 3.8
+            node-version: 12
+            postgres-version: 12
+          - name: "Ubuntu 21.04 (hirsute)"  # -> 2022-01
+            os: ubuntu-latest
+            python-version: 3.9
+            node-version: 12
+            postgres-version: 13
+
+    name: "${{ matrix.name }} [py${{ matrix.python-version }}, node${{ matrix.node-version }}, pg${{ matrix.postgres-version }}]"
+
+    runs-on: ${{ matrix.os }}
+
+    services:
+
+      postgres:
+        image: postgres:${{ matrix.postgres-version }}
+        env:
+          POSTGRES_USER: pontoonuser
+          POSTGRES_PASSWORD: pontoonpassword
+          POSTGRES_DB: pontoondb
+        ports:
+          - 5432:5432
+
+    steps:
+
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Install Node dependences
+      run: |
+        npm install
+        cd frontend/
+        npm install
+
+    - name: Write basic configuration for Pontoon
+      run: |
+        echo "SECRET_KEY=pontoonsecret" >> .env
+        echo "DATABASE_URL=postgres://pontoonuser:pontoonpassword@localhost/pontoondb" >> .env
+        echo "DJANGO_DEBUG=0" >> .env
+
+    - name: Build the front
+      run: |
+        cd frontend/
+        npm run build
+        cd -
+        npm run build
+        python manage.py collectstatic
+
+    - name: Make DB migration
+      run: |
+        python manage.py migrate
+
+
