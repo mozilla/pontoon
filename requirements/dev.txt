@@ -126,9 +126,6 @@ dj-database-url==0.3.0 \
     --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353 \
     --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138
     # via -r requirements/default.txt
-dj.debug==0.0.2 \
-    --hash=sha256:0b7629bde97f1cce6077ac430537089f5a2552973004951cb3590e30fec9054a
-    # via -r requirements/dev.in
 django-ace==1.0.5 \
     --hash=sha256:1334f08b4c5548e8ab13b25787e6a3f49dfe5fc92bb3a3d845b5b42fa0e1aff6 \
     --hash=sha256:a2616b0265bdc1f839cc905c77243f779d82c00f3fddf58d23c08eb07e91e189
@@ -196,7 +193,6 @@ django==3.1.3 \
     --hash=sha256:14b87775ffedab2ef6299b73343d1b4b41e5d4e2aa58c6581f114dbec01e3f8f
     # via
     #   -r requirements/default.txt
-    #   dj.debug
     #   django-ace
     #   django-allauth
     #   django-cors-headers
