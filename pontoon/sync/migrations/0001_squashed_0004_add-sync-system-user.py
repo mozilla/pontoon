@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("base", "0001_squashed_0154_auto_20200206_1736"),
+        ("base", "0002_auto_20200322_1821"),
     ]
 
     operations = [
