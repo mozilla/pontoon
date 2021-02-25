@@ -5,17 +5,6 @@ import django.db.migrations.operations.special
 import django.db.models.deletion
 
 
-def remove_warnings_and_errors(apps, schema_editor):
-    """
-    Remove all warnings and errors related to Translate Toolkit.
-    """
-    Warning = apps.get_model("checks", "Warning")
-    Error = apps.get_model("checks", "Error")
-
-    Warning.objects.filter(library="tt").delete()
-    Error.objects.filter(library="tt").delete()
-
-
 class Migration(migrations.Migration):
     initial = True
 
@@ -39,11 +28,7 @@ class Migration(migrations.Migration):
                 (
                     "library",
                     models.CharField(
-                        choices=[
-                            (b"p", b"pontoon"),
-                            (b"tt", b"translate-toolkit"),
-                            (b"cl", b"compare-locales"),
-                        ],
+                        choices=[("p", "pontoon"), ("cl", "compare-locales"),],
                         db_index=True,
                         max_length=20,
                     ),
@@ -75,11 +60,7 @@ class Migration(migrations.Migration):
                 (
                     "library",
                     models.CharField(
-                        choices=[
-                            (b"p", b"pontoon"),
-                            (b"tt", b"translate-toolkit"),
-                            (b"cl", b"compare-locales"),
-                        ],
+                        choices=[("p", "pontoon"), ("cl", "compare-locales"),],
                         db_index=True,
                         max_length=20,
                     ),
@@ -102,45 +83,5 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="error", unique_together=set([("translation", "library", "message")]),
-        ),
-        migrations.RunPython(
-            code=remove_warnings_and_errors,
-            reverse_code=django.db.migrations.operations.special.RunPython.noop,
-        ),
-        migrations.AlterField(
-            model_name="error",
-            name="library",
-            field=models.CharField(
-                choices=[(b"p", b"pontoon"), (b"cl", b"compare-locales")],
-                db_index=True,
-                max_length=20,
-            ),
-        ),
-        migrations.AlterField(
-            model_name="warning",
-            name="library",
-            field=models.CharField(
-                choices=[(b"p", b"pontoon"), (b"cl", b"compare-locales")],
-                db_index=True,
-                max_length=20,
-            ),
-        ),
-        migrations.AlterField(
-            model_name="error",
-            name="library",
-            field=models.CharField(
-                choices=[("p", "pontoon"), ("cl", "compare-locales")],
-                db_index=True,
-                max_length=20,
-            ),
-        ),
-        migrations.AlterField(
-            model_name="warning",
-            name="library",
-            field=models.CharField(
-                choices=[("p", "pontoon"), ("cl", "compare-locales")],
-                db_index=True,
-                max_length=20,
-            ),
         ),
     ]
