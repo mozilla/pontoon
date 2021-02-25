@@ -16,7 +16,6 @@
 # requirements/default.txt contains all dependencies required to run the project in the production environment.
 -r default.txt
 
-dj.debug==0.0.2
 django-debug-toolbar==3.2
 django-extensions==3.0.9
 django-sslserver==0.19
