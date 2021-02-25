@@ -41,12 +41,12 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 
     componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
     }
 
     componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
