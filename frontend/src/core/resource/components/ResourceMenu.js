@@ -80,7 +80,7 @@ export function ResourceMenu({
     useOnDiscard(ref, onDiscard);
 
     return (
-        <div className='menu'>
+        <div ref={ref} className='menu'>
             <div className='search-wrapper'>
                 <div className='icon fa fa-search'></div>
                 <Localized
