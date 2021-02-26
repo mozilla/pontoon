@@ -4,34 +4,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
-SYNC_USER = {
-    "username": "pontoon-sync",
-    "email": "pontoon-sync@mozilla.org",
-    "first_name": "Sync",
-}
-
-
-def add_sync_user(apps, schema_editor):
-    User = apps.get_model("auth", "User")
-    UserProfile = apps.get_model("base", "UserProfile")
-
-    user = User(**SYNC_USER)
-    user.save()
-
-    profile = UserProfile(user=user)
-    profile.save()
-
-
-def remove_sync_user(apps, schema_editor):
-    User = apps.get_model("auth", "User")
-    UserProfile = apps.get_model("base", "UserProfile")
-
-    user = User.objects.find(username=SYNC_USER["username"])
-    user_profile = UserProfile.objects.find(user=user)
-
-    user_profile.delete()
-    user.delete()
-
 
 class Migration(migrations.Migration):
 
@@ -128,5 +100,4 @@ class Migration(migrations.Migration):
             name="skipped_end_time",
             field=models.DateTimeField(blank=True, default=None, null=True),
         ),
-        migrations.RunPython(code=add_sync_user, reverse_code=remove_sync_user,),
     ]
