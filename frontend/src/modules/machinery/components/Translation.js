@@ -4,12 +4,14 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
+import './ConcordanceSearch.css';
 import './Translation.css';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { GenericTranslation } from 'core/translation';
 
+import ConcordanceSearch from './ConcordanceSearch';
 import TranslationSource from './TranslationSource';
 
 import type { MachineryTranslation } from 'core/api';
@@ -79,39 +81,52 @@ export default function Translation(props: Props) {
                 onClick={copyTranslationIntoEditor}
                 ref={translationRef}
             >
-                <header>
-                    {!translation.quality ? null : (
-                        <span className='quality'>
-                            {translation.quality + '%'}
-                        </span>
-                    )}
-                    <TranslationSource
+                {translation.sources.includes('concordance-search') ? (
+                    <ConcordanceSearch
+                        sourceString={sourceString}
                         translation={translation}
-                        locale={locale}
                     />
-                </header>
-                <p className='original'>
-                    {translation.sources.indexOf('caighdean') === -1 ? (
-                        <GenericTranslation
-                            content={translation.original}
-                            diffTarget={sourceString}
-                        />
-                    ) : (
-                        /*
-                         * Caighdean takes `gd` translations as input, so we shouldn't
-                         * diff it against the `en-US` source string.
-                         */
-                        <GenericTranslation content={translation.original} />
-                    )}
-                </p>
-                <p
-                    className='suggestion'
-                    dir={locale.direction}
-                    data-script={locale.script}
-                    lang={locale.code}
-                >
-                    <GenericTranslation content={translation.translation} />
-                </p>
+                ) : (
+                    <>
+                        <header>
+                            {translation.quality && (
+                                <span className='quality'>
+                                    {translation.quality + '%'}
+                                </span>
+                            )}
+                            <TranslationSource
+                                translation={translation}
+                                locale={locale}
+                            />
+                        </header>
+                        <p className='original'>
+                            {translation.sources.indexOf('caighdean') === -1 ? (
+                                <GenericTranslation
+                                    content={translation.original}
+                                    diffTarget={sourceString}
+                                />
+                            ) : (
+                                /*
+                                 * Caighdean takes `gd` translations as input, so we shouldn't
+                                 * diff it against the `en-US` source string.
+                                 */
+                                <GenericTranslation
+                                    content={translation.original}
+                                />
+                            )}
+                        </p>
+                        <p
+                            className='suggestion'
+                            dir={locale.direction}
+                            data-script={locale.script}
+                            lang={locale.code}
+                        >
+                            <GenericTranslation
+                                content={translation.translation}
+                            />
+                        </p>
+                    </>
+                )}
             </li>
         </Localized>
     );

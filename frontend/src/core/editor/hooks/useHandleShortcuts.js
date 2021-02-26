@@ -32,6 +32,9 @@ export default function useHandleShortcuts() {
     const machineryTranslations = useSelector(
         (state) => state.machinery.translations,
     );
+    const concordanceSearchResults = useSelector(
+        (state) => state.machinery.searchResults,
+    );
     const otherLocaleTranslations = useSelector(
         (state) => state.otherlocales.translations,
     );
@@ -128,16 +131,19 @@ export default function useHandleShortcuts() {
             }
 
             let translations;
+            let searchResults;
             let copyTranslationFn;
             if (editorState.selectedHelperTabIndex === 0) {
                 translations = machineryTranslations;
+                searchResults = concordanceSearchResults;
                 copyTranslationFn = copyMachineryTranslation;
             } else {
                 translations = otherLocaleTranslations;
                 copyTranslationFn = copyOtherLocaleTranslation;
             }
 
-            const numTranslations = translations.length;
+            const numTranslations =
+                translations.length + (searchResults && searchResults.length);
             if (!numTranslations) {
                 return;
             }
@@ -154,7 +160,10 @@ export default function useHandleShortcuts() {
 
             dispatch(editor.actions.selectHelperElementIndex(nextIdx));
 
-            const newTranslation = translations[nextIdx];
+            const newTranslation =
+                !searchResults || nextIdx < translations.length
+                    ? translations[nextIdx]
+                    : searchResults[nextIdx - translations.length];
             copyTranslationFn(newTranslation);
         }
     };

@@ -51,6 +51,7 @@
 
 .react-tabs__tab-panel {
     display: none;
+    height: calc(100% - 44px);
     overflow-y: auto;
 }
 
@@ -75,8 +76,4 @@
 .react-tabs span.count .preferred,
 .react-tabs span.count .pinned {
     color: #7bc876;
-}
-
-.react-tabs__tab-panel {
-    height: calc(100% - 44px);
 }

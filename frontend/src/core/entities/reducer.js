@@ -60,7 +60,7 @@ export default function reducer(
         case RECEIVE:
             return {
                 ...state,
-                entities: state.entities.concat(action.entities),
+                entities: [...state.entities, ...action.entities],
                 fetching: false,
                 fetchCount: state.fetchCount + 1,
                 hasMore: action.hasMore,
