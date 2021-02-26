@@ -11,7 +11,8 @@ type Props = {|
 export default function Count(props: Props) {
     const { machinery } = props;
 
-    const machineryCount = machinery.translations.length;
+    const machineryCount =
+        machinery.translations.length + machinery.searchResults.length;
 
     if (!machineryCount) {
         return null;

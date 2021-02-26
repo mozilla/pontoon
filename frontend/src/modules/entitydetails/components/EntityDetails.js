@@ -212,7 +212,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
     }
 
-    searchMachinery = (query: string) => {
+    searchMachinery = (query: string, page?: number) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
 
         let source = query;
@@ -227,9 +227,21 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             pk = selectedEntity.pk;
         }
 
-        dispatch(
-            machinery.actions.get(source, locale, user.isAuthenticated, pk),
-        );
+        if (!pk) {
+            dispatch(
+                machinery.actions.getConcordanceSearchResults(
+                    source,
+                    locale,
+                    page,
+                ),
+            );
+        }
+
+        if (!page) {
+            dispatch(
+                machinery.actions.get(source, locale, user.isAuthenticated, pk),
+            );
+        }
     };
 
     copyLinkToClipboard = () => {

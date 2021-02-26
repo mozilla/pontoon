@@ -6,6 +6,7 @@ import { Localized } from '@fluent/react';
 import './Machinery.css';
 
 import Translation from './Translation';
+import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
 import type { MachineryState } from '..';
@@ -13,7 +14,11 @@ import type { MachineryState } from '..';
 type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
-    searchMachinery: (string) => void,
+    searchMachinery: (string, ?number) => void,
+|};
+
+type State = {|
+    page: number,
 |};
 
 /**
@@ -23,12 +28,13 @@ type Props = {|
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export default class Machinery extends React.Component<Props> {
+export default class Machinery extends React.Component<Props, State> {
     searchInput: { current: any };
 
     constructor(props: Props) {
         super(props);
         this.searchInput = React.createRef();
+        this.state = { page: 1 };
     }
 
     componentDidMount() {
@@ -47,16 +53,29 @@ export default class Machinery extends React.Component<Props> {
         // Clear search field after switching to a different entity
         if (machinery.entity && !prevProps.machinery.entity) {
             this.searchInput.current.value = '';
+            this.setState({ page: 1 });
         }
     }
 
     handleResetSearch = () => {
         this.props.searchMachinery('');
+        this.setState({ page: 1 });
     };
 
     submitForm = (event: SyntheticKeyboardEvent<>) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
+    };
+
+    getMoreResults = () => {
+        this.setState(
+            (state) => ({ page: state.page + 1 }),
+            () =>
+                this.props.searchMachinery(
+                    this.searchInput.current.value,
+                    this.state.page,
+                ),
+        );
     };
 
     render() {
@@ -67,6 +86,8 @@ export default class Machinery extends React.Component<Props> {
         }
 
         const showResetButton = !machinery.entity && machinery.sourceString;
+
+        const hasMore = machinery.hasMore;
 
         return (
             <section className='machinery'>
@@ -90,24 +111,58 @@ export default class Machinery extends React.Component<Props> {
                                 id='machinery-search'
                                 type='search'
                                 autoComplete='off'
-                                placeholder='Search in Machinery'
+                                placeholder='Concordance Search'
                                 ref={this.searchInput}
                             />
                         </Localized>
                     </form>
                 </div>
-                <ul>
-                    {machinery.translations.map((translation, index) => {
-                        return (
-                            <Translation
-                                index={index}
-                                sourceString={machinery.sourceString}
-                                translation={translation}
-                                key={index}
-                            />
-                        );
-                    })}
-                </ul>
+                <div className='list-wrapper'>
+                    <ul>
+                        {machinery.translations.map((translation, index) => {
+                            return (
+                                <Translation
+                                    index={index}
+                                    sourceString={machinery.sourceString}
+                                    translation={translation}
+                                    key={index}
+                                />
+                            );
+                        })}
+                    </ul>
+                    <ul>
+                        {machinery.searchResults.map((result, index) => {
+                            return (
+                                <Translation
+                                    index={
+                                        index + machinery.translations.length
+                                    }
+                                    sourceString={machinery.sourceString}
+                                    translation={result}
+                                    key={index + machinery.translations.length}
+                                />
+                            );
+                        })}
+                    </ul>
+                    {hasMore && (
+                        <div className='load-more-container'>
+                            <Localized id='machinery-Machinery--load-more'>
+                                <button
+                                    className='load-more-button'
+                                    onClick={this.getMoreResults}
+                                >
+                                    LOAD MORE
+                                </button>
+                            </Localized>
+                        </div>
+                    )}
+                    {machinery.fetching && (
+                        <SkeletonLoader
+                            key={0}
+                            items={machinery.searchResults}
+                        />
+                    )}
+                </div>
             </section>
         );
     }

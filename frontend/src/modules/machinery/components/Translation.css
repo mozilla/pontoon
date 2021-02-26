@@ -27,7 +27,7 @@
 }
 
 .machinery .translation > header ul li {
-    display: inline-block;
+    display: inline;
     padding-left: 3px;
 }
 
@@ -49,6 +49,13 @@
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
     color: #7bc876;
+}
+
+.machinery .translation > header .projects {
+    max-width: calc(100% - 10px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .machinery .translation p {

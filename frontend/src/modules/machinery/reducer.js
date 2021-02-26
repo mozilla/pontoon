@@ -1,11 +1,25 @@
 /* @flow */
 
-import { ADD_TRANSLATIONS, RESET } from './actions';
+import {
+    CONCORDANCE_SEARCH,
+    ADD_TRANSLATIONS,
+    REQUEST,
+    RESET,
+} from './actions';
 
 import type { MachineryTranslation } from 'core/api';
-import type { AddTranslationsAction, ResetAction } from './actions';
+import type {
+    ConcordanceSearchAction,
+    AddTranslationsAction,
+    RequestAction,
+    ResetAction,
+} from './actions';
 
-type Action = AddTranslationsAction | ResetAction;
+type Action =
+    | ConcordanceSearchAction
+    | AddTranslationsAction
+    | RequestAction
+    | ResetAction;
 
 type Translations = Array<MachineryTranslation>;
 
@@ -13,6 +27,9 @@ export type MachineryState = {|
     entity: ?number,
     sourceString: string,
     translations: Translations,
+    searchResults: Translations,
+    fetching: boolean,
+    hasMore?: boolean,
 |};
 
 /**
@@ -50,6 +67,9 @@ function dedupedTranslations(
     });
 
     return translations.sort((a, b) => {
+        if (!a.quality && !b.quality) {
+            return 1;
+        }
         if (!a.quality && b.quality) {
             return 1;
         }
@@ -72,6 +92,9 @@ const initial: MachineryState = {
     entity: null,
     sourceString: '',
     translations: [],
+    searchResults: [],
+    fetching: false,
+    hasMore: false,
 };
 
 export default function reducer(
@@ -79,6 +102,16 @@ export default function reducer(
     action: Action,
 ): MachineryState {
     switch (action.type) {
+        case CONCORDANCE_SEARCH:
+            return {
+                ...state,
+                searchResults: [
+                    ...state.searchResults,
+                    ...action.searchResults,
+                ],
+                fetching: false,
+                hasMore: action.hasMore,
+            };
         case ADD_TRANSLATIONS:
             return {
                 ...state,
@@ -87,12 +120,20 @@ export default function reducer(
                     action.translations,
                 ),
             };
+        case REQUEST:
+            return {
+                ...state,
+                fetching: true,
+                hasMore: false,
+            };
         case RESET:
             return {
                 ...state,
                 entity: action.entity,
                 sourceString: action.sourceString,
                 translations: [],
+                searchResults: [],
+                hasMore: false,
             };
         default:
             return state;
