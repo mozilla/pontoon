@@ -35,5 +35,13 @@
 				<seg>&lt;p&gt;translation łążśźć&lt;/p&gt;</seg>
 			</tuv>
 		</tu>
+		<tu tuid="pontoon:aa/bb/ccc:xxx" srclang="en-US">
+			<tuv xml:lang="en-US">
+				<seg>content are c.1998–2019</seg>
+			</tuv>
+			<tuv xml:lang="sl">
+				<seg>content are c.1998–2019</seg>
+			</tuv>
+		</tu>
 	</body>
 </tmx>

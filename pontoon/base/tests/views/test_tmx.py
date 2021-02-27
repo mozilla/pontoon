@@ -109,6 +109,15 @@ def test_view_tmx_valid_entries():
                 "pontoon",
                 "pontoon",
             ),
+            # Handle illegal characters
+            (
+                "aa/bb/ccc",
+                "xxx",
+                "content are c.1998–2019",
+                "content are c.1998–2019",
+                "pontoon",
+                "pontoon",
+            ),
         ),
     )
     _check_xml(
