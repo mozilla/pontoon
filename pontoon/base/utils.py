@@ -553,19 +553,19 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * project_slug - slugified name of a project,
     """
     yield (
-        u'<?xml version="1.0" encoding="UTF-8"?>'
-        u'\n<tmx version="1.4">'
-        u"\n\t<header"
-        u' adminlang="en-US"'
-        u' creationtoolversion="0.1"'
-        u' creationtool="pontoon"'
-        u' datatype="plaintext"'
-        u' segtype="sentence"'
-        u' o-tmf="plain text"'
-        u' srclang="en-US"'
-        u' creationdate="%(creation_date)s">'
-        u"\n\t</header>"
-        u"\n\t<body>" % {"creation_date": creation_date.isoformat()}
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '\n<tmx version="1.4">'
+        "\n\t<header"
+        ' adminlang="en-US"'
+        ' creationtoolversion="0.1"'
+        ' creationtool="pontoon"'
+        ' datatype="plaintext"'
+        ' segtype="sentence"'
+        ' o-tmf="plain text"'
+        ' srclang="en-US"'
+        ' creationdate="%(creation_date)s">'
+        "\n\t</header>"
+        "\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
     for resource_path, key, source, target, project_name, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify(key)))
@@ -573,14 +573,14 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         target = sanitise_xml_input_string(target)
 
         yield (
-            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
-            u'\n\t\t\t<tuv xml:lang="en-US">'
-            u"\n\t\t\t\t<seg>%(source)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t\t<tuv xml:lang=%(locale_code)s>"
-            u"\n\t\t\t\t<seg>%(target)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t</tu>"
+            '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            '\n\t\t\t<tuv xml:lang="en-US">'
+            "\n\t\t\t\t<seg>%(source)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t\t<tuv xml:lang=%(locale_code)s>"
+            "\n\t\t\t\t<seg>%(target)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
                 "source": escape(source),
@@ -590,7 +590,7 @@ def build_translation_memory_file(creation_date, locale_code, entries):
             }
         )
 
-    yield (u"\n\t</body>" u"\n</tmx>\n")
+    yield ("\n\t</body>" "\n</tmx>\n")
 
 
 def get_m2m_changes(current_qs, new_qs):
