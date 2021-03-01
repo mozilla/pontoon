@@ -1,26 +1,26 @@
-* Feature Name: User Notifications Component
+* Feature Name: Infobar Component
 * Created: 2021-02-25
 * Associated Bugs: [bug 1694911](https://bugzilla.mozilla.org/show_bug.cgi?id=1694911)
 
 # Summary
 
-Create a reusable component to display notifications to users as part of experiments and A/B testing.
+Create a reusable component to display infobars to users.
 
 # Motivation
 
-We need a flexible way to notify users without writing ad-hoc code for every situation. Notifications should be manageable by admins without intervention from developers.
+We need a flexible way to notify users without writing ad-hoc code for every situation:
+* Infobars should be manageable by admins without intervention from developers.
+* Unlike notifications, infobars are more visible and require interaction from users to get dismissed.
 
 Potential use cases:
 * We introduce a brand new feature, like string comments, and we want to make sure that users are aware of it. The infobar will include a short message and a link to documentation.
 * We want to promote the Pontoon add-on. The notification will include a button opening the AMO page to install the add-on.
-* We make changes to Pontoon terms and conditions, and want to require users to acknowledge them. The infobar will include a link to the updated terms, and a button to explicitly accept them.
 
 # Feature explanation
 
 When a logged in user opens Pontoon, we check against a list of notifications. If the user matches the necessary conditions, we display the notification.
 
 Information about each notification is stored in a table with the following fields:
-* Notification ID (automatically generated).
 * Identifier: short text identifier, e.g. `new_terms_2020`.
 * Active (boolean): indicates if the notification is currently active or not.
 * Creation date (date): stores when the notification was created.
@@ -35,17 +35,16 @@ We also need to store information on the last time we displayed the infobar to e
 * User ID.
 * Notification ID.
 * First displayed (timestamp).
-* Last displayed (timestamp).
+* Dismissed date (timestamp).
 * Number of times it’s been displayed.
 * Dismissed (boolean).
 
-If there are multiple notifications active, we look at them in order of creation date, from the most recent to the oldest, to make sure we only display one.
+If there are multiple notifications active, we only display the most recent based on creation date.
 
 We create a row in the table for the user the first time the notification is displayed, and keep updating the table until it’s dismissed.
 
 For `infobar`, the notification won’t be displayed to the user again (i.e. the `dismissed` field is set to True) if:
 * They click the close (x) button.
-* They click any of the links included.
 * They click the button, if present.
 
 For `modal` notifications, it won’t be displayed to the user again only if they click the button, which has to be present. The notification won’t have a close button (x).
