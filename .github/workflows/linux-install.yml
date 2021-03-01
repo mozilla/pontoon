@@ -13,39 +13,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: "Debian 10 (buster)"  # -> 2024-06
-            os: ubuntu-18.04
-            python-version: 3.7
-            node-version: 10
-            postgres-version: 11
-          - name: "Debian 11 (bullseye)"  # -> ?
-            os: ubuntu-20.04
-            python-version: 3.9
-            node-version: 12
-            postgres-version: 13
-          - name: "Ubuntu 18.04 LTS (bionic)"  # -> 2023-04
-            os: ubuntu-18.04
-            python-version: 3.7
-            node-version: 8
-            postgres-version: 10
-          - name: "Ubuntu 20.04 LTS (focal)"  # -> 2025-04
-            os: ubuntu-20.04
-            python-version: 3.8
-            node-version: 10
-            postgres-version: 12
-          - name: "Ubuntu 20.10 (groovy)"  # -> 2021-07
-            os: ubuntu-latest
-            python-version: 3.8
-            node-version: 12
-            postgres-version: 12
-          - name: "Ubuntu 21.04 (hirsute)"  # -> 2022-01
-            os: ubuntu-latest
-            python-version: 3.9
-            node-version: 12
-            postgres-version: 13
+        python-version: [3.8, 3.9]
+        node-version: [14]
+        postgres-version: [10, 11, 12, 13]
+        os: [ubuntu-20.04]
 
-    name: "${{ matrix.name }} [py${{ matrix.python-version }}, node${{ matrix.node-version }}, pg${{ matrix.postgres-version }}]"
+    name: "${{matrix.os}} (py${{ matrix.python-version }}, node${{ matrix.node-version }}, pg${{ matrix.postgres-version }})"
 
     runs-on: ${{ matrix.os }}
 
