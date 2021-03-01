@@ -73,6 +73,9 @@ flake8:
 black:
 	"${DC}" run --rm webapp black pontoon/
 
+pyupgrade:
+	"${DC}" run --rm webapp pyupgrade --py38-plus *.py `find pontoon -name \*.py`
+
 flow:
 	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
 

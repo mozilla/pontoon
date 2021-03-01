@@ -592,6 +592,10 @@ pytz==2019.3 \
     #   django
     #   django-dirtyfields
     #   django-notifications-hq
+pyupgrade==2.10.0 \
+    --hash=sha256:601427033f280d50b5b102fed1013b96f91244777772114aeb7e191762cd6050 \
+    --hash=sha256:b26a00db6e2d745fe5a949e1fd02c5286c3999edaf804f746c69d559c8f8b365
+    # via -r requirements/lint.txt
 raygun4py==4.3.0 \
     --hash=sha256:9a675da0215df310a929ef8fe4f9f6c7882b3ee44a925d73e5c191fd962d7c4d
     # via -r requirements/default.txt
@@ -712,6 +716,12 @@ text-unidecode==1.3 \
     --hash=sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8 \
     --hash=sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93
     # via faker
+tokenize-rt==4.1.0 \
+    --hash=sha256:ab339b5ff829eb5e198590477f9c03c84e762b3e455e74c018956e7e326cbc70 \
+    --hash=sha256:b37251fa28c21e8cce2e42f7769a35fba2dd2ecafb297208f9a9a8add3ca7793
+    # via
+    #   -r requirements/lint.txt
+    #   pyupgrade
 toml==0.10.2 \
     --hash=sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b \
     --hash=sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
