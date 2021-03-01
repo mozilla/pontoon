@@ -13,7 +13,7 @@ from pontoon.base.models import (
 from pontoon.tags.models import Tag as TagModel
 
 
-class Stats(object):
+class Stats:
     missing_strings = graphene.Int()
     complete = graphene.Boolean()
 

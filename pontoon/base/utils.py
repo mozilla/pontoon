@@ -249,7 +249,7 @@ def get_download_content(slug, code, part):
 
     for resource in resources:
         # Get locale file
-        dirnames = set([locale.code, locale.code.replace("-", "_")])
+        dirnames = {locale.code, locale.code.replace("-", "_")}
         locale_path = _download_file(
             locale_prefixes, dirnames, vcs_project, resource.path
         )
@@ -500,7 +500,7 @@ def sanitize_xml_input_string(string):
     """
 
     illegal_xml_chars_re = re.compile(
-        u"[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]"
+        "[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]"
     )
 
     return illegal_xml_chars_re.sub("", string)

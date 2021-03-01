@@ -17,7 +17,7 @@ class Tag(models.Model):
 
     objects = TagQuerySet.as_manager()
 
-    class Meta(object):
+    class Meta:
         unique_together = [["slug", "project"]]
 
     def serialize(self):

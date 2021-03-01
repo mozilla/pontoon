@@ -135,7 +135,7 @@ def test_repo_pull(repo_git):
             "git",
             "https://example.com",
             repo_git.checkout_path,
-            u"",
+            "",
         )
 
 

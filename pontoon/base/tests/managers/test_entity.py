@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from unittest.mock import patch, call
 
 import pytest
@@ -41,7 +40,7 @@ def entity_test_search(admin, resource_a, locale_a):
             "comment": "random",
         },
         {
-            "string": u"Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ",
+            "string": "Third entity string with some twist: ZAŻÓŁĆ GĘŚLĄ",
             "string_plural": "Third plural",
             "comment": "even more random notes",
         },
@@ -703,7 +702,7 @@ def test_mgr_entity_search_invalid_query(entity_test_search):
 
     assert search("localization") == []
     assert search("testing search queries") == []
-    assert search(u"Ń") == []
+    assert search("Ń") == []
 
 
 @pytest.mark.django_db
@@ -723,26 +722,26 @@ def test_mgr_entity_search_entities(entity_test_search):
     # 5, First Entity with string
     # 6, Entity with quoted "string"
 
-    assert search(u"e") == entities
-    assert search(u"entity string") == [entities[i] for i in [0, 1, 2, 3, 5, 6]]
+    assert search("e") == entities
+    assert search("entity string") == [entities[i] for i in [0, 1, 2, 3, 5, 6]]
 
-    assert search(u"second entity") == [entities[1]]
-    assert search(u"third entity") == [entities[2]]
+    assert search("second entity") == [entities[1]]
+    assert search("third entity") == [entities[2]]
 
     # Check if quoted queries use full string string and
     # unquoted use full text search
-    assert search(u"first entity") == [entities[i] for i in [0, 3, 4, 5]]
-    assert search(u'"first entity"') == [entities[i] for i in [0, 4, 5]]
+    assert search("first entity") == [entities[i] for i in [0, 3, 4, 5]]
+    assert search('"first entity"') == [entities[i] for i in [0, 4, 5]]
 
-    assert search(u"first entity string") == [entities[i] for i in [0, 3, 5]]
-    assert search(u'"first entity" string') == [entities[0], entities[5]]
-    assert search(u'"first entity string"') == [entities[0]]
+    assert search("first entity string") == [entities[i] for i in [0, 3, 5]]
+    assert search('"first entity" string') == [entities[0], entities[5]]
+    assert search('"first entity string"') == [entities[0]]
 
     # Check if escaped quoted searches for quoted string
     assert search(r"entity \"string\"") == [entities[6]]
 
     # Check if we're able search by unicode characters.
-    assert search(u"gęślą") == [entities[2]]
+    assert search("gęślą") == [entities[2]]
 
 
 @pytest.mark.django_db
@@ -765,9 +764,9 @@ def test_lookup_collation(resource_a, locale_a):
     """
     entity = EntityFactory.create(resource=resource_a, string="string",)
     entity_args = [
-        {"string": u"First string", "comment": u"random Strıng"},
-        {"string": u"Second strİng", "comment": u"random string"},
-        {"string": u"Third Strıng", "comment": u"random strİng"},
+        {"string": "First string", "comment": "random Strıng"},
+        {"string": "Second strİng", "comment": "random string"},
+        {"string": "Third Strıng", "comment": "random strİng"},
     ]
     entities = [
         EntityFactory(resource=resource_a, string=x["string"], comment=x["comment"],)
@@ -775,11 +774,11 @@ def test_lookup_collation(resource_a, locale_a):
     ]
 
     translation_args = [
-        u"this is string",
-        u"this is STRİNG",
-        u"this is Strıng",
-        u"this is StrInG",
-        u"this is sTriNg",
+        "this is string",
+        "this is STRİNG",
+        "this is Strıng",
+        "this is StrInG",
+        "this is sTriNg",
     ]
     translations = [
         TranslationFactory(entity=entity, locale=locale_a, string=s,)
@@ -789,31 +788,31 @@ def test_lookup_collation(resource_a, locale_a):
     # Check if 'Iı' and 'İi' are appropriately distinguished and filtered
     # according to turkish(tr_tr) collation
     assert set(
-        resource_a.entities.filter(string__icontains_collate=(u"string", "tr_tr"))
+        resource_a.entities.filter(string__icontains_collate=("string", "tr_tr"))
     ) == set([entities[n] for n in [0, 1]] + [entity])
     assert set(
-        resource_a.entities.filter(comment__icontains_collate=(u"strİng", "tr_tr"))
-    ) == set([entities[n] for n in [1, 2]])
+        resource_a.entities.filter(comment__icontains_collate=("strİng", "tr_tr"))
+    ) == {entities[n] for n in [1, 2]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=(u"string", "tr_tr"))
-    ) == set([translations[n] for n in [0, 1, 4]])
+        Translation.objects.filter(string__icontains_collate=("string", "tr_tr"))
+    ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=(u"string", "tr_tr"))
-    ) == set([translations[n] for n in [0, 1, 4]])
+        Translation.objects.filter(string__icontains_collate=("string", "tr_tr"))
+    ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=(u"strİng", "tr_tr"))
-    ) == set([translations[n] for n in [0, 1, 4]])
+        Translation.objects.filter(string__icontains_collate=("strİng", "tr_tr"))
+    ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=(u"strıng", "tr_tr"))
-    ) == set([translations[n] for n in [2, 3]])
+        Translation.objects.filter(string__icontains_collate=("strıng", "tr_tr"))
+    ) == {translations[n] for n in [2, 3]}
     # Check if differentiation fails without any collation(C)
     assert set(
-        Translation.objects.filter(string__icontains_collate=(u"string", "C"))
-    ) == set([translations[n] for n in [0, 3, 4]])
+        Translation.objects.filter(string__icontains_collate=("string", "C"))
+    ) == {translations[n] for n in [0, 3, 4]}
     # Compare the icontains_collate query with regular i_contains query
-    assert set(Translation.objects.filter(string__icontains=u"string")) == set(
-        [translations[n] for n in [0, 2, 3, 4]]
-    )
+    assert set(Translation.objects.filter(string__icontains="string")) == {
+        translations[n] for n in [0, 2, 3, 4]
+    }
 
 
 @pytest.mark.django_db

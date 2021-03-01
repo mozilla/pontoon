@@ -13,7 +13,7 @@ from pontoon.base.models import (
 from pontoon.tags.models import Tag
 
 
-class Clonable(object):
+class Clonable:
     """Instantiated descendants of this class can be called to create a cloned
     version of the object.
 
@@ -29,7 +29,7 @@ class Clonable(object):
             setattr(self, k, kwargs.get(k))
 
     def __call__(self, **kwargs):
-        clone_kwargs = dict((k, getattr(self, k)) for k in self.clone_kwargs)
+        clone_kwargs = {k: getattr(self, k) for k in self.clone_kwargs}
         clone_kwargs.update(kwargs)
         return self.__class__(**clone_kwargs)
 

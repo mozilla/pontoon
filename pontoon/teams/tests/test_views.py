@@ -39,7 +39,7 @@ def test_locale_view(mock_render, translation_a, client):
     """
     Check if the locale view finds the right locale and passes it to the template.
     """
-    client.get("/{locale}/".format(locale=translation_a.locale.code))
+    client.get(f"/{translation_a.locale.code}/")
 
     assert mock_render.call_args[0][2]["locale"] == translation_a.locale
 
@@ -113,13 +113,13 @@ def test_users_permissions_for_ajax_permissions_view(
     Permissions Tab.
     """
 
-    response = client.get("/{locale}/ajax/permissions/".format(locale=locale_a.code))
+    response = client.get(f"/{locale_a.code}/ajax/permissions/")
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     # Check if users without permissions for the locale can get this tab.
     response = member.client.get(
-        "/{locale}/ajax/permissions/".format(locale=locale_a.code)
+        f"/{locale_a.code}/ajax/permissions/"
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
@@ -128,7 +128,7 @@ def test_users_permissions_for_ajax_permissions_view(
 
     # Bump up permissions for user0 and check if the view is accessible.
     response = member.client.get(
-        "/{locale}/ajax/permissions/".format(locale=locale_a.code)
+        f"/{locale_a.code}/ajax/permissions/"
     )
     assert response.status_code == 200
     assert b"<title>Forbidden page</title>" not in response.content
@@ -137,21 +137,21 @@ def test_users_permissions_for_ajax_permissions_view(
     locale_a.managers_group.user_set.clear()
 
     response = member.client.get(
-        "/{locale}/ajax/permissions/".format(locale=locale_a.code)
+        f"/{locale_a.code}/ajax/permissions/"
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     # All unauthorized attempts to POST data should be blocked
     response = member.client.post(
-        "/{locale}/ajax/permissions/".format(locale=locale_a.code),
+        f"/{locale_a.code}/ajax/permissions/",
         data={"smth": "smth"},
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     response = client.post(
-        "/{locale}/ajax/permissions/".format(locale=locale_a.code),
+        f"/{locale_a.code}/ajax/permissions/",
         data={"smth": "smth"},
     )
     assert response.status_code == 403
@@ -168,7 +168,7 @@ def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     Tests if the view returns top contributors specific for given locale.
     """
     client.get(
-        "/{locale}/ajax/contributors/".format(locale=translation_a.locale.code),
+        f"/{translation_a.locale.code}/ajax/contributors/",
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
@@ -177,7 +177,7 @@ def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     assert list(response_context["contributors"]) == [translation_a.user]
 
     client.get(
-        "/{locale}/ajax/contributors/".format(locale=locale_b.code),
+        f"/{locale_b.code}/ajax/contributors/",
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 

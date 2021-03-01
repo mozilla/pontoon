@@ -1,4 +1,3 @@
-# coding: utf-8
 from collections import OrderedDict
 
 import pytest
@@ -141,7 +140,7 @@ def test_helper_base_format_timedelta_0(settings):
 
 
 def test_helper_base_nospam_unicode(settings):
-    assert str(nospam(u"<łążźćń>")) == u"&lt;łążźćń&gt;"
+    assert str(nospam("<łążźćń>")) == "&lt;łążźćń&gt;"
 
 
 def test_helper_base_nospam_escape(settings):

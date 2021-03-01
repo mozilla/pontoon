@@ -20,7 +20,7 @@ BLANK_LINE = "blank_line"
 TAG_REGEX = re.compile(r"\{(ok|l10n-extra)\}")
 
 
-class LangComment(object):
+class LangComment:
     def __init__(self, marker, content, end):
         self.marker = marker
         self.raw_content = content
@@ -37,7 +37,7 @@ class LangComment(object):
 
 class LangEntity(VCSTranslation):
     def __init__(self, source_string, translation_string, tags):
-        super(LangEntity, self).__init__(
+        super().__init__(
             key=source_string,  # Langfiles use the source as the key.
             source_string=source_string,
             strings={None: translation_string},  # Langfiles lack plural support
@@ -75,10 +75,10 @@ class LangResource(ParsedResource):
                 elif isinstance(child, LangComment):
                     f.write(child.raw)
                 elif child == BLANK_LINE:
-                    f.write(u"\n")
+                    f.write("\n")
 
     def write_entity(self, f, entity):
-        f.write(u";{0}\n".format(entity.source_string))
+        f.write(f";{entity.source_string}\n")
 
         translation = entity.strings.get(None, None)
         if translation is None:
@@ -93,12 +93,12 @@ class LangResource(ParsedResource):
             entity.tags.discard("ok")
 
         if entity.extra.get("tags"):
-            tags = [u"{{{tag}}}".format(tag=t) for t in entity.tags]
-            translation = u"{translation} {tags}".format(
-                translation=translation, tags=u" ".join(tags)
+            tags = [f"{{{t}}}" for t in entity.tags]
+            translation = "{translation} {tags}".format(
+                translation=translation, tags=" ".join(tags)
             )
 
-        f.write(u"{0}\n".format(translation))
+        f.write(f"{translation}\n")
 
 
 class LangVisitor(NodeVisitor):
@@ -186,7 +186,7 @@ def node_text(node):
     actually be a list of nodes due to repetition.
     """
     if node is None:
-        return u""
+        return ""
     elif isinstance(node, list):
         return "".join([n.text for n in node])
     else:
@@ -203,7 +203,7 @@ def parse(path, source_path=None, locale=None):
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
         raise ParseError(
-            u"Failed to parse {path}: {err}".format(path=path, err=err)
+            f"Failed to parse {path}: {err}"
         ) from err
 
     return LangResource(path, children)

@@ -151,7 +151,7 @@ def test_util_tags_stats_tool_get_data_matrix(
     elif name == "empty":
         pass
     else:
-        raise ValueError("Unsupported assertion type: {}".format(name))
+        raise ValueError(f"Unsupported assertion type: {name}")
 
     if name.startswith("slug_") and "slug" in kwargs:
         for result in data:

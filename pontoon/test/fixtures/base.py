@@ -37,7 +37,7 @@ def member(client, user_a):
     the `client` is authenticated
     """
 
-    class LoggedInMember(object):
+    class LoggedInMember:
         def __init__(self, user, client):
             client.force_login(user)
             self.client = client

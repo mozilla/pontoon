@@ -76,7 +76,7 @@ def translate_locale_agnostic(request, slug, part):
                 "pontoon.translate",
                 kwargs=dict(project=slug, locale=locale, resource=part),
             )
-            return redirect("%s%s" % (path, query))
+            return redirect(f"{path}{query}")
 
     locale = utils.get_project_locale_from_request(request, project_locales)
     path = (
@@ -86,7 +86,7 @@ def translate_locale_agnostic(request, slug, part):
         if locale
         else reverse("pontoon.projects.project", kwargs=dict(slug=slug))
     )
-    return redirect("%s%s" % (path, query))
+    return redirect(f"{path}{query}")
 
 
 @utils.require_AJAX
@@ -111,7 +111,7 @@ def locale_project_parts(request, locale, slug):
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
+            {"status": False, "message": f"Not Found: {e}"},
             status=404,
         )
 
@@ -119,7 +119,7 @@ def locale_project_parts(request, locale, slug):
         project = Project.objects.visible_for(request.user).get(slug=slug)
     except Project.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": "Not Found: {error}".format(error=e)},
+            {"status": False, "message": f"Not Found: {e}"},
             status=404,
         )
 
@@ -295,7 +295,7 @@ def entities(request):
         entities = Entity.for_project_locale(request.user, project, locale, **form_data)
     except ValueError as error:
         return JsonResponse(
-            {"status": False, "message": "{error}".format(error=error)}, status=500
+            {"status": False, "message": f"{error}"}, status=500
         )
 
     # Only return a list of entity PKs (batch editing: select all)
@@ -340,7 +340,7 @@ def get_translations_from_other_locales(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -386,7 +386,7 @@ def get_translation_history(request):
         plural_form = int(request.GET["plural_form"])
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -433,7 +433,7 @@ def get_team_comments(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -695,7 +695,7 @@ def perform_checks(request):
         ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -703,7 +703,7 @@ def perform_checks(request):
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -799,7 +799,7 @@ def download_translation_memory(request, locale, slug):
         .exclude(Q(source="") | Q(target=""))
         .exclude(translation__approved=False, translation__fuzzy=False)
     )
-    filename = "{code}.{slug}.tmx".format(code=locale.code, slug=slug)
+    filename = f"{locale.code}.{slug}.tmx"
 
     response = StreamingHttpResponse(
         utils.build_translation_memory_file(
@@ -876,11 +876,11 @@ class AjaxFormView(FormView):
 
     @method_decorator(utils.require_AJAX)
     def get(self, *args, **kwargs):
-        return super(AjaxFormView, self).get(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
     @method_decorator(utils.require_AJAX)
     def post(self, *args, **kwargs):
-        return super(AjaxFormView, self).post(*args, **kwargs)
+        return super().post(*args, **kwargs)
 
     def form_invalid(self, form):
         return JsonResponse(dict(errors=form.errors), status=400)

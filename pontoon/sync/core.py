@@ -99,7 +99,7 @@ def update_entities(db_project, vcs_project, changeset):
         if vcs_entity is None:
             if db_entity is None:
                 # This should never happen. What? Hard abort.
-                raise ValueError(u"No entities found for key `{0}`".format(key))
+                raise ValueError(f"No entities found for key `{key}`")
             else:
                 # VCS no longer has the entity, obsolete it.
                 changeset.obsolete_db_entity(db_entity)
@@ -112,7 +112,7 @@ def update_entities(db_project, vcs_project, changeset):
 
 def update_resources(db_project, vcs_project):
     """Update the database on what resource files exist in VCS."""
-    log.debug("Scanning {}".format(vcs_project.source_directory_path))
+    log.debug(f"Scanning {vcs_project.source_directory_path}")
     vcs_changed_files, vcs_removed_files = vcs_project.changed_source_files
 
     removed_resources = db_project.resources.filter(path__in=vcs_removed_files)
@@ -378,7 +378,7 @@ def get_changed_locales(db_project, locales, now):
             return locales
 
     log.info(
-        "Fetching latest commit hashes for project {0} started.".format(db_project.slug)
+        f"Fetching latest commit hashes for project {db_project.slug} started."
     )
 
     # If locale has changed in the DB, we need to sync it.

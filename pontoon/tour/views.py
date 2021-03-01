@@ -15,7 +15,7 @@ def update_tour_status(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "Bad Request: {error}".format(error=form.errors),
+                "message": f"Bad Request: {form.errors}",
             },
             status=400,
         )

@@ -18,10 +18,10 @@ class ProjectTagAdminAjaxView(AjaxFormPostView):
             Project.objects.visible_for(self.request.user), slug=kwargs["project"]
         )
         self.tag = kwargs["tag"]
-        return super(ProjectTagAdminAjaxView, self).post(*args, **kwargs)
+        return super().post(*args, **kwargs)
 
     def get_form_kwargs(self, **kwargs):
-        kwargs = super(ProjectTagAdminAjaxView, self).get_form_kwargs(**kwargs)
+        kwargs = super().get_form_kwargs(**kwargs)
         kwargs["project"] = self.project
         kwargs["data"] = kwargs["data"].copy()
         kwargs["data"]["tag"] = self.tag

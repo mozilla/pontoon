@@ -18,11 +18,11 @@ from pontoon.sync.tests.formats import FormatTestsMixin
 
 class CompareLocalesResourceTests(TestCase):
     def setUp(self):
-        super(CompareLocalesResourceTests, self).setUp()
+        super().setUp()
         self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        super(CompareLocalesResourceTests, self).tearDown()
+        super().tearDown()
         shutil.rmtree(self.tempdir)
 
     def get_invalid_file_path(self):
@@ -115,11 +115,11 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
     supports_source_string = False
 
     def setUp(self):
-        super(AndroidXMLTests, self).setUp()
+        super().setUp()
         self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        super(AndroidXMLTests, self).tearDown()
+        super().tearDown()
         shutil.rmtree(self.tempdir)
 
     def parse_string(
@@ -133,7 +133,7 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
             source_path = create_named_tempfile(
                 source_string, prefix="strings", suffix=".xml", directory=self.tempdir,
             )
-        return super(AndroidXMLTests, self).parse_string(
+        return super().parse_string(
             string,
             source_string=source_string,
             locale=locale,

@@ -84,7 +84,7 @@ class DTDTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """DTD keys can't contain spaces."""
-        return super(DTDTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_DTD_FILE, 0)
@@ -293,7 +293,7 @@ class PropertiesTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """Properties keys can't contain spaces."""
-        return super(PropertiesTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_PROPERTIES_FILE, 0)
@@ -456,7 +456,7 @@ class IniTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """Ini keys can't contain spaces."""
-        return super(IniTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_INI_FILE, 0)
@@ -631,7 +631,7 @@ class IncTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """Inc keys can't contain spaces."""
-        return super(IncTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_INC_FILE, 0)

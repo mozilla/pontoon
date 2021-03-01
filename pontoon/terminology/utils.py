@@ -9,50 +9,50 @@ def build_tbx_v2_file(term_translations, locale):
     django templates. Rendering a string in memory is a lot faster.
     """
     yield (
-        u'<?xml version="1.0" encoding="UTF-8"?>'
-        u'\n<!DOCTYPE martif SYSTEM "TBXcoreStructV02.dtd">'
-        u'\n<martif type="TBX" xml:lang="en-US">'
-        u"\n\t<martifHeader>"
-        u"\n\t\t<fileDesc>"
-        u"\n\t\t\t<titleStmt>"
-        u"\n\t\t\t\t<title>Mozilla Terms</title>"
-        u"\n\t\t\t</titleStmt>"
-        u"\n\t\t\t<sourceDesc>"
-        u"\n\t\t\t\t<p>from a Mozilla termbase</p>"
-        u"\n\t\t\t</sourceDesc>"
-        u"\n\t\t</fileDesc>"
-        u"\n\t\t<encodingDesc>"
-        u'\n\t\t\t<p type="XCSURI">TBXXCSV02.xcs</p>'
-        u"\n\t\t</encodingDesc>"
-        u"\n\t</martifHeader>"
-        u"\n\t<text>"
-        u"\n\t\t<body>"
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '\n<!DOCTYPE martif SYSTEM "TBXcoreStructV02.dtd">'
+        '\n<martif type="TBX" xml:lang="en-US">'
+        "\n\t<martifHeader>"
+        "\n\t\t<fileDesc>"
+        "\n\t\t\t<titleStmt>"
+        "\n\t\t\t\t<title>Mozilla Terms</title>"
+        "\n\t\t\t</titleStmt>"
+        "\n\t\t\t<sourceDesc>"
+        "\n\t\t\t\t<p>from a Mozilla termbase</p>"
+        "\n\t\t\t</sourceDesc>"
+        "\n\t\t</fileDesc>"
+        "\n\t\t<encodingDesc>"
+        '\n\t\t\t<p type="XCSURI">TBXXCSV02.xcs</p>'
+        "\n\t\t</encodingDesc>"
+        "\n\t</martifHeader>"
+        "\n\t<text>"
+        "\n\t\t<body>"
     )
 
     for translation in term_translations:
         term = translation.term
         yield (
-            u'\n\t\t\t<termEntry id="c%(id)s">'
-            u'\n\t\t\t\t<descrip type="context">%(usage)s</descrip>'
-            u'\n\t\t\t\t<langSet xml:lang="en-US">'
-            u"\n\t\t\t\t\t<ntig>"
-            u"\n\t\t\t\t\t\t<termGrp>"
-            u"\n\t\t\t\t\t\t\t<term>%(term)s</term>"
-            u'\n\t\t\t\t\t\t\t<termNote type="partOfSpeech">%(part_of_speech)s</termNote>'
-            u"\n\t\t\t\t\t\t</termGrp>"
-            u"\n\t\t\t\t\t</ntig>"
-            u"\n\t\t\t\t\t<descripGrp>"
-            u'\n\t\t\t\t\t\t<descrip type="definition">%(definition)s</descrip>'
-            u"\n\t\t\t\t\t</descripGrp>"
-            u"\n\t\t\t\t</langSet>"
-            u"\n\t\t\t\t<langSet xml:lang=%(locale)s>"
-            u"\n\t\t\t\t\t<ntig>"
-            u"\n\t\t\t\t\t\t<termGrp>"
-            u"\n\t\t\t\t\t\t\t<term>%(translation)s</term>"
-            u"\n\t\t\t\t\t\t</termGrp>"
-            u"\n\t\t\t\t\t</ntig>"
-            u"\n\t\t\t\t</langSet>"
-            u"\n\t\t\t</termEntry>"
+            '\n\t\t\t<termEntry id="c%(id)s">'
+            '\n\t\t\t\t<descrip type="context">%(usage)s</descrip>'
+            '\n\t\t\t\t<langSet xml:lang="en-US">'
+            "\n\t\t\t\t\t<ntig>"
+            "\n\t\t\t\t\t\t<termGrp>"
+            "\n\t\t\t\t\t\t\t<term>%(term)s</term>"
+            '\n\t\t\t\t\t\t\t<termNote type="partOfSpeech">%(part_of_speech)s</termNote>'
+            "\n\t\t\t\t\t\t</termGrp>"
+            "\n\t\t\t\t\t</ntig>"
+            "\n\t\t\t\t\t<descripGrp>"
+            '\n\t\t\t\t\t\t<descrip type="definition">%(definition)s</descrip>'
+            "\n\t\t\t\t\t</descripGrp>"
+            "\n\t\t\t\t</langSet>"
+            "\n\t\t\t\t<langSet xml:lang=%(locale)s>"
+            "\n\t\t\t\t\t<ntig>"
+            "\n\t\t\t\t\t\t<termGrp>"
+            "\n\t\t\t\t\t\t\t<term>%(translation)s</term>"
+            "\n\t\t\t\t\t\t</termGrp>"
+            "\n\t\t\t\t\t</ntig>"
+            "\n\t\t\t\t</langSet>"
+            "\n\t\t\t</termEntry>"
             % {
                 "id": term.pk,
                 "term": escape(term.text),
@@ -64,7 +64,7 @@ def build_tbx_v2_file(term_translations, locale):
             }
         )
 
-    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</martif>\n")
+    yield ("\n\t\t</body>" "\n\t</text>" "\n</martif>\n")
 
 
 def build_tbx_v3_file(term_translations, locale):
@@ -75,47 +75,47 @@ def build_tbx_v3_file(term_translations, locale):
     django templates. Rendering a string in memory is a lot faster.
     """
     yield (
-        u'<?xml version="1.0" encoding="UTF-8"?>'
-        u'\n<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBXcoreStructV03_TBX-Basic_integrated.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>'
-        u'\n<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBX-Basic_DCA.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>'
-        u'\n<tbx style="dca" type="TBX-Basic" xml:lang="en" xmlns="urn:iso:std:iso:30042:ed-2">'
-        u"\n\t<tbxHeader>"
-        u"\n\t\t<fileDesc>"
-        u"\n\t\t\t<titleStmt>"
-        u"\n\t\t\t\t<title>Mozilla Terms</title>"
-        u"\n\t\t\t</titleStmt>"
-        u"\n\t\t\t<sourceDesc>"
-        u"\n\t\t\t\t<p>from a Mozilla termbase</p>"
-        u"\n\t\t\t</sourceDesc>"
-        u"\n\t\t</fileDesc>"
-        u"\n\t\t<encodingDesc>"
-        u'\n\t\t\t<p type="XCSURI">TBXXCSV02.xcs</p>'
-        u"\n\t\t</encodingDesc>"
-        u"\n\t</tbxHeader>"
-        u"\n\t<text>"
-        u"\n\t\t<body>"
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '\n<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBXcoreStructV03_TBX-Basic_integrated.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>'
+        '\n<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBX-Basic_DCA.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>'
+        '\n<tbx style="dca" type="TBX-Basic" xml:lang="en" xmlns="urn:iso:std:iso:30042:ed-2">'
+        "\n\t<tbxHeader>"
+        "\n\t\t<fileDesc>"
+        "\n\t\t\t<titleStmt>"
+        "\n\t\t\t\t<title>Mozilla Terms</title>"
+        "\n\t\t\t</titleStmt>"
+        "\n\t\t\t<sourceDesc>"
+        "\n\t\t\t\t<p>from a Mozilla termbase</p>"
+        "\n\t\t\t</sourceDesc>"
+        "\n\t\t</fileDesc>"
+        "\n\t\t<encodingDesc>"
+        '\n\t\t\t<p type="XCSURI">TBXXCSV02.xcs</p>'
+        "\n\t\t</encodingDesc>"
+        "\n\t</tbxHeader>"
+        "\n\t<text>"
+        "\n\t\t<body>"
     )
 
     for translation in term_translations:
         term = translation.term
         yield (
-            u'\n\t\t\t<conceptEntry id="c%(id)s">'
-            u'\n\t\t\t\t<langSec xml:lang="en-US">'
-            u"\n\t\t\t\t\t<termSec>"
-            u"\n\t\t\t\t\t\t<term>%(term)s</term>"
-            u'\n\t\t\t\t\t\t<termNote type="partOfSpeech">%(part_of_speech)s</termNote>'
-            u"\n\t\t\t\t\t\t<descripGrp>"
-            u'\n\t\t\t\t\t\t\t<descrip type="definition">%(definition)s</descrip>'
-            u'\n\t\t\t\t\t\t\t<descrip type="context">%(usage)s</descrip>'
-            u"\n\t\t\t\t\t\t</descripGrp>"
-            u"\n\t\t\t\t\t</termSec>"
-            u"\n\t\t\t\t</langSec>"
-            u"\n\t\t\t\t<langSec xml:lang=%(locale)s>"
-            u"\n\t\t\t\t\t<termSec>"
-            u"\n\t\t\t\t\t\t<term>%(translation)s</term>"
-            u"\n\t\t\t\t\t</termSec>"
-            u"\n\t\t\t\t</langSec>"
-            u"\n\t\t\t</conceptEntry>"
+            '\n\t\t\t<conceptEntry id="c%(id)s">'
+            '\n\t\t\t\t<langSec xml:lang="en-US">'
+            "\n\t\t\t\t\t<termSec>"
+            "\n\t\t\t\t\t\t<term>%(term)s</term>"
+            '\n\t\t\t\t\t\t<termNote type="partOfSpeech">%(part_of_speech)s</termNote>'
+            "\n\t\t\t\t\t\t<descripGrp>"
+            '\n\t\t\t\t\t\t\t<descrip type="definition">%(definition)s</descrip>'
+            '\n\t\t\t\t\t\t\t<descrip type="context">%(usage)s</descrip>'
+            "\n\t\t\t\t\t\t</descripGrp>"
+            "\n\t\t\t\t\t</termSec>"
+            "\n\t\t\t\t</langSec>"
+            "\n\t\t\t\t<langSec xml:lang=%(locale)s>"
+            "\n\t\t\t\t\t<termSec>"
+            "\n\t\t\t\t\t\t<term>%(translation)s</term>"
+            "\n\t\t\t\t\t</termSec>"
+            "\n\t\t\t\t</langSec>"
+            "\n\t\t\t</conceptEntry>"
             % {
                 "id": term.pk,
                 "term": escape(term.text),
@@ -127,4 +127,4 @@ def build_tbx_v3_file(term_translations, locale):
             }
         )
 
-    yield (u"\n\t\t</body>" u"\n\t</text>" u"\n</tbx>\n")
+    yield ("\n\t\t</body>" "\n\t</text>" "\n</tbx>\n")

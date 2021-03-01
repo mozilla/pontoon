@@ -20,7 +20,7 @@ from pontoon.checks.utils import bulk_run_checks
 log = logging.getLogger(__name__)
 
 
-class ChangeSet(object):
+class ChangeSet:
     """
     Stores a set of changes to be made to the database and the
     translations stored in VCS. Once all the necessary changes have been
@@ -216,7 +216,7 @@ class ChangeSet(object):
                 notify.send(self.db_project, recipient=contributor, verb=verb)
 
             log.info(
-                "New string notifications for project {} sent.".format(self.db_project)
+                f"New string notifications for project {self.db_project} sent."
             )
 
     def execute_create_db(self):

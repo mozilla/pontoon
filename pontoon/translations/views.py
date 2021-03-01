@@ -32,7 +32,7 @@ def create_translation(request):
         problems = []
         for field, errors in form.errors.items():
             problems.append(
-                'Error validating field `{0}`: "{1}"'.format(field, " ".join(errors))
+                'Error validating field `{}`: "{}"'.format(field, " ".join(errors))
             )
         return JsonResponse(
             {"status": False, "message": "\n".join(problems)}, status=400
@@ -132,7 +132,7 @@ def delete_translation(request):
         translation_id = request.POST["translation"]
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -188,7 +188,7 @@ def approve_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -271,7 +271,7 @@ def unapprove_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -333,7 +333,7 @@ def reject_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
@@ -399,7 +399,7 @@ def unreject_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": "Bad Request: {error}".format(error=e)},
+            {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 

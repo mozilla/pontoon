@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 
 from django.urls import reverse
@@ -362,12 +361,12 @@ def test_manage_project_strings_download_csv(client_superuser):
 
     # Verify the translated content is here.
     assert b"pedestal" in response.content
-    assert "piédestal".encode("utf-8") in response.content
+    assert "piédestal".encode() in response.content
     assert b"Sockel" in response.content
 
     assert b"Mighty" in response.content
     assert b"puissants" in response.content
-    assert "Mächt’ge".encode("utf-8") in response.content
+    assert "Mächt’ge".encode() in response.content
 
 
 @pytest.mark.django_db

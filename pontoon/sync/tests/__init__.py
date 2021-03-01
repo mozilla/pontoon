@@ -39,7 +39,7 @@ class VCSEntityFactory(factory.Factory):
 
 
 class VCSTranslationFactory(factory.Factory):
-    key = factory.Sequence(lambda n: "key-{0}".format(n))
+    key = factory.Sequence(lambda n: f"key-{n}")
     strings = factory.Dict({})
     comments = factory.List([])
     fuzzy = False

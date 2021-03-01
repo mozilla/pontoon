@@ -84,7 +84,7 @@ def metric_prefix(source):
     output = source / prefix["value"]
 
     # Round quotient to 1 decimal point
-    output = "{0:.1f}".format(output)
+    output = f"{output:.1f}"
 
     # Remove decimal point if 0
     output = output.rstrip("0").rstrip(".")
@@ -153,13 +153,13 @@ def format_timedelta(value):
     if value is not None:
         parts = []
         if value.days > 0:
-            parts.append("{0} days".format(value.days))
+            parts.append(f"{value.days} days")
         minutes = value.seconds // 60
         seconds = value.seconds % 60
         if minutes > 0:
-            parts.append("{0} minutes".format(minutes))
+            parts.append(f"{minutes} minutes")
         if seconds > 0:
-            parts.append("{0} seconds".format(seconds))
+            parts.append(f"{seconds} seconds")
 
         if parts:
             return ", ".join(parts)
@@ -232,7 +232,7 @@ def local_url(url, code=None):
 def dict_html_attrs(dict_obj):
     """Render json object properties into a series of data-* attributes."""
     return jinja2.Markup(
-        " ".join([u'data-{}="{}"'.format(k, v) for k, v in dict_obj.items()])
+        " ".join([f'data-{k}="{v}"' for k, v in dict_obj.items()])
     )
 
 

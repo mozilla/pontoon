@@ -20,7 +20,7 @@ class HtmlField(forms.CharField):
     widget = forms.Textarea
 
     def clean(self, value):
-        value = super(HtmlField, self).clean(value)
+        value = super().clean(value)
         value = bleach.clean(
             value,
             strip=True,
@@ -48,7 +48,7 @@ class UploadFileForm(DownloadFileForm):
     uploadfile = NoTabStopFileField()
 
     def clean(self):
-        cleaned_data = super(UploadFileForm, self).clean()
+        cleaned_data = super().clean()
         part = cleaned_data.get("part")
         uploadfile = cleaned_data.get("uploadfile")
 
@@ -76,7 +76,7 @@ class UploadFileForm(DownloadFileForm):
                     raise forms.ValidationError(message)
 
 
-class UserPermissionLogFormMixin(object):
+class UserPermissionLogFormMixin:
     """
     Logging of changes requires knowledge about the current user.
     We fetch information about a user from `request` object and
@@ -85,13 +85,13 @@ class UserPermissionLogFormMixin(object):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
-        super(UserPermissionLogFormMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def assign_users_to_groups(self, group_name, users):
         """
         Clear group membership and assign a set of users to a given group of users.
         """
-        group = getattr(self.instance, "{}_group".format(group_name))
+        group = getattr(self.instance, f"{group_name}_group")
 
         add_users, remove_users = utils.get_m2m_changes(group.user_set.all(), users)
 
@@ -136,7 +136,7 @@ class ProjectLocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
         fields = ("translators", "has_custom_translators")
 
     def save(self, *args, **kwargs):
-        super(ProjectLocalePermsForm, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         translators = self.cleaned_data.get("translators", User.objects.none())
 
@@ -214,7 +214,7 @@ class UserProfileForm(forms.ModelForm):
             .exclude(username=self.instance.username)
             .exists()
         ):
-            raise forms.ValidationError(u"Email address must be unique.")
+            raise forms.ValidationError("Email address must be unique.")
         return email
 
 
@@ -228,7 +228,7 @@ class UserCustomHomepageForm(forms.ModelForm):
         fields = ("custom_homepage",)
 
     def __init__(self, *args, **kwargs):
-        super(UserCustomHomepageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         all_locales = list(Locale.objects.all().values_list("code", "name"))
 
         self.fields["custom_homepage"] = forms.ChoiceField(
@@ -246,7 +246,7 @@ class UserPreferredSourceLocaleForm(forms.ModelForm):
         fields = ("preferred_source_locale",)
 
     def __init__(self, *args, **kwargs):
-        super(UserPreferredSourceLocaleForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         all_locales = list(Locale.objects.all().values_list("code", "name"))
 
         self.fields["preferred_source_locale"] = forms.ChoiceField(
