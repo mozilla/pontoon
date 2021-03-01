@@ -111,16 +111,14 @@ def locale_project_parts(request, locale, slug):
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"},
-            status=404,
+            {"status": False, "message": f"Not Found: {e}"}, status=404,
         )
 
     try:
         project = Project.objects.visible_for(request.user).get(slug=slug)
     except Project.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"},
-            status=404,
+            {"status": False, "message": f"Not Found: {e}"}, status=404,
         )
 
     try:
@@ -294,9 +292,7 @@ def entities(request):
     try:
         entities = Entity.for_project_locale(request.user, project, locale, **form_data)
     except ValueError as error:
-        return JsonResponse(
-            {"status": False, "message": f"{error}"}, status=500
-        )
+        return JsonResponse({"status": False, "message": f"{error}"}, status=500)
 
     # Only return a list of entity PKs (batch editing: select all)
     if form.cleaned_data["pk_only"]:
@@ -340,8 +336,7 @@ def get_translations_from_other_locales(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
+            {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
@@ -386,8 +381,7 @@ def get_translation_history(request):
         plural_form = int(request.GET["plural_form"])
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
+            {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
@@ -433,8 +427,7 @@ def get_team_comments(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
+            {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
@@ -695,16 +688,14 @@ def perform_checks(request):
         ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
+            {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
     try:
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"},
-            status=400,
+            {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
     failed_checks = run_checks(

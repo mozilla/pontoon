@@ -118,13 +118,9 @@ def sync_sources(db_project, now, force, no_pull):
     if no_pull:
         has_source_repo_changed = True
     else:
-        log.info(
-            f"Pulling source changes for project {db_project.slug} started."
-        )
+        log.info(f"Pulling source changes for project {db_project.slug} started.")
         has_source_repo_changed = pull_source_repo_changes(db_project)
-        log.info(
-            f"Pulling source changes for project {db_project.slug} complete."
-        )
+        log.info(f"Pulling source changes for project {db_project.slug} complete.")
 
     # If the only repo hasn't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
@@ -224,15 +220,11 @@ def sync_translations(
 
         # Pull repos of locales in case of multi_locale_project
         if not db_project.has_single_repo:
-            log.info(
-                f"Pulling locale repos for project {db_project.slug} started."
-            )
+            log.info(f"Pulling locale repos for project {db_project.slug} started.")
             have_locale_repos_changed, pulled_repo_locales = pull_locale_repo_changes(
                 db_project, locales
             )
-            log.info(
-                f"Pulling locale repos for project {db_project.slug} complete."
-            )
+            log.info(f"Pulling locale repos for project {db_project.slug} complete.")
 
             have_repos_changed |= have_locale_repos_changed
             repo_locales.update(pulled_repo_locales)

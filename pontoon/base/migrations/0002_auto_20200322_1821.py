@@ -1400,9 +1400,7 @@ def migration_0043_create_locale_groups(apps, schema_editor):
         content_type=locale_content_type, codename="can_manage_locale"
     )
     for locale in Locale.objects.all():
-        translators_group = Group.objects.create(
-            name=f"{locale.code} translators"
-        )
+        translators_group = Group.objects.create(name=f"{locale.code} translators")
         translators_group.permissions.add(can_translate)
         GroupObjectPermission.objects.create(
             object_pk=locale.pk,

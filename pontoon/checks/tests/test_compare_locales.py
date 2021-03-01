@@ -19,7 +19,7 @@ def mock_quality_check_args(
     translation="",
     resource_entities=None,
     resource_path=None,
-    **entity_data
+    **entity_data,
 ):
     """
     Generate a dictionary of arguments ready to use by get_quality_check

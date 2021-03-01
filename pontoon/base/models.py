@@ -1119,9 +1119,7 @@ class Locale(AggregatedStats):
                         return
 
         except requests.exceptions.RequestException as e:
-            log.error(
-                f"Unable to retrieve SYSTRAN Profile UUID: {e}"
-            )
+            log.error(f"Unable to retrieve SYSTRAN Profile UUID: {e}")
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -1444,9 +1442,7 @@ class Project(AggregatedStats):
         )
 
         if repo is None:
-            raise ValueError(
-                f"Could not find repo matching path {path}."
-            )
+            raise ValueError(f"Could not find repo matching path {path}.")
         else:
             return repo
 
@@ -3402,7 +3398,7 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         entries = self.filter(pk__in=matches_pks,).annotate(
             quality=Case(
                 *quality_sql_map,
-                **dict(default=Value(0), output_field=models.DecimalField(),)
+                **dict(default=Value(0), output_field=models.DecimalField(),),
             )
         )
         return entries

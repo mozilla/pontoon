@@ -118,41 +118,33 @@ def test_users_permissions_for_ajax_permissions_view(
     assert b"<title>Forbidden page</title>" in response.content
 
     # Check if users without permissions for the locale can get this tab.
-    response = member.client.get(
-        f"/{locale_a.code}/ajax/permissions/"
-    )
+    response = member.client.get(f"/{locale_a.code}/ajax/permissions/")
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     locale_a.managers_group.user_set.add(member.user)
 
     # Bump up permissions for user0 and check if the view is accessible.
-    response = member.client.get(
-        f"/{locale_a.code}/ajax/permissions/"
-    )
+    response = member.client.get(f"/{locale_a.code}/ajax/permissions/")
     assert response.status_code == 200
     assert b"<title>Forbidden page</title>" not in response.content
 
     # Remove permissions for user0 and check if the view is not accessible.
     locale_a.managers_group.user_set.clear()
 
-    response = member.client.get(
-        f"/{locale_a.code}/ajax/permissions/"
-    )
+    response = member.client.get(f"/{locale_a.code}/ajax/permissions/")
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     # All unauthorized attempts to POST data should be blocked
     response = member.client.post(
-        f"/{locale_a.code}/ajax/permissions/",
-        data={"smth": "smth"},
+        f"/{locale_a.code}/ajax/permissions/", data={"smth": "smth"},
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     response = client.post(
-        f"/{locale_a.code}/ajax/permissions/",
-        data={"smth": "smth"},
+        f"/{locale_a.code}/ajax/permissions/", data={"smth": "smth"},
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
@@ -177,8 +169,7 @@ def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     assert list(response_context["contributors"]) == [translation_a.user]
 
     client.get(
-        f"/{locale_b.code}/ajax/contributors/",
-        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        f"/{locale_b.code}/ajax/contributors/", HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
     response_context = mock_render.call_args[0][0]

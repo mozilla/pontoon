@@ -13,11 +13,7 @@ def update_tour_status(request):
 
     if not form.is_valid():
         return JsonResponse(
-            {
-                "status": False,
-                "message": f"Bad Request: {form.errors}",
-            },
-            status=400,
+            {"status": False, "message": f"Bad Request: {form.errors}"}, status=400,
         )
 
     form.save()

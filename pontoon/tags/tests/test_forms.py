@@ -40,9 +40,7 @@ def test_form_project_tag_resources_submit_bad(project_a):
     assert not form.is_valid()
     assert form.errors == {
         "tag": ["This field is required."],
-        "type": [
-            "Select a valid choice. " "foo is not one of the available choices.",
-        ],
+        "type": ["Select a valid choice. " "foo is not one of the available choices."],
     }
 
     form = LinkTagResourcesAdminForm(

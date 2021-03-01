@@ -103,9 +103,7 @@ def locale_directory_path(checkout_path, locale_code, parent_directories=None):
     if possible_paths:
         return possible_paths[0]
 
-    raise OSError(
-        "Directory for locale `{}` not found".format(locale_code or "source")
-    )
+    raise OSError("Directory for locale `{}` not found".format(locale_code or "source"))
 
 
 def locale_to_source_path(path):

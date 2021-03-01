@@ -77,8 +77,7 @@ class Migration(migrations.Migration):
             options={"abstract": False,},
         ),
         migrations.AlterUniqueTogether(
-            name="warning",
-            unique_together={("translation", "library", "message")},
+            name="warning", unique_together={("translation", "library", "message")},
         ),
         migrations.AlterUniqueTogether(
             name="error", unique_together={("translation", "library", "message")},

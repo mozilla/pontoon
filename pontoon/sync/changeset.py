@@ -215,9 +215,7 @@ class ChangeSet:
             for contributor in contributors:
                 notify.send(self.db_project, recipient=contributor, verb=verb)
 
-            log.info(
-                f"New string notifications for project {self.db_project} sent."
-            )
+            log.info(f"New string notifications for project {self.db_project} sent.")
 
     def execute_create_db(self):
         new_entities = []

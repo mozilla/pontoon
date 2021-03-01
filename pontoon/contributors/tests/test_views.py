@@ -197,9 +197,7 @@ def test_timeline_invalid_page(contributor_translations, client, user_a):
     response = client.get(f"/contributors/{user_a.username}/timeline/?page=45")
     assert response.status_code == 404
 
-    response = client.get(
-        f"/contributors/{user_a.username}/timeline/?page=-aa45"
-    )
+    response = client.get(f"/contributors/{user_a.username}/timeline/?page=-aa45")
     assert response.status_code == 404
 
 

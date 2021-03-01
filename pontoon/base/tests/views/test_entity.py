@@ -66,9 +66,7 @@ def test_view_entity_filters(member, resource_a, locale_a):
             params["extra"] = filter_
         else:
             params["status"] = filter_
-        patched_entity = patch(
-            f"pontoon.base.models.Entity.objects.{filter_name}"
-        )
+        patched_entity = patch(f"pontoon.base.models.Entity.objects.{filter_name}")
         with patched_entity as m:
             m.return_value = getattr(Entity.objects, filter_name)(locale_a)
             member.client.post(

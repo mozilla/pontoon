@@ -202,8 +202,6 @@ def parse(path, source_path=None, locale=None):
     try:
         children = LangVisitor().parse(content)
     except (ParsimoniousParseError, VisitationError) as err:
-        raise ParseError(
-            f"Failed to parse {path}: {err}"
-        ) from err
+        raise ParseError(f"Failed to parse {path}: {err}") from err
 
     return LangResource(path, children)

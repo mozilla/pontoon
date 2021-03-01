@@ -231,9 +231,7 @@ def local_url(url, code=None):
 @library.filter
 def dict_html_attrs(dict_obj):
     """Render json object properties into a series of data-* attributes."""
-    return jinja2.Markup(
-        " ".join([f'data-{k}="{v}"' for k, v in dict_obj.items()])
-    )
+    return jinja2.Markup(" ".join([f'data-{k}="{v}"' for k, v in dict_obj.items()]))
 
 
 def _get_default_variant(variants):

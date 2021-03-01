@@ -378,14 +378,7 @@ class GitRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ("A", "M")
         code, output, error = self.execute(
-            [
-                "git",
-                "diff",
-                "--name-status",
-                f"{from_revision}..HEAD",
-                "--",
-                path,
-            ],
+            ["git", "diff", "--name-status", f"{from_revision}..HEAD", "--", path],
         )
         if code == 0:
             return [

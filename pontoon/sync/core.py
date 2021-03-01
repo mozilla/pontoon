@@ -377,9 +377,7 @@ def get_changed_locales(db_project, locales, now):
         if not repo.api_config:
             return locales
 
-    log.info(
-        f"Fetching latest commit hashes for project {db_project.slug} started."
-    )
+    log.info(f"Fetching latest commit hashes for project {db_project.slug} started.")
 
     # If locale has changed in the DB, we need to sync it.
     changed_locale_pks = list(
