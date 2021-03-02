@@ -2,6 +2,8 @@ name: Linux Install Test
 
 on:
   push:
+    branches:
+      - master
     paths:
       - requirements/**
       - pontoon/**
