@@ -517,7 +517,6 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * key - key of an entity,
                          * source - source string of entity,
                          * target - translated string,
-                         * project_name - name of a project,
                          * project_slug - slugified name of a project,
     """
     yield (
