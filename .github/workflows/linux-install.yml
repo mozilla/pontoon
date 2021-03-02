@@ -2,9 +2,17 @@ name: Linux Install Test
 
 on:
   push:
+    paths:
+      - requirements/**
+      - pontoon/**
+      - .github/workflows/linux-install.yml
+  pull_request:
     branches:
       - master
-      - 1694598-standard-linux-install
+    paths:
+      - requirements/**
+      - pontoon/**
+      - .github/workflows/linux-install.yml
 
 jobs:
 
