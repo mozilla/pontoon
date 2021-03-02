@@ -3,7 +3,6 @@ import functools
 import io
 import os
 import re
-import sys
 
 import pytz
 import requests
@@ -494,46 +493,15 @@ def get_last_months(n):
         start_date += relativedelta(months=-1)
 
 
-def sanitise_xml_input_string(string):
+def sanitize_xml_input_string(string):
     """
-    The XML specification (http://www.w3.org/TR/xml11/#charsets) lists a bunch of Unicode characters
-    that are either illegal or "discouraged". Relace these characters to get valid XML strings
+    The XML specification (http://www.w3.org/TR/xml11/#charsets) lists a set of Unicode characters
+    that are either illegal or "discouraged". Replace these characters to get valid XML strings
     """
 
-    illegal_unichrs = [
-        (0x00, 0x08),
-        (0x0B, 0x0C),
-        (0x0E, 0x1F),
-        (0x7F, 0x84),
-        (0x86, 0x9F),
-        (0xFDD0, 0xFDDF),
-        (0xFFFE, 0xFFFF),
-    ]
-    if sys.maxunicode >= 0x10000:  # not narrow build
-        illegal_unichrs.extend(
-            [
-                (0x1FFFE, 0x1FFFF),
-                (0x2FFFE, 0x2FFFF),
-                (0x3FFFE, 0x3FFFF),
-                (0x4FFFE, 0x4FFFF),
-                (0x5FFFE, 0x5FFFF),
-                (0x6FFFE, 0x6FFFF),
-                (0x7FFFE, 0x7FFFF),
-                (0x8FFFE, 0x8FFFF),
-                (0x9FFFE, 0x9FFFF),
-                (0xAFFFE, 0xAFFFF),
-                (0xBFFFE, 0xBFFFF),
-                (0xCFFFE, 0xCFFFF),
-                (0xDFFFE, 0xDFFFF),
-                (0xEFFFE, 0xEFFFF),
-                (0xFFFFE, 0xFFFFF),
-                (0x10FFFE, 0x10FFFF),
-            ]
-        )
-
-    illegal_ranges = [fr"{chr(low)}-{chr(high)}" for (low, high) in illegal_unichrs]
-    xml_illegal_character_regex = "[" + "".join(illegal_ranges) + "]"
-    illegal_xml_chars_re = re.compile(xml_illegal_character_regex)
+    illegal_xml_chars_re = re.compile(
+        u"[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]"
+    )
 
     return illegal_xml_chars_re.sub("", string)
 
@@ -567,10 +535,10 @@ def build_translation_memory_file(creation_date, locale_code, entries):
         "\n\t</header>"
         "\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
-    for resource_path, key, source, target, project_name, project_slug in entries:
+    for resource_path, key, source, target, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify(key)))
-        source = sanitise_xml_input_string(source)
-        target = sanitise_xml_input_string(target)
+        source = sanitize_xml_input_string(source)
+        target = sanitize_xml_input_string(target)
 
         yield (
             '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
@@ -586,7 +554,6 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                 "source": escape(source),
                 "locale_code": quoteattr(locale_code),
                 "target": escape(target),
-                "project_name": escape(project_name),
             }
         )
 

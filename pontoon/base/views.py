@@ -810,7 +810,6 @@ def download_translation_memory(request, locale, slug):
                 "entity__key",
                 "source",
                 "target",
-                "project__name",
                 "project__slug",
             ).order_by("project__slug", "source"),
         ),

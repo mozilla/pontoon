@@ -74,30 +74,15 @@ def test_view_tmx_valid_entries():
         datetime(2010, 1, 1),
         "sl",
         (
-            (
-                "aa/bb/ccc",
-                "xxx",
-                "source string",
-                "translation",
-                "Pontoon App",
-                "pontoon",
-            ),
+            ("aa/bb/ccc", "xxx", "source string", "translation", "pontoon",),
             # Test escape of characters
-            (
-                "aa/bb/ccc",
-                'x&y&z#"',
-                "source string",
-                "translation",
-                "Pontoon & App",
-                "pontoon",
-            ),
+            ("aa/bb/ccc", 'x&y&z#"', "source string", "translation", "pontoon",),
             # Handle unicode characters
             (
                 "aa/bb/ccc",
                 "xxx",
                 "source string łążśźć",
                 "translation łążśźć",
-                "pontoon",
                 "pontoon",
             ),
             # Handle html content
@@ -107,7 +92,6 @@ def test_view_tmx_valid_entries():
                 "<p>source <strong>string</p>",
                 "<p>translation łążśźć</p>",
                 "pontoon",
-                "pontoon",
             ),
             # Handle illegal characters
             (
@@ -115,7 +99,6 @@ def test_view_tmx_valid_entries():
                 "xxx",
                 "content are c.1998–2019",
                 "content are c.1998–2019",
-                "pontoon",
                 "pontoon",
             ),
         ),
