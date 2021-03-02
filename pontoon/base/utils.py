@@ -493,6 +493,19 @@ def get_last_months(n):
         start_date += relativedelta(months=-1)
 
 
+def sanitize_xml_input_string(string):
+    """
+    The XML specification (http://www.w3.org/TR/xml11/#charsets) lists a set of Unicode characters
+    that are either illegal or "discouraged". Replace these characters to get valid XML strings
+    """
+
+    illegal_xml_chars_re = re.compile(
+        u"[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]"
+    )
+
+    return illegal_xml_chars_re.sub("", string)
+
+
 def build_translation_memory_file(creation_date, locale_code, entries):
     """
     TMX files will contain large amount of entries and it's impossible to render all the data with
@@ -504,45 +517,46 @@ def build_translation_memory_file(creation_date, locale_code, entries):
                          * key - key of an entity,
                          * source - source string of entity,
                          * target - translated string,
-                         * project_name - name of a project,
                          * project_slug - slugified name of a project,
     """
     yield (
-        u'<?xml version="1.0" encoding="UTF-8"?>'
-        u'\n<tmx version="1.4">'
-        u"\n\t<header"
-        u' adminlang="en-US"'
-        u' creationtoolversion="0.1"'
-        u' creationtool="pontoon"'
-        u' datatype="plaintext"'
-        u' segtype="sentence"'
-        u' o-tmf="plain text"'
-        u' srclang="en-US"'
-        u' creationdate="%(creation_date)s">'
-        u"\n\t</header>"
-        u"\n\t<body>" % {"creation_date": creation_date.isoformat()}
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '\n<tmx version="1.4">'
+        "\n\t<header"
+        ' adminlang="en-US"'
+        ' creationtoolversion="0.1"'
+        ' creationtool="pontoon"'
+        ' datatype="plaintext"'
+        ' segtype="sentence"'
+        ' o-tmf="plain text"'
+        ' srclang="en-US"'
+        ' creationdate="%(creation_date)s">'
+        "\n\t</header>"
+        "\n\t<body>" % {"creation_date": creation_date.isoformat()}
     )
-    for resource_path, key, source, target, project_name, project_slug in entries:
+    for resource_path, key, source, target, project_slug in entries:
         tuid = ":".join((project_slug, resource_path, slugify(key)))
+        source = sanitize_xml_input_string(source)
+        target = sanitize_xml_input_string(target)
+
         yield (
-            u'\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
-            u'\n\t\t\t<tuv xml:lang="en-US">'
-            u"\n\t\t\t\t<seg>%(source)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t\t<tuv xml:lang=%(locale_code)s>"
-            u"\n\t\t\t\t<seg>%(target)s</seg>"
-            u"\n\t\t\t</tuv>"
-            u"\n\t\t</tu>"
+            '\n\t\t<tu tuid=%(tuid)s srclang="en-US">'
+            '\n\t\t\t<tuv xml:lang="en-US">'
+            "\n\t\t\t\t<seg>%(source)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t\t<tuv xml:lang=%(locale_code)s>"
+            "\n\t\t\t\t<seg>%(target)s</seg>"
+            "\n\t\t\t</tuv>"
+            "\n\t\t</tu>"
             % {
                 "tuid": quoteattr(tuid),
                 "source": escape(source),
                 "locale_code": quoteattr(locale_code),
                 "target": escape(target),
-                "project_name": escape(project_name),
             }
         )
 
-    yield (u"\n\t</body>" u"\n</tmx>\n")
+    yield ("\n\t</body>" "\n</tmx>\n")
 
 
 def get_m2m_changes(current_qs, new_qs):
