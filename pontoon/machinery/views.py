@@ -15,7 +15,7 @@ from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
 
 from pontoon.base import utils
-from pontoon.base.models import Entity, Locale, Translation
+from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
     get_concordance_search_data,
     get_google_translate_data,
@@ -85,12 +85,13 @@ def concordance_search(request):
         return JsonResponse({"results": [], "has_next": False})
 
     # ArrayAgg (used in get_concordance_search_data()) does not support using
-    # distinct=True in combination with ordering, so we need to remove
-    # duplicates manually. After pagination, for improved performance.
-    for s in data.object_list:
-        # Fastest way to eliminate hashable duplicates while retaining order:
-        # https://twitter.com/raymondh/status/944125570534621185
-        s["project_names"] = list(dict.fromkeys(s["project_names"]))
+    # distinct=True in combination with ordering, so we need to do one of them
+    # manually - after pagination, to reduce the number of rows processed.
+    projects = Project.objects.order_by("disabled", "-priority").values_list(
+        "name", flat=True
+    )
+    for r in data.object_list:
+        r["project_names"] = [p for p in projects if p in r["project_names"]]
 
     return JsonResponse(
         {"results": data.object_list, "has_next": data.has_next()}, safe=False

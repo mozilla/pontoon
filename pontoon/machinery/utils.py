@@ -76,11 +76,7 @@ def get_concordance_search_data(text, locale):
     search_results = (
         base.models.TranslationMemoryEntry.objects.filter(search_query)
         .values("source", "target")
-        .annotate(
-            project_names=ArrayAgg(
-                "project__name", ordering=["project__disabled", "-project__priority"]
-            )
-        )
+        .annotate(project_names=ArrayAgg("project__name", distinct=True))
         .distinct()
     )
 
