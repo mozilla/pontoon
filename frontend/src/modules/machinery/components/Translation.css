@@ -8,6 +8,10 @@
     pointer-events: none;
 }
 
+.machinery .translation.cannot-copy .sources.projects {
+    pointer-events: auto;
+}
+
 .machinery .translation:not(.cannot-copy):hover,
 .machinery .translation.selected {
     background: #333941;
