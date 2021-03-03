@@ -84,6 +84,14 @@ def concordance_search(request):
     except EmptyPage:
         return JsonResponse({"results": [], "has_next": False})
 
+    # ArrayAgg (used in get_concordance_search_data()) does not support using
+    # distinct=True in combination with ordering, so we need to remove
+    # duplicates manually. After pagination, for improved performance.
+    for s in data.object_list:
+        # Fastest way to eliminate hashable duplicates while retaining order:
+        # https://twitter.com/raymondh/status/944125570534621185
+        s["project_names"] = list(dict.fromkeys(s["project_names"]))
+
     return JsonResponse(
         {"results": data.object_list, "has_next": data.has_next()}, safe=False
     )

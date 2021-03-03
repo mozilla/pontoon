@@ -84,13 +84,6 @@ def get_concordance_search_data(text, locale):
         .distinct()
     )
 
-    # We need to remove duplicates manually - ArrayAgg does not support using distinct=True
-    # in combination with ordering.
-    for s in search_results:
-        # Fastest way to eliminate hashable duplicates while retaining order:
-        # https://twitter.com/raymondh/status/944125570534621185
-        s["project_names"] = list(dict.fromkeys(s["project_names"]))
-
     def sort_by_quality(entity):
         """Sort the results by their best Levenshtein distance from the search query"""
         return (
