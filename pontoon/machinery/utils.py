@@ -78,7 +78,7 @@ def get_concordance_search_data(text, locale):
         .values("source", "target")
         .annotate(
             project_names=ArrayAgg(
-                "project__name", ordering=["project__disabled", "-project__priority",],
+                "project__name", ordering=["project__disabled", "-project__priority"]
             )
         )
         .distinct()
