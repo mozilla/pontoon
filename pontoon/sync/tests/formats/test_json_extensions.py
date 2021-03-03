@@ -44,7 +44,7 @@ class JsonExtensionsTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """JSON keys can't contain spaces."""
-        return super(JsonExtensionsTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         self.run_parse_basic(BASE_JSON_FILE, 0)

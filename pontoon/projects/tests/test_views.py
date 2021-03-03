@@ -32,7 +32,7 @@ def test_project_view(client):
     ResourceFactory.create(project=project)
 
     with patch("pontoon.projects.views.render", wraps=render) as mock_render:
-        client.get("/projects/{}/".format(project.slug))
+        client.get(f"/projects/{project.slug}/")
         assert mock_render.call_args[0][2]["project"] == project
 
 
@@ -58,7 +58,7 @@ def test_project_top_contributors(client):
         return_value=HttpResponse(""),
     ) as mock_render:
         client.get(
-            "/projects/{}/ajax/contributors/".format(first_project.slug),
+            f"/projects/{first_project.slug}/ajax/contributors/",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         assert mock_render.call_args[0][0]["project"] == first_project
@@ -67,7 +67,7 @@ def test_project_top_contributors(client):
         ]
 
         client.get(
-            "/projects/{}/ajax/contributors/".format(second_project.slug),
+            f"/projects/{second_project.slug}/ajax/contributors/",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
         assert mock_render.call_args[0][0]["project"] == second_project

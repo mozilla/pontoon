@@ -54,7 +54,7 @@ class UserAdmin(AuthUserAdmin):
         """
         Save a user and log changes in its roles.
         """
-        super(UserAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
         # Users can only be moved between groups upon editing, not creation
         if "groups" in form.cleaned_data:
@@ -101,7 +101,7 @@ class UserAdmin(AuthUserAdmin):
         Term.objects.filter(created_by=obj).update(created_by=new_user)
         models.Comment.objects.filter(author=obj).update(author=new_user)
 
-        super(UserAdmin, self).delete_model(request, obj)
+        super().delete_model(request, obj)
 
     # This method is to override bulk delete method from the user list page
     def delete_queryset(self, request, queryset):
@@ -144,10 +144,10 @@ class LocaleAdminForm(ModelForm):
         with connection.cursor() as cursor:
             cursor.execute("SELECT collname, collcollate  FROM pg_collation")
             rows = cursor.fetchall()
-            return ((name, "{} ({})".format(name, collate)) for name, collate in rows)
+            return ((name, f"{name} ({collate})") for name, collate in rows)
 
     def __init__(self, *args, **kwargs):
-        super(LocaleAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["db_collation"].choices = self.db_collations_choices
         self.fields["db_collation"].help_text = self._meta.model._meta.get_field(
             "db_collation"

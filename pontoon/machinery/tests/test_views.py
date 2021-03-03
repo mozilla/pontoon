@@ -139,8 +139,8 @@ def test_view_caighdean(client, entity_a):
         "original": translation.string,
     }
     assert urllib.parse.parse_qs(m.request_history[0].text) == {
-        u"teacs": [translation.string],
-        u"foinse": [gd.code],
+        "teacs": [translation.string],
+        "foinse": [gd.code],
     }
 
 
@@ -213,7 +213,7 @@ def test_view_translation_memory_best_quality_entry(
         {"text": "aaa", "pk": tm.entity.pk, "locale": locale_a.code},
     )
     assert json.loads(response.content) == [
-        {"count": 1, "source": u"aaa", "quality": u"100", "target": u"ddd"}
+        {"count": 1, "source": "aaa", "quality": "100", "target": "ddd"}
     ]
 
 
@@ -247,7 +247,7 @@ def test_view_translation_memory_translation_counts(
     )
     result = json.loads(response.content)
     assert result[0].pop("source") in ("abaa", "aaab", "aaab")
-    assert result == [{u"count": 3, u"quality": u"75", u"target": u"ccc"}]
+    assert result == [{"count": 3, "quality": "75", "target": "ccc"}]
 
 
 @pytest.mark.django_db
@@ -317,7 +317,7 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     result = json.loads(response.content)
     assert result == {
         "results": [
-            {u"source": u"aBaf", u"target": u"cCDd", u"project_names": [project_a.name]}
+            {"source": "aBaf", "target": "cCDd", "project_names": [project_a.name]}
         ],
         "has_next": False,
     }
@@ -328,7 +328,7 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     result = json.loads(response.content)
     assert result == {
         "results": [
-            {u"source": u"abaa", u"target": u"ccc", u"project_names": [project_a.name]}
+            {"source": "abaa", "target": "ccc", "project_names": [project_a.name]}
         ],
         "has_next": False,
     }

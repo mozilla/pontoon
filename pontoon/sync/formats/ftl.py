@@ -33,7 +33,7 @@ class FTLEntity(VCSTranslation):
         resource_comments=None,
         order=None,
     ):
-        super(FTLEntity, self).__init__(
+        super().__init__(
             key=key,
             source_string=source_string,
             source_string_plural=source_string_plural,
@@ -74,7 +74,7 @@ class FTLResource(ParsedResource):
         try:
             with codecs.open(path, "r", "utf-8") as resource:
                 self.structure = parser.parse(resource.read())
-        except IOError:
+        except OSError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
@@ -123,7 +123,7 @@ class FTLResource(ParsedResource):
         """
         if not self.source_resource:
             raise SyncError(
-                "Cannot save FTL resource {0}: No source resource given.".format(
+                "Cannot save FTL resource {}: No source resource given.".format(
                     self.path
                 )
             )

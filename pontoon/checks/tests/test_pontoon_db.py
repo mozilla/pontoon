@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from unittest.mock import MagicMock
 
 import pytest
@@ -107,11 +106,11 @@ def test_ending_newline(get_entity_mock):
     in a newline, or none of them should.
     """
     assert run_checks(get_entity_mock("po"), "Original", "Translation\n") == {
-        "pErrors": [u"Ending newline mismatch"]
+        "pErrors": ["Ending newline mismatch"]
     }
 
     assert run_checks(get_entity_mock("po"), "Original\n", "Translation") == {
-        "pErrors": [u"Ending newline mismatch"]
+        "pErrors": ["Ending newline mismatch"]
     }
 
     assert run_checks(get_entity_mock("po"), "Original\n", "Translation\n") == {}
@@ -124,14 +123,14 @@ def test_empty_translations(get_entity_mock):
     Empty translations shouldn't be allowed for some extensions.
     """
     assert run_checks(get_entity_mock("po"), "", "") == {
-        "pErrors": [u"Empty translations are not allowed"]
+        "pErrors": ["Empty translations are not allowed"]
     }
 
 
 def test_lang_newlines(get_entity_mock):
     """Newlines aren't allowed in lang files"""
     assert run_checks(get_entity_mock("lang"), "", "aaa\nbbb") == {
-        "pErrors": [u"Newline characters are not allowed"]
+        "pErrors": ["Newline characters are not allowed"]
     }
 
     assert run_checks(get_entity_mock("po"), "", "aaa\nbbb") == {}
@@ -140,7 +139,7 @@ def test_lang_newlines(get_entity_mock):
 def test_ftl_parse_error(get_entity_mock):
     """Invalid FTL strings are not allowed"""
     assert run_checks(get_entity_mock("ftl", string="key = value"), "", "key =") == {
-        "pErrors": [u'Expected message "key" to have a value or attributes']
+        "pErrors": ['Expected message "key" to have a value or attributes']
     }
 
     assert (
@@ -154,7 +153,7 @@ def test_ftl_parse_error(get_entity_mock):
 def test_ftl_non_localizable_entries(get_entity_mock):
     """Non-localizable entries are not allowed"""
     assert run_checks(get_entity_mock("ftl", string="key = value"), "", "[[foo]]") == {
-        "pErrors": [u"Expected an entry start"]
+        "pErrors": ["Expected an entry start"]
     }
 
 
@@ -162,4 +161,4 @@ def test_ftl_id_missmatch(get_entity_mock):
     """ID of the source string and translation must be the same"""
     assert run_checks(
         get_entity_mock("ftl", string="key = value"), "", "key1 = translation"
-    ) == {"pErrors": [u"Translation key needs to match source string key"]}
+    ) == {"pErrors": ["Translation key needs to match source string key"]}

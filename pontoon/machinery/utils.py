@@ -42,10 +42,10 @@ def get_google_translate_data(text, locale_code):
         root = json.loads(r.content)
 
         if "data" not in root:
-            log.error("Google Translate error: {error}".format(error=root))
+            log.error(f"Google Translate error: {root}")
             return {
                 "status": False,
-                "message": "Bad Request: {error}".format(error=root),
+                "message": f"Bad Request: {root}",
             }
 
         return {
@@ -54,10 +54,10 @@ def get_google_translate_data(text, locale_code):
         }
 
     except requests.exceptions.RequestException as e:
-        log.error("Google Translate error: {error}".format(error=e))
+        log.error(f"Google Translate error: {e}")
         return {
             "status": False,
-            "message": "{error}".format(error=e),
+            "message": f"{e}",
         }
 
 

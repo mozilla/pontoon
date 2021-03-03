@@ -73,7 +73,7 @@ class VCSProjectTests(VCSTestCase):
             repositories__permalink="https://example.com/l10n/{locale_code}",
         )
         self.vcs_project = VCSProject(self.project)
-        super(VCSProjectTests, self).setUp()
+        super().setUp()
 
     @patch.object(VCSProject, "source_directory_path", new_callable=PropertyMock)
     def test_get_relevant_files_with_config(self, source_directory_path_mock):
@@ -332,7 +332,7 @@ class VCSConfigurationTests(VCSTestCase):
     toml = "l10n.toml"
 
     def setUp(self):
-        super(VCSConfigurationTests, self).setUp()
+        super().setUp()
         self.locale, _ = Locale.objects.get_or_create(code="fr")
 
         self.repository = RepositoryFactory()
@@ -490,7 +490,7 @@ class VCSConfigurationFullLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="fr")
         setUpResource(self)
-        super(VCSConfigurationFullLocaleTests, self).setUp()
+        super().setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -522,7 +522,7 @@ class VCSConfigurationPartialLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="sl")
         setUpResource(self)
-        super(VCSConfigurationPartialLocaleTests, self).setUp()
+        super().setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -656,4 +656,4 @@ class DownloadTOMLParserTests(TestCase):
 
         self.assertTrue(self.requests_mock.called)
         self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
-        self.assertEqual(open(project_config_path, "r").read(), "test-content")
+        self.assertEqual(open(project_config_path).read(), "test-content")

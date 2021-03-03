@@ -71,4 +71,4 @@ def parse(path, source_path=None, locale=None):
             path, source_path=source_path, locale=locale
         )
     else:
-        raise ValueError("Translation format {0} is not supported.".format(extension))
+        raise ValueError(f"Translation format {extension} is not supported.")

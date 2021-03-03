@@ -666,7 +666,7 @@ if not (HEROKU_DEMO or SITE_URL.startswith("https")):
 # For absolute urls
 try:
     DOMAIN = socket.gethostname()
-except socket.error:
+except OSError:
     DOMAIN = "localhost"
 PROTOCOL = "http://"
 PORT = 80

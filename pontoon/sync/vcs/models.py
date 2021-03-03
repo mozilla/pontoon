@@ -77,7 +77,7 @@ class DownloadTOMLParser(TOMLParser):
 
     def parse(self, path=None, env=None, ignore_missing_includes=True):
         """Download the config file before it gets parsed."""
-        return super(DownloadTOMLParser, self).parse(
+        return super().parse(
             self.get_project_config(path or self.config_file),
             env,
             ignore_missing_includes,
@@ -106,7 +106,7 @@ class MissingLocaleDirectoryError(IOError):
     """Raised when sync can't find the locale directory."""
 
 
-class VCSProject(object):
+class VCSProject:
     """
     Container for project data that is stored on the filesystem and
     pulled from a remote VCS.
@@ -295,10 +295,10 @@ class VCSProject(object):
         """
         A set of the changed project config files.
         """
-        config_files = set(
+        config_files = {
             pc.path.replace(os.path.join(self.source_directory_path, ""), "")
             for pc in self.configuration.parsed_configuration.configs
-        )
+        }
         changed_files = set(self.changed_source_files[0])
         return changed_files.intersection(config_files)
 
@@ -382,7 +382,7 @@ class VCSProject(object):
                     locale_directory_paths[locale.code]
                 )
 
-            except IOError:
+            except OSError:
                 if not self.db_project.has_multi_locale_repositories:
                     source_directory = self.source_directory_path
                     parent_directory = get_parent_directory(source_directory)
@@ -413,7 +413,7 @@ class VCSProject(object):
 
                 else:
                     raise MissingLocaleDirectoryError(
-                        "Directory for locale `{0}` not found".format(locale.code)
+                        f"Directory for locale `{locale.code}` not found"
                     )
 
             parent_directories.add(parent_directory)
@@ -454,7 +454,7 @@ class VCSProject(object):
                     and path not in self.changed_paths
                 ):
                     if not locales:
-                        log.debug("Skipping unchanged file: {}".format(path))
+                        log.debug(f"Skipping unchanged file: {path}")
                         continue
 
                 else:
@@ -470,11 +470,11 @@ class VCSProject(object):
             # Syncing resources
             else:
                 if self.changed_files is not None and path not in self.changed_files:
-                    log.debug("Skipping unchanged resource file: {}".format(path))
+                    log.debug(f"Skipping unchanged resource file: {path}")
                     continue
                 locales = []
 
-            locales = set([l for l in locales if l in self.locales])
+            locales = {l for l in locales if l in self.locales}
             self.synced_locales.update(locales)
 
             log.debug(
@@ -487,7 +487,7 @@ class VCSProject(object):
                 resources[path] = VCSResource(self, path, locales=locales)
             except ParseError as err:
                 log.error(
-                    u"Skipping resource {path} due to ParseError: {err}".format(
+                    "Skipping resource {path} due to ParseError: {err}".format(
                         path=path, err=err
                     )
                 )
@@ -551,7 +551,7 @@ class VCSProject(object):
             return max(possible_sources, key=lambda s: s[1])[0]
         else:
             raise MissingSourceDirectoryError(
-                "No source directory found for project {0}".format(self.db_project.slug)
+                f"No source directory found for project {self.db_project.slug}"
             )
 
     def relative_resource_paths(self):
@@ -607,7 +607,7 @@ class VCSProject(object):
                     yield os.path.join(root, filename)
 
 
-class VCSConfiguration(object):
+class VCSConfiguration:
     """
     Container for the project configuration, provided by the optional
     configuration file.
@@ -729,7 +729,7 @@ class VCSConfiguration(object):
         return resources
 
 
-class VCSResource(object):
+class VCSResource:
     """Represents a single resource across multiple locales."""
 
     def __init__(self, vcs_project, path, locales=None):
@@ -799,9 +799,9 @@ class VCSResource(object):
                 )
 
             # File doesn't exist or is invalid: log it and move on
-            except (IOError, ParseError) as err:
+            except (OSError, ParseError) as err:
                 log.error(
-                    u"Skipping resource {path} due to {type}: {err}".format(
+                    "Skipping resource {path} due to {type}: {err}".format(
                         path=path, type=type(err).__name__, err=err
                     )
                 )
@@ -834,7 +834,7 @@ class VCSResource(object):
                 resource_file.save(locale)
 
 
-class VCSEntity(object):
+class VCSEntity:
     """
     An Entity is a single string to be translated, and a VCSEntity
     stores the translations for an entity from several locales.
@@ -868,7 +868,7 @@ class VCSEntity(object):
         return locale_code in self.translations
 
 
-class VCSTranslation(object):
+class VCSTranslation:
     """
     A single translation of a source string into another language.
 

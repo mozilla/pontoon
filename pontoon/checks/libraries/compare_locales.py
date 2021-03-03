@@ -28,10 +28,10 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
 
     @property
     def all(self):
-        return u"%s = %s".format(self.key, self.raw_val)
+        return f"%s = %s"
 
     def __repr__(self):
-        return u'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+        return 'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
             self.key, self.raw_val, self.pre_comment.all,
         )
 
@@ -51,12 +51,12 @@ class CompareDTDEntity(DTDEntityMixin):
         else:
             wrap = '"'
 
-        return u"<!ENTITY {key} {wrap}{entity}{wrap}>".format(
+        return "<!ENTITY {key} {wrap}{entity}{wrap}>".format(
             key=self.key, entity=self.raw_val, wrap=wrap,
         )
 
     def __repr__(self):
-        return u'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
+        return 'CompareDTDEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(
             self.key, self.raw_val, self.pre_comment.all,
         )
 
@@ -117,7 +117,7 @@ def cast_to_compare_locales(resource_ext, entity, string):
     elif resource_ext == ".xml":
         parser = AndroidParser()
 
-        content = u"""<?xml version="1.0" encoding="utf-8"?>
+        content = """<?xml version="1.0" encoding="utf-8"?>
             <resources>
                 <string name="{key}"><![CDATA[{original}]]></string>
                 <string name="{key}"><![CDATA[{translation}]]></string>
@@ -161,7 +161,7 @@ def run_checks(entity, locale_code, string):
         }
         Both keys are optional.
     """
-    resource_ext = ".{}".format(entity.resource.format)
+    resource_ext = f".{entity.resource.format}"
     extra_tests = None
 
     if "mobile/android/base" in entity.resource.path:

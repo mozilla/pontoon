@@ -22,11 +22,11 @@ class ProjectTagView(DetailView):
     def get(self, request, *args, **kwargs):
         if is_ajax(request):
             return self.get_AJAX(request, *args, **kwargs)
-        return super(ProjectTagView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_AJAX(self, request, *args, **kwargs):
         self.template_name = "projects/includes/teams.html"
-        return super(ProjectTagView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         try:

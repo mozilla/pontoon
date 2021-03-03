@@ -6,7 +6,7 @@ class BaseConfig(AppConfig):
     verbose_name = "Base"
 
     def ready(self):
-        super(BaseConfig, self).ready()
+        super().ready()
 
         # Load celery app so celery.shared_task uses it for executing
         # tasks.

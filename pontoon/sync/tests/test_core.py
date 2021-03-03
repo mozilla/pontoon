@@ -282,7 +282,7 @@ class EntityKeyTests(FakeCheckoutTestCase):
 
 class CommitChangesTests(FakeCheckoutTestCase):
     def setUp(self):
-        super(CommitChangesTests, self).setUp()
+        super().setUp()
         self.mock_repo_commit = self.patch_object(Repository, "commit")
 
     def test_multiple_authors(self):
@@ -353,7 +353,7 @@ class CommitChangesTests(FakeCheckoutTestCase):
 
 class PullChangesTests(FakeCheckoutTestCase):
     def setUp(self):
-        super(PullChangesTests, self).setUp()
+        super().setUp()
         self.mock_repo_pull = self.patch_object(Repository, "pull")
         self.locales = self.db_project.locales.all()
 

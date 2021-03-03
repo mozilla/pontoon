@@ -11,9 +11,7 @@ class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
         # Ignore non-failure exceptions. We don't need to be notified
         # of these.
         if not isinstance(exception, (Http404, PermissionDenied)):
-            return super(RaygunExceptionMiddleware, self).process_exception(
-                request, exception
-            )
+            return super().process_exception(request, exception)
 
 
 class BlockedIpMiddleware(MiddlewareMixin):

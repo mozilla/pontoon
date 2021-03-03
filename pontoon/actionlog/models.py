@@ -71,4 +71,4 @@ class ActionLog(models.Model):
         self.validate_action_type_choice()
         self.validate_foreign_keys_per_action()
 
-        super(ActionLog, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
