@@ -16,7 +16,7 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
     """
 
     def setUp(self):
-        super(TestChangesetTranslationsChecks, self).setUp()
+        super().setUp()
 
         changed_translation_patch = patch(
             "pontoon.sync.changeset.ChangeSet.changed_translations",

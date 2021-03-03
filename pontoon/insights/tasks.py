@@ -36,16 +36,16 @@ def collect_insights(self):
 
     date = start_of_today.date()
 
-    log.info("Collect insights for {}: Begin.".format(date))
+    log.info(f"Collect insights for {date}: Begin.")
 
     collect_project_insights(start_of_today)
-    log.info("Collect insights for {}: Project insights created.".format(date))
+    log.info(f"Collect insights for {date}: Project insights created.")
 
     collect_project_locale_insights(start_of_today)
-    log.info("Collect insights for {}: ProjectLocale insights created.".format(date))
+    log.info(f"Collect insights for {date}: ProjectLocale insights created.")
 
     collect_locale_insights(start_of_today)
-    log.info("Collect insights for {}: Locale insights created.".format(date))
+    log.info(f"Collect insights for {date}: Locale insights created.")
 
 
 def collect_project_insights(start_of_today):

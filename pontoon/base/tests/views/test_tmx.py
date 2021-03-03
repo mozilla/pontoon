@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 from datetime import datetime
 
@@ -52,7 +51,7 @@ def test_view_tmx_empty_file():
     data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
     filepath = "tmx/no_entries.tmx"
 
-    with open(os.path.join(data_root, filepath), "r", encoding="utf-8") as f:
+    with open(os.path.join(data_root, filepath), encoding="utf-8") as f:
         xml = f.read()
 
     tmx_contents = build_translation_memory_file(datetime(2010, 1, 1), "sl", ())
@@ -67,7 +66,7 @@ def test_view_tmx_valid_entries():
     data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
     filepath = "tmx/valid_entries.tmx"
 
-    with open(os.path.join(data_root, filepath), "r", encoding="utf-8") as f:
+    with open(os.path.join(data_root, filepath), encoding="utf-8") as f:
         xml = f.read()
 
     tmx_contents = build_translation_memory_file(

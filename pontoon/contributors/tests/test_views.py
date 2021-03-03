@@ -119,7 +119,7 @@ def mock_profile_render():
 @pytest.mark.django_db
 def test_profile_view_contributor_profile_by_username(member, mock_profile_render):
     """Users should be able to retrieve contributor's profile by its username."""
-    member.client.get("/contributors/{}/".format(member.user.username))
+    member.client.get(f"/contributors/{member.user.username}/")
 
     assert mock_profile_render.call_args[0][2]["contributor"] == member.user
 
@@ -127,7 +127,7 @@ def test_profile_view_contributor_profile_by_username(member, mock_profile_rende
 @pytest.mark.django_db
 def test_profile_view_contributor_profile_by_email(member, mock_profile_render):
     """Check if we can access contributor profile by its email."""
-    member.client.get("/contributors/{}/".format(member.user.email))
+    member.client.get(f"/contributors/{member.user.email}/")
 
     assert mock_profile_render.call_args[0][2]["contributor"] == member.user
 
@@ -178,7 +178,7 @@ def test_timeline(
     contributor_translations, client, project_a, mock_profile_render, user_a
 ):
     """Backend should return events filtered by page number requested by user."""
-    client.get("/contributors/{}/timeline/?page=2".format(user_a.username))
+    client.get(f"/contributors/{user_a.username}/timeline/?page=2")
     assert mock_profile_render.call_args[0][2]["events"] == [
         {
             "date": dt,
@@ -194,12 +194,10 @@ def test_timeline(
 @pytest.mark.django_db
 def test_timeline_invalid_page(contributor_translations, client, user_a):
     """Backend should return 404 error when user requests an invalid/empty page."""
-    response = client.get("/contributors/{}/timeline/?page=45".format(user_a.username))
+    response = client.get(f"/contributors/{user_a.username}/timeline/?page=45")
     assert response.status_code == 404
 
-    response = client.get(
-        "/contributors/{}/timeline/?page=-aa45".format(user_a.username)
-    )
+    response = client.get(f"/contributors/{user_a.username}/timeline/?page=-aa45")
     assert response.status_code == 404
 
 
@@ -209,7 +207,7 @@ def test_timeline_non_active_contributor(
 ):
     """Test if backend is able return events for a user without contributions."""
     nonactive_contributor = UserFactory.create()
-    client.get("/contributors/{}/timeline/".format(nonactive_contributor.username))
+    client.get(f"/contributors/{nonactive_contributor.username}/timeline/")
     assert mock_profile_render.call_args[0][2]["events"] == [
         {"date": nonactive_contributor.date_joined, "type": "join"}
     ]
@@ -218,7 +216,7 @@ def test_timeline_non_active_contributor(
 @pytest.mark.django_db
 def test_timeline_join(client, contributor_translations, mock_profile_render, user_a):
     """Last page of results should include informations about the when user joined pontoon."""
-    client.get("/contributors/{}/timeline/?page=3".format(user_a.username))
+    client.get(f"/contributors/{user_a.username}/timeline/?page=3")
 
     assert mock_profile_render.call_args[0][2]["events"][-1] == {
         "date": user_a.date_joined,

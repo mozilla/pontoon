@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         for index, project in enumerate(projects):
             log.info(
-                u'Calculating stats for project "{project}" ({index}/{total})'.format(
+                'Calculating stats for project "{project}" ({index}/{total})'.format(
                     index=index + 1, total=len(projects), project=project.name,
                 )
             )

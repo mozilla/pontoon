@@ -39,15 +39,15 @@ class IContainsCollate(IContains):
         else:
             raise ValueError("You have to pass collation in order to use this lookup.")
 
-        super(IContainsCollate, self).__init__(lhs, rhs)
+        super().__init__(lhs, rhs)
 
     def process_lhs(self, qn, connection):
-        lhs, params = super(IContainsCollate, self).process_lhs(qn, connection)
+        lhs, params = super().process_lhs(qn, connection)
         if self.collation:
-            lhs = lhs.replace("::text", '::text COLLATE "{}"'.format(self.collation))
+            lhs = lhs.replace("::text", f'::text COLLATE "{self.collation}"')
             if "::text" not in lhs:
                 lhs = lhs.replace(
-                    '."{}"'.format(self.lhs.target.column),
+                    f'."{self.lhs.target.column}"',
                     '."{}"::text COLLATE "{}"'.format(
                         self.lhs.target.column, self.collation
                     ),
@@ -55,9 +55,9 @@ class IContainsCollate(IContains):
         return lhs, params
 
     def get_rhs_op(self, connection, rhs):
-        value = super(IContainsCollate, self).get_rhs_op(connection, rhs)
+        value = super().get_rhs_op(connection, rhs)
         if self.collation:
-            return value.replace("%s", '%s COLLATE "{}"'.format(self.collation))
+            return value.replace("%s", f'%s COLLATE "{self.collation}"')
         return value
 
 

@@ -167,7 +167,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_vcs_translation.fuzzy = False
         # The test translation is from a langfile so we can use tags
         # for testing extra.
-        self.main_vcs_translation.tags = set(["ok"])
+        self.main_vcs_translation.tags = {"ok"}
 
         self.update_main_db_entity()
         self.main_db_entity.refresh_from_db()

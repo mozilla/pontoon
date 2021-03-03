@@ -60,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
 
         try:
             self.parser.readFile(self.path)
-        except IOError as err:
+        except OSError as err:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
@@ -85,7 +85,7 @@ class CompareLocalesResource(ParsedResource):
     def save(self, locale):
         if not self.source_resource:
             raise SyncError(
-                "Cannot save resource {0}: No source resource given.".format(self.path)
+                f"Cannot save resource {self.path}: No source resource given."
             )
 
         # A dictionary of new translations

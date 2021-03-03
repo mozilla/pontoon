@@ -229,7 +229,7 @@ class Term(models.Model):
         if not created:
             self.handle_term_update()
 
-        super(Term, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         if created and self.localizable:
             self.handle_term_create()
@@ -241,7 +241,7 @@ class Term(models.Model):
         self.obsolete_entity()
         update_terminology_project_stats()
 
-        super(Term, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.text

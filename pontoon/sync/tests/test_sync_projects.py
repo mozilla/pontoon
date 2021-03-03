@@ -14,7 +14,7 @@ from pontoon.sync.models import SyncLog
 
 class CommandTests(TestCase):
     def setUp(self):
-        super(CommandTests, self).setUp()
+        super().setUp()
         self.command = sync_projects.Command()
         self.command.verbosity = 0
         self.command.no_commit = False

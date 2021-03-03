@@ -6,7 +6,7 @@ from pontoon.base.tests import (
 from pontoon.base.utils import match_attr
 
 
-class FormatTestsMixin(object):
+class FormatTestsMixin:
     """
     Mixin for tests and methods that are common to all supported
     formats.
@@ -37,7 +37,7 @@ class FormatTestsMixin(object):
     supports_source_string = False
 
     def setUp(self):
-        super(FormatTestsMixin, self).setUp()
+        super().setUp()
         self.locale = LocaleFactory.create(
             code="test-locale",
             name="Test Locale",
@@ -242,7 +242,7 @@ class FormatTestsMixin(object):
             comments=[],
             source=[],
             key=self.key("Empty Translation"),
-            strings={None: u""},
+            strings={None: ""},
             fuzzy=False,
             order=translation_index,
         )

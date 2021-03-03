@@ -15,7 +15,7 @@ class LinkTagResourcesAdminForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop("project")
-        super(LinkTagResourcesAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # we cant filter any further at this stage as we dont know the
         # action yet - ie un/link
         self.fields["data"].choices = Resource.objects.filter(
@@ -27,7 +27,7 @@ class LinkTagResourcesAdminForm(forms.Form):
         return TagsTool(projects=[self.project]).get(self.cleaned_data["tag"])
 
     def clean(self):
-        cleaned_data = super(LinkTagResourcesAdminForm, self).clean()
+        cleaned_data = super().clean()
         if self.errors:
             return
         try:

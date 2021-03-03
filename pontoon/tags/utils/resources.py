@@ -17,7 +17,7 @@ class TagsResourcesTool(TagsDataTool):
 
     @property
     def filtered_data(self):
-        return super(TagsResourcesTool, self).filtered_data.distinct()
+        return super().filtered_data.distinct()
 
     def filter_locales(self, resources):
         return (

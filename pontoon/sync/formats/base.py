@@ -1,4 +1,4 @@
-class ParsedResource(object):
+class ParsedResource:
     """
     Parent class for parsed resources as returned by parse.
 

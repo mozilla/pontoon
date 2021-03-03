@@ -28,7 +28,7 @@ class VCSRepositoryTests(TestCase):
             )
 
 
-class VCSChangedFilesTests(object):
+class VCSChangedFilesTests:
     """
     Mixin class that unifies all tests  for changed/removed files between repositories.
     Every subclass should provide two properties:a

@@ -49,7 +49,7 @@ def test_util_tags_translation_tool_get_data(
     elif name == "empty":
         pass
     else:
-        raise ValueError("Unsupported assertion type: {}".format(name))
+        raise ValueError(f"Unsupported assertion type: {name}")
 
 
 @patch("pontoon.tags.utils.TagsLatestTranslationsTool.get_data")

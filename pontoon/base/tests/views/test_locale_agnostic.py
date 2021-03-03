@@ -63,12 +63,12 @@ def test_view_lang_agnostic_authed(
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
-    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": u"FOO"}]
+    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": "FOO"}]
 
     # reverse was called with args...
     assert list(reverse_mock.call_args) == [
         ("pontoon.translate",),
-        {"kwargs": {"locale": 23, "resource": u"BAR", "project": u"FOO"}},
+        {"kwargs": {"locale": 23, "resource": "BAR", "project": "FOO"}},
     ]
 
     # redirect was called with reverse result
@@ -120,7 +120,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
-    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": u"FOO"}]
+    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": "FOO"}]
 
     # get_project_locale_from_request
     assert list(util_mock.call_args) == [(response.wsgi_request, "LOCALES"), {}]
@@ -128,7 +128,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
     # reverse was called with args...
     assert list(reverse_mock.call_args) == [
         ("pontoon.translate",),
-        {"kwargs": {"locale": 23, "resource": u"BAR", "project": u"FOO"}},
+        {"kwargs": {"locale": 23, "resource": "BAR", "project": "FOO"}},
     ]
 
     # redirect was called with reverse result
@@ -180,7 +180,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
 
     # get_object_or_404 was called with Project.objects.available and
     # the requested slug
-    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": u"FOO"}]
+    assert list(get_mock.call_args) == [("AVAILABLEPROJECTS",), {"slug": "FOO"}]
 
     # get_project_locale_from_request
     assert list(util_mock.call_args) == [(response.wsgi_request, "LOCALES"), {}]
@@ -188,7 +188,7 @@ def test_view_lang_agnostic_anon_unavailable_accept_language(
     # reverse was called with args...
     assert list(reverse_mock.call_args) == [
         ("pontoon.projects.project",),
-        {"kwargs": {"slug": u"FOO"}},
+        {"kwargs": {"slug": "FOO"}},
     ]
 
     # redirect was called with reverse result

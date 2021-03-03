@@ -178,12 +178,12 @@ def ajax_permissions(request, locale):
         .order_by("email")
     )
 
-    contributors_emails = set(
+    contributors_emails = {
         contributor.email
         for contributor in users_with_translations_counts(
             None, Q(locale=locale) & Q(user__isnull=False), None
         )
-    )
+    }
 
     locale_projects = locale.projects_permissions(request.user)
 
@@ -225,9 +225,9 @@ def request_item(request, locale=None):
                 "Bad Request: Non-existent projects specified"
             )
 
-        projects = "".join("- {} ({})\n".format(p.name, p.slug) for p in project_list)
+        projects = "".join(f"- {p.name} ({p.slug})\n" for p in project_list)
 
-        mail_subject = u"Project request for {locale} ({code})".format(
+        mail_subject = "Project request for {locale} ({code})".format(
             locale=locale.name, code=locale.code
         )
 
@@ -251,7 +251,7 @@ def request_item(request, locale=None):
         code = form.cleaned_data["code"]
         name = form.cleaned_data["name"]
 
-        mail_subject = u"New team request: {locale} ({code})".format(
+        mail_subject = "New team request: {locale} ({code})".format(
             locale=name, code=code
         )
 

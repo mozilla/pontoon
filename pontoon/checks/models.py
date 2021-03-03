@@ -21,7 +21,7 @@ class FailedCheck(models.Model):
         abstract = True
 
     def __repr__(self):
-        return u"[{}] {}: {}".format(
+        return "[{}] {}: {}".format(
             self.__class__.__name__, self.get_library_display(), self.message
         )
 

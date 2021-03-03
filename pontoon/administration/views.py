@@ -296,7 +296,7 @@ def _get_project_strings_csv(project, entities, output):
         .prefetch_related("locale")
         .prefetch_related("entity")
     )
-    all_data = dict((x.id, {"source": x.string}) for x in entities)
+    all_data = {x.id: {"source": x.string} for x in entities}
 
     for translation in translations:
         all_data[translation.entity.id][translation.locale.code] = translation.string

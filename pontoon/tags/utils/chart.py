@@ -1,7 +1,7 @@
 import math
 
 
-class TagChart(object):
+class TagChart:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.approved_strings = kwargs.get("approved_strings")

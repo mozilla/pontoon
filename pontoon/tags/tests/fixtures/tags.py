@@ -24,7 +24,7 @@ def tag_factory():
 
 def _assert_tags(expected, data):
     assert len(expected) == len(data)
-    results = dict((d["slug"], d) for d in data)
+    results = {d["slug"]: d for d in data}
     attrs = [
         "pk",
         "name",
@@ -128,7 +128,7 @@ def _calculate_tags(**kwargs):
             key = _slug
         if key not in totals:
             # create a totals[tag] with zeros for this tag
-            totals[key] = dict((attr, 0) for attr in attrs)
+            totals[key] = {attr: 0 for attr in attrs}
             totals[key].update(dict(name=_name, pk=_pk, last_change=None))
         for attr in attrs:
             # add the total for this translated resource to the tags total

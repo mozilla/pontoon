@@ -37,7 +37,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     """
     project = Project.objects.get(pk=project_pk)
 
-    log.info("Fetching pretranslations for project {} started".format(project.name))
+    log.info(f"Fetching pretranslations for project {project.name} started")
 
     if locales:
         locales = project.locales.filter(pk__in=locales)
@@ -92,10 +92,10 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     index = -1
 
     for locale in locales:
-        log.info("Fetching pretranslations for locale {} started".format(locale.code))
+        log.info(f"Fetching pretranslations for locale {locale.code} started")
         for entity in entities:
-            locale_entity = "{}-{}".format(locale.id, entity.id)
-            locale_resource = "{}-{}".format(locale.id, entity.resource.id)
+            locale_entity = f"{locale.id}-{entity.id}"
+            locale_resource = f"{locale.id}-{entity.resource.id}"
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
@@ -130,7 +130,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
                 # Update the latest translation index
                 tr_dict[locale_resource] = index
 
-        log.info("Fetching pretranslations for locale {} done".format(locale.code))
+        log.info(f"Fetching pretranslations for locale {locale.code} done")
 
     if len(translations) == 0:
         return
@@ -156,4 +156,4 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     # Update latest activity and stats for changed instances.
     update_changed_instances(tr_filter, tr_dict, translations)
 
-    log.info("Fetching pretranslations for project {} done".format(project.name))
+    log.info(f"Fetching pretranslations for project {project.name} done")

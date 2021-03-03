@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 import logging
 import os
@@ -15,7 +14,7 @@ class PullFromRepositoryException(Exception):
     pass
 
 
-class PullFromRepository(object):
+class PullFromRepository:
     def __init__(self, source, target, branch):
         self.source = source
         self.target = target
@@ -122,7 +121,7 @@ class CommitToRepositoryException(Exception):
     pass
 
 
-class CommitToRepository(object):
+class CommitToRepository:
     def __init__(self, path, message, user, branch, url):
         self.path = path
         self.message = message
@@ -281,7 +280,7 @@ def commit_to_vcs(repo_type, path, message, user, branch, url):
         return obj.commit()
 
     except CommitToRepositoryException as e:
-        log.debug("%s Commit Error for %s: %s" % (repo_type.upper(), path, e))
+        log.debug(f"{repo_type.upper()} Commit Error for {path}: {e}")
         raise e
 
 
@@ -302,7 +301,7 @@ class VCSRepository(ABC):
     def for_type(cls, repo_type, path):
         SubClass = cls.REPO_TYPES.get(repo_type)
         if SubClass is None:
-            raise ValueError("No subclass found for repo type {0}.".format(repo_type))
+            raise ValueError(f"No subclass found for repo type {repo_type}.")
 
         return SubClass(path)
 
@@ -379,14 +378,7 @@ class GitRepository(VCSRepository):
     def get_changed_files(self, path, from_revision, statuses=None):
         statuses = statuses or ("A", "M")
         code, output, error = self.execute(
-            [
-                "git",
-                "diff",
-                "--name-status",
-                "{}..HEAD".format(from_revision),
-                "--",
-                path,
-            ],
+            ["git", "diff", "--name-status", f"{from_revision}..HEAD", "--", path],
         )
         if code == 0:
             return [
@@ -454,7 +446,7 @@ def get_revision(repo_type, path):
 def get_changed_files(repo_type, path, revision):
     """Return a list of changed files for the repository."""
     repo = VCSRepository.for_type(repo_type, path)
-    log.info("Retrieving changed files for: {}:{}".format(path, revision))
+    log.info(f"Retrieving changed files for: {path}:{revision}")
     # If there's no latest revision we should return all the files in the latest
     # version of repository
     if revision is None:

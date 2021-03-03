@@ -26,11 +26,9 @@ class Command(BaseCommand):
             else:
                 continue
 
-            self.stdout.write(
-                "Sending deadline notifications for project {}.".format(project)
-            )
+            self.stdout.write(f"Sending deadline notifications for project {project}.")
 
-            verb = "due in {} days".format(days_left)
+            verb = f"due in {days_left} days"
             locales = []
 
             for project_locale in project.project_locale.all():
@@ -49,6 +47,4 @@ class Command(BaseCommand):
             for contributor in contributors:
                 notify.send(project, recipient=contributor, verb=verb)
 
-            self.stdout.write(
-                "Deadline notifications for project {} sent.".format(project)
-            )
+            self.stdout.write(f"Deadline notifications for project {project} sent.")

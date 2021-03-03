@@ -102,7 +102,7 @@ class SilmeResource(ParsedResource):
                     uncomment_moz_langpack=parser is IncParser and not source_resource,
                 )
             )
-        except IOError:
+        except OSError:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
@@ -141,7 +141,7 @@ class SilmeResource(ParsedResource):
         """
         if self.source_resource is None:
             raise SyncError(
-                "Cannot save silme resource {0}: No source resource given.".format(
+                "Cannot save silme resource {}: No source resource given.".format(
                     self.path
                 )
             )

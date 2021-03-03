@@ -55,7 +55,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """XLIFF keys are prefixed with the file name."""
-        return u"filename" + KEY_SEPARATOR + super(XLIFFTests, self).key(source_string)
+        return "filename" + KEY_SEPARATOR + super().key(source_string)
 
     def assert_file_content(self, file_path, expected_content):
         """
@@ -118,7 +118,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             locale_code=self.locale.code,
         )
 
-        super(XLIFFTests, self).run_save_basic(input_string, expected_string)
+        super().run_save_basic(input_string, expected_string)
 
     def test_save_remove(self):
         input_string = self.generate_xliff(
@@ -145,4 +145,4 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             locale_code=self.locale.code,
         )
 
-        super(XLIFFTests, self).run_save_remove(input_string, expected_string)
+        super().run_save_remove(input_string, expected_string)

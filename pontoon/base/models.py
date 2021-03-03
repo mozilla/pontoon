@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import hashlib
 import json
 import logging
@@ -128,7 +127,7 @@ def user_display_name(self):
 @property
 def user_display_name_and_email(self):
     name = self.display_name
-    return "{name} <{email}>".format(name=name, email=self.email)
+    return f"{name} <{self.email}>"
 
 
 @classmethod
@@ -163,7 +162,7 @@ def user_translated_projects(self):
         has_custom_translators=True
     ).values_list("pk", "locale__code", "project__slug")
     permission_map = {
-        "{}-{}".format(locale, project): (pk in user_project_locales)
+        f"{locale}-{project}": (pk in user_project_locales)
         for pk, locale, project in project_locales
     }
     return permission_map
@@ -320,7 +319,7 @@ def serialized_notifications(self):
                             "resource": t.resource.path,
                         },
                     )
-                    + "?string={entity}".format(entity=t.pk),
+                    + f"?string={t.pk}",
                 }
 
         notifications.append(
@@ -1077,7 +1076,7 @@ class Locale(AggregatedStats):
 
     def save(self, *args, **kwargs):
         old = Locale.objects.get(pk=self.pk) if self.pk else None
-        super(Locale, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If SYSTRAN Translate code changes, update SYSTRAN Profile UUID.
         if old is None or old.systran_translate_code == self.systran_translate_code:
@@ -1092,7 +1091,7 @@ class Locale(AggregatedStats):
         if not (api_key or server or profile_owner):
             return
 
-        url = "{SERVER}/translation/supportedLanguages".format(SERVER=server)
+        url = f"{server}/translation/supportedLanguages"
 
         payload = {
             "key": api_key,
@@ -1120,9 +1119,7 @@ class Locale(AggregatedStats):
                         return
 
         except requests.exceptions.RequestException as e:
-            log.error(
-                "Unable to retrieve SYSTRAN Profile UUID: {error}".format(error=e)
-            )
+            log.error(f"Unable to retrieve SYSTRAN Profile UUID: {e}")
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -1372,7 +1369,7 @@ class Project(AggregatedStats):
             except Project.DoesNotExist:
                 pass
 
-        super(Project, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         if disabled_changed or visibility_changed:
             for locale in self.locales.all():
@@ -1445,9 +1442,7 @@ class Project(AggregatedStats):
         )
 
         if repo is None:
-            raise ValueError(
-                "Could not find repo matching path {path}.".format(path=path)
-            )
+            raise ValueError(f"Could not find repo matching path {path}.")
         else:
             return repo
 
@@ -1793,7 +1788,7 @@ class Repository(models.Model):
         repo_kind = "Repository"
         if self.source_repo:
             repo_kind = "SourceRepository"
-        return "<{}[{}:{}:{}]".format(repo_kind, self.pk, self.type, self.url)
+        return f"<{repo_kind}[{self.pk}:{self.type}:{self.url}]"
 
     @property
     def multi_locale(self):
@@ -1907,7 +1902,7 @@ class Repository(models.Model):
             if path.startswith(self.locale_checkout_path(locale)):
                 return self.locale_url(locale)
 
-        raise ValueError("No repo found for path: {0}".format(path))
+        raise ValueError(f"No repo found for path: {path}")
 
     def pull(self, locales=None):
         """
@@ -1939,7 +1934,7 @@ class Repository(models.Model):
                         repo_type, checkout_path
                     )
                 except PullFromRepositoryException as e:
-                    log.error("%s Pull Error for %s: %s" % (repo_type.upper(), url, e))
+                    log.error(f"{repo_type.upper()} Pull Error for {url}: {e}")
 
             return current_revisions
 
@@ -2459,7 +2454,7 @@ class EntityQuerySet(models.QuerySet):
 
     def get_or_create(self, defaults=None, **kwargs):
         kwargs["word_count"] = get_word_count(kwargs["string"])
-        return super(EntityQuerySet, self).get_or_create(defaults=defaults, **kwargs)
+        return super().get_or_create(defaults=defaults, **kwargs)
 
     def bulk_update(self, objs, fields, batch_size=None):
         if "string" in fields:
@@ -2514,7 +2509,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def save(self, *args, **kwargs):
         self.word_count = get_word_count(self.string)
-        super(Entity, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_stats(self, locale):
         """
@@ -3129,7 +3124,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         if update_stats:
             stats_before = self.entity.get_stats(self.locale)
 
-        super(Translation, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         project = self.entity.resource.project
 
@@ -3403,7 +3398,7 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         entries = self.filter(pk__in=matches_pks,).annotate(
             quality=Case(
                 *quality_sql_map,
-                **dict(default=Value(0), output_field=models.DecimalField(),)
+                **dict(default=Value(0), output_field=models.DecimalField(),),
             )
         )
         return entries
@@ -3566,7 +3561,7 @@ class TranslatedResource(AggregatedStats):
 
     objects = TranslatedResourceQuerySet.as_manager()
 
-    class Meta(object):
+    class Meta:
         unique_together = (("locale", "resource"),)
 
     def adjust_all_stats(self, *args, **kwargs):
@@ -3748,4 +3743,4 @@ class Comment(models.Model):
         ):
             raise ValidationError("Invalid comment arguments")
 
-        super(Comment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
