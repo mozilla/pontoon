@@ -49,7 +49,7 @@ export const FILTERS_EXTRA = [
         slug: 'rejected',
     },
     {
-        name: 'Missing (No Suggestions)',
-        slug: 'missing-no-suggestions',
+        name: 'Missing without Unreviewed',
+        slug: 'missing-without-unreviewed',
     },
 ];

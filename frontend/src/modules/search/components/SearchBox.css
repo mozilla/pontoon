@@ -111,8 +111,8 @@
     content: '';
 }
 
-.search-box .missing-no-suggestions .status:before {
-    content: 'Ⓜ';
+.search-box .missing-without-unreviewed .status:before {
+    content: '\f0eb';
 }
 
 .search-box .tag .status:before {

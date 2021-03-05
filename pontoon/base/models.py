@@ -2228,7 +2228,7 @@ class EntityQuerySet(models.QuerySet):
                 lambda x: (x.approved or x.fuzzy) and x.warnings.count(),
                 match_all=False,
                 prefetch=Prefetch("warnings"),
-                project=None,
+                project=project,
             )
         )
 
@@ -2312,11 +2312,11 @@ class EntityQuerySet(models.QuerySet):
                 Q(rejected=True),
                 lambda x: x.rejected,
                 match_all=False,
-                project=None,
+                project=project,
             )
         )
 
-    def missing_no_suggestions(self, locale, project=None):
+    def missing_without_unreviewed(self, locale, project=None):
         """Return a filter to be used to select entities with no or only rejected translations.
 
         This filter will return all entities that have no or only rejected translations.
@@ -2329,9 +2329,9 @@ class EntityQuerySet(models.QuerySet):
             pk__in=self.get_filtered_entities(
                 locale,
                 Q(approved=True) | Q(rejected=False),
-                lambda x: x.approved and not x.rejected,
+                lambda x: x.approved or not x.rejected,
                 match_all=True,
-                project=None,
+                project=project,
             )
         )
 
@@ -2776,7 +2776,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "rejected",
                 "unchanged",
                 "empty",
-                "missing-no-suggestions",
+                "missing-without-unreviewed",
             )
             post_filters.append(
                 combine_entity_filters(
