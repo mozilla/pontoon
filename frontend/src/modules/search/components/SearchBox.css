@@ -111,6 +111,10 @@
     content: '';
 }
 
+.search-box .missing-no-suggestions .status:before {
+    content: 'Ⓜ';
+}
+
 .search-box .tag .status:before {
     content: '';
 }

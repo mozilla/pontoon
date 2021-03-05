@@ -2316,6 +2316,25 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def missing_no_suggestions(self, locale, project=None):
+        """Return a filter to be used to select entities with no or only rejected translations.
+
+        This filter will return all entities that have no or only rejected translations.
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return ~Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=True) | Q(rejected=False),
+                lambda x: x.approved and not x.rejected,
+                match_all=False,
+                project=None,
+            )
+        )
+
     def empty(self, locale, project=None):
         """Return a filter to be used to select empty translations.
 
@@ -2753,7 +2772,12 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ("rejected", "unchanged", "empty")
+            extra_filter_choices = (
+                "rejected",
+                "unchanged",
+                "empty",
+                "missing-no-suggestions",
+            )
             post_filters.append(
                 combine_entity_filters(
                     entities, extra_filter_choices, extra.split(","), locale
