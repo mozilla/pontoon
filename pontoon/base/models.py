@@ -2328,8 +2328,8 @@ class EntityQuerySet(models.QuerySet):
         return ~Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(approved=True) | Q(rejected=False),
-                lambda x: x.approved or not x.rejected,
+                Q(approved=True) | Q(fuzzy=True) | Q(rejected=False),
+                lambda x: x.approved or x.fuzzy or not x.rejected,
                 match_all=True,
                 project=project,
             )

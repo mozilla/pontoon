@@ -651,6 +651,107 @@ def test_mgr_entity_filter_rejected_plural(resource_a, locale_a):
 
 
 @pytest.mark.django_db
+def test_mgr_entity_filter_missing_without_unreviewed(resource_a, locale_a):
+    entities = [
+        EntityFactory.create(resource=resource_a, string="testentity%s" % i,)
+        for i in range(0, 5)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a, entity=entities[0], approved=False, fuzzy=False, rejected=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a, entity=entities[0], approved=False, fuzzy=False, rejected=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a, entity=entities[2], approved=True, fuzzy=False, rejected=False,
+    )
+    TranslationFactory.create(
+        locale=locale_a, entity=entities[3], approved=False, fuzzy=True, rejected=False,
+    )
+    TranslationFactory.create(
+        locale=locale_a, entity=entities[1], approved=False, fuzzy=False, rejected=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=False,
+        fuzzy=False,
+        rejected=False,
+    )
+
+    assert set(
+        resource_a.entities.filter(Entity.objects.missing_without_unreviewed(locale_a))
+    ) == {entities[0], entities[4]}
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_missing_without_unreviewed_plural(resource_a, locale_a):
+    locale_a.cldr_plurals = "1,5"
+    locale_a.save()
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+            string_plural="testpluralentity%s" % i,
+        )
+        for i in range(0, 4)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        approved=False,
+        fuzzy=False,
+        rejected=True,
+        plural_form=0,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        approved=False,
+        fuzzy=False,
+        rejected=True,
+        plural_form=1,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        fuzzy=False,
+        rejected=False,
+        plural_form=0,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=False,
+        fuzzy=False,
+        rejected=True,
+        plural_form=1,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        approved=False,
+        fuzzy=False,
+        rejected=False,
+        plural_form=0,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        approved=True,
+        fuzzy=False,
+        rejected=False,
+        plural_form=1,
+    )
+    assert set(
+        resource_a.entities.filter(Entity.objects.missing_without_unreviewed(locale_a))
+    ) == {entities[0], entities[1], entities[3]}
+
+
+@pytest.mark.django_db
 def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
     """
     All filters should be joined by AND instead of OR.
