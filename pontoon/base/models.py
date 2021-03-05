@@ -2330,7 +2330,7 @@ class EntityQuerySet(models.QuerySet):
                 locale,
                 Q(approved=True) | Q(rejected=False),
                 lambda x: x.approved and not x.rejected,
-                match_all=False,
+                match_all=True,
                 project=None,
             )
         )
