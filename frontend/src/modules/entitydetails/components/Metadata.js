@@ -72,11 +72,11 @@ export default class Metadata extends React.Component<Props, State> {
         }
     }
 
-    handleClickOnSeeMore = () => {
+    handleClickOnSeeMore: (() => void) = () => {
         this.setState({ seeMore: true });
     };
 
-    handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
+    handleClickOnPlaceable: ((e: SyntheticMouseEvent<HTMLParagraphElement>) => void) = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         // Flow requires that we use `e.currentTarget` instead of `e.target`.
         // However in this case, we do want to use that, so we're ignoring all
         // errors Flow throws there.
@@ -113,7 +113,7 @@ export default class Metadata extends React.Component<Props, State> {
         }
     };
 
-    hidePopupTerms = () => {
+    hidePopupTerms: (() => void) = () => {
         this.setState({ popupTerms: [] });
     };
 
@@ -336,14 +336,14 @@ export default class Metadata extends React.Component<Props, State> {
         return this.renderSourceObject(entity.source);
     }
 
-    navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+    navigateToPath: ((event: SyntheticMouseEvent<HTMLAnchorElement>) => void) = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
 
         const path = event.currentTarget.pathname;
         this.props.navigateToPath(path);
     };
 
-    openTeamComments = () => {
+    openTeamComments: (() => void) = () => {
         const teamCommentsTab = this.props.commentTabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
         this.props.setCommentTabIndex(index);

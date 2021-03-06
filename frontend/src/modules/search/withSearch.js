@@ -5,7 +5,7 @@ import shortid from 'shortid';
 import escapeRegExp from 'lodash.escaperegexp';
 import { mark } from 'react-content-marker';
 
-export function markSearchTerms(base: string, search: string) {
+export function markSearchTerms(base: string, search: string): string {
     // Split search string on spaces except if between non-escaped quotes.
     const unusable = '☠';
     const searchTerms = search

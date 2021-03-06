@@ -62,7 +62,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         };
     }
 
-    handleStatusChange = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+    handleStatusChange: ((event: SyntheticMouseEvent<HTMLButtonElement>) => void) = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         if (this.props.isActionDisabled) {
             return;
         }
@@ -75,7 +75,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         this.props.updateTranslationStatus(this.props.translation.pk, action);
     };
 
-    delete = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
+    delete: ((event: SyntheticMouseEvent<HTMLButtonElement>) => void) = (event: SyntheticMouseEvent<HTMLButtonElement>) => {
         if (this.props.isActionDisabled) {
             return;
         }
@@ -85,7 +85,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         this.props.deleteTranslation(this.props.translation.pk);
     };
 
-    copyTranslationIntoEditor = () => {
+    copyTranslationIntoEditor: (() => void) = () => {
         if (this.props.isReadOnlyEditor) {
             return;
         }
@@ -101,7 +101,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         );
     };
 
-    getStatus() {
+    getStatus(): string {
         const { translation } = this.props;
 
         if (translation.approved) {
@@ -116,7 +116,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         return 'unreviewed';
     }
 
-    getApprovalTitle() {
+    getApprovalTitle(): string {
         const { translation } = this.props;
 
         // TODO: To Localize.
@@ -129,7 +129,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         return 'Not reviewed yet';
     }
 
-    renderUser() {
+    renderUser(): React.Element<"a"> | React.Element<"span"> {
         const { translation } = this.props;
 
         if (!translation.uid) {
@@ -149,14 +149,14 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         );
     }
 
-    toggleComments = (event: SyntheticMouseEvent<>) => {
+    toggleComments: ((event: SyntheticMouseEvent<>) => void) = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
             return { areCommentsVisible: !state.areCommentsVisible };
         });
     };
 
-    renderCommentToggle(commentCount: number) {
+    renderCommentToggle(commentCount: number): React.Node {
         const className =
             'toggle comments ' + (this.state.areCommentsVisible ? 'on' : 'off');
         const title = 'Toggle translation comments';
@@ -196,14 +196,14 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         }
     }
 
-    toggleDiff = (event: SyntheticMouseEvent<>) => {
+    toggleDiff: ((event: SyntheticMouseEvent<>) => void) = (event: SyntheticMouseEvent<>) => {
         event.stopPropagation();
         this.setState((state) => {
             return { isDiffVisible: !state.isDiffVisible };
         });
     };
 
-    renderDiffToggle() {
+    renderDiffToggle(): null | React.Node {
         const { index } = this.props;
 
         if (index === 0) {
@@ -229,7 +229,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         );
     }
 
-    render() {
+    render(): React.Element<"li"> {
         const {
             isTranslator,
             entity,

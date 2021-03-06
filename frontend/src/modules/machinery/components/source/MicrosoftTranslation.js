@@ -1,12 +1,12 @@
 /* @flow */
 
-import React from 'react';
+import type {Element} from "React";import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Show the translation source from Microsoft Translation.
  */
-export default function MicrosoftTranslation() {
+export default function MicrosoftTranslation(): Element<"li"> {
     return (
         <li>
             <Localized

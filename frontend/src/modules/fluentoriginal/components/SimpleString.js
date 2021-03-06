@@ -19,7 +19,7 @@ type Props = {|
 /**
  * Show the original string of a Fluent entity as a simple preview.
  */
-export default function SimpleString(props: Props) {
+export default function SimpleString(props: Props): React.Element<"p"> {
     const original = fluent.getSimplePreview(props.entity.original);
 
     const TermsAndPlaceablesMarker = getMarker(props.terms);

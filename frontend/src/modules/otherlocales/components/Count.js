@@ -8,7 +8,7 @@ type Props = {|
     otherlocales: LocalesState,
 |};
 
-export default function Count(props: Props) {
+export default function Count(props: Props): null | React.Element<"span"> {
     const { otherlocales } = props;
 
     if (otherlocales.fetching || !otherlocales.translations) {

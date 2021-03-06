@@ -72,7 +72,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.searchInput = React.createRef();
     }
 
-    updateFiltersFromURLParams = () => {
+    updateFiltersFromURLParams: (() => void) = () => {
         const props = this.props;
 
         const statuses = this.getInitialStatuses();
@@ -156,7 +156,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    getTimeRangeFromURLParameter(timeParameter: string) {
+    getTimeRangeFromURLParameter(timeParameter: string): {|from: number, to: number|} {
         const boundaries = timeParameter.split('-');
 
         return {
@@ -165,25 +165,25 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         };
     }
 
-    getInitialStatuses() {
+    getInitialStatuses(): {...} {
         const statuses = {};
         FILTERS_STATUS.forEach((s) => (statuses[s.slug] = false));
         return statuses;
     }
 
-    getInitialExtras() {
+    getInitialExtras(): {...} {
         const extras = {};
         FILTERS_EXTRA.forEach((e) => (extras[e.slug] = false));
         return extras;
     }
 
-    getInitialTags() {
+    getInitialTags(): {...} {
         const tags = {};
         this.props.project.tags.forEach((t) => (tags[t.slug] = false));
         return tags;
     }
 
-    getInitialAuthors() {
+    getInitialAuthors(): {...} {
         const authors = {};
         this.props.searchAndFilters.authors.forEach(
             (a) => (authors[a.email] = false),
@@ -217,7 +217,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
     }
 
-    updateTimeRange = (filter: string) => {
+    updateTimeRange: ((filter: string) => void) = (filter: string) => {
         let timeRange = this.getTimeRangeFromURLParameter(filter);
 
         this.setState({
@@ -225,7 +225,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     };
 
-    toggleFilter = (filter: string, type: string) => {
+    toggleFilter: ((filter: string, type: string) => void) = (filter: string, type: string) => {
         if (type === 'timeRange') {
             let timeRange = this.getTimeRangeFromURLParameter(filter);
 
@@ -246,7 +246,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     };
 
-    applySingleFilter = (
+    applySingleFilter: ((filter: string, type: string, callback?: () => void) => void) = (
         filter: string,
         type: string,
         callback?: () => void,
@@ -300,7 +300,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     };
 
-    resetFilters = () => {
+    resetFilters: (() => void) = () => {
         this.setState({
             statuses: this.getInitialStatuses(),
             extras: this.getInitialExtras(),
@@ -310,7 +310,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     };
 
-    getAuthorsAndTimeRangeData = () => {
+    getAuthorsAndTimeRangeData: (() => void) = () => {
         const { locale, project, resource } = this.props.parameters;
 
         this.props.dispatch(
@@ -322,7 +322,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
     };
 
-    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+    handleShortcuts: ((event: SyntheticKeyboardEvent<>) => void) = (event: SyntheticKeyboardEvent<>) => {
         const key = event.keyCode;
 
         // On Ctrl + Shift + F, set focus on the search input.
@@ -334,28 +334,28 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         }
     };
 
-    unsetFocus = () => {
+    unsetFocus: (() => void) = () => {
         this.props.dispatch(search.actions.setFocus(false));
     };
 
-    setFocus = () => {
+    setFocus: (() => void) = () => {
         this.props.dispatch(search.actions.setFocus(true));
     };
 
-    updateSearchInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
+    updateSearchInput: ((event: SyntheticInputEvent<HTMLInputElement>) => void) = (event: SyntheticInputEvent<HTMLInputElement>) => {
         this.setState({
             search: event.currentTarget.value,
         });
     };
 
-    handleKeyDown = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+    handleKeyDown: ((event: SyntheticKeyboardEvent<HTMLInputElement>) => void) = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
         // Perform search on Enter
         if (event.keyCode === 13) {
             this.update();
         }
     };
 
-    _update = () => {
+    _update: (() => void) = () => {
         const statuses = this.getSelectedStatuses();
         let status = statuses.join(',');
 
@@ -388,7 +388,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
     };
 
-    update = () => {
+    update: (() => void) = () => {
         const state = this.props.store.getState();
         const unsavedChangesExist = state[unsavedchanges.NAME].exist;
         const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
@@ -402,7 +402,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         );
     };
 
-    composePlaceholder() {
+    composePlaceholder(): string {
         const statuses = this.getSelectedStatuses();
         const selectedStatuses = FILTERS_STATUS.filter((f) =>
             statuses.includes(f.slug),
@@ -453,7 +453,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         return `Search in ${selectedFiltersString}`;
     }
 
-    render() {
+    render(): React.Element<"div"> {
         const { searchAndFilters, parameters, project, stats } = this.props;
 
         return (
@@ -498,7 +498,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 }
 
-export default function SearchBox() {
+export default function SearchBox(): React.Node {
     const state = {
         searchAndFilters: useSelector((state) => state[search.NAME]),
         parameters: useSelector((state) =>

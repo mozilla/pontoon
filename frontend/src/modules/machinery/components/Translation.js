@@ -29,7 +29,7 @@ type Props = {|
  * Similar translations (same original and translation) are shown only once
  * and their sources are merged.
  */
-export default function Translation(props: Props) {
+export default function Translation(props: Props): React.Node {
     const { index, sourceString, translation } = props;
 
     const dispatch = useDispatch();

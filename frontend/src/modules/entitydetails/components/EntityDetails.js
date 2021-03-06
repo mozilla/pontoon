@@ -212,7 +212,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
     }
 
-    searchMachinery = (query: string, page?: number) => {
+    searchMachinery: ((query: string, page?: number) => void) = (query: string, page?: number) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
 
         let source = query;
@@ -244,7 +244,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
     };
 
-    copyLinkToClipboard = () => {
+    copyLinkToClipboard: (() => void) = () => {
         const { locale, project, resource, entity } = this.props.parameters;
         const { protocol, host } = window.location;
 
@@ -256,7 +256,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         });
     };
 
-    goToNextEntity = () => {
+    goToNextEntity: (() => void) = () => {
         const { dispatch, nextEntity, router } = this.props;
 
         const state = this.props.store.getState();
@@ -280,7 +280,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    goToPreviousEntity = () => {
+    goToPreviousEntity: (() => void) = () => {
         const { dispatch, previousEntity, router } = this.props;
 
         const state = this.props.store.getState();
@@ -304,7 +304,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    navigateToPath = (path: string) => {
+    navigateToPath: ((path: string) => void) = (path: string) => {
         const { dispatch } = this.props;
 
         const state = this.props.store.getState();
@@ -322,21 +322,21 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    openLightbox = (image: string) => {
+    openLightbox: ((image: string) => void) = (image: string) => {
         this.props.dispatch(lightbox.actions.open(image));
     };
 
-    updateEditorTranslation = (translation: string, changeSource: string) => {
+    updateEditorTranslation: ((translation: string, changeSource: string) => void) = (translation: string, changeSource: string) => {
         this.props.dispatch(editor.actions.update(translation, changeSource));
     };
 
-    addTextToEditorTranslation = (content: string, changeSource?: string) => {
+    addTextToEditorTranslation: ((content: string, changeSource?: string) => void) = (content: string, changeSource?: string) => {
         this.props.dispatch(
             editor.actions.updateSelection(content, changeSource),
         );
     };
 
-    deleteTranslation = (translationId: number) => {
+    deleteTranslation: ((translationId: number) => void) = (translationId: number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(
             history.actions.deleteTranslation(
@@ -348,19 +348,19 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    setCommentTabIndex = (tab: number) => {
+    setCommentTabIndex: ((tab: number) => void) = (tab: number) => {
         this.setState({ commentTabIndex: tab });
     };
 
-    setContactPerson = (contact: string) => {
+    setContactPerson: ((contact: string) => void) = (contact: string) => {
         this.setState({ contactPerson: contact });
     };
 
-    resetContactPerson = () => {
+    resetContactPerson: (() => void) = () => {
         this.setState({ contactPerson: '' });
     };
 
-    addComment = (comment: string, translation: ?number) => {
+    addComment: ((comment: string, translation: ?number) => void) = (comment: string, translation: ?number) => {
         const { parameters, pluralForm, dispatch } = this.props;
         dispatch(
             comments.actions.addComment(
@@ -373,7 +373,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    togglePinnedStatus = (pinned: boolean, commentId: number) => {
+    togglePinnedStatus: ((pinned: boolean, commentId: number) => void) = (pinned: boolean, commentId: number) => {
         this.props.dispatch(
             teamcomments.actions.togglePinnedStatus(pinned, commentId),
         );
@@ -384,7 +384,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
      * When changing this function, you probably want to change both.
      * We might want to refactor to keep the logic in one place only.
      */
-    updateTranslationStatus = (
+    updateTranslationStatus: ((translationId: number, change: ChangeOperation) => void) = (
         translationId: number,
         change: ChangeOperation,
     ) => {
@@ -426,7 +426,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         );
     };
 
-    render() {
+    render(): null | React.Element<"section"> {
         const state = this.props;
 
         if (!state.locale) {
@@ -509,7 +509,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 }
 
-export default function EntityDetails() {
+export default function EntityDetails(): React.Node {
     const state = {
         activeTranslationString: useSelector((state) =>
             plural.selectors.getTranslationStringForSelectedEntity(state),

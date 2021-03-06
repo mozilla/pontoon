@@ -14,7 +14,7 @@ type Props = {|
  * Renders Approve All batch action button.
  */
 export default class ApproveAll extends React.Component<Props> {
-    renderDefault() {
+    renderDefault(): React.Node {
         return (
             <Localized id='batchactions-ApproveAll--default'>
                 {'APPROVE ALL'}
@@ -22,7 +22,7 @@ export default class ApproveAll extends React.Component<Props> {
         );
     }
 
-    renderError() {
+    renderError(): React.Node {
         return (
             <Localized id='batchactions-ApproveAll--error'>
                 {'OOPS, SOMETHING WENT WRONG'}
@@ -30,7 +30,7 @@ export default class ApproveAll extends React.Component<Props> {
         );
     }
 
-    renderInvalid() {
+    renderInvalid(): null | React.Node {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -47,7 +47,7 @@ export default class ApproveAll extends React.Component<Props> {
         );
     }
 
-    renderSuccess() {
+    renderSuccess(): null | React.Node {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -64,7 +64,7 @@ export default class ApproveAll extends React.Component<Props> {
         );
     }
 
-    renderTitle() {
+    renderTitle(): null | React.Node {
         const { response } = this.props.batchactions;
 
         if (response && response.action === 'approve') {
@@ -86,7 +86,7 @@ export default class ApproveAll extends React.Component<Props> {
         }
     }
 
-    render() {
+    render(): React.Element<"button"> {
         return (
             <button className='approve-all' onClick={this.props.approveAll}>
                 {this.renderTitle()}

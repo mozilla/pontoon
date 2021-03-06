@@ -23,7 +23,7 @@ type ProjectInfoProps = {|
     onDiscard: (e: SyntheticEvent<any>) => void,
 |};
 
-export function ProjectInfo({ project, onDiscard }: ProjectInfoProps) {
+export function ProjectInfo({ project, onDiscard }: ProjectInfoProps): React.Element<"aside"> {
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);
     return (
@@ -53,19 +53,19 @@ export default class ProjectInfoBase extends React.Component<Props, State> {
         };
     }
 
-    toggleVisibility = () => {
+    toggleVisibility: (() => void) = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard = () => {
+    handleDiscard: (() => void) = () => {
         this.setState({
             visible: false,
         });
     };
 
-    render() {
+    render(): null | React.Element<"div"> {
         if (
             this.props.project.fetching ||
             !this.props.project.info ||

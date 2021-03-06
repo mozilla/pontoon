@@ -18,7 +18,7 @@ type Props = {|
 /**
  * Show the source string of a Fluent entity.
  */
-export default function SourceString(props: Props) {
+export default function SourceString(props: Props): React.Element<"p"> {
     const TermsAndPlaceablesMarker = getMarker(props.terms);
 
     return (

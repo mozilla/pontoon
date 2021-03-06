@@ -130,7 +130,7 @@ function renderAttributes(
 /**
  * Show the original string of a Fluent entity in a rich interface.
  */
-export default function RichString(props: Props) {
+export default function RichString(props: Props): React.Element<"table"> {
     const message = fluent.flattenMessage(
         fluent.parser.parseEntry(props.entity.original),
     );

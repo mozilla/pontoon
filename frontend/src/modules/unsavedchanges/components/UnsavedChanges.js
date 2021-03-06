@@ -35,15 +35,15 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
         }
     }
 
-    hideUnsavedChanges = () => {
+    hideUnsavedChanges: (() => void) = () => {
         this.props.dispatch(actions.hide());
     };
 
-    ignoreUnsavedChanges = () => {
+    ignoreUnsavedChanges: (() => void) = () => {
         this.props.dispatch(actions.ignore());
     };
 
-    render() {
+    render(): null | React.Element<"div"> {
         if (!this.props.unsavedchanges.shown) {
             return null;
         }
@@ -90,4 +90,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(UnsavedChangesBase);
+export default (connect(mapStateToProps)(UnsavedChangesBase): any);
