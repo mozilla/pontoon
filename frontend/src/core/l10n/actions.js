@@ -44,7 +44,7 @@ export function receive(localization: ReactLocalization): ReceiveAction {
  * This fetches the translations for the UI for each given locale, bundles
  * those and store them to be used in showing a localized interface.
  */
-export function get(locales: Array<string>): Function {
+export function get(locales: $ReadOnlyArray<string>): Function {
     return async (dispatch) => {
         dispatch(request());
 

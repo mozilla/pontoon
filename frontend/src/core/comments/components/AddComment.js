@@ -24,7 +24,7 @@ type Props = {|
     resetContactPerson?: () => void,
 |};
 
-export default function AddComment(props: Props): React.Element<"div"> {
+export default function AddComment(props: Props): React.Element<'div'> {
     const {
         parameters,
         translation,
@@ -211,7 +211,7 @@ export default function AddComment(props: Props): React.Element<"div"> {
     React.useEffect(() => {
         // Flow does not recognize the event listeners with 'SyntheticEvent`,
         // so I'm ignoring the errors Flow throws here.
-        // $FlowIgnore
+
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;
             setScrollPosition(element.scrollTop);
@@ -225,17 +225,21 @@ export default function AddComment(props: Props): React.Element<"div"> {
         }
 
         if (historyScroll) {
+            // $FlowIgnore
             historyScroll.addEventListener('scroll', handleScroll);
         }
         if (teamsScroll) {
+            //$FlowIgnore
             teamsScroll.addEventListener('scroll', handleScroll);
         }
 
         return () => {
             if (historyScroll) {
+                // $FlowIgnore
                 historyScroll.removeEventListener('scroll', handleScroll);
             }
             if (teamsScroll) {
+                // $FlowIgnore
                 teamsScroll.removeEventListener('scroll', handleScroll);
             }
         };

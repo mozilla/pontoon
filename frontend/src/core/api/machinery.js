@@ -12,7 +12,7 @@ type ConcordanceTranslations = {|
 |};
 
 export default class MachineryAPI extends APIBase {
-    async _get(url: string, params: Object) {
+    async _get(url: string, params: Object): any {
         const payload = new URLSearchParams();
         for (let param in params) {
             payload.append(param, params[param]);
