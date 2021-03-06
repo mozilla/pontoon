@@ -11,8 +11,8 @@ import { Localized } from '@fluent/react';
  *   " Hello, world"
  */
 const leadingSpace = {
-    rule: /(^ +)/,
-    tag: (x: string) => {
+    rule: (/(^ +)/: RegExp),
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-leadingSpace'

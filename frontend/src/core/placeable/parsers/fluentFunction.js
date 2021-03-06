@@ -15,8 +15,8 @@ import { Localized } from '@fluent/react';
  *   { NUMBER($ratio, minimumFractionDigits: 2) }
  */
 const fluentFunction = {
-    rule: /({ ?[A-W0-9\-_]+[^}]* ?})/,
-    tag: (x: string) => {
+    rule: (/({ ?[A-W0-9\-_]+[^}]* ?})/: RegExp),
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-fluentFunction'

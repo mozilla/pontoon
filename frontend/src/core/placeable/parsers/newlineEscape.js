@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  */
 const newlineEscape = {
     rule: '\\n',
-    tag: (x: string) => {
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-newlineEscape'

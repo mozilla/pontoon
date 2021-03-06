@@ -1,0 +1,260 @@
+[2021-03-06 14:29:56.929] No saved state available
+[2021-03-06 14:29:56.930] Parsing
+[2021-03-06 14:29:59.818] Loading libraries
+[2021-03-06 14:30:00.597] Resolving dependencies
+[2021-03-06 14:30:01.006] Resolved requires changed
+[2021-03-06 14:30:01.012] Indexing files
+[2021-03-06 14:30:01.020] Done
+[2021-03-06 14:30:01.037] Calculating dependencies
+[2021-03-06 14:30:01.039] Merging 194 files
+[2021-03-06 14:30:01.770] Merge skipped 0 of 194 modules
+[2021-03-06 14:30:01.771] Merging done.
+[2021-03-06 14:30:01.771] Checking 172 files
+[2021-03-06 14:30:01.805] [flow serverWorker 1] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/parser.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.807] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/optionPattern.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.809] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/filePattern.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.809] [flow serverWorker 1] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/serializer.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.809] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/areSupportedElements.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.810] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/punctuation.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.811] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentFunction.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.812] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormatNamedString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.813] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentParametrizedTerm.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.813] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyMachineryTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 4, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.814] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormatString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.814] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.816] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyOriginalIntoEditor.js file stats: (annotations_added: 1, total_size_of_annotations: 3, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.816] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/FileUpload.js file stats: (annotations_added: 2, total_size_of_annotations: 5, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.816] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentTerm.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.816] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormattingVariable.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.817] [flow serverWorker 9] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/l10n/components/AppLocalizationProvider.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.818] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/javaFormattingVariable.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.818] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/qtFormatting.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.820] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/jsonPlaceholder.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.822] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/leadingSpace.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.825] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/multipleSpaces.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.827] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/narrowNonBreakingSpace.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.827] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/base.js file stats: (annotations_added: 3, total_size_of_annotations: 11, sig_ver_errors: 3, annotations_required: 3, annotations_skipped: 0)
+[2021-03-06 14:30:01.828] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/plural/components/PluralSelector.js file stats: (annotations_added: 2, total_size_of_annotations: 6, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.828] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/notification/components/NotificationPanel.js file stats: (annotations_added: 2, total_size_of_annotations: 5, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.829] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/newlineCharacter.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.829] [flow serverWorker 9] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/lightbox/components/Lightbox.js file stats: (annotations_added: 3, total_size_of_annotations: 12, sig_ver_errors: 3, annotations_required: 3, annotations_skipped: 0)
+[2021-03-06 14:30:01.829] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/Comment.js file stats: (annotations_added: 1, total_size_of_annotations: 4, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.830] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/shortCapitalNumberString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.830] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/newlineEscape.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.830] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignIn.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.829] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyOtherLocaleTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 4, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.832] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/convertSyntax.js file stats: (annotations_added: 1, total_size_of_annotations: 7, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.832] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/stringFormattingVariable.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.833] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/comment.js file stats: (annotations_added: 4, total_size_of_annotations: 8, sig_ver_errors: 4, annotations_required: 4, annotations_skipped: 0)
+[2021-03-06 14:30:01.833] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/nonBreakingSpace.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.833] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/tabCharacter.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.834] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignInLink.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.835] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/nsisVariable.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.835] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/thinSpace.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.836] [flow serverWorker 7] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/numberString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.837] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceables.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.837] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/unusualSpace.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.837] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignOut.js file stats: (annotations_added: 2, total_size_of_annotations: 5, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.837] [flow serverWorker 9] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/locale/actions.js file stats: (annotations_added: 2, total_size_of_annotations: 5, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.839] [flow serverWorker 9] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/locale/getPluralExamples.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.840] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/uriPattern.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.840] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserAutoUpdater.js file stats: (annotations_added: 2, total_size_of_annotations: 4, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.842] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/xmlEntity.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.843] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesForFluent.js file stats: (annotations_added: 2, total_size_of_annotations: 17, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.844] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectItem.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.844] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesForFluentNoLeadingSpace.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.844] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/xmlTag.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.845] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/components/Term.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.847] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesNoLeadingSpace.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.848] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/CommentsList.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.848] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserAvatar.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.849] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/altAttribute.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.849] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/components/TermsList.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.850] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/diff/components/TranslationDiff.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.851] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/camelCaseString.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.851] [flow serverWorker 6] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/plural/actions.js file stats: (annotations_added: 2, total_size_of_annotations: 5, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.852] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useHandleShortcuts.js file stats: (annotations_added: 1, total_size_of_annotations: 16, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.852] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/emailPattern.js file stats: (annotations_added: 2, total_size_of_annotations: 3, sig_ver_errors: 2, annotations_required: 2, annotations_skipped: 0)
+[2021-03-06 14:30:01.852] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js:14:6-5
+[2021-03-06 14:30:01.853] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js:119:78-77
+[2021-03-06 14:30:01.853] [flow serverWorker 8] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/escapeSequence.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.853] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js:163:58-57
+[2021-03-06 14:30:01.853] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js:181:57-56
+[2021-03-06 14:30:01.854] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js file stats: (annotations_added: 4, total_size_of_annotations: 8, sig_ver_errors: 4, annotations_required: 4, annotations_skipped: 0)
+[2021-03-06 14:30:01.854] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/getMarker.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.854] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/diff/withDiff.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.856] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/filter.js:9:65-64
+[2021-03-06 14:30:01.857] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/filter.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.858] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useSendTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 5, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.859] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/getSimplePreview.js file stats: (annotations_added: 1, total_size_of_annotations: 3, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.859] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserControls.js file stats: (annotations_added: 5, total_size_of_annotations: 12, sig_ver_errors: 5, annotations_required: 5, annotations_skipped: 0)
+[2021-03-06 14:30:01.859] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useUpdateTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 5, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.860] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/index.js file stats: (annotations_added: 10, total_size_of_annotations: 10, sig_ver_errors: 10, annotations_required: 10, annotations_skipped: 0)
+[2021-03-06 14:30:01.862] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/FluentTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 17, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.862] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useUpdateTranslationStatus.js file stats: (annotations_added: 1, total_size_of_annotations: 9, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.862] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/l10n.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.864] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSimpleMessage.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.864] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/locale.js:6:28-27
+[2021-03-06 14:30:01.864] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/locale.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.865] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/GenericTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 17, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.865] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSimpleSingleAttributeMessage.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.866] [flow serverWorker 2] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSupportedMessage.js file stats: (annotations_added: 1, total_size_of_annotations: 3, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.869] [flow serverWorker 4] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/TranslationProxy.js file stats: (annotations_added: 1, total_size_of_annotations: 6, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.872] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorMainAction.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.873] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectMenu.js file stats: (annotations_added: 5, total_size_of_annotations: 15, sig_ver_errors: 5, annotations_required: 5, annotations_skipped: 0)
+[2021-03-06 14:30:01.876] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectPercent.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.879] [flow serverWorker 12] Validation_error Empty_SomeUnknownUpper (use: PredicateT) /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/machinery.js:15:44-43
+[2021-03-06 14:30:01.879] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/machinery.js file stats: (annotations_added: 0, total_size_of_annotations: 0, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.880] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/project.js:6:28-27
+[2021-03-06 14:30:01.881] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/project.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.881] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourceItem.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.882] [flow serverWorker 12] Empty_NoUpper /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/resource.js:6:50-49
+[2021-03-06 14:30:01.882] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/resource.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.884] [flow serverWorker 10] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/selectors.js file stats: (annotations_added: 1, total_size_of_annotations: 1, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.886] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorMenu.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.889] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserMenu.js file stats: (annotations_added: 4, total_size_of_annotations: 10, sig_ver_errors: 4, annotations_required: 4, annotations_skipped: 0)
+[2021-03-06 14:30:01.889] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/translation.js file stats: (annotations_added: 7, total_size_of_annotations: 14, sig_ver_errors: 7, annotations_required: 7, annotations_skipped: 0)
+[2021-03-06 14:30:01.898] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorSettings.js file stats: (annotations_added: 4, total_size_of_annotations: 10, sig_ver_errors: 4, annotations_required: 4, annotations_skipped: 0)
+[2021-03-06 14:30:01.898] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserNotification.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.922] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/FailedChecks.js file stats: (annotations_added: 1, total_size_of_annotations: 4, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.926] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourceMenu.js file stats: (annotations_added: 5, total_size_of_annotations: 17, sig_ver_errors: 5, annotations_required: 5, annotations_skipped: 0)
+[2021-03-06 14:30:01.928] [flow serverWorker 3] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserNotificationsMenu.js file stats: (annotations_added: 6, total_size_of_annotations: 18, sig_ver_errors: 6, annotations_required: 6, annotations_skipped: 0)
+[2021-03-06 14:30:01.929] [flow serverWorker 5] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourcePercent.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.946] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/KeyboardShortcuts.js file stats: (annotations_added: 3, total_size_of_annotations: 8, sig_ver_errors: 3, annotations_required: 3, annotations_skipped: 0)
+[2021-03-06 14:30:01.953] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/TranslationLength.js file stats: (annotations_added: 3, total_size_of_annotations: 6, sig_ver_errors: 3, annotations_required: 3, annotations_skipped: 0)
+[2021-03-06 14:30:01.954] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useAddTextToTranslation.js file stats: (annotations_added: 1, total_size_of_annotations: 5, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.954] [flow serverWorker 11] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useClearEditor.js file stats: (annotations_added: 1, total_size_of_annotations: 3, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.966] [flow serverWorker 12] /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/AddComment.js file stats: (annotations_added: 1, total_size_of_annotations: 2, sig_ver_errors: 1, annotations_required: 1, annotations_skipped: 0)
+[2021-03-06 14:30:01.987] Done
+[2021-03-06 14:30:02.018] recheck 105 modified, 0 deleted files
+[2021-03-06 14:30:02.018] modified files:
+[2021-03-06 14:30:02.018] 1/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/base.js
+[2021-03-06 14:30:02.018] 2/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/comment.js
+[2021-03-06 14:30:02.018] 3/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/entity.js
+[2021-03-06 14:30:02.018] 4/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/filter.js
+[2021-03-06 14:30:02.018] 5/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/index.js
+[2021-03-06 14:30:02.018] 6/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/l10n.js
+[2021-03-06 14:30:02.018] 7/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/locale.js
+[2021-03-06 14:30:02.018] 8/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/project.js
+[2021-03-06 14:30:02.019] 9/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/resource.js
+[2021-03-06 14:30:02.019] 10/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/api/translation.js
+[2021-03-06 14:30:02.019] 11/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/AddComment.js
+[2021-03-06 14:30:02.019] 12/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/Comment.js
+[2021-03-06 14:30:02.019] 13/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/comments/components/CommentsList.js
+[2021-03-06 14:30:02.019] 14/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/diff/components/TranslationDiff.js
+[2021-03-06 14:30:02.019] 15/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/diff/withDiff.js
+[2021-03-06 14:30:02.019] 16/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorMainAction.js
+[2021-03-06 14:30:02.019] 17/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorMenu.js
+[2021-03-06 14:30:02.019] 18/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/EditorSettings.js
+[2021-03-06 14:30:02.019] 19/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/FailedChecks.js
+[2021-03-06 14:30:02.019] 20/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/KeyboardShortcuts.js
+[2021-03-06 14:30:02.019] 21/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/components/TranslationLength.js
+[2021-03-06 14:30:02.019] 22/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useAddTextToTranslation.js
+[2021-03-06 14:30:02.019] 23/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useClearEditor.js
+[2021-03-06 14:30:02.019] 24/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyMachineryTranslation.js
+[2021-03-06 14:30:02.019] 25/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyOriginalIntoEditor.js
+[2021-03-06 14:30:02.019] 26/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useCopyOtherLocaleTranslation.js
+[2021-03-06 14:30:02.019] 27/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useHandleShortcuts.js
+[2021-03-06 14:30:02.019] 28/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useSendTranslation.js
+[2021-03-06 14:30:02.019] 29/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useUpdateTranslation.js
+[2021-03-06 14:30:02.019] 30/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/hooks/useUpdateTranslationStatus.js
+[2021-03-06 14:30:02.019] 31/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/editor/selectors.js
+[2021-03-06 14:30:02.019] 32/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/l10n/components/AppLocalizationProvider.js
+[2021-03-06 14:30:02.019] 33/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/lightbox/components/Lightbox.js
+[2021-03-06 14:30:02.019] 34/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/locale/actions.js
+[2021-03-06 14:30:02.019] 35/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/locale/getPluralExamples.js
+[2021-03-06 14:30:02.019] 36/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/notification/components/NotificationPanel.js
+[2021-03-06 14:30:02.019] 37/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceables.js
+[2021-03-06 14:30:02.019] 38/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesForFluent.js
+[2021-03-06 14:30:02.019] 39/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesForFluentNoLeadingSpace.js
+[2021-03-06 14:30:02.019] 40/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/components/WithPlaceablesNoLeadingSpace.js
+[2021-03-06 14:30:02.019] 41/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/altAttribute.js
+[2021-03-06 14:30:02.019] 42/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/camelCaseString.js
+[2021-03-06 14:30:02.019] 43/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/emailPattern.js
+[2021-03-06 14:30:02.019] 44/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/escapeSequence.js
+[2021-03-06 14:30:02.019] 45/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/filePattern.js
+[2021-03-06 14:30:02.019] 46/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentFunction.js
+[2021-03-06 14:30:02.019] 47/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentParametrizedTerm.js
+[2021-03-06 14:30:02.079] 48/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentString.js
+[2021-03-06 14:30:02.079] 49/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/fluentTerm.js
+[2021-03-06 14:30:02.079] 50/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/javaFormattingVariable.js
+[2021-03-06 14:30:02.079] 51/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/jsonPlaceholder.js
+[2021-03-06 14:30:02.079] 52/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/leadingSpace.js
+[2021-03-06 14:30:02.079] 53/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/multipleSpaces.js
+[2021-03-06 14:30:02.079] 54/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/narrowNonBreakingSpace.js
+[2021-03-06 14:30:02.079] 55/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/newlineCharacter.js
+[2021-03-06 14:30:02.080] 56/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/newlineEscape.js
+[2021-03-06 14:30:02.080] 57/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/nonBreakingSpace.js
+[2021-03-06 14:30:02.080] 58/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/nsisVariable.js
+[2021-03-06 14:30:02.080] 59/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/numberString.js
+[2021-03-06 14:30:02.080] 60/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/optionPattern.js
+[2021-03-06 14:30:02.080] 61/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/punctuation.js
+[2021-03-06 14:30:02.080] 62/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormatNamedString.js
+[2021-03-06 14:30:02.080] 63/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormatString.js
+[2021-03-06 14:30:02.080] 64/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/pythonFormattingVariable.js
+[2021-03-06 14:30:02.080] 65/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/qtFormatting.js
+[2021-03-06 14:30:02.080] 66/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/shortCapitalNumberString.js
+[2021-03-06 14:30:02.080] 67/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/stringFormattingVariable.js
+[2021-03-06 14:30:02.080] 68/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/tabCharacter.js
+[2021-03-06 14:30:02.080] 69/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/thinSpace.js
+[2021-03-06 14:30:02.080] 70/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/unusualSpace.js
+[2021-03-06 14:30:02.080] 71/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/uriPattern.js
+[2021-03-06 14:30:02.080] 72/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/xmlEntity.js
+[2021-03-06 14:30:02.080] 73/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/placeable/parsers/xmlTag.js
+[2021-03-06 14:30:02.080] 74/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/plural/actions.js
+[2021-03-06 14:30:02.080] 75/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/plural/components/PluralSelector.js
+[2021-03-06 14:30:02.080] 76/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectItem.js
+[2021-03-06 14:30:02.080] 77/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectMenu.js
+[2021-03-06 14:30:02.080] 78/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/project/components/ProjectPercent.js
+[2021-03-06 14:30:02.080] 79/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourceItem.js
+[2021-03-06 14:30:02.080] 80/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourceMenu.js
+[2021-03-06 14:30:02.080] 81/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/resource/components/ResourcePercent.js
+[2021-03-06 14:30:02.080] 82/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/components/Term.js
+[2021-03-06 14:30:02.080] 83/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/components/TermsList.js
+[2021-03-06 14:30:02.080] 84/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/term/getMarker.js
+[2021-03-06 14:30:02.080] 85/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/FluentTranslation.js
+[2021-03-06 14:30:02.080] 86/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/GenericTranslation.js
+[2021-03-06 14:30:02.080] 87/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/translation/components/TranslationProxy.js
+[2021-03-06 14:30:02.080] 88/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/FileUpload.js
+[2021-03-06 14:30:02.080] 89/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignIn.js
+[2021-03-06 14:30:02.080] 90/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignInLink.js
+[2021-03-06 14:30:02.080] 91/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/SignOut.js
+[2021-03-06 14:30:02.080] 92/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserAutoUpdater.js
+[2021-03-06 14:30:02.080] 93/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserAvatar.js
+[2021-03-06 14:30:02.080] 94/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserControls.js
+[2021-03-06 14:30:02.080] 95/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserMenu.js
+[2021-03-06 14:30:02.080] 96/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserNotification.js
+[2021-03-06 14:30:02.080] 97/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/user/components/UserNotificationsMenu.js
+[2021-03-06 14:30:02.080] 98/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/areSupportedElements.js
+[2021-03-06 14:30:02.080] 99/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/convertSyntax.js
+[2021-03-06 14:30:02.080] 100/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/getSimplePreview.js
+[2021-03-06 14:30:02.080] 101/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSimpleMessage.js
+[2021-03-06 14:30:02.080] 102/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSimpleSingleAttributeMessage.js
+[2021-03-06 14:30:02.080] 103/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/isSupportedMessage.js
+[2021-03-06 14:30:02.080] 104/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/parser.js
+[2021-03-06 14:30:02.080] 105/105: /Users/abowler/moz-pontoon/pontoon/frontend/src/core/utils/fluent/serializer.js
+[2021-03-06 14:30:02.080] Parsing
+[2021-03-06 14:30:02.201] Resolved requires changed
+[2021-03-06 14:30:02.211] Re-resolving directly dependent files
+[2021-03-06 14:30:02.255] Resolved requires are unchanged
+[2021-03-06 14:30:02.255] Recalculating dependency graph
+[2021-03-06 14:30:02.265] Updating index
+[2021-03-06 14:30:02.269] Done updating index
+[2021-03-06 14:30:02.278] recheck 162 dependent files:
+[2021-03-06 14:30:02.278] to_merge: Focused: 105, Dependents: 119, Dependencies: 42
+[2021-03-06 14:30:02.278] Calculating dependencies
+[2021-03-06 14:30:02.279] Merging
+[2021-03-06 14:30:03.134] Merge skipped 0 of 266 modules
+[2021-03-06 14:30:03.134] Done
+[2021-03-06 14:30:03.134] Check prep
+[2021-03-06 14:30:03.134] new or changed signatures: 214
+[2021-03-06 14:30:03.134] Check will skip 4 of 228 files
+[2021-03-06 14:30:03.134] Checking files
+[2021-03-06 14:30:03.506] Done
+[2021-03-06 14:30:03.508] Checked set: Focused: 105, Dependents: 123, Dependencies: 38
+[2021-03-06 14:30:03.509] Calculating dependencies
+[2021-03-06 14:30:03.513] Merging 187 files
+[2021-03-06 14:30:04.230] Merge skipped 0 of 187 modules
+[2021-03-06 14:30:04.230] Merging done.
+[2021-03-06 14:30:04.230] Checking 105 files
+[2021-03-06 14:30:04.462] Done

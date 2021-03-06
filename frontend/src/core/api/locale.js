@@ -3,7 +3,7 @@
 import APIBase from './base';
 
 export default class LocaleAPI extends APIBase {
-    async get(code: string) {
+    async get(code: string): Promise<any> {
         const query = `{
             locale(code: "${code}") {
                 code

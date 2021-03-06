@@ -28,7 +28,7 @@ export function EditorSettings({
     settings,
     toggleSetting,
     onDiscard,
-}: EditorSettingsProps) {
+}: EditorSettingsProps): React.Element<"ul"> {
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);
 
@@ -89,13 +89,13 @@ export default class EditorSettingsBase extends React.Component<Props, State> {
         };
     }
 
-    toggleVisibility = () => {
+    toggleVisibility: (() => void) = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard = () => {
+    handleDiscard: (() => void) = () => {
         this.setState({
             visible: false,
         });
@@ -106,7 +106,7 @@ export default class EditorSettingsBase extends React.Component<Props, State> {
         this.toggleVisibility();
     }
 
-    render() {
+    render(): React.Element<"div"> {
         return (
             <div className='editor-settings'>
                 <div

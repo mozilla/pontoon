@@ -12,9 +12,9 @@ import { Localized } from '@fluent/react';
  *   $BrandShortName
  */
 const nsisVariable = {
-    rule: /(^|\s)(\$[a-zA-Z][\w]*)/,
+    rule: (/(^|\s)(\$[a-zA-Z][\w]*)/: RegExp),
     matchIndex: 2,
-    tag: (x: string) => {
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-nsisVariable'

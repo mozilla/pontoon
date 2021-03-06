@@ -28,7 +28,7 @@ import serialize from './serialize';
  * @returns {string} A simplified version of the Fluent message, or the original
  * content if it isn't a valid Fluent message.
  */
-export default function getSimplePreview(content: ?string) {
+export default function getSimplePreview(content: ?string): any | string {
     if (!content) {
         return '';
     }

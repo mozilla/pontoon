@@ -8,7 +8,7 @@ import { rules } from './WithPlaceables';
 import leadingSpace from '../parsers/leadingSpace';
 import unusualSpace from '../parsers/unusualSpace';
 
-export function getRulesWithoutLeadingSpace(rules: Array<Object>) {
+export function getRulesWithoutLeadingSpace(rules: Array<Object>): Array<any> {
     let newRules = [...rules];
     newRules.splice(newRules.indexOf(leadingSpace), 1);
     newRules.splice(newRules.indexOf(unusualSpace), 1);
@@ -26,7 +26,7 @@ export function getRulesWithoutLeadingSpace(rules: Array<Object>) {
  * have a special Placeables component without that parser, for use in
  * combination with other parsing tools (like diff).
  */
-const WithPlaceablesNoLeadingSpace = createMarker(
+const WithPlaceablesNoLeadingSpace: any = createMarker(
     getRulesWithoutLeadingSpace(rules),
 );
 

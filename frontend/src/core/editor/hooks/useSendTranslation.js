@@ -11,7 +11,7 @@ import { actions } from '..';
 /**
  * Return a function to send a translation to the server.
  */
-export default function useSendTranslation() {
+export default function useSendTranslation(): ((ignoreWarnings?: boolean, content?: string) => void) {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);

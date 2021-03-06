@@ -109,7 +109,7 @@ function _isFluentMessage(editorState: EditorState) {
 /**
  * Returns `true` if the current editor translation contains a Fluent message.
  */
-const isFluentTranslationMessage = createSelector(
+const isFluentTranslationMessage: any = createSelector(
     editorSelector,
     _isFluentMessage,
 );

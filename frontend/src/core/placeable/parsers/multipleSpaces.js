@@ -7,8 +7,8 @@ import { Localized } from '@fluent/react';
  * Marks multiple consecutive spaces and replaces them with a middle dot.
  */
 const multipleSpaces = {
-    rule: /(  +)/,
-    tag: (x: string) => {
+    rule: (/(  +)/: RegExp),
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-multipleSpaces'

@@ -11,11 +11,11 @@ type Props = {|
  * Render a Sign Out link.
  */
 export default class SignOut extends React.Component<Props> {
-    signOut = () => {
+    signOut: (() => void) = () => {
         this.props.signOut();
     };
 
-    render() {
+    render(): React.Node {
         return (
             <Localized
                 id='user-SignOut--sign-out'

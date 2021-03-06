@@ -19,7 +19,7 @@ type Props = {|
 /**
  * Shows a list of terms.
  */
-export default function TermsList(props: Props) {
+export default function TermsList(props: Props): React.Element<"ul"> {
     return (
         <ul className='terms-list'>
             {props.terms.map((term, i) => {

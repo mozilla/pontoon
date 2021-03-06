@@ -2,6 +2,6 @@
 
 import { FluentSerializer } from '@fluent/syntax';
 
-const fluentSerializer = new FluentSerializer();
+const fluentSerializer: any = new FluentSerializer();
 
 export default fluentSerializer;

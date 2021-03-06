@@ -19,7 +19,7 @@ type Props = {|
  * is provided for strings without HTML tags, so they need to be stripped.
  */
 export default class TranslationLength extends React.Component<Props> {
-    getLimit() {
+    getLimit(): null | number {
         const { comment, format } = this.props;
 
         if (format !== 'lang') {
@@ -44,7 +44,7 @@ export default class TranslationLength extends React.Component<Props> {
 
     // Only used for countdown.
     // Source: https://stackoverflow.com/a/47140708
-    stripHTML(translation: string) {
+    stripHTML(translation: string): string {
         const doc = new DOMParser().parseFromString(translation, 'text/html');
 
         if (!doc.body) {
@@ -54,7 +54,7 @@ export default class TranslationLength extends React.Component<Props> {
         return doc.body.textContent || '';
     }
 
-    render() {
+    render(): React.Element<"div"> {
         const { original, translation } = this.props;
 
         const limit = this.getLimit();

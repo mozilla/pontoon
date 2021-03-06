@@ -6,7 +6,7 @@ import isSimpleElement from './isSimpleElement';
  * Return true when message has no value and a single attribute with only simple
  * elements.
  */
-export default function isSimpleSingleAttributeMessage(message: Object) {
+export default function isSimpleSingleAttributeMessage(message: Object): boolean {
     if (
         message &&
         !message.value &&

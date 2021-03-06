@@ -24,7 +24,7 @@ type Props = {|
     resetContactPerson?: () => void,
 |};
 
-export default function AddComment(props: Props) {
+export default function AddComment(props: Props): React.Element<"div"> {
     const {
         parameters,
         translation,

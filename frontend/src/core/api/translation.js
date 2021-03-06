@@ -20,7 +20,7 @@ export default class TranslationAPI extends APIBase {
         resource: string,
         ignoreWarnings: ?boolean,
         machinerySources: Array<SourceType>,
-    ) {
+    ): Promise<any> {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -58,7 +58,7 @@ export default class TranslationAPI extends APIBase {
         id: number,
         resource: string,
         ignoreWarnings: ?boolean,
-    ) {
+    ): Promise<any> {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -79,7 +79,7 @@ export default class TranslationAPI extends APIBase {
         return this.fetch(url, 'POST', payload, headers);
     }
 
-    approve(id: number, resource: string, ignoreWarnings: ?boolean) {
+    approve(id: number, resource: string, ignoreWarnings: ?boolean): Promise<any> {
         return this._changeStatus(
             '/translations/approve/',
             id,
@@ -88,19 +88,19 @@ export default class TranslationAPI extends APIBase {
         );
     }
 
-    unapprove(id: number, resource: string) {
+    unapprove(id: number, resource: string): Promise<any> {
         return this._changeStatus('/translations/unapprove/', id, resource);
     }
 
-    reject(id: number, resource: string) {
+    reject(id: number, resource: string): Promise<any> {
         return this._changeStatus('/translations/reject/', id, resource);
     }
 
-    unreject(id: number, resource: string) {
+    unreject(id: number, resource: string): Promise<any> {
         return this._changeStatus('/translations/unreject/', id, resource);
     }
 
-    delete(id: number) {
+    delete(id: number): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('translation', id.toString());
 

@@ -15,9 +15,9 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L317
  */
 const optionPattern = {
-    rule: /(\B(-[a-zA-Z]|--[a-z-]+)\b)/,
+    rule: (/(\B(-[a-zA-Z]|--[a-z-]+)\b)/: RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-optionPattern'

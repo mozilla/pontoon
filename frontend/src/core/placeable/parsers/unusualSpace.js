@@ -16,8 +16,8 @@ import { Localized } from '@fluent/react';
  *   "hello  world"
  */
 const unusualSpace = {
-    rule: /( +$|[\r\n\t]( +)| {2,})/,
-    tag: (x: string) => {
+    rule: (/( +$|[\r\n\t]( +)| {2,})/: RegExp),
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-unusualSpace'

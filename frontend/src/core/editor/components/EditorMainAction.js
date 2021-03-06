@@ -23,7 +23,7 @@ type Props = {
  * Otherwise, if the "force suggestion" user setting is on, it renders "Suggest".
  * Otherwise, it renders "Save".
  */
-export default function EditorMainAction(props: Props) {
+export default function EditorMainAction(props: Props): React.Node {
     const isRunningRequest = useSelector(
         (state) => state.editor.isRunningRequest,
     );

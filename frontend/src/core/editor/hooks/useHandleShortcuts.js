@@ -9,7 +9,12 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 /**
  * Return a function to handle shortcuts in a translation form.
  */
-export default function useHandleShortcuts() {
+export default function useHandleShortcuts(): ((
+  event: SyntheticKeyboardEvent<HTMLTextAreaElement>,
+  sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
+  clearEditorCustom?: () => void,
+  copyOriginalIntoEditorCustom?: () => void
+) => void) {
     const dispatch = useDispatch();
 
     const clearEditor = editor.useClearEditor();

@@ -58,7 +58,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
         );
     }
 
-    render() {
+    render(): null | React.Element<"nav"> {
         const props = this.props;
         const { pluralForm } = props;
 
@@ -96,7 +96,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
     }
 }
 
-export default function PluralSelector(props: WrapperProps) {
+export default function PluralSelector(props: WrapperProps): React.Node {
     const state = {
         locale: useSelector((state) => state[locale.NAME]),
         pluralForm: useSelector((state) => selectors.getPluralForm(state)),

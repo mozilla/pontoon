@@ -10,7 +10,7 @@ import type { Translation } from 'core/editor';
 /**
  * Return a function to update the content of the editor.
  */
-export default function useUpdateTranslation() {
+export default function useUpdateTranslation(): ((translation: Translation, changeSource?: string) => void) {
     const dispatch = useDispatch();
 
     return useCallback(

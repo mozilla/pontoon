@@ -8,7 +8,7 @@ import isSimpleElement from './isSimpleElement';
  * A simple message has no attributes and all value
  * elements are simple.
  */
-export default function isSimpleMessage(message: Object) {
+export default function isSimpleMessage(message: Object): boolean {
     if (
         message &&
         message.attributes &&

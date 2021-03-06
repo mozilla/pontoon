@@ -13,7 +13,7 @@ type Props = {
 export default class UserAutoUpdater extends React.Component<Props> {
     timer: ?IntervalID;
 
-    fetchUserData = () => {
+    fetchUserData: (() => void) = () => {
         this.props.getUserData();
     };
 
@@ -28,7 +28,7 @@ export default class UserAutoUpdater extends React.Component<Props> {
         }
     }
 
-    render() {
+    render(): null {
         return null;
     }
 }

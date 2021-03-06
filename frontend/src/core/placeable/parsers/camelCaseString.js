@@ -16,9 +16,9 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L274
  */
 const camelCaseString = {
-    rule: /(\b([a-z]+[A-Z]|[A-Z]+[a-z]+[A-Z]|[A-Z]{2,}[a-z])[a-zA-Z0-9]*\b)/,
+    rule: (/(\b([a-z]+[A-Z]|[A-Z]+[a-z]+[A-Z]|[A-Z]{2,}[a-z])[a-zA-Z0-9]*\b)/: RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-camelCaseString'

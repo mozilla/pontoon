@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  */
 const nonBreakingSpace = {
     rule: '\u00A0',
-    tag: (x: string) => {
+    tag: (x: string): React.Node => {
         return (
             <Localized
                 id='placeable-parser-nonBreakingSpace'

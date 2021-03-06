@@ -19,7 +19,7 @@ type Props = {|
  * Removed slices are wrapped in <del>.
  */
 export default class TranslationDiff extends React.Component<Props> {
-    render() {
+    render(): any {
         const { base, target } = this.props;
         return getDiff(base, target);
     }

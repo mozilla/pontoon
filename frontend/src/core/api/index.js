@@ -29,14 +29,14 @@ export type {
 } from './types';
 
 export default {
-    entity: new EntityAPI(),
-    comment: new CommentAPI(),
-    filter: new FilterAPI(),
-    locale: new LocaleAPI(),
-    l10n: new L10nAPI(),
-    machinery: new MachineryAPI(),
-    project: new ProjectAPI(),
-    resource: new ResourceAPI(),
-    translation: new TranslationAPI(),
-    user: new UserAPI(),
+    entity: (new EntityAPI(): EntityAPI),
+    comment: (new CommentAPI(): CommentAPI),
+    filter: (new FilterAPI(): FilterAPI),
+    locale: (new LocaleAPI(): LocaleAPI),
+    l10n: (new L10nAPI(): L10nAPI),
+    machinery: (new MachineryAPI(): MachineryAPI),
+    project: (new ProjectAPI(): ProjectAPI),
+    resource: (new ResourceAPI(): ResourceAPI),
+    translation: (new TranslationAPI(): TranslationAPI),
+    user: (new UserAPI(): UserAPI),
 };

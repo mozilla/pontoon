@@ -9,7 +9,7 @@ import isSimpleElement from './isSimpleElement';
  * - simple elements or
  * - select expressions, whose variants are simple elements
  */
-export default function areSupportedElements(elements: Array<Object>) {
+export default function areSupportedElements(elements: Array<Object>): boolean {
     return elements.every((element) => {
         return (
             isSimpleElement(element) ||

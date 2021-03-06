@@ -20,7 +20,7 @@ type FailedChecksProps = {|
  * Shows a list of failed checks (errors and warnings) and a button to ignore
  * those checks and proceed anyway.
  */
-export default function FailedChecks(props: FailedChecksProps) {
+export default function FailedChecks(props: FailedChecksProps): null | React.Element<"div"> {
     const dispatch = useDispatch();
 
     const errors = useSelector((state) => state.editor.errors);
