@@ -81,19 +81,19 @@ export default class Metadata extends React.Component<Props, State> {
         // However in this case, we do want to use that, so we're ignoring all
         // errors Flow throws there.
 
-        // $FLOW_IGNORE
+        // $FlowIgnore
         if (e.target && e.target.classList.contains('placeable')) {
             if (this.props.isReadOnlyEditor) {
                 return;
             }
-            // $FLOW_IGNORE
+            // $FlowIgnore
             if (e.target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
-                    // $FLOW_IGNORE
+                    // $FlowIgnore
                     e.target.dataset['match'],
                 );
             }
-            // $FLOW_IGNORE
+            // $FlowIgnore
             else if (e.target.childNodes.length) {
                 this.props.addTextToEditorTranslation(
                     e.target.childNodes[0].data,
@@ -103,7 +103,7 @@ export default class Metadata extends React.Component<Props, State> {
 
         // Handle click on Term
 
-        // $FLOW_IGNORE
+        // $FlowIgnore
         const markedTerm = e.target.dataset['term'];
         if (e.target && markedTerm) {
             const popupTerms = this.props.terms.terms.filter(

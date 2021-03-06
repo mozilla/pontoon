@@ -226,7 +226,7 @@ export default function RichTranslationForm(props: Props) {
 
         updateRichTranslation(
             event.currentTarget.textContent,
-            // $FLOW_IGNORE: Bug in Flow, again.
+            // $FlowIgnore: Bug in Flow, again.
             accessKeyElementIdRef.current.split('-'),
         );
     }

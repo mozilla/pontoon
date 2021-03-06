@@ -211,7 +211,7 @@ export default function AddComment(props: Props) {
     React.useEffect(() => {
         // Flow does not recognize the event listeners with 'SyntheticEvent`,
         // so I'm ignoring the errors Flow throws here.
-        // $FLOW_IGNORE
+        // $FlowIgnore
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;
             setScrollPosition(element.scrollTop);
