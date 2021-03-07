@@ -50,7 +50,9 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    handleShortcuts: ((event: SyntheticKeyboardEvent<>) => void) = (event: SyntheticKeyboardEvent<>) => {
+    handleShortcuts: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         const key = event.keyCode;
 
         // On Esc, quit batch actions
@@ -59,11 +61,11 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         }
     };
 
-    quitBatchActions: (() => void) = () => {
+    quitBatchActions: () => void = () => {
         this.props.dispatch(batchactions.actions.resetSelection());
     };
 
-    selectAllEntities: (() => void) = () => {
+    selectAllEntities: () => void = () => {
         const {
             locale,
             project,
@@ -91,7 +93,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    approveAll: (() => void) = () => {
+    approveAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -110,7 +112,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    rejectAll: (() => void) = () => {
+    rejectAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -129,7 +131,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    replaceAll: (() => void) = () => {
+    replaceAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -167,12 +169,14 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    submitReplaceForm: ((event: SyntheticKeyboardEvent<>) => void) = (event: SyntheticKeyboardEvent<>) => {
+    submitReplaceForm: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         event.preventDefault();
         this.replaceAll();
     };
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         return (
             <div className='batch-actions'>
                 <div className='topbar clearfix'>

@@ -35,7 +35,7 @@ export default class UserNotification extends React.Component<Props, State> {
         }
     }
 
-    render(): React.Element<"li"> {
+    render(): React.Element<'li'> {
         const { notification } = this.props;
 
         let className = 'user-notification';

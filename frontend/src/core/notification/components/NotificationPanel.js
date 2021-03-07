@@ -47,12 +47,12 @@ export default class NotificationPanel extends React.Component<Props, State> {
         }
     }
 
-    hide: (() => void) = () => {
+    hide: () => void = () => {
         clearTimeout(this.hideTimeout);
         this.setState({ hiding: true });
     };
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         const { notification } = this.props;
 
         let hideClass = '';

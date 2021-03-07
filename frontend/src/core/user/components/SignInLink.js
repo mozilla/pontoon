@@ -21,7 +21,7 @@ export default class SignInLink extends React.Component<Props> {
         return parsedUrl.toString();
     }
 
-    render(): React.Element<"a"> {
+    render(): React.Element<'a'> {
         return <a href={this.generateSignInURL()}>{this.props.children}</a>;
     }
 }

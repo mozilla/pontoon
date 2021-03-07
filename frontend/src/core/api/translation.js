@@ -79,7 +79,11 @@ export default class TranslationAPI extends APIBase {
         return this.fetch(url, 'POST', payload, headers);
     }
 
-    approve(id: number, resource: string, ignoreWarnings: ?boolean): Promise<any> {
+    approve(
+        id: number,
+        resource: string,
+        ignoreWarnings: ?boolean,
+    ): Promise<any> {
         return this._changeStatus(
             '/translations/approve/',
             id,

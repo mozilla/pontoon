@@ -13,7 +13,7 @@ type Props = {|
 /**
  * Render a resource item percentage.
  */
-export default function ResourcePercent(props: Props): React.Element<"span"> {
+export default function ResourcePercent(props: Props): React.Element<'span'> {
     const {
         approvedStrings,
         stringsWithWarnings,

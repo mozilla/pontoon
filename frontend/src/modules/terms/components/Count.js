@@ -8,7 +8,7 @@ type Props = {|
     terms: TermState,
 |};
 
-export default function TermCount(props: Props): null | React.Element<"span"> {
+export default function TermCount(props: Props): null | React.Element<'span'> {
     const { terms } = props;
 
     if (terms.fetching || !terms.terms) {

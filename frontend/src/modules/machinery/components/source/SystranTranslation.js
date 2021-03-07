@@ -1,12 +1,13 @@
 /* @flow */
 
-import type {Element} from "React";import React from 'react';
+import type { Element } from 'React';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Show the translation source from Systran.
  */
-export default function SystranTranslation(): Element<"li"> {
+export default function SystranTranslation(): Element<'li'> {
     return (
         <li>
             <Localized

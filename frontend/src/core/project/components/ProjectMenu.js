@@ -36,7 +36,7 @@ export function ProjectMenu({
     parameters,
     onDiscard,
     onNavigate,
-}: ProjectMenuProps): React.Element<"div"> {
+}: ProjectMenuProps): React.Element<'div'> {
     // Searching
     const [search, setSearch] = React.useState('');
 
@@ -193,19 +193,21 @@ export default class ProjectMenuBase extends React.Component<Props, State> {
         };
     }
 
-    toggleVisibility: (() => void) = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard: (() => void) = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
     };
 
-    navigateToPath: ((event: SyntheticMouseEvent<HTMLAnchorElement>) => void) = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+    navigateToPath: (event: SyntheticMouseEvent<HTMLAnchorElement>) => void = (
+        event: SyntheticMouseEvent<HTMLAnchorElement>,
+    ) => {
         event.preventDefault();
 
         const path = event.currentTarget.pathname;
@@ -216,7 +218,7 @@ export default class ProjectMenuBase extends React.Component<Props, State> {
         });
     };
 
-    render(): React.Element<"li"> {
+    render(): React.Element<'li'> {
         const { locale, parameters, project } = this.props;
 
         if (parameters.project !== 'all-projects') {

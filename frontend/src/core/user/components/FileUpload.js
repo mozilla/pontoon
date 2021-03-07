@@ -22,14 +22,14 @@ export default class FileUpload extends React.Component<Props> {
         this.uploadForm = React.createRef();
     }
 
-    submitForm: (() => void) = () => {
+    submitForm: () => void = () => {
         const form = this.uploadForm.current;
         if (form) {
             form.submit();
         }
     };
 
-    render(): React.Element<"form"> {
+    render(): React.Element<'form'> {
         const { parameters } = this.props;
 
         /* TODO: Refactor core.api.base and reuse getCSRFToken() here */

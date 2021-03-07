@@ -11,7 +11,7 @@ type Props = {|
  * Render a Sign Out link.
  */
 export default class SignOut extends React.Component<Props> {
-    signOut: (() => void) = () => {
+    signOut: () => void = () => {
         this.props.signOut();
     };
 

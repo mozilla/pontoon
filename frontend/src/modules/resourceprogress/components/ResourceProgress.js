@@ -175,19 +175,19 @@ export default class ResourceProgressBase extends React.Component<
         };
     }
 
-    toggleVisibility: (() => void) = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard: (() => void) = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
     };
 
-    render(): null | React.Element<"div"> {
+    render(): null | React.Element<'div'> {
         const { parameters, stats } = this.props;
 
         // Do not show resource progress until stats are available

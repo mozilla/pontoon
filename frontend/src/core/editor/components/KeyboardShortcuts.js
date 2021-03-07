@@ -231,19 +231,19 @@ export default class KeyboardShortcutsBase extends React.Component<
         };
     }
 
-    toggleVisibility: (() => void) = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard: (() => void) = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
     };
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         return (
             <div className='keyboard-shortcuts'>
                 <Localized

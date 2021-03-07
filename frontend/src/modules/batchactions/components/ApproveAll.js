@@ -86,7 +86,7 @@ export default class ApproveAll extends React.Component<Props> {
         }
     }
 
-    render(): React.Element<"button"> {
+    render(): React.Element<'button'> {
         return (
             <button className='approve-all' onClick={this.props.approveAll}>
                 {this.renderTitle()}

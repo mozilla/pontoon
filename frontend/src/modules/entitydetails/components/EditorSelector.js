@@ -11,7 +11,7 @@ type Props = {
     fileFormat: string,
 };
 
-export default function EditorSelector(props: Props): React.Element<"div"> {
+export default function EditorSelector(props: Props): React.Element<'div'> {
     if (props.fileFormat === 'ftl') {
         return (
             <div className='editor'>

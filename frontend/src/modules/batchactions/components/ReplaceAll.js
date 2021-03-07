@@ -86,7 +86,7 @@ export default class ReplaceAll extends React.Component<Props> {
         }
     }
 
-    render(): React.Element<"button"> {
+    render(): React.Element<'button'> {
         return (
             <button className='replace-all' onClick={this.props.replaceAll}>
                 {this.renderTitle()}

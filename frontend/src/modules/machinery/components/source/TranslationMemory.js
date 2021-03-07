@@ -1,6 +1,7 @@
 /* @flow */
 
-import type {Element} from "React";import React from 'react';
+import type { Element } from 'React';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 type Props = {|
@@ -10,7 +11,7 @@ type Props = {|
 /**
  * Show the translation source from Pontoon's memory.
  */
-export default function TranslationMemory(props: Props): Element<"li"> {
+export default function TranslationMemory(props: Props): Element<'li'> {
     return (
         <li>
             <Localized

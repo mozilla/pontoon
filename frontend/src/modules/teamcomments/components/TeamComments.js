@@ -21,7 +21,9 @@ type Props = {|
     resetContactPerson: () => void,
 |};
 
-export default function TeamComments(props: Props): null | React.Element<"section"> {
+export default function TeamComments(
+    props: Props,
+): null | React.Element<'section'> {
     const {
         teamComments,
         user,

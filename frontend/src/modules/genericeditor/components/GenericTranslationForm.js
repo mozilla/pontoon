@@ -14,7 +14,9 @@ type Props = {|
 /**
  * Shows a generic translation form, a simple textarea.
  */
-export default function GenericTranslationForm(props: Props): React.Element<"textarea"> {
+export default function GenericTranslationForm(
+    props: Props,
+): React.Element<'textarea'> {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);

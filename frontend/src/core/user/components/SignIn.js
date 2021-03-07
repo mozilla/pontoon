@@ -15,7 +15,7 @@ type Props = {|
  * Render a Sign In link styled as a button.
  */
 export default class SignIn extends React.Component<Props> {
-    render(): React.Element<"span"> {
+    render(): React.Element<'span'> {
         return (
             <span className='user-signin'>
                 <Localized id='user-SignIn--sign-in'>

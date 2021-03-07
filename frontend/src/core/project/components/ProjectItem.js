@@ -18,7 +18,7 @@ type Props = {|
 /**
  * Render a project menu item.
  */
-export default function ProjectItem(props: Props): React.Element<"li"> {
+export default function ProjectItem(props: Props): React.Element<'li'> {
     const { parameters, localization, navigateToPath } = props;
     const project = localization.project;
     const className = parameters.project === project.slug ? 'current' : null;

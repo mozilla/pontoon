@@ -54,7 +54,7 @@ export default class TranslationLength extends React.Component<Props> {
         return doc.body.textContent || '';
     }
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         const { original, translation } = this.props;
 
         const limit = this.getLimit();

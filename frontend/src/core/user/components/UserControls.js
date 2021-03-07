@@ -32,20 +32,20 @@ type InternalProps = {
 };
 
 export class UserControlsBase extends React.Component<InternalProps> {
-    getUserData: (() => void) = () => {
+    getUserData: () => void = () => {
         this.props.dispatch(actions.get());
     };
 
-    markAllNotificationsAsRead: (() => void) = () => {
+    markAllNotificationsAsRead: () => void = () => {
         this.props.dispatch(actions.markAllNotificationsAsRead());
     };
 
-    signUserOut: (() => void) = () => {
+    signUserOut: () => void = () => {
         const { user } = this.props;
         this.props.dispatch(actions.signOut(user.signOutURL));
     };
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         const { isTranslator, parameters, user, selectedEntity } = this.props;
 
         const isReadOnly = selectedEntity ? selectedEntity.readonly : true;

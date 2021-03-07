@@ -20,7 +20,7 @@ type Props = {|
 /**
  * Shows all terms found in the source string.
  */
-export default function Terms(props: Props): null | React.Element<"section"> {
+export default function Terms(props: Props): null | React.Element<'section'> {
     let { terms } = props;
 
     if (terms.fetching || !terms.terms) {

@@ -23,7 +23,7 @@ type Props = {|
  * source string and then shows a miniature of those images.
  */
 export default class Screenshots extends React.Component<Props> {
-    openLightbox: ((image: string) => () => any) = (image: string) => {
+    openLightbox: (image: string) => () => any = (image: string) => {
         return () => this.props.openLightbox(image);
     };
 

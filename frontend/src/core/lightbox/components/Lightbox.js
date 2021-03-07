@@ -63,7 +63,7 @@ function LightboxContent({ image, onClose }: ContentProps) {
 }
 
 export class LightboxBase extends React.Component<InternalProps> {
-    close: (() => void) = () => {
+    close: () => void = () => {
         this.props.dispatch(close());
     };
 

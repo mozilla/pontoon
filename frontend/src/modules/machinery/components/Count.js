@@ -8,7 +8,7 @@ type Props = {|
     machinery: MachineryState,
 |};
 
-export default function Count(props: Props): null | React.Element<"span"> {
+export default function Count(props: Props): null | React.Element<'span'> {
     const { machinery } = props;
 
     const machineryCount =

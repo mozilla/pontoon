@@ -116,7 +116,11 @@ export default class EntityAPI extends APIBase {
         return await this.fetch('/get-entities/', 'POST', payload, headers);
     }
 
-    async getHistory(entity: number, locale: string, pluralForm: number = -1): Promise<any> {
+    async getHistory(
+        entity: number,
+        locale: string,
+        pluralForm: number = -1,
+    ): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);

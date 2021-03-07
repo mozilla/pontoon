@@ -108,7 +108,7 @@ export default class ProgressChart extends React.Component<Props> {
         });
     }
 
-    render(): React.Element<"canvas"> {
+    render(): React.Element<'canvas'> {
         return (
             <canvas
                 ref={this.canvas}

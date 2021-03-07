@@ -58,7 +58,9 @@ type Props = {|
 /**
  * Render a Rich editor for Fluent string editing.
  */
-export default function RichTranslationForm(props: Props): null | React.Element<"div"> {
+export default function RichTranslationForm(
+    props: Props,
+): null | React.Element<'div'> {
     const {
         clearEditor,
         copyOriginalIntoEditor,

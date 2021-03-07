@@ -1,6 +1,7 @@
 /* @flow */
 
-import type {Node} from "React";import React from 'react';
+import type { Node } from 'React';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { Link } from 'react-router-dom';

@@ -11,11 +11,12 @@ import fluentString from '../parsers/fluentString';
 import fluentTerm from '../parsers/fluentTerm';
 import multipleSpaces from '../parsers/multipleSpaces';
 
-export function getRulesWithFluent(rules: Array<Object>): Array<
-  
+export function getRulesWithFluent(
+    rules: Array<Object>,
+): Array<
     | any
-    | {|matchIndex: number, rule: any, tag: (x: string) => any|}
-    | {|rule: any, tag: (x: string) => any|},
+    | {| matchIndex: number, rule: any, tag: (x: string) => any |}
+    | {| rule: any, tag: (x: string) => any |},
 > {
     const newRules = [...rules];
 

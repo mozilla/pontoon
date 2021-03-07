@@ -58,7 +58,7 @@ export class PluralSelectorBase extends React.Component<InternalProps> {
         );
     }
 
-    render(): null | React.Element<"nav"> {
+    render(): null | React.Element<'nav'> {
         const props = this.props;
         const { pluralForm } = props;
 

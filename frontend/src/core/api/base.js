@@ -34,13 +34,13 @@ export default class APIBase {
         return new URL(url, window.location.origin);
     }
 
-    toCamelCase: ((s: string) => string) = (s: string) => {
+    toCamelCase: (s: string) => string = (s: string) => {
         return s.replace(/([-_][a-z])/gi, ($1) => {
             return $1.toUpperCase().replace('-', '').replace('_', '');
         });
     };
 
-    isObject: ((obj: any) => boolean) = function (obj: any) {
+    isObject: (obj: any) => boolean = function (obj: any) {
         return (
             obj === Object(obj) &&
             !Array.isArray(obj) &&

@@ -35,7 +35,7 @@ export function UserMenu({
     isReadOnly,
     signOut,
     onDiscard,
-}: UserMenuProps): React.Element<"ul"> {
+}: UserMenuProps): React.Element<'ul'> {
     const { locale, project, resource } = parameters;
 
     const canDownload =
@@ -246,19 +246,19 @@ export default class UserMenuBase extends React.Component<Props, State> {
         };
     }
 
-    toggleVisibility: (() => void) = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    handleDiscard: (() => void) = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
     };
 
-    render(): React.Element<"div"> {
+    render(): React.Element<'div'> {
         const {
             isReadOnly,
             isTranslator,

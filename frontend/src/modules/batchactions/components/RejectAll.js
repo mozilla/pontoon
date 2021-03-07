@@ -26,7 +26,7 @@ export default class RejectAll extends React.Component<Props, State> {
         };
     }
 
-    rejectAll: (() => void) = () => {
+    rejectAll: () => void = () => {
         if (!this.state.isConfirmationVisible) {
             this.setState({
                 isConfirmationVisible: true,
@@ -121,7 +121,7 @@ export default class RejectAll extends React.Component<Props, State> {
         }
     }
 
-    render(): React.Element<"button"> {
+    render(): React.Element<'button'> {
         return (
             <button className='reject-all' onClick={this.rejectAll}>
                 {this.renderTitle()}

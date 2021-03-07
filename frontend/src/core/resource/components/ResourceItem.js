@@ -18,7 +18,7 @@ type Props = {|
 /**
  * Render a resource menu item.
  */
-export default function ResourceItem(props: Props): React.Element<"li"> {
+export default function ResourceItem(props: Props): React.Element<'li'> {
     const { parameters, resource, navigateToPath } = props;
     const className = parameters.resource === resource.path ? 'current' : null;
 

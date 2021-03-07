@@ -1,6 +1,7 @@
 /* @flow */
 
-import type {Element} from "React";import React from 'react';
+import type { Element } from 'React';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 import './Machinery.css';
@@ -57,17 +58,19 @@ export default class Machinery extends React.Component<Props, State> {
         }
     }
 
-    handleResetSearch: (() => void) = () => {
+    handleResetSearch: () => void = () => {
         this.props.searchMachinery('');
         this.setState({ page: 1 });
     };
 
-    submitForm: ((event: SyntheticKeyboardEvent<>) => void) = (event: SyntheticKeyboardEvent<>) => {
+    submitForm: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);
     };
 
-    getMoreResults: (() => void) = () => {
+    getMoreResults: () => void = () => {
         this.setState(
             (state) => ({ page: state.page + 1 }),
             () =>
@@ -78,7 +81,7 @@ export default class Machinery extends React.Component<Props, State> {
         );
     };
 
-    render(): null | Element<"section"> {
+    render(): null | Element<'section'> {
         const { locale, machinery } = this.props;
 
         if (!locale) {
