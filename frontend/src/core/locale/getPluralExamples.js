@@ -16,7 +16,9 @@ import type { Locale } from './actions';
  * @param {Locale} locale A Locale object.
  * @returns {Object} A map of locale's cldrPlurals and their plural examples.
  */
-export default function getPluralExamples(locale: Locale): { ... } {
+export default function getPluralExamples(
+    locale: Locale,
+): { [number]: number } {
     const pluralsCount = locale.cldrPlurals.length;
     const examples = {};
 

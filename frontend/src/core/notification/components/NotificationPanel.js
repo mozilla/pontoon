@@ -67,8 +67,10 @@ export default class NotificationPanel extends React.Component<Props, State> {
                 className={'notification-panel' + hideClass}
                 onClick={this.hide}
             >
-                {!notif && (
-                    <span className={notif?.type}>{notif?.content}</span>
+                {!notif ? (
+                    <span />
+                ) : (
+                    <span className={notif.type}>{notif.content}</span>
                 )}
             </div>
         );
