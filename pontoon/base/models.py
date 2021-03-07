@@ -2330,7 +2330,6 @@ class EntityQuerySet(models.QuerySet):
                 locale,
                 Q(approved=True) | Q(fuzzy=True) | Q(rejected=False),
                 lambda x: x.approved or x.fuzzy or not x.rejected,
-                match_all=True,
                 project=project,
             )
         )

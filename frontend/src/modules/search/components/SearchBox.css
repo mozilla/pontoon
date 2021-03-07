@@ -113,6 +113,13 @@
 
 .search-box .missing-without-unreviewed .status:before {
     content: '\f0eb';
+    font-size: 18px;
+    margin-left: 1px;
+}
+
+.filters-panel .menu .missing-without-unreviewed.selected .status::before,
+.filters-panel .menu .missing-without-unreviewed .status:hover:before {
+    font-size: 16px;
 }
 
 .search-box .tag .status:before {
