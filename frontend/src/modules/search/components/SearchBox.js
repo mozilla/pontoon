@@ -167,25 +167,25 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         };
     }
 
-    getInitialStatuses(): { ... } {
+    getInitialStatuses(): { [string]: boolean } {
         const statuses = {};
         FILTERS_STATUS.forEach((s) => (statuses[s.slug] = false));
         return statuses;
     }
 
-    getInitialExtras(): { ... } {
+    getInitialExtras(): { [string]: boolean } {
         const extras = {};
         FILTERS_EXTRA.forEach((e) => (extras[e.slug] = false));
         return extras;
     }
 
-    getInitialTags(): { ... } {
+    getInitialTags(): { [string]: boolean } {
         const tags = {};
         this.props.project.tags.forEach((t) => (tags[t.slug] = false));
         return tags;
     }
 
-    getInitialAuthors(): { ... } {
+    getInitialAuthors(): { [string]: boolean } {
         const authors = {};
         this.props.searchAndFilters.authors.forEach(
             (a) => (authors[a.email] = false),
