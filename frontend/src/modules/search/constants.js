@@ -48,4 +48,8 @@ export const FILTERS_EXTRA = [
         name: 'Rejected',
         slug: 'rejected',
     },
+    {
+        name: 'Missing without Unreviewed',
+        slug: 'missing-without-unreviewed',
+    },
 ];

@@ -2228,7 +2228,7 @@ class EntityQuerySet(models.QuerySet):
                 lambda x: (x.approved or x.fuzzy) and x.warnings.count(),
                 match_all=False,
                 prefetch=Prefetch("warnings"),
-                project=None,
+                project=project,
             )
         )
 
@@ -2312,7 +2312,25 @@ class EntityQuerySet(models.QuerySet):
                 Q(rejected=True),
                 lambda x: x.rejected,
                 match_all=False,
-                project=None,
+                project=project,
+            )
+        )
+
+    def missing_without_unreviewed(self, locale, project=None):
+        """Return a filter to be used to select entities with no or only rejected translations.
+
+        This filter will return all entities that have no or only rejected translations.
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return ~Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(approved=True) | Q(fuzzy=True) | Q(rejected=False),
+                lambda x: x.approved or x.fuzzy or not x.rejected,
+                project=project,
             )
         )
 
@@ -2753,7 +2771,12 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         if extra:
             # Apply a combination of filters based on the list of extras the user sent.
-            extra_filter_choices = ("rejected", "unchanged", "empty")
+            extra_filter_choices = (
+                "rejected",
+                "unchanged",
+                "empty",
+                "missing-without-unreviewed",
+            )
             post_filters.append(
                 combine_entity_filters(
                     entities, extra_filter_choices, extra.split(","), locale
