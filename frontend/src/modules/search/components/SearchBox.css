@@ -120,6 +120,7 @@
 .filters-panel .menu .missing-without-unreviewed.selected .status::before,
 .filters-panel .menu .missing-without-unreviewed .status:hover:before {
     font-size: 16px;
+    margin-left: 0;
 }
 
 .search-box .tag .status:before {
