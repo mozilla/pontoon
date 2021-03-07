@@ -59,6 +59,7 @@ module.exports = {
         SyntheticMouseEvent: false,
         TimeoutID: false,
         "$Diff": false,
+        "$ReadOnlyArray": false,
     },
     plugins: [
         'react',

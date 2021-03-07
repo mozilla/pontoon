@@ -51,7 +51,7 @@ export default function EditorMainAction(props: Props): React.Node {
         action: Function,
         title: string,
         label: string,
-        glyph: ?React.Node,
+        glyph: ?React.Element<'i'>,
     };
 
     if (
