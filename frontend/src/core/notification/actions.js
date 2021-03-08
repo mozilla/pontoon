@@ -14,7 +14,7 @@ export type NotificationType =
 
 export type NotificationMessage = {|
     +type: NotificationType,
-    +content: string | typeof Localized,
+    +content: string | React$Element<any>,
     +key?: string,
 |};
 
