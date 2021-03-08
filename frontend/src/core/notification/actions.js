@@ -1,6 +1,5 @@
 /* @flow */
 
-import { Localized } from '@fluent/react';
 import shortid from 'shortid';
 
 export const ADD: 'notification/ADD' = 'notification/ADD';

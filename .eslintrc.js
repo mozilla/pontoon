@@ -60,6 +60,7 @@ module.exports = {
         TimeoutID: false,
         "$Diff": false,
         "$ReadOnlyArray": false,
+        "React$Element": false,
     },
     plugins: [
         'react',
