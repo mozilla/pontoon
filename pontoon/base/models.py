@@ -3034,6 +3034,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     class MachinerySource(models.TextChoices):
         TRANSLATION_MEMORY = "translation-memory", "Translation Memory"
+        CONCORDANCE_SEARCH = "concordance-search", "Concordance Search"
         GOOGLE_TRANSLATE = "google-translate", "Google Translate"
         MICROSOFT_TRANSLATOR = "microsoft-translator", "Microsoft Translator"
         SYSTRAN_TRANSLATE = "systran-translate", "Systran Translate"
