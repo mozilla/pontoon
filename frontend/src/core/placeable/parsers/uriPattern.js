@@ -33,7 +33,7 @@ const uriPattern = {
         'i', // This one is not case sensitive.
     ): RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-uriPattern' attrs={{ title: true }}>
                 <mark className='placeable' title='URI'>

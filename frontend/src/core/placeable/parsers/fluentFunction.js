@@ -16,7 +16,7 @@ import { Localized } from '@fluent/react';
  */
 const fluentFunction = {
     rule: (/({ ?[A-W0-9\-_]+[^}]* ?})/: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-fluentFunction'

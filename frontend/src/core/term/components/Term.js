@@ -18,7 +18,7 @@ type Props = {|
 /**
  * Shows term entry with its metadata.
  */
-export default function Term(props: Props): React.Node {
+export default function Term(props: Props): React.Element<React.ElementType> {
     const { isReadOnlyEditor, locale, term } = props;
 
     const copyTermIntoEditor = (translation: string) => {

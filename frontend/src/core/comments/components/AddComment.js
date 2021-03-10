@@ -209,8 +209,8 @@ export default function AddComment(props: Props): React.Element<'div'> {
     // This allows for the mention suggestions to stay properly positioned
     // when the container scrolls.
     React.useEffect(() => {
-        // Flow does not recognize the event listeners with 'SyntheticEvent`,
-        // so I'm ignoring the errors Flow throws here.
+        // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+        // so I'm ignoring the errors Flow throws below.
 
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;

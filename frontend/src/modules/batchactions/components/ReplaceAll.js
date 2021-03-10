@@ -14,7 +14,7 @@ type Props = {|
  * Renders Replace All batch action button.
  */
 export default class ReplaceAll extends React.Component<Props> {
-    renderDefault(): React.Node {
+    renderDefault(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-ReplaceAll--default'>
                 {'REPLACE ALL'}
@@ -22,7 +22,7 @@ export default class ReplaceAll extends React.Component<Props> {
         );
     }
 
-    renderError(): React.Node {
+    renderError(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-ReplaceAll--error'>
                 {'OOPS, SOMETHING WENT WRONG'}
@@ -30,7 +30,7 @@ export default class ReplaceAll extends React.Component<Props> {
         );
     }
 
-    renderInvalid(): null | React.Node {
+    renderInvalid(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -47,7 +47,7 @@ export default class ReplaceAll extends React.Component<Props> {
         );
     }
 
-    renderSuccess(): null | React.Node {
+    renderSuccess(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {

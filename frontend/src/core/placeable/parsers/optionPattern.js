@@ -17,7 +17,7 @@ import { Localized } from '@fluent/react';
 const optionPattern = {
     rule: (/(\B(-[a-zA-Z]|--[a-z-]+)\b)/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-optionPattern'

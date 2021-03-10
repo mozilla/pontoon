@@ -509,7 +509,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 }
 
-export default function SearchBox(): React.Node {
+export default function SearchBox(): React.Element<typeof SearchBoxBase> {
     const state = {
         searchAndFilters: useSelector((state) => state[search.NAME]),
         parameters: useSelector((state) =>

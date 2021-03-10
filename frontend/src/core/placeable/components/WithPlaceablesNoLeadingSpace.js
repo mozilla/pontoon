@@ -8,7 +8,15 @@ import { rules } from './WithPlaceables';
 import leadingSpace from '../parsers/leadingSpace';
 import unusualSpace from '../parsers/unusualSpace';
 
-export function getRulesWithoutLeadingSpace(rules: Array<Object>): Array<any> {
+export function getRulesWithoutLeadingSpace(
+    rules: Array<
+        | {| matchIndex: number, rule: any, tag: (x: string) => any |}
+        | {| rule: any, tag: (x: string) => any |},
+    >,
+): Array<
+    | {| matchIndex: number, rule: any, tag: (x: string) => any |}
+    | {| rule: any, tag: (x: string) => any |},
+> {
     let newRules = [...rules];
     newRules.splice(newRules.indexOf(leadingSpace), 1);
     newRules.splice(newRules.indexOf(unusualSpace), 1);

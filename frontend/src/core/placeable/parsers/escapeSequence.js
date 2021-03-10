@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  */
 const escapeSequence = {
     rule: '\\',
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-escapeSequence'

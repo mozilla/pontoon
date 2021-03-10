@@ -18,7 +18,7 @@ import { Localized } from '@fluent/react';
 const emailPattern = {
     rule: (/(((mailto:)|)[A-Za-z0-9]+[-a-zA-Z0-9._%]*@(([-A-Za-z0-9]+)\.)+[a-zA-Z]{2,4})/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-emailPattern'

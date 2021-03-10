@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Node } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { Link } from 'react-router-dom';
@@ -28,7 +27,9 @@ type Props = {|
  * Show the translation of a given entity in a different locale, as well as the
  * locale and its code.
  */
-export default function Translation(props: Props): Node {
+export default function Translation(
+    props: Props,
+): React.Element<React.ElementType> {
     const { entity, translation, parameters, index } = props;
 
     const dispatch = useDispatch();

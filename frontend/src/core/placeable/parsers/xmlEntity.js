@@ -17,7 +17,7 @@ import { Localized } from '@fluent/react';
 const xmlEntity = {
     rule: (/(&(([a-zA-Z][a-zA-Z0-9.-]*)|([#](\d{1,5}|x[a-fA-F0-9]{1,5})+));)/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-xmlEntity' attrs={{ title: true }}>
                 <mark className='placeable' title='XML entity'>

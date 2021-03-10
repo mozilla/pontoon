@@ -23,7 +23,7 @@ const TranslationPlaceablesSearch = withSearch(
 );
 
 export default class FluentTranslation extends React.Component<TranslationProps> {
-    render(): React.Node {
+    render(): React.Element<React.ElementType> {
         const { content, diffTarget, search } = this.props;
 
         if (diffTarget) {

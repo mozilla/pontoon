@@ -14,7 +14,6 @@ import multipleSpaces from '../parsers/multipleSpaces';
 export function getRulesWithFluent(
     rules: Array<Object>,
 ): Array<
-    | any
     | {| matchIndex: number, rule: any, tag: (x: string) => any |}
     | {| rule: any, tag: (x: string) => any |},
 > {

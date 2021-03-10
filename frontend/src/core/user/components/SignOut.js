@@ -15,7 +15,7 @@ export default class SignOut extends React.Component<Props> {
         this.props.signOut();
     };
 
-    render(): React.Node {
+    render(): React.Element<React.ElementType> {
         return (
             <Localized
                 id='user-SignOut--sign-out'

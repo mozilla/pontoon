@@ -18,7 +18,7 @@ import { Localized } from '@fluent/react';
 const xmlTag = {
     rule: (/(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-xmlTag' attrs={{ title: true }}>
                 <mark className='placeable' title='XML tag'>

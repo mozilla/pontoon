@@ -13,7 +13,7 @@ import { Localized } from '@fluent/react';
  */
 const pythonFormatNamedString = {
     rule: (/(%\([[\w\d!.,[\]%:$<>+\-= ]*\)[+|-|0\d+|#]?[.\d+]?[s|d|e|f|g|o|x|c|%])/i: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-pythonFormatNamedString'

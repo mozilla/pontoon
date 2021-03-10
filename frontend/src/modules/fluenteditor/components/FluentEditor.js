@@ -178,7 +178,7 @@ function useForceSource() {
  *
  * Renders the most appropriate type of editor for the current translation.
  */
-export default function FluentEditor(): null | React.Node {
+export default function FluentEditor(): null | React.Element<React.ElementType> {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);

@@ -8,7 +8,7 @@ import areSupportedElements from './areSupportedElements';
  * Message is supported if it's valid and all value elements
  * and all attribute elements are supported.
  */
-export default function isSupportedMessage(message: Object): any | boolean {
+export default function isSupportedMessage(message: Object): boolean {
     // Parse error
     if (message.type === 'Junk') {
         return false;
