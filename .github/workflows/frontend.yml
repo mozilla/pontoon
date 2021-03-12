@@ -88,4 +88,4 @@ jobs:
         run: git show HEAD
       - name: tsc
         working-directory: frontend
-        run: ./node_modules/.bin/tsc
+        run: ./node_modules/.bin/tsc -b no-tsconfig.json
