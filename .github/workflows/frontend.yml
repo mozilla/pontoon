@@ -60,6 +60,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: git config
+        run: |
+          git config --global user.email "Jane@example.com"
+          git config --global user.name "Jane Doe"
+
       - name: Install globals
         run: |
           npm install -g yarn @khanacademy/flow-to-ts
@@ -71,7 +76,7 @@ jobs:
       - name: Pre-flight diff
         run: git diff
       - name: Pre-flight commit
-        run: git commit --author="Jane Doe <jane@example.com>" -am"Pre-flight flow to ts"
+        run: git commit -am"Pre-flight flow to ts"
       - name: flow-to-ts
         working-directory: frontend
         run: flow-to-ts --prettier --write --delete-source
