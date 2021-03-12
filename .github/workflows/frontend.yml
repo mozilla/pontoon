@@ -54,7 +54,6 @@ jobs:
 
   flow-to-ts:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -80,12 +79,14 @@ jobs:
       - name: flow-to-ts
         working-directory: frontend
         run: flow-to-ts --prettier --write --delete-source 'src/**/*.js'
-      - name: Stage
-        run: |
-          git add frontend
-          git commit -m'flow-to-ts'
-      - name: flow-to-ts diff
-        run: git show HEAD
+      # Git diff doesn't do anything constructive on gh actions, disable for now
+      # - name: Stage
+      #   run: |
+      #     git add frontend
+      #     git commit -m'flow-to-ts'
+      # - name: flow-to-ts diff
+      #   run: git show HEAD
       - name: tsc
         working-directory: frontend
         run: ./node_modules/.bin/tsc -b no-tsconfig.json
+        continue-on-error: true
