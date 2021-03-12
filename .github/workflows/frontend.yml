@@ -83,7 +83,7 @@ jobs:
       - name: Stage
         run: git add frontend
       - name: flow-to-ts diff
-        run: git diff --staged
+        run: git diff --staged -M -C
       - name: tsc
         working-directory: frontend
-        run: ./node-modules/.bin/tsc
+        run: ./node_modules/.bin/tsc
