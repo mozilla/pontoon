@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Locale } from 'core/locale';
@@ -14,7 +13,9 @@ type Props = {|
 /**
  * Show the translation source from Microsoft Terminology.
  */
-export default function MicrosoftTerminology(props: Props): Element<'li'> {
+export default function MicrosoftTerminology(
+    props: Props,
+): React.Element<'li'> {
     return (
         <li>
             <Localized

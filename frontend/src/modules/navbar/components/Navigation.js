@@ -136,7 +136,7 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 }
 
-export default function Navigation(): React.Node {
+export default function Navigation(): React.Element<typeof NavigationBase> {
     const state = {
         locale: useSelector((state) => state[locale.NAME]),
         parameters: useSelector((state) =>

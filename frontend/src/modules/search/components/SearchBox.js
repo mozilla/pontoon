@@ -119,8 +119,11 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         });
     };
 
+    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+    // so I'm ignoring the errors Flow throws in componentDid*mount.
+
     componentDidMount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
         this.updateFiltersFromURLParams();
 
@@ -152,7 +155,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     componentWillUnmount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 

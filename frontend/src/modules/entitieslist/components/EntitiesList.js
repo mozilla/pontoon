@@ -338,8 +338,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         // InfiniteScroll will display information about loading during the request
         const hasMore = props.entities.fetching || props.entities.hasMore;
 
-        console.log('***', props.entities.entities);
-
         return (
             <div className='entities unselectable' ref={this.list}>
                 <InfiniteScroll
