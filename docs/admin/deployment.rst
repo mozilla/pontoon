@@ -99,6 +99,21 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
+``EMAIL_HOST_PASSWORD``
+   Optional. Password for the SMTP connection (no e-mail will be sent if not defined).
+
+``EMAIL_HOST_USER``
+   Optional. Username for the SMTP connection (no e-mail will be sent if not defined).
+
+``EMAIL_HOST``
+   SMTP host (default: ``'smtp.sendgrid.net'``)
+
+``EMAIL_PORT``
+   SMTP port (default: ``587``)
+
+``EMAIL_USE_TLS``
+   Use TLS for the SMTP connection (default: ``True``)
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
