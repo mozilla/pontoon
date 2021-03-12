@@ -107,12 +107,14 @@ RAYGUN4PY_CONFIG = {"api_key": os.environ.get("RAYGUN_APIKEY", "")}
 
 # Email settings
 EMAIL_HOST_USER = os.environ.get(
-    "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", ""))
+    "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "")
+)
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.sendgrid.net")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") != "False"
 EMAIL_HOST_PASSWORD = os.environ.get(
-    "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", ""))
+    "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
+)
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
