@@ -79,7 +79,7 @@ jobs:
         run: git commit -am"Pre-flight flow to ts"
       - name: flow-to-ts
         working-directory: frontend
-        run: flow-to-ts --prettier --write --delete-source
+        run: flow-to-ts --prettier --write --delete-source 'src/**/*.js'
       - name: Stage
         run: git add frontend
       - name: flow-to-ts diff
