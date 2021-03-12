@@ -81,9 +81,11 @@ jobs:
         working-directory: frontend
         run: flow-to-ts --prettier --write --delete-source 'src/**/*.js'
       - name: Stage
-        run: git add frontend
+        run: |
+          git add frontend
+          git commit -m'flow-to-ts'
       - name: flow-to-ts diff
-        run: git diff --staged -M -C
+        run: git show HEAD
       - name: tsc
         working-directory: frontend
         run: ./node_modules/.bin/tsc
