@@ -27,6 +27,13 @@
   {% for notification in notifications %}
     <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
       <div class="item-content">
+        {% set is_comment = False %}
+        {% set target = notification.target %}
+
+        {% if target and target.resource %}
+          {% set is_comment = True %}
+        {% endif %}
+
         {% if notification.actor.slug %}
           {% set actor_anchor = notification.actor %}
           {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
@@ -37,14 +44,21 @@
         {% endif %}
 
         <span class="actor">
-          <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+          {% if is_comment %}
+            {{ actor_anchor }}
+          {% else %}
+            <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+          {% endif %}
         </span>
 
-        <span class="verb">{{ notification.verb }}</span>
-
-        {% set target = notification.target %}
-        {% set is_comment = False %}
-
+        <span class="verb">
+          {% if is_comment %}
+            {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
+            <a href="{{ link + '?string=' + target.pk|string }}">{{ notification.verb }}</a>
+          {% else %}
+            {{ notification.verb }}
+          {% endif %}
+        </span>
         {% if target %}
           {% if target.slug %}
             <span class="target">
@@ -52,10 +66,8 @@
             </span>
 
           {% elif target.resource %}
-            {% set is_comment = True %}
-            {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
             <span class="target">
-              <a href="{{ link + '?string=' + target.pk|string }}">{{ target.resource.project.name }}</a>
+              {{ target.resource.project.name }}
             </span>
           {% endif %}
         </span>

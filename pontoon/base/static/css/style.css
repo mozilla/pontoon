@@ -803,6 +803,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item span {
+    color: #ebebeb;
     float: none;
 }
 
@@ -821,9 +822,18 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
+    pointer-events: none;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.notifications .menu li.notification-item .message.trim a {
+    color: #aaaaaa;
+}
+
+.notifications .menu li.notification-item.hover .message.trim a {
+    color: #ebebeb;
 }
 
 .notifications .menu li.notification-item .message.trim p {

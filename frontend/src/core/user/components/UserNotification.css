@@ -41,6 +41,7 @@
 }
 
 .user-notification span {
+    color: #ebebeb;
     float: none;
 }
 
@@ -60,10 +61,17 @@
 
 .user-notification .message.trim,
 .user-notification .message.trim p {
+    pointer-events: none;
+    color: #aaaaaa;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.user-notification .message.trim a{
+    color: #aaaaaa;
+}
+
 
 .user-notification .message.trim p {
     padding: 0;
