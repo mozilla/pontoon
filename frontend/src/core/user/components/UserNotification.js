@@ -39,7 +39,9 @@ export default class UserNotification extends React.Component<Props, State> {
         const { notification } = this.props;
 
         let className = 'user-notification';
-        let is_comment = !notification.description.content ? false : notification.description.is_comment;
+        let is_comment = !notification.description.content
+            ? false
+            : notification.description.is_comment;
         if (notification.unread) {
             className += ' unread';
         } else if (this.state.markAsRead) {
@@ -54,7 +56,9 @@ export default class UserNotification extends React.Component<Props, State> {
             >
                 <div className='item-content'>
                     <span className='actor'>
-                        {is_comment ? notification.actor.anchor : (
+                        {is_comment ? (
+                            notification.actor.anchor
+                        ) : (
                             <a href={notification.actor.url}>
                                 {notification.actor.anchor}
                             </a>
@@ -62,7 +66,9 @@ export default class UserNotification extends React.Component<Props, State> {
                     </span>
 
                     <span className='verb'>
-                        {!is_comment ? notification.verb : (
+                        {!is_comment ? (
+                            notification.verb
+                        ) : (
                             <a href={notification.target.url}>
                                 {notification.verb}
                             </a>
@@ -71,7 +77,9 @@ export default class UserNotification extends React.Component<Props, State> {
 
                     {!notification.target ? null : (
                         <span className='target'>
-                            {is_comment ? notification.target.anchor : (
+                            {is_comment ? (
+                                notification.target.anchor
+                            ) : (
                                 <a href={notification.target.url}>
                                     {notification.target.anchor}
                                 </a>

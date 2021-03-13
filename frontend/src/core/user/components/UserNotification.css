@@ -68,10 +68,9 @@
     white-space: nowrap;
 }
 
-.user-notification .message.trim a{
+.user-notification .message.trim a {
     color: #aaaaaa;
 }
-
 
 .user-notification .message.trim p {
     padding: 0;
