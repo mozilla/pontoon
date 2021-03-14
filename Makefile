@@ -90,8 +90,8 @@ format:
 	make pyupgrade
 	make black
 
-lint-frontend:
-	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/
+eslint:
+	"${DC}" run --rm webapp npm run eslint
 
 shell:
 	"${DC}" run --rm webapp //bin/bash

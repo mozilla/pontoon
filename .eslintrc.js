@@ -8,7 +8,7 @@ module.exports = {
         browser: true,
         jest: true,
     },
-    parser: "babel-eslint",
+    parser: "@babel/eslint-parser",
     parserOptions: {
         ecmaVersion: 2017,
         ecmaFeatures: {
@@ -16,6 +16,9 @@ module.exports = {
             experimentalObjectRestSpread: true
         },
         sourceType: 'module',
+        babelOptions: {
+          configFile: "./.babelrc",
+        },
     },
     globals: {
         gettext: false,
@@ -76,4 +79,9 @@ module.exports = {
         "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
         "no-console": 1,
     },
+    settings: {
+        'react': {
+            'version': 'detect'
+        }
+    }
 };

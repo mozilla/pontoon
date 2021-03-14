@@ -1,4 +1,3 @@
-/* global $ */
 $(function () {
     var container = $('#main .container');
 
