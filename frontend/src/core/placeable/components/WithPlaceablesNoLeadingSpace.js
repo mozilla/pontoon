@@ -1,6 +1,7 @@
 /* @flow */
 
 import createMarker from 'react-content-marker';
+import type { Parser } from 'react-content-marker';
 
 import './WithPlaceables.css';
 
@@ -9,14 +10,8 @@ import leadingSpace from '../parsers/leadingSpace';
 import unusualSpace from '../parsers/unusualSpace';
 
 export function getRulesWithoutLeadingSpace(
-    rules: Array<
-        | {| matchIndex: number, rule: any, tag: (x: string) => any |}
-        | {| rule: any, tag: (x: string) => any |},
-    >,
-): Array<
-    | {| matchIndex: number, rule: any, tag: (x: string) => any |}
-    | {| rule: any, tag: (x: string) => any |},
-> {
+    rules: Array<Parser>,
+): Array<Parser> {
     let newRules = [...rules];
     newRules.splice(newRules.indexOf(leadingSpace), 1);
     newRules.splice(newRules.indexOf(unusualSpace), 1);
