@@ -67,6 +67,8 @@ jobs:
       - name: Install globals
         run: |
           npm install -g yarn @khanacademy/flow-to-ts
+      - name: npm install
+        run: npm install
       - name: Pre-flight switches
         working-directory: frontend
         run: |
