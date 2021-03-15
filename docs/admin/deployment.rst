@@ -99,6 +99,21 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
+``EMAIL_HOST``
+   SMTP host (default: ``'smtp.sendgrid.net'``)
+
+``EMAIL_HOST_PASSWORD``
+   Password for the SMTP connection.
+
+``EMAIL_HOST_USER``
+   Username for the SMTP connection (default: ``'apikey'``).
+
+``EMAIL_PORT``
+   SMTP port (default: ``587``)
+
+``EMAIL_USE_TLS``
+   Use TLS for the SMTP connection (default: ``True``)
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
@@ -240,8 +255,17 @@ Pontoon is designed to run with the following add-ons enabled:
 It's possible to run with the free tiers of all of these add-ons, but it is
 recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
 
-Cache Add-ons
-~~~~~~~~~~~~~
+SendGrid Add-on
+~~~~~~~~~~~~~~~
+Pontoon uses `SendGrid`_, which expects the following environment variable:
+
+``SENDGRID_PASSWORD``
+   Use SendGrid API key.
+
+.. _SendGrid: https://devcenter.heroku.com/articles/sendgrid
+
+Cache Add-on
+~~~~~~~~~~~~
 Pontoon uses `django-bmemcached`_, which expects the following environment
 variables from the cache add-on:
 
@@ -269,8 +293,8 @@ variables from the cache add-on:
 
 .. _django-bmemcached: https://github.com/jaysonsantos/python-binary-memcached
 
-RabbitMQ Add-ons
-~~~~~~~~~~~~~~~~
+RabbitMQ Add-on
+~~~~~~~~~~~~~~~
 Similar to the cache add-ons, Pontoon expects environment variables from the
 RabbitMQ add-on:
 
