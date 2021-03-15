@@ -77,15 +77,15 @@ jobs:
       - name: Pre-flight commit
         run: git commit -am"Pre-flight flow to ts"
       - name: flow-to-ts
-        working-directory: frontend
-        run: flow-to-ts --prettier --write --delete-source 'src/**/*.js'
-      # Git diff doesn't do anything constructive on gh actions, disable for now
-      # - name: Stage
-      #   run: |
-      #     git add frontend
-      #     git commit -m'flow-to-ts'
-      # - name: flow-to-ts diff
-      #   run: git show HEAD
+        run: flow-to-ts --write --delete-source 'frontend/src/**/*.js'
+      - name: prettier
+        run: npm run prettier
+      - name: Stage
+        run: |
+          git add frontend
+          git commit -m'flow-to-ts'
+      - name: flow-to-ts diff
+        run: git -c diff.renameLimit=36000 show HEAD
       - name: tsc
         working-directory: frontend
         run: ./node_modules/.bin/tsc -b no-tsconfig.json
