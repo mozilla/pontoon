@@ -99,14 +99,14 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
-``EMAIL_HOST_PASSWORD``
-   Optional. Password for the SMTP connection (default: ``'apikey'``, no e-mail will be sent if it is set to an empty string).
-
-``EMAIL_HOST_USER``
-   Optional. Username for the SMTP connection (no e-mail will be sent if not defined).
-
 ``EMAIL_HOST``
    SMTP host (default: ``'smtp.sendgrid.net'``)
+
+``EMAIL_HOST_PASSWORD``
+   Password for the SMTP connection.
+
+``EMAIL_HOST_USER``
+   Username for the SMTP connection (default: ``'apikey'``).
 
 ``EMAIL_PORT``
    SMTP port (default: ``587``)
@@ -260,13 +260,12 @@ SendGrid Add-on
 Pontoon uses `SendGrid`_, which expects the following environment variable:
 
 ``SENDGRID_PASSWORD``
-
    Use SendGrid API key.
 
 .. _SendGrid: https://devcenter.heroku.com/articles/sendgrid
 
-Cache Add-ons
-~~~~~~~~~~~~~
+Cache Add-on
+~~~~~~~~~~~~
 Pontoon uses `django-bmemcached`_, which expects the following environment
 variables from the cache add-on:
 
@@ -294,8 +293,8 @@ variables from the cache add-on:
 
 .. _django-bmemcached: https://github.com/jaysonsantos/python-binary-memcached
 
-RabbitMQ Add-ons
-~~~~~~~~~~~~~~~~
+RabbitMQ Add-on
+~~~~~~~~~~~~~~~
 Similar to the cache add-ons, Pontoon expects environment variables from the
 RabbitMQ add-on:
 
