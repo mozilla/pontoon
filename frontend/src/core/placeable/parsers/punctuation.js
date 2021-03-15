@@ -27,7 +27,7 @@ const punctuation = {
             ')',
     ): RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-punctuation'

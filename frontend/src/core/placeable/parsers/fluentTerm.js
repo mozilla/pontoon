@@ -16,7 +16,7 @@ import { Localized } from '@fluent/react';
  */
 const fluentTerm = {
     rule: (/({ ?-[^}]* ?})/: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-fluentTerm' attrs={{ title: true }}>
                 <mark className='placeable' title='Fluent term'>

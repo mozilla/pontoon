@@ -42,7 +42,7 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
         this.props.dispatch(l10n.actions.get(locales));
     }
 
-    render(): React.Node {
+    render(): React.Element<React.ElementType> {
         const { children, l10n } = this.props;
 
         return (

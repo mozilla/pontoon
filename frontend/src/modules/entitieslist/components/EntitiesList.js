@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Node, Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -56,15 +55,18 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         this.list = React.createRef();
     }
 
+    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+    // so I'm ignoring the errors Flow throws below.
+
     componentDidMount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
 
         this.selectFirstEntityIfNoneSelected();
     }
 
     componentWillUnmount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
@@ -329,14 +331,12 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
-    render(): Element<'div'> {
+    render(): React.Element<'div'> {
         const props = this.props;
         const search = props.parameters.search;
 
         // InfiniteScroll will display information about loading during the request
         const hasMore = props.entities.fetching || props.entities.hasMore;
-
-        console.log('***', props.entities.entities);
 
         return (
             <div className='entities unselectable' ref={this.list}>
@@ -395,7 +395,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 }
 
-export default function EntitiesList(): Node {
+export default function EntitiesList(): React.Element<typeof EntitiesListBase> {
     const state = {
         batchactions: useSelector((state) => state[batchactions.NAME]),
         entities: useSelector((state) => state[entities.NAME]),

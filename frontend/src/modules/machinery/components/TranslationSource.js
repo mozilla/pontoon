@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -24,7 +23,7 @@ type Props = {|
 export default function TranslationSource({
     translation,
     locale,
-}: Props): Element<'ul'> {
+}: Props): React.Element<'ul'> {
     const translationSource = translation.sources.map((source, index) => {
         switch (source) {
             case 'translation-memory':

@@ -14,7 +14,7 @@ import { Localized } from '@fluent/react';
  */
 const shortCapitalNumberString = {
     rule: (/(\b([A-Z][0-9])|([0-9][A-Z])\b)/: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-shortCapitalNumberString'

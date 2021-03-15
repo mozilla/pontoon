@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  */
 const thinSpace = {
     rule: (/([\u2009])/: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-thinSpace' attrs={{ title: true }}>
                 <mark className='placeable' title='Thin space'>

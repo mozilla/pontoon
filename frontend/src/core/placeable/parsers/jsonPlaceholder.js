@@ -16,7 +16,7 @@ import { Localized } from '@fluent/react';
  */
 const jsonPlaceholder = {
     rule: (/(\$[A-Z0-9_]+\$)/: RegExp),
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-jsonPlaceholder'

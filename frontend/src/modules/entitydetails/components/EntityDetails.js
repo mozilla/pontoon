@@ -526,7 +526,9 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
     }
 }
 
-export default function EntityDetails(): React.Node {
+export default function EntityDetails(): React.Element<
+    typeof EntityDetailsBase,
+> {
     const state = {
         activeTranslationString: useSelector((state) =>
             plural.selectors.getTranslationStringForSelectedEntity(state),

@@ -93,7 +93,7 @@ export default function FailedChecks(
 }
 
 type MainActionProps = {|
-    source: number | string,
+    source: string,
     user: UserState,
     isTranslator: boolean,
     errors: Array<string>,

@@ -40,13 +40,16 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         this.replace = React.createRef();
     }
 
+    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+    // so I'm ignoring the errors Flow throws below.
+
     componentDidMount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
     }
 
     componentWillUnmount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 

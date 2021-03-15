@@ -18,7 +18,7 @@ import { Localized } from '@fluent/react';
 const filePattern = {
     rule: (/(^|\s)((~\/|\/|\.\/)([-A-Za-z0-9_$.+!*(),;:@&=?/~#%]|\\){3,})/: RegExp),
     matchIndex: 2,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-filePattern'

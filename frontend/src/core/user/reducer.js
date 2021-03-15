@@ -11,10 +11,10 @@ import type { UsersList } from 'core/api';
 
 type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
 
-export type SettingsState = {
+export type SettingsState = {|
     +runQualityChecks: boolean,
     +forceSuggestions: boolean,
-};
+|};
 
 const initialSettings: SettingsState = {
     runQualityChecks: true,

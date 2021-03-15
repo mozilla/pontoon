@@ -19,7 +19,7 @@ import { Localized } from '@fluent/react';
 const numberString = {
     rule: (/([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-numberString'

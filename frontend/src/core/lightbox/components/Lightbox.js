@@ -67,7 +67,7 @@ export class LightboxBase extends React.Component<InternalProps> {
         this.props.dispatch(close());
     };
 
-    render(): null | React.Node {
+    render(): null | React.Element<React.ElementType> {
         const { lightbox } = this.props;
 
         if (!lightbox.isOpen) {

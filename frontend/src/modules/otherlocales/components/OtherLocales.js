@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Node, Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 import './OtherLocales.css';
@@ -24,7 +23,7 @@ type Props = {|
  * Shows all translations of an entity in locales other than the current one.
  */
 export default class OtherLocales extends React.Component<Props> {
-    renderNoResults(): Element<'section'> {
+    renderNoResults(): React.Element<'section'> {
         return (
             <section className='other-locales'>
                 <Localized id='history-history-no-translations'>
@@ -37,7 +36,7 @@ export default class OtherLocales extends React.Component<Props> {
     renderTranslations(
         translation: OtherLocaleTranslation,
         index: number,
-    ): Node {
+    ): React.Element<React.ElementType> {
         return (
             <Translation
                 index={index}
@@ -49,7 +48,7 @@ export default class OtherLocales extends React.Component<Props> {
         );
     }
 
-    render(): null | Element<'section'> {
+    render(): null | React.Element<'section'> {
         const { otherlocales } = this.props;
 
         if (otherlocales.fetching) {

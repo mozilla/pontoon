@@ -19,7 +19,7 @@ export type TranslationProps = {|
 |};
 
 export default class GenericTranslation extends React.Component<TranslationProps> {
-    render(): React.Node {
+    render(): React.Element<React.ElementType> {
         const { content, diffTarget, search } = this.props;
 
         if (diffTarget) {

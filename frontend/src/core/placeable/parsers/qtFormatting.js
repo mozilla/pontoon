@@ -28,7 +28,7 @@ import { Localized } from '@fluent/react';
 const qtFormatting = {
     rule: (/(%L?[1-9]\d{0,1}(?=([^\d]|$)))/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-qtFormatting'

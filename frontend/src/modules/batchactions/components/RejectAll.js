@@ -39,7 +39,7 @@ export default class RejectAll extends React.Component<Props, State> {
         }
     };
 
-    renderConfirmation(): React.Node {
+    renderConfirmation(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--confirmation'>
                 {'ARE YOU SURE?'}
@@ -47,7 +47,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderDefault(): React.Node {
+    renderDefault(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--default'>
                 {'REJECT ALL SUGGESTIONS'}
@@ -55,7 +55,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderError(): React.Node {
+    renderError(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--error'>
                 {'OOPS, SOMETHING WENT WRONG'}
@@ -63,7 +63,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderInvalid(): null | React.Node {
+    renderInvalid(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -80,7 +80,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderSuccess(): null | React.Node {
+    renderSuccess(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {

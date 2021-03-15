@@ -20,7 +20,7 @@ import { Localized } from '@fluent/react';
 const stringFormattingVariable = {
     rule: (/(%(\d+\$)?[-+0#'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/: RegExp),
     matchIndex: 0,
-    tag: (x: string): React.Node => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-stringFormattingVariable'

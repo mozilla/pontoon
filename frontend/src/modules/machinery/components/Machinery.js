@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 import './Machinery.css';
@@ -81,7 +80,7 @@ export default class Machinery extends React.Component<Props, State> {
         );
     };
 
-    render(): null | Element<'section'> {
+    render(): null | React.Element<'section'> {
         const { locale, machinery } = this.props;
 
         if (!locale) {
