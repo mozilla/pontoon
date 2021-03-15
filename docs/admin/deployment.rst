@@ -255,6 +255,16 @@ Pontoon is designed to run with the following add-ons enabled:
 It's possible to run with the free tiers of all of these add-ons, but it is
 recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
 
+SendGrid Add-on
+~~~~~~~~~~~~~~~
+Pontoon uses `SendGrid`_, which expects the following environment variable:
+
+``SENDGRID_PASSWORD``
+
+   Use SendGrid API key.
+
+.. _SendGrid: https://devcenter.heroku.com/articles/sendgrid
+
 Cache Add-ons
 ~~~~~~~~~~~~~
 Pontoon uses `django-bmemcached`_, which expects the following environment
