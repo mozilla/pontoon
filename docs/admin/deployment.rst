@@ -100,7 +100,7 @@ you create:
    Adds some additional django apps that can be helpful during day to day development.
 
 ``EMAIL_HOST_PASSWORD``
-   Optional. Password for the SMTP connection (no e-mail will be sent if not defined).
+   Optional. Password for the SMTP connection (default: ``'apikey'``, no e-mail will be sent if it is set to an empty string).
 
 ``EMAIL_HOST_USER``
    Optional. Username for the SMTP connection (no e-mail will be sent if not defined).
