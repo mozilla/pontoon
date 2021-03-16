@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format flow lint-frontend dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format flow eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -20,7 +20,7 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-frontend    Runs the new frontend's test suite (Translate.Next)"
+	@echo "  test-frontend    Runs the new frontend's test suite"
 	@echo "  jest             Runs the jest test runner on all Translate.Next tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
@@ -29,7 +29,7 @@ help:
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  flow             Runs the Flow type checker on the frontend code"
-	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
+	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
