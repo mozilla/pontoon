@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import * as React from 'react';
 
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
@@ -20,7 +20,10 @@ type Props = {|
 /**
  * Shows a list of translation sources.
  */
-export default function TranslationSource({ translation, locale }: Props) {
+export default function TranslationSource({
+    translation,
+    locale,
+}: Props): React.Element<'ul'> {
     const translationSource = translation.sources.map((source, index) => {
         switch (source) {
             case 'translation-memory':

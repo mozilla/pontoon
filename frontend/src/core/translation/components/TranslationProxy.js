@@ -13,7 +13,7 @@ type Props = {|
 |};
 
 export default class TranslationProxy extends React.Component<Props> {
-    render() {
+    render(): null | React.Element<React.ElementType> {
         const { content, diffTarget, format, search } = this.props;
 
         if (!content) {

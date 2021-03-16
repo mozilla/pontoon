@@ -15,9 +15,9 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L254
  */
 const xmlEntity = {
-    rule: /(&(([a-zA-Z][a-zA-Z0-9.-]*)|([#](\d{1,5}|x[a-fA-F0-9]{1,5})+));)/,
+    rule: (/(&(([a-zA-Z][a-zA-Z0-9.-]*)|([#](\d{1,5}|x[a-fA-F0-9]{1,5})+));)/: RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-xmlEntity' attrs={{ title: true }}>
                 <mark className='placeable' title='XML entity'>

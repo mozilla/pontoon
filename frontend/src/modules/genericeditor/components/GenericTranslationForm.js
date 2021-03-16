@@ -14,7 +14,9 @@ type Props = {|
 /**
  * Shows a generic translation form, a simple textarea.
  */
-export default function GenericTranslationForm(props: Props) {
+export default function GenericTranslationForm(
+    props: Props,
+): React.Element<'textarea'> {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);
@@ -93,7 +95,7 @@ export default function GenericTranslationForm(props: Props) {
                     : 'Type translation and press Enter to save'
             }
             readOnly={isReadOnlyEditor}
-            // $FLOW_IGNORE: No idea why this is erroring out.
+            // $FlowIgnore: No idea why this is erroring out.
             ref={textareaRef}
             value={translation}
             onKeyDown={handleShortcuts}

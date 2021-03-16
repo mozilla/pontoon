@@ -10,7 +10,7 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L229
  */
 const punctuation = {
-    rule: new RegExp(
+    rule: (new RegExp(
         '(' +
             '(' +
             /[™©®]|/.source + // Marks
@@ -25,9 +25,9 @@ const punctuation = {
             /[\u202F]/.source + // U202F - narrow no-break space
             ')+' +
             ')',
-    ),
+    ): RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-punctuation'

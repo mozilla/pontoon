@@ -25,7 +25,7 @@ type Props = {|
     resetContactPerson?: () => void,
 |};
 
-export default function CommentsList(props: Props) {
+export default function CommentsList(props: Props): React.Element<'div'> {
     const {
         comments,
         parameters,

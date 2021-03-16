@@ -16,7 +16,7 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L192
  */
 const uriPattern = {
-    rule: new RegExp(
+    rule: (new RegExp(
         '(' +
             '(' +
             '(' +
@@ -31,9 +31,9 @@ const uriPattern = {
             /(?=$|\s|([\]'}>),"]))/.source +
             ')',
         'i', // This one is not case sensitive.
-    ),
+    ): RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized id='placeable-parser-uriPattern' attrs={{ title: true }}>
                 <mark className='placeable' title='URI'>

@@ -83,11 +83,13 @@ export default class Entity extends React.Component<Props> {
         return 'missing';
     }
 
-    selectEntity = (e: SyntheticMouseEvent<HTMLLIElement>) => {
+    selectEntity: (e: SyntheticMouseEvent<HTMLLIElement>) => null | void = (
+        e: SyntheticMouseEvent<HTMLLIElement>,
+    ) => {
         // Flow requires that we use `e.currentTarget` instead of `e.target`.
         // However in this case, we do want to use that, so I'm ignoring all
         // errors Flow throws there.
-        // $FLOW_IGNORE
+        // $FlowIgnore
         if (e.target && e.target.classList.contains('status')) {
             return null;
         }
@@ -95,7 +97,9 @@ export default class Entity extends React.Component<Props> {
         this.props.selectEntity(this.props.entity);
     };
 
-    toggleForBatchEditing = (e: SyntheticMouseEvent<HTMLSpanElement>) => {
+    toggleForBatchEditing: (e: SyntheticMouseEvent<HTMLSpanElement>) => void = (
+        e: SyntheticMouseEvent<HTMLSpanElement>,
+    ) => {
         const { entity, isReadOnlyEditor, isTranslator } = this.props;
 
         if (isTranslator && !isReadOnlyEditor) {
@@ -103,7 +107,7 @@ export default class Entity extends React.Component<Props> {
         }
     };
 
-    render() {
+    render(): React.Element<'li'> {
         const {
             checkedForBatchEditing,
             entity,

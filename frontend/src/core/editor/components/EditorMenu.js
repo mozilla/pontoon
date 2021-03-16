@@ -30,7 +30,7 @@ type Props = {|
  * If the entity is read-only, shows a read-only notification.
  * Otherise, shows the various tools to control the editor.
  */
-export default function EditorMenu(props: Props) {
+export default function EditorMenu(props: Props): React.Element<'menu'> {
     return (
         <menu className='editor-menu'>
             {props.firstItemHook}

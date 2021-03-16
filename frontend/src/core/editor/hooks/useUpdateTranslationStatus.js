@@ -14,7 +14,11 @@ import type { ChangeOperation } from 'modules/history';
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.
  */
-export default function useUpdateTranslationStatus() {
+export default function useUpdateTranslationStatus(): (
+    translationId: number,
+    change: ChangeOperation,
+    ignoreWarnings: ?boolean,
+) => void {
     const dispatch = useDispatch();
 
     const entity = useSelector((state) =>

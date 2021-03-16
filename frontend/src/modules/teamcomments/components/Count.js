@@ -8,7 +8,7 @@ type Props = {|
     teamComments: TeamCommentState,
 |};
 
-export default function Count(props: Props) {
+export default function Count(props: Props): null | React.Element<'span'> {
     const { teamComments } = props;
 
     if (teamComments.fetching || !teamComments.comments) {

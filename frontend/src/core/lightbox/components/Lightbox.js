@@ -63,11 +63,11 @@ function LightboxContent({ image, onClose }: ContentProps) {
 }
 
 export class LightboxBase extends React.Component<InternalProps> {
-    close = () => {
+    close: () => void = () => {
         this.props.dispatch(close());
     };
 
-    render() {
+    render(): null | React.Element<React.ElementType> {
         const { lightbox } = this.props;
 
         if (!lightbox.isOpen) {
@@ -84,4 +84,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(LightboxBase);
+export default (connect(mapStateToProps)(LightboxBase): any);

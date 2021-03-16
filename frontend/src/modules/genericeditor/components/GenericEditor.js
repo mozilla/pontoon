@@ -53,7 +53,7 @@ function useLoadTranslation() {
  *
  * Shows a plural selector, a translation form and a menu.
  */
-export default function GenericEditor() {
+export default function GenericEditor(): null | React.Node {
     const dispatch = useDispatch();
 
     useLoadTranslation();

@@ -139,7 +139,7 @@ export const CHART_OPTIONS = {
     series: [
         {
             animation: false,
-            data: [],
+            data: ([]: Array<any>),
             type: 'column',
         },
     ],

@@ -28,7 +28,7 @@ export function moveToNextTranslation(
 export type ResetAction = {|
     type: typeof RESET,
 |};
-export function reset() {
+export function reset(): ResetAction {
     return {
         type: RESET,
     };
@@ -38,7 +38,7 @@ export type SelectAction = {|
     type: typeof SELECT,
     pluralForm: number,
 |};
-export function select(pluralForm: number) {
+export function select(pluralForm: number): SelectAction {
     return {
         type: SELECT,
         pluralForm,

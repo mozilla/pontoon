@@ -21,7 +21,7 @@ type Props = {
  * are made directly to that AST. That is why lots of Editor methods are
  * overwritten, to handle the conversion from AST to string and back.
  */
-export default function RichEditor(props: Props) {
+export default function RichEditor(props: Props): React.Node {
     const dispatch = useDispatch();
 
     const sendTranslation = editor.useSendTranslation();

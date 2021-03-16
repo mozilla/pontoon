@@ -60,7 +60,7 @@ export class NavigationBase extends React.Component<InternalProps> {
         }
     }
 
-    updateTitle = () => {
+    updateTitle: () => null | void = () => {
         const { locale, project } = this.props;
 
         if (!locale || !locale.name) {
@@ -75,7 +75,7 @@ export class NavigationBase extends React.Component<InternalProps> {
         document.title = `${locale.name} (${locale.code}) · ${projectName}`;
     };
 
-    navigateToPath = (path: string) => {
+    navigateToPath: (path: string) => void = (path: string) => {
         const { dispatch } = this.props;
 
         const state = this.props.store.getState();
@@ -93,7 +93,7 @@ export class NavigationBase extends React.Component<InternalProps> {
         );
     };
 
-    render() {
+    render(): null | React.Element<'nav'> {
         const { locale, parameters, resources } = this.props;
 
         if (!locale) {
@@ -136,7 +136,7 @@ export class NavigationBase extends React.Component<InternalProps> {
     }
 }
 
-export default function Navigation() {
+export default function Navigation(): React.Element<typeof NavigationBase> {
     const state = {
         locale: useSelector((state) => state[locale.NAME]),
         parameters: useSelector((state) =>

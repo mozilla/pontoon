@@ -128,7 +128,7 @@ export default function convertSyntax(
     original: string,
     initial: string,
     locale: Locale,
-) {
+): [FluentMessage, FluentMessage] | [string, string] {
     if (
         fromSyntax === 'complex' &&
         toSyntax === 'simple' &&

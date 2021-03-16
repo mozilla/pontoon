@@ -100,7 +100,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         }
     }
 
-    initializeChart = () => {
+    initializeChart: () => void = () => {
         // Initialize the highchartsStock module
         highchartsStock(Highcharts);
 
@@ -112,7 +112,10 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    updateChartExtremes = (key: ?string, value: ?number) => {
+    updateChartExtremes: (key: ?string, value: ?number) => void = (
+        key: ?string,
+        value: ?number,
+    ) => {
         const { chartFrom, chartTo } = this.state;
 
         if (!chartFrom || !chartTo) {
@@ -140,7 +143,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         );
     };
 
-    plotChart = () => {
+    plotChart: () => null | void = () => {
         const { timeRange, timeRangeData } = this.props;
 
         // In case of no translations
@@ -187,13 +190,15 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    getTimeForURL = (unixTime: number) => {
+    getTimeForURL: (unixTime: number) => number = (unixTime: number) => {
         const d = new Date(unixTime);
 
         return parseInt(date.format(d, URL_FORMAT, true));
     };
 
-    getTimeForInput = (urlTime: ?number) => {
+    getTimeForInput: (urlTime: ?number) => any | string = (
+        urlTime: ?number,
+    ) => {
         if (!urlTime) {
             return '';
         }
@@ -207,11 +212,13 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         return date.format(d, INPUT_FORMAT);
     };
 
-    isValidInput = (value: string) => {
+    isValidInput: (value: string) => any = (value: string) => {
         return date.isValid(value, INPUT_FORMAT);
     };
 
-    handleInputChange = (event: SyntheticInputEvent<HTMLInputElement>) => {
+    handleInputChange: (
+        event: SyntheticInputEvent<HTMLInputElement>,
+    ) => void = (event: SyntheticInputEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
 
@@ -225,7 +232,9 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    toggleEditingTimeRange = (event: SyntheticMouseEvent<>) => {
+    toggleEditingTimeRange: (event: SyntheticMouseEvent<>) => void = (
+        event: SyntheticMouseEvent<>,
+    ) => {
         const { chartFrom, chartTo, visible } = this.state;
 
         // After Save Range is clicked...
@@ -253,7 +262,9 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    toggleTimeRangeFilter = (event: SyntheticMouseEvent<>) => {
+    toggleTimeRangeFilter: (event: SyntheticMouseEvent<>) => void = (
+        event: SyntheticMouseEvent<>,
+    ) => {
         const { chartFrom, chartTo, visible } = this.state;
 
         if (visible) {
@@ -267,7 +278,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         );
     };
 
-    applyTimeRangeFilter = () => {
+    applyTimeRangeFilter: () => void = () => {
         const { chartFrom, chartTo, visible } = this.state;
 
         if (visible) {
@@ -280,7 +291,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         );
     };
 
-    render() {
+    render(): null | React.Node {
         const props = this.props;
 
         // In case of no translations or the All Projects view

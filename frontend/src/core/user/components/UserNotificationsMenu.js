@@ -29,7 +29,7 @@ type UserNotificationsMenuProps = {
 export function UserNotificationsMenu({
     notifications,
     onDiscard,
-}: UserNotificationsMenuProps) {
+}: UserNotificationsMenuProps): React.Element<'div'> {
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);
 
@@ -101,7 +101,7 @@ export default class UserNotificationsMenuBase extends React.Component<
         }
     }
 
-    handleClick = () => {
+    handleClick: () => void = () => {
         if (this.state.markAsRead) {
             this.setState({
                 markAsRead: false,
@@ -112,25 +112,25 @@ export default class UserNotificationsMenuBase extends React.Component<
         this.markAllNotificationsAsRead();
     };
 
-    toggleVisibility = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
     };
 
-    markAllNotificationsAsRead = () => {
+    markAllNotificationsAsRead: () => void = () => {
         if (this.props.user.notifications.has_unread) {
             this.props.markAllNotificationsAsRead();
         }
     };
 
-    handleDiscard = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
     };
 
-    render() {
+    render(): null | React.Element<'div'> {
         const { user } = this.props;
 
         if (!user || !user.isAuthenticated) {

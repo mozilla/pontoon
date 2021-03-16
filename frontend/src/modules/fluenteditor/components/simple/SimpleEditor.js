@@ -18,7 +18,7 @@ type Props = {|
  * Handles transforming the editor's content back to a valid Fluent message on save.
  * Makes sure the content is correctly formatted when updated.
  */
-export default function SimpleEditor(props: Props) {
+export default function SimpleEditor(props: Props): null | React.Node {
     const updateTranslation = editor.useUpdateTranslation();
     const clearEditor = editor.useClearEditor();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();

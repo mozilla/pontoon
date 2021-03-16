@@ -11,7 +11,9 @@ import useUpdateTranslation from './useUpdateTranslation';
 /**
  * Return a function to copy the other locale translation into the editor.
  */
-export default function useCopyOtherLocaleTranslation() {
+export default function useCopyOtherLocaleTranslation(): (
+    translation: OtherLocaleTranslation,
+) => void {
     const updateTranslation = useUpdateTranslation();
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),

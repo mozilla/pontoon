@@ -1,6 +1,5 @@
 /* @flow */
 
-import { Localized } from '@fluent/react';
 import shortid from 'shortid';
 
 export const ADD: 'notification/ADD' = 'notification/ADD';
@@ -14,7 +13,7 @@ export type NotificationType =
 
 export type NotificationMessage = {|
     +type: NotificationType,
-    +content: string | typeof Localized,
+    +content: string | React$Element<any>,
     +key?: string,
 |};
 

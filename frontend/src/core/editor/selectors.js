@@ -31,7 +31,7 @@ export function _existingTranslation(
         (translation === initialTranslation ||
             // If translation is a FluentMessage, from the fluent editor.
             (translation.equals &&
-                // $FLOW_IGNORE: `equals`, if defined, will always be a function.
+                // $FlowIgnore: `equals`, if defined, will always be a function.
                 translation.equals(initialTranslation)))
     ) {
         existingTranslation = activeTranslation;
@@ -109,7 +109,7 @@ function _isFluentMessage(editorState: EditorState) {
 /**
  * Returns `true` if the current editor translation contains a Fluent message.
  */
-const isFluentTranslationMessage = createSelector(
+const isFluentTranslationMessage: any = createSelector(
     editorSelector,
     _isFluentMessage,
 );

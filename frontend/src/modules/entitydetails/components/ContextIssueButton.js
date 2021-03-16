@@ -9,7 +9,7 @@ type Props = {|
     openTeamComments: () => void,
 |};
 
-export default function ContextIssueButton(props: Props) {
+export default function ContextIssueButton(props: Props): React.Element<'div'> {
     return (
         <div className='source-string-comment'>
             <Localized id='entitydetails-ContextIssueButton--context-issue-button'>

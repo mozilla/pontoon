@@ -40,17 +40,22 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         this.replace = React.createRef();
     }
 
+    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+    // so I'm ignoring the errors Flow throws below.
+
     componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
     }
 
     componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+    handleShortcuts: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         const key = event.keyCode;
 
         // On Esc, quit batch actions
@@ -59,11 +64,11 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         }
     };
 
-    quitBatchActions = () => {
+    quitBatchActions: () => void = () => {
         this.props.dispatch(batchactions.actions.resetSelection());
     };
 
-    selectAllEntities = () => {
+    selectAllEntities: () => void = () => {
         const {
             locale,
             project,
@@ -91,7 +96,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    approveAll = () => {
+    approveAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -110,7 +115,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    rejectAll = () => {
+    rejectAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -129,7 +134,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    replaceAll = () => {
+    replaceAll: () => void = () => {
         if (this.props.batchactions.requestInProgress) {
             return;
         }
@@ -167,12 +172,14 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    submitReplaceForm = (event: SyntheticKeyboardEvent<>) => {
+    submitReplaceForm: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         event.preventDefault();
         this.replaceAll();
     };
 
-    render() {
+    render(): React.Element<'div'> {
         return (
             <div className='batch-actions'>
                 <div className='topbar clearfix'>
@@ -298,4 +305,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(BatchActionsBase);
+export default (connect(mapStateToProps)(BatchActionsBase): any);

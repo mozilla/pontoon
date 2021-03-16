@@ -11,7 +11,7 @@ export default class EntityAPI extends APIBase {
         entities: Array<number>,
         find: ?string,
         replace: ?string,
-    ) {
+    ): Promise<any> {
         const payload = new FormData();
 
         const csrfToken = this.getCSRFToken();
@@ -116,7 +116,11 @@ export default class EntityAPI extends APIBase {
         return await this.fetch('/get-entities/', 'POST', payload, headers);
     }
 
-    async getHistory(entity: number, locale: string, pluralForm: number = -1) {
+    async getHistory(
+        entity: number,
+        locale: string,
+        pluralForm: number = -1,
+    ): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);
@@ -160,7 +164,7 @@ export default class EntityAPI extends APIBase {
         return results;
     }
 
-    async getTeamComments(entity: number, locale: string) {
+    async getTeamComments(entity: number, locale: string): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);
@@ -178,7 +182,7 @@ export default class EntityAPI extends APIBase {
         return this.keysToCamelCase(results);
     }
 
-    async getTerms(sourceString: string, locale: string) {
+    async getTerms(sourceString: string, locale: string): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('source_string', sourceString);
         payload.append('locale', locale);

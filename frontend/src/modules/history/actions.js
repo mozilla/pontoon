@@ -33,7 +33,7 @@ export type UpdateAction = {|
     +type: typeof UPDATE,
     +translation: Object,
 |};
-export function update(translation: Object) {
+export function update(translation: Object): UpdateAction {
     return {
         type: UPDATE,
         translation,
