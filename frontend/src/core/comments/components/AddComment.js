@@ -24,7 +24,7 @@ type Props = {|
     resetContactPerson?: () => void,
 |};
 
-export default function AddComment(props: Props) {
+export default function AddComment(props: Props): React.Element<'div'> {
     const {
         parameters,
         translation,
@@ -209,9 +209,9 @@ export default function AddComment(props: Props) {
     // This allows for the mention suggestions to stay properly positioned
     // when the container scrolls.
     React.useEffect(() => {
-        // Flow does not recognize the event listeners with 'SyntheticEvent`,
-        // so I'm ignoring the errors Flow throws here.
-        // $FLOW_IGNORE
+        // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+        // so I'm ignoring the errors Flow throws below.
+
         const handleScroll = (e: SyntheticEvent<HTMLElement>) => {
             const element = e.currentTarget;
             setScrollPosition(element.scrollTop);
@@ -225,17 +225,21 @@ export default function AddComment(props: Props) {
         }
 
         if (historyScroll) {
+            // $FlowIgnore
             historyScroll.addEventListener('scroll', handleScroll);
         }
         if (teamsScroll) {
+            //$FlowIgnore
             teamsScroll.addEventListener('scroll', handleScroll);
         }
 
         return () => {
             if (historyScroll) {
+                // $FlowIgnore
                 historyScroll.removeEventListener('scroll', handleScroll);
             }
             if (teamsScroll) {
+                // $FlowIgnore
                 teamsScroll.removeEventListener('scroll', handleScroll);
             }
         };

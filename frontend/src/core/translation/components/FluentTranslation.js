@@ -12,18 +12,18 @@ import { withSearch } from 'modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 
-// $FLOW_IGNORE: I just can't get HOC working with Flow.
+// $FlowIgnore: I just can't get HOC working with Flow.
 const TranslationPlaceablesDiff = withDiff(
     WithPlaceablesForFluentNoLeadingSpace,
 );
 
-// $FLOW_IGNORE: I just can't get HOC working with Flow.
+// $FlowIgnore: I just can't get HOC working with Flow.
 const TranslationPlaceablesSearch = withSearch(
     WithPlaceablesForFluentNoLeadingSpace,
 );
 
 export default class FluentTranslation extends React.Component<TranslationProps> {
-    render() {
+    render(): React.Element<React.ElementType> {
         const { content, diffTarget, search } = this.props;
 
         if (diffTarget) {

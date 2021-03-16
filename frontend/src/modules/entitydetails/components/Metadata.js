@@ -72,28 +72,30 @@ export default class Metadata extends React.Component<Props, State> {
         }
     }
 
-    handleClickOnSeeMore = () => {
+    handleClickOnSeeMore: () => void = () => {
         this.setState({ seeMore: true });
     };
 
-    handleClickOnPlaceable = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
+    handleClickOnPlaceable: (
+        e: SyntheticMouseEvent<HTMLParagraphElement>,
+    ) => void = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
         // Flow requires that we use `e.currentTarget` instead of `e.target`.
         // However in this case, we do want to use that, so we're ignoring all
         // errors Flow throws there.
 
-        // $FLOW_IGNORE
+        // $FlowIgnore
         if (e.target && e.target.classList.contains('placeable')) {
             if (this.props.isReadOnlyEditor) {
                 return;
             }
-            // $FLOW_IGNORE
+            // $FlowIgnore
             if (e.target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
-                    // $FLOW_IGNORE
+                    // $FlowIgnore
                     e.target.dataset['match'],
                 );
             }
-            // $FLOW_IGNORE
+            // $FlowIgnore
             else if (e.target.childNodes.length) {
                 this.props.addTextToEditorTranslation(
                     e.target.childNodes[0].data,
@@ -103,7 +105,7 @@ export default class Metadata extends React.Component<Props, State> {
 
         // Handle click on Term
 
-        // $FLOW_IGNORE
+        // $FlowIgnore
         const markedTerm = e.target.dataset['term'];
         if (e.target && markedTerm) {
             const popupTerms = this.props.terms.terms.filter(
@@ -113,7 +115,7 @@ export default class Metadata extends React.Component<Props, State> {
         }
     };
 
-    hidePopupTerms = () => {
+    hidePopupTerms: () => void = () => {
         this.setState({ popupTerms: [] });
     };
 
@@ -336,14 +338,16 @@ export default class Metadata extends React.Component<Props, State> {
         return this.renderSourceObject(entity.source);
     }
 
-    navigateToPath = (event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+    navigateToPath: (event: SyntheticMouseEvent<HTMLAnchorElement>) => void = (
+        event: SyntheticMouseEvent<HTMLAnchorElement>,
+    ) => {
         event.preventDefault();
 
         const path = event.currentTarget.pathname;
         this.props.navigateToPath(path);
     };
 
-    openTeamComments = () => {
+    openTeamComments: () => void = () => {
         const teamCommentsTab = this.props.commentTabRef.current;
         const index = teamCommentsTab._reactInternalFiber.index;
         this.props.setCommentTabIndex(index);

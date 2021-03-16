@@ -8,7 +8,10 @@ import { actions } from '..';
 /**
  * Return a function to add text to the content of the editor.
  */
-export default function useAddTextToTranslation() {
+export default function useAddTextToTranslation(): (
+    content: string,
+    changeSource?: string,
+) => void {
     const dispatch = useDispatch();
 
     return useCallback(

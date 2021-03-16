@@ -26,7 +26,7 @@ export default class RejectAll extends React.Component<Props, State> {
         };
     }
 
-    rejectAll = () => {
+    rejectAll: () => void = () => {
         if (!this.state.isConfirmationVisible) {
             this.setState({
                 isConfirmationVisible: true,
@@ -39,7 +39,7 @@ export default class RejectAll extends React.Component<Props, State> {
         }
     };
 
-    renderConfirmation() {
+    renderConfirmation(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--confirmation'>
                 {'ARE YOU SURE?'}
@@ -47,7 +47,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderDefault() {
+    renderDefault(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--default'>
                 {'REJECT ALL SUGGESTIONS'}
@@ -55,7 +55,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderError() {
+    renderError(): React.Element<React.ElementType> {
         return (
             <Localized id='batchactions-RejectAll--error'>
                 {'OOPS, SOMETHING WENT WRONG'}
@@ -63,7 +63,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderInvalid() {
+    renderInvalid(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -80,7 +80,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderSuccess() {
+    renderSuccess(): null | React.Element<React.ElementType> {
         const { response } = this.props.batchactions;
 
         if (!response) {
@@ -97,7 +97,7 @@ export default class RejectAll extends React.Component<Props, State> {
         );
     }
 
-    renderTitle() {
+    renderTitle(): null | React.Node {
         const { response } = this.props.batchactions;
 
         if (response && response.action === 'reject') {
@@ -121,7 +121,7 @@ export default class RejectAll extends React.Component<Props, State> {
         }
     }
 
-    render() {
+    render(): React.Element<'button'> {
         return (
             <button className='reject-all' onClick={this.rejectAll}>
                 {this.renderTitle()}

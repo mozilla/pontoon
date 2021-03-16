@@ -24,7 +24,7 @@ import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 // Combine reducers from all modules, using their NAME constant as key.
-export default (browserHistory: any) =>
+export default (browserHistory: any): any =>
     combineReducers({
         // System modules
         router: connectRouter(browserHistory),

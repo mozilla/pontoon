@@ -17,9 +17,9 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L72
  */
 const numberString = {
-    rule: /([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u,
+    rule: (/([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u: RegExp),
     matchIndex: 0,
-    tag: (x: string) => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-numberString'

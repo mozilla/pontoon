@@ -13,7 +13,7 @@ type Props = {|
     translation: MachineryTranslation,
 |};
 
-export default function ConcordanceSearch(props: Props) {
+export default function ConcordanceSearch(props: Props): React.Node {
     const locale = useSelector((state) => state.locale);
     const { sourceString, translation } = props;
 

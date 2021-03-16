@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  */
 const tabCharacter = {
     rule: '\t',
-    tag: (x: string) => {
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-tabCharacter'

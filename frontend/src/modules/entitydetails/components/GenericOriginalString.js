@@ -56,7 +56,7 @@ function getOriginalContent(props: Props) {
  * Based on the plural form, show either the singular or plural version of the
  * string, and also display which form is being rendered.
  */
-export default function GenericOriginalString(props: Props) {
+export default function GenericOriginalString(props: Props): React.Node {
     const { title, original } = getOriginalContent(props);
 
     const TermsAndPlaceablesMarker = getMarker(props.terms);

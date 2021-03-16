@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -55,15 +55,18 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         this.list = React.createRef();
     }
 
+    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
+    // so I'm ignoring the errors Flow throws below.
+
     componentDidMount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
 
         this.selectFirstEntityIfNoneSelected();
     }
 
     componentWillUnmount() {
-        // $FLOW_IGNORE (errors that I don't understand, no help from the Web)
+        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
@@ -123,7 +126,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    handleShortcuts = (event: SyntheticKeyboardEvent<>) => {
+    handleShortcuts: (event: SyntheticKeyboardEvent<>) => void = (
+        event: SyntheticKeyboardEvent<>,
+    ) => {
         const key = event.keyCode;
 
         // On Ctrl + Shift + A, select all entities for batch editing.
@@ -191,7 +196,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    selectEntity = (entity: EntityType, replaceHistory?: boolean) => {
+    selectEntity: (entity: EntityType, replaceHistory?: boolean) => void = (
+        entity: EntityType,
+        replaceHistory?: boolean,
+    ) => {
         const { dispatch, router } = this.props;
 
         const state = this.props.store.getState();
@@ -217,7 +225,10 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
-    toggleForBatchEditing = (entity: number, shiftKeyPressed: boolean) => {
+    toggleForBatchEditing: (
+        entity: number,
+        shiftKeyPressed: boolean,
+    ) => void = (entity: number, shiftKeyPressed: boolean) => {
         const props = this.props;
         const { dispatch } = props;
 
@@ -271,7 +282,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
-    getMoreEntities = () => {
+    getMoreEntities: () => void = () => {
         const props = this.props;
         const {
             locale,
@@ -320,7 +331,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
-    render() {
+    render(): React.Element<'div'> {
         const props = this.props;
         const search = props.parameters.search;
 
@@ -384,7 +395,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     }
 }
 
-export default function EntitiesList() {
+export default function EntitiesList(): React.Element<typeof EntitiesListBase> {
     const state = {
         batchactions: useSelector((state) => state[batchactions.NAME]),
         entities: useSelector((state) => state[entities.NAME]),

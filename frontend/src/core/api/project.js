@@ -3,7 +3,7 @@
 import APIBase from './base';
 
 export default class ProjectAPI extends APIBase {
-    async get(slug: string) {
+    async get(slug: string): Promise<any> {
         const query = `{
             project(slug: "${slug}") {
                 slug

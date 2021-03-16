@@ -11,7 +11,7 @@ type Props = {|
 /**
  * Component to dislay a property of an entity in the Metadata component.
  */
-export default function Property(props: Props) {
+export default function Property(props: Props): React.Element<'div'> {
     const { children, className, title } = props;
 
     return (

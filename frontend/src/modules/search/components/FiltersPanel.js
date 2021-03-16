@@ -84,7 +84,7 @@ export function FiltersPanel({
     onResetFilters,
     onToggleFilter,
     onDiscard,
-}: FiltersPanelProps) {
+}: FiltersPanelProps): React.Element<'div'> {
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);
 
@@ -367,28 +367,32 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         }
     }
 
-    toggleVisibility = () => {
+    toggleVisibility: () => void = () => {
         this.setState((state) => {
             return { visible: !state.visible };
         });
         this.props.updateFiltersFromURLParams();
     };
 
-    handleDiscard = () => {
+    handleDiscard: () => void = () => {
         this.setState({
             visible: false,
         });
         this.props.updateFiltersFromURLParams();
     };
 
-    applyFilters = () => {
+    applyFilters: () => void = () => {
         this.setState({
             visible: false,
         });
         return this.props.update();
     };
 
-    toggleFilter = (
+    toggleFilter: (
+        filter: string,
+        type: string,
+        event: SyntheticMouseEvent<>,
+    ) => void = (
         filter: string,
         type: string,
         event: SyntheticMouseEvent<>,
@@ -401,7 +405,10 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         this.props.toggleFilter(filter, type);
     };
 
-    applySingleFilter = (filter: string, type: string) => {
+    applySingleFilter: (filter: string, type: string) => void = (
+        filter: string,
+        type: string,
+    ) => {
         this.toggleVisibility();
         this.props.applySingleFilter(filter, type, this.props.update);
     };
@@ -424,7 +431,7 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         };
     }
 
-    getSelectedFiltersCount = () => {
+    getSelectedFiltersCount: () => number = () => {
         const selected = this.getSelectedFilters();
 
         return (
@@ -436,7 +443,7 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         );
     };
 
-    getFilterIcon = () => {
+    getFilterIcon: () => any | string = () => {
         const { authorsData, tagsData, timeRange } = this.props;
         const selected = this.getSelectedFilters();
         const selectedFiltersCount = this.getSelectedFiltersCount();
@@ -482,7 +489,7 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
         return filterIcon;
     };
 
-    render() {
+    render(): React.Element<'div'> {
         const props = this.props;
         const { project, resource } = this.props.parameters;
 

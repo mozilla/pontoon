@@ -83,6 +83,6 @@ export const rules = [
 /**
  * Component that marks placeables in a string.
  */
-const WithPlaceables = createMarker(rules);
+const WithPlaceables: any = createMarker(rules);
 
 export default WithPlaceables;

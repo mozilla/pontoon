@@ -14,7 +14,7 @@ import { getRulesWithoutLeadingSpace } from './WithPlaceablesNoLeadingSpace';
  *
  * See ./WithPlaceablesNoLeadingSpace.js for documentation.
  */
-const WithPlaceablesForFluentNoLeadingSpace = createMarker(
+const WithPlaceablesForFluentNoLeadingSpace: any = createMarker(
     getRulesWithFluent(getRulesWithoutLeadingSpace(rules)),
 );
 

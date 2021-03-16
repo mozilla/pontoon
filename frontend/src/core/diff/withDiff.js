@@ -7,7 +7,7 @@ import './components/TranslationDiff.css';
 
 const dmp = new DiffMatchPatch();
 
-export function getDiff(base: string, target: string) {
+export function getDiff(base: string, target: string): React.Node {
     const diff = dmp.diff_main(base, target);
 
     dmp.diff_cleanupSemantic(diff);

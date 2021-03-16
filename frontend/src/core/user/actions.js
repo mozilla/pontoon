@@ -30,10 +30,10 @@ export function updateTourStatus(step: number): Function {
     };
 }
 
-export type Settings = {
+export type Settings = {|
     runQualityChecks?: boolean,
     forceSuggestions?: boolean,
-};
+|};
 
 /**
  * Update the user settings.

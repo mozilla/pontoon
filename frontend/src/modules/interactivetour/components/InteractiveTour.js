@@ -44,7 +44,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
         };
     }
 
-    createUpdateTourStatus = (totalSteps: number) => {
+    createUpdateTourStatus: (
+        totalSteps: number,
+    ) => null | ((currentStep: number) => void) = (totalSteps: number) => {
         if (!this.props.user.isAuthenticated) {
             return null;
         }
@@ -55,11 +57,11 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
         };
     };
 
-    close = () => {
+    close: () => void = () => {
         this.setState({ isOpen: false });
     };
 
-    render() {
+    render(): null | React.Node {
         // Run the tour only on project with slug 'tutorial'
         if (this.props.project.slug !== 'tutorial') {
             return null;
@@ -408,4 +410,4 @@ const mapStateToProps = (state: Object): Props => {
     };
 };
 
-export default connect(mapStateToProps)(InteractiveTourBase);
+export default (connect(mapStateToProps)(InteractiveTourBase): any);

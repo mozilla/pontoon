@@ -15,8 +15,8 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L55
  */
 const altAttribute = {
-    rule: /(alt=".*?")/i,
-    tag: (x: string) => {
+    rule: (/(alt=".*?")/i: RegExp),
+    tag: (x: string): React.Element<React.ElementType> => {
         return (
             <Localized
                 id='placeable-parser-altAttribute'

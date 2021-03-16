@@ -32,7 +32,7 @@ export type Locale = {|
 export type RequestAction = {|
     type: typeof REQUEST,
 |};
-export function request() {
+export function request(): RequestAction {
     return {
         type: REQUEST,
     };
@@ -42,7 +42,7 @@ export type ReceiveAction = {|
     type: typeof RECEIVE,
     locale: Locale,
 |};
-export function receive(locale: Locale) {
+export function receive(locale: Locale): ReceiveAction {
     return {
         type: RECEIVE,
         locale,
