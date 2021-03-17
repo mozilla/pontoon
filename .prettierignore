@@ -1,6 +1,7 @@
 # minified code
 *.min.js
 *.min.css
+frontend/build
 
 # libraries
 **/base/static/js/lib*

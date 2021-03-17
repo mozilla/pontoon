@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: eslint
-        run: ./node_modules/.bin/eslint .
+        run: npm run eslint
 
   prettier:
     name: prettier

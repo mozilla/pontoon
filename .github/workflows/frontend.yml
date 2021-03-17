@@ -23,14 +23,16 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Install dependencies
+      - name: Root install
         run: npm install
+      - name: Install dependencies
+        run: yarn
         working-directory: frontend
       - name: flow
-        run: npm run flow
+        run: yarn flow
         working-directory: frontend
       - name: build
-        run: npm run build
+        run: yarn build
         working-directory: frontend
 
   jest:
