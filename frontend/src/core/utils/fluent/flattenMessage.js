@@ -17,8 +17,12 @@ import type { FluentMessage } from './types';
  */
 export default function flattenMessage(message: FluentMessage): FluentMessage {
     const flatMessage = message.clone();
+    if (flatMessage.type !== 'Message' && flatMessage.type !== 'Term') {
+        return flatMessage;
+    }
 
     if (flatMessage.value && flatMessage.value.elements.length > 0) {
+        // $FlowIgnore We know value is non-null, but flow doesn't
         flatMessage.value.elements = flattenPatternElements(
             flatMessage.value.elements,
         );

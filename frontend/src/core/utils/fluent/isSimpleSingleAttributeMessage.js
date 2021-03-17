@@ -1,16 +1,17 @@
 /* @flow */
 
 import isSimpleElement from './isSimpleElement';
+import type { FluentMessage } from './types';
 
 /**
  * Return true when message has no value and a single attribute with only simple
  * elements.
  */
 export default function isSimpleSingleAttributeMessage(
-    message: Object,
+    message: FluentMessage,
 ): boolean {
     if (
-        message &&
+        message.type === 'Message' &&
         !message.value &&
         message.attributes &&
         message.attributes.length === 1 &&

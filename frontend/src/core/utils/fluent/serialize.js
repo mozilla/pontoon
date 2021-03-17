@@ -1,13 +1,16 @@
 /* @flow */
 
 import { serializeExpression } from '@fluent/syntax';
+import type { PatternElement } from '@fluent/syntax';
 
 /**
  * Returns a list of values from a Fluent AST.
  *
  * Walks the given elements' AST and return the most pertinent value for each.
  */
-export default function serialize(elements: Array<Object>): Array<any> {
+export default function serialize(
+    elements: Array<PatternElement>,
+): Array<Object> {
     return elements.map((elt) => {
         if (elt.type === 'TextElement') {
             return elt.value;

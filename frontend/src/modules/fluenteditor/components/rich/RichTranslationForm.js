@@ -14,13 +14,13 @@ import { CLDR_PLURALS } from 'core/plural';
 import { fluent } from 'core/utils';
 
 import type { Translation } from 'core/editor';
+import type { FluentAttributes, FluentMessage } from 'core/utils/fluent/types';
 import type {
-    FluentAttributes,
-    FluentMessage,
     Pattern,
     PatternElement,
     Variant,
-} from 'core/utils/fluent/types';
+    SyntaxNode,
+} from '@fluent/syntax';
 
 type MessagePath = Array<string | number>;
 
@@ -35,14 +35,20 @@ function getUpdatedTranslation(
 ) {
     // Never mutate state.
     const source = translation.clone();
+    // Safeguard against all the entry types, keep cloning, though.
+    if (source.type !== 'Message' && source.type !== 'Term') {
+        return source;
+    }
     let dest = source;
     // Walk the path until the next to last item.
     for (let i = 0, ln = path.length; i < ln - 1; i++) {
+        // $FlowIgnore: dest can be an Array or a BaseNode, ignore BaseNode[0]
         dest = dest[path[i]];
     }
     // Assign the new value to the last element in the path, so that
     // it is actually assigned to the message object reference and
     // to the extracted value.
+    // $FlowIgnore: dest can be an Array or a BaseNode, ignore BaseNode[0]
     dest[path[path.length - 1]] = value;
 
     return source;
@@ -415,31 +421,31 @@ export default function RichTranslationForm(
         let indent = false;
 
         return elements.map((element, eIndex) => {
+            let expression;
             if (
                 element.type === 'Placeable' &&
-                element.expression &&
-                element.expression.type === 'SelectExpression'
+                (expression = element.expression) &&
+                expression.type === 'SelectExpression'
             ) {
+                const variants = expression.variants;
                 let pluralExamples = null;
-                if (fluent.isPluralExpression(element.expression)) {
+                if (fluent.isPluralExpression(expression)) {
                     pluralExamples = locale.getPluralExamples(localeState);
                 }
-                const variants = element.expression.variants.map(
-                    (variant, vIndex) => {
-                        return renderVariant(
-                            variant,
-                            path,
-                            indent,
-                            eIndex,
-                            vIndex,
-                            pluralExamples,
-                            attributeName,
-                        );
-                    },
-                );
+                const rendered_variants = variants.map((variant, vIndex) => {
+                    return renderVariant(
+                        variant,
+                        path,
+                        indent,
+                        eIndex,
+                        vIndex,
+                        pluralExamples,
+                        attributeName,
+                    );
+                });
 
                 indent = false;
-                return variants;
+                return rendered_variants;
             } else {
                 // When rendering Message attribute, set label to attribute name.
                 // When rendering Message value, set label to "Value".

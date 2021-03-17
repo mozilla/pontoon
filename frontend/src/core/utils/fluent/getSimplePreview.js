@@ -35,18 +35,18 @@ export default function getSimplePreview(content: ?string): string {
 
     const message = parser.parseEntry(content);
 
-    if (message.type === 'Junk') {
+    if (message.type !== 'Message' && message.type !== 'Term') {
         return content;
     }
 
     let tree;
     if (message.value) {
-        tree = message;
+        tree = message.value;
     } else {
-        tree = message.attributes[0];
+        tree = message.attributes[0].value;
     }
 
-    let elements = serialize(tree.value.elements);
+    let elements = serialize(tree.elements);
 
     return flattenDeep(elements).join('');
 }

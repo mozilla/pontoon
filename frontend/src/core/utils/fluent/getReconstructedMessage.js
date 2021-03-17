@@ -13,6 +13,11 @@ export default function getReconstructedMessage(
     translation: string,
 ): FluentMessage {
     const message = parser.parseEntry(original);
+    if (message.type !== 'Message' && message.type !== 'Term') {
+        throw new Error(
+            `Unexpected type '${message.type}' in getReconstructedMessage`,
+        );
+    }
     let key = message.id.name;
 
     // For Terms, the leading dash is removed in the identifier. We need to add

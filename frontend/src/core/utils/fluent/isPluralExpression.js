@@ -2,7 +2,7 @@
 
 import { CLDR_PLURALS } from 'core/plural';
 
-import type { SelectExpression } from './types';
+import type { SelectExpression } from '@fluent/syntax';
 
 /**
  * Return true when AST element represents a pluralized string.
@@ -10,7 +10,7 @@ import type { SelectExpression } from './types';
  * Keys of all variants of such elements are either CLDR plurals or numbers.
  */
 export default function isPluralExpression(
-    expression: SelectExpression,
+    expression: $ReadOnly<SelectExpression>,
 ): boolean {
     if (!expression || expression.type !== 'SelectExpression') {
         return false;

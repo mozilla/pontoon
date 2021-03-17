@@ -25,7 +25,10 @@ export default function FluentAttribute(props: Props): null | React.Node {
 
     const message = fluent.parser.parseEntry(entity.original);
 
-    if (!fluent.isSimpleSingleAttributeMessage(message)) {
+    if (
+        message.type !== 'Message' ||
+        !fluent.isSimpleSingleAttributeMessage(message)
+    ) {
         return null;
     }
 

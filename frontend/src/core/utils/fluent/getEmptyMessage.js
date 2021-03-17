@@ -1,6 +1,12 @@
 /* @flow */
 
-import { Transformer } from '@fluent/syntax';
+import {
+    Transformer,
+    BaseNode,
+    SelectExpression,
+    TextElement,
+    Variant,
+} from '@fluent/syntax';
 
 import flattenMessage from './flattenMessage';
 import isPluralExpression from './isPluralExpression';
@@ -22,19 +28,24 @@ function getNumericVariants(variants) {
 /**
  * Generate a CLDR template variant
  */
-function getCldrTemplateVariant(variants) {
+function getCldrTemplateVariant(variants: $ReadOnlyArray<Variant>): ?Variant {
     return variants.find((variant) => {
-        return CLDR_PLURALS.indexOf(variant.key.name) !== -1;
+        const key = variant.key;
+        return (
+            key.type === 'Identifier' && CLDR_PLURALS.indexOf(key.name) !== -1
+        );
     });
 }
 
 /**
  * Generate locale plural variants from a template
  */
-function getLocaleVariants(locale, template) {
+function getLocaleVariants(locale: Locale, template: Variant) {
     return locale.cldrPlurals.map((item) => {
         const localeVariant = template.clone();
-        localeVariant.key.name = CLDR_PLURALS[item];
+        if (localeVariant.key.type === 'Identifier') {
+            localeVariant.key.name = CLDR_PLURALS[item];
+        }
         localeVariant.default = false;
         return localeVariant;
     });
@@ -43,7 +54,7 @@ function getLocaleVariants(locale, template) {
 /**
  * Return variants with default variant set
  */
-function withDefaultVariant(variants) {
+function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
     const defaultVariant = variants.find((variant) => {
         return variant.default === true;
     });
@@ -76,13 +87,13 @@ export default function getEmptyMessage(
 ): FluentMessage {
     class EmptyTransformer extends Transformer {
         // Empty Text Elements
-        visitTextElement(node) {
+        visitTextElement(node: TextElement): TextElement {
             node.value = '';
             return node;
         }
 
         // Create empty locale plural variants
-        visitSelectExpression(node) {
+        visitSelectExpression(node: SelectExpression): BaseNode {
             if (isPluralExpression(node)) {
                 const variants = node.variants;
                 const numericVariants = getNumericVariants(variants);
@@ -108,5 +119,5 @@ export default function getEmptyMessage(
 
     // Empty TextElements
     const transformer = new EmptyTransformer();
-    return transformer.visit(flatMessage);
+    return ((transformer.visit(flatMessage): any): FluentMessage);
 }
