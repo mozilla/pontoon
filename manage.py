@@ -11,7 +11,7 @@ if __name__ == '__main__':
     warnings.filterwarnings('ignore', module='dotenv')
 
     # Read .env file and inject it's values into the environment
-    dotenv.read_dotenv()
+    dotenv.read_dotenv(os.environ.get("DOTENV_PATH"))
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pontoon.settings')
 

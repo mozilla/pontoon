@@ -24,7 +24,7 @@ django-bmemcached==0.2.3
 django-cors-headers==3.5.0
 django-csp==3.7
 django-dirtyfields==1.3.1
-django-dotenv==1.3.0
+django-dotenv==1.4.2
 django-guardian==2.3.0
 django-jinja==2.7.0
 django-notifications-hq==1.6.0
