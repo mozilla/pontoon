@@ -32,7 +32,7 @@ type ContentProps = {|
  */
 function LightboxContent({ image, onClose }: ContentProps) {
     const handleKeyDown = React.useCallback(
-        (event: SyntheticKeyboardEvent<>) => {
+        (event: KeyboardEvent) => {
             // On keys:
             //   - 13: Enter
             //   - 27: Escape
