@@ -24,13 +24,13 @@ jobs:
         with:
           node-version: '14'
       - name: Install dependencies
-        run: npm install
+        run: yarn
         working-directory: frontend
       - name: flow
-        run: npm run flow
+        run: yarn flow
         working-directory: frontend
       - name: build
-        run: npm run build
+        run: yarn build
         working-directory: frontend
 
   jest:
