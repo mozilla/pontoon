@@ -44,7 +44,7 @@
     "slate": "0.58.4",
     "slate-react": "0.58.4",
     "styled-components": "4.3.2",
-    "tlds": "1.203.1"
+    "tlds": "1.218.0"
   },
   "scripts": {
     "start": "react-scripts start",
