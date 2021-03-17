@@ -21,7 +21,7 @@ help:
 	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
 	@echo "  test-frontend    Runs the new frontend's test suite"
-	@echo "  jest             Runs the jest test runner on all Translate.Next tests"
+	@echo "  jest             Runs the jest test runner on all frontend tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
