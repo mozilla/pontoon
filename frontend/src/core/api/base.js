@@ -53,28 +53,26 @@ export default class APIBase {
         method: string,
         payload: URLSearchParams | FormData | null,
         headers: Headers,
-    ): Promise<Object> {
+    ): Promise<any> {
         const fullUrl = this.getFullURL(url);
 
-        const requestParams = {};
-        requestParams.method = method;
-        requestParams.credentials = 'same-origin';
-        requestParams.headers = headers;
+        const requestParams = {
+            method: method,
+            credentials: ('same-origin': CredentialsType),
+            headers: headers,
+            // This signal is used to cancel requests with the `abort()` method.
+            signal: this.signal,
+            body: payload,
+        };
 
-        // This signal is used to cancel requests with the `abort()` method.
-        requestParams.signal = this.signal;
-
-        if (payload !== null) {
-            if (method === 'POST') {
-                requestParams.body = payload;
-            } else if (method === 'GET') {
-                fullUrl.search = payload.toString();
-            }
+        if (payload !== null && method === 'GET') {
+            requestParams.body = null;
+            fullUrl.search = payload.toString();
         }
 
         let response;
         try {
-            response = await fetch(fullUrl, requestParams);
+            response = await fetch(fullUrl.toString(), requestParams);
         } catch (e) {
             // Swallow Abort errors because we trigger them ourselves.
             if (e.name === 'AbortError') {
