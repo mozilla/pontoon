@@ -146,8 +146,8 @@ you create:
    Optional. Enable Sync button in project Admin.
 
 ``MEDIA_ROOT``
-   Optional. The absolute path of the "media" folder where the projects will be
-   cloned (it located next to the "pontoon" Python module by default).
+   Optional. The absolute path of the "media" folder the projects will be
+   cloned into (it is located next to the "pontoon" Python module by default).
 
 ``MICROSOFT_TRANSLATOR_API_KEY``
    Optional. Set your `Microsoft Translator API key`_ to use machine translation
