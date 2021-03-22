@@ -93,15 +93,25 @@ export default class TranslationAPI extends APIBase {
     }
 
     unapprove(id: number, resource: string): Promise<any> {
-        return this._changeStatus('/translations/unapprove/', id, resource);
+        return this._changeStatus(
+            '/translations/unapprove/',
+            id,
+            resource,
+            false,
+        );
     }
 
     reject(id: number, resource: string): Promise<any> {
-        return this._changeStatus('/translations/reject/', id, resource);
+        return this._changeStatus('/translations/reject/', id, resource, false);
     }
 
     unreject(id: number, resource: string): Promise<any> {
-        return this._changeStatus('/translations/unreject/', id, resource);
+        return this._changeStatus(
+            '/translations/unreject/',
+            id,
+            resource,
+            false,
+        );
     }
 
     delete(id: number): Promise<any> {
