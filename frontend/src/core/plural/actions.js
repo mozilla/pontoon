@@ -17,7 +17,7 @@ export function moveToNextTranslation(
     nextEntity: number,
     pluralForm: number,
     locale: Locale,
-): Function {
+): void {
     if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
         dispatch(select(pluralForm + 1));
     } else if (nextEntity !== entity) {

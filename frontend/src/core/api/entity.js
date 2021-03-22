@@ -161,7 +161,7 @@ export default class EntityAPI extends APIBase {
             return [];
         }
 
-        return results;
+        return (results: OtherLocaleTranslations);
     }
 
     async getTeamComments(entity: number, locale: string): Promise<any> {
