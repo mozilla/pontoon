@@ -16,38 +16,43 @@ Example use case: we introduce a brand new feature, like string comments, and we
 
 # Feature explanation
 
-When a logged in user opens Pontoon, we check against a list of notifications. If the user matches the necessary conditions, we display the notification.
+When a logged in user opens Pontoon, we check against a list of infobars. If the user matches the necessary conditions, we display the infobar.
 
-Information about each notification is stored in a table with the following fields:
+Information about each infobar is stored in a table with the following fields:
 * Identifier: short text identifier, e.g. `new_terms_2020`.
 * Start time (datetime): when we should start displaying the infobar to users.
 * End time (datetime): when we should stop displaying the infobar to users.
-* Creation date (date): stores when the notification was created.
-* Cohort: if defined, we only display the notification for users part of a specific experiment or cohort (A/B testing).
+* Creation date (date): stores when the infobar was created.
+* Cohort: if defined, we only display the infobar for users part of a specific experiment or cohort (A/B testing).
 * Type: `infobar`, `modal`. Infobar is displayed at the top of the window, while modal is displayed in the middle of the window.
-* Title: (optional) title for the notification.
-* Text: (mandatory) text for the notification. Basic HTML should be allowed.
-* Button: text for the button. If empty, the button will not be displayed. The only action associated to a button would be opening the associated URL.
-* URL: URL to open when the user clicks the button.
+* Title: (optional) title for the infobar.
+* Text: (mandatory) text for the infobar. Basic HTML should be allowed.
+* Button: text for the button. If empty, the button will not be displayed. The only action associated to a button would be opening the associated URL. The button is mandatory for `modal`, optional for `infobar`.
+* URL: URL to open when the user clicks the button. Mandatory if the button field is populated.
 
-We also need to store information on the last time we displayed the infobar to each user, to determine if it should be displayed again in the future:
+For each user, we need to store if an infobar has been dismissed, to avoid displaying it again. We store that information in a table with the following fields:
 * User ID.
-* Notification ID.
-* First displayed (timestamp).
-* Dismissed date (timestamp).
-* Number of times it’s been displayed.
-* Dismissed (boolean).
+* Infobar ID.
+* Action date (datetime).
 
-If there are multiple notifications active, we only display the most recent based on creation date.
+We also want to keep track of every time we display the infobar to each user. Every display action will be logged in a table with the following fields:
+* User ID.
+* Infobar ID.
+* Action date (datetime).
 
-We create a row in the table for the user the first time the notification is displayed, and keep updating the table until it’s dismissed.
+# Dismissing infobars
 
-For `infobar`, the notification won’t be displayed to the user again (i.e. the `dismissed` field is set to True) if:
+For the `infobar` type, the infobar won’t be displayed to the user again if:
 * They click the close (x) button.
 * They click the button, if present.
 
-For `modal` notifications, it won’t be displayed to the user again only if they click the button, which has to be present. The notification won’t have a close button (x).
+For `modal` infobars, it won’t be displayed to the user again only if they click the button, which has to be present. The infobar won’t have a close button (x).
+
+# Multiple infobars
+
+If there are multiple infobars active, we only display the most recent based on creation date.
 
 # Out of scope
 
-Writing a dashboard to manage these notifications is out of scope. For the initial phase, working directly via the Django Admin interface would be sufficient.
+* Writing a dashboard to manage infobars is out of scope. For the initial phase, working directly via the Django Admin interface would be sufficient.
+* Tracking changes to existing infobars.
