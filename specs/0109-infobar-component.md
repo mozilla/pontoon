@@ -12,9 +12,7 @@ We need a flexible way to notify users without writing ad-hoc code for every sit
 * Infobars should be manageable by admins without intervention from developers.
 * Unlike notifications, infobars are more visible and require interaction from users to get dismissed.
 
-Potential use cases:
-* We introduce a brand new feature, like string comments, and we want to make sure that users are aware of it. The infobar will include a short message and a link to documentation.
-* We want to promote the Pontoon add-on. The notification will include a button opening the AMO page to install the add-on.
+Example use case: we introduce a brand new feature, like string comments, and we want to make sure that users are aware of it. The infobar will include a short message and a link to documentation.
 
 # Feature explanation
 
@@ -22,7 +20,8 @@ When a logged in user opens Pontoon, we check against a list of notifications. I
 
 Information about each notification is stored in a table with the following fields:
 * Identifier: short text identifier, e.g. `new_terms_2020`.
-* Active (boolean): indicates if the notification is currently active or not.
+* Start time (datetime): when we should start displaying the infobar to users.
+* End time (datetime): when we should stop displaying the infobar to users.
 * Creation date (date): stores when the notification was created.
 * Cohort: if defined, we only display the notification for users part of a specific experiment or cohort (A/B testing).
 * Type: `infobar`, `modal`. Infobar is displayed at the top of the window, while modal is displayed in the middle of the window.
