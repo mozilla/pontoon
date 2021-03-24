@@ -26,6 +26,12 @@ Information about each infobar is stored in a table with the following fields:
 * End time (datetime): when we should stop displaying the infobar to users.
 * Creation date (date): stores when the infobar was created.
 * Cohort: if defined, we only display the infobar for users part of a specific experiment or cohort (A/B testing).
+* Selector (optional): a CSS selector.
+    * If empty, the infobar will be displayed at the top of the page.
+    * If defined, the infobar will be displayed as a pop-up above the element identified by the selector.
+* Pages pattern (optional): regular expression to indicate on which pages the infobar should be displayed.
+    * If empty, the infobar will be displayed on all pages.
+    * If defined, the infobar will be displayed only on pages whose URL matches the regular expression.
 * Title (optional): title for the infobar.
 * Text (mandatory): text for the infobar.
     * Basic HTML should be allowed, including anchors.
@@ -62,3 +68,4 @@ If there are multiple infobars active, we only display the most recent based on 
 The following features are out of scope:
 * Writing a dashboard to manage infobars. For the initial phase, working directly via the Django Admin interface would be sufficient.
 * Tracking changes to existing infobars.
+* Customizing the aspect of the infobars.
