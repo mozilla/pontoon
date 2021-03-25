@@ -4,7 +4,7 @@
 
 # Summary
 
-Create a reusable component to display infobars to users.
+Create a component to display infobars to users.
 
 # Motivation
 
@@ -18,14 +18,14 @@ Example use cases:
 
 # Feature explanation
 
-When a logged in user opens Pontoon, we check against a list of infobars. If the user matches the necessary conditions, we display the infobar.
+When a logged in user opens Pontoon, we check against a list of infobars. If there is an active infobar, the user belongs to the assigned cohort (where it’s defined) and they haven’t dismissed it yet, we display it.
 
 Information about each infobar is stored in a table with the following fields:
 * Identifier: short text identifier, e.g. `new_terms_2020`.
 * Start time (datetime): when we should start displaying the infobar to users.
 * End time (datetime): when we should stop displaying the infobar to users.
 * Creation date (date): stores when the infobar was created.
-* Cohort: if defined, we only display the infobar for users part of a specific experiment or cohort (A/B testing).
+* Cohort (optional): if defined, we only display the infobar for users part of a specific experiment or cohort (A/B testing).
 * Selector (optional): a CSS selector.
     * If empty, the infobar will be displayed at the top of the page.
     * If defined, the infobar will be displayed as a pop-up above the element identified by the selector.
@@ -34,10 +34,10 @@ Information about each infobar is stored in a table with the following fields:
     * If defined, the infobar will be displayed only on pages whose URL matches the regular expression.
 * Title (optional): title for the infobar.
 * Text (mandatory): text for the infobar.
-    * Basic HTML should be allowed, including anchors.
+    * Basic HTML should be allowed: `<p>`, `<strong>`, `<em>`, `<a>`. For all anchors `target=_blank` will be enforced.
 * Button (optional): text for an optional button.
     * The button will not be displayed if this field is empty.
-    * The only action associated to a button would be opening the URL specified in the URL field.
+    * The only action associated to a button would be opening the URL specified in the URL field in a new tab.
 * URL: URL to open when the user clicks the button.
     * This field is mandatory if the button field is populated.
 
