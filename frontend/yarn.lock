@@ -9778,10 +9778,10 @@ react-clientside-effect@^1.2.2:
   dependencies:
     "@babel/runtime" "^7.12.13"
 
-react-content-marker@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-1.1.3.tgz#feecebb87be853afe4808ccac03c4bd4e9d3a39f"
-  integrity sha512-sGHrknj1al+L7o1F5Vz07bTskblI78U4ffabu1fGTqKP8OTDrncwFKMj86XSRcId6y4NVUwnV8uFRoSBsfwHdA==
+react-content-marker@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-content-marker/-/react-content-marker-2.0.0.tgz#8c6337e77db207ee62db4bdddaf68b1758051b17"
+  integrity sha512-WDDZLQaGaelVhKwx1xD1+0MQtJi73XNkZlEw1eu6Yz27ZTOhiZo8uDdMxtRaAk/chNFUqZ1XbY9HiGmBqfsVYQ==
   dependencies:
     shortid "^2.2.15"
 
