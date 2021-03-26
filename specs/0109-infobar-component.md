@@ -68,4 +68,4 @@ If there are multiple infobars active, we only display the most recent based on 
 The following features are out of scope:
 * Writing a dashboard to manage infobars. For the initial phase, working directly via the Django Admin interface would be sufficient.
 * Tracking changes to existing infobars.
-* Customizing the aspect of the infobars.
+* Customizing the appearance of the infobars.
