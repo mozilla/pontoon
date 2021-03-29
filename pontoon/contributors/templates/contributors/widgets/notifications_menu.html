@@ -27,12 +27,8 @@
   {% for notification in notifications %}
     <li class="notification-item" data-id="{{ notification.id }}" data-level="{{ notification.level }}" data-unread="{{ notification.unread|to_json() }}">
       <div class="item-content">
-        {% set is_comment = False %}
         {% set target = notification.target %}
-
-        {% if target and target.resource %}
-          {% set is_comment = True %}
-        {% endif %}
+        {% set description = notification.description %}
 
         {% if notification.actor.slug %}
           {% set actor_anchor = notification.actor %}
@@ -43,46 +39,48 @@
           {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% endif %}
 
-        <span class="actor">
-          {% if is_comment %}
+        {% if target and target.resource %}
+          <span class="actor">
             {{ actor_anchor }}
-          {% else %}
-            <a href="{{ actor_url }}">{{ actor_anchor }}</a>
-          {% endif %}
-        </span>
+          </span>
 
-        <span class="verb">
-          {% if is_comment %}
+          <span class="verb">
             {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
             <a href="{{ link + '?string=' + target.pk|string }}">{{ notification.verb }}</a>
-          {% else %}
+          </span>
+
+          <span class="target">
+            {{ target.resource.project.name }}
+          </span>
+
+          <p class="timeago">{{ notification.timesince() }} ago</p>
+
+          <div class="message trim">{{ description|linkify|safe }}</div>
+
+        {% else %}
+
+          <span class="actor">
+            <a href="{{ actor_url }}">{{ actor_anchor }}</a>
+          </span>
+
+          <span class="verb">
             {{ notification.verb }}
-          {% endif %}
-        </span>
-        {% if target %}
-          {% if target.slug %}
+          </span>
+
+          {% if target %}
             <span class="target">
               <a href="{{ url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
             </span>
-
-          {% elif target.resource %}
-            <span class="target">
-              {{ target.resource.project.name }}
-            </span>
           {% endif %}
-        </span>
-        {% endif %}
 
-        <p class="timeago">{{ notification.timesince() }} ago</p>
+          <p class="timeago">{{ notification.timesince() }} ago</p>
 
-        {% set description = notification.description %}
-        {% if description %}
-          {% if not is_comment %}
+          {% set description = notification.description %}
+          {% if description %}
             <div class="message">{{ description|safe }}</div>
-          {% else %}
-            <div class="message trim">{{ description|linkify|safe }}</div>
           {% endif %}
-        {% endif %}
+
+        {% endif%}
       </div>
     </li>
     {% if not loop.last %}

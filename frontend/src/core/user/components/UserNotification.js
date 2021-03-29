@@ -39,7 +39,7 @@ export default class UserNotification extends React.Component<Props, State> {
         const { notification } = this.props;
 
         let className = 'user-notification';
-        let is_comment = !notification.description.content
+        let isComment = !notification.description.content
             ? false
             : notification.description.is_comment;
         if (notification.unread) {
@@ -48,64 +48,33 @@ export default class UserNotification extends React.Component<Props, State> {
             className += ' read';
         }
 
-        return (
-            <li
-                className={className}
-                data-id={notification.id}
-                data-level={notification.level}
-            >
-                <div className='item-content'>
-                    <span className='actor'>
-                        {is_comment ? (
-                            notification.actor.anchor
-                        ) : (
-                            <a href={notification.actor.url}>
-                                {notification.actor.anchor}
-                            </a>
-                        )}
-                    </span>
+        if (isComment) {
+            return (
+                <li
+                    className={className}
+                    data-id={notification.id}
+                    data-level={notification.level}
+                >
+                    <div className='item-content'>
+                        <span className='actor'>
+                            {notification.actor.anchor}
+                        </span>
 
-                    <span className='verb'>
-                        {!is_comment ? (
-                            notification.verb
-                        ) : (
+                        <span className='verb'>
                             <a href={notification.target.url}>
                                 {notification.verb}
                             </a>
-                        )}
-                    </span>
-
-                    {!notification.target ? null : (
-                        <span className='target'>
-                            {is_comment ? (
-                                notification.target.anchor
-                            ) : (
-                                <a href={notification.target.url}>
-                                    {notification.target.anchor}
-                                </a>
-                            )}
                         </span>
-                    )}
 
-                    <ReactTimeAgo
-                        className='timeago'
-                        date={new Date(notification.date_iso)}
-                        title={`${notification.date} UTC`}
-                    />
+                        <span className='target'>
+                            {notification.target.anchor}
+                        </span>
 
-                    {!notification.description.content ? null : !notification
-                          .description.is_comment ? (
-                        <div
-                            className='message'
-                            // We can safely use notification.description as it is either generated
-                            // by the code or sanitized when coming from the DB. See:
-                            //   - pontoon.projects.forms.NotificationsForm()
-                            //   - pontoon.base.forms.HtmlField()
-                            dangerouslySetInnerHTML={{
-                                __html: notification.description.content,
-                            }}
+                        <ReactTimeAgo
+                            className='timeago'
+                            date={new Date(notification.date_iso)}
+                            title={`${notification.date} UTC`}
                         />
-                    ) : (
                         <div className='message trim'>
                             <Linkify
                                 properties={{
@@ -121,6 +90,55 @@ export default class UserNotification extends React.Component<Props, State> {
                                 {parse(notification.description.content)}
                             </Linkify>
                         </div>
+                    </div>
+                </li>
+            );
+        }
+
+        return (
+            <li
+                className={className}
+                data-id={notification.id}
+                data-level={notification.level}
+            >
+                <div className='item-content'>
+                    <span className='actor'>
+                        <a href={notification.actor.url}>
+                            {notification.actor.anchor}
+                        </a>
+                    </span>
+
+                    <span className='verb'>
+                        <a href={notification.target.url}>
+                            {notification.verb}
+                        </a>
+                    </span>
+
+                    {!notification.target ? null : (
+                        <span className='target'>
+                            <a href={notification.target.url}>
+                                {notification.target.anchor}
+                            </a>
+                        </span>
+                    )}
+
+                    <ReactTimeAgo
+                        className='timeago'
+                        date={new Date(notification.date_iso)}
+                        title={`${notification.date} UTC`}
+                    />
+
+                    {!notification.description.content ? null : (
+                        <div
+                            className='message'
+                            // We can safely use notification.description as it is either generated
+                            // by the code or sanitized when coming from the DB. See:
+                            //   - pontoon.projects.forms.NotificationsForm()
+                            //   - pontoon.base.forms.HtmlField()
+                            dangerouslySetInnerHTML={{
+                                __html: notification.description.content,
+                            }}
+                        />
                     )}
                 </div>
             </li>

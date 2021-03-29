@@ -68,6 +68,12 @@
     white-space: nowrap;
 }
 
+.user-notification .item-content:hover .message,
+.user-notification .item-content:hover .message.trim p,
+.user-notification .item-content:hover .message.trim a {
+    color: #ebebeb;
+}
+
 .user-notification .message.trim a {
     color: #aaaaaa;
 }
