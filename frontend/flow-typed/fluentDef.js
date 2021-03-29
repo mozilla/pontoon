@@ -1,5 +1,17 @@
 /* @flow */
 
+declare module '@fluent/langneg' {
+    declare interface NegotiateLanguagesOptions {
+        strategy?: 'filtering' | 'matching' | 'lookup';
+        defaultLocale?: string;
+    }
+    declare export function negotiateLanguages(
+        requestedLocales: $ReadOnlyArray<string>,
+        availableLocales: $ReadOnlyArray<string>,
+        opts?: NegotiateLanguagesOptions,
+    ): Array<string>;
+}
+
 declare module '@fluent/syntax' {
     declare export class BaseNode {
         [name: string]: mixed;
