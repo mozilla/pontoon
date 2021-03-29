@@ -108,11 +108,7 @@ export default class UserNotification extends React.Component<Props, State> {
                         </a>
                     </span>
 
-                    <span className='verb'>
-                        <a href={notification.target.url}>
-                            {notification.verb}
-                        </a>
-                    </span>
+                    <span className='verb'>{notification.verb}</span>
 
                     {!notification.target ? null : (
                         <span className='target'>
