@@ -1,5 +1,27 @@
 /* @flow */
 
+declare module '@fluent/bundle' {
+    declare export class FluentResource {
+        constructor(source: string): this;
+    }
+    declare export type TextTransform = (text: string) => string;
+    declare export class FluentBundle {
+        constructor(
+            locales: string | Array<string>,
+            opts?: {
+                useIsolating?: boolean,
+                transform?: TextTransform,
+            },
+        ): this;
+        addResource(
+            res: FluentResource,
+            opts?: {
+                allowOverrides?: boolean,
+            },
+        ): Array<Error>;
+    }
+}
+
 declare module '@fluent/langneg' {
     declare interface NegotiateLanguagesOptions {
         strategy?: 'filtering' | 'matching' | 'lookup';
