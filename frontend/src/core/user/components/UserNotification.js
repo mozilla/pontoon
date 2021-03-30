@@ -75,6 +75,7 @@ export default class UserNotification extends React.Component<Props, State> {
                             date={new Date(notification.date_iso)}
                             title={`${notification.date} UTC`}
                         />
+
                         <div className='message trim'>
                             <Linkify
                                 properties={{
