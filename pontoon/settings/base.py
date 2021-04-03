@@ -535,28 +535,29 @@ STATICFILES_DIRS = [
 
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
-def _allowed_hosts():
-    from urllib.parse import urlparse
-    from django.conf import settings
-
-    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
-    result = [host]
+#def _allowed_hosts():
+#    from urllib.parse import urlparse
+#    from django.conf import settings
+#    from six.moves.urllib.parse import urlparse
+#
+#    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
+#    result = [host]
     # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
     # have a version of the host that contains the port. This only applies
     # to local development (usually the host is localhost:8000).
-    if ":" in host:
-        host_no_port = host.rsplit(":", 1)[0]
-        result = [host, host_no_port]
+#    if ":" in host:
+#        host_no_port = host.rsplit(":", 1)[0]
+#        result = [host, host_no_port]
 
     # add values from environment variable. Needed in case of URL/domain redirections
-    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
-    env_vars = [x.strip() for x in env_vars_str.split(",")]
-    result.extend(env_vars)
+#    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
+#    env_vars = [x.strip() for x in env_vars_str.split(",")]
+#    result.extend(env_vars)
 
-    return result
+#    return result
 
-
-ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+#ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+ALLOWED_HOSTS= ["translate.readingsnail.pe.kr", "readingsnail.pe.kr", "translates.herokuapp.com"]
 
 # Auth
 # The first hasher in this list will be used for new passwords.
@@ -632,35 +633,36 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
-CSP_DEFAULT_SRC = ("'none'",)
+CSP_DEFAULT_SRC = ("https:",)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = ("https:",)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
 )
-CSP_FONT_SRC = ("'self'",)
+#CSP_FONT_SRC = ("'unsafe-inline'",)
 CSP_IMG_SRC = (
     "'self'",
+    "'unsafe-inline'",
     "https:",
     # Needed for ACE editor images
     "data:",
     "https://*.wp.com/pontoon.mozilla.org/",
-    "https://www.google-analytics.com",
+#    "https://www.google-analytics.com",
     "https://www.gravatar.com/avatar/",
 )
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'unsafe-eval'",
-    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
+#CSP_SCRIPT_SRC = (
+#    "'self'"
+#    "'unsafe-eval'",
+#    "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
     # Rules related to Google Analytics
-    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
-    "https://www.google-analytics.com/analytics.js",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",
-)
+#    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
+#    "https://www.google-analytics.com/analytics.js",
+# )
+# CSP_STYLE_SRC = (
+#    "'self'",
+#    "'unsafe-inline'",
+#)
 
 # Needed if site not hosted on HTTPS domains (like local setup)
 if not (HEROKU_DEMO or SITE_URL.startswith("https")):
@@ -668,6 +670,7 @@ if not (HEROKU_DEMO or SITE_URL.startswith("https")):
     CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
 
 # For absolute urls
+
 try:
     DOMAIN = socket.gethostname()
 except OSError:
@@ -744,7 +747,7 @@ try:
 except ValueError:
     SYNC_TASK_TIMEOUT = 60 * 60 * 1  # 1 hour
 
-SYNC_LOG_RETENTION = 90  # days
+SYNC_LOG_RETENTION = 5  # days
 
 MANUAL_SYNC = os.environ.get("MANUAL_SYNC", "True") != "False"
 
