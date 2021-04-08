@@ -21,9 +21,9 @@ describe('reducer', () => {
     it('handles the RECEIVE action', () => {
         const initial = {
             fetching: true,
-            localization: new ReactLocalization([{ messages: ['hello'] }]),
+            localization: new ReactLocalization([]),
         };
-        const localization = new ReactLocalization([{ messages: ['world'] }]);
+        const localization = new ReactLocalization([]);
 
         const res = reducer(initial, { type: RECEIVE, localization });
 
