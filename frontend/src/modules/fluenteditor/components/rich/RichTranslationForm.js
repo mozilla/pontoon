@@ -23,6 +23,7 @@ import type {
 } from '@fluent/syntax';
 
 type MessagePath = Array<string | number>;
+type Child = SyntaxNode | Array<SyntaxNode>;
 
 /**
  * Return a clone of a translation with one of its elements replaced with a new
@@ -39,7 +40,7 @@ function getUpdatedTranslation(
     if (source.type !== 'Message' && source.type !== 'Term') {
         return source;
     }
-    let dest = source;
+    let dest: Child = source;
     // Walk the path until the next to last item.
     for (let i = 0, ln = path.length; i < ln - 1; i++) {
         // $FlowIgnore: dest can be an Array or a BaseNode, ignore BaseNode[0]
