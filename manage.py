@@ -5,15 +5,21 @@ import sys
 import dotenv
 
 
+ROOT = os.path.dirname(__file__)
+
+
+def path(*args):
+    return os.path.join(ROOT, *args)
+
+
 if __name__ == "__main__":
     # Read dotenv file and inject it's values into the environment
-    root_path = os.path.dirname(__file__)
-    if (
-        "DOTENV_PATH" in os.environ
-        or os.path.isfile(os.path.join(root_path, ".env"))
-        or os.path.isfile(os.path.join(root_path, ".env", ".env"))
-    ):
+    if "DOTENV_PATH" in os.environ:
         dotenv.read_dotenv(os.environ.get("DOTENV_PATH"))
+    elif os.path.isfile(path(".env")):
+        dotenv.read_dotenv(path(".env"))
+    elif os.path.isfile(path(".env", ".env")):
+        dotenv.read_dotenv(path(".env", ".env"))
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pontoon.settings")
 
