@@ -81,7 +81,7 @@ export default function AddComment(props: Props): React.Element<'div'> {
 
     const userNames = users.map((user) => user.name);
     const suggestedUsers = userNames
-        .filter((c) => c.toLowerCase().startsWith(search.toLowerCase()))
+        .filter((c) => c.toLowerCase().includes(search.toLowerCase()))
         .slice(0, 5);
 
     // Set position of mentions suggestions
