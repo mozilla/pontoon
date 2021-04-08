@@ -1206,34 +1206,34 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fluent/bundle@0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.16.0.tgz#e0cab75ba6ce9d9147ace3cb6ec61fd90f31ec1f"
-  integrity sha512-kUEAUePhb/y2BCcNpKOnjCs+WJkDczVpUUAQ+cDl0xvBGqL0Kv0Yog2oHSuv/Ou22c6KdXbvfCl3We0bIZnrmg==
+"@fluent/bundle@0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@fluent/bundle/-/bundle-0.16.1.tgz#2d359eb2eca4c6053335258f6d3e1025f3fd3b1d"
+  integrity sha512-l/y8uvAC1vAIEGXfbt97g36s9gJ6wdEFRWCJo4vtoxD1e210MxBAXfLhU+wfzaatlxwh+HjJ15G41ee6V8Y4ww==
 
-"@fluent/langneg@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@fluent/langneg/-/langneg-0.5.0.tgz#de448070efa16c8fb6cc4af1629663f01e10689b"
-  integrity sha512-jv0g3YO5byz29HXEE6DBzAog60q726mwV2nIoekEX590JVh+mbd6/ZXT5/l4mN2BMlrelzyscCTffKI4XScVtg==
+"@fluent/langneg@0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@fluent/langneg/-/langneg-0.5.1.tgz#da8639bb22b46793feed326114a78610d1bb54a5"
+  integrity sha512-cjaaK6TNt32NaBChZfSDO3nSDzCthNx0rQn0Map52USlHVgbjRK/ReQxh5bE8jyms9KYWXDsLFqJmdsbHlBB/w==
 
-"@fluent/react@0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@fluent/react/-/react-0.13.0.tgz#cf2652d56fe22072dfeb30dcd2e03650fb913f88"
-  integrity sha512-NdITFI7eqecpb2Ty+I9g2BKxbzhdBKoKm8eU3/vnmBhGDeFgkS/aACSHF3gV2rL87JW9A+h4Ih1ympWp8OqqxQ==
+"@fluent/react@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@fluent/react/-/react-0.13.1.tgz#c6337f6031220baf78c08c9f31d2c6ded4531508"
+  integrity sha512-0hvWZojJgc97J1V2nI2COvStjKOD3blYGk1EPdDyhK+OhddsZR4Gp9S1c4cOdxNjLYbz1sBwBOMOKP+tY6Zarg==
   dependencies:
     "@fluent/sequence" "0.5.0"
     cached-iterable "^0.2.1"
-    prop-types "^15.6.0"
+    prop-types "^15.7.2"
 
 "@fluent/sequence@0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@fluent/sequence/-/sequence-0.5.0.tgz#6349b614711df2d8ed256598fa31a757fe032539"
   integrity sha512-70LhnbPO/sO2rI2vHws66QwKq9a7PKiEN0hrc65xY3LzWq3AlATZnt+EmFG1ihmPI+5mqGPnJMAdpp3qze3X2Q==
 
-"@fluent/syntax@0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@fluent/syntax/-/syntax-0.16.1.tgz#8da0946c9016349fe670f5fecdea772b2a78f1be"
-  integrity sha512-/lgGfJpSTKo0z6nW/z9LrtkFj2yhfV+D6ayk7KVQfnfCYpLWxbFsY6dvHzRUTQj7NBuWbEyMPTXW5yuOIlVo7g==
+"@fluent/syntax@0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@fluent/syntax/-/syntax-0.17.0.tgz#3e6385c44bda2a44a68b83a1efbadc1a134e9805"
+  integrity sha512-fgJNUZRBk/n5MO5AxZ7Vvv8aCzMF6NanGBS1GFR2HG2lnsGqHLAe9OeHpyg+FkKfP5SvOtbyk3Nkza5iIwN/Ug==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
