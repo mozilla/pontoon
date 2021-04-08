@@ -10,9 +10,22 @@ import dotenv
 from django.core.wsgi import get_wsgi_application
 from wsgi_sslify import sslify
 
+_dirname = os.path.dirname
+ROOT = _dirname(_dirname(os.path.abspath(__file__)))
 
+
+def path(*args):
+    return os.path.join(ROOT, *args)
+
+
+# Read .env file and inject it's values into the environment
 if "DOTENV_PATH" in os.environ:
-    dotenv.read_dotenv(os.environ["DOTENV_PATH"])
+    dotenv.read_dotenv(os.environ.get("DOTENV_PATH"))
+elif os.path.isfile(path(".env")):
+    dotenv.read_dotenv(path(".env"))
+elif os.path.isfile(path(".env", ".env")):
+    dotenv.read_dotenv(path(".env", ".env"))
+
 
 # Set settings env var before importing whitenoise as it depends on
 # some settings.
