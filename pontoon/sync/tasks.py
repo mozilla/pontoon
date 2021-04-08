@@ -333,7 +333,7 @@ def sync_translations(
             if locale in locales:
                 created = update_translated_resources(db_project, vcs_project, locale)
                 if created:
-                    new_locales.append[locale.pk]
+                    new_locales.append(locale.pk)
 
             # We don't have files: we can still update asymmetric translated resources.
             else:
