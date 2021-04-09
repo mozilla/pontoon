@@ -48,7 +48,7 @@ you create:
 .. NOTE::
 
    Alternatively, you can put all variables below in a `dotenv
-   <https://github.com/jpadilla/django-dotenv>`_ text file::
+   <https://saurabh-kumar.com/python-dotenv/>`_ text file::
 
       VAR="value 1"
       OTHER_VAR="other value"
