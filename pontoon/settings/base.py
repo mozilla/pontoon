@@ -844,3 +844,5 @@ NOTIFICATIONS_MAX_COUNT = 7
 
 # Number of events displayed on the Contributor's timeline per page.
 CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

@@ -301,7 +301,7 @@ def test_manage_project_strings_download_csv(client_superuser):
     # Test downloading the data.
     response = client_superuser.get(url, {"format": "csv"})
     assert response.status_code == 200
-    assert response._headers["content-type"] == ("Content-Type", "text/csv")
+    assert response.headers["content-type"] == "text/csv"
 
     # Verify the original content is here.
     assert b"pedestal" in response.content
