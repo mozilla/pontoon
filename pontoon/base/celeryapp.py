@@ -1,23 +1,11 @@
 import os
-import warnings
 
 import dotenv
 from celery import Celery
 
 
-_dirname = os.path.dirname
-ROOT = _dirname(_dirname(_dirname(os.path.abspath(__file__))))
-
-
-def path(*args):
-    return os.path.join(ROOT, *args)
-
-
-# Filter out missing .env warning, it's fine if we don't have one.
-warnings.filterwarnings("ignore", module="dotenv")
-
-# Read .env file and inject it's values into the environment
-dotenv.read_dotenv(path(".env"))
+# Read dotenv file and inject it's values into the environment
+dotenv.load_dotenv(dotenv_path=os.environ.get("DOTENV_PATH"))
 
 # Set the default Django settings module for `celery`.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pontoon.settings")

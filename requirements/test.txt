@@ -208,10 +208,6 @@ django-csp==3.7 \
 django-dirtyfields==1.3.1 \
     --hash=sha256:c3aafe524fc26c6ac573bbaf3ea852607e7b0f8622a2ec23dcdf65e1a9dcb7bb
     # via -r requirements/default.txt
-django-dotenv==1.4.2 \
-    --hash=sha256:3812bb0f4876cf31f902aad140f0645e120e51ee30eb7c40c22050f58a0e4adb \
-    --hash=sha256:a9b1b40a70bd321acd231926acedb9bd2c5e873e33a1873b34a7276d196a765e
-    # via -r requirements/default.txt
 django-guardian==2.3.0 \
     --hash=sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8 \
     --hash=sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b
@@ -572,6 +568,10 @@ python-dateutil==2.8.1 \
     # via
     #   -r requirements/default.txt
     #   faker
+python-dotenv==0.17.0 \
+    --hash=sha256:471b782da0af10da1a80341e8438fca5fadeba2881c54360d5fd8d03d03a4f4a \
+    --hash=sha256:49782a97c9d641e8a09ae1d9af0856cc587c8d2474919342d5104d85be9890b2
+    # via -r requirements/default.txt
 python-levenshtein==0.12.2 \
     --hash=sha256:dc2395fbd148a1ab31090dd113c366695934b9e85fe5a4b2a032745efd0346f6
     # via -r requirements/default.txt
