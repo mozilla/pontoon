@@ -84,7 +84,7 @@ jobs:
       - name: Pre-flight commit
         run: git commit -am"Pre-flight flow to ts"
       - name: flow-to-ts
-        run: flow-to-ts --write --delete-source 'frontend/src/**/*.js'
+        run: flow-to-ts --write --delete-source --inline-utility-types 'frontend/src/**/*.js'
       - name: prettier
         run: npm run prettier
       - name: Stage

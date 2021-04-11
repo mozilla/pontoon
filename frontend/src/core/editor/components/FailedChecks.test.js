@@ -4,6 +4,7 @@ import * as editor from 'core/editor';
 import * as locale from 'core/locale';
 import * as project from 'core/project';
 import * as user from 'core/user';
+import * as utils from 'core/utils';
 
 import {
     createDefaultUser,
@@ -16,8 +17,10 @@ import FailedChecks from './FailedChecks';
 function createFailedChecks() {
     const store = createReduxStore();
     createDefaultUser(store);
-    store.dispatch(locale.actions.receive({ code: 'kg' }));
-    store.dispatch(project.actions.receive({ slug: 'firefox' }));
+    store.dispatch(locale.actions.receive(utils.createLocale({ code: 'kg' })));
+    store.dispatch(
+        project.actions.receive(utils.createProject({ slug: 'firefox' })),
+    );
 
     const comp = mountComponentWithStore(FailedChecks, store, {
         sendTranslation: sinon.mock(),

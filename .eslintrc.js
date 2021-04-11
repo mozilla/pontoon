@@ -64,6 +64,7 @@ module.exports = {
         TimeoutID: false,
         "$Diff": false,
         "$ReadOnlyArray": false,
+        "$Shape": false,
         "React$Element": false,
     },
     plugins: [
