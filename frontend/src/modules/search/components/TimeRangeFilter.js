@@ -112,7 +112,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         });
     };
 
-    updateChartExtremes: (key: ?string, value: ?number) => void = (
+    updateChartExtremes: (key?: ?string, value?: ?number) => void = (
         key: ?string,
         value: ?number,
     ) => {

@@ -240,7 +240,7 @@ export default function RichTranslationForm(
     function renderTextarea(
         value: string,
         path: MessagePath,
-        maxlength: ?number,
+        maxlength?: ?number,
     ) {
         return (
             <textarea
@@ -331,9 +331,9 @@ export default function RichTranslationForm(
         value: string,
         path: MessagePath,
         label: string,
-        attributeName: ?string,
-        className: ?string,
-        example: ?number,
+        attributeName?: ?string,
+        className?: ?string,
+        example?: ?number,
     ) {
         return (
             <tr key={`${path.join('-')}`} className={className}>

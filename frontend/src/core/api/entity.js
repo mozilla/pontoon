@@ -53,14 +53,14 @@ export default class EntityAPI extends APIBase {
         resource: string,
         entityIds: ?Array<number>,
         exclude: Array<number>,
-        entity: ?string,
-        search: ?string,
-        status: ?string,
-        extra: ?string,
-        tag: ?string,
-        author: ?string,
-        time: ?string,
-        pkOnly: ?boolean,
+        entity?: ?string,
+        search?: ?string,
+        status?: ?string,
+        extra?: ?string,
+        tag?: ?string,
+        author?: ?string,
+        time?: ?string,
+        pkOnly?: ?boolean,
     ): Promise<Object> {
         const payload = new FormData();
         payload.append('locale', locale);

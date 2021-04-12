@@ -12,7 +12,7 @@ import {
 import * as editor from '..';
 import EditorMainAction from './EditorMainAction';
 
-function createComponent(sendTranslationMock) {
+function createComponent(sendTranslationMock?) {
     const store = createReduxStore();
     createDefaultUser(store);
 
