@@ -22,6 +22,17 @@ def managers():
     return _get_sorted_users()
 
 
+@pytest.mark.no_cover
+@pytest.mark.django_db
+def test_teams_list(client, locale_a):
+    """
+    Tests if the teams list is rendered properly.
+    """
+    response = client.get("/teams/")
+    assert response.status_code == 200
+    assert response.resolver_match.view_name == "pontoon.teams"
+
+
 @pytest.mark.django_db
 def test_missing_locale(client):
     """
