@@ -22,6 +22,7 @@ def managers():
     return _get_sorted_users()
 
 
+@pytest.mark.no_cover
 @pytest.mark.django_db
 def test_teams_list(client, locale_a):
     """

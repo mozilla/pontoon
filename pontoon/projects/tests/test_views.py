@@ -7,6 +7,7 @@ from django.shortcuts import render
 from pontoon.base.tests import TranslationFactory
 
 
+@pytest.mark.no_cover
 @pytest.mark.django_db
 def test_projects_list(client, project_a, resource_a):
     """
