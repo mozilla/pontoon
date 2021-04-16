@@ -1,7 +1,3 @@
-"""Application base, containing global templates."""
-default_app_config = "pontoon.base.apps.BaseConfig"
-
-
 MOZILLA_REPOS = (
     "ssh://hg.mozilla.org/users/m_owca.info/firefox-beta/",
     "ssh://hg.mozilla.org/users/m_owca.info/firefox-for-android-beta/",
