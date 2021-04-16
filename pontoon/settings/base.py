@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     "pontoon.tour",
     "pontoon.translate",
     "pontoon.translations",
+    "pontoon.uxactionlog",
     "pontoon.homepage",
     # Django contrib apps
     "django.contrib.admin",
