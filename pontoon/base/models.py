@@ -428,14 +428,14 @@ class AggregatedStats(models.Model):
         """
         Get sum of stats for all items in the queryset.
         """
-        return cls(
-            total_strings=sum(x.total_strings for x in qs),
-            approved_strings=sum(x.approved_strings for x in qs),
-            fuzzy_strings=sum(x.fuzzy_strings for x in qs),
-            strings_with_errors=sum(x.strings_with_errors for x in qs),
-            strings_with_warnings=sum(x.strings_with_warnings for x in qs),
-            unreviewed_strings=sum(x.unreviewed_strings for x in qs),
-        )
+        return {
+            "total_strings": sum(x.total_strings for x in qs),
+            "approved_strings": sum(x.approved_strings for x in qs),
+            "fuzzy_strings": sum(x.fuzzy_strings for x in qs),
+            "strings_with_errors": sum(x.strings_with_errors for x in qs),
+            "strings_with_warnings": sum(x.strings_with_warnings for x in qs),
+            "unreviewed_strings": sum(x.unreviewed_strings for x in qs),
+        }
 
     @classmethod
     def get_top_instances(cls, qs):
