@@ -35,7 +35,7 @@ jsonfield==3.1.0
 jsonschema==2.6.0
 lxml==4.6.3
 mercurial==5.2.2
-newrelic==2.106.1.88
+newrelic==6.2.0.156
 parsimonious==0.6.2
 polib==1.0.6
 psycopg2==2.8.5
