@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
+from django.utils.html import format_html
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models
@@ -236,16 +237,13 @@ class ProjectAdmin(admin.ModelAdmin):
     )
     ordering = ("disabled",)
 
+    @admin.display(ordering="contact__first_name")
     def contact_person(self, obj):
         return obj.contact.name_or_email if obj.contact else "-"
 
-    contact_person.admin_order_field = "contact__first_name"
-
+    @admin.display(boolean=True, ordering="disabled")
     def enabled(self, obj):
         return not obj.disabled
-
-    enabled.boolean = True
-    enabled.admin_order_field = "disabled"
 
     fieldsets = (
         (
@@ -352,21 +350,21 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
             args=(user_pk,),
         )
 
+    @admin.display(description="Performed on")
     def performed_on_email(self, obj):
-        return '<a href="{}">{}</a>'.format(
-            self.get_user_edit_url(obj.performed_on_id), obj.performed_on.email
+        return format_html(
+            '<a href="{}">{}</a>',
+            self.get_user_edit_url(obj.performed_on_id),
+            obj.performed_on.email,
         )
 
-    performed_on_email.short_description = "Performed on"
-    performed_on_email.allow_tags = True
-
+    @admin.display(description="Performed by")
     def performed_by_email(self, obj):
-        return '<a href="{}">{}</a>'.format(
-            self.get_user_edit_url(obj.performed_by_id), obj.performed_by.email
+        return format_html(
+            '<a href="{}">{}</a>',
+            self.get_user_edit_url(obj.performed_by_id),
+            obj.performed_by.email,
         )
-
-    performed_by_email.short_description = "Performed by"
-    performed_by_email.allow_tags = True
 
 
 admin.site.unregister(User)
