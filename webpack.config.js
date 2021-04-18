@@ -21,7 +21,7 @@ module.exports = {
     rules: [{
       exclude: /node_modules/,
       test: /\.js$/,
-      loaders: ['babel-loader'],
+      use: ['babel-loader'],
     },{
         test: /\.css$/,
         use: [
@@ -58,5 +58,5 @@ module.exports = {
   ],
   // This will expose source map files so that errors will point to your
   // original source files instead of the transpiled files.
-  devtool: 'sourcemap'
+  devtool: 'source-map'
 };

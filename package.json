@@ -84,9 +84,9 @@
     "react-test-renderer": "^16.14.0",
     "request": "^2.88.2",
     "style-loader": "^0.19.1",
-    "webpack": "^4.46.0",
-    "webpack-bundle-tracker": "^0.4.3",
-    "webpack-cli": "^3.3.12",
+    "webpack": "^5.33.2",
+    "webpack-bundle-tracker": "^1.0.0-alpha.1",
+    "webpack-cli": "^4.6.0",
     "yuglify": "^2.0.0"
   },
   "prettier": {
