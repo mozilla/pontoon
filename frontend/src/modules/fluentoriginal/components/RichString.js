@@ -30,8 +30,8 @@ function renderItem(
     label: string,
     key: string,
     terms: TermState,
-    className: ?string,
-    attributeName: ?string,
+    className?: ?string,
+    attributeName?: ?string,
 ): React.Node {
     const TermsAndPlaceablesMarker = getMarker(terms, true);
 

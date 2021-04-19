@@ -16,7 +16,7 @@ import type { MachineryState } from '..';
 type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
-    searchMachinery: (string, ?number) => void,
+    searchMachinery: (query: string, page?: number) => void,
     entity: Entity,
 |};
 

@@ -96,8 +96,8 @@ export function performAction(
     resource: string,
     selectedEntity: number,
     entities: Array<number>,
-    find: ?string,
-    replace: ?string,
+    find?: ?string,
+    replace?: ?string,
 ): Function {
     return async (dispatch) => {
         dispatch(request(action));
@@ -151,7 +151,7 @@ export type ReceiveAction = {|
     type: typeof RECEIVE,
     response: ?ResponseType,
 |};
-export function receive(response: ?ResponseType): ReceiveAction {
+export function receive(response?: ?ResponseType): ReceiveAction {
     return {
         type: RECEIVE,
         response,

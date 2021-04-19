@@ -17,7 +17,7 @@ import type { ChangeOperation } from 'modules/history';
 export default function useUpdateTranslationStatus(): (
     translationId: number,
     change: ChangeOperation,
-    ignoreWarnings: ?boolean,
+    ignoreWarnings?: ?boolean,
 ) => void {
     const dispatch = useDispatch();
 

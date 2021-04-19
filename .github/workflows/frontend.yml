@@ -95,5 +95,5 @@ jobs:
         run: git -c diff.renameLimit=36000 show HEAD
       - name: tsc
         working-directory: frontend
-        run: ./node_modules/.bin/tsc -b no-tsconfig.json
+        run: ./node_modules/.bin/tsc -b no-tsconfig.json --pretty
         continue-on-error: true
