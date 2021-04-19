@@ -140,7 +140,7 @@ export function updateStatus(
     translation: number,
     nextEntity: ?Entity,
     router: Object,
-    ignoreWarnings: ?boolean,
+    ignoreWarnings?: ?boolean,
 ): Function {
     return async (dispatch) => {
         NProgress.start();
