@@ -1,4 +1,5 @@
 import React from 'react';
+import sinon from 'sinon';
 import { shallow } from 'enzyme';
 
 import UserNotificationsMenuBase, {
@@ -53,6 +54,9 @@ describe('<UserNotificationsMenuBase>', () => {
     it('hides the notifications icon when the user is logged out', () => {
         const user = {
             isAuthenticated: false,
+            notifications: {
+                has_unread: false,
+            },
         };
         const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
 
@@ -80,7 +84,9 @@ describe('<UserNotificationsMenuBase>', () => {
                 notifications: [],
             },
         };
-        const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
+        const wrapper = shallow(
+            <UserNotificationsMenuBase user={user} logUxAction={sinon.spy()} />,
+        );
 
         expect(wrapper.find('.user-notifications-menu.unread')).toHaveLength(1);
     });
