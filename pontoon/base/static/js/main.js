@@ -143,6 +143,22 @@ $(function () {
         ga('send', 'event', 'ajax', 'request', settings.url);
     });
 
+    // Log display of the unread notification icon
+    if ($("#notifications").is(".unread")) {
+        $.ajax({
+            url: '/log-ux-action/',
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: $('body').data('csrf'),
+                action_type: 'Unread notifications icon displayed',
+                experiment: 'Notifications 1.0',
+                data: JSON.stringify({
+                    pathname: window.location.pathname,
+                }),
+            },
+        });
+    }
+
     Pontoon.NProgressBind();
 
     // Display any notifications
