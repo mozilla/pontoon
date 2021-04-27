@@ -28,6 +28,7 @@ from pontoon.contributors.utils import (
     map_translations_to_events,
     users_with_translations_counts,
 )
+from pontoon.uxactionlog.utils import log_ux_action
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -277,6 +278,13 @@ def notifications(request):
 def mark_all_notifications_as_read(request):
     """Mark all notifications of the currently logged in user as read"""
     request.user.notifications.mark_all_as_read()
+
+    utm_source = request.GET.get("utm_source")
+    if utm_source == "pontoon-addon-automation":
+        log_ux_action(
+            action_type="mark_all_notifications_as_read",
+            experiment="Notifications 1.0",
+        )
 
     return JsonResponse({"status": True})
 
