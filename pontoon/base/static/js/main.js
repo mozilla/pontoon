@@ -66,6 +66,26 @@ var Pontoon = (function (my) {
         },
 
         /*
+         * Log UX action
+         */
+        logUxAction: function (action_type, experiment, data) {
+            this.NProgressUnbind();
+
+            $.ajax({
+                url: '/log-ux-action/',
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: $('body').data('csrf'),
+                    action_type,
+                    experiment,
+                    data: JSON.stringify(data),
+                },
+            });
+
+            this.NProgressBind();
+        },
+
+        /*
          * Close notification
          */
         closeNotification: function () {
@@ -143,23 +163,35 @@ $(function () {
         ga('send', 'event', 'ajax', 'request', settings.url);
     });
 
+    Pontoon.NProgressBind();
+
+    var unreadNotificationsExist = $("#notifications").is(".unread");
+
     // Log display of the unread notification icon
-    if ($("#notifications").is(".unread")) {
-        $.ajax({
-            url: '/log-ux-action/',
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: $('body').data('csrf'),
-                action_type: 'Unread notifications icon displayed',
-                experiment: 'Notifications 1.0',
-                data: JSON.stringify({
-                    pathname: window.location.pathname,
-                }),
+    if (unreadNotificationsExist) {
+        Pontoon.logUxAction(
+            'Unread notifications icon displayed',
+            'Notifications 1.0',
+            {
+                pathname: window.location.pathname,
             },
-        });
+        );
     }
 
-    Pontoon.NProgressBind();
+    // Log clicks on the notifications icon
+    $('#notifications .button').click(function () {
+        if ($('#notifications').is('.opened')) {
+            return;
+        }
+
+        Pontoon.logUxAction(
+            'Notifications icon clicked',
+            'Notifications 1.0',
+            {
+                unread: unreadNotificationsExist,
+            },
+        );
+    });
 
     // Display any notifications
     var notifications = $('.notification li');
