@@ -173,7 +173,7 @@ $(function () {
     });
 
     // Mark notifications as read when notification menu opens
-    $('#notifications.unread .button .icon').click(function () {
+    $('#notifications.unread .button').click(function () {
         Pontoon.markAllNotificationsAsRead();
     });
 
