@@ -87,6 +87,20 @@ export default class UserNotificationsMenuBase extends React.Component<
         };
     }
 
+    componentDidMount() {
+        if (!this.props.user.notifications.has_unread) {
+            return;
+        }
+
+        this.props.logUxAction(
+            'Unread notifications icon displayed',
+            'Notifications 1.0',
+            {
+                pathname: window.location.pathname,
+            },
+        );
+    }
+
     componentDidUpdate(prevProps: Props) {
         if (!this.props.user.isAuthenticated) {
             return;
