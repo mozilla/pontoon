@@ -14,8 +14,7 @@
 
   {% if request.user.has_perm('base.can_manage_locale', locale) %}
   <div class="read-write-info hidden"
-       data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}"
-       {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}>
+       data-url="{{ url('pontoon.teams.ajax.update-info', locale.code) }}">
 
     <textarea rows="10" />
 
