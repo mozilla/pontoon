@@ -165,7 +165,7 @@ $(function () {
 
     Pontoon.NProgressBind();
 
-    var unreadNotificationsExist = $("#notifications").is(".unread");
+    var unreadNotificationsExist = $('#notifications').is('.unread');
 
     // Log display of the unread notification icon
     if (unreadNotificationsExist) {
@@ -184,13 +184,9 @@ $(function () {
             return;
         }
 
-        Pontoon.logUxAction(
-            'Notifications icon clicked',
-            'Notifications 1.0',
-            {
-                unread: unreadNotificationsExist,
-            },
-        );
+        Pontoon.logUxAction('Notifications icon clicked', 'Notifications 1.0', {
+            unread: unreadNotificationsExist,
+        });
     });
 
     // Log clicks on the See all Notifications link
