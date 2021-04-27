@@ -12,6 +12,7 @@ import { useOnDiscard } from 'core/utils';
 import type { UserState, Notification } from 'core/user';
 
 type Props = {
+    logUxAction: (string, ?string, ?any) => void,
     markAllNotificationsAsRead: () => void,
     user: UserState,
 };
@@ -106,6 +107,16 @@ export default class UserNotificationsMenuBase extends React.Component<
             this.setState({
                 markAsRead: false,
             });
+        }
+
+        if (!this.state.visible) {
+            this.props.logUxAction(
+                'Notifications icon clicked',
+                'Notifications 1.0',
+                {
+                    unread: this.props.user.notifications.has_unread,
+                },
+            );
         }
 
         this.toggleVisibility();

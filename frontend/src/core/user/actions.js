@@ -114,6 +114,16 @@ export function markAllNotificationsAsRead(): Function {
     };
 }
 
+export function logUxAction(
+    action_type: string,
+    experiment: ?string,
+    data: ?any,
+): Function {
+    return async () => {
+        await api.user.logUxAction(action_type, experiment, data);
+    };
+}
+
 /**
  * Get data about the current user from the server.
  *
@@ -137,6 +147,7 @@ export function getUsers(): Function {
 export default {
     get,
     getUsers,
+    logUxAction,
     markAllNotificationsAsRead,
     saveSetting,
     signOut,

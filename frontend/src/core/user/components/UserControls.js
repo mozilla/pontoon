@@ -36,6 +36,14 @@ export class UserControlsBase extends React.Component<InternalProps> {
         this.props.dispatch(actions.get());
     };
 
+    logUxAction: (
+        action_type: string,
+        experiment: ?string,
+        data: ?any,
+    ) => void = (action_type, experiment, data) => {
+        this.props.dispatch(actions.logUxAction(action_type, experiment, data));
+    };
+
     markAllNotificationsAsRead: () => void = () => {
         this.props.dispatch(actions.markAllNotificationsAsRead());
     };
@@ -63,6 +71,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
                 />
 
                 <UserNotificationsMenu
+                    logUxAction={this.logUxAction}
                     markAllNotificationsAsRead={this.markAllNotificationsAsRead}
                     user={user}
                 />
