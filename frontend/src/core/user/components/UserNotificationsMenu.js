@@ -98,6 +98,10 @@ export default class UserNotificationsMenuBase extends React.Component<
     }
 
     componentDidMount() {
+        if (!this.props.user.isAuthenticated) {
+            return;
+        }
+
         if (!this.props.user.notifications.has_unread) {
             return;
         }
