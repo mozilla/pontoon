@@ -31,7 +31,7 @@ export default class UserAPI extends APIBase {
     /**
      * Log UX action.
      */
-    async logUxAction(
+    logUxAction(
         action_type: string,
         experiment: ?string,
         data: ?any,
@@ -54,7 +54,7 @@ export default class UserAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return await this.fetch('/log-ux-action/', 'POST', payload, headers);
+        return this.fetch('/log-ux-action/', 'POST', payload, headers);
     }
 
     /**
