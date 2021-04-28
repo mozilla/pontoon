@@ -181,6 +181,10 @@ nav#sections ul li:hover a span {
     top: calc(var(--header-height) + 10px);
 }
 
+body.addon-promotion-active #edit-homepage .select {
+    top: calc(var(--header-height) + 54px);
+}
+
 #edit-homepage .button {
     background: #7bc876;
     color: #000;

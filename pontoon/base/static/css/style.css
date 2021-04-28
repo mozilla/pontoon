@@ -690,10 +690,64 @@ img.rounded {
     vertical-align: middle;
 }
 
+#addon-promotion {
+    display: none;
+    background: #ff3366dd;
+    border-bottom: 1px solid #333941;
+    height: 44px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+}
+
+body.addon-promotion-active #addon-promotion {
+    display: block;
+}
+
+#addon-promotion .container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#addon-promotion .dismiss {
+    background: transparent;
+    border: none;
+    color: #ebebeb;
+    font-size: 28px;
+    padding: 0;
+}
+
+#addon-promotion .dismiss:hover {
+    color: #272a2f;
+}
+
+#addon-promotion .text {
+    margin-left: 20px;
+}
+
+#addon-promotion .get {
+    background: #272a2f;
+    border-radius: 3px;
+    color: #ebebeb;
+    font-weight: normal;
+    margin-left: auto;
+    padding: 7px 12px;
+}
+
+#addon-promotion .get:hover {
+    background: #333941;
+}
+
 body > header {
     background: #272a2f;
     border-bottom: 1px solid #333941;
     height: 60px;
+}
+
+body.addon-promotion-active > header {
+    margin-top: 44px;
 }
 
 header nav {
