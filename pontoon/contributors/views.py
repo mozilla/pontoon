@@ -279,12 +279,11 @@ def mark_all_notifications_as_read(request):
     """Mark all notifications of the currently logged in user as read"""
     request.user.notifications.mark_all_as_read()
 
-    utm_source = request.GET.get("utm_source")
-    if utm_source == "pontoon-addon-automation":
-        log_ux_action(
-            action_type="mark_all_notifications_as_read",
-            experiment="Notifications 1.0",
-        )
+    log_ux_action(
+        action_type="mark_all_notifications_as_read",
+        experiment="Notifications 1.0",
+        data={"utm_source": request.GET.get("utm_source"),},
+    )
 
     return JsonResponse({"status": True})
 
