@@ -282,7 +282,7 @@ def mark_all_notifications_as_read(request):
     log_ux_action(
         action_type="mark_all_notifications_as_read",
         experiment="Notifications 1.0",
-        data={"utm_source": request.GET.get("utm_source"),},
+        data={"utm_source": request.GET.get("utm_source")},
     )
 
     return JsonResponse({"status": True})
