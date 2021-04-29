@@ -180,7 +180,7 @@ $(function () {
             if (isFirefox) {
                 downloadLink.attr(
                     'href',
-                    'https://addons.mozilla.org/sl/firefox/addon/pontoon-tools/',
+                    'https://addons.mozilla.org/firefox/addon/pontoon-tools/',
                 );
             }
             if (isChrome) {
