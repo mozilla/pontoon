@@ -171,25 +171,21 @@ $(function () {
      */
     var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
     var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
-    var downloadLink = $('#addon-promotion').find('.get');
+    var downloadHref = '';
     setTimeout(function () {
         if (!window.PontoonAddon || !window.PontoonAddon.installed) {
-            if (!isFirefox && !isChrome) {
-                return;
-            }
             if (isFirefox) {
-                downloadLink.attr(
-                    'href',
-                    'https://addons.mozilla.org/firefox/addon/pontoon-tools/',
-                );
+                downloadHref =
+                    'https://addons.mozilla.org/firefox/addon/pontoon-tools/';
             }
             if (isChrome) {
-                downloadLink.attr(
-                    'href',
-                    'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb',
-                );
+                downloadHref =
+                    'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb';
             }
-            $('body').addClass('addon-promotion-active');
+            if (downloadHref) {
+                $('#addon-promotion').find('.get').attr('href', downloadHref);
+                $('body').addClass('addon-promotion-active');
+            }
         }
         // window.PontoonAddon is made available by the Pontoon Add-On,
         // but not immediatelly after the DOM is ready
