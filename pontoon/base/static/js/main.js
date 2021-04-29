@@ -163,6 +163,38 @@ $(function () {
         ga('send', 'event', 'ajax', 'request', settings.url);
     });
 
+    /*
+     * Display Pontoon Add-On promotion, if:
+     *
+     * - Pontoon Add-On not installed
+     * - Page loaded on Firefox or Chrome (add-on not available for other browsers)
+     */
+    var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+    var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+    var downloadLink = $('#addon-promotion').find('.get');
+    setTimeout(function () {
+        if (!window.PontoonAddon || !window.PontoonAddon.installed) {
+            if (!isFirefox && !isChrome) {
+                return;
+            }
+            if (isFirefox) {
+                downloadLink.attr(
+                    'href',
+                    'https://addons.mozilla.org/sl/firefox/addon/pontoon-tools/',
+                );
+            }
+            if (isChrome) {
+                downloadLink.attr(
+                    'href',
+                    'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb',
+                );
+            }
+            $('body').addClass('addon-promotion-active');
+        }
+        // window.PontoonAddon is made available by the Pontoon Add-On,
+        // but not immediatelly after the DOM is ready
+    }, 1000);
+
     Pontoon.NProgressBind();
 
     var unreadNotificationsExist = $('#notifications').is('.unread');
