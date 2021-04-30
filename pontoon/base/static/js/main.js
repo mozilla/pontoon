@@ -172,8 +172,9 @@ $(function () {
      */
     setTimeout(function () {
         var notDismissed = $('#addon-promotion').length;
-        var installed = !window.PontoonAddon || !window.PontoonAddon.installed;
-        if (notDismissed && installed) {
+        var notInstalled =
+            !window.PontoonAddon || !window.PontoonAddon.installed;
+        if (notDismissed && notInstalled) {
             var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
             var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
             var downloadHref = '';
