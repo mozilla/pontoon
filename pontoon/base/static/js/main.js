@@ -208,6 +208,16 @@ $(function () {
         Pontoon.NProgressBind();
     });
 
+    // Hide Add-On Promotion if Add-On installed while active
+    window.addEventListener('message', (e) => {
+        const data = JSON.parse(e.data);
+        if (data._type === 'PontoonAddonInfo') {
+            if (data.value.installed) {
+                $('body').removeClass('addon-promotion-active');
+            }
+        }
+    });
+
     Pontoon.NProgressBind();
 
     var unreadNotificationsExist = $('#notifications').is('.unread');
