@@ -124,6 +124,13 @@ export function logUxAction(
     };
 }
 
+export function getUsers(): Function {
+    return async (dispatch) => {
+        const content = await api.user.getUsers();
+        dispatch(receive(content));
+    };
+}
+
 /**
  * Get data about the current user from the server.
  *
@@ -137,14 +144,16 @@ export function get(): Function {
     };
 }
 
-export function getUsers(): Function {
+export function dismissAddonPromotion(): Function {
     return async (dispatch) => {
-        const content = await api.user.getUsers();
-        dispatch(receive(content));
+        await api.user.dismissAddonPromotion();
+
+        dispatch(get());
     };
 }
 
 export default {
+    dismissAddonPromotion,
     get,
     getUsers,
     logUxAction,

@@ -850,6 +850,7 @@ def user_data(request):
                 "force_suggestions": user.profile.force_suggestions,
             },
             "tour_status": user.profile.tour_status,
+            "has_dismissed_addon_promotion": user.profile.has_dismissed_addon_promotion,
             "logout_url": logout_url,
             "gravatar_url_small": user.gravatar_url(88),
             "gravatar_url_big": user.gravatar_url(176),

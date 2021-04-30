@@ -706,8 +706,8 @@ body.addon-promotion-active #addon-promotion {
 }
 
 #addon-promotion .container {
-    display: flex;
     align-items: center;
+    display: flex;
     height: 100%;
 }
 

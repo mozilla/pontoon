@@ -164,7 +164,7 @@ $(function () {
     });
 
     /*
-     * Display Pontoon Add-On promotion, if:
+     * Display Pontoon Add-On Promotion, if:
      *
      * - Promotion not dismissed
      * - Add-On not installed

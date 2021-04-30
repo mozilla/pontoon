@@ -6,6 +6,15 @@
 # keep strings in order of appearance.
 
 
+## Pontoon Add-On promotion
+## Renders Pontoon Add-On promotion banner
+
+addonpromotion-AddonPromotion--dismiss = ×
+    .aria-label = Dismiss
+addonpromotion-AddonPromotion--get = Get Pontoon Add-On
+addonpromotion-AddonPromotion--text = Take your Pontoon notifications everywhere with the official Pontoon Add-on.
+
+
 ## ApproveAll
 ## Renders Approve All batch action button.
 

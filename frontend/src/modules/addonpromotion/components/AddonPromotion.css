@@ -1,0 +1,62 @@
+.addon-promotion {
+    background: #272a2f;
+    border-bottom: 1px solid #333941;
+    height: 44px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+}
+
+#app {
+    grid-template-rows: 104px auto;
+}
+
+.addon-promotion + header {
+    margin-top: 44px;
+}
+
+#app > header + .panel-list {
+    height: calc(100vh - 104px);
+}
+
+#app > .panel-list + .panel-content {
+    height: calc(100vh - 104px);
+}
+
+.addon-promotion .container {
+    align-items: center;
+    background: #ff3366dd;
+    display: flex;
+    height: 100%;
+    padding: 0 10px;
+}
+
+.addon-promotion .dismiss {
+    background: transparent;
+    border: none;
+    color: #ebebeb;
+    font-size: 28px;
+    padding: 0;
+}
+
+.addon-promotion .dismiss:hover {
+    color: #272a2f;
+}
+
+.addon-promotion .text {
+    margin-left: 20px;
+}
+
+.addon-promotion .get {
+    background: #272a2f;
+    border-radius: 3px;
+    color: #ebebeb;
+    font-weight: normal;
+    margin-left: auto;
+    padding: 7px 12px;
+}
+
+.addon-promotion .get:hover {
+    background: #333941;
+}
