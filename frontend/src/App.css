@@ -1,31 +1,43 @@
 #app {
-    display: grid;
-    grid-template-columns: 25% 75%;
-    grid-template-rows: 60px auto;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column;
+    height: 100%;
 }
 
 #app > header {
     background: #272a2f;
     border-bottom: 1px solid #333941;
-    grid-column-start: 1;
-    grid-column-end: 3;
+    box-sizing: border-box;
+    height: 60px;
     min-width: 700px;
+    position: relative;
 }
 
 #app > header .user-controls {
     float: right;
 }
 
+#app .main-content {
+    display: flex;
+    justify-content: space-between;
+    overflow: auto;
+}
+
 #app .panel-content,
 #app .panel-list {
-    height: calc(100vh - 60px);
+    height: 100%;
     position: relative;
+}
+
+#app .panel-list {
+    width: 25%;
 }
 
 #app .panel-content {
     border-left: 1px solid #5e6475;
     box-sizing: border-box;
+    width: 75%;
 }
 
 #app .inner {

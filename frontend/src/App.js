@@ -119,16 +119,18 @@ class App extends React.Component<InternalProps> {
                     />
                     <UserControls />
                 </header>
-                <section className='panel-list'>
-                    <SearchBox />
-                    <EntitiesList />
-                </section>
-                <section className='panel-content'>
-                    {state.batchactions.entities.length === 0 ? (
-                        <EntityDetails />
-                    ) : (
-                        <BatchActions />
-                    )}
+                <section className='main-content'>
+                    <section className='panel-list'>
+                        <SearchBox />
+                        <EntitiesList />
+                    </section>
+                    <section className='panel-content'>
+                        {state.batchactions.entities.length === 0 ? (
+                            <EntityDetails />
+                        ) : (
+                            <BatchActions />
+                        )}
+                    </section>
                 </section>
                 <Lightbox />
                 <InteractiveTour />

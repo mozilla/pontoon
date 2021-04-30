@@ -1,3 +1,7 @@
+.addon-promotion + header {
+    margin-top: 44px;
+}
+
 .addon-promotion {
     background: #272a2f;
     border-bottom: 1px solid #333941;
@@ -6,22 +10,6 @@
     top: 0;
     width: 100%;
     z-index: 20;
-}
-
-#app {
-    grid-template-rows: 104px auto;
-}
-
-.addon-promotion + header {
-    margin-top: 44px;
-}
-
-#app > header + .panel-list {
-    height: calc(100vh - 104px);
-}
-
-#app > .panel-list + .panel-content {
-    height: calc(100vh - 104px);
 }
 
 .addon-promotion .container {
