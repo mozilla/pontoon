@@ -166,14 +166,17 @@ $(function () {
     /*
      * Display Pontoon Add-On promotion, if:
      *
-     * - Pontoon Add-On not installed
+     * - Promotion not dismissed
+     * - Add-On not installed
      * - Page loaded on Firefox or Chrome (add-on not available for other browsers)
      */
-    var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
-    var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
-    var downloadHref = '';
     setTimeout(function () {
-        if (!window.PontoonAddon || !window.PontoonAddon.installed) {
+        var notDismissed = $('#addon-promotion').length;
+        var installed = !window.PontoonAddon || !window.PontoonAddon.installed;
+        if (notDismissed && installed) {
+            var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+            var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+            var downloadHref = '';
             if (isFirefox) {
                 downloadHref =
                     'https://addons.mozilla.org/firefox/addon/pontoon-tools/';
@@ -190,6 +193,20 @@ $(function () {
         // window.PontoonAddon is made available by the Pontoon Add-On,
         // but not immediatelly after the DOM is ready
     }, 1000);
+
+    // Dismiss Add-On Promotion
+    $('#addon-promotion .dismiss').click(function () {
+        Pontoon.NProgressUnbind();
+
+        $.ajax({
+            url: '/dismiss-addon-promotion/',
+            success: function () {
+                $('body').removeClass('addon-promotion-active');
+            },
+        });
+
+        Pontoon.NProgressBind();
+    });
 
     Pontoon.NProgressBind();
 
