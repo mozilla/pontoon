@@ -691,18 +691,18 @@ img.rounded {
 }
 
 #addon-promotion {
-    display: none;
     background: #ff3366dd;
     border-bottom: 1px solid #333941;
     height: 44px;
     position: fixed;
-    top: 0;
+    top: -44px;
+    transition: top 0.3s;
     width: 100%;
     z-index: 20;
 }
 
 body.addon-promotion-active #addon-promotion {
-    display: block;
+    top: 0;
 }
 
 #addon-promotion .container {
@@ -744,6 +744,7 @@ body > header {
     background: #272a2f;
     border-bottom: 1px solid #333941;
     height: 60px;
+    transition: margin-top 0.3s;
 }
 
 body.addon-promotion-active > header {
