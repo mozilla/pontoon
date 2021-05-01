@@ -189,17 +189,6 @@ $(function () {
         });
     });
 
-    // Log clicks on the See all Notifications link
-    $('#notifications .see-all').click(function () {
-        Pontoon.logUxAction(
-            'See all Notifications link clicked',
-            'Notifications 1.0',
-            {
-                unread: unreadNotificationsExist,
-            },
-        );
-    });
-
     // Display any notifications
     var notifications = $('.notification li');
     if (notifications.length) {

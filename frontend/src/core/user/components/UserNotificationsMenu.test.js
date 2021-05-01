@@ -48,20 +48,6 @@ describe('<UserNotificationsMenu>', () => {
         expect(wrapper.find('.notification-list .no')).toHaveLength(0);
         expect(wrapper.find(UserNotification)).toHaveLength(1);
     });
-
-    it('calls the logUxAction function on click on .see-all', () => {
-        const logUxAction = sinon.spy();
-        const notifications = [];
-        const wrapper = shallow(
-            <UserNotificationsMenu
-                logUxAction={logUxAction}
-                notifications={notifications}
-            />,
-        );
-
-        wrapper.find('.see-all').simulate('click');
-        expect(logUxAction.called).toEqual(true);
-    });
 });
 
 describe('<UserNotificationsMenuBase>', () => {
@@ -81,7 +67,6 @@ describe('<UserNotificationsMenuBase>', () => {
         const user = {
             isAuthenticated: true,
             notifications: {
-                has_unread: false,
                 notifications: [],
             },
         };

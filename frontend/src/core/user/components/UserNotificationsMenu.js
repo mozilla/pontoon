@@ -23,26 +23,16 @@ type State = {|
 |};
 
 type UserNotificationsMenuProps = {
-    has_unread: boolean,
-    logUxAction: (string, ?string, ?any) => void,
     notifications: Array<Notification>,
     onDiscard: (e: SyntheticEvent<any>) => void,
 };
 
 export function UserNotificationsMenu({
-    has_unread,
-    logUxAction,
     notifications,
     onDiscard,
 }: UserNotificationsMenuProps): React.Element<'div'> {
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);
-
-    function handleClickSeeAll() {
-        logUxAction('See all Notifications link clicked', 'Notifications 1.0', {
-            unread: has_unread,
-        });
-    }
 
     return (
         <div ref={ref} className='menu'>
@@ -72,9 +62,11 @@ export function UserNotificationsMenu({
                 )}
             </ul>
 
-            <div className='see-all' onClick={handleClickSeeAll}>
+            <div className='see-all'>
                 <Localized id='user-UserNotificationsMenu--see-all-notifications'>
-                    <a href='/notifications'>See all Notifications</a>
+                    <a href='/notifications?referrer=ui'>
+                        See all Notifications
+                    </a>
                 </Localized>
             </div>
         </div>
@@ -130,7 +122,7 @@ export default class UserNotificationsMenuBase extends React.Component<
         }
     }
 
-    handleClickIcon: () => void = () => {
+    handleClick: () => void = () => {
         if (this.state.markAsRead) {
             this.setState({
                 markAsRead: false,
@@ -189,14 +181,12 @@ export default class UserNotificationsMenuBase extends React.Component<
 
         return (
             <div className={className}>
-                <div className='selector' onClick={this.handleClickIcon}>
+                <div className='selector' onClick={this.handleClick}>
                     <i className='icon far fa-bell fa-fw'></i>
                 </div>
 
                 {this.state.visible && (
                     <UserNotificationsMenu
-                        has_unread={user.notifications.has_unread}
-                        logUxAction={this.props.logUxAction}
                         notifications={user.notifications.notifications}
                         onDiscard={this.handleDiscard}
                     />
