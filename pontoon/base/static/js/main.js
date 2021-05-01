@@ -171,10 +171,9 @@ $(function () {
      * - Page loaded on Firefox or Chrome (add-on not available for other browsers)
      */
     setTimeout(function () {
-        var notDismissed = $('#addon-promotion').length;
-        var notInstalled =
-            !window.PontoonAddon || !window.PontoonAddon.installed;
-        if (notDismissed && notInstalled) {
+        var dismissed = !$('#addon-promotion').length;
+        var installed = window.PontoonAddon && window.PontoonAddon.installed;
+        if (!dismissed && !installed) {
             var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
             var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
             var downloadHref = '';
