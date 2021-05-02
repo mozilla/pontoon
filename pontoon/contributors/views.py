@@ -13,11 +13,9 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseRedirect,
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -234,15 +232,6 @@ def settings(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 def notifications(request):
-    if request.GET.get("referrer"):
-        log_ux_action(
-            action_type="See all Notifications link clicked",
-            experiment="Notifications 1.0",
-            data={"referrer": request.GET.get("referrer")},
-        )
-
-        return HttpResponseRedirect(reverse("pontoon.contributors.notifications"))
-
     """View and edit user notifications."""
     notifications = request.user.notifications.prefetch_related(
         "actor", "target"
@@ -271,6 +260,12 @@ def notifications(request):
         projects, key=lambda slug: len(projects[slug]["notifications"]), reverse=True
     ):
         ordered_projects.append(slug)
+
+    log_ux_action(
+        action_type="Notifications page loaded",
+        experiment="Notifications 1.0",
+        data={"referrer": request.GET.get("referrer", "")},
+    )
 
     return render(
         request,
