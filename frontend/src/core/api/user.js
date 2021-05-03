@@ -131,4 +131,14 @@ export default class UserAPI extends APIBase {
             headers,
         );
     }
+
+    /**
+     * Dismiss Add-On Promotion.
+     */
+    dismissAddonPromotion(): Promise<any> {
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        return this.fetch('/dismiss-addon-promotion/', 'GET', null, headers);
+    }
 }

@@ -15,6 +15,7 @@ import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as stats from 'core/stats';
 import * as user from 'core/user';
+import { AddonPromotion } from 'modules/addonpromotion';
 import * as batchactions from 'modules/batchactions';
 import { UserControls } from 'core/user';
 import { BatchActions } from 'modules/batchactions';
@@ -32,7 +33,6 @@ import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
-import type { UserState } from 'core/user';
 
 type Props = {|
     batchactions: BatchActionsState,
@@ -42,7 +42,6 @@ type Props = {|
     parameters: NavigationParams,
     project: ProjectState,
     stats: Stats,
-    users: UserState,
 |};
 
 type InternalProps = {
@@ -104,6 +103,7 @@ class App extends React.Component<InternalProps> {
 
         return (
             <div id='app'>
+                <AddonPromotion />
                 <header>
                     <Navigation />
                     <ResourceProgress
@@ -119,16 +119,18 @@ class App extends React.Component<InternalProps> {
                     />
                     <UserControls />
                 </header>
-                <section className='panel-list'>
-                    <SearchBox />
-                    <EntitiesList />
-                </section>
-                <section className='panel-content'>
-                    {state.batchactions.entities.length === 0 ? (
-                        <EntityDetails />
-                    ) : (
-                        <BatchActions />
-                    )}
+                <section className='main-content'>
+                    <section className='panel-list'>
+                        <SearchBox />
+                        <EntitiesList />
+                    </section>
+                    <section className='panel-content'>
+                        {state.batchactions.entities.length === 0 ? (
+                            <EntityDetails />
+                        ) : (
+                            <BatchActions />
+                        )}
+                    </section>
                 </section>
                 <Lightbox />
                 <InteractiveTour />
@@ -146,7 +148,6 @@ const mapStateToProps = (state: Object): Props => {
         parameters: navigation.selectors.getNavigationParams(state),
         project: state[project.NAME],
         stats: state[stats.NAME],
-        users: state[user.NAME],
     };
 };
 

@@ -1558,6 +1558,9 @@ class UserProfile(models.Model):
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(models.PositiveIntegerField(), default=list, blank=True,)
 
+    # Used to dismiss promotional banner for the Pontoon Add-On.
+    has_dismissed_addon_promotion = models.BooleanField(default=False)
+
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)

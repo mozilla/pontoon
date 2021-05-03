@@ -150,7 +150,7 @@ def save_custom_homepage(request):
 @require_POST
 @transaction.atomic
 def save_preferred_source_locale(request):
-    """Save preferred source locale """
+    """Save preferred source locale."""
     form = forms.UserPreferredSourceLocaleForm(
         request.POST, instance=request.user.profile,
     )
@@ -162,6 +162,17 @@ def save_preferred_source_locale(request):
     form.save()
 
     return HttpResponse("ok")
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+@transaction.atomic
+def dismiss_addon_promotion(request):
+    profile = request.user.profile
+    profile.has_dismissed_addon_promotion = True
+    profile.save()
+
+    return JsonResponse({"status": True})
 
 
 @login_required(redirect_field_name="", login_url="/403")

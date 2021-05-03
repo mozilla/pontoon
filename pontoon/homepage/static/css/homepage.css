@@ -9,7 +9,6 @@ body > header {
     background: transparent;
     border-color: transparent;
     position: fixed;
-    transition: background-color 0.3s;
     width: 100%;
     z-index: 10;
 }
@@ -179,6 +178,11 @@ nav#sections ul li:hover a span {
 
 #edit-homepage .select {
     top: calc(var(--header-height) + 10px);
+    transition: top 0.3s;
+}
+
+body.addon-promotion-active #edit-homepage .select {
+    top: calc(var(--header-height) + 54px);
 }
 
 #edit-homepage .button {
