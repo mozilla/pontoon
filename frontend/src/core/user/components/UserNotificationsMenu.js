@@ -12,6 +12,7 @@ import { useOnDiscard } from 'core/utils';
 import type { UserState, Notification } from 'core/user';
 
 type Props = {
+    logUxAction: (string, ?string, ?any) => void,
     markAllNotificationsAsRead: () => void,
     user: UserState,
 };
@@ -63,7 +64,9 @@ export function UserNotificationsMenu({
 
             <div className='see-all'>
                 <Localized id='user-UserNotificationsMenu--see-all-notifications'>
-                    <a href='/notifications'>See all Notifications</a>
+                    <a href='/notifications?referrer=ui'>
+                        See all Notifications
+                    </a>
                 </Localized>
             </div>
         </div>
@@ -86,6 +89,24 @@ export default class UserNotificationsMenuBase extends React.Component<
         };
     }
 
+    componentDidMount() {
+        if (!this.props.user.isAuthenticated) {
+            return;
+        }
+
+        if (!this.props.user.notifications.has_unread) {
+            return;
+        }
+
+        this.props.logUxAction(
+            'Render: Unread notifications icon',
+            'Notifications 1.0',
+            {
+                pathname: window.location.pathname,
+            },
+        );
+    }
+
     componentDidUpdate(prevProps: Props) {
         if (!this.props.user.isAuthenticated) {
             return;
@@ -106,6 +127,17 @@ export default class UserNotificationsMenuBase extends React.Component<
             this.setState({
                 markAsRead: false,
             });
+        }
+
+        if (!this.state.visible) {
+            this.props.logUxAction(
+                'Click: Notifications icon',
+                'Notifications 1.0',
+                {
+                    pathname: window.location.pathname,
+                    unread: this.props.user.notifications.has_unread,
+                },
+            );
         }
 
         this.toggleVisibility();

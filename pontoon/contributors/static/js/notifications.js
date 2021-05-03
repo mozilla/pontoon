@@ -1,4 +1,10 @@
 $(function () {
+    window.history.replaceState(
+        {},
+        document.title,
+        document.location.href.split('?')[0],
+    );
+
     // Filter notifications
     $('.left-column a').on('click', function () {
         var notifications = $(this).data('notifications');

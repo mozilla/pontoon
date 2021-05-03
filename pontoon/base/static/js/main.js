@@ -66,6 +66,26 @@ var Pontoon = (function (my) {
         },
 
         /*
+         * Log UX action
+         */
+        logUxAction: function (action_type, experiment, data) {
+            this.NProgressUnbind();
+
+            $.ajax({
+                url: '/log-ux-action/',
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: $('body').data('csrf'),
+                    action_type,
+                    experiment,
+                    data: JSON.stringify(data),
+                },
+            });
+
+            this.NProgressBind();
+        },
+
+        /*
          * Close notification
          */
         closeNotification: function () {
@@ -145,6 +165,31 @@ $(function () {
 
     Pontoon.NProgressBind();
 
+    var unreadNotificationsExist = $('#notifications').is('.unread');
+
+    // Log display of the unread notification icon
+    if (unreadNotificationsExist) {
+        Pontoon.logUxAction(
+            'Render: Unread notifications icon',
+            'Notifications 1.0',
+            {
+                pathname: window.location.pathname,
+            },
+        );
+    }
+
+    // Log clicks on the notifications icon
+    $('#notifications .button').click(function () {
+        if ($('#notifications').is('.opened')) {
+            return;
+        }
+
+        Pontoon.logUxAction('Click: Notifications icon', 'Notifications 1.0', {
+            pathname: window.location.pathname,
+            unread: unreadNotificationsExist,
+        });
+    });
+
     // Display any notifications
     var notifications = $('.notification li');
     if (notifications.length) {
@@ -157,7 +202,7 @@ $(function () {
     });
 
     // Mark notifications as read when notification menu opens
-    $('#notifications.unread .button .icon').click(function () {
+    $('#notifications.unread .button').click(function () {
         Pontoon.markAllNotificationsAsRead();
     });
 

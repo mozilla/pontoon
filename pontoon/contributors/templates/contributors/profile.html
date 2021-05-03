@@ -7,7 +7,6 @@
 {% block before %}
 <!-- Server data -->
 <div id="server" class="hidden"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      {% if user.is_authenticated and user.email %}data-email="{{ user.email|nospam }}"{% endif %}
      >
 </div>

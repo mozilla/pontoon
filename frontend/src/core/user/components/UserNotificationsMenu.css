@@ -21,16 +21,12 @@
 }
 
 .user-notifications-menu.read.menu-visible .selector .icon {
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-name: fadeout-color;
 }
 
 @keyframes fadeout-color {
     0% {
-        color: #f36;
-    }
-
-    50% {
         color: #f36;
     }
 

@@ -10,7 +10,6 @@
 <!-- Server data -->
 <div id="server"
      class="hidden"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      data-url-split="{{ locale.code }}"
      data-locale="{{ locale.code }}"
      data-locale-projects="{{ locale.available_projects_list(request.user)|to_json }}">
