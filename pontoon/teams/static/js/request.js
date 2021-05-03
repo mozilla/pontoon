@@ -76,7 +76,7 @@ var Pontoon = (function (my) {
                     url: '/' + locale + '/request/',
                     type: 'POST',
                     data: {
-                        csrfmiddlewaretoken: $('#server').data('csrf'),
+                        csrfmiddlewaretoken: $('body').data('csrf'),
                         projects: projects,
                     },
                     success: function () {
@@ -108,7 +108,7 @@ var Pontoon = (function (my) {
                     url: '/teams/request/',
                     type: 'POST',
                     data: {
-                        csrfmiddlewaretoken: $('#server').data('csrf'),
+                        csrfmiddlewaretoken: $('body').data('csrf'),
                         name: name,
                         code: code,
                     },

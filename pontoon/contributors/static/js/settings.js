@@ -7,7 +7,7 @@ $(function () {
             url: '/api/v1/user/' + $('#server').data('username') + '/',
             type: 'POST',
             data: {
-                csrfmiddlewaretoken: $('#server').data('csrf'),
+                csrfmiddlewaretoken: $('body').data('csrf'),
                 attribute: self.data('attribute'),
                 value: !self.is('.enabled'),
             },
@@ -36,7 +36,7 @@ $(function () {
             url: '/save-custom-homepage/',
             type: 'POST',
             data: {
-                csrfmiddlewaretoken: $('#server').data('csrf'),
+                csrfmiddlewaretoken: $('body').data('csrf'),
                 custom_homepage: custom_homepage,
             },
             success: function (data) {
@@ -62,7 +62,7 @@ $(function () {
             url: '/save-preferred-source-locale/',
             type: 'POST',
             data: {
-                csrfmiddlewaretoken: $('#server').data('csrf'),
+                csrfmiddlewaretoken: $('body').data('csrf'),
                 preferred_source_locale: preferred_source_locale,
             },
             success: function (data) {

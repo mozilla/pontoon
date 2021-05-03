@@ -17,16 +17,12 @@
 }
 
 .user-notification.read {
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-name: fadeout-background;
 }
 
 @keyframes fadeout-background {
     0% {
-        background: #3f4752;
-    }
-
-    50% {
         background: #3f4752;
     }
 

@@ -115,6 +115,7 @@ urlpatterns = [
     path("", include("pontoon.api.urls")),
     path("", include("pontoon.homepage.urls")),
     path("", include("pontoon.in_context.urls")),
+    path("", include("pontoon.uxactionlog.urls")),
     # Team page: Must be at the end
     path("<locale:locale>/", team, name="pontoon.teams.team"),
 ]
