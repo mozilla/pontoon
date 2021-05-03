@@ -163,6 +163,61 @@ $(function () {
         ga('send', 'event', 'ajax', 'request', settings.url);
     });
 
+    /*
+     * Display Pontoon Add-On Promotion, if:
+     *
+     * - Promotion not dismissed
+     * - Add-On not installed
+     * - Page loaded on Firefox or Chrome (add-on not available for other browsers)
+     */
+    setTimeout(function () {
+        var dismissed = !$('#addon-promotion').length;
+        var installed = window.PontoonAddon && window.PontoonAddon.installed;
+        if (!dismissed && !installed) {
+            var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+            var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+            var downloadHref = '';
+            if (isFirefox) {
+                downloadHref =
+                    'https://addons.mozilla.org/firefox/addon/pontoon-tools/';
+            }
+            if (isChrome) {
+                downloadHref =
+                    'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb';
+            }
+            if (downloadHref) {
+                $('#addon-promotion').find('.get').attr('href', downloadHref);
+                $('body').addClass('addon-promotion-active');
+            }
+        }
+        // window.PontoonAddon is made available by the Pontoon Add-On,
+        // but not immediatelly after the DOM is ready
+    }, 1000);
+
+    // Dismiss Add-On Promotion
+    $('#addon-promotion .dismiss').click(function () {
+        Pontoon.NProgressUnbind();
+
+        $.ajax({
+            url: '/dismiss-addon-promotion/',
+            success: function () {
+                $('body').removeClass('addon-promotion-active');
+            },
+        });
+
+        Pontoon.NProgressBind();
+    });
+
+    // Hide Add-On Promotion if Add-On installed while active
+    window.addEventListener('message', (e) => {
+        const data = JSON.parse(e.data);
+        if (data._type === 'PontoonAddonInfo') {
+            if (data.value.installed) {
+                $('body').removeClass('addon-promotion-active');
+            }
+        }
+    });
+
     Pontoon.NProgressBind();
 
     var unreadNotificationsExist = $('#notifications').is('.unread');

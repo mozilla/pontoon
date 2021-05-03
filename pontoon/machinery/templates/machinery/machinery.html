@@ -6,7 +6,7 @@
 
 {% block class %}machinery{% endblock %}
 
-{% block content %}
+{% block before %}
 <!-- Server data -->
 <div id="server"
      class="hidden"
@@ -16,17 +16,10 @@
      data-is-systran-translate-supported="{{ is_systran_translate_supported|to_json() }}"
      >
 </div>
-
-{% include "header.html" %}
-
-{% block before %}
 {% endblock %}
 
 {% block heading %}
   {{ Heading.heading(title='Machinery', subtitle='Metasearch engine for translations') }}
-{% endblock %}
-
-{% block middle %}
 {% endblock %}
 
 {% block bottom %}
@@ -49,8 +42,6 @@
     </div>
   </div>
 </section>
-{% endblock %}
-
 {% endblock %}
 
 {% block extend_css %}

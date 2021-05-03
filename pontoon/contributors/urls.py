@@ -66,7 +66,7 @@ urlpatterns = [
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
-    # AJAX
+    # AJAX: Save custom homepage
     path(
         "save-custom-homepage/",
         views.save_custom_homepage,
@@ -77,5 +77,11 @@ urlpatterns = [
         "save-preferred-source-locale/",
         views.save_preferred_source_locale,
         name="pontoon.contributors.save_preferred_source_locale",
+    ),
+    # AJAX: Dismiss Add-On Promotion
+    path(
+        "dismiss-addon-promotion/",
+        views.dismiss_addon_promotion,
+        name="pontoon.contributors.dismiss_addon_promotion",
     ),
 ]
