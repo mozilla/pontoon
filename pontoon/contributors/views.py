@@ -262,7 +262,7 @@ def notifications(request):
         ordered_projects.append(slug)
 
     log_ux_action(
-        action_type="Notifications page loaded",
+        action_type="Page load: Notifications",
         experiment="Notifications 1.0",
         data={"referrer": request.GET.get("referrer", "")},
     )
@@ -286,7 +286,7 @@ def mark_all_notifications_as_read(request):
     request.user.notifications.mark_all_as_read()
 
     log_ux_action(
-        action_type="mark_all_notifications_as_read",
+        action_type="Background action: Mark all notifications as read",
         experiment="Notifications 1.0",
         data={"utm_source": request.GET.get("utm_source")},
     )

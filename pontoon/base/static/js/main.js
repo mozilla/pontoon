@@ -170,7 +170,7 @@ $(function () {
     // Log display of the unread notification icon
     if (unreadNotificationsExist) {
         Pontoon.logUxAction(
-            'Unread notifications icon displayed',
+            'Render: Unread notifications icon',
             'Notifications 1.0',
             {
                 pathname: window.location.pathname,
@@ -184,7 +184,8 @@ $(function () {
             return;
         }
 
-        Pontoon.logUxAction('Notifications icon clicked', 'Notifications 1.0', {
+        Pontoon.logUxAction('Click: Notifications icon', 'Notifications 1.0', {
+            pathname: window.location.pathname,
             unread: unreadNotificationsExist,
         });
     });

@@ -99,7 +99,7 @@ export default class UserNotificationsMenuBase extends React.Component<
         }
 
         this.props.logUxAction(
-            'Unread notifications icon displayed',
+            'Render: Unread notifications icon',
             'Notifications 1.0',
             {
                 pathname: window.location.pathname,
@@ -131,9 +131,10 @@ export default class UserNotificationsMenuBase extends React.Component<
 
         if (!this.state.visible) {
             this.props.logUxAction(
-                'Notifications icon clicked',
+                'Click: Notifications icon',
                 'Notifications 1.0',
                 {
+                    pathname: window.location.pathname,
                     unread: this.props.user.notifications.has_unread,
                 },
             );
