@@ -13,7 +13,7 @@ import isPluralExpression from './isPluralExpression';
 
 import { CLDR_PLURALS } from 'core/plural';
 
-import type { FluentMessage } from './types';
+import type { Entry } from '@fluent/syntax';
 import type { Locale } from 'core/locale';
 
 /**
@@ -78,13 +78,10 @@ function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
  * Note that this produces "junk" Fluent messages. Serializing the AST works,
  * but parsing it afterwards will result in a Junk message.
  *
- * @param {FluentMessage} source A Fluent AST to empty.
- * @returns {FluentMessage} An emptied copy of the source.
+ * @param {Entry} source A Fluent AST to empty.
+ * @returns {Entry} An emptied copy of the source.
  */
-export default function getEmptyMessage(
-    source: FluentMessage,
-    locale: Locale,
-): FluentMessage {
+export default function getEmptyMessage(source: Entry, locale: Locale): Entry {
     class EmptyTransformer extends Transformer {
         // Empty Text Elements
         visitTextElement(node: TextElement): TextElement {
@@ -119,5 +116,5 @@ export default function getEmptyMessage(
 
     // Empty TextElements
     const transformer = new EmptyTransformer();
-    return ((transformer.visit(flatMessage): any): FluentMessage);
+    return ((transformer.visit(flatMessage): any): Entry);
 }

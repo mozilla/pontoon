@@ -14,7 +14,7 @@ import { CLDR_PLURALS } from 'core/plural';
 import { fluent } from 'core/utils';
 
 import type { Translation } from 'core/editor';
-import type { FluentAttributes, FluentMessage } from 'core/utils/fluent/types';
+import type { Attribute, Entry } from '@fluent/syntax';
 import type {
     Pattern,
     PatternElement,
@@ -30,7 +30,7 @@ type Child = SyntaxNode | Array<SyntaxNode>;
  * value.
  */
 function getUpdatedTranslation(
-    translation: FluentMessage,
+    translation: Entry,
     value: string,
     path: MessagePath,
 ) {
@@ -483,7 +483,7 @@ export default function RichTranslationForm(
     }
 
     function renderAttributes(
-        attributes: ?FluentAttributes,
+        attributes: ?Array<Attribute>,
         path: MessagePath,
     ) {
         if (!attributes) {

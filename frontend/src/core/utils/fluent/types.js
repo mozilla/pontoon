@@ -1,13 +1,5 @@
 /* @flow */
 
-import type { Attribute, Entry } from '@fluent/syntax';
-
-export type FluentAttribute = Attribute;
-
-export type FluentAttributes = Array<FluentAttribute>;
-
-export type FluentMessage = Entry;
-
 // Type of syntax of the translation to show in the editor.
 // `simple` => SimpleEditor (the message can be simplified to a single text element)
 // `rich` => RichEditor (the message can be displayed in our rich interface)

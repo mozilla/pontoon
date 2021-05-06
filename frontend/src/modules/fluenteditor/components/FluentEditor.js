@@ -10,7 +10,8 @@ import * as entities from 'core/entities';
 import * as notification from 'core/notification';
 import * as plural from 'core/plural';
 import { fluent } from 'core/utils';
-import type { FluentMessage, SyntaxType } from 'core/utils/fluent/types';
+import type { SyntaxType } from 'core/utils/fluent/types';
+import type { Entry } from '@fluent/syntax';
 
 import SourceEditor from './source/SourceEditor';
 import SimpleEditor from './simple/SimpleEditor';
@@ -81,7 +82,7 @@ function useLoadTranslation(forceSource) {
             activeTranslationString || entity.original,
         );
 
-        let translationContent: string | FluentMessage = '';
+        let translationContent: string | Entry = '';
         if (syntax === 'complex') {
             // Use the actual content that we get from the server: a Fluent message as a string.
             translationContent = activeTranslationString;

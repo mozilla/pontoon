@@ -10,11 +10,7 @@ import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
-import type {
-    FluentAttribute,
-    FluentAttributes,
-} from 'core/utils/fluent/types';
-import type { PatternElement, Pattern } from '@fluent/syntax';
+import type { Attribute, PatternElement, Pattern } from '@fluent/syntax';
 
 type Props = {|
     +entity: Entity,
@@ -114,14 +110,14 @@ function renderValue(
 }
 
 function renderAttributes(
-    attributes: ?FluentAttributes,
+    attributes: ?Array<Attribute>,
     terms: TermState,
 ): React.Node {
     if (!attributes) {
         return null;
     }
 
-    return attributes.map((attribute: FluentAttribute) => {
+    return attributes.map((attribute: Attribute) => {
         return renderValue(attribute.value, terms, attribute.id.name);
     });
 }
