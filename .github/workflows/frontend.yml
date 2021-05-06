@@ -71,6 +71,9 @@ jobs:
           npm install -g yarn @khanacademy/flow-to-ts
       - name: npm install
         run: npm install
+      - name: install frontend
+        working-directory: frontend
+        run: yarn install
       - name: Pre-flight switches
         working-directory: frontend
         run: |
@@ -84,7 +87,7 @@ jobs:
       - name: Pre-flight commit
         run: git commit -am"Pre-flight flow to ts"
       - name: flow-to-ts
-        run: flow-to-ts --write --delete-source 'frontend/src/**/*.js'
+        run: flow-to-ts --inline-utility-types --write --delete-source 'frontend/src/**/!(*.test).js'
       - name: prettier
         run: npm run prettier
       - name: Stage
