@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from pontoon.sync import models
 
@@ -8,24 +8,21 @@ from pontoon.sync import models
 TIMES = ("start_time", "end_time", "duration")
 
 
-class EditLinkToInlineObject:
-    def edit_link(self, instance):
-        url = reverse(
-            "admin:%s_%s_change"
-            % (instance._meta.app_label, instance._meta.model_name),
-            args=[instance.pk],
-        )
-        if instance.pk:
-            return mark_safe(f'<a href="{url}">edit</a>')
-        else:
-            return ""
-
-
-class ProjectSyncLogInline(EditLinkToInlineObject, admin.TabularInline):
+class ProjectSyncLogInline(admin.TabularInline):
     model = models.ProjectSyncLog
     extra = 0
     verbose_name_plural = "Projects"
     readonly_fields = ("edit_link",)
+
+    @admin.display
+    def edit_link(self, obj):
+        url = reverse(
+            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk],
+        )
+        if obj.pk:
+            return format_html('<a href="{}">edit</a>', url)
+        else:
+            return ""
 
 
 class SyncLogAdmin(admin.ModelAdmin):
@@ -47,6 +44,7 @@ class ProjectSyncLogAdmin(admin.ModelAdmin):
 class RepositorySyncLogAdmin(admin.ModelAdmin):
     list_display = ("repository_url",) + TIMES
 
+    @admin.display
     def repository_url(self, obj):
         return obj.repository.url
 
