@@ -42,9 +42,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         window.removeEventListener('message', this.handleMessages);
     }
 
-    handleMessages: (event: SyntheticEvent<>) => void = (
-        event: SyntheticEvent<>,
-    ) => {
+    handleMessages: (event: MessageEvent) => void = (event: MessageEvent) => {
         // $FlowIgnore: not sure which event type to use
         const data = JSON.parse(event.data);
         if (data._type === 'PontoonAddonInfo') {

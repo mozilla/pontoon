@@ -25,7 +25,7 @@ type State = {|
 
 type UserNotificationsMenuProps = {
     notifications: Array<Notification>,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 };
 
 export function UserNotificationsMenu({

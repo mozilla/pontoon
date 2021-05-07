@@ -27,7 +27,7 @@ type State = {|
 type ProjectMenuProps = {|
     locale: LocaleState,
     parameters: NavigationParams,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
     onNavigate: (e: SyntheticMouseEvent<HTMLAnchorElement>) => void,
 |};
 

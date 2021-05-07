@@ -62,7 +62,7 @@ type FiltersPanelProps = {|
     onApplyFilters: () => void,
     onResetFilters: () => void,
     onToggleFilter: (string, string, SyntheticMouseEvent<any>) => void,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 |};
 
 export function FiltersPanel({

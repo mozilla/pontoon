@@ -18,17 +18,15 @@ type Props = {|
  */
 export default class EntityNavigation extends React.Component<Props> {
     componentDidMount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
         document.addEventListener('keydown', this.handleShortcuts);
     }
 
     componentWillUnmount() {
-        // $FlowIgnore (errors that I don't understand, no help from the Web)
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
-    handleShortcuts: (event: SyntheticKeyboardEvent<>) => void = (
-        event: SyntheticKeyboardEvent<>,
+    handleShortcuts: (event: KeyboardEvent) => void = (
+        event: KeyboardEvent,
     ) => {
         const key = event.keyCode;
 

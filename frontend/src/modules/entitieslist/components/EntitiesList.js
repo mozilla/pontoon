@@ -55,18 +55,13 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         this.list = React.createRef();
     }
 
-    // Flow does not recognize the addEventListener with 'SyntheticEvent` listeners,
-    // so I'm ignoring the errors Flow throws below.
-
     componentDidMount() {
-        // $FlowIgnore
         document.addEventListener('keydown', this.handleShortcuts);
 
         this.selectFirstEntityIfNoneSelected();
     }
 
     componentWillUnmount() {
-        // $FlowIgnore
         document.removeEventListener('keydown', this.handleShortcuts);
     }
 
@@ -126,8 +121,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         }
     }
 
-    handleShortcuts: (event: SyntheticKeyboardEvent<>) => void = (
-        event: SyntheticKeyboardEvent<>,
+    handleShortcuts: (event: KeyboardEvent) => void = (
+        event: KeyboardEvent,
     ) => {
         const key = event.keyCode;
 
