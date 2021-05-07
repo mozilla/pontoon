@@ -26,7 +26,7 @@ type ResourceProgressProps = {
     currentPath: string,
     percent: number,
     stats: Stats,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 };
 
 function ResourceProgress({

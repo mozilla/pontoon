@@ -65,8 +65,8 @@ export default class Machinery extends React.Component<Props, State> {
         this.setState({ page: 1 });
     };
 
-    submitForm: (event: SyntheticKeyboardEvent<>) => void = (
-        event: SyntheticKeyboardEvent<>,
+    submitForm: (event: SyntheticEvent<HTMLFormElement>) => void = (
+        event: SyntheticEvent<HTMLFormElement>,
     ) => {
         event.preventDefault();
         this.props.searchMachinery(this.searchInput.current.value);

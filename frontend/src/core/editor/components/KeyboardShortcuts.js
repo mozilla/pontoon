@@ -14,7 +14,7 @@ type State = {|
 |};
 
 type KeyboardShortcutsProps = {
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 };
 
 function KeyboardShortcuts({ onDiscard }: KeyboardShortcutsProps) {
