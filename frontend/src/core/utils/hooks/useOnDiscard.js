@@ -3,10 +3,10 @@ import * as React from 'react';
 
 export default function useOnDiscard(
     ref: { current: null | React.ElementRef<any> },
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 ) {
     const handleClick = React.useCallback(
-        (e: SyntheticEvent<any>) => {
+        (e: MouseEvent) => {
             const el = ref.current;
             if (!el || el.contains(e.target)) {
                 return;

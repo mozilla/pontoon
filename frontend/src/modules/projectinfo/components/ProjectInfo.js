@@ -20,7 +20,7 @@ type State = {|
 
 type ProjectInfoProps = {|
     project: ProjectState,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 |};
 
 export function ProjectInfo({

@@ -21,7 +21,7 @@ type State = {|
 type EditorSettingsProps = {
     settings: Settings,
     toggleSetting: Function,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
 };
 
 export function EditorSettings({

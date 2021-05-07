@@ -27,7 +27,7 @@ type State = {|
 type ResourceMenuProps = {|
     parameters: NavigationParams,
     resources: ResourcesState,
-    onDiscard: (e: SyntheticEvent<any>) => void,
+    onDiscard: (e: MouseEvent) => void,
     onNavigate: (e: SyntheticMouseEvent<HTMLAnchorElement>) => void,
 |};
 
