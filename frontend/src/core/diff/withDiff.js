@@ -35,8 +35,8 @@ type Props = {
 };
 
 export default function withDiff<Config: Object>(
-    WrappedComponent: React.AbstractComponent<Config>,
-): React.AbstractComponent<Config> {
+    WrappedComponent: React.ComponentType<Config>,
+): React.ComponentType<Config> {
     return React.memo(function WithDiff(props: { ...Config, ...Props }) {
         return (
             <WrappedComponent {...props}>

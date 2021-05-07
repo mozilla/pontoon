@@ -12,8 +12,8 @@ type State = {|
 |};
 
 export default function withActionsDisabled<Config: {}>(
-    WrappedComponent: React.AbstractComponent<Config>,
-): React.AbstractComponent<$Diff<Config, Props>> {
+    WrappedComponent: React.ComponentType<Config>,
+): React.ComponentType<$Diff<Config, Props>> {
     class WithActionsDisabled extends React.Component<
         $Diff<Config, Props>,
         State,

@@ -224,8 +224,8 @@ export default class KeyboardShortcutsBase extends React.Component<
     Props,
     State,
 > {
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         this.state = {
             visible: false,
         };
