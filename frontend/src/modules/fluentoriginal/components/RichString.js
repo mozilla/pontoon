@@ -129,7 +129,7 @@ export default function RichString(props: Props): React.Element<'table'> {
     const message = fluent.flattenMessage(
         fluent.parser.parseEntry(props.entity.original),
     );
-    // Safe guard against non-translatable entries
+    // Safeguard against non-translatable entries
     if (message.type !== 'Message' && message.type !== 'Term') {
         throw new Error(`Unexpected type '${message.type}' in RichString`);
     }

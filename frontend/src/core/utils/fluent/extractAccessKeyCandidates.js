@@ -42,7 +42,7 @@ function getTextElementsRecursivelly(elements: Array<PatternElement>) {
 export default function extractAccessKeyCandidates(
     message: Entry,
 ): ?Array<string> {
-    // Safe guard against non-message Fluent entries
+    // Safeguard against non-message Fluent entries
     if (message.type !== 'Message') {
         return null;
     }
