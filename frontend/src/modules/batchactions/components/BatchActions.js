@@ -167,8 +167,8 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    submitReplaceForm: (event: SyntheticKeyboardEvent<>) => void = (
-        event: SyntheticKeyboardEvent<>,
+    submitReplaceForm: (event: SyntheticEvent<HTMLFormElement>) => void = (
+        event: SyntheticEvent<HTMLFormElement>,
     ) => {
         event.preventDefault();
         this.replaceAll();
