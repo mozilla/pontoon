@@ -16,7 +16,7 @@ type Props = {
  * Displayed when the Rich Editor cannot handle the translation, or if a user
  * forces showing the Fluent source.
  */
-export default function SourceEditor(props: Props): React.Node {
+export default function SourceEditor(props: Props): React.Element<any> {
     const clearEditor = editor.useClearEditor();
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
     const sendTranslation = editor.useSendTranslation();

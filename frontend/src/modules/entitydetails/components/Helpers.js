@@ -49,7 +49,7 @@ type Props = {|
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export default function Helpers(props: Props): React.Node {
+export default function Helpers(props: Props): React.Element<any> {
     const {
         entity,
         isReadOnlyEditor,

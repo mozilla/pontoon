@@ -25,7 +25,7 @@ type Props = {|
  * Based on the syntax type of the string, render it as a simple string preview,
  * as a rich UI or as the original, untouched string.
  */
-export default function FluentOriginalString(props: Props): React.Node {
+export default function FluentOriginalString(props: Props): React.Element<any> {
     const message = fluent.parser.parseEntry(props.entity.original);
     const syntax = fluent.getSyntaxType(message);
 
