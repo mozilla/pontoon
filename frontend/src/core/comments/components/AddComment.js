@@ -209,9 +209,8 @@ export default function AddComment(props: Props): React.Element<'div'> {
     // This allows for the mention suggestions to stay properly positioned
     // when the container scrolls.
     React.useEffect(() => {
-
         const handleScroll = (e: Event) => {
-            const element:HTMLElement = (e.currentTarget: any);
+            const element: HTMLElement = (e.currentTarget: any);
             setScrollPosition(element.scrollTop);
         };
 
