@@ -1,15 +1,16 @@
 /* @flow */
 
+import CommentAPI from './comment';
 import EntityAPI from './entity';
 import FilterAPI from './filter';
-import LocaleAPI from './locale';
 import L10nAPI from './l10n';
+import LocaleAPI from './locale';
 import MachineryAPI from './machinery';
 import ProjectAPI from './project';
 import ResourceAPI from './resource';
 import TranslationAPI from './translation';
 import UserAPI from './user';
-import CommentAPI from './comment';
+import UxActionAPI from './uxaction';
 
 export type {
     Entities,
@@ -29,14 +30,15 @@ export type {
 } from './types';
 
 export default {
-    entity: (new EntityAPI(): EntityAPI),
     comment: (new CommentAPI(): CommentAPI),
+    entity: (new EntityAPI(): EntityAPI),
     filter: (new FilterAPI(): FilterAPI),
-    locale: (new LocaleAPI(): LocaleAPI),
     l10n: (new L10nAPI(): L10nAPI),
+    locale: (new LocaleAPI(): LocaleAPI),
     machinery: (new MachineryAPI(): MachineryAPI),
     project: (new ProjectAPI(): ProjectAPI),
     resource: (new ResourceAPI(): ResourceAPI),
     translation: (new TranslationAPI(): TranslationAPI),
     user: (new UserAPI(): UserAPI),
+    uxaction: (new UxActionAPI(): UxActionAPI),
 };

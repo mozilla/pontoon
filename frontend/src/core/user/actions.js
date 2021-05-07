@@ -114,16 +114,6 @@ export function markAllNotificationsAsRead(): Function {
     };
 }
 
-export function logUxAction(
-    action_type: string,
-    experiment: ?string,
-    data: ?any,
-): Function {
-    return async () => {
-        await api.user.logUxAction(action_type, experiment, data);
-    };
-}
-
 export function getUsers(): Function {
     return async (dispatch) => {
         const content = await api.user.getUsers();
@@ -156,7 +146,6 @@ export default {
     dismissAddonPromotion,
     get,
     getUsers,
-    logUxAction,
     markAllNotificationsAsRead,
     saveSetting,
     signOut,

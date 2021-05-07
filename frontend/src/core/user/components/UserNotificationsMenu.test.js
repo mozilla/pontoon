@@ -2,6 +2,8 @@ import React from 'react';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 
+import api from 'core/api';
+
 import UserNotificationsMenuBase, {
     UserNotificationsMenu,
 } from './UserNotificationsMenu';
@@ -51,6 +53,16 @@ describe('<UserNotificationsMenu>', () => {
 });
 
 describe('<UserNotificationsMenuBase>', () => {
+    const sandbox = sinon.createSandbox();
+
+    beforeEach(function () {
+        sandbox.spy(api.uxaction, 'log');
+    });
+
+    afterEach(function () {
+        sandbox.restore();
+    });
+
     it('hides the notifications icon when the user is logged out', () => {
         const user = {
             isAuthenticated: false,
@@ -76,7 +88,6 @@ describe('<UserNotificationsMenuBase>', () => {
     });
 
     it('highlights the notifications icon when the user has unread notifications and call logUxAction', () => {
-        const logUxAction = sinon.spy();
         const user = {
             isAuthenticated: true,
             notifications: {
@@ -84,16 +95,13 @@ describe('<UserNotificationsMenuBase>', () => {
                 notifications: [],
             },
         };
-        const wrapper = shallow(
-            <UserNotificationsMenuBase user={user} logUxAction={logUxAction} />,
-        );
+        const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
 
         expect(wrapper.find('.user-notifications-menu.unread')).toHaveLength(1);
-        expect(logUxAction.called).toEqual(true);
+        expect(api.uxaction.log.called).toEqual(true);
     });
 
     it('calls the logUxAction function on click on the icon if menu not visible', () => {
-        const logUxAction = sinon.spy();
         const markAllNotificationsAsRead = sinon.spy();
         const user = {
             isAuthenticated: true,
@@ -104,7 +112,6 @@ describe('<UserNotificationsMenuBase>', () => {
         };
         const wrapper = shallow(
             <UserNotificationsMenuBase
-                logUxAction={logUxAction}
                 markAllNotificationsAsRead={markAllNotificationsAsRead}
                 user={user}
             />,
@@ -114,6 +121,6 @@ describe('<UserNotificationsMenuBase>', () => {
             visible: false,
         });
         wrapper.find('.selector').simulate('click');
-        expect(logUxAction.called).toEqual(true);
+        expect(api.uxaction.log.called).toEqual(true);
     });
 });
