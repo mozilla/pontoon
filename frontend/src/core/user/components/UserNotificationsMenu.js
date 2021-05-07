@@ -5,6 +5,8 @@ import { Localized } from '@fluent/react';
 
 import './UserNotificationsMenu.css';
 
+import api from 'core/api';
+
 import UserNotification from './UserNotification';
 
 import { useOnDiscard } from 'core/utils';
@@ -12,7 +14,6 @@ import { useOnDiscard } from 'core/utils';
 import type { UserState, Notification } from 'core/user';
 
 type Props = {
-    logUxAction: (string, ?string, ?any) => void,
     markAllNotificationsAsRead: () => void,
     user: UserState,
 };
@@ -98,7 +99,7 @@ export default class UserNotificationsMenuBase extends React.Component<
             return;
         }
 
-        this.props.logUxAction(
+        api.uxaction.log(
             'Render: Unread notifications icon',
             'Notifications 1.0',
             {
@@ -130,14 +131,10 @@ export default class UserNotificationsMenuBase extends React.Component<
         }
 
         if (!this.state.visible) {
-            this.props.logUxAction(
-                'Click: Notifications icon',
-                'Notifications 1.0',
-                {
-                    pathname: window.location.pathname,
-                    unread: this.props.user.notifications.has_unread,
-                },
-            );
+            api.uxaction.log('Click: Notifications icon', 'Notifications 1.0', {
+                pathname: window.location.pathname,
+                unread: this.props.user.notifications.has_unread,
+            });
         }
 
         this.toggleVisibility();

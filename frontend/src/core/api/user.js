@@ -29,35 +29,6 @@ export default class UserAPI extends APIBase {
     }
 
     /**
-     * Log UX action.
-     */
-    logUxAction(
-        action_type: string,
-        experiment: ?string,
-        data: ?any,
-    ): Promise<any> {
-        const csrfToken = this.getCSRFToken();
-
-        const payload = new URLSearchParams();
-        payload.append('csrfmiddlewaretoken', csrfToken);
-        payload.append('action_type', action_type);
-
-        if (experiment) {
-            payload.append('experiment', experiment);
-        }
-
-        if (data) {
-            payload.append('data', JSON.stringify(data));
-        }
-
-        const headers = new Headers();
-        headers.append('X-Requested-With', 'XMLHttpRequest');
-        headers.append('X-CSRFToken', csrfToken);
-
-        return this.fetch('/log-ux-action/', 'POST', payload, headers);
-    }
-
-    /**
      * Mark all notifications of the current user as read.
      */
     async markAllNotificationsAsRead(): Promise<any> {
