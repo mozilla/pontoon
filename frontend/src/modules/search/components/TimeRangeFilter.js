@@ -219,8 +219,8 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
     handleInputChange: (
         event: SyntheticInputEvent<HTMLInputElement>,
     ) => void = (event: SyntheticInputEvent<HTMLInputElement>) => {
-        const name = event.target.name;
-        const value = event.target.value;
+        const name = event.currentTarget.name;
+        const value = event.currentTarget.value;
 
         if (this.isValidInput(value)) {
             const d = date.parse(value, INPUT_FORMAT);
