@@ -40,14 +40,14 @@ export type TextType = {|
 |};
 
 export type MentionType = {|
-    type: string,
+    type: 'mention',
     character: string,
     url: string,
     children: Array<TextType>,
 |};
 
 export type InitialType = {|
-    type: string,
+    type: 'paragraph',
     children: Array<TextType>,
 |};
 
