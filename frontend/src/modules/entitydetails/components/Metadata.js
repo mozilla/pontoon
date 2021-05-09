@@ -79,35 +79,32 @@ export default class Metadata extends React.Component<Props, State> {
     handleClickOnPlaceable: (
         e: SyntheticMouseEvent<HTMLParagraphElement>,
     ) => void = (e: SyntheticMouseEvent<HTMLParagraphElement>) => {
-        // Flow requires that we use `e.currentTarget` instead of `e.target`.
-        // However in this case, we do want to use that, so we're ignoring all
-        // errors Flow throws there.
-
-        // $FlowIgnore
-        if (e.target && e.target.classList.contains('placeable')) {
+        const target = e.target;
+        if (!(target instanceof HTMLElement)) {
+            return;
+        }
+        if (target && target.classList.contains('placeable')) {
             if (this.props.isReadOnlyEditor) {
                 return;
             }
-            // $FlowIgnore
-            if (e.target.dataset['match']) {
+            if (target.dataset['match']) {
                 this.props.addTextToEditorTranslation(
                     // $FlowIgnore
                     e.target.dataset['match'],
                 );
-            }
-            // $FlowIgnore
-            else if (e.target.childNodes.length) {
+            } else if (
+                target.childNodes.length &&
+                target.childNodes[0] instanceof Text
+            ) {
                 this.props.addTextToEditorTranslation(
-                    e.target.childNodes[0].data,
+                    target.childNodes[0].data,
                 );
             }
         }
 
         // Handle click on Term
-
-        // $FlowIgnore
-        const markedTerm = e.target.dataset['term'];
-        if (e.target && markedTerm) {
+        const markedTerm = target.dataset['term'];
+        if (target && markedTerm) {
             const popupTerms = this.props.terms.terms.filter(
                 (t) => t.text === markedTerm,
             );

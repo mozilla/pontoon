@@ -49,8 +49,8 @@ type Props = {
 };
 
 export default function withSearch<Config: Object>(
-    WrappedComponent: React.AbstractComponent<Config>,
-): React.AbstractComponent<Config> {
+    WrappedComponent: React.ComponentType<Config>,
+): React.ComponentType<Config> {
     return function WithSearch(props: { ...Config, ...Props }) {
         return (
             <WrappedComponent {...props}>
