@@ -10,6 +10,8 @@ import * as entities from 'core/entities';
 import * as notification from 'core/notification';
 import * as plural from 'core/plural';
 import { fluent } from 'core/utils';
+import type { SyntaxType } from 'core/utils/fluent/types';
+import type { Entry } from '@fluent/syntax';
 
 import SourceEditor from './source/SourceEditor';
 import SimpleEditor from './simple/SimpleEditor';
@@ -23,7 +25,7 @@ import RichEditor from './rich/RichEditor';
  *      - "rich" if the translation is not simple but can be handled by the Rich editor
  *      - "complex" otherwise
  */
-function getSyntaxType(source) {
+function getSyntaxType(source): SyntaxType {
     if (source && typeof source !== 'string') {
         return fluent.getSyntaxType(source);
     }
@@ -80,11 +82,7 @@ function useLoadTranslation(forceSource) {
             activeTranslationString || entity.original,
         );
 
-        if (syntax === '') {
-            return;
-        }
-
-        let translationContent = '';
+        let translationContent: string | Entry = '';
         if (syntax === 'complex') {
             // Use the actual content that we get from the server: a Fluent message as a string.
             translationContent = activeTranslationString;
@@ -203,11 +201,6 @@ export default function FluentEditor(): null | React.Element<React.ElementType> 
     const syntax = getSyntaxType(
         translation || activeTranslationString || entity.original,
     );
-
-    // Do not render if the syntax has not yet been computed.
-    if (syntax === '') {
-        return null;
-    }
 
     // Choose which editor implementation to render.
     let EditorImplementation = RichEditor;

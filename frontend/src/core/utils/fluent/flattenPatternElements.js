@@ -2,7 +2,7 @@
 
 import { TextElement, serializeExpression } from '@fluent/syntax';
 
-import type { PatternElement } from './types';
+import type { PatternElement } from '@fluent/syntax';
 
 /**
  * Return a flattened list of Pattern elements.
@@ -40,10 +40,7 @@ export default function flattenPatternElements(
 
             flatElements.push(element);
         } else {
-            if (
-                element.type === 'TextElement' &&
-                typeof element.value === 'string'
-            ) {
+            if (element.type === 'TextElement') {
                 textFragments.push(element.value);
             } else {
                 textFragments.push(serializeExpression(element));

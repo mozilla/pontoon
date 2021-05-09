@@ -2,7 +2,7 @@
 
 import flattenPatternElements from './flattenPatternElements';
 
-import type { FluentMessage } from './types';
+import type { Entry } from '@fluent/syntax';
 
 /**
  * Return a flattened Fluent message.
@@ -10,15 +10,19 @@ import type { FluentMessage } from './types';
  * Takes a Fluent message and returns a copy with flattened value and
  * attributes elements.
  *
- * @param {FluentMessage} message A Fluent message to flatten.
+ * @param {Entry} message A Fluent message to flatten.
  *
- * @returns {FluentMessage} A copy of the given Fluent message with flattened
+ * @returns {Entry} A copy of the given Fluent message with flattened
  * value and attributes elements.
  */
-export default function flattenMessage(message: FluentMessage): FluentMessage {
+export default function flattenMessage(message: Entry): Entry {
     const flatMessage = message.clone();
+    if (flatMessage.type !== 'Message' && flatMessage.type !== 'Term') {
+        return flatMessage;
+    }
 
     if (flatMessage.value && flatMessage.value.elements.length > 0) {
+        // $FlowIgnore We know value is non-null, but flow doesn't
         flatMessage.value.elements = flattenPatternElements(
             flatMessage.value.elements,
         );

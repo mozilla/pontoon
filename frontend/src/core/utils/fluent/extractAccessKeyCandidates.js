@@ -2,7 +2,7 @@
 
 import flattenDeep from 'lodash.flattendeep';
 
-import type { FluentMessage, PatternElement } from './types';
+import type { Entry, PatternElement } from '@fluent/syntax';
 
 /**
  * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
@@ -36,12 +36,16 @@ function getTextElementsRecursivelly(elements: Array<PatternElement>) {
  * and then generates a list of unique characters from either the attribute with an ID
  * 'label' or the message value.
  *
- * @param {FluentMessage} message A (flat) Fluent message to extract access key candidates from.
+ * @param {Entry} message A (flat) Fluent message to extract access key candidates from.
  * @returns {?Array<string>} A list of access key candidates.
  */
 export default function extractAccessKeyCandidates(
-    message: FluentMessage,
+    message: Entry,
 ): ?Array<string> {
+    // Safeguard against non-message Fluent entries
+    if (message.type !== 'Message') {
+        return null;
+    }
     // If message has no attributes, return null
     if (!message.attributes) {
         return null;

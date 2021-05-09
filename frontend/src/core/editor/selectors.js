@@ -37,7 +37,7 @@ export function _existingTranslation(
         existingTranslation = activeTranslation;
     } else if (history.translations.length) {
         // If translation is a FluentMessage, from the fluent editor.
-        if (translation.equals) {
+        if (typeof translation !== 'string') {
             // We apply a bunch of logic on the stored translation, to
             // make it work with our Editor. So here, we need to
             // re-serialize it and re-parse it to make sure the translation
