@@ -124,7 +124,7 @@ function useLoadTranslation(forceSource) {
  *      - a boolean indicating if the source mode is enabled;
  *      - a function to toggle the source mode.
  */
-function useForceSource() {
+function useForceSource(): [boolean, () => void] {
     const dispatch = useDispatch();
 
     const translation = useSelector((state) => state.editor.translation);
