@@ -2,9 +2,9 @@
 
 import { UPDATE, SET_FOCUS } from './actions';
 
-import type { Author, UpdateAction } from './actions';
+import type { Author, UpdateAction, SetFocusAction } from './actions';
 
-type Action = UpdateAction;
+type Action = UpdateAction | SetFocusAction;
 
 export type SearchAndFilters = {|
     +authors: Array<Author>,
