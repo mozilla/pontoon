@@ -22,7 +22,7 @@ import { shallow } from 'enzyme';
 export function shallowUntilTarget(
     componentInstance,
     TargetComponent,
-    { maxTries = 10, shallowOptions, _shallow = shallow } = {},
+    { maxTries = 10, shallowOptions = undefined, _shallow = shallow } = {},
 ) {
     if (!componentInstance) {
         throw new Error('componentInstance parameter is required');
