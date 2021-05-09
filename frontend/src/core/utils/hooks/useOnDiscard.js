@@ -8,7 +8,11 @@ export default function useOnDiscard(
     const handleClick = React.useCallback(
         (e: MouseEvent) => {
             const el = ref.current;
-            if (!(el instanceof HTMLElement) || el.contains(e.target)) {
+            if (
+                !(el instanceof HTMLElement) ||
+                !(e.target instanceof Element) ||
+                el.contains(e.target)
+            ) {
                 return;
             }
 

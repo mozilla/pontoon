@@ -88,17 +88,12 @@ export default class Metadata extends React.Component<Props, State> {
                 return;
             }
             if (target.dataset['match']) {
-                this.props.addTextToEditorTranslation(
-                    // $FlowIgnore
-                    e.target.dataset['match'],
-                );
-            } else if (
-                target.childNodes.length &&
-                target.childNodes[0] instanceof Text
-            ) {
-                this.props.addTextToEditorTranslation(
-                    target.childNodes[0].data,
-                );
+                this.props.addTextToEditorTranslation(target.dataset['match']);
+            } else if (target.firstChild) {
+                const child = target.firstChild;
+                if (child instanceof Text) {
+                    this.props.addTextToEditorTranslation(child.data);
+                }
             }
         }
 
