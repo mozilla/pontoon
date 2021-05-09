@@ -25,7 +25,7 @@ type State = {|
 |};
 
 type UserMenuProps = Props & {
-    onDiscard: (e: MouseEvent) => void,
+    onDiscard: () => void,
 };
 
 export function UserMenu({
