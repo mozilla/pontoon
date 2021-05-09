@@ -10,12 +10,7 @@ import { fluent } from 'core/utils';
 
 import type { Entity } from 'core/api';
 import type { TermState } from 'core/term';
-import type {
-    FluentAttribute,
-    FluentAttributes,
-    PatternElement,
-    Pattern,
-} from 'core/utils/fluent/types';
+import type { Attribute, PatternElement, Pattern } from '@fluent/syntax';
 
 type Props = {|
     +entity: Entity,
@@ -103,7 +98,7 @@ function renderElements(
 }
 
 function renderValue(
-    value: Pattern,
+    value: ?Pattern,
     terms: TermState,
     attributeName?: string,
 ): React.Node {
@@ -115,14 +110,14 @@ function renderValue(
 }
 
 function renderAttributes(
-    attributes: ?FluentAttributes,
+    attributes: ?Array<Attribute>,
     terms: TermState,
 ): React.Node {
     if (!attributes) {
         return null;
     }
 
-    return attributes.map((attribute: FluentAttribute) => {
+    return attributes.map((attribute: Attribute) => {
         return renderValue(attribute.value, terms, attribute.id.name);
     });
 }
@@ -134,6 +129,10 @@ export default function RichString(props: Props): React.Element<'table'> {
     const message = fluent.flattenMessage(
         fluent.parser.parseEntry(props.entity.original),
     );
+    // Safeguard against non-translatable entries
+    if (message.type !== 'Message' && message.type !== 'Term') {
+        throw new Error(`Unexpected type '${message.type}' in RichString`);
+    }
 
     return (
         <table

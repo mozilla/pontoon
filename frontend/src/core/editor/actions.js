@@ -13,7 +13,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 
 import type { Entity, SourceType } from 'core/api';
 import type { Locale } from 'core/locale';
-import type { FluentMessage } from 'core/utils/fluent/types';
+import type { Entry } from '@fluent/syntax';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
     'editor/END_UPDATE_TRANSLATION';
@@ -40,7 +40,7 @@ export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' =
 export const UPDATE_MACHINERY_SOURCES: 'editor/UPDATE_MACHINERY_SOURCES' =
     'editor/UPDATE_MACHINERY_SOURCES';
 
-export type Translation = string | FluentMessage;
+export type Translation = string | Entry;
 
 /**
  * Update the current translation of the selected entity.

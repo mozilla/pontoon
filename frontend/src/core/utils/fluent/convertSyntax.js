@@ -7,7 +7,7 @@ import getSimplePreview from './getSimplePreview';
 import parser from './parser';
 import serializer from './serializer';
 
-import type { FluentMessage } from './types';
+import type { Entry } from '@fluent/syntax';
 import type { Locale } from 'core/locale';
 
 type SyntaxType = 'simple' | 'rich' | 'complex' | '';
@@ -60,7 +60,7 @@ export function getRichFromComplex(
     original: string,
     initial: string,
     locale: Locale,
-): [FluentMessage, FluentMessage] {
+): [Entry, Entry] {
     let translationContent = parser.parseEntry(current);
 
     // If the parsed content is invalid, create an empty message instead.
@@ -87,7 +87,7 @@ export function getRichFromComplex(
 }
 
 export function getComplexFromRich(
-    current: FluentMessage,
+    current: Entry,
     original: string,
     initial: string,
     locale: Locale,
@@ -114,21 +114,21 @@ export function getComplexFromRich(
  *
  * @param {string} fromSyntax Syntax of the current translation.
  * @param {string} toSyntax Expected syntax of the output.
- * @param {string | FluentMessage} current Current content of the translation, as entered by the user.
+ * @param {string | Entry} current Current content of the translation, as entered by the user.
  * @param {string} original Original string of the entity.
  * @param {string} initial Currently active translation, if any.
  * @param {Locale} locale Current locale.
  *
- * @returns {[ string | FluentMessage, string ]} The converted current translation and initial translation.
+ * @returns {[ string | Entry, string ]} The converted current translation and initial translation.
  */
 export default function convertSyntax(
     fromSyntax: SyntaxType,
     toSyntax: SyntaxType,
-    current: string | FluentMessage,
+    current: string | Entry,
     original: string,
     initial: string,
     locale: Locale,
-): [FluentMessage, FluentMessage] | [string, string] {
+): [Entry, Entry] | [string, string] {
     if (
         fromSyntax === 'complex' &&
         toSyntax === 'simple' &&

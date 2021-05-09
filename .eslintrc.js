@@ -63,6 +63,7 @@ module.exports = {
         SyntheticMouseEvent: false,
         TimeoutID: false,
         "$Diff": false,
+        "$ReadOnly": false,
         "$ReadOnlyArray": false,
         "React$Element": false,
     },
