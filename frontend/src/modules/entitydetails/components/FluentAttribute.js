@@ -16,7 +16,9 @@ type Props = {|
 /**
  * Get attribute of a simple single-attribute Fluent message.
  */
-export default function FluentAttribute(props: Props): null | React.Node {
+export default function FluentAttribute(
+    props: Props,
+): null | React.Element<any> {
     const { entity } = props;
 
     if (entity.format !== 'ftl') {

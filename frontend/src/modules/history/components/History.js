@@ -1,7 +1,6 @@
 /* @flow */
 
-import type { Element } from 'React';
-import React from 'react';
+import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 import './History.css';
@@ -32,7 +31,7 @@ type Props = {|
  * For each translation, show its author, date and status (approved, rejected).
  */
 export default class History extends React.Component<Props> {
-    renderNoResults(): Element<'section'> {
+    renderNoResults(): React.Element<'section'> {
         return (
             <section className='history'>
                 <Localized id='history-History--no-translations'>
@@ -42,7 +41,7 @@ export default class History extends React.Component<Props> {
         );
     }
 
-    render(): null | Element<'section'> {
+    render(): null | React.Element<'section'> {
         const {
             entity,
             history,

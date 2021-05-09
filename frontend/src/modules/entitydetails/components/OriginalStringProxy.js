@@ -26,7 +26,7 @@ type Props = {|
  * For Fluent strings ('ftl'), returns a Fluent-specific OriginalString
  * component. For everything else, return a generic OriginalString component.
  */
-export default function OriginalStringProxy(props: Props): React.Node {
+export default function OriginalStringProxy(props: Props): React.Element<any> {
     if (props.entity.format === 'ftl') {
         return (
             <FluentOriginalString
