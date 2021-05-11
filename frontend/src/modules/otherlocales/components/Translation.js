@@ -64,8 +64,8 @@ export default function Translation(
 
     const translationRef = React.useRef();
     React.useEffect(() => {
-        if (selectedHelperElementIndex === index && translationRef.current) {
-            translationRef.current.scrollIntoView({
+        if (selectedHelperElementIndex === index) {
+            translationRef.current?.scrollIntoView?.({
                 behavior: 'smooth',
                 block: 'nearest',
             });

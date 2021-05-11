@@ -43,8 +43,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
     }
 
     handleMessages: (event: MessageEvent) => void = (event: MessageEvent) => {
-        // $FlowIgnore: not sure which event type to use
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(((event.data: any): string));
         if (data._type === 'PontoonAddonInfo') {
             if (data.value.installed) {
                 this.setState({

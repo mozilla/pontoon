@@ -71,8 +71,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
         this.props.disableAction();
 
         event.stopPropagation();
-        // $FlowIgnore: Flow and the DOM… >_<
-        const action = event.target.name;
+        const action = ((event.currentTarget.name: any): ChangeOperation);
 
         this.props.updateTranslationStatus(this.props.translation.pk, action);
     };
