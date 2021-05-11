@@ -110,7 +110,7 @@ export function performAction(
             replace,
         );
 
-        const response = {};
+        const response: ResponseType = {};
         response.action = action;
 
         if ('count' in data) {

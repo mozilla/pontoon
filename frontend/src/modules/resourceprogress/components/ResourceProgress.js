@@ -26,7 +26,7 @@ type ResourceProgressProps = {
     currentPath: string,
     percent: number,
     stats: Stats,
-    onDiscard: (e: MouseEvent) => void,
+    onDiscard: () => void,
 };
 
 function ResourceProgress({
