@@ -150,7 +150,6 @@ export default function Helpers(props: Props): React.Element<any> {
                         <Machinery
                             locale={locale}
                             machinery={machinery}
-                            entity={entity}
                             searchMachinery={searchMachinery}
                         />
                     </TabPanel>
