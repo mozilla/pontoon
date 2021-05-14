@@ -253,7 +253,9 @@ export default class ResourceMenuBase extends React.Component<Props, State> {
             className += ' closed';
         }
 
-        let resourceName = parameters.resource.split('/').slice(-1)[0];
+        let resourceName:
+            | string
+            | React.Element<any> = parameters.resource.split('/').slice(-1)[0];
         if (parameters.resource === 'all-resources') {
             resourceName = (
                 <Localized id='resource-ResourceMenu--all-resources'>

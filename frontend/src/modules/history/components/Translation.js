@@ -14,8 +14,7 @@ import * as utils from 'core/utils';
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { UserState } from 'core/user';
-import type { ChangeOperation } from '..';
-import type { HistoryTranslation } from '../reducer';
+import type { ChangeOperation, HistoryTranslation } from '..';
 
 type Props = {|
     entity: Entity,

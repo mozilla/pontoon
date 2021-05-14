@@ -11,7 +11,7 @@ import type { Entities, Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
-const entitiesSelector = (state): string => state[NAME].entities;
+const entitiesSelector = (state): Entities => state[NAME].entities;
 const userSelector = (state): UserState => state[user.NAME];
 
 export function _getSelectedEntity(

@@ -110,8 +110,12 @@ export function performAction(
             replace,
         );
 
-        const response: ResponseType = {};
-        response.action = action;
+        const response: ResponseType = {
+            changedCount: 0,
+            invalidCount: 0,
+            error: false,
+            action,
+        };
 
         if ('count' in data) {
             response.changedCount = data.count;

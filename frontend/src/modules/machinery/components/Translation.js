@@ -68,6 +68,7 @@ export default function Translation(
     const translationRef = React.useRef();
     React.useEffect(() => {
         if (selectedHelperElementIndex === index) {
+            // @ts-expect-error: What can be undefined here?
             translationRef.current?.scrollIntoView?.({
                 behavior: 'smooth',
                 block: 'nearest',

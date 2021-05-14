@@ -11,12 +11,12 @@ import { TranslationProxy } from 'core/translation';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
-import type { Entity } from 'core/api';
+import type { Entity, OtherLocaleTranslation } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 
 type Props = {|
     entity: Entity,
-    translation: Object,
+    translation: OtherLocaleTranslation,
     parameters: NavigationParams,
     index: number,
 |};
@@ -65,6 +65,7 @@ export default function Translation(
     const translationRef = React.useRef();
     React.useEffect(() => {
         if (selectedHelperElementIndex === index) {
+            // @ts-expect-error: What can be undefined here?
             translationRef.current?.scrollIntoView?.({
                 behavior: 'smooth',
                 block: 'nearest',
@@ -113,7 +114,7 @@ export default function Translation(
                 <p
                     lang={translation.locale.code}
                     dir={translation.locale.direction}
-                    script={translation.locale.script}
+                    data-script={translation.locale.script}
                 >
                     <TranslationProxy
                         content={translation.translation}

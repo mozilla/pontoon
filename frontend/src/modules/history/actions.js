@@ -11,18 +11,38 @@ import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 
-import type { Entity } from 'core/api';
+import type { Entity, TranslationComment } from 'core/api';
 import type { Locale } from 'core/locale';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
 export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
 export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 
+export type HistoryTranslation = {|
+    +approved: boolean,
+    +approvedUser: string,
+    +date: string,
+    +dateIso: string,
+    +fuzzy: boolean,
+    +pk: number,
+    +rejected: boolean,
+    +string: string,
+    +uid: ?number,
+    +unapprovedUser: string,
+    +machinerySources: string,
+    +user: string,
+    +username: string,
+    +userGravatarUrlSmall: string,
+    +comments: Array<TranslationComment>,
+|};
+
 export type ReceiveAction = {|
     +type: typeof RECEIVE,
-    +translations: Array<Object>,
+    +translations: Array<HistoryTranslation>,
 |};
-export function receive(translations: Array<Object>): ReceiveAction {
+export function receive(
+    translations: Array<HistoryTranslation>,
+): ReceiveAction {
     return {
         type: RECEIVE,
         translations,
@@ -31,9 +51,9 @@ export function receive(translations: Array<Object>): ReceiveAction {
 
 export type UpdateAction = {|
     +type: typeof UPDATE,
-    +translation: Object,
+    +translation: HistoryTranslation,
 |};
-export function update(translation: Object): UpdateAction {
+export function update(translation: HistoryTranslation): UpdateAction {
     return {
         type: UPDATE,
         translation,

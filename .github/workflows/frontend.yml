@@ -78,7 +78,7 @@ jobs:
         working-directory: frontend
         run: |
           yarn remove flow-bin
-          yarn add -D typescript @types/jest @types/node @types/react @types/react-dom utility-types
+          yarn add -D typescript @types/history @types/jest @types/node @types/react @types/react-dom utility-types
       - name: Redirect prettier
         run: |
           python -c "from pathlib import Path;pack_path=Path('package.json');pack_path.write_text(pack_path.read_text().replace('**/frontend/**/*.{js,css}','**/frontend/**/*.{ts,tsx,css}'))"

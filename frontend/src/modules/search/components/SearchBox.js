@@ -239,6 +239,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
             return this.setState({ timeRange });
         }
 
+        // @ts-expect-error
         this.setState((state) => {
             return {
                 [type]: {
