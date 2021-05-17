@@ -14,10 +14,6 @@
     position: relative;
 }
 
-#app > header .user-controls {
-    float: right;
-}
-
 #app > .main-content {
     display: flex;
     flex: 1;
