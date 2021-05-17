@@ -68,6 +68,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         // Add-On installed
         if (
             this.state.installed ||
+            // @ts-expect-error
             (window.PontoonAddon && window.PontoonAddon.installed)
         ) {
             return null;

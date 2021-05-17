@@ -227,6 +227,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
             this.updateChartExtremes('chart' + name, d.getTime());
         }
 
+        // @ts-expect-error
         this.setState({
             ['input' + name]: value,
         });
@@ -387,6 +388,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
                     {!this.state.visible ? null : (
                         <HighchartsReact
                             highcharts={Highcharts}
+                            // @ts-expect-error
                             options={this.state.chartOptions}
                             constructorType={'stockChart'}
                             allowChartUpdate={false}

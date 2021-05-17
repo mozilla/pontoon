@@ -58,6 +58,7 @@ export default class APIBase {
 
         const requestParams = {
             method: method,
+            // @ts-expect-error, RequestCredentials
             credentials: ('same-origin': CredentialsType),
             headers: headers,
             // This signal is used to cancel requests with the `abort()` method.

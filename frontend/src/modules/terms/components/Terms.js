@@ -21,17 +21,17 @@ type Props = {|
  * Shows all terms found in the source string.
  */
 export default function Terms(props: Props): null | React.Element<'section'> {
-    let { terms } = props;
+    const { terms } = props;
 
     if (terms.fetching || !terms.terms) {
         return null;
     }
 
-    terms = terms.terms;
+    const termlist = terms.terms;
 
     return (
         <section className='terms'>
-            {!terms.length ? (
+            {!termlist.length ? (
                 <Localized id='entitydetails-Helpers--no-terms'>
                     <p className='no-terms'>No terms available.</p>
                 </Localized>
@@ -39,7 +39,7 @@ export default function Terms(props: Props): null | React.Element<'section'> {
                 <TermsList
                     isReadOnlyEditor={props.isReadOnlyEditor}
                     locale={props.locale}
-                    terms={terms}
+                    terms={termlist}
                     addTextToEditorTranslation={
                         props.addTextToEditorTranslation
                     }

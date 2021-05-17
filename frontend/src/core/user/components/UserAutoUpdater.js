@@ -11,6 +11,7 @@ type Props = {
  * Regularly fetch user data to keep it up-to-date with the server.
  */
 export default class UserAutoUpdater extends React.Component<Props> {
+    // @ts-expect-error number
     timer: ?IntervalID;
 
     fetchUserData: () => void = () => {
