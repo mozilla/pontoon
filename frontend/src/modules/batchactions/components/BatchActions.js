@@ -219,7 +219,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
                     )}
                 </div>
 
-                <div className='main-content'>
+                <div className='actions-panel'>
                     <div className='intro'>
                         <Localized
                             id='batchactions-BatchActions--warning'
