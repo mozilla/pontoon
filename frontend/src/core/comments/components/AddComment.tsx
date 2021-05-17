@@ -9,7 +9,6 @@ import './AddComment.css';
 
 import { UserAvatar } from 'core/user';
 
-import type { TextType, MentionType, InitialType } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
 
@@ -33,7 +32,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     } = props;
 
     const mentionList: any = React.useRef();
-    const [target, setTarget] = React.useState();
+    const [target, setTarget] = React.useState<Range>();
     const [index, setIndex] = React.useState(0);
     const [search, setSearch] = React.useState('');
     const [scrollPosition, setScrollPosition] = React.useState(0);
@@ -354,8 +353,8 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         return ReactDOM.createPortal(children, document.body);
     };
 
-    const serialize = (node: TextType | MentionType | InitialType) => {
-        if (Text.isText(node) && node.text) {
+    const serialize = (node: Node) => {
+        if (Text.isText(node)) {
             return escapeHtml(node.text);
         }
 
