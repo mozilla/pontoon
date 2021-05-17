@@ -37,11 +37,6 @@
     width: 75%;
 }
 
-#app .inner {
-    display: table-cell;
-    vertical-align: middle;
-}
-
 /* NProgress: A nanoscopic progress bar. */
 #nprogress {
     pointer-events: none;
