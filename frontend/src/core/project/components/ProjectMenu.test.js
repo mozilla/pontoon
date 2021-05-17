@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import ProjectItem from './ProjectItem.js';
+import ProjectItem from './ProjectItem';
 
 import ProjectMenuBase, { ProjectMenu } from './ProjectMenu';
 

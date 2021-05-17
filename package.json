@@ -25,7 +25,7 @@
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
     "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
     "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
-    "eslint": "eslint 'frontend/**/*.js' 'pontoon/**/*.js' 'tests/**/*.js'"
+    "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tests/**/*.js'"
   },
   "jest": {
     "testMatch": [
