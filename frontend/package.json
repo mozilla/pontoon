@@ -49,9 +49,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --modulePaths=src",
-    "eject": "react-scripts eject",
-    "flow": "flow",
-    "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
     "@types/history": "^4.7.8",
