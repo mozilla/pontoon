@@ -1,6 +1,8 @@
 /* @flow */
 
 import { LOCATION_CHANGE } from 'connected-react-router';
+// TODO: TypeScript
+// import type { LocationChangeAction } from 'connected-react-router';
 
 import { RESET, SELECT } from './actions';
 
@@ -26,8 +28,9 @@ export default function reducer(
                 ...state,
                 pluralForm: action.pluralForm,
             };
-        case RESET:
+        // @ts-expect-error
         case LOCATION_CHANGE:
+        case RESET:
             return {
                 ...initial,
             };

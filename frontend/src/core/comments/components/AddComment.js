@@ -138,7 +138,9 @@ export default function AddComment(props: Props): React.Element<'div'> {
         const commentEditorSpan = document.querySelector(
             '.comments-list .add-comment .comment-editor p span',
         );
-        const commentEditorSpanHeight = !commentEditorSpan
+        const commentEditorSpanHeight = !(
+            commentEditorSpan instanceof HTMLElement
+        )
             ? 0
             : commentEditorSpan.offsetHeight;
 

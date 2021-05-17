@@ -22,6 +22,7 @@ type State = {|
  * clicked.
  */
 export default class NotificationPanel extends React.Component<Props, State> {
+    // @ts-expect-error number
     hideTimeout: TimeoutID;
 
     constructor(props: Props) {

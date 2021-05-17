@@ -3,6 +3,8 @@
 import { serializeExpression } from '@fluent/syntax';
 import type { PatternElement } from '@fluent/syntax';
 
+type DeepStringArray = Array<DeepStringArray> | string | null;
+
 /**
  * Returns a list of values from a Fluent AST.
  *
@@ -10,8 +12,8 @@ import type { PatternElement } from '@fluent/syntax';
  */
 export default function serialize(
     elements: Array<PatternElement>,
-): Array<Object> {
-    return elements.map((elt) => {
+): DeepStringArray {
+    return elements.map((elt): DeepStringArray => {
         if (elt.type === 'TextElement') {
             return elt.value;
         }

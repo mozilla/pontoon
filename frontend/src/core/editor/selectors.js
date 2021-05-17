@@ -30,8 +30,8 @@ export function _existingTranslation(
         // If translation is a string, from the generic editor.
         (translation === initialTranslation ||
             // If translation is a FluentMessage, from the fluent editor.
-            (translation.equals &&
-                // $FlowIgnore: `equals`, if defined, will always be a function.
+            (typeof translation !== 'string' &&
+                typeof initialTranslation !== 'string' &&
                 translation.equals(initialTranslation)))
     ) {
         existingTranslation = activeTranslation;

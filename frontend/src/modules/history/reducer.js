@@ -2,28 +2,14 @@
 
 import { RECEIVE, REQUEST, UPDATE } from './actions';
 
-import type { ReceiveAction, RequestAction, UpdateAction } from './actions';
-import type { TranslationComment } from 'core/api';
+import type {
+    ReceiveAction,
+    RequestAction,
+    UpdateAction,
+    HistoryTranslation,
+} from './actions';
 
 type Action = ReceiveAction | RequestAction | UpdateAction;
-
-export type HistoryTranslation = {|
-    +approved: boolean,
-    +approvedUser: string,
-    +date: string,
-    +dateIso: string,
-    +fuzzy: boolean,
-    +pk: number,
-    +rejected: boolean,
-    +string: string,
-    +uid: ?number,
-    +unapprovedUser: string,
-    +machinerySources: string,
-    +user: string,
-    +username: string,
-    +userGravatarUrlSmall: string,
-    +comments: Array<TranslationComment>,
-|};
 
 export type HistoryState = {|
     +fetching: boolean,
