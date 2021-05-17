@@ -8,18 +8,13 @@ describe('<Machinery>', () => {
         code: 'kg',
     };
 
-    const ENTITY = {
-        machinery_original: 'Plus ultra',
-        format: 'po',
-    };
-
     it('shows a search form', () => {
         const machinery = {
             translations: [],
             searchResults: [],
         };
         const wrapper = shallow(
-            <Machinery machinery={machinery} locale={LOCALE} entity={ENTITY} />,
+            <Machinery machinery={machinery} locale={LOCALE} />,
         );
 
         expect(wrapper.find('.search-wrapper')).toHaveLength(1);
@@ -38,7 +33,7 @@ describe('<Machinery>', () => {
             searchResults: [{ original: '4' }, { original: '5' }],
         };
         const wrapper = shallow(
-            <Machinery machinery={machinery} locale={LOCALE} entity={ENTITY} />,
+            <Machinery machinery={machinery} locale={LOCALE} />,
         );
 
         expect(wrapper.find('Translation')).toHaveLength(5);
@@ -47,7 +42,7 @@ describe('<Machinery>', () => {
     it('returns null if there is no locale', () => {
         const machinery = {};
         const wrapper = shallow(
-            <Machinery machinery={machinery} locale={null} entity={ENTITY} />,
+            <Machinery machinery={machinery} locale={null} />,
         );
 
         expect(wrapper.type()).toBeNull();
@@ -60,7 +55,7 @@ describe('<Machinery>', () => {
             sourceString: 'test',
         };
         const wrapper = mount(
-            <Machinery machinery={machinery} locale={LOCALE} entity={ENTITY} />,
+            <Machinery machinery={machinery} locale={LOCALE} />,
         );
 
         expect(wrapper.find('button')).toHaveLength(1);

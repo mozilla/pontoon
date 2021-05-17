@@ -7,17 +7,14 @@ import './Machinery.css';
 
 import Translation from './Translation';
 import { SkeletonLoader } from 'core/loaders';
-import * as utils from 'core/utils';
 
 import type { Locale } from 'core/locale';
-import type { Entity } from 'core/api';
 import type { MachineryState } from '..';
 
 type Props = {|
     locale: ?Locale,
     machinery: MachineryState,
     searchMachinery: (query: string, page?: number) => void,
-    entity: Entity,
 |};
 
 type State = {|
@@ -84,12 +81,7 @@ export default class Machinery extends React.Component<Props, State> {
     };
 
     render(): null | React.Element<'section'> {
-        const { locale, machinery, entity } = this.props;
-
-        const source = utils.getOptimizedContent(
-            entity.machinery_original,
-            entity.format,
-        );
+        const { locale, machinery } = this.props;
 
         if (!locale) {
             return null;
@@ -130,15 +122,14 @@ export default class Machinery extends React.Component<Props, State> {
                 <div className='list-wrapper'>
                     <ul>
                         {machinery.translations.map((translation, index) => {
-                            return !machinery.entity ||
-                                translation.original == source ? (
+                            return (
                                 <Translation
                                     index={index}
                                     sourceString={machinery.sourceString}
                                     translation={translation}
                                     key={index}
                                 />
-                            ) : null;
+                            );
                         })}
                     </ul>
                     <ul>
