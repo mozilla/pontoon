@@ -47,7 +47,7 @@
     display: inline;
 }
 
-.batch-actions .main-content {
+.batch-actions .actions-panel {
     overflow: auto;
     position: absolute;
     top: 44px;
@@ -56,36 +56,36 @@
     bottom: 0;
 }
 
-.batch-actions .main-content div {
+.batch-actions .actions-panel div {
     margin: 0 auto;
     min-width: 300px;
     padding: 20px;
     width: 50%;
 }
 
-.batch-actions .main-content h2 {
+.batch-actions .actions-panel h2 {
     color: #cccccc;
     font-size: 14px;
     font-weight: 300;
     padding-bottom: 2px;
 }
 
-.batch-actions .main-content .intro p {
+.batch-actions .actions-panel .intro p {
     color: #aaaaaa;
     font-style: italic;
 }
 
-.batch-actions .main-content .intro p .stress {
+.batch-actions .actions-panel .intro p .stress {
     color: #f36;
 }
 
-.batch-actions .main-content button,
-.batch-actions .main-content input {
+.batch-actions .actions-panel button,
+.batch-actions .actions-panel input {
     display: block;
     width: 100%;
 }
 
-.batch-actions .main-content button {
+.batch-actions .actions-panel button {
     background: #7bc876;
     border: none;
     border-radius: 3px;
@@ -96,18 +96,18 @@
     position: relative;
 }
 
-.batch-actions .main-content button .fa {
+.batch-actions .actions-panel button .fa {
     position: absolute;
     right: 10px;
     top: 12px;
     opacity: 0.5;
 }
 
-.batch-actions .main-content button.reject-all {
+.batch-actions .actions-panel button.reject-all {
     background: #f36;
 }
 
-.batch-actions .main-content input {
+.batch-actions .actions-panel input {
     background: transparent;
     border: none;
     border-bottom: 1px solid #5e6475;
@@ -118,16 +118,16 @@
 }
 
 /* Remove highlight in Chrome */
-.batch-actions .main-content input:focus {
+.batch-actions .actions-panel input:focus {
     outline: none;
 }
 
 /* Remove cancel button in Chrome */
-.batch-actions .main-content input::-webkit-search-cancel-button {
+.batch-actions .actions-panel input::-webkit-search-cancel-button {
     display: none;
 }
 
 /* Style placeholder color in Chrome */
-.batch-actions .main-content input::-webkit-input-placeholder {
+.batch-actions .actions-panel input::-webkit-input-placeholder {
     color: #aaaaaa;
 }
