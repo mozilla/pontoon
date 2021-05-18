@@ -14,36 +14,27 @@
     position: relative;
 }
 
-#app > header .user-controls {
-    float: right;
-}
-
-#app .main-content {
+#app > .main-content {
     display: flex;
     flex: 1;
     justify-content: space-between;
     overflow: auto;
 }
 
-#app .panel-content,
-#app .panel-list {
+#app > .main-content > .panel-content,
+#app > .main-content > .panel-list {
     height: 100%;
     position: relative;
 }
 
-#app .panel-list {
+#app > .main-content > .panel-list {
     width: 25%;
 }
 
-#app .panel-content {
+#app > .main-content > .panel-content {
     border-left: 1px solid #5e6475;
     box-sizing: border-box;
     width: 75%;
-}
-
-#app .inner {
-    display: table-cell;
-    vertical-align: middle;
 }
 
 /* NProgress: A nanoscopic progress bar. */

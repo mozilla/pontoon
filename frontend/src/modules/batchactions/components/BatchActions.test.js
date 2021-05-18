@@ -44,7 +44,7 @@ describe('<BatchActionsBase>', () => {
         expect(wrapper.find('.selected-count')).toHaveLength(1);
         expect(wrapper.find('.select-all')).toHaveLength(1);
 
-        expect(wrapper.find('.main-content')).toHaveLength(1);
+        expect(wrapper.find('.actions-panel')).toHaveLength(1);
 
         expect(
             wrapper.find('#batchactions-BatchActions--warning'),
