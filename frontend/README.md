@@ -136,6 +136,10 @@ Note that, in order to add new dependencies, you need to have `yarn` installed a
 
 Our code uses TypeScript for type-checking the production code. Tests are not type-checked in general, which allows for smaller test fixtures. Visit the [TypeScript documentation](https://www.typescriptlang.org/docs) to learn more about TypeScript.
 
+To check for TypeScript errors locally, run:
+
+    $ make types
+
 
 ## Testing
 

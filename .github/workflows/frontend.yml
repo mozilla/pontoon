@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: yarn
         working-directory: frontend
+      - name: Check TypeScript
+        run: yarn types --pretty
+        working-directory: frontend
       - name: build
         run: yarn build
         working-directory: frontend

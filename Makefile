@@ -28,6 +28,7 @@ help:
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
+	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -74,6 +75,9 @@ black:
 
 pyupgrade:
 	"${DC}" run --rm webapp pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
+
+types:
+	"${DC}" run --rm -w //app/frontend webapp yarn types
 
 prettier:
 	"${DC}" run --rm webapp npm run prettier
