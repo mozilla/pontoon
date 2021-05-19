@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
+
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as lightbox from 'core/lightbox';
@@ -18,8 +19,9 @@ import * as machinery from 'modules/machinery';
 import * as otherlocales from 'modules/otherlocales';
 import * as search from 'modules/search';
 import * as teamcomments from 'modules/teamcomments';
-import * as unsavedchanges from 'modules/unsavedchanges'; // Combine reducers from all modules, using their NAME constant as key.
+import * as unsavedchanges from 'modules/unsavedchanges';
 
+// Combine reducers from all modules, using their NAME constant as key.
 export default (browserHistory: any): any =>
     combineReducers({
         // System modules
