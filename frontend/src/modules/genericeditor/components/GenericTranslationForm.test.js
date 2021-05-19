@@ -7,7 +7,7 @@ import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import GenericTranslationForm from './GenericTranslationForm';
 
-function createComponent(updateTranslation?) {
+function createComponent(updateTranslation) {
     const store = createReduxStore();
     store.dispatch(locale.actions.receive({ code: 'kg' }));
     store.dispatch(editor.actions.update('Hello'));
