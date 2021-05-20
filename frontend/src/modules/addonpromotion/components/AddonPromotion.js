@@ -42,14 +42,20 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         window.removeEventListener('message', this.handleMessages);
     }
 
+    // Hide Add-On Promotion if Add-On installed while active
     handleMessages: (event: MessageEvent) => void = (event: MessageEvent) => {
-        const data = JSON.parse(((event.data: any): string));
+        // only allow messages from authorized senders (extension content script, or Pontoon itself)
+        if (event.origin !== window.origin || event.source !== window) {
+            return;
+        }
+        let data = undefined;
+        if (typeof event.data === 'string') {
+            data = JSON.parse(((event.data: any): string));
+        }
         if (data._type === 'PontoonAddonInfo') {
-            if (data.value.installed) {
-                this.setState({
-                    installed: true,
-                });
-            }
+            this.setState({
+                installed: data.value && data.value.installed,
+            });
         }
     };
 

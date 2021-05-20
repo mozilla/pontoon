@@ -209,10 +209,17 @@ $(function () {
     });
 
     // Hide Add-On Promotion if Add-On installed while active
-    window.addEventListener('message', (e) => {
-        const data = JSON.parse(e.data);
+    window.addEventListener('message', (event) => {
+        // only allow messages from authorized senders (extension content script, or Pontoon itself)
+        if (event.origin !== window.origin || event.source !== window) {
+            return;
+        }
+        let data = undefined;
+        if (typeof event.data === 'string') {
+            data = JSON.parse(event.data);
+        }
         if (data._type === 'PontoonAddonInfo') {
-            if (data.value.installed) {
+            if (data.value && data.value.installed) {
                 $('body').removeClass('addon-promotion-active');
             }
         }
