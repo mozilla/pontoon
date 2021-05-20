@@ -60,10 +60,10 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
                 data = JSON.parse(((event.data: any): string));
                 break;
         }
-        if (data._type === 'PontoonAddonInfo') {
-            this.setState({
-                installed: data.value && data.value.installed,
-            });
+        if (data._type === 'PontoonAddonInfo' && data.value) {
+            if (data.value.installed) {
+                this.setState({ installed: true });
+            }
         }
     };
 

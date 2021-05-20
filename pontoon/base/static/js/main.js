@@ -226,8 +226,8 @@ $(function () {
                 data = JSON.parse(event.data);
                 break;
         }
-        if (data._type === 'PontoonAddonInfo') {
-            if (data.value && data.value.installed) {
+        if (data._type === 'PontoonAddonInfo' && data.value) {
+            if (data.value.installed) {
                 $('body').removeClass('addon-promotion-active');
             }
         }
