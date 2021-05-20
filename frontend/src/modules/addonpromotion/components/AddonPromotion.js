@@ -49,8 +49,16 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
             return;
         }
         let data = undefined;
-        if (typeof event.data === 'string') {
-            data = JSON.parse(((event.data: any): string));
+        switch (typeof event.data) {
+            case 'object':
+                data = event.data;
+                break;
+            case 'string':
+                // backward compatibility
+                // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
+                // and convert this switch into a condition
+                data = JSON.parse(((event.data: any): string));
+                break;
         }
         if (data._type === 'PontoonAddonInfo') {
             this.setState({
