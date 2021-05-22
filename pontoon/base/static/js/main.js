@@ -214,7 +214,7 @@ $(function () {
         if (event.origin !== window.origin || event.source !== window) {
             return;
         }
-        let data = undefined;
+        let data;
         switch (typeof event.data) {
             case 'object':
                 data = event.data;
@@ -226,8 +226,8 @@ $(function () {
                 data = JSON.parse(event.data);
                 break;
         }
-        if (data._type === 'PontoonAddonInfo' && data.value) {
-            if (data.value.installed) {
+        if (data && data._type === 'PontoonAddonInfo' && data.value) {
+            if (data.value.installed === true) {
                 $('body').removeClass('addon-promotion-active');
             }
         }

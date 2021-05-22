@@ -23,6 +23,13 @@ type State = {|
     installed: boolean,
 |};
 
+type PontoonAddonInfoMessage = {
+    _type?: 'PontoonAddonInfo',
+    value?: {
+        installed?: boolean,
+    },
+};
+
 /**
  * Renders Pontoon Add-On promotion banner.
  */
@@ -48,20 +55,20 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         if (event.origin !== window.origin || event.source !== window) {
             return;
         }
-        let data = undefined;
+        let data: ?PontoonAddonInfoMessage;
         switch (typeof event.data) {
             case 'object':
-                data = event.data;
+                data = (event.data: any);
                 break;
             case 'string':
                 // backward compatibility
                 // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
                 // and convert this switch into a condition
-                data = JSON.parse(((event.data: any): string));
+                data = JSON.parse((event.data: string));
                 break;
         }
-        if (data._type === 'PontoonAddonInfo' && data.value) {
-            if (data.value.installed) {
+        if (data && data._type === 'PontoonAddonInfo' && data.value) {
+            if (data.value.installed === true) {
                 this.setState({ installed: true });
             }
         }
