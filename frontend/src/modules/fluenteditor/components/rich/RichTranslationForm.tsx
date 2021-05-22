@@ -41,13 +41,11 @@ function getUpdatedTranslation(
     let dest: Child = source;
     // Walk the path until the next to last item.
     for (let i = 0, ln = path.length; i < ln - 1; i++) {
-        // $FlowIgnore: dest can be an Array or a BaseNode, ignore BaseNode[0]
         dest = dest[path[i]];
     }
     // Assign the new value to the last element in the path, so that
     // it is actually assigned to the message object reference and
     // to the extracted value.
-    // $FlowIgnore: dest can be an Array or a BaseNode, ignore BaseNode[0]
     dest[path[path.length - 1]] = value;
 
     return source;

@@ -57,7 +57,7 @@ export default function SimpleEditor(
 
         if (typeof translation !== 'string') {
             // This should never happen. If it does, the developers have made a
-            // mistake in the code. We need this check for Flow's sake though.
+            // mistake in the code. We need this check for TypeScript's sake though.
             throw new Error(
                 'Unexpected data type for translation: ' + typeof translation,
             );

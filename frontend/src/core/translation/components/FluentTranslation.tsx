@@ -10,12 +10,12 @@ import { withSearch } from 'modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 
-// @ts-ignore: I just can't get HOC working with Flow.
+// @ts-ignore: bug 1712442.
 const TranslationPlaceablesDiff = withDiff(
     WithPlaceablesForFluentNoLeadingSpace,
 );
 
-// @ts-ignore: I just can't get HOC working with Flow.
+// @ts-ignore: bug 1712442.
 const TranslationPlaceablesSearch = withSearch(
     WithPlaceablesForFluentNoLeadingSpace,
 );

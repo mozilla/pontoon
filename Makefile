@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format flow eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"

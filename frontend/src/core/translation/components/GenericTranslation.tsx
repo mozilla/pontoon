@@ -4,10 +4,10 @@ import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 import { withSearch } from 'modules/search';
 
-// @ts-ignore: I just can't get HOC working with Flow.
+// @ts-ignore: bug 1712442.
 const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
-// @ts-ignore: I just can't get HOC working with Flow.
+// @ts-ignore: bug 1712442.
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {
