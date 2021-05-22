@@ -66,7 +66,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
                 // and convert this switch into a condition
                 try {
                     data = JSON.parse((event.data: string));
-                } catch(_) {
+                } catch (_) {
                     return;
                 }
                 break;
