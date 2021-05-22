@@ -223,7 +223,11 @@ $(function () {
                 // backward compatibility
                 // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
                 // and convert this switch into a condition
-                data = JSON.parse(event.data);
+                try {
+                    data = JSON.parse(event.data);
+                } catch(_) {
+                    return;
+                }
                 break;
         }
         if (data && data._type === 'PontoonAddonInfo' && data.value) {
