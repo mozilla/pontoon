@@ -7,8 +7,8 @@ export default class EntityAPI extends APIBase {
         action: string,
         locale: string,
         entities: Array<number>,
-        find: string | null | undefined,
-        replace: string | null | undefined,
+        find: string | undefined,
+        replace: string | undefined,
     ): Promise<any> {
         const payload = new FormData();
 

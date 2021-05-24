@@ -13,7 +13,7 @@ import type { TermState } from 'core/term';
 
 export default function getMarker(
     terms: TermState,
-    forFluent?: boolean | null | undefined,
+    forFluent: boolean = false,
 ): any {
     let placeableRules = getRulesWithoutLeadingSpace(rules);
 

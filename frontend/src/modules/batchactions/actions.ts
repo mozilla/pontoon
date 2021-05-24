@@ -94,8 +94,8 @@ export function performAction(
     resource: string,
     selectedEntity: number,
     entities: Array<number>,
-    find?: string | null | undefined,
-    replace?: string | null | undefined,
+    find?: string,
+    replace?: string,
 ): (...args: Array<any>) => any {
     return async (dispatch) => {
         dispatch(request(action));
