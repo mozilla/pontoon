@@ -1,10 +1,11 @@
 {% macro menu() %}
 {% if user.is_authenticated %}
 
-<div id="notifications" class="notifications select{% if user.notifications.unread() %} unread{% endif %}">
+<div id="notifications" class="notifications select{% if user.unread_notifications_display %} unread{% endif %}">
 
   <div class="button selector">
     <i class="icon far fa-bell fa-fw"></i>
+    <i class="badge">{{ user.unread_notifications_display }}</i>
   </div>
 
   <div class="menu">

@@ -41,10 +41,7 @@ var Pontoon = (function (my) {
             $.ajax({
                 url: '/notifications/mark-all-as-read/',
                 success: function () {
-                    $('#notifications.unread .button .icon').animate(
-                        { color: '#4D5967' },
-                        1000,
-                    );
+                    $('#notifications.unread .button .badge').hide();
                     var unreadNotifications = $(
                         '.notifications .menu ul.notification-list li.notification-item[data-unread="true"]',
                     );
