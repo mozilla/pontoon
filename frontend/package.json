@@ -34,7 +34,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.3",
     "react-tabs": "3.0.0",
-    "react-time-ago": "5.0.4",
+    "react-time-ago": "6.2.2",
     "reactour": "1.15.1",
     "redux": "4.0.5",
     "redux-logger": "3.0.6",
