@@ -68,6 +68,7 @@ export type Notification = {|
 export type Notifications = {|
     has_unread: boolean,
     notifications: Array<Notification>,
+    unread_count: string,
 |};
 
 export type UserState = {|
@@ -113,6 +114,7 @@ const initial: UserState = {
     notifications: {
         has_unread: false,
         notifications: [],
+        unread_count: '0',
     },
     users: [],
 };

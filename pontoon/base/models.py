@@ -353,6 +353,7 @@ def serialized_notifications(self):
     return {
         "has_unread": unread_count > 0,
         "notifications": notifications,
+        "unread_count": str(self.unread_notifications_display),
     }
 
 
