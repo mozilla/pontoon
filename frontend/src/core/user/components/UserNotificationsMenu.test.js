@@ -93,7 +93,7 @@ describe('<UserNotificationsMenuBase>', () => {
             notifications: {
                 has_unread: true,
                 notifications: [],
-                unread_count: 5,
+                unread_count: '5',
             },
         };
         const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
