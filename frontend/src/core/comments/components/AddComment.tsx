@@ -1,7 +1,17 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { Localized } from '@fluent/react';
-import { Editor, Transforms, Range, createEditor, Text, Node } from 'slate';
+import {
+    BaseEditor,
+    Editor,
+    Element as SlateElement,
+    Transforms,
+    Range,
+    createEditor,
+    Text,
+    Node,
+} from 'slate';
+import type { Descendant } from 'slate';
 import { Slate, Editable, ReactEditor, withReact } from 'slate-react';
 import escapeHtml from 'escape-html';
 
@@ -20,6 +30,25 @@ type Props = {
     addComment: (arg0: string, arg1: number | null | undefined) => void;
     resetContactPerson?: () => void;
 };
+
+type Paragraph = {
+    type: 'paragraph';
+    children: Descendant[];
+};
+
+type Mention = {
+    type: 'mention';
+    character: string;
+    url: string;
+    children: Text[];
+};
+
+declare module 'slate' {
+    interface CustomTypes {
+        Editor: BaseEditor & ReactEditor;
+        Element: Paragraph | Mention;
+    }
+}
 
 export default function AddComment(props: Props): React.ReactElement<'div'> {
     const {
@@ -40,8 +69,8 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         () => withMentions(withReact(createEditor())),
         [],
     );
-    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] }];
-    const [value, setValue] = React.useState(initialValue);
+    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] } as Paragraph];
+    const [value, setValue] = React.useState<Descendant[]>(initialValue);
     const users = user.users;
     const placeFocus = React.useCallback(() => {
         ReactEditor.focus(editor);
@@ -54,7 +83,10 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         // check to see if contact person is already mentioned
         const [isMentioned] = Editor.nodes(editor, {
             at: [],
-            match: (n) => n.character === contactPerson,
+            match: (n) =>
+                SlateElement.isElement(n) &&
+                n.type == 'mention' &&
+                n.character === contactPerson,
         });
 
         if (contactPerson) {
@@ -353,7 +385,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         return ReactDOM.createPortal(children, document.body);
     };
 
-    const serialize = (node: Node) => {
+    const serialize = (node: Descendant) => {
         if (Text.isText(node)) {
             return escapeHtml(node.text);
         }
