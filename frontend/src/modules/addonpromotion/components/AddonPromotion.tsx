@@ -62,7 +62,9 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
                 // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
                 // and convert this switch into a condition
                 try {
-                    data = JSON.parse(event.data as string) as PontoonAddonInfoMessage;
+                    data = JSON.parse(
+                        event.data as string,
+                    ) as PontoonAddonInfoMessage;
                 } catch (_) {
                     return;
                 }
