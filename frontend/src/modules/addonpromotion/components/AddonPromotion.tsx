@@ -20,6 +20,19 @@ type State = {
     installed: boolean;
 };
 
+interface PontoonAddonInfo {
+    installed?: boolean;
+}
+
+interface PontoonAddonInfoMessage {
+    _type?: 'PontoonAddonInfo';
+    value?: PontoonAddonInfo;
+}
+
+interface WindowWithInfo extends Window {
+    PontoonAddon?: PontoonAddonInfo;
+}
+
 /**
  * Renders Pontoon Add-On promotion banner.
  */
@@ -39,14 +52,35 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         window.removeEventListener('message', this.handleMessages);
     }
 
+    // Hide Add-On Promotion if Add-On installed while active
     handleMessages: (event: MessageEvent) => void = (event: MessageEvent) => {
-        const data = JSON.parse((event.data as any) as string);
-        if (data._type === 'PontoonAddonInfo') {
-            if (data.value.installed) {
-                this.setState({
-                    installed: true,
-                });
-            }
+        // only allow messages from authorized senders (extension content script, or Pontoon itself)
+        if (event.origin !== window.origin || event.source !== window) {
+            return;
+        }
+        let data: PontoonAddonInfoMessage;
+        switch (typeof event.data) {
+            case 'object':
+                data = event.data;
+                break;
+            case 'string':
+                // backward compatibility
+                // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
+                // and convert this switch into a condition
+                try {
+                    data = JSON.parse(event.data);
+                } catch (_) {
+                    return;
+                }
+                break;
+            default:
+                return;
+        }
+        if (
+            data?._type === 'PontoonAddonInfo' &&
+            data?.value?.installed === true
+        ) {
+            this.setState({ installed: true });
         }
     };
 
@@ -65,8 +99,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         // Add-On installed
         if (
             this.state.installed ||
-            // @ts-expect-error
-            (window.PontoonAddon && window.PontoonAddon.installed)
+            (window as WindowWithInfo).PontoonAddon?.installed === true
         ) {
             return null;
         }

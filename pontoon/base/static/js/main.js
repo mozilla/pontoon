@@ -206,10 +206,29 @@ $(function () {
     });
 
     // Hide Add-On Promotion if Add-On installed while active
-    window.addEventListener('message', (e) => {
-        const data = JSON.parse(e.data);
-        if (data._type === 'PontoonAddonInfo') {
-            if (data.value.installed) {
+    window.addEventListener('message', (event) => {
+        // only allow messages from authorized senders (extension content script, or Pontoon itself)
+        if (event.origin !== window.origin || event.source !== window) {
+            return;
+        }
+        let data;
+        switch (typeof event.data) {
+            case 'object':
+                data = event.data;
+                break;
+            case 'string':
+                // backward compatibility
+                // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
+                // and convert this switch into a condition
+                try {
+                    data = JSON.parse(event.data);
+                } catch (_) {
+                    return;
+                }
+                break;
+        }
+        if (data && data._type === 'PontoonAddonInfo' && data.value) {
+            if (data.value.installed === true) {
                 $('body').removeClass('addon-promotion-active');
             }
         }
