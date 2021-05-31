@@ -1809,6 +1809,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/date-and-time@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@types/date-and-time/-/date-and-time-0.13.0.tgz#8252c1a8d166a8baf4e9631321a85e6e5ce59457"
+  integrity sha512-kHEncapIgrqaY8r2tyb19EvdKyhNjwheLl5cYTorsWJtURoI+oGm5ehW8CLAaq4dvu8x9z56FcXqAT4Mm5Nvzw==
+
 "@types/diff-match-patch@^1.0.32":
   version "1.0.32"
   resolved "https://registry.yarnpkg.com/@types/diff-match-patch/-/diff-match-patch-1.0.32.tgz#d9c3b8c914aa8229485351db4865328337a3d09f"
