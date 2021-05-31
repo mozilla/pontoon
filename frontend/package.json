@@ -53,6 +53,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "@types/diff-match-patch": "^1.0.32",
     "@types/enzyme": "^3.10.8",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/history": "^4.7.8",
