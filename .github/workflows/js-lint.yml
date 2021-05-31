@@ -33,6 +33,9 @@ jobs:
           node-version: '14'
       - name: Install dependencies
         run: npm install
+      - name: Install frontend
+        run: yarn
+        working-directory: frontend
       - name: eslint
         run: npm run eslint
 
@@ -47,4 +50,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: prettier
-        run: ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
+        run: ./node_modules/.bin/prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'

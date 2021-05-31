@@ -54,18 +54,6 @@ module.exports = {
         generalShortcutsHandler: true,
         traversalShortcutsHandler: true,
         editorShortcutsHandler: true,
-        // Flow specific things
-        CredentialsType: true,
-        SyntheticEvent: false,
-        SyntheticFocusEvent: false,
-        SyntheticInputEvent: false,
-        SyntheticKeyboardEvent: false,
-        SyntheticMouseEvent: false,
-        TimeoutID: false,
-        "$Diff": false,
-        "$ReadOnly": false,
-        "$ReadOnlyArray": false,
-        "React$Element": false,
     },
     plugins: [
         'react',

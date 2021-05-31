@@ -15,7 +15,7 @@ const DEFAULT_LOCALE = {
     cldrPlurals: [1, 5],
 };
 
-function createComponent(entityString, updateTranslation?) {
+function createComponent(entityString, updateTranslation) {
     if (!updateTranslation) {
         updateTranslation = sinon.fake();
     }

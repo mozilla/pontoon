@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format flow eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -28,7 +28,7 @@ help:
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
-	@echo "  flow             Runs the Flow type checker on the frontend code"
+	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -76,8 +76,8 @@ black:
 pyupgrade:
 	"${DC}" run --rm webapp pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
-flow:
-	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
+types:
+	"${DC}" run --rm -w //app/frontend webapp yarn types
 
 prettier:
 	"${DC}" run --rm webapp npm run prettier
