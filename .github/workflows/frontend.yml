@@ -15,8 +15,8 @@ on:
       - .github/workflows/frontend.yml
 
 jobs:
-  flow:
-    name: Flow & build
+  typescript:
+    name: TypeScript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,8 +28,8 @@ jobs:
       - name: Install dependencies
         run: yarn
         working-directory: frontend
-      - name: flow
-        run: yarn flow
+      - name: Check TypeScript
+        run: yarn types --pretty
         working-directory: frontend
       - name: build
         run: yarn build
@@ -53,50 +53,3 @@ jobs:
         working-directory: frontend
       - name: codecov.io
         run: codecov -F frontend
-
-  flow-to-ts:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: git config
-        run: |
-          git config --global user.email "Jane@example.com"
-          git config --global user.name "Jane Doe"
-
-      - name: Install globals
-        run: |
-          npm install -g yarn @khanacademy/flow-to-ts
-      - name: npm install
-        run: npm install
-      - name: install frontend
-        working-directory: frontend
-        run: yarn install
-      - name: Pre-flight switches
-        working-directory: frontend
-        run: |
-          yarn remove flow-bin
-          yarn add -D typescript @types/history @types/jest @types/node @types/react @types/react-dom utility-types
-      - name: Redirect prettier
-        run: |
-          python -c "from pathlib import Path;pack_path=Path('package.json');pack_path.write_text(pack_path.read_text().replace('**/frontend/**/*.{js,css}','**/frontend/**/*.{ts,tsx,css}'))"
-      - name: Pre-flight diff
-        run: git diff
-      - name: Pre-flight commit
-        run: git commit -am"Pre-flight flow to ts"
-      - name: flow-to-ts
-        run: flow-to-ts --inline-utility-types --write --delete-source 'frontend/src/**/!(*.test).js'
-      - name: prettier
-        run: npm run prettier
-      - name: Stage
-        run: |
-          git add frontend
-          git commit -m'flow-to-ts'
-      - name: flow-to-ts diff
-        run: git -c diff.renameLimit=36000 show HEAD
-      - name: tsc
-        working-directory: frontend
-        run: ./node_modules/.bin/tsc -b no-tsconfig.json --pretty
-        continue-on-error: true

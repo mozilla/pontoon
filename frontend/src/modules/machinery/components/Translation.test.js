@@ -17,7 +17,7 @@ const DEFAULT_TRANSLATION = {
     translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
 };
 
-function createTranslation(translation, entity?) {
+function createTranslation(translation, entity) {
     const store = createReduxStore();
     const wrapper = mountComponentWithStore(Translation, store, {
         translation,
