@@ -11,8 +11,7 @@
     "connected-react-router": "6.8.0",
     "date-and-time": "0.14.2",
     "diff-match-patch": "1.0.4",
-    "flow-bin": "0.146.0",
-    "highcharts": "7.2.2",
+    "highcharts": "9.0.0",
     "highcharts-react-official": "2.2.2",
     "html-react-parser": "0.13.0",
     "intl-pluralrules": "1.0.0",
@@ -34,14 +33,14 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.3",
     "react-tabs": "3.0.0",
-    "react-time-ago": "5.0.4",
+    "react-time-ago": "6.2.2",
     "reactour": "1.15.1",
     "redux": "4.0.5",
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "shortid": "2.2.14",
-    "slate": "0.58.4",
+    "slate": "0.63.0",
     "slate-react": "0.58.4",
     "styled-components": "4.3.2",
     "tlds": "1.218.0"
@@ -50,14 +49,20 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --modulePaths=src",
-    "eject": "react-scripts eject",
-    "flow": "flow",
-    "flow:dev": "flow stop; flow start; chokidar .flowconfig flow/ src/ tests/ -i flow/logs/flow.log -c 'flow status' --initial"
+    "types": "tsc",
+    "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "@types/history": "^4.7.8",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.3.0",
+    "@types/react": "^17.0.5",
+    "@types/react-dom": "^17.0.5",
     "chokidar-cli": "2.1.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
-    "sinon": "9.2.4"
+    "sinon": "9.2.4",
+    "typescript": "^4.2.4",
+    "utility-types": "^3.10.0"
   }
 }

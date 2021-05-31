@@ -802,6 +802,7 @@ header .right .select .menu {
 #notifications {
     float: left;
     height: 60px;
+    margin-right: 3px;
 }
 
 #notifications .button {
@@ -815,8 +816,26 @@ header .right .select .menu {
     margin-top: 17px;
 }
 
-#notifications.unread .button .icon {
-    color: #f36;
+#notifications .button .badge {
+    background: #f36;
+    border: 3px solid #272a2f;
+    border-radius: 12px;
+    color: #fff;
+    display: none;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    height: 14px;
+    line-height: 16px;
+    padding: 1px 6px 3px;
+    position: absolute;
+    right: -6px;
+    text-align: center;
+    top: 4px;
+}
+
+#notifications.unread .button .badge {
+    display: block;
 }
 
 #notifications .menu,
