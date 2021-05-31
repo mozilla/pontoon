@@ -87,17 +87,20 @@ describe('<UserNotificationsMenuBase>', () => {
         expect(wrapper.find('.user-notifications-menu')).toHaveLength(1);
     });
 
-    it('highlights the notifications icon when the user has unread notifications and call logUxAction', () => {
+    it('shows the notifications badge when the user has unread notifications and call logUxAction', () => {
         const user = {
             isAuthenticated: true,
             notifications: {
                 has_unread: true,
                 notifications: [],
+                unread_count: '5',
             },
         };
         const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
 
-        expect(wrapper.find('.user-notifications-menu.unread')).toHaveLength(1);
+        expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual(
+            '5',
+        );
         expect(api.uxaction.log.called).toEqual(true);
     });
 

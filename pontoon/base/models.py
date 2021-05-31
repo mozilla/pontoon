@@ -263,6 +263,17 @@ def menu_notifications(self):
 
 
 @property
+def unread_notifications_display(self):
+    """Textual representation of the unread notifications count."""
+    count = self.notifications.unread().count()
+
+    if count > 9:
+        return "9+"
+
+    return count
+
+
+@property
 def serialized_notifications(self):
     """Serialized list of notifications to display in the notifications menu."""
     unread_count = self.notifications.unread().count()
@@ -342,6 +353,7 @@ def serialized_notifications(self):
     return {
         "has_unread": unread_count > 0,
         "notifications": notifications,
+        "unread_count": str(self.unread_notifications_display),
     }
 
 
@@ -371,6 +383,7 @@ User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("menu_notifications", menu_notifications)
+User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
 User.add_to_class("serialize", user_serialize)
 

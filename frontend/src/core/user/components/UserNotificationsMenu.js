@@ -19,7 +19,6 @@ type Props = {
 };
 
 type State = {|
-    markAsRead: boolean,
     visible: boolean,
 |};
 
@@ -85,7 +84,6 @@ export default class UserNotificationsMenuBase extends React.Component<
         super(props);
 
         this.state = {
-            markAsRead: false,
             visible: false,
         };
     }
@@ -108,28 +106,7 @@ export default class UserNotificationsMenuBase extends React.Component<
         );
     }
 
-    componentDidUpdate(prevProps: Props) {
-        if (!this.props.user.isAuthenticated) {
-            return;
-        }
-
-        if (
-            prevProps.user.notifications.has_unread &&
-            !this.props.user.notifications.has_unread
-        ) {
-            this.setState({
-                markAsRead: true,
-            });
-        }
-    }
-
     handleClick: () => void = () => {
-        if (this.state.markAsRead) {
-            this.setState({
-                markAsRead: false,
-            });
-        }
-
         if (!this.state.visible) {
             api.uxaction.log('Click: Notifications icon', 'Notifications 1.0', {
                 pathname: window.location.pathname,
@@ -166,21 +143,15 @@ export default class UserNotificationsMenuBase extends React.Component<
             return null;
         }
 
-        let className = 'user-notifications-menu';
-        if (user.notifications.has_unread) {
-            className += ' unread';
-        } else if (this.state.markAsRead) {
-            className += ' read';
-        }
-
-        if (this.state.visible) {
-            className += ' menu-visible';
-        }
-
         return (
-            <div className={className}>
+            <div className='user-notifications-menu'>
                 <div className='selector' onClick={this.handleClick}>
                     <i className='icon far fa-bell fa-fw'></i>
+                    {user.notifications.has_unread && (
+                        <i className='badge'>
+                            {user.notifications.unread_count}
+                        </i>
+                    )}
                 </div>
 
                 {this.state.visible && (
