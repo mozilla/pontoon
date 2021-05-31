@@ -1,6 +1,7 @@
 .user-notifications-menu {
     float: right;
     height: 60px;
+    margin-right: 3px;
     position: relative;
 }
 
@@ -16,23 +17,21 @@
     margin-top: 17px;
 }
 
-.user-notifications-menu.unread .selector .icon {
-    color: #f36;
-}
-
-.user-notifications-menu.read.menu-visible .selector .icon {
-    animation-duration: 1s;
-    animation-name: fadeout-color;
-}
-
-@keyframes fadeout-color {
-    0% {
-        color: #f36;
-    }
-
-    100% {
-        color: #4d5967;
-    }
+.user-notifications-menu .selector .badge {
+    background: #f36;
+    border: 3px solid #272a2f;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    height: 14px;
+    line-height: 16px;
+    padding: 1px 6px 3px;
+    position: absolute;
+    right: -6px;
+    text-align: center;
+    top: 4px;
 }
 
 .user-notifications-menu .menu {
