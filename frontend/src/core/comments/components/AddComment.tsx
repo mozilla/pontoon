@@ -69,7 +69,9 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         () => withMentions(withReact(createEditor())),
         [],
     );
-    const initialValue = [{ type: 'paragraph', children: [{ text: '' }] } as Paragraph];
+    const initialValue = [
+        { type: 'paragraph', children: [{ text: '' }] } as Paragraph,
+    ];
     const [value, setValue] = React.useState<Descendant[]>(initialValue);
     const users = user.users;
     const placeFocus = React.useCallback(() => {
