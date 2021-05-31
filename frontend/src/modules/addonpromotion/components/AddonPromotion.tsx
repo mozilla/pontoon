@@ -20,12 +20,18 @@ type State = {
     installed: boolean;
 };
 
-type PontoonAddonInfoMessage = {
+interface PontoonAddonInfo {
+    installed?: boolean;
+}
+
+interface PontoonAddonInfoMessage {
     _type?: 'PontoonAddonInfo';
-    value?: {
-        installed?: boolean;
-    };
-};
+    value?: PontoonAddonInfo;
+}
+
+interface WindowWithInfo extends Window {
+    PontoonAddon?: PontoonAddonInfo;
+}
 
 /**
  * Renders Pontoon Add-On promotion banner.
@@ -52,28 +58,29 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         if (event.origin !== window.origin || event.source !== window) {
             return;
         }
-        let data: PontoonAddonInfoMessage | undefined;
+        let data: PontoonAddonInfoMessage;
         switch (typeof event.data) {
             case 'object':
-                data = event.data as PontoonAddonInfoMessage;
+                data = event.data;
                 break;
             case 'string':
                 // backward compatibility
                 // TODO: remove some reasonable time after https://github.com/MikkCZ/pontoon-addon/pull/155 is released
                 // and convert this switch into a condition
                 try {
-                    data = JSON.parse(
-                        event.data as string,
-                    ) as PontoonAddonInfoMessage;
+                    data = JSON.parse(event.data);
                 } catch (_) {
                     return;
                 }
                 break;
+            default:
+                return;
         }
-        if (data && data._type === 'PontoonAddonInfo' && data.value) {
-            if (data.value.installed === true) {
-                this.setState({ installed: true });
-            }
+        if (
+            data?._type === 'PontoonAddonInfo' &&
+            data?.value?.installed === true
+        ) {
+            this.setState({ installed: true });
         }
     };
 
@@ -92,8 +99,7 @@ export class AddonPromotionBase extends React.Component<InternalProps, State> {
         // Add-On installed
         if (
             this.state.installed ||
-            // @ts-expect-error
-            (window.PontoonAddon && window.PontoonAddon.installed)
+            (window as WindowWithInfo).PontoonAddon?.installed === true
         ) {
             return null;
         }
