@@ -209,7 +209,7 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
 
         const d = date.parse(urlTime.toString(), URL_FORMAT, true);
 
-        if (isNaN(d)) {
+        if (isNaN(Number(d))) {
             return urlTime.toString();
         }
 
