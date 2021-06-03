@@ -1,9 +1,9 @@
 import * as React from 'react';
-import DiffMatchPatch from 'diff-match-patch';
+import { diff_match_patch, DIFF_INSERT, DIFF_DELETE } from 'diff-match-patch';
 
 import './components/TranslationDiff.css';
 
-const dmp = new DiffMatchPatch();
+const dmp = new diff_match_patch();
 
 export function getDiff(base: string, target: string): React.ReactNode {
     const diff = dmp.diff_main(base, target);
@@ -16,10 +16,10 @@ export function getDiff(base: string, target: string): React.ReactNode {
         let slice = item[1];
 
         switch (type) {
-            case DiffMatchPatch.DIFF_INSERT:
+            case DIFF_INSERT:
                 return <ins key={index}>{slice}</ins>;
 
-            case DiffMatchPatch.DIFF_DELETE:
+            case DIFF_DELETE:
                 return <del key={index}>{slice}</del>;
 
             default:
