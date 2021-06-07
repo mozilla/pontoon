@@ -1,9 +1,9 @@
-- Feature Name: Timelines
+- Feature Name: Milestones
 - Bug: [bug 1614618](https://bugzilla.mozilla.org/show_bug.cgi?id=1614618)
 
 # Summary
 
-Add Timelines to Projects to educate localizers on future milestones on a
+Add Milestones to Projects to educate localizers on future milestones on a
 project that's continuously shipping.
 
 # Motivation
@@ -35,7 +35,7 @@ we're introducing the acronym PPM.
 
 # Feature Explanation
 
-Timelines introduce a concept of multiple points in time that have impact to
+Milestones introduce a concept of multiple points in time that have impact to
 localizers. The points in time shown to localizers are always relevant to what a
 localizer does right now.
 
@@ -52,13 +52,13 @@ the next cut-off for a Lockwise release.
 *TBD*: Should we show the latest PIT if there's no upcoming one? Should we do
 that only for some amount of time?
 
-*TBD*: Can there be both a Deadline and a Timeline for a project?
+*TBD*: Can there be both a Deadline and Milestones for a project?
 
 # Data Models
 
 ## Point in Time
 
-The basic model for Timelines is a Point in Time.
+The basic model for Milestones is a Point in Time.
 
 | Key | Type |
 | -- | -- |
@@ -82,12 +82,12 @@ This feature can be implemented incrementally.
 ## Basic Functionality
 
 In this phase, we're not yet introducing new roles, and the management of
-Timelines is done by LPM.
+Milestones is done by LPM.
 
 ## Extended Management
 
 In addition to LPMs, we add the ability for Project Project Managers (PPM) to
-maintain the Timeline data.
+maintain the Milestones data.
 
 *TBD*: Should PPMs manage date changes, or also PIT creation and metadata like
 labels?
