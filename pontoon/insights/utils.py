@@ -11,7 +11,7 @@ def get_insights(query_filters=None):
     :param django.db.models.Q query_filters: filters insights by given query_filters.
     """
     months = sorted(
-        [aware_datetime(year, month, 1) for year, month in get_last_months(12)]
+        aware_datetime(year, month, 1) for year, month in get_last_months(12)
     )
 
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=months[0])

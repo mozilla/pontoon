@@ -37,7 +37,7 @@ def test_view_entity_inplace_mode(
     assert response.status_code == 200
     assert json.loads(response.content)["has_next"] is False
     assert sorted(
-        [e["pk"] for e in json.loads(response.content)["entities"]]
+        e["pk"] for e in json.loads(response.content)["entities"]
     ) == sorted(entities_pks)
 
 
