@@ -24,9 +24,15 @@ Prerequisites
 Quickstart
 ----------
 
-1. Clone your `fork <https://help.github.com/en/github/getting-started-with-github/fork-a-repo>`_ of Pontoon repository::
+1. Clone the `Pontoon repository <https://github.com/mozilla/pontoon>`_::
 
-     $ git clone https://github.com/YOUR-USERNAME/pontoon.git
+     $ git clone https://github.com/mozilla/pontoon.git
+
+   .. Note::
+
+        To contribute changes to the project, you will need to
+        `fork <https://help.github.com/en/github/getting-started-with-github/fork-a-repo>`_
+        the repository under your own GitHub account.
 
 
 2. From the root of the repository, run::

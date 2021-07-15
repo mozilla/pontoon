@@ -44,7 +44,7 @@ If you're on Ubuntu 17.04, you can install all the prerequisites using the follo
 
 Installation
 ------------
-1. Clone this repository or your fork_:
+1. Clone this repository_ or your fork_:
 
    .. code-block:: bash
 
@@ -165,6 +165,7 @@ running:
 
 The site should be available at http://localhost:8000.
 
+.. _repository: https://github.com/mozilla/pontoon
 .. _fork: http://help.github.com/fork-a-repo/
 .. _issue: https://bugs.python.org/issue18378
 .. _request: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
