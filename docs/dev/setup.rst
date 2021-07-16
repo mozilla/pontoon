@@ -42,6 +42,14 @@ Quickstart
    That will build the containers required for development: base and
    webapp.
 
+   .. Warning::
+
+        On M1 MacBooks, a workaround is currently required for successful
+        operations: Add a ``platform: linux/amd64`` specifier under the
+        ``webapp`` service of ``docker-compose.yml``. This avoids a
+        segmentation fault in curl due to the libssl version used by
+        images based on Debian Buster.
+
    .. Note::
 
         If you want to share your development instance in your local network,
