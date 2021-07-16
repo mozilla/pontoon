@@ -2,6 +2,14 @@
 Contributing
 ============
 
+Source code
+===========
+
+Pontoon source code is available via GitHub:
+
+https://github.com/mozilla/pontoon
+
+
 Bugs
 ====
 
