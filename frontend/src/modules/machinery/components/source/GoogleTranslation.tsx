@@ -180,7 +180,7 @@ export function GetGoogleTranslateResponseText(
                 `Google Translate API removed the placeable: ${placeable}`,
             );
         }
-        return acc.replace(placeableHash, placeable);
+        return acc.replace(new RegExp(placeableHash, "gi"), placeable);
     };
     return placeables.reduce(checkAndReplace, response.translation);
 }
