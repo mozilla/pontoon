@@ -20,36 +20,25 @@ pose a few limitations:
 
 | Role | Impact |
 | -- | -- |
-| Localizer | Only see upcoming points in time |
-| L10n Project Manager (LPM) | Set multiple points in time for a project |
-
-# New Roles
-
-| Role | Impact |
-| -- | -- |
-| Project Manager (PPM) | PPM can set multiple points in time for a project|
-
-This feature introduces a role of the upstream project manager. In contrast to
-the Localization Project Manager (LPM), this is a Project Project Manager, thus
-we're introducing the acronym PPM.
+| Localizer | Only see upcoming milestones |
+| Project Manager (PM) | Set multiple milestones for a project |
 
 # Feature Explanation
 
 Milestones introduce a concept of multiple points in time that have impact to
-localizers. The points in time shown to localizers are always relevant to what a
+localizers. The milestones shown to localizers are always relevant to what a
 localizer does right now.
 
-For PMs these points in time (PIT) will have labels that help to recognize which
-PIT is which. That way, if schedules change, PMs can update the corresponding
-PIT easily.
+For PMs these milestones will have labels that help to recognize which
+milestone is which. That way, if schedules change, PMs can update the corresponding milestone easily.
 
-Example: In Android L10n, we might have PITs for releases of Android Components
-every two weeks, a PIT for the next cut-off for a Fenix release, and a PIT for
+Example: In Android L10n, we might have milestones for releases of Android Components
+every two weeks, a milestone for the next cut-off for a Fenix release, and a milestone for
 the next cut-off for a Lockwise release.
 
 *TBD*: Should metadata like labels be shown to Localizers?
 
-*TBD*: Should we show the latest PIT if there's no upcoming one? Should we do
+*TBD*: Should we show the latest milestone if there's no upcoming one? Should we do
 that only for some amount of time?
 
 *TBD*: Can there be both a Deadline and Milestones for a project?
@@ -58,38 +47,16 @@ that only for some amount of time?
 
 ## Point in Time
 
-The basic model for Milestones is a Point in Time.
+The basic model for Milestones is a an individual milestone.
 
 | Key | Type |
 | -- | -- |
-| project | ForeignKey(Project) |
+| project | ForeignKey(Project, CASCADE) |
 | when | datetime |
 | label | string |
-| author | ForeignKey(User) |
-| created_when | datetime |
+| author | ForeignKey(User, SET_NULL) |
+| created_at | datetime |
 
-PITs are deleted when projects are deleted.
+Milestones are deleted when projects are deleted.
 
-*TBD*: Modifications to existing PITs should be traced in a log. Is ActionLog
-the right place?
-
-*TBD*: What to do when a User is deleted?
-
-# Phases
-
-This feature can be implemented incrementally.
-
-## Basic Functionality
-
-In this phase, we're not yet introducing new roles, and the management of
-Milestones is done by LPM.
-
-## Extended Management
-
-In addition to LPMs, we add the ability for Project Project Managers (PPM) to
-maintain the Milestones data.
-
-*TBD*: Should PPMs manage date changes, or also PIT creation and metadata like
-labels?
-
-*TBD*: Are there constraints of how soon a PIT can be?
+The change history of Milestones is store in the ActionLog.
