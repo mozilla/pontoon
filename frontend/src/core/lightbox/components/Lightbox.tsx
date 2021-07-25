@@ -7,6 +7,7 @@ import { NAME } from '..';
 import { close } from '../actions';
 
 import type { LightboxState } from '../reducer';
+import { AppState } from 'rootReducer';
 
 type Props = {
     lightbox: LightboxState;
@@ -75,7 +76,7 @@ export class LightboxBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Record<string, any>): Props => {
+const mapStateToProps = (state: AppState): Props => {
     return {
         lightbox: state[NAME],
     };

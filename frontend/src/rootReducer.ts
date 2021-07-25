@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
+import { History } from 'history';
 
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
@@ -22,7 +23,7 @@ import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 // Combine reducers from all modules, using their NAME constant as key.
-export default (browserHistory: any): any =>
+const rootReducer = (browserHistory: History) =>
     combineReducers({
         // System modules
         router: connectRouter(browserHistory),
@@ -48,3 +49,7 @@ export default (browserHistory: any): any =>
         [term.NAME]: term.reducer,
         [unsavedchanges.NAME]: unsavedchanges.reducer,
     });
+
+export type AppState = ReturnType<typeof rootReducer>;
+
+export default rootReducer;
