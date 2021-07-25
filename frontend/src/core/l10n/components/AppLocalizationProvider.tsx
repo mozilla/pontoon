@@ -4,6 +4,7 @@ import { LocalizationProvider } from '@fluent/react';
 import 'intl-pluralrules';
 
 import * as l10n from 'core/l10n';
+import { AppState } from 'rootReducer';
 
 type Props = {
     l10n: l10n.L10nState;
@@ -50,7 +51,7 @@ export class AppLocalizationProviderBase extends React.Component<InternalProps> 
     }
 }
 
-const mapStateToProps = (state: Record<string, any>): Props => {
+const mapStateToProps = (state: AppState): Props => {
     return {
         l10n: state[l10n.NAME],
     };

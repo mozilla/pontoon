@@ -16,6 +16,7 @@ import { actions, NAME } from '..';
 import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import { AppState } from 'rootReducer';
 
 type Props = {
     isTranslator: boolean;
@@ -70,7 +71,7 @@ export class UserControlsBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Record<string, any>): Props => {
+const mapStateToProps = (state: AppState): Props => {
     return {
         isTranslator: user.selectors.isTranslator(state),
         parameters: navigation.selectors.getNavigationParams(state),

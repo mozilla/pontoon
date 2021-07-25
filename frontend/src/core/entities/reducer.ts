@@ -19,7 +19,7 @@ export type EntitiesState = {
 };
 
 function updateEntityTranslation(
-    state: Record<string, any>,
+    state: EntitiesState,
     entity: number,
     pluralForm: number,
     translation: EntityTranslation,

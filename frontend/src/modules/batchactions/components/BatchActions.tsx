@@ -13,6 +13,7 @@ import ReplaceAll from './ReplaceAll';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { NavigationParams } from 'core/navigation';
+import { AppState } from 'rootReducer';
 
 type Props = {
     batchactions: BatchActionsState;
@@ -294,7 +295,7 @@ export class BatchActionsBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Record<string, any>): Props => {
+const mapStateToProps = (state: AppState): Props => {
     return {
         batchactions: state[batchactions.NAME],
         parameters: navigation.selectors.getNavigationParams(state),
