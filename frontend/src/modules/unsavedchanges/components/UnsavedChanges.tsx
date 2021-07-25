@@ -7,6 +7,7 @@ import './UnsavedChanges.css';
 import { actions, NAME } from '..';
 
 import type { UnsavedChangesState } from '../reducer';
+import { AppState } from 'rootReducer';
 
 type Props = {
     unsavedchanges: UnsavedChangesState;
@@ -81,7 +82,7 @@ export class UnsavedChangesBase extends React.Component<InternalProps> {
     }
 }
 
-const mapStateToProps = (state: Record<string, any>): Props => {
+const mapStateToProps = (state: AppState): Props => {
     return {
         unsavedchanges: state[NAME],
     };
