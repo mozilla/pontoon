@@ -109,18 +109,23 @@ export default class MachineryAPI extends APIBase {
         locale: Locale,
     ): Promise<Translations> {
         const url = '/google-translate/';
-        const replaceLabels: Array<string> = GetPlaceables(source);
+        const placeablesMap: Map<string, string> = GetPlaceables(source);
         const params = {
-            text: GetGoogleTranslateInputText(source, replaceLabels),
+            text: GetGoogleTranslateInputText(source, placeablesMap),
             locale: locale.googleTranslateCode,
             format: GetGoogleTranslateInputFormat(source),
         };
         const result = await this._get(url, params);
 
+        if (!result.translation) {
+            return [];
+        }
+
         try {
             const translation = GetGoogleTranslateResponseText(
                 result,
-                replaceLabels,
+                placeablesMap,
+                locale.direction === 'rtl'
             );
             return [
                 {

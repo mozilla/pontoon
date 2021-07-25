@@ -3,11 +3,11 @@ import { Localized } from '@fluent/react';
 import { mark, Parser } from 'react-content-marker';
 import { rules } from '../../../../core/placeable';
 import { ReactNodeArray } from 'react';
-import shajs from 'sha.js';
 
 import xmlTag from '../../../../core/placeable/parsers/xmlTag';
 import xmlEntity from '../../../../core/placeable/parsers/xmlEntity';
 import punctuation from '../../../../core/placeable/parsers/punctuation';
+import numberString from '../../../../core/placeable/parsers/numberString';
 
 /**
  * When the input format is html, remove the rules responsible for handling xml entities and xml tags because
@@ -19,13 +19,12 @@ function getRulesBasedOnInputFormat(
 ): Array<Parser> {
     let newRules: Array<Parser> = [...rules];
 
-    if (GetGoogleTranslateInputFormat(text) === 'html') {
-        newRules.splice(newRules.indexOf(xmlTag), 1);
-        newRules.splice(newRules.indexOf(xmlEntity), 1);
-    }
+    newRules.splice(newRules.indexOf(xmlTag), 1);
+    newRules.splice(newRules.indexOf(xmlEntity), 1);
 
-    // Don't pre-process the punctuation characters allowing GTA translate them.
+    // Don't pre-process the punctuation characters allowing GTA to translate them.
     newRules.splice(newRules.indexOf(punctuation), 1);
+    newRules.splice(newRules.indexOf(numberString), 1);
 
     return newRules;
 }
@@ -35,30 +34,35 @@ function getRulesBasedOnInputFormat(
  * similarly to short commit hashes in Git.
  * Wishfully thinking there's no word that matches any of SHA256 hashes of placeables.
  */
-function getPlaceableHash(placeable: string): string {
-    return shajs('sha256').update(placeable).digest('hex').substring(0, 7);
+function getPlaceableHash(
+    index: string,
+    leftSpace: boolean,
+    rightSpace: boolean,
+): string {
+    return `${leftSpace ? '1' : '0'}placeable${index}${rightSpace ? '1' : '0'}`;
 }
 
 /**
  * Detect the placeables and return them as array to process them later.
  */
-export function GetPlaceables(searchString: string): Array<string> {
-    let placeables: Array<string> = [];
-
+export function GetPlaceables(searchString: string): Map<string, string> {
+    let placeables: Map<string, string> = new Map<string, string>();
+    let index: number = 0;
     getRulesBasedOnInputFormat(searchString, rules).reduce(
         (acc: string | ReactNodeArray, parser: Parser): ReactNodeArray => {
             return mark(
                 acc,
                 parser.rule,
                 (match: string): any => {
-                    placeables.push(match);
+                    if (!placeables.has(match)) {
+                        placeables.set(match, (index++).toString());
+                    }
                 },
                 parser['matchIndex'],
             );
         },
         searchString,
     );
-
     return placeables;
 }
 
@@ -75,12 +79,12 @@ function escapeRegExp(text: string) {
  */
 export function GetGoogleTranslateInputText(
     text: string,
-    placeables: Array<string>,
+    placeablesMap: Map<string, string>,
 ): string {
-    if (placeables.length == 0) {
+    if (placeablesMap.size === 0) {
         return text;
     }
-
+    const placeables: Array<string> = Array.from(placeablesMap.keys());
     const placeablesRegex = new RegExp(
         '(' + placeables.map((x) => escapeRegExp(x)).join('|') + ')',
         'gi',
@@ -124,13 +128,22 @@ export function GetGoogleTranslateInputText(
         //   Final string visible in the Translate.Next UI: O naturze \n ${something}$
         // Also, the direction of a script in a locale (LTR, RTL) is a factor that may change the order
         // of the placeables in a string and make restoring the surrounding spaces harder.
+        let newPos = placeableOccurrence.index + placeable.length,
+            textBefore = text.substring(pos, placeableOccurrence.index),
+            textAfter = text.substring(newPos),
+            leftSpace = textBefore[textBefore.length - 1] == ' ',
+            rightSpace = textAfter[0] == ' ';
 
         newText +=
-            text.substring(pos, placeableOccurrence.index) +
-            ' ' +
-            getPlaceableHash(placeable) +
-            ' ';
-        pos = placeableOccurrence.index + placeable.length;
+            textBefore +
+            (leftSpace ? '' : ' ') +
+            getPlaceableHash(
+                placeablesMap.get(placeableOccurrence[0]),
+                leftSpace,
+                rightSpace,
+            ) +
+            (rightSpace ? '' : ' ');
+        pos = newPos;
         placeableOccurrence = placeablesRegex.exec(text);
     }
 
@@ -138,7 +151,7 @@ export function GetGoogleTranslateInputText(
         newText += text.substring(pos);
     }
 
-    return newText;
+    return newText.replace(/  /gi, ' ');
 }
 
 /**
@@ -166,23 +179,76 @@ export function GetGoogleTranslateInputFormat(text: string): 'text' | 'html' {
  */
 export function GetGoogleTranslateResponseText(
     response: any,
-    placeables: Array<string>,
+    placeablesMap: Map<string, string>,
+    rightToLeft: boolean,
 ): string | null {
     if (!response.translation) {
         throw new Error('No translation in response');
     }
 
-    const checkAndReplace = (acc, placeable): string => {
-        let placeableHash = getPlaceableHash(placeable);
+    if (placeablesMap.size == 0) {
+        return response.translation;
+    }
 
-        if (response.translation.indexOf(placeableHash) == -1) {
+    const text: string = response.translation;
+    let newText: string = '';
+
+    const inversePlaceablesMap = new Map(
+        [...placeablesMap].map((item) => [item[1], item[0]]),
+    );
+    const placeablesRegex = new RegExp(
+        '(' +
+            Array.from(placeablesMap.values())
+                .map(
+                    (x) =>
+                        ` (?<leftSpace>0|1)placeable(?<placeableIndex>${x})(?<rightSpace>0|1) `,
+                )
+                .join('|') +
+            ')',
+        'gi',
+    );
+    let pos: number = 0;
+    let placeableOccurrence = placeablesRegex.exec(text);
+    while (placeableOccurrence) {
+        let placeableHash: string = placeableOccurrence[0],
+            textBefore: string = text.substring(pos, placeableOccurrence.index),
+            placeableOptions: any = placeableOccurrence.groups,
+            leftSpace: boolean = placeableOptions.leftSpace === '1',
+            rightSpace: boolean = placeableOptions.rightSpace === '1';
+
+        if (
+            !inversePlaceablesMap.has(placeableOptions.placeableIndex)
+        ) {
             throw new Error(
-                `Google Translate API removed the placeable: ${placeable}`,
+                `Placeable with an invalid index: ${placeableOptions.placeableIndex}`,
             );
         }
-        return acc.replace(new RegExp(placeableHash, "gi"), placeable);
-    };
-    return placeables.reduce(checkAndReplace, response.translation);
+
+        if (rightToLeft) {
+            [leftSpace, rightSpace] = [rightSpace, leftSpace];
+        }
+
+        newText += leftSpace
+            ? textBefore
+            : textBefore.substr(0, textBefore.length - 1);
+
+        newText += inversePlaceablesMap.get(
+            placeableOptions.placeableIndex
+        );
+
+        pos = placeableOccurrence.index + placeableHash.length;
+
+        if (!rightSpace) {
+            pos++;
+        }
+        placeableOccurrence = placeablesRegex.exec(text);
+    }
+
+    if (pos < text.length - 1) {
+        newText += text.substring(pos);
+    }
+
+    return newText;
 }
 
 /**
