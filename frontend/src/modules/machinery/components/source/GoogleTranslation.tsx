@@ -30,11 +30,9 @@ function getRulesBasedOnInputFormat(
 }
 
 /**
- * Create a deterministic identifier for a placeable, using SHA256 and using the first 7 characters,
- * similarly to short commit hashes in Git.
- * Wishfully thinking there's no word that matches any of SHA256 hashes of placeables.
+ * Create a identifier for a placeable, based in the value provided in the
  */
-function getPlaceableHash(
+export function GetPlaceableHash(
     index: string,
     leftSpace: boolean,
     rightSpace: boolean,
@@ -76,6 +74,38 @@ function escapeRegExp(text: string) {
 /**
  * Replace the placeables with their git-hashes in order to avoid breaking them by the Google Translate API.
  * The algorithm uses a RegExp in order to find all occurrences of placeables in order to replace them with their hashes.
+ *
+ * Wrap the placeable with spaces, in order to avoid concatenating hashes of placeables with the words that
+ * should be translated.
+ * e.g.
+ *   [disclaimer] $ is the end marker of the string.
+ *
+ *   Original string: On the nature of "daylight"$ # (only " is a placeable here)
+ *   GTA input string: On the nature of <placeable hash>daylight<placeable hash>$
+ *   ^ In such case, some of the words (e.g. daylight) won't be translated correctly.
+ *   GTA output string [locale: pl]: O naturze 8a331fddaylight8a331fd$
+ *   Final string visible in the Translate.Next UI: O naturze 8a331fddaylight8a331fd$
+ *
+ * However, when the placeables are separated:
+ *   Original string: On the nature of "daylight" # (only " is a placeable here)
+ *   GTA input string: On the nature of <placeable hash> daylight <placeable hash>
+ *   ^ GTA is able to translate the words in this scenario.
+ *   GTA output string [locale: pl]: O naturze <placeable hash> światła dziennego <placeable hash>
+ *   ^ And that string is a correct translation without broken placeables, but has a different problem.
+ *   Final string visible in the Translate.Next UI: O naturze " światła dziennego "$
+ *
+ * When spaces are added, GTA is able to translate the input, however that introduces additional
+ * complexity related to restoring the original spacing between a placeable and its surrounding words/tokens.
+ * e.g.
+ *   Original string: On the nature of \n${something}  # (only ${something} is a placeable here)
+ *   ^ Notice the lack of trailing spaces
+ *   GTA input string: On the nature of \n <placeable hash> $
+ *   ^ the pre-processing function added the trailing spaces. $ is the end marker of the string.
+ *   GTA output string [locale: pl]: O naturze \n <placeable hash>$
+ *   ^ GTA returns only the left trailing space. $ is the end marker of the string.
+ *   Final string visible in the Translate.Next UI: O naturze \n ${something}$
+ * Also, the direction of a script in a locale (LTR, RTL) is a factor that may change the order
+ * of the placeables in a string and make restoring the surrounding spaces harder.
  */
 export function GetGoogleTranslateInputText(
     text: string,
@@ -97,37 +127,6 @@ export function GetGoogleTranslateInputText(
     while (placeableOccurrence) {
         let placeable: string = placeableOccurrence[0];
 
-        // Wrap the placeable with spaces, in order to avoid concatenating hashes of placeables with the words that
-        // should be translated.
-        // e.g.
-        //   [disclaimer] $ is the end marker of the string.
-        //
-        //   Original string: On the nature of "daylight"$ # (only " is a placeable here)
-        //   GTA input string: On the nature of <placeable hash>daylight<placeable hash>$
-        //   ^ In such case, some of the words (e.g. daylight) won't be translated correctly.
-        //   GTA output string [locale: pl]: O naturze 8a331fddaylight8a331fd$
-        //   Final string visible in the Translate.Next UI: O naturze 8a331fddaylight8a331fd$
-        //
-        // However, when the placeables are separated:
-        //   Original string: On the nature of "daylight" # (only " is a placeable here)
-        //   GTA input string: On the nature of <placeable hash> daylight <placeable hash>
-        //   ^ GTA is able to translate the words in this scenario.
-        //   GTA output string [locale: pl]: O naturze <placeable hash> światła dziennego <placeable hash>
-        //   ^ And that string is a correct translation without broken placeables, but has a different problem.
-        //   Final string visible in the Translate.Next UI: O naturze " światła dziennego "$
-        //
-        // When spaces are added, GTA is able to translate the input, however that introduces additional
-        // complexity related to restoring the original spacing between a placeable and its surrounding words/tokens.
-        // e.g.
-        //   Original string: On the nature of \n${something}  # (only ${something} is a placeable here)
-        //   ^ Notice the lack of trailing spaces
-        //   GTA input string: On the nature of \n <placeable hash> $
-        //   ^ the pre-processing function added the trailing spaces. $ is the end marker of the string.
-        //   GTA output string [locale: pl]: O naturze \n <placeable hash>$
-        //   ^ GTA returns only the left trailing space. $ is the end marker of the string.
-        //   Final string visible in the Translate.Next UI: O naturze \n ${something}$
-        // Also, the direction of a script in a locale (LTR, RTL) is a factor that may change the order
-        // of the placeables in a string and make restoring the surrounding spaces harder.
         let newPos = placeableOccurrence.index + placeable.length,
             textBefore = text.substring(pos, placeableOccurrence.index),
             textAfter = text.substring(newPos),
@@ -137,7 +136,7 @@ export function GetGoogleTranslateInputText(
         newText +=
             textBefore +
             (leftSpace ? '' : ' ') +
-            getPlaceableHash(
+            GetPlaceableHash(
                 placeablesMap.get(placeableOccurrence[0]),
                 leftSpace,
                 rightSpace,
@@ -151,7 +150,7 @@ export function GetGoogleTranslateInputText(
         newText += text.substring(pos);
     }
 
-    return newText.replace(/  /gi, ' ');
+    return newText.replace(/ {2}/gi, ' ').trim();
 }
 
 /**
@@ -197,14 +196,7 @@ export function GetGoogleTranslateResponseText(
         [...placeablesMap].map((item) => [item[1], item[0]]),
     );
     const placeablesRegex = new RegExp(
-        '(' +
-            Array.from(placeablesMap.values())
-                .map(
-                    (x) =>
-                        ` (?<leftSpace>0|1)placeable(?<placeableIndex>${x})(?<rightSpace>0|1) `,
-                )
-                .join('|') +
-            ')',
+        '( |)(?<leftSpace>0|1)placeable(?<placeableIndex>\\d+)(?<rightSpace>0|1)( |)',
         'gi',
     );
     let pos: number = 0;
@@ -216,9 +208,7 @@ export function GetGoogleTranslateResponseText(
             leftSpace: boolean = placeableOptions.leftSpace === '1',
             rightSpace: boolean = placeableOptions.rightSpace === '1';
 
-        if (
-            !inversePlaceablesMap.has(placeableOptions.placeableIndex)
-        ) {
+        if (!inversePlaceablesMap.has(placeableOptions.placeableIndex)) {
             throw new Error(
                 `Placeable with an invalid index: ${placeableOptions.placeableIndex}`,
             );
@@ -232,9 +222,7 @@ export function GetGoogleTranslateResponseText(
             ? textBefore
             : textBefore.substr(0, textBefore.length - 1);
 
-        newText += inversePlaceablesMap.get(
-            placeableOptions.placeableIndex
-        );
+        newText += inversePlaceablesMap.get(placeableOptions.placeableIndex);
 
         pos = placeableOccurrence.index + placeableHash.length;
 

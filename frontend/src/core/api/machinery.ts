@@ -125,7 +125,7 @@ export default class MachineryAPI extends APIBase {
             const translation = GetGoogleTranslateResponseText(
                 result,
                 placeablesMap,
-                locale.direction === 'rtl'
+                locale.direction === 'rtl',
             );
             return [
                 {

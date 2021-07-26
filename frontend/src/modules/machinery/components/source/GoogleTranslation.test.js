@@ -5,20 +5,39 @@ import GoogleTranslation, {
     GetGoogleTranslateInputFormat,
     GetGoogleTranslateInputText,
     GetGoogleTranslateResponseText,
+    GetPlaceableHash,
     GetPlaceables,
 } from './GoogleTranslation';
 
-describe ('GetgoogleTranslateInputFormat', () => {
-    it('should detect html entities', () => {
-        expect(GetGoogleTranslateInputFormat('html &amp; text walk into bar.')).toBe('html');
-    });
-    it('should detect html tags', function () {
-        expect(GetGoogleTranslateInputFormat('html and <h1>text</h1> walk into bar.')).toBe('html');
-    });
-    it('should detect text without html tags and entities', function () {
-        expect(GetGoogleTranslateInputFormat('html and text walk into bar.')).toBe('text');
+describe('GetPlaceableHash', () => {
+    it('generates placeable hash based on an index and adds information about the surrounding spaces', () => {
+        expect(GetPlaceableHash('0', false, false)).toEqual('0placeable00');
+        expect(GetPlaceableHash('0', true, false)).toEqual('1placeable00');
+        expect(GetPlaceableHash('0', false, true)).toEqual('0placeable01');
+        expect(GetPlaceableHash('0', true, true)).toEqual('1placeable01');
     });
 });
+
+describe('GetGoogleTranslateInputFormat', () => {
+    it('should detect html entities', () => {
+        expect(
+            GetGoogleTranslateInputFormat('html &amp; text walk into bar.'),
+        ).toEqual('html');
+    });
+    it('should detect html tags', function () {
+        expect(
+            GetGoogleTranslateInputFormat(
+                'html and <h1>text</h1> walk into bar.',
+            ),
+        ).toEqual('html');
+    });
+    it('should detect text without html tags and entities', function () {
+        expect(
+            GetGoogleTranslateInputFormat('html and text walk into bar.'),
+        ).toEqual('text');
+    });
+});
+
 describe('GetGoogleTranslateResponseText', () => {
     const placeablesTestCases = [
         {
@@ -48,26 +67,60 @@ describe('GetGoogleTranslateResponseText', () => {
         {
             placeableHashes: [' 1placeable00 '],
             placeablesMap: new Map([['%s', '0']]),
+            rightToLeft: false,
+            expectedResult: ' %s',
+        },
+        {
+            placeableHashes: [' 1placeable00 '],
+            placeablesMap: new Map([['%s', '0']]),
             rightToLeft: true,
             expectedResult: '%s ',
         },
-
-
     ];
     placeablesTestCases.forEach((testcase, index) => {
-        it(`Multiple placeable hashes[${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
+        it(`returns translation and replaces the placeable hashes [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
             let inputText = `Test of ${testcase.placeableHashes.join(
                 ' ',
             )} as placeables.`;
             expect(
-                GetGoogleTranslateResponseText({translation:inputText}, testcase.placeablesMap, testcase.rightToLeft),
+                GetGoogleTranslateResponseText(
+                    { translation: inputText },
+                    testcase.placeablesMap,
+                    testcase.rightToLeft,
+                ),
             ).toEqual(`Test of${testcase.expectedResult}as placeables.`);
+        });
+
+        it(`returns translation and replaces the placeable hashes (starting from left) [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
+            let inputText = `${testcase.placeableHashes.join(
+                ' ',
+            )} as placeables.`;
+            expect(
+                GetGoogleTranslateResponseText(
+                    { translation: inputText },
+                    testcase.placeablesMap,
+                    testcase.rightToLeft,
+                ),
+            ).toEqual(`${testcase.expectedResult}as placeables.`.trim());
+        });
+
+        it(`returns translation and replaces the placeable hashes (starting from right) [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
+            let inputText = `Test of ${testcase.placeableHashes.join(
+                ' ',
+            )}`.trim();
+            expect(
+                GetGoogleTranslateResponseText(
+                    { translation: inputText },
+                    testcase.placeablesMap,
+                    testcase.rightToLeft,
+                ),
+            ).toEqual(`Test of${testcase.expectedResult}`.trim());
         });
     });
 });
 
 describe('GetGoogleTranslateInputText', () => {
-    it('No placeables', () => {
+    it('return text when the placeables map is empty', () => {
         expect(
             GetGoogleTranslateInputText(
                 'String without placeables.',
@@ -201,8 +254,9 @@ describe('GetGoogleTranslateInputText', () => {
             expectedResult: ' 0placeable00 0placeable10 ',
         },
     ];
+
     placeablesTestCases.forEach((testcase, index) => {
-        it(`Multiple placeables[${index}, "${testcase.placeables}"]`, () => {
+        it(`replace the placeables with their hashes [${index}, "${testcase.placeables}"]`, () => {
             let inputText = `Test of${testcase.placeables.join(
                 '',
             )}as placeables.`;
@@ -210,18 +264,33 @@ describe('GetGoogleTranslateInputText', () => {
                 GetGoogleTranslateInputText(inputText, testcase.placeablesMap),
             ).toEqual(`Test of${testcase.expectedResult}as placeables.`);
         });
+
+        it(`replace placeables with their hashes (starting from left) [${index}, "${testcase.placeables}"]`, () => {
+            let inputText = `${testcase.placeables.join('')}as placeables.`;
+            expect(
+                GetGoogleTranslateInputText(inputText, testcase.placeablesMap),
+            ).toEqual(`${testcase.expectedResult}as placeables.`.trim());
+        });
+
+        it(`replace placeables with their hashes (starting from right) [${index}, "${testcase.placeables}"]`, () => {
+            let inputText = `Test of${testcase.placeables.join('')}`;
+            expect(
+                GetGoogleTranslateInputText(inputText, testcase.placeablesMap),
+            ).toEqual(`Test of${testcase.expectedResult}`.trim());
+        });
     });
 });
+
 describe('GetPlaceables', () => {
-    it('Empty string', () => {
+    it('returns empty map when  the string is empty', () => {
         expect(GetPlaceables('')).toEqual(new Map());
     });
-    it('Non-empty string without placeables', () => {
+    it("returns empty map when the string doesn't contain placeables", () => {
         expect(
             GetPlaceables('some random string to test the function.'),
         ).toEqual(new Map());
     });
-    it('Detect placeables', () => {
+    it('return the map of placeables', () => {
         expect(
             GetPlaceables(
                 'Detect %(types)s of placeables and %(types)s of %s something.',
@@ -233,11 +302,11 @@ describe('GetPlaceables', () => {
             ]),
         );
     });
-    it('Blocked placeables', ()  => {
+    it("don't return the blocked placeables in the map", () => {
         expect(
             GetPlaceables(
                 'Detect %(types)s of placeables and %(types)s of %s something.' +
-                'Random &amp; «» <h1>Some other placeables</h1>.',
+                    'Random &amp; «» <h1>Some other placeables</h1>.',
             ),
         ).toEqual(
             new Map([
@@ -245,8 +314,9 @@ describe('GetPlaceables', () => {
                 ['%s', '1'],
             ]),
         );
-    })
+    });
 });
+
 describe('<GoogleTranslation>', () => {
     it('renders the GoogleTranslation component properly', () => {
         const wrapper = shallow(<GoogleTranslation />);

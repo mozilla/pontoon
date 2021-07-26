@@ -42,7 +42,6 @@
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "sha.js": "2.4.11",
     "shortid": "2.2.14",
     "slate": "0.63.0",
     "slate-react": "0.58.4",
