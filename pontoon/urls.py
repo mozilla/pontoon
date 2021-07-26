@@ -73,6 +73,8 @@ urlpatterns = [
     path("accounts/", include("pontoon.allauth_urls")),
     # Admin
     path("admin/", include("pontoon.administration.urls")),
+    # Django admin: Disable the login form
+    path("a/login/", permission_denied_view),
     # Django admin
     path("a/", admin.site.urls),
     # Logout
