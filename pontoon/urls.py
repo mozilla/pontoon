@@ -17,6 +17,9 @@ pontoon_js_view = TemplateView.as_view(
     template_name="js/pontoon.js", content_type="text/javascript"
 )
 
+permission_denied_view = TemplateView.as_view(template_name="403.html")
+page_not_found_view = TemplateView.as_view(template_name="404.html")
+server_error_view = TemplateView.as_view(template_name="500.html")
 
 urlpatterns = [
     # Legacy: Locale redirect for compatibility with i18n ready URL scheme
@@ -75,9 +78,9 @@ urlpatterns = [
     # Logout
     path("signout/", logout, {"next_page": "/"}, name="signout"),
     # Error pages
-    path("403/", TemplateView.as_view(template_name="403.html")),
-    path("404/", TemplateView.as_view(template_name="404.html")),
-    path("500/", TemplateView.as_view(template_name="500.html")),
+    path("403/", permission_denied_view),
+    path("404/", page_not_found_view),
+    path("500/", server_error_view),
     # Robots.txt
     path(
         "robots.txt",
