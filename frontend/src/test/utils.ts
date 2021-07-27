@@ -73,3 +73,24 @@ export function findLocalizedById(wrapper, id) {
         (elem) => elem.type() === Localized && elem.prop('id') === id,
     );
 }
+
+/*
+ * Mock window.matchMedia, which is not implemented in JSDOM.
+ *
+ * Source: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
+ */
+export function mockMatchMedia() {
+    return Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: jest.fn().mockImplementation((query) => ({
+            matches: false,
+            media: query,
+            onchange: null,
+            addListener: jest.fn(), // deprecated
+            removeListener: jest.fn(), // deprecated
+            addEventListener: jest.fn(),
+            removeEventListener: jest.fn(),
+            dispatchEvent: jest.fn(),
+        })),
+    });
+}

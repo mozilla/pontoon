@@ -4,6 +4,8 @@ import {
     mountComponentWithStore,
 } from 'test/store';
 
+import { mockMatchMedia } from 'test/utils';
+
 import Translation from './Translation';
 
 const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
@@ -39,6 +41,7 @@ describe('<Translation>', () => {
                 toString: () => {},
             };
         };
+        mockMatchMedia();
     });
 
     afterAll(() => {
