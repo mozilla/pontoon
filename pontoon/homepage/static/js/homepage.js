@@ -4,6 +4,7 @@ const Sections = {
         this.nav = null;
         this.sections = this.root.querySelectorAll('[id^=section-]');
         this.activeSectionIdx = 0;
+        this.mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
         this._initKeyboard();
         this._initWheel();
@@ -30,8 +31,10 @@ const Sections = {
     navigate() {
         requestAnimationFrame(() => {
             const section = this.sections[this.activeSectionIdx];
+            const behavior = this.mediaQuery.matches ? 'auto' : 'smooth';
+
             section.scrollIntoView({
-                behavior: 'smooth',
+                behavior: behavior,
                 block: 'nearest',
             });
             this._render();

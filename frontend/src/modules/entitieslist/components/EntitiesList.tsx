@@ -108,10 +108,14 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         ) {
             const list = this.list.current;
             const element = list.querySelector('li.selected');
+            const mediaQuery = window.matchMedia(
+                '(prefers-reduced-motion: reduce)',
+            );
+            const behavior = mediaQuery.matches ? 'auto' : 'smooth';
 
             if (element) {
                 element.scrollIntoView({
-                    behavior: 'smooth',
+                    behavior: behavior,
                     block: 'nearest',
                 });
             }
