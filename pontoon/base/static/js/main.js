@@ -385,6 +385,10 @@ $(function () {
 
     // General keyboard shortcuts
     generalShortcutsHandler = function (e) {
+        const mediaQuery = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        );
+
         function moveMenu(type) {
             var options =
                 type === 'up' ? ['first', 'last', -1] : ['last', 'first', 1];
@@ -408,9 +412,10 @@ $(function () {
             }
 
             if (element) {
+                const behavior = mediaQuery.matches ? 'auto' : 'smooth';
                 element.addClass('hover');
                 element[0].scrollIntoView({
-                    behavior: 'smooth',
+                    behavior: behavior,
                     block: 'nearest',
                 });
             }

@@ -236,7 +236,8 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
                 ),
             },
             {
-                selector: '#app > .main-content > .panel-content .entity-details .history',
+                selector:
+                    '#app > .main-content > .panel-content .entity-details .history',
                 content: (
                     <div>
                         <Localized id='interactivetour-InteractiveTour--history-title'>
