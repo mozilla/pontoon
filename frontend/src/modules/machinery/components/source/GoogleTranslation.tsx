@@ -201,6 +201,7 @@ export function GetGoogleTranslateResponseText(
     );
     let pos: number = 0;
     let placeableOccurrence = placeablesRegex.exec(text);
+
     while (placeableOccurrence) {
         let placeableHash: string = placeableOccurrence[0],
             textBefore: string = text.substring(pos, placeableOccurrence.index),
@@ -214,20 +215,20 @@ export function GetGoogleTranslateResponseText(
             );
         }
 
-        if (rightToLeft) {
-            [leftSpace, rightSpace] = [rightSpace, leftSpace];
+        // if (rightToLeft) {
+        //     [leftSpace, rightSpace] = [rightSpace, leftSpace];
+        // }
+
+        newText += textBefore;
+        console.log(`input: "${text}", left pos=${pos}, char=${text[placeableOccurrence.index-1]}`);
+        if (leftSpace && pos > 0 && text[placeableOccurrence.index-1] !== ' ') {
+            newText += ' ';
         }
 
-        newText += leftSpace
-            ? textBefore
-            : textBefore.substr(0, textBefore.length - 1);
-
         newText += inversePlaceablesMap.get(placeableOptions.placeableIndex);
-
-        pos = placeableOccurrence.index + placeableHash.length;
-
-        if (!rightSpace) {
-            pos++;
+        pos = placeableOccurrence.index + placeableOccurrence[0].length;
+        if (rightSpace && pos < text.length && text[pos] !== ' ') {
+            newText += ' ';
         }
         placeableOccurrence = placeablesRegex.exec(text);
     }
