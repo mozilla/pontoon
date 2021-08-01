@@ -73,8 +73,9 @@ def test_view_google_translate_not_logged_in(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("input_format", ["html", "text"])
 def test_view_google_translate(
-    member, google_translate_locale, google_translate_api_key
+    member, google_translate_locale, google_translate_api_key, input_format
 ):
     url = reverse("pontoon.google_translate")
 
@@ -83,7 +84,11 @@ def test_view_google_translate(
         m.post("https://translation.googleapis.com/language/translate/v2", json=data)
         response = member.client.get(
             url,
-            {"text": "text", "locale": google_translate_locale.google_translate_code},
+            {
+                "text": "text",
+                "locale": google_translate_locale.google_translate_code,
+                "format": input_format,
+            },
         )
 
     assert response.status_code == 200
@@ -98,7 +103,7 @@ def test_view_google_translate(
         "q": ["text"],
         "source": ["en"],
         "target": ["bg"],
-        "format": ["text"],
+        "format": [input_format],
         "key": ["2fffff"],
     }
 
@@ -108,9 +113,28 @@ def test_view_google_translate_bad_locale(
     member, google_translate_locale, google_translate_api_key,
 ):
     url = reverse("pontoon.google_translate")
-    response = member.client.get(url, {"text": "text", "locale": "bad"})
+    response = member.client.get(
+        url, {"text": "text", "locale": "bad", "format": "text"}
+    )
 
     assert response.status_code == 400
+    assert (
+        response.json()["message"]
+        == "400 Client Error: Bad Request for url: https://translation.googleapis.com/language/translate/v2?q=text&source=en&target=bad&format=text&key=2fffff"
+    )
+
+
+@pytest.mark.django_db
+def test_view_google_translate_bad_format(
+    member, google_translate_locale, google_translate_api_key,
+):
+    url = reverse("pontoon.google_translate")
+    response = member.client.get(
+        url, {"text": "text", "locale": "bad", "format": "invalid_format"}
+    )
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Bad Request: Invalid input format"
 
 
 @pytest.mark.django_db

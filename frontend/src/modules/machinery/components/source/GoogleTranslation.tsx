@@ -4,10 +4,10 @@ import { mark, Parser } from 'react-content-marker';
 import { rules } from '../../../../core/placeable';
 import { ReactNodeArray } from 'react';
 
-import xmlTag from '../../../../core/placeable/parsers/xmlTag';
-import xmlEntity from '../../../../core/placeable/parsers/xmlEntity';
-import punctuation from '../../../../core/placeable/parsers/punctuation';
-import numberString from '../../../../core/placeable/parsers/numberString';
+import xmlTag from 'core/placeable/parsers/xmlTag';
+import xmlEntity from 'core/placeable/parsers/xmlEntity';
+import punctuation from 'core/placeable/parsers/punctuation';
+import numberString from 'core/placeable/parsers/numberString';
 
 /**
  * When the input format is html, remove the rules responsible for handling xml entities and xml tags because
@@ -30,7 +30,8 @@ function getRulesBasedOnInputFormat(
 }
 
 /**
- * Create a identifier for a placeable, based in the value provided in the
+ * Create a identifier for a placeable, based on its index from the placeables map,.
+ * Additionally, encode information about the surrounding spaces.
  */
 export function GetPlaceableHash(
     index: string,
@@ -172,9 +173,13 @@ export function GetGoogleTranslateInputFormat(text: string): 'text' | 'html' {
     return 'text';
 }
 
-
-export function GoogleValidatePlaceables(text:string, placeablesMap: Map<string, string>): boolean {
-    return Array.from(placeablesMap.keys()).every((placeable) => text.indexOf(placeable) !== -1);
+export function GoogleValidatePlaceables(
+    text: string,
+    placeablesMap: Map<string, string>,
+): boolean {
+    return Array.from(placeablesMap.keys()).every(
+        (placeable) => text.indexOf(placeable) !== -1,
+    );
 }
 
 /**
@@ -265,5 +270,4 @@ export default function GoogleTranslation(): React.ReactElement<'li'> {
             </Localized>
         </li>
     );
-
 }

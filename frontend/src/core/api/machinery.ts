@@ -6,6 +6,7 @@ import {
     GetGoogleTranslateInputFormat,
     GetGoogleTranslateInputText,
     GetGoogleTranslateResponseText,
+    GoogleValidatePlaceables,
     GetPlaceables,
 } from '../../modules/machinery/components/source/GoogleTranslation';
 
@@ -121,23 +122,27 @@ export default class MachineryAPI extends APIBase {
             return [];
         }
 
-        try {
-            const translation = GetGoogleTranslateResponseText(
-                result,
-                placeablesMap,
-                locale.direction === 'rtl',
+        const translation = GetGoogleTranslateResponseText(
+            result.translation,
+            placeablesMap,
+            locale.direction === 'rtl',
+        );
+
+        if (!GoogleValidatePlaceables(translation, placeablesMap)) {
+            // TODO: Can we send errors to New relic/Papertrail?
+            console.log(
+                "Google Translate: Couldn't find the detected placeables in response.",
             );
-            return [
-                {
-                    sources: ['google-translate'],
-                    original: source,
-                    translation: translation,
-                },
-            ];
-        } catch (e) {
-            console.log(e);
             return [];
         }
+
+        return [
+            {
+                sources: ['google-translate'],
+                original: source,
+                translation: translation,
+            },
+        ];
     }
 
     /**

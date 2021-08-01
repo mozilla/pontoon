@@ -7,14 +7,49 @@ import GoogleTranslation, {
     GetGoogleTranslateResponseText,
     GetPlaceableHash,
     GetPlaceables,
+    GoogleValidatePlaceables,
 } from './GoogleTranslation';
+import escapeRegExp from 'lodash.escaperegexp';
 
 describe('GetPlaceableHash', () => {
-    it('generates placeable hash based on an index and adds information about the surrounding spaces', () => {
+    it('generates placeable hash based on an index and encodes the information about the surrounding spaces', () => {
         expect(GetPlaceableHash('0', false, false)).toEqual('0placeable00');
         expect(GetPlaceableHash('0', true, false)).toEqual('1placeable00');
         expect(GetPlaceableHash('0', false, true)).toEqual('0placeable01');
         expect(GetPlaceableHash('0', true, true)).toEqual('1placeable01');
+    });
+});
+
+describe('GoogleValidatePlaceables', () => {
+    it("should success when there's no placeables", () => {
+        expect(GoogleValidatePlaceables('test string', new Map())).toEqual(
+            true,
+        );
+    });
+
+    it('should success when all of the placeables are in the string', () => {
+        expect(
+            GoogleValidatePlaceables(
+                'test %s %d',
+                new Map([
+                    ['%s', '0'],
+                    ['%d', '1'],
+                ]),
+            ),
+        ).toEqual(true);
+    });
+
+    it('should fail when any of the placeables is missing', () => {
+        expect(
+            GoogleValidatePlaceables(
+                'test %s %d',
+                new Map([
+                    ['%s', '0'],
+                    ['%d', '1'],
+                    ['%c', '2'],
+                ]),
+            ),
+        ).toEqual(false);
     });
 });
 
@@ -40,24 +75,33 @@ describe('GetGoogleTranslateInputFormat', () => {
 
 describe('GetGoogleTranslateResponseText', () => {
     it('checks example responses', () => {
-        const inputText = "The server is redirecting the \"URI\" for the calendar “ 0placeable10 ” & 1 > 2 > 5.¶ 0placeable00";
-        expect(GetGoogleTranslateResponseText(
-            {translation: inputText},
-            new Map([
-                ["¶", "0"],
-                ["{ $calendarName }", "1"],
-            ]),
-            false
-        )).toEqual('The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶')
+        const inputText =
+            'The server is redirecting the "URI" for the calendar “ 0placeable10 ” & 1 > 2 > 5.¶ 0placeable00';
+        expect(
+            GetGoogleTranslateResponseText(
+                inputText,
+                new Map([
+                    ['¶', '0'],
+                    ['{ $calendarName }', '1'],
+                ]),
+                false,
+            ),
+        ).toEqual(
+            'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
+        );
 
-        expect(GetGoogleTranslateResponseText(
-            {translation: inputText},
-            new Map([
-                ["¶", "0"],
-                ["{ $calendarName }", "1"],
-            ]),
-            true
-        )).toEqual('The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶')
+        expect(
+            GetGoogleTranslateResponseText(
+                inputText,
+                new Map([
+                    ['¶', '0'],
+                    ['{ $calendarName }', '1'],
+                ]),
+                true,
+            ),
+        ).toEqual(
+            'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
+        );
     });
 
     const placeablesTestCases = [
@@ -103,10 +147,12 @@ describe('GetGoogleTranslateResponseText', () => {
         it(`returns translation and replaces the placeable hashes [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
             const inputText = `Test of ${testcase.placeableHashes.join(
                 ' ',
-            )} as placeables.`.trim().replace(/ {2}/gi, ' ');
+            )} as placeables.`
+                .trim()
+                .replace(/ {2}/gi, ' ');
             expect(
                 GetGoogleTranslateResponseText(
-                    { translation: inputText },
+                    inputText,
                     testcase.placeablesMap,
                     testcase.rightToLeft,
                 ),
@@ -116,10 +162,12 @@ describe('GetGoogleTranslateResponseText', () => {
         it(`returns translation and replaces the placeable hashes (starting from left) [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
             const inputText = `${testcase.placeableHashes.join(
                 ' ',
-            )} as placeables.`;
+            )} as placeables.`
+                .trim()
+                .replace(/ {2}/gi, ' ');
             expect(
                 GetGoogleTranslateResponseText(
-                    { translation: inputText },
+                    inputText,
                     testcase.placeablesMap,
                     testcase.rightToLeft,
                 ),
@@ -127,12 +175,12 @@ describe('GetGoogleTranslateResponseText', () => {
         });
 
         it(`returns translation and replaces the placeable hashes (starting from right) [${index}, "${testcase.placeableHashes}", rtl: ${testcase.rightToLeft}]`, () => {
-            const inputText = `Test of ${testcase.placeableHashes.join(
-                ' ',
-            )}`.trim();
+            const inputText = `Test of ${testcase.placeableHashes.join(' ')}`
+                .trim()
+                .replace(/ {2}/gi, ' ');
             expect(
                 GetGoogleTranslateResponseText(
-                    { translation: inputText },
+                    inputText,
                     testcase.placeablesMap,
                     testcase.rightToLeft,
                 ),

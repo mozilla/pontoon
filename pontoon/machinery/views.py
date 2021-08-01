@@ -154,6 +154,9 @@ def google_translate(request):
         if not locale_code:
             raise ValueError("Locale code is empty")
 
+        if input_format not in ("text", "html"):
+            raise ValueError("Invalid input format")
+
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"}, status=400,
