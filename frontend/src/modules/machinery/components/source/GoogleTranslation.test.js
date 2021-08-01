@@ -9,7 +9,6 @@ import GoogleTranslation, {
     GetPlaceables,
     GoogleValidatePlaceables,
 } from './GoogleTranslation';
-import escapeRegExp from 'lodash.escaperegexp';
 
 describe('GetPlaceableHash', () => {
     it('generates placeable hash based on an index and encodes the information about the surrounding spaces', () => {
