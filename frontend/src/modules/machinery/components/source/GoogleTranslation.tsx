@@ -157,7 +157,7 @@ export function GetGoogleTranslateInputText(
  * Google Translate API supports two input formats:
  * * text
  * * html
- * Depending on the selected format type, the API applies and returns format specific transformations,
+ * Depending on the selected format type, GTA applies transformations like
  * e.g. replaces some reserved characters with HTML entities.
  */
 export function GetGoogleTranslateInputFormat(text: string): 'text' | 'html' {
@@ -172,24 +172,24 @@ export function GetGoogleTranslateInputFormat(text: string): 'text' | 'html' {
     return 'text';
 }
 
+
+export function GoogleValidatePlaceables(text:string, placeablesMap: Map<string, string>): boolean {
+    return Array.from(placeablesMap.keys()).every((placeable) => text.indexOf(placeable) !== -1);
+}
+
 /**
  *  Process the response from the Google Translate API and replace the placeable hashes with their original values.
  *  Validate the translation and throw an error when a placeable is missing.
  */
 export function GetGoogleTranslateResponseText(
-    response: any,
+    text: string,
     placeablesMap: Map<string, string>,
     rightToLeft: boolean,
 ): string | null {
-    if (!response.translation) {
-        throw new Error('No translation in response');
-    }
-
     if (placeablesMap.size == 0) {
-        return response.translation;
+        return text;
     }
 
-    const text: string = response.translation;
     let newText: string = '';
 
     const inversePlaceablesMap = new Map(
@@ -203,8 +203,7 @@ export function GetGoogleTranslateResponseText(
     let placeableOccurrence = placeablesRegex.exec(text);
 
     while (placeableOccurrence) {
-        let placeableHash: string = placeableOccurrence[0],
-            textBefore: string = text.substring(pos, placeableOccurrence.index),
+        let textBefore: string = text.substring(pos, placeableOccurrence.index),
             placeableOptions: any = placeableOccurrence.groups,
             leftSpace: boolean = placeableOptions.leftSpace === '1',
             rightSpace: boolean = placeableOptions.rightSpace === '1';
@@ -215,13 +214,16 @@ export function GetGoogleTranslateResponseText(
             );
         }
 
-        // if (rightToLeft) {
-        //     [leftSpace, rightSpace] = [rightSpace, leftSpace];
-        // }
+        if (rightToLeft) {
+            [leftSpace, rightSpace] = [rightSpace, leftSpace];
+        }
 
         newText += textBefore;
-        console.log(`input: "${text}", left pos=${pos}, char=${text[placeableOccurrence.index-1]}`);
-        if (leftSpace && pos > 0 && text[placeableOccurrence.index-1] !== ' ') {
+        if (
+            leftSpace &&
+            placeableOccurrence.index > 0 &&
+            text[placeableOccurrence.index - 1] !== ' '
+        ) {
             newText += ' ';
         }
 
@@ -263,4 +265,5 @@ export default function GoogleTranslation(): React.ReactElement<'li'> {
             </Localized>
         </li>
     );
+
 }
