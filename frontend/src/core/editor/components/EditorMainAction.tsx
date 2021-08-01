@@ -5,6 +5,7 @@ import { Localized } from '@fluent/react';
 import * as user from 'core/user';
 
 import * as editor from '..';
+import { AppState } from 'rootReducer';
 
 type Props = {
     sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -25,15 +26,15 @@ export default function EditorMainAction(
     props: Props,
 ): React.ReactElement<React.ElementType> {
     const isRunningRequest = useSelector(
-        (state) => state.editor.isRunningRequest,
+        (state: AppState) => state.editor.isRunningRequest,
     );
     const forceSuggestions = useSelector(
-        (state) => state.user.settings.forceSuggestions,
+        (state: AppState) => state.user.settings.forceSuggestions,
     );
-    const isTranslator = useSelector((state) =>
+    const isTranslator = useSelector((state: AppState) =>
         user.selectors.isTranslator(state),
     );
-    const sameExistingTranslation = useSelector((state) =>
+    const sameExistingTranslation = useSelector((state: AppState) =>
         editor.selectors.sameExistingTranslation(state),
     );
 
