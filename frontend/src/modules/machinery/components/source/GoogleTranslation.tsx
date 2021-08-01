@@ -14,7 +14,6 @@ import numberString from 'core/placeable/parsers/numberString';
  * Google Translate API is able to handle HTML/XML input.
  */
 function getRulesBasedOnInputFormat(
-    text: string,
     rules: Array<Parser>,
 ): Array<Parser> {
     let newRules: Array<Parser> = [...rules];
@@ -47,7 +46,7 @@ export function GetPlaceableHash(
 export function GetPlaceables(searchString: string): Map<string, string> {
     let placeables: Map<string, string> = new Map<string, string>();
     let index: number = 0;
-    getRulesBasedOnInputFormat(searchString, rules).reduce(
+    getRulesBasedOnInputFormat(rules).reduce(
         (acc: string | ReactNodeArray, parser: Parser): ReactNodeArray => {
             return mark(
                 acc,
@@ -105,8 +104,6 @@ function escapeRegExp(text: string) {
  *   GTA output string [locale: pl]: O naturze \n <placeable hash>$
  *   ^ GTA returns only the left trailing space. $ is the end marker of the string.
  *   Final string visible in the Translate.Next UI: O naturze \n ${something}$
- * Also, the direction of a script in a locale (LTR, RTL) is a factor that may change the order
- * of the placeables in a string and make restoring the surrounding spaces harder.
  */
 export function GetGoogleTranslateInputText(
     text: string,
