@@ -22,11 +22,16 @@ import * as search from 'modules/search';
 import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
+type BaseReducerMap<S> = {
+    [K in keyof S]: (state: S[K], action: any) => S
+}
+
+export type InferRootState<ReducerMap extends BaseReducerMap<S>, S = any> = {
+    [K in keyof ReducerMap]: ReturnType<ReducerMap[K]>
+}
+
 // Combine reducers from all modules, using their NAME constant as key.
-const rootReducer = (browserHistory: History) =>
-    combineReducers({
-        // System modules
-        router: connectRouter(browserHistory),
+const reducers = {
         // Core modules
         [editor.NAME]: editor.reducer,
         [entities.NAME]: entities.reducer,
@@ -48,8 +53,15 @@ const rootReducer = (browserHistory: History) =>
         [teamcomments.NAME]: teamcomments.reducer,
         [term.NAME]: term.reducer,
         [unsavedchanges.NAME]: unsavedchanges.reducer,
-    });
+    };
 
-export type AppState = ReturnType<typeof rootReducer>;
+const combinedReducers = (browserHistory: History) =>
+combineReducers({
+    // System modules
+    router: connectRouter(browserHistory),
+    ...reducers,
+})
 
-export default rootReducer;
+export type AppState = InferRootState<typeof reducers>;
+
+export default combinedReducers;
