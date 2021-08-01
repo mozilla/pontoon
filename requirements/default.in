@@ -3,12 +3,13 @@
 # The dependencies are grouped by function:
 # default.in: required for running a pontoon instance
 # dev.in: required for development
-# test.in: required for running tests or linting
+# test.in: required for running tests
+# lint.in: required for linting
 #
 # All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
 # This step is only required when adding, removing or updating dependencies,
 # or to force an update of indirect dependencies.
-# Run './requirements/compile_all.sh' for compiling these files.
+# Run 'make requirements' for compiling these files.
 #
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.

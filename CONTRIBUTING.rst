@@ -216,7 +216,8 @@ Direct dependencies for Pontoon are distributed across three files:
 
 1. ``requirements/default.in``: Running Pontoon in production
 2. ``requirements/dev.in``: Development
-3. ``requirements/test.in``: Testing and linting
+3. ``requirements/test.in``: Testing
+4. ``requirements/lint.in``:  Linting
 
 In order to pin and hash the direct and indirect dependencies, we use `pip-compile <https://pypi.org/project/pip-tools/>`_,
 which yields corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and indirect dependencies,

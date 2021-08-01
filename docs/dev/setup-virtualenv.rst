@@ -68,7 +68,7 @@ Installation
 
    .. code-block:: bash
 
-      pip install --require-hashes -r requirements/dev.txt -r requirements/test.txt
+      pip install --require-hashes -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt
 
 4. Create your database, using the following set of commands:
 
