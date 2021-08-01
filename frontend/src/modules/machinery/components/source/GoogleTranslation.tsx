@@ -13,9 +13,7 @@ import numberString from 'core/placeable/parsers/numberString';
  * When the input format is html, remove the rules responsible for handling xml entities and xml tags because
  * Google Translate API is able to handle HTML/XML input.
  */
-function getRulesBasedOnInputFormat(
-    rules: Array<Parser>,
-): Array<Parser> {
+function getRulesBasedOnInputFormat(rules: Array<Parser>): Array<Parser> {
     let newRules: Array<Parser> = [...rules];
 
     newRules.splice(newRules.indexOf(xmlTag), 1);
