@@ -5,4 +5,4 @@ export type { NavigationParams } from './selectors';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME: string = 'navigation';
+export const NAME = 'navigation';
