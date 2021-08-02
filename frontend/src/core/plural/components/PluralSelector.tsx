@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 
 import './PluralSelector.css';
 
+import { useAppSelector } from 'hooks';
 import * as locale from 'core/locale';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
@@ -97,8 +98,8 @@ export default function PluralSelector(
     props: WrapperProps,
 ): React.ReactElement<typeof PluralSelectorBase> {
     const state = {
-        locale: useSelector((state) => state[locale.NAME]),
-        pluralForm: useSelector((state) => selectors.getPluralForm(state)),
+        locale: useAppSelector((state) => state[locale.NAME]),
+        pluralForm: useAppSelector((state) => selectors.getPluralForm(state)),
     };
 
     return (

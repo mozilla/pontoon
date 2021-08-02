@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './ConcordanceSearch.css';
 import './Translation.css';
 
+import { useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { GenericTranslation } from 'core/translation';
@@ -34,10 +35,10 @@ export default function Translation(
     const { index, sourceString, translation, entity } = props;
 
     const dispatch = useDispatch();
-    const isReadOnlyEditor = useSelector((state) =>
+    const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
-    const locale = useSelector((state) => state.locale);
+    const locale = useAppSelector((state) => state.locale);
 
     const copyMachineryTranslation = editor.useCopyMachineryTranslation(entity);
     const copyTranslationIntoEditor = React.useCallback(() => {
@@ -51,10 +52,10 @@ export default function Translation(
         className += ' cannot-copy';
     }
 
-    const selectedHelperElementIndex = useSelector(
+    const selectedHelperElementIndex = useAppSelector(
         (state) => state[editor.NAME].selectedHelperElementIndex,
     );
-    const changeSource = useSelector(
+    const changeSource = useAppSelector(
         (state) => state[editor.NAME].changeSource,
     );
     const isSelected =

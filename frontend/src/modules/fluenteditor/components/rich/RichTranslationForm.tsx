@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichTranslationForm.css';
 
+import { useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
@@ -76,16 +77,16 @@ export default function RichTranslationForm(
 
     const dispatch = useDispatch();
 
-    const message = useSelector((state) => state.editor.translation);
-    const changeSource = useSelector((state) => state.editor.changeSource);
-    const localeState = useSelector((state) => state.locale);
-    const isReadOnlyEditor = useSelector((state) =>
+    const message = useAppSelector((state) => state.editor.translation);
+    const changeSource = useAppSelector((state) => state.editor.changeSource);
+    const localeState = useAppSelector((state) => state.locale);
+    const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
-    const searchInputFocused = useSelector(
+    const searchInputFocused = useAppSelector(
         (state) => state.search.searchInputFocused,
     );
-    const entity = useSelector((state) =>
+    const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
 

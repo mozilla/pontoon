@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 
+import { useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { fluent } from 'core/utils';
@@ -24,9 +24,9 @@ export default function SimpleEditor(
     const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
     const sendTranslation = editor.useSendTranslation();
 
-    const translation = useSelector((state) => state.editor.translation);
-    const changeSource = useSelector((state) => state.editor.changeSource);
-    const entity = useSelector((state) =>
+    const translation = useAppSelector((state) => state.editor.translation);
+    const changeSource = useAppSelector((state) => state.editor.changeSource);
+    const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
 
