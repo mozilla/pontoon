@@ -8,4 +8,4 @@ export type { MachineryState } from './reducer';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME: string = 'machinery';
+export const NAME = 'machinery';

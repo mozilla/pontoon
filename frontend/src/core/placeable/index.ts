@@ -11,4 +11,4 @@ export { default as WithPlaceablesForFluentNoLeadingSpace } from './components/W
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME: string = 'placeable';
+export const NAME = 'placeable';
