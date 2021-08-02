@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
+import { useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
 import { NAME as PROJECT_NAME } from 'core/project';
@@ -505,13 +506,13 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
 
 export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
     const state = {
-        searchAndFilters: useSelector((state) => state[search.NAME]),
-        parameters: useSelector((state) =>
+        searchAndFilters: useAppSelector((state) => state[search.NAME]),
+        parameters: useAppSelector((state) =>
             navigation.selectors.getNavigationParams(state),
         ),
-        project: useSelector((state) => state[PROJECT_NAME]),
-        stats: useSelector((state) => state[STATS_NAME]),
-        router: useSelector((state) => state.router),
+        project: useAppSelector((state) => state[PROJECT_NAME]),
+        stats: useAppSelector((state) => state[STATS_NAME]),
+        router: useAppSelector((state) => state.router),
     };
 
     return (

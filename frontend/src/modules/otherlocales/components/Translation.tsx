@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 
+import { useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import type { Entity, OtherLocaleTranslation } from 'core/api';
@@ -31,7 +32,7 @@ export default function Translation(
     const { entity, translation, parameters, index } = props;
 
     const dispatch = useDispatch();
-    const isReadOnlyEditor = useSelector((state) =>
+    const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
 
@@ -41,10 +42,10 @@ export default function Translation(
         className += ' cannot-copy';
     }
 
-    const selectedHelperElementIndex = useSelector(
+    const selectedHelperElementIndex = useAppSelector(
         (state) => state[editor.NAME].selectedHelperElementIndex,
     );
-    const changeSource = useSelector(
+    const changeSource = useAppSelector(
         (state) => state[editor.NAME].changeSource,
     );
     const isSelected =

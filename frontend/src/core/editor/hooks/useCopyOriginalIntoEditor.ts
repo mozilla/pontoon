@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-
+import { useAppSelector } from 'hooks';
 import * as entities from 'core/entities';
 import * as plural from 'core/plural';
 
@@ -11,10 +10,10 @@ import useUpdateTranslation from './useUpdateTranslation';
 export default function useCopyOriginalIntoEditor(): () => void {
     const updateTranslation = useUpdateTranslation();
 
-    const entity = useSelector((state) =>
+    const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
-    const pluralForm = useSelector((state) =>
+    const pluralForm = useAppSelector((state) =>
         plural.selectors.getPluralForm(state),
     );
 
