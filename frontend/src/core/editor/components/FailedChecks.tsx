@@ -9,6 +9,7 @@ import * as user from 'core/user';
 
 import { actions, useUpdateTranslationStatus } from '..';
 
+import type  { EditorState } from 'core/editor';
 import type { UserState } from 'core/user';
 
 type FailedChecksProps = {
@@ -91,7 +92,7 @@ export default function FailedChecks(
     );
 }
 type MainActionProps = {
-    source: string;
+    source: EditorState['source'];
     user: UserState;
     isTranslator: boolean;
     errors: Array<string>;
