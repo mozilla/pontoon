@@ -18,4 +18,4 @@ export const CLDR_PLURALS: Array<string> = [
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME: string = 'plural';
+export const NAME = 'plural';
