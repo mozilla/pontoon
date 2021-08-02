@@ -1,19 +1,20 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
+import { useAppSelector } from 'hooks';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 export default function useUpdateUnsavedChanges(richEditor: boolean) {
     const dispatch = useDispatch();
 
-    const translation = useSelector((state) => state.editor.translation);
-    const initialTranslation = useSelector(
+    const translation = useAppSelector((state) => state.editor.translation);
+    const initialTranslation = useAppSelector(
         (state) => state.editor.initialTranslation,
     );
-    const unsavedChangesExist = useSelector(
+    const unsavedChangesExist = useAppSelector(
         (state) => state.unsavedchanges.exist,
     );
-    const unsavedChangesShown = useSelector(
+    const unsavedChangesShown = useAppSelector(
         (state) => state.unsavedchanges.shown,
     );
 

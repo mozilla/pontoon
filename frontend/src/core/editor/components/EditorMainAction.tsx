@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { Localized } from '@fluent/react';
 
+import { useAppSelector } from 'hooks';
 import * as user from 'core/user';
 
 import * as editor from '..';
@@ -25,16 +25,16 @@ type Props = {
 export default function EditorMainAction(
     props: Props,
 ): React.ReactElement<React.ElementType> {
-    const isRunningRequest = useSelector(
+    const isRunningRequest = useAppSelector(
         (state: AppState) => state.editor.isRunningRequest,
     );
-    const forceSuggestions = useSelector(
+    const forceSuggestions = useAppSelector(
         (state: AppState) => state.user.settings.forceSuggestions,
     );
-    const isTranslator = useSelector((state: AppState) =>
+    const isTranslator = useAppSelector((state: AppState) =>
         user.selectors.isTranslator(state),
     );
-    const sameExistingTranslation = useSelector((state: AppState) =>
+    const sameExistingTranslation = useAppSelector((state: AppState) =>
         editor.selectors.sameExistingTranslation(state),
     );
 

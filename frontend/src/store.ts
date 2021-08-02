@@ -14,8 +14,14 @@ if (process.env.NODE_ENV === 'development') {
     middlewares.push(loggerMiddleware);
 }
 
-export default createStore(
+const store = createStore(
     createRootReducer(history),
     {}, // initial state
     compose(applyMiddleware(...middlewares)),
 );
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;

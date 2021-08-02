@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
+import { useAppSelector } from 'hooks';
 import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
@@ -528,38 +529,38 @@ export default function EntityDetails(): React.ReactElement<
     typeof EntityDetailsBase
 > {
     const state = {
-        activeTranslationString: useSelector((state) =>
+        activeTranslationString: useAppSelector((state) =>
             plural.selectors.getTranslationStringForSelectedEntity(state),
         ),
-        history: useSelector((state) => state[history.NAME]),
-        isReadOnlyEditor: useSelector((state) =>
+        history: useAppSelector((state) => state[history.NAME]),
+        isReadOnlyEditor: useAppSelector((state) =>
             entities.selectors.isReadOnlyEditor(state),
         ),
-        isTranslator: useSelector((state) =>
+        isTranslator: useAppSelector((state) =>
             user.selectors.isTranslator(state),
         ),
-        locale: useSelector((state) => state[locale.NAME]),
-        machinery: useSelector((state) => state[machinery.NAME]),
-        nextEntity: useSelector((state) =>
+        locale: useAppSelector((state) => state[locale.NAME]),
+        machinery: useAppSelector((state) => state[machinery.NAME]),
+        nextEntity: useAppSelector((state) =>
             entities.selectors.getNextEntity(state),
         ),
-        previousEntity: useSelector((state) =>
+        previousEntity: useAppSelector((state) =>
             entities.selectors.getPreviousEntity(state),
         ),
-        otherlocales: useSelector((state) => state[otherlocales.NAME]),
-        teamComments: useSelector((state) => state[teamcomments.NAME]),
-        terms: useSelector((state) => state[terms.NAME]),
-        parameters: useSelector((state) =>
+        otherlocales: useAppSelector((state) => state[otherlocales.NAME]),
+        teamComments: useAppSelector((state) => state[teamcomments.NAME]),
+        terms: useAppSelector((state) => state[terms.NAME]),
+        parameters: useAppSelector((state) =>
             navigation.selectors.getNavigationParams(state),
         ),
-        pluralForm: useSelector((state) =>
+        pluralForm: useAppSelector((state) =>
             plural.selectors.getPluralForm(state),
         ),
-        router: useSelector((state) => state.router),
-        selectedEntity: useSelector((state) =>
+        router: useAppSelector((state) => state.router),
+        selectedEntity: useAppSelector((state) =>
             entities.selectors.getSelectedEntity(state),
         ),
-        user: useSelector((state) => state[user.NAME]),
+        user: useAppSelector((state) => state[user.NAME]),
     };
     return (
         <EntityDetailsBase

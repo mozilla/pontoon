@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 
+import { useAppSelector } from 'hooks';
 import * as entities from 'core/entities';
 import type { OtherLocaleTranslation } from 'core/api';
 
@@ -13,7 +13,7 @@ export default function useCopyOtherLocaleTranslation(): (
     translation: OtherLocaleTranslation,
 ) => void {
     const updateTranslation = useUpdateTranslation();
-    const isReadOnlyEditor = useSelector((state) =>
+    const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
 

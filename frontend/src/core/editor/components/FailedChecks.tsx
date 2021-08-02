@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './FailedChecks.css';
 
+import { useAppSelector } from 'hooks';
 import * as user from 'core/user';
 
 import { actions, useUpdateTranslationStatus } from '..';
@@ -23,11 +24,11 @@ export default function FailedChecks(
 ): null | React.ReactElement<'div'> {
     const dispatch = useDispatch();
 
-    const errors = useSelector((state) => state.editor.errors);
-    const warnings = useSelector((state) => state.editor.warnings);
-    const source = useSelector((state) => state.editor.source);
-    const userState = useSelector((state) => state.user);
-    const isTranslator = useSelector(user.selectors.isTranslator);
+    const errors = useAppSelector((state) => state.editor.errors);
+    const warnings = useAppSelector((state) => state.editor.warnings);
+    const source = useAppSelector((state) => state.editor.source);
+    const userState = useAppSelector((state) => state.user);
+    const isTranslator = useAppSelector(user.selectors.isTranslator);
 
     const updateTranslationStatus = useUpdateTranslationStatus();
 

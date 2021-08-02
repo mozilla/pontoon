@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 
+import { useAppSelector } from 'hooks';
 import { GenericTranslation } from 'core/translation';
 import TranslationMemory from './source/TranslationMemory';
 
@@ -14,7 +14,7 @@ type Props = {
 export default function ConcordanceSearch(
     props: Props,
 ): React.ReactElement<any> {
-    const locale = useSelector((state) => state.locale);
+    const locale = useAppSelector((state) => state.locale);
     const { sourceString, translation } = props;
 
     const createProjectList = () => {
