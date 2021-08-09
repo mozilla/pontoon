@@ -13,7 +13,7 @@ import useUpdateTranslation from './useUpdateTranslation';
 /**
  * Return a function to copy the original translation into the editor.
  */
-export default function useCopyMachineryTranslation(): (
+export default function useCopyMachineryTranslation(entity?: number | null): (
     translation: MachineryTranslation,
 ) => void {
     const dispatch = useDispatch();
@@ -34,9 +34,6 @@ export default function useCopyMachineryTranslation(): (
 
     const isReadOnlyEditor = useSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
-    );
-    const entity = useSelector((state) =>
-        entities.selectors.getSelectedEntity(state),
     );
     const isFluentTranslationMessage = useSelector((state) =>
         editor.selectors.isFluentTranslationMessage(state),
