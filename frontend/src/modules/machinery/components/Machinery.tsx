@@ -123,6 +123,7 @@ export default class Machinery extends React.Component<Props, State> {
                             return (
                                 <Translation
                                     index={index}
+                                    entity={machinery.entity}
                                     sourceString={machinery.sourceString}
                                     translation={translation}
                                     key={index}
@@ -137,6 +138,7 @@ export default class Machinery extends React.Component<Props, State> {
                                     index={
                                         index + machinery.translations.length
                                     }
+                                    entity={machinery.entity}
                                     sourceString={machinery.sourceString}
                                     translation={result}
                                     key={index + machinery.translations.length}
