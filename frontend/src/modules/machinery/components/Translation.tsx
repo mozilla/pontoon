@@ -18,6 +18,7 @@ type Props = {
     sourceString: string;
     translation: MachineryTranslation;
     index: number;
+    entity: number | null;
 };
 
 /**
@@ -30,7 +31,7 @@ type Props = {
 export default function Translation(
     props: Props,
 ): React.ReactElement<React.ElementType> {
-    const { index, sourceString, translation } = props;
+    const { index, sourceString, translation, entity } = props;
 
     const dispatch = useDispatch();
     const isReadOnlyEditor = useSelector((state) =>
@@ -38,7 +39,7 @@ export default function Translation(
     );
     const locale = useSelector((state) => state.locale);
 
-    const copyMachineryTranslation = editor.useCopyMachineryTranslation();
+    const copyMachineryTranslation = editor.useCopyMachineryTranslation(entity);
     const copyTranslationIntoEditor = React.useCallback(() => {
         dispatch(editor.actions.selectHelperElementIndex(index));
         copyMachineryTranslation(translation);
