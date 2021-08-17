@@ -35,6 +35,11 @@ export default function getPluralExamples(
                 examples[locale.cldrPlurals[rule]] = n;
             }
             n++;
+            // Protection against infinite loop
+            if (n === 1000) {
+                console.error('Unable to generate plural examples.');
+                break;
+            }
         }
     }
 
