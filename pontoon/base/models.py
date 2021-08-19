@@ -2505,6 +2505,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     string_plural = models.TextField(blank=True)
     # Unique identifier, used to compare DB and VCS objects
     key = models.TextField()
+    # Format-specific value, used to provide more context
+    context = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     group_comment = models.TextField(blank=True)
     resource_comment = models.TextField(blank=True)
