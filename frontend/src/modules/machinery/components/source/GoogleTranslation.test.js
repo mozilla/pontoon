@@ -102,7 +102,46 @@ describe('GetGoogleTranslateResponseText', () => {
             'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
         );
     });
+    it('should remove wrapping spaces when a punctuation sign wraps a placeable', () => {
+        expect(
+            GetGoogleTranslateResponseText(
+                'The server is redirecting the "URI" for the calendar “ 1placeable11 ” & 1 > 2 > 5.¶ 0placeable00',
+                new Map([
+                    ['¶', '0'],
+                    ['{ $calendarName }', '1'],
+                ]),
+                false,
+            ),
+        ).toEqual(
+            'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
+        );
 
+        expect(
+            GetGoogleTranslateResponseText(
+                'The server is redirecting the "URI" for the calendar “ 0placeable11 ” & 1 > 2 > 5.¶ 0placeable00',
+                new Map([
+                    ['¶', '0'],
+                    ['{ $calendarName }', '1'],
+                ]),
+                false,
+            ),
+        ).toEqual(
+            'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
+        );
+
+        expect(
+            GetGoogleTranslateResponseText(
+                'The server is redirecting the "URI" for the calendar “ 1placeable10 ” & 1 > 2 > 5.¶ 0placeable00',
+                new Map([
+                    ['¶', '0'],
+                    ['{ $calendarName }', '1'],
+                ]),
+                false,
+            ),
+        ).toEqual(
+            'The server is redirecting the "URI" for the calendar “{ $calendarName }” & 1 > 2 > 5.¶¶',
+        );
+    });
     const placeablesTestCases = [
         {
             placeableHashes: [' 1placeable01 '],
@@ -196,6 +235,7 @@ describe('GetGoogleTranslateInputText', () => {
                 new Map([]),
             ),
         ).toEqual('String without placeables.');
+
         expect(
             GetGoogleTranslateInputText(
                 'String without %s placeables.',

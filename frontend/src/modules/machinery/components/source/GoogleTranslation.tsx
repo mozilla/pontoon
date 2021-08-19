@@ -157,11 +157,7 @@ export function GetGoogleTranslateInputText(
  * e.g. replaces some reserved characters with HTML entities.
  */
 export function GetGoogleTranslateInputFormat(text: string): 'text' | 'html' {
-    // The regexes are borrowed from the corresponding placeable rules.
-    const htmlEntities: RegExp = /(&(([a-zA-Z][a-zA-Z0-9.-]*)|([#](\d{1,5}|x[a-fA-F0-9]{1,5})+));)/;
-    const htmlTags: RegExp = /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/;
-
-    if (text.search(htmlEntities) !== -1 || text.search(htmlTags) !== -1) {
+    if (text.search(xmlEntity.rule) !== -1 || text.search(xmlTag.rule) !== -1) {
         return 'html';
     }
 
@@ -190,15 +186,16 @@ export function GetGoogleTranslateResponseText(
         return text;
     }
 
-    let newText: string = '';
-
     const inversePlaceablesMap = new Map(
         [...placeablesMap].map((item) => [item[1], item[0]]),
     );
+    const isPunctuation = (text) => text.search(punctuation.rule) !== -1;
     const placeablesRegex = new RegExp(
         '( |)(?<leftSpace>0|1)placeable(?<placeableIndex>\\d+)(?<rightSpace>0|1)( |)',
         'gi',
     );
+
+    let newText: string = '';
     let pos: number = 0;
     let placeableOccurrence = placeablesRegex.exec(text);
 
@@ -222,14 +219,20 @@ export function GetGoogleTranslateResponseText(
         if (
             leftSpace &&
             placeableOccurrence.index > 0 &&
-            text[placeableOccurrence.index - 1] !== ' '
+            text[placeableOccurrence.index - 1] !== ' ' &&
+            !isPunctuation(text[placeableOccurrence.index - 1])
         ) {
             newText += ' ';
         }
 
         newText += inversePlaceablesMap.get(placeableOptions.placeableIndex);
         pos = placeableOccurrence.index + placeableOccurrence[0].length;
-        if (rightSpace && pos < text.length && text[pos] !== ' ') {
+        if (
+            rightSpace &&
+            pos < text.length &&
+            text[pos] !== ' ' &&
+            !isPunctuation(text[pos])
+        ) {
             newText += ' ';
         }
         placeableOccurrence = placeablesRegex.exec(text);
