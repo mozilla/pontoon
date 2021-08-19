@@ -2503,7 +2503,8 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
     string = models.TextField()
     string_plural = models.TextField(blank=True)
-    key = models.TextField(blank=True)
+    # Unique identifier, used to compare DB and VCS objects
+    key = models.TextField()
     comment = models.TextField(blank=True)
     group_comment = models.TextField(blank=True)
     resource_comment = models.TextField(blank=True)
