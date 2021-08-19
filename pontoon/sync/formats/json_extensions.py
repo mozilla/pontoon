@@ -53,6 +53,7 @@ class JSONEntity(VCSTranslation):
 
     def __init__(self, order, key, data):
         self.key = key
+        self.context = key
         self.data = data
         self.order = order
         self.strings = {None: self.source_string} if self.source_string else {}
