@@ -2900,6 +2900,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "original_plural": original_plural,
                     "machinery_original": entity.string,
                     "key": entity.cleaned_key,
+                    "context": entity.context,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),
                     "format": entity.resource.format,
