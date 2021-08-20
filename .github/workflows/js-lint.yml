@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - '**.js'
+      - '**.ts'
+      - '**.tsx'
       - '**.css'
       - package.json
       - '.*eslint*'
@@ -16,6 +18,8 @@ on:
       - master
     paths:
       - '**.js'
+      - '**.ts'
+      - '**.tsx'
       - '**.css'
       - package.json
       - '.*eslint*'
