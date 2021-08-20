@@ -13,9 +13,9 @@ import useUpdateTranslation from './useUpdateTranslation';
 /**
  * Return a function to copy the original translation into the editor.
  */
-export default function useCopyMachineryTranslation(entity?: number | null): (
-    translation: MachineryTranslation,
-) => void {
+export default function useCopyMachineryTranslation(
+    entity?: number | null,
+): (translation: MachineryTranslation) => void {
     const dispatch = useDispatch();
 
     const addTextToTranslation = useAddTextToTranslation();
