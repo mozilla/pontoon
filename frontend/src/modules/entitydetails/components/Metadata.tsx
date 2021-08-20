@@ -250,7 +250,7 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     renderContext(entity: Entity): React.ReactNode {
-        if (!entity.key) {
+        if (!entity.context) {
             return null;
         }
 
@@ -260,7 +260,7 @@ export default class Metadata extends React.Component<Props, State> {
                 attrs={{ title: true }}
             >
                 <Property title='CONTEXT' className='context'>
-                    {entity.key}
+                    {entity.context}
                 </Property>
             </Localized>
         );

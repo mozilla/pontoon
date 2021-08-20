@@ -759,6 +759,7 @@ class VCSResource:
             vcs_entity = VCSEntity(
                 resource=self,
                 key=translation.key,
+                context=translation.context,
                 string=translation.source_string,
                 string_plural=translation.source_string_plural,
                 comments=translation.comments,
@@ -845,23 +846,25 @@ class VCSEntity:
         resource,
         key,
         string,
-        comments,
         source,
-        string_plural="",
-        order=0,
+        comments,
         group_comments=None,
         resource_comments=None,
+        context="",
+        string_plural="",
+        order=0,
     ):
         self.resource = resource
         self.key = key
         self.string = string
         self.string_plural = string_plural
-        self.translations = {}
+        self.source = source
         self.comments = comments
         self.group_comments = group_comments or []
         self.resource_comments = resource_comments or []
-        self.source = source
+        self.context = context
         self.order = order
+        self.translations = {}
 
     def has_translation_for(self, locale_code):
         """Return True if a translation exists for the given locale."""
@@ -885,6 +888,7 @@ class VCSTranslation:
         strings,
         comments,
         fuzzy,
+        context="",
         source_string="",
         source_string_plural="",
         group_comments=None,
@@ -895,6 +899,7 @@ class VCSTranslation:
         last_updated=None,
     ):
         self.key = key
+        self.context = context
         self.source_string = source_string
         self.source_string_plural = source_string_plural
         self.strings = strings

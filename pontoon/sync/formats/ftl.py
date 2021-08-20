@@ -35,6 +35,7 @@ class FTLEntity(VCSTranslation):
     ):
         super().__init__(
             key=key,
+            context=key,
             source_string=source_string,
             source_string_plural=source_string_plural,
             strings=strings,

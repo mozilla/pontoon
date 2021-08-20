@@ -26,6 +26,7 @@ class CompareLocalesEntity(VCSTranslation):
 
     def __init__(self, key, string, comment, order):
         self.key = key
+        self.context = key
         self.source_string = string
         self.source_string_plural = ""
         self.strings = (

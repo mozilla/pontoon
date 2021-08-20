@@ -2503,7 +2503,10 @@ class Entity(DirtyFieldsMixin, models.Model):
     resource = models.ForeignKey(Resource, models.CASCADE, related_name="entities")
     string = models.TextField()
     string_plural = models.TextField(blank=True)
-    key = models.TextField(blank=True)
+    # Unique identifier, used to compare DB and VCS objects
+    key = models.TextField()
+    # Format-specific value, used to provide more context
+    context = models.TextField(blank=True)
     comment = models.TextField(blank=True)
     group_comment = models.TextField(blank=True)
     resource_comment = models.TextField(blank=True)
@@ -2897,6 +2900,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "original_plural": original_plural,
                     "machinery_original": entity.string,
                     "key": entity.cleaned_key,
+                    "context": entity.context,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),
                     "format": entity.resource.format,
