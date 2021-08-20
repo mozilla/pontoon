@@ -1,8 +1,10 @@
 """
 Parser for the xliff translation format.
 """
+from lxml import etree
 from translate.storage import xliff
 
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -125,5 +127,10 @@ class XLIFFResource(ParsedResource):
 def parse(path, source_path=None, locale=None):
     with open(path) as f:
         xml = f.read().encode("utf-8")
-        xliff_file = xliff.xlifffile(xml)
+
+        try:
+            xliff_file = xliff.xlifffile(xml)
+        except etree.XMLSyntaxError as err:
+            raise ParseError(f"Failed to parse {path}: {err}")
+
     return XLIFFResource(path, xliff_file)
