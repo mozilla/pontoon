@@ -102,6 +102,8 @@ class SilmeResource(ParsedResource):
                     uncomment_moz_langpack=parser is IncParser and not source_resource,
                 )
             )
+        # Parse errors are handled gracefully by fluent
+        # No need to catch them here
         except OSError as err:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.

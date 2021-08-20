@@ -74,6 +74,8 @@ class FTLResource(ParsedResource):
         try:
             with codecs.open(path, "r", "utf-8") as resource:
                 self.structure = parser.parse(resource.read())
+        # Parse errors are handled gracefully by fluent
+        # No need to catch them here
         except OSError as err:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
