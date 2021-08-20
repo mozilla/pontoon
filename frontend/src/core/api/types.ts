@@ -64,6 +64,7 @@ export type Entity = {
     readonly group_comment: string;
     readonly resource_comment: string;
     readonly key: string;
+    readonly context: string;
     readonly format: string;
     readonly path: string;
     readonly project: Record<string, any>;

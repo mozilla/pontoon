@@ -272,6 +272,7 @@ def test_entity_project_locale_no_paths(
         "format": "po",
         "obsolete": False,
         "key": "",
+        "context": "",
         "path": str(resource0.path),
         "project": project_a.serialize(),
         "translation": [

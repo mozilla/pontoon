@@ -28,6 +28,7 @@ PROJECT_CONFIG_CHECKOUT_PATH = os.path.join(
 class VCSEntityFactory(factory.Factory):
     resource = None
     key = "key"
+    context = "context"
     string = "string"
     string_plural = ""
     comments = factory.List([])
@@ -40,6 +41,7 @@ class VCSEntityFactory(factory.Factory):
 
 class VCSTranslationFactory(factory.Factory):
     key = factory.Sequence(lambda n: f"key-{n}")
+    context = "context"
     strings = factory.Dict({})
     comments = factory.List([])
     fuzzy = False

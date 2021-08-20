@@ -45,6 +45,10 @@ class SilmeEntity(VCSTranslation):
         return self.silme_object.id
 
     @property
+    def context(self):
+        return self.key
+
+    @property
     def source_string(self):
         return self.silme_object.value
 

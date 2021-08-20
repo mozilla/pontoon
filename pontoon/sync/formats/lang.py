@@ -39,6 +39,7 @@ class LangEntity(VCSTranslation):
     def __init__(self, source_string, translation_string, tags):
         super().__init__(
             key=source_string,  # Langfiles use the source as the key.
+            context="",
             source_string=source_string,
             strings={None: translation_string},  # Langfiles lack plural support
             comments=[],

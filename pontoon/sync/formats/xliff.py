@@ -22,6 +22,10 @@ class XLIFFEntity(VCSTranslation):
         return self.unit.getid()
 
     @property
+    def context(self):
+        return self.unit.xmlelement.get("id") or ""
+
+    @property
     def source_string(self):
         return str(self.unit.rich_source[0])
 

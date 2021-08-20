@@ -27,11 +27,13 @@ class POEntity(VCSTranslation):
 
         # Pofiles use the source as the key prepended with context if available.
         key = po_entry.msgid
-        if po_entry.msgctxt:
-            key = po_entry.msgctxt + KEY_SEPARATOR + key
+        context = po_entry.msgctxt or ""
+        if context:
+            key = context + KEY_SEPARATOR + key
 
         super().__init__(
             key=key,
+            context=context,
             source_string=po_entry.msgid,
             source_string_plural=po_entry.msgid_plural,
             strings=strings,
