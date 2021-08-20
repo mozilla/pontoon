@@ -69,7 +69,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
         plural.selectors.getPluralForm(state),
     );
 
-    if (!entity) {
+    if (!entity || typeof translation !== 'string') {
         return null;
     }
 

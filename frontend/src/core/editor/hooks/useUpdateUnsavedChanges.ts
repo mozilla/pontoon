@@ -20,13 +20,14 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
 
     // When the translation or the initial translation changes, check for unsaved changes.
     React.useEffect(() => {
-        if (richEditor && typeof translation === 'string') {
-            return;
-        }
-
         let exist;
         if (richEditor) {
-            exist = !translation.equals(initialTranslation);
+            if (typeof translation === 'string') {
+                return;
+            }
+            exist =
+                typeof initialTranslation !== 'string' &&
+                !translation.equals(initialTranslation);
         } else {
             exist = translation !== initialTranslation;
         }
@@ -49,13 +50,14 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
     // the translation has effectively changed.
     const prevTranslation = React.useRef(translation);
     React.useEffect(() => {
-        if (richEditor && typeof translation === 'string') {
-            return;
-        }
-
         let sameTranslation;
         if (richEditor) {
-            sameTranslation = translation.equals(prevTranslation.current);
+            if (typeof translation === 'string') {
+                return;
+            }
+            sameTranslation =
+                typeof prevTranslation.current !== 'string' &&
+                translation.equals(prevTranslation.current);
         } else {
             sameTranslation = prevTranslation.current === translation;
         }

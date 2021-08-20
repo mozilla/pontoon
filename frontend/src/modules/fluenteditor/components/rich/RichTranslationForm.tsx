@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
-import { serializeVariantKey } from '@fluent/syntax';
+import { Message, Term, serializeVariantKey } from '@fluent/syntax';
 
 import './RichTranslationForm.css';
 
@@ -199,7 +199,10 @@ export default function RichTranslationForm(
         getFirstInput,
     ]);
 
-    if (typeof message === 'string') {
+    if (
+        typeof message === 'string' ||
+        !(message instanceof Message || message instanceof Term)
+    ) {
         // This is a transitional state, and this editor is not able to handle a
         // non-Fluent message translation. Thus we abort this render and wait for the
         // next one.
