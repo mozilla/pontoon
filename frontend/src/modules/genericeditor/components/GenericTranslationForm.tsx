@@ -76,6 +76,10 @@ export default function GenericTranslationForm(
         props.updateTranslation(input.value);
     });
 
+    if (typeof translation !== 'string') {
+        return null;
+    }
+
     function handleChange(event: React.SyntheticEvent<HTMLTextAreaElement>) {
         props.updateTranslation(event.currentTarget.value);
     }

@@ -9,7 +9,7 @@ import * as user from 'core/user';
 
 import { actions, useUpdateTranslationStatus } from '..';
 
-import type  { EditorState } from 'core/editor';
+import type { EditorState } from 'core/editor';
 import type { UserState } from 'core/user';
 
 type FailedChecksProps = {
