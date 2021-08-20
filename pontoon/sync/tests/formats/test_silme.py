@@ -11,6 +11,7 @@ from pontoon.base.tests import (
     LocaleFactory,
     TestCase,
 )
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import silme
 from pontoon.sync.tests.formats import FormatTestsMixin
 
@@ -19,10 +20,10 @@ class SilmeResourceTests(TestCase):
     def test_init_missing_resource(self):
         """
         If the translated resource doesn't exist and no source resource
-        is given, raise an IOError.
+        is given, raise a ParseError.
         """
         path = os.path.join(tempfile.mkdtemp(), "does", "not", "exist.dtd")
-        with pytest.raises(IOError):
+        with pytest.raises(ParseError):
             silme.SilmeResource(DTDParser, path, source_resource=None)
 
     def create_nonexistant_resource(self, path):
