@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 
@@ -47,11 +46,10 @@ const reducers = {
     [unsavedchanges.NAME]: unsavedchanges.reducer,
 };
 
-const combinedReducers = (browserHistory: History) =>
-    combineReducers({
-        // System modules
-        router: connectRouter(browserHistory),
-        ...reducers,
-    });
+const combinedReducers = (browserHistory: History) => ({
+    // System modules
+    router: connectRouter(browserHistory),
+    ...reducers,
+});
 
 export default combinedReducers;
