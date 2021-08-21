@@ -22,14 +22,6 @@ import * as search from 'modules/search';
 import * as teamcomments from 'modules/teamcomments';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
-type BaseReducerMap<S> = {
-    [K in keyof S]: (state: S[K], action: any) => S;
-};
-
-export type InferRootState<ReducerMap extends BaseReducerMap<S>, S = any> = {
-    [K in keyof ReducerMap]: ReturnType<ReducerMap[K]>;
-};
-
 // Combine reducers from all modules, using their NAME constant as key.
 const reducers = {
     // Core modules
@@ -61,7 +53,5 @@ const combinedReducers = (browserHistory: History) =>
         router: connectRouter(browserHistory),
         ...reducers,
     });
-
-export type AppState = InferRootState<typeof reducers>;
 
 export default combinedReducers;
