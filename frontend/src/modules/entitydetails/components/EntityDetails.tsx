@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
@@ -565,7 +565,7 @@ export default function EntityDetails(): React.ReactElement<
     return (
         <EntityDetailsBase
             {...state}
-            dispatch={useDispatch()}
+            dispatch={useAppDispatch()}
             store={useStore()}
         />
     );

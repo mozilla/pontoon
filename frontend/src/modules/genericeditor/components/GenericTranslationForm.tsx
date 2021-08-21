@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 
@@ -16,7 +15,7 @@ type Props = {
 export default function GenericTranslationForm(
     props: Props,
 ): React.ReactElement<'textarea'> {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const translation = useAppSelector((state) => state.editor.translation);
     const changeSource = useAppSelector((state) => state.editor.changeSource);

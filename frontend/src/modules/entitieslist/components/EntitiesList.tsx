@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
@@ -414,7 +414,7 @@ export default function EntitiesList(): React.ReactElement<
     return (
         <EntitiesListBase
             {...state}
-            dispatch={useDispatch()}
+            dispatch={useAppDispatch()}
             store={useStore()}
         />
     );

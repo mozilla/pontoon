@@ -2,6 +2,7 @@ import api from 'core/api';
 import * as notification from 'core/notification';
 
 import type { UsersList } from 'core/api';
+import type { AppThunk } from 'store';
 
 export const RECEIVE_USERS: 'users/RECEIVE_USERS' = 'users/RECEIVE_USERS';
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
@@ -21,7 +22,7 @@ export function receive(users: Array<UsersList>): ReceiveAction {
 /**
  * Update Interactive Tour status to a given step.
  */
-export function updateTourStatus(step: number): (...args: Array<any>) => any {
+export function updateTourStatus(step: number): AppThunk {
     return async () => {
         await api.user.updateTourStatus(step);
     };
@@ -63,7 +64,7 @@ export function update(data: Record<string, any>): UpdateAction {
 /**
  * Sign out the current user.
  */
-export function signOut(url: string): (...args: Array<any>) => any {
+export function signOut(url: string): AppThunk {
     return async (dispatch) => {
         await api.user.signOut(url);
 
@@ -92,7 +93,7 @@ export function saveSetting(
     setting: string,
     value: boolean,
     username: string,
-): (...args: Array<any>) => any {
+): AppThunk {
     return async (dispatch) => {
         dispatch(updateSettings({ [setting]: value }));
 
@@ -103,7 +104,7 @@ export function saveSetting(
     };
 }
 
-export function markAllNotificationsAsRead(): (...args: Array<any>) => any {
+export function markAllNotificationsAsRead(): AppThunk {
     return async (dispatch) => {
         await api.user.markAllNotificationsAsRead();
 
@@ -111,7 +112,7 @@ export function markAllNotificationsAsRead(): (...args: Array<any>) => any {
     };
 }
 
-export function getUsers(): (...args: Array<any>) => any {
+export function getUsers(): AppThunk {
     return async (dispatch) => {
         const content = await api.user.getUsers();
         dispatch(receive(content));
@@ -124,14 +125,14 @@ export function getUsers(): (...args: Array<any>) => any {
  * This will fetch data about whether the user is authenticated or not,
  * and if so, get their information and permissions.
  */
-export function get(): (...args: Array<any>) => any {
+export function get(): AppThunk {
     return async (dispatch) => {
         const content = await api.user.get();
         dispatch(update(content));
     };
 }
 
-export function dismissAddonPromotion(): (...args: Array<any>) => any {
+export function dismissAddonPromotion(): AppThunk {
     return async (dispatch) => {
         await api.user.dismissAddonPromotion();
 

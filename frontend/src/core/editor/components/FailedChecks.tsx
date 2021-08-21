@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './FailedChecks.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as user from 'core/user';
 
 import { actions, useUpdateTranslationStatus } from '..';
@@ -23,7 +22,7 @@ type FailedChecksProps = {
 export default function FailedChecks(
     props: FailedChecksProps,
 ): null | React.ReactElement<'div'> {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const errors = useAppSelector((state) => state.editor.errors);
     const warnings = useAppSelector((state) => state.editor.warnings);

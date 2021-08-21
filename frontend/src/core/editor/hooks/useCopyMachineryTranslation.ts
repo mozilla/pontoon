@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { actions } from '..';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import type { MachineryTranslation, SourceType } from 'core/api';
@@ -17,7 +16,7 @@ import useUpdateTranslation from './useUpdateTranslation';
 export default function useCopyMachineryTranslation(
     entity?: number | null,
 ): (translation: MachineryTranslation) => void {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const addTextToTranslation = useAddTextToTranslation();
     const updateTranslation = useUpdateTranslation();

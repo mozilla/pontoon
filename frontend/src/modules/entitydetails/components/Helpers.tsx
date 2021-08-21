@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
+import { useAppDispatch } from 'hooks';
 import * as editor from 'core/editor';
 import { TeamComments, CommentCount } from 'modules/teamcomments';
 import { Terms, TermCount } from 'modules/terms';
@@ -69,7 +69,7 @@ export default function Helpers(props: Props): React.ReactElement<any> {
         setCommentTabIndex,
         resetContactPerson,
     } = props;
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     return (
         <>

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { Message, Term, serializeVariantKey } from '@fluent/syntax';
 
 import './RichTranslationForm.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
@@ -75,7 +74,7 @@ export default function RichTranslationForm(
     const accessKeyElementIdRef = React.useRef(null);
     const focusedElementIdRef = React.useRef(null);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const message = useAppSelector((state) => state.editor.translation);
     const changeSource = useAppSelector((state) => state.editor.changeSource);
