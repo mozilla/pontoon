@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 
 import './PluralSelector.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as locale from 'core/locale';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
@@ -106,7 +106,7 @@ export default function PluralSelector(
         <PluralSelectorBase
             {...props}
             {...state}
-            dispatch={useDispatch()}
+            dispatch={useAppDispatch()}
             store={useStore()}
         />
     );

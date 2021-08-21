@@ -12,6 +12,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import type { Entity, SourceType } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { Entry } from '@fluent/syntax';
+import { AppThunk } from 'store';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
     'editor/END_UPDATE_TRANSLATION';
@@ -251,7 +252,7 @@ export function sendTranslation(
     resource: string,
     ignoreWarnings: boolean | null | undefined,
     machinerySources: Array<SourceType>,
-): (...args: Array<any>) => any {
+): AppThunk {
     return async (dispatch) => {
         NProgress.start();
         dispatch(startUpdateTranslation());

@@ -1,6 +1,4 @@
-import { useDispatch } from 'react-redux';
-
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as entities from 'core/entities';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
@@ -14,7 +12,7 @@ export default function useSendTranslation(): (
     ignoreWarnings?: boolean,
     content?: string,
 ) => void {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const translation = useAppSelector((state) => state.editor.translation);
     const isRunningRequest = useAppSelector(

@@ -1,6 +1,4 @@
-import { useDispatch } from 'react-redux';
-
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as entities from 'core/entities';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
@@ -18,7 +16,7 @@ export default function useUpdateTranslationStatus(): (
     change: ChangeOperation,
     ignoreWarnings?: boolean | null | undefined,
 ) => void {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),

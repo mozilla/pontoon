@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 
 import './FluentEditor.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as notification from 'core/notification';
@@ -48,7 +47,7 @@ function getSyntaxType(source): SyntaxType {
  * as that is dealt with by using the `useForceSource` hook.
  */
 function useLoadTranslation(forceSource) {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const updateTranslation = editor.useUpdateTranslation();
     const changeSource = useAppSelector((state) => state.editor.changeSource);
@@ -124,7 +123,7 @@ function useLoadTranslation(forceSource) {
  *      - a function to toggle the source mode.
  */
 function useForceSource(): [boolean, () => void] {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const translation = useAppSelector((state) => state.editor.translation);
     const entity = useAppSelector((state) =>
@@ -176,7 +175,7 @@ function useForceSource(): [boolean, () => void] {
  * Renders the most appropriate type of editor for the current translation.
  */
 export default function FluentEditor(): null | React.ReactElement<React.ElementType> {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const translation = useAppSelector((state) => state.editor.translation);
     const isReadOnlyEditor = useAppSelector((state) =>

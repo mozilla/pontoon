@@ -1,6 +1,4 @@
-import { useDispatch } from 'react-redux';
-
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as unsavedchanges from 'modules/unsavedchanges';
@@ -14,7 +12,7 @@ export default function useHandleShortcuts(): (
     clearEditorCustom?: () => void,
     copyOriginalIntoEditorCustom?: () => void,
 ) => void {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const clearEditor = editor.useClearEditor();
     const copyMachineryTranslation = editor.useCopyMachineryTranslation();
