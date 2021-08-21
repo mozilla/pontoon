@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
+import { useAppDispatch } from 'hooks';
 import { actions } from '..';
 
 /**
@@ -10,7 +10,7 @@ export default function useAddTextToTranslation(): (
     content: string,
     changeSource?: string,
 ) => void {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     return useCallback(
         (content: string, changeSource?: string) => {

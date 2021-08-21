@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 import { Link } from 'react-router-dom';
 
@@ -7,7 +6,7 @@ import './Translation.css';
 
 import { TranslationProxy } from 'core/translation';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import type { Entity, OtherLocaleTranslation } from 'core/api';
@@ -31,7 +30,7 @@ export default function Translation(
 ): React.ReactElement<React.ElementType> {
     const { entity, translation, parameters, index } = props;
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );

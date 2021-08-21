@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './EditorMenu.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as entities from 'core/entities';
 import * as user from 'core/user';
 import * as unsavedchanges from 'modules/unsavedchanges';
@@ -41,7 +40,7 @@ export default function EditorMenu(props: Props): React.ReactElement<'menu'> {
 }
 
 function MenuContent(props: Props) {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
