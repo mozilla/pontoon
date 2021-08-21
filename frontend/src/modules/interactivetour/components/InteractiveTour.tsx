@@ -12,7 +12,7 @@ import * as user from 'core/user';
 import type { LocaleState } from 'core/locale';
 import type { ProjectState } from 'core/project';
 import type { UserState } from 'core/user';
-import { AppState } from 'rootReducer';
+import { RootState } from 'store';
 
 type Props = {
     isTranslator: boolean;
@@ -400,7 +400,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
     }
 }
 
-const mapStateToProps = (state: AppState): Props => {
+const mapStateToProps = (state: RootState): Props => {
     return {
         isTranslator: user.selectors.isTranslator(state),
         locale: state[locale.NAME],
