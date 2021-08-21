@@ -5,9 +5,8 @@
  */
 
 import React from 'react';
-import { applyMiddleware, compose, createStore } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import thunkMiddleware from 'redux-thunk';
 import { mount } from 'enzyme';
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
@@ -21,11 +20,15 @@ const history = createMemoryHistory({
 });
 
 export function createReduxStore(initialState = {}) {
-    return createStore(
-        createRootReducer(history),
-        initialState,
-        compose(applyMiddleware(routerMiddleware(history), thunkMiddleware)),
-    );
+    return configureStore({
+        reducer: createRootReducer(history),
+        middleware: (getDefaultMiddleware) => {
+            return getDefaultMiddleware({ serializableCheck: false }).prepend(
+                routerMiddleware(history),
+            );
+        },
+        preloadedState: initialState,
+    });
 }
 
 export function mountComponentWithStore(Component, store, props = {}) {
