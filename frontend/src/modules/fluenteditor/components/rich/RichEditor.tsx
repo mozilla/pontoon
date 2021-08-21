@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { fluent } from 'core/utils';
@@ -21,7 +20,7 @@ type Props = {
  * overwritten, to handle the conversion from AST to string and back.
  */
 export default function RichEditor(props: Props): React.ReactElement<any> {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const sendTranslation = editor.useSendTranslation();
     const updateTranslation = editor.useUpdateTranslation();

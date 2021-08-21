@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
 import { NAME as PROJECT_NAME } from 'core/project';
@@ -516,6 +516,10 @@ export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
     };
 
     return (
-        <SearchBoxBase {...state} dispatch={useDispatch()} store={useStore()} />
+        <SearchBoxBase
+            {...state}
+            dispatch={useAppDispatch()}
+            store={useStore()}
+        />
     );
 }
