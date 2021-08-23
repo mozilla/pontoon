@@ -1,20 +1,22 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Sum
 
 from pontoon.base.utils import aware_datetime, convert_to_unix_time, get_last_months
-from pontoon.insights.models import LocaleInsightsSnapshot, active_users_default
+from pontoon.insights.models import LocaleInsightsSnapshot, ProjectInsightsSnapshot, active_users_default
 
+
+def get_insight_start_date():
+    return datetime.now() - relativedelta(months=12)
 
 def get_locale_insights(query_filters=None):
     """Get data required by the Locale Insights tab.
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
     """
-    months = sorted(
-        aware_datetime(year, month, 1) for year, month in get_last_months(12)
-    )
-
-    snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=months[0])
+    start_date = get_insight_start_date()
+    snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if query_filters:
         snapshots = snapshots.filter(query_filters)
@@ -51,6 +53,10 @@ def get_locale_insights(query_filters=None):
             "new_suggestions_sum",
         )
         .order_by("month")
+    )
+
+    months = sorted(
+        aware_datetime(year, month, 1) for year, month in get_last_months(len(insights))
     )
 
     output = {}

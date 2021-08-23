@@ -101,6 +101,7 @@ var Pontoon = (function (my) {
             },
             renderUnreviewedSuggestionsLifespan: function () {
                 var chart = $('#unreviewed-suggestions-lifespan-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 160);
@@ -184,11 +185,16 @@ var Pontoon = (function (my) {
             },
             renderTranslationActivity: function () {
                 var chart = $('#translation-activity-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#7BC87633');
                 gradient.addColorStop(1, 'transparent');
+
+                var humanData = chart.data('human-translations') || [];
+                var machineryData = chart.data('machinery-translations') || [];
+                var newSourcesData = chart.data('new-source-strings') || [];
 
                 var translationActivityChart = new Chart(chart, {
                     type: 'bar',
@@ -210,30 +216,30 @@ var Pontoon = (function (my) {
                                 pointHoverBackgroundColor: '#7BC876',
                                 pointHoverBorderColor: '#FFF',
                             },
-                            {
+                            humanData.length > 0 && {
                                 type: 'bar',
                                 label: 'Human translations',
-                                data: chart.data('human-translations'),
+                                data: humanData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#4f7256',
                                 hoverBackgroundColor: '#4f7256',
                                 stack: 'translations',
                                 order: 2,
                             },
-                            {
+                            machineryData.length > 0 && {
                                 type: 'bar',
                                 label: 'Machinery translations',
-                                data: chart.data('machinery-translations'),
+                                data: machineryData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#41554c',
                                 hoverBackgroundColor: '#41554c',
                                 stack: 'translations',
                                 order: 1,
                             },
-                            {
+                            newSourcesData.length > 0 && {
                                 type: 'bar',
                                 label: 'New source strings',
-                                data: chart.data('new-source-strings'),
+                                data: newSourcesData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#272a2f',
                                 hoverBackgroundColor: '#272a2f',
@@ -241,7 +247,7 @@ var Pontoon = (function (my) {
                                 order: 3,
                                 hidden: true,
                             },
-                        ],
+                        ].filter(Boolean),
                     },
                     options: {
                         legend: {
@@ -389,11 +395,18 @@ var Pontoon = (function (my) {
             },
             renderReviewActivity: function () {
                 var chart = $('#review-activity-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#4fc4f688');
                 gradient.addColorStop(1, 'transparent');
+
+                var unreviewedData = chart.data('unreviewed') || [];
+                var peerApprovedData = chart.data('peer-approved') || [];
+                var selfApprovedData = chart.data('self-approved') || [];
+                var rejectedData = chart.data('rejected') || [];
+                var newSuggestionsData = chart.data('new-suggestions') || [];
 
                 var reviewActivityChart = new Chart(chart, {
                     type: 'bar',
@@ -403,7 +416,7 @@ var Pontoon = (function (my) {
                             {
                                 type: 'line',
                                 label: 'Unreviewed',
-                                data: chart.data('unreviewed'),
+                                data: unreviewedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
@@ -415,37 +428,37 @@ var Pontoon = (function (my) {
                                 pointHoverBackgroundColor: '#4fc4f6',
                                 pointHoverBorderColor: '#FFF',
                             },
-                            {
+                            peerApprovedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Peer-approved',
-                                data: chart.data('peer-approved'),
+                                data: peerApprovedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#3e7089',
                                 hoverBackgroundColor: '#3e7089',
                                 stack: 'review-actions',
                                 order: 3,
                             },
-                            {
+                            selfApprovedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Self-approved',
-                                data: chart.data('self-approved'),
+                                data: selfApprovedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#385465',
                                 hoverBackgroundColor: '#385465',
                                 stack: 'review-actions',
                                 order: 2,
                             },
-                            {
+                            rejectedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Rejected',
-                                data: chart.data('rejected'),
+                                data: rejectedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#843650',
                                 hoverBackgroundColor: '#843650',
                                 stack: 'review-actions',
                                 order: 1,
                             },
-                            {
+                            newSuggestionsData > 0 && {
                                 type: 'bar',
                                 label: 'New suggestions',
                                 data: chart.data('new-suggestions'),
@@ -456,7 +469,7 @@ var Pontoon = (function (my) {
                                 order: 4,
                                 hidden: true,
                             },
-                        ],
+                        ].filter(Boolean),
                     },
                     options: {
                         legend: {
@@ -494,51 +507,53 @@ var Pontoon = (function (my) {
                                         ].label;
                                     var value = tooltipItems.yLabel;
 
-                                    var peerApproved =
-                                        chart.datasets[1].data[
-                                            tooltipItems.index
-                                        ];
-                                    var selfApproved =
-                                        chart.datasets[2].data[
-                                            tooltipItems.index
-                                        ];
-                                    var rejecetd =
-                                        chart.datasets[3].data[
-                                            tooltipItems.index
-                                        ];
-                                    var totalPeerReviews =
-                                        peerApproved + rejecetd;
-                                    var totalApprovals =
-                                        peerApproved + selfApproved;
+                                    if (chart.datasets.length >= 4) {
+                                        var peerApproved =
+                                            chart.datasets[1].data[
+                                                tooltipItems.index
+                                            ];
+                                        var selfApproved =
+                                            chart.datasets[2].data[
+                                                tooltipItems.index
+                                            ];
+                                        var rejecetd =
+                                            chart.datasets[3].data[
+                                                tooltipItems.index
+                                            ];
+                                        var totalPeerReviews =
+                                            peerApproved + rejecetd;
+                                        var totalApprovals =
+                                            peerApproved + selfApproved;
 
-                                    var suffix = '';
+                                        var suffix = '';
 
-                                    if (label === 'Peer-approved') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
-                                                value,
-                                                totalPeerReviews,
-                                            ) +
-                                            '% of peer-reviews)';
-                                    }
-                                    if (label === 'Self-approved') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
-                                                value,
-                                                totalApprovals,
-                                            ) +
-                                            '% of all approvals)';
-                                    }
-                                    if (label === 'Rejected') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
-                                                value,
-                                                totalPeerReviews,
-                                            ) +
-                                            '% of peer-reviews)';
+                                        if (label === 'Peer-approved') {
+                                            suffix =
+                                                ' (' +
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    totalPeerReviews,
+                                                ) +
+                                                '% of peer-reviews)';
+                                        }
+                                        if (label === 'Self-approved') {
+                                            suffix =
+                                                ' (' +
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    totalApprovals,
+                                                ) +
+                                                '% of all approvals)';
+                                        }
+                                        if (label === 'Rejected') {
+                                            suffix =
+                                                ' (' +
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    totalPeerReviews,
+                                                ) +
+                                                '% of peer-reviews)';
+                                        }
                                     }
 
                                     return label + ': ' + value + suffix;
