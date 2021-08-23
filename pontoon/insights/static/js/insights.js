@@ -458,7 +458,7 @@ var Pontoon = (function (my) {
                                 stack: 'review-actions',
                                 order: 1,
                             },
-                            newSuggestionsData > 0 && {
+                            newSuggestionsData.length > 0 && {
                                 type: 'bar',
                                 label: 'New suggestions',
                                 data: chart.data('new-suggestions'),
