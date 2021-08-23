@@ -5,8 +5,8 @@ from pontoon.base.utils import aware_datetime, convert_to_unix_time, get_last_mo
 from pontoon.insights.models import LocaleInsightsSnapshot, active_users_default
 
 
-def get_insights(query_filters=None):
-    """Get data required by the Insights tab.
+def get_locale_insights(query_filters=None):
+    """Get data required by the Locale Insights tab.
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
     """
