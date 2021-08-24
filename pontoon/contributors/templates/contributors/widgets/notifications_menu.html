@@ -33,7 +33,11 @@
 
         {% if notification.actor.slug %}
           {% set actor_anchor = notification.actor %}
-          {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
+          {% if "new string" in notification.verb and user.profile.custom_homepage %}
+            {% set actor_url = url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,fuzzy' %}
+          {% else %}
+            {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
+          {% endif %}
 
         {% elif notification.actor.email %}
           {% set actor_anchor = notification.actor.name_or_email|nospam %}
