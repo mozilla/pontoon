@@ -290,12 +290,26 @@ def serialized_notifications(self):
         is_comment = False
 
         if hasattr(notification.actor, "slug"):
-            actor = {
-                "anchor": notification.actor.name,
-                "url": reverse(
-                    "pontoon.projects.project", kwargs={"slug": notification.actor.slug}
-                ),
-            }
+            if "new string" in notification.verb and self.profile.custom_homepage:
+                actor = {
+                    "anchor": notification.actor.name,
+                    "url": reverse(
+                        "pontoon.translate.locale.agnostic",
+                        kwargs={
+                            "slug": notification.actor.slug,
+                            "part": "all-resources",
+                        },
+                    )
+                    + "?status=missing,fuzzy",
+                }
+            else:
+                actor = {
+                    "anchor": notification.actor.name,
+                    "url": reverse(
+                        "pontoon.projects.project",
+                        kwargs={"slug": notification.actor.slug},
+                    ),
+                }
         elif hasattr(notification.actor, "email"):
             actor = {
                 "anchor": notification.actor.name_or_email,
