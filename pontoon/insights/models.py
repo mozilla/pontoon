@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.utils import timezone
 
@@ -25,7 +26,7 @@ class InsightsSnapshot(AggregatedStats, models.Model):
     active_users_last_month = models.JSONField(default=active_users_default)
 
     # Unreviewed lifespan
-    unreviewed_suggestions_lifespan = models.DurationField()
+    unreviewed_suggestions_lifespan = models.DurationField(default=timedelta)
 
     # Translation activity
     completion = models.FloatField()
@@ -47,10 +48,8 @@ class LocaleInsightsSnapshot(InsightsSnapshot):
     locale = models.ForeignKey("base.Locale", models.CASCADE)
 
 
-class ProjectInsightsSnapshot(AggregatedStats):
+class ProjectInsightsSnapshot(InsightsSnapshot):
     project = models.ForeignKey("base.Project", models.CASCADE)
-    created_at = models.DateField(default=timezone.now)
-    completion = models.FloatField()
 
 
 class ProjectLocaleInsightsSnapshot(AggregatedStats):
