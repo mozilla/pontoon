@@ -286,14 +286,17 @@ export default class Metadata extends React.Component<Props, State> {
     }
 
     renderSourceObject(source: Record<string, any>): React.ReactNode {
-        const examples = Object.keys(source).map((value) => {
+        let examples = Object.keys(source).map((value) => {
             if (!source[value].example) {
                 return null;
             }
             return `$${value.toUpperCase()}$: ${source[value].example}`;
         });
 
-        if (!examples) {
+        // Remove placeholders without examples
+        examples = examples.filter((example) => example != null);
+
+        if (!examples || !examples.length) {
             return null;
         }
 

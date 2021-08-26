@@ -82,7 +82,7 @@ describe('<Metadata>', () => {
         expect(content).toContain(ENTITY.comment);
     });
 
-    it('handles sources as an object', () => {
+    it('handles sources as an object with examples', () => {
         const withSourceAsObject = {
             source: {
                 arg1: {
@@ -105,5 +105,26 @@ describe('<Metadata>', () => {
             .props().children;
         expect(sourceContent).toContain('$ARG1$: example_1');
         expect(sourceContent).toContain('$ARG2$: example_2');
+    });
+
+    it('handles sources as an object without examples', () => {
+        const withSourceAsObject = {
+            source: {
+                arg1: {
+                    content: '',
+                },
+                arg2: {
+                    content: '',
+                },
+            },
+        };
+        const wrapper = createShallowMetadata({
+            ...ENTITY,
+            ...withSourceAsObject,
+        });
+
+        expect(
+            wrapper.find('Property[title="PLACEHOLDER EXAMPLES"]').exists(),
+        ).toBeFalsy();
     });
 });
