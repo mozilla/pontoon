@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
- * Marks JSON format placeholders as user by the WebExtension API.
+ * Marks JSON format placeholders as used by the WebExtension API.
  *
  * Terms must start and end with a dollar sign "$" and contain only capital
  * letters or underscores.
