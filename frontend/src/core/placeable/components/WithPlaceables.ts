@@ -60,9 +60,10 @@ export const rules = [
     pythonFormattingVariable,
     javaFormattingVariable,
     stringFormattingVariable,
-    nsisVariable,
-
+    // JSON Placeholder parser Must come before NSIS Variable parser,
+    // otherwise JSON Placeholders are marked up without the trailing $
     jsonPlaceholder,
+    nsisVariable,
 
     // The Qt variables can consume the %1 in %1$s which will mask a printf
     // placeable, so it has to come later.
