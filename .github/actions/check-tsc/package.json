@@ -1,0 +1,7 @@
+{
+  "name": "check-tsc",
+  "version": "0.0.0",
+  "description": "Run tsc checks",
+  "main": "index.js",
+  "private": true
+}

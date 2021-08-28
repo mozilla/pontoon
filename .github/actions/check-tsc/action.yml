@@ -1,0 +1,18 @@
+name: 'Check TSC'
+description: 'Run TypeScript Compiler and gather error count'
+author: 'Pontoon'
+inputs:
+  run:
+    required: true
+    description: 'yarn tsc command'
+    default: 'default value if applicable'
+  working-directory:
+    required: false
+    description: 'working directory'
+    default: '.'
+outputs:
+  errors:
+    description: 'Number of errors that tsc found'
+runs:
+  using: 'node12'
+  main: 'index.js'
