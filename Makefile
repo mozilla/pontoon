@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -32,8 +32,8 @@ help:
 	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
-	@echo "  build-frontend   Builds the frontend static files"
-	@echo "  build-frontend-w Watches the frontend static files and builds on change"
+	@echo "  build-tagadmin   Builds the tag_admin frontend static files"
+	@echo "  build-tagadmin-w Watches the tag_admin frontend static files and builds on change"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
 	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
@@ -111,10 +111,10 @@ loaddb:
 	# use docker here instead.
 	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
 
-build-frontend:
+build-tagadmin:
 	"${DC}" run --rm webapp npm run build
 
-build-frontend-w:
+build-tagadmin-w:
 	"${DC}" run --rm webapp npm run build-w
 
 sync-projects:
