@@ -1863,6 +1863,11 @@
     "@types/cheerio" "*"
     "@types/react" "*"
 
+"@types/escape-html@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/escape-html/-/escape-html-1.0.1.tgz#b19b4646915f0ae2c306bf984dc0a59c5cfc97ba"
+  integrity sha512-4mI1FuUUZiuT95fSVqvZxp/ssQK9zsa86S43h9x3zPOSU9BBJ+BfDkXwuaU7BfsD+e7U0/cUUfJFk3iW2M4okA==
+
 "@types/eslint@^7.2.6":
   version "7.2.12"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.12.tgz#fefaa48a4db2415b621fe315e4baeedde525927e"
@@ -1959,6 +1964,11 @@
   integrity sha512-nwKNbvnwJ2/mndE9ItP/zc2TCzw6uuodnF4EHYWD+gCQDVBuRQL5UzbZD0/ezy1iKsFU2ZQiDqg4M9dN4+wZgA==
   dependencies:
     "@types/istanbul-lib-report" "*"
+
+"@types/javascript-time-ago@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/javascript-time-ago/-/javascript-time-ago-2.0.3.tgz#0cb6afd91f0a8fd876b4d7ffae1d080f2d8e8193"
+  integrity sha512-G6SdYh6gHxgCTU0s4cMIRHwRO4p3f7jQSZbDPfUOZpUAG1od3rTjT0e8rxGThUiTTWQHwpBRws8eHO8D2QqfkA==
 
 "@types/jest@^26.0.23":
   version "26.0.23"
@@ -2119,6 +2129,13 @@
   integrity sha512-gb9KzKkG0kmgE+A5eBfDa4ldGOr9b6jb1A0Xp1J7rh6toHG1/eb5u7kVcdmKuG33S4ZGXZCpx/rkz330R19tLg==
   dependencies:
     "@types/react" "*"
+
+"@types/redux-logger@^3.0.9":
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@types/redux-logger/-/redux-logger-3.0.9.tgz#9193b3d51bb6ab98d25514ba7764e4f98a64d3ec"
+  integrity sha512-cwYhVbYNgH01aepeMwhd0ABX6fhVB2rcQ9m80u8Fl50ZODhsZ8RhQArnLTkE7/Zrfq4Sz/taNoF7DQy9pCZSKg==
+  dependencies:
+    redux "^4.0.0"
 
 "@types/redux@^3.6.0":
   version "3.6.0"
