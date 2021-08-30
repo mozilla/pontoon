@@ -516,12 +516,12 @@ var Pontoon = (function (my) {
                                             chart.datasets[2].data[
                                                 tooltipItems.index
                                             ];
-                                        var rejecetd =
+                                        var rejected =
                                             chart.datasets[3].data[
                                                 tooltipItems.index
                                             ];
                                         var totalPeerReviews =
-                                            peerApproved + rejecetd;
+                                            peerApproved + rejected;
                                         var totalApprovals =
                                             peerApproved + selfApproved;
 
