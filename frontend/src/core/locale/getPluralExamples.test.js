@@ -18,12 +18,20 @@ describe('getPluralExamples', () => {
     });
 
     it('prevents infinite loop if locale plurals are not configured properly', () => {
+        const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
         const locale = {
             cldrPlurals: [0, 1, 2, 3, 4, 5],
             pluralRule: '(n != 1)',
         };
-        const res = getPluralExamples(locale);
-        const expected = { undefined: 1 };
-        expect(res).toEqual(expected);
+        try {
+            const res = getPluralExamples(locale);
+            const expected = { 0: 1, 1: 2 };
+            expect(res).toEqual(expected);
+            expect(spy).toHaveBeenCalledWith(
+                'Unable to generate plural examples.',
+            );
+        } finally {
+            spy.mockRestore();
+        }
     });
 });
