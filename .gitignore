@@ -28,6 +28,8 @@ coverage/
 
 # Docker
 .docker-build
+.frontend-build
+.webapp-build
 docker/config/webapp.env
 docker/config/webapp.env-e
 

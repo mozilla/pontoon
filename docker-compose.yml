@@ -3,7 +3,16 @@
 # Note: Requires docker-compose 1.10+.
 version: "2"
 services:
-  # Webapp
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/frontend/src
+      - ./frontend/public:/frontend/public
+
   webapp:
     build:
       context: .
@@ -15,11 +24,8 @@ services:
       - postgresql
     ports:
       - "8000:8000"
-      - "3000:3000"
     volumes:
       - ./pontoon:/app/pontoon
-      - ./frontend/src:/app/frontend/src
-      - ./frontend/public:/app/frontend/public
       - ./tests:/app/tests
       - ./requirements:/app/requirements
       - ~/.ssh:/home/pontoon/.ssh

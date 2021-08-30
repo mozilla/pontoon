@@ -56,26 +56,17 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 
-RUN mkdir frontend
-WORKDIR frontend
-COPY frontend/package.json .
-COPY --chown=pontoon:pontoon frontend/yarn.lock .
-RUN yarn install
-
-WORKDIR /app
 COPY ./docker/config/webapp.env .env
 COPY --chown=pontoon:pontoon . /app/
+
+# The contents aren't used for dev builds, but the directory needs to exist
+# because it's included in STATICFILES_DIRS for collectstatic.
+RUN mkdir -p frontend/build/static
 
 # Create the folder for front-end assets
 RUN mkdir -p assets
 # Run webpack to compile JS files
 RUN $WEBPACK_BINARY
-
-# Build Translate.Next frontend resources
-WORKDIR frontend
-RUN yarn build
-
-WORKDIR /app
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
