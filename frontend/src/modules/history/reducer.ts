@@ -28,7 +28,7 @@ function updateTranslation(
     });
 }
 
-const initialState = {
+const initialState: HistoryState = {
     fetching: false,
     entity: null,
     pluralForm: null,

@@ -36,6 +36,7 @@ import type { ChangeOperation, HistoryState } from 'modules/history';
 import type { MachineryState } from 'modules/machinery';
 import type { LocalesState } from 'modules/otherlocales';
 import type { TeamCommentState } from 'modules/teamcomments';
+import type { FailedChecks } from 'core/editor/actions';
 
 type Props = {
     activeTranslationString: string;
@@ -198,7 +199,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
             (translation.errors.length || translation.warnings.length) &&
             (translation.approved || translation.fuzzy)
         ) {
-            const failedChecks = {
+            const failedChecks: FailedChecks = {
                 clErrors: translation.errors,
                 clWarnings: translation.warnings,
                 pErrors: [],

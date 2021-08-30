@@ -29,7 +29,7 @@ function updateResource(
 }
 
 function updateAllResources(
-    state: Record<string, any>,
+    state: ResourcesState,
     resourcePath: string,
     approvedStrings: number,
     stringsWithWarnings: number,
