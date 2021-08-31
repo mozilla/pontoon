@@ -247,7 +247,7 @@ var Pontoon = (function (my) {
                                 order: 3,
                                 hidden: true,
                             },
-                        ].filter(Boolean),
+                        ].filter(Boolean), // Filter out empty values
                     },
                     options: {
                         legend: {
@@ -469,7 +469,7 @@ var Pontoon = (function (my) {
                                 order: 4,
                                 hidden: true,
                             },
-                        ].filter(Boolean),
+                        ].filter(Boolean), // Filter out empty values
                     },
                     options: {
                         legend: {
