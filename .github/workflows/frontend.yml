@@ -50,15 +50,29 @@ jobs:
       - name: Install dependencies
         run: yarn
         working-directory: frontend
-      - name: noImplicitAny
-        run: yarn types --pretty --noImplicitAny || true
-        working-directory: frontend
-      - name: strictNullChecks
-        run: yarn types --pretty --strictNullChecks || true
-        working-directory: frontend
-      - name: strict
-        run: yarn types --pretty --strict || true
-        working-directory: frontend
+      - id: noImplicitAny
+        name: noImplicitAny
+        uses: ./.github/actions/check-tsc
+        with:
+          run: yarn types --pretty --noImplicitAny
+          working-directory: frontend
+      - id: strictNullChecks
+        name: strictNullChecks
+        uses: ./.github/actions/check-tsc
+        with:
+          run: yarn types --pretty --strictNullChecks
+          working-directory: frontend
+      - id: strict
+        name: strict
+        uses: ./.github/actions/check-tsc
+        with:
+          run: yarn types --pretty --strict
+          working-directory: frontend
+      - name: Summary
+        run: |
+          echo "noImplicitAny:    ${{ steps.noImplicitAny.outputs.errors }}"
+          echo "strictNullChecks: ${{ steps.strictNullChecks.outputs.errors }}"
+          echo "strict:           ${{ steps.strict.outputs.errors }}"
 
   jest:
     runs-on: ubuntu-latest
