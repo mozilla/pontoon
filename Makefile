@@ -41,8 +41,10 @@ help:
 	@echo "  sync-projects    Runs the synchronization task on all projects"
 	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
-.frontend-build: build-frontend
-.webapp-build: build-webapp
+.frontend-build:
+	make build-frontend
+.webapp-build:
+	make build-webapp
 
 build: build-frontend build-webapp
 build-frontend: webapp-env
@@ -60,7 +62,7 @@ setup: .webapp-build
 	"${DC}" run webapp //app/docker/set_up_webapp.sh
 
 run: .frontend-build .webapp-build
-	"${DC}" up frontend webapp
+	"${DC}" up --no-build frontend webapp
 
 clean:
 	rm -f .docker-build .frontend-build .webapp-build

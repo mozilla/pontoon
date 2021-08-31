@@ -1,4 +1,12 @@
-FROM python:3.9-buster
+# Frontend build
+FROM node:14-buster AS frontend
+WORKDIR /frontend
+COPY frontend/package.json frontend/yarn.lock ./
+RUN yarn install
+COPY frontend/ .
+RUN yarn build
+
+FROM python:3.9-buster AS webapp
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -59,14 +67,12 @@ RUN npm install
 COPY ./docker/config/webapp.env .env
 COPY --chown=pontoon:pontoon . /app/
 
-# The contents aren't used for dev builds, but the directory needs to exist
-# because it's included in STATICFILES_DIRS for collectstatic.
-RUN mkdir -p frontend/build/static
-
 # Create the folder for front-end assets
 RUN mkdir -p assets
 # Run webpack to compile JS files
 RUN $WEBPACK_BINARY
+
+COPY --from=frontend /frontend/ ./frontend/
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
