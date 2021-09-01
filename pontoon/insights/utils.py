@@ -1,9 +1,8 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Sum
 
-from pontoon.base.utils import aware_datetime, convert_to_unix_time, get_last_months
+from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
     ProjectInsightsSnapshot,
@@ -11,9 +10,18 @@ from pontoon.insights.models import (
 )
 
 
-def get_insight_start_date():
-    """Include at most the last year of data in insights"""
-    return datetime.now() - relativedelta(months=12)
+def get_insight_start_date(from2021=False):
+    """Include at most the last year of data in insights.
+
+    For project insights, data is only available from 2020-12-14 onwards,
+    so limit queries to start from 2021-01-01 at earliest.
+    """
+    now = datetime.now()
+    if from2021 and now.year == 2021:
+        return datetime(2021, 1, 1)
+    if now.month == 12:
+        return datetime(now.year, 1, 1)
+    return datetime(now.year - 1, now.month + 1, 1)
 
 
 def get_locale_insights(query_filters=None):
@@ -21,7 +29,7 @@ def get_locale_insights(query_filters=None):
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
     """
-    start_date = get_insight_start_date()
+    start_date = get_insight_start_date(False)
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if query_filters:
@@ -61,10 +69,6 @@ def get_locale_insights(query_filters=None):
         .order_by("month")
     )
 
-    months = sorted(
-        aware_datetime(year, month, 1) for year, month in get_last_months(len(insights))
-    )
-
     output = {}
     latest = snapshots.latest("created_at") if snapshots else None
 
@@ -95,7 +99,7 @@ def get_locale_insights(query_filters=None):
 
     output.update(
         {
-            "dates": [convert_to_unix_time(month) for month in months],
+            "dates": [convert_to_unix_time(x["month"]) for x in insights],
             "unreviewed_lifespans": [
                 x["unreviewed_lifespan_avg"].days for x in insights
             ],
@@ -123,7 +127,7 @@ def get_project_insights(query_filters=None):
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
     """
-    start_date = get_insight_start_date()
+    start_date = get_insight_start_date(True)
     snapshots = ProjectInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if query_filters:
@@ -161,12 +165,8 @@ def get_project_insights(query_filters=None):
         .order_by("month")
     )
 
-    months = sorted(
-        aware_datetime(year, month, 1) for year, month in get_last_months(len(insights))
-    )
-
     return {
-        "dates": [convert_to_unix_time(month) for month in months],
+        "dates": [convert_to_unix_time(x["month"]) for x in insights],
         "translation_activity": {
             "completion": [round(x["completion_avg"], 2) for x in insights],
             "human_translations": [x["human_translations_sum"] for x in insights],
