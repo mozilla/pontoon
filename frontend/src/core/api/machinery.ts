@@ -6,9 +6,9 @@ import {
     GetGoogleTranslateInputFormat,
     GetGoogleTranslateInputText,
     GetGoogleTranslateResponseText,
-    GoogleValidatePlaceables,
     GetPlaceables,
-} from '../../modules/machinery/components/source/GoogleTranslation';
+    GoogleValidatePlaceables,
+} from '../utils/GoogleTranslation';
 
 type Translations = Array<MachineryTranslation>;
 
