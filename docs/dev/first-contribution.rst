@@ -104,28 +104,22 @@ the command ``make test``.
 When you have successfully verified that your setup works correctly, you
 can safely move to the next part.
 
-5. Choose a bug to work on
---------------------------
+5. Choose an issue to work on
+-----------------------------
 
 *You are now ready to make a contribution! Open source projects usually
-have a list of mentored bugs that are appropriate to work on first, and
+have a list of mentored issues that are appropriate to work on first, and
 on which mentors will be available to help you.*
 
 Work that needs to be done on Pontoon is tracked in
-`bugzilla <https://bugzilla.mozilla.org/>`_, Mozilla's bug tracking
-software. You will need to create an account there in order to be
-assigned to a bug.
+`GitHub <https://github.com/mozilla/pontoon/issues>`_, where we maintain
+a list of what we deem `good first issues <https://github.com/mozilla/pontoon/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_.
 
-We maintain a list of what we deem "good first bugs". They are marked as
-mentored on bugzilla, and can be found quickly on our `Pontoon wiki
-page <https://wiki.mozilla.org/L10n:Pontoon#Get_involved>`_ or through
-`this bugzilla
-search <https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&list_id=15050149&o1=isnotempty&resolution=---&classification=Server%20Software&query_format=advanced&emailbug_mentor1=1&component=Pontoon&product=Webtools>`_.
-Look through that list for unassigned bugs (marked as ``NEW``), choose
-one that is appealing to you and seems adapted to your skill set, then
-comment on that bug asking to be assigned to it. Feel free to start
+Look through that list for unassigned issues, choose
+one that is appealing to you and seems appropriate for your skill set, then
+comment on that issue asking to be assigned to it. Feel free to start
 working on it right away — even if you end up not being assigned for
-some reason, it will still be good experience for you.
+some reason, it will still be a good experience for you.
 
 6. Read the contributing rules
 ------------------------------

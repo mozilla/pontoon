@@ -40,8 +40,8 @@ database, run tests, and send your contribution.
 If you want to go further, you can:
 
 * Check out development roadmap on the [wiki](https://wiki.mozilla.org/Pontoon)
-* File a [bug](https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon&rep_platform=all&op_sys=all)
-* Check [existing bugs](https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon&resolution=---&list_id=13740920)
+* Report an [issue](https://github.com/mozilla/pontoon/issues/new)
+* Check [existing issues](https://github.com/mozilla/pontoon/issues)
 * See Mozilla's Pontoon servers:
     * [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
     * [Production](https://pontoon.mozilla.org/)

@@ -10,14 +10,12 @@ Pontoon source code is available via GitHub:
 https://github.com/mozilla/pontoon
 
 
-Bugs
-====
+Issues
+======
 
-All bugs are tracked in `<https://bugzilla.mozilla.org/>`_.
+All bugs and ideas are tracked in `GitHub <https://github.com/mozilla/pontoon/issues>`_.
 
-Write up a new bug:
-
-https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon
+Report a `new issue <https://github.com/mozilla/pontoon/issues/new>`_:
 
 
 Docker
