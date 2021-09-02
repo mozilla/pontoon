@@ -4,13 +4,10 @@
   "description": "Mozilla in-place localization tool.",
   "private": true,
   "browserslist": [
-    "Firefox >= 52",
-    "FirefoxAndroid >= 52",
-    "Chrome >= 55",
-    "ChromeAndroid >= 55",
-    "Edge >= 15",
-    "Safari >= 10.1",
-    "iOS >= 10.3"
+    "chrome >= 80",
+    "edge >= 91",
+    "firefox >= 78",
+    "safari >= 13.1"
   ],
   "repository": {
     "type": "git",

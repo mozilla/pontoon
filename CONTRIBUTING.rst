@@ -76,13 +76,10 @@ The following is the `browser support matrix of Pontoon <https://browserl.ist/?q
 
 .. code-block:: bash
 
-    Firefox >= 52,
-    FirefoxAndroid >= 52,
-    Chrome >= 57,
-    ChromeAndroid >= 57,
-    Edge >= 16,
-    Safari >= 10.1,
-    iOS >= 10.3
+    Firefox >= 78
+    Chrome >= 80
+    Edge >= 91
+    Safari >= 13.1
 
 
 Code style
