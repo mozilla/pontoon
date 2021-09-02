@@ -8,6 +8,13 @@ import punctuation from '../placeable/parsers/punctuation';
 import numberString from '../placeable/parsers/numberString';
 
 /**
+ * Extended list of punctuation characters that the functions inside of this module needs to detect.
+ */
+const punctuationCharacters: RegExp = new RegExp(
+    `(${punctuation.rule.source}|[.,"])`,
+);
+
+/**
  * When the input format is html, remove the rules responsible for handling xml entities and xml tags because
  * Google Translate API is able to handle HTML/XML input.
  */
@@ -18,11 +25,11 @@ function getRulesBasedOnInputFormat(rules: Array<Parser>): Array<Parser> {
     newRules.splice(newRules.indexOf(xmlTag), 1);
     newRules.splice(newRules.indexOf(xmlEntity), 1);
 
-    // GTA translates punctuation characters.
+    // GTA translates punctuation characters
     newRules.splice(newRules.indexOf(punctuation), 1);
 
+    // GTA sometimes moves the numbers to translate the strings properly
     newRules.splice(newRules.indexOf(numberString), 1);
-
     return newRules;
 }
 
@@ -187,12 +194,12 @@ export function GetGoogleTranslateResponseText(
         return text;
     }
 
-    const inversePlaceablesMap = new Map(
+    const inversePlaceablesMap: Map<string, string> = new Map(
         [...placeablesMap].map((item) => [item[1], item[0]]),
     );
 
-    const isPunctuationCharacter = (char) =>
-        char.search(punctuation.rule) !== -1 || char.search('[.,"]') !== -1;
+    const isPunctuationCharacter: Function = (char) =>
+        char.search(punctuationCharacters) !== -1;
 
     const placeablesRegex = new RegExp(
         '( |)(?<leftSpace>[01])placeable(?<placeableIndex>\\d+)(?<rightSpace>[01])( |)',

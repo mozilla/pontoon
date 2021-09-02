@@ -15,7 +15,7 @@ const cartesianProduct = (a, b, ...c) =>
 
 describe('GetPlaceableLabel', () => {
     it.each(cartesianProduct(['0', '1'], [true, false], [true, false]))(
-        'encodes the placeable with information about the wrapping spaces (%s, %s, %s, %s)',
+        'should encode a placeable with information about the wrapping spaces (%s, %s, %s, %s)',
         (index, leftSpace, rightSpace) => {
             expect(GetPlaceableLabel(index, leftSpace, rightSpace)).toEqual(
                 `${leftSpace ? '1' : '0'}placeable${index}${
@@ -169,7 +169,7 @@ describe('GetGoogleTranslateResponseText', () => {
 });
 
 describe('GetGoogleTranslateInputText', () => {
-    it('return text when the placeables map is empty', () => {
+    it("should return the string's contents when the map of placeables is empty", () => {
         expect(
             GetGoogleTranslateInputText(
                 'String without %s placeables.',
@@ -196,7 +196,7 @@ describe('GetGoogleTranslateInputText', () => {
         ['%s %(types)s', ' 0placeable01 1placeable10 '],
         ['%s%(types)s', ' 0placeable00 0placeable10 '],
     ])(
-        `replace the placeables with their labels (%s)`,
+        `should replace the placeables with their labels (%s)`,
         (placeables, expectedResult) => {
             const inputText = `Test of${placeables}as placeables.`;
 
@@ -215,17 +215,17 @@ describe('GetGoogleTranslateInputText', () => {
 });
 
 describe('GetPlaceables', () => {
-    it('returns empty map when  the string is empty', () => {
+    it('should return empty map when  the string is empty', () => {
         expect(GetPlaceables('')).toEqual(new Map());
     });
 
-    it("returns empty map when the string doesn't contain placeables", () => {
+    it("should return empty map when the string doesn't contain placeables", () => {
         expect(
             GetPlaceables('some random string to test the function.'),
         ).toEqual(new Map());
     });
 
-    it('return the map of placeables', () => {
+    it('should return the map of placeables', () => {
         expect(
             GetPlaceables(
                 'Detect %(types)s of placeables and %(types)s of %s something.',
@@ -237,17 +237,19 @@ describe('GetPlaceables', () => {
             ]),
         );
     });
-    it("don't return the blocked placeables in the map", () => {
-        expect(
-            GetPlaceables(
-                'Detect %(types)s of placeables and %(types)s of %s something.' +
-                    'Random &amp; «» <h1>Some other placeables</h1>.',
-            ),
-        ).toEqual(
-            new Map([
-                ['%(types)s', '0'],
-                ['%s', '1'],
-            ]),
-        );
-    });
+    it.each(['&amp;', '«', '»', '<h1>'])(
+        "shouldn't return the excluded placeables (%s)",
+        (excludedPlaceable) => {
+            expect(
+                GetPlaceables(
+                    `Detect %(types)s of placeables and %(types)s of %s something.Random ${excludedPlaceable} other placeables.`,
+                ),
+            ).toEqual(
+                new Map([
+                    ['%(types)s', '0'],
+                    ['%s', '1'],
+                ]),
+            );
+        },
+    );
 });
