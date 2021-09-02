@@ -34,3 +34,9 @@ services:
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+# Persist database
+volumes:
+  pgdata: null

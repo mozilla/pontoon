@@ -30,6 +30,7 @@ help:
 	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
+	@echo "  dropdb           Completely remove the postgres container and its data"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
@@ -95,6 +96,9 @@ eslint:
 
 shell:
 	"${DC}" run --rm webapp //bin/bash
+
+dropdb:
+	"${DC}" down --volumes postgresql 
 
 dumpdb:
 	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
