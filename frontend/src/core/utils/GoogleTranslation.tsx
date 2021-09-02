@@ -28,7 +28,7 @@ function getRulesBasedOnInputFormat(rules: Array<Parser>): Array<Parser> {
     // GTA translates punctuation characters
     newRules.splice(newRules.indexOf(punctuation), 1);
 
-    // GTA sometimes moves the numbers to translate the strings properly
+    // GTA sometimes moves numbers as part of the translation process
     newRules.splice(newRules.indexOf(numberString), 1);
     return newRules;
 }
@@ -125,16 +125,16 @@ export function GetGoogleTranslateInputText(
     );
 
     let newText: string = '';
-    let placeableMatch = placeablesRegex.exec(text);
+    let placeableMatch: RegExpExecArray = placeablesRegex.exec(text);
     let pos: number = 0;
 
     while (placeableMatch) {
         let placeable: string = placeableMatch[0],
-            newPos = placeableMatch.index + placeable.length,
-            textBefore = text.substring(pos, placeableMatch.index),
-            textAfter = text.substring(newPos),
-            leftSpace = textBefore[textBefore.length - 1] == ' ',
-            rightSpace = textAfter[0] == ' ';
+            newPos: number = placeableMatch.index + placeable.length,
+            textBefore: string = text.substring(pos, placeableMatch.index),
+            textAfter: string = text.substring(newPos),
+            leftSpace: boolean = textBefore[textBefore.length - 1] === ' ',
+            rightSpace: boolean = textAfter[0] === ' ';
         pos = newPos;
 
         newText +=
@@ -201,7 +201,7 @@ export function GetGoogleTranslateResponseText(
     const isPunctuationCharacter: Function = (char) =>
         char.search(punctuationCharacters) !== -1;
 
-    const placeablesRegex = new RegExp(
+    const placeablesRegex: RegExp = new RegExp(
         '( |)(?<leftSpace>[01])placeable(?<placeableIndex>\\d+)(?<rightSpace>[01])( |)',
         'gi',
     );
