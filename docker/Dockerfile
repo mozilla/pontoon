@@ -1,4 +1,4 @@
-FROM python:3.9-buster
+FROM python:3.9-bullseye
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -21,9 +21,7 @@ RUN apt-get update \
     # Enable downloading packages over https
     && apt-get install -y apt-transport-https \
     # Get source for node.js
-    && curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
-    && echo 'deb https://deb.nodesource.com/node_10.x buster main' > /etc/apt/sources.list.d/nodesource.list \
-    && echo 'deb-src https://deb.nodesource.com/node_10.x buster main' >> /etc/apt/sources.list.d/nodesource.list \
+    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
     # Get source for yarn
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
@@ -33,8 +31,8 @@ RUN apt-get update \
         build-essential \
         libmemcached-dev \
         nodejs \
-        postgresql-client-11 \
-        postgresql-server-dev-11 \
+        postgresql-client \
+        postgresql-server-dev-13 \
         yarn \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
