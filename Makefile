@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-webapp webapp-env setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-webapp webapp-env setup run clean shell test test-webapp test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -24,7 +24,8 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-frontend    Runs the new frontend's test suite"
+	@echo "  test-webapp      Runs the webapp test suite"
+	@echo "  test-frontend    Runs the translate frontend test suite"
 	@echo "  jest             Runs the jest test runner on all frontend tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
@@ -67,7 +68,9 @@ run: .frontend-build .webapp-build
 clean:
 	rm -f .docker-build .frontend-build .webapp-build
 
-test:
+test: test-webapp test-frontend
+
+test-webapp:
 	"${DC}" run --rm webapp //app/docker/run_tests.sh
 
 test-frontend: jest
