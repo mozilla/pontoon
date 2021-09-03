@@ -5,6 +5,7 @@
 {% macro display() %}
 <div id="insights" data-dates="{{ dates }}">
     <section class="clearfix">
+        {% if total_users %}
         <section
             id="active-users"
             class="half"
@@ -45,6 +46,8 @@
                 {{ ActiveUsers.chart('contributors', 'Active contributors') }}
             </div>
         </section>
+        {% endif %}
+        {% if unreviewed_lifespans %}
         <section class="half">
             <div class="block clearfix">
                 <h3 class="controls">
@@ -61,6 +64,7 @@
                 </canvas>
             </div>
         </section>
+        {% endif %}
     </section>
 
     <section class="translation-activity">

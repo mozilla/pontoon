@@ -86,6 +86,16 @@
           icon = 'users',
         )
       }}
+      {% if settings.ENABLE_INSIGHTS_TAB %}
+      {{ Menu.item(
+          'Insights',
+          url('pontoon.projects.insights', project.slug),
+          is_active = (current_page == 'insights'),
+          count = False,
+          icon = 'chart-line',
+        )
+      }}
+      {% endif %}
       {{ Menu.item(
           'Info',
           url('pontoon.projects.info', project.slug),

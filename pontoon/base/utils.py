@@ -12,7 +12,6 @@ import zipfile
 
 from collections import defaultdict
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 from guardian.decorators import permission_required as guardian_permission_required
 from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
@@ -481,16 +480,6 @@ def convert_to_unix_time(my_datetime):
     Convert datetime object to UNIX time
     """
     return int(time.mktime(my_datetime.timetuple()) * 1000)
-
-
-def get_last_months(n):
-    """
-    Return a list of tuples representing last n months
-    """
-    start_date = datetime.now()
-    for _ in range(n):
-        yield (start_date.year, start_date.month)
-        start_date += relativedelta(months=-1)
 
 
 def sanitize_xml_input_string(string):
