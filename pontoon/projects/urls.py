@@ -28,6 +28,8 @@ urlpatterns = [
                     views.project,
                     name="pontoon.projects.contributors",
                 ),
+                # Project insights
+                path("insights/", views.project, name="pontoon.projects.insights",),
                 # Project info
                 path("info/", views.project, name="pontoon.projects.info",),
                 # Project notifications
@@ -58,6 +60,12 @@ urlpatterns = [
                                 "contributors/",
                                 views.ProjectContributorsView.as_view(),
                                 name="pontoon.projects.ajax.contributors",
+                            ),
+                            # Project insights
+                            path(
+                                "insights/",
+                                views.ajax_insights,
+                                name="pontoon.projects.ajax.insights",
                             ),
                             # Project info
                             path(

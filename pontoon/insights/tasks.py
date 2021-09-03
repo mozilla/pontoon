@@ -38,33 +38,37 @@ def collect_insights(self):
 
     log.info(f"Collect insights for {date}: Begin.")
 
-    collect_project_insights(start_of_today)
+    actions = get_activity_actions(start_of_today)
+    entities = get_entities(start_of_today)
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+    log.info(f"Collect insights for {date}: Common data gathered.")
+
+    collect_project_insights(start_of_today, actions, entities, sync_user)
     log.info(f"Collect insights for {date}: Project insights created.")
 
     collect_project_locale_insights(start_of_today)
     log.info(f"Collect insights for {date}: ProjectLocale insights created.")
 
-    collect_locale_insights(start_of_today)
+    collect_locale_insights(start_of_today, actions, entities, sync_user)
     log.info(f"Collect insights for {date}: Locale insights created.")
 
 
-def collect_project_insights(start_of_today):
+def collect_project_insights(start_of_today, actions, entities, sync_user):
     """
     Collect insights for each available Project.
     """
+    # Get data sources to retrieve insights from
+    actions_dict = group_dict_by(actions, "translation__entity__resource__project")
+    entities_dict = group_dict_by(entities, "resource__project")
+
     ProjectInsightsSnapshot.objects.bulk_create(
         [
-            ProjectInsightsSnapshot(
-                project=project,
-                created_at=start_of_today,
-                completion=round(project.completed_percent, 2),
-                # AggregatedStats
-                total_strings=project.total_strings,
-                approved_strings=project.approved_strings,
-                fuzzy_strings=project.fuzzy_strings,
-                strings_with_errors=project.strings_with_errors,
-                strings_with_warnings=project.strings_with_warnings,
-                unreviewed_strings=project.unreviewed_strings,
+            get_project_insights_snapshot(
+                project,
+                start_of_today,
+                actions_dict[project.id],
+                entities_dict[project.id],
+                sync_user,
             )
             for project in Project.objects.available()
         ],
@@ -96,7 +100,7 @@ def collect_project_locale_insights(start_of_today):
     )
 
 
-def collect_locale_insights(start_of_today):
+def collect_locale_insights(start_of_today, actions, entities, sync_user):
     """
     Collect insights for each available Locale.
     """
@@ -105,10 +109,9 @@ def collect_locale_insights(start_of_today):
     contributors = get_contributors()
     active_users_actions = get_active_users_actions(start_of_today)
     suggestions = get_suggestions()
-    activity_actions = get_activity_actions(start_of_today)
-    entities = get_entities(start_of_today)
 
-    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+    actions_dict = group_dict_by(actions, "translation__locale")
+    entities_dict = group_dict_by(entities, "resource__translatedresources__locale")
 
     LocaleInsightsSnapshot.objects.bulk_create(
         [
@@ -119,8 +122,8 @@ def collect_locale_insights(start_of_today):
                 contributors[locale.id],
                 active_users_actions[locale.id],
                 suggestions[locale.id],
-                activity_actions[locale.id],
-                entities[locale.id],
+                actions_dict[locale.id],
+                entities_dict[locale.id],
                 sync_user,
             )
             for locale in Locale.objects.available()
@@ -197,7 +200,7 @@ def get_suggestions():
 
 def get_activity_actions(start_of_today):
     """Get actions of the previous day, needed for the Translation and Review activity charts."""
-    actions = ActionLog.objects.filter(
+    return ActionLog.objects.filter(
         created_at__gte=start_of_today - relativedelta(days=1),
         created_at__lt=start_of_today,
         translation__entity__resource__project__system_project=False,
@@ -207,6 +210,7 @@ def get_activity_actions(start_of_today):
         "performed_by",
         "translation",
         "translation__locale",
+        "translation__entity__resource__project",
         "translation__machinery_sources",
         "translation__user",
         "translation__approved_user",
@@ -214,21 +218,17 @@ def get_activity_actions(start_of_today):
         "translation__approved_date",
     )
 
-    return group_dict_by(actions, "translation__locale")
-
 
 def get_entities(start_of_today):
     """Get entities created on the previous day."""
-    entities = Entity.objects.filter(
+    return Entity.objects.filter(
         date_created__gte=start_of_today - relativedelta(days=1),
         date_created__lt=start_of_today,
         obsolete=False,
         resource__project__disabled=False,
         resource__project__system_project=False,
         resource__project__visibility="public",
-    ).values("pk", "resource__translatedresources__locale")
-
-    return group_dict_by(entities, "resource__translatedresources__locale")
+    ).values("pk", "resource__translatedresources__locale", "resource__project")
 
 
 def get_locale_insights_snapshot(
@@ -318,6 +318,42 @@ def get_locale_insights_snapshot(
         unreviewed_suggestions_lifespan=unreviewed_suggestions_lifespan,
         # Translation activity
         completion=round(locale.completed_percent, 2),
+        human_translations=len(human_translations),
+        machinery_translations=len(machinery_translations),
+        new_source_strings=len(entities),
+        # Review activity
+        peer_approved=len(peer_approved),
+        self_approved=len(self_approved),
+        rejected=len(rejected),
+        new_suggestions=len(new_suggestions),
+    )
+
+
+def get_project_insights_snapshot(
+    project, start_of_today, activity_actions, entities, sync_user,
+):
+    """Create ProjectInsightsSnapshot instance for the given project and day using given data."""
+    (
+        human_translations,
+        machinery_translations,
+        new_suggestions,
+        peer_approved,
+        self_approved,
+        rejected,
+    ) = get_activity_charts_data(activity_actions, sync_user)
+
+    return ProjectInsightsSnapshot(
+        project=project,
+        created_at=start_of_today,
+        # AggregatedStats
+        total_strings=project.total_strings,
+        approved_strings=project.approved_strings,
+        fuzzy_strings=project.fuzzy_strings,
+        strings_with_errors=project.strings_with_errors,
+        strings_with_warnings=project.strings_with_warnings,
+        unreviewed_strings=project.unreviewed_strings,
+        # Translation activity
+        completion=round(project.completed_percent, 2),
         human_translations=len(human_translations),
         machinery_translations=len(machinery_translations),
         new_source_strings=len(entities),
