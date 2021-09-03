@@ -28,10 +28,14 @@ help:
 	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
+	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
+	@echo "  pyupgrade-check  Checks all Python code against newer syntax of Python"
 	@echo "  black            Runs the black formatter on all Python code"
+	@echo "  black-check      Checks formatting of all Python code"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
+	@echo "  lint             Runs linters for both the frontend and Python code"
 	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dropdb           Completely remove the postgres container and its data"
@@ -91,8 +95,16 @@ black:
 pyupgrade:
 	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
+pyupgrade-check:
+	"${DC}" run --rm webapp pyupgrade --py38-plus *.py `find pontoon -name \*.py`
+
 types:
 	"${DC}" run --rm -w //frontend frontend yarn types
+
+black-check:
+	"${DC}" run --rm webapp black --check pontoon
+
+lint: eslint types flake8 black-check pyupgrade-check
 
 prettier:
 	"${DC}" run --rm frontend npm run prettier

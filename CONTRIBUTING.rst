@@ -96,6 +96,12 @@ To format the Python and the JavaScript code at once you can use:
 
 Code formatting is explained in more detail in the following sections.
 
+To run the required linters on the Python and the Javascript code at once you can use:
+
+.. code-block:: shell
+
+    $ make lint
+
 
 Python code conventions
 =======================
@@ -208,7 +214,7 @@ Code reviews should review the changes in the context of the rest of the system.
 Dependencies
 ============
 
-Direct dependencies for Pontoon are distributed across three files:
+Direct dependencies for Pontoon are distributed across four files:
 
 1. ``requirements/default.in``: Running Pontoon in production
 2. ``requirements/dev.in``: Development
