@@ -28,7 +28,7 @@ $(function () {
             target.append(item);
             target.scrollTop(target[0].scrollHeight);
             updateSelectedLocales();
-        }
+        },
     );
 
     // Choose/remove all locales

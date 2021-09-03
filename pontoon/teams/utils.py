@@ -13,13 +13,19 @@ def log_user_groups(admin, user, changed_groups):
     add_groups, remove_groups = changed_groups
     log_entries = [
         PermissionChangelog(
-            action_type="added", performed_by=admin, performed_on=user, group=group,
+            action_type=PermissionChangelog.ActionType.ADDED,
+            performed_by=admin,
+            performed_on=user,
+            group=group,
         )
         for group in add_groups
     ]
     log_entries += [
         PermissionChangelog(
-            action_type="removed", performed_by=admin, performed_on=user, group=group,
+            action_type=PermissionChangelog.ActionType.REMOVED,
+            performed_by=admin,
+            performed_on=user,
+            group=group,
         )
         for group in remove_groups
     ]
@@ -38,14 +44,20 @@ def log_group_members(manager, group, changed_groups):
     add_users, remove_users = changed_groups
     log_entries = [
         PermissionChangelog(
-            action_type="added", performed_by=manager, performed_on=user, group=group,
+            action_type=PermissionChangelog.ActionType.ADDED,
+            performed_by=manager,
+            performed_on=user,
+            group=group,
         )
         for user in add_users
     ]
 
     log_entries += [
         PermissionChangelog(
-            action_type="removed", performed_by=manager, performed_on=user, group=group,
+            action_type=PermissionChangelog.ActionType.REMOVED,
+            performed_by=manager,
+            performed_on=user,
+            group=group,
         )
         for user in remove_users
     ]

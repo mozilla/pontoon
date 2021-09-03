@@ -149,18 +149,16 @@ def ajax_notifications(request, slug):
     # TODO: We should simplify this with a custom Notifications model
     notifications = []
 
-    identifiers = set(
-        [
-            data["identifier"]
-            for data in list(
-                Notification.objects.filter(
-                    description__isnull=False,
-                    target_content_type=ContentType.objects.get_for_model(project),
-                    target_object_id=project.id,
-                ).values_list("data", flat=True)
-            )
-        ]
-    )
+    identifiers = {
+        data["identifier"]
+        for data in list(
+            Notification.objects.filter(
+                description__isnull=False,
+                target_content_type=ContentType.objects.get_for_model(project),
+                target_object_id=project.id,
+            ).values_list("data", flat=True)
+        )
+    }
 
     for identifier in identifiers:
         notifications.append(Notification.objects.filter(data__contains=identifier)[0])

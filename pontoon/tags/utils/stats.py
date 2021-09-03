@@ -49,7 +49,7 @@ class TagsStatsTool(TagsTRTool):
                 tag.update(stats[tag["pk"]])
             return tags
         elif self.get_groupby()[0] == "locale":
-            result = list(super(TagsStatsTool, self).get_data())
+            result = list(super().get_data())
             # get the found locales as values
             locales = {
                 loc["pk"]: loc

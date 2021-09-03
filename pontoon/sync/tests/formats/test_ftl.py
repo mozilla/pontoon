@@ -11,17 +11,18 @@ from pontoon.base.tests import (
     LocaleFactory,
     TestCase,
 )
+from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import ftl
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
 class FTLResourceTests(FormatTestsMixin, TestCase):
     def setUp(self):
-        super(FTLResourceTests, self).setUp()
+        super().setUp()
         self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        super(FTLResourceTests, self).tearDown()
+        super().tearDown()
         shutil.rmtree(self.tempdir)
 
     def get_nonexistant_file_resource(self, path):
@@ -42,10 +43,10 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
     def test_init_missing_resource(self):
         """
         If the FTLResource file doesn't exist and no source resource is
-        given, raise a IOError.
+        given, raise a ParseError.
         """
         path = self.get_nonexistant_file_path()
-        with pytest.raises(IOError):
+        with pytest.raises(ParseError):
             ftl.FTLResource(path, locale=None, source_resource=None)
 
     def test_init_missing_resource_with_source(self):
@@ -115,16 +116,16 @@ class FTLTests(FormatTestsMixin, TestCase):
     supports_source_string = False
 
     def setUp(self):
-        super(FTLTests, self).setUp()
+        super().setUp()
         self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        super(FTLTests, self).tearDown()
+        super().tearDown()
         shutil.rmtree(self.tempdir)
 
     def key(self, source_string):
         """FTL keys can't contain spaces."""
-        return super(FTLTests, self).key(source_string).replace(" ", "")
+        return super().key(source_string).replace(" ", "")
 
     def test_parse_basic(self):
         input_string = BASE_FTL_FILE

@@ -99,7 +99,11 @@ def test_user_admin_form_log_add_groups(
     (changelog_entry0,) = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
-        changelog_entry0, "added", user_a, user_b, locale_c.managers_group,
+        changelog_entry0,
+        PermissionChangelog.ActionType.ADDED,
+        user_a,
+        user_b,
+        locale_c.managers_group,
     )
 
 
@@ -122,5 +126,9 @@ def test_user_admin_form_log_removed_groups(
     (changelog_entry0,) = PermissionChangelog.objects.all()
 
     assert_permissionchangelog(
-        changelog_entry0, "removed", user_a, user_b, locale_c.managers_group,
+        changelog_entry0,
+        PermissionChangelog.ActionType.REMOVED,
+        user_a,
+        user_b,
+        locale_c.managers_group,
     )

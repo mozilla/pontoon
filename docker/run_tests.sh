@@ -11,7 +11,6 @@ BLACK="$(which black)"
 FLAKE8="$(which flake8)"
 NPM="$(which npm)"
 PYTEST="$(which pytest)"
-CODECOV="$(which codecov)"
 
 
 echo ""
@@ -29,12 +28,12 @@ $FLAKE8 pontoon/
 echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Formatting Javascript code"
-./node_modules/.bin/prettier --check '**/frontend/**/*.{js,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'
+npm run check-prettier
 
 
 echo ""
 echo "Linting JavaScript code"
-./node_modules/.bin/eslint .
+npm run eslint
 
 
 echo ""
@@ -48,6 +47,9 @@ echo ""
 echo "--------------------------------------------------------------------------------------------"
 echo "Running JavaScript tests"
 $NPM test
+pushd frontend
+yarn test --watchAll=false
+popd
 
 
 echo ""

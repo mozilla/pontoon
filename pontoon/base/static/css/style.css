@@ -279,7 +279,11 @@ tfoot td a {
     padding: 10px 12px;
     position: absolute;
     width: 150px;
-    z-index: 20; /* Must be higher than iframe-cover */
+    z-index: 20;
+}
+
+.select .menu.permanent {
+    z-index: 19; /* Must be lower than for the (popup) .menu */
 }
 
 .select > .button.breadcrumbs,
@@ -508,8 +512,7 @@ tfoot td a {
     padding: 2px 4px;
 }
 
-.menu li.hover,
-.menu .static-links div.hover {
+.menu li.hover {
     color: #ffffff;
     background: #3f4752;
 }
@@ -687,10 +690,65 @@ img.rounded {
     vertical-align: middle;
 }
 
+#addon-promotion {
+    background: #ff3366cc;
+    border-bottom: 1px solid #333941;
+    height: 44px;
+    position: fixed;
+    top: -44px;
+    transition: top 0.3s;
+    width: 100%;
+    z-index: 20;
+}
+
+body.addon-promotion-active #addon-promotion {
+    top: 0;
+}
+
+#addon-promotion .container {
+    align-items: center;
+    display: flex;
+    height: 100%;
+}
+
+#addon-promotion .dismiss {
+    background: transparent;
+    border: none;
+    color: #ebebeb;
+    font-size: 28px;
+    padding: 0;
+}
+
+#addon-promotion .dismiss:hover {
+    color: #272a2f;
+}
+
+#addon-promotion .text {
+    margin-left: 20px;
+}
+
+#addon-promotion .get {
+    background: #272a2f;
+    border-radius: 3px;
+    color: #ebebeb;
+    font-weight: normal;
+    margin-left: auto;
+    padding: 7px 12px;
+}
+
+#addon-promotion .get:hover {
+    background: #333941;
+}
+
 body > header {
     background: #272a2f;
     border-bottom: 1px solid #333941;
     height: 60px;
+    transition: margin-top 0.3s;
+}
+
+body.addon-promotion-active > header {
+    margin-top: 44px;
 }
 
 header nav {
@@ -744,6 +802,7 @@ header .right .select .menu {
 #notifications {
     float: left;
     height: 60px;
+    margin-right: 3px;
 }
 
 #notifications .button {
@@ -757,8 +816,26 @@ header .right .select .menu {
     margin-top: 17px;
 }
 
-#notifications.unread .button .icon {
-    color: #f36;
+#notifications .button .badge {
+    background: #f36;
+    border: 3px solid #272a2f;
+    border-radius: 12px;
+    color: #fff;
+    display: none;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    height: 14px;
+    line-height: 16px;
+    padding: 1px 6px 3px;
+    position: absolute;
+    right: -6px;
+    text-align: center;
+    top: 4px;
+}
+
+#notifications.unread .button .badge {
+    display: block;
 }
 
 #notifications .menu,
@@ -800,6 +877,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item span {
+    color: #ebebeb;
     float: none;
 }
 
@@ -818,9 +896,18 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
+    pointer-events: none;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.notifications .menu li.notification-item .message.trim a {
+    color: #aaaaaa;
+}
+
+.notifications .menu li.notification-item.hover .message.trim a {
+    color: #ebebeb;
 }
 
 .notifications .menu li.notification-item .message.trim p {
@@ -1040,7 +1127,7 @@ nav .links li {
 }
 
 .submenu.tabs .links a {
-    padding: 12px 30px;
+    padding: 12px 25px;
     width: 100%;
 
     -moz-box-sizing: border-box;

@@ -1,4 +1,4 @@
-FROM python:3.8.3-buster
+FROM python:3.9-buster
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -14,6 +14,7 @@ ENV PYTHONPATH /app
 # JavaScript applications paths
 ENV WEBPACK_BINARY /app/node_modules/.bin/webpack
 ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
+ENV TERSER_BINARY /app/node_modules/.bin/terser
 
 # Install required software.
 RUN apt-get update \
@@ -43,7 +44,7 @@ WORKDIR /app
 # Install Pontoon Python requirements
 COPY requirements/* /app/requirements/
 RUN pip install -U 'pip>=8' && \
-    pip install --no-cache-dir --require-hashes -r requirements/dev.txt -r requirements/test.txt
+    pip install --no-cache-dir --require-hashes -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt -r requirements/lint.txt
 
 # Create the app user
 RUN groupadd -r --gid=${GROUP_ID} pontoon && useradd --uid=${USER_ID} --no-log-init -r -m -g pontoon pontoon

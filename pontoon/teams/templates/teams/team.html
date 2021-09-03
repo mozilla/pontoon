@@ -10,7 +10,6 @@
 <!-- Server data -->
 <div id="server"
      class="hidden"
-     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
      data-url-split="{{ locale.code }}"
      data-locale="{{ locale.code }}"
      data-locale-projects="{{ locale.available_projects_list(request.user)|to_json }}">
@@ -91,6 +90,16 @@
           icon = 'users',
         )
       }}
+      {% if settings.ENABLE_INSIGHTS_TAB %}
+      {{ Menu.item(
+          'Insights',
+          url('pontoon.teams.insights', locale.code),
+          is_active = (current_page == 'insights'),
+          count = False,
+          icon = 'chart-line',
+        )
+      }}
+      {% endif %}
       {% if settings.ENABLE_BUGS_TAB %}
       {{ Menu.item(
           'Bugs',

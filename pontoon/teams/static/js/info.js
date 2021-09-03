@@ -1,4 +1,3 @@
-/* global $ */
 $(function () {
     var container = $('#main .container');
 
@@ -36,7 +35,7 @@ $(function () {
             url: textArea.parent().data('url'),
             type: 'POST',
             data: {
-                csrfmiddlewaretoken: textArea.parent().data('csrf'),
+                csrfmiddlewaretoken: $('body').data('csrf'),
                 team_info: textArea.val(),
             },
             success: function (data) {

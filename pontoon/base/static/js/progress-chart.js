@@ -31,7 +31,7 @@ $(function () {
                     : 1 /* Draw "empty" progress if no projects enabled */,
             },
             number = Math.floor(
-                (fraction.translated + fraction.warnings) * 100
+                (fraction.translated + fraction.warnings) * 100,
             );
 
         // Update graph

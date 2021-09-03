@@ -3,20 +3,21 @@
 # The dependencies are grouped by function:
 # default.in: required for running a pontoon instance
 # dev.in: required for development
-# test.in: required for running tests or linting
+# test.in: required for running tests
+# lint.in: required for linting
 #
 # All requirements/*.in files are compiled to requirements/*.txt files with pip-compile.
 # This step is only required when adding, removing or updating dependencies,
 # or to force an update of indirect dependencies.
-# Run './requirements/compile_all.sh' for compiling these files.
+# Run 'make requirements' for compiling these files.
 #
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 # requirements/default.txt contains all dependencies required to run the project in the production environment.
--r default.txt
+-c default.txt
 
-dj.debug==0.0.2
-django-debug-toolbar==2.2
+django-debug-toolbar==3.2.1
 django-extensions==3.0.9
 django-sslserver==0.19
+pip-tools==5.5.0

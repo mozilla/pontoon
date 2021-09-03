@@ -107,12 +107,15 @@ def test_term_localizable(_):
 @patch("pontoon.terminology.models.update_terminology_project_stats")
 def test_term_entity_comment(_):
     term_a = TermFactory.create(
-        text="term", part_of_speech="noun", definition="definition",
+        text="term", part_of_speech=Term.PartOfSpeech.NOUN, definition="definition",
     )
     assert term_a.entity_comment() == "Noun. Definition."
 
     term_b = TermFactory.create(
-        text="term", part_of_speech="noun", definition="definition", usage="usage",
+        text="term",
+        part_of_speech=Term.PartOfSpeech.NOUN,
+        definition="definition",
+        usage="usage",
     )
     assert term_b.entity_comment() == "Noun. Definition. E.g. Usage."
 

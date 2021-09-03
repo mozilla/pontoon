@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from unittest.mock import MagicMock
 
 import pytest
@@ -30,4 +29,4 @@ def test_empty_translations(get_entity_mock):
     """
     assert run_checks(
         get_entity_mock("properties", allows_empty_translations=True), ""
-    ) == {"pndbWarnings": [u"Empty translation"]}
+    ) == {"pndbWarnings": ["Empty translation"]}

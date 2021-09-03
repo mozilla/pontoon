@@ -12,7 +12,7 @@ from silme.format.ini import FormatParser as IniParser
 from silme.format.inc import FormatParser as IncParser
 from silme.format.properties import FormatParser as PropertiesParser
 
-from pontoon.sync.exceptions import SyncError
+from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.utils import (
     create_parent_directory,
     escape_quotes,
@@ -43,6 +43,10 @@ class SilmeEntity(VCSTranslation):
     @property
     def key(self):
         return self.silme_object.id
+
+    @property
+    def context(self):
+        return self.key
 
     @property
     def source_string(self):
@@ -102,13 +106,15 @@ class SilmeResource(ParsedResource):
                     uncomment_moz_langpack=parser is IncParser and not source_resource,
                 )
             )
-        except IOError:
+        # Parse errors are handled gracefully by silme
+        # No need to catch them here
+        except OSError as err:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
                 return
             else:
-                raise
+                raise ParseError(err)
 
         comments = []
         current_order = 0
@@ -141,7 +147,7 @@ class SilmeResource(ParsedResource):
         """
         if self.source_resource is None:
             raise SyncError(
-                "Cannot save silme resource {0}: No source resource given.".format(
+                "Cannot save silme resource {}: No source resource given.".format(
                     self.path
                 )
             )

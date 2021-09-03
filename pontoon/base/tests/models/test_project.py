@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth.models import AnonymousUser
 
-from pontoon.base.models import ProjectLocale, Project
+from pontoon.base.models import ProjectLocale, Project, Repository
 from pontoon.test.factories import (
     ChangedEntityLocaleFactory,
     EntityFactory,
@@ -15,34 +15,6 @@ from pontoon.test.factories import (
     ProjectFactory,
     LocaleFactory,
 )
-
-
-@pytest.mark.django_db
-def test_project_commit_no_repos(project_a):
-    """can_commit should be False if there are no repos."""
-
-    assert project_a.repositories.count() == 0
-    assert not project_a.can_commit
-
-
-@pytest.mark.django_db
-def test_project_commit_false(project_a, repo_file):
-    """
-    can_commit should be False if there are no repo xthat can be
-    committed to.
-    """
-    assert project_a.repositories.first().type == "file"
-    assert not project_a.can_commit
-
-
-@pytest.mark.django_db
-def test_project_commit_true(project_a, repo_git):
-    """
-    can_commit should be True if there is a repo that can be
-    committed to.
-    """
-    assert project_a.repositories.first().type == "git"
-    assert project_a.can_commit
 
 
 @pytest.mark.django_db
@@ -57,8 +29,8 @@ def test_project_type_multi_repos(project_a, repo_git, repo_hg):
     If a project has repos, return the type of the repo created
     first.
     """
-    assert project_a.repositories.first().type == "git"
-    assert project_a.repository_type == "git"
+    assert project_a.repositories.first().type == Repository.Type.GIT
+    assert project_a.repository_type == Repository.Type.GIT
 
 
 @pytest.mark.django_db
@@ -137,7 +109,7 @@ def public_project():
 
 @pytest.fixture
 def private_project():
-    yield ProjectFactory.create(visibility="private")
+    yield ProjectFactory.create(visibility=Project.Visibility.PRIVATE)
 
 
 @pytest.mark.parametrize(

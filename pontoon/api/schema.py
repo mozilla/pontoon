@@ -13,7 +13,7 @@ from pontoon.base.models import (
 from pontoon.tags.models import Tag as TagModel
 
 
-class Stats(object):
+class Stats:
     missing_strings = graphene.Int()
     complete = graphene.Boolean()
 
@@ -99,7 +99,6 @@ class Locale(DjangoObjectType, Stats):
             "ms_translator_code",
             "systran_translate_code",
             "ms_terminology_code",
-            "transvision",
         )
 
     localizations = graphene.List(

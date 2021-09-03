@@ -181,7 +181,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     tag_formset.save()
 
                 # If the data source is database and there are new strings, save them.
-                if project.data_source == "database":
+                if project.data_source == Project.DataSource.DATABASE:
                     _save_new_strings(project, request.POST.get("new_strings", ""))
                     _create_or_update_translated_resources(project, locales)
 
@@ -233,7 +233,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
             }
         )
 
-    locales_available = Locale.objects.exclude(pk__in=locales_selected)
+    locales_available = Locale.objects.exclude(pk__in=locales_readonly).exclude(
+        pk__in=locales_selected
+    )
 
     # Admins reason in terms of locale codes (see bug 1394194)
     locales_readonly = locales_readonly.order_by("code")
@@ -294,7 +296,7 @@ def _get_project_strings_csv(project, entities, output):
         .prefetch_related("locale")
         .prefetch_related("entity")
     )
-    all_data = dict((x.id, {"source": x.string}) for x in entities)
+    all_data = {x.id: {"source": x.string} for x in entities}
 
     for translation in translations:
         all_data[translation.entity.id][translation.locale.code] = translation.string
@@ -404,7 +406,7 @@ def manage_project_strings(request, slug=None):
     except Project.DoesNotExist:
         raise Http404
 
-    if project.data_source != "database":
+    if project.data_source != Project.DataSource.DATABASE:
         return HttpResponseForbidden(
             "Project %s's strings come from a repository, managing strings is forbidden."
             % project.name

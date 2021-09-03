@@ -15,7 +15,7 @@ var Pontoon = (function (my) {
                 container,
                 tab,
                 countCallback,
-                errorCallback
+                errorCallback,
             ) {
                 return $.ajax({
                     url: 'https://bugzilla.mozilla.org/rest/bug',
@@ -72,7 +72,7 @@ var Pontoon = (function (my) {
                                     class: 'last-changed',
                                     datetime: bug.last_change_time,
                                     html: formatter.format(
-                                        new Date(bug.last_change_time)
+                                        new Date(bug.last_change_time),
                                     ),
                                 }).appendTo(tr);
 
@@ -111,7 +111,7 @@ var Pontoon = (function (my) {
                             error.statusText !== 'abort'
                         ) {
                             errorCallback(
-                                'Oops, something went wrong. We were unable to load the bugs. Please try again later.'
+                                'Oops, something went wrong. We were unable to load the bugs. Please try again later.',
                             );
                         }
                     },
@@ -131,7 +131,7 @@ var Pontoon = (function (my) {
 
                     function getNumber(el) {
                         return parseInt(
-                            $(el).find('.id').text().replace(/,/g, '')
+                            $(el).find('.id').text().replace(/,/g, ''),
                         );
                     }
 

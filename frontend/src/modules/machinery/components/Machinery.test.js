@@ -11,6 +11,7 @@ describe('<Machinery>', () => {
     it('shows a search form', () => {
         const machinery = {
             translations: [],
+            searchResults: [],
         };
         const wrapper = shallow(
             <Machinery machinery={machinery} locale={LOCALE} />,
@@ -29,12 +30,13 @@ describe('<Machinery>', () => {
                 { original: '2' },
                 { original: '3' },
             ],
+            searchResults: [{ original: '4' }, { original: '5' }],
         };
         const wrapper = shallow(
             <Machinery machinery={machinery} locale={LOCALE} />,
         );
 
-        expect(wrapper.find('Translation')).toHaveLength(3);
+        expect(wrapper.find('Translation')).toHaveLength(5);
     });
 
     it('returns null if there is no locale', () => {
@@ -49,6 +51,7 @@ describe('<Machinery>', () => {
     it('renders a reset button if a source string is present', () => {
         const machinery = {
             translations: [],
+            searchResults: [],
             sourceString: 'test',
         };
         const wrapper = mount(

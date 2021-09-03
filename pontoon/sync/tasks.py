@@ -67,14 +67,14 @@ def sync_project(
     db_project = get_or_fail(
         Project,
         pk=project_pk,
-        message="Could not sync project with pk={0}, not found.".format(project_pk),
+        message=f"Could not sync project with pk={project_pk}, not found.",
     )
 
     sync_log = get_or_fail(
         SyncLog,
         pk=sync_log_pk,
         message=(
-            "Could not sync project {0}, log with pk={1} not found.".format(
+            "Could not sync project {}, log with pk={} not found.".format(
                 db_project.slug, sync_log_pk
             )
         ),
@@ -88,7 +88,7 @@ def sync_project(
         sync_log=sync_log, project=db_project, start_time=now
     )
 
-    log.info("Syncing project {0}.".format(db_project.slug))
+    log.info(f"Syncing project {db_project.slug}.")
 
     source_changes = sync_sources(db_project, now, force, no_pull)
     # Skip syncing translations if we already know there's nothing to sync
@@ -118,13 +118,9 @@ def sync_sources(db_project, now, force, no_pull):
     if no_pull:
         has_source_repo_changed = True
     else:
-        log.info(
-            "Pulling source changes for project {0} started.".format(db_project.slug)
-        )
+        log.info(f"Pulling source changes for project {db_project.slug} started.")
         has_source_repo_changed = pull_source_repo_changes(db_project)
-        log.info(
-            "Pulling source changes for project {0} complete.".format(db_project.slug)
-        )
+        log.info(f"Pulling source changes for project {db_project.slug} complete.")
 
     # If the only repo hasn't changed since the last sync and there are
     # no Pontoon-side changes for this project, quit early.
@@ -134,7 +130,7 @@ def sync_sources(db_project, now, force, no_pull):
         and not has_source_repo_changed
         and db_project.has_single_repo
     ):
-        log.info("Skipping project {0}, no changes detected.".format(db_project.slug))
+        log.info(f"Skipping project {db_project.slug}, no changes detected.")
         return False
 
     if force or has_source_repo_changed:
@@ -146,12 +142,12 @@ def sync_sources(db_project, now, force, no_pull):
             log.error(e)
             return False
 
-        log.info("Synced sources for project {0}.".format(db_project.slug))
+        log.info(f"Synced sources for project {db_project.slug}.")
 
     else:
         added_paths, removed_paths, changed_paths, new_entities = None, None, None, None
         log.info(
-            "Skipping syncing sources for project {0}, no changes detected.".format(
+            "Skipping syncing sources for project {}, no changes detected.".format(
                 db_project.slug
             )
         )
@@ -180,7 +176,7 @@ def sync_translations(
 ):
     repo = db_project.translation_repositories()[0]
 
-    log.info("Syncing translations for project: {}".format(db_project.slug))
+    log.info(f"Syncing translations for project: {db_project.slug}")
 
     repo_sync_log = RepositorySyncLog.objects.create(
         project_sync_log=project_sync_log, repository=repo, start_time=timezone.now()
@@ -190,7 +186,7 @@ def sync_translations(
 
     if not locales:
         log.info(
-            "Skipping syncing translations for project {0}, no locales to sync "
+            "Skipping syncing translations for project {}, no locales to sync "
             "found within.".format(db_project.slug)
         )
         repo_sync_log.end()
@@ -224,15 +220,11 @@ def sync_translations(
 
         # Pull repos of locales in case of multi_locale_project
         if not db_project.has_single_repo:
-            log.info(
-                "Pulling locale repos for project {0} started.".format(db_project.slug)
-            )
+            log.info(f"Pulling locale repos for project {db_project.slug} started.")
             have_locale_repos_changed, pulled_repo_locales = pull_locale_repo_changes(
                 db_project, locales
             )
-            log.info(
-                "Pulling locale repos for project {0} complete.".format(db_project.slug)
-            )
+            log.info(f"Pulling locale repos for project {db_project.slug} complete.")
 
             have_repos_changed |= have_locale_repos_changed
             repo_locales.update(pulled_repo_locales)
@@ -245,7 +237,7 @@ def sync_translations(
         and not have_repos_changed
         and not (added_paths or removed_paths or changed_paths)
     ):
-        log.info("Skipping project {0}, no changes detected.".format(db_project.slug))
+        log.info(f"Skipping project {db_project.slug}, no changes detected.")
         repo_sync_log.end()
         return
 
@@ -341,7 +333,7 @@ def sync_translations(
             if locale in locales:
                 created = update_translated_resources(db_project, vcs_project, locale)
                 if created:
-                    new_locales.append[locale.pk]
+                    new_locales.append(locale.pk)
 
             # We don't have files: we can still update asymmetric translated resources.
             else:
@@ -362,19 +354,19 @@ def sync_translations(
 
     if synced_locales:
         log.info(
-            "Synced translations for project {0} in locales {1}.".format(
+            "Synced translations for project {} in locales {}.".format(
                 db_project.slug, ",".join(synced_locales)
             )
         )
     elif failed_locales:
         log.info(
-            "Failed to sync translations for project {0} due to commit error.".format(
+            "Failed to sync translations for project {} due to commit error.".format(
                 db_project.slug
             )
         )
     else:
         log.info(
-            "Skipping syncing translations for project {0}, none of the locales "
+            "Skipping syncing translations for project {}, none of the locales "
             "has anything to sync.".format(db_project.slug)
         )
 

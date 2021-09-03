@@ -5,8 +5,6 @@ from http.client import HTTPException
 from pathlib import Path
 from unittest.mock import Mock, patch, PropertyMock, MagicMock
 
-import scandir
-
 from pontoon.base.models import (
     Locale,
     Project,
@@ -75,7 +73,7 @@ class VCSProjectTests(VCSTestCase):
             repositories__permalink="https://example.com/l10n/{locale_code}",
         )
         self.vcs_project = VCSProject(self.project)
-        super(VCSProjectTests, self).setUp()
+        super().setUp()
 
     @patch.object(VCSProject, "source_directory_path", new_callable=PropertyMock)
     def test_get_relevant_files_with_config(self, source_directory_path_mock):
@@ -299,10 +297,10 @@ class VCSProjectTests(VCSTestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch(
-            "pontoon.sync.vcs.models.scandir", wraps=scandir
-        ) as mock_scandir, patch("pontoon.sync.vcs.models.MOZILLA_REPOS", [url]):
-            mock_scandir.walk.return_value = [
+        with patch("pontoon.sync.vcs.models.os", wraps=os) as mock_os, patch(
+            "pontoon.sync.vcs.models.MOZILLA_REPOS", [url]
+        ):
+            mock_os.walk.return_value = [
                 ("/root", [], ["foo.pot", "region.properties"])
             ]
 
@@ -323,9 +321,7 @@ class VCSProjectTests(VCSTestCase):
             ("/root/templates", [], ("foo.pot",)),
         )
         with patch(
-            "pontoon.sync.vcs.models.scandir.walk",
-            wraps=scandir,
-            return_value=hidden_paths,
+            "pontoon.sync.vcs.models.os.walk", wraps=os, return_value=hidden_paths,
         ):
             assert list(self.vcs_project.resource_paths_without_config()) == [
                 "/root/templates/foo.pot"
@@ -336,7 +332,7 @@ class VCSConfigurationTests(VCSTestCase):
     toml = "l10n.toml"
 
     def setUp(self):
-        super(VCSConfigurationTests, self).setUp()
+        super().setUp()
         self.locale, _ = Locale.objects.get_or_create(code="fr")
 
         self.repository = RepositoryFactory()
@@ -494,7 +490,7 @@ class VCSConfigurationFullLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="fr")
         setUpResource(self)
-        super(VCSConfigurationFullLocaleTests, self).setUp()
+        super().setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -526,7 +522,7 @@ class VCSConfigurationPartialLocaleTests(VCSTestCase):
     def setUp(self):
         self.locale, _ = Locale.objects.get_or_create(code="sl")
         setUpResource(self)
-        super(VCSConfigurationPartialLocaleTests, self).setUp()
+        super().setUp()
 
     def test_vcs_resource(self):
         self.vcs_project.configuration.add_locale(self.locale.code)
@@ -660,4 +656,4 @@ class DownloadTOMLParserTests(TestCase):
 
         self.assertTrue(self.requests_mock.called)
         self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
-        self.assertEqual(open(project_config_path, "r").read(), "test-content")
+        self.assertEqual(open(project_config_path).read(), "test-content")

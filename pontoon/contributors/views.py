@@ -28,6 +28,7 @@ from pontoon.contributors.utils import (
     map_translations_to_events,
     users_with_translations_counts,
 )
+from pontoon.uxactionlog.utils import log_ux_action
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -137,7 +138,7 @@ def save_custom_homepage(request):
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
 
     if not form.is_valid():
-        error = escape(u"\n".join(form.errors["custom_homepage"]))
+        error = escape("\n".join(form.errors["custom_homepage"]))
         return HttpResponseBadRequest(error)
 
     form.save()
@@ -149,18 +150,29 @@ def save_custom_homepage(request):
 @require_POST
 @transaction.atomic
 def save_preferred_source_locale(request):
-    """Save preferred source locale """
+    """Save preferred source locale."""
     form = forms.UserPreferredSourceLocaleForm(
         request.POST, instance=request.user.profile,
     )
 
     if not form.is_valid():
-        error = escape(u"\n".join(form.errors["preferred_source_locale"]))
+        error = escape("\n".join(form.errors["preferred_source_locale"]))
         return HttpResponseBadRequest(error)
 
     form.save()
 
     return HttpResponse("ok")
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+@transaction.atomic
+def dismiss_addon_promotion(request):
+    profile = request.user.profile
+    profile.has_dismissed_addon_promotion = True
+    profile.save()
+
+    return JsonResponse({"status": True})
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -260,6 +272,12 @@ def notifications(request):
     ):
         ordered_projects.append(slug)
 
+    log_ux_action(
+        action_type="Page load: Notifications",
+        experiment="Notifications 1.0",
+        data={"referrer": request.GET.get("referrer", "")},
+    )
+
     return render(
         request,
         "contributors/notifications.html",
@@ -278,10 +296,16 @@ def mark_all_notifications_as_read(request):
     """Mark all notifications of the currently logged in user as read"""
     request.user.notifications.mark_all_as_read()
 
+    log_ux_action(
+        action_type="Background action: Mark all notifications as read",
+        experiment="Notifications 1.0",
+        data={"utm_source": request.GET.get("utm_source")},
+    )
+
     return JsonResponse({"status": True})
 
 
-class ContributorsMixin(object):
+class ContributorsMixin:
     def contributors_filter(self, **kwargs):
         """
         Return Q() filters for fetching contributors. Fetches all by default.
@@ -290,7 +314,7 @@ class ContributorsMixin(object):
 
     def get_context_data(self, **kwargs):
         """Top contributors view."""
-        context = super(ContributorsMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         try:
             period = int(self.request.GET["period"])
             if period <= 0:

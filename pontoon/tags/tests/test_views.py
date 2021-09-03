@@ -4,6 +4,7 @@ import pytest
 
 from django.urls import reverse
 
+from pontoon.base.models import Priority
 from pontoon.tags.utils import TaggedLocale, TagTool
 
 
@@ -28,7 +29,7 @@ def test_view_project_tag_admin_ajax_form(
     response = client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
     assert form_mock.return_value.return_value.is_valid.called
     assert form_mock.return_value.return_value.save.called
-    assert response.json() == {u"data": [7, 23]}
+    assert response.json() == {"data": [7, 23]}
 
 
 @pytest.mark.django_db
@@ -51,10 +52,10 @@ def test_view_project_tag_admin_ajax_form_bad(
     response = client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
     assert response.status_code == 400
     assert form_mock.return_value.call_args[1]["project"] == project_a
-    assert dict(form_mock.return_value.call_args[1]["data"]) == dict(tag=[u"tag"])
+    assert dict(form_mock.return_value.call_args[1]["data"]) == dict(tag=["tag"])
     assert form_mock.return_value.return_value.is_valid.called
     assert not form_mock.return_value.return_value.save.called
-    assert response.json() == {u"errors": [u"BIG PROBLEM"]}
+    assert response.json() == {"errors": ["BIG PROBLEM"]}
 
     form_mock.return_value.reset_mock()
     response = client.post(
@@ -63,11 +64,11 @@ def test_view_project_tag_admin_ajax_form_bad(
     assert response.status_code == 400
     assert form_mock.return_value.call_args[1]["project"] == project_a
     assert dict(form_mock.return_value.call_args[1]["data"]) == dict(
-        foo=[u"bar"], bar=[u"baz"], tag=[u"tag"],
+        foo=["bar"], bar=["baz"], tag=["tag"],
     )
     assert form_mock.return_value.return_value.is_valid.called
     assert not form_mock.return_value.return_value.save.called
-    assert response.json() == {u"errors": [u"BIG PROBLEM"]}
+    assert response.json() == {"errors": ["BIG PROBLEM"]}
 
 
 @pytest.mark.django_db
@@ -102,7 +103,7 @@ def test_view_project_tag_admin_ajax(form_mock, member, project_a, tag_a):
     assert form_mock.called
     assert form_mock.return_value.is_valid.called
     assert response.status_code == 200
-    assert response.json() == {u"data": 23}
+    assert response.json() == {"data": 23}
 
 
 @pytest.mark.django_db
@@ -120,7 +121,7 @@ def test_view_project_tag_locales(client, project_a, tag_a):
     response = client.get(url)
     assert response.status_code == 404
 
-    tag_a.priority = 3
+    tag_a.priority = Priority.NORMAL
     tag_a.save()
     response = client.get(url)
     assert response.status_code == 200
@@ -143,7 +144,7 @@ def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_
         "pontoon.tags.ajax.teams", kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
     project_a.tag_set.add(tag_a)
-    tag_a.priority = 3
+    tag_a.priority = Priority.NORMAL
     tag_a.save()
     response = client.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
 
@@ -168,7 +169,7 @@ def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_
 def test_view_project_tag_ajax(client, project_a, tag_a):
     url = reverse("pontoon.projects.ajax.tags", kwargs=dict(slug=project_a.slug),)
     project_a.tag_set.add(tag_a)
-    tag_a.priority = 3
+    tag_a.priority = Priority.NORMAL
     tag_a.save()
 
     response = client.get(url)

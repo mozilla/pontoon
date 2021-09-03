@@ -12,8 +12,9 @@
     pointer-events: none;
 }
 
-.other-locales .translation:not(.cannot-copy):hover {
-    background: #4d5967;
+.other-locales .translation:not(.cannot-copy):hover,
+.other-locales .translation.selected {
+    background: #333941;
     border-color: #5e6475;
 }
 

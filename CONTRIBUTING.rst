@@ -2,6 +2,14 @@
 Contributing
 ============
 
+Source code
+===========
+
+Pontoon source code is available via GitHub:
+
+https://github.com/mozilla/pontoon
+
+
 Bugs
 ====
 
@@ -28,7 +36,15 @@ Database
 ========
 
 By default, you will have default data loaded for only the Pontoon Intro project.
-If you have a database dump, you can load it into your PostgreSQL database by running:
+If you have a database dump, you can load it into your PostgreSQL database.
+
+Make sure you backup your existing database first:
+
+.. code-block:: shell
+
+    $ make dumpdb
+
+And then load the dump:
 
 .. code-block:: shell
 
@@ -69,11 +85,28 @@ The following is the `browser support matrix of Pontoon <https://browserl.ist/?q
     iOS >= 10.3
 
 
+Code style
+==========
+
+We use code formatters so that we do not have to fight over code style.
+You are free to write code however you like, because in the end the formatter is the one
+that will format it. We thus don't need to pay attention to style during
+code reviews, and are free from those never-ending code style discussions.
+
+To format the Python and the JavaScript code at once you can use:
+
+.. code-block:: shell
+
+    $ make format
+
+Code formatting is explained in more detail in the following sections.
+
+
 Python code conventions
 =======================
 
 Our Python code is automatically formatted using `black <https://black.readthedocs.io/en/stable/>`_.
-We enforce that in our Continuous Integration tool (travis), so you will need to run
+We enforce that in our Continuous Integration, so you will need to run
 black on your code before sending it for review.
 
 You can run black locally either as an
@@ -84,13 +117,6 @@ Alternatively, you can format your code using:
 .. code-block:: shell
 
     $ make black
-
-.. note::
-
-    Using black on all Python code means that we cannot fight over code style anymore.
-    You are free to write code however you like, because in the end black is the one
-    that will format it. We thus don't need to pay any more attention to style during
-    code reviews, and are free from those never-ending code style discussions.
 
 Additionally, we use a linter to verify that imports are correct. You can run it with:
 
@@ -105,11 +131,8 @@ ignore that error. Note that in most cases, it is better to fix the issues than 
 Javascript code conventions
 ===========================
 
-Outside the ``frontend`` folder, we don't follow strict rules other than using
-2-space indentation.
-
-Inside ``frontend`` (which contains the Translate app), our code is formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
-We enforce that in our Continuous Integration tool (travis), so you will need to run
+Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
+We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
 You can run prettier locally either as an
@@ -121,25 +144,17 @@ Alternatively, you can format your code using:
 
     $ make prettier 
 
-Additioanally, there are linting rules that are defined in our
-``.eslintrc.js`` file.
-
-To run the linter, do:
+Additionally, there are linting rules that are defined in our
+``.eslintrc.js`` file. To run the linter, do:
 
 .. code-block:: shell
 
-    $ make lint-frontend
+    $ make eslint
+
+In the rare case when you cannot fix an eslint error, use ``// eslint-disable`` to make the linter
+ignore that error. Note that in most cases, it is better to fix the issues than ignore them.
 
 For more specifics about the ```frontend`` folder, look at the README.md file there.
-
-
-.. A note about formatting...::
-
-    To format both the frontend and Python code at once you can use:
-
-    .. code-block:: shell
-
-        $ make format
 
 
 Git conventions
@@ -201,21 +216,21 @@ Direct dependencies for Pontoon are distributed across three files:
 
 1. ``requirements/default.in``: Running Pontoon in production
 2. ``requirements/dev.in``: Development
-3. ``requirements/test.in``: Testing and linting
+3. ``requirements/test.in``: Testing
+4. ``requirements/lint.in``:  Linting
 
 In order to pin and hash the direct and indirect dependencies, we use `pip-compile <https://pypi.org/project/pip-tools/>`_,
 which yields corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and indirect dependencies,
 and can be used for installation with ``pip``. After any change to the ``*.in`` files,
-you should run the following script to update all ``requirements/*.txt`` files.
+you should run the following command to update all ``requirements/*.txt`` files.
 
 .. code-block:: shell
 
-    $ ./requirements/compile_all.sh
+    $ make requirements
 
 When adding a new requirement, add it to the appropriate ``requirements/*.in`` file.
 For example, to add the development dependency ``foobar`` version 5, add ``foobar==5`` to ``requirements/dev.in``,
-and then run the script from above. Make sure to run it in the same environment (operating system, Python version)
-as the docker and production environment!
+and then run the command from above.
 
 Once you are done adding, removing or updating requirements, rebuild your docker environment:
 
@@ -225,6 +240,12 @@ Once you are done adding, removing or updating requirements, rebuild your docker
 
 If there are problems, it'll tell you.
 
+To upgrade existing dependencies within the given constraints of the input
+files, you can pass options through to the ``pip-compile`` invocations, i.e.
+
+.. code-block:: shell
+
+    $ make requirements opts=--upgrade
 
 Documentation
 =============

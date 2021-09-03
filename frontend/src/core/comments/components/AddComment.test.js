@@ -4,14 +4,11 @@ import sinon from 'sinon';
 
 import AddComment from './AddComment';
 
-const DEFAULT_USER = {
-    user: 'RSwanson',
-    username: 'Ron_Swanson',
-    imageURL: '',
-};
-
-const USERS = {
-    users: {
+const USER = {
+    user: {
+        user: 'RSwanson',
+        username: 'Ron_Swanson',
+        imageURL: '',
         users: [
             {
                 name: 'April Ludwig',
@@ -26,11 +23,7 @@ describe('<AddComment>', () => {
     it('calls submitComment function', () => {
         const submitCommentFn = sinon.spy();
         const wrapper = shallow(
-            <AddComment
-                {...DEFAULT_USER}
-                {...USERS}
-                submitComment={submitCommentFn}
-            />,
+            <AddComment {...USER} submitComment={submitCommentFn} />,
         );
 
         const event = {

@@ -27,11 +27,13 @@ class POEntity(VCSTranslation):
 
         # Pofiles use the source as the key prepended with context if available.
         key = po_entry.msgid
-        if po_entry.msgctxt:
-            key = po_entry.msgctxt + KEY_SEPARATOR + key
+        context = po_entry.msgctxt or ""
+        if context:
+            key = context + KEY_SEPARATOR + key
 
-        super(POEntity, self).__init__(
+        super().__init__(
             key=key,
+            context=context,
             source_string=po_entry.msgid,
             source_string_plural=po_entry.msgid_plural,
             strings=strings,
@@ -107,13 +109,13 @@ class POResource(ParsedResource):
         self.pofile.save()
 
     def __repr__(self):
-        return "<POResource {self.pofile.fpath}>".format(self=self)
+        return f"<POResource {self.pofile.fpath}>"
 
 
 def parse(path, source_path=None, locale=None):
     try:
         pofile = polib.pofile(path, wrapwidth=200)
-    except IOError as err:
-        raise ParseError(u"Failed to parse {path}: {err}".format(path=path, err=err))
+    except OSError as err:
+        raise ParseError(f"Failed to parse {path}: {err}")
 
     return POResource(pofile)

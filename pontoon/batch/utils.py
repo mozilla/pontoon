@@ -2,15 +2,15 @@ from copy import deepcopy
 
 from django.utils import timezone
 
-from pontoon.base.models import Entity
+from pontoon.base.models import Entity, Resource
 from pontoon.checks import DB_FORMATS
 
 from pontoon.checks.libraries import run_checks
 
 from fluent.syntax import (
-    ast,
     FluentParser,
     FluentSerializer,
+    visitor,
 )
 
 
@@ -52,14 +52,15 @@ def ftl_find_and_replace(string, find, replace):
 
     """
 
-    def replace_text_elements(node):
-        """Perform find and replace on text values only"""
-        if type(node) == ast.TextElement:
+    class FindAndReplaceTransformer(visitor.Transformer):
+        def visit_TextElement(self, node):
+            """Perform find and replace on text values only"""
             node.value = node.value.replace(find, replace)
-        return node
+            return node
 
+    transformer = FindAndReplaceTransformer()
     old_ast = parser.parse_entry(string)
-    new_ast = old_ast.traverse(replace_text_elements)
+    new_ast = transformer.visit(old_ast)
 
     return serializer.serialize_entry(new_ast)
 
@@ -96,7 +97,7 @@ def find_and_replace(translations, find, replace, user):
         # Cache the old value to identify changed translations
         new_translation = deepcopy(translation)
 
-        if translation.entity.resource.format == "ftl":
+        if translation.entity.resource.format == Resource.Format.FTL:
             new_translation.string = ftl_find_and_replace(
                 translation.string, find, replace
             )

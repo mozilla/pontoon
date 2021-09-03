@@ -9,6 +9,7 @@ from pontoon.base.utils import (
     get_m2m_changes,
     get_object_or_none,
     latest_datetime,
+    get_search_phrases,
 )
 
 
@@ -90,3 +91,17 @@ def test_util_base_latest_datetime():
     assert latest_datetime([None, None, None]) is None
     assert latest_datetime([None, larger]) == larger
     assert latest_datetime([None, smaller, larger]) == larger
+
+
+@pytest.mark.parametrize(
+    "search_query,expected_results",
+    (
+        ("", []),
+        ("lorem ipsum dolor", ["lorem", "ipsum", "dolor"]),
+        ('"lorem ipsum dolor"', ["lorem ipsum dolor"]),
+        ('"lorem ipsum" dolor', ["lorem ipsum", "dolor"]),
+        ('"lorem ipsum" "dolor dolor"', ["lorem ipsum", "dolor dolor"]),
+    ),
+)
+def test_get_search_phrases(search_query, expected_results):
+    assert get_search_phrases(search_query) == expected_results

@@ -103,7 +103,7 @@ export default class CheckboxTable extends React.Component {
         // not in `this.visible` removed
         let { checked } = state;
         return new Set(
-            [...checked].filter((v) => this.visible.indexOf(v) !== -1)
+            [...checked].filter((v) => this.visible.indexOf(v) !== -1),
         );
     }
 

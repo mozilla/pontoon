@@ -7,10 +7,6 @@
     margin: 0;
 }
 
-.other-locales > ul:first-child {
-    padding-top: 10px;
-}
-
 .other-locales > p {
     color: #aaa;
     font-style: italic;

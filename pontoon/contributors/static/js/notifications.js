@@ -1,4 +1,10 @@
 $(function () {
+    window.history.replaceState(
+        {},
+        document.title,
+        document.location.href.split('?')[0],
+    );
+
     // Filter notifications
     $('.left-column a').on('click', function () {
         var notifications = $(this).data('notifications');
@@ -6,7 +12,7 @@ $(function () {
         // Show all notifications
         if (!notifications) {
             $(
-                '.right-column .notification-item, .right-column .horizontal-separator'
+                '.right-column .notification-item, .right-column .horizontal-separator',
             ).show();
             $('.right-column .horizontal-separator').show();
 

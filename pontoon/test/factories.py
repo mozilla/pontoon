@@ -40,10 +40,10 @@ class GroupFactory(DjangoModelFactory):
 
 
 class ProjectFactory(DjangoModelFactory):
-    name = Sequence(lambda n: "Project {0}".format(n))
+    name = Sequence(lambda n: f"Project {n}")
     slug = LazyAttribute(lambda p: slugify(p.name))
     links = False
-    visibility = "public"
+    visibility = Project.Visibility.PUBLIC
 
     class Meta:
         model = Project
@@ -76,8 +76,8 @@ class ProjectLocaleFactory(DjangoModelFactory):
 
 class RepositoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    type = "git"
-    url = Sequence(lambda n: "https://example.com/url_{0}.git".format(n))
+    type = Repository.Type.GIT
+    url = Sequence(lambda n: f"https://example.com/url_{n}.git")
 
     class Meta:
         model = Repository
@@ -85,8 +85,8 @@ class RepositoryFactory(DjangoModelFactory):
 
 class ResourceFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
-    path = Sequence(lambda n: "/fake/path{0}.po".format(n))
-    format = "po"
+    path = Sequence(lambda n: f"/fake/path{n}.po")
+    format = Resource.Format.PO
     total_strings = 1
 
     class Meta:
@@ -102,8 +102,8 @@ class SubpageFactory(DjangoModelFactory):
 
 
 class LocaleFactory(DjangoModelFactory):
-    code = Sequence(lambda n: "en-{0}".format(n))
-    name = Sequence(lambda n: "English #{0}".format(n))
+    code = Sequence(lambda n: f"en-{n}")
+    name = Sequence(lambda n: f"English #{n}")
 
     class Meta:
         model = Locale
@@ -111,7 +111,7 @@ class LocaleFactory(DjangoModelFactory):
 
 class EntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
-    string = Sequence(lambda n: "string {0}".format(n))
+    string = Sequence(lambda n: f"string {n}")
     order = Sequence(lambda n: n)
 
     class Meta:
@@ -120,8 +120,8 @@ class EntityFactory(DjangoModelFactory):
 
 class PluralEntityFactory(DjangoModelFactory):
     resource = SubFactory(ResourceFactory)
-    string = Sequence(lambda n: "string {0}".format(n))
-    string_plural = Sequence(lambda n: "string plural {0}".format(n))
+    string = Sequence(lambda n: f"string {n}")
+    string_plural = Sequence(lambda n: f"string plural {n}")
 
     class Meta:
         model = Entity
@@ -138,7 +138,7 @@ class ChangedEntityLocaleFactory(DjangoModelFactory):
 class TranslationFactory(DjangoModelFactory):
     entity = SubFactory(EntityFactory)
     locale = SubFactory(LocaleFactory)
-    string = Sequence(lambda n: "translation {0}".format(n))
+    string = Sequence(lambda n: f"translation {n}")
     user = SubFactory(UserFactory)
 
     class Meta:
@@ -150,8 +150,8 @@ class IdenticalTranslationFactory(TranslationFactory):
 
 
 class TranslationMemoryFactory(DjangoModelFactory):
-    source = Sequence(lambda n: u"source {0}".format(n))
-    target = Sequence(lambda n: u"target {0}".format(n))
+    source = Sequence(lambda n: f"source {n}")
+    target = Sequence(lambda n: f"target {n}")
     entity = SubFactory(EntityFactory, string=SelfAttribute("..source"))
     locale = SubFactory(LocaleFactory)
 
@@ -169,7 +169,7 @@ class TranslatedResourceFactory(DjangoModelFactory):
 
 class ErrorFactory(DjangoModelFactory):
     library = Sequence(lambda n: "pontoon")
-    message = Sequence(lambda n: "Error {0}".format(n))
+    message = Sequence(lambda n: f"Error {n}")
     translation = SubFactory(TranslationFactory)
 
     class Meta:
@@ -178,7 +178,7 @@ class ErrorFactory(DjangoModelFactory):
 
 class WarningFactory(DjangoModelFactory):
     library = Sequence(lambda n: "pontoon")
-    message = Sequence(lambda n: "Warning {0}".format(n))
+    message = Sequence(lambda n: f"Warning {n}")
     translation = SubFactory(TranslationFactory)
 
     class Meta:
@@ -186,7 +186,7 @@ class WarningFactory(DjangoModelFactory):
 
 
 class TagFactory(DjangoModelFactory):
-    name = Sequence(lambda n: "Tag {0}".format(n))
+    name = Sequence(lambda n: f"Tag {n}")
     slug = LazyAttribute(lambda p: slugify(p.name))
 
     class Meta:
@@ -194,7 +194,7 @@ class TagFactory(DjangoModelFactory):
 
 
 class TermFactory(DjangoModelFactory):
-    text = Sequence(lambda n: "Term {0}".format(n))
+    text = Sequence(lambda n: f"Term {n}")
     definition = "definition"
     part_of_speech = "part_of_speech"
     case_sensitive = False
@@ -207,7 +207,7 @@ class TermFactory(DjangoModelFactory):
 class TermTranslationFactory(DjangoModelFactory):
     term = SubFactory(TermFactory)
     locale = SubFactory(LocaleFactory)
-    text = Sequence(lambda n: "Term Translation {0}".format(n))
+    text = Sequence(lambda n: f"Term Translation {n}")
 
     class Meta:
         model = TermTranslation

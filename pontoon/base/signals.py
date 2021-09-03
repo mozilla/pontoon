@@ -63,13 +63,13 @@ def create_group(instance, group_name, perms, name_prefix):
     ct = ContentType.objects.get(
         app_label="base", model=instance.__class__.__name__.lower()
     )
-    group, _ = Group.objects.get_or_create(name="{} {}".format(name_prefix, group_name))
+    group, _ = Group.objects.get_or_create(name=f"{name_prefix} {group_name}")
 
     for perm_name in perms:
         perm = Permission.objects.get(content_type=ct, codename=perm_name)
         group.permissions.add(perm)
 
-        setattr(instance, "{}_group".format(group_name), group)
+        setattr(instance, f"{group_name}_group", group)
 
 
 def assign_group_permissions(instance, group_name, perms):
@@ -82,7 +82,7 @@ def assign_group_permissions(instance, group_name, perms):
 
     for perm_name in perms:
         perm = Permission.objects.get(content_type=ct, codename=perm_name)
-        group = getattr(instance, "{}_group".format(group_name))
+        group = getattr(instance, f"{group_name}_group")
         GroupObjectPermission.objects.get_or_create(
             object_pk=instance.pk, content_type=ct, group=group, permission=perm
         )
@@ -125,7 +125,7 @@ def create_project_locale_permissions_groups(sender, **kwargs):
             instance,
             "translators",
             ["can_translate_project_locale"],
-            "{}/{}".format(instance.project.slug, instance.locale.code),
+            f"{instance.project.slug}/{instance.locale.code}",
         )
     except ObjectDoesNotExist as e:
         errors.send_exception(e)

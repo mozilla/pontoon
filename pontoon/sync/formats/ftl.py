@@ -4,7 +4,7 @@ import logging
 
 from fluent.syntax import ast, FluentParser, FluentSerializer
 
-from pontoon.sync.exceptions import SyncError
+from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.utils import create_parent_directory
 from pontoon.sync.vcs.models import VCSTranslation
@@ -33,8 +33,9 @@ class FTLEntity(VCSTranslation):
         resource_comments=None,
         order=None,
     ):
-        super(FTLEntity, self).__init__(
+        super().__init__(
             key=key,
+            context=key,
             source_string=source_string,
             source_string_plural=source_string_plural,
             strings=strings,
@@ -74,13 +75,15 @@ class FTLResource(ParsedResource):
         try:
             with codecs.open(path, "r", "utf-8") as resource:
                 self.structure = parser.parse(resource.read())
-        except IOError:
+        # Parse errors are handled gracefully by fluent
+        # No need to catch them here
+        except OSError as err:
             # If the file doesn't exist, but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
                 return
             else:
-                raise
+                raise ParseError(err)
 
         group_comment = []
         resource_comment = []
@@ -123,7 +126,7 @@ class FTLResource(ParsedResource):
         """
         if not self.source_resource:
             raise SyncError(
-                "Cannot save FTL resource {0}: No source resource given.".format(
+                "Cannot save FTL resource {}: No source resource given.".format(
                     self.path
                 )
             )

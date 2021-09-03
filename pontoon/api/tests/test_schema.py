@@ -35,7 +35,7 @@ def test_projects(client):
 
     response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
 
-    ProjectFactory.create(visibility="private")
+    ProjectFactory.create(visibility=Project.Visibility.PRIVATE)
     assert response.status_code == 200
     assert response.json() == {
         "data": {
@@ -50,7 +50,7 @@ def test_projects(client):
 
 @pytest.fixture()
 def regular_projects(locale_a):
-    return ProjectFactory.create_batch(3, visibility="public") + list(
+    return ProjectFactory.create_batch(3, visibility=Project.Visibility.PUBLIC) + list(
         Project.objects.filter(slug__in=["terminology"])
     )
 
@@ -69,7 +69,7 @@ def system_projects(locale_a):
 
 @pytest.fixture()
 def private_projects():
-    return ProjectFactory.create_batch(3, visibility="private")
+    return ProjectFactory.create_batch(3, visibility=Project.Visibility.PRIVATE)
 
 
 @pytest.mark.django_db

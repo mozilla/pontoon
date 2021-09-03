@@ -106,11 +106,15 @@ GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 RAYGUN4PY_CONFIG = {"api_key": os.environ.get("RAYGUN_APIKEY", "")}
 
 # Email settings
-EMAIL_HOST_USER = os.environ.get("SENDGRID_USERNAME", "")
-EMAIL_HOST = "smtp.sendgrid.net"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_PASSWORD", "")
+EMAIL_HOST_USER = os.environ.get(
+    "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "apikey")
+)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.sendgrid.net")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") != "False"
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
+)
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
@@ -140,6 +144,7 @@ INSTALLED_APPS = (
     "pontoon.tour",
     "pontoon.translate",
     "pontoon.translations",
+    "pontoon.uxactionlog",
     "pontoon.homepage",
     # Django contrib apps
     "django.contrib.admin",
@@ -316,8 +321,9 @@ PIPELINE_CSS = {
             "css/contributors.css",
             "css/heading_info.css",
             "css/team.css",
-            "css/info.css",
             "css/request.css",
+            "css/insights.css",
+            "css/info.css",
         ),
         "output_filename": "css/team.min.css",
     },
@@ -367,7 +373,7 @@ PIPELINE_CSS = {
         "output_filename": "css/terms.min.css",
     },
     "homepage": {
-        "source_filenames": ("css/fullpage.css", "css/homepage.css",),
+        "source_filenames": ("css/homepage.css",),
         "output_filename": "css/homepage.min.css",
     },
 }
@@ -422,6 +428,7 @@ PIPELINE_JS = {
     },
     "team": {
         "source_filenames": (
+            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -429,6 +436,7 @@ PIPELINE_JS = {
             "js/tabs.js",
             "js/request.js",
             "js/permissions.js",
+            "js/insights.js",
             "js/info.js",
         ),
         "output_filename": "js/team.min.js",
@@ -464,7 +472,7 @@ PIPELINE_JS = {
         "output_filename": "js/machinery.min.js",
     },
     "homepage": {
-        "source_filenames": ("js/lib/fullpage.js", "js/homepage.js"),
+        "source_filenames": ("js/homepage.js",),
         "output_filename": "js/homepage.min.js",
     },
 }
@@ -472,11 +480,12 @@ PIPELINE_JS = {
 PIPELINE = {
     "STYLESHEETS": PIPELINE_CSS,
     "JAVASCRIPT": PIPELINE_JS,
+    "JS_COMPRESSOR": "pipeline.compressors.terser.TerserCompressor",
+    "CSS_COMPRESSOR": "pipeline.compressors.NoopCompressor",
     "YUGLIFY_BINARY": path(
         os.environ.get("YUGLIFY_BINARY", "node_modules/.bin/yuglify")
     ),
-    "BABEL_BINARY": path("node_modules/.bin/babel"),
-    "BABEL_ARGUMENTS": "--modules ignore",
+    "TERSER_BINARY": path(os.environ.get("TERSER_BINARY", "node_modules/.bin/terser")),
     "DISABLE_WRAPPER": True,
 }
 
@@ -503,7 +512,7 @@ SITE_ID = 1
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = path("media")
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", path("media"))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -662,7 +671,7 @@ if not (HEROKU_DEMO or SITE_URL.startswith("https")):
 # For absolute urls
 try:
     DOMAIN = socket.gethostname()
-except socket.error:
+except OSError:
     DOMAIN = "localhost"
 PROTOCOL = "http://"
 PORT = 80
@@ -695,6 +704,10 @@ USE_L10N = False
 # Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
 # See bug 1567402 for details. A Mozilla-specific variable.
 ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
+
+# Enable Insights tab on the team pages, which presents data that needs to be
+# collected by a scheduled job. See docs/admin/deployment.rst for more information.
+ENABLE_INSIGHTS_TAB = os.environ.get("ENABLE_INSIGHTS_TAB", "False") != "False"
 
 # Bleach tags and attributes
 ALLOWED_TAGS = [
@@ -832,3 +845,5 @@ NOTIFICATIONS_MAX_COUNT = 7
 
 # Number of events displayed on the Contributor's timeline per page.
 CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

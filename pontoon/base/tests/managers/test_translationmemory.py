@@ -8,17 +8,17 @@ from pontoon.test.factories import TranslationMemoryFactory
 
 @pytest.fixture
 def tm_entry_long():
-    return TranslationMemoryFactory.create(source=u"a" * 500,)
+    return TranslationMemoryFactory.create(source="a" * 500,)
 
 
 @pytest.fixture
 def tm_entry_medium():
-    return TranslationMemoryFactory.create(source=u"a" * 255,)
+    return TranslationMemoryFactory.create(source="a" * 255,)
 
 
 @pytest.fixture
 def tm_entry_short():
-    return TranslationMemoryFactory.create(source=u"a" * 50,)
+    return TranslationMemoryFactory.create(source="a" * 50,)
 
 
 @pytest.mark.django_db

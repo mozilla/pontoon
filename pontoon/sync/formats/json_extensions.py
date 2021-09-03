@@ -53,6 +53,7 @@ class JSONEntity(VCSTranslation):
 
     def __init__(self, order, key, data):
         self.key = key
+        self.context = key
         self.data = data
         self.order = order
         self.strings = {None: self.source_string} if self.source_string else {}
@@ -101,7 +102,7 @@ class JSONResource(ParsedResource):
                 self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
                 validate(self.json_file, SCHEMA)
 
-        except (IOError, ValueError, ValidationError) as err:
+        except (OSError, ValueError, ValidationError) as err:
             # If the file doesn't exist or cannot be decoded,
             # but we have a source resource,
             # we can keep going, we'll just not have any translations.
@@ -125,7 +126,7 @@ class JSONResource(ParsedResource):
         """
         if not self.source_resource:
             raise SyncError(
-                "Cannot save JSON resource {0}: No source resource given.".format(
+                "Cannot save JSON resource {}: No source resource given.".format(
                     self.path
                 )
             )

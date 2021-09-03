@@ -33,10 +33,10 @@ $('body')
                 name = $element.data('user-name'),
                 link = $element.data('user-link'),
                 date = date_formatter.format(
-                    new Date($element.attr('datetime'))
+                    new Date($element.attr('datetime')),
                 ),
                 time = time_formatter.format(
-                    new Date($element.attr('datetime'))
+                    new Date($element.attr('datetime')),
                 );
 
             $element.after(
@@ -68,7 +68,7 @@ $('body')
                         : '') +
                     '</div>' +
                     '</footer>' +
-                    '</aside>'
+                    '</aside>',
             );
         }, delay);
     })
@@ -114,11 +114,11 @@ var Pontoon = (function (my) {
                                     filter +
                                     ':containsi("' +
                                     $(field).val() +
-                                    '")'
+                                    '")',
                             )
                             .parents(item)
                             .show();
-                    }
+                    },
                 );
             })(),
 
@@ -152,7 +152,7 @@ var Pontoon = (function (my) {
                         return parseInt(
                             $(el)
                                 .find('.progress .legend .unreviewed .value')
-                                .data('value') || 0
+                                .data('value') || 0,
                         );
                     }
 
@@ -175,7 +175,7 @@ var Pontoon = (function (my) {
 
                     function getNumber(el) {
                         return parseInt(
-                            $(el).find('span').text().replace(/,/g, '')
+                            $(el).find('span').text().replace(/,/g, ''),
                         );
                     }
 

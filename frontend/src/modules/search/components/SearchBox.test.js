@@ -2,8 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
+import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import { actions } from 'core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
@@ -270,15 +269,17 @@ describe('<SearchBoxBase>', () => {
 describe('<SearchBox>', () => {
     it('updates the search text after a delay', () => {
         const store = createReduxStore();
-        const wrapper = shallowUntilTarget(
-            <SearchBox store={store} />,
-            SearchBoxBase,
-        );
+        const root = mountComponentWithStore(SearchBox, store);
+        const wrapper = root.find(SearchBoxBase);
 
         const updateSpy = sinon.spy(actions, 'update');
 
         const inputChanged = { currentTarget: { value: 'test' } };
-        wrapper.find('input#search').simulate('change', inputChanged);
+        const input = wrapper.find('input#search');
+        // `simulate()` doesn't quite work in conjunction with `mount()`, so
+        // invoking the `prop()` callback directly is the way to go as suggested
+        // by the enzyme maintainer...
+        input.prop('onChange')(inputChanged);
 
         // The state has been updated correctly...
         expect(wrapper.state().search).toEqual('test');
@@ -288,7 +289,7 @@ describe('<SearchBox>', () => {
 
         // Wait until Enter is pressed.
         const enterPressed = { keyCode: 13 };
-        wrapper.find('input#search').simulate('keydown', enterPressed);
+        input.simulate('keydown', enterPressed);
         expect(updateSpy.calledOnce).toBeTruthy();
     });
 

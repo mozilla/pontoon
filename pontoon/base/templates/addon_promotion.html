@@ -1,0 +1,9 @@
+{% if user.is_authenticated and not user.profile.has_dismissed_addon_promotion %}
+<div id="addon-promotion">
+  <div class="container">
+    <button class="dismiss" title="Dismiss">×</button>
+    <p class="text">Take your Pontoon notifications everywhere with the official Pontoon Add-on.</p>
+    <a class="get">Get Pontoon Add-On</a>
+  </div>
+</div>
+{% endif %}

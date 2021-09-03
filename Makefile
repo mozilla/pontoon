@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build setup run clean shell test jest pytest black flow lint-frontend loaddb build-frontend build-frontend-w
+.PHONY: build setup run clean shell test test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-frontend build-frontend-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -20,20 +20,23 @@ help:
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a webapp docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-frontend    Runs the new frontend's test suite (Translate.Next)"
-	@echo "  jest             Runs the jest test runner on all Translate.Next tests"
+	@echo "  test-frontend    Runs the new frontend's test suite"
+	@echo "  jest             Runs the jest test runner on all frontend tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
-	@echo "  flow             Runs the Flow type checker on the frontend code"
-	@echo "  lint-frontend    Runs a code linter on the frontend code (Translate.Next)"
+	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
+	@echo "  eslint           Runs a code linter on the JavaScript code"
+	@echo "  dropdb           Completely remove the postgres container and its data"
+	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  build-frontend   Builds the frontend static files"
 	@echo "  build-frontend-w Watches the frontend static files and builds on change"
-	@echo "  sync-projects    Runs the synchronization task on all projects\n"
+	@echo "  sync-projects    Runs the synchronization task on all projects"
+	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
 .docker-build:
 	make build
@@ -63,7 +66,7 @@ jest:
 	"${DC}" run --rm -w //app/frontend webapp yarn test
 
 pytest:
-	"${DC}" run --rm webapp pytest --cov-append --cov-report=term --cov=. $(opts)
+	"${DC}" run ${run_opts} --rm webapp pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
 flake8:
 	"${DC}" run --rm webapp flake8 pontoon/
@@ -71,8 +74,11 @@ flake8:
 black:
 	"${DC}" run --rm webapp black pontoon/
 
-flow:
-	"${DC}" run --rm -w //app/frontend -e SHELL=//bin/bash webapp yarn flow:dev
+pyupgrade:
+	"${DC}" run --rm webapp pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
+
+types:
+	"${DC}" run --rm -w //app/frontend webapp yarn types
 
 prettier:
 	"${DC}" run --rm webapp npm run prettier
@@ -82,13 +88,20 @@ check-prettier:
 
 format:
 	make prettier
+	make pyupgrade
 	make black
 
-lint-frontend:
-	"${DC}" run --rm -w //app/frontend webapp ./node_modules/.bin/eslint src/
+eslint:
+	"${DC}" run --rm webapp npm run eslint
 
 shell:
 	"${DC}" run --rm webapp //bin/bash
+
+dropdb:
+	"${DC}" down --volumes postgresql 
+
+dumpdb:
+	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
 
 loaddb:
 	# Stop connections to the database so we can drop it.
@@ -110,3 +123,8 @@ build-frontend-w:
 
 sync-projects:
 	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)
+
+requirements:
+	# Pass --upgrade to upgrade all dependencies
+	# The arguments are passed through to pip-compile
+	"${DC}" run --rm webapp //app/docker/compile_requirements.sh ${opts}

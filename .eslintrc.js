@@ -8,7 +8,7 @@ module.exports = {
         browser: true,
         jest: true,
     },
-    parser: "babel-eslint",
+    parser: "@babel/eslint-parser",
     parserOptions: {
         ecmaVersion: 2017,
         ecmaFeatures: {
@@ -16,6 +16,9 @@ module.exports = {
             experimentalObjectRestSpread: true
         },
         sourceType: 'module',
+        babelOptions: {
+          configFile: __dirname + "/.babelrc",
+        },
     },
     globals: {
         gettext: false,
@@ -37,12 +40,11 @@ module.exports = {
         Pontoon: false,
         jQuery: false,
         Clipboard: false,
+        Chart: false,
         NProgress: false,
         diff_match_patch: false,
         Highcharts: false,
         Sideshow: false,
-        fullpage: false,
-        fullpage_api: false,
         editor: false,
         DIFF_INSERT: false,
         DIFF_EQUAL: false,
@@ -52,14 +54,6 @@ module.exports = {
         generalShortcutsHandler: true,
         traversalShortcutsHandler: true,
         editorShortcutsHandler: true,
-        // Flow specific things
-        SyntheticEvent: false,
-        SyntheticFocusEvent: false,
-        SyntheticInputEvent: false,
-        SyntheticKeyboardEvent: false,
-        SyntheticMouseEvent: false,
-        TimeoutID: false,
-        "$Diff": false,
     },
     plugins: [
         'react',
@@ -75,4 +69,9 @@ module.exports = {
         "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
         "no-console": 1,
     },
+    settings: {
+        'react': {
+            'version': 'detect'
+        }
+    }
 };

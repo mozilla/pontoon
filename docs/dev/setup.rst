@@ -24,9 +24,15 @@ Prerequisites
 Quickstart
 ----------
 
-1. Clone your `fork <https://help.github.com/en/github/getting-started-with-github/fork-a-repo>`_ of Pontoon repository::
+1. Clone the `Pontoon repository <https://github.com/mozilla/pontoon>`_::
 
-     $ git clone https://github.com/YOUR-USERNAME/pontoon.git
+     $ git clone https://github.com/mozilla/pontoon.git
+
+   .. Note::
+
+        To contribute changes to the project, you will need to
+        `fork <https://help.github.com/en/github/getting-started-with-github/fork-a-repo>`_
+        the repository under your own GitHub account.
 
 
 2. From the root of the repository, run::
@@ -35,6 +41,14 @@ Quickstart
 
    That will build the containers required for development: base and
    webapp.
+
+   .. Warning::
+
+        On M1 MacBooks, a workaround is currently required for successful
+        operations: Add a ``platform: linux/amd64`` specifier under the
+        ``webapp`` service of ``docker-compose.yml``. This avoids a
+        segmentation fault in curl due to the libssl version used by
+        images based on Debian Buster.
 
    .. Note::
 

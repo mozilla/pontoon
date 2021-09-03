@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Translation
-from pontoon.checks.models import Warning
+from pontoon.checks.models import Warning, FailedCheck
 from pontoon.test.factories import TranslationFactory
 
 
@@ -198,7 +198,7 @@ def test_run_checks_during_translation_update(
     (warning,) = Warning.objects.all()
 
     assert warning.translation_id == translation_pk
-    assert warning.library == "cl"
+    assert warning.library == FailedCheck.Library.COMPARE_LOCALES
     assert warning.message == "trailing argument 1 `s` missing"
 
 

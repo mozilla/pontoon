@@ -2,15 +2,20 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
+import { createReduxStore, mountComponentWithStore } from 'test/store';
 
 import { actions } from '..';
 
 import PluralSelector, { PluralSelectorBase } from './PluralSelector';
 
 function createShallowPluralSelector(plural, locale) {
-    return shallow(<PluralSelectorBase pluralForm={plural} locale={locale} />);
+    return shallow(
+        <PluralSelectorBase
+            pluralForm={plural}
+            locale={locale}
+            resetEditor={sinon.spy()}
+        />,
+    );
 }
 
 describe('<PluralSelectorBase>', () => {
@@ -72,20 +77,31 @@ describe('<PluralSelector>', () => {
             },
             router: {
                 location: {
-                    pathname: '/kg/pro/all/',
+                    pathname: '/kg/firefox/all-resources/',
                     search: '?string=42',
                 },
+                // `action` is required because
+                // https://github.com/supasate/connected-react-router/issues/312#issuecomment-500968504
+                // Please note the initial `LOCATION_CHANGE` action can and must
+                // be supressed via the `noInitialPop` prop in
+                // `ConnectedRouter`, otherwise it'll cause side-effects like
+                // executing reducers and hence altering initial state values.
+                action: 'some-string-to-please-connected-react-router',
             },
         };
         const store = createReduxStore(initialState);
         const dispatchSpy = sinon.spy(store, 'dispatch');
 
-        const wrapper = shallowUntilTarget(
-            <PluralSelector store={store} />,
-            PluralSelectorBase,
-        );
+        const root = mountComponentWithStore(PluralSelector, store, {
+            resetEditor: sinon.spy(),
+        });
+        const wrapper = root.find(PluralSelectorBase);
 
-        wrapper.find('button').first().simulate('click');
+        const button = wrapper.find('button').first();
+        // `simulate()` doesn't quite work in conjunction with `mount()`, so
+        // invoking the `prop()` callback directly is the way to go as suggested
+        // by the enzyme maintainer...
+        button.prop('onClick')();
 
         const expectedAction = actions.select(0);
         expect(dispatchSpy.calledWith(expectedAction)).toBeTruthy();

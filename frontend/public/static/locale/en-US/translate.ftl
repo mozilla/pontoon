@@ -6,6 +6,15 @@
 # keep strings in order of appearance.
 
 
+## Pontoon Add-On promotion
+## Renders Pontoon Add-On promotion banner
+
+addonpromotion-AddonPromotion--dismiss = ×
+    .aria-label = Dismiss
+addonpromotion-AddonPromotion--get = Get Pontoon Add-On
+addonpromotion-AddonPromotion--text = Take your Pontoon notifications everywhere with the official Pontoon Add-on.
+
+
 ## ApproveAll
 ## Renders Approve All batch action button.
 
@@ -82,7 +91,7 @@ resourceprogress-ResourceProgress--missing = MISSING
 
 
 ## Comments
-## Allows user to leave comments on translations
+## Allows user to leave comments on translations and source strings
 
 comments-AddComment--input =
     .placeholder = Write a comment…
@@ -94,6 +103,9 @@ comments-Comment--pin-button = PIN
     .title = Pin comment
 comments-Comment--unpin-button = UNPIN
     .title = Unpin comment
+comments-Comment--pinned = PINNED
+comments-CommentsList--pinned-comments = PINNED COMMENTS
+comments-CommentsList--all-comments = ALL COMMENTS
 
 
 ## Editor Menu
@@ -159,11 +171,11 @@ editor-KeyboardShortcuts--cancel-translation-shortcut = <accel>Esc</accel>
 editor-KeyboardShortcuts--insert-a-new-line = Insert A New Line
 editor-KeyboardShortcuts--insert-a-new-line-shortcut = <mod1>Shift</mod1> + <accel>Enter</accel>
 
-editor-KeyboardShortcuts--go-to-next-string = Go To Next String
-editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
-
 editor-KeyboardShortcuts--go-to-previous-string = Go To Previous String
 editor-KeyboardShortcuts--go-to-previous-string-shortcut = <mod1>Alt</mod1> + <accel>Up</accel>
+
+editor-KeyboardShortcuts--go-to-next-string = Go To Next String
+editor-KeyboardShortcuts--go-to-next-string-shortcut = <mod1>Alt</mod1> + <accel>Down</accel>
 
 editor-KeyboardShortcuts--copy-from-source = Copy From Source
 editor-KeyboardShortcuts--copy-from-source-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>C</accel>
@@ -176,6 +188,12 @@ editor-KeyboardShortcuts--search-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Sh
 
 editor-KeyboardShortcuts--select-all-strings = Select All Strings
 editor-KeyboardShortcuts--select-all-strings-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>A</accel>
+
+editor-KeyboardShortcuts--copy-from-previous-helper = Copy From Previous Helper
+editor-KeyboardShortcuts--copy-from-previous-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Up</accel>
+
+editor-KeyboardShortcuts--copy-from-next-helper = Copy From Next Helper
+editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Down</accel>
 
 
 ## Editor Unsaved Changes
@@ -416,13 +434,19 @@ interactivetour-InteractiveTour--end-footer =
 ## Machinery
 ## Shows a list of translations from machines.
 machinery-Machinery--search-placeholder =
-    .placeholder = Search in Machinery
+    .placeholder = Concordance Search
+
+machinery-Machinery--load-more = LOAD MORE
 
 
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.
 machinery-CaighdeanTranslation--visit-caighdean = CAIGHDEAN
     .title = Visit Caighdean Machine Translation
+
+## Machinery Concordance Search
+## Shows concordance search results from Pontoon's memory.
+machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 
 
 ## Machinery Google Translation
@@ -454,7 +478,7 @@ machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
 ## Machinery Translation
 ## Shows a specific translation from machinery.
 machinery-Translation--copy =
-    .title = Copy Into Translation
+    .title = Copy Into Translation (Ctrl + Shift + Down)
 
 
 ## Machinery Translation Memory
@@ -464,12 +488,6 @@ machinery-TranslationMemory--pontoon-homepage =
 machinery-TranslationMemory--translation-memory = TRANSLATION MEMORY
 machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
-
-
-## Machinery Transvision Memory
-## Shows the translation source from Transvision.
-machinery-TransvisionMemory--visit-transvision = MOZILLA
-    .title = Visit Transvision
 
 
 ## Notification Messages
@@ -500,7 +518,7 @@ notification--comment-added = Comment added
 ## Shows a specific translation from a different locale
 
 otherlocales-Translation--copy =
-    .title = Copy Into Translation
+    .title = Copy Into Translation (Ctrl + Shift + Down)
 
 otherlocales-Translation--header-link =
     .title = Open string in { $locale } ({ $code })
@@ -626,6 +644,9 @@ search-TimeRangeFilter--save-range = SAVE RANGE
 
 ## Term
 ## Shows term entry with its metadata
+
+term-Term--copy = 
+    .title = Copy Into Translation
 
 term-Term--for-example = E.G.
 

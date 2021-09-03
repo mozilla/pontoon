@@ -1,5 +1,15 @@
+#react-tabs-5 {
+    overflow-y: hidden;
+}
+
 .machinery {
+    height: 100%;
     line-height: 22px;
+}
+
+.machinery .list-wrapper {
+    height: calc(100% - 53px);
+    overflow-y: auto;
 }
 
 .machinery ul {
@@ -58,4 +68,26 @@
 /* Style placeholder color in Chrome */
 .machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
     color: #aaaaaa;
+}
+
+.machinery .load-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0 20px 0;
+}
+
+.machinery .load-more-button {
+    background: #333941;
+    border: 1px solid #3f4752;
+    border-radius: 4px;
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 100;
+    margin-right: 6px;
+    padding: 2px 4px;
+    pointer-events: auto;
+}
+
+.machinery .load-more-button:hover {
+    border-color: #637283;
 }

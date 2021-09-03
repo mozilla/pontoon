@@ -2,13 +2,13 @@ from pontoon.actionlog.models import ActionLog
 
 
 def log_action(
-    action, user, translation=None, entity=None, locale=None,
+    action_type, user, translation=None, entity=None, locale=None,
 ):
     """Save a new action in the database.
 
-    :arg string action:
+    :arg string action_type:
         The type of action that was performed.
-        See models.ActionLog.ACTIONS_TYPES for choices.
+        See models.ActionLog.ActionType for choices.
     :arg User user: The User who performed the action.
     :arg Translation translation: The Translation the action was performed on.
     :arg Entity entity:
@@ -21,7 +21,7 @@ def log_action(
     :returns: None
     """
     action = ActionLog(
-        action_type=action,
+        action_type=action_type,
         performed_by=user,
         translation=translation,
         entity=entity,

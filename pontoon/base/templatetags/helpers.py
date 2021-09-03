@@ -2,7 +2,7 @@ import html
 import datetime
 import json
 
-import jinja2
+import markupsafe
 from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
@@ -84,7 +84,7 @@ def metric_prefix(source):
     output = source / prefix["value"]
 
     # Round quotient to 1 decimal point
-    output = "{0:.1f}".format(output)
+    output = f"{output:.1f}"
 
     # Remove decimal point if 0
     output = output.rstrip("0").rstrip(".")
@@ -153,13 +153,13 @@ def format_timedelta(value):
     if value is not None:
         parts = []
         if value.days > 0:
-            parts.append("{0} days".format(value.days))
+            parts.append(f"{value.days} days")
         minutes = value.seconds // 60
         seconds = value.seconds % 60
         if minutes > 0:
-            parts.append("{0} minutes".format(minutes))
+            parts.append(f"{minutes} minutes")
         if seconds > 0:
-            parts.append("{0} seconds".format(seconds))
+            parts.append(f"{seconds} seconds")
 
         if parts:
             return ", ".join(parts)
@@ -172,7 +172,7 @@ def format_timedelta(value):
 @register.filter
 @library.filter
 def nospam(self):
-    return jinja2.Markup(
+    return markupsafe.Markup(
         html.escape(self, True).replace("@", "&#64;").replace(".", "&#46;")
     )
 
@@ -206,7 +206,7 @@ def provider_login_url(request, provider_id=settings.AUTHENTICATION_METHOD, **qu
 @library.global_function
 def providers_media_js(request):
     """A port of django tag into jinja2"""
-    return jinja2.Markup(
+    return markupsafe.Markup(
         "\n".join([p.media_js(request) for p in providers.registry.get_list()])
     )
 
@@ -231,9 +231,7 @@ def local_url(url, code=None):
 @library.filter
 def dict_html_attrs(dict_obj):
     """Render json object properties into a series of data-* attributes."""
-    return jinja2.Markup(
-        " ".join([u'data-{}="{}"'.format(k, v) for k, v in dict_obj.items()])
-    )
+    return markupsafe.Markup(" ".join([f'data-{k}="{v}"' for k, v in dict_obj.items()]))
 
 
 def _get_default_variant(variants):

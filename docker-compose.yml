@@ -21,6 +21,7 @@ services:
       - ./frontend/src:/app/frontend/src
       - ./frontend/public:/app/frontend/public
       - ./tests:/app/tests
+      - ./requirements:/app/requirements
       - ~/.ssh:/home/pontoon/.ssh
 
   # Database
@@ -33,3 +34,9 @@ services:
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+# Persist database
+volumes:
+  pgdata: null

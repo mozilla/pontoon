@@ -1,0 +1,147 @@
+{% import "insights/widgets/tooltip.html" as Tooltip %}
+{% import "insights/widgets/active_users.html" as ActiveUsers %}
+
+{# Widget to display insights. #}
+{% macro display() %}
+<div id="insights" data-dates="{{ dates }}">
+    <section class="clearfix">
+        <section
+            id="active-users"
+            class="half"
+            data-total="{{ total_users|to_json() }}"
+            data-1="{{ active_users_last_month|to_json() }}"
+            data-3="{{ active_users_last_3_months|to_json() }}"
+            data-6="{{ active_users_last_6_months|to_json() }}"
+            data-12="{{ active_users_last_12_months|to_json() }}"
+        >
+            <div class="block clearfix">
+                <h3 class="controls">
+                    Active users
+                    {{ Tooltip.display(
+                        intro='Ratios of active vs. all managers, reviewers, contributors.',
+                        items=[{
+                            'class': 'active-managers',
+                            'name': 'Active managers',
+                            'definition': 'Managers who logged into Pontoon within the selected time frame.',
+                        }, {
+                            'class': 'active-reviewers',
+                            'name': 'Active reviewers',
+                            'definition': 'Users who reviewed translations within the selected time frame.',
+                        }, {
+                            'class': 'active-contributors',
+                            'name': 'Active contributors',
+                            'definition': 'Users who submitted translations within the selected time frame.',
+                        }]
+                    ) }}
+                    <ul class="period-selector noselect clearfix">
+                        <li><div class="active selector" data-period="12">12m</div></li>
+                        <li><div class="selector" data-period="6">6m</div></li>
+                        <li><div class="selector" data-period="3">3m</div></li>
+                        <li><div class="selector" data-period="1">1m</div></li>
+                    </ul>
+                </h3>
+                {{ ActiveUsers.chart('managers', 'Active managers') }}
+                {{ ActiveUsers.chart('reviewers', 'Active reviewers') }}
+                {{ ActiveUsers.chart('contributors', 'Active contributors') }}
+            </div>
+        </section>
+        <section class="half">
+            <div class="block clearfix">
+                <h3 class="controls">
+                    Unreviewed suggestions lifespan
+                    {{ Tooltip.display(
+                        intro='How much time it takes on average to review a suggestion.',
+                    ) }}
+                </h3>
+                <canvas
+                    id="unreviewed-suggestions-lifespan-chart"
+                    data-lifespans="{{ unreviewed_lifespans }}"
+                    width="410"
+                    height="160">
+                </canvas>
+            </div>
+        </section>
+    </section>
+
+    <section class="translation-activity">
+        <figure class="block">
+            <h3 class="controls">
+                Translation activity
+                {{ Tooltip.display(
+                    intro='Impact of adding translations and source strings on the overal translation completion.',
+                    items=[{
+                        'class': 'completion',
+                        'name': 'Completion',
+                        'definition': 'Share of translated strings.',
+                    }, {
+                        'class': 'human-translations',
+                        'name': 'Human translations',
+                        'definition': 'Translations authored by users.',
+                    }, {
+                        'class': 'machinery-translations',
+                        'name': 'Machinery translations',
+                        'definition': 'Translations copied from Machinery.',
+                    }, {
+                        'class': 'new-source-strings',
+                        'name': 'New source strings',
+                        'definition': 'Newly added source strings (hidden by default).',
+                    }]
+                ) }}
+            </h3>
+            <canvas
+                id="translation-activity-chart"
+                data-completion="{{ translation_activity.completion }}"
+                data-human-translations="{{ translation_activity.human_translations }}"
+                data-machinery-translations="{{ translation_activity.machinery_translations }}"
+                data-new-source-strings="{{ translation_activity.new_source_strings }}"
+                width="920"
+                height="400">
+            </canvas>
+            <div id="translation-activity-chart-legend" class="legend"></div>
+        </figure>
+    </section>
+
+    <section class="review-activity">
+        <figure class="block">
+            <h3 class="controls">
+                Review activity
+                {{ Tooltip.display(
+                    intro='Impact of the review process and adding suggestions on the overal amount of unreviewed suggestions.',
+                    items=[{
+                        'class': 'unreviewed',
+                        'name': 'Unreviewed',
+                        'definition': 'Suggestions pending a review.',
+                    }, {
+                        'class': 'peer-approved',
+                        'name': 'Peer-approved',
+                        'definition': 'Suggestions approved by peers of the author.',
+                    }, {
+                        'class': 'self-approved',
+                        'name': 'Self-approved',
+                        'definition': 'Directly submitted translations.',
+                    }, {
+                        'class': 'rejected',
+                        'name': 'Rejected',
+                        'definition': 'Rejected suggestions.',
+                    }, {
+                        'class': 'new-suggestions',
+                        'name': 'New suggestions',
+                        'definition': 'Newly added suggestions (hidden by default).',
+                    }]
+                ) }}
+            </h3>
+            <canvas
+                id="review-activity-chart"
+                data-unreviewed="{{ review_activity.unreviewed }}"
+                data-peer-approved="{{ review_activity.peer_approved }}"
+                data-self-approved="{{ review_activity.self_approved }}"
+                data-rejected="{{ review_activity.rejected }}"
+                data-new-suggestions="{{ review_activity.new_suggestions }}"
+                width="920"
+                height="400">
+            </canvas>
+            <div id="review-activity-chart-legend" class="legend"></div>
+        </figure>
+    </section>
+</div>
+{% endmacro %}

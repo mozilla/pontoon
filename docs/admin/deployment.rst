@@ -48,7 +48,7 @@ you create:
 .. NOTE::
 
    Alternatively, you can put all variables below in a `dotenv
-   <https://github.com/theskumar/python-dotenv>`_ text file::
+   <https://saurabh-kumar.com/python-dotenv/>`_ text file::
 
       VAR="value 1"
       OTHER_VAR="other value"
@@ -99,9 +99,30 @@ you create:
    production.
    Adds some additional django apps that can be helpful during day to day development.
 
+``EMAIL_HOST``
+   SMTP host (default: ``'smtp.sendgrid.net'``)
+
+``EMAIL_HOST_PASSWORD``
+   Password for the SMTP connection.
+
+``EMAIL_HOST_USER``
+   Username for the SMTP connection (default: ``'apikey'``).
+
+``EMAIL_PORT``
+   SMTP port (default: ``587``)
+
+``EMAIL_USE_TLS``
+   Use TLS for the SMTP connection (default: ``True``)
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
+
+``ENABLE_INSIGHTS_TAB``
+   Optional. Enables Insights tab on team pages, which presents data that needs
+   to be collected by the :ref:`collect-insights` scheduled job. It is advised
+   to run the job at least once before enabling the tab, otherwise the content
+   will be empty. See `the spec`_ for more information.
 
 ``ERROR_PAGE_URL``
    Optional. URL to the page displayed to your users when the application encounters
@@ -123,6 +144,10 @@ you create:
 
 ``MANUAL_SYNC``
    Optional. Enable Sync button in project Admin.
+
+``MEDIA_ROOT``
+   Optional. The absolute path of the "media" folder the projects will be
+   cloned into (it is located next to the "pontoon" Python module by default).
 
 ``MICROSOFT_TRANSLATOR_API_KEY``
    Optional. Set your `Microsoft Translator API key`_ to use machine translation
@@ -212,6 +237,7 @@ you create:
 ``VCS_SYNC_EMAIL``
   Optional. Default committer's email used when committing translations to version control system.
 
+.. _the spec: https://github.com/mozilla/pontoon/blob/master/specs/0108-community-health-dashboard.md
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 .. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
@@ -233,8 +259,17 @@ Pontoon is designed to run with the following add-ons enabled:
 It's possible to run with the free tiers of all of these add-ons, but it is
 recommended that, at a minimum, you run the "Standard 0" tier of Postgres.
 
-Cache Add-ons
-~~~~~~~~~~~~~
+SendGrid Add-on
+~~~~~~~~~~~~~~~
+Pontoon uses `SendGrid`_, which expects the following environment variable:
+
+``SENDGRID_PASSWORD``
+   Use SendGrid API key.
+
+.. _SendGrid: https://devcenter.heroku.com/articles/sendgrid
+
+Cache Add-on
+~~~~~~~~~~~~
 Pontoon uses `django-bmemcached`_, which expects the following environment
 variables from the cache add-on:
 
@@ -262,8 +297,8 @@ variables from the cache add-on:
 
 .. _django-bmemcached: https://github.com/jaysonsantos/python-binary-memcached
 
-RabbitMQ Add-ons
-~~~~~~~~~~~~~~~~
+RabbitMQ Add-on
+~~~~~~~~~~~~~~~
 Similar to the cache add-ons, Pontoon expects environment variables from the
 RabbitMQ add-on:
 
@@ -306,6 +341,8 @@ notifications are sent again. The command is designed to run daily.
 .. code-block:: bash
 
    ./manage.py send_deadline_notifications
+
+.. _collect-insights:
 
 Collect Insights
 ~~~~~~~~~~~~~~~~

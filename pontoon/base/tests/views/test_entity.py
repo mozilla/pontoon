@@ -36,9 +36,9 @@ def test_view_entity_inplace_mode(
     )
     assert response.status_code == 200
     assert json.loads(response.content)["has_next"] is False
-    assert sorted(
-        [e["pk"] for e in json.loads(response.content)["entities"]]
-    ) == sorted(entities_pks)
+    assert sorted(e["pk"] for e in json.loads(response.content)["entities"]) == sorted(
+        entities_pks
+    )
 
 
 @pytest.mark.django_db
@@ -66,9 +66,7 @@ def test_view_entity_filters(member, resource_a, locale_a):
             params["extra"] = filter_
         else:
             params["status"] = filter_
-        patched_entity = patch(
-            "pontoon.base.models.Entity.objects.{}".format(filter_name)
-        )
+        patched_entity = patch(f"pontoon.base.models.Entity.objects.{filter_name}")
         with patched_entity as m:
             m.return_value = getattr(Entity.objects, filter_name)(locale_a)
             member.client.post(

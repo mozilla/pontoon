@@ -1,10 +1,14 @@
 import json
 import logging
-import requests
-
+import operator
 from collections import defaultdict
+from functools import reduce
 
+import Levenshtein
+import requests
 from django.conf import settings
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 import pontoon.base as base
 
@@ -34,13 +38,14 @@ def get_google_translate_data(text, locale_code):
 
     try:
         r = requests.post(url, params=payload)
+        r.raise_for_status()
         root = json.loads(r.content)
 
         if "data" not in root:
-            log.error("Google Translate error: {error}".format(error=root))
+            log.error(f"Google Translate error: {root}")
             return {
                 "status": False,
-                "message": "Bad Request: {error}".format(error=root),
+                "message": f"Bad Request: {root}",
             }
 
         return {
@@ -49,11 +54,51 @@ def get_google_translate_data(text, locale_code):
         }
 
     except requests.exceptions.RequestException as e:
-        log.error("Google Translate error: {error}".format(error=e))
+        log.error(f"Google Translate error: {e}")
         return {
             "status": False,
-            "message": "Bad Request: {error}".format(error=e),
+            "message": f"{e}",
         }
+
+
+def get_concordance_search_data(text, locale):
+    search_phrases = base.utils.get_search_phrases(text)
+    search_filters = (
+        Q(
+            Q(target__icontains_collate=(phrase, locale.db_collation))
+            | Q(source__icontains=phrase),
+            locale=locale,
+        )
+        for phrase in search_phrases
+    )
+    search_query = reduce(operator.and_, search_filters)
+
+    search_results = (
+        base.models.TranslationMemoryEntry.objects.filter(search_query)
+        .values("source", "target")
+        .annotate(project_names=ArrayAgg("project__name", distinct=True))
+        .distinct()
+    )
+
+    def sort_by_quality(entity):
+        """Sort the results by their best Levenshtein distance from the search query"""
+        return (
+            max(
+                int(
+                    round(
+                        Levenshtein.ratio(text.lower(), entity["target"].lower()) * 100
+                    )
+                ),
+                int(
+                    round(
+                        Levenshtein.ratio(text.lower(), entity["source"].lower()) * 100
+                    )
+                ),
+            ),
+            len(entity["project_names"]),
+        )
+
+    return sorted(search_results, key=sort_by_quality, reverse=True)
 
 
 def get_translation_memory_data(text, locale, pk=None):

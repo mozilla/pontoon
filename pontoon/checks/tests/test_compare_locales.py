@@ -1,4 +1,3 @@
-# coding: utf-8
 import os
 
 from textwrap import dedent
@@ -20,7 +19,7 @@ def mock_quality_check_args(
     translation="",
     resource_entities=None,
     resource_path=None,
-    **entity_data
+    **entity_data,
 ):
     """
     Generate a dictionary of arguments ready to use by get_quality_check
@@ -32,7 +31,7 @@ def mock_quality_check_args(
         entity.resource.path = resource_path
         entity.resource.format = os.path.splitext(resource_path)[1][1:]
     else:
-        entity.resource.path = "resource1.{}".format(resource_ext)
+        entity.resource.path = f"resource1.{resource_ext}"
         entity.resource.format = resource_ext
     entity.comment = ""
     res_entities = []
@@ -152,15 +151,15 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
             translation="Allizom",
         ),
         mock_quality_check_args(
-            resource_ext="properties", string=u"モジラ", translation=u"モジラ translation",
+            resource_ext="properties", string="モジラ", translation="モジラ translation",
         ),
         mock_quality_check_args(
-            resource_ext="dtd", string=u"モジラ", translation=u"モジラ translation",
+            resource_ext="dtd", string="モジラ", translation="モジラ translation",
         ),
         mock_quality_check_args(
             resource_ext="ftl",
-            string=u"entity = モジラ",
-            translation=u"entity = モジラ translation",
+            string="entity = モジラ",
+            translation="entity = モジラ translation",
         ),
     ),
 )
@@ -181,7 +180,7 @@ def test_valid_translations(quality_check_args):
                 translation="%d Bar %d foo %d \\q %",
             ),
             {
-                "clWarnings": [u"unknown escape sequence, \\q"],
+                "clWarnings": ["unknown escape sequence, \\q"],
                 "clErrors": ["Found single %"],
             },
         ),
@@ -236,8 +235,8 @@ def test_invalid_properties_translations(quality_check_args, failed_checks):
             ),
             {
                 "clWarnings": [
-                    u"Referencing unknown entity `NonExistingKey`"
-                    u" (aa used in context, validProductName known)",
+                    "Referencing unknown entity `NonExistingKey`"
+                    " (aa used in context, validProductName known)",
                 ],
             },
         ),

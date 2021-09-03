@@ -31,8 +31,13 @@
     {% include "tracker.html" %}
   </head>
 
-  <body class="{% block class %}{% endblock %}">
+  <body
+    class="{% block class %}{% endblock %}"
+    {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+  >
     {% block content %}
+
+      {% include "addon_promotion.html" %}
 
       {% include "header.html" %}
 

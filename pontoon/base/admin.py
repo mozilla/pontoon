@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
+from django.utils.html import format_html
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models
@@ -54,7 +55,7 @@ class UserAdmin(AuthUserAdmin):
         """
         Save a user and log changes in its roles.
         """
-        super(UserAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
         # Users can only be moved between groups upon editing, not creation
         if "groups" in form.cleaned_data:
@@ -101,7 +102,7 @@ class UserAdmin(AuthUserAdmin):
         Term.objects.filter(created_by=obj).update(created_by=new_user)
         models.Comment.objects.filter(author=obj).update(author=new_user)
 
-        super(UserAdmin, self).delete_model(request, obj)
+        super().delete_model(request, obj)
 
     # This method is to override bulk delete method from the user list page
     def delete_queryset(self, request, queryset):
@@ -144,10 +145,10 @@ class LocaleAdminForm(ModelForm):
         with connection.cursor() as cursor:
             cursor.execute("SELECT collname, collcollate  FROM pg_collation")
             rows = cursor.fetchall()
-            return ((name, "{} ({})".format(name, collate)) for name, collate in rows)
+            return ((name, f"{name} ({collate})") for name, collate in rows)
 
     def __init__(self, *args, **kwargs):
-        super(LocaleAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["db_collation"].choices = self.db_collations_choices
         self.fields["db_collation"].help_text = self._meta.model._meta.get_field(
             "db_collation"
@@ -236,16 +237,13 @@ class ProjectAdmin(admin.ModelAdmin):
     )
     ordering = ("disabled",)
 
+    @admin.display(ordering="contact__first_name")
     def contact_person(self, obj):
         return obj.contact.name_or_email if obj.contact else "-"
 
-    contact_person.admin_order_field = "contact__first_name"
-
+    @admin.display(boolean=True, ordering="disabled")
     def enabled(self, obj):
         return not obj.disabled
-
-    enabled.boolean = True
-    enabled.admin_order_field = "disabled"
 
     fieldsets = (
         (
@@ -280,6 +278,12 @@ class ProjectAdmin(admin.ModelAdmin):
         RepositoryInline,
         ExternalProjectResourceInline,
     )
+
+
+class ProjectLocaleAdmin(admin.ModelAdmin):
+    search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
+    list_display = ("pk", "project", "locale", "readonly")
+    ordering = ("-pk",)
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -346,27 +350,28 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
             args=(user_pk,),
         )
 
+    @admin.display(description="Performed on")
     def performed_on_email(self, obj):
-        return '<a href="{}">{}</a>'.format(
-            self.get_user_edit_url(obj.performed_on_id), obj.performed_on.email
+        return format_html(
+            '<a href="{}">{}</a>',
+            self.get_user_edit_url(obj.performed_on_id),
+            obj.performed_on.email,
         )
 
-    performed_on_email.short_description = "Performed on"
-    performed_on_email.allow_tags = True
-
+    @admin.display(description="Performed by")
     def performed_by_email(self, obj):
-        return '<a href="{}">{}</a>'.format(
-            self.get_user_edit_url(obj.performed_by_id), obj.performed_by.email
+        return format_html(
+            '<a href="{}">{}</a>',
+            self.get_user_edit_url(obj.performed_by_id),
+            obj.performed_by.email,
         )
-
-    performed_by_email.short_description = "Performed by"
-    performed_by_email.allow_tags = True
 
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(models.Locale, LocaleAdmin)
 admin.site.register(models.Project, ProjectAdmin)
+admin.site.register(models.ProjectLocale, ProjectLocaleAdmin)
 admin.site.register(models.Resource, ResourceAdmin)
 admin.site.register(models.TranslatedResource, TranslatedResourceAdmin)
 admin.site.register(models.Entity, EntityAdmin)

@@ -17,16 +17,12 @@
 }
 
 .user-notification.read {
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-name: fadeout-background;
 }
 
 @keyframes fadeout-background {
     0% {
-        background: #3f4752;
-    }
-
-    50% {
         background: #3f4752;
     }
 
@@ -41,6 +37,7 @@
 }
 
 .user-notification span {
+    color: #ebebeb;
     float: none;
 }
 
@@ -60,9 +57,21 @@
 
 .user-notification .message.trim,
 .user-notification .message.trim p {
+    pointer-events: none;
+    color: #aaaaaa;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.user-notification .item-content:hover .message,
+.user-notification .item-content:hover .message.trim p,
+.user-notification .item-content:hover .message.trim a {
+    color: #ebebeb;
+}
+
+.user-notification .message.trim a {
+    color: #aaaaaa;
 }
 
 .user-notification .message.trim p {
