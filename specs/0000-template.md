@@ -1,6 +1,6 @@
 - Feature Name: Name Of The Feature
 - Created: YYYY-MM-DD
-- Associated Issue: https://github.com/mozilla/pontoon/issues/ISSUE-ID
+- Associated Issue: #ISSUE-ID
 
 # Summary
 
