@@ -174,26 +174,15 @@ are where you should introduce yourself, ask questions, show your work,
 etc.
 
 Pontoon's core developer team is currently composed of Matjaž and
-Adrian, with occasional help from other members of Mozilla's L10n team,
-Axel and Staś. We also receive invaluable help from community members.
+Eemeli. We also regularly receive invaluable help from community members.
 
 +------------+----------+--------------------------+------------------+-----------------------------------------------+
 |            | Name     | ROLE                     | chat.mozilla.org | github                                        |
 +============+==========+==========================+==================+===============================================+
-| |image4|   | Matjaž   | Pontoon Core Developer   | mathjazz         | `mathjazz <https://github.com/mathjazz/>`_    |
+| |image0|   | Matjaž   | Pontoon Core Developer   | mathjazz         | `mathjazz <https://github.com/mathjazz/>`_    |
 +------------+----------+--------------------------+------------------+-----------------------------------------------+
-| |image5|   | Adrian   | Pontoon Core Developer   | adrian           | `adngdb <https://github.com/adngdb/>`_        |
-+------------+----------+--------------------------+------------------+-----------------------------------------------+
-| |image6|   | Axel     | L10n Tech Lead           | Pike             | `Pike <https://github.com/Pike/>`_            |
-+------------+----------+--------------------------+------------------+-----------------------------------------------+
-| |image7|   | Staś     | Fluent Core Developer    | stas             | `stasm <https://github.com/stasm/>`_          |
+| |image1|   | Eemeli   | Pontoon Core Developer   | eemeli           | `eemeli <https://github.com/eemeli/>`_        |
 +------------+----------+--------------------------+------------------+-----------------------------------------------+
 
 .. |image0| image:: https://avatars2.githubusercontent.com/u/626716?s=32&v=4
-.. |image1| image:: https://avatars1.githubusercontent.com/u/328790?s=32&v=4
-.. |image2| image:: https://avatars3.githubusercontent.com/u/43494?s=32&v=4
-.. |image3| image:: https://avatars2.githubusercontent.com/u/265818?s=32&v=4
-.. |image4| image:: https://avatars2.githubusercontent.com/u/626716?s=32&v=4
-.. |image5| image:: https://avatars1.githubusercontent.com/u/328790?s=32&v=4
-.. |image6| image:: https://avatars3.githubusercontent.com/u/43494?s=32&v=4
-.. |image7| image:: https://avatars2.githubusercontent.com/u/265818?s=32&v=4
+.. |image1| image:: https://avatars3.githubusercontent.com/u/617000?s=32&v=4
