@@ -11,15 +11,14 @@
         "chat": "https://chat.mozilla.org/#/room/#pontoon:mozilla.org",
         "chat-contacts": [
             "mathjazz",
-            "adrian",
-            "Pike"
+            "eemeli"
         ],
         "mailing-list": "https://discourse.mozilla.org/c/pontoon"
     },
     "bugs": {
-        "list": "https://bugzilla.mozilla.org/buglist.cgi?product=Webtools&component=Pontoon",
-        "report": "https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon",
-        "mentored": "https://bugzilla.mozilla.org/buglist.cgi?f1=bug_mentor&o1=isnotempty&query_format=advanced&bug_status=NEW&product=Webtools&component=Pontoon"
+        "list": "https://github.com/mozilla/pontoon/issues",
+        "report": "https://github.com/mozilla/pontoon/issues/new",
+        "mentored": "https://github.com/mozilla/pontoon/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"
     },
     "urls": {
         "prod": "https://pontoon.mozilla.org",

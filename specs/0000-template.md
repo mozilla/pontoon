@@ -1,6 +1,6 @@
 - Feature Name: Name Of The Feature
 - Created: YYYY-MM-DD
-- Associated Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=BUG-ID
+- Associated Issue: #ISSUE-ID
 
 # Summary
 
@@ -14,7 +14,7 @@ Explain the rationale for developing the new feature — what value does it prov
 
 A general explanation of a feature written from the perspective of the end user. Define user interface and user interactions precisely enough for developers to be able to start coding.
 
-This section also provides a concise technical specification, but keep in mind that once the specification is approved, bugs will be filed with all implementation details.
+This section also provides a concise technical specification, but keep in mind that once the specification is approved, issues will be filed with all the implementation details.
 
 Note that we use present simple tense across the entire specification.
 
