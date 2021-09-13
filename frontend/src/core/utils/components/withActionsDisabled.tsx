@@ -1,5 +1,5 @@
 // @ts-nocheck
-// bug 1710215
+// https://github.com/mozilla/pontoon/issues/2292
 import { $Diff } from 'utility-types';
 import * as React from 'react';
 
