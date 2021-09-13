@@ -13,7 +13,7 @@ https://github.com/mozilla/pontoon
 Issues
 ======
 
-All bugs and ideas are tracked in `GitHub <https://github.com/mozilla/pontoon/issues>`_.
+Our work is tracked in `GitHub <https://github.com/mozilla/pontoon/issues>`_.
 
 Report a `new issue <https://github.com/mozilla/pontoon/issues/new>`_:
 
