@@ -10,12 +10,12 @@ import { withSearch } from 'modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 
-// @ts-ignore: bug 1712442.
+// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesDiff = withDiff(
     WithPlaceablesForFluentNoLeadingSpace,
 );
 
-// @ts-ignore: bug 1712442.
+// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesSearch = withSearch(
     WithPlaceablesForFluentNoLeadingSpace,
 );

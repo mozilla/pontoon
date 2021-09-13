@@ -4,10 +4,10 @@ import { withDiff } from 'core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
 import { withSearch } from 'modules/search';
 
-// @ts-ignore: bug 1712442.
+// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 
-// @ts-ignore: bug 1712442.
+// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {

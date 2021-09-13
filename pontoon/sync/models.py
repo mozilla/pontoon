@@ -55,7 +55,7 @@ class SyncLog(BaseLog):
     def fix_stats(self):
         """
         Recalculate any broken stats when sync task is finished. This is a
-        temporary fix for bug 1310668.
+        temporary fix for https://github.com/mozilla/pontoon/issues/2040.
         """
         if not self.finished:
             return
