@@ -10,14 +10,12 @@ Pontoon source code is available via GitHub:
 https://github.com/mozilla/pontoon
 
 
-Bugs
-====
+Issues
+======
 
-All bugs are tracked in `<https://bugzilla.mozilla.org/>`_.
+Our work is tracked in `GitHub <https://github.com/mozilla/pontoon/issues>`_.
 
-Write up a new bug:
-
-https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon
+Report a `new issue <https://github.com/mozilla/pontoon/issues/new>`_:
 
 
 Docker
@@ -159,14 +157,15 @@ Git conventions
 
 The first line is a summary of the commit. It should start with one of the following::
 
-    Fix bug XXXXXXX
+    Fix #1234
 
 or::
 
-    Bug XXXXXXX
+    #1234
 
 
-The first, when it lands, will cause the bug to be closed. The second one does not.
+The first, when it lands, will cause the issue to be closed. The second one just adds
+a cross-reference.
 
 After that, the commit should explain *why* the changes are being made and any
 notes that future readers should know for context or be aware of.
@@ -185,7 +184,7 @@ We follow `The seven rules of a great Git commit message <https://chris.beams.io
 Pull requests
 =============
 
-Pull request summary should indicate the bug the pull request addresses.
+Pull request summary should indicate the issue the pull request addresses.
 
 Pull request descriptions should cover at least some of the following:
 
