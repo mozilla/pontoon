@@ -50,7 +50,7 @@
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(project) }}
+    {{ HeadingInfo.progress_chart_legend(chart) }}
   </div>
 </section>
 {% endblock %}
@@ -64,7 +64,7 @@
           'Teams',
           url('pontoon.projects.project', project.slug),
           is_active = (current_page == ''),
-          count = project.locales.count(),
+          count = count,
           icon = 'folder',
         )
       }}
