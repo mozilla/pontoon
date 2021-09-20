@@ -171,35 +171,6 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     )
 
 
-def _get_all_entities(user, locale, preferred_source_locale, project, form, entities):
-    """Return entities without pagination.
-
-    This is used by the in-context mode of the Translate page.
-    """
-    has_next = False
-    entities_to_map = Entity.for_project_locale(
-        user,
-        project,
-        locale,
-        paths=form.cleaned_data["paths"],
-        exclude_entities=form.cleaned_data["exclude_entities"],
-    )
-    visible_entities = entities.values_list("pk", flat=True)
-
-    return JsonResponse(
-        {
-            "entities": Entity.map_entities(
-                locale, preferred_source_locale, entities_to_map, visible_entities,
-            ),
-            "has_next": has_next,
-            "stats": TranslatedResource.objects.stats(
-                project, form.cleaned_data["paths"], locale
-            ),
-        },
-        safe=False,
-    )
-
-
 def _get_paginated_entities(locale, preferred_source_locale, project, form, entities):
     """Return a paginated list of entities.
 
@@ -297,12 +268,6 @@ def entities(request):
     # Only return a list of entity PKs (batch editing: select all)
     if form.cleaned_data["pk_only"]:
         return JsonResponse({"entity_pks": list(entities.values_list("pk", flat=True))})
-
-    # In-place view: load all entities
-    if form.cleaned_data["inplace_editor"]:
-        return _get_all_entities(
-            request.user, locale, preferred_source_locale, project, form, entities
-        )
 
     # Out-of-context view: paginate entities
     return _get_paginated_entities(
