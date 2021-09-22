@@ -24,6 +24,13 @@ $(function () {
                 return;
             }
 
+            // Filtered teams are only supported by the Teams tab, so we need to drop them
+            // when switching to other tabs and update stats in the heading section by
+            // reloading the page
+            if (new URLSearchParams(window.location.search).get('teams')) {
+                return;
+            }
+
             e.preventDefault();
 
             var url = $(this).attr('href');

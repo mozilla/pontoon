@@ -1617,6 +1617,16 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
+    def aggregated_stats(self):
+        return self.aggregate(
+            total_strings=Sum("total_strings"),
+            approved_strings=Sum("approved_strings"),
+            fuzzy_strings=Sum("fuzzy_strings"),
+            strings_with_errors=Sum("strings_with_errors"),
+            strings_with_warnings=Sum("strings_with_warnings"),
+            unreviewed_strings=Sum("unreviewed_strings"),
+        )
+
     def visible_for(self, user):
         """
         Filter project locales by the visibility of their projects.
