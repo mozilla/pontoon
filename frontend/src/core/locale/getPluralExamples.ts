@@ -24,17 +24,21 @@ export default function getPluralExamples(
         examples[locale.cldrPlurals[0]] = 1;
         examples[locale.cldrPlurals[1]] = 2;
     } else {
-        // This variable is used in the pluralRule we eval in the while block.
+        const getRule = new Function('n', `return ${locale.pluralRule}`) as (
+            n: number,
+        ) => number | boolean;
         let n = 0;
         while (Object.keys(examples).length < pluralsCount) {
-            // This `eval` is not so much evil. The pluralRule we parse
-            // comes from our database and is not a user input.
-            // eslint-disable-next-line
-            const rule = eval(locale.pluralRule);
-            if (!examples[locale.cldrPlurals[rule]]) {
-                examples[locale.cldrPlurals[rule]] = n;
+            const rule = locale.cldrPlurals[Number(getRule(n))];
+            if (!examples[rule]) {
+                examples[rule] = n;
             }
             n++;
+            // Protection against infinite loop
+            if (n === 1000) {
+                console.error('Unable to generate plural examples.');
+                break;
+            }
         }
     }
 

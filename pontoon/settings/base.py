@@ -297,6 +297,7 @@ PIPELINE_CSS = {
             "css/sidebar_menu.css",
             "css/multiple_team_selector.css",
             "css/manual_notifications.css",
+            "css/insights.css",
         ),
         "output_filename": "css/project.min.css",
     },
@@ -413,6 +414,7 @@ PIPELINE_JS = {
     },
     "project": {
         "source_filenames": (
+            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/request.js",
             "js/progress-chart.js",
@@ -420,6 +422,7 @@ PIPELINE_JS = {
             "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
             "js/manual_notifications.js",
+            "js/insights.js",
         ),
         "output_filename": "js/project.min.js",
     },
@@ -706,8 +709,9 @@ USE_L10N = False
 # See bug 1567402 for details. A Mozilla-specific variable.
 ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
 
-# Enable Insights tab on the team pages, which presents data that needs to be
-# collected by a scheduled job. See docs/admin/deployment.rst for more information.
+# Enable Insights tab on the locale and project pages,
+# which presents data that needs to be collected by a scheduled job.
+# See docs/admin/deployment.rst for more information.
 ENABLE_INSIGHTS_TAB = os.environ.get("ENABLE_INSIGHTS_TAB", "False") != "False"
 
 # Bleach tags and attributes

@@ -1,4 +1,5 @@
 var Pontoon = (function (my) {
+    const nf = new Intl.NumberFormat('en');
     return $.extend(true, my, {
         insights: {
             initialize: function () {
@@ -101,6 +102,7 @@ var Pontoon = (function (my) {
             },
             renderUnreviewedSuggestionsLifespan: function () {
                 var chart = $('#unreviewed-suggestions-lifespan-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 160);
@@ -139,9 +141,8 @@ var Pontoon = (function (my) {
                             yPadding: 10,
                             displayColors: false,
                             callbacks: {
-                                label: function (tooltipItem) {
-                                    return tooltipItem.value + ' days';
-                                },
+                                label: (item) =>
+                                    nf.format(item.value) + ' days',
                             },
                         },
                         scales: {
@@ -184,11 +185,16 @@ var Pontoon = (function (my) {
             },
             renderTranslationActivity: function () {
                 var chart = $('#translation-activity-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#7BC87633');
                 gradient.addColorStop(1, 'transparent');
+
+                var humanData = chart.data('human-translations') || [];
+                var machineryData = chart.data('machinery-translations') || [];
+                var newSourcesData = chart.data('new-source-strings') || [];
 
                 var translationActivityChart = new Chart(chart, {
                     type: 'bar',
@@ -210,30 +216,30 @@ var Pontoon = (function (my) {
                                 pointHoverBackgroundColor: '#7BC876',
                                 pointHoverBorderColor: '#FFF',
                             },
-                            {
+                            humanData.length > 0 && {
                                 type: 'bar',
                                 label: 'Human translations',
-                                data: chart.data('human-translations'),
+                                data: humanData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#4f7256',
                                 hoverBackgroundColor: '#4f7256',
                                 stack: 'translations',
                                 order: 2,
                             },
-                            {
+                            machineryData.length > 0 && {
                                 type: 'bar',
                                 label: 'Machinery translations',
-                                data: chart.data('machinery-translations'),
+                                data: machineryData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#41554c',
                                 hoverBackgroundColor: '#41554c',
                                 stack: 'translations',
                                 order: 1,
                             },
-                            {
+                            newSourcesData.length > 0 && {
                                 type: 'bar',
                                 label: 'New source strings',
-                                data: chart.data('new-source-strings'),
+                                data: newSourcesData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#272a2f',
                                 hoverBackgroundColor: '#272a2f',
@@ -241,7 +247,7 @@ var Pontoon = (function (my) {
                                 order: 3,
                                 hidden: true,
                             },
-                        ],
+                        ].filter(Boolean), // Filter out empty values
                     },
                     options: {
                         legend: {
@@ -268,48 +274,33 @@ var Pontoon = (function (my) {
                                 }
                             },
                             callbacks: {
-                                label: function (tooltipItems, chart) {
-                                    var label =
-                                        chart.datasets[
-                                            tooltipItems.datasetIndex
-                                        ].label;
-                                    var value = tooltipItems.yLabel;
+                                label: function (items, chart) {
+                                    const human =
+                                        chart.datasets[1].data[items.index];
+                                    const machinery =
+                                        chart.datasets[2].data[items.index];
 
-                                    var human =
-                                        chart.datasets[1].data[
-                                            tooltipItems.index
-                                        ];
-                                    var machinery =
-                                        chart.datasets[2].data[
-                                            tooltipItems.index
-                                        ];
-                                    var total = human + machinery;
+                                    const label =
+                                        chart.datasets[items.datasetIndex]
+                                            .label;
+                                    const value = items.yLabel;
+                                    const base =
+                                        label + ': ' + nf.format(value);
 
-                                    var suffix = '';
-
-                                    if (label === 'Completion') {
-                                        suffix = '%';
-                                    }
-                                    if (label === 'Human translations') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
+                                    switch (label) {
+                                        case 'Completion':
+                                            return base + '%';
+                                        case 'Human translations':
+                                        case 'Machinery translations': {
+                                            const pct = Pontoon.insights.getPercent(
                                                 value,
-                                                total,
-                                            ) +
-                                            '% of all translations)';
+                                                human + machinery,
+                                            );
+                                            return `${base} (${pct} of all translations)`;
+                                        }
+                                        default:
+                                            return base;
                                     }
-                                    if (label === 'Machinery translations') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
-                                                value,
-                                                total,
-                                            ) +
-                                            '% of all translations)';
-                                    }
-
-                                    return label + ': ' + value + suffix;
                                 },
                             },
                         },
@@ -389,11 +380,18 @@ var Pontoon = (function (my) {
             },
             renderReviewActivity: function () {
                 var chart = $('#review-activity-chart');
+                if (chart.length === 0) return;
                 var ctx = chart[0].getContext('2d');
 
                 var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#4fc4f688');
                 gradient.addColorStop(1, 'transparent');
+
+                var unreviewedData = chart.data('unreviewed') || [];
+                var peerApprovedData = chart.data('peer-approved') || [];
+                var selfApprovedData = chart.data('self-approved') || [];
+                var rejectedData = chart.data('rejected') || [];
+                var newSuggestionsData = chart.data('new-suggestions') || [];
 
                 var reviewActivityChart = new Chart(chart, {
                     type: 'bar',
@@ -403,7 +401,7 @@ var Pontoon = (function (my) {
                             {
                                 type: 'line',
                                 label: 'Unreviewed',
-                                data: chart.data('unreviewed'),
+                                data: unreviewedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
@@ -415,37 +413,37 @@ var Pontoon = (function (my) {
                                 pointHoverBackgroundColor: '#4fc4f6',
                                 pointHoverBorderColor: '#FFF',
                             },
-                            {
+                            peerApprovedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Peer-approved',
-                                data: chart.data('peer-approved'),
+                                data: peerApprovedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#3e7089',
                                 hoverBackgroundColor: '#3e7089',
                                 stack: 'review-actions',
                                 order: 3,
                             },
-                            {
+                            selfApprovedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Self-approved',
-                                data: chart.data('self-approved'),
+                                data: selfApprovedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#385465',
                                 hoverBackgroundColor: '#385465',
                                 stack: 'review-actions',
                                 order: 2,
                             },
-                            {
+                            rejectedData.length > 0 && {
                                 type: 'bar',
                                 label: 'Rejected',
-                                data: chart.data('rejected'),
+                                data: rejectedData,
                                 yAxisID: 'strings-y-axis',
                                 backgroundColor: '#843650',
                                 hoverBackgroundColor: '#843650',
                                 stack: 'review-actions',
                                 order: 1,
                             },
-                            {
+                            newSuggestionsData.length > 0 && {
                                 type: 'bar',
                                 label: 'New suggestions',
                                 data: chart.data('new-suggestions'),
@@ -456,7 +454,7 @@ var Pontoon = (function (my) {
                                 order: 4,
                                 hidden: true,
                             },
-                        ],
+                        ].filter(Boolean), // Filter out empty values
                     },
                     options: {
                         legend: {
@@ -487,61 +485,42 @@ var Pontoon = (function (my) {
                                 }
                             },
                             callbacks: {
-                                label: function (tooltipItems, chart) {
-                                    var label =
-                                        chart.datasets[
-                                            tooltipItems.datasetIndex
-                                        ].label;
-                                    var value = tooltipItems.yLabel;
+                                label: function (items, chart) {
+                                    const label =
+                                        chart.datasets[items.datasetIndex]
+                                            .label;
+                                    const value = items.yLabel;
+                                    const base =
+                                        label + ': ' + nf.format(value);
 
-                                    var peerApproved =
-                                        chart.datasets[1].data[
-                                            tooltipItems.index
-                                        ];
-                                    var selfApproved =
-                                        chart.datasets[2].data[
-                                            tooltipItems.index
-                                        ];
-                                    var rejecetd =
-                                        chart.datasets[3].data[
-                                            tooltipItems.index
-                                        ];
-                                    var totalPeerReviews =
-                                        peerApproved + rejecetd;
-                                    var totalApprovals =
-                                        peerApproved + selfApproved;
+                                    if (chart.datasets.length < 4) return base;
 
-                                    var suffix = '';
+                                    const peerApproved =
+                                        chart.datasets[1].data[items.index];
+                                    const selfApproved =
+                                        chart.datasets[2].data[items.index];
+                                    const rejected =
+                                        chart.datasets[3].data[items.index];
 
-                                    if (label === 'Peer-approved') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
+                                    switch (label) {
+                                        case 'Self-approved': {
+                                            const pct = Pontoon.insights.getPercent(
                                                 value,
-                                                totalPeerReviews,
-                                            ) +
-                                            '% of peer-reviews)';
-                                    }
-                                    if (label === 'Self-approved') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
+                                                peerApproved + selfApproved,
+                                            );
+                                            return `${base} (${pct} of all approvals)`;
+                                        }
+                                        case 'Peer-approved':
+                                        case 'Rejected': {
+                                            const pct = Pontoon.insights.getPercent(
                                                 value,
-                                                totalApprovals,
-                                            ) +
-                                            '% of all approvals)';
+                                                peerApproved + rejected,
+                                            );
+                                            return `${base} (${pct} of peer-reviews)`;
+                                        }
+                                        default:
+                                            return base;
                                     }
-                                    if (label === 'Rejected') {
-                                        suffix =
-                                            ' (' +
-                                            Pontoon.insights.getPercent(
-                                                value,
-                                                totalPeerReviews,
-                                            ) +
-                                            '% of peer-reviews)';
-                                    }
-
-                                    return label + ': ' + value + suffix;
                                 },
                             },
                         },
@@ -598,15 +577,16 @@ var Pontoon = (function (my) {
                     '#review-activity-chart-legend .label',
                 );
             },
-            // Safely divide value by total, convert to percent
-            // and round to max. 2 decimals
-            getPercent: function (value, total) {
-                if (total !== 0) {
-                    return +parseFloat((value / total) * 100).toFixed(2);
-                }
 
-                return 0;
+            getPercent: function (value, total) {
+                const pf = new Intl.NumberFormat('en', {
+                    style: 'percent',
+                    maximumFractionDigits: 2,
+                });
+                const n = value / total;
+                return pf.format(isFinite(n) ? n : 0);
             },
+
             // Legend configuration doesn't allow for enough flexibility,
             // so we build our own legend
             // eslint-disable-next-line no-unused-vars

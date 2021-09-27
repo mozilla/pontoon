@@ -40,6 +40,19 @@ def test_project_view(client, project_a, resource_a):
 
 
 @pytest.mark.django_db
+def test_project_view_filtered_teams(
+    client, locale_a, project_a, project_locale_a, resource_a
+):
+    """
+    Checks if project page is returned properly with filtered teams.
+    """
+    with patch("pontoon.projects.views.render", wraps=render) as mock_render:
+        client.get(f"/projects/{project_a.slug}/?teams={locale_a.code}")
+        assert mock_render.call_args[0][2]["project"] == project_a
+        assert mock_render.call_args[0][2]["count"] == 1
+
+
+@pytest.mark.django_db
 def test_project_top_contributors(client, project_a, project_b):
     """
     Tests if view returns top contributors specific for given project.

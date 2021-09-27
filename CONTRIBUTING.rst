@@ -10,14 +10,12 @@ Pontoon source code is available via GitHub:
 https://github.com/mozilla/pontoon
 
 
-Bugs
-====
+Issues
+======
 
-All bugs are tracked in `<https://bugzilla.mozilla.org/>`_.
+Our work is tracked in `GitHub <https://github.com/mozilla/pontoon/issues>`_.
 
-Write up a new bug:
-
-https://bugzilla.mozilla.org/enter_bug.cgi?product=Webtools&component=Pontoon
+Report a `new issue <https://github.com/mozilla/pontoon/issues/new>`_:
 
 
 Docker
@@ -72,17 +70,14 @@ you can start an interactive shell inside a Pontoon container:
 Browser Support
 ===============
 
-The following is the `browser support matrix of Pontoon <https://browserl.ist/?q=Firefox+%3E%3D+52%2C+FirefoxAndroid+%3E%3D+52%2C+Chrome+%3E%3D+55%2C+ChromeAndroid+%3E%3D+55%2C+Edge+%3E%3D+15%2C+Safari+%3E%3D+10.1%2C+iOS+%3E%3D+10.3>`_:
+The list of browsers supported by Pontoon is defined in the `"browserslist"` entry of the root package.json, and contains by default:
 
 .. code-block:: bash
 
-    Firefox >= 52,
-    FirefoxAndroid >= 52,
-    Chrome >= 57,
-    ChromeAndroid >= 57,
-    Edge >= 16,
-    Safari >= 10.1,
-    iOS >= 10.3
+    Firefox >= 78
+    Chrome >= 80
+    Edge >= 91
+    Safari >= 13.1
 
 
 Code style
@@ -162,14 +157,15 @@ Git conventions
 
 The first line is a summary of the commit. It should start with one of the following::
 
-    Fix bug XXXXXXX
+    Fix #1234
 
 or::
 
-    Bug XXXXXXX
+    #1234
 
 
-The first, when it lands, will cause the bug to be closed. The second one does not.
+The first, when it lands, will cause the issue to be closed. The second one just adds
+a cross-reference.
 
 After that, the commit should explain *why* the changes are being made and any
 notes that future readers should know for context or be aware of.
@@ -188,7 +184,7 @@ We follow `The seven rules of a great Git commit message <https://chris.beams.io
 Pull requests
 =============
 
-Pull request summary should indicate the bug the pull request addresses.
+Pull request summary should indicate the issue the pull request addresses.
 
 Pull request descriptions should cover at least some of the following:
 

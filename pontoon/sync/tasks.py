@@ -204,7 +204,7 @@ def sync_translations(
     ).distinct()
 
     # We should also sync files for which source file change - but only for read-only locales.
-    # See bug 1372151 for more details.
+    # See https://github.com/mozilla/pontoon/issues/2068 for more details.
     if added_and_changed_resources:
         changed_locales_pks = [l.pk for l in locales]
         readonly_locales_pks = [l.pk for l in readonly_locales]

@@ -118,10 +118,10 @@ class XLIFFResource(ParsedResource):
         if locale_code in locale_mapping:
             locale_code = locale_mapping[locale_code]
 
-        # Update target-language where necessary.
+        # Set target-language if not set
         file_node = self.xliff_file.namespaced("file")
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            if node.get("target-language"):
+            if not node.get("target-language"):
                 node.set("target-language", locale_code)
 
         with open(self.path, "wb") as f:

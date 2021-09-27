@@ -737,8 +737,8 @@ class Locale(AggregatedStats):
         validators=[validate_cldr],
         help_text="""
         A comma separated list of
-        <a href="http://www.unicode.org/cldr/charts/dev/supplemental/language_plural_rules.html">
-        CLDR plural rules</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
+        <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html">
+        CLDR plural categories</a>, where 0 represents zero, 1 one, 2 two, 3 few, 4 many, and 5 other.
         E.g. 1,5
         """,
     )
@@ -1617,6 +1617,16 @@ class ExternalResource(models.Model):
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
+    def aggregated_stats(self):
+        return self.aggregate(
+            total_strings=Sum("total_strings"),
+            approved_strings=Sum("approved_strings"),
+            fuzzy_strings=Sum("fuzzy_strings"),
+            strings_with_errors=Sum("strings_with_errors"),
+            strings_with_warnings=Sum("strings_with_warnings"),
+            unreviewed_strings=Sum("unreviewed_strings"),
+        )
+
     def visible_for(self, user):
         """
         Filter project locales by the visibility of their projects.
