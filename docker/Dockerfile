@@ -5,6 +5,7 @@ COPY frontend/package.json frontend/yarn.lock ./
 RUN yarn install
 COPY frontend/ .
 RUN yarn build
+CMD ["yarn", "start"]
 
 FROM python:3.9-bullseye AS server
 

@@ -6,7 +6,8 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: ./docker/frontend/Dockerfile
+      dockerfile: ./docker/Dockerfile
+      target: frontend
     image: local/pontoon-frontend
     ports:
       - "3000:3000"
@@ -18,6 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+      target: server
     image: local/pontoon
     env_file:
       - docker/config/server.env
