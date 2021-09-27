@@ -890,6 +890,11 @@ header .right .select .menu {
     color: #ebebeb;
 }
 
+.notifications .menu li.notification-item .verb ul {
+    list-style: inside;
+    padding-top: 10px;
+}
+
 .notifications .menu li.notification-item .message {
     padding: 10px;
 }
@@ -999,7 +1004,7 @@ header .right .select .menu {
     padding-top: 4px;
 }
 
-#notifications .menu li > a,
+#notifications .menu .see-all > a,
 .notifications .menu li > .item-content {
     display: block;
     padding: 10px;

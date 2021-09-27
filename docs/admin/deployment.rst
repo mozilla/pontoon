@@ -342,6 +342,18 @@ notifications are sent again. The command is designed to run daily.
 
    ./manage.py send_deadline_notifications
 
+Send Suggestion Notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends notifications about newly created unreviewed suggestions that
+were submitted, unapproved or unrejected in the last 24 hours. Recipients of
+notifications are users with permission to review them, as well as authors of
+any previous translations or comments of the same string. The command is
+designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_suggestion_notifications
+
 .. _collect-insights:
 
 Collect Insights
