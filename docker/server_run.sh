@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Prepares then runs the webapp.
+# Prepares then runs the server
 
 echo ">>> Setting up the db for Django"
 python manage.py migrate

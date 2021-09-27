@@ -10,21 +10,21 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-webapp webapp-env setup run clean shell test test-webapp test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell test test-server test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
 	@echo "The list of commands for local development:\n"
 	@echo "  build            Builds the docker images for the docker-compose setup"
 	@echo "  build-frontend   Builds just the frontend image"
-	@echo "  build-webapp     Builds just the Django webapp image"
-	@echo "  webapp-env       Regenerates the env variable file used by webapp"
+	@echo "  build-server     Builds just the Django server image"
+	@echo "  server-env       Regenerates the env variable file used by server"
 	@echo "  setup            Configures a local instance after a fresh build"
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
-	@echo "  shell            Opens a Bash shell in a webapp docker container"
+	@echo "  shell            Opens a Bash shell in a server docker container"
 	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-webapp      Runs the webapp test suite"
+	@echo "  test-server      Runs the server test suite"
 	@echo "  test-frontend    Runs the translate frontend test suite"
 	@echo "  jest             Runs the jest test runner on all frontend tests"
 	@echo "  pytest           Runs the backend's test suite (Python)"
@@ -45,59 +45,59 @@ help:
 
 .frontend-build:
 	make build-frontend
-.webapp-build:
-	make build-webapp
+.server-build:
+	make build-server
 
-build: build-frontend build-webapp
-build-frontend: webapp-env
+build: build-frontend build-server
+build-frontend: server-env
 	"${DC}" build frontend
 	touch .frontend-build
-build-webapp: webapp-env
-	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) webapp
-	touch .webapp-build
+build-server: server-env
+	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
+	touch .server-build
 
-webapp-env:
-	cp ./docker/config/webapp.env.template ./docker/config/webapp.env
-	sed -i -e 's/#FRONTEND_URL#/$(subst /,\/,${FRONTEND_URL})/g;s/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/webapp.env
+server-env:
+	cp ./docker/config/server.env.template ./docker/config/server.env
+	sed -i -e 's/#FRONTEND_URL#/$(subst /,\/,${FRONTEND_URL})/g;s/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/server.env
 
-setup: .webapp-build
-	"${DC}" run webapp //app/docker/set_up_webapp.sh
+setup: .server-build
+	"${DC}" run server //app/docker/server_setup.sh
 
-run: .frontend-build .webapp-build
-	"${DC}" up --no-build frontend webapp
+run: .frontend-build .server-build
+	"${DC}" up
 
 clean:
-	rm -f .docker-build .frontend-build .webapp-build
+	rm -f .docker-build .frontend-build .server-build
 
-test: test-webapp test-frontend
+test: test-server test-frontend
 
-test-webapp:
-	"${DC}" run --rm webapp //app/docker/run_tests.sh
+test-server:
+	"${DC}" run --rm server //app/docker/server_tests.sh
 
 test-frontend: jest
 jest:
 	"${DC}" run --rm -w //frontend frontend yarn test
 
 pytest:
-	"${DC}" run ${run_opts} --rm webapp pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
+	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
 flake8:
-	"${DC}" run --rm webapp flake8 pontoon/
+	"${DC}" run --rm server flake8 pontoon/
 
 black:
-	"${DC}" run --rm webapp black pontoon/
+	"${DC}" run --rm server black pontoon/
 
 pyupgrade:
-	"${DC}" run --rm webapp pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
+	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
 types:
 	"${DC}" run --rm -w //frontend frontend yarn types
 
 prettier:
-	"${DC}" run --rm webapp npm run prettier
+	"${DC}" run --rm server npm run prettier
 
 check-prettier:
-	"${DC}" run --rm webapp npm run check-prettier
+	"${DC}" run --rm server npm run check-prettier
 
 format:
 	make prettier
@@ -105,10 +105,10 @@ format:
 	make black
 
 eslint:
-	"${DC}" run --rm webapp npm run eslint
+	"${DC}" run --rm server npm run eslint
 
 shell:
-	"${DC}" run --rm webapp //bin/bash
+	"${DC}" run --rm server //bin/bash
 
 dropdb:
 	"${DC}" down --volumes postgresql 
@@ -118,7 +118,7 @@ dumpdb:
 
 loaddb:
 	# Stop connections to the database so we can drop it.
-	-"${DC}" stop webapp
+	-"${DC}" stop server
 	# Make sure the postgresql container is running.
 	-"${DC}" start postgresql
 	-"${DC}" exec postgresql dropdb -U pontoon pontoon
@@ -129,15 +129,15 @@ loaddb:
 	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
 
 build-tagadmin:
-	"${DC}" run --rm webapp npm run build
+	"${DC}" run --rm server npm run build
 
 build-tagadmin-w:
-	"${DC}" run --rm webapp npm run build-w
+	"${DC}" run --rm server npm run build-w
 
 sync-projects:
-	"${DC}" run --rm webapp .//manage.py sync_projects $(opts)
+	"${DC}" run --rm server .//manage.py sync_projects $(opts)
 
 requirements:
 	# Pass --upgrade to upgrade all dependencies
 	# The arguments are passed through to pip-compile
-	"${DC}" run --rm webapp //app/docker/compile_requirements.sh ${opts}
+	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}

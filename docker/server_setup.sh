@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Runs steps needed only once for the webapp.
+# Runs steps needed only once for the server
 
 cd /app
 

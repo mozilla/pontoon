@@ -6,7 +6,7 @@ RUN yarn install
 COPY frontend/ .
 RUN yarn build
 
-FROM python:3.9-bullseye AS webapp
+FROM python:3.9-bullseye AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -62,7 +62,7 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 
-COPY ./docker/config/webapp.env .env
+COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
 # Create the folder for front-end assets
@@ -76,4 +76,4 @@ COPY --from=frontend /frontend/ ./frontend/
 # static files.
 RUN python manage.py collectstatic --noinput
 
-CMD ["/app/docker/run_webapp.sh"]
+CMD ["/app/docker/server_run.sh"]

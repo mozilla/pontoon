@@ -27,9 +27,13 @@ venv
 coverage/
 
 # Docker
-.docker-build
 .frontend-build
-.webapp-build
+.server-build
+docker/config/server.env
+docker/config/server.env-e
+
+# Obsolete Docker
+.docker-build
 docker/config/webapp.env
 docker/config/webapp.env-e
 

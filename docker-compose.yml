@@ -14,13 +14,13 @@ services:
       - ./frontend/src:/frontend/src
       - ./frontend/public:/frontend/public
 
-  webapp:
+  server:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
     image: local/pontoon
     env_file:
-      - docker/config/webapp.env
+      - docker/config/server.env
     depends_on:
       - postgresql
     ports:
