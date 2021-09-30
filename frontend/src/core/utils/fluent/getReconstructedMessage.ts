@@ -26,7 +26,7 @@ export default function getReconstructedMessage(
 
     const isMultilineTranslation = translation.indexOf('\n') > -1;
 
-    let content;
+    let content: string;
 
     if (message.attributes && message.attributes.length === 1) {
         const attribute = message.attributes[0].id.name;

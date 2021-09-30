@@ -9,10 +9,11 @@ import * as locale from 'core/locale';
 import * as project from 'core/project';
 import * as user from 'core/user';
 
+import type { ReactourStep } from 'reactour';
 import type { LocaleState } from 'core/locale';
 import type { ProjectState } from 'core/project';
 import type { UserState } from 'core/user';
-import { RootState } from 'store';
+import type { RootState, AppDispatch } from 'store';
 
 type Props = {
     isTranslator: boolean;
@@ -21,9 +22,7 @@ type Props = {
     user: UserState;
 };
 
-type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
-};
+type InternalProps = Props & { dispatch: AppDispatch };
 
 type State = {
     isOpen: boolean;
@@ -72,7 +71,7 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
             return null;
         }
 
-        const steps = [
+        const steps: ReactourStep[] = [
             {
                 selector: '',
                 content: (

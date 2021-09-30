@@ -16,7 +16,7 @@ export type TeamCommentState = {
 };
 
 function togglePinnedComment(
-    state: Record<string, any>,
+    state: TeamCommentState,
     pinned: boolean,
     commentId: number,
 ): Array<TeamComment> {
@@ -25,15 +25,14 @@ function togglePinnedComment(
             return comment;
         }
 
-        comment.pinned = pinned;
-
         return {
             ...comment,
+            pinned: pinned,
         };
     });
 }
 
-const initialState = {
+const initialState: TeamCommentState = {
     fetching: false,
     entity: null,
     comments: [],

@@ -162,25 +162,25 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
 
     getInitialStatuses(): Record<string, boolean> {
-        const statuses = {};
+        const statuses: Record<string, boolean> = {};
         FILTERS_STATUS.forEach((s) => (statuses[s.slug] = false));
         return statuses;
     }
 
     getInitialExtras(): Record<string, boolean> {
-        const extras = {};
+        const extras: Record<string, boolean> = {};
         FILTERS_EXTRA.forEach((e) => (extras[e.slug] = false));
         return extras;
     }
 
     getInitialTags(): Record<string, boolean> {
-        const tags = {};
+        const tags: Record<string, boolean> = {};
         this.props.project.tags.forEach((t) => (tags[t.slug] = false));
         return tags;
     }
 
     getInitialAuthors(): Record<string, boolean> {
-        const authors = {};
+        const authors: Record<string, boolean> = {};
         this.props.searchAndFilters.authors.forEach(
             (a) => (authors[a.email] = false),
         );

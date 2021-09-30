@@ -11,7 +11,7 @@ export type LocalesState = {
     readonly translations: OtherLocaleTranslations;
 };
 
-const initialState = {
+const initialState: LocalesState = {
     fetching: false,
     entity: null,
     translations: [],
