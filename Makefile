@@ -94,9 +94,11 @@ types:
 	"${DC}" run --rm -w //frontend frontend yarn types
 
 prettier:
+	"${DC}" run --rm frontend npm run prettier
 	"${DC}" run --rm server npm run prettier
 
 check-prettier:
+	"${DC}" run --rm frontend npm run check-prettier
 	"${DC}" run --rm server npm run check-prettier
 
 format:
@@ -105,6 +107,7 @@ format:
 	make black
 
 eslint:
+	"${DC}" run --rm frontend npm run lint
 	"${DC}" run --rm server npm run eslint
 
 shell:
