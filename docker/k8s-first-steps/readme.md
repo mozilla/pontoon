@@ -77,7 +77,7 @@ END$$;
 
   - check open ports (8000 and 3000 should be open): `ss -lntu`
   - check running processes: `ps -A`
-  - show simple startup log of run_server.sh: `cat /app/run_server.log`
+  - show simple startup log of server_run.sh: `cat /app/server_run.log`
 
   ##### first time only, with newly created database:
 

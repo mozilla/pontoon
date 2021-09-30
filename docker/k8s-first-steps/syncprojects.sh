@@ -5,7 +5,7 @@
 if [ ! -z "$SYNC_INTERVAL" ]; then
     syncInterval=$SYNC_INTERVAL
     echo "syncInterval=$SYNC_INTERVAL"
-    echo "SYNC_INTERVAL=$SYNC_INTERVAL for syncing projects" >> /app/run_server.log
+    echo "SYNC_INTERVAL=$SYNC_INTERVAL for syncing projects" >> /app/server_run.log
     if((syncInterval > 5)); then
         echo "doing startup delay of 60 seconds..."
         sleep 60
@@ -20,4 +20,4 @@ if [ ! -z "$SYNC_INTERVAL" ]; then
     fi
 fi
 echo "SYNC_INTERVAL is not defined or <5, doing nothing."
-echo "SYNC_INTERVAL is not defined or <5, doing nothing." >> /app/run_server.log
+echo "SYNC_INTERVAL is not defined or <5, doing nothing." >> /app/server_run.log
