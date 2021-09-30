@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell test test-server test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-server test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -23,11 +23,10 @@ help:
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a server docker container"
-	@echo "  test             Runs the entire test suite (back and front)"
-	@echo "  test-server      Runs the server test suite"
-	@echo "  test-frontend    Runs the translate frontend test suite"
-	@echo "  jest             Runs the jest test runner on all frontend tests"
-	@echo "  pytest           Runs the backend's test suite (Python)"
+	@echo "  ci               Test and lint both frontend and server"
+	@echo "  test             Runs both frontend and server test suites"
+	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
+	@echo "  test-server      Runs the server test suite (Pytest)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
@@ -71,13 +70,15 @@ clean:
 
 test: test-server test-frontend
 
-test-server:
+ci: test-frontend
 	"${DC}" run --rm server //app/docker/server_tests.sh
+	"${DC}" run --rm frontend npm run check-prettier
 
 test-frontend: jest
 jest:
 	"${DC}" run --rm -w //frontend frontend yarn test
 
+test-server: pytest
 pytest:
 	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
