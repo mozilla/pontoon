@@ -15,6 +15,8 @@ def get_insight_start_date(from2021=False):
 
     For project insights, data is only available from 2020-12-14 onwards,
     so limit queries to start from 2021-01-01 at earliest.
+
+    TODO: Remove the 2021-specific argument & logic after the year ends.
     """
     now = datetime.now()
     if from2021 and now.year == 2021:
@@ -28,6 +30,8 @@ def get_locale_insights(query_filters=None):
     """Get data required by the Locale Insights tab.
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
+
+    TODO: Refactor as get_insights(locale, project)
     """
     start_date = get_insight_start_date(False)
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
