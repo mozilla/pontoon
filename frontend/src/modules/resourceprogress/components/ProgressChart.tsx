@@ -92,11 +92,11 @@ export default class ProgressChart extends React.Component<Props> {
         const x = canvas.width / 2;
         const y = canvas.height / 2;
         const radius = (canvas.width - context.lineWidth) / 2;
-        let end = null;
+        let end = -0.5;
 
         data.forEach((item) => {
             const length = item.type * 2;
-            const start = end !== null ? end : -0.5;
+            const start = end;
             end = start + length;
 
             context.beginPath();

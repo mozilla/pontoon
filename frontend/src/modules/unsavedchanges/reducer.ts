@@ -16,7 +16,7 @@ export type UnsavedChangesState = {
     readonly shown: boolean;
 };
 
-const initialState = {
+const initialState: UnsavedChangesState = {
     callback: null,
     exist: false,
     ignored: false,

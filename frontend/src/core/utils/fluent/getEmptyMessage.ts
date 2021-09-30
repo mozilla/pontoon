@@ -17,7 +17,7 @@ import type { Locale } from 'core/locale';
 /**
  * Gather custom (numeric) plural variants
  */
-function getNumericVariants(variants) {
+function getNumericVariants(variants: Variant[]) {
     return variants.filter((variant) => {
         return variant.key.type === 'NumberLiteral';
     });

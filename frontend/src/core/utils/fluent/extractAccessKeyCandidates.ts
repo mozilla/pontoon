@@ -1,12 +1,17 @@
 import flattenDeep from 'lodash.flattendeep';
 
-import type { Entry, PatternElement } from '@fluent/syntax';
+import type { Entry, PatternElement, TextElement } from '@fluent/syntax';
 
 /**
  * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
  */
-function getTextElementsRecursivelly(elements: Array<PatternElement>) {
-    const textElements = elements.map((element) => {
+function getTextElementsRecursivelly(
+    elements: Array<PatternElement>,
+): TextElement[] {
+    const textElements = elements.map((element):
+        | TextElement
+        | TextElement[]
+        | TextElement[][] => {
         if (element.type === 'TextElement') {
             return element;
         }

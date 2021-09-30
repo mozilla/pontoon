@@ -52,14 +52,14 @@ $(function () {
         var x = canvas.width / 2,
             y = canvas.height / 2,
             radius = (canvas.width - context.lineWidth) / 2,
-            end = null;
+            end = -0.5;
 
         progress
             .siblings('.legend')
             .find('li')
             .each(function () {
                 var length = fraction[$(this).attr('class')] * 2,
-                    start = end !== null ? end : -0.5,
+                    start = end,
                     color = window
                         .getComputedStyle($(this).find('.status')[0], ':before')
                         .getPropertyValue('color');

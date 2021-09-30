@@ -11,7 +11,7 @@ export type TermState = {
     readonly terms: Array<TermType>;
 };
 
-const initialState = {
+const initialState: TermState = {
     fetching: false,
     sourceString: '',
     terms: [],

@@ -271,7 +271,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         };
     }, []);
 
-    const handleMentionsKeyDown = (event) => {
+    const handleMentionsKeyDown = (event: React.KeyboardEvent) => {
         if (!target) {
             return;
         }
@@ -321,7 +321,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
              * the last character so the BOM was added
              */
             editor.insertText('\n\uFEFF');
-            return null;
+            return;
         }
     };
 
@@ -350,7 +350,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         [users],
     );
 
-    const handleEditorOnChange = (value) => {
+    const handleEditorOnChange = (value: Node[]) => {
         setValue(value);
         const { selection } = editor;
 
@@ -387,7 +387,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
         return ReactDOM.createPortal(children, document.body);
     };
 
-    const serialize = (node: Descendant) => {
+    const serialize = (node: Descendant): string => {
         if (Text.isText(node)) {
             return escapeHtml(node.text);
         }
@@ -413,7 +413,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
 
     const submitComment = () => {
         if (Node.string(editor).trim() === '') {
-            return null;
+            return;
         }
 
         const comment = value.map((node) => serialize(node)).join('');
@@ -527,7 +527,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     );
 }
 
-const withMentions = (editor) => {
+const withMentions = (editor: Editor) => {
     const { isInline, isVoid } = editor;
 
     editor.isInline = (element) => {

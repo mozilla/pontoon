@@ -15,7 +15,7 @@ export default function flattenPatternElements(
     elements: Array<PatternElement>,
 ): Array<PatternElement> {
     const flatElements = [];
-    let textFragments = [];
+    let textFragments: string[] = [];
 
     elements.forEach((element) => {
         if (
