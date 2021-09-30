@@ -52,7 +52,5 @@ class ProjectInsightsSnapshot(InsightsSnapshot):
     project = models.ForeignKey("base.Project", models.CASCADE)
 
 
-class ProjectLocaleInsightsSnapshot(AggregatedStats):
+class ProjectLocaleInsightsSnapshot(InsightsSnapshot):
     project_locale = models.ForeignKey("base.ProjectLocale", models.CASCADE)
-    created_at = models.DateField(default=timezone.now)
-    completion = models.FloatField()
