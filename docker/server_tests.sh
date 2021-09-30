@@ -45,14 +45,5 @@ $PYTHON manage.py collectstatic -v0 --noinput
 
 echo ""
 echo "--------------------------------------------------------------------------------------------"
-echo "Running JavaScript tests"
-$NPM test
-pushd frontend
-yarn test --watchAll=false
-popd
-
-
-echo ""
-echo "--------------------------------------------------------------------------------------------"
 echo "Running Python tests"
 $PYTEST --cov-append --cov-report=term --cov=.

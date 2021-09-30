@@ -1,4 +1,13 @@
-FROM python:3.9-bullseye
+# Frontend build
+FROM node:14-bullseye AS frontend
+WORKDIR /frontend
+COPY frontend/package.json frontend/yarn.lock ./
+RUN yarn install
+COPY frontend/ .
+RUN yarn build
+CMD ["yarn", "start"]
+
+FROM python:3.9-bullseye AS server
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -54,14 +63,7 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 
-RUN mkdir frontend
-WORKDIR frontend
-COPY frontend/package.json .
-COPY --chown=pontoon:pontoon frontend/yarn.lock .
-RUN yarn install
-
-WORKDIR /app
-COPY ./docker/config/webapp.env .env
+COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
 # Create the folder for front-end assets
@@ -69,14 +71,10 @@ RUN mkdir -p assets
 # Run webpack to compile JS files
 RUN $WEBPACK_BINARY
 
-# Build Translate.Next frontend resources
-WORKDIR frontend
-RUN yarn build
-
-WORKDIR /app
+COPY --from=frontend /frontend/ ./frontend/
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
 RUN python manage.py collectstatic --noinput
 
-CMD ["/app/docker/run_webapp.sh"]
+CMD ["/app/docker/server_run.sh"]

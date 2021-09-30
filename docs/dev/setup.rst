@@ -39,8 +39,8 @@ Quickstart
 
      $ make build
 
-   That will build the containers required for development: base and
-   webapp.
+   That will build the containers required for development:
+   frontend and server.
 
    .. Warning::
 
@@ -53,7 +53,7 @@ Quickstart
    .. Note::
 
         If you want to share your development instance in your local network,
-        set SITE_URL to bind the webapp to any address you like, e.g.
+        set SITE_URL to bind the server to any address you like, e.g.
         ``make build SITE_URL="http://192.168.1.14:8000"``.
 
 
@@ -64,18 +64,18 @@ Quickstart
    .. Note::
 
         The first time you run this, the PostgreSQL container needs to do
-        some work before it becomes available to the webapp container. Hence,
-        the webapp might not be able to perform things like migrations.
+        some work before it becomes available to the server container. Hence,
+        the server might not be able to perform things like migrations.
         You can simply wait for the postgresql container to report that it's
         ready, then abort the process, then restart it. That should let the
-        webapp do all its setup as expected.
+        server do all its setup as expected.
 
         Alternatively, you can run ``docker-compose up postgresql`` and wait
         until it reports that the database is ready, then stop that and run
         ``make run``.
 
 
-4. Finally, you need to run some setup steps, while the webapp is running::
+4. Finally, you need to run some setup steps, while the server is running::
 
       $ make setup
 

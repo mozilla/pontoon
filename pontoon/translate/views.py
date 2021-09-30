@@ -51,13 +51,12 @@ def catchall_dev(request, context=None):
 
     """
     # URL to the development webpack server, used to redirect front-end requests.
-    UPSTREAM = "http://localhost:3000"
+    upstream_url = settings.FRONTEND_URL + request.path
 
     # Redirect websocket requests directly to the webpack server.
     if request.META.get("HTTP_UPGRADE", "").lower() == "websocket":
-        return http.HttpResponseRedirect(UPSTREAM + request.path)
+        return http.HttpResponseRedirect(upstream_url)
 
-    upstream_url = UPSTREAM + request.path
     method = request.META["REQUEST_METHOD"].lower()
     response = getattr(requests, method)(upstream_url, stream=True)
     content_type = response.headers.get("Content-Type")

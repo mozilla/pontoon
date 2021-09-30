@@ -80,6 +80,7 @@ SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "True") != "Fals
 
 APP_URL_KEY = "APP_URL"
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
