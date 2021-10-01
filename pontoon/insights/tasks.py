@@ -4,7 +4,7 @@ from celery import shared_task
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
-from django.db.models import F
+from django.db.models import Count, F
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -39,7 +39,7 @@ def collect_insights(self):
     log.info(f"Collect insights for {date}: Begin.")
 
     actions = get_activity_actions(start_of_today)
-    entities = get_entities(start_of_today)
+    entities = query_entities(start_of_today)
     sync_user = User.objects.get(email="pontoon-sync@example.com").pk
     log.info(f"Collect insights for {date}: Common data gathered.")
 
@@ -59,7 +59,6 @@ def collect_project_insights(start_of_today, actions, entities, sync_user):
     """
     # Get data sources to retrieve insights from
     actions_dict = group_dict_by(actions, "translation__entity__resource__project")
-    entities_dict = group_dict_by(entities, "resource__project")
 
     ProjectInsightsSnapshot.objects.bulk_create(
         [
@@ -67,7 +66,7 @@ def collect_project_insights(start_of_today, actions, entities, sync_user):
                 project,
                 start_of_today,
                 actions_dict[project.id],
-                entities_dict[project.id],
+                count_entities(entities, project=project.id),
                 sync_user,
             )
             for project in Project.objects.available()
@@ -111,7 +110,6 @@ def collect_locale_insights(start_of_today, actions, entities, sync_user):
     suggestions = get_suggestions()
 
     actions_dict = group_dict_by(actions, "translation__locale")
-    entities_dict = group_dict_by(entities, "resource__translatedresources__locale")
 
     LocaleInsightsSnapshot.objects.bulk_create(
         [
@@ -123,7 +121,7 @@ def collect_locale_insights(start_of_today, actions, entities, sync_user):
                 active_users_actions[locale.id],
                 suggestions[locale.id],
                 actions_dict[locale.id],
-                entities_dict[locale.id],
+                count_entities(entities, locale=locale.id),
                 sync_user,
             )
             for locale in Locale.objects.available()
@@ -219,16 +217,35 @@ def get_activity_actions(start_of_today):
     )
 
 
-def get_entities(start_of_today):
+def query_entities(start_of_today):
     """Get entities created on the previous day."""
-    return Entity.objects.filter(
-        date_created__gte=start_of_today - relativedelta(days=1),
-        date_created__lt=start_of_today,
-        obsolete=False,
-        resource__project__disabled=False,
-        resource__project__system_project=False,
-        resource__project__visibility="public",
-    ).values("pk", "resource__translatedresources__locale", "resource__project")
+    return (
+        Entity.objects.filter(
+            date_created__gte=start_of_today - relativedelta(days=1),
+            date_created__lt=start_of_today,
+            obsolete=False,
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__visibility="public",
+        )
+        .distinct()
+        .values(
+            locale=F("resource__translatedresources__locale"),
+            project=F("resource__project"),
+        )
+        .annotate(count=Count("*"))
+    )
+
+
+def count_entities(entities, project=None, locale=None):
+    """Count the number of entities (i.e. source strings) with the given project and/or locale."""
+    count = 0
+    for ent in entities:
+        if (project is None or project == ent["project"]) and (
+            locale is None or locale == ent["locale"]
+        ):
+            count += ent["count"]
+    return count
 
 
 def get_locale_insights_snapshot(
@@ -239,7 +256,7 @@ def get_locale_insights_snapshot(
     active_users_actions,
     suggestions,
     activity_actions,
-    entities,
+    entities_count,
     sync_user,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
@@ -320,7 +337,7 @@ def get_locale_insights_snapshot(
         completion=round(locale.completed_percent, 2),
         human_translations=len(human_translations),
         machinery_translations=len(machinery_translations),
-        new_source_strings=len(entities),
+        new_source_strings=entities_count,
         # Review activity
         peer_approved=len(peer_approved),
         self_approved=len(self_approved),
@@ -330,7 +347,7 @@ def get_locale_insights_snapshot(
 
 
 def get_project_insights_snapshot(
-    project, start_of_today, activity_actions, entities, sync_user,
+    project, start_of_today, activity_actions, entities_count, sync_user,
 ):
     """Create ProjectInsightsSnapshot instance for the given project and day using given data."""
     (
@@ -356,7 +373,7 @@ def get_project_insights_snapshot(
         completion=round(project.completed_percent, 2),
         human_translations=len(human_translations),
         machinery_translations=len(machinery_translations),
-        new_source_strings=len(entities),
+        new_source_strings=entities_count,
         # Review activity
         peer_approved=len(peer_approved),
         self_approved=len(self_approved),
