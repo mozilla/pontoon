@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-server test-frontend jest pytest flake8 pyupgrade check-pyupgrade black check-black prettier check-prettier format lint types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-frontend test-server jest pytest flake8 pyupgrade check-pyupgrade black check-black prettier check-prettier format lint types eslint dropdb dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -72,11 +72,14 @@ run: .frontend-build .server-build
 clean:
 	rm -f .docker-build .frontend-build .server-build
 
-test: test-server test-frontend
+shell:
+	"${DC}" run --rm server //bin/bash
 
 ci: test-frontend
 	"${DC}" run --rm server //app/docker/server_tests.sh
 	"${DC}" run --rm frontend npm run check-prettier
+
+test: test-server test-frontend
 
 test-frontend: jest
 jest:
@@ -89,22 +92,17 @@ pytest:
 flake8:
 	"${DC}" run --rm server flake8 pontoon/
 
-black:
-	"${DC}" run --rm server black pontoon/
-
-check-black:
-	"${DC}" run --rm webapp black --check pontoon
-
 pyupgrade:
 	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
 check-pyupgrade:
 	"${DC}" run --rm webapp pyupgrade --py38-plus *.py `find pontoon -name \*.py`
 
-types:
-	"${DC}" run --rm -w //frontend frontend yarn types
+black:
+	"${DC}" run --rm server black pontoon/
 
-lint: eslint types check-prettier flake8 check-black check-pyupgrade
+check-black:
+	"${DC}" run --rm webapp black --check pontoon
 
 prettier:
 	"${DC}" run --rm frontend npm run prettier
@@ -116,15 +114,17 @@ check-prettier:
 
 format: prettier pyupgrade black
 
+lint: eslint types check-prettier flake8 check-black check-pyupgrade
+
+types:
+	"${DC}" run --rm -w //frontend frontend yarn types
+
 eslint:
 	"${DC}" run --rm frontend npm run lint
 	"${DC}" run --rm server npm run eslint
 
-shell:
-	"${DC}" run --rm server //bin/bash
-
 dropdb:
-	"${DC}" down --volumes postgresql 
+	"${DC}" down --volumes postgresql
 
 dumpdb:
 	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
