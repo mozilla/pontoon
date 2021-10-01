@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-server test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-server test-frontend jest pytest flake8 pyupgrade check-pyupgrade black check-black prettier check-prettier format lint types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -29,9 +29,9 @@ help:
 	@echo "  test-server      Runs the server test suite (Pytest)"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
-	@echo "  pyupgrade-check  Checks all Python code against newer syntax of Python"
+	@echo "  check-pyupgrade  Runs a check for outdated syntax of Python with the pyupgrade formatter"
 	@echo "  black            Runs the black formatter on all Python code"
-	@echo "  black-check      Checks formatting of all Python code"
+	@echo "  check-black      Runs a check for format issues with the black formatter"
 	@echo "  prettier         Runs the prettier formatter on the frontend code"
 	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
@@ -92,19 +92,19 @@ flake8:
 black:
 	"${DC}" run --rm server black pontoon/
 
+check-black:
+	"${DC}" run --rm webapp black --check pontoon
+
 pyupgrade:
 	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
-pyupgrade-check:
+check-pyupgrade:
 	"${DC}" run --rm webapp pyupgrade --py38-plus *.py `find pontoon -name \*.py`
 
 types:
 	"${DC}" run --rm -w //frontend frontend yarn types
 
-black-check:
-	"${DC}" run --rm webapp black --check pontoon
-
-lint: eslint types flake8 black-check pyupgrade-check
+lint: eslint types check-prettier flake8 check-black check-pyupgrade
 
 prettier:
 	"${DC}" run --rm frontend npm run prettier
@@ -114,10 +114,7 @@ check-prettier:
 	"${DC}" run --rm frontend npm run check-prettier
 	"${DC}" run --rm server npm run check-prettier
 
-format:
-	make prettier
-	make pyupgrade
-	make black
+format: prettier pyupgrade black
 
 eslint:
 	"${DC}" run --rm frontend npm run lint
