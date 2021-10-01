@@ -119,6 +119,12 @@ Alternatively, you can format your code using:
 
     $ make black
 
+We also require Python code to use newer syntax of Python. You can upgrade automatically by running:
+
+.. code-block:: shell
+
+    $ make pyupgrade
+
 Additionally, we use a linter to verify that imports are correct. You can run it with:
 
 .. code-block:: shell
