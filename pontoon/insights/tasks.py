@@ -38,36 +38,32 @@ def collect_insights(self):
 
     log.info(f"Collect insights for {date}: Begin.")
 
-    actions = get_activity_actions(start_of_today)
-    entities = query_entities(start_of_today)
     sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+    activities = build_activity_charts_data(start_of_today, sync_user)
+    entities = query_entities(start_of_today)
     log.info(f"Collect insights for {date}: Common data gathered.")
 
-    collect_project_insights(start_of_today, actions, entities, sync_user)
+    collect_project_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: Project insights created.")
 
     collect_project_locale_insights(start_of_today)
     log.info(f"Collect insights for {date}: ProjectLocale insights created.")
 
-    collect_locale_insights(start_of_today, actions, entities, sync_user)
+    collect_locale_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: Locale insights created.")
 
 
-def collect_project_insights(start_of_today, actions, entities, sync_user):
+def collect_project_insights(start_of_today, activities, entities):
     """
     Collect insights for each available Project.
     """
-    # Get data sources to retrieve insights from
-    actions_dict = group_dict_by(actions, "translation__entity__resource__project")
-
     ProjectInsightsSnapshot.objects.bulk_create(
         [
             get_project_insights_snapshot(
                 project,
                 start_of_today,
-                actions_dict[project.id],
+                activities,
                 count_entities(entities, project=project.id),
-                sync_user,
             )
             for project in Project.objects.available()
         ],
@@ -99,7 +95,7 @@ def collect_project_locale_insights(start_of_today):
     )
 
 
-def collect_locale_insights(start_of_today, actions, entities, sync_user):
+def collect_locale_insights(start_of_today, activities, entities):
     """
     Collect insights for each available Locale.
     """
@@ -108,8 +104,6 @@ def collect_locale_insights(start_of_today, actions, entities, sync_user):
     contributors = get_contributors()
     active_users_actions = get_active_users_actions(start_of_today)
     suggestions = get_suggestions()
-
-    actions_dict = group_dict_by(actions, "translation__locale")
 
     LocaleInsightsSnapshot.objects.bulk_create(
         [
@@ -120,9 +114,8 @@ def collect_locale_insights(start_of_today, actions, entities, sync_user):
                 contributors[locale.id],
                 active_users_actions[locale.id],
                 suggestions[locale.id],
-                actions_dict[locale.id],
+                activities,
                 count_entities(entities, locale=locale.id),
-                sync_user,
             )
             for locale in Locale.objects.available()
         ],
@@ -196,27 +189,6 @@ def get_suggestions():
     return group_dict_by(suggestions, "locale")
 
 
-def get_activity_actions(start_of_today):
-    """Get actions of the previous day, needed for the Translation and Review activity charts."""
-    return ActionLog.objects.filter(
-        created_at__gte=start_of_today - relativedelta(days=1),
-        created_at__lt=start_of_today,
-        translation__entity__resource__project__system_project=False,
-        translation__entity__resource__project__visibility="public",
-    ).values(
-        "action_type",
-        "performed_by",
-        "translation",
-        "translation__locale",
-        "translation__entity__resource__project",
-        "translation__machinery_sources",
-        "translation__user",
-        "translation__approved_user",
-        "translation__date",
-        "translation__approved_date",
-    )
-
-
 def query_entities(start_of_today):
     """Get entities created on the previous day."""
     return (
@@ -255,9 +227,8 @@ def get_locale_insights_snapshot(
     contributors,
     active_users_actions,
     suggestions,
-    activity_actions,
+    activities,
     entities_count,
-    sync_user,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
     all_managers, all_reviewers = get_privileged_users_data(privileged_users)
@@ -311,7 +282,7 @@ def get_locale_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
-    ) = get_activity_charts_data(activity_actions, sync_user)
+    ) = get_activity_charts_data(activities, locale=locale.id)
 
     return LocaleInsightsSnapshot(
         locale=locale,
@@ -335,19 +306,19 @@ def get_locale_insights_snapshot(
         unreviewed_suggestions_lifespan=unreviewed_suggestions_lifespan,
         # Translation activity
         completion=round(locale.completed_percent, 2),
-        human_translations=len(human_translations),
-        machinery_translations=len(machinery_translations),
+        human_translations=human_translations,
+        machinery_translations=machinery_translations,
         new_source_strings=entities_count,
         # Review activity
-        peer_approved=len(peer_approved),
-        self_approved=len(self_approved),
-        rejected=len(rejected),
-        new_suggestions=len(new_suggestions),
+        peer_approved=peer_approved,
+        self_approved=self_approved,
+        rejected=rejected,
+        new_suggestions=new_suggestions,
     )
 
 
 def get_project_insights_snapshot(
-    project, start_of_today, activity_actions, entities_count, sync_user,
+    project, start_of_today, activities, entities_count,
 ):
     """Create ProjectInsightsSnapshot instance for the given project and day using given data."""
     (
@@ -357,7 +328,7 @@ def get_project_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
-    ) = get_activity_charts_data(activity_actions, sync_user)
+    ) = get_activity_charts_data(activities, project=project.id)
 
     return ProjectInsightsSnapshot(
         project=project,
@@ -371,14 +342,14 @@ def get_project_insights_snapshot(
         unreviewed_strings=project.unreviewed_strings,
         # Translation activity
         completion=round(project.completed_percent, 2),
-        human_translations=len(human_translations),
-        machinery_translations=len(machinery_translations),
+        human_translations=human_translations,
+        machinery_translations=machinery_translations,
         new_source_strings=entities_count,
         # Review activity
-        peer_approved=len(peer_approved),
-        self_approved=len(self_approved),
-        rejected=len(rejected),
-        new_suggestions=len(new_suggestions),
+        peer_approved=peer_approved,
+        self_approved=self_approved,
+        rejected=rejected,
+        new_suggestions=new_suggestions,
     )
 
 
@@ -462,16 +433,44 @@ def get_unreviewed_suggestions_lifespan_data(suggestions):
     return unreviewed_suggestions_lifespan
 
 
-def get_activity_charts_data(activity_actions, sync_user):
-    """Get data for Translation activity and Review activity charts."""
-    human_translations = set()
-    machinery_translations = set()
-    new_suggestions = set()
-    peer_approved = set()
-    self_approved = set()
-    rejected = set()
+def query_activity_actions(start_of_today):
+    """Get actions of the previous day, needed for the Translation and Review activity charts."""
+    return ActionLog.objects.filter(
+        created_at__gte=start_of_today - relativedelta(days=1),
+        created_at__lt=start_of_today,
+        translation__entity__resource__project__system_project=False,
+        translation__entity__resource__project__visibility="public",
+    ).values(
+        "action_type",
+        "performed_by",
+        "translation",
+        "translation__locale",
+        "translation__machinery_sources",
+        "translation__user",
+        "translation__approved_user",
+        "translation__date",
+        "translation__approved_date",
+        project=F("translation__entity__resource__project"),
+    )
 
-    for action in activity_actions:
+
+def build_activity_charts_data(start_of_today, sync_user):
+    """Fetch and prepare data for Translation activity and Review activity charts."""
+    res = dict()
+
+    for action in query_activity_actions(start_of_today):
+        key = (action["translation__locale"], action["project"])
+        if key not in res:
+            res[key] = {
+                "human_translations": set(),
+                "machinery_translations": set(),
+                "new_suggestions": set(),
+                "peer_approved": set(),
+                "self_approved": set(),
+                "rejected": set(),
+            }
+        data = res[key]
+
         action_type = action["action_type"]
         performed_by = action["performed_by"]
         translation = action["translation"]
@@ -487,31 +486,54 @@ def get_activity_charts_data(activity_actions, sync_user):
 
         if action_type == "translation:created":
             if len(machinery_sources) == 0:
-                human_translations.add(translation)
+                data["human_translations"].add(translation)
             else:
-                machinery_translations.add(translation)
+                data["machinery_translations"].add(translation)
 
             if not approved_date or approved_date > date:
-                new_suggestions.add(translation)
+                data["new_suggestions"].add(translation)
 
             # Self-approval can also happen on translation submission
             if performed_by == approved_user and not performed_by_sync:
-                self_approved.add(translation)
+                data["self_approved"].add(translation)
 
         elif action_type == "translation:approved" and not performed_by_sync:
             if performed_by == user:
-                self_approved.add(translation)
+                data["self_approved"].add(translation)
             else:
-                peer_approved.add(translation)
+                data["peer_approved"].add(translation)
 
         elif action_type == "translation:rejected" and not performed_by_sync:
-            rejected.add(translation)
+            data["rejected"].add(translation)
+
+    return res
+
+
+def get_activity_charts_data(activities, project=None, locale=None):
+    """Get data for Translation activity and Review activity charts."""
+    human_translations = set()
+    machinery_translations = set()
+    new_suggestions = set()
+    peer_approved = set()
+    self_approved = set()
+    rejected = set()
+
+    for (locale_, project_), data in activities.items():
+        if (project is None or project == project_) and (
+            locale is None or locale == locale_
+        ):
+            human_translations.update(data["human_translations"])
+            machinery_translations.update(data["machinery_translations"])
+            new_suggestions.update(data["new_suggestions"])
+            peer_approved.update(data["peer_approved"])
+            self_approved.update(data["self_approved"])
+            rejected.update(data["rejected"])
 
     return (
-        human_translations,
-        machinery_translations,
-        new_suggestions,
-        peer_approved,
-        self_approved,
-        rejected,
+        len(human_translations),
+        len(machinery_translations),
+        len(new_suggestions),
+        len(peer_approved),
+        len(self_approved),
+        len(rejected),
     )
