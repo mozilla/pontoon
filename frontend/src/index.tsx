@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { ConnectedRouter } from 'connected-react-router';
-// javascript-time-ago is installed automatically with react-time-ago
-// See: https://www.npmjs.com/package/react-time-ago
 import JavascriptTimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 
