@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-frontend test-server jest pytest flake8 pyupgrade check-pyupgrade black check-black prettier check-prettier format lint types eslint dropdb dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-frontend test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -27,17 +27,17 @@ help:
 	@echo "  test             Runs both frontend and server test suites"
 	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
+	@echo "  format           Runs formatters for both the frontend and Python code"
+	@echo "  lint             Runs linters for both the frontend and Python code"
+	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
+	@echo "  eslint           Runs a code linter on the JavaScript code"
+	@echo "  prettier         Runs the prettier formatter on the frontend code"
+	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
 	@echo "  check-pyupgrade  Runs a check for outdated syntax of Python with the pyupgrade formatter"
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  check-black      Runs a check for format issues with the black formatter"
-	@echo "  prettier         Runs the prettier formatter on the frontend code"
-	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
-	@echo "  format           Runs formatters for both the frontend and Python code"
-	@echo "  lint             Runs linters for both the frontend and Python code"
-	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
-	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  dropdb           Completely remove the postgres container and its data"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -89,6 +89,25 @@ test-server: pytest
 pytest:
 	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
+format: prettier pyupgrade black
+
+lint: types eslint check-prettier flake8 check-pyupgrade check-black
+
+types:
+	"${DC}" run --rm -w //frontend frontend yarn types
+
+eslint:
+	"${DC}" run --rm frontend npm run lint
+	"${DC}" run --rm server npm run eslint
+
+prettier:
+	"${DC}" run --rm frontend npm run prettier
+	"${DC}" run --rm server npm run prettier
+
+check-prettier:
+	"${DC}" run --rm frontend npm run check-prettier
+	"${DC}" run --rm server npm run check-prettier
+
 flake8:
 	"${DC}" run --rm server flake8 pontoon/
 
@@ -103,25 +122,6 @@ black:
 
 check-black:
 	"${DC}" run --rm webapp black --check pontoon
-
-prettier:
-	"${DC}" run --rm frontend npm run prettier
-	"${DC}" run --rm server npm run prettier
-
-check-prettier:
-	"${DC}" run --rm frontend npm run check-prettier
-	"${DC}" run --rm server npm run check-prettier
-
-format: prettier pyupgrade black
-
-lint: eslint types check-prettier flake8 check-black check-pyupgrade
-
-types:
-	"${DC}" run --rm -w //frontend frontend yarn types
-
-eslint:
-	"${DC}" run --rm frontend npm run lint
-	"${DC}" run --rm server npm run eslint
 
 dropdb:
 	"${DC}" down --volumes postgresql
