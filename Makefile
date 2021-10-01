@@ -75,9 +75,7 @@ clean:
 shell:
 	"${DC}" run --rm server //bin/bash
 
-ci: test-frontend
-	"${DC}" run --rm server //app/docker/server_tests.sh
-	"${DC}" run --rm frontend npm run check-prettier
+ci: test lint
 
 test: test-server test-frontend
 
