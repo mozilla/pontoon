@@ -138,7 +138,7 @@ ignore that error. Note that in most cases, it is better to fix the issues than 
 Javascript code conventions
 ===========================
 
-Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
+Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
 We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
@@ -149,7 +149,7 @@ Alternatively, you can format your code using:
 
 .. code-block:: shell
 
-    $ make prettier 
+    $ make prettier
 
 Additionally, there are linting rules that are defined in our
 ``.eslintrc.js`` file. To run the linter, do:
