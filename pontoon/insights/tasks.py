@@ -46,7 +46,7 @@ def collect_insights(self):
     collect_project_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: Project insights created.")
 
-    collect_project_locale_insights(start_of_today)
+    collect_project_locale_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: ProjectLocale insights created.")
 
     collect_locale_insights(start_of_today, activities, entities)
@@ -71,23 +71,21 @@ def collect_project_insights(start_of_today, activities, entities):
     )
 
 
-def collect_project_locale_insights(start_of_today):
+def collect_project_locale_insights(start_of_today, activities, entities):
     """
     Collect insights for each available ProjectLocale.
     """
     ProjectLocaleInsightsSnapshot.objects.bulk_create(
         [
-            ProjectLocaleInsightsSnapshot(
-                project_locale=project_locale,
-                created_at=start_of_today,
-                completion=round(project_locale.completed_percent, 2),
-                # AggregatedStats
-                total_strings=project_locale.total_strings,
-                approved_strings=project_locale.approved_strings,
-                fuzzy_strings=project_locale.fuzzy_strings,
-                strings_with_errors=project_locale.strings_with_errors,
-                strings_with_warnings=project_locale.strings_with_warnings,
-                unreviewed_strings=project_locale.unreviewed_strings,
+            get_project_locale_insights_snapshot(
+                project_locale,
+                start_of_today,
+                activities,
+                count_entities(
+                    entities,
+                    locale=project_locale.project.id,
+                    project=project_locale.project.id,
+                ),
             )
             for project_locale in ProjectLocale.objects.all()
         ],
@@ -342,6 +340,44 @@ def get_project_insights_snapshot(
         unreviewed_strings=project.unreviewed_strings,
         # Translation activity
         completion=round(project.completed_percent, 2),
+        human_translations=human_translations,
+        machinery_translations=machinery_translations,
+        new_source_strings=entities_count,
+        # Review activity
+        peer_approved=peer_approved,
+        self_approved=self_approved,
+        rejected=rejected,
+        new_suggestions=new_suggestions,
+    )
+
+
+def get_project_locale_insights_snapshot(
+    project_locale, start_of_today, activities, entities_count,
+):
+    """Create ProjectLocaleInsightsSnapshot instance for the given locale, project, and day using given data."""
+    (
+        human_translations,
+        machinery_translations,
+        new_suggestions,
+        peer_approved,
+        self_approved,
+        rejected,
+    ) = get_activity_charts_data(
+        activities, locale=project_locale.project.id, project=project_locale.project.id
+    )
+
+    return ProjectLocaleInsightsSnapshot(
+        project_locale=project_locale,
+        created_at=start_of_today,
+        # AggregatedStats
+        total_strings=project_locale.total_strings,
+        approved_strings=project_locale.approved_strings,
+        fuzzy_strings=project_locale.fuzzy_strings,
+        strings_with_errors=project_locale.strings_with_errors,
+        strings_with_warnings=project_locale.strings_with_warnings,
+        unreviewed_strings=project_locale.unreviewed_strings,
+        # Translation activity
+        completion=round(project_locale.completed_percent, 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,
