@@ -17,7 +17,7 @@ from notifications.signals import notify
 from pontoon.base.models import Project, Locale
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
-from pontoon.insights.utils import get_project_insights
+from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
 from pontoon.tags.utils import TagsTool
 
@@ -123,7 +123,7 @@ def ajax_insights(request, slug):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    insights = get_project_insights(Q(project=project))
+    insights = get_insights(project=project)
 
     return render(request, "projects/includes/insights.html", insights)
 
