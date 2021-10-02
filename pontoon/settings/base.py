@@ -308,6 +308,7 @@ PIPELINE_CSS = {
             "css/heading_info.css",
             "css/info.css",
             "css/download_selector.css",
+            "css/insights.css",
         ),
         "output_filename": "css/localization.min.css",
     },
@@ -405,9 +406,11 @@ PIPELINE_JS = {
     },
     "localization": {
         "source_filenames": (
+            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/tabs.js",
+            "js/insights.js",
             "js/info.js",
         ),
         "output_filename": "js/localization.min.js",
