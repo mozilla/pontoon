@@ -10,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-server test-frontend jest pytest flake8 black prettier check-prettier format types eslint dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-frontend test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -27,13 +27,17 @@ help:
 	@echo "  test             Runs both frontend and server test suites"
 	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
-	@echo "  flake8           Runs the flake8 style guides on all Python code"
-	@echo "  black            Runs the black formatter on all Python code"
-	@echo "  prettier         Runs the prettier formatter on the frontend code"
-	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
 	@echo "  format           Runs formatters for both the frontend and Python code"
+	@echo "  lint             Runs linters for both the frontend and Python code"
 	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
+	@echo "  prettier         Runs the prettier formatter on the frontend code"
+	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
+	@echo "  flake8           Runs the flake8 style guides on all Python code"
+	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
+	@echo "  check-pyupgrade  Runs a check for outdated syntax of Python with the pyupgrade formatter"
+	@echo "  black            Runs the black formatter on all Python code"
+	@echo "  check-black      Runs a check for format issues with the black formatter"
 	@echo "  dropdb           Completely remove the postgres container and its data"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
@@ -68,11 +72,12 @@ run: .frontend-build .server-build
 clean:
 	rm -f .docker-build .frontend-build .server-build
 
-test: test-server test-frontend
+shell:
+	"${DC}" run --rm server //bin/bash
 
-ci: test-frontend
-	"${DC}" run --rm server //app/docker/server_tests.sh
-	"${DC}" run --rm frontend npm run check-prettier
+ci: test lint
+
+test: test-server test-frontend
 
 test-frontend: jest
 jest:
@@ -82,17 +87,16 @@ test-server: pytest
 pytest:
 	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
-flake8:
-	"${DC}" run --rm server flake8 pontoon/
+format: prettier pyupgrade black
 
-black:
-	"${DC}" run --rm server black pontoon/
-
-pyupgrade:
-	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
+lint: types eslint check-prettier flake8 check-pyupgrade check-black
 
 types:
 	"${DC}" run --rm -w //frontend frontend yarn types
+
+eslint:
+	"${DC}" run --rm frontend npm run lint
+	"${DC}" run --rm server npm run eslint
 
 prettier:
 	"${DC}" run --rm frontend npm run prettier
@@ -102,20 +106,23 @@ check-prettier:
 	"${DC}" run --rm frontend npm run check-prettier
 	"${DC}" run --rm server npm run check-prettier
 
-format:
-	make prettier
-	make pyupgrade
-	make black
+flake8:
+	"${DC}" run --rm server flake8 pontoon/
 
-eslint:
-	"${DC}" run --rm frontend npm run lint
-	"${DC}" run --rm server npm run eslint
+pyupgrade:
+	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
 
-shell:
-	"${DC}" run --rm server //bin/bash
+check-pyupgrade:
+	"${DC}" run --rm webapp pyupgrade --py38-plus *.py `find pontoon -name \*.py`
+
+black:
+	"${DC}" run --rm server black pontoon/
+
+check-black:
+	"${DC}" run --rm webapp black --check pontoon
 
 dropdb:
-	"${DC}" down --volumes postgresql 
+	"${DC}" down --volumes postgresql
 
 dumpdb:
 	"${DOCKER}" exec -t `"${DC}" ps -q postgresql` pg_dumpall -c -U pontoon > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql

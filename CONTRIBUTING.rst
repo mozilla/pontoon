@@ -96,6 +96,12 @@ To format the Python and the JavaScript code at once you can use:
 
 Code formatting is explained in more detail in the following sections.
 
+To run the required linters on the Python and the Javascript code at once you can use:
+
+.. code-block:: shell
+
+    $ make lint
+
 
 Python code conventions
 =======================
@@ -113,6 +119,12 @@ Alternatively, you can format your code using:
 
     $ make black
 
+We also require Python code to use newer syntax of Python. You can upgrade automatically by running:
+
+.. code-block:: shell
+
+    $ make pyupgrade
+
 Additionally, we use a linter to verify that imports are correct. You can run it with:
 
 .. code-block:: shell
@@ -126,7 +138,7 @@ ignore that error. Note that in most cases, it is better to fix the issues than 
 Javascript code conventions
 ===========================
 
-Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>_`.
+Our Javascript code is automatically formatted using `Prettier <https://prettier.io/docs/en/index.html>`_.
 We enforce that in our Continuous Integration, so you will need to run
 prettier on your code before sending it for review.
 
@@ -137,7 +149,7 @@ Alternatively, you can format your code using:
 
 .. code-block:: shell
 
-    $ make prettier 
+    $ make prettier
 
 Additionally, there are linting rules that are defined in our
 ``.eslintrc.js`` file. To run the linter, do:
@@ -208,7 +220,7 @@ Code reviews should review the changes in the context of the rest of the system.
 Dependencies
 ============
 
-Direct dependencies for Pontoon are distributed across three files:
+Direct dependencies for Pontoon are distributed across four files:
 
 1. ``requirements/default.in``: Running Pontoon in production
 2. ``requirements/dev.in``: Development
