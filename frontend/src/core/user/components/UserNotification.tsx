@@ -36,7 +36,9 @@ export default class UserNotification extends React.Component<Props, State> {
     render(): React.ReactElement<'li'> {
         const { notification } = this.props;
 
-        const isSuggestion = notification.verb.startsWith('Unreviewed suggestions');
+        const isSuggestion = notification.verb.startsWith(
+            'Unreviewed suggestions',
+        );
         const isComment = !notification.description.content
             ? false
             : notification.description.is_comment;
@@ -75,7 +77,7 @@ export default class UserNotification extends React.Component<Props, State> {
                         />
                     </div>
                 </li>
-            )
+            );
         }
 
         if (isComment) {
