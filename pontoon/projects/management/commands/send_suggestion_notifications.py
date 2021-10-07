@@ -1,11 +1,15 @@
+import calendar
+
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import cached_property
 
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
+from django.utils import timezone
 from notifications.signals import notify
 
 from pontoon.base.models import Comment, Locale, ProjectLocale, Translation
@@ -13,6 +17,15 @@ from pontoon.base.models import Comment, Locale, ProjectLocale, Translation
 
 class Command(BaseCommand):
     help = "Notify contributors about newly added unreviewed suggestions"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            dest="force",
+            default=False,
+            help="Force run command, regardless of what day of the week it is",
+        )
 
     @cached_property
     def locale_reviewers(self):
@@ -59,7 +72,7 @@ class Command(BaseCommand):
             data[recipient].add(project_locale)
 
     def get_suggestions(self):
-        start = datetime.now() - timedelta(days=1)
+        start = timezone.now() - timedelta(days=1)
 
         return Translation.objects.filter(
             approved=False, rejected=False, fuzzy=False
@@ -72,13 +85,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """
         This command sends notifications about newly created unreviewed suggestions that
-        were submitted, unapproved or unrejected in the last 24 hours. Recipients of
+        were submitted, unapproved or unrejected in the last 7 days. Recipients of
         notifications are users with permission to review them, as well as authors of
         previous translations or comments of the same string.
 
-        The command is designed to run daily.
+        The command is designed to run on a weekly basis.
         """
         self.stdout.write("Sending suggestion notifications.")
+
+        today = calendar.day_name[timezone.datetime.today().weekday()]
+        day = calendar.day_name[settings.SUGGESTION_NOTIFICATIONS_DAY]
+
+        if today != day and not options["force"]:
+            raise CommandError(f"Skipping. Command runs every {day}. Today is {today}.")
 
         suggestions = self.get_suggestions()
 
