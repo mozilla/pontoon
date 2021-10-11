@@ -51,6 +51,16 @@
     padding: 0 3px;
 }
 
+.user-notification.suggestion .verb {
+    padding: 0;
+}
+
+.user-notification .verb ul {
+    list-style: inside;
+    margin-left: 0;
+    padding: 12px 0 0 4px;
+}
+
 .user-notification .message {
     padding: 10px;
 }

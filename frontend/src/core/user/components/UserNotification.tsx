@@ -36,14 +36,48 @@ export default class UserNotification extends React.Component<Props, State> {
     render(): React.ReactElement<'li'> {
         const { notification } = this.props;
 
-        let className = 'user-notification';
-        let isComment = !notification.description.content
+        const isSuggestion = notification.verb.startsWith(
+            'Unreviewed suggestions',
+        );
+        const isComment = !notification.description.content
             ? false
             : notification.description.is_comment;
+
+        let className = 'user-notification';
+        if (isSuggestion) {
+            className += ' suggestion';
+        }
         if (notification.unread) {
             className += ' unread';
         } else if (this.state.markAsRead) {
             className += ' read';
+        }
+
+        if (isSuggestion) {
+            return (
+                <li
+                    className={className}
+                    data-id={notification.id}
+                    data-level={notification.level}
+                >
+                    <div className='item-content'>
+                        <span
+                            className='verb'
+                            // We can safely use notification.verb as it is generated
+                            // by the code.
+                            dangerouslySetInnerHTML={{
+                                __html: notification.verb,
+                            }}
+                        />
+
+                        <ReactTimeAgo
+                            className='timeago'
+                            date={new Date(notification.date_iso)}
+                            title={`${notification.date} UTC`}
+                        />
+                    </div>
+                </li>
+            );
         }
 
         if (isComment) {

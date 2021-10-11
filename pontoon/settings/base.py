@@ -848,6 +848,10 @@ DJANGO_NOTIFICATIONS_CONFIG = {
 # Maximum number of read notifications to display in the notifications menu
 NOTIFICATIONS_MAX_COUNT = 7
 
+# Integer representing a day of the week on which the `send_suggestion_notifications`
+# management command will run.
+SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+
 # Number of events displayed on the Contributor's timeline per page.
 CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
 
