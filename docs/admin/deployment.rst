@@ -209,6 +209,11 @@ you create:
    Optional. Hostname to prepend to static resources paths. Useful for serving
    static files from a CDN. Example: ``//asdf.cloudfront.net``.
 
+``SUGGESTION_NOTIFICATIONS_DAY``
+   Optional. Integer representing a day of the week on which the
+   `send_suggestion_notifications` management command will run. 0 represents
+   Monday, 6 represents Sunday. The default value is 4 (Friday).
+
 ``SVN_LD_LIBRARY_PATH``
    Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary
    on Heroku because the Python buildpack alters the path in a way that breaks
@@ -341,6 +346,18 @@ notifications are sent again. The command is designed to run daily.
 .. code-block:: bash
 
    ./manage.py send_deadline_notifications
+
+Send Suggestion Notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends notifications about newly created unreviewed suggestions that
+were submitted, unapproved or unrejected in the last 7 days. Recipients of
+notifications are users with permission to review them, as well as authors of
+any previous translations or comments of the same string. The command is
+designed to run on a weekly basis.
+
+.. code-block:: bash
+
+   ./manage.py send_suggestion_notifications
 
 .. _collect-insights:
 
