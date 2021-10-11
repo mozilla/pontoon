@@ -72,7 +72,7 @@ class Command(BaseCommand):
             data[recipient].add(project_locale)
 
     def get_suggestions(self):
-        start = timezone.now() - timedelta(days=1)
+        start = timezone.now() - timedelta(days=7)
 
         return Translation.objects.filter(
             approved=False, rejected=False, fuzzy=False
