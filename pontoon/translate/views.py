@@ -127,7 +127,7 @@ def translate(request, locale, project, resource):
             {"content": str(x), "type": x.tags} for x in notifications
         ]
 
-    if settings.DEBUG:
+    if settings.DEV:
         return catchall_dev(request, context=context)
 
     return catchall_prod(request, context=context)
