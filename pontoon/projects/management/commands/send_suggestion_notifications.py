@@ -107,11 +107,13 @@ class Command(BaseCommand):
             self.extract_notifications_data(data, suggestion)
 
         for recipient, project_locales in data.items():
-            verb = render_to_string(
+            description = render_to_string(
                 "projects/suggestion_notification.jinja",
                 {"project_locales": project_locales},
             )
 
-            notify.send(recipient, recipient=recipient, verb=verb)
+            notify.send(
+                recipient, recipient=recipient, verb="", description=description
+            )
 
         self.stdout.write("Suggestion notifications sent.")
