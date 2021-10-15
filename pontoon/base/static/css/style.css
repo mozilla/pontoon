@@ -890,7 +890,7 @@ header .right .select .menu {
     color: #ebebeb;
 }
 
-.notifications .menu li.notification-item .verb ul {
+.notifications .menu li.notification-item .description ul {
     list-style: inside;
     padding-top: 10px;
 }

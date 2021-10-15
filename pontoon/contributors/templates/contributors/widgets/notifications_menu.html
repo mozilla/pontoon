@@ -44,8 +44,8 @@
           {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% endif %}
 
-        {% if notification.verb.startswith("Unreviewed suggestions") %}
-          <div class="verb">{{ notification.verb|safe }}</div>
+        {% if description and description.startswith("Unreviewed suggestions") %}
+          <span class="description">{{ description|safe }}</span>
 
           <p class="timeago">{{ notification.timesince() }} ago</p>
 
