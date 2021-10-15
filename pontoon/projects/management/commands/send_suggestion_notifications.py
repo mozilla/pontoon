@@ -116,6 +116,4 @@ class Command(BaseCommand):
                 recipient, recipient=recipient, verb="", description=description
             )
 
-        self.stdout.write(
-            "Suggestion notifications sent to {count} users.".format(count=len(data))
-        )
+        self.stdout.write(f"Suggestion notifications sent to {len(data)} users.")
