@@ -13,7 +13,6 @@ from pontoon.base.models import Entity, Locale, Project, ProjectLocale, Translat
 from pontoon.base.utils import group_dict_by
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
-    ProjectInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
 
@@ -43,32 +42,11 @@ def collect_insights(self):
     entities = query_entities(start_of_today)
     log.info(f"Collect insights for {date}: Common data gathered.")
 
-    collect_project_insights(start_of_today, activities, entities)
-    log.info(f"Collect insights for {date}: Project insights created.")
-
     collect_project_locale_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: ProjectLocale insights created.")
 
     collect_locale_insights(start_of_today, activities, entities)
     log.info(f"Collect insights for {date}: Locale insights created.")
-
-
-def collect_project_insights(start_of_today, activities, entities):
-    """
-    Collect insights for each available Project.
-    """
-    ProjectInsightsSnapshot.objects.bulk_create(
-        [
-            get_project_insights_snapshot(
-                project,
-                start_of_today,
-                activities,
-                count_entities(entities, project=project.id),
-            )
-            for project in Project.objects.available()
-        ],
-        batch_size=1000,
-    )
 
 
 def collect_project_locale_insights(start_of_today, activities, entities):
@@ -304,42 +282,6 @@ def get_locale_insights_snapshot(
         unreviewed_suggestions_lifespan=unreviewed_suggestions_lifespan,
         # Translation activity
         completion=round(locale.completed_percent, 2),
-        human_translations=human_translations,
-        machinery_translations=machinery_translations,
-        new_source_strings=entities_count,
-        # Review activity
-        peer_approved=peer_approved,
-        self_approved=self_approved,
-        rejected=rejected,
-        new_suggestions=new_suggestions,
-    )
-
-
-def get_project_insights_snapshot(
-    project, start_of_today, activities, entities_count,
-):
-    """Create ProjectInsightsSnapshot instance for the given project and day using given data."""
-    (
-        human_translations,
-        machinery_translations,
-        new_suggestions,
-        peer_approved,
-        self_approved,
-        rejected,
-    ) = get_activity_charts_data(activities, project=project.id)
-
-    return ProjectInsightsSnapshot(
-        project=project,
-        created_at=start_of_today,
-        # AggregatedStats
-        total_strings=project.total_strings,
-        approved_strings=project.approved_strings,
-        fuzzy_strings=project.fuzzy_strings,
-        strings_with_errors=project.strings_with_errors,
-        strings_with_warnings=project.strings_with_warnings,
-        unreviewed_strings=project.unreviewed_strings,
-        # Translation activity
-        completion=round(project.completed_percent, 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,
