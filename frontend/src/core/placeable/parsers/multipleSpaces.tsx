@@ -17,8 +17,8 @@ const multipleSpaces = {
                     title='Multiple spaces'
                     data-match={x}
                 >
-                    {' '}
-                    &middot;{' '}
+                    <span className='hidden-source'>{x}</span>
+                    <span aria-hidden> &middot; </span>
                 </mark>
             </Localized>
         );

@@ -7,3 +7,12 @@ mark.placeable {
     font-weight: normal;
     margin: 0 1px;
 }
+
+mark.placeable [aria-hidden='true'] {
+    user-select: none;
+}
+
+mark.placeable .hidden-source {
+    display: inline-block;
+    width: 0;
+}
