@@ -12,6 +12,6 @@ describe('tabCharacter', () => {
 
         const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual('\u2192');
+        expect(wrapper.find('mark').text()).toEqual('\t\u2192');
     });
 });

@@ -17,7 +17,8 @@ const tabCharacter = {
                     title='Tab character'
                     data-match={x}
                 >
-                    &rarr;
+                    <span className='hidden-source'>{x}</span>
+                    <span aria-hidden>&rarr;</span>
                 </mark>
             </Localized>
         );

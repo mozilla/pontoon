@@ -17,7 +17,8 @@ const newlineCharacter = {
                     title='Newline character'
                     data-match={x}
                 >
-                    {'¶\n'}
+                    <span aria-hidden>¶</span>
+                    {x}
                 </mark>
             </Localized>
         );
