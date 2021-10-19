@@ -17,10 +17,8 @@ const tabCharacter = {
                     title='Tab character'
                     data-match={x}
                 >
-                    <span style={{ display: 'inline-block', width: 0 }}>
-                        {x}
-                    </span>
-                    <span style={{ userSelect: 'none' }}>&rarr;</span>
+                    <span className='hidden-source'>{x}</span>
+                    <span aria-hidden>&rarr;</span>
                 </mark>
             </Localized>
         );

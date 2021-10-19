@@ -17,7 +17,7 @@ const newlineCharacter = {
                     title='Newline character'
                     data-match={x}
                 >
-                    <span style={{ userSelect: 'none' }}>¶</span>
+                    <span aria-hidden>¶</span>
                     {x}
                 </mark>
             </Localized>

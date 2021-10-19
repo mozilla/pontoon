@@ -17,10 +17,8 @@ const multipleSpaces = {
                     title='Multiple spaces'
                     data-match={x}
                 >
-                    <span style={{ display: 'inline-block', width: 0 }}>
-                        {x}
-                    </span>
-                    <span style={{ userSelect: 'none' }}> &middot; </span>
+                    <span className='hidden-source'>{x}</span>
+                    <span aria-hidden> &middot; </span>
                 </mark>
             </Localized>
         );
