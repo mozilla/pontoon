@@ -12,6 +12,6 @@ describe('multipleSpaces', () => {
 
         const wrapper = shallow(<Marker>{content}</Marker>);
         expect(wrapper.find('mark')).toHaveLength(1);
-        expect(wrapper.find('mark').text()).toEqual(' \u00B7 ');
+        expect(wrapper.find('mark').text()).toEqual('    \u00B7 ');
     });
 });
