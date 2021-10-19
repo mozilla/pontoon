@@ -17,7 +17,8 @@ const newlineCharacter = {
                     title='Newline character'
                     data-match={x}
                 >
-                    {'¶\n'}
+                    <span style={{ userSelect: 'none' }}>¶</span>
+                    {x}
                 </mark>
             </Localized>
         );
