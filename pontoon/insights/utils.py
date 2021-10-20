@@ -144,7 +144,7 @@ def get_insights(locale=None, project=None):
         # Group By month
         .values("month")
         # Select the avg/sum of the grouping
-        .annotate(days_in_month=Count("created_at", distinct=True))
+        .annotate(snapshots_count=Count("created_at", distinct=True))
         .annotate(locales_count=Count("project_locale__locale", distinct=True))
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
@@ -158,7 +158,7 @@ def get_insights(locale=None, project=None):
         # Select month and values
         .values(
             "month",
-            "days_in_month",
+            "snapshots_count",
             "locales_count",
             "completion_avg",
             "human_translations_sum",
@@ -179,6 +179,7 @@ def get_insights(locale=None, project=None):
             "completion": [round(x["completion_avg"], 2) for x in insights],
             "human_translations": [x["human_translations_sum"] for x in insights],
             "machinery_translations": [x["machinery_sum"] for x in insights],
+            # The same new source strings are added to each locale, so they need to be normalised
             "new_source_strings": [
                 int(
                     round(
@@ -190,11 +191,12 @@ def get_insights(locale=None, project=None):
             ],
         },
         "review_activity": {
+            # Unreviewed is not a delta, so use an average for the whole month
             "unreviewed": [
                 int(
                     round(
                         x["unreviewed_sum"]
-                        / (x["days_in_month"] if x["days_in_month"] != 0 else 1)
+                        / (x["snapshots_count"] if x["snapshots_count"] != 0 else 1)
                     )
                 )
                 for x in insights

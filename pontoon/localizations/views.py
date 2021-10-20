@@ -171,9 +171,8 @@ def ajax_insights(request, code, slug):
     if not settings.ENABLE_INSIGHTS_TAB:
         raise ImproperlyConfigured("ENABLE_INSIGHTS_TAB variable not set in settings.")
 
-    locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-    insights = get_insights(locale=locale, project=project)
+    pl = get_object_or_404(ProjectLocale, locale__code=code, project__slug=slug)
+    insights = get_insights(locale=pl.locale, project=pl.project)
 
     return render(request, "localizations/includes/insights.html", insights)
 
