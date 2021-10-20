@@ -423,11 +423,11 @@ def query_activity_actions(start_of_today):
         "performed_by",
         "translation",
         "translation__locale",
-        "translation__machinery_sources",
-        "translation__user",
-        "translation__approved_user",
-        "translation__date",
-        "translation__approved_date",
+        machinery_sources=F("translation__machinery_sources"),
+        user=F("translation__user"),
+        approved_user=F("translation__approved_user"),
+        date=F("translation__date"),
+        approved_date=F("translation__approved_date"),
         project=F("translation__entity__resource__project"),
     )
 
@@ -452,31 +452,26 @@ def build_activity_charts_data(start_of_today, sync_user):
         action_type = action["action_type"]
         performed_by = action["performed_by"]
         translation = action["translation"]
-        machinery_sources = action["translation__machinery_sources"]
-        user = action["translation__user"]
-        approved_user = action["translation__approved_user"]
-        date = action["translation__date"]
-        approved_date = action["translation__approved_date"]
 
         # Review actions performed by the sync process are ignored, because they
         # aren't explicit user review actions.
         performed_by_sync = performed_by == sync_user
 
         if action_type == "translation:created":
-            if len(machinery_sources) == 0:
+            if len(action["machinery_sources"]) == 0:
                 data["human_translations"].add(translation)
             else:
                 data["machinery_translations"].add(translation)
 
-            if not approved_date or approved_date > date:
+            if not action["approved_date"] or action["approved_date"] > action["date"]:
                 data["new_suggestions"].add(translation)
 
             # Self-approval can also happen on translation submission
-            if performed_by == approved_user and not performed_by_sync:
+            if performed_by == action["approved_user"] and not performed_by_sync:
                 data["self_approved"].add(translation)
 
         elif action_type == "translation:approved" and not performed_by_sync:
-            if performed_by == user:
+            if performed_by == action["user"]:
                 data["self_approved"].add(translation)
             else:
                 data["peer_approved"].add(translation)
