@@ -36,8 +36,38 @@ type Props = {
 
 type State = {
     popupTerms: Array<TermType>;
-    seeMore: boolean;
 };
+
+function ResourceComment({ comment }: { comment: string }) {
+    const [seeMore, setSeeMore] = React.useState(false);
+    const MAX_LENGTH = 85;
+    return comment ? (
+        <Localized
+            id='entitydetails-Metadata--resource-comment'
+            attrs={{ title: true }}
+        >
+            <Property title='RESOURCE COMMENT' className='comment'>
+                <Linkify
+                    properties={{
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                    }}
+                >
+                    {comment.length < MAX_LENGTH || seeMore
+                        ? comment
+                        : comment.slice(0, MAX_LENGTH) + '\u2026'}
+                </Linkify>
+                {comment.length < MAX_LENGTH || seeMore ? null : (
+                    <Localized id='entitydetails-Metadata--see-more'>
+                        <button onClick={() => setSeeMore(true)}>
+                            {'See More'}
+                        </button>
+                    </Localized>
+                )}
+            </Property>
+        </Localized>
+    ) : null;
+}
 
 /**
  * Component showing metadata of an entity.
@@ -57,7 +87,6 @@ export default class Metadata extends React.Component<Props, State> {
         super(props);
         this.state = {
             popupTerms: [],
-            seeMore: false,
         };
     }
 
@@ -65,14 +94,9 @@ export default class Metadata extends React.Component<Props, State> {
         if (this.props.entity !== prevProps.entity) {
             this.setState({
                 popupTerms: [],
-                seeMore: false,
             });
         }
     }
-
-    handleClickOnSeeMore: () => void = () => {
-        this.setState({ seeMore: true });
-    };
 
     handleClickOnPlaceable: (
         e: React.MouseEvent<HTMLParagraphElement>,
@@ -208,44 +232,6 @@ export default class Metadata extends React.Component<Props, State> {
                           );
                       })}
             </>
-        );
-    }
-
-    renderResourceComment(entity: Entity): React.ReactNode {
-        const { seeMore } = this.state;
-        const MAX_LENGTH = 85;
-
-        if (!entity.resource_comment) {
-            return null;
-        }
-
-        let comment = entity.resource_comment;
-
-        return (
-            <Localized
-                id='entitydetails-Metadata--resource-comment'
-                attrs={{ title: true }}
-            >
-                <Property title='RESOURCE COMMENT' className='comment'>
-                    <Linkify
-                        properties={{
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
-                        }}
-                    >
-                        {comment.length < MAX_LENGTH || seeMore
-                            ? comment
-                            : comment.slice(0, MAX_LENGTH) + '\u2026'}
-                    </Linkify>
-                    {comment.length < MAX_LENGTH || seeMore ? null : (
-                        <Localized id='entitydetails-Metadata--see-more'>
-                            <button onClick={this.handleClickOnSeeMore}>
-                                {'See More'}
-                            </button>
-                        </Localized>
-                    )}
-                </Property>
-            </Localized>
         );
     }
 
@@ -394,7 +380,10 @@ export default class Metadata extends React.Component<Props, State> {
                 {this.renderPinnedComments(teamComments)}
                 {this.renderComment(entity)}
                 {this.renderGroupComment(entity)}
-                {this.renderResourceComment(entity)}
+                <ResourceComment
+                    comment={entity.resource_comment}
+                    key={entity.pk}
+                />
                 <FluentAttribute entity={entity} />
                 {this.renderContext(entity)}
                 {this.renderSources(entity)}
