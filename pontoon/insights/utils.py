@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.db.models.functions import TruncMonth
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Count, Sum
 
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
-    ProjectInsightsSnapshot,
+    ProjectLocaleInsightsSnapshot,
     active_users_default,
 )
 
@@ -15,6 +15,8 @@ def get_insight_start_date(from2021=False):
 
     For project insights, data is only available from 2020-12-14 onwards,
     so limit queries to start from 2021-01-01 at earliest.
+
+    TODO: Remove the 2021-specific argument & logic after the year ends.
     """
     now = datetime.now()
     if from2021 and now.year == 2021:
@@ -28,6 +30,8 @@ def get_locale_insights(query_filters=None):
     """Get data required by the Locale Insights tab.
 
     :param django.db.models.Q query_filters: filters insights by given query_filters.
+
+    TODO: Refactor as get_insights(locale, project)
     """
     start_date = get_insight_start_date(False)
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
@@ -122,16 +126,16 @@ def get_locale_insights(query_filters=None):
     return output
 
 
-def get_project_insights(query_filters=None):
-    """Get data required by the Project Insights tab.
-
-    :param django.db.models.Q query_filters: filters insights by given query_filters.
-    """
+def get_insights(locale=None, project=None):
+    """Get data required by the Insights tab."""
     start_date = get_insight_start_date(True)
-    snapshots = ProjectInsightsSnapshot.objects.filter(created_at__gte=start_date)
+    snapshots = ProjectLocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
-    if query_filters:
-        snapshots = snapshots.filter(query_filters)
+    if locale:
+        snapshots = snapshots.filter(project_locale__locale=locale)
+
+    if project:
+        snapshots = snapshots.filter(project_locale__project=project)
 
     insights = (
         snapshots
@@ -140,11 +144,13 @@ def get_project_insights(query_filters=None):
         # Group By month
         .values("month")
         # Select the avg/sum of the grouping
+        .annotate(snapshots_count=Count("created_at", distinct=True))
+        .annotate(locales_count=Count("project_locale__locale", distinct=True))
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
         .annotate(machinery_sum=Sum("machinery_translations"))
         .annotate(new_source_strings_sum=Sum("new_source_strings"))
-        .annotate(unreviewed_avg=Avg("unreviewed_strings"))
+        .annotate(unreviewed_sum=Sum("unreviewed_strings"))
         .annotate(peer_approved_sum=Sum("peer_approved"))
         .annotate(self_approved_sum=Sum("self_approved"))
         .annotate(rejected_sum=Sum("rejected"))
@@ -152,11 +158,13 @@ def get_project_insights(query_filters=None):
         # Select month and values
         .values(
             "month",
+            "snapshots_count",
+            "locales_count",
             "completion_avg",
             "human_translations_sum",
             "machinery_sum",
             "new_source_strings_sum",
-            "unreviewed_avg",
+            "unreviewed_sum",
             "peer_approved_sum",
             "self_approved_sum",
             "rejected_sum",
@@ -171,10 +179,28 @@ def get_project_insights(query_filters=None):
             "completion": [round(x["completion_avg"], 2) for x in insights],
             "human_translations": [x["human_translations_sum"] for x in insights],
             "machinery_translations": [x["machinery_sum"] for x in insights],
-            "new_source_strings": [x["new_source_strings_sum"] for x in insights],
+            # The same new source strings are added to each locale, so they need to be normalised
+            "new_source_strings": [
+                int(
+                    round(
+                        x["new_source_strings_sum"]
+                        / (x["locales_count"] if x["locales_count"] != 0 else 1)
+                    )
+                )
+                for x in insights
+            ],
         },
         "review_activity": {
-            "unreviewed": [int(round(x["unreviewed_avg"])) for x in insights],
+            # Unreviewed is not a delta, so use an average for the whole month
+            "unreviewed": [
+                int(
+                    round(
+                        x["unreviewed_sum"]
+                        / (x["snapshots_count"] if x["snapshots_count"] != 0 else 1)
+                    )
+                )
+                for x in insights
+            ],
             "peer_approved": [x["peer_approved_sum"] for x in insights],
             "self_approved": [x["self_approved_sum"] for x in insights],
             "rejected": [x["rejected_sum"] for x in insights],
