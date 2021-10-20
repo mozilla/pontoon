@@ -76,3 +76,21 @@
     font-style: italic;
     padding: 0 0 0 2px;
 }
+
+.metadata .resource-comment {
+    display: flex;
+}
+
+.metadata .resource-comment .comment {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.metadata .resource-comment .comment.expanded {
+    white-space: normal;
+}
+
+.metadata .resource-comment button {
+    white-space: nowrap;
+}

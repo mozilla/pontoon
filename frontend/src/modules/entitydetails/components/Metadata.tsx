@@ -39,33 +39,41 @@ type State = {
 };
 
 function ResourceComment({ comment }: { comment: string }) {
-    const [seeMore, setSeeMore] = React.useState(false);
-    const MAX_LENGTH = 85;
+    const ref = React.useRef<HTMLDivElement>(null);
+    const [overflow, setOverflow] = React.useState(false);
+    const [expand, setExpand] = React.useState(false);
+
+    React.useLayoutEffect(() => {
+        const body = ref.current?.querySelector<HTMLDivElement>('.comment');
+        if (body && body.scrollWidth > body.offsetWidth) setOverflow(true);
+    }, []);
+
     return comment ? (
-        <Localized
-            id='entitydetails-Metadata--resource-comment'
-            attrs={{ title: true }}
-        >
-            <Property title='RESOURCE COMMENT' className='comment'>
-                <Linkify
-                    properties={{
-                        target: '_blank',
-                        rel: 'noopener noreferrer',
-                    }}
+        <div className='resource-comment' ref={ref}>
+            <Localized
+                id='entitydetails-Metadata--resource-comment'
+                attrs={{ title: true }}
+            >
+                <Property
+                    className={expand ? 'comment expanded' : 'comment'}
+                    title='RESOURCE COMMENT'
                 >
-                    {comment.length < MAX_LENGTH || seeMore
-                        ? comment
-                        : comment.slice(0, MAX_LENGTH) + '\u2026'}
-                </Linkify>
-                {comment.length < MAX_LENGTH || seeMore ? null : (
-                    <Localized id='entitydetails-Metadata--see-more'>
-                        <button onClick={() => setSeeMore(true)}>
-                            {'See More'}
-                        </button>
-                    </Localized>
-                )}
-            </Property>
-        </Localized>
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
+                    >
+                        {comment}
+                    </Linkify>
+                </Property>
+            </Localized>
+            {!overflow || expand ? null : (
+                <Localized id='entitydetails-Metadata--see-more'>
+                    <button onClick={() => setExpand(true)}>See More</button>
+                </Localized>
+            )}
+        </div>
     ) : null;
 }
 
