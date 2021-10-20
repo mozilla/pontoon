@@ -22,6 +22,12 @@ urlpatterns = [
                     views.localization,
                     name="pontoon.localizations.contributors",
                 ),
+                # Project insights
+                path(
+                    "insights/",
+                    views.localization,
+                    name="pontoon.localizations.insights",
+                ),
                 # Project info
                 path(
                     "project-info/",
@@ -56,6 +62,12 @@ urlpatterns = [
                                 "contributors/",
                                 views.LocalizationContributorsView.as_view(),
                                 name="pontoon.localizations.ajax.contributors",
+                            ),
+                            # Project insights
+                            path(
+                                "insights/",
+                                views.ajax_insights,
+                                name="pontoon.localizations.ajax.insights",
                             ),
                         ]
                     ),
