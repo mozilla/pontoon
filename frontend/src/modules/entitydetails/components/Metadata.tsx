@@ -48,36 +48,32 @@ function ResourceComment({ comment }: { comment: string }) {
         if (body && body.scrollWidth > body.offsetWidth) setOverflow(true);
     }, []);
 
-    return (
-        comment && (
-            <div className='resource-comment' ref={ref}>
-                <Localized
-                    id='entitydetails-Metadata--resource-comment'
-                    attrs={{ title: true }}
+    return !comment ? null : (
+        <div className='resource-comment' ref={ref}>
+            <Localized
+                id='entitydetails-Metadata--resource-comment'
+                attrs={{ title: true }}
+            >
+                <Property
+                    className={expand ? 'comment expanded' : 'comment'}
+                    title='RESOURCE COMMENT'
                 >
-                    <Property
-                        className={expand ? 'comment expanded' : 'comment'}
-                        title='RESOURCE COMMENT'
+                    <Linkify
+                        properties={{
+                            target: '_blank',
+                            rel: 'noopener noreferrer',
+                        }}
                     >
-                        <Linkify
-                            properties={{
-                                target: '_blank',
-                                rel: 'noopener noreferrer',
-                            }}
-                        >
-                            {comment}
-                        </Linkify>
-                    </Property>
+                        {comment}
+                    </Linkify>
+                </Property>
+            </Localized>
+            {overflow && !expand && (
+                <Localized id='entitydetails-Metadata--see-more'>
+                    <button onClick={() => setExpand(true)}>See More</button>
                 </Localized>
-                {overflow && !expand && (
-                    <Localized id='entitydetails-Metadata--see-more'>
-                        <button onClick={() => setExpand(true)}>
-                            See More
-                        </button>
-                    </Localized>
-                )}
-            </div>
-        )
+            )}
+        </div>
     );
 }
 
