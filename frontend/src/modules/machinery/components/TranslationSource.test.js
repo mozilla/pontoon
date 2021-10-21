@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import TranslationSource from './TranslationSource';
+import { TranslationSource } from './TranslationSource';
 
 const DEFAULT_TRANSLATION = {
     sources: ['translation-memory'],

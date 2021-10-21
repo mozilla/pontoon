@@ -44,44 +44,29 @@ function dedupedTranslations(
     oldTranslations: Translations,
     newTranslations: Translations,
 ): Translations {
-    const translations = oldTranslations.map((item) => ({ ...item }));
+    const translations = oldTranslations.map((oldT) => ({ ...oldT }));
 
-    newTranslations.forEach((newT) => {
-        const sameTranslation = translations.findIndex(
+    for (const newT of newTranslations) {
+        const oldT = translations.find(
             (oldT) =>
                 newT.original === oldT.original &&
                 newT.translation === oldT.translation,
         );
-
-        if (sameTranslation >= 0) {
-            translations[sameTranslation].sources.push(newT.sources[0]);
-
-            if (newT.quality && !translations[sameTranslation].quality) {
-                translations[sameTranslation].quality = newT.quality;
-            }
-        } else {
+        if (!oldT) {
             translations.push({ ...newT });
+        } else {
+            oldT.sources.push(newT.sources[0]);
+            if (newT.quality) {
+                oldT.quality ||= newT.quality;
+            }
         }
-    });
+    }
 
     return translations.sort((a, b) => {
-        if (!a.quality && !b.quality) {
-            return 1;
-        }
-        if (!a.quality && b.quality) {
-            return 1;
-        }
-        if (a.quality && !b.quality) {
-            return -1;
-        }
-        if (a.quality && b.quality) {
-            if (a.quality > b.quality) {
-                return -1;
-            }
-            if (a.quality < b.quality) {
-                return 1;
-            }
-        }
+        if (!a.quality) return 1;
+        if (!b.quality) return -1;
+        if (a.quality > b.quality) return -1;
+        if (a.quality < b.quality) return 1;
         return 0;
     });
 }

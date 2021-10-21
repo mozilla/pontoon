@@ -20,31 +20,29 @@ const TranslationPlaceablesSearch = withSearch(
     WithPlaceablesForFluentNoLeadingSpace,
 );
 
-export default class FluentTranslation extends React.Component<TranslationProps> {
-    render(): React.ReactElement<React.ElementType> {
-        const { content, diffTarget, search } = this.props;
+export default function FluentTranslation({
+    content,
+    diffTarget,
+    search,
+}: TranslationProps): React.ReactElement<React.ElementType> {
+    const preview = fluent.getSimplePreview(content);
 
-        if (diffTarget) {
-            const fluentTarget = fluent.getSimplePreview(diffTarget);
-            return (
-                <TranslationPlaceablesDiff diffTarget={fluentTarget}>
-                    {fluent.getSimplePreview(content)}
-                </TranslationPlaceablesDiff>
-            );
-        }
-
-        if (search) {
-            return (
-                <TranslationPlaceablesSearch search={search}>
-                    {fluent.getSimplePreview(content)}
-                </TranslationPlaceablesSearch>
-            );
-        }
-
+    if (diffTarget) {
+        const fluentTarget = fluent.getSimplePreview(diffTarget);
         return (
-            <WithPlaceablesForFluent>
-                {fluent.getSimplePreview(content)}
-            </WithPlaceablesForFluent>
+            <TranslationPlaceablesDiff diffTarget={fluentTarget}>
+                {preview}
+            </TranslationPlaceablesDiff>
         );
     }
+
+    if (search) {
+        return (
+            <TranslationPlaceablesSearch search={search}>
+                {preview}
+            </TranslationPlaceablesSearch>
+        );
+    }
+
+    return <WithPlaceablesForFluent>{preview}</WithPlaceablesForFluent>;
 }

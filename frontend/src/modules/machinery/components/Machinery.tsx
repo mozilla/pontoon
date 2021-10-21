@@ -3,7 +3,7 @@ import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 
-import Translation from './Translation';
+import { Translation } from './Translation';
 import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
@@ -26,7 +26,7 @@ type State = {
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export default class Machinery extends React.Component<Props, State> {
+export class Machinery extends React.Component<Props, State> {
     searchInput: { current: any };
 
     constructor(props: Props) {
@@ -119,32 +119,26 @@ export default class Machinery extends React.Component<Props, State> {
                 </div>
                 <div className='list-wrapper'>
                     <ul>
-                        {machinery.translations.map((translation, index) => {
-                            return (
-                                <Translation
-                                    index={index}
-                                    entity={machinery.entity}
-                                    sourceString={machinery.sourceString}
-                                    translation={translation}
-                                    key={index}
-                                />
-                            );
-                        })}
+                        {machinery.translations.map((translation, index) => (
+                            <Translation
+                                index={index}
+                                entity={machinery.entity}
+                                sourceString={machinery.sourceString}
+                                translation={translation}
+                                key={index}
+                            />
+                        ))}
                     </ul>
                     <ul>
-                        {machinery.searchResults.map((result, index) => {
-                            return (
-                                <Translation
-                                    index={
-                                        index + machinery.translations.length
-                                    }
-                                    entity={machinery.entity}
-                                    sourceString={machinery.sourceString}
-                                    translation={result}
-                                    key={index + machinery.translations.length}
-                                />
-                            );
-                        })}
+                        {machinery.searchResults.map((result, index) => (
+                            <Translation
+                                index={index + machinery.translations.length}
+                                entity={machinery.entity}
+                                sourceString={machinery.sourceString}
+                                translation={result}
+                                key={index + machinery.translations.length}
+                            />
+                        ))}
                     </ul>
                     {hasMore && (
                         <div className='load-more-container'>

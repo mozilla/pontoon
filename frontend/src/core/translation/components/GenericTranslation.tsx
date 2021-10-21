@@ -16,26 +16,26 @@ export type TranslationProps = {
     search?: string | null | undefined;
 };
 
-export default class GenericTranslation extends React.Component<TranslationProps> {
-    render(): React.ReactElement<React.ElementType> {
-        const { content, diffTarget, search } = this.props;
-
-        if (diffTarget) {
-            return (
-                <TranslationPlaceablesDiff diffTarget={diffTarget}>
-                    {content}
-                </TranslationPlaceablesDiff>
-            );
-        }
-
-        if (search) {
-            return (
-                <TranslationPlaceablesSearch search={search}>
-                    {content}
-                </TranslationPlaceablesSearch>
-            );
-        }
-
-        return <WithPlaceables>{content}</WithPlaceables>;
+export default function GenericTranslation({
+    content,
+    diffTarget,
+    search,
+}: TranslationProps): React.ReactElement<React.ElementType> {
+    if (diffTarget) {
+        return (
+            <TranslationPlaceablesDiff diffTarget={diffTarget}>
+                {content}
+            </TranslationPlaceablesDiff>
+        );
     }
+
+    if (search) {
+        return (
+            <TranslationPlaceablesSearch search={search}>
+                {content}
+            </TranslationPlaceablesSearch>
+        );
+    }
+
+    return <WithPlaceables>{content}</WithPlaceables>;
 }

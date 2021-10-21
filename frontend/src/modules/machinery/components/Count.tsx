@@ -6,36 +6,29 @@ type Props = {
     machinery: MachineryState;
 };
 
-export default function Count(props: Props): null | React.ReactElement<'span'> {
-    const { machinery } = props;
+export function MachineryCount({
+    machinery: { searchResults, translations },
+}: Props): null | React.ReactElement<'span'> {
+    const machinery = translations.length + searchResults.length;
 
-    const machineryCount =
-        machinery.translations.length + machinery.searchResults.length;
-
-    if (!machineryCount) {
+    if (!machinery) {
         return null;
     }
 
-    const preferredCount = machinery.translations.reduce((count, item) => {
+    const preferred = translations.reduce((count, item) => {
         if (item.sources.find((source) => source === 'translation-memory')) {
             return count + 1;
         }
         return count;
     }, 0);
 
-    const remainingCount = machineryCount - preferredCount;
-
-    const preferred = !preferredCount ? null : (
-        <span className='preferred'>{preferredCount}</span>
-    );
-    const remaining = !remainingCount ? null : <span>{remainingCount}</span>;
-    const plus = !remainingCount || !preferredCount ? null : <span>{'+'}</span>;
+    const remaining = machinery - preferred;
 
     return (
         <span className='count'>
-            {preferred}
-            {plus}
-            {remaining}
+            {preferred && <span className='preferred'>{preferred}</span>}
+            {preferred && remaining && <span>+</span>}
+            {remaining && <span>{remaining}</span>}
         </span>
     );
 }

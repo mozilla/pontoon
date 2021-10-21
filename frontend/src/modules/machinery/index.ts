@@ -1,8 +1,8 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-export { default as Machinery } from './components/Machinery';
-export { default as MachineryCount } from './components/Count';
+export { Machinery } from './components/Machinery';
+export { MachineryCount } from './components/Count';
 
 export type { MachineryState } from './reducer';
 
