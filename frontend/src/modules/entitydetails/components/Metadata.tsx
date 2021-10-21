@@ -48,33 +48,37 @@ function ResourceComment({ comment }: { comment: string }) {
         if (body && body.scrollWidth > body.offsetWidth) setOverflow(true);
     }, []);
 
-    return comment ? (
-        <div className='resource-comment' ref={ref}>
-            <Localized
-                id='entitydetails-Metadata--resource-comment'
-                attrs={{ title: true }}
-            >
-                <Property
-                    className={expand ? 'comment expanded' : 'comment'}
-                    title='RESOURCE COMMENT'
+    return (
+        comment && (
+            <div className='resource-comment' ref={ref}>
+                <Localized
+                    id='entitydetails-Metadata--resource-comment'
+                    attrs={{ title: true }}
                 >
-                    <Linkify
-                        properties={{
-                            target: '_blank',
-                            rel: 'noopener noreferrer',
-                        }}
+                    <Property
+                        className={expand ? 'comment expanded' : 'comment'}
+                        title='RESOURCE COMMENT'
                     >
-                        {comment}
-                    </Linkify>
-                </Property>
-            </Localized>
-            {!overflow || expand ? null : (
-                <Localized id='entitydetails-Metadata--see-more'>
-                    <button onClick={() => setExpand(true)}>See More</button>
+                        <Linkify
+                            properties={{
+                                target: '_blank',
+                                rel: 'noopener noreferrer',
+                            }}
+                        >
+                            {comment}
+                        </Linkify>
+                    </Property>
                 </Localized>
-            )}
-        </div>
-    ) : null;
+                {overflow && !expand && (
+                    <Localized id='entitydetails-Metadata--see-more'>
+                        <button onClick={() => setExpand(true)}>
+                            See More
+                        </button>
+                    </Localized>
+                )}
+            </div>
+        )
+    );
 }
 
 /**
