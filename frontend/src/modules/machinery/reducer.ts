@@ -56,8 +56,8 @@ function dedupedTranslations(
             translations.push({ ...newT });
         } else {
             oldT.sources.push(newT.sources[0]);
-            if (newT.quality) {
-                oldT.quality ||= newT.quality;
+            if (newT.quality && !oldT.quality) {
+                oldT.quality = newT.quality;
             }
         }
     }
