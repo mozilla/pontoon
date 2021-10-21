@@ -26,9 +26,9 @@ export function MachineryCount({
 
     return (
         <span className='count'>
-            {preferred && <span className='preferred'>{preferred}</span>}
-            {preferred && remaining && <span>+</span>}
-            {remaining && <span>{remaining}</span>}
+            {preferred > 0 && <span className='preferred'>{preferred}</span>}
+            {preferred > 0 && remaining > 0 && <span>+</span>}
+            {remaining > 0 && <span>{remaining}</span>}
         </span>
     );
 }
