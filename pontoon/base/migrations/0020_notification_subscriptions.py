@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0019_alter_locale_cldr_plurals'),
+        ("base", "0019_alter_locale_cldr_plurals"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='comment_notifications',
+            model_name="userprofile",
+            name="comment_notifications",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='new_string_notifications',
+            model_name="userprofile",
+            name="new_string_notifications",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='project_deadline_notifications',
+            model_name="userprofile",
+            name="project_deadline_notifications",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='unreviewed_suggestion_notifications',
+            model_name="userprofile",
+            name="unreviewed_suggestion_notifications",
             field=models.BooleanField(default=True),
         ),
     ]
