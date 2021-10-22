@@ -1,8 +1,9 @@
 import {
-    CONCORDANCE_SEARCH,
     ADD_TRANSLATIONS,
+    CONCORDANCE_SEARCH,
     REQUEST,
-    RESET,
+    RESET_SEARCH,
+    SET_ENTITY,
 } from './actions';
 
 import type { MachineryTranslation } from 'core/api';
@@ -10,20 +11,23 @@ import type {
     ConcordanceSearchAction,
     AddTranslationsAction,
     RequestAction,
-    ResetAction,
+    ResetSearchAction,
+    SetEntityAction,
 } from './actions';
 
 type Action =
     | ConcordanceSearchAction
     | AddTranslationsAction
     | RequestAction
-    | ResetAction;
+    | ResetSearchAction
+    | SetEntityAction;
 
 type Translations = Array<MachineryTranslation>;
 
 export type MachineryState = {
     entity: number | null | undefined;
     sourceString: string;
+    searchString: string;
     translations: Translations;
     searchResults: Translations;
     fetching: boolean;
@@ -74,6 +78,7 @@ function dedupedTranslations(
 const initial: MachineryState = {
     entity: null,
     sourceString: '',
+    searchString: '',
     translations: [],
     searchResults: [],
     fetching: false,
@@ -109,14 +114,19 @@ export default function reducer(
                 fetching: true,
                 hasMore: false,
             };
-        case RESET:
+        case RESET_SEARCH:
+            return {
+                ...state,
+                searchString: action.searchString,
+                translations: [],
+                searchResults: [],
+                hasMore: false,
+            };
+        case SET_ENTITY:
             return {
                 ...state,
                 entity: action.entity,
                 sourceString: action.sourceString,
-                translations: [],
-                searchResults: [],
-                hasMore: false,
             };
         default:
             return state;

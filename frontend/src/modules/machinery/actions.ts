@@ -4,12 +4,11 @@ import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { AppThunk } from 'store';
 
-export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' =
-    'machinery/ADD_TRANSLATIONS';
-export const CONCORDANCE_SEARCH: 'machinery/CONCORDANCE_SEARCH' =
-    'machinery/CONCORDANCE_SEARCH';
-export const REQUEST: 'machinery/REQUEST' = 'machinery/REQUEST';
-export const RESET: 'machinery/RESET' = 'machinery/RESET';
+export const ADD_TRANSLATIONS = 'machinery/ADD_TRANSLATIONS';
+export const CONCORDANCE_SEARCH = 'machinery/CONCORDANCE_SEARCH';
+export const REQUEST = 'machinery/REQUEST';
+export const RESET_SEARCH = 'machinery/RESET_SEARCH';
+export const SET_ENTITY = 'machinery/SET_ENTITY';
 
 /**
  * Indicate that entities are currently being fetched.
@@ -51,18 +50,30 @@ export const addTranslations = (
 });
 
 /**
- * Reset the list of machinery translations.
+ * Reset the list of machinery translations for a new search.
  */
-export type ResetAction = {
-    readonly type: typeof RESET;
+export type ResetSearchAction = {
+    readonly type: typeof RESET_SEARCH;
+    readonly searchString: string;
+};
+export const resetSearch = (searchString: string): ResetSearchAction => ({
+    type: RESET_SEARCH,
+    searchString,
+});
+
+/**
+ * Set the current entity.
+ */
+export type SetEntityAction = {
+    readonly type: typeof SET_ENTITY;
     readonly entity: number | null | undefined;
     readonly sourceString: string;
 };
-export const reset = (
+export const setEntity = (
     entity: number | null | undefined,
     sourceString: string,
-): ResetAction => ({
-    type: RESET,
+): SetEntityAction => ({
+    type: SET_ENTITY,
     entity: entity,
     sourceString: sourceString,
 });
@@ -75,10 +86,6 @@ export const getConcordanceSearchResults = (
     locale: Locale,
     page?: number,
 ): AppThunk => async (dispatch) => {
-    if (!page) {
-        dispatch(reset(null, source));
-    }
-
     dispatch(request());
 
     // Abort all previously running requests.
@@ -109,8 +116,6 @@ export const get = (
     isAuthenticated: boolean,
     pk: number | null | undefined,
 ): AppThunk => async (dispatch) => {
-    dispatch(reset(pk, source));
-
     // Abort all previously running requests.
     await api.machinery.abort();
 
@@ -168,5 +173,6 @@ export default {
     getConcordanceSearchResults,
     addTranslations,
     get,
-    reset,
+    resetSearch,
+    setEntity,
 };

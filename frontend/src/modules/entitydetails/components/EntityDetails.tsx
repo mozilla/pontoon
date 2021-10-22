@@ -158,6 +158,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         }
 
         if (selectedEntity.pk !== this.props.machinery.entity) {
+            dispatch(machinery.actions.resetSearch(''));
+            dispatch(machinery.actions.setEntity(selectedEntity.pk, source));
             dispatch(
                 machinery.actions.get(
                     source,
@@ -217,33 +219,31 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         page?: number,
     ) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
+        const {
+            get,
+            getConcordanceSearchResults,
+            resetSearch,
+        } = machinery.actions;
 
-        let source = query;
-        let pk = null;
-
-        // On empty query, use source string as input
-        if (selectedEntity && !query.length) {
-            source = utils.getOptimizedContent(
-                selectedEntity.machinery_original,
-                selectedEntity.format,
-            );
-            pk = selectedEntity.pk;
-        }
-
-        if (!pk) {
-            dispatch(
-                machinery.actions.getConcordanceSearchResults(
-                    source,
-                    locale,
-                    page,
-                ),
-            );
-        }
-
-        if (!page) {
-            dispatch(
-                machinery.actions.get(source, locale, user.isAuthenticated, pk),
-            );
+        if (query) {
+            if (page) {
+                dispatch(getConcordanceSearchResults(query, locale, page));
+            } else {
+                dispatch(resetSearch(query));
+                dispatch(getConcordanceSearchResults(query, locale));
+                dispatch(get(query, locale, user.isAuthenticated, null));
+            }
+        } else {
+            dispatch(resetSearch(''));
+            if (selectedEntity) {
+                // On empty query, use source string as input
+                const source = utils.getOptimizedContent(
+                    selectedEntity.machinery_original,
+                    selectedEntity.format,
+                );
+                const pk = selectedEntity.pk;
+                dispatch(get(source, locale, user.isAuthenticated, pk));
+            }
         }
     };
 

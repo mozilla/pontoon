@@ -52,7 +52,7 @@ describe('<Machinery>', () => {
         const machinery = {
             translations: [],
             searchResults: [],
-            sourceString: 'test',
+            searchString: 'test',
         };
         const wrapper = mount(
             <Machinery machinery={machinery} locale={LOCALE} />,

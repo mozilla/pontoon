@@ -49,7 +49,10 @@ export class Machinery extends React.Component<Props, State> {
         const { machinery } = this.props;
 
         // Clear search field after switching to a different entity
-        if (machinery.entity && !prevProps.machinery.entity) {
+        if (
+            machinery.entity &&
+            machinery.entity !== prevProps.machinery.entity
+        ) {
             this.searchInput.current.value = '';
             this.setState({ page: 1 });
         }
@@ -85,15 +88,14 @@ export class Machinery extends React.Component<Props, State> {
             return null;
         }
 
-        const showResetButton = !machinery.entity && machinery.sourceString;
-
-        const hasMore = machinery.hasMore;
+        const entity = machinery.searchString ? null : machinery.entity;
+        const sourceString = machinery.searchString || machinery.sourceString;
 
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
                     <label htmlFor='machinery-search'>
-                        {showResetButton ? (
+                        {machinery.searchString ? (
                             <button
                                 className='fa fa-times'
                                 onClick={this.handleResetSearch}
@@ -122,8 +124,8 @@ export class Machinery extends React.Component<Props, State> {
                         {machinery.translations.map((translation, index) => (
                             <Translation
                                 index={index}
-                                entity={machinery.entity}
-                                sourceString={machinery.sourceString}
+                                entity={entity}
+                                sourceString={sourceString}
                                 translation={translation}
                                 key={index}
                             />
@@ -133,14 +135,14 @@ export class Machinery extends React.Component<Props, State> {
                         {machinery.searchResults.map((result, index) => (
                             <Translation
                                 index={index + machinery.translations.length}
-                                entity={machinery.entity}
-                                sourceString={machinery.sourceString}
+                                entity={entity}
+                                sourceString={sourceString}
                                 translation={result}
                                 key={index + machinery.translations.length}
                             />
                         ))}
                     </ul>
-                    {hasMore && (
+                    {machinery.hasMore && (
                         <div className='load-more-container'>
                             <Localized id='machinery-Machinery--load-more'>
                                 <button
