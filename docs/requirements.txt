@@ -10,9 +10,9 @@ graphviz==0.4.7 \
 alabaster==0.7.7 \
     --hash=sha256:d57602b3d730c2ecb978a213face0b7a16ceaa4a263575361bd4fd9e2669a544 \
     --hash=sha256:f416a84e0d0ddbc288f6b8f2c276d10b40ca1238562cd9ed5a751292ec647b71
-Babel==2.2.0 \
-    --hash=sha256:fed07cbcdcb3de79b53a8220eebed21c93f8dbb3dbce1d9c6b1c4b09e8aecf2b \
-    --hash=sha256:d8cb4c0e78148aee89560f9fe21587aa57739c975bb89ff66b1e842cc697428f
+Babel==2.9.1 \
+    --hash=sha256:ab49e12b91d937cd11f0b67cb259a57ab4ad2b59ac7a3b41d6c06c0ac5b0def9 \
+    --hash=sha256:bc0c176f9f6a994582230df350aa6e05ba2ebe4b3ac317eab29d9be5d2768da0
 Jinja2==2.11.3 \
     --hash=sha256:03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419 \
     --hash=sha256:a6d58433de0ae800347cab1fa3043cebbabe8baa9d29e668f1c768cb87a333c6
