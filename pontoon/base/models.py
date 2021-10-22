@@ -1588,6 +1588,12 @@ class UserProfile(models.Model):
     # Used to dismiss promotional banner for the Pontoon Add-On.
     has_dismissed_addon_promotion = models.BooleanField(default=False)
 
+    # Notification subscriptions
+    new_string_notifications = models.BooleanField(default=True)
+    project_deadline_notifications = models.BooleanField(default=True)
+    comment_notifications = models.BooleanField(default=True)
+    unreviewed_suggestion_notifications = models.BooleanField(default=True)
+
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)
