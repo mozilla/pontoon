@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 
-import Machinery from './Machinery';
+import { Machinery } from './Machinery';
 
 describe('<Machinery>', () => {
     const LOCALE = {
@@ -52,7 +52,7 @@ describe('<Machinery>', () => {
         const machinery = {
             translations: [],
             searchResults: [],
-            sourceString: 'test',
+            searchString: 'test',
         };
         const wrapper = mount(
             <Machinery machinery={machinery} locale={LOCALE} />,

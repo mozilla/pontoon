@@ -11,16 +11,10 @@ type ConcordanceTranslations = {
 };
 
 export default class MachineryAPI extends APIBase {
-    async _get(url: string, params: Record<string, any>): Promise<any> {
-        const payload = new URLSearchParams();
-        for (let param in params) {
-            payload.append(param, params[param]);
-        }
-
-        const headers = new Headers();
-        headers.append('X-Requested-With', 'XMLHttpRequest');
-
-        return await this.fetch(url, 'GET', payload, headers);
+    private _get(url: string, params: Record<string, any>): Promise<any> {
+        const payload = new URLSearchParams(params);
+        const headers = new Headers({ 'X-Requested-With': 'XMLHttpRequest' });
+        return this.fetch(url, 'GET', payload, headers);
     }
 
     /**
@@ -38,24 +32,28 @@ export default class MachineryAPI extends APIBase {
             page: (page || 1).toString(),
         };
 
-        const results = await this._get(url, params);
+        const { results, has_next } = (await this._get(url, params)) as {
+            results: Array<{
+                source: string;
+                target: string;
+                project_names: string[];
+            }>;
+            has_next: boolean;
+        };
 
-        if (!results.results || !Array.isArray(results.results)) {
+        if (!Array.isArray(results)) {
             return { results: [], hasMore: false };
         }
 
-        const searchResults = results.results.map(
-            (item): MachineryTranslation => {
-                return {
-                    sources: ['concordance-search'],
-                    original: item.source,
-                    translation: item.target,
-                    projectNames: item.project_names,
-                };
-            },
-        );
-
-        return { results: searchResults, hasMore: results.has_next };
+        return {
+            results: results.map((item) => ({
+                sources: ['concordance-search'],
+                original: item.source,
+                translation: item.target,
+                projectNames: item.project_names,
+            })),
+            hasMore: has_next,
+        };
     }
 
     /**
@@ -76,23 +74,24 @@ export default class MachineryAPI extends APIBase {
             params[pk] = pk;
         }
 
-        const results = await this._get(url, params);
+        const results = (await this._get(url, params)) as Array<{
+            count: number;
+            source: string;
+            target: string;
+            quality: number;
+        }>;
 
         if (!Array.isArray(results)) {
             return [];
         }
 
-        return results.map(
-            (item): MachineryTranslation => {
-                return {
-                    sources: ['translation-memory'],
-                    itemCount: item.count,
-                    original: item.source,
-                    translation: item.target,
-                    quality: Math.round(item.quality),
-                };
-            },
-        );
+        return results.map((item) => ({
+            sources: ['translation-memory'],
+            itemCount: item.count,
+            original: item.source,
+            translation: item.target,
+            quality: Math.round(item.quality),
+        }));
     }
 
     /**
@@ -108,18 +107,16 @@ export default class MachineryAPI extends APIBase {
             locale: locale.googleTranslateCode,
         };
 
-        const result = await this._get(url, params);
+        const { translation } = (await this._get(url, params)) as {
+            translation: string;
+        };
 
-        if (!result.translation) {
+        if (!translation) {
             return [];
         }
 
         return [
-            {
-                sources: ['google-translate'],
-                original: source,
-                translation: result.translation,
-            },
+            { sources: ['google-translate'], original: source, translation },
         ];
     }
 
@@ -136,9 +133,11 @@ export default class MachineryAPI extends APIBase {
             locale: locale.msTranslatorCode,
         };
 
-        const result = await this._get(url, params);
+        const { translation } = (await this._get(url, params)) as {
+            translation: string;
+        };
 
-        if (!result.translation) {
+        if (!translation) {
             return [];
         }
 
@@ -146,7 +145,7 @@ export default class MachineryAPI extends APIBase {
             {
                 sources: ['microsoft-translator'],
                 original: source,
-                translation: result.translation,
+                translation,
             },
         ];
     }
@@ -164,18 +163,16 @@ export default class MachineryAPI extends APIBase {
             locale: locale.systranTranslateCode,
         };
 
-        const result = await this._get(url, params);
+        const { translation } = (await this._get(url, params)) as {
+            translation: string;
+        };
 
-        if (!result.translation) {
+        if (!translation) {
             return [];
         }
 
         return [
-            {
-                sources: ['systran-translate'],
-                original: source,
-                translation: result.translation,
-            },
+            { sources: ['systran-translate'], original: source, translation },
         ];
     }
 
@@ -192,21 +189,19 @@ export default class MachineryAPI extends APIBase {
             locale: locale.msTerminologyCode,
         };
 
-        const results = await this._get(url, params);
+        const { translations } = (await this._get(url, params)) as {
+            translations: Array<{ source: string; target: string }>;
+        };
 
-        if (!results.translations) {
+        if (!translations) {
             return [];
         }
 
-        return results.translations.map(
-            (item): MachineryTranslation => {
-                return {
-                    sources: ['microsoft-terminology'],
-                    original: item.source,
-                    translation: item.target,
-                };
-            },
-        );
+        return translations.map((item) => ({
+            sources: ['microsoft-terminology'],
+            original: item.source,
+            translation: item.target,
+        }));
     }
 
     /**
@@ -220,18 +215,15 @@ export default class MachineryAPI extends APIBase {
             id: pk,
         };
 
-        const result = await this._get(url, params);
+        const { original, translation } = (await this._get(url, params)) as {
+            original: string;
+            translation: string;
+        };
 
-        if (!result.translation) {
+        if (!translation) {
             return [];
         }
 
-        return [
-            {
-                sources: ['caighdean'],
-                original: result.original,
-                translation: result.translation,
-            },
-        ];
+        return [{ sources: ['caighdean'], original, translation }];
     }
 }

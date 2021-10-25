@@ -6,7 +6,7 @@ import {
 
 import { mockMatchMedia } from 'test/utils';
 
-import Translation from './Translation';
+import { Translation } from './Translation';
 
 const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
 const DEFAULT_TRANSLATION = {

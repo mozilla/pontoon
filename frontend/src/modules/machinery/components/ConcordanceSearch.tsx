@@ -11,54 +11,39 @@ type Props = {
     translation: MachineryTranslation;
 };
 
-export default function ConcordanceSearch(
-    props: Props,
-): React.ReactElement<any> {
+function ProjectList({ projects }: { projects: string[] }) {
+    const notEmpty = projects.filter(Boolean);
+
+    if (notEmpty.length === 0) {
+        return <TranslationMemory />;
+    }
+
+    return (
+        <>
+            {notEmpty.map((project) => (
+                <li key={project}>
+                    <span className='translation-source'>
+                        <span>{project.toUpperCase()}</span>
+                    </span>
+                </li>
+            ))}
+        </>
+    );
+}
+
+export function ConcordanceSearch({
+    sourceString,
+    translation,
+}: Props): React.ReactElement {
     const locale = useAppSelector((state) => state.locale);
-    const { sourceString, translation } = props;
-
-    const createProjectList = () => {
-        if (!translation.projectNames) {
-            return null;
-        }
-
-        if (translation.projectNames.every((projectName) => !projectName)) {
-            return <TranslationMemory />;
-        }
-
-        return (
-            translation.projectNames &&
-            translation.projectNames.map((project) => {
-                return (
-                    project && (
-                        <li key={project}>
-                            <span className='translation-source'>
-                                <span>{project.toUpperCase()}</span>
-                            </span>
-                        </li>
-                    )
-                );
-            })
-        );
-    };
-
-    const getProjectNames = () => {
-        if (!translation.projectNames) {
-            return null;
-        }
-
-        return translation.projectNames
-            .filter((projectName) => {
-                return projectName !== null;
-            })
-            .join(' • ');
-    };
+    const projects = translation.projectNames;
+    const title = !projects ? null : projects.filter(Boolean).join(' • ');
 
     return (
         <>
             <header>
-                <ul className='sources projects' title={getProjectNames()}>
-                    {createProjectList()}
+                <ul className='sources projects' title={title}>
+                    {projects && <ProjectList projects={projects} />}
                 </ul>
             </header>
             <p className='original'>

@@ -9,8 +9,8 @@ import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import { GenericTranslation } from 'core/translation';
 
-import ConcordanceSearch from './ConcordanceSearch';
-import TranslationSource from './TranslationSource';
+import { ConcordanceSearch } from './ConcordanceSearch';
+import { TranslationSource } from './TranslationSource';
 
 import type { MachineryTranslation } from 'core/api';
 
@@ -28,16 +28,16 @@ type Props = {
  * Similar translations (same original and translation) are shown only once
  * and their sources are merged.
  */
-export default function Translation(
-    props: Props,
-): React.ReactElement<React.ElementType> {
-    const { index, sourceString, translation, entity } = props;
-
+export function Translation({
+    index,
+    sourceString,
+    translation,
+    entity,
+}: Props): React.ReactElement<React.ElementType> {
     const dispatch = useAppDispatch();
     const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
-    const locale = useAppSelector((state) => state.locale);
 
     const copyMachineryTranslation = editor.useCopyMachineryTranslation(entity);
     const copyTranslationIntoEditor = React.useCallback(() => {
@@ -64,16 +64,14 @@ export default function Translation(
         className += ' selected';
     }
 
-    const translationRef = React.useRef();
+    const translationRef = React.useRef<HTMLLIElement>(null);
     React.useEffect(() => {
         if (selectedHelperElementIndex === index) {
             const mediaQuery = window.matchMedia(
                 '(prefers-reduced-motion: reduce)',
             );
-            const behavior = mediaQuery.matches ? 'auto' : 'smooth';
-            // @ts-expect-error: What can be undefined here?
-            translationRef.current?.scrollIntoView?.({
-                behavior: behavior,
+            translationRef.current.scrollIntoView({
+                behavior: mediaQuery.matches ? 'auto' : 'smooth',
                 block: 'nearest',
             });
         }
@@ -93,47 +91,52 @@ export default function Translation(
                         translation={translation}
                     />
                 ) : (
-                    <>
-                        <header>
-                            {translation.quality && (
-                                <span className='quality'>
-                                    {translation.quality + '%'}
-                                </span>
-                            )}
-                            <TranslationSource
-                                translation={translation}
-                                locale={locale}
-                            />
-                        </header>
-                        <p className='original'>
-                            {translation.sources.indexOf('caighdean') === -1 ? (
-                                <GenericTranslation
-                                    content={translation.original}
-                                    diffTarget={sourceString}
-                                />
-                            ) : (
-                                /*
-                                 * Caighdean takes `gd` translations as input, so we shouldn't
-                                 * diff it against the `en-US` source string.
-                                 */
-                                <GenericTranslation
-                                    content={translation.original}
-                                />
-                            )}
-                        </p>
-                        <p
-                            className='suggestion'
-                            dir={locale.direction}
-                            data-script={locale.script}
-                            lang={locale.code}
-                        >
-                            <GenericTranslation
-                                content={translation.translation}
-                            />
-                        </p>
-                    </>
+                    <TranslationSuggestion
+                        sourceString={sourceString}
+                        translation={translation}
+                    />
                 )}
             </li>
         </Localized>
+    );
+}
+
+function TranslationSuggestion({
+    sourceString,
+    translation,
+}: {
+    sourceString: string;
+    translation: MachineryTranslation;
+}) {
+    const locale = useAppSelector((state) => state.locale);
+    return (
+        <>
+            <header>
+                {translation.quality && (
+                    <span className='quality'>{translation.quality + '%'}</span>
+                )}
+                <TranslationSource translation={translation} locale={locale} />
+            </header>
+            <p className='original'>
+                <GenericTranslation
+                    content={translation.original}
+                    diffTarget={
+                        // Caighdean takes `gd` translations as input, so we shouldn't
+                        // diff it against the `en-US` source string.
+                        translation.sources.includes('caighdean')
+                            ? null
+                            : sourceString
+                    }
+                />
+            </p>
+            <p
+                className='suggestion'
+                dir={locale.direction}
+                data-script={locale.script}
+                lang={locale.code}
+            >
+                <GenericTranslation content={translation.translation} />
+            </p>
+        </>
     );
 }

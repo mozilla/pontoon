@@ -3,7 +3,7 @@ import { Localized } from '@fluent/react';
 
 import './Machinery.css';
 
-import Translation from './Translation';
+import { Translation } from './Translation';
 import { SkeletonLoader } from 'core/loaders';
 
 import type { Locale } from 'core/locale';
@@ -26,7 +26,7 @@ type State = {
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export default class Machinery extends React.Component<Props, State> {
+export class Machinery extends React.Component<Props, State> {
     searchInput: { current: any };
 
     constructor(props: Props) {
@@ -49,7 +49,10 @@ export default class Machinery extends React.Component<Props, State> {
         const { machinery } = this.props;
 
         // Clear search field after switching to a different entity
-        if (machinery.entity && !prevProps.machinery.entity) {
+        if (
+            machinery.entity &&
+            machinery.entity !== prevProps.machinery.entity
+        ) {
             this.searchInput.current.value = '';
             this.setState({ page: 1 });
         }
@@ -85,15 +88,14 @@ export default class Machinery extends React.Component<Props, State> {
             return null;
         }
 
-        const showResetButton = !machinery.entity && machinery.sourceString;
-
-        const hasMore = machinery.hasMore;
+        const entity = machinery.searchString ? null : machinery.entity;
+        const sourceString = machinery.searchString || machinery.sourceString;
 
         return (
             <section className='machinery'>
                 <div className='search-wrapper clearfix'>
                     <label htmlFor='machinery-search'>
-                        {showResetButton ? (
+                        {machinery.searchString ? (
                             <button
                                 className='fa fa-times'
                                 onClick={this.handleResetSearch}
@@ -119,34 +121,28 @@ export default class Machinery extends React.Component<Props, State> {
                 </div>
                 <div className='list-wrapper'>
                     <ul>
-                        {machinery.translations.map((translation, index) => {
-                            return (
-                                <Translation
-                                    index={index}
-                                    entity={machinery.entity}
-                                    sourceString={machinery.sourceString}
-                                    translation={translation}
-                                    key={index}
-                                />
-                            );
-                        })}
+                        {machinery.translations.map((translation, index) => (
+                            <Translation
+                                index={index}
+                                entity={entity}
+                                sourceString={sourceString}
+                                translation={translation}
+                                key={index}
+                            />
+                        ))}
                     </ul>
                     <ul>
-                        {machinery.searchResults.map((result, index) => {
-                            return (
-                                <Translation
-                                    index={
-                                        index + machinery.translations.length
-                                    }
-                                    entity={machinery.entity}
-                                    sourceString={machinery.sourceString}
-                                    translation={result}
-                                    key={index + machinery.translations.length}
-                                />
-                            );
-                        })}
+                        {machinery.searchResults.map((result, index) => (
+                            <Translation
+                                index={index + machinery.translations.length}
+                                entity={entity}
+                                sourceString={sourceString}
+                                translation={result}
+                                key={index + machinery.translations.length}
+                            />
+                        ))}
                     </ul>
-                    {hasMore && (
+                    {machinery.hasMore && (
                         <div className='load-more-container'>
                             <Localized id='machinery-Machinery--load-more'>
                                 <button

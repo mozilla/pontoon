@@ -1,8 +1,9 @@
 import {
-    CONCORDANCE_SEARCH,
     ADD_TRANSLATIONS,
+    CONCORDANCE_SEARCH,
     REQUEST,
-    RESET,
+    RESET_SEARCH,
+    SET_ENTITY,
 } from './actions';
 
 import type { MachineryTranslation } from 'core/api';
@@ -10,20 +11,23 @@ import type {
     ConcordanceSearchAction,
     AddTranslationsAction,
     RequestAction,
-    ResetAction,
+    ResetSearchAction,
+    SetEntityAction,
 } from './actions';
 
 type Action =
     | ConcordanceSearchAction
     | AddTranslationsAction
     | RequestAction
-    | ResetAction;
+    | ResetSearchAction
+    | SetEntityAction;
 
 type Translations = Array<MachineryTranslation>;
 
 export type MachineryState = {
     entity: number | null | undefined;
     sourceString: string;
+    searchString: string;
     translations: Translations;
     searchResults: Translations;
     fetching: boolean;
@@ -44,44 +48,29 @@ function dedupedTranslations(
     oldTranslations: Translations,
     newTranslations: Translations,
 ): Translations {
-    const translations = oldTranslations.map((item) => ({ ...item }));
+    const translations = oldTranslations.map((oldT) => ({ ...oldT }));
 
-    newTranslations.forEach((newT) => {
-        const sameTranslation = translations.findIndex(
+    for (const newT of newTranslations) {
+        const oldT = translations.find(
             (oldT) =>
                 newT.original === oldT.original &&
                 newT.translation === oldT.translation,
         );
-
-        if (sameTranslation >= 0) {
-            translations[sameTranslation].sources.push(newT.sources[0]);
-
-            if (newT.quality && !translations[sameTranslation].quality) {
-                translations[sameTranslation].quality = newT.quality;
-            }
-        } else {
+        if (!oldT) {
             translations.push({ ...newT });
+        } else {
+            oldT.sources.push(newT.sources[0]);
+            if (newT.quality && !oldT.quality) {
+                oldT.quality = newT.quality;
+            }
         }
-    });
+    }
 
     return translations.sort((a, b) => {
-        if (!a.quality && !b.quality) {
-            return 1;
-        }
-        if (!a.quality && b.quality) {
-            return 1;
-        }
-        if (a.quality && !b.quality) {
-            return -1;
-        }
-        if (a.quality && b.quality) {
-            if (a.quality > b.quality) {
-                return -1;
-            }
-            if (a.quality < b.quality) {
-                return 1;
-            }
-        }
+        if (!a.quality) return 1;
+        if (!b.quality) return -1;
+        if (a.quality > b.quality) return -1;
+        if (a.quality < b.quality) return 1;
         return 0;
     });
 }
@@ -89,6 +78,7 @@ function dedupedTranslations(
 const initial: MachineryState = {
     entity: null,
     sourceString: '',
+    searchString: '',
     translations: [],
     searchResults: [],
     fetching: false,
@@ -124,14 +114,19 @@ export default function reducer(
                 fetching: true,
                 hasMore: false,
             };
-        case RESET:
+        case RESET_SEARCH:
+            return {
+                ...state,
+                searchString: action.searchString,
+                translations: [],
+                searchResults: [],
+                hasMore: false,
+            };
+        case SET_ENTITY:
             return {
                 ...state,
                 entity: action.entity,
                 sourceString: action.sourceString,
-                translations: [],
-                searchResults: [],
-                hasMore: false,
             };
         default:
             return state;
