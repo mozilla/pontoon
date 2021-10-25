@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { MachineryCount } from './Count';
+import { MachineryCount } from './MachineryCount';
 
 describe('<Count>', () => {
     it('shows the correct number of preferred translations', () => {
