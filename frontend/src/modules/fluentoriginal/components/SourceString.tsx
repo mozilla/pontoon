@@ -17,7 +17,7 @@ type Props = {
  * Show the source string of a Fluent entity.
  */
 export default function SourceString(props: Props): React.ReactElement<'p'> {
-    const TermsAndPlaceablesMarker = getMarker(props.terms);
+    const TermsAndPlaceablesMarker = getMarker(props.terms, true);
 
     return (
         <p className='original' onClick={props.handleClickOnPlaceable}>
