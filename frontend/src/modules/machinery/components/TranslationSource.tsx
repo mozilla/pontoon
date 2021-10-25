@@ -18,39 +18,47 @@ type Props = {
 /**
  * Shows a list of translation sources.
  */
-export default function TranslationSource({
+export function TranslationSource({
     translation,
     locale,
 }: Props): React.ReactElement<'ul'> {
-    const translationSource = translation.sources.map((source, index) => {
+    const sources: React.ReactElement<'li'>[] = [];
+    const seen: string[] = [];
+    for (const source of translation.sources) {
+        if (seen.includes(source)) continue;
+        seen.push(source);
         switch (source) {
             case 'translation-memory':
-                return (
+                sources.push(
                     <TranslationMemory
                         itemCount={translation.itemCount}
-                        key={index}
-                    />
+                        key={source}
+                    />,
                 );
+                break;
             case 'google-translate':
-                return <GoogleTranslation key={index} />;
+                sources.push(<GoogleTranslation key={source} />);
+                break;
             case 'microsoft-translator':
-                return <MicrosoftTranslation key={index} />;
+                sources.push(<MicrosoftTranslation key={source} />);
+                break;
             case 'systran-translate':
-                return <SystranTranslation key={index} />;
+                sources.push(<SystranTranslation key={source} />);
+                break;
             case 'microsoft-terminology':
-                return (
+                sources.push(
                     <MicrosoftTerminology
                         original={translation.original}
                         locale={locale}
-                        key={index}
-                    />
+                        key={source}
+                    />,
                 );
+                break;
             case 'caighdean':
-                return <CaighdeanTranslation key={index} />;
-            default:
-                return null;
+                sources.push(<CaighdeanTranslation key={source} />);
+                break;
         }
-    });
+    }
 
-    return <ul className='sources'>{translationSource}</ul>;
+    return <ul className='sources'>{sources}</ul>;
 }

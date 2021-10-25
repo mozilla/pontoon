@@ -2,13 +2,13 @@ import api from 'core/api';
 
 import type { MachineryTranslation } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { AppThunk } from 'store';
 
-export const ADD_TRANSLATIONS: 'machinery/ADD_TRANSLATIONS' =
-    'machinery/ADD_TRANSLATIONS';
-export const CONCORDANCE_SEARCH: 'machinery/CONCORDANCE_SEARCH' =
-    'machinery/CONCORDANCE_SEARCH';
-export const REQUEST: 'machinery/REQUEST' = 'machinery/REQUEST';
-export const RESET: 'machinery/RESET' = 'machinery/RESET';
+export const ADD_TRANSLATIONS = 'machinery/ADD_TRANSLATIONS';
+export const CONCORDANCE_SEARCH = 'machinery/CONCORDANCE_SEARCH';
+export const REQUEST = 'machinery/REQUEST';
+export const RESET_SEARCH = 'machinery/RESET_SEARCH';
+export const SET_ENTITY = 'machinery/SET_ENTITY';
 
 /**
  * Indicate that entities are currently being fetched.
@@ -16,11 +16,7 @@ export const RESET: 'machinery/RESET' = 'machinery/RESET';
 export type RequestAction = {
     type: typeof REQUEST;
 };
-export function request(): RequestAction {
-    return {
-        type: REQUEST,
-    };
-}
+export const request = (): RequestAction => ({ type: REQUEST });
 
 /**
  * Get a list of concordance search results
@@ -30,16 +26,14 @@ export type ConcordanceSearchAction = {
     readonly searchResults: Array<MachineryTranslation>;
     readonly hasMore: boolean;
 };
-export function concordanceSearch(
+export const concordanceSearch = (
     searchResults: Array<MachineryTranslation>,
     hasMore: boolean,
-): ConcordanceSearchAction {
-    return {
-        type: CONCORDANCE_SEARCH,
-        searchResults: searchResults,
-        hasMore,
-    };
-}
+): ConcordanceSearchAction => ({
+    type: CONCORDANCE_SEARCH,
+    searchResults: searchResults,
+    hasMore,
+});
 
 /**
  * Add a list of machine translations to the current list.
@@ -48,59 +42,62 @@ export type AddTranslationsAction = {
     readonly type: typeof ADD_TRANSLATIONS;
     readonly translations: Array<MachineryTranslation>;
 };
-export function addTranslations(
+export const addTranslations = (
     translations: Array<MachineryTranslation>,
-): AddTranslationsAction {
-    return {
-        type: ADD_TRANSLATIONS,
-        translations: translations,
-    };
-}
+): AddTranslationsAction => ({
+    type: ADD_TRANSLATIONS,
+    translations: translations,
+});
 
 /**
- * Reset the list of machinery translations.
+ * Reset the list of machinery translations for a new search.
  */
-export type ResetAction = {
-    readonly type: typeof RESET;
+export type ResetSearchAction = {
+    readonly type: typeof RESET_SEARCH;
+    readonly searchString: string;
+};
+export const resetSearch = (searchString: string): ResetSearchAction => ({
+    type: RESET_SEARCH,
+    searchString,
+});
+
+/**
+ * Set the current entity.
+ */
+export type SetEntityAction = {
+    readonly type: typeof SET_ENTITY;
     readonly entity: number | null | undefined;
     readonly sourceString: string;
 };
-export function reset(
+export const setEntity = (
     entity: number | null | undefined,
     sourceString: string,
-): ResetAction {
-    return {
-        type: RESET,
-        entity: entity,
-        sourceString: sourceString,
-    };
-}
+): SetEntityAction => ({
+    type: SET_ENTITY,
+    entity: entity,
+    sourceString: sourceString,
+});
 
 /**
  * Get concordance search results for a given source string and locale.
  */
-export function getConcordanceSearchResults(
+export const getConcordanceSearchResults = (
     source: string,
     locale: Locale,
     page?: number,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
-        if (!page) {
-            dispatch(reset(null, source));
-        }
+): AppThunk => async (dispatch) => {
+    dispatch(request());
 
-        dispatch(request());
+    // Abort all previously running requests.
+    await api.machinery.abort();
 
-        // Abort all previously running requests.
-        await api.machinery.abort();
-
-        api.machinery
-            .getConcordanceResults(source, locale, page)
-            .then((results) =>
-                dispatch(concordanceSearch(results.results, results.hasMore)),
-            );
-    };
-}
+    const { results, hasMore } = await api.machinery.getConcordanceResults(
+        source,
+        locale,
+        page,
+    );
+    dispatch(concordanceSearch(results, hasMore));
+};
 
 /**
  * Get all machinery results for a given source string and locale.
@@ -113,62 +110,69 @@ export function getConcordanceSearchResults(
  *  - Microsoft Terminology (if enabled for the locale)
  *  - Caighdean (if enabled for the locale)
  */
-export function get(
+export const get = (
     source: string,
     locale: Locale,
     isAuthenticated: boolean,
     pk: number | null | undefined,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
-        dispatch(reset(pk, source));
+): AppThunk => async (dispatch) => {
+    // Abort all previously running requests.
+    await api.machinery.abort();
 
-        // Abort all previously running requests.
-        await api.machinery.abort();
+    if (pk) {
+        const results = await api.machinery.getTranslationMemory(
+            source,
+            locale,
+            pk,
+        );
+        dispatch(addTranslations(results));
+    }
 
-        if (pk) {
-            api.machinery
-                .getTranslationMemory(source, locale, pk)
-                .then((results) => dispatch(addTranslations(results)));
+    // Only make requests to paid services if user is authenticated
+    if (isAuthenticated) {
+        if (locale.googleTranslateCode) {
+            const results = await api.machinery.getGoogleTranslation(
+                source,
+                locale,
+            );
+            dispatch(addTranslations(results));
         }
 
-        // Only make requests to paid services if user is authenticated
-        if (isAuthenticated) {
-            if (locale.googleTranslateCode) {
-                api.machinery
-                    .getGoogleTranslation(source, locale)
-                    .then((results) => dispatch(addTranslations(results)));
-            }
-
-            if (locale.msTranslatorCode) {
-                api.machinery
-                    .getMicrosoftTranslation(source, locale)
-                    .then((results) => dispatch(addTranslations(results)));
-            }
-
-            if (locale.systranTranslateCode) {
-                api.machinery
-                    .getSystranTranslation(source, locale)
-                    .then((results) => dispatch(addTranslations(results)));
-            }
+        if (locale.msTranslatorCode) {
+            const results = await api.machinery.getMicrosoftTranslation(
+                source,
+                locale,
+            );
+            dispatch(addTranslations(results));
         }
 
-        if (locale.msTerminologyCode) {
-            api.machinery
-                .getMicrosoftTerminology(source, locale)
-                .then((results) => dispatch(addTranslations(results)));
+        if (locale.systranTranslateCode) {
+            const results = await api.machinery.getSystranTranslation(
+                source,
+                locale,
+            );
+            dispatch(addTranslations(results));
         }
+    }
 
-        if (locale.code === 'ga-IE' && pk) {
-            api.machinery
-                .getCaighdeanTranslation(pk)
-                .then((results) => dispatch(addTranslations(results)));
-        }
-    };
-}
+    if (locale.msTerminologyCode) {
+        const results = await api.machinery.getMicrosoftTerminology(
+            source,
+            locale,
+        );
+        dispatch(addTranslations(results));
+    }
+
+    if (locale.code === 'ga-IE' && pk) {
+        const results = await api.machinery.getCaighdeanTranslation(pk);
+        dispatch(addTranslations(results));
+    }
+};
 
 export default {
     getConcordanceSearchResults,
     addTranslations,
     get,
-    reset,
+    resetSearch,
+    setEntity,
 };

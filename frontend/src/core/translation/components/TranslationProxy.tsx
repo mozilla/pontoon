@@ -10,30 +10,15 @@ type Props = {
     search?: string | null | undefined;
 };
 
-export default class TranslationProxy extends React.Component<Props> {
-    render(): null | React.ReactElement<React.ElementType> {
-        const { content, diffTarget, format, search } = this.props;
-
-        if (!content) {
-            return null;
-        }
-
-        if (format === 'ftl') {
-            return (
-                <FluentTranslation
-                    content={content}
-                    diffTarget={diffTarget}
-                    search={search}
-                />
-            );
-        }
-
-        return (
-            <GenericTranslation
-                content={content}
-                diffTarget={diffTarget}
-                search={search}
-            />
-        );
+export default function TranslationProxy({
+    format,
+    ...props
+}: Props): null | React.ReactElement<React.ElementType> {
+    if (!props.content) {
+        return null;
     }
+
+    const Translation =
+        format === 'ftl' ? FluentTranslation : GenericTranslation;
+    return <Translation {...props} />;
 }
