@@ -19,7 +19,7 @@ type Props = {
  */
 export default function SimpleString(props: Props): React.ReactElement<'p'> {
     const original = fluent.getSimplePreview(props.entity.original);
-    const TermsAndPlaceablesMarker = getMarker(props.terms);
+    const TermsAndPlaceablesMarker = getMarker(props.terms, true);
     return (
         <p className='original' onClick={props.handleClickOnPlaceable}>
             <TermsAndPlaceablesMarker>{original}</TermsAndPlaceablesMarker>
