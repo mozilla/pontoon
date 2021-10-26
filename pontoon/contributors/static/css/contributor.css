@@ -39,16 +39,17 @@ a.avatar:hover .desc ~ img {
     text-transform: none;
 }
 
-.info {
+.check-list {
     list-style: none;
     margin: 0;
     display: inline-block;
     text-align: left;
 }
 
-.info li {
+.check-list li {
     color: #aaaaaa;
-    display: block;
+    cursor: pointer;
+    display: table;
     font-size: 16px;
     font-weight: 300;
     overflow: hidden;
@@ -58,17 +59,12 @@ a.avatar:hover .desc ~ img {
     max-width: 980px;
 }
 
-.info a {
+.check-list a {
     color: #7bc876;
 }
 
-.info .fa {
+.check-list .fa {
     margin-right: 6px;
-}
-
-.info li.check-box {
-    cursor: pointer;
-    display: table;
 }
 
 #timeline-loader {
