@@ -28,6 +28,7 @@ class Command(BaseCommand):
 
             self.stdout.write(f"Sending deadline notifications for project {project}.")
 
+            is_project_public = project.visibility == Project.Visibility.PUBLIC
             verb = f"due in {days_left} days"
             locales = []
 
@@ -36,16 +37,15 @@ class Command(BaseCommand):
                     locales.append(project_locale.locale)
 
             contributors = (
-                User.projects.filter_by_visibility(project)
-                .filter(
+                User.objects.filter(
                     translation__entity__resource__project=project,
                     translation__locale__in=locales,
                     profile__project_deadline_notifications=True,
-                )
-                .distinct(),
+                ).distinct(),
             )
 
             for contributor in contributors:
-                notify.send(project, recipient=contributor, verb=verb)
+                if is_project_public or contributor.is_superuser:
+                    notify.send(project, recipient=contributor, verb=verb)
 
             self.stdout.write(f"Deadline notifications for project {project} sent.")
