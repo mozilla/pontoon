@@ -2,6 +2,8 @@ from unittest.mock import Mock, MagicMock, patch
 
 import pytest
 
+from notifications.signals import notify
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
@@ -143,6 +145,46 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved_date=aware_datetime(1970, 1, 1),
             fuzzy=False,
         )
+
+    def test_send_notifications(self):
+        """
+        Test if new string notifications are sent to the right users.
+        """
+        notify.send = Mock()
+
+        # No new entities created
+        new_entities = []
+        self.changeset.send_notifications(new_entities)
+        assert not notify.send.called
+
+        # New entity created
+        new_entities = [
+            Entity.objects.get(
+                resource__path=self.main_vcs_resource.path,
+                string=self.main_vcs_entity.string,
+            )
+        ]
+        self.changeset.send_notifications(new_entities)
+        assert notify.send.called
+
+    def test_send_notifications_opt_out(self):
+        """
+        Test if new string notifications are not sent to users that opt out.
+        """
+        notify.send = Mock()
+
+        # New entity created, user opts out of getting new string notifications
+        new_entities = [
+            Entity.objects.get(
+                resource__path=self.main_vcs_resource.path,
+                string=self.main_vcs_entity.string,
+            )
+        ]
+        self.main_db_translation.user.profile.new_string_notifications = False
+        self.main_db_translation.user.profile.save()
+
+        self.changeset.send_notifications(new_entities)
+        assert not notify.send.called
 
     def update_main_db_entity(self):
         self.changeset.update_db_entity(

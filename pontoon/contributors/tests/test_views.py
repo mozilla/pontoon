@@ -215,13 +215,38 @@ def test_timeline_non_active_contributor(
 
 @pytest.mark.django_db
 def test_timeline_join(client, contributor_translations, mock_profile_render, user_a):
-    """Last page of results should include informations about the when user joined pontoon."""
+    """Last page of results should include information about when user joined Pontoon."""
     client.get(f"/contributors/{user_a.username}/timeline/?page=3")
 
     assert mock_profile_render.call_args[0][2]["events"][-1] == {
         "date": user_a.date_joined,
         "type": "join",
     }
+
+
+@pytest.mark.django_db
+def test_toggle_user_profile_attribute(
+    member, contributor_translations, mock_profile_render, user_a
+):
+    """Test if toggle_user_profile_attribute view works and fails as expected."""
+    params = {}
+    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    assert response.status_code == 403
+    assert response.json()["message"] == "Forbidden: Attribute not allowed"
+
+    params = {
+        "attribute": "quality_checks",
+    }
+    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    assert response.status_code == 400
+    assert response.json()["message"] == "Bad Request: Value not set"
+
+    params = {
+        "attribute": "quality_checks",
+        "value": "false",
+    }
+    response = member.client.post(f"/api/v1/user/{user_a.username}/", params)
+    assert response.status_code == 200
 
 
 @pytest.fixture

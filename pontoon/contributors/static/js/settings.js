@@ -1,6 +1,6 @@
 $(function () {
     // Toggle user profile attribute
-    $('#check-boxes .check-box').click(function () {
+    $('.check-box').click(function () {
         var self = $(this);
 
         $.ajax({

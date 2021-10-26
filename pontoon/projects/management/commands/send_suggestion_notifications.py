@@ -106,7 +106,14 @@ class Command(BaseCommand):
         for suggestion in suggestions:
             self.extract_notifications_data(data, suggestion)
 
-        for recipient, project_locales in data.items():
+        pks = [user.pk for user in data.keys()]
+        recipients = User.objects.filter(
+            pk__in=pks, profile__unreviewed_suggestion_notifications=True
+        )
+
+        for recipient in recipients:
+            project_locales = data[recipient]
+
             description = render_to_string(
                 "projects/suggestion_notification.jinja",
                 {"project_locales": project_locales},
@@ -116,4 +123,4 @@ class Command(BaseCommand):
                 recipient, recipient=recipient, verb="", description=description
             )
 
-        self.stdout.write(f"Suggestion notifications sent to {len(data)} users.")
+        self.stdout.write(f"Suggestion notifications sent to {len(recipients)} users.")
