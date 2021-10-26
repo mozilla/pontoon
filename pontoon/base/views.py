@@ -488,7 +488,9 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         User.objects.filter(username__in=usernames).values_list("pk", flat=True)
     )
 
-    for recipient in User.objects.filter(pk__in=recipients).exclude(pk=user.pk):
+    for recipient in User.objects.filter(
+        pk__in=recipients, profile__comment_notifications=True,
+    ).exclude(pk=user.pk):
         notify.send(
             user,
             recipient=recipient,
