@@ -32,7 +32,7 @@ class JSONEntity(VCSTranslation):
             key=key,
             context=key,
             source_string=source_value,
-            strings={None: value}, # No plural support in key value JSON
+            strings={None: value} if value else {}, # No plural support in key value JSON
             comments=[],
             fuzzy=False,
         )
@@ -62,21 +62,11 @@ class JSONResource(ParsedResource):
                 raise ParseError(err)
 
         self.order_count = 0
-        def readEntity(flat_key, value):
-            print("read")
-            self.entities[flat_key] = JSONEntity(self.order_count, flat_key, value, value)
+        # Callback Populate JSON Entities
+        def readEntity(dot_key, value):
+            self.entities[dot_key] = JSONEntity(self.order_count, dot_key, value, value)
             self.order_count += 1
         self.traverse_json(self.json_file, readEntity)
-
-    def traverse_json(self, data, function, keys = []):
-        for key, value in data.items():
-            currentKey = keys.copy()
-            currentKey.append(key)
-            if isinstance(value, dict):
-                self.traverse_json(value, function, keys = currentKey)
-            elif type(value) == str:
-                flat_key = ".".join(currentKey)
-                function(flat_key, value)
 
     @property
     def translations(self):
@@ -98,17 +88,14 @@ class JSONResource(ParsedResource):
         with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
 
-        def writeEntity(flat_key, value):
-            entity = self.entities[flat_key]
+        def writeEntity(dot_key, value):
+            entity = self.entities[dot_key]
             if entity.strings:
-                print(self.get_value_flat_key(json_file, flat_key))
-                print(entity.strings[None])
-                self.set_value_flat_key(json_file, flat_key, entity.strings[None])
-                print(self.get_value_flat_key(json_file, flat_key))
+                self.set_json_value(json_file, dot_key, entity.strings[None])
             else:
-                del value
-
+                self.del_json_value(json_file, dot_key)
         self.traverse_json(json_file.copy(), writeEntity)
+        self.clear_empty_objects(json_file)
 
         create_parent_directory(self.path)
 
@@ -121,17 +108,40 @@ class JSONResource(ParsedResource):
             )
             f.write("\n")  # Add newline
 
-    def get_value_flat_key(self, json, flat_key):
-        json_pointer = json
-        for key_fragment in flat_key.split("."):
-            json_pointer = json_pointer[key_fragment]
-        return json_pointer
+    # Recursively read json object
+    # Callback a function when reaching the end of a branch
+    def traverse_json(self, data, function, keys = []):
+        for key, value in data.copy().items():
+            currentKey = keys.copy()
+            currentKey.append(key)
+            if isinstance(value, dict):
+                self.traverse_json(value, function, keys = currentKey)
+            elif type(value) == str:
+                dot_key = ".".join(currentKey)
+                function(dot_key, value)
 
-    def set_value_flat_key(self, json, flat_key, value):
+    # Set json entry at dot_key path
+    def set_json_value(self, json, dot_key, value):
         json_pointer = json
-        for key_fragment in flat_key.split(".")[:-1]:
+        for key_fragment in dot_key.split(".")[:-1]:
             json_pointer = json_pointer[key_fragment]
-        json_pointer[flat_key.split(".")[-1]] = value
+        json_pointer[dot_key.split(".")[-1]] = value
+
+    # Remove json entry at dot_key path
+    def del_json_value(self, json, dot_key):
+        json_pointer = json
+        split_key = dot_key.split(".")
+        for key_fragment in split_key[:-1]:
+            json_pointer = json_pointer[key_fragment]
+        del json_pointer[dot_key.split(".")[-1]]
+
+    # Recursively clear empty dict in json file
+    def clear_empty_objects(self, json):
+        for key, value in json.copy().items():
+            if isinstance(value, dict):
+                self.clear_empty_objects(json[key])
+                if len(json[key]) == 0:
+                    del json[key]
 
 
 def parse(path, source_path=None, locale=None):
