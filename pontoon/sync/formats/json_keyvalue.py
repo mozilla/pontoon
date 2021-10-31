@@ -63,6 +63,7 @@ class JSONResource(ParsedResource):
 
         self.order_count = 0
         def readEntity(flat_key, value):
+            print("read")
             self.entities[flat_key] = JSONEntity(self.order_count, flat_key, value, value)
             self.order_count += 1
         self.traverse_json(self.json_file, readEntity)
@@ -71,7 +72,7 @@ class JSONResource(ParsedResource):
         for key, value in data.items():
             currentKey = keys.copy()
             currentKey.append(key)
-            if type(value) == dict:
+            if isinstance(value, dict):
                 self.traverse_json(value, function, keys = currentKey)
             elif type(value) == str:
                 flat_key = ".".join(currentKey)
@@ -100,11 +101,10 @@ class JSONResource(ParsedResource):
         def writeEntity(flat_key, value):
             entity = self.entities[flat_key]
             if entity.strings:
-                print(entity)
-                self.get_value_flat_key(json_file, flat_key)
+                print(self.get_value_flat_key(json_file, flat_key))
+                print(entity.strings[None])
                 self.set_value_flat_key(json_file, flat_key, entity.strings[None])
-                self.get_value_flat_key(json_file, flat_key)
-                print()
+                print(self.get_value_flat_key(json_file, flat_key))
             else:
                 del value
 
@@ -129,9 +129,9 @@ class JSONResource(ParsedResource):
 
     def set_value_flat_key(self, json, flat_key, value):
         json_pointer = json
-        for key_fragment in flat_key.split("."):
+        for key_fragment in flat_key.split(".")[:-1]:
             json_pointer = json_pointer[key_fragment]
-        json_pointer = value
+        json_pointer[flat_key.split(".")[-1]] = value
 
 
 def parse(path, source_path=None, locale=None):
