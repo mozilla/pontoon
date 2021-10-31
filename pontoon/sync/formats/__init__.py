@@ -4,11 +4,13 @@ Parsing resource files.
 See base.py for the ParsedResource base class.
 """
 import os.path
+import fnmatch
 
 from pontoon.sync.formats import (
     compare_locales,
     ftl,
     json_extensions,
+    json_keyvalue,
     lang,
     po,
     silme,
@@ -19,18 +21,19 @@ from pontoon.sync.formats import (
 # where the key is the extension you're parsing and the value is a
 # callable returning an instance of a ParsedResource subclass.
 SUPPORTED_FORMAT_PARSERS = {
-    ".dtd": silme.parse_dtd,
-    ".ftl": ftl.parse,
-    ".inc": silme.parse_inc,
-    ".ini": silme.parse_ini,
-    ".json": json_extensions.parse,
-    ".lang": lang.parse,
-    ".po": po.parse,
-    ".pot": po.parse,
-    ".properties": silme.parse_properties,
-    ".xlf": xliff.parse,
-    ".xliff": xliff.parse,
-    ".xml": compare_locales.parse,
+    "*.dtd": silme.parse_dtd,
+    "*.ftl": ftl.parse,
+    "*.inc": silme.parse_inc,
+    "*.ini": silme.parse_ini,
+    "messages.json": json_extensions.parse,
+    "*.json": json_keyvalue.parse,
+    "*.lang": lang.parse,
+    "*.po": po.parse,
+    "*.pot": po.parse,
+    "*.properties": silme.parse_properties,
+    "*.xlf": xliff.parse,
+    "*.xliff": xliff.parse,
+    "*.xml": compare_locales.parse,
 }
 
 
@@ -41,6 +44,7 @@ def are_compatible_formats(extension_a, extension_b):
     Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
     """
     try:
+        print(extension_a, extension_b)
         return (
             SUPPORTED_FORMAT_PARSERS[extension_a]
             == SUPPORTED_FORMAT_PARSERS[extension_b]
@@ -65,10 +69,11 @@ def parse(path, source_path=None, locale=None):
         Object which describes information about currently processed locale.
         Some of the formats require information about things like e.g. plural form.
     """
+    filename = os.path.basename(path)
+    for format, parser in SUPPORTED_FORMAT_PARSERS.items():
+        if fnmatch.fnmatch(filename, format):
+            return parser(
+                path, source_path=source_path, locale=locale
+            )
     root, extension = os.path.splitext(path)
-    if extension in SUPPORTED_FORMAT_PARSERS:
-        return SUPPORTED_FORMAT_PARSERS[extension](
-            path, source_path=source_path, locale=locale
-        )
-    else:
-        raise ValueError(f"Translation format {extension} is not supported.")
+    raise ValueError(f"Translation format {extension} is not supported.")
