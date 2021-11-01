@@ -44,7 +44,6 @@ def are_compatible_formats(extension_a, extension_b):
     Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
     """
     try:
-        print(extension_a, extension_b)
         return (
             SUPPORTED_FORMAT_PARSERS[extension_a]
             == SUPPORTED_FORMAT_PARSERS[extension_b]
