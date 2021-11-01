@@ -6,12 +6,10 @@ See also:
 https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
 """
 import codecs
-import copy
 import json
 import logging
 
 from collections import OrderedDict
-from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
 from pontoon.sync.exceptions import ParseError, SyncError
@@ -21,6 +19,7 @@ from pontoon.sync.vcs.models import VCSTranslation
 
 
 log = logging.getLogger(__name__)
+
 
 class JSONEntity(VCSTranslation):
     """
@@ -32,10 +31,13 @@ class JSONEntity(VCSTranslation):
             key=key,
             context=key,
             source_string=source_value,
-            strings={None: value} if value else {}, # No plural support in key value JSON
+            strings={None: value}
+            if value
+            else {},  # No plural support in key value JSON
             comments=[],
             fuzzy=False,
         )
+
 
 class JSONResource(ParsedResource):
     def __init__(self, path, source_resource=None):
@@ -62,10 +64,12 @@ class JSONResource(ParsedResource):
                 raise ParseError(err)
 
         self.order_count = 0
+
         # Callback Populate JSON Entities
         def readEntity(dot_key, value):
             self.entities[dot_key] = JSONEntity(self.order_count, dot_key, value, value)
             self.order_count += 1
+
         self.traverse_json(self.json_file, readEntity)
 
     @property
@@ -94,6 +98,7 @@ class JSONResource(ParsedResource):
                 self.set_json_value(json_file, dot_key, entity.strings[None])
             else:
                 self.del_json_value(json_file, dot_key)
+
         self.traverse_json(json_file.copy(), writeEntity)
         self.clear_empty_objects(json_file)
 
@@ -110,12 +115,12 @@ class JSONResource(ParsedResource):
 
     # Recursively read json object
     # Callback a function when reaching the end of a branch
-    def traverse_json(self, data, function, keys = []):
+    def traverse_json(self, data, function, keys=[]):
         for key, value in data.copy().items():
             currentKey = keys.copy()
             currentKey.append(key)
             if isinstance(value, dict):
-                self.traverse_json(value, function, keys = currentKey)
+                self.traverse_json(value, function, keys=currentKey)
             elif type(value) == str:
                 dot_key = ".".join(currentKey)
                 function(dot_key, value)

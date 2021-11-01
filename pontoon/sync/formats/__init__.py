@@ -71,8 +71,6 @@ def parse(path, source_path=None, locale=None):
     filename = os.path.basename(path)
     for format, parser in SUPPORTED_FORMAT_PARSERS.items():
         if fnmatch.fnmatch(filename, format):
-            return parser(
-                path, source_path=source_path, locale=locale
-            )
+            return parser(path, source_path=source_path, locale=locale)
     root, extension = os.path.splitext(path)
     raise ValueError(f"Translation format {extension} is not supported.")
