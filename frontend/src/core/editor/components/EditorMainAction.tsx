@@ -48,7 +48,7 @@ export default function EditorMainAction(
     let btn: {
         id: string;
         className: string;
-        action: (...args: Array<any>) => any;
+        action: (event: React.SyntheticEvent) => void;
         title: string;
         label: string;
         glyph: React.ReactElement<'i'> | null | undefined;
@@ -79,7 +79,7 @@ export default function EditorMainAction(
         btn = {
             id: 'editor-EditorMenu--button-suggest',
             className: 'action-suggest',
-            action: props.sendTranslation,
+            action: () => props.sendTranslation(),
             title: 'Suggest Translation (Enter)',
             label: 'SUGGEST',
             glyph: null,
@@ -95,7 +95,7 @@ export default function EditorMainAction(
         btn = {
             id: 'editor-EditorMenu--button-save',
             className: 'action-save',
-            action: props.sendTranslation,
+            action: () => props.sendTranslation(),
             title: 'Save Translation (Enter)',
             label: 'SAVE',
             glyph: null,
