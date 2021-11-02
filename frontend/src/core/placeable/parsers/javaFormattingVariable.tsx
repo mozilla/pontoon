@@ -33,6 +33,7 @@ const javaFormattingVariable = {
                 <mark
                     className='placeable'
                     title='Java Message formatting variable'
+                    dir='ltr'
                 >
                     {x}
                 </mark>

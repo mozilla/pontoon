@@ -16,6 +16,7 @@ const tabCharacter = {
                     className='placeable'
                     title='Tab character'
                     data-match={x}
+                    dir='ltr'
                 >
                     <span className='hidden-source'>{x}</span>
                     <span aria-hidden>&rarr;</span>

@@ -21,7 +21,7 @@ const unusualSpace = {
                 id='placeable-parser-unusualSpace'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Unusual space'>
+                <mark className='placeable' title='Unusual space' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

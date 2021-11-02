@@ -22,7 +22,7 @@ const filePattern = {
                 id='placeable-parser-filePattern'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='File location'>
+                <mark className='placeable' title='File location' dir='ltr'>
                     {x}
                 </mark>
             </Localized>
