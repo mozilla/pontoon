@@ -21,7 +21,11 @@ const pythonFormatString = {
                 id='placeable-parser-pythonFormatString'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Python format string'>
+                <mark
+                    className='placeable'
+                    title='Python format string'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>

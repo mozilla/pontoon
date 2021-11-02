@@ -31,7 +31,7 @@ const punctuation = {
                 id='placeable-parser-punctuation'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Punctuation'>
+                <mark className='placeable' title='Punctuation' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

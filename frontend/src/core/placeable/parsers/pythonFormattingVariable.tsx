@@ -28,6 +28,7 @@ const pythonFormattingVariable = {
                 <mark
                     className='placeable'
                     title='Python string formatting variable'
+                    dir='ltr'
                 >
                     {x}
                 </mark>
