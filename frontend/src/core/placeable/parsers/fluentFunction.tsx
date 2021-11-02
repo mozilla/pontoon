@@ -20,7 +20,7 @@ const fluentFunction = {
                 id='placeable-parser-fluentFunction'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Fluent function'>
+                <mark className='placeable' title='Fluent function' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

@@ -22,7 +22,7 @@ const camelCaseString = {
                 id='placeable-parser-camelCaseString'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Camel case string'>
+                <mark className='placeable' title='Camel case string' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

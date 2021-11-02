@@ -23,7 +23,7 @@ const numberString = {
                 id='placeable-parser-numberString'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Number'>
+                <mark className='placeable' title='Number' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

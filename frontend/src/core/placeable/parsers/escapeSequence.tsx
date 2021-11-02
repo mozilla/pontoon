@@ -12,7 +12,7 @@ const escapeSequence = {
                 id='placeable-parser-escapeSequence'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Escape sequence'>
+                <mark className='placeable' title='Escape sequence' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

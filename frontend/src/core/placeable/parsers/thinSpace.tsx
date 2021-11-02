@@ -9,7 +9,7 @@ const thinSpace = {
     tag: (x: string): React.ReactElement<React.ElementType> => {
         return (
             <Localized id='placeable-parser-thinSpace' attrs={{ title: true }}>
-                <mark className='placeable' title='Thin space'>
+                <mark className='placeable' title='Thin space' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

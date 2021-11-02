@@ -23,6 +23,7 @@ const altAttribute = {
                 <mark
                     className='placeable'
                     title="'alt' attribute inside XML tag"
+                    dir='ltr'
                 >
                     {x}
                 </mark>

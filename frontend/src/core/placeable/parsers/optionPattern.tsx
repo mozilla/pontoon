@@ -21,7 +21,11 @@ const optionPattern = {
                 id='placeable-parser-optionPattern'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Command line option'>
+                <mark
+                    className='placeable'
+                    title='Command line option'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>

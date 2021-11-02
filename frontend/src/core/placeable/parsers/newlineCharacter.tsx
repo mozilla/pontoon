@@ -16,6 +16,7 @@ const newlineCharacter = {
                     className='placeable'
                     title='Newline character'
                     data-match={x}
+                    dir='ltr'
                 >
                     <span aria-hidden>¶</span>
                     {x}

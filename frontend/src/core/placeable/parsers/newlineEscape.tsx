@@ -12,7 +12,7 @@ const newlineEscape = {
                 id='placeable-parser-newlineEscape'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Escaped newline'>
+                <mark className='placeable' title='Escaped newline' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

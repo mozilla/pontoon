@@ -24,7 +24,11 @@ const stringFormattingVariable = {
                 id='placeable-parser-stringFormattingVariable'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='String formatting variable'>
+                <mark
+                    className='placeable'
+                    title='String formatting variable'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>

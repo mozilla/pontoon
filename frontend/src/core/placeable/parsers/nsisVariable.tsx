@@ -18,7 +18,7 @@ const nsisVariable = {
                 id='placeable-parser-nsisVariable'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='NSIS variable'>
+                <mark className='placeable' title='NSIS variable' dir='ltr'>
                     {x}
                 </mark>
             </Localized>
