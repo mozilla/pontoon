@@ -34,7 +34,7 @@ const uriPattern = {
     tag: (x: string): React.ReactElement<React.ElementType> => {
         return (
             <Localized id='placeable-parser-uriPattern' attrs={{ title: true }}>
-                <mark className='placeable' title='URI'>
+                <mark className='placeable' title='URI' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

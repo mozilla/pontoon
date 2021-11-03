@@ -21,6 +21,7 @@ const shortCapitalNumberString = {
                 <mark
                     className='placeable'
                     title='Short capital letter and number string'
+                    dir='ltr'
                 >
                     {x}
                 </mark>

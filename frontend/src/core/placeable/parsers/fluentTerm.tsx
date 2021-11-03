@@ -17,7 +17,7 @@ const fluentTerm = {
     tag: (x: string): React.ReactElement<React.ElementType> => {
         return (
             <Localized id='placeable-parser-fluentTerm' attrs={{ title: true }}>
-                <mark className='placeable' title='Fluent term'>
+                <mark className='placeable' title='Fluent term' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

@@ -19,7 +19,11 @@ const fluentString = {
                 id='placeable-parser-fluentString'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Fluent string expression'>
+                <mark
+                    className='placeable'
+                    title='Fluent string expression'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>

@@ -18,7 +18,7 @@ const xmlEntity = {
     tag: (x: string): React.ReactElement<React.ElementType> => {
         return (
             <Localized id='placeable-parser-xmlEntity' attrs={{ title: true }}>
-                <mark className='placeable' title='XML entity'>
+                <mark className='placeable' title='XML entity' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

@@ -12,7 +12,11 @@ const nonBreakingSpace = {
                 id='placeable-parser-nonBreakingSpace'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Non-breaking space'>
+                <mark
+                    className='placeable'
+                    title='Non-breaking space'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>
