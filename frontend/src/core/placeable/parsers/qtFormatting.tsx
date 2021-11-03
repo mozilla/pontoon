@@ -35,6 +35,7 @@ const qtFormatting = {
                 <mark
                     className='placeable'
                     title='Qt string formatting variable'
+                    dir='ltr'
                 >
                     {x}
                 </mark>

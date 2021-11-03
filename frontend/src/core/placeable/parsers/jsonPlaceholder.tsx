@@ -20,7 +20,7 @@ const jsonPlaceholder = {
                 id='placeable-parser-jsonPlaceholder'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='JSON placeholder'>
+                <mark className='placeable' title='JSON placeholder' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

@@ -16,6 +16,7 @@ const multipleSpaces = {
                     className='placeable'
                     title='Multiple spaces'
                     data-match={x}
+                    dir='ltr'
                 >
                     <span className='hidden-source'>{x}</span>
                     <span aria-hidden> &middot; </span>

@@ -22,7 +22,7 @@ const emailPattern = {
                 id='placeable-parser-emailPattern'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Email'>
+                <mark className='placeable' title='Email' dir='ltr'>
                     {x}
                 </mark>
             </Localized>

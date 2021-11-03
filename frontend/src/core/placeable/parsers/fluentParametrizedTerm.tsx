@@ -21,7 +21,11 @@ const fluentParametrizedTerm = {
                 id='placeable-parser-fluentParametrizedTerm'
                 attrs={{ title: true }}
             >
-                <mark className='placeable' title='Fluent parametrized term'>
+                <mark
+                    className='placeable'
+                    title='Fluent parametrized term'
+                    dir='ltr'
+                >
                     {x}
                 </mark>
             </Localized>

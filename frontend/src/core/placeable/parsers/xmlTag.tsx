@@ -19,7 +19,7 @@ const xmlTag = {
     tag: (x: string): React.ReactElement<React.ElementType> => {
         return (
             <Localized id='placeable-parser-xmlTag' attrs={{ title: true }}>
-                <mark className='placeable' title='XML tag'>
+                <mark className='placeable' title='XML tag' dir='ltr'>
                     {x}
                 </mark>
             </Localized>
