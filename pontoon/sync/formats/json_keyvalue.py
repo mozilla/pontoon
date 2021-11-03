@@ -1,15 +1,13 @@
 """
-Parser for the .json translation format as used by the WebExtensions API:
-https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
-
-See also:
-https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
+Parser for Key Value .json
+Schema free format allowing the storage of translation strings in a json object
 """
 import codecs
 import json
 import logging
 
 from collections import OrderedDict
+from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
 from pontoon.sync.exceptions import ParseError, SyncError
@@ -19,6 +17,14 @@ from pontoon.sync.vcs.models import VCSTranslation
 
 
 log = logging.getLogger(__name__)
+
+SCHEMA = {
+    "type": "object",
+    "patternProperties": {
+        ".+": {"anyOf": [{"type": "string"}, {"type": "object", "$ref": "#"}]}
+    },
+    "additionalProperties": False,
+}
 
 
 class JSONEntity(VCSTranslation):
@@ -53,6 +59,7 @@ class JSONResource(ParsedResource):
         try:
             with codecs.open(path, "r", "utf-8") as resource:
                 self.json_file = json.load(resource)
+                validate(self.json_file, SCHEMA)
 
         except (OSError, ValueError, ValidationError) as err:
             # If the file doesn't exist or cannot be decoded,
