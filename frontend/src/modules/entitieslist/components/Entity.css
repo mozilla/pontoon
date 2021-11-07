@@ -103,7 +103,11 @@
     color: #ffa10f;
 }
 
-.entity .sibling-entities {
+.entity.sibling {
+    background-color: #4d5967;
+}
+
+.entity .sibling-entities-icon {
     color: #aaa;
     left: 19px;
     top: 39px;
@@ -113,6 +117,6 @@
     font-size: 16px;
 }
 
-.entity .sibling-entities:hover {
+.entity .sibling-entities-icon:hover {
     color: #7bc876;
 }

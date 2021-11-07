@@ -362,17 +362,16 @@ def get_sibling_entities(request):
     entities = Entity.objects.filter(resource=entity.resource, obsolete=False).order_by(
         "order"
     )
-
     succeeding_entities = entities.filter(order__gt=entity.order)[:2]
-    preceding_entities = entities.filter(order__lt=entity.order)[:2]
+    preceding_entities = entities.filter(order__lt=entity.order).order_by("-order")[:2]
 
     return JsonResponse(
         {
             "succeeding": Entity.map_entities(
-                locale, preferred_source_locale, succeeding_entities
+                locale, preferred_source_locale, succeeding_entities, [], True
             ),
             "preceding": Entity.map_entities(
-                locale, preferred_source_locale, preceding_entities
+                locale, preferred_source_locale, preceding_entities, [], True
             ),
         },
         safe=False,

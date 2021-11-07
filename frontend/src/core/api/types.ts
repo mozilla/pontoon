@@ -71,14 +71,15 @@ export type Entity = {
     readonly source: Array<Array<string>> | Record<string, any>;
     readonly translation: Array<EntityTranslation>;
     readonly readonly: boolean;
+    readonly sibling: boolean;
 };
 
 /**
  * Lists of preceding and succeeding entities
  */
 export type EntitySiblings = {
-    readonly preceding: Array<Entity>,
-    readonly succeeding: Array<Entity>,
+    readonly preceding: Array<Entity>;
+    readonly succeeding: Array<Entity>;
 };
 
 /**
@@ -119,7 +120,6 @@ export type SourceType =
     | 'systran-translate'
     | 'microsoft-terminology'
     | 'caighdean';
-
 export type MachineryTranslation = {
     sources: Array<SourceType>;
     itemCount?: number;

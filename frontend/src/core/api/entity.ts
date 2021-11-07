@@ -137,7 +137,7 @@ export default class EntityAPI extends APIBase {
         return this.keysToCamelCase(results);
     }
 
-    async getSiblingEntities(entity: number, locale: string) {
+    async getSiblingEntities(entity: number, locale: string): Promise<any> {
         const payload = new URLSearchParams();
         payload.append('entity', entity.toString());
         payload.append('locale', locale);

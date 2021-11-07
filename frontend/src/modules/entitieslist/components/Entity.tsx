@@ -16,11 +16,11 @@ type Props = {
     isReadOnlyEditor: boolean;
     isTranslator: boolean;
     locale: Locale;
-    search: string | null | undefined;
     selected: boolean;
     selectEntity: (...args: Array<any>) => any;
-    getSiblingEntities: Function,
-    parameters: NavigationParams,
+    getSiblingEntities: Function;
+    sibling: boolean;
+    parameters: NavigationParams;
 };
 
 /**
@@ -94,11 +94,12 @@ export default class Entity extends React.Component<Props> {
         ) {
             return null;
         }
-
         this.props.selectEntity(this.props.entity);
     };
 
-    getSiblingEntities = (e: React.MouseEvent<HTMLButtonElement>) => {
+    getSiblingEntities: (e: React.MouseEvent<HTMLButtonElement>) => void = (
+        e: React.MouseEvent<HTMLButtonElement>,
+    ) => {
         e.stopPropagation();
         this.props.getSiblingEntities(this.props.entity.pk);
     };
@@ -114,7 +115,7 @@ export default class Entity extends React.Component<Props> {
         }
     };
 
-    areFiltersApplied = () => {
+    areFiltersApplied: () => boolean = () => {
         const parameters = this.props.parameters;
         if (
             parameters.status != null ||
@@ -136,6 +137,7 @@ export default class Entity extends React.Component<Props> {
             isTranslator,
             locale,
             selected,
+            sibling,
             parameters,
         } = this.props;
 
@@ -146,22 +148,23 @@ export default class Entity extends React.Component<Props> {
 
         const classChecked = checkedForBatchEditing ? 'checked' : '';
 
+        const classSibling = sibling ? 'sibling' : '';
         return (
             <li
-                className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}`}
+                className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}
                 onClick={this.selectEntity}
             >
                 <span
                     className='status fa'
                     onClick={this.toggleForBatchEditing}
                 />
-                {classSelected ? (
+                {classSelected && !classSibling ? (
                     <div>
                         {parameters.search || this.areFiltersApplied() ? (
                             <Localized id='entitieslist-Entity--sibling-strings-title'>
                                 <i
                                     className={
-                                        'sibling-entities fas fa-arrows-alt-v'
+                                        'sibling-entities-icon fas fa-expand-arrows-alt'
                                     }
                                     title='Click to reveal sibling strings'
                                     onClick={this.getSiblingEntities}

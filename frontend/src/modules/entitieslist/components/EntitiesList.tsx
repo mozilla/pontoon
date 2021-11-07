@@ -222,14 +222,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         );
     };
 
-    getSiblingEntities = (entity: number) => {
-        const entityIds = this.props.entities.entities.map(
-            (entity) => entity.pk,
-        );
+    getSiblingEntities: (entity: number) => void = (entity: number) => {
         const { dispatch, locale } = this.props;
-        dispatch(
-            entities.actions.getSiblingEntities(entity, locale.code, entityIds),
-        );
+        dispatch(entities.actions.getSiblingEntities(entity, locale.code));
     };
 
     toggleForBatchEditing: (
@@ -367,6 +362,8 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                     !props.batchactions.entities.length &&
                                     entity.pk === props.parameters.entity;
 
+                                const sibling = entity.sibling;
+
                                 return (
                                     <Entity
                                         checkedForBatchEditing={props.batchactions.entities.includes(
@@ -387,6 +384,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                         getSiblingEntities={
                                             this.getSiblingEntities
                                         }
+                                        sibling={sibling}
                                         parameters={parameters}
                                     />
                                 );
