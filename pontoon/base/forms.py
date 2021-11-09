@@ -12,7 +12,7 @@ from pontoon.base.models import (
     User,
     UserProfile,
 )
-from pontoon.sync.formats import are_compatible_formats
+from pontoon.sync.formats import are_compatible_files
 from pontoon.teams.utils import log_group_members
 
 
@@ -65,13 +65,13 @@ class UploadFileForm(DownloadFileForm):
 
             # File format validation
             if part:
-                uploadfile_ext = Path(uploadfile.name).suffix.lower()
-                targetfile_ext = Path(part).suffix.lower()
+                uploadfile_name = Path(uploadfile.name).name.lower()
+                targetfile_name = Path(part).name.lower()
 
                 # Fail if upload and target file are incompatible
-                if not are_compatible_formats(uploadfile_ext, targetfile_ext):
+                if not are_compatible_files(uploadfile_name, targetfile_name):
                     message = "Upload failed. File format not supported. Use {supported}.".format(
-                        supported=targetfile_ext
+                        supported=targetfile_name
                     )
                     raise forms.ValidationError(message)
 

@@ -37,20 +37,25 @@ SUPPORTED_FORMAT_PARSERS = {
 }
 
 
-def are_compatible_formats(extension_a, extension_b):
+def get_format_parser(file_name):
+    for format, parser in SUPPORTED_FORMAT_PARSERS.items():
+        if fnmatch.fnmatch(file_name, format):
+            return parser
+    return None
+
+
+def are_compatible_files(file_a, file_b):
     """
-    Return True if given file extensions belong to the same file format.
-    We test that by comparing parsers used by each file extenion.
+    Return True if five file names belong to the same file format.
+    We test that by comparing parsers used by each file extension.
     Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
+    Some use fullname resolution
     """
-    try:
-        return (
-            SUPPORTED_FORMAT_PARSERS[extension_a]
-            == SUPPORTED_FORMAT_PARSERS[extension_b]
-        )
-    # File extension not supported
-    except KeyError:
-        return False
+    parser_a = get_format_parser(file_a)
+    parser_b = get_format_parser(file_b)
+    if parser_a:
+        return parser_a == parser_b
+    return False
 
 
 def parse(path, source_path=None, locale=None):
@@ -69,8 +74,8 @@ def parse(path, source_path=None, locale=None):
         Some of the formats require information about things like e.g. plural form.
     """
     filename = os.path.basename(path)
-    for format, parser in SUPPORTED_FORMAT_PARSERS.items():
-        if fnmatch.fnmatch(filename, format):
-            return parser(path, source_path=source_path, locale=locale)
+    parser = get_format_parser(filename)
+    if parser:
+        return parser(path, source_path=source_path, locale=locale)
     root, extension = os.path.splitext(path)
     raise ValueError(f"Translation format {extension} is not supported.")
