@@ -134,7 +134,8 @@ class ProjectSyncLogTests(TestCase):
 
         # Skipped projects are just "skipped".
         skipped_log = ProjectSyncLogFactory.create(
-            project__repositories=[repo], skipped=True,
+            project__repositories=[repo],
+            skipped=True,
         )
 
         assert skipped_log.status == ProjectSyncLog.SKIPPED

@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="entity", name="key", field=models.TextField(),
+            model_name="entity",
+            name="key",
+            field=models.TextField(),
         ),
     ]

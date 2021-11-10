@@ -21,7 +21,11 @@ urlpatterns = [
                 # Project page
                 path("", views.project, name="pontoon.projects.project"),
                 # Project tags
-                path("tags/", views.project, name="pontoon.projects.tags",),
+                path(
+                    "tags/",
+                    views.project,
+                    name="pontoon.projects.tags",
+                ),
                 # Project contributors
                 path(
                     "contributors/",
@@ -29,9 +33,17 @@ urlpatterns = [
                     name="pontoon.projects.contributors",
                 ),
                 # Project insights
-                path("insights/", views.project, name="pontoon.projects.insights",),
+                path(
+                    "insights/",
+                    views.project,
+                    name="pontoon.projects.insights",
+                ),
                 # Project info
-                path("info/", views.project, name="pontoon.projects.info",),
+                path(
+                    "info/",
+                    views.project,
+                    name="pontoon.projects.info",
+                ),
                 # Project notifications
                 path(
                     "notifications/",

@@ -226,7 +226,9 @@ def _get_latest_translation(latest, kwargs):
 
 
 def _create_translated_resources(
-    factories, translations, translated_resource_kwargs,
+    factories,
+    translations,
+    translated_resource_kwargs,
 ):
     # creates translated resources from pre-calculated kwargs
     latest = _get_latest_translations(translations)

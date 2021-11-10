@@ -69,7 +69,11 @@ def test_contributors_of_missing_locale(client):
 @pytest.mark.django_db
 @patch("pontoon.teams.views.render", wraps=render)
 def test_ajax_permissions_locale_translators_managers_order(
-    render_mock, admin_client, locale_a, translators, managers,
+    render_mock,
+    admin_client,
+    locale_a,
+    translators,
+    managers,
 ):
     """
     Translators and managers of a locale should be sorted by email in
@@ -117,7 +121,9 @@ def test_ajax_permissions_project_locale_translators_order(
 
 @pytest.mark.django_db
 def test_users_permissions_for_ajax_permissions_view(
-    client, locale_a, member,
+    client,
+    locale_a,
+    member,
 ):
     """
     Check if anonymous users and users without permissions can't access
@@ -149,13 +155,15 @@ def test_users_permissions_for_ajax_permissions_view(
 
     # All unauthorized attempts to POST data should be blocked
     response = member.client.post(
-        f"/{locale_a.code}/ajax/permissions/", data={"smth": "smth"},
+        f"/{locale_a.code}/ajax/permissions/",
+        data={"smth": "smth"},
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
 
     response = client.post(
-        f"/{locale_a.code}/ajax/permissions/", data={"smth": "smth"},
+        f"/{locale_a.code}/ajax/permissions/",
+        data={"smth": "smth"},
     )
     assert response.status_code == 403
     assert b"<title>Forbidden page</title>" in response.content
@@ -180,7 +188,8 @@ def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     assert list(response_context["contributors"]) == [translation_a.user]
 
     client.get(
-        f"/{locale_b.code}/ajax/contributors/", HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        f"/{locale_b.code}/ajax/contributors/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
     response_context = mock_render.call_args[0][0]

@@ -25,7 +25,11 @@ def localization(request, code, slug):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    project_locale = get_object_or_404(ProjectLocale, locale=locale, project=project,)
+    project_locale = get_object_or_404(
+        ProjectLocale,
+        locale=locale,
+        project=project,
+    )
 
     resource_count = len(locale.parts_stats(project)) - 1
 
@@ -156,7 +160,11 @@ def ajax_tags(request, code, slug):
     if not project.tags_enabled:
         raise Http404
 
-    tags_tool = TagsTool(locales=[locale], projects=[project], priority=True,)
+    tags_tool = TagsTool(
+        locales=[locale],
+        projects=[project],
+        priority=True,
+    )
 
     return render(
         request,

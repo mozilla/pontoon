@@ -95,7 +95,11 @@ class JSONResource(ParsedResource):
                 data = copy.copy(entity.data)
                 data["message"] = None
 
-                self.entities[key] = JSONEntity(entity.order, entity.key, data,)
+                self.entities[key] = JSONEntity(
+                    entity.order,
+                    entity.key,
+                    data,
+                )
 
         try:
             with codecs.open(path, "r", "utf-8") as resource:
@@ -112,7 +116,11 @@ class JSONResource(ParsedResource):
                 raise ParseError(err)
 
         for order, (key, data) in enumerate(self.json_file.items()):
-            self.entities[key] = JSONEntity(order, key, data,)
+            self.entities[key] = JSONEntity(
+                order,
+                key,
+                data,
+            )
 
     @property
     def translations(self):

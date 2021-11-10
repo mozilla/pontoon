@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="entity", name="context", field=models.TextField(blank=True),
+            model_name="entity",
+            name="context",
+            field=models.TextField(blank=True),
         ),
     ]

@@ -18,7 +18,11 @@ def test_locale_perms_form_log_no_changes(user_a, locale_a):
 
 @pytest.mark.django_db
 def test_project_locale_perms_form_log_no_changes(user_a, locale_a):
-    form = ProjectLocalePermsForm({"translators": []}, instance=locale_a, user=user_a,)
+    form = ProjectLocalePermsForm(
+        {"translators": []},
+        instance=locale_a,
+        user=user_a,
+    )
     assert form.is_valid()
 
     form.save()
@@ -60,7 +64,9 @@ def test_locale_perms_form_log(
 
     # Remove items from groups
     form = LocalePermsForm(
-        {"translators": [], "managers": []}, instance=locale_a, user=user_a,
+        {"translators": [], "managers": []},
+        instance=locale_a,
+        user=user_a,
     )
 
     assert form.is_valid()
@@ -91,7 +97,9 @@ def test_project_locale_perms_form_log(
 ):
     # Add new users to groups
     form = ProjectLocalePermsForm(
-        {"translators": [user_c.pk]}, instance=locale_a, user=user_a,
+        {"translators": [user_c.pk]},
+        instance=locale_a,
+        user=user_a,
     )
 
     assert form.is_valid()
@@ -109,7 +117,9 @@ def test_project_locale_perms_form_log(
 
     # Remove items from groups
     form = ProjectLocalePermsForm(
-        {"translators": [], "managers": []}, instance=locale_a, user=user_a,
+        {"translators": [], "managers": []},
+        instance=locale_a,
+        user=user_a,
     )
 
     assert form.is_valid()

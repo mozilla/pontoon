@@ -57,7 +57,12 @@ class CompareLocalesResource(ParsedResource):
         # source resource entity.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = CompareLocalesEntity(entity.key, None, None, 0,)
+                self.entities[key] = CompareLocalesEntity(
+                    entity.key,
+                    None,
+                    None,
+                    0,
+                )
 
         try:
             self.parser.readFile(self.path)
@@ -75,7 +80,10 @@ class CompareLocalesResource(ParsedResource):
         for entity in self.parsed_objects:
             if isinstance(entity, parser.Entity):
                 self.entities[entity.key] = CompareLocalesEntity(
-                    entity.key, entity.unwrap(), entity.pre_comment, order,
+                    entity.key,
+                    entity.unwrap(),
+                    entity.pre_comment,
+                    order,
                 )
                 order += 1
 

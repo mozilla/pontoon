@@ -161,7 +161,8 @@ def _download_file(prefixes, dirnames, vcs_project, relative_path):
                     locale, absolute_path
                 )
                 relative_l10n_path = os.path.relpath(
-                    absolute_l10n_path, vcs_project.locale_directory_paths[locale.code],
+                    absolute_l10n_path,
+                    vcs_project.locale_directory_paths[locale.code],
                 )
                 url = urljoin(prefix, relative_l10n_path)
             else:
@@ -354,7 +355,8 @@ def handle_upload_content(slug, code, part, f, user):
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
     with tempfile.NamedTemporaryFile(
-        prefix="strings" if extension == ".xml" else "", suffix=extension,
+        prefix="strings" if extension == ".xml" else "",
+        suffix=extension,
     ) as temp:
         for chunk in f.chunks():
             temp.write(chunk)
@@ -578,7 +580,9 @@ def readonly_exists(projects, locale):
         projects = [projects]
 
     return ProjectLocale.objects.filter(
-        project__in=projects, locale=locale, readonly=True,
+        project__in=projects,
+        locale=locale,
+        readonly=True,
     ).exists()
 
 

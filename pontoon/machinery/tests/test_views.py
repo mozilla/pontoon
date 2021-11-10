@@ -32,7 +32,8 @@ def test_view_microsoft_translator(member, ms_locale, ms_api_key):
         data = [{"translations": [{"text": "target"}]}]
         m.post("https://api.cognitive.microsofttranslator.com/translate", json=data)
         response = member.client.get(
-            url, {"text": "text", "locale": ms_locale.ms_translator_code},
+            url,
+            {"text": "text", "locale": ms_locale.ms_translator_code},
         )
 
     assert response.status_code == 200
@@ -105,7 +106,9 @@ def test_view_google_translate(
 
 @pytest.mark.django_db
 def test_view_google_translate_bad_locale(
-    member, google_translate_locale, google_translate_api_key,
+    member,
+    google_translate_locale,
+    google_translate_api_key,
 ):
     url = reverse("pontoon.google_translate")
     response = member.client.get(url, {"text": "text", "locale": "bad"})
@@ -171,7 +174,11 @@ def test_view_caighdean_bad(client, entity_a):
     )
 
     translation = TranslationFactory.create(
-        entity=entity_a, locale=gd, string="foo", plural_form=None, approved=True,
+        entity=entity_a,
+        locale=gd,
+        string="foo",
+        plural_form=None,
+        approved=True,
     )
     entity_a.translation_set.add(translation)
 
@@ -189,7 +196,9 @@ def test_view_caighdean_bad(client, entity_a):
 
 @pytest.mark.django_db
 def test_view_translation_memory_best_quality_entry(
-    client, locale_a, resource_a,
+    client,
+    locale_a,
+    resource_a,
 ):
     """
     Translation memory should return results entries aggregated by
@@ -200,13 +209,22 @@ def test_view_translation_memory_best_quality_entry(
         for i in range(3)
     ]
     tm = TranslationMemoryFactory.create(
-        entity=entities[0], source="aaa", target="ccc", locale=locale_a,
+        entity=entities[0],
+        source="aaa",
+        target="ccc",
+        locale=locale_a,
     )
     TranslationMemoryFactory.create(
-        entity=entities[1], source="aaa", target="ddd", locale=locale_a,
+        entity=entities[1],
+        source="aaa",
+        target="ddd",
+        locale=locale_a,
     )
     TranslationMemoryFactory.create(
-        entity=entities[2], source="bbb", target="ccc", locale=locale_a,
+        entity=entities[2],
+        source="bbb",
+        target="ccc",
+        locale=locale_a,
     )
     response = client.get(
         "/translation-memory/",
@@ -219,7 +237,9 @@ def test_view_translation_memory_best_quality_entry(
 
 @pytest.mark.django_db
 def test_view_translation_memory_translation_counts(
-    client, locale_a, resource_a,
+    client,
+    locale_a,
+    resource_a,
 ):
     """
     Translation memory should aggregate identical translations strings
@@ -230,16 +250,28 @@ def test_view_translation_memory_translation_counts(
         for i, x in enumerate(["abaa", "abaa", "aaab", "aaab"])
     ]
     tm = TranslationMemoryFactory.create(
-        entity=entities[0], source=entities[0].string, target="ccc", locale=locale_a,
+        entity=entities[0],
+        source=entities[0].string,
+        target="ccc",
+        locale=locale_a,
     )
     TranslationMemoryFactory.create(
-        entity=entities[1], source=entities[1].string, target="ccc", locale=locale_a,
+        entity=entities[1],
+        source=entities[1].string,
+        target="ccc",
+        locale=locale_a,
     )
     TranslationMemoryFactory.create(
-        entity=entities[2], source=entities[2].string, target="ccc", locale=locale_a,
+        entity=entities[2],
+        source=entities[2].string,
+        target="ccc",
+        locale=locale_a,
     )
     TranslationMemoryFactory.create(
-        entity=entities[3], source=entities[3].string, target="ccc", locale=locale_a,
+        entity=entities[3],
+        source=entities[3].string,
+        target="ccc",
+        locale=locale_a,
     )
     response = client.get(
         "/translation-memory/",
@@ -256,7 +288,10 @@ def test_view_tm_exclude_entity(client, entity_a, locale_a, resource_a):
     Exclude entity from results to avoid false positive results.
     """
     tm = TranslationMemoryFactory.create(
-        entity=entity_a, source=entity_a.string, target="ccc", locale=locale_a,
+        entity=entity_a,
+        source=entity_a.string,
+        target="ccc",
+        locale=locale_a,
     )
     response = client.get(
         "/translation-memory/",
@@ -293,7 +328,11 @@ def test_view_tm_minimal_quality(client, locale_a, resource_a):
 @pytest.mark.django_db
 def test_view_concordance_search(client, project_a, locale_a, resource_a):
     entities = [
-        EntityFactory(resource=resource_a, string=x, order=i,)
+        EntityFactory(
+            resource=resource_a,
+            string=x,
+            order=i,
+        )
         for i, x in enumerate(["abaa", "aBaf", "aaAb", "aAab"])
     ]
     TranslationMemoryFactory.create(
@@ -312,7 +351,8 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     )
 
     response = client.get(
-        "/concordance-search/", {"text": "cdd", "locale": locale_a.code},
+        "/concordance-search/",
+        {"text": "cdd", "locale": locale_a.code},
     )
     result = json.loads(response.content)
     assert result == {
@@ -323,7 +363,8 @@ def test_view_concordance_search(client, project_a, locale_a, resource_a):
     }
 
     response = client.get(
-        "/concordance-search/", {"text": "abaa", "locale": locale_a.code},
+        "/concordance-search/",
+        {"text": "abaa", "locale": locale_a.code},
     )
     result = json.loads(response.content)
     assert result == {
@@ -340,7 +381,11 @@ def test_view_concordance_search_multiple_project_names(
 ):
     """Check Concordance search doesn't produce duplicated search results."""
     entities = [
-        EntityFactory(resource=resource_a, string=x, order=i,)
+        EntityFactory(
+            resource=resource_a,
+            string=x,
+            order=i,
+        )
         for i, x in enumerate(["abaa", "abaf"])
     ]
     TranslationMemoryFactory.create(
@@ -372,7 +417,8 @@ def test_view_concordance_search_multiple_project_names(
         project=project_b,
     )
     response = client.get(
-        "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code},
     )
     results = json.loads(response.content)
     assert results == {
@@ -394,7 +440,11 @@ def test_view_concordance_search_remove_duplicates(
 ):
     """Check Concordance search doesn't produce duplicated search results."""
     entities = [
-        EntityFactory(resource=resource_a, string=x, order=i,)
+        EntityFactory(
+            resource=resource_a,
+            string=x,
+            order=i,
+        )
         for i, x in enumerate(["abaa", "abaf"])
     ]
     TranslationMemoryFactory.create(
@@ -429,7 +479,8 @@ def test_view_concordance_search_remove_duplicates(
     )
 
     response = client.get(
-        "/concordance-search/", {"text": "ccc", "locale": locale_a.code},
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code},
     )
     results = json.loads(response.content)
     assert results == {
@@ -455,7 +506,8 @@ def test_view_concordance_search_invalid_pagination_parameters(
     parameters, client, locale_a
 ):
     response = client.get(
-        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, **parameters},
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code, **parameters},
     )
     assert response.status_code == 400
 
@@ -490,7 +542,8 @@ def test_view_concordance_search_pagination(client, project_a, locale_a, resourc
     )
 
     response = client.get(
-        "/concordance-search/", {"text": "ccc", "locale": locale_a.code, "limit": 1},
+        "/concordance-search/",
+        {"text": "ccc", "locale": locale_a.code, "limit": 1},
     )
     results = json.loads(response.content)
     assert results == {

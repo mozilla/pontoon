@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AlterUniqueTogether(
-            name="tag", unique_together={("slug", "project")},
+            name="tag",
+            unique_together={("slug", "project")},
         ),
     ]

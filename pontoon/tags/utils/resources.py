@@ -6,8 +6,7 @@ from .base import TagsDataTool
 
 
 class TagsResourcesTool(TagsDataTool):
-    """ Find, link and unlink Resources for Tags
-    """
+    """Find, link and unlink Resources for Tags"""
 
     filter_methods = ("locales", "projects", "slug", "path")
 
@@ -40,7 +39,7 @@ class TagsResourcesTool(TagsDataTool):
         )
 
     def find(self, search_path=None, include=None, exclude=None):
-        """ Find filtered resources by their path, and optionally
+        """Find filtered resources by their path, and optionally
         include/exclude resources linked to given tags.
         Return all resources by default.
         """
@@ -64,19 +63,18 @@ class TagsResourcesTool(TagsDataTool):
         return self.filtered_data.filter(tag__slug=tag).distinct()
 
     def get_linkable_resources(self, slug):
-        """ Return `values` of resources that can be linked to a given tag,
+        """Return `values` of resources that can be linked to a given tag,
         but are not already
         """
 
         return self.find(exclude=slug).values("path", "project")
 
     def get_linked_resources(self, slug):
-        """ Return `values` of resources that are already linked to a given tag
-        """
+        """Return `values` of resources that are already linked to a given tag"""
         return self.get(slug).values("path", "project")
 
     def link(self, tag, resources):
-        """ Associate Resources with a Tag. The Resources can be selected
+        """Associate Resources with a Tag. The Resources can be selected
         either by passing a search query to match, or by passing a list
         of Resource paths
         """

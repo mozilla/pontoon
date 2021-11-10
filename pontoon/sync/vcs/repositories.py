@@ -348,7 +348,7 @@ class SvnRepository(VCSRepository):
         statuses = statuses or ("A", "M")
 
         def normalize_revision(rev):
-            """Remove all non digit characters from the revision number. """
+            """Remove all non digit characters from the revision number."""
             return "".join(filter(lambda c: c.isdigit(), rev))
 
         from_revision = normalize_revision(from_revision)
@@ -372,7 +372,9 @@ class SvnRepository(VCSRepository):
 class GitRepository(VCSRepository):
     @property
     def revision(self):
-        code, output, error = self.execute(["git", "rev-parse", "HEAD"],)
+        code, output, error = self.execute(
+            ["git", "rev-parse", "HEAD"],
+        )
         return output.strip() if code == 0 else None
 
     def get_changed_files(self, path, from_revision, statuses=None):

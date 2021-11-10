@@ -46,7 +46,12 @@ class FormatTestsMixin:
         )
 
     def parse_string(
-        self, string, source_string=None, locale=None, path=None, source_path=None,
+        self,
+        string,
+        source_string=None,
+        locale=None,
+        path=None,
+        source_path=None,
     ):
         path = path or create_tempfile(string)
         locale = locale or self.locale
@@ -91,7 +96,10 @@ class FormatTestsMixin:
             )
 
     def run_parse_multiple_comments(
-        self, input_string, translation_index, comments=None,
+        self,
+        input_string,
+        translation_index,
+        comments=None,
     ):
         path, resource = self.parse_string(input_string)
 
