@@ -29,13 +29,20 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         contents = "text = Arise, awake and do not stop until the goal is reached."
 
         source_path = create_named_tempfile(
-            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
+            contents,
+            prefix="strings",
+            suffix=".ftl",
+            directory=self.tempdir,
         )
         source_resource = ftl.FTLResource(
             path=source_path, locale=None, source_resource=None
         )
 
-        return ftl.FTLResource(path, locale=None, source_resource=source_resource,)
+        return ftl.FTLResource(
+            path,
+            locale=None,
+            source_resource=source_resource,
+        )
 
     def get_nonexistant_file_path(self):
         return os.path.join(self.tempdir, "strings.ftl")
@@ -77,7 +84,10 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
     def test_parse_with_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
         source_path = create_named_tempfile(
-            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
+            contents,
+            prefix="strings",
+            suffix=".ftl",
+            directory=self.tempdir,
         )
         path = self.get_nonexistant_file_path()
         obj = ftl.parse(path, source_path=source_path, locale=None)
@@ -89,7 +99,10 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
     def test_parse_with_no_source_path(self):
         contents = "text = Arise, awake and do not stop until the goal is reached."
         path = create_named_tempfile(
-            contents, prefix="strings", suffix=".ftl", directory=self.tempdir,
+            contents,
+            prefix="strings",
+            suffix=".ftl",
+            directory=self.tempdir,
         )
         obj = ftl.parse(path, source_path=None, locale=None)
         assert obj.path == path

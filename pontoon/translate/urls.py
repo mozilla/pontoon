@@ -39,6 +39,12 @@ urlpatterns = [
 # automatically done when running with `make run`.
 if settings.DEV:
     urlpatterns += [
-        path("static/<path:path>", views.static_serve_dev,),
-        re_path(r"^sockjs-node/.*$", views.translate,),
+        path(
+            "static/<path:path>",
+            views.static_serve_dev,
+        ),
+        re_path(
+            r"^sockjs-node/.*$",
+            views.translate,
+        ),
     ]

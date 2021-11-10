@@ -125,5 +125,7 @@ def get_translation_memory_data(text, locale, pk=None):
         entries_merged[entry["target"]]["count"] += 1
 
     return sorted(
-        entries_merged.values(), key=lambda e: (e["quality"], e["count"]), reverse=True,
+        entries_merged.values(),
+        key=lambda e: (e["quality"], e["count"]),
+        reverse=True,
     )[:MAX_RESULTS]

@@ -45,7 +45,8 @@ def translation_dtd_unapproved():
     bulk_run_checks([translation])
 
     ProjectLocaleFactory.create(
-        project=translation.entity.resource.project, locale=translation.locale,
+        project=translation.entity.resource.project,
+        locale=translation.locale,
     )
 
     yield translation
@@ -65,7 +66,8 @@ def translation_dtd_invalid_unapproved():
     bulk_run_checks([translation])
 
     ProjectLocaleFactory.create(
-        project=translation.entity.resource.project, locale=translation.locale,
+        project=translation.entity.resource.project,
+        locale=translation.locale,
     )
 
     yield translation
@@ -73,8 +75,7 @@ def translation_dtd_invalid_unapproved():
 
 @pytest.yield_fixture
 def test_batch_edit_translations_no_user(client):
-    """If there are no logged in users, the view redirects to the login page.
-    """
+    """If there are no logged in users, the view redirects to the login page."""
     response = client.post(reverse("pontoon.batch.edit.translations"))
     assert response.status_code == 302
 
@@ -92,7 +93,10 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
     assert b"action" in response.content
 
     # Incorrect `action` parameter.
-    response = batch_action(action="unknown", locale=locale_a.code,)
+    response = batch_action(
+        action="unknown",
+        locale=locale_a.code,
+    )
 
     assert response.status_code == 400
     assert b"action" in response.content
@@ -101,7 +105,10 @@ def test_batch_edit_translations_bad_request(batch_action, member, locale_a):
 @pytest.mark.django_db
 def test_batch_edit_translations_not_found(batch_action, member, locale_a):
     # Incorrect `locale` parameter.
-    response = batch_action(action="reject", locale="unknown",)
+    response = batch_action(
+        action="reject",
+        locale="unknown",
+    )
     assert response.status_code == 404
 
 
@@ -110,7 +117,9 @@ def test_batch_edit_translations_no_permissions(
     batch_action, member, locale_a, entity_a, project_locale_a
 ):
     response = batch_action(
-        action="reject", locale=locale_a.code, entities=entity_a.id,
+        action="reject",
+        locale=locale_a.code,
+        entities=entity_a.id,
     )
 
     assert response.status_code == 403
@@ -119,7 +128,9 @@ def test_batch_edit_translations_no_permissions(
 
 @pytest.mark.django_db
 def test_batch_approve_valid_translations(
-    batch_action, member, translation_dtd_unapproved,
+    batch_action,
+    member,
+    translation_dtd_unapproved,
 ):
     """
     Approve translations without errors.
@@ -141,7 +152,9 @@ def test_batch_approve_valid_translations(
 
 @pytest.mark.django_db
 def test_batch_approve_invalid_translations(
-    batch_action, member, translation_dtd_invalid_unapproved,
+    batch_action,
+    member,
+    translation_dtd_invalid_unapproved,
 ):
     """
     Translations with errors can't be approved.
@@ -166,7 +179,9 @@ def test_batch_approve_invalid_translations(
 
 @pytest.mark.django_db
 def test_batch_find_and_replace_valid_translations(
-    batch_action, member, translation_dtd_unapproved,
+    batch_action,
+    member,
+    translation_dtd_unapproved,
 ):
     response = batch_action(
         admin=True,
@@ -190,7 +205,9 @@ def test_batch_find_and_replace_valid_translations(
 
 @pytest.mark.django_db
 def test_batch_find_and_replace_invalid_translations(
-    batch_action, member, translation_dtd_unapproved,
+    batch_action,
+    member,
+    translation_dtd_unapproved,
 ):
     """
     The `find & replace` action can't produce invalid translations.

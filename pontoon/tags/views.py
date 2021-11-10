@@ -30,13 +30,18 @@ class ProjectTagView(DetailView):
 
     def get_context_data(self, **kwargs):
         try:
-            tag = TagsTool(projects=[self.object], priority=True,)[
-                self.kwargs["tag"]
-            ].get()
+            tag = TagsTool(
+                projects=[self.object],
+                priority=True,
+            )[self.kwargs["tag"]].get()
         except IndexError:
             raise Http404
 
         if is_ajax(self.request):
-            return dict(project=self.object, locales=list(tag.iter_locales()), tag=tag,)
+            return dict(
+                project=self.object,
+                locales=list(tag.iter_locales()),
+                tag=tag,
+            )
 
         return dict(project=self.object, tag=tag)

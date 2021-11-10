@@ -140,8 +140,7 @@ class TagsDataTool(FilteredDataTool):
 
 
 class TagsTRTool(TagsDataTool):
-    """Data Tool from the perspective of TranslatedResources
-    """
+    """Data Tool from the perspective of TranslatedResources"""
 
     clone_kwargs = TagsDataTool.clone_kwargs + ("annotations", "groupby")
 
@@ -163,8 +162,7 @@ class TagsTRTool(TagsDataTool):
         return trs.filter(resource__project__in=self.projects) if self.projects else trs
 
     def filter_tag(self, trs):
-        """Filters on tag.slug and tag.priority
-        """
+        """Filters on tag.slug and tag.priority"""
 
         q = Q()
         if not self.slug:

@@ -56,7 +56,8 @@ def translation_memory(request):
 
     except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     data = get_translation_memory_data(text, locale, pk)
@@ -72,7 +73,8 @@ def concordance_search(request):
         page = int(request.GET.get("page", 1))
     except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     paginator = Paginator(get_concordance_search_data(text, locale), page_results_limit)
@@ -112,7 +114,8 @@ def microsoft_translator(request):
 
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     url = "https://api.cognitive.microsofttranslator.com/translate"
@@ -134,13 +137,17 @@ def microsoft_translator(request):
         if "error" in root:
             log.error(f"Microsoft Translator error: {root}")
             return JsonResponse(
-                {"status": False, "message": f"Bad Request: {root}"}, status=400,
+                {"status": False, "message": f"Bad Request: {root}"},
+                status=400,
             )
 
         return JsonResponse({"translation": root[0]["translations"][0]["text"]})
 
     except requests.exceptions.RequestException as e:
-        return JsonResponse({"status": False, "message": f"{e}"}, status=r.status_code,)
+        return JsonResponse(
+            {"status": False, "message": f"{e}"},
+            status=r.status_code,
+        )
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -155,7 +162,8 @@ def google_translate(request):
 
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     data = get_google_translate_data(text, locale_code)
@@ -184,7 +192,8 @@ def systran_translate(request):
 
     except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     url = "https://api-translate.systran.net/translation/text/translate"
@@ -207,13 +216,17 @@ def systran_translate(request):
         if "error" in root:
             log.error(f"SYSTRAN error: {root}")
             return JsonResponse(
-                {"status": False, "message": f"Bad Request: {root}"}, status=400,
+                {"status": False, "message": f"Bad Request: {root}"},
+                status=400,
             )
 
         return JsonResponse({"translation": root["outputs"][0]["output"]})
 
     except requests.exceptions.RequestException as e:
-        return JsonResponse({"status": False, "message": f"{e}"}, status=r.status_code,)
+        return JsonResponse(
+            {"status": False, "message": f"{e}"},
+            status=r.status_code,
+        )
 
 
 def caighdean(request):
@@ -223,7 +236,8 @@ def caighdean(request):
         entity = Entity.objects.get(id=entityid)
     except (Entity.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     try:
@@ -255,7 +269,10 @@ def caighdean(request):
         return JsonResponse({"original": text, "translation": translation})
 
     except requests.exceptions.RequestException as e:
-        return JsonResponse({"status": False, "message": f"{e}"}, status=r.status_code,)
+        return JsonResponse(
+            {"status": False, "message": f"{e}"},
+            status=r.status_code,
+        )
 
 
 def microsoft_terminology(request):
@@ -269,7 +286,8 @@ def microsoft_terminology(request):
 
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     obj = {}
@@ -311,4 +329,7 @@ def microsoft_terminology(request):
         return JsonResponse(obj)
 
     except requests.exceptions.RequestException as e:
-        return JsonResponse({"status": False, "message": f"{e}"}, status=r.status_code,)
+        return JsonResponse(
+            {"status": False, "message": f"{e}"},
+            status=r.status_code,
+        )

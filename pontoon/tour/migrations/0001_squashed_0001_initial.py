@@ -43,7 +43,9 @@ def create_tutorial_project(apps, schema_editor):
     Resource = apps.get_model("base", "Resource")
     new_strings = DEMO_PROJECT_CONTENT.strip().split("\n")
     resource, _ = Resource.objects.get_or_create(
-        path="playground", project=project, total_strings=len(new_strings),
+        path="playground",
+        project=project,
+        total_strings=len(new_strings),
     )
 
     # Add entities
@@ -59,7 +61,11 @@ def create_tutorial_project(apps, schema_editor):
     ProjectLocale = apps.get_model("base", "ProjectLocale")
     locales = Locale.objects.exclude(code__in=["en-US", "en"])
     project_locales = [
-        ProjectLocale(project=project, locale=locale, total_strings=len(new_strings),)
+        ProjectLocale(
+            project=project,
+            locale=locale,
+            total_strings=len(new_strings),
+        )
         for locale in locales
     ]
     ProjectLocale.objects.bulk_create(project_locales)
@@ -68,7 +74,9 @@ def create_tutorial_project(apps, schema_editor):
     TranslatedResource = apps.get_model("base", "TranslatedResource")
     translated_resources = [
         TranslatedResource(
-            resource=resource, locale=locale, total_strings=len(new_strings),
+            resource=resource,
+            locale=locale,
+            total_strings=len(new_strings),
         )
         for locale in locales
     ]
@@ -98,6 +106,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=create_tutorial_project, reverse_code=remove_tutorial_project,
+            code=create_tutorial_project,
+            reverse_code=remove_tutorial_project,
         ),
     ]

@@ -157,7 +157,9 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         # Without project config
         self.vcs_project.configuration = None
         update_translated_resources(
-            self.db_project, self.vcs_project, self.translated_locale,
+            self.db_project,
+            self.vcs_project,
+            self.translated_locale,
         )
         assert not update_translated_resources_with_config_mock.called
         assert update_translated_resources_without_config_mock.called
@@ -169,7 +171,9 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         # With project config
         self.vcs_project.configuration = True
         update_translated_resources(
-            self.db_project, self.vcs_project, self.translated_locale,
+            self.db_project,
+            self.vcs_project,
+            self.translated_locale,
         )
         assert update_translated_resources_with_config_mock.called
         assert not update_translated_resources_without_config_mock.called
@@ -185,15 +189,19 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
                 ]
 
                 update_translated_resources_with_config(
-                    self.db_project, self.vcs_project, self.translated_locale,
+                    self.db_project,
+                    self.vcs_project,
+                    self.translated_locale,
                 )
 
                 assert TranslatedResource.objects.filter(
-                    resource=self.other_db_resource, locale=self.translated_locale,
+                    resource=self.other_db_resource,
+                    locale=self.translated_locale,
                 ).exists()
 
                 assert not TranslatedResource.objects.filter(
-                    resource=self.missing_db_resource, locale=self.translated_locale,
+                    resource=self.missing_db_resource,
+                    locale=self.translated_locale,
                 ).exists()
 
     def test_no_project_configuration_basic(self):
@@ -202,7 +210,9 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         available in the current locale.
         """
         update_translated_resources_without_config(
-            self.db_project, self.vcs_project, self.translated_locale,
+            self.db_project,
+            self.vcs_project,
+            self.translated_locale,
         )
 
         assert TranslatedResource.objects.filter(
@@ -228,7 +238,9 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
             is_asymmetric.return_value = True
 
             update_translated_resources_without_config(
-                self.db_project, self.vcs_project, self.translated_locale,
+                self.db_project,
+                self.vcs_project,
+                self.translated_locale,
             )
 
             assert TranslatedResource.objects.filter(
@@ -249,7 +261,9 @@ class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
         even if the inactive locale has a resource.
         """
         update_translated_resources_without_config(
-            self.db_project, self.vcs_project, self.translated_locale,
+            self.db_project,
+            self.vcs_project,
+            self.translated_locale,
         )
 
         assert TranslatedResource.objects.filter(

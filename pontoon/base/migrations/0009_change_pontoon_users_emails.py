@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=update_system_user_email, reverse_code=revert_system_user_email,
+            code=update_system_user_email,
+            reverse_code=revert_system_user_email,
         ),
     ]

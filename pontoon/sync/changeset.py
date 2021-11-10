@@ -378,7 +378,9 @@ class ChangeSet:
 
         for locale in locale_entities.keys():
             entities_qs = (
-                Entity.objects.filter(pk__in=locale_entities[locale],)
+                Entity.objects.filter(
+                    pk__in=locale_entities[locale],
+                )
                 .prefetch_related(
                     Prefetch(
                         "translation_set",
@@ -535,7 +537,10 @@ class ChangeSet:
         bulk_run_checks(Translation.objects.for_checks().filter(pk__in=changed_pks))
 
         valid_translations = set(
-            Translation.objects.filter(pk__in=changed_pks, errors__isnull=True,)
+            Translation.objects.filter(
+                pk__in=changed_pks,
+                errors__isnull=True,
+            )
             .values_list("pk", flat=True)
             .order_by("pk")
         )

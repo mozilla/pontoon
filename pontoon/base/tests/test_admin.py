@@ -14,8 +14,12 @@ from pontoon.test.factories import (
 
 @pytest.fixture
 def locale_c():
-    translators_group = GroupFactory.create(name="locale translators",)
-    managers_group = GroupFactory.create(name="locale managers",)
+    translators_group = GroupFactory.create(
+        name="locale translators",
+    )
+    managers_group = GroupFactory.create(
+        name="locale managers",
+    )
     return LocaleFactory.create(
         code="nv",
         name="Na'vi",
@@ -45,7 +49,10 @@ def user_form_request():
 
         form_request.update(override_fields)
 
-        request = rf.post("/dummy/", form_request,)
+        request = rf.post(
+            "/dummy/",
+            form_request,
+        )
         request.user = request_user
         return request
 
@@ -59,11 +66,21 @@ def get_useradmin_form():
     """
 
     def _get_user_admin_form(request, user):
-        useradmin = UserAdmin(User, AdminSite(),)
-        form = useradmin.get_form(request=request, obj=user,)
+        useradmin = UserAdmin(
+            User,
+            AdminSite(),
+        )
+        form = useradmin.get_form(
+            request=request,
+            obj=user,
+        )
         return (
             useradmin,
-            form(request.POST, instance=user, initial={"password": "password"},),
+            form(
+                request.POST,
+                instance=user,
+                initial={"password": "password"},
+            ),
         )
 
     return _get_user_admin_form
@@ -71,9 +88,15 @@ def get_useradmin_form():
 
 @pytest.mark.django_db
 def test_user_admin_form_log_no_changes(
-    user_a, user_b, user_form_request, get_useradmin_form,
+    user_a,
+    user_b,
+    user_form_request,
+    get_useradmin_form,
 ):
-    _, form = get_useradmin_form(user_form_request(user_a, user_b), user_b,)
+    _, form = get_useradmin_form(
+        user_form_request(user_a, user_b),
+        user_b,
+    )
 
     assert form.is_valid()
 
@@ -90,8 +113,15 @@ def test_user_admin_form_log_add_groups(
     get_useradmin_form,
     assert_permissionchangelog,
 ):
-    request = user_form_request(user_a, user_b, groups=[locale_c.managers_group.pk],)
-    useradmin, form = get_useradmin_form(request, user_b,)
+    request = user_form_request(
+        user_a,
+        user_b,
+        groups=[locale_c.managers_group.pk],
+    )
+    useradmin, form = get_useradmin_form(
+        request,
+        user_b,
+    )
     assert form.is_valid()
 
     useradmin.save_model(request, user_b, form, True)
@@ -117,8 +147,15 @@ def test_user_admin_form_log_removed_groups(
     assert_permissionchangelog,
 ):
     user_b.groups.add(locale_c.managers_group)
-    request = user_form_request(user_a, user_b, groups=[],)
-    useradmin, form = get_useradmin_form(request, user_b,)
+    request = user_form_request(
+        user_a,
+        user_b,
+        groups=[],
+    )
+    useradmin, form = get_useradmin_form(
+        request,
+        user_b,
+    )
     assert form.is_valid()
 
     useradmin.save_model(request, user_b, form, True)

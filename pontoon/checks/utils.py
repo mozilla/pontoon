@@ -63,7 +63,11 @@ def get_failed_checks_db_objects(translation, failed_checks):
 
         messages_list.extend(
             [
-                severity_cls(library=library, message=message, translation=translation,)
+                severity_cls(
+                    library=library,
+                    message=message,
+                    translation=translation,
+                )
                 for message in messages
             ]
         )

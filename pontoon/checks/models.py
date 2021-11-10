@@ -14,7 +14,11 @@ class FailedCheck(models.Model):
         PONTOON = "p", "pontoon"
         COMPARE_LOCALES = "cl", "compare-locales"
 
-    library = models.CharField(max_length=20, choices=Library.choices, db_index=True,)
+    library = models.CharField(
+        max_length=20,
+        choices=Library.choices,
+        db_index=True,
+    )
     message = models.TextField()
 
     class Meta:

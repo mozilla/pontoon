@@ -30,7 +30,10 @@ def get_translations(entity, locale):
     plural_forms = range(0, locale.nplurals or 1)
 
     # Try to get matches from translation_memory
-    tm_response = get_translation_memory_data(text=entity.string, locale=locale,)
+    tm_response = get_translation_memory_data(
+        text=entity.string,
+        locale=locale,
+    )
 
     tm_response = [t for t in tm_response if int(t["quality"]) == 100]
 
@@ -44,7 +47,8 @@ def get_translations(entity, locale):
     # Else fetch from google translate
     elif locale.google_translate_code:
         gt_response = get_google_translate_data(
-            text=entity.string, locale_code=locale.google_translate_code,
+            text=entity.string,
+            locale_code=locale.google_translate_code,
         )
 
         if gt_response["status"]:

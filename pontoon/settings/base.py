@@ -281,11 +281,17 @@ PIPELINE_CSS = {
         "output_filename": "css/base.min.css",
     },
     "admin": {
-        "source_filenames": ("css/table.css", "css/admin.css",),
+        "source_filenames": (
+            "css/table.css",
+            "css/admin.css",
+        ),
         "output_filename": "css/admin.min.css",
     },
     "admin_project": {
-        "source_filenames": ("css/double_list_selector.css", "css/admin_project.css",),
+        "source_filenames": (
+            "css/double_list_selector.css",
+            "css/admin_project.css",
+        ),
         "output_filename": "css/admin_project.min.css",
     },
     "project": {
@@ -313,7 +319,10 @@ PIPELINE_CSS = {
         "output_filename": "css/localization.min.css",
     },
     "projects": {
-        "source_filenames": ("css/heading_info.css", "css/table.css",),
+        "source_filenames": (
+            "css/heading_info.css",
+            "css/table.css",
+        ),
         "output_filename": "css/projects.min.css",
     },
     "team": {
@@ -343,7 +352,10 @@ PIPELINE_CSS = {
         "output_filename": "css/sync_logs.min.css",
     },
     "profile": {
-        "source_filenames": ("css/contributor.css", "css/profile.css",),
+        "source_filenames": (
+            "css/contributor.css",
+            "css/profile.css",
+        ),
         "output_filename": "css/profile.min.css",
     },
     "settings": {
@@ -356,19 +368,31 @@ PIPELINE_CSS = {
         "output_filename": "css/settings.min.css",
     },
     "notifications": {
-        "source_filenames": ("css/sidebar_menu.css", "css/notifications.css",),
+        "source_filenames": (
+            "css/sidebar_menu.css",
+            "css/notifications.css",
+        ),
         "output_filename": "css/notifications.min.css",
     },
     "machinery": {
-        "source_filenames": ("css/team_selector.css", "css/machinery.css",),
+        "source_filenames": (
+            "css/team_selector.css",
+            "css/machinery.css",
+        ),
         "output_filename": "css/machinery.min.css",
     },
     "contributors": {
-        "source_filenames": ("css/heading_info.css", "css/contributors.css",),
+        "source_filenames": (
+            "css/heading_info.css",
+            "css/contributors.css",
+        ),
         "output_filename": "css/contributors.min.css",
     },
     "in_context": {
-        "source_filenames": ("css/bootstrap.min.css", "css/agency.css",),
+        "source_filenames": (
+            "css/bootstrap.min.css",
+            "css/agency.css",
+        ),
         "output_filename": "css/in_context.min.css",
     },
     "terms": {
@@ -430,7 +454,10 @@ PIPELINE_JS = {
         "output_filename": "js/project.min.js",
     },
     "projects": {
-        "source_filenames": ("js/table.js", "js/progress-chart.js",),
+        "source_filenames": (
+            "js/table.js",
+            "js/progress-chart.js",
+        ),
         "output_filename": "js/projects.min.js",
     },
     "team": {
@@ -449,7 +476,11 @@ PIPELINE_JS = {
         "output_filename": "js/team.min.js",
     },
     "teams": {
-        "source_filenames": ("js/table.js", "js/progress-chart.js", "js/request.js",),
+        "source_filenames": (
+            "js/table.js",
+            "js/progress-chart.js",
+            "js/request.js",
+        ),
         "output_filename": "js/teams.min.js",
     },
     "profile": {
@@ -466,7 +497,10 @@ PIPELINE_JS = {
         "output_filename": "js/settings.min.js",
     },
     "notifications": {
-        "source_filenames": ("js/sidebar_menu.js", "js/notifications.js",),
+        "source_filenames": (
+            "js/sidebar_menu.js",
+            "js/notifications.js",
+        ),
         "output_filename": "js/notifications.min.js",
     },
     "machinery": {

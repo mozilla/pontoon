@@ -376,7 +376,9 @@ class VCSProject:
                     locale_directory_paths[locale.code] = self.configuration.l10n_base
                 else:
                     locale_directory_paths[locale.code] = locale_directory_path(
-                        self.checkout_path, locale.code, parent_directories,
+                        self.checkout_path,
+                        locale.code,
+                        parent_directories,
                     )
                 parent_directory = get_parent_directory(
                     locale_directory_paths[locale.code]
@@ -689,7 +691,8 @@ class VCSConfiguration:
             self.add_locale(locale_code)
 
         return self.project_files.setdefault(
-            locale_code, ProjectFiles(locale_code, [self.parsed_configuration]),
+            locale_code,
+            ProjectFiles(locale_code, [self.parsed_configuration]),
         )
 
     def l10n_path(self, locale, reference_path):
@@ -720,7 +723,8 @@ class VCSConfiguration:
 
         for resource in self.vcs_project.db_project.resources.all():
             absolute_resource_path = os.path.join(
-                self.vcs_project.source_directory_path, resource.path,
+                self.vcs_project.source_directory_path,
+                resource.path,
             )
 
             if project_files.match(absolute_resource_path):
@@ -785,7 +789,8 @@ class VCSResource:
             if self.vcs_project.configuration:
                 # Some resources might not be available for this locale
                 resource_path = self.vcs_project.configuration.l10n_path(
-                    locale, source_resource_path,
+                    locale,
+                    source_resource_path,
                 )
                 if resource_path is None:
                     continue

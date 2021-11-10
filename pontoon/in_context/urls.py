@@ -5,7 +5,11 @@ from . import views
 
 urlpatterns = [
     # In-context demo
-    path("in-context/", views.in_context, name="pontoon.in_context",),
+    path(
+        "in-context/",
+        views.in_context,
+        name="pontoon.in_context",
+    ),
     # Legacy: Redirect to /in-context
     path(
         "intro/",

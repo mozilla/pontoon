@@ -66,7 +66,9 @@ def test_manage_project_strings_bad_request(client_superuser):
 @pytest.mark.django_db
 def test_manage_project_strings_new(admin, client_superuser, locale_a):
     project = ProjectFactory.create(
-        data_source=Project.DataSource.DATABASE, repositories=[], locales=[locale_a],
+        data_source=Project.DataSource.DATABASE,
+        repositories=[],
+        locales=[locale_a],
     )
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
 
@@ -109,10 +111,13 @@ def test_manage_project_strings_new(admin, client_superuser, locale_a):
 @pytest.mark.django_db
 def test_manage_project_strings_existing_resource(client_superuser, locale_a):
     project = ProjectFactory.create(
-        data_source=Project.DataSource.DATABASE, repositories=[], locales=[locale_a],
+        data_source=Project.DataSource.DATABASE,
+        repositories=[],
+        locales=[locale_a],
     )
     ResourceFactory.create(
-        path="not_database", project=project,
+        path="not_database",
+        project=project,
     )
     url = reverse("pontoon.admin.project.strings", args=(project.slug,))
 
@@ -189,8 +194,7 @@ def test_manage_project_strings_translated_resource(client_superuser):
 
 @pytest.mark.django_db
 def test_manage_project_strings_new_all_empty(client_superuser):
-    """Test that sending empty data doesn't create empty strings in the database.
-    """
+    """Test that sending empty data doesn't create empty strings in the database."""
     project = ProjectFactory.create(
         data_source=Project.DataSource.DATABASE, repositories=[]
     )
@@ -243,7 +247,10 @@ def test_manage_project_strings_list(client_superuser):
     assert b"string 0" not in response.content
     assert b"string 1" not in response.content  # It's been removed.
 
-    total = Entity.objects.filter(resource=resource, obsolete=False,).count()
+    total = Entity.objects.filter(
+        resource=resource,
+        obsolete=False,
+    ).count()
     assert total == nb_entities - 1
 
     # Test adding a new string.
@@ -266,12 +273,17 @@ def test_manage_project_strings_list(client_superuser):
     assert b"new string" in response.content
     assert b"adding this entity now" in response.content
 
-    total = Entity.objects.filter(resource=resource, obsolete=False,).count()
+    total = Entity.objects.filter(
+        resource=resource,
+        obsolete=False,
+    ).count()
     assert total == nb_entities
 
     # Verify the new string has the correct order.
     new_string = Entity.objects.filter(
-        resource=resource, obsolete=False, string="new string",
+        resource=resource,
+        obsolete=False,
+        string="new string",
     ).first()
     # The order of the new string should be that of the highest existing order
     # plus one. In our case, we know the highest was simply the other string.
@@ -374,7 +386,9 @@ def test_project_add_locale(client_superuser):
     locale_kl = LocaleFactory.create(code="kl", name="Klingon")
     locale_gs = LocaleFactory.create(code="gs", name="Geonosian")
     project = ProjectFactory.create(
-        data_source=Project.DataSource.DATABASE, locales=[locale_kl], repositories=[],
+        data_source=Project.DataSource.DATABASE,
+        locales=[locale_kl],
+        repositories=[],
     )
     _create_or_update_translated_resources(project, [locale_kl])
 

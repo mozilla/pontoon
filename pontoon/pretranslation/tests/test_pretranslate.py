@@ -28,7 +28,10 @@ def test_get_translations(gt_mock, locale_b, resource_a, google_translate_locale
 
     for entity in entities[0:2]:
         TranslationMemoryFactory.create(
-            entity=entity, source=entity.string, target=entity.string, locale=locale_b,
+            entity=entity,
+            source=entity.string,
+            target=entity.string,
+            locale=locale_b,
         )
         TranslationMemoryFactory.create(
             entity=entity,

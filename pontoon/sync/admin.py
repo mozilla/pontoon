@@ -17,7 +17,8 @@ class ProjectSyncLogInline(admin.TabularInline):
     @admin.display
     def edit_link(self, obj):
         url = reverse(
-            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change", args=[obj.pk],
+            f"admin:{obj._meta.app_label}_{obj._meta.model_name}_change",
+            args=[obj.pk],
         )
         if obj.pk:
             return format_html('<a href="{}">edit</a>', url)
@@ -37,7 +38,10 @@ class RepositorySyncLogInline(admin.TabularInline):
 
 
 class ProjectSyncLogAdmin(admin.ModelAdmin):
-    list_display = ("project", "status",) + TIMES
+    list_display = (
+        "project",
+        "status",
+    ) + TIMES
     inlines = (RepositorySyncLogInline,)
 
 
