@@ -187,9 +187,7 @@ def systran_translate(request):
             {"status": False, "message": f"Bad Request: {e}"}, status=400,
         )
 
-    url = (
-        "https://translationpartners-spn9.mysystran.com:8904/translation/text/translate"
-    )
+    url = "https://api-translate.systran.net/translation/text/translate"
 
     payload = {
         "key": api_key,
