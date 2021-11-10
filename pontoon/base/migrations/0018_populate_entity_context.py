@@ -46,6 +46,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=add_entity_context, reverse_code=remove_entity_context,
+            code=add_entity_context,
+            reverse_code=remove_entity_context,
         ),
     ]

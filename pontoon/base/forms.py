@@ -184,7 +184,9 @@ class ProjectLocaleFormSet(forms.models.BaseModelFormSet):
 
 
 ProjectLocalePermsFormsSet = forms.modelformset_factory(
-    ProjectLocale, ProjectLocalePermsForm, formset=ProjectLocaleFormSet,
+    ProjectLocale,
+    ProjectLocalePermsForm,
+    formset=ProjectLocaleFormSet,
 )
 
 
@@ -194,7 +196,10 @@ class UserProfileForm(forms.ModelForm):
     """
 
     first_name = forms.RegexField(
-        label="Name", regex="^[^<>\"'&]+$", max_length=30, strip=True,
+        label="Name",
+        regex="^[^<>\"'&]+$",
+        max_length=30,
+        strip=True,
     )
     email = forms.EmailField(
         help_text=(

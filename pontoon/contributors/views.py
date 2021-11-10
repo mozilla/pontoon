@@ -159,7 +159,8 @@ def save_custom_homepage(request):
 def save_preferred_source_locale(request):
     """Save preferred source locale."""
     form = forms.UserPreferredSourceLocaleForm(
-        request.POST, instance=request.user.profile,
+        request.POST,
+        instance=request.user.profile,
     )
 
     if not form.is_valid():
@@ -187,9 +188,13 @@ def settings(request):
     """View and edit user settings."""
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
-            request.POST, instance=request.user.profile,
+            request.POST,
+            instance=request.user.profile,
         )
-        profile_form = forms.UserProfileForm(request.POST, instance=request.user,)
+        profile_form = forms.UserProfileForm(
+            request.POST,
+            instance=request.user,
+        )
         user = get_object_or_404(User, username=request.user.username)
 
         if locales_form.is_valid() and profile_form.is_valid():

@@ -89,7 +89,9 @@ def test_translate_invalid_locale(client, resource_a):
 
 @pytest.mark.django_db
 def test_translate_invalid_project(
-    client, resource_a, locale_a,
+    client,
+    resource_a,
+    locale_a,
 ):
     """If the project is invalid, redirect home."""
     # this doesnt seem to redirect as the comment suggests
@@ -99,7 +101,9 @@ def test_translate_invalid_project(
 
 @pytest.mark.django_db
 def test_translate_invalid_pl(
-    client, locale_a, project_b,
+    client,
+    locale_a,
+    project_b,
 ):
     """
     If the requested locale is not available for this project,

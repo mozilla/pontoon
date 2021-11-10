@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="locale", name="transvision",),
+        migrations.RemoveField(
+            model_name="locale",
+            name="transvision",
+        ),
         migrations.AlterField(
             model_name="translation",
             name="machinery_sources",

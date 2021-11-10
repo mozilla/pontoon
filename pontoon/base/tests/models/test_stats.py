@@ -34,7 +34,8 @@ def recalculate_stats(translation):
     """
     translation.save(update_stats=False)
     translated_resource = TranslatedResource.objects.get(
-        resource=translation.entity.resource, locale=translation.locale,
+        resource=translation.entity.resource,
+        locale=translation.locale,
     )
     translated_resource.calculate_stats()
 
@@ -46,7 +47,12 @@ def diff_stats(t):
     t.save()
 
 
-@pytest.fixture(params=(recalculate_stats, diff_stats,))
+@pytest.fixture(
+    params=(
+        recalculate_stats,
+        diff_stats,
+    )
+)
 def stats_update(db, request):
     """
     Wrapper fixture which allows to test both implementations of stats calculations.
@@ -58,7 +64,8 @@ def stats_update(db, request):
 def get_stats():
     def f(translation):
         return TranslatedResource.objects.filter(
-            resource=translation.entity.resource, locale=translation.locale,
+            resource=translation.entity.resource,
+            locale=translation.locale,
         ).aggregated_stats()
 
     return f

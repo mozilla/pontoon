@@ -59,7 +59,8 @@ def create_terminology_project(apps, schema_editor):
 
     for index, term in enumerate(terms):
         comment = "{}. {}.".format(
-            term.part_of_speech.capitalize(), term.definition.capitalize().rstrip("."),
+            term.part_of_speech.capitalize(),
+            term.definition.capitalize().rstrip("."),
         )
         if term.usage:
             comment += " E.g. {}.".format(term.usage.capitalize().rstrip("."))
@@ -126,7 +127,13 @@ def create_terminology_project(apps, schema_editor):
         locale.total_strings += len(terms)
         locale.approved_strings += counts[locale.code]
 
-    Locale.objects.bulk_update(list(locales), ["total_strings", "approved_strings",])
+    Locale.objects.bulk_update(
+        list(locales),
+        [
+            "total_strings",
+            "approved_strings",
+        ],
+    )
 
 
 def remove_terminology_project(apps, schema_editor):
@@ -153,13 +160,20 @@ def remove_terminology_project(apps, schema_editor):
         )
 
         aggregated_stats = translated_resources.aggregate(
-            total=Sum("resource__total_strings"), approved=Sum("approved_strings"),
+            total=Sum("resource__total_strings"),
+            approved=Sum("approved_strings"),
         )
 
         locale.total_strings = aggregated_stats["total"] or 0
         locale.approved_strings = aggregated_stats["approved"] or 0
 
-    Locale.objects.bulk_update(locales, ["total_strings", "approved_strings",])
+    Locale.objects.bulk_update(
+        locales,
+        [
+            "total_strings",
+            "approved_strings",
+        ],
+    )
 
 
 class Migration(migrations.Migration):
@@ -171,6 +185,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=create_terminology_project, reverse_code=remove_terminology_project,
+            code=create_terminology_project,
+            reverse_code=remove_terminology_project,
         ),
     ]

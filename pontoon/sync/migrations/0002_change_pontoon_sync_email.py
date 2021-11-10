@@ -40,5 +40,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(code=add_sync_user, reverse_code=remove_sync_user,),
+        migrations.RunPython(
+            code=add_sync_user,
+            reverse_code=remove_sync_user,
+        ),
     ]

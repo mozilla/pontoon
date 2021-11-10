@@ -294,7 +294,10 @@ def get_locale_insights_snapshot(
 
 
 def get_project_locale_insights_snapshot(
-    project_locale, start_of_today, activities, entities_count,
+    project_locale,
+    start_of_today,
+    activities,
+    entities_count,
 ):
     """Create ProjectLocaleInsightsSnapshot instance for the given locale, project, and day using given data."""
     (

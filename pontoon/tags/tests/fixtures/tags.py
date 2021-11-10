@@ -54,7 +54,10 @@ def _calculate_resource_tags(**kwargs):
     priority = kwargs.get("priority", None)
     resource_tags = {}
     tags_through = Tag.resources.through.objects.values_list(
-        "resource", "tag", "tag__slug", "tag__name",
+        "resource",
+        "tag",
+        "tag__slug",
+        "tag__name",
     )
     if priority is not None:
         if priority is True:

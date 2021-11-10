@@ -24,10 +24,12 @@ class ProjectForm(forms.ModelForm):
     contact = ContactChoiceField(None, required=False)
     info = HtmlField(required=False)
     locales_readonly = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.all(), required=False,
+        queryset=Locale.objects.all(),
+        required=False,
     )
     locales = forms.ModelMultipleChoiceField(
-        queryset=Locale.objects.all(), required=False,
+        queryset=Locale.objects.all(),
+        required=False,
     )
 
     def clean(self):
@@ -103,7 +105,9 @@ ExternalResourceInlineFormSet = inlineformset_factory(
 
 
 EntityFormSet = forms.modelformset_factory(
-    Entity, fields=("string", "comment", "obsolete"), extra=1,
+    Entity,
+    fields=("string", "comment", "obsolete"),
+    extra=1,
 )
 
 

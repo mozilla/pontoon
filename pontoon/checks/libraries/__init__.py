@@ -4,7 +4,11 @@ from . import pontoon_db, pontoon_non_db
 
 
 def run_checks(
-    entity, locale_code, original, string, use_tt_checks,
+    entity,
+    locale_code,
+    original,
+    string,
+    use_tt_checks,
 ):
     """
     Main function that performs all quality checks from frameworks handled in Pontoon.

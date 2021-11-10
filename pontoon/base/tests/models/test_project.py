@@ -49,7 +49,11 @@ def test_project_repo_for_path(project_a):
     the given path.
     """
     repos = [
-        RepositoryFactory.create(type="file", project=project_a, url="testrepo%s" % i,)
+        RepositoryFactory.create(
+            type="file",
+            project=project_a,
+            url="testrepo%s" % i,
+        )
         for i in range(0, 3)
     ]
     path = os.path.join(repos[1].checkout_path, "foo", "bar")
@@ -73,7 +77,8 @@ def test_project_needs_sync(project_a, project_b, locale_a):
     assert project_b.unsynced_locales == []
     del project_b.unsynced_locales
     ProjectLocaleFactory.create(
-        project=project_b, locale=locale_a,
+        project=project_b,
+        locale=locale_a,
     )
     assert project_b.needs_sync == [locale_a]
 

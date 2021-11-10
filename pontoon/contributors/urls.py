@@ -24,7 +24,9 @@ urlpatterns = [
     ),
     # List contributors
     path(
-        "contributors/", views.ContributorsView.as_view(), name="pontoon.contributors",
+        "contributors/",
+        views.ContributorsView.as_view(),
+        name="pontoon.contributors",
     ),
     # Contributor profile by email
     path(
