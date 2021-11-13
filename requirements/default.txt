@@ -352,8 +352,8 @@ packaging==20.9 \
     --hash=sha256:5b327ac1320dc863dca72f4514ecc086f31186744b84a230374cc1fd776feae5 \
     --hash=sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a
     # via bleach
-parsimonious==0.6.2 \
-    --hash=sha256:423ae2e16061504418ab7abf0a740e26a781f9bc7674a6cf5e2f11edb4ae8029
+parsimonious==0.8.1 \
+    --hash=sha256:3add338892d580e0cb3b1a39e4a1b427ff9f687858fdd61097053742391a9f6b
     # via -r requirements/default.in
 polib==1.0.6 \
     --hash=sha256:20d2a0d589a692c11df549bd7cda83c665eef2a83e017b843fecdf956edbad74 \
@@ -504,6 +504,7 @@ six==1.16.0 \
     #   graphene-django
     #   graphql-core
     #   graphql-relay
+    #   parsimonious
     #   promise
     #   python-binary-memcached
     #   python-dateutil
