@@ -2978,7 +2978,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         else True
                     ),
                     "sibling": sibling,
-                    "displayed_siblings":displayed_siblings,
+                    "displayed_siblings": displayed_siblings,
                 }
             )
 

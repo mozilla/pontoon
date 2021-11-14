@@ -350,7 +350,8 @@ def get_sibling_entities(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
