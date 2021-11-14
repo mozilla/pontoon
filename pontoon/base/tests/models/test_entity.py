@@ -318,6 +318,7 @@ def test_entity_project_locale_no_paths(
         "readonly": False,
         "visible": False,
         "sibling": False,
+         "display_siblings": False,
     }
     assert entities[0] == expected
 
