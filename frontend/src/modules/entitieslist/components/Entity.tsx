@@ -20,6 +20,7 @@ type Props = {
     selectEntity: (...args: Array<any>) => any;
     getSiblingEntities: Function;
     sibling: boolean;
+    displaySiblings: boolean;
     parameters: NavigationParams;
 };
 
@@ -138,6 +139,7 @@ export default class Entity extends React.Component<Props> {
             locale,
             selected,
             sibling,
+            displaySiblings,
             parameters,
         } = this.props;
 
@@ -162,13 +164,15 @@ export default class Entity extends React.Component<Props> {
                     <div>
                         {parameters.search || this.areFiltersApplied() ? (
                             <Localized id='entitieslist-Entity--sibling-strings-title'>
-                                <i
-                                    className={
-                                        'sibling-entities-icon fas fa-expand-arrows-alt'
-                                    }
-                                    title='Click to reveal sibling strings'
-                                    onClick={this.getSiblingEntities}
-                                ></i>
+                                {displaySiblings ? null : (
+                                    <i
+                                        className={
+                                            'sibling-entities-icon fas fa-expand-arrows-alt'
+                                        }
+                                        title='Click to reveal sibling strings'
+                                        onClick={this.getSiblingEntities}
+                                    ></i>
+                                )}
                             </Localized>
                         ) : null}
                     </div>

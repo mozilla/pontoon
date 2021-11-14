@@ -55,19 +55,21 @@ function injectSiblingEntities(
     entity: number,
 ): Entities {
     const index = entities.findIndex((item) => item.pk === entity);
-    const currentPK = entities.map((e) => e.pk);
+    let parentEntity = entities[index];
+    const currentPKs = entities.map((e) => e.pk);
     let newEntitiesState = entities.slice();
+    parentEntity = { ...parentEntity, displaySiblings: true };
 
     // filtering out parent entities already present in the list
-    let siblingsTestOne = siblings.preceding.filter(
-        (sibling) => !currentPK.includes(sibling.pk),
+    const precedingSiblings = siblings.preceding.filter(
+        (sibling) => !currentPKs.includes(sibling.pk),
     );
 
-    let siblingsTestTwo = siblings.succeeding.filter(
-        (sibling) => !currentPK.includes(sibling.pk),
+    const succeedingSiblings = siblings.succeeding.filter(
+        (sibling) => !currentPKs.includes(sibling.pk),
     );
 
-    let list = [...siblingsTestOne, entities[index], ...siblingsTestTwo];
+    let list = [...precedingSiblings, parentEntity, ...succeedingSiblings];
 
     newEntitiesState.splice(index, 1, ...list);
 

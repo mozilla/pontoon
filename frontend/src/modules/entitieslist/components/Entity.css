@@ -109,12 +109,12 @@
 
 .entity .sibling-entities-icon {
     color: #aaa;
-    left: 19px;
+    left: 17px;
     top: 39px;
     position: absolute;
-    margin: -13px -13px -13px -16px;
-    padding: 13px 13px 13px 16px;
-    font-size: 16px;
+    margin: 0 -13px -13px -17px;
+    padding: 0 13px 13px 17px;
+    font-size: 14px;
 }
 
 .entity .sibling-entities-icon:hover {

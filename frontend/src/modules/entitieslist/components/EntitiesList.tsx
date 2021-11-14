@@ -363,6 +363,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                     entity.pk === props.parameters.entity;
 
                                 const sibling = entity.sibling;
+                                const displaySiblings = entity.displaySiblings;
 
                                 return (
                                     <Entity
@@ -385,6 +386,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                             this.getSiblingEntities
                                         }
                                         sibling={sibling}
+                                        displaySiblings={displaySiblings}
                                         parameters={parameters}
                                     />
                                 );

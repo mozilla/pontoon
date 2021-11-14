@@ -2917,6 +2917,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         entities,
         visible_entities=None,
         sibling=False,
+        displayed_siblings=False,
     ):
         entities_array = []
         visible_entities = visible_entities or []
@@ -2977,6 +2978,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         else True
                     ),
                     "sibling": sibling,
+                    "displayed_siblings":displayed_siblings,
                 }
             )
 

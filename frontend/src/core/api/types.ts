@@ -72,6 +72,7 @@ export type Entity = {
     readonly translation: Array<EntityTranslation>;
     readonly readonly: boolean;
     readonly sibling: boolean;
+    readonly displaySiblings: boolean;
 };
 
 /**
