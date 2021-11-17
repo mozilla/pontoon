@@ -21,7 +21,7 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
     React.useEffect(() => {
         let exist: boolean;
         if (typeof translation === 'string') {
-            if (richEditor) return
+            if (richEditor) return;
             exist = translation !== initialTranslation;
         } else {
             exist =

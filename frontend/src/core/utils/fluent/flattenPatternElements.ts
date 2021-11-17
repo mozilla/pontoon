@@ -30,8 +30,8 @@ export default function flattenPatternElements(
             // In a message with multiple SelectExpressions separated by some
             // whitespace, keep that whitespace out of select variants.
             if (/^\s+$/.test(textFragment)) {
-                flatElements.push(new TextElement(textFragment))
-                textFragment = ''
+                flatElements.push(new TextElement(textFragment));
+                textFragment = '';
             }
 
             // Flatten SelectExpression variant elements

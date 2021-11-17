@@ -119,7 +119,7 @@ describe('flattenMessage', () => {
             'There are { $num } emails for { $awesome }',
         );
 
-        expect(res.value.elements[1].value).toEqual(' ')
+        expect(res.value.elements[1].value).toEqual(' ');
 
         const selGender = res.value.elements[2].expression;
         expect(selGender.variants[0].value.elements[0].value).toEqual('him');
