@@ -27,7 +27,7 @@ describe('getComplexFromRich', () => {
 
         const res = getComplexFromRich(current, original, initial);
 
-        expect(res[1]).toEqual('title = Mien titre');
+        expect(res[1]).toEqual('title = Mien titre\n');
     });
 
     it('returns the correct initial translation when none exist', () => {
