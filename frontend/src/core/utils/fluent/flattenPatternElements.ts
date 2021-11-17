@@ -91,7 +91,7 @@ export default function flattenPatternElements(
     }
 
     // Merge any remaining collected text into a TextElement
-    if (textFragment) {
+    if (textFragment || flatElements.length === 0) {
         flatElements.push(new TextElement(textFragment));
     }
 
