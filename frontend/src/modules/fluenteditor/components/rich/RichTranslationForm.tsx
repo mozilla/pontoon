@@ -369,14 +369,12 @@ export default function RichTranslationForm(
         pluralExamples: any,
         attributeName: string | null | undefined,
     ) {
+        let value: string;
         const element = variant.value.elements[0];
-        if (element.value === null) {
-            return null;
-        }
-
-        const value = element.value;
-        if (typeof value !== 'string') {
-            return null;
+        if (element && element.value && typeof element.value === 'string') {
+            value = element.value;
+        } else {
+            value = '';
         }
 
         const label = serializeVariantKey(variant.key);
