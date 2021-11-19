@@ -157,17 +157,6 @@ export default function RichTranslationForm(
         focusedElementIdRef.current = null;
     }, [entity, changeSource]);
 
-    // Walks the tree and unify all simple elements into just one.
-    React.useEffect(() => {
-        if (typeof message === 'string') {
-            return;
-        }
-        const flatMessage = fluent.flattenMessage(message);
-        if (!flatMessage.equals(message)) {
-            updateTranslation(flatMessage);
-        }
-    }, [entity, message, updateTranslation]);
-
     // Reset checks when content of the editor changes.
     React.useEffect(() => {
         dispatch(editor.actions.resetFailedChecks());
