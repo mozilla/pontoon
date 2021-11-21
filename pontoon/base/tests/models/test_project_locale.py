@@ -48,7 +48,9 @@ def test_projectlocale_translators_group(project_a, locale_a, user_a):
     locale after assigment.
     """
     project_locale = ProjectLocaleFactory.create(
-        project=project_a, locale=locale_a, has_custom_translators=True,
+        project=project_a,
+        locale=locale_a,
+        has_custom_translators=True,
     )
 
     assert user_a.can_translate(locale=locale_a, project=project_a) is False

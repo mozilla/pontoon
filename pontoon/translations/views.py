@@ -62,7 +62,9 @@ def create_translation(request):
         )
 
     translations = Translation.objects.filter(
-        entity=entity, locale=locale, plural_form=plural_form,
+        entity=entity,
+        locale=locale,
+        plural_form=plural_form,
     )
 
     same_translations = translations.filter(string=string)
@@ -79,7 +81,11 @@ def create_translation(request):
     failed_checks = None
     if use_checks:
         failed_checks = run_checks(
-            entity, locale.code, original, string, user.profile.quality_checks,
+            entity,
+            locale.code,
+            original,
+            string,
+            user.profile.quality_checks,
         )
 
         if are_blocking_checks(failed_checks, ignore_warnings):
@@ -111,7 +117,8 @@ def create_translation(request):
 
     if translations:
         translation = entity.reset_active_translation(
-            locale=locale, plural_form=plural_form,
+            locale=locale,
+            plural_form=plural_form,
         )
 
     return JsonResponse(
@@ -132,7 +139,8 @@ def delete_translation(request):
         translation_id = request.POST["translation"]
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     translation = get_object_or_404(Translation, pk=translation_id)
@@ -187,7 +195,8 @@ def approve_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     translation = get_object_or_404(Translation, pk=t)
@@ -248,7 +257,8 @@ def approve_translation(request):
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
     active_translation = translation.entity.reset_active_translation(
-        locale=locale, plural_form=translation.plural_form,
+        locale=locale,
+        plural_form=translation.plural_form,
     )
 
     return JsonResponse(
@@ -269,7 +279,8 @@ def unapprove_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     translation = get_object_or_404(Translation, pk=t)
@@ -309,7 +320,8 @@ def unapprove_translation(request):
     )
 
     active_translation = translation.entity.reset_active_translation(
-        locale=locale, plural_form=translation.plural_form,
+        locale=locale,
+        plural_form=translation.plural_form,
     )
 
     return JsonResponse(
@@ -330,7 +342,8 @@ def reject_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     translation = get_object_or_404(Translation, pk=t)
@@ -374,7 +387,8 @@ def reject_translation(request):
     )
 
     active_translation = translation.entity.reset_active_translation(
-        locale=locale, plural_form=translation.plural_form,
+        locale=locale,
+        plural_form=translation.plural_form,
     )
 
     return JsonResponse(
@@ -395,7 +409,8 @@ def unreject_translation(request):
         paths = request.POST.getlist("paths[]")
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     translation = get_object_or_404(Translation, pk=t)
@@ -435,7 +450,8 @@ def unreject_translation(request):
     )
 
     active_translation = translation.entity.reset_active_translation(
-        locale=locale, plural_form=translation.plural_form,
+        locale=locale,
+        plural_form=translation.plural_form,
     )
 
     return JsonResponse(

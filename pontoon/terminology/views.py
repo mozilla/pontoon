@@ -19,7 +19,8 @@ def get_terms(request):
         locale_code = request.GET["locale"]
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     locale = get_object_or_404(Locale, code=locale_code)

@@ -6,7 +6,8 @@ from pontoon.base.tests import po_file
 
 @pytest.yield_fixture
 def translator_a(
-    member, project_locale_a,
+    member,
+    project_locale_a,
 ):
     """
     A translator is required to test upload of the new strings.
@@ -39,20 +40,28 @@ def upload(client, **args):
     """
     Shortcut function to call /upload/ view.
     """
-    response = client.post("/upload/", args,)
+    response = client.post(
+        "/upload/",
+        args,
+    )
 
     return response
 
 
 @pytest.mark.django_db
 def test_upload_login_required(
-    client, project_a, locale_a,
+    client,
+    project_a,
+    locale_a,
 ):
     """
     Return HTTP 403 if user is anonymous
     """
     response = upload(
-        client, slug=project_a.slug, code=locale_a.code, part="resource_a.po",
+        client,
+        slug=project_a.slug,
+        code=locale_a.code,
+        part="resource_a.po",
     )
 
     assert response.status_code == 302
@@ -61,10 +70,18 @@ def test_upload_login_required(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "missing_parameter", ("slug", "code", "resource_a.po",),
+    "missing_parameter",
+    (
+        "slug",
+        "code",
+        "resource_a.po",
+    ),
 )
 def test_upload_invalid_parameters(
-    member, missing_parameter, project_a, locale_a,
+    member,
+    missing_parameter,
+    project_a,
+    locale_a,
 ):
     """
     Check validation of parameters
@@ -82,7 +99,9 @@ def test_upload_invalid_parameters(
 
 @pytest.mark.django_db
 def test_upload_missing_file(
-    client, translator_a, project_locale_a,
+    client,
+    translator_a,
+    project_locale_a,
 ):
     response = upload(
         translator_a.client,
@@ -98,7 +117,8 @@ def test_upload_missing_file(
 
 @pytest.mark.django_db
 def test_upload_cannot_translate(
-    member, project_locale_a,
+    member,
+    project_locale_a,
 ):
     """
     Check if a member without permission gets HTTP 403
@@ -114,7 +134,8 @@ def test_upload_cannot_translate(
 
 @pytest.mark.django_db
 def test_upload_project_locale_is_readonly(
-    translator_a, readonly_project_locale,
+    translator_a,
+    readonly_project_locale,
 ):
     response = upload(
         translator_a.client,
@@ -127,7 +148,9 @@ def test_upload_project_locale_is_readonly(
 
 @pytest.mark.django_db
 def test_upload_file(
-    translator_a, project_locale_a, po_translation,
+    translator_a,
+    project_locale_a,
+    po_translation,
 ):
     """
     Test a positive upload which changes the translation.

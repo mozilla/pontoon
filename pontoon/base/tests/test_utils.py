@@ -19,10 +19,13 @@ def test_get_m2m_changes_no_change(user_a):
         get_user_model().objects.none(), get_user_model().objects.none()
     ) == ([], [])
 
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk=user_a.pk),
-        get_user_model().objects.filter(pk=user_a.pk),
-    ) == ([], [])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk=user_a.pk),
+            get_user_model().objects.filter(pk=user_a.pk),
+        )
+        == ([], [])
+    )
 
 
 @pytest.mark.django_db
@@ -31,40 +34,59 @@ def test_get_m2m_added(user_a, user_b):
         get_user_model().objects.none(), get_user_model().objects.filter(pk=user_b.pk)
     ) == ([user_b], [])
 
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk=user_a.pk),
-        get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
-    ) == ([user_b], [])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk=user_a.pk),
+            get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
+        )
+        == ([user_b], [])
+    )
 
 
 @pytest.mark.django_db
 def test_get_m2m_removed(user_a, user_b):
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk=user_b.pk), get_user_model().objects.none(),
-    ) == ([], [user_b])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk=user_b.pk),
+            get_user_model().objects.none(),
+        )
+        == ([], [user_b])
+    )
 
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
-        get_user_model().objects.filter(pk=user_a.pk),
-    ) == ([], [user_b])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
+            get_user_model().objects.filter(pk=user_a.pk),
+        )
+        == ([], [user_b])
+    )
 
 
 @pytest.mark.django_db
 def test_get_m2m_mixed(user_a, user_b, user_c):
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk__in=[user_b.pk, user_c.pk]),
-        get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
-    ) == ([user_a], [user_c])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk__in=[user_b.pk, user_c.pk]),
+            get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
+        )
+        == ([user_a], [user_c])
+    )
 
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
-        get_user_model().objects.filter(pk__in=[user_c.pk]),
-    ) == ([user_c], [user_a, user_b])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk__in=[user_a.pk, user_b.pk]),
+            get_user_model().objects.filter(pk__in=[user_c.pk]),
+        )
+        == ([user_c], [user_a, user_b])
+    )
 
-    assert get_m2m_changes(
-        get_user_model().objects.filter(pk__in=[user_b.pk]),
-        get_user_model().objects.filter(pk__in=[user_c.pk, user_a.pk]),
-    ) == ([user_a, user_c], [user_b])
+    assert (
+        get_m2m_changes(
+            get_user_model().objects.filter(pk__in=[user_b.pk]),
+            get_user_model().objects.filter(pk__in=[user_c.pk, user_a.pk]),
+        )
+        == ([user_a, user_c], [user_b])
+    )
 
 
 def test_util_base_extension_in():

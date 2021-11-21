@@ -33,7 +33,9 @@ urlpatterns = [
         name="pontoon.microsoft_translator",
     ),
     path(
-        "systran-translate/", views.systran_translate, name="pontoon.systran_translate",
+        "systran-translate/",
+        views.systran_translate,
+        name="pontoon.systran_translate",
     ),
     path("caighdean/", views.caighdean, name="pontoon.caighdean"),
     path(

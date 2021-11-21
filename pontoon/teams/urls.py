@@ -19,15 +19,35 @@ urlpatterns = [
         include(
             [
                 # Team contributors
-                path("contributors/", views.team, name="pontoon.teams.contributors",),
+                path(
+                    "contributors/",
+                    views.team,
+                    name="pontoon.teams.contributors",
+                ),
                 # Team insights
-                path("insights/", views.team, name="pontoon.teams.insights",),
+                path(
+                    "insights/",
+                    views.team,
+                    name="pontoon.teams.insights",
+                ),
                 # Team bugs
-                path("bugs/", views.team, name="pontoon.teams.bugs",),
+                path(
+                    "bugs/",
+                    views.team,
+                    name="pontoon.teams.bugs",
+                ),
                 # Team info
-                path("info/", views.team, name="pontoon.teams.info",),
+                path(
+                    "info/",
+                    views.team,
+                    name="pontoon.teams.info",
+                ),
                 # Team permissions
-                path("permissions/", views.team, name="pontoon.teams.permissions",),
+                path(
+                    "permissions/",
+                    views.team,
+                    name="pontoon.teams.permissions",
+                ),
                 # Legacy url for permissions management
                 path(
                     "manage/",

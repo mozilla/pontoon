@@ -36,7 +36,10 @@ def test_form_project_tag_resources_submit_bad(project_a):
         "type": ["This field is required."],
     }
 
-    form = LinkTagResourcesAdminForm(project=project_a, data=dict(type="foo"),)
+    form = LinkTagResourcesAdminForm(
+        project=project_a,
+        data=dict(type="foo"),
+    )
     assert not form.is_valid()
     assert form.errors == {
         "tag": ["This field is required."],
@@ -44,7 +47,8 @@ def test_form_project_tag_resources_submit_bad(project_a):
     }
 
     form = LinkTagResourcesAdminForm(
-        project=project_a, data=dict(type="assoc", tag="DOESNOTEXIST"),
+        project=project_a,
+        data=dict(type="assoc", tag="DOESNOTEXIST"),
     )
     assert not form.is_valid()
     assert form.errors == {"tag": ["Unrecognized tag: DOESNOTEXIST"]}
@@ -59,7 +63,8 @@ def test_form_project_tag_resources_submit(paths_mock, project_a, tag_a):
 
     # test assoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project_a, data=dict(type="assoc", tag=tag_a.slug),
+        project=project_a,
+        data=dict(type="assoc", tag=tag_a.slug),
     )
     assert form.is_valid()
     assert form.cleaned_data == {
@@ -72,7 +77,8 @@ def test_form_project_tag_resources_submit(paths_mock, project_a, tag_a):
 
     # test nonassoc form submit
     form = LinkTagResourcesAdminForm(
-        project=project_a, data=dict(type="nonassoc", tag=tag_a.slug),
+        project=project_a,
+        data=dict(type="nonassoc", tag=tag_a.slug),
     )
     assert form.is_valid()
     assert form.cleaned_data == {

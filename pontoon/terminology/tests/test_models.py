@@ -40,7 +40,10 @@ def non_localizable_term(_):
     """
     This fixture provides a localizable term.
     """
-    return TermFactory.create(text="Non-localizable term", do_not_translate=True,)
+    return TermFactory.create(
+        text="Non-localizable term",
+        do_not_translate=True,
+    )
 
 
 @pytest.mark.django_db
@@ -76,7 +79,9 @@ def test_term_translation(_, locale_a):
     assert term.translation(locale_a) is None
 
     TermTranslationFactory.create(
-        locale=locale_a, term=term, text="translation",
+        locale=locale_a,
+        term=term,
+        text="translation",
     )
     assert term.translation(locale_a) == "translation"
 
@@ -107,7 +112,9 @@ def test_term_localizable(_):
 @patch("pontoon.terminology.models.update_terminology_project_stats")
 def test_term_entity_comment(_):
     term_a = TermFactory.create(
-        text="term", part_of_speech=Term.PartOfSpeech.NOUN, definition="definition",
+        text="term",
+        part_of_speech=Term.PartOfSpeech.NOUN,
+        definition="definition",
     )
     assert term_a.entity_comment() == "Noun. Definition."
 
@@ -145,7 +152,9 @@ def test_term_save(handle_term_update_mock, handle_term_create_mock):
 @patch("pontoon.terminology.models.update_terminology_project_stats")
 @patch("pontoon.terminology.models.Term.create_entity")
 def test_handle_term_create(
-    create_entity_mock, update_terminology_project_stats_mock, localizable_term,
+    create_entity_mock,
+    update_terminology_project_stats_mock,
+    localizable_term,
 ):
     """
     handle_term_create() calls create_entity() and update_terminology_project_stats().

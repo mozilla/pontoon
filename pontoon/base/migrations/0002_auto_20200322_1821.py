@@ -1352,7 +1352,8 @@ def migration_0002_load_initial_data(apps, schema_editor):
     project.locales.set(intro_locales)
     Repository = apps.get_model("base", "Repository")
     Repository.objects.create(
-        project=project, url="https://github.com/mozilla/pontoon-intro.git",
+        project=project,
+        url="https://github.com/mozilla/pontoon-intro.git",
     )
 
 

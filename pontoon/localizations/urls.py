@@ -12,10 +12,16 @@ urlpatterns = [
             [
                 # Localization page
                 path(
-                    "", views.localization, name="pontoon.localizations.localization",
+                    "",
+                    views.localization,
+                    name="pontoon.localizations.localization",
                 ),
                 # Localization tags
-                path("tags/", views.localization, name="pontoon.localizations.tags",),
+                path(
+                    "tags/",
+                    views.localization,
+                    name="pontoon.localizations.tags",
+                ),
                 # Localization contributors
                 path(
                     "contributors/",

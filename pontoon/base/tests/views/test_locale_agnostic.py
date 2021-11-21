@@ -16,8 +16,8 @@ from django.contrib.auth.models import User, AnonymousUser
 def test_view_lang_agnostic_authed(
     redirect_mock, reverse_mock, projects_mock, util_mock, get_mock, client
 ):
-    """ User is authenticated and Userprofile.custom_homepage defined,
-    redirect to Userprofile.custom_homepage """
+    """User is authenticated and Userprofile.custom_homepage defined,
+    redirect to Userprofile.custom_homepage"""
     test_user, _ = User.objects.get_or_create(username="testuser")
     client.force_login(test_user)
 
@@ -85,7 +85,7 @@ def test_view_lang_agnostic_anon_available_accept_language(
     redirect_mock, reverse_mock, projects_mock, util_mock, get_mock, client
 ):
     """User is not authenticated, redirect to first
-        available accept-language locale"""
+    available accept-language locale"""
     view = reverse(
         "pontoon.translate.locale.agnostic", kwargs=dict(slug="FOO", part="BAR")
     )
@@ -144,8 +144,8 @@ def test_view_lang_agnostic_anon_available_accept_language(
 def test_view_lang_agnostic_anon_unavailable_accept_language(
     redirect_mock, reverse_mock, projects_mock, util_mock, get_mock, client
 ):
-    """ User is not authenticated and Userprofile.custom_homepage not defined,
-    redirect to project dashboard """
+    """User is not authenticated and Userprofile.custom_homepage not defined,
+    redirect to project dashboard"""
     view = reverse(
         "pontoon.translate.locale.agnostic", kwargs=dict(slug="FOO", part="BAR")
     )

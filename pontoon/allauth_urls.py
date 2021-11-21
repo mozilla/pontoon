@@ -16,7 +16,9 @@ if settings.AUTHENTICATION_METHOD == "django":
     urlpatterns = [
         path("standalone-login/", views.LoginView.as_view(), name="standalone_login"),
         path(
-            "standalone-logout/", views.LogoutView.as_view(), name="standalone_logout",
+            "standalone-logout/",
+            views.LogoutView.as_view(),
+            name="standalone_logout",
         ),
     ]
 else:

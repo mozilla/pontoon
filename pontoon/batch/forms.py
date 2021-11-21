@@ -7,8 +7,7 @@ from pontoon.batch.actions import ACTIONS_FN_MAP
 
 
 class BatchActionsForm(forms.Form):
-    """Handles the arguments passed to the batch actions view.
-    """
+    """Handles the arguments passed to the batch actions view."""
 
     locale = forms.CharField()
     action = forms.ChoiceField(choices=[(x, x) for x in ACTIONS_FN_MAP.keys()])

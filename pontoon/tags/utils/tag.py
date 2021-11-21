@@ -35,8 +35,7 @@ class TagTool(Tagged):
 
     @cached_property
     def locale_latest(self):
-        """A cached property containing latest locale changes
-        """
+        """A cached property containing latest locale changes"""
         return self.tags_tool.translation_tool(slug=self.slug, groupby="locale").data
 
     @cached_property
@@ -82,6 +81,5 @@ class TagTool(Tagged):
         return self.resource_tool.link(self.slug, resources=resources)
 
     def unlink_resources(self, resources):
-        """Unlink Resources from this tag
-        """
+        """Unlink Resources from this tag"""
         return self.resource_tool.unlink(self.slug, resources=resources)

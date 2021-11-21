@@ -105,7 +105,10 @@ def ajax_tags(request, slug):
     if not project.tags_enabled:
         raise Http404
 
-    tags_tool = TagsTool(projects=[project], priority=True,)
+    tags_tool = TagsTool(
+        projects=[project],
+        priority=True,
+    )
 
     return render(
         request,

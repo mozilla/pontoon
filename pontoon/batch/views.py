@@ -27,8 +27,7 @@ log = logging.getLogger(__name__)
 
 
 def mark_changed_translation(changed_entities, locale):
-    """Mark entities as changed, for later sync.
-    """
+    """Mark entities as changed, for later sync."""
     changed_entities_array = []
     existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
     for changed_entity in changed_entities:
@@ -44,8 +43,7 @@ def mark_changed_translation(changed_entities, locale):
 
 
 def update_translation_memory(changed_translation_pks, project, locale):
-    """Update translation memory for a list of translations.
-    """
+    """Update translation memory for a list of translations."""
     memory_entries = [
         TranslationMemoryEntry(
             source=t.tm_source,
@@ -113,12 +111,19 @@ def batch_edit_translations(request):
 
     # Find all impacted active translations, including plural forms.
     active_translations = Translation.objects.filter(
-        active=True, locale=locale, entity__in=entities,
+        active=True,
+        locale=locale,
+        entity__in=entities,
     )
 
     # Execute the actual action.
     action_function = ACTIONS_FN_MAP[form.cleaned_data["action"]]
-    action_status = action_function(form, request.user, active_translations, locale,)
+    action_status = action_function(
+        form,
+        request.user,
+        active_translations,
+        locale,
+    )
 
     if action_status.get("error"):
         return JsonResponse(action_status)
@@ -137,7 +142,8 @@ def batch_edit_translations(request):
     # Reset term translations for entities belonging to the Terminology project
     changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]
     terminology_entities = Entity.objects.filter(
-        pk__in=changed_entity_pks, resource__project__slug="terminology",
+        pk__in=changed_entity_pks,
+        resource__project__slug="terminology",
     )
 
     for e in terminology_entities:

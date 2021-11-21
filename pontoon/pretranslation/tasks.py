@@ -52,13 +52,15 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     if not entities:
         entities = Entity.objects.filter(
-            resource__project=project, obsolete=False,
+            resource__project=project,
+            obsolete=False,
         ).prefetch_related("resource")
 
     # get available TranslatedResource pairs
     tr_pairs = (
         TranslatedResource.objects.filter(
-            resource__project=project, locale__in=locales,
+            resource__project=project,
+            locale__in=locales,
         )
         .annotate(
             locale_resource=Concat(
@@ -71,7 +73,10 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     # Fetch all distinct locale-entity pairs for which translation exists
     translated_entities = (
-        Translation.objects.filter(locale__in=locales, entity__in=entities,)
+        Translation.objects.filter(
+            locale__in=locales,
+            entity__in=entities,
+        )
         .annotate(
             locale_entity=Concat(
                 "locale_id", V("-"), "entity_id", output_field=CharField()

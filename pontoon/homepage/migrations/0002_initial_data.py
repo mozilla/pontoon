@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=create_homepage_entry, reverse_code=remove_homepage_entry,
+            code=create_homepage_entry,
+            reverse_code=remove_homepage_entry,
         ),
     ]

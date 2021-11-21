@@ -195,11 +195,19 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
 
         self.mock_pull_locale_repo_changes.return_value = [
             True,
-            {self.repository.pk: Locale.objects.filter(pk=self.translated_locale.pk,)},
+            {
+                self.repository.pk: Locale.objects.filter(
+                    pk=self.translated_locale.pk,
+                )
+            },
         ]
 
         sync_translations(
-            self.db_project, self.project_sync_log, self.now, True, no_commit=False,
+            self.db_project,
+            self.project_sync_log,
+            self.now,
+            True,
+            no_commit=False,
         )
 
         assert not self.mock_commit_changes.called

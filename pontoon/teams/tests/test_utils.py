@@ -16,7 +16,9 @@ from pontoon.test.factories import (
 
 @pytest.fixture
 def translators_group():
-    return GroupFactory.create(name="some translators",)
+    return GroupFactory.create(
+        name="some translators",
+    )
 
 
 @pytest.mark.django_db
@@ -114,7 +116,9 @@ def test_log_user_groups_empty(user_a, user_b):
 
 @pytest.mark.django_db
 def test_log_user_groups_added(
-    user_a, user_b, assert_permissionchangelog,
+    user_a,
+    user_b,
+    assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     added_groups = [group0, group2]
@@ -133,7 +137,9 @@ def test_log_user_groups_added(
 
 @pytest.mark.django_db
 def test_log_user_groups_removed(
-    user_a, user_b, assert_permissionchangelog,
+    user_a,
+    user_b,
+    assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     removed_members = [group0, group2]
@@ -153,7 +159,9 @@ def test_log_user_groups_removed(
 
 @pytest.mark.django_db
 def test_log_user_groups_mixed(
-    user_a, user_b, assert_permissionchangelog,
+    user_a,
+    user_b,
+    assert_permissionchangelog,
 ):
     group0, group1, group2 = GroupFactory.create_batch(size=3)
     added_groups = [group2]

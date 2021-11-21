@@ -345,7 +345,8 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
     def get_user_edit_url(self, user_pk):
         return reverse(
             "admin:{}_{}_change".format(
-                get_user_model()._meta.app_label, get_user_model()._meta.model_name,
+                get_user_model()._meta.app_label,
+                get_user_model()._meta.model_name,
             ),
             args=(user_pk,),
         )

@@ -14,7 +14,10 @@ from pontoon.test.factories import (
 
 @pytest.fixture
 def locale_c():
-    return LocaleFactory(code="nv", name="Na'vi",)
+    return LocaleFactory(
+        code="nv",
+        name="Na'vi",
+    )
 
 
 @pytest.mark.django_db
@@ -119,14 +122,18 @@ def test_locale_parts_stats_no_page_multiple_resources(locale_parts):
     locale_c, locale_b, entityX = locale_parts
     project = entityX.resource.project
     resourceY = ResourceFactory.create(
-        total_strings=1, project=project, path="/other/path.po",
+        total_strings=1,
+        project=project,
+        path="/other/path.po",
     )
     EntityFactory.create(resource=resourceY, string="Entity Y")
     TranslatedResourceFactory.create(
-        resource=resourceY, locale=locale_c,
+        resource=resourceY,
+        locale=locale_c,
     )
     TranslatedResourceFactory.create(
-        resource=resourceY, locale=locale_b,
+        resource=resourceY,
+        locale=locale_b,
     )
 
     # results are sorted by title
@@ -164,17 +171,28 @@ def test_locale_parts_stats_pages_tied_to_resources(locale_parts):
     """
     locale_a, locale_b, entity_a = locale_parts
     project = entity_a.resource.project
-    resourceX = ResourceFactory.create(project=project, path="/other/path.po",)
+    resourceX = ResourceFactory.create(
+        project=project,
+        path="/other/path.po",
+    )
     EntityFactory.create(resource=resourceX, string="Entity X")
     TranslatedResourceFactory.create(
-        resource=resourceX, locale=locale_a,
+        resource=resourceX,
+        locale=locale_a,
     )
     TranslatedResourceFactory.create(
-        resource=resourceX, locale=locale_b,
+        resource=resourceX,
+        locale=locale_b,
     )
-    sub1 = SubpageFactory.create(project=project, name="Subpage",)
+    sub1 = SubpageFactory.create(
+        project=project,
+        name="Subpage",
+    )
     sub1.resources.add(resourceX)
-    sub2 = SubpageFactory.create(project=project, name="Other Subpage",)
+    sub2 = SubpageFactory.create(
+        project=project,
+        name="Other Subpage",
+    )
     sub2.resources.add(resourceX)
     details0 = locale_a.parts_stats(project)
     detailsX = locale_b.parts_stats(project)

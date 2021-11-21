@@ -25,7 +25,8 @@ def test_mgr_user_without_translations(translation_a, user_a, user_b):
 
 @pytest.mark.django_db
 def test_mgr_user_contributors_order(
-    resource_b, locale_a,
+    resource_b,
+    locale_a,
 ):
     """
     Checks if users are ordered by count of contributions.
@@ -37,7 +38,9 @@ def test_mgr_user_contributors_order(
     for i, count in enumerate([2, 4, 9, 1, 6]):
         for j in range(count):
             TranslationFactory.create(
-                locale=locale_a, user=contributors[i], entity=entities[i],
+                locale=locale_a,
+                user=contributors[i],
+                entity=entities[i],
             )
 
     # Ordered by approved count
@@ -48,16 +51,23 @@ def test_mgr_user_contributors_order(
 
 @pytest.mark.django_db
 def test_mgr_user_contributors_limit(
-    resource_a, locale_a,
+    resource_a,
+    locale_a,
 ):
     """
     Checks if proper count of user is returned.
     """
     contributors = UserFactory.create_batch(size=102)
-    entities = EntityFactory.create_batch(size=102, resource=resource_a,)
+    entities = EntityFactory.create_batch(
+        size=102,
+        resource=resource_a,
+    )
     for i, contrib in enumerate(contributors):
         TranslationFactory.create(
-            locale=locale_a, approved=True, user=contrib, entity=entities[i],
+            locale=locale_a,
+            approved=True,
+            user=contrib,
+            entity=entities[i],
         )
     top_contributors = users_with_translations_counts()
     assert len(top_contributors) == 100
@@ -65,7 +75,8 @@ def test_mgr_user_contributors_limit(
 
 @pytest.mark.django_db
 def test_mgr_user_translation_counts(
-    resource_a, locale_a,
+    resource_a,
+    locale_a,
 ):
     """Checks if translation counts are calculated properly.
 
@@ -132,7 +143,8 @@ def test_mgr_user_translation_counts(
 
 @pytest.mark.django_db
 def test_mgr_user_period_filters(
-    locale_a, resource_a,
+    locale_a,
+    resource_a,
 ):
     """Total counts should be filtered by given date.
 
@@ -168,7 +180,13 @@ def test_mgr_user_period_filters(
                 )
             ]
             * 1,
-            [dict(user=contributors[0], date=aware_datetime(2015, 3, 2), fuzzy=True,)]
+            [
+                dict(
+                    user=contributors[0],
+                    date=aware_datetime(2015, 3, 2),
+                    fuzzy=True,
+                )
+            ]
             * 2,
             [
                 dict(
@@ -187,7 +205,13 @@ def test_mgr_user_period_filters(
                 )
             ]
             * 11,
-            [dict(user=contributors[1], date=aware_datetime(2015, 6, 1), fuzzy=True,)]
+            [
+                dict(
+                    user=contributors[1],
+                    date=aware_datetime(2015, 6, 1),
+                    fuzzy=True,
+                )
+            ]
             * 2,
         ],
         [],
@@ -242,7 +266,9 @@ def test_mgr_user_period_filters(
 
 @pytest.mark.django_db
 def test_mgr_user_query_args_filtering(
-    locale_a, resource_a, locale_b,
+    locale_a,
+    resource_a,
+    locale_b,
 ):
     """
     Tests if query args are honored properly and contributors are filtered.
@@ -280,7 +306,8 @@ def test_mgr_user_query_args_filtering(
         )
 
     top_contribs = users_with_translations_counts(
-        aware_datetime(2015, 1, 1), Q(locale=locale_a),
+        aware_datetime(2015, 1, 1),
+        Q(locale=locale_a),
     )
     assert len(top_contribs) == 2
     assert top_contribs[0] == contributors[2]
@@ -297,7 +324,8 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[1].translations_needs_work_count == 2
 
     top_contribs = users_with_translations_counts(
-        aware_datetime(2015, 1, 1), Q(locale=locale_b),
+        aware_datetime(2015, 1, 1),
+        Q(locale=locale_b),
     )
     assert len(top_contribs) == 1
     assert top_contribs[0] == contributors[1]

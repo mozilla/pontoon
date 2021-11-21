@@ -66,7 +66,11 @@ def test_create_translation_not_logged_in(
 
 @pytest.mark.django_db
 def test_create_translation_force_suggestions(
-    project_locale_a, translation_a, locale_a, member, request_create_translation,
+    project_locale_a,
+    translation_a,
+    locale_a,
+    member,
+    request_create_translation,
 ):
     """
     Save/suggest button should always do what the current label says and
@@ -137,7 +141,11 @@ def properties_entity(entity_a, properties_resource):
 
 @pytest.mark.django_db
 def test_run_checks_during_translation_update(
-    properties_entity, member, locale_a, project_locale_a, request_create_translation,
+    properties_entity,
+    member,
+    locale_a,
+    project_locale_a,
+    request_create_translation,
 ):
     """
     The backend shouldn't allow to post translations with critical errors.
@@ -205,7 +213,11 @@ def test_run_checks_during_translation_update(
 @pytest.fixture
 def approved_translation(locale_a, project_locale_a, entity_a, user_a):
     return TranslationFactory(
-        entity=entity_a, locale=locale_a, user=user_a, approved=True, active=True,
+        entity=entity_a,
+        locale=locale_a,
+        user=user_a,
+        approved=True,
+        active=True,
     )
 
 
@@ -229,7 +241,11 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
     assert response.content == b"Bad Request: Request must be AJAX"
 
     # Rejected translation gets deleted
-    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     assert response.status_code == 200
     assert Translation.objects.filter(pk=rejected_translation.pk).exists() is False
 
@@ -237,7 +253,11 @@ def test_view_translation_delete(approved_translation, rejected_translation, mem
     params = {
         "translation": approved_translation.pk,
     }
-    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     assert response.status_code == 403
     assert Translation.objects.filter(pk=approved_translation.pk).exists() is True
 
@@ -257,7 +277,9 @@ def test_approve_translation_basic(translation_a, client_superuser):
     assert response.content == b"Bad Request: Request must be AJAX"
 
     response = client_superuser.post(
-        url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 200, response.content
 
@@ -269,7 +291,9 @@ def test_approve_translation_basic(translation_a, client_superuser):
 
 @pytest.mark.django_db
 def test_approve_translation_rejects_previous_approved(
-    approved_translation, translation_a, client_superuser,
+    approved_translation,
+    translation_a,
+    client_superuser,
 ):
     """Check if previously approved translations get rejected on approve."""
     url = reverse("pontoon.translations.approve")
@@ -280,7 +304,9 @@ def test_approve_translation_rejects_previous_approved(
     }
 
     response = client_superuser.post(
-        url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
 
     assert response.status_code == 200, response.content
@@ -308,7 +334,11 @@ def test_unapprove_translation(approved_translation, member):
     assert response.status_code == 400
     assert response.content == b"Bad Request: Request must be AJAX"
 
-    response = member.client.post(url, params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = member.client.post(
+        url,
+        params,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     assert response.status_code == 200
 
     approved_translation.refresh_from_db()

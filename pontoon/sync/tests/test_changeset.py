@@ -410,7 +410,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.update_main_db_entity()
         self.main_db_translation.refresh_from_db()
         assert_attributes_equal(
-            self.main_db_translation, rejected=True,
+            self.main_db_translation,
+            rejected=True,
         )
 
         assert ActionLog.objects.filter(
@@ -434,7 +435,8 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.update_main_db_entity()
         self.main_db_translation.refresh_from_db()
         assert_attributes_equal(
-            self.main_db_translation, rejected=False,
+            self.main_db_translation,
+            rejected=False,
         )
 
     def test_obsolete_db(self):

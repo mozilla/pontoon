@@ -124,7 +124,8 @@ class Term(models.Model):
         Generate entity comment from the term.
         """
         comment = "{}. {}.".format(
-            self.part_of_speech.capitalize(), self.definition.capitalize().rstrip("."),
+            self.part_of_speech.capitalize(),
+            self.definition.capitalize().rstrip("."),
         )
 
         if self.usage:
@@ -143,7 +144,9 @@ class Term(models.Model):
         resource = Resource.objects.get(project__slug="terminology")
 
         entity, created = Entity.objects.get_or_create(
-            string=self.text, comment=self.entity_comment(), resource=resource,
+            string=self.text,
+            comment=self.entity_comment(),
+            resource=resource,
         )
 
         # Using update() to avoid circular Term.save() call

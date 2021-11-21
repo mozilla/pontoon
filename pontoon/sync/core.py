@@ -185,10 +185,16 @@ def update_translated_resources(db_project, vcs_project, locale):
     Returns true if a new TranslatedResource is added to the locale.
     """
     if vcs_project.configuration:
-        return update_translated_resources_with_config(db_project, vcs_project, locale,)
+        return update_translated_resources_with_config(
+            db_project,
+            vcs_project,
+            locale,
+        )
     else:
         return update_translated_resources_without_config(
-            db_project, vcs_project, locale,
+            db_project,
+            vcs_project,
+            locale,
         )
 
 

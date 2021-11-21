@@ -41,12 +41,16 @@ class CompareLocalesResourceTests(TestCase):
         )
 
         source_path = create_named_tempfile(
-            contents, prefix="strings", suffix=".xml", directory=self.tempdir,
+            contents,
+            prefix="strings",
+            suffix=".xml",
+            directory=self.tempdir,
         )
         source_resource = compare_locales.CompareLocalesResource(source_path)
 
         return compare_locales.CompareLocalesResource(
-            path, source_resource=source_resource,
+            path,
+            source_resource=source_resource,
         )
 
     def test_init_invalid_resource(self):
@@ -123,15 +127,26 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def parse_string(
-        self, string, source_string=None, locale=None, path=None, source_path=None,
+        self,
+        string,
+        source_string=None,
+        locale=None,
+        path=None,
+        source_path=None,
     ):
         """Android XML files must contain the word 'strings'."""
         path = create_named_tempfile(
-            string, prefix="strings", suffix=".xml", directory=self.tempdir,
+            string,
+            prefix="strings",
+            suffix=".xml",
+            directory=self.tempdir,
         )
         if source_string is not None:
             source_path = create_named_tempfile(
-                source_string, prefix="strings", suffix=".xml", directory=self.tempdir,
+                source_string,
+                prefix="strings",
+                suffix=".xml",
+                directory=self.tempdir,
             )
         return super().parse_string(
             string,

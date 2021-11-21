@@ -643,7 +643,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["id"],},
+            options={
+                "ordering": ["id"],
+            },
         ),
         migrations.CreateModel(
             name="ProjectLocale",
@@ -1007,21 +1009,27 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterUniqueTogether(
-            name="translatedresource", unique_together={("locale", "resource")},
+            name="translatedresource",
+            unique_together={("locale", "resource")},
         ),
         migrations.AlterUniqueTogether(
-            name="resource", unique_together={("project", "path")},
+            name="resource",
+            unique_together={("project", "path")},
         ),
         migrations.AlterUniqueTogether(
-            name="repository", unique_together={("project", "url")},
+            name="repository",
+            unique_together={("project", "url")},
         ),
         migrations.AlterUniqueTogether(
-            name="projectlocale", unique_together={("project", "locale")},
+            name="projectlocale",
+            unique_together={("project", "locale")},
         ),
         migrations.AlterIndexTogether(
-            name="entity", index_together={("resource", "obsolete", "string_plural")},
+            name="entity",
+            index_together={("resource", "obsolete", "string_plural")},
         ),
         migrations.AlterUniqueTogether(
-            name="changedentitylocale", unique_together={("entity", "locale")},
+            name="changedentitylocale",
+            unique_together={("entity", "locale")},
         ),
     ]

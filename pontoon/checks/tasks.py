@@ -23,6 +23,9 @@ def check_translations(self, translations_pks):
 
         log.info(
             "Task: {}, Processed items: {}, Warnings: {}, Errors: {}".format(
-                self.request.id, len(translations), len(warnings), len(errors),
+                self.request.id,
+                len(translations),
+                len(warnings),
+                len(errors),
             )
         )

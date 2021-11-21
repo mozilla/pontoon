@@ -57,15 +57,13 @@ class TagsTool(Clonable):
         )
 
     def get(self, slug=None):
-        """Get the first tag by iterating self, or by slug if set
-        """
+        """Get the first tag by iterating self, or by slug if set"""
         if slug is None:
             return list(self)[0]
         return self.tag_class(self, **self.get_tags(slug=slug)[0])
 
     def get_tags(self, slug=None):
-        """Get `values` of associated tags, filtering by slug if given
-        """
+        """Get `values` of associated tags, filtering by slug if given"""
         tags = self.tag_manager.filter(project__in=self.projects).values(
             "pk", "name", "slug", "priority", "project"
         )

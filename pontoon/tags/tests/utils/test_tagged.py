@@ -115,7 +115,10 @@ def test_util_latest_activity_user(avatar_mock):
     avatar_mock.return_value = 113
 
     # call with random user data - defaults
-    user = LatestActivityUser(dict(foo="bar"), "submitted",)
+    user = LatestActivityUser(
+        dict(foo="bar"),
+        "submitted",
+    )
     assert user.prefix == ""
     assert user.email is None
     assert user.first_name is None
@@ -123,7 +126,10 @@ def test_util_latest_activity_user(avatar_mock):
     assert user.gravatar_url(23) is None
 
     # call with email - user data added
-    user = LatestActivityUser(dict(user__email="bar@ba.z"), "submitted",)
+    user = LatestActivityUser(
+        dict(user__email="bar@ba.z"),
+        "submitted",
+    )
     assert user.prefix == ""
     assert user.email == "bar@ba.z"
     assert user.first_name is None
@@ -135,7 +141,8 @@ def test_util_latest_activity_user(avatar_mock):
 
     # call with email and first_name - correct first_name
     user = LatestActivityUser(
-        dict(user__email="bar@ba.z", user__first_name="FOOBAR"), "submitted",
+        dict(user__email="bar@ba.z", user__first_name="FOOBAR"),
+        "submitted",
     )
     assert user.prefix == ""
     assert user.email == "bar@ba.z"

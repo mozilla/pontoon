@@ -28,7 +28,11 @@ def _check_xml(xml_content, expected_xml=None, dtd_path=None):
 def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
     """By download the data."""
     url = reverse(
-        "pontoon.download_tmx", args=(locale_a.code, entity_a.resource.project.slug,)
+        "pontoon.download_tmx",
+        args=(
+            locale_a.code,
+            entity_a.resource.project.slug,
+        ),
     )
     response = client.get(url)
     assert response.status_code == 200
@@ -38,17 +42,32 @@ def test_view_tmx_locale_file_dl(client, entity_a, locale_a):
 @pytest.mark.django_db
 def test_view_tmx_bad_params(client, entity_a, locale_a, settings_debug):
     """Validate locale code and don't return data."""
-    url = reverse("pontoon.download_tmx", args=("invalidlocale", "invalidproject",))
+    url = reverse(
+        "pontoon.download_tmx",
+        args=(
+            "invalidlocale",
+            "invalidproject",
+        ),
+    )
     response = client.get(url)
     assert response.status_code == 404
 
-    url = reverse("pontoon.download_tmx", args=(locale_a, "invalidproject",))
+    url = reverse(
+        "pontoon.download_tmx",
+        args=(
+            locale_a,
+            "invalidproject",
+        ),
+    )
     response = client.get(url)
     assert response.status_code == 404
 
 
 def test_view_tmx_empty_file():
-    data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
+    data_root = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "data",
+    )
     filepath = "tmx/no_entries.tmx"
 
     with open(os.path.join(data_root, filepath), encoding="utf-8") as f:
@@ -63,7 +82,10 @@ def test_view_tmx_empty_file():
 
 
 def test_view_tmx_valid_entries():
-    data_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data",)
+    data_root = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "data",
+    )
     filepath = "tmx/valid_entries.tmx"
 
     with open(os.path.join(data_root, filepath), encoding="utf-8") as f:
@@ -73,9 +95,21 @@ def test_view_tmx_valid_entries():
         datetime(2010, 1, 1),
         "sl",
         (
-            ("aa/bb/ccc", "xxx", "source string", "translation", "pontoon",),
+            (
+                "aa/bb/ccc",
+                "xxx",
+                "source string",
+                "translation",
+                "pontoon",
+            ),
             # Test escape of characters
-            ("aa/bb/ccc", 'x&y&z#"', "source string", "translation", "pontoon",),
+            (
+                "aa/bb/ccc",
+                'x&y&z#"',
+                "source string",
+                "translation",
+                "pontoon",
+            ),
             # Handle unicode characters
             (
                 "aa/bb/ccc",

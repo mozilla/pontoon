@@ -27,12 +27,25 @@ class ActionLog(models.Model):
 
     # Used to track on what translation related actions apply.
     translation = models.ForeignKey(
-        "base.Translation", models.CASCADE, blank=True, null=True,
+        "base.Translation",
+        models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     # Used when a translation has been deleted or a team comment has been added.
-    entity = models.ForeignKey("base.Entity", models.CASCADE, blank=True, null=True,)
-    locale = models.ForeignKey("base.Locale", models.CASCADE, blank=True, null=True,)
+    entity = models.ForeignKey(
+        "base.Entity",
+        models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    locale = models.ForeignKey(
+        "base.Locale",
+        models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     def validate_action_type_choice(self):
         valid_types = self.ActionType.values

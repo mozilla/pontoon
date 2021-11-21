@@ -19,8 +19,7 @@ class Tagged:
 
     @property
     def chart(self):
-        """Generate a dict of chart information
-        """
+        """Generate a dict of chart information"""
         return TagChart(**self.kwargs) if self.total_strings else None
 
     @property
@@ -29,8 +28,7 @@ class Tagged:
 
     @property
     def latest_activity(self):
-        """Returns wrapped LatestActivity data if available
-        """
+        """Returns wrapped LatestActivity data if available"""
         return (
             LatestActivity(self.latest_translation) if self.latest_translation else None
         )
@@ -47,8 +45,7 @@ class Tagged:
 
 
 class TaggedLocale(Tagged):
-    """Wraps a Locale to provide stats and latest information
-    """
+    """Wraps a Locale to provide stats and latest information"""
 
     @property
     def code(self):
