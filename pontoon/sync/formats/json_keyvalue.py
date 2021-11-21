@@ -1,6 +1,24 @@
 """
-Parser for Key Value .json
-Schema free format allowing the storage of translation strings in a json object
+Parser for key-value json (https://json.org/)
+key-value json uses a subset of json features.
+This implementation does not support plurals.
+
+Each key can be associated with either a String or an Object value.
+Therefore, the format support nested values.
+
+You are free to use dots in the keys name on Pontoon,
+though if your implementation supports nested values, you may encounter issues.
+Dot is usually the separator used to represent a path to nested values.
+Depending on the implementation, accessing "my.key" could either refer to
+{
+    "my": {
+        "key": "value"
+    }
+}
+or
+{
+    "my.key": "value"
+}
 """
 import codecs
 import json
