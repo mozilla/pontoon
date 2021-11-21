@@ -19,9 +19,8 @@ type Props = {
     selected: boolean;
     selectEntity: (...args: Array<any>) => any;
     getSiblingEntities: Function;
-    sibling: boolean;
-    displaySiblings: boolean;
     parameters: NavigationParams;
+    areSiblingsRevealed: Boolean;
 };
 
 /**
@@ -138,9 +137,8 @@ export default class Entity extends React.Component<Props> {
             isTranslator,
             locale,
             selected,
-            sibling,
-            displaySiblings,
             parameters,
+            areSiblingsRevealed,
         } = this.props;
 
         const classSelected = selected ? 'selected' : '';
@@ -150,7 +148,7 @@ export default class Entity extends React.Component<Props> {
 
         const classChecked = checkedForBatchEditing ? 'checked' : '';
 
-        const classSibling = sibling ? 'sibling' : '';
+        const classSibling = entity.isSibling ? 'sibling' : '';
         return (
             <li
                 className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}
@@ -164,7 +162,7 @@ export default class Entity extends React.Component<Props> {
                     <div>
                         {parameters.search || this.areFiltersApplied() ? (
                             <Localized id='entitieslist-Entity--sibling-strings-title'>
-                                {displaySiblings ? null : (
+                                {!areSiblingsRevealed && (
                                     <i
                                         className={
                                             'sibling-entities-icon fas fa-expand-arrows-alt'

@@ -71,8 +71,7 @@ export type Entity = {
     readonly source: Array<Array<string>> | Record<string, any>;
     readonly translation: Array<EntityTranslation>;
     readonly readonly: boolean;
-    readonly sibling: boolean;
-    readonly displaySiblings: boolean;
+    readonly isSibling: boolean;
 };
 
 /**

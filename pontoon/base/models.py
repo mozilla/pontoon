@@ -2916,8 +2916,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         preferred_source_locale,
         entities,
         visible_entities=None,
-        sibling=False,
-        display_siblings=False,
+        is_sibling=False,
     ):
         entities_array = []
         visible_entities = visible_entities or []
@@ -2977,8 +2976,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         if entity.pk not in visible_entities or not visible_entities
                         else True
                     ),
-                    "sibling": sibling,
-                    "display_siblings": display_siblings,
+                    "isSibling": is_sibling,
                 }
             )
 

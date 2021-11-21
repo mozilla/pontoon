@@ -58,7 +58,6 @@ function injectSiblingEntities(
     let parentEntity = entities[index];
     const currentPKs = entities.map((e) => e.pk);
     let newEntitiesState = entities.slice();
-    parentEntity = { ...parentEntity, displaySiblings: true };
 
     // filtering out parent entities already present in the list
     const precedingSiblings = siblings.preceding.filter(

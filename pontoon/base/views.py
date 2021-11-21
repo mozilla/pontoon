@@ -369,10 +369,18 @@ def get_sibling_entities(request):
     return JsonResponse(
         {
             "succeeding": Entity.map_entities(
-                locale, preferred_source_locale, succeeding_entities, [], True
+                locale,
+                preferred_source_locale,
+                succeeding_entities,
+                [],
+                True,
             ),
             "preceding": Entity.map_entities(
-                locale, preferred_source_locale, preceding_entities, [], True
+                locale,
+                preferred_source_locale,
+                preceding_entities,
+                [],
+                True,
             ),
         },
         safe=False,

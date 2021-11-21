@@ -38,6 +38,10 @@ type InternalProps = Props & {
     store: Record<string, any>;
 };
 
+type State = {
+    entitiesWithActiveSiblings: Array<number>;
+};
+
 /**
  * Displays a list of entities and their current translation.
  *
@@ -45,12 +49,15 @@ type InternalProps = Props & {
  * entities. It interacts with `core/navigation` when an entity is selected.
  *
  */
-export class EntitiesListBase extends React.Component<InternalProps> {
+export class EntitiesListBase extends React.Component<InternalProps, State> {
     list: { current: any };
 
     constructor(props: InternalProps) {
         super(props);
         this.list = React.createRef();
+        this.state = {
+            entitiesWithActiveSiblings: [],
+        };
     }
 
     componentDidMount() {
@@ -97,6 +104,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
             previous.author !== current.author ||
             previous.time !== current.time
         ) {
+            this.setState({ entitiesWithActiveSiblings: [] });
             this.props.dispatch(entities.actions.reset());
         }
 
@@ -224,6 +232,12 @@ export class EntitiesListBase extends React.Component<InternalProps> {
 
     getSiblingEntities: (entity: number) => void = (entity: number) => {
         const { dispatch, locale } = this.props;
+        this.setState({
+            entitiesWithActiveSiblings: [
+                ...this.state.entitiesWithActiveSiblings,
+                entity,
+            ],
+        });
         dispatch(entities.actions.getSiblingEntities(entity, locale.code));
     };
 
@@ -362,8 +376,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                     !props.batchactions.entities.length &&
                                     entity.pk === props.parameters.entity;
 
-                                const sibling = entity.sibling;
-                                const displaySiblings = entity.displaySiblings;
+                                const areSiblingsRevealed = this.state.entitiesWithActiveSiblings.includes(
+                                    entity.pk,
+                                );
 
                                 return (
                                     <Entity
@@ -385,8 +400,9 @@ export class EntitiesListBase extends React.Component<InternalProps> {
                                         getSiblingEntities={
                                             this.getSiblingEntities
                                         }
-                                        sibling={sibling}
-                                        displaySiblings={displaySiblings}
+                                        areSiblingsRevealed={
+                                            areSiblingsRevealed
+                                        }
                                         parameters={parameters}
                                     />
                                 );
