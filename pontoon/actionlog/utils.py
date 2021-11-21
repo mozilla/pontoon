@@ -2,7 +2,11 @@ from pontoon.actionlog.models import ActionLog
 
 
 def log_action(
-    action_type, user, translation=None, entity=None, locale=None,
+    action_type,
+    user,
+    translation=None,
+    entity=None,
+    locale=None,
 ):
     """Save a new action in the database.
 

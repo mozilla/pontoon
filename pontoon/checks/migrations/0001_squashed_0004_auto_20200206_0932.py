@@ -27,7 +27,10 @@ class Migration(migrations.Migration):
                 (
                     "library",
                     models.CharField(
-                        choices=[("p", "pontoon"), ("cl", "compare-locales"),],
+                        choices=[
+                            ("p", "pontoon"),
+                            ("cl", "compare-locales"),
+                        ],
                         db_index=True,
                         max_length=20,
                     ),
@@ -42,7 +45,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={
+                "abstract": False,
+            },
         ),
         migrations.CreateModel(
             name="Warning",
@@ -59,7 +64,10 @@ class Migration(migrations.Migration):
                 (
                     "library",
                     models.CharField(
-                        choices=[("p", "pontoon"), ("cl", "compare-locales"),],
+                        choices=[
+                            ("p", "pontoon"),
+                            ("cl", "compare-locales"),
+                        ],
                         db_index=True,
                         max_length=20,
                     ),
@@ -74,12 +82,16 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={
+                "abstract": False,
+            },
         ),
         migrations.AlterUniqueTogether(
-            name="warning", unique_together={("translation", "library", "message")},
+            name="warning",
+            unique_together={("translation", "library", "message")},
         ),
         migrations.AlterUniqueTogether(
-            name="error", unique_together={("translation", "library", "message")},
+            name="error",
+            unique_together={("translation", "library", "message")},
         ),
     ]

@@ -23,7 +23,9 @@ urlpatterns = [
             [
                 # Sync project
                 path(
-                    "sync/", views.manually_sync_project, name="pontoon.project.sync",
+                    "sync/",
+                    views.manually_sync_project,
+                    name="pontoon.project.sync",
                 ),
                 # Project strings
                 path(

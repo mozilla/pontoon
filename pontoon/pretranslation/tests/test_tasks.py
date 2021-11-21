@@ -31,10 +31,12 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     TranslatedResourceFactory.create(resource=resources[1], locale=locale_a)
 
     ProjectLocaleFactory.create(
-        project=project_a, locale=locale_a,
+        project=project_a,
+        locale=locale_a,
     )
     ProjectLocaleFactory.create(
-        project=project_a, locale=locale_b,
+        project=project_a,
+        locale=locale_b,
     )
 
     tm_user = User.objects.get(email="pontoon-tm@example.com")

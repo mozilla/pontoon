@@ -74,7 +74,11 @@ def test_profileform_user_locales_order(member, settings_url):
         {
             "first_name": "contributor",
             "email": member.user.email,
-            "locales_order": commajoin(locale2.pk, locale1.pk, locale3.pk,),
+            "locales_order": commajoin(
+                locale2.pk,
+                locale1.pk,
+                locale3.pk,
+            ),
         },
     )
 
@@ -98,7 +102,11 @@ def test_profileform_user_locales_order(member, settings_url):
         {
             "first_name": "contributor",
             "email": member.user.email,
-            "locales_order": commajoin(locale1.pk, locale2.pk, locale2.pk,),
+            "locales_order": commajoin(
+                locale1.pk,
+                locale2.pk,
+                locale2.pk,
+            ),
         },
     )
     assert response.status_code, 200
@@ -299,7 +307,9 @@ def test_given_period(member, mock_contributors_render, mock_users_translations_
     Checks if view sets and returns data for right period.
     """
     with patch(
-        "django.utils.timezone.now", wraps=now, return_value=aware_datetime(2015, 7, 5),
+        "django.utils.timezone.now",
+        wraps=now,
+        return_value=aware_datetime(2015, 7, 5),
     ):
         member.client.get("/contributors/?period=6")
         assert mock_contributors_render.call_args[0][0]["period"] == 6

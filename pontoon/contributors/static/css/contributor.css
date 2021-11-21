@@ -39,16 +39,15 @@ a.avatar:hover .desc ~ img {
     text-transform: none;
 }
 
-.check-list {
+.info {
     list-style: none;
     margin: 0;
     display: inline-block;
     text-align: left;
 }
 
-.check-list li {
+.info li {
     color: #aaaaaa;
-    cursor: pointer;
     display: table;
     font-size: 16px;
     font-weight: 300;
@@ -59,11 +58,11 @@ a.avatar:hover .desc ~ img {
     max-width: 980px;
 }
 
-.check-list a {
+.info a {
     color: #7bc876;
 }
 
-.check-list .fa {
+.info .fa {
     margin-right: 6px;
 }
 

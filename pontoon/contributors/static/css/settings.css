@@ -108,3 +108,7 @@
     margin-top: 5px;
     text-align: left;
 }
+
+.check-list {
+    cursor: pointer;
+}

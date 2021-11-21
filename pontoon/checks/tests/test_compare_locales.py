@@ -151,10 +151,14 @@ def test_cast_to_dtd(entity_with_comment, translation_a, entity_a):
             translation="Allizom",
         ),
         mock_quality_check_args(
-            resource_ext="properties", string="モジラ", translation="モジラ translation",
+            resource_ext="properties",
+            string="モジラ",
+            translation="モジラ translation",
         ),
         mock_quality_check_args(
-            resource_ext="dtd", string="モジラ", translation="モジラ translation",
+            resource_ext="dtd",
+            string="モジラ",
+            translation="モジラ translation",
         ),
         mock_quality_check_args(
             resource_ext="ftl",

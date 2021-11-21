@@ -61,7 +61,12 @@ def update_locale_project_locale_stats(locale, project):
     on_error=sync_project_error,
 )
 def sync_project(
-    self, project_pk, sync_log_pk, no_pull=False, no_commit=False, force=False,
+    self,
+    project_pk,
+    sync_log_pk,
+    no_pull=False,
+    no_commit=False,
+    force=False,
 ):
     """Fetch the project with the given PK and perform sync on it."""
     db_project = get_or_fail(
@@ -305,7 +310,8 @@ def sync_translations(
 
                 log.info(
                     "Synced locale {locale} for project {project}.".format(
-                        locale=locale.code, project=db_project.slug,
+                        locale=locale.code,
+                        project=db_project.slug,
                     )
                 )
 
@@ -316,7 +322,9 @@ def sync_translations(
             log.warning(
                 "Failed to sync locale {locale} for project {project} due to "
                 "commit error: {error}".format(
-                    locale=locale.code, project=db_project.slug, error=err,
+                    locale=locale.code,
+                    project=db_project.slug,
+                    error=err,
                 )
             )
 
@@ -338,7 +346,9 @@ def sync_translations(
             # We don't have files: we can still update asymmetric translated resources.
             else:
                 update_translated_resources_no_files(
-                    db_project, locale, added_and_changed_resources,
+                    db_project,
+                    locale,
+                    added_and_changed_resources,
                 )
 
             update_locale_project_locale_stats(locale, db_project)
@@ -346,7 +356,8 @@ def sync_translations(
 
             log.info(
                 "Synced source changes for locale {locale} for project {project}.".format(
-                    locale=locale.code, project=db_project.slug,
+                    locale=locale.code,
+                    project=db_project.slug,
                 )
             )
 

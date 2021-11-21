@@ -39,14 +39,18 @@ def test_view_entity_filters(member, resource_a, locale_a):
         with patched_entity as m:
             m.return_value = getattr(Entity.objects, filter_name)(locale_a)
             member.client.post(
-                "/get-entities/", params, HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+                "/get-entities/",
+                params,
+                HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
             assert m.called is True
 
 
 @pytest.mark.django_db
 def test_view_entity_exclude_entities(
-    member, resource_a, locale_a,
+    member,
+    resource_a,
+    locale_a,
 ):
     """
     Excluded entities shouldn't be returned by get_entities.

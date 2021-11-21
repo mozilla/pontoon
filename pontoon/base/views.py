@@ -111,14 +111,16 @@ def locale_project_parts(request, locale, slug):
         locale = Locale.objects.get(code=locale)
     except Locale.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"}, status=404,
+            {"status": False, "message": f"Not Found: {e}"},
+            status=404,
         )
 
     try:
         project = Project.objects.visible_for(request.user).get(slug=slug)
     except Project.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"}, status=404,
+            {"status": False, "message": f"Not Found: {e}"},
+            status=404,
         )
 
     try:
@@ -301,7 +303,8 @@ def get_translations_from_other_locales(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
@@ -310,7 +313,9 @@ def get_translations_from_other_locales(request):
 
     translations = (
         Translation.objects.filter(
-            entity=entity, plural_form=plural_form, approved=True,
+            entity=entity,
+            plural_form=plural_form,
+            approved=True,
         )
         .exclude(locale=locale)
         .order_by("locale__name")
@@ -346,14 +351,16 @@ def get_translation_history(request):
         plural_form = int(request.GET["plural_form"])
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
 
     translations = Translation.objects.filter(
-        entity=entity, locale=locale,
+        entity=entity,
+        locale=locale,
     ).prefetch_related("comments")
 
     if plural_form != -1:
@@ -392,7 +399,8 @@ def get_team_comments(request):
         locale = request.GET["locale"]
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     entity = get_object_or_404(Entity, pk=entity)
@@ -437,7 +445,8 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     else:
         recipients = set()
         project_locale = ProjectLocale.objects.get(
-            project=entity.resource.project, locale=locale,
+            project=entity.resource.project,
+            locale=locale,
         )
         translations = Translation.objects.filter(entity=entity, locale=locale)
 
@@ -489,7 +498,8 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     )
 
     for recipient in User.objects.filter(
-        pk__in=recipients, profile__comment_notifications=True,
+        pk__in=recipients,
+        profile__comment_notifications=True,
     ).exclude(pk=user.pk):
         notify.send(
             user,
@@ -587,7 +597,7 @@ def add_comment(request):
 @require_POST
 @transaction.atomic
 def pin_comment(request):
-    """ Update a comment as pinned """
+    """Update a comment as pinned"""
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
@@ -606,7 +616,7 @@ def pin_comment(request):
 @require_POST
 @transaction.atomic
 def unpin_comment(request):
-    """ Update a comment as unpinned """
+    """Update a comment as unpinned"""
     comment_id = request.POST.get("comment_id", None)
     if not comment_id:
         return JsonResponse({"status": False, "message": "Bad Request"}, status=400)
@@ -655,18 +665,24 @@ def perform_checks(request):
         ignore_warnings = request.POST.get("ignore_warnings", "false") == "true"
     except MultiValueDictKeyError as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     try:
         entity = Entity.objects.get(pk=entity)
     except Entity.DoesNotExist as e:
         return JsonResponse(
-            {"status": False, "message": f"Bad Request: {e}"}, status=400,
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
         )
 
     failed_checks = run_checks(
-        entity, locale_code, original, string, request.user.profile.quality_checks,
+        entity,
+        locale_code,
+        original,
+        string,
+        request.user.profile.quality_checks,
     )
 
     if are_blocking_checks(failed_checks, ignore_warnings):
@@ -734,7 +750,8 @@ def upload(request):
 
     response = HttpResponse(content="", status=303)
     response["Location"] = reverse(
-        "pontoon.translate", kwargs={"locale": code, "project": slug, "resource": part},
+        "pontoon.translate",
+        kwargs={"locale": code, "project": slug, "resource": part},
     )
     return response
 

@@ -11,7 +11,11 @@ from pontoon.tags.utils import TaggedLocale, TagTool
 @pytest.mark.django_db
 @patch("pontoon.tags.admin.views.ProjectTagAdminAjaxView.get_form_class")
 def test_view_project_tag_admin_ajax_form(
-    form_mock, client, admin, project_a, tag_a,
+    form_mock,
+    client,
+    admin,
+    project_a,
+    tag_a,
 ):
     form_mock.configure_mock(
         **{
@@ -23,10 +27,16 @@ def test_view_project_tag_admin_ajax_form(
     client.force_login(admin)
     url = reverse(
         "pontoon.admin.project.ajax.tag",
-        kwargs=dict(project=project_a.slug, tag=tag_a.slug,),
+        kwargs=dict(
+            project=project_a.slug,
+            tag=tag_a.slug,
+        ),
     )
 
-    response = client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = client.post(
+        url,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     assert form_mock.return_value.return_value.is_valid.called
     assert form_mock.return_value.return_value.save.called
     assert response.json() == {"data": [7, 23]}
@@ -35,7 +45,11 @@ def test_view_project_tag_admin_ajax_form(
 @pytest.mark.django_db
 @patch("pontoon.tags.admin.views.ProjectTagAdminAjaxView.get_form_class")
 def test_view_project_tag_admin_ajax_form_bad(
-    form_mock, client, admin, project_a, tag_a,
+    form_mock,
+    client,
+    admin,
+    project_a,
+    tag_a,
 ):
     form_mock.configure_mock(
         **{
@@ -46,10 +60,16 @@ def test_view_project_tag_admin_ajax_form_bad(
     client.force_login(admin)
     url = reverse(
         "pontoon.admin.project.ajax.tag",
-        kwargs=dict(project=project_a.slug, tag=tag_a.slug,),
+        kwargs=dict(
+            project=project_a.slug,
+            tag=tag_a.slug,
+        ),
     )
 
-    response = client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = client.post(
+        url,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     assert response.status_code == 400
     assert form_mock.return_value.call_args[1]["project"] == project_a
     assert dict(form_mock.return_value.call_args[1]["data"]) == dict(tag=["tag"])
@@ -59,12 +79,16 @@ def test_view_project_tag_admin_ajax_form_bad(
 
     form_mock.return_value.reset_mock()
     response = client.post(
-        url, data=dict(foo="bar", bar="baz"), HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        url,
+        data=dict(foo="bar", bar="baz"),
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 400
     assert form_mock.return_value.call_args[1]["project"] == project_a
     assert dict(form_mock.return_value.call_args[1]["data"]) == dict(
-        foo=["bar"], bar=["baz"], tag=["tag"],
+        foo=["bar"],
+        bar=["baz"],
+        tag=["tag"],
     )
     assert form_mock.return_value.return_value.is_valid.called
     assert not form_mock.return_value.return_value.save.called
@@ -77,7 +101,10 @@ def test_view_project_tag_admin_ajax(form_mock, member, project_a, tag_a):
     form_mock.configure_mock(**{"return_value.save.return_value": 23})
     url = reverse(
         "pontoon.admin.project.ajax.tag",
-        kwargs=dict(project=project_a.slug, tag=tag_a.slug,),
+        kwargs=dict(
+            project=project_a.slug,
+            tag=tag_a.slug,
+        ),
     )
 
     # no `get` here
@@ -89,7 +116,10 @@ def test_view_project_tag_admin_ajax(form_mock, member, project_a, tag_a):
     assert response.status_code == 400
 
     # must be superuser!
-    response = member.client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest",)
+    response = member.client.post(
+        url,
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
     if not response.wsgi_request.user.is_superuser:
         assert not form_mock.called
         assert not form_mock.return_value.is_valid.called
@@ -109,7 +139,8 @@ def test_view_project_tag_admin_ajax(form_mock, member, project_a, tag_a):
 @pytest.mark.django_db
 def test_view_project_tag_locales(client, project_a, tag_a):
     url = reverse(
-        "pontoon.tags.project.tag", kwargs=dict(project=project_a.slug, tag=tag_a.slug),
+        "pontoon.tags.project.tag",
+        kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
 
     # tag is not associated with project
@@ -141,7 +172,8 @@ def test_view_project_tag_locales(client, project_a, tag_a):
 @pytest.mark.django_db
 def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_a):
     url = reverse(
-        "pontoon.tags.ajax.teams", kwargs=dict(project=project_a.slug, tag=tag_a.slug),
+        "pontoon.tags.ajax.teams",
+        kwargs=dict(project=project_a.slug, tag=tag_a.slug),
     )
     project_a.tag_set.add(tag_a)
     tag_a.priority = Priority.NORMAL
@@ -167,7 +199,10 @@ def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_
 
 @pytest.mark.django_db
 def test_view_project_tag_ajax(client, project_a, tag_a):
-    url = reverse("pontoon.projects.ajax.tags", kwargs=dict(slug=project_a.slug),)
+    url = reverse(
+        "pontoon.projects.ajax.tags",
+        kwargs=dict(slug=project_a.slug),
+    )
     project_a.tag_set.add(tag_a)
     tag_a.priority = Priority.NORMAL
     tag_a.save()

@@ -145,7 +145,9 @@ class POTests(FormatTestsMixin, TestCase):
         )
 
         assert_attributes_equal(
-            resource.translations[2], source_string="Source", key=self.key("Source"),
+            resource.translations[2],
+            source_string="Source",
+            key=self.key("Source"),
         )
 
     def generate_pofile(
