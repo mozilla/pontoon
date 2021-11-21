@@ -32,10 +32,10 @@ class JSONEntity(VCSTranslation):
     Represents an entity in a Key Value JSON file.
     """
 
-    def __init__(self, order, key, source_value, value):
+    def __init__(self, order, key, context, source_value, value):
         super().__init__(
             key=key,
-            context=key,
+            context=context,
             source_string=source_value,
             strings={None: value}
             if value
@@ -54,7 +54,7 @@ class JSONResource(ParsedResource):
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = JSONEntity(entity.order, entity.key, "", None)
+                self.entities[key] = JSONEntity(entity.order, entity.key, entity.context, "", None)
 
         try:
             with codecs.open(path, "r", "utf-8") as resource:
@@ -73,8 +73,8 @@ class JSONResource(ParsedResource):
         self.order_count = 0
 
         # Callback Populate JSON Entities
-        def readEntity(dot_key, value):
-            self.entities[dot_key] = JSONEntity(self.order_count, dot_key, value, value)
+        def readEntity(internal_key, dot_key, value):
+            self.entities[internal_key] = JSONEntity(self.order_count, internal_key, dot_key, value, value)
             self.order_count += 1
 
         self.traverse_json(self.json_file, readEntity)
@@ -99,12 +99,12 @@ class JSONResource(ParsedResource):
         with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
 
-        def writeEntity(dot_key, value):
-            entity = self.entities[dot_key]
+        def writeEntity(internal_key, dot_key, value):
+            entity = self.entities[internal_key]
             if entity.strings:
-                self.set_json_value(json_file, dot_key, entity.strings[None])
+                self.set_json_value(json_file, internal_key, entity.strings[None])
             else:
-                self.del_json_value(json_file, dot_key)
+                self.del_json_value(json_file, internal_key)
 
         self.traverse_json(json_file.copy(), writeEntity)
         self.clear_empty_objects(json_file)
@@ -129,23 +129,24 @@ class JSONResource(ParsedResource):
             if isinstance(value, dict):
                 self.traverse_json(value, function, keys=currentKey)
             elif type(value) == str:
+                internal_key = "<dot>".join(currentKey)
                 dot_key = ".".join(currentKey)
-                function(dot_key, value)
+                function(internal_key, dot_key, value)
 
     # Set json entry at dot_key path
-    def set_json_value(self, json, dot_key, value):
+    def set_json_value(self, json, internal_key, value):
         json_pointer = json
-        for key_fragment in dot_key.split(".")[:-1]:
+        for key_fragment in internal_key.split("<dot>")[:-1]:
             json_pointer = json_pointer[key_fragment]
-        json_pointer[dot_key.split(".")[-1]] = value
+        json_pointer[internal_key.split("<dot>")[-1]] = value
 
     # Remove json entry at dot_key path
-    def del_json_value(self, json, dot_key):
+    def del_json_value(self, json, internal_key):
         json_pointer = json
-        split_key = dot_key.split(".")
+        split_key = internal_key.split("<dot>")
         for key_fragment in split_key[:-1]:
             json_pointer = json_pointer[key_fragment]
-        del json_pointer[dot_key.split(".")[-1]]
+        del json_pointer[internal_key.split("<dot>")[-1]]
 
     # Recursively clear empty dict in json file
     def clear_empty_objects(self, json):

@@ -31,7 +31,8 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
             resource.translations[1],
             comments=[],
             source=[],
-            key=self.key("Nested.key"),
+            # Nested keys are internally using "<dot>" as a separator
+            key=self.key("Nested<dot>key"),
             strings={None: "value"},
             fuzzy=False,
             order=0,
@@ -61,6 +62,26 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
             input_string, expected_string, source_string=input_string,
         )
 
+    def test_save_dot_key(self):
+        input_string = dedent(
+            """
+            {
+              "Source.String": "Source String"
+            }
+        """
+        )
+        expected_string = dedent(
+            """
+            {
+              "Source.String": "New Translated String"
+            }
+        """
+        )
+
+        self.run_save_basic(
+            input_string, expected_string, source_string=input_string,
+        )
+
     def test_save_remove(self):
         input_string = dedent(
             """
@@ -79,4 +100,21 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
 
         self.run_save_remove(
             input_string, expected_string, source_string=input_string,
+        )
+
+    def test_key_and_context_format(self):
+        input_string = dedent(
+            """
+            {
+                "Source": {
+                  "String": "Source String"
+                }
+            }
+        """
+        )
+        path, resource = self.parse_string(input_string)
+        assert_attributes_equal(
+            resource.translations[0],
+            key = "Source<dot>String",
+            context = "Source.String"
         )
