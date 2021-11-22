@@ -157,17 +157,6 @@ export default function RichTranslationForm(
         focusedElementIdRef.current = null;
     }, [entity, changeSource]);
 
-    // Walks the tree and unify all simple elements into just one.
-    React.useEffect(() => {
-        if (typeof message === 'string') {
-            return;
-        }
-        const flatMessage = fluent.flattenMessage(message);
-        if (!flatMessage.equals(message)) {
-            updateTranslation(flatMessage);
-        }
-    }, [entity, message, updateTranslation]);
-
     // Reset checks when content of the editor changes.
     React.useEffect(() => {
         dispatch(editor.actions.resetFailedChecks());
@@ -369,14 +358,12 @@ export default function RichTranslationForm(
         pluralExamples: any,
         attributeName: string | null | undefined,
     ) {
+        let value: string;
         const element = variant.value.elements[0];
-        if (element.value === null) {
-            return null;
-        }
-
-        const value = element.value;
-        if (typeof value !== 'string') {
-            return null;
+        if (element && element.value && typeof element.value === 'string') {
+            value = element.value;
+        } else {
+            value = '';
         }
 
         const label = serializeVariantKey(variant.key);

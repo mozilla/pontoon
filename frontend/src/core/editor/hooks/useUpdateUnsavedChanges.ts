@@ -19,16 +19,14 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
 
     // When the translation or the initial translation changes, check for unsaved changes.
     React.useEffect(() => {
-        let exist;
-        if (richEditor) {
-            if (typeof translation === 'string') {
-                return;
-            }
+        let exist: boolean;
+        if (typeof translation === 'string') {
+            if (richEditor) return;
+            exist = translation !== initialTranslation;
+        } else {
             exist =
                 typeof initialTranslation !== 'string' &&
                 !translation.equals(initialTranslation);
-        } else {
-            exist = translation !== initialTranslation;
         }
 
         if (exist !== unsavedChangesExist) {
