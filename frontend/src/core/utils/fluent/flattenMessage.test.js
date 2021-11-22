@@ -109,28 +109,20 @@ describe('flattenMessage', () => {
         const message = parser.parseEntry(input);
         const res = flattenMessage(message);
 
-        expect(res.value.elements).toHaveLength(4);
+        expect(res.value.elements).toHaveLength(3);
 
-        expect(res.value.elements[0].value).toEqual('There ');
+        const selEmail = res.value.elements[0].expression;
+        expect(selEmail.variants[0].value.elements[0].value).toEqual(
+            'There is one email for { $awesome }',
+        );
+        expect(selEmail.variants[1].value.elements[0].value).toEqual(
+            'There are { $num } emails for { $awesome }',
+        );
 
-        expect(
-            res.value.elements[1].expression.variants[0].value.elements[0]
-                .value,
-        ).toEqual('is one email');
-        expect(
-            res.value.elements[1].expression.variants[1].value.elements[0]
-                .value,
-        ).toEqual('are { $num } emails');
+        expect(res.value.elements[1].value).toEqual(' ');
 
-        expect(res.value.elements[2].value).toEqual(' for { $awesome } ');
-
-        expect(
-            res.value.elements[3].expression.variants[0].value.elements[0]
-                .value,
-        ).toEqual('him');
-        expect(
-            res.value.elements[3].expression.variants[1].value.elements[0]
-                .value,
-        ).toEqual('her');
+        const selGender = res.value.elements[2].expression;
+        expect(selGender.variants[0].value.elements[0].value).toEqual('him');
+        expect(selGender.variants[1].value.elements[0].value).toEqual('her');
     });
 });
