@@ -46,10 +46,8 @@ def get_format_parser(file_name):
 
 def are_compatible_files(file_a, file_b):
     """
-    Return True if five file names belong to the same file format.
-    We test that by comparing parsers used by each file extension.
-    Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
-    Some use fullname resolution
+    Return True if the given file names correspond to the same file format.
+    Note that some formats (e.g. Gettext, XLIFF) use multiple file name patterns.
     """
     parser_a = get_format_parser(file_a)
     parser_b = get_format_parser(file_b)
