@@ -72,7 +72,9 @@ class JSONResource(ParsedResource):
         # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = JSONEntity(entity.order, entity.key, entity.context, "", None)
+                self.entities[key] = JSONEntity(
+                    entity.order, entity.key, entity.context, "", None
+                )
 
         try:
             with codecs.open(path, "r", "utf-8") as resource:
@@ -92,7 +94,9 @@ class JSONResource(ParsedResource):
 
         # Callback Populate JSON Entities
         def readEntity(internal_key, dot_key, value):
-            self.entities[internal_key] = JSONEntity(self.order_count, internal_key, dot_key, value, value)
+            self.entities[internal_key] = JSONEntity(
+                self.order_count, internal_key, dot_key, value, value
+            )
             self.order_count += 1
 
         self.traverse_json(self.json_file, readEntity)

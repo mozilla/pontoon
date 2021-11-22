@@ -59,7 +59,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
         )
 
         self.run_save_basic(
-            input_string, expected_string, source_string=input_string,
+            input_string,
+            expected_string,
+            source_string=input_string,
         )
 
     def test_save_dot_key(self):
@@ -79,7 +81,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
         )
 
         self.run_save_basic(
-            input_string, expected_string, source_string=input_string,
+            input_string,
+            expected_string,
+            source_string=input_string,
         )
 
     def test_save_remove(self):
@@ -99,7 +103,9 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
         )
 
         self.run_save_remove(
-            input_string, expected_string, source_string=input_string,
+            input_string,
+            expected_string,
+            source_string=input_string,
         )
 
     def test_key_and_context_format(self):
@@ -114,7 +120,5 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
         )
         path, resource = self.parse_string(input_string)
         assert_attributes_equal(
-            resource.translations[0],
-            key = "Source<dot>String",
-            context = "Source.String"
+            resource.translations[0], key="Source<dot>String", context="Source.String"
         )
