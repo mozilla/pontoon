@@ -13,6 +13,7 @@
 
 .entity.checked,
 .entity.selected,
+.entity.sibling:hover,
 .entity:hover {
     background-color: #333941;
 }

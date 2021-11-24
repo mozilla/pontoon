@@ -2976,7 +2976,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         if entity.pk not in visible_entities or not visible_entities
                         else True
                     ),
-                    "isSibling": is_sibling,
+                    "is_sibling": is_sibling,
                 }
             )
 
