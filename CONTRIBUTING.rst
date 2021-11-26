@@ -244,7 +244,7 @@ Once you are done adding, removing or updating requirements, rebuild your docker
 
 .. code-block:: shell
 
-    $ make build
+    $ make build-server
 
 If there are problems, it'll tell you.
 
