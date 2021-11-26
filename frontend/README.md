@@ -113,7 +113,7 @@ To add a new dependency, run the following commands:
     cd ..
 
     # Rebuild the Pontoon image so that it has the new dependencies.
-    make build
+    make build-frontend
 ```
 
 To upgrade dependency to a specific version, run the following commands:
@@ -126,7 +126,7 @@ To upgrade dependency to a specific version, run the following commands:
     cd ..
 
     # Rebuild the Pontoon image so that it has the upgraded dependencies.
-    make build
+    make build-frontend
 ```
 
 Note that, in order to add new dependencies, you need to have `yarn` installed and perform the actions locally (outside docker). You might want to remove the `node_modules` folder after you've run the install or update command (and the `package.json` and `yarn.lock` files have been updated) and before rebuilding the image, to reduce the size of the docker context.
