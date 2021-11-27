@@ -59,7 +59,7 @@ export function getRichFromComplex(
     initial: string,
     locale: Locale,
 ): [Entry, Entry] {
-    let translationContent = parser.parseEntry(current);
+    let translationContent = flattenMessage(parser.parseEntry(current));
 
     // If the parsed content is invalid, create an empty message instead.
     // Note that this should be replaced with a check that prevents
@@ -90,18 +90,20 @@ export function getComplexFromRich(
     initial: string,
     locale: Locale,
 ): [string, string] {
-    let initialContent = initial;
-
     const translationContent = serializer.serializeEntry(current);
+
+    let initialEntry: Entry;
 
     // If there is no active translation (it's an untranslated string)
     // we make the initial translation an empty fluent message to avoid
     // showing unchanged content warnings.
-    if (!initialContent) {
-        initialContent = serializer.serializeEntry(
-            getEmptyMessage(parser.parseEntry(original), locale),
-        );
+    if (!initial) {
+        initialEntry = getEmptyMessage(parser.parseEntry(original), locale);
+    } else {
+        initialEntry = flattenMessage(parser.parseEntry(initial));
     }
+
+    const initialContent = serializer.serializeEntry(initialEntry);
 
     return [translationContent, initialContent];
 }

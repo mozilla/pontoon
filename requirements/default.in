@@ -18,7 +18,7 @@ bleach==3.3.0
 celery==4.3.0
 compare-locales==8.2.0
 dj-database-url==0.3.0
-Django==3.2.4
+Django==3.2.9
 django-ace==1.0.5
 django-allauth==0.44.0
 django-bmemcached==0.2.3
