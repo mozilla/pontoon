@@ -48,10 +48,16 @@ def get_parent_directory(path):
 
 def uses_undercore_as_separator(directory):
     """
-    Return True if any subdirectory contains underscore.
+    Return True if the names of folders in a directory contain more '_' than '-'.
     """
+    only_folders = []
     subdirs = os.listdir(directory)
-    return "".join(subdirs).count("_") > "".join(subdirs).count("-")
+
+    for i in subdirs:
+        if os.path.isdir(os.path.join(directory, i)):
+            only_folders.append(i)
+
+    return "".join(only_folders).count("_") > "".join(only_folders).count("-")
 
 
 def directory_contains_resources(directory_path, source_only=False):
