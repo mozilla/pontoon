@@ -27,6 +27,10 @@ PROJECT_CONFIG_CHECKOUT_PATH = os.path.join(
     os.path.dirname(__file__),
     "project-config-checkout",
 )
+LOCALE_SEPARATOR_TEST_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "locale-separator-tests",
+)
 
 
 class VCSEntityFactory(factory.Factory):
