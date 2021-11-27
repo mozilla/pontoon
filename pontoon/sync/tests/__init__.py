@@ -19,11 +19,18 @@ from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs.models import VCSEntity, VCSProject, VCSResource, VCSTranslation
 
 
-FAKE_CHECKOUT_PATH = os.path.join(os.path.dirname(__file__), "fake-checkout",)
-PROJECT_CONFIG_CHECKOUT_PATH = os.path.join(
-    os.path.dirname(__file__), "project-config-checkout",
+FAKE_CHECKOUT_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "fake-checkout",
 )
-DUMMY_DIRECTORY_PATH = os.path.abspath("pontoon/sync/tests/dummy_directory")
+PROJECT_CONFIG_CHECKOUT_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "project-config-checkout",
+)
+LOCALE_SEPARATOR_TEST_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "locale-separator-tests",
+)
 
 
 class VCSEntityFactory(factory.Factory):

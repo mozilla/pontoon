@@ -48,7 +48,7 @@ def get_parent_directory(path):
 
 def uses_undercore_as_separator(directory):
     """
-    Return True if any subdirectory contains underscore.
+    Return True if the names of folders in a directory contain more '_' than '-'.
     """
     only_folders = []
     subdirs = os.listdir(directory)
