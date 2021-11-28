@@ -20,7 +20,10 @@ type Props = {
     selectEntity: (...args: Array<any>) => any;
     getSiblingEntities: Function;
     parameters: NavigationParams;
-    areSiblingsRevealed: Boolean;
+};
+
+type State = {
+    siblingsAreActive: Boolean;
 };
 
 /**
@@ -41,7 +44,11 @@ type Props = {
  * "Translation" is the current "best" translation. It shows either the approved
  * translation, or the fuzzy translation, or the last suggested translation.
  */
-export default class Entity extends React.Component<Props> {
+export default class Entity extends React.Component<Props, State> {
+    constructor(props) {
+        super(props);
+        this.state = { siblingsAreActive: false };
+    }
     get status(): string {
         const translations = this.props.entity.translation;
         let approved = 0;
@@ -102,6 +109,7 @@ export default class Entity extends React.Component<Props> {
     ) => {
         e.stopPropagation();
         this.props.getSiblingEntities(this.props.entity.pk);
+        this.setState({ siblingsAreActive: true });
     };
 
     toggleForBatchEditing: (e: React.MouseEvent<HTMLSpanElement>) => void = (
@@ -138,7 +146,6 @@ export default class Entity extends React.Component<Props> {
             locale,
             selected,
             parameters,
-            areSiblingsRevealed,
         } = this.props;
 
         const classSelected = selected ? 'selected' : '';
@@ -162,7 +169,7 @@ export default class Entity extends React.Component<Props> {
                     <div>
                         {parameters.search || this.areFiltersApplied() ? (
                             <Localized id='entitieslist-Entity--sibling-strings-title'>
-                                {!areSiblingsRevealed && (
+                                {!this.state.siblingsAreActive && (
                                     <i
                                         className={
                                             'sibling-entities-icon fas fa-expand-arrows-alt'

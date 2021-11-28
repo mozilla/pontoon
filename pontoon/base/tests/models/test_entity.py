@@ -317,7 +317,7 @@ def test_entity_project_locale_no_paths(
         "machinery_original": str(entity_a.string),
         "readonly": False,
         "visible": False,
-        "isSibling": False,
+        "is_sibling": False,
     }
     assert entities[0] == expected
 
