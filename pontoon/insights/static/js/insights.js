@@ -41,19 +41,20 @@ var Pontoon = (function (my) {
 
                 Pontoon.insights.renderActiveUsers();
                 Pontoon.insights.renderUnreviewedSuggestionsLifespan();
+                Pontoon.insights.renderTimeToReviewSuggestions();
                 Pontoon.insights.renderTranslationActivity();
                 Pontoon.insights.renderReviewActivity();
             },
             renderActiveUsers: function () {
                 $('#insights canvas.chart').each(function () {
                     // Collect data
-                    var parent = $(this).parents('.active-users');
+                    var parent = $(this).parents('.active-users-chart');
                     var id = parent.attr('id');
                     var period = $('.period-selector .active')
                         .data('period')
                         .toString();
-                    var active = $('#active-users').data(period)[id];
-                    var total = $('#active-users').data('total')[id];
+                    var active = $('.active-users').data(period)[id];
+                    var total = $('.active-users').data('total')[id];
 
                     // Clear old canvas content to avoid aliasing
                     var canvas = this;
@@ -158,6 +159,107 @@ var Pontoon = (function (my) {
                                     gridLines: {
                                         display: false,
                                     },
+                                    ticks: {
+                                        source: 'data',
+                                    },
+                                },
+                            ],
+                            yAxes: [
+                                {
+                                    gridLines: {
+                                        display: false,
+                                    },
+                                    position: 'right',
+                                    ticks: {
+                                        beginAtZero: true,
+                                        maxTicksLimit: 3,
+                                        precision: 0,
+                                        callback: function (value) {
+                                            return value + ' days';
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                });
+            },
+            renderTimeToReviewSuggestions: function () {
+                var chart = $('#time-to-review-suggestions-chart');
+
+                new Chart(chart, {
+                    type: 'bar',
+                    data: {
+                        labels: $('#insights').data('dates'),
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Within a month',
+                                data: chart.data('time-to-review-suggestions'),
+                                borderColor: ['#4fc4f6'],
+                                borderWidth: 2,
+                                pointBackgroundColor: '#4fc4f6',
+                                pointHitRadius: 10,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#4fc4f6',
+                                pointHoverBorderColor: '#FFF',
+                            },
+                            {
+                                type: 'line',
+                                label: '12-month average',
+                                data: chart.data(
+                                    'time-to-review-suggestions-12-month-avg',
+                                ),
+                                borderColor: ['#385465'],
+                                borderWidth: 1,
+                                pointBackgroundColor: '#385465',
+                                pointHitRadius: 10,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#385465',
+                                pointHoverBorderColor: '#FFF',
+                            },
+                        ],
+                    },
+                    options: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                            borderColor: '#4fc4f6',
+                            borderWidth: 1,
+                            caretPadding: 5,
+                            xPadding: 10,
+                            yPadding: 10,
+                            callbacks: {
+                                label: function (items, chart) {
+                                    return (
+                                        chart.datasets[items.datasetIndex]
+                                            .label +
+                                        ': ' +
+                                        items.value +
+                                        ' days'
+                                    );
+                                },
+                            },
+                        },
+                        scales: {
+                            xAxes: [
+                                {
+                                    type: 'time',
+                                    time: {
+                                        displayFormats: {
+                                            month: 'MMM',
+                                        },
+                                        tooltipFormat: 'MMMM YYYY',
+                                    },
+                                    gridLines: {
+                                        display: false,
+                                    },
+                                    offset: true,
                                     ticks: {
                                         source: 'data',
                                     },
@@ -637,3 +739,14 @@ var Pontoon = (function (my) {
         },
     });
 })(Pontoon || {});
+
+/* Main code */
+$(function () {
+    $('body').on('click', '#insights .suggestions-age nav li', function () {
+        var items = $('.suggestions-age nav li').removeClass('active');
+        $(this).addClass('active');
+        var index = items.index(this);
+        var itemWidth = $('.suggestions-age-item').first().outerWidth();
+        $('.suggestions-age-items').css('marginLeft', -index * itemWidth);
+    });
+});
