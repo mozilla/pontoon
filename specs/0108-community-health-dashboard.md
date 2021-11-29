@@ -39,7 +39,7 @@ A line chart showing the average age of suggestions still unreviewed in a partic
 
 Data is available for each day, but aggregated by month in the chart. A tooltip showing the exact data at a given month appears when hovering over a chart.
 
-**Text for infobox**: How old are on average the suggestions currently unreviewed.
+**Text for infobox**: How old are the unreviewed suggestions on average at a particular point in time.
 
 ## Time to review suggestions
 
