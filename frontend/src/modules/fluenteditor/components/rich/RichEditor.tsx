@@ -47,7 +47,7 @@ export default function RichEditor(props: Props): React.ReactElement<any> {
             if (syntax !== 'rich') {
                 return;
             }
-            updateTranslation(message, changeSource);
+            updateTranslation(fluent.flattenMessage(message), changeSource);
         }
     }, [translation, changeSource, updateTranslation, dispatch]);
 
