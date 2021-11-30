@@ -13,6 +13,7 @@
 
 .entity.checked,
 .entity.selected,
+.entity.sibling:hover,
 .entity:hover {
     background-color: #333941;
 }
@@ -101,4 +102,22 @@
 
 .entity.warnings .status:before {
     color: #ffa10f;
+}
+
+.entity.sibling {
+    background-color: #4d5967;
+}
+
+.entity .sibling-entities-icon {
+    color: #aaa;
+    left: 17px;
+    top: 39px;
+    position: absolute;
+    margin: 0 -13px -13px -17px;
+    padding: 0 13px 13px 17px;
+    font-size: 14px;
+}
+
+.entity .sibling-entities-icon:hover {
+    color: #7bc876;
 }

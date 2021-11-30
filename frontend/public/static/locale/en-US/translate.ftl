@@ -268,6 +268,13 @@ entitydetails-GenericOriginalString--plural = PLURAL
 entitydetails-GenericOriginalString--singular = SINGULAR
 
 
+## Entities List Entity
+## Displays a single Entity as a list element
+
+entitieslist-Entity--sibling-strings-title =
+    .title = Click to reveal sibling strings
+
+
 ## Rich editor
 ## Renders a Rich editor for Fluent string editing
 

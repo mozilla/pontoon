@@ -1,12 +1,14 @@
 import api from 'core/api';
 import * as stats from 'core/stats';
 
-import type { Entities, EntityTranslation } from 'core/api';
+import type { Entities, EntityTranslation, EntitySiblings } from 'core/api';
 
 export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
 export const REQUEST: 'entities/REQUEST' = 'entities/REQUEST';
 export const RESET: 'entities/RESET' = 'entities/RESET';
 export const UPDATE: 'entities/UPDATE' = 'entities/UPDATE';
+export const RECEIVE_SIBLINGS: 'entities/RECEIVE_SIBLINGS' =
+    'entities/RECEIVE_SIBLINGS';
 
 /**
  * Indicate that entities are currently being fetched.
@@ -33,6 +35,24 @@ export function receive(entities: Entities, hasMore: boolean): ReceiveAction {
         type: RECEIVE,
         entities,
         hasMore,
+    };
+}
+/**
+ * Update the siblings of an entity.
+ */
+export type ReceiveSiblingsAction = {
+    type: typeof RECEIVE_SIBLINGS;
+    siblings: EntitySiblings;
+    entity: number;
+};
+export function receiveSiblings(
+    siblings: EntitySiblings,
+    entity: number,
+): ReceiveSiblingsAction {
+    return {
+        type: RECEIVE_SIBLINGS,
+        siblings,
+        entity,
     };
 }
 
@@ -101,6 +121,15 @@ export function get(
     };
 }
 
+export function getSiblingEntities(entity: number, locale: string): Function {
+    return async (dispatch) => {
+        const siblings = await api.entity.getSiblingEntities(entity, locale);
+        if (siblings) {
+            dispatch(receiveSiblings(siblings, entity));
+        }
+    };
+}
+
 export type ResetAction = {
     type: typeof RESET;
 };
@@ -112,8 +141,10 @@ export function reset(): ResetAction {
 
 export default {
     get,
+    getSiblingEntities,
     receive,
     request,
     reset,
+    receiveSiblings,
     updateEntityTranslation,
 };

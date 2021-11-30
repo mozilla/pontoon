@@ -90,7 +90,11 @@ describe('<Entity>', () => {
 
     it('renders the source string and the first translation', () => {
         const wrapper = shallow(
-            <Entity entity={ENTITY_A} locale={DEFAULT_LOCALE} />,
+            <Entity
+                entity={ENTITY_A}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
         );
 
         const contents = wrapper.find('TranslationProxy');
@@ -102,23 +106,57 @@ describe('<Entity>', () => {
 
     it('shows the correct status class', () => {
         let wrapper = shallow(
-            <Entity entity={ENTITY_A} locale={DEFAULT_LOCALE} />,
+            <Entity
+                entity={ENTITY_A}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
         );
         expect(wrapper.instance().status).toEqual('approved');
 
-        wrapper = shallow(<Entity entity={ENTITY_B} locale={DEFAULT_LOCALE} />);
+        wrapper = shallow(
+            <Entity
+                entity={ENTITY_B}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
+        );
         expect(wrapper.instance().status).toEqual('fuzzy');
 
-        wrapper = shallow(<Entity entity={ENTITY_C} locale={DEFAULT_LOCALE} />);
+        wrapper = shallow(
+            <Entity
+                entity={ENTITY_C}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
+        );
         expect(wrapper.instance().status).toEqual('missing');
 
-        wrapper = shallow(<Entity entity={ENTITY_D} locale={DEFAULT_LOCALE} />);
+        wrapper = shallow(
+            <Entity
+                entity={ENTITY_D}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
+        );
         expect(wrapper.instance().status).toEqual('errors');
 
-        wrapper = shallow(<Entity entity={ENTITY_E} locale={DEFAULT_LOCALE} />);
+        wrapper = shallow(
+            <Entity
+                entity={ENTITY_E}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
+        );
         expect(wrapper.instance().status).toEqual('warnings');
 
-        wrapper = shallow(<Entity entity={ENTITY_F} locale={DEFAULT_LOCALE} />);
+        wrapper = shallow(
+            <Entity
+                entity={ENTITY_F}
+                locale={DEFAULT_LOCALE}
+                parameters={{}}
+            />,
+        );
         expect(wrapper.instance().status).toEqual('partial');
     });
 
@@ -129,23 +167,11 @@ describe('<Entity>', () => {
                 entity={ENTITY_A}
                 selectEntity={selectEntityFn}
                 locale={DEFAULT_LOCALE}
+                parameters={{}}
             />,
         );
         wrapper.find('li').simulate('click');
         expect(selectEntityFn.calledOnce).toEqual(true);
-    });
-
-    it('does not call the selectEntity function on click on .status', () => {
-        const selectEntityFn = sinon.spy();
-        const wrapper = mount(
-            <Entity
-                entity={ENTITY_A}
-                selectEntity={selectEntityFn}
-                locale={DEFAULT_LOCALE}
-            />,
-        );
-        wrapper.find('.status').simulate('click');
-        expect(selectEntityFn.called).toEqual(false);
     });
 
     it('calls the toggleForBatchEditing function on click on .status', () => {
@@ -157,6 +183,7 @@ describe('<Entity>', () => {
                 isReadOnlyEditor={false}
                 toggleForBatchEditing={toggleForBatchEditingFn}
                 locale={DEFAULT_LOCALE}
+                parameters={{}}
             />,
         );
         wrapper.find('.status').simulate('click');
@@ -165,13 +192,16 @@ describe('<Entity>', () => {
 
     it('does not call the toggleForBatchEditing function if user not translator', () => {
         const toggleForBatchEditingFn = sinon.spy();
+        const selectEntityFn = sinon.spy();
         const wrapper = mount(
             <Entity
                 entity={ENTITY_A}
                 isTranslator={false}
                 isReadOnlyEditor={false}
                 toggleForBatchEditing={toggleForBatchEditingFn}
+                selectEntity={selectEntityFn}
                 locale={DEFAULT_LOCALE}
+                parameters={{}}
             />,
         );
         wrapper.find('.status').simulate('click');
@@ -180,13 +210,16 @@ describe('<Entity>', () => {
 
     it('does not call the toggleForBatchEditing function if read-only editor', () => {
         const toggleForBatchEditingFn = sinon.spy();
+        const selectEntityFn = sinon.spy();
         const wrapper = mount(
             <Entity
                 entity={ENTITY_A}
                 isTranslator={false}
                 isReadOnlyEditor={true}
                 toggleForBatchEditing={toggleForBatchEditingFn}
+                selectEntity={selectEntityFn}
                 locale={DEFAULT_LOCALE}
+                parameters={{}}
             />,
         );
         wrapper.find('.status').simulate('click');

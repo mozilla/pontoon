@@ -2911,7 +2911,12 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     @classmethod
     def map_entities(
-        cls, locale, preferred_source_locale, entities, visible_entities=None
+        cls,
+        locale,
+        preferred_source_locale,
+        entities,
+        visible_entities=None,
+        is_sibling=False,
     ):
         entities_array = []
         visible_entities = visible_entities or []
@@ -2971,6 +2976,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         if entity.pk not in visible_entities or not visible_entities
                         else True
                     ),
+                    "is_sibling": is_sibling,
                 }
             )
 

@@ -1,14 +1,20 @@
-import { RECEIVE, REQUEST, RESET, UPDATE } from './actions';
+import { RECEIVE, REQUEST, RESET, UPDATE, RECEIVE_SIBLINGS } from './actions';
 
-import type { Entities, EntityTranslation } from 'core/api';
+import type { Entities, EntityTranslation, EntitySiblings } from 'core/api';
 import type {
     ReceiveAction,
     RequestAction,
     ResetAction,
     UpdateAction,
+    ReceiveSiblingsAction,
 } from './actions';
 
-export type Action = ReceiveAction | RequestAction | ResetAction | UpdateAction;
+export type Action =
+    | ReceiveAction
+    | RequestAction
+    | ResetAction
+    | UpdateAction
+    | ReceiveSiblingsAction;
 
 // Read-only state.
 export type EntitiesState = {
@@ -41,6 +47,37 @@ function updateEntityTranslation(
             translation: translations,
         };
     });
+}
+
+function injectSiblingEntities(
+    entities: Entities,
+    siblings: EntitySiblings,
+    entity: number,
+): Entities {
+    const index = entities.findIndex((item) => item.pk === entity);
+    let parentEntity = entities[index];
+    const currentPKs = entities.map((e) => e.pk);
+    let newEntitiesState = entities.slice();
+
+    // filtering out parent entities already present in the list
+    const precedingSiblings = siblings.preceding.filter(
+        (sibling) => !currentPKs.includes(sibling.pk),
+    );
+
+    const succeedingSiblings = siblings.succeeding.filter(
+        (sibling) => !currentPKs.includes(sibling.pk),
+    );
+
+    let list = [...precedingSiblings, parentEntity, ...succeedingSiblings];
+
+    newEntitiesState.splice(index, 1, ...list);
+
+    // This block removes duplicated siblings
+    newEntitiesState = newEntitiesState.filter(
+        (currentValue, index, array) =>
+            array.findIndex((e) => e.pk === currentValue.pk) === index,
+    );
+    return newEntitiesState;
 }
 
 const initial: EntitiesState = {
@@ -84,6 +121,15 @@ export default function reducer(
                     action.entity,
                     action.pluralForm,
                     action.translation,
+                ),
+            };
+        case RECEIVE_SIBLINGS:
+            return {
+                ...state,
+                entities: injectSiblingEntities(
+                    state.entities,
+                    action.siblings,
+                    action.entity,
                 ),
             };
         default:

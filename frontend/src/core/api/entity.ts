@@ -137,6 +137,23 @@ export default class EntityAPI extends APIBase {
         return this.keysToCamelCase(results);
     }
 
+    async getSiblingEntities(entity: number, locale: string): Promise<any> {
+        const payload = new URLSearchParams();
+        payload.append('entity', entity.toString());
+        payload.append('locale', locale);
+        const headers = new Headers();
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+
+        const results = await this.fetch(
+            '/get-sibling-entities/',
+            'GET',
+            payload,
+            headers,
+        );
+
+        return this.keysToCamelCase(results);
+    }
+
     async getOtherLocales(
         entity: number,
         locale: string,
