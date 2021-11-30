@@ -22,8 +22,6 @@ page_not_found_view = TemplateView.as_view(template_name="404.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
 
 urlpatterns = [
-    # Legacy: Locale redirect for compatibility with i18n ready URL scheme
-    path("en-US<path:url>", RedirectView.as_view(url="%(url)s", permanent=True)),
     # Redirect legacy Aurora projects
     path(
         "projects/firefox-aurora/<path:url>",
