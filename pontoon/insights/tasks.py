@@ -251,6 +251,10 @@ def get_locale_insights_snapshot(
         suggestions
     )
 
+    time_to_review_suggestions = get_time_to_review_suggestions_data(
+        activities, locale=locale.id
+    )
+
     (
         human_translations,
         machinery_translations,
@@ -280,6 +284,8 @@ def get_locale_insights_snapshot(
         active_users_last_12_months=active_users_last_12_months,
         # Unreviewed suggestions lifespan
         unreviewed_suggestions_lifespan=unreviewed_suggestions_lifespan,
+        # Time to review suggestions
+        time_to_review_suggestions=time_to_review_suggestions,
         # Translation activity
         completion=round(locale.completed_percent, 2),
         human_translations=human_translations,
@@ -414,6 +420,20 @@ def get_unreviewed_suggestions_lifespan_data(suggestions):
     return unreviewed_suggestions_lifespan
 
 
+def get_time_to_review_suggestions_data(activities, locale):
+    """Get average time to review a suggestion."""
+    times_to_review = list()
+
+    for (locale_, _), data in activities.items():
+        if locale == locale_:
+            times_to_review.extend(data["times_to_review"])
+
+    if len(times_to_review) == 0:
+        return timedelta()
+
+    return sum(times_to_review, timedelta()) / len(times_to_review)
+
+
 def query_activity_actions(start_of_today):
     """Get actions of the previous day, needed for the Translation and Review activity charts."""
     return ActionLog.objects.filter(
@@ -431,6 +451,7 @@ def query_activity_actions(start_of_today):
         approved_user=F("translation__approved_user"),
         date=F("translation__date"),
         approved_date=F("translation__approved_date"),
+        rejected_date=F("translation__rejected_date"),
         project=F("translation__entity__resource__project"),
     )
 
@@ -449,6 +470,7 @@ def build_activity_charts_data(start_of_today, sync_user):
                 "peer_approved": set(),
                 "self_approved": set(),
                 "rejected": set(),
+                "times_to_review": list(),
             }
         data = res[key]
 
@@ -478,9 +500,15 @@ def build_activity_charts_data(start_of_today, sync_user):
                 data["self_approved"].add(translation)
             else:
                 data["peer_approved"].add(translation)
+                if action["approved_date"]:
+                    data["times_to_review"].append(
+                        action["approved_date"] - action["date"]
+                    )
 
         elif action_type == "translation:rejected" and not performed_by_sync:
             data["rejected"].add(translation)
+            if action["rejected_date"]:
+                data["times_to_review"].append(action["rejected_date"] - action["date"])
 
     return res
 
