@@ -23,7 +23,7 @@ type Props = {
 };
 
 type State = {
-    siblingsAreActive: Boolean;
+    areSiblingsActive: Boolean;
 };
 
 /**
@@ -47,7 +47,7 @@ type State = {
 export default class Entity extends React.Component<Props, State> {
     constructor(props) {
         super(props);
-        this.state = { siblingsAreActive: false };
+        this.state = { areSiblingsActive: false };
     }
     get status(): string {
         const translations = this.props.entity.translation;
@@ -109,7 +109,7 @@ export default class Entity extends React.Component<Props, State> {
     ) => {
         e.stopPropagation();
         this.props.getSiblingEntities(this.props.entity.pk);
-        this.setState({ siblingsAreActive: true });
+        this.setState({ areSiblingsActive: true });
     };
 
     toggleForBatchEditing: (e: React.MouseEvent<HTMLSpanElement>) => void = (
@@ -135,6 +135,14 @@ export default class Entity extends React.Component<Props, State> {
             return true;
         }
         return false;
+    };
+
+    showSiblingEntitiesButton: () => boolean = () => {
+        const isSearched = this.props.parameters.search;
+        const areFiltersApplied = this.areFiltersApplied();
+        const areSiblingsActive = !this.state.areSiblingsActive;
+
+        return (isSearched || areFiltersApplied) && areSiblingsActive;
     };
 
     render(): React.ReactElement<'li'> {
@@ -167,19 +175,17 @@ export default class Entity extends React.Component<Props, State> {
                 />
                 {classSelected && !classSibling ? (
                     <div>
-                        {parameters.search || this.areFiltersApplied() ? (
+                        {this.showSiblingEntitiesButton() && (
                             <Localized id='entitieslist-Entity--sibling-strings-title'>
-                                {!this.state.siblingsAreActive && (
-                                    <i
-                                        className={
-                                            'sibling-entities-icon fas fa-expand-arrows-alt'
-                                        }
-                                        title='Click to reveal sibling strings'
-                                        onClick={this.getSiblingEntities}
-                                    ></i>
-                                )}
+                                <i
+                                    className={
+                                        'sibling-entities-icon fas fa-expand-arrows-alt'
+                                    }
+                                    title='Click to reveal sibling strings'
+                                    onClick={this.getSiblingEntities}
+                                ></i>
                             </Localized>
-                        ) : null}
+                        )}
                     </div>
                 ) : null}
                 <div>
