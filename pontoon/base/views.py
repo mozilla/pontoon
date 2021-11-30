@@ -343,6 +343,51 @@ def get_translations_from_other_locales(request):
 
 
 @utils.require_AJAX
+def get_sibling_entities(request):
+    """Get entities preceding and succeeding the current entity"""
+    try:
+        entity = int(request.GET["entity"])
+        locale = request.GET["locale"]
+    except (MultiValueDictKeyError, ValueError) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    entity = get_object_or_404(Entity, pk=entity)
+    locale = get_object_or_404(Locale, code=locale)
+    preferred_source_locale = ""
+    if request.user.is_authenticated:
+        preferred_source_locale = request.user.profile.preferred_source_locale
+
+    entities = Entity.objects.filter(resource=entity.resource, obsolete=False).order_by(
+        "order"
+    )
+    succeeding_entities = entities.filter(order__gt=entity.order)[:2]
+    preceding_entities = entities.filter(order__lt=entity.order).order_by("-order")[:2]
+
+    return JsonResponse(
+        {
+            "succeeding": Entity.map_entities(
+                locale,
+                preferred_source_locale,
+                succeeding_entities,
+                [],
+                True,
+            ),
+            "preceding": Entity.map_entities(
+                locale,
+                preferred_source_locale,
+                preceding_entities,
+                [],
+                True,
+            ),
+        },
+        safe=False,
+    )
+
+
+@utils.require_AJAX
 def get_translation_history(request):
     """Get history of translations of given entity to given locale."""
     try:

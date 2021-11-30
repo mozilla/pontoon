@@ -3,9 +3,11 @@ import * as React from 'react';
 import './Entity.css';
 
 import { TranslationProxy } from 'core/translation';
+import { Localized } from '@fluent/react';
 
 import type { Entity as EntityType } from 'core/api';
 import type { Locale } from 'core/locale';
+import type { NavigationParams } from 'core/navigation';
 
 type Props = {
     checkedForBatchEditing: boolean;
@@ -14,9 +16,14 @@ type Props = {
     isReadOnlyEditor: boolean;
     isTranslator: boolean;
     locale: Locale;
-    search: string | null | undefined;
     selected: boolean;
     selectEntity: (...args: Array<any>) => any;
+    getSiblingEntities: Function;
+    parameters: NavigationParams;
+};
+
+type State = {
+    areSiblingsActive: Boolean;
 };
 
 /**
@@ -37,7 +44,11 @@ type Props = {
  * "Translation" is the current "best" translation. It shows either the approved
  * translation, or the fuzzy translation, or the last suggested translation.
  */
-export default class Entity extends React.Component<Props> {
+export default class Entity extends React.Component<Props, State> {
+    constructor(props) {
+        super(props);
+        this.state = { areSiblingsActive: false };
+    }
     get status(): string {
         const translations = this.props.entity.translation;
         let approved = 0;
@@ -90,8 +101,15 @@ export default class Entity extends React.Component<Props> {
         ) {
             return null;
         }
-
         this.props.selectEntity(this.props.entity);
+    };
+
+    getSiblingEntities: (e: React.MouseEvent<HTMLButtonElement>) => void = (
+        e: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+        e.stopPropagation();
+        this.props.getSiblingEntities(this.props.entity.pk);
+        this.setState({ areSiblingsActive: true });
     };
 
     toggleForBatchEditing: (e: React.MouseEvent<HTMLSpanElement>) => void = (
@@ -100,8 +118,31 @@ export default class Entity extends React.Component<Props> {
         const { entity, isReadOnlyEditor, isTranslator } = this.props;
 
         if (isTranslator && !isReadOnlyEditor) {
+            e.stopPropagation();
             this.props.toggleForBatchEditing(entity.pk, e.shiftKey);
         }
+    };
+
+    areFiltersApplied: () => boolean = () => {
+        const parameters = this.props.parameters;
+        if (
+            parameters.status != null ||
+            parameters.extra != null ||
+            parameters.tag != null ||
+            parameters.time != null ||
+            parameters.author != null
+        ) {
+            return true;
+        }
+        return false;
+    };
+
+    showSiblingEntitiesButton: () => boolean = () => {
+        const isSearched = this.props.parameters.search;
+        const areFiltersApplied = this.areFiltersApplied();
+        const areSiblingsActive = !this.state.areSiblingsActive;
+
+        return (isSearched || areFiltersApplied) && areSiblingsActive;
     };
 
     render(): React.ReactElement<'li'> {
@@ -111,8 +152,8 @@ export default class Entity extends React.Component<Props> {
             isReadOnlyEditor,
             isTranslator,
             locale,
-            search,
             selected,
+            parameters,
         } = this.props;
 
         const classSelected = selected ? 'selected' : '';
@@ -122,21 +163,37 @@ export default class Entity extends React.Component<Props> {
 
         const classChecked = checkedForBatchEditing ? 'checked' : '';
 
+        const classSibling = entity.isSibling ? 'sibling' : '';
         return (
             <li
-                className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked}`}
+                className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}
                 onClick={this.selectEntity}
             >
                 <span
                     className='status fa'
                     onClick={this.toggleForBatchEditing}
                 />
+                {classSelected && !classSibling ? (
+                    <div>
+                        {this.showSiblingEntitiesButton() && (
+                            <Localized id='entitieslist-Entity--sibling-strings-title'>
+                                <i
+                                    className={
+                                        'sibling-entities-icon fas fa-expand-arrows-alt'
+                                    }
+                                    title='Click to reveal sibling strings'
+                                    onClick={this.getSiblingEntities}
+                                ></i>
+                            </Localized>
+                        )}
+                    </div>
+                ) : null}
                 <div>
                     <p className='source-string'>
                         <TranslationProxy
                             content={entity.original}
                             format={entity.format}
-                            search={search}
+                            search={parameters.search}
                         />
                     </p>
                     <p
@@ -148,7 +205,7 @@ export default class Entity extends React.Component<Props> {
                         <TranslationProxy
                             content={entity.translation[0].string}
                             format={entity.format}
-                            search={search}
+                            search={parameters.search}
                         />
                     </p>
                 </div>

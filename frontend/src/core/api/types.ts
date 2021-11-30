@@ -71,6 +71,15 @@ export type Entity = {
     readonly source: Array<Array<string>> | Record<string, any>;
     readonly translation: Array<EntityTranslation>;
     readonly readonly: boolean;
+    readonly isSibling: boolean;
+};
+
+/**
+ * Lists of preceding and succeeding entities
+ */
+export type EntitySiblings = {
+    readonly preceding: Array<Entity>;
+    readonly succeeding: Array<Entity>;
 };
 
 /**
