@@ -201,7 +201,7 @@ var Pontoon = (function (my) {
                         datasets: [
                             {
                                 type: 'line',
-                                label: 'Within a month',
+                                label: 'Current month',
                                 data: chart.data('time-to-review-suggestions'),
                                 borderColor: ['#4fc4f6'],
                                 borderWidth: 2,

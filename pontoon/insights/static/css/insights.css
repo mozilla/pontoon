@@ -195,7 +195,7 @@
 
 /* Active users info tooltip */
 
-#insights h3 .tooltip li.within-a-month::marker {
+#insights h3 .tooltip li.current-month::marker {
     color: #4fc4f6;
 }
 
