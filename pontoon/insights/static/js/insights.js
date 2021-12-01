@@ -193,6 +193,12 @@ var Pontoon = (function (my) {
             },
             renderTimeToReviewSuggestions: function () {
                 var chart = $('#time-to-review-suggestions-chart');
+                if (chart.length === 0) return;
+                var ctx = chart[0].getContext('2d');
+
+                var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+                gradient.addColorStop(0, '#4fc4f666');
+                gradient.addColorStop(1, 'transparent');
 
                 new Chart(chart, {
                     type: 'bar',
@@ -203,6 +209,7 @@ var Pontoon = (function (my) {
                                 type: 'line',
                                 label: 'Current month',
                                 data: chart.data('time-to-review-suggestions'),
+                                backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
                                 borderWidth: 2,
                                 pointBackgroundColor: '#4fc4f6',
@@ -218,13 +225,13 @@ var Pontoon = (function (my) {
                                 data: chart.data(
                                     'time-to-review-suggestions-12-month-avg',
                                 ),
-                                borderColor: ['#385465'],
+                                borderColor: ['#3e7089'],
                                 borderWidth: 1,
-                                pointBackgroundColor: '#385465',
+                                pointBackgroundColor: '#3e7089',
                                 pointHitRadius: 10,
                                 pointRadius: 4,
                                 pointHoverRadius: 6,
-                                pointHoverBackgroundColor: '#385465',
+                                pointHoverBackgroundColor: '#3e7089',
                                 pointHoverBorderColor: '#FFF',
                             },
                         ],
