@@ -11,7 +11,7 @@ var Pontoon = (function (my) {
                 });
 
                 // Hide info tooltips on click outside
-                $(window).click(function() {
+                $(window).click(function () {
                     $('#insights .tooltip').hide();
                     $('#insights h3 .fa-info').removeClass('active');
                 });
