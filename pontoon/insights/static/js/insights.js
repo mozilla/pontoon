@@ -116,7 +116,7 @@ var Pontoon = (function (my) {
                         labels: $('#insights').data('dates'),
                         datasets: [
                             {
-                                label: 'Unreviewed suggestion lifespan',
+                                label: 'Age of unreviewed suggestions',
                                 data: chart.data('lifespans'),
                                 backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
