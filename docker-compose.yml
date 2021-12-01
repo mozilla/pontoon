@@ -1,7 +1,7 @@
 # docker-compose for Pontoon development.
 #
 # Note: Requires docker-compose 1.10+.
-version: "2"
+version: "2.3"
 services:
   frontend:
     build:
