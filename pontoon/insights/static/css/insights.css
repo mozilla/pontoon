@@ -117,7 +117,7 @@
 
 #insights .suggestions-age-items {
     width: 940px;
-    height: 212px;
+    height: 180px;
     display: inline-block;
     overflow: hidden;
     transition: margin 0.4s ease-in-out;
@@ -130,21 +130,28 @@
 
 #insights .suggestions-age nav {
     text-align: center;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #insights .suggestions-age nav ul li {
-    color: #aaaaaa;
     cursor: pointer;
     display: inline-block;
+    margin: 15px 15px 0;
 }
 
-#insights .suggestions-age nav ul li.active {
-    color: #7bc876;
+#insights .suggestions-age nav ul li .icon {
+    background-color: #272a2f;
+}
+
+#insights .suggestions-age nav ul li .label {
+    color: #4d5967;
+}
+
+#insights .suggestions-age nav ul li.active .icon {
+    background-color: #4fc4f6;
+}
+
+#insights .suggestions-age nav ul li.active .label {
+    color: #ffffff;
 }
 
 /* Info tooltip */
@@ -256,7 +263,8 @@
     margin-bottom: 5px;
 }
 
-#insights .legend li .icon {
+#insights .legend li .icon,
+#insights nav li .icon {
     display: inline-block;
     border-radius: 50%;
     margin-right: 8px;
@@ -264,7 +272,8 @@
     width: 12px;
 }
 
-#insights .legend li .label {
+#insights .legend li .label,
+#insights nav li .label {
     cursor: pointer;
     font-weight: bold;
     vertical-align: text-top;
