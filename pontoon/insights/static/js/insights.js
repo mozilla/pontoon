@@ -243,8 +243,9 @@ var Pontoon = (function (my) {
                             yPadding: 10,
                             callbacks: {
                                 label(items, chart) {
-                                    const { label } =
-                                        chart.datasets[items.datasetIndex];
+                                    const { label } = chart.datasets[
+                                        items.datasetIndex
+                                    ];
                                     return `${label}: ${items.value} days`;
                                 },
                             },
