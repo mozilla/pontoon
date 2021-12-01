@@ -743,12 +743,12 @@ var Pontoon = (function (my) {
 })(Pontoon || {});
 
 /* Main code */
-$(function () {
-    $('body').on('click', '#insights .suggestions-age nav li', function () {
-        var items = $('.suggestions-age nav li').removeClass('active');
-        $(this).addClass('active');
-        var index = items.index(this);
-        var itemWidth = $('.suggestions-age-item').first().outerWidth();
-        $('.suggestions-age-items').css('marginLeft', -index * itemWidth);
-    });
+$('body').on('click', '#insights .suggestions-age nav li', function () {
+    var items = $('.suggestions-age nav li').removeClass('active');
+    $(this).addClass('active');
+    var index = items.index(this);
+    var itemWidth = $('.suggestions-age-item').first().outerWidth();
+
+    // Show the selected graph view
+    $('.suggestions-age-items').css('marginLeft', -index * itemWidth);
 });
