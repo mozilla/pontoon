@@ -3,10 +3,17 @@ var Pontoon = (function (my) {
     return $.extend(true, my, {
         insights: {
             initialize: function () {
-                // Show/hide info tooltip
-                $('#insights h3 .fa-info').on('click', function () {
+                // Show/hide info tooltips on click on the icon
+                $('#insights h3 .fa-info').on('click', function (e) {
+                    e.stopPropagation();
                     $(this).next('.tooltip').toggle();
                     $(this).toggleClass('active');
+                });
+
+                // Hide info tooltips on click outside
+                $(window).click(function() {
+                    $('#insights .tooltip').hide();
+                    $('#insights h3 .fa-info').removeClass('active');
                 });
 
                 // Select active users period
