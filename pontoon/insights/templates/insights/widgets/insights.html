@@ -100,44 +100,6 @@
         {% endif %}
     </section>
 
-    <section class="translation-activity">
-        <figure class="block">
-            <h3 class="controls">
-                Translation activity
-                {{ Tooltip.display(
-                    intro='Impact of adding translations and source strings on the overal translation completion.',
-                    items=[{
-                        'class': 'completion',
-                        'name': 'Completion',
-                        'definition': 'Share of translated strings.',
-                    }, {
-                        'class': 'human-translations',
-                        'name': 'Human translations',
-                        'definition': 'Translations authored by users.',
-                    }, {
-                        'class': 'machinery-translations',
-                        'name': 'Machinery translations',
-                        'definition': 'Translations copied from Machinery.',
-                    }, {
-                        'class': 'new-source-strings',
-                        'name': 'New source strings',
-                        'definition': 'Newly added source strings (hidden by default).',
-                    }]
-                ) }}
-            </h3>
-            <canvas
-                id="translation-activity-chart"
-                data-completion="{{ translation_activity.completion }}"
-                data-human-translations="{{ translation_activity.human_translations }}"
-                data-machinery-translations="{{ translation_activity.machinery_translations }}"
-                data-new-source-strings="{{ translation_activity.new_source_strings }}"
-                width="920"
-                height="400">
-            </canvas>
-            <div id="translation-activity-chart-legend" class="legend"></div>
-        </figure>
-    </section>
-
     <section class="review-activity">
         <figure class="block">
             <h3 class="controls">
@@ -178,6 +140,44 @@
                 height="400">
             </canvas>
             <div id="review-activity-chart-legend" class="legend"></div>
+        </figure>
+    </section>
+
+    <section class="translation-activity">
+        <figure class="block">
+            <h3 class="controls">
+                Translation activity
+                {{ Tooltip.display(
+                    intro='Impact of adding translations and source strings on the overal translation completion.',
+                    items=[{
+                        'class': 'completion',
+                        'name': 'Completion',
+                        'definition': 'Share of translated strings.',
+                    }, {
+                        'class': 'human-translations',
+                        'name': 'Human translations',
+                        'definition': 'Translations authored by users.',
+                    }, {
+                        'class': 'machinery-translations',
+                        'name': 'Machinery translations',
+                        'definition': 'Translations copied from Machinery.',
+                    }, {
+                        'class': 'new-source-strings',
+                        'name': 'New source strings',
+                        'definition': 'Newly added source strings (hidden by default).',
+                    }]
+                ) }}
+            </h3>
+            <canvas
+                id="translation-activity-chart"
+                data-completion="{{ translation_activity.completion }}"
+                data-human-translations="{{ translation_activity.human_translations }}"
+                data-machinery-translations="{{ translation_activity.machinery_translations }}"
+                data-new-source-strings="{{ translation_activity.new_source_strings }}"
+                width="920"
+                height="400">
+            </canvas>
+            <div id="translation-activity-chart-legend" class="legend"></div>
         </figure>
     </section>
 </div>
