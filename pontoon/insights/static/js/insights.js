@@ -278,9 +278,7 @@ var Pontoon = (function (my) {
                                         beginAtZero: true,
                                         maxTicksLimit: 3,
                                         precision: 0,
-                                        callback: function (value) {
-                                            return value + ' days';
-                                        },
+                                        callback: (value) => `${value} days`,
                                     },
                                 },
                             ],
