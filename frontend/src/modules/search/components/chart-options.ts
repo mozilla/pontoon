@@ -80,6 +80,7 @@ export const CHART_OPTIONS = {
             x: -4,
             y: 95,
         },
+        buttonSpacing: 20,
         buttonTheme: {
             fill: 'none',
             stroke: 'none',
