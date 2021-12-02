@@ -3,10 +3,17 @@ var Pontoon = (function (my) {
     return $.extend(true, my, {
         insights: {
             initialize: function () {
-                // Show/hide info tooltip
-                $('#insights h3 .fa-info').on('click', function () {
+                // Show/hide info tooltips on click on the icon
+                $('#insights h3 .fa-info').on('click', function (e) {
+                    e.stopPropagation();
                     $(this).next('.tooltip').toggle();
                     $(this).toggleClass('active');
+                });
+
+                // Hide info tooltips on click outside
+                $(window).click(function () {
+                    $('#insights .tooltip').hide();
+                    $('#insights h3 .fa-info').removeClass('active');
                 });
 
                 // Select active users period
@@ -41,19 +48,20 @@ var Pontoon = (function (my) {
 
                 Pontoon.insights.renderActiveUsers();
                 Pontoon.insights.renderUnreviewedSuggestionsLifespan();
+                Pontoon.insights.renderTimeToReviewSuggestions();
                 Pontoon.insights.renderTranslationActivity();
                 Pontoon.insights.renderReviewActivity();
             },
             renderActiveUsers: function () {
                 $('#insights canvas.chart').each(function () {
                     // Collect data
-                    var parent = $(this).parents('.active-users');
+                    var parent = $(this).parents('.active-users-chart');
                     var id = parent.attr('id');
                     var period = $('.period-selector .active')
                         .data('period')
                         .toString();
-                    var active = $('#active-users').data(period)[id];
-                    var total = $('#active-users').data('total')[id];
+                    var active = $('.active-users').data(period)[id];
+                    var total = $('.active-users').data('total')[id];
 
                     // Clear old canvas content to avoid aliasing
                     var canvas = this;
@@ -115,7 +123,7 @@ var Pontoon = (function (my) {
                         labels: $('#insights').data('dates'),
                         datasets: [
                             {
-                                label: 'Unreviewed suggestion lifespan',
+                                label: 'Age of unreviewed suggestions',
                                 data: chart.data('lifespans'),
                                 backgroundColor: gradient,
                                 borderColor: ['#4fc4f6'],
@@ -176,6 +184,109 @@ var Pontoon = (function (my) {
                                         callback: function (value) {
                                             return value + ' days';
                                         },
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                });
+            },
+            renderTimeToReviewSuggestions: function () {
+                var chart = $('#time-to-review-suggestions-chart');
+                if (chart.length === 0) return;
+                var ctx = chart[0].getContext('2d');
+
+                var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+                gradient.addColorStop(0, '#4fc4f666');
+                gradient.addColorStop(1, 'transparent');
+
+                new Chart(chart, {
+                    type: 'bar',
+                    data: {
+                        labels: $('#insights').data('dates'),
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Current month',
+                                data: chart.data('time-to-review-suggestions'),
+                                backgroundColor: gradient,
+                                borderColor: ['#4fc4f6'],
+                                borderWidth: 2,
+                                pointBackgroundColor: '#4fc4f6',
+                                pointHitRadius: 10,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#4fc4f6',
+                                pointHoverBorderColor: '#FFF',
+                            },
+                            {
+                                type: 'line',
+                                label: '12-month average',
+                                data: chart.data(
+                                    'time-to-review-suggestions-12-month-avg',
+                                ),
+                                borderColor: ['#3e7089'],
+                                borderWidth: 1,
+                                pointBackgroundColor: '#3e7089',
+                                pointHitRadius: 10,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointHoverBackgroundColor: '#3e7089',
+                                pointHoverBorderColor: '#FFF',
+                            },
+                        ],
+                    },
+                    options: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                            borderColor: '#4fc4f6',
+                            borderWidth: 1,
+                            caretPadding: 5,
+                            xPadding: 10,
+                            yPadding: 10,
+                            callbacks: {
+                                label(items, chart) {
+                                    const { label } = chart.datasets[
+                                        items.datasetIndex
+                                    ];
+                                    return `${label}: ${items.value} days`;
+                                },
+                            },
+                        },
+                        scales: {
+                            xAxes: [
+                                {
+                                    type: 'time',
+                                    time: {
+                                        displayFormats: {
+                                            month: 'MMM',
+                                        },
+                                        tooltipFormat: 'MMMM YYYY',
+                                    },
+                                    gridLines: {
+                                        display: false,
+                                    },
+                                    offset: true,
+                                    ticks: {
+                                        source: 'data',
+                                    },
+                                },
+                            ],
+                            yAxes: [
+                                {
+                                    gridLines: {
+                                        display: false,
+                                    },
+                                    position: 'right',
+                                    ticks: {
+                                        beginAtZero: true,
+                                        maxTicksLimit: 3,
+                                        precision: 0,
+                                        callback: (value) => `${value} days`,
                                     },
                                 },
                             ],
@@ -637,3 +748,14 @@ var Pontoon = (function (my) {
         },
     });
 })(Pontoon || {});
+
+/* Main code */
+$('body').on('click', '#insights .suggestions-age nav li', function () {
+    var items = $('.suggestions-age nav li').removeClass('active');
+    $(this).addClass('active');
+    var index = items.index(this);
+    var itemWidth = $('.suggestions-age-item').first().outerWidth();
+
+    // Show the selected graph view
+    $('.suggestions-age-items').css('marginLeft', -index * itemWidth);
+});

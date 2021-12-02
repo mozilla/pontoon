@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Count, Sum
 
@@ -26,6 +27,51 @@ def get_insight_start_date(from2021=False):
     return datetime(now.year - 1, now.month + 1, 1)
 
 
+def get_time_to_review_suggestions_12_month_avg(query_filters=None):
+    """For each month, get the average age of suggestions reviewed
+    in the 12 months before each month.
+    """
+    snapshots = LocaleInsightsSnapshot.objects.filter(
+        created_at__gte=datetime.now() - relativedelta(years=2)
+    )
+
+    if query_filters:
+        snapshots = snapshots.filter(query_filters)
+
+    insights = (
+        snapshots
+        # Truncate to month and add to select list
+        .annotate(month=TruncMonth("created_at"))
+        # Group By month
+        .values("month")
+        # Select the avg of the grouping
+        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
+        # Select month and values
+        .values(
+            "month",
+            "time_to_review_suggestions_avg",
+        ).order_by("month")
+    )
+
+    times_to_review = [x["time_to_review_suggestions_avg"] for x in insights]
+    reversed_times_to_review = list(reversed(times_to_review))
+    times_to_review_12_month_avg = []
+
+    for i, time in enumerate(reversed_times_to_review):
+        if len(times_to_review_12_month_avg) == 12:
+            break
+
+        try:
+            previous_12_months = reversed_times_to_review[(i + 1) : (i + 13)]
+        except KeyError:
+            break
+
+        average = sum(previous_12_months, timedelta()) / 12
+        times_to_review_12_month_avg.insert(0, average.days)
+
+    return times_to_review_12_month_avg
+
+
 def get_locale_insights(query_filters=None):
     """Get data required by the Locale Insights tab.
 
@@ -47,6 +93,7 @@ def get_locale_insights(query_filters=None):
         .values("month")
         # Select the avg/sum of the grouping
         .annotate(unreviewed_lifespan_avg=Avg("unreviewed_suggestions_lifespan"))
+        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
         .annotate(machinery_sum=Sum("machinery_translations"))
@@ -60,6 +107,7 @@ def get_locale_insights(query_filters=None):
         .values(
             "month",
             "unreviewed_lifespan_avg",
+            "time_to_review_suggestions_avg",
             "completion_avg",
             "human_translations_sum",
             "machinery_sum",
@@ -107,6 +155,12 @@ def get_locale_insights(query_filters=None):
             "unreviewed_lifespans": [
                 x["unreviewed_lifespan_avg"].days for x in insights
             ],
+            "time_to_review_suggestions": [
+                x["time_to_review_suggestions_avg"].days for x in insights
+            ],
+            "time_to_review_suggestions_12_month_avg": get_time_to_review_suggestions_12_month_avg(
+                query_filters
+            ),
             "translation_activity": {
                 "completion": [round(x["completion_avg"], 2) for x in insights],
                 "human_translations": [x["human_translations_sum"] for x in insights],
