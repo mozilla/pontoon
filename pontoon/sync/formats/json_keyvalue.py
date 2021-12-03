@@ -2,19 +2,11 @@
 Parser for key-value JSON, a nested Object structure of String values.
 This implementation does not support plurals.
 
-You are free to use dots in the keys name on Pontoon,
-though if your implementation supports nested values, you may encounter issues.
-Dot is usually the separator used to represent a path to nested values.
-Depending on the implementation, accessing "my.key" could either refer to
-{
-    "my": {
-        "key": "value"
-    }
-}
-or
-{
-    "my.key": "value"
-}
+Each key can be associated with either a String or an Object value.
+Therefore, the format support nested values.
+
+A key can contain any character.
+Nested keys are internally stored as a JSON array.
 """
 import codecs
 import json
@@ -65,7 +57,7 @@ class JSONResource(ParsedResource):
         self.entities = {}
         self.source_resource = source_resource
 
-        # Copy entities from the source_resource if it's available.
+        # Copy entities from the source_resource if it is available.
         if source_resource:
             for key, entity in source_resource.entities.items():
                 self.entities[key] = JSONEntity(
@@ -74,7 +66,7 @@ class JSONResource(ParsedResource):
 
         try:
             with codecs.open(path, "r", "utf-8") as resource:
-                self.json_file = json.load(resource)
+                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
                 validate(self.json_file, SCHEMA)
 
         except (OSError, ValueError, ValidationError) as err:
@@ -88,13 +80,14 @@ class JSONResource(ParsedResource):
 
         self.order_count = 0
 
-        # Callback Populate JSON Entities
+        # Callback used to populate JSON Entities
         def readEntity(internal_key, dot_key, value):
             self.entities[internal_key] = JSONEntity(
                 self.order_count, internal_key, dot_key, value, value
             )
             self.order_count += 1
 
+        # Read all nested values
         self.traverse_json(self.json_file, readEntity)
 
     @property
@@ -116,6 +109,11 @@ class JSONResource(ParsedResource):
 
         with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
             json_file = json.load(resource, object_pairs_hook=OrderedDict)
+
+            try:
+                validate(json_file, SCHEMA)
+            except ValidationError as e:
+                raise ParseError(e)
 
         def writeEntity(internal_key, dot_key, value):
             entity = self.entities[internal_key]
@@ -147,32 +145,32 @@ class JSONResource(ParsedResource):
             if isinstance(value, dict):
                 self.traverse_json(value, function, keys=currentKey)
             elif type(value) == str:
-                internal_key = "<dot>".join(currentKey)
+                internal_key = json.dumps(currentKey)
                 dot_key = ".".join(currentKey)
                 function(internal_key, dot_key, value)
 
     # Set json entry at dot_key path
-    def set_json_value(self, json, internal_key, value):
-        json_pointer = json
-        for key_fragment in internal_key.split("<dot>")[:-1]:
+    def set_json_value(self, json_object, internal_key, value):
+        json_pointer = json_object
+        for key_fragment in json.loads(internal_key)[:-1]:
             json_pointer = json_pointer[key_fragment]
-        json_pointer[internal_key.split("<dot>")[-1]] = value
+        json_pointer[json.loads(internal_key)[-1]] = value
 
     # Remove json entry at dot_key path
-    def del_json_value(self, json, internal_key):
-        json_pointer = json
-        split_key = internal_key.split("<dot>")
+    def del_json_value(self, json_object, internal_key):
+        json_pointer = json_object
+        split_key = json.loads(internal_key)
         for key_fragment in split_key[:-1]:
             json_pointer = json_pointer[key_fragment]
-        del json_pointer[internal_key.split("<dot>")[-1]]
+        del json_pointer[json.loads(internal_key)[-1]]
 
     # Recursively clear empty dict in json file
-    def clear_empty_objects(self, json):
-        for key, value in json.copy().items():
+    def clear_empty_objects(self, json_object):
+        for key, value in json_object.copy().items():
             if isinstance(value, dict):
-                self.clear_empty_objects(json[key])
-                if len(json[key]) == 0:
-                    del json[key]
+                self.clear_empty_objects(json_object[key])
+                if len(json_object[key]) == 0:
+                    del json_object[key]
 
 
 def parse(path, source_path=None, locale=None):
