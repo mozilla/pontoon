@@ -8,19 +8,12 @@ Therefore, the format support nested values.
 A key can contain any character.
 Nested keys are internally stored as a JSON array.
 """
-import codecs
 import json
 import logging
 
-from collections import OrderedDict
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-
-from pontoon.sync.exceptions import ParseError, SyncError
-from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
+from pontoon.sync.exceptions import SyncError
 from pontoon.sync.vcs.models import VCSTranslation
-
+from pontoon.sync.formats.base_json_file import JSONResource, parse as parseJSONResource
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +26,7 @@ SCHEMA = {
 }
 
 
-class JSONEntity(VCSTranslation):
+class JSONKVEntity(VCSTranslation):
     """
     Represents an entity in a Key Value JSON file.
     """
@@ -51,48 +44,34 @@ class JSONEntity(VCSTranslation):
         )
 
 
-class JSONResource(ParsedResource):
+class JSONKVResource(JSONResource):
     def __init__(self, path, source_resource=None):
         self.path = path
         self.entities = {}
         self.source_resource = source_resource
 
-        # Copy entities from the source_resource if it is available.
+        # Copy entities from the source_resource if it's available.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = JSONEntity(
+                self.entities[key] = JSONKVEntity(
                     entity.order, entity.key, entity.context, "", None
                 )
 
-        try:
-            with codecs.open(path, "r", "utf-8") as resource:
-                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
-                validate(self.json_file, SCHEMA)
-
-        except (OSError, ValueError, ValidationError) as err:
-            # If the file doesn't exist or cannot be decoded,
-            # but we have a source resource,
-            # we can keep going, we'll just not have any translations.
-            if source_resource:
-                return
-            else:
-                raise ParseError(err)
+        self.json_file = self.open_json_file(
+            path, SCHEMA, source_resource=source_resource
+        )
 
         self.order_count = 0
 
         # Callback used to populate JSON Entities
         def readEntity(internal_key, dot_key, value):
-            self.entities[internal_key] = JSONEntity(
+            self.entities[internal_key] = JSONKVEntity(
                 self.order_count, internal_key, dot_key, value, value
             )
             self.order_count += 1
 
         # Read all nested values
         self.traverse_json(self.json_file, readEntity)
-
-    @property
-    def translations(self):
-        return sorted(self.entities.values(), key=lambda e: e.order)
 
     def save(self, locale):
         """
@@ -107,13 +86,7 @@ class JSONResource(ParsedResource):
                 )
             )
 
-        with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
-            json_file = json.load(resource, object_pairs_hook=OrderedDict)
-
-            try:
-                validate(json_file, SCHEMA)
-            except ValidationError as e:
-                raise ParseError(e)
+        json_file = self.open_json_file(self.source_resource.path, SCHEMA)
 
         def writeEntity(internal_key, dot_key, value):
             entity = self.entities[internal_key]
@@ -125,16 +98,7 @@ class JSONResource(ParsedResource):
         self.traverse_json(json_file.copy(), writeEntity)
         self.clear_empty_objects(json_file)
 
-        create_parent_directory(self.path)
-
-        with codecs.open(self.path, "w+", "utf-8") as f:
-            log.debug("Saving file: %s", self.path)
-            f.write(
-                json.dumps(
-                    json_file, ensure_ascii=False, indent=2, separators=(",", ": ")
-                )
-            )
-            f.write("\n")  # Add newline
+        self.save_json_file(json_file)
 
     # Recursively read json object
     # Callback a function when reaching the end of a branch
@@ -174,9 +138,6 @@ class JSONResource(ParsedResource):
 
 
 def parse(path, source_path=None, locale=None):
-    if source_path is not None:
-        source_resource = JSONResource(source_path)
-    else:
-        source_resource = None
-
-    return JSONResource(path, source_resource)
+    return parseJSONResource(
+        path, JSONKVResource, source_path=source_path, locale=locale
+    )

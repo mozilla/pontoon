@@ -5,20 +5,12 @@ https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
 See also:
 https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
 """
-import codecs
 import copy
-import json
 import logging
 
-from collections import OrderedDict
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-
-from pontoon.sync.exceptions import ParseError, SyncError
-from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
+from pontoon.sync.exceptions import SyncError
 from pontoon.sync.vcs.models import VCSTranslation
-
+from pontoon.sync.formats.base_json_file import JSONResource, parse as parseJSONResource
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +38,7 @@ SCHEMA = {
 }
 
 
-class JSONEntity(VCSTranslation):
+class JSONExtensionEntity(VCSTranslation):
     """
     Represents an entity in a JSON file.
     """
@@ -83,7 +75,7 @@ class JSONEntity(VCSTranslation):
         return self.data.get("placeholders", [])
 
 
-class JSONResource(ParsedResource):
+class JSONExtensionResource(JSONResource):
     def __init__(self, path, source_resource=None):
         self.path = path
         self.entities = {}
@@ -95,36 +87,22 @@ class JSONResource(ParsedResource):
                 data = copy.copy(entity.data)
                 data["message"] = None
 
-                self.entities[key] = JSONEntity(
+                self.entities[key] = JSONExtensionEntity(
                     entity.order,
                     entity.key,
                     data,
                 )
 
-        try:
-            with codecs.open(path, "r", "utf-8") as resource:
-                self.json_file = json.load(resource, object_pairs_hook=OrderedDict)
-                validate(self.json_file, SCHEMA)
-
-        except (OSError, ValueError, ValidationError) as err:
-            # If the file doesn't exist or cannot be decoded,
-            # but we have a source resource,
-            # we can keep going, we'll just not have any translations.
-            if source_resource:
-                return
-            else:
-                raise ParseError(err)
+        self.json_file = self.open_json_file(
+            path, SCHEMA, source_resource=source_resource
+        )
 
         for order, (key, data) in enumerate(self.json_file.items()):
-            self.entities[key] = JSONEntity(
+            self.entities[key] = JSONExtensionEntity(
                 order,
                 key,
                 data,
             )
-
-    @property
-    def translations(self):
-        return sorted(self.entities.values(), key=lambda e: e.order)
 
     def save(self, locale):
         """
@@ -139,13 +117,7 @@ class JSONResource(ParsedResource):
                 )
             )
 
-        with codecs.open(self.source_resource.path, "r", "utf-8") as resource:
-            json_file = json.load(resource, object_pairs_hook=OrderedDict)
-
-            try:
-                validate(json_file, SCHEMA)
-            except ValidationError as e:
-                raise ParseError(e)
+        json_file = self.open_json_file(self.source_resource.path, SCHEMA)
 
         # Iterate over a copy, leaving original free to modify
         for key, value in json_file.copy().items():
@@ -156,22 +128,10 @@ class JSONResource(ParsedResource):
             else:
                 del json_file[key]
 
-        create_parent_directory(self.path)
-
-        with codecs.open(self.path, "w+", "utf-8") as f:
-            log.debug("Saving file: %s", self.path)
-            f.write(
-                json.dumps(
-                    json_file, ensure_ascii=False, indent=2, separators=(",", ": ")
-                )
-            )
-            f.write("\n")  # Add newline
+        self.save_json_file(json_file)
 
 
 def parse(path, source_path=None, locale=None):
-    if source_path is not None:
-        source_resource = JSONResource(source_path)
-    else:
-        source_resource = None
-
-    return JSONResource(path, source_resource)
+    return parseJSONResource(
+        path, JSONExtensionResource, source_path=source_path, locale=locale
+    )
