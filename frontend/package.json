@@ -27,6 +27,7 @@
     "react": "16.13.1",
     "react-content-marker": "2.0.0",
     "react-dom": "16.13.1",
+    "react-infinite-scroll-hook": "^4.0.1",
     "react-infinite-scroller": "1.2.4",
     "react-linkify": "0.2.2",
     "react-redux": "7.1.3",
