@@ -69,7 +69,7 @@ def concordance_search(request):
     try:
         text = request.GET["text"]
         locale = Locale.objects.get(code=request.GET["locale"])
-        page_results_limit = int(request.GET.get("limit", 100))
+        page_results_limit = int(request.GET.get("limit", 10))
         page = int(request.GET.get("page", 1))
     except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
