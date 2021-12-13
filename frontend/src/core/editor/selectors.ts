@@ -33,8 +33,8 @@ export function _existingTranslation(
     ) {
         return activeTranslation;
     }
-    if (!history.translations.length) {
-        return;
+    if (history.translations.length === 0) {
+        return undefined;
     }
     // If translation is a FluentMessage, from the fluent editor.
     if (typeof translation !== 'string') {
