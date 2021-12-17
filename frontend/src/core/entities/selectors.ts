@@ -8,21 +8,22 @@ import { NAME } from '.';
 import type { Entities, Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
+import type { RootState } from '../../store';
 
-const entitiesSelector = (state): Entities => state[NAME].entities;
-const userSelector = (state): UserState => state[user.NAME];
+const entitiesSelector = (state: RootState) => state[NAME].entities;
+const userSelector = (state: RootState) => state[user.NAME];
 
 export function _getSelectedEntity(
-    entities: Entities,
+    entities: ReturnType<typeof entitiesSelector>,
     params: NavigationParams,
-): Entity | null | undefined {
+): Entity | undefined {
     return entities.find((element) => element.pk === params.entity);
 }
 
 /**
  * Return the currently selected Entity object.
  */
-export const getSelectedEntity: (...args: Array<any>) => any = createSelector(
+export const getSelectedEntity = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
     _getSelectedEntity,
@@ -31,13 +32,13 @@ export const getSelectedEntity: (...args: Array<any>) => any = createSelector(
 export function _getNextEntity(
     entities: Entities,
     params: NavigationParams,
-): Entity | null | undefined {
+): Entity | undefined {
     const currentIndex = entities.findIndex(
         (element) => element.pk === params.entity,
     );
 
     if (currentIndex === -1) {
-        return null;
+        return undefined;
     }
 
     const next = currentIndex + 1 >= entities.length ? 0 : currentIndex + 1;
@@ -47,7 +48,7 @@ export function _getNextEntity(
 /**
  * Return the Entity that follows the current one in the list.
  */
-export const getNextEntity: (...args: Array<any>) => any = createSelector(
+export const getNextEntity = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
     _getNextEntity,
@@ -56,13 +57,13 @@ export const getNextEntity: (...args: Array<any>) => any = createSelector(
 export function _getPreviousEntity(
     entities: Entities,
     params: NavigationParams,
-): Entity | null | undefined {
+): Entity | undefined {
     const currentIndex = entities.findIndex(
         (element) => element.pk === params.entity,
     );
 
     if (currentIndex === -1) {
-        return null;
+        return undefined;
     }
 
     const previous =
@@ -73,7 +74,7 @@ export function _getPreviousEntity(
 /**
  * Return the Entity that preceeds the current one in the list.
  */
-export const getPreviousEntity: (...args: Array<any>) => any = createSelector(
+export const getPreviousEntity = createSelector(
     entitiesSelector,
     navigation.selectors.getNavigationParams,
     _getPreviousEntity,
@@ -88,7 +89,7 @@ export function _isReadOnlyEditor(entity: Entity, user: UserState): boolean {
  *   - the entity is read-only OR
  *   - the user is not authenticated
  */
-export const isReadOnlyEditor: (...args: Array<any>) => any = createSelector(
+export const isReadOnlyEditor = createSelector(
     getSelectedEntity,
     userSelector,
     _isReadOnlyEditor,
