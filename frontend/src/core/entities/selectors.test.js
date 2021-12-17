@@ -24,7 +24,7 @@ describe('selectors', () => {
         it('returns null when the current entity does not exist', () => {
             const params = { entity: 5 };
             const res = _getNextEntity(ENTITIES, params);
-            expect(res).toBeNull();
+            expect(res).toBeUndefined();
         });
     });
 
@@ -46,7 +46,7 @@ describe('selectors', () => {
         it('returns null when the current entity does not exist', () => {
             const params = { entity: 5 };
             const res = _getPreviousEntity(ENTITIES, params);
-            expect(res).toBeNull();
+            expect(res).toBeUndefined();
         });
     });
 

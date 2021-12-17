@@ -3,8 +3,9 @@ import { createSelector } from 'reselect';
 import * as entities from 'core/entities';
 
 import type { EntityTranslation, Entity } from 'core/api';
+import type { RootState } from '../../store';
 
-const pluralSelector = (state): number => state.plural.pluralForm;
+const pluralSelector = (state: RootState) => state.plural.pluralForm;
 
 export function _getPluralForm(
     pluralForm: number,
@@ -23,9 +24,9 @@ export function _getPluralForm(
  * this will correctly return 0 instead of -1. In all other cases, return
  * the plural form as stored in the state.
  */
-export const getPluralForm: (...args: Array<any>) => any = createSelector(
+export const getPluralForm = createSelector(
     pluralSelector,
-    (state) => entities.selectors.getSelectedEntity(state),
+    (state: RootState) => entities.selectors.getSelectedEntity(state),
     _getPluralForm,
 );
 
@@ -55,10 +56,8 @@ export function _getTranslationForSelectedEntity(
  * The active translation is either the approved one, the fuzzy one, or the
  * most recent non-rejected one.
  */
-export const getTranslationForSelectedEntity: (
-    ...args: Array<any>
-) => any = createSelector(
-    (state) => entities.selectors.getSelectedEntity(state),
+export const getTranslationForSelectedEntity = createSelector(
+    (state: RootState) => entities.selectors.getSelectedEntity(state),
     getPluralForm,
     _getTranslationForSelectedEntity,
 );
@@ -81,10 +80,8 @@ export function _getTranslationStringForSelectedEntity(
  * The active translation is either the approved one, the fuzzy one, or the
  * most recent non-rejected one.
  */
-export const getTranslationStringForSelectedEntity: (
-    ...args: Array<any>
-) => any = createSelector(
-    (state) => entities.selectors.getSelectedEntity(state),
+export const getTranslationStringForSelectedEntity = createSelector(
+    (state: RootState) => entities.selectors.getSelectedEntity(state),
     getPluralForm,
     _getTranslationStringForSelectedEntity,
 );

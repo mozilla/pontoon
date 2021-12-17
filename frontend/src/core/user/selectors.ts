@@ -5,18 +5,16 @@ import { NAME as PROJECT_NAME } from 'core/project';
 
 import { NAME } from '.';
 
-import type { LocaleState } from 'core/locale';
-import type { ProjectState } from 'core/project';
-import type { UserState } from 'core/user';
+import type { RootState } from '../../store';
 
-const userSelector = (state): UserState => state[NAME];
-const localeSelector = (state): LocaleState => state[LOCALE_NAME];
-const projectSelector = (state): ProjectState => state[PROJECT_NAME];
+const userSelector = (state: RootState) => state[NAME];
+const localeSelector = (state: RootState) => state[LOCALE_NAME];
+const projectSelector = (state: RootState) => state[PROJECT_NAME];
 
 export function _isTranslator(
-    user: UserState,
-    locale: LocaleState,
-    project: ProjectState,
+    user: ReturnType<typeof userSelector>,
+    locale: ReturnType<typeof localeSelector>,
+    project: ReturnType<typeof projectSelector>,
 ): boolean {
     const localeProject = locale.code + '-' + project.slug;
 
@@ -39,7 +37,7 @@ export function _isTranslator(
  * Return true if the user has translator permission for the current project
  * and locale.
  */
-export const isTranslator: (...args: Array<any>) => any = createSelector(
+export const isTranslator = createSelector(
     userSelector,
     localeSelector,
     projectSelector,
