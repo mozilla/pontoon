@@ -34,8 +34,6 @@ export const Machinery = ({
     const prevPage = usePrevious(page);
 
     React.useEffect(() => {
-        console.log('*** searchString', machinery.searchString);
-
         // Restore custom input in search field,
         // e.g. when switching from Locales tab back to Machinery
         if (machinery.searchString) {
