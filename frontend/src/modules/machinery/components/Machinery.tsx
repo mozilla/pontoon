@@ -54,9 +54,9 @@ export const Machinery = ({
         if (prevPage && page !== prevPage) {
             searchMachinery(searchInput.current.value, page);
         }
-    }, [page]);
+    }, [page, searchMachinery]);
 
-    const handleResetSearch = () => {
+    const resetSearch = () => {
         searchMachinery('');
         searchInput.current.value = '';
         setPage(1);
@@ -65,10 +65,6 @@ export const Machinery = ({
     const submitForm = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         searchMachinery(searchInput.current.value);
-    };
-
-    const getMoreResults = () => {
-        setPage(page + 1);
     };
 
     if (!locale) {
@@ -85,7 +81,7 @@ export const Machinery = ({
                     {machinery.searchString ? (
                         <button
                             className='fa fa-times'
-                            onClick={handleResetSearch}
+                            onClick={resetSearch}
                         ></button>
                     ) : (
                         <div className='fa fa-search'></div>
@@ -134,7 +130,7 @@ export const Machinery = ({
                         <Localized id='machinery-Machinery--load-more'>
                             <button
                                 className='load-more-button'
-                                onClick={getMoreResults}
+                                onClick={() => setPage((page) => page + 1)}
                             >
                                 LOAD MORE
                             </button>
