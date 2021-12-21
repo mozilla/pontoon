@@ -64,6 +64,7 @@ export const Machinery = ({
 
     const submitForm = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setPage(1)
         searchMachinery(searchInput.current.value);
     };
 
