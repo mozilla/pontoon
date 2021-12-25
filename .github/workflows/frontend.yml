@@ -35,6 +35,60 @@ jobs:
         run: yarn build
         working-directory: frontend
 
+  ts-check:
+    name: Check TypeScript
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+    # Only run the stricter tests if the actual tsc passes
+    needs: typescript
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Root install
+        run: npm install
+      - name: Install dependencies
+        run: yarn
+        working-directory: frontend
+      - name: Process
+        id: tsc
+        run: node scripts/check-tsc.js
+        working-directory: frontend
+      - name: Create checks
+        uses:  actions/github-script@v5
+        with:
+          strict: ${{ steps.tsc.outputs.strict }}
+          script: |
+            const sd = core.getInput("strict", {required: true});
+            const annotations = JSON.parse(sd);
+            const name = "ts strict"
+            const { sha: head_sha } = context;
+            const { owner, repo } = context.repo;
+            const conclusion = 'neutral';
+            const output = {
+              title: 'ts strict',
+              summary: "summary of __ts strict__",
+              text: "Quite a few details around ts strict",
+              annotations: annotations.slice(0,25),
+            }
+            try {
+              const rv = await github.rest.checks.create({
+                owner,
+                repo,
+                name,
+                head_sha,
+                conclusion,
+                output,
+              });
+              console.log(rv);
+            } catch (httpError) {
+              console.log(httpError);
+              console.log(httpError.response.data.errors);
+            }
+
+
   ts-strict:
     name: Stricter TypeScript
     runs-on: ubuntu-latest
