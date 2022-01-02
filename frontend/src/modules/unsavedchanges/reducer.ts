@@ -10,7 +10,7 @@ import type {
 type Action = HideAction | IgnoreAction | ShowAction | UpdateAction;
 
 export type UnsavedChangesState = {
-    readonly callback: ((...args: Array<any>) => any) | null | undefined;
+    readonly callback: ShowAction['callback'] | null;
     readonly exist: boolean;
     readonly ignored: boolean;
     readonly shown: boolean;

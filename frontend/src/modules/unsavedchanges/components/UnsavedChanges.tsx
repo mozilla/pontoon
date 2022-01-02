@@ -7,14 +7,14 @@ import './UnsavedChanges.css';
 import { actions, NAME } from '..';
 
 import type { UnsavedChangesState } from '../reducer';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     unsavedchanges: UnsavedChangesState;
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 /*
