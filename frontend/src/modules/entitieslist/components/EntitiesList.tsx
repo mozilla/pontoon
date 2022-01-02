@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useStore } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
 import * as locale from 'core/locale';
@@ -17,6 +16,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import Entity from './Entity';
 import { SkeletonLoader } from 'core/loaders';
 
+import type { AppDispatch } from 'store';
 import type { BatchActionsState } from 'modules/batchactions';
 import type { Entity as EntityType } from 'core/api';
 import type { EntitiesState } from 'core/entities';
@@ -34,8 +34,8 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
-    store: Record<string, any>;
+    dispatch: AppDispatch;
+    store: AppStore;
 };
 
 /**
@@ -423,7 +423,7 @@ export default function EntitiesList(): React.ReactElement<
         <EntitiesListBase
             {...state}
             dispatch={useAppDispatch()}
-            store={useStore()}
+            store={useAppStore()}
         />
     );
 }

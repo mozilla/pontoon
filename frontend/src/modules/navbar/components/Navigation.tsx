@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as project from 'core/project';
 import * as resource from 'core/resource';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
+import type { AppDispatch } from 'store';
 import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
@@ -24,8 +24,8 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
-    store: Record<string, any>;
+    dispatch: AppDispatch;
+    store: AppStore;
 };
 
 /**
@@ -150,7 +150,7 @@ export default function Navigation(): React.ReactElement<
         <NavigationBase
             {...state}
             dispatch={useAppDispatch()}
-            store={useStore()}
+            store={useAppStore()}
         />
     );
 }
