@@ -95,8 +95,8 @@ export function get(
     tag: string | null | undefined,
     author: string | null | undefined,
     time: string | null | undefined,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request());
 
         const content = await api.entity.getEntities(

@@ -2,6 +2,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
 import type { TermType } from 'core/api';
 
 export const RECEIVE: 'terms/RECEIVE' = 'terms/RECEIVE';
@@ -29,11 +30,8 @@ export function request(sourceString: string): RequestAction {
     };
 }
 
-export function get(
-    sourceString: string,
-    locale: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(sourceString: string, locale: string) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request(sourceString));
 
         // Abort all previously running requests.

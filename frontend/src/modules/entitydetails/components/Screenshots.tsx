@@ -11,7 +11,7 @@ linkify.tlds(tlds);
 type Props = {
     locale: string;
     source: string;
-    openLightbox: (...args: Array<any>) => any;
+    openLightbox: (image: string) => void;
 };
 
 /**

@@ -1,5 +1,7 @@
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
+
 export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
 export const SET_FOCUS: 'search/SET_FOCUS' = 'search/SET_FOCUS';
 
@@ -32,8 +34,8 @@ export function getAuthorsAndTimeRangeData(
     locale: string,
     project: string,
     resource: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         const response = await api.filter.get(locale, project, resource);
 
         dispatch(update(response));

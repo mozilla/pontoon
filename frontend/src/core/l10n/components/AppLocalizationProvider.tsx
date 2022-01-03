@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { LocalizationProvider } from '@fluent/react';
 
 import * as l10n from 'core/l10n';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     l10n: l10n.L10nState;
@@ -11,7 +11,7 @@ type Props = {
 
 type InternalProps = Props & {
     children: React.ReactNode;
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 /**
