@@ -52,6 +52,7 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
     };
 
     const pinnedComments = comments.filter((comment) => comment.pinned);
+    const unpinnedComments = comments.filter((comment) => !comment.pinned);
 
     return (
         <div className='comments-list'>
@@ -73,7 +74,9 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
                 </section>
             ) : null}
             <section className='all-comments'>
-                <ul>{comments.map((comment) => renderComment(comment))}</ul>
+                <ul>
+                    {unpinnedComments.map((comment) => renderComment(comment))}
+                </ul>
                 {!canComment ? null : (
                     <AddComment
                         parameters={parameters}
