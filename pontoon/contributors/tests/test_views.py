@@ -41,17 +41,10 @@ def test_profileform_invalid_first_name(member, settings_url):
 
 
 @pytest.mark.django_db
-def test_profileform_invalid_email(member, settings_url):
-    response = member.client.post(settings_url, {"email": "usermail"})
-
-    assert b"Enter a valid email address." in response.content
-
-
-@pytest.mark.django_db
 def test_profileform_missing_profile_fields(member, settings_url):
     response = member.client.post(settings_url, {})
 
-    assert response.content.count(b"This field is required.") == 2
+    assert response.content.count(b"This field is required.") == 1
 
 
 @pytest.mark.django_db
