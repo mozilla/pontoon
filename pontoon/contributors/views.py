@@ -3,7 +3,6 @@ import json
 from dateutil.relativedelta import relativedelta
 from django.conf import settings as django_settings
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
@@ -15,7 +14,7 @@ from django.http import (
     HttpResponseBadRequest,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -195,17 +194,12 @@ def settings(request):
             request.POST,
             instance=request.user,
         )
-        user = get_object_or_404(User, username=request.user.username)
 
         if locales_form.is_valid() and profile_form.is_valid():
             locales_form.save()
             profile_form.save()
 
             messages.success(request, "Settings saved.")
-
-            if user.email != request.user.email:
-                logout(request)
-                return redirect(request.POST.get("return_url", "/"))
     else:
         profile_form = forms.UserProfileForm(instance=request.user)
 
