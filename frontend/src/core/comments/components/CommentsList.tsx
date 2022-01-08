@@ -37,6 +37,7 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
         resetContactPerson,
     } = props;
 
+    console.log({ user });
     const translationId = translation ? translation.pk : null;
 
     // rendering comment
@@ -53,6 +54,10 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
 
     const pinnedComments = comments.filter((comment) => comment.pinned);
     const unpinnedComments = comments.filter((comment) => !comment.pinned);
+    const produceAllComments =
+        !user.isAuthenticated &&
+        unpinnedComments.length === 0 &&
+        pinnedComments.length;
 
     return (
         <div className='comments-list'>
@@ -69,25 +74,29 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
                     </ul>
                 </section>
             ) : null}
-            <section className='all-comments'>
-                <Localized id='comments-CommentsList--all-comments'>
-                    <h2 className='title'>ALL COMMENTS</h2>
-                </Localized>
+            {!produceAllComments ? (
+                <section className='all-comments'>
+                    <Localized id='comments-CommentsList--all-comments'>
+                        <h2 className='title'>ALL COMMENTS</h2>
+                    </Localized>
 
-                <ul>
-                    {unpinnedComments.map((comment) => renderComment(comment))}
-                </ul>
-                {!canComment ? null : (
-                    <AddComment
-                        parameters={parameters}
-                        translation={translationId}
-                        user={user}
-                        addComment={addComment}
-                        contactPerson={contactPerson}
-                        resetContactPerson={resetContactPerson}
-                    />
-                )}
-            </section>
+                    <ul>
+                        {unpinnedComments.map((comment) =>
+                            renderComment(comment),
+                        )}
+                    </ul>
+                    {!canComment ? null : (
+                        <AddComment
+                            parameters={parameters}
+                            translation={translationId}
+                            user={user}
+                            addComment={addComment}
+                            contactPerson={contactPerson}
+                            resetContactPerson={resetContactPerson}
+                        />
+                    )}
+                </section>
+            ) : null}
         </div>
     );
 }
