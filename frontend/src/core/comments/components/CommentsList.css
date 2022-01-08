@@ -28,6 +28,13 @@
     margin-left: 58px;
 }
 
+.comments-list .all-comments .title {
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 100;
+    margin-bottom: 6px;
+}
+
 .comments-list .comment .user-avatar {
     padding-right: 8px;
 }

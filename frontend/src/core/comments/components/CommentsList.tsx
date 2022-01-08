@@ -67,13 +67,13 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
                             renderComment(comment),
                         )}
                     </ul>
-
-                    <Localized id='comments-CommentsList--all-comments'>
-                        <h2 className='title'>ALL COMMENTS</h2>
-                    </Localized>
                 </section>
             ) : null}
             <section className='all-comments'>
+                <Localized id='comments-CommentsList--all-comments'>
+                    <h2 className='title'>ALL COMMENTS</h2>
+                </Localized>
+
                 <ul>
                     {unpinnedComments.map((comment) => renderComment(comment))}
                 </ul>
