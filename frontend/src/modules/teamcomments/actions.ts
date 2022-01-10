@@ -2,6 +2,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
 import type { TeamComment } from 'core/api';
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
@@ -46,11 +47,8 @@ export function togglePinned(
     };
 }
 
-export function get(
-    entity: number,
-    locale: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(entity: number, locale: string) {
+    return async (dispatch: AppDispatch) => {
         // request() must be called separately to prevent
         // re-rendering of the component on addComment()
 
@@ -69,11 +67,8 @@ export function get(
     };
 }
 
-export function togglePinnedStatus(
-    pinned: boolean,
-    commentId: number,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function togglePinnedStatus(pinned: boolean, commentId: number) {
+    return async (dispatch: AppDispatch) => {
         if (pinned) {
             await api.comment.pinComment(commentId);
         } else {

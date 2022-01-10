@@ -2,6 +2,7 @@ import isEmpty from 'lodash.isempty';
 
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
 import type { OtherLocaleTranslations } from 'core/api';
 
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
@@ -29,11 +30,8 @@ export function request(entity: number): RequestAction {
     };
 }
 
-export function get(
-    entity: number,
-    locale: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(entity: number, locale: string) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request(entity));
 
         // Abort all previously running requests.

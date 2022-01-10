@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import * as editor from 'core/editor';
 
 export default function useReplaceSelectionContent(
-    updateTranslationSelectionWith: (...args: Array<any>) => void,
+    updateTranslationSelectionWith: (content: string, source: string) => void,
 ) {
     const dispatch = useAppDispatch();
     const changeSource = useAppSelector((state) => state.editor.changeSource);

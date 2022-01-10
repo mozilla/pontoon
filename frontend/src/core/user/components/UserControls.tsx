@@ -16,7 +16,7 @@ import { actions, NAME } from '..';
 import type { Entity } from 'core/api';
 import type { NavigationParams } from 'core/navigation';
 import type { UserState } from 'core/user';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     isTranslator: boolean;
@@ -26,7 +26,7 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 export class UserControlsBase extends React.Component<InternalProps> {

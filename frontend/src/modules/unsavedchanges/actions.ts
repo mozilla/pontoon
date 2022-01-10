@@ -1,3 +1,5 @@
+import type { AppDispatch } from 'store';
+
 export const HIDE: 'unsavedchanges/HIDE' = 'unsavedchanges/HIDE';
 export const IGNORE: 'unsavedchanges/IGNORE' = 'unsavedchanges/IGNORE';
 export const SHOW: 'unsavedchanges/SHOW' = 'unsavedchanges/SHOW';
@@ -11,8 +13,8 @@ export const UPDATE: 'unsavedchanges/UPDATE' = 'unsavedchanges/UPDATE';
 export function check(
     exist: boolean,
     ignored: boolean,
-    callback: (...args: Array<any>) => any,
-): (...args: Array<any>) => any {
+    callback: ShowAction['callback'],
+): (dispatch: AppDispatch) => void {
     return (dispatch) => {
         if (exist && !ignored) {
             dispatch(show(callback));
@@ -51,9 +53,9 @@ export function ignore(): IgnoreAction {
  */
 export type ShowAction = {
     readonly type: typeof SHOW;
-    callback: (...args: Array<any>) => any;
+    callback: () => void;
 };
-export function show(callback: (...args: Array<any>) => any): ShowAction {
+export function show(callback: ShowAction['callback']): ShowAction {
     return {
         type: SHOW,
         callback,

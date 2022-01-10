@@ -13,7 +13,7 @@ import ReplaceAll from './ReplaceAll';
 
 import type { BatchActionsState } from 'modules/batchactions';
 import type { NavigationParams } from 'core/navigation';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     batchactions: BatchActionsState;
@@ -21,7 +21,7 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 /**

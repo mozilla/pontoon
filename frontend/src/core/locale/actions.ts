@@ -1,5 +1,7 @@
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
+
 export const RECEIVE: 'locale/RECEIVE' = 'locale/RECEIVE';
 export const REQUEST: 'locale/REQUEST' = 'locale/REQUEST';
 
@@ -47,8 +49,8 @@ export function receive(locale: Locale): ReceiveAction {
     };
 }
 
-export function get(code: string): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(code: string) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request());
         const results = await api.locale.get(code);
         const data = results.data.locale;
