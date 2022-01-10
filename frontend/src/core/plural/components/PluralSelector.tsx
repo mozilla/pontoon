@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useStore } from 'react-redux';
 
 import './PluralSelector.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as locale from 'core/locale';
 import * as unsavedchanges from 'modules/unsavedchanges';
 
 import { actions, CLDR_PLURALS, selectors } from '..';
 
+import type { AppDispatch } from 'store';
 import type { Locale } from 'core/locale';
 
 type Props = {
@@ -17,13 +17,13 @@ type Props = {
 };
 
 type WrapperProps = {
-    resetEditor: (...args: Array<any>) => any;
+    resetEditor: () => void;
 };
 
 type InternalProps = Props &
     WrapperProps & {
-        dispatch: (...args: Array<any>) => any;
-        store: Record<string, any>;
+        dispatch: AppDispatch;
+        store: AppStore;
     };
 
 /**
@@ -107,7 +107,7 @@ export default function PluralSelector(
             {...props}
             {...state}
             dispatch={useAppDispatch()}
-            store={useStore()}
+            store={useAppStore()}
         />
     );
 }

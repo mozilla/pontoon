@@ -9,6 +9,7 @@ import { actions as pluralActions } from 'core/plural';
 import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 
+import type { AppDispatch } from 'store';
 import type { Entity, TranslationComment } from 'core/api';
 import type { Locale } from 'core/locale';
 
@@ -71,12 +72,8 @@ export function request(entity: number, pluralForm: number): RequestAction {
     };
 }
 
-export function get(
-    entity: number,
-    locale: string,
-    pluralForm: number,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(entity: number, locale: string, pluralForm: number) {
+    return async (dispatch: AppDispatch) => {
         // request() must be called separately to prevent
         // re-rendering of the component on addComment()
 
@@ -159,8 +156,8 @@ export function updateStatus(
     nextEntity: Entity | null | undefined,
     router: Record<string, any>,
     ignoreWarnings?: boolean | null | undefined,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         NProgress.start();
 
         const results = await updateStatusOnServer(
@@ -234,8 +231,8 @@ export function deleteTranslation(
     locale: string,
     pluralForm: number,
     translation: number,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         NProgress.start();
 
         const results = await api.translation.delete(translation);

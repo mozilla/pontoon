@@ -7,19 +7,19 @@ import { NAME } from '..';
 import { close } from '../actions';
 
 import type { LightboxState } from '../reducer';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     lightbox: LightboxState;
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 type ContentProps = {
     image: string;
-    onClose: (...args: Array<any>) => any;
+    onClose: () => void;
 };
 
 /**

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useStore } from 'react-redux';
 import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
 import { NAME as PROJECT_NAME } from 'core/project';
@@ -15,6 +14,7 @@ import * as unsavedchanges from 'modules/unsavedchanges';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import FiltersPanel from './FiltersPanel';
 
+import type { AppDispatch } from 'store';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
@@ -34,8 +34,8 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    store: Record<string, any>;
-    dispatch: (...args: Array<any>) => any;
+    store: AppStore;
+    dispatch: AppDispatch;
 };
 
 type State = {
@@ -519,7 +519,7 @@ export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
         <SearchBoxBase
             {...state}
             dispatch={useAppDispatch()}
-            store={useStore()}
+            store={useAppStore()}
         />
     );
 }

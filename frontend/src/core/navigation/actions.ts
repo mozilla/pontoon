@@ -1,5 +1,7 @@
 import { push, replace } from 'connected-react-router';
 
+import type { AppDispatch } from 'store';
+
 /**
  * Update the URL with a set of new parameters.
  *
@@ -16,8 +18,8 @@ export function update(
     router: Record<string, any>,
     params: Record<string, string | null | undefined>,
     replaceHistory?: boolean,
-): (...args: Array<any>) => any {
-    return (dispatch) => {
+) {
+    return (dispatch: AppDispatch) => {
         const queryString = router.location.search;
         const currentParams = new URLSearchParams(queryString);
 
@@ -68,7 +70,7 @@ export function update(
 export function updateAuthor(
     router: Record<string, any>,
     author: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { author });
 }
 
@@ -81,7 +83,7 @@ export function updateEntity(
     router: Record<string, any>,
     entity: string,
     replaceHistory?: boolean,
-): (...args: Array<any>) => any {
+) {
     return update(router, { string: entity }, replaceHistory);
 }
 
@@ -96,7 +98,7 @@ export function updateEntity(
 export function updateExtra(
     router: Record<string, any>,
     extra: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { extra });
 }
 
@@ -111,7 +113,7 @@ export function updateExtra(
 export function updateSearch(
     router: Record<string, any>,
     search: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { search });
 }
 
@@ -126,7 +128,7 @@ export function updateSearch(
 export function updateStatus(
     router: Record<string, any>,
     status: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { status });
 }
 
@@ -141,7 +143,7 @@ export function updateStatus(
 export function updateTag(
     router: Record<string, any>,
     tag: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { tag });
 }
 
@@ -156,7 +158,7 @@ export function updateTag(
 export function updateTime(
     router: Record<string, any>,
     time: string | null | undefined,
-): (...args: Array<any>) => any {
+) {
     return update(router, { time });
 }
 

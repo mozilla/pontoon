@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useStore } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
@@ -27,6 +26,7 @@ import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
+import type { AppDispatch } from 'store';
 import type { Entity } from 'core/api';
 import type { Locale } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
@@ -58,8 +58,8 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
-    store: Record<string, any>;
+    dispatch: AppDispatch;
+    store: AppStore;
 };
 
 type State = {
@@ -567,7 +567,7 @@ export default function EntityDetails(): React.ReactElement<
         <EntityDetailsBase
             {...state}
             dispatch={useAppDispatch()}
-            store={useStore()}
+            store={useAppStore()}
         />
     );
 }

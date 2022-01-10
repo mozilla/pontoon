@@ -1,5 +1,7 @@
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
+
 export const RECEIVE: 'project/RECEIVE' = 'project/RECEIVE';
 export const REQUEST: 'project/REQUEST' = 'project/REQUEST';
 
@@ -51,8 +53,8 @@ export function receive(project: Project): ReceiveAction {
 /**
  * Get data about the current project.
  */
-export function get(slug: string): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(slug: string) {
+    return async (dispatch: AppDispatch) => {
         // When 'all-projects' are selected, we do not fetch data.
         if (slug === 'all-projects') {
             return;

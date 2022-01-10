@@ -7,6 +7,8 @@ import api from 'core/api';
 import { AVAILABLE_LOCALES } from '.';
 import PSEUDO_STRATEGIES from './pseudolocalization';
 
+import type { AppDispatch } from 'store';
+
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
 export const REQUEST: 'l10n/REQUEST' = 'l10n/REQUEST';
 
@@ -42,10 +44,8 @@ export function receive(localization: ReactLocalization): ReceiveAction {
  * This fetches the translations for the UI for each given locale, bundles
  * those and store them to be used in showing a localized interface.
  */
-export function get(
-    locales: ReadonlyArray<string>,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(locales: ReadonlyArray<string>) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request());
 
         // Pseudo localization shows a weirdly translated UI, based on English.
