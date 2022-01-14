@@ -11,14 +11,14 @@ import type { NavigationParams } from 'core/navigation';
 
 type Props = {
     checkedForBatchEditing: boolean;
-    toggleForBatchEditing: (...args: Array<any>) => any;
+    toggleForBatchEditing: (entityPK: number, shiftPressed: boolean) => void;
     entity: EntityType;
     isReadOnlyEditor: boolean;
     isTranslator: boolean;
     locale: Locale;
     selected: boolean;
-    selectEntity: (...args: Array<any>) => any;
-    getSiblingEntities: Function;
+    selectEntity: (entity: EntityType) => void;
+    getSiblingEntities: (entityPK: number) => void;
     parameters: NavigationParams;
 };
 

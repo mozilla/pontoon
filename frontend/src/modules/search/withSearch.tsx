@@ -4,9 +4,9 @@ import escapeRegExp from 'lodash.escaperegexp';
 import { mark } from 'react-content-marker';
 
 export function markSearchTerms(
-    base: Array<React.ReactNode> | string,
+    base: React.ReactNodeArray | string,
     search: string,
-): Array<React.ReactNode> | string {
+): React.ReactNodeArray | string {
     // Split search string on spaces except if between non-escaped quotes.
     const unusable = '☠';
     const searchTerms = search

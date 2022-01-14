@@ -7,14 +7,14 @@ import './AddonPromotion.css';
 import * as user from 'core/user';
 
 import type { UserState } from 'core/user';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     user: UserState;
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 type State = {

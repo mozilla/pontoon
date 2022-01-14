@@ -5,14 +5,16 @@ import * as notification from 'core/notification';
 import * as history from 'modules/history';
 import * as teamcomments from 'modules/teamcomments';
 
+import type { AppDispatch } from 'store';
+
 export function addComment(
     entity: number,
     locale: string,
     pluralForm: number,
     translation: number | null | undefined,
     comment: string,
-): (...args: Array<any>) => void {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         NProgress.start();
 
         await api.comment.add(entity, locale, comment, translation);

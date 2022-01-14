@@ -5,6 +5,8 @@ import { actions as resourceActions } from 'core/resource';
 import { actions as statsActions } from 'core/stats';
 import { actions as historyActions } from 'modules/history';
 
+import type { AppDispatch } from 'store';
+
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
 export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';
 export const REQUEST: 'batchactions/REQUEST' = 'batchactions/REQUEST';
@@ -36,8 +38,8 @@ function updateUI(
     resource: string,
     selectedEntity: number,
     entities: Array<number>,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         const entitiesData = await api.entity.getEntities(
             locale,
             project,
@@ -96,8 +98,8 @@ export function performAction(
     entities: Array<number>,
     find?: string,
     replace?: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request(action));
 
         const data = await api.entity.batchEdit(
@@ -201,8 +203,8 @@ export function selectAll(
     tag: string | null | undefined,
     author: string | null | undefined,
     time: string | null | undefined,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request('select-all'));
 
         const content = await api.entity.getEntities(

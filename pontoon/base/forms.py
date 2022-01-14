@@ -201,26 +201,10 @@ class UserProfileForm(forms.ModelForm):
         max_length=30,
         strip=True,
     )
-    email = forms.EmailField(
-        help_text=(
-            "Changing your email address will cause a logout. "
-            "Make sure the new one is correct before saving!"
-        )
-    )
 
     class Meta:
         model = User
-        fields = ("first_name", "email")
-
-    def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if email and (
-            User.objects.filter(email=email)
-            .exclude(username=self.instance.username)
-            .exists()
-        ):
-            raise forms.ValidationError("Email address must be unique.")
-        return email
+        fields = ("first_name",)
 
 
 class UserCustomHomepageForm(forms.ModelForm):

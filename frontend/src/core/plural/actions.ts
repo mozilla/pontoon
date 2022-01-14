@@ -1,5 +1,6 @@
 import { actions as navActions } from 'core/navigation';
 
+import type { AppDispatch } from 'store';
 import type { Locale } from 'core/locale';
 
 export const RESET: 'plural/RESET' = 'plural/RESET';
@@ -9,7 +10,7 @@ export const SELECT: 'plural/SELECT' = 'plural/SELECT';
  * Move to next Entity or pluralForm.
  */
 export function moveToNextTranslation(
-    dispatch: (...args: Array<any>) => any,
+    dispatch: AppDispatch,
     router: Record<string, any>,
     entity: number,
     nextEntity: number,

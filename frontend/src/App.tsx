@@ -31,7 +31,7 @@ import type { LocaleState } from 'core/locale';
 import type { NavigationParams } from 'core/navigation';
 import type { ProjectState } from 'core/project';
 import type { Stats } from 'core/stats';
-import { RootState } from 'store';
+import { AppDispatch, RootState } from 'store';
 
 type Props = {
     batchactions: BatchActionsState;
@@ -44,7 +44,7 @@ type Props = {
 };
 
 type InternalProps = Props & {
-    dispatch: (...args: Array<any>) => any;
+    dispatch: AppDispatch;
 };
 
 /**

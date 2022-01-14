@@ -9,7 +9,7 @@ import type { Settings } from 'core/user';
 
 type Props = {
     settings: Settings;
-    updateSetting: (...args: Array<any>) => void;
+    updateSetting: (name: string, value: boolean) => void;
 };
 
 type State = {
@@ -18,7 +18,7 @@ type State = {
 
 type EditorSettingsProps = {
     settings: Settings;
-    toggleSetting: (...args: Array<any>) => void;
+    toggleSetting: (name: string) => void;
     onDiscard: () => void;
 };
 

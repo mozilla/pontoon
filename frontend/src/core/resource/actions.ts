@@ -1,5 +1,7 @@
 import api from 'core/api';
 
+import type { AppDispatch } from 'store';
+
 export const RECEIVE: 'resource/RECEIVE' = 'resource/RECEIVE';
 export const UPDATE: 'resource/UPDATE' = 'resource/UPDATE';
 
@@ -45,11 +47,8 @@ export function receive(
     };
 }
 
-export function get(
-    locale: string,
-    project: string,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+export function get(locale: string, project: string) {
+    return async (dispatch: AppDispatch) => {
         const results = await api.resource.getAll(locale, project);
 
         const resources = results.map((resource) => {

@@ -1,6 +1,7 @@
 import api from 'core/api';
 import * as stats from 'core/stats';
 
+import type { AppDispatch } from 'store';
 import type { Entities, EntityTranslation, EntitySiblings } from 'core/api';
 
 export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
@@ -94,8 +95,8 @@ export function get(
     tag: string | null | undefined,
     author: string | null | undefined,
     time: string | null | undefined,
-): (...args: Array<any>) => any {
-    return async (dispatch) => {
+) {
+    return async (dispatch: AppDispatch) => {
         dispatch(request());
 
         const content = await api.entity.getEntities(
@@ -121,8 +122,8 @@ export function get(
     };
 }
 
-export function getSiblingEntities(entity: number, locale: string): Function {
-    return async (dispatch) => {
+export function getSiblingEntities(entity: number, locale: string) {
+    return async (dispatch: AppDispatch) => {
         const siblings = await api.entity.getSiblingEntities(entity, locale);
         if (siblings) {
             dispatch(receiveSiblings(siblings, entity));

@@ -1,7 +1,9 @@
 import { createSelector } from 'reselect';
 
-const pathSelector = (state): string => state.router.location.pathname;
-const querySelector = (state): string => state.router.location.search;
+import type { RootState } from '../../store';
+
+const pathSelector = (state: RootState) => state.router.location.pathname;
+const querySelector = (state: RootState) => state.router.location.search;
 
 export type NavigationParams = {
     locale: string;
@@ -20,7 +22,7 @@ export type NavigationParams = {
  * Return the locale, project, resource and entity that correspond to the
  * current URL.
  */
-export const getNavigationParams: (...args: Array<any>) => any = createSelector(
+export const getNavigationParams = createSelector(
     pathSelector,
     querySelector,
     (path: string, query: string): NavigationParams => {
