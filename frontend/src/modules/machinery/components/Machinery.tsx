@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import './Machinery.css';
 
@@ -56,6 +57,13 @@ export const Machinery = ({
         }
     }, [page, searchMachinery]);
 
+    const [sentryRef, { rootRef }] = useInfiniteScroll({
+        loading: machinery.fetching,
+        hasNextPage: machinery.hasMore,
+        onLoadMore: () => setPage((page) => page + 1),
+        rootMargin: '0px 0px 400px 0px',
+    });
+
     const resetSearch = () => {
         searchMachinery('');
         searchInput.current.value = '';
@@ -103,7 +111,7 @@ export const Machinery = ({
                     </Localized>
                 </form>
             </div>
-            <div className='list-wrapper'>
+            <div className='list-wrapper' ref={rootRef}>
                 <ul>
                     {machinery.translations.map((translation, index) => (
                         <Translation
@@ -126,20 +134,13 @@ export const Machinery = ({
                         />
                     ))}
                 </ul>
-                {machinery.hasMore && (
-                    <div className='load-more-container'>
-                        <Localized id='machinery-Machinery--load-more'>
-                            <button
-                                className='load-more-button'
-                                onClick={() => setPage((page) => page + 1)}
-                            >
-                                LOAD MORE
-                            </button>
-                        </Localized>
+                {(machinery.fetching || machinery.hasMore) && (
+                    <div ref={sentryRef}>
+                        <SkeletonLoader
+                            key={0}
+                            items={machinery.searchResults}
+                        />
                     </div>
-                )}
-                {machinery.fetching && (
-                    <SkeletonLoader key={0} items={machinery.searchResults} />
                 )}
             </div>
         </section>
