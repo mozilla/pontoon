@@ -46,7 +46,7 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
             key=self.key('["Nested", "key"]'),
             strings={None: "value"},
             fuzzy=False,
-            order=0,
+            order=1,
         )
 
     # Check if using a dot key do not mess with nested values
@@ -193,4 +193,35 @@ class JsonKeyValueTests(FormatTestsMixin, TestCase):
             input_string,
             expected_string,
             source_string=input_string,
+        )
+
+    def test_key_conflict(self):
+        input_string = dedent(
+            """
+          {
+            "Source": { "String": "foo" },
+            "Source.String": "bar",
+            "[\\"Source\\", \\"String\\"]": "eek"
+          }
+      """
+        )
+
+        path, resource = self.parse_string(input_string)
+        assert_attributes_equal(
+            resource.translations[0],
+            key='["Source", "String"]',
+            context="Source.String",
+            strings={None: "foo"},
+        )
+        assert_attributes_equal(
+            resource.translations[1],
+            key='["Source.String"]',
+            context="Source.String",
+            strings={None: "bar"},
+        )
+        assert_attributes_equal(
+            resource.translations[2],
+            key='["[\\"Source\\", \\"String\\"]"]',
+            context='["Source", "String"]',
+            strings={None: "eek"},
         )

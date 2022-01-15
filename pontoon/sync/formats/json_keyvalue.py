@@ -33,6 +33,7 @@ class JSONKVEntity(VCSTranslation):
 
     def __init__(self, order, key, context, source_value, value):
         super().__init__(
+            order=order,
             key=key,
             context=context,
             source_string=source_value,
