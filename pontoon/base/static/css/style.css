@@ -1116,6 +1116,7 @@ nav .links li {
 .submenu.tabs .links {
     margin-bottom: -1px;
     text-align: left;
+    white-space: nowrap;
     width: 100%;
 }
 
@@ -1132,7 +1133,7 @@ nav .links li {
 }
 
 .submenu.tabs .links a {
-    padding: 12px 25px;
+    padding: 12px 20px;
     width: 100%;
 
     -moz-box-sizing: border-box;
