@@ -20,7 +20,7 @@ export default class Screenshots extends React.Component<Props> {
         return () => this.props.openLightbox(image);
     };
 
-    getImages(): Array<React.ReactNode> | null {
+    getImages(): Array<React.ReactNode> {
         const { locale, source } = this.props;
 
         const images = getImageURLs(source, locale);
@@ -36,9 +36,9 @@ export default class Screenshots extends React.Component<Props> {
         });
     }
 
-    render(): null | React.ReactNode {
+    render(): React.ReactNode {
         const images = this.getImages();
-        if (!images) {
+        if (images.length === 0) {
             return null;
         }
 
