@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Linkify from 'react-linkify';
 import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago';
+
+import { Linkify } from 'core/linkify';
 
 import './UserNotification.css';
 
