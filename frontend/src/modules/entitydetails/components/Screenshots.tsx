@@ -2,11 +2,12 @@ import * as React from 'react';
 
 import './Screenshots.css';
 import { getImageURLs } from 'core/linkify';
+import { actions } from 'core/lightbox';
+import { useAppDispatch } from 'hooks';
 
 type Props = {
     locale: string;
     source: string;
-    openLightbox: (image: string) => void;
 };
 
 /**
@@ -16,7 +17,8 @@ type Props = {
  * source string and then shows a miniature of those images.
  */
 export default function Screenshots(props: Props) {
-    const { locale, openLightbox, source } = props;
+    const { locale, source } = props;
+    const dispatch = useAppDispatch();
 
     const images = getImageURLs(source, locale);
 
@@ -31,7 +33,7 @@ export default function Screenshots(props: Props) {
                     src={urlWithLocale}
                     alt=''
                     key={i}
-                    onClick={() => openLightbox(urlWithLocale)}
+                    onClick={() => dispatch(actions.open(urlWithLocale))}
                 />
             ))}
         </div>
