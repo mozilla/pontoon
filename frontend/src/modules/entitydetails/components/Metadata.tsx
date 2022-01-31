@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Linkify from 'react-linkify';
 import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
 
@@ -13,6 +12,7 @@ import Screenshots from './Screenshots';
 import TermsPopup from './TermsPopup';
 
 import type { Entity, TermType } from 'core/api';
+import { Linkify } from 'core/linkify';
 import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';

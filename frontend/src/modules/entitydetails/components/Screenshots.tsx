@@ -1,12 +1,7 @@
 import * as React from 'react';
-import LinkifyIt from 'linkify-it';
-import tlds from 'tlds';
 
 import './Screenshots.css';
-
-// Create and configure a URLs matcher.
-const linkify = new LinkifyIt();
-linkify.tlds(tlds);
+import { getImageURLs } from 'core/linkify';
 
 type Props = {
     locale: string;
@@ -25,42 +20,25 @@ export default class Screenshots extends React.Component<Props> {
         return () => this.props.openLightbox(image);
     };
 
-    getImages(): Array<React.ReactNode> | null {
+    getImages(): Array<React.ReactNode> {
         const { locale, source } = this.props;
 
-        if (source === '') {
-            return null;
-        }
-
-        const matches = linkify.match(source);
-        if (!matches) {
-            return null;
-        }
-
-        const images = [];
-        matches.forEach((match, i) => {
-            if (/(https?:\/\/.*\.(?:png|jpg))/im.test(match.url)) {
-                const urlWithLocale = match.url.replace(
-                    /en-US\//gi,
-                    locale + '/',
-                );
-                images.push(
-                    <img
-                        src={urlWithLocale}
-                        alt=''
-                        key={i}
-                        onClick={this.openLightbox(urlWithLocale)}
-                    />,
-                );
-            }
+        const images = getImageURLs(source, locale);
+        return images.map((urlWithLocale, i) => {
+            return (
+                <img
+                    src={urlWithLocale}
+                    alt=''
+                    key={i}
+                    onClick={this.openLightbox(urlWithLocale)}
+                />
+            );
         });
-
-        return images;
     }
 
-    render(): null | React.ReactNode {
+    render(): React.ReactNode {
         const images = this.getImages();
-        if (!images) {
+        if (images.length === 0) {
             return null;
         }
 
