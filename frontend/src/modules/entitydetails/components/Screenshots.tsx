@@ -28,11 +28,11 @@ export default function Screenshots(props: Props) {
 
     return (
         <div className='screenshots'>
-            {images.map((urlWithLocale, i) => (
+            {images.map((urlWithLocale) => (
                 <img
                     src={urlWithLocale}
                     alt=''
-                    key={i}
+                    key={urlWithLocale}
                     onClick={() => dispatch(actions.open(urlWithLocale))}
                 />
             ))}
