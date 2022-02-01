@@ -27,7 +27,6 @@ type Props = {
     readonly teamComments: TeamCommentState;
     readonly user: UserState;
     readonly commentTabRef: Record<string, any>;
-    readonly openLightbox: (arg0: string) => void;
     readonly addTextToEditorTranslation: (text: string) => void;
     readonly navigateToPath: (path: string) => void;
     setCommentTabIndex: (id: number) => void;
@@ -344,7 +343,6 @@ export default class Metadata extends React.Component<Props, State> {
             entity,
             isReadOnlyEditor,
             locale,
-            openLightbox,
             pluralForm,
             terms,
             user,
@@ -361,11 +359,7 @@ export default class Metadata extends React.Component<Props, State> {
                         openTeamComments={this.openTeamComments}
                     />
                 )}
-                <Screenshots
-                    source={entity.comment}
-                    locale={locale.code}
-                    openLightbox={openLightbox}
-                />
+                <Screenshots source={entity.comment} locale={locale.code} />
                 <OriginalStringProxy
                     entity={entity}
                     locale={locale}
