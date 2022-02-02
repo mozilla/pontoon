@@ -96,7 +96,6 @@ export function FiltersPanel({
                 <Localized id='search-FiltersPanel--heading-status'>
                     <li className='horizontal-separator'>TRANSLATION STATUS</li>
                 </Localized>
-
                 {FILTERS_STATUS.map((status, i) => {
                     const count = status.stat
                         ? stats[status.stat]
@@ -359,7 +358,6 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State) {
         const props = this.props;
         const state = this.state;
-
         if (
             state.visible &&
             !prevState.visible &&
