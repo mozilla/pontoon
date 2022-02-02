@@ -365,9 +365,11 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     _update: () => void = () => {
         const statuses = this.getSelectedStatuses();
         let status = statuses.join(',');
+
         if (status === 'all') {
             status = null;
         }
+
         const extras = this.getSelectedExtras();
         const extra = extras.join(',');
 
@@ -398,6 +400,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const state = this.props.store.getState();
         const unsavedChangesExist = state[unsavedchanges.NAME].exist;
         const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
         this.props.dispatch(
             unsavedchanges.actions.check(
                 unsavedChangesExist,
