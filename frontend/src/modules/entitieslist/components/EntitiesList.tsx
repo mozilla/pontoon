@@ -51,7 +51,7 @@ export const EntitiesListBase: React.FC<InternalProps> = (
 ): null | React.ReactElement<'div'> => {
     const list = useRef<any>();
     const isFirstRendered = useRef<boolean>(true);
-    const entitiesPrev = usePrevious(props.entities.entities);
+    const prevProps = usePrevious(props);
 
     const {
         locale,
@@ -63,7 +63,6 @@ export const EntitiesListBase: React.FC<InternalProps> = (
         tag,
         author,
         time,
-        entity,
     } = props.parameters;
 
     useEffect(() => {
@@ -78,13 +77,16 @@ export const EntitiesListBase: React.FC<InternalProps> = (
         //a workaround preventing the first rendering
         if (isFirstRendered.current) {
             isFirstRendered.current = false;
-            selectFirstEntityIfNoneSelected();
         } else {
             props.dispatch(entities.actions.reset());
 
             // Scroll to selected entity when entity changes
             // and when entity list loads for the first time
-            if (!entitiesPrev.length && props.entities.entities.length) {
+            if (
+                prevProps.parameters.entity ||
+                (!prevProps.entities.entities.length &&
+                    props.entities.entities.length)
+            ) {
                 const element = list.current.querySelector('li.selected');
                 const mediaQuery = window.matchMedia(
                     '(prefers-reduced-motion: reduce)',
@@ -98,18 +100,7 @@ export const EntitiesListBase: React.FC<InternalProps> = (
                 }
             }
         }
-    }, [
-        locale,
-        project,
-        resource,
-        search,
-        status,
-        extra,
-        tag,
-        author,
-        time,
-        entity,
-    ]);
+    }, [locale, project, resource, search, status, extra, tag, author, time]);
 
     const handleShortcuts: (event: KeyboardEvent) => void = (
         event: KeyboardEvent,
@@ -148,66 +139,6 @@ export const EntitiesListBase: React.FC<InternalProps> = (
         }
     };
 
-    /*
-     * If entity not provided through a URL parameter, or if provided entity
-     * cannot be found, select the first entity in the list.
-     */
-    const selectFirstEntityIfNoneSelected = () => {
-        const selectedEntity = props.parameters.entity;
-        const firstEntity = props.entities.entities[0];
-
-        const entityIds = props.entities.entities.map((entity) => entity.pk);
-        const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
-
-        if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
-            selectEntity(
-                firstEntity,
-                true, // Replace the last history item instead of pushing a new one.
-            );
-
-            // Only do this the very first time entities are loaded.
-            if (
-                props.entities.fetchCount === 1 &&
-                selectedEntity &&
-                !isSelectedEntityValid
-            ) {
-                props.dispatch(
-                    notification.actions.add(
-                        notification.messages.ENTITY_NOT_FOUND,
-                    ),
-                );
-            }
-        }
-    };
-
-    const selectEntity = (
-        entity: EntityType,
-        replaceHistory?: boolean,
-    ): void => {
-        const { dispatch, router } = props;
-
-        const state = props.store.getState();
-        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-        dispatch(
-            unsavedchanges.actions.check(
-                unsavedChangesExist,
-                unsavedChangesIgnored,
-                () => {
-                    dispatch(batchactions.actions.resetSelection());
-                    dispatch(editor.actions.reset());
-                    dispatch(
-                        navigation.actions.updateEntity(
-                            router,
-                            entity.pk.toString(),
-                            replaceHistory,
-                        ),
-                    );
-                },
-            ),
-        );
-    };
     const getSiblingEntities = (entity: number): void => {
         const { dispatch, locale } = props;
         dispatch(entities.actions.getSiblingEntities(entity, locale.code));
@@ -268,6 +199,67 @@ export const EntitiesListBase: React.FC<InternalProps> = (
             ),
         );
     };
+
+    const selectEntity = (
+        entity: EntityType,
+        replaceHistory?: boolean,
+    ): void => {
+        const { dispatch, router } = props;
+
+        const state = props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                unsavedChangesExist,
+                unsavedChangesIgnored,
+                () => {
+                    dispatch(batchactions.actions.resetSelection());
+                    dispatch(editor.actions.reset());
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            entity.pk.toString(),
+                            replaceHistory,
+                        ),
+                    );
+                },
+            ),
+        );
+    };
+
+    /*
+     * If entity not provided through a URL parameter, or if provided entity
+     * cannot be found, select the first entity in the list.
+     */
+    (function selectFirstEntityIfNoneSelected() {
+        const selectedEntity = props.parameters.entity;
+        const firstEntity = props.entities.entities[0];
+
+        const entityIds = props.entities.entities.map((entity) => entity.pk);
+        const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
+
+        if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
+            selectEntity(
+                firstEntity,
+                true, // Replace the last history item instead of pushing a new one.
+            );
+
+            // Only do this the very first time entities are loaded.
+            if (
+                props.entities.fetchCount === 1 &&
+                selectedEntity &&
+                !isSelectedEntityValid
+            ) {
+                props.dispatch(
+                    notification.actions.add(
+                        notification.messages.ENTITY_NOT_FOUND,
+                    ),
+                );
+            }
+        }
+    })();
 
     const getMoreEntities = (): void => {
         const { dispatch } = props;
