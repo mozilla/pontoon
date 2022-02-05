@@ -22,51 +22,6 @@ page_not_found_view = TemplateView.as_view(template_name="404.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
 
 urlpatterns = [
-    # Redirect legacy Aurora projects
-    path(
-        "projects/firefox-aurora/<path:url>",
-        RedirectView.as_view(url="/projects/firefox/%(url)s", permanent=True),
-    ),
-    path(
-        "projects/firefox-for-android-aurora/<path:url>",
-        RedirectView.as_view(
-            url="/projects/firefox-for-android/%(url)s", permanent=True
-        ),
-    ),
-    path(
-        "projects/thunderbird-aurora/<path:url>",
-        RedirectView.as_view(url="/projects/thunderbird/%(url)s", permanent=True),
-    ),
-    path(
-        "projects/lightning-aurora/<path:url>",
-        RedirectView.as_view(url="/projects/lightning/%(url)s", permanent=True),
-    ),
-    path(
-        "projects/seamonkey-aurora/<path:url>",
-        RedirectView.as_view(url="/projects/seamonkey/%(url)s", permanent=True),
-    ),
-    path(
-        "<locale:locale>/firefox-aurora/<path:url>",
-        RedirectView.as_view(url="/%(locale)s/firefox/%(url)s", permanent=True),
-    ),
-    path(
-        "<locale:locale>/firefox-for-android-aurora/<path:url>",
-        RedirectView.as_view(
-            url="/%(locale)s/firefox-for-android/%(url)s", permanent=True
-        ),
-    ),
-    path(
-        "<locale:locale>/thunderbird-aurora/<path:url>",
-        RedirectView.as_view(url="/%(locale)s/thunderbird/%(url)s", permanent=True),
-    ),
-    path(
-        "<locale:locale>/lightning-aurora/<path:url>",
-        RedirectView.as_view(url="/%(locale)s/lightning/%(url)s", permanent=True),
-    ),
-    path(
-        "<locale:locale>/seamonkey-aurora/<path:url>",
-        RedirectView.as_view(url="/%(locale)s/seamonkey/%(url)s", permanent=True),
-    ),
     # Accounts
     path("accounts/", include("pontoon.allauth_urls")),
     # Admin
