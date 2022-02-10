@@ -1,10 +1,7 @@
 # GraphQL API
 
-Pontoon exposes some of its data via a public API endpoint.
-
-The API is [GraphQL](http://graphql.org/)-based and available at ``/graphql``.  
-The endpoint is exempt from CSP and CSRF validation so that is can be accessed
-by third-party code with ease.
+Pontoon exposes some of its data via a public API endpoint. The API is
+[GraphQL](http://graphql.org/)-based and available at ``/graphql``.
 
 
 ## Production Deployments
