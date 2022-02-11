@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import useInfiniteScroll from 'react-infinite-scroll-hook'
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 import './EntitiesList.css';
 
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
