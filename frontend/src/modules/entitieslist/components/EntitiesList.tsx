@@ -197,9 +197,14 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         entity: EntityType,
         replaceHistory?: boolean,
     ) => {
-        const { dispatch, router } = this.props;
+        const { dispatch, parameters, router, store } = this.props;
 
-        const state = this.props.store.getState();
+        // Do not re-select already selected entity
+        if (entity.pk === parameters.entity) {
+            return;
+        }
+
+        const state = store.getState();
         const unsavedChangesExist = state[unsavedchanges.NAME].exist;
         const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
 

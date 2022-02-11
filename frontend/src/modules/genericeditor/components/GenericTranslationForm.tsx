@@ -26,6 +26,9 @@ export default function GenericTranslationForm(
     const isReadOnlyEditor = useAppSelector((state) =>
         entities.selectors.isReadOnlyEditor(state),
     );
+    const unsavedChangesExist = useAppSelector(
+        (state) => state.unsavedchanges.exist,
+    );
 
     const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -46,10 +49,12 @@ export default function GenericTranslationForm(
         }
     }, [translation, changeSource, searchInputFocused]);
 
-    // Reset checks when content of the editor changes.
+    // Reset checks when content of the editor changes and some changes have been made.
     React.useEffect(() => {
-        dispatch(editor.actions.resetFailedChecks());
-    }, [translation, dispatch]);
+        if (unsavedChangesExist) {
+            dispatch(editor.actions.resetFailedChecks());
+        }
+    }, [dispatch, translation, unsavedChangesExist]);
 
     // When the translation or the initial translation changes, check for unsaved changes.
     editor.useUpdateUnsavedChanges(false);
