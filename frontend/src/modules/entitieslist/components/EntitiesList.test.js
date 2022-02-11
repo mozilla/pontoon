@@ -44,7 +44,16 @@ describe('<EntitiesList>', () => {
             .stub(navigation.actions, 'updateEntity')
             .returns({ type: 'whatever' });
     });
-
+    beforeEach(() => {
+        // IntersectionObserver isn't available in test environment
+        const mockIntersectionObserver = jest.fn();
+        mockIntersectionObserver.mockReturnValue({
+            observe: () => null,
+            unobserve: () => null,
+            disconnect: () => null,
+        });
+        window.IntersectionObserver = mockIntersectionObserver;
+    });
     afterEach(() => {
         // Make sure tests do not pollute one another.
         batchactions.actions.resetSelection.resetHistory();
@@ -67,7 +76,7 @@ describe('<EntitiesList>', () => {
 
         const root = mountComponentWithStore(EntitiesList, store);
         const wrapper = root.find(EntitiesListBase);
-        const scroll = wrapper.find('InfiniteScroll');
+        const scroll = wrapper.find('div');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(1);
     });
@@ -79,7 +88,7 @@ describe('<EntitiesList>', () => {
 
         const root = mountComponentWithStore(EntitiesList, store);
         const wrapper = root.find(EntitiesListBase);
-        const scroll = wrapper.find('InfiniteScroll');
+        const scroll = wrapper.find('div');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(0);
     });
@@ -91,7 +100,7 @@ describe('<EntitiesList>', () => {
 
         const root = mountComponentWithStore(EntitiesList, store);
         const wrapper = root.find(EntitiesListBase);
-        const scroll = wrapper.find('InfiniteScroll');
+        const scroll = wrapper.find('div');
 
         expect(scroll.find('SkeletonLoader')).toHaveLength(1);
     });

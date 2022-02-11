@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
-
+import useInfiniteScroll from 'react-infinite-scroll-hook'
 import './EntitiesList.css';
 
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
@@ -277,14 +276,6 @@ export const EntitiesListBase: React.FC<InternalProps> = (
             time,
         } = props.parameters;
 
-        // Temporary fix for the infinite number of requests from InfiniteScroller
-        // More info at:
-        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
-        // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
-        if (props.entities.fetching) {
-            return;
-        }
-
         // Do not return a specific list of entities defined by their IDs.
         const entityIds: number[] = null;
 
@@ -312,56 +303,55 @@ export const EntitiesListBase: React.FC<InternalProps> = (
     };
 
     // InfiniteScroll will display information about loading during the request
-
     const hasMore = props.entities.fetching || props.entities.hasMore;
-    return (
-        <div className='entities unselectable' ref={list}>
-            <InfiniteScroll
-                pageStart={1}
-                loadMore={getMoreEntities}
-                hasMore={hasMore}
-                loader={
-                    <SkeletonLoader key={0} items={props.entities.entities} />
-                }
-                useWindow={false}
-                threshold={600}
-            >
-                {hasMore || props.entities.entities.length ? (
-                    <ul>
-                        {props.entities.entities.map((entity) => {
-                            const selected =
-                                !props.batchactions.entities.length &&
-                                entity.pk === props.parameters.entity;
+    const [sentryRef, { rootRef }] = useInfiniteScroll({
+        loading: props.entities.fetching,
+        hasNextPage: hasMore,
+        onLoadMore: getMoreEntities,
+        rootMargin: '0px 0px 400px 0px',
+    });
 
-                            return (
-                                <Entity
-                                    checkedForBatchEditing={props.batchactions.entities.includes(
-                                        entity.pk,
-                                    )}
-                                    toggleForBatchEditing={
-                                        toggleForBatchEditing
-                                    }
-                                    entity={entity}
-                                    isReadOnlyEditor={props.isReadOnlyEditor}
-                                    isTranslator={props.isTranslator}
-                                    locale={props.locale}
-                                    selected={selected}
-                                    selectEntity={selectEntity}
-                                    key={entity.pk}
-                                    getSiblingEntities={getSiblingEntities}
-                                    parameters={props.parameters}
-                                />
-                            );
-                        })}
-                    </ul>
-                ) : (
-                    // When there are no results for the current search.
-                    <h3 className='no-results'>
-                        <div className='fa fa-exclamation-circle'></div>
-                        No results
-                    </h3>
-                )}
-            </InfiniteScroll>
+    return (
+        <div className='entities unselectable' ref={rootRef}>
+            {hasMore || props.entities.entities.length ? (
+                <ul>
+                    {props.entities.entities.map((entity) => {
+                        const selected =
+                            !props.batchactions.entities.length &&
+                            entity.pk === props.parameters.entity;
+
+                        return (
+                            <Entity
+                                checkedForBatchEditing={props.batchactions.entities.includes(
+                                    entity.pk,
+                                )}
+                                toggleForBatchEditing={toggleForBatchEditing}
+                                entity={entity}
+                                isReadOnlyEditor={props.isReadOnlyEditor}
+                                isTranslator={props.isTranslator}
+                                locale={props.locale}
+                                selected={selected}
+                                selectEntity={selectEntity}
+                                key={entity.pk}
+                                getSiblingEntities={getSiblingEntities}
+                                parameters={props.parameters}
+                            />
+                        );
+                    })}
+                </ul>
+            ) : (
+                // When there are no results for the current search.
+                <h3 className='no-results'>
+                    <div className='fa fa-exclamation-circle'></div>
+                    No results
+                </h3>
+            )}
+
+            {hasMore && (
+                <div ref={sentryRef}>
+                    <SkeletonLoader key={0} items={props.entities.entities} />
+                </div>
+            )}
         </div>
     );
 };
