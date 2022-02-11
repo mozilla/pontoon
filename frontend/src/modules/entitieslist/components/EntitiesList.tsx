@@ -199,29 +199,32 @@ export class EntitiesListBase extends React.Component<InternalProps> {
     ) => {
         const { dispatch, parameters, router, store } = this.props;
 
+        // Do not re-select already selected entity
+        if (entity.pk === parameters.entity) {
+            return;
+        }
+
         const state = store.getState();
         const unsavedChangesExist = state[unsavedchanges.NAME].exist;
         const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
 
-        if (entity.pk !== parameters.entity) {
-            dispatch(
-                unsavedchanges.actions.check(
-                    unsavedChangesExist,
-                    unsavedChangesIgnored,
-                    () => {
-                        dispatch(batchactions.actions.resetSelection());
-                        dispatch(editor.actions.reset());
-                        dispatch(
-                            navigation.actions.updateEntity(
-                                router,
-                                entity.pk.toString(),
-                                replaceHistory,
-                            ),
-                        );
-                    },
-                ),
-            );
-        }
+        dispatch(
+            unsavedchanges.actions.check(
+                unsavedChangesExist,
+                unsavedChangesIgnored,
+                () => {
+                    dispatch(batchactions.actions.resetSelection());
+                    dispatch(editor.actions.reset());
+                    dispatch(
+                        navigation.actions.updateEntity(
+                            router,
+                            entity.pk.toString(),
+                            replaceHistory,
+                        ),
+                    );
+                },
+            ),
+        );
     };
 
     getSiblingEntities: (entity: number) => void = (entity: number) => {
