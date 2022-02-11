@@ -88,6 +88,9 @@ export default function RichTranslationForm(
     const entity = useAppSelector((state) =>
         entities.selectors.getSelectedEntity(state),
     );
+    const unsavedChangesExist = useAppSelector(
+        (state) => state.unsavedchanges.exist,
+    );
 
     const tableBodyRef: { current: any } = React.useRef();
 
@@ -157,10 +160,12 @@ export default function RichTranslationForm(
         focusedElementIdRef.current = null;
     }, [entity, changeSource]);
 
-    // Reset checks when content of the editor changes.
+    // Reset checks when content of the editor changes and some changes have been made.
     React.useEffect(() => {
-        dispatch(editor.actions.resetFailedChecks());
-    }, [message, dispatch]);
+        if (unsavedChangesExist) {
+            dispatch(editor.actions.resetFailedChecks());
+        }
+    }, [message, dispatch, unsavedChangesExist]);
 
     // When content of the translation changes, update unsaved changes.
     editor.useUpdateUnsavedChanges(false);
