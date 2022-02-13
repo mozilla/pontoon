@@ -164,7 +164,7 @@ machinery-Translation--number-occurrences =
 ## Messages shown to users after they perform actions.
 
 notification--translation-approved = Traduction approuvée
-notification--translation-unaproved = Traduction désapprouvée
+notification--translation-unapproved = Traduction désapprouvée
 notification--translation-rejected = Traduction rejetée
 notification--translation-unrejected = Traduction dérejetée
 notification--translation-deleted = Traduction supprimée
