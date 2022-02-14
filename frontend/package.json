@@ -33,7 +33,6 @@
     "react-redux": "7.1.3",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
-    "react-scripts": "4.0.3",
     "react-tabs": "3.0.0",
     "react-time-ago": "^7.1.3",
     "reactour": "1.15.1",
@@ -83,14 +82,10 @@
     "utility-types": "^3.10.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "prettier": "prettier --write src/",
     "check-prettier": "prettier --check src/",
-    "test": "react-scripts test --modulePaths=src",
-    "types": "tsc",
-    "eject": "react-scripts eject"
+    "types": "tsc"
   },
   "prettier": {
     "endOfLine": "lf",
