@@ -138,134 +138,6 @@ export const EntitiesListBase: React.FC<InternalProps> = (
         }
     };
 
-    const getSiblingEntities = (entity: number): void => {
-        const { dispatch, locale } = props;
-      dispatch(entities.actions.getSiblingEntities(entity, locale.code));
-    };
-  
-    /*
-     * If entity not provided through a URL parameter, or if provided entity
-     * cannot be found, select the first entity in the list.
-     */
-    selectFirstEntityIfNoneSelected() {
-        const props = this.props;
-        const selectedEntity = props.parameters.entity;
-        const firstEntity = props.entities.entities[0];
-
-        const entityIds = props.entities.entities.map((entity) => entity.pk);
-        const isSelectedEntityValid = entityIds.indexOf(selectedEntity) > -1;
-
-        if ((!selectedEntity || !isSelectedEntityValid) && firstEntity) {
-            this.selectEntity(
-                firstEntity,
-                true, // Replace the last history item instead of pushing a new one.
-            );
-
-            // Only do this the very first time entities are loaded.
-            if (
-                props.entities.fetchCount === 1 &&
-                selectedEntity &&
-                !isSelectedEntityValid
-            ) {
-                props.dispatch(
-                    notification.actions.add(
-                        notification.messages.ENTITY_NOT_FOUND,
-                    ),
-                );
-            }
-        }
-    }
-
-    selectEntity: (entity: EntityType, replaceHistory?: boolean) => void = (
-        entity: EntityType,
-        replaceHistory?: boolean,
-    ) => {
-        const { dispatch, parameters, router, store } = this.props;
-
-        // Do not re-select already selected entity
-        if (entity.pk === parameters.entity) {
-            return;
-        }
-
-        const state = store.getState();
-        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-        dispatch(
-            unsavedchanges.actions.check(
-                unsavedChangesExist,
-                unsavedChangesIgnored,
-                () => {
-                    dispatch(batchactions.actions.resetSelection());
-                    dispatch(editor.actions.reset());
-                    dispatch(
-                        navigation.actions.updateEntity(
-                            router,
-                            entity.pk.toString(),
-                            replaceHistory,
-                        ),
-                    );
-                },
-            ),
-        );
-    };
-
-    const toggleForBatchEditing = (
-        entity: number,
-        shiftKeyPressed: boolean,
-    ): void => {
-        const { dispatch } = props;
-
-        const state = props.store.getState();
-        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-        dispatch(
-            unsavedchanges.actions.check(
-                unsavedChangesExist,
-                unsavedChangesIgnored,
-                () => {
-                    // If holding Shift, check all entities in the entity list between the
-                    // lastCheckedEntity and the entity if entity not checked. If entity
-                    // checked, uncheck all entities in-between.
-                    const lastCheckedEntity =
-                        props.batchactions.lastCheckedEntity;
-
-                    if (shiftKeyPressed && lastCheckedEntity) {
-                        const entityListIds = props.entities.entities.map(
-                            (e) => e.pk,
-                        );
-                        const start = entityListIds.indexOf(entity);
-                        const end = entityListIds.indexOf(lastCheckedEntity);
-
-                        const entitySelection = entityListIds.slice(
-                            Math.min(start, end),
-                            Math.max(start, end) + 1,
-                        );
-
-                        if (props.batchactions.entities.includes(entity)) {
-                            dispatch(
-                                batchactions.actions.uncheckSelection(
-                                    entitySelection,
-                                    entity,
-                                ),
-                            );
-                        } else {
-                            dispatch(
-                                batchactions.actions.checkSelection(
-                                    entitySelection,
-                                    entity,
-                                ),
-                            );
-                        }
-                    } else {
-                        dispatch(batchactions.actions.toggleSelection(entity));
-                    }
-                },
-            ),
-        );
-    };
-
     const selectEntity = (
         entity: EntityType,
         replaceHistory?: boolean,
@@ -326,6 +198,68 @@ export const EntitiesListBase: React.FC<InternalProps> = (
             }
         }
     })();
+
+    const getSiblingEntities = (entity: number): void => {
+        const { dispatch, locale } = props;
+        dispatch(entities.actions.getSiblingEntities(entity, locale.code));
+    };
+
+
+    const toggleForBatchEditing = (
+        entity: number,
+        shiftKeyPressed: boolean,
+    ): void => {
+        const { dispatch } = props;
+
+        const state = props.store.getState();
+        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+
+        dispatch(
+            unsavedchanges.actions.check(
+                unsavedChangesExist,
+                unsavedChangesIgnored,
+                () => {
+                    // If holding Shift, check all entities in the entity list between the
+                    // lastCheckedEntity and the entity if entity not checked. If entity
+                    // checked, uncheck all entities in-between.
+                    const lastCheckedEntity =
+                        props.batchactions.lastCheckedEntity;
+
+                    if (shiftKeyPressed && lastCheckedEntity) {
+                        const entityListIds = props.entities.entities.map(
+                            (e) => e.pk,
+                        );
+                        const start = entityListIds.indexOf(entity);
+                        const end = entityListIds.indexOf(lastCheckedEntity);
+
+                        const entitySelection = entityListIds.slice(
+                            Math.min(start, end),
+                            Math.max(start, end) + 1,
+                        );
+
+                        if (props.batchactions.entities.includes(entity)) {
+                            dispatch(
+                                batchactions.actions.uncheckSelection(
+                                    entitySelection,
+                                    entity,
+                                ),
+                            );
+                        } else {
+                            dispatch(
+                                batchactions.actions.checkSelection(
+                                    entitySelection,
+                                    entity,
+                                ),
+                            );
+                        }
+                    } else {
+                        dispatch(batchactions.actions.toggleSelection(entity));
+                    }
+                },
+            ),
+        );
+    };
 
     const getMoreEntities = (): void => {
         const { dispatch } = props;
