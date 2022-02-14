@@ -51,7 +51,7 @@ def catchall_dev(request, context=None):
 
     """
     # URL to the development webpack server, used to redirect front-end requests.
-    upstream_url = settings.FRONTEND_URL + request.path
+    upstream_url = settings.FRONTEND_URL + request.get_full_path()
 
     # Redirect websocket requests directly to the webpack server.
     if request.META.get("HTTP_UPGRADE", "").lower() == "websocket":
@@ -61,7 +61,7 @@ def catchall_dev(request, context=None):
     response = getattr(requests, method)(upstream_url, stream=True)
     content_type = response.headers.get("Content-Type")
 
-    if content_type == "text/html; charset=UTF-8":
+    if content_type and content_type.startswith("text/html"):
         return http.HttpResponse(
             content=(
                 engines["jinja2"]

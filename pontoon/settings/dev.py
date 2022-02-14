@@ -42,6 +42,7 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
     re.VERBOSE,
 )
 
+CSP_CONNECT_SRC = base.CSP_CONNECT_SRC + ("ws://localhost:3000/static/",)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ("data:",)
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + (
     "http://ajax.googleapis.com",
@@ -49,6 +50,8 @@ CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + (
     "https://cdn.jsdelivr.net",
     # Needed for GraphiQL (inline script)
     "'sha256-gp1+DqtmqR6gC56O1TE7F+GuoHAHHbXyN+gaBi8gcjo='",
+    # @vitejs/plugin-react inline hot-refresh code
+    "'sha256-Q8rQqRSiaHPJf2vcWzD92PtXar77ZR2i/nUmoa4PSDc='",
 )
 CSP_STYLE_SRC = base.CSP_STYLE_SRC + (
     # Needed for GraphiQL
