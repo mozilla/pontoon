@@ -204,7 +204,6 @@ export const EntitiesListBase: React.FC<InternalProps> = (
         dispatch(entities.actions.getSiblingEntities(entity, locale.code));
     };
 
-
     const toggleForBatchEditing = (
         entity: number,
         shiftKeyPressed: boolean,
