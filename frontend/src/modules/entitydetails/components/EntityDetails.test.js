@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
