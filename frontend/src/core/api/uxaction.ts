@@ -4,11 +4,11 @@ export default class UXActionAPI extends APIBase {
     /**
      * Log UX action.
      */
-    log(
+    async log(
         action_type: string,
         experiment: string | null | undefined,
         data: any | null | undefined,
-    ): Promise<any> {
+    ): Promise<void> {
         const csrfToken = this.getCSRFToken();
 
         const payload = new URLSearchParams();
@@ -27,6 +27,10 @@ export default class UXActionAPI extends APIBase {
         headers.append('X-Requested-With', 'XMLHttpRequest');
         headers.append('X-CSRFToken', csrfToken);
 
-        return this.fetch('/log-ux-action/', 'POST', payload, headers);
+        try {
+            await this.fetch('/log-ux-action/', 'POST', payload, headers);
+        } catch (_) {
+            /* Ignore errors during UX action logging */
+        }
     }
 }

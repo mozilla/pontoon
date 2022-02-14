@@ -14,7 +14,7 @@
     "escape-html": "^1.0.3",
     "highcharts": "9.0.0",
     "highcharts-react-official": "2.2.2",
-    "html-react-parser": "0.13.0",
+    "html-react-parser": "1.4.8",
     "javascript-time-ago": "2.3.9",
     "jest-each": "24.5.0",
     "linkify-it": "2.1.0",
