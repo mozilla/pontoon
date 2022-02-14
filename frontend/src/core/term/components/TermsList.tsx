@@ -4,7 +4,7 @@ import './TermsList.css';
 
 import Term from './Term';
 
-import type { TermType } from 'core/api';
+import type { TermType } from '~/core/api';
 
 type Props = {
     isReadOnlyEditor: boolean;

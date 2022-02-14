@@ -3,11 +3,11 @@ import { Localized } from '@fluent/react';
 
 import './TeamComments.css';
 
-import { CommentsList } from 'core/comments';
+import { CommentsList } from '~/core/comments';
 
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
-import type { TeamCommentState } from 'modules/teamcomments';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
+import type { TeamCommentState } from '~/modules/teamcomments';
 
 type Props = {
     parameters: NavigationParams;

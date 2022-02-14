@@ -5,7 +5,7 @@ import FileUpload from './FileUpload';
 import SignOut from './SignOut';
 import UserMenuBase, { UserMenu } from './UserMenu';
 
-import { findLocalizedById } from 'test/utils';
+import { findLocalizedById } from '~/test/utils';
 
 function createShallowUserMenu({
     isAdmin = false,

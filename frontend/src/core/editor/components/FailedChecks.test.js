@@ -1,15 +1,15 @@
 import sinon from 'sinon';
 
-import * as editor from 'core/editor';
-import * as locale from 'core/locale';
-import * as project from 'core/project';
-import * as user from 'core/user';
+import * as editor from '~/core/editor';
+import * as locale from '~/core/locale';
+import * as project from '~/core/project';
+import * as user from '~/core/user';
 
 import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 import FailedChecks from './FailedChecks';
 

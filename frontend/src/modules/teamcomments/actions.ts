@@ -1,9 +1,9 @@
 import isEmpty from 'lodash.isempty';
 
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { AppDispatch } from 'store';
-import type { TeamComment } from 'core/api';
+import type { AppDispatch } from '~/store';
+import type { TeamComment } from '~/core/api';
 
 export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
 export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';

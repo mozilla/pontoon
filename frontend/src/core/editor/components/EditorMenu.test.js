@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
 
 import EditorMenu from './EditorMenu';
 import EditorSettings from './EditorSettings';
@@ -12,7 +12,7 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 const SELECTED_ENTITY = {
     pk: 1,

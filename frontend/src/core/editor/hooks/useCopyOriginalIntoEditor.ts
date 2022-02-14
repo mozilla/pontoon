@@ -1,6 +1,6 @@
-import { useAppSelector } from 'hooks';
-import * as entities from 'core/entities';
-import * as plural from 'core/plural';
+import { useAppSelector } from '~/hooks';
+import * as entities from '~/core/entities';
+import * as plural from '~/core/plural';
 
 import useUpdateTranslation from './useUpdateTranslation';
 

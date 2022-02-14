@@ -3,13 +3,13 @@ import { Localized } from '@fluent/react';
 
 import './UserNotificationsMenu.css';
 
-import api from 'core/api';
+import api from '~/core/api';
 
 import UserNotification from './UserNotification';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
-import type { UserState, Notification } from 'core/user';
+import type { UserState, Notification } from '~/core/user';
 
 type Props = {
     markAllNotificationsAsRead: () => void;

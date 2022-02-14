@@ -3,7 +3,7 @@ import { Localized } from '@fluent/react';
 
 import './Term.css';
 
-import type { TermType } from 'core/api';
+import type { TermType } from '~/core/api';
 
 type Props = {
     isReadOnlyEditor: boolean;

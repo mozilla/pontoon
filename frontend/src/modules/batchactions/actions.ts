@@ -1,11 +1,11 @@
-import api from 'core/api';
+import api from '~/core/api';
 
-import { actions as entitiesActions } from 'core/entities';
-import { actions as resourceActions } from 'core/resource';
-import { actions as statsActions } from 'core/stats';
-import { actions as historyActions } from 'modules/history';
+import { actions as entitiesActions } from '~/core/entities';
+import { actions as resourceActions } from '~/core/resource';
+import { actions as statsActions } from '~/core/stats';
+import { actions as historyActions } from '~/modules/history';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
 export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';

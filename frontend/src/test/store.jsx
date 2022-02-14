@@ -11,9 +11,9 @@ import { mount } from 'enzyme';
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 
-import * as user from 'core/user';
+import * as user from '~/core/user';
 
-import createRootReducer from 'rootReducer';
+import createRootReducer from '~/rootReducer';
 
 const history = createMemoryHistory({
     initialEntries: ['/kg/firefox/all-resources/'],

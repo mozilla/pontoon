@@ -5,15 +5,15 @@ import { Localized } from '@fluent/react';
 
 import './InteractiveTour.css';
 
-import * as locale from 'core/locale';
-import * as project from 'core/project';
-import * as user from 'core/user';
+import * as locale from '~/core/locale';
+import * as project from '~/core/project';
+import * as user from '~/core/user';
 
 import type { ReactourStep } from 'reactour';
-import type { LocaleState } from 'core/locale';
-import type { ProjectState } from 'core/project';
-import type { UserState } from 'core/user';
-import type { RootState, AppDispatch } from 'store';
+import type { LocaleState } from '~/core/locale';
+import type { ProjectState } from '~/core/project';
+import type { UserState } from '~/core/user';
+import type { RootState, AppDispatch } from '~/store';
 
 type Props = {
     isTranslator: boolean;

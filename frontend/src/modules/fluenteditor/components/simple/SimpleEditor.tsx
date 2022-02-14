@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import { fluent } from 'core/utils';
-import { GenericTranslationForm } from 'modules/genericeditor';
+import { useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import { fluent } from '~/core/utils';
+import { GenericTranslationForm } from '~/modules/genericeditor';
 
 type Props = {
     ftlSwitch: React.ReactNode;

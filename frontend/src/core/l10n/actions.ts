@@ -2,12 +2,12 @@ import { FluentBundle, FluentResource } from '@fluent/bundle';
 import { negotiateLanguages } from '@fluent/langneg';
 import { ReactLocalization } from '@fluent/react';
 
-import api from 'core/api';
+import api from '~/core/api';
 
 import { AVAILABLE_LOCALES } from '.';
 import PSEUDO_STRATEGIES from './pseudolocalization';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export const RECEIVE: 'l10n/RECEIVE' = 'l10n/RECEIVE';
 export const REQUEST: 'l10n/REQUEST' = 'l10n/REQUEST';

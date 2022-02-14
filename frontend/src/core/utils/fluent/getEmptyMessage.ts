@@ -9,10 +9,10 @@ import {
 import flattenMessage from './flattenMessage';
 import isPluralExpression from './isPluralExpression';
 
-import { CLDR_PLURALS } from 'core/plural';
+import { CLDR_PLURALS } from '~/core/plural';
 
 import type { Entry } from '@fluent/syntax';
-import type { Locale } from 'core/locale';
+import type { Locale } from '~/core/locale';
 
 /**
  * Gather custom (numeric) plural variants

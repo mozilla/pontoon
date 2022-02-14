@@ -6,9 +6,9 @@ import {
     getRulesWithFluent,
     getRulesWithoutLeadingSpace,
     rules,
-} from 'core/placeable';
+} from '~/core/placeable';
 
-import type { TermState } from 'core/term';
+import type { TermState } from '~/core/term';
 
 let keyCounter = 0;
 

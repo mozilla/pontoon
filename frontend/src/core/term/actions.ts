@@ -1,9 +1,9 @@
 import isEmpty from 'lodash.isempty';
 
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { AppDispatch } from 'store';
-import type { TermType } from 'core/api';
+import type { AppDispatch } from '~/store';
+import type { TermType } from '~/core/api';
 
 export const RECEIVE: 'terms/RECEIVE' = 'terms/RECEIVE';
 export const REQUEST: 'terms/REQUEST' = 'terms/REQUEST';

@@ -6,7 +6,7 @@ import parser from './parser';
 import serializer from './serializer';
 
 import type { Entry } from '@fluent/syntax';
-import type { Locale } from 'core/locale';
+import type { Locale } from '~/core/locale';
 
 type SyntaxType = 'simple' | 'rich' | 'complex' | '';
 

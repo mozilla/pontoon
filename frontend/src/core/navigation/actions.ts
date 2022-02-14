@@ -1,6 +1,6 @@
 import { push, replace } from 'connected-react-router';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 /**
  * Update the URL with a set of new parameters.

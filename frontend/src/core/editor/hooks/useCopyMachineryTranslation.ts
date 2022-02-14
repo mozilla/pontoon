@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 
 import { actions } from '..';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import type { MachineryTranslation, SourceType } from 'core/api';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import type { MachineryTranslation, SourceType } from '~/core/api';
 
 import useAddTextToTranslation from './useAddTextToTranslation';
 import useUpdateTranslation from './useUpdateTranslation';

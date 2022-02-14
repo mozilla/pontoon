@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 
-import * as entities from 'core/entities';
+import * as entities from '~/core/entities';
 
-import type { EntityTranslation, Entity } from 'core/api';
+import type { EntityTranslation, Entity } from '~/core/api';
 import type { RootState } from '../../store';
 
 const pluralSelector = (state: RootState) => state.plural.pluralForm;

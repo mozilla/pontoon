@@ -1,13 +1,13 @@
 import { createSelector } from 'reselect';
 
-import * as navigation from 'core/navigation';
-import * as user from 'core/user';
+import * as navigation from '~/core/navigation';
+import * as user from '~/core/user';
 
 import { NAME } from '.';
 
-import type { Entities, Entity } from 'core/api';
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
+import type { Entities, Entity } from '~/core/api';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
 import type { RootState } from '../../store';
 
 const entitiesSelector = (state: RootState) => state[NAME].entities;

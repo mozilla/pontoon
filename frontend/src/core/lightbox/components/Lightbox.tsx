@@ -7,7 +7,7 @@ import { NAME } from '..';
 import { close } from '../actions';
 
 import type { LightboxState } from '../reducer';
-import { AppDispatch, RootState } from 'store';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     lightbox: LightboxState;

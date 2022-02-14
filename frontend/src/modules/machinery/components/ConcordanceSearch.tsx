@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { useAppSelector } from 'hooks';
-import { GenericTranslation } from 'core/translation';
+import { useAppSelector } from '~/hooks';
+import { GenericTranslation } from '~/core/translation';
 import TranslationMemory from './source/TranslationMemory';
 
-import type { MachineryTranslation } from 'core/api';
+import type { MachineryTranslation } from '~/core/api';
 
 type Props = {
     sourceString: string;

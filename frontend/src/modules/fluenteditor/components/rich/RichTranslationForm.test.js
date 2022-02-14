@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 
-import * as editor from 'core/editor';
-import * as locale from 'core/locale';
-import { fluent } from 'core/utils';
+import * as editor from '~/core/editor';
+import * as locale from '~/core/locale';
+import { fluent } from '~/core/utils';
 
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import RichTranslationForm from './RichTranslationForm';
 

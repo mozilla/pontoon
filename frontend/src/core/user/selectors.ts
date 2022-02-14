@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { NAME as LOCALE_NAME } from 'core/locale';
-import { NAME as PROJECT_NAME } from 'core/project';
+import { NAME as LOCALE_NAME } from '~/core/locale';
+import { NAME as PROJECT_NAME } from '~/core/project';
 
 import { NAME } from '.';
 

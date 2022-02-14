@@ -2,9 +2,9 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
-import { mockMatchMedia } from 'test/utils';
+import { mockMatchMedia } from '~/test/utils';
 
 import { Translation } from './Translation';
 

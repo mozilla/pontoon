@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { MachineryState } from 'modules/machinery';
+import type { MachineryState } from '~/modules/machinery';
 
 type Props = {
     machinery: MachineryState;

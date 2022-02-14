@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
 
 type Props = {
     sendTranslation: (ignoreWarnings?: boolean) => void;

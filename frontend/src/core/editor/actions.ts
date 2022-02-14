@@ -1,18 +1,18 @@
 import NProgress from 'nprogress';
 
-import api from 'core/api';
+import api from '~/core/api';
 
-import { actions as entitiesActions } from 'core/entities';
-import * as notification from 'core/notification';
-import { actions as pluralActions } from 'core/plural';
-import { actions as resourceActions } from 'core/resource';
-import { actions as statsActions } from 'core/stats';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { actions as entitiesActions } from '~/core/entities';
+import * as notification from '~/core/notification';
+import { actions as pluralActions } from '~/core/plural';
+import { actions as resourceActions } from '~/core/resource';
+import { actions as statsActions } from '~/core/stats';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
-import type { Entity, SourceType } from 'core/api';
-import type { Locale } from 'core/locale';
+import type { Entity, SourceType } from '~/core/api';
+import type { Locale } from '~/core/locale';
 import type { Entry } from '@fluent/syntax';
-import { AppThunk } from 'store';
+import { AppThunk } from '~/store';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
     'editor/END_UPDATE_TRANSLATION';

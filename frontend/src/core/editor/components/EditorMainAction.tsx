@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useAppSelector } from 'hooks';
-import * as user from 'core/user';
+import { useAppSelector } from '~/hooks';
+import * as user from '~/core/user';
 
 import * as editor from '..';
 

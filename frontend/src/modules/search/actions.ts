@@ -1,6 +1,6 @@
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
 export const SET_FOCUS: 'search/SET_FOCUS' = 'search/SET_FOCUS';

@@ -4,10 +4,10 @@ import { Localized } from '@fluent/react';
 
 import './AddonPromotion.css';
 
-import * as user from 'core/user';
+import * as user from '~/core/user';
 
-import type { UserState } from 'core/user';
-import { AppDispatch, RootState } from 'store';
+import type { UserState } from '~/core/user';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     user: UserState;

@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 
 import { actions } from '..';
 
-import type { Translation } from 'core/editor';
-import { useAppDispatch } from 'hooks';
+import type { Translation } from '~/core/editor';
+import { useAppDispatch } from '~/hooks';
 
 /**
  * Return a function to update the content of the editor.

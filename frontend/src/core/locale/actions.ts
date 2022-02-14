@@ -1,6 +1,6 @@
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export const RECEIVE: 'locale/RECEIVE' = 'locale/RECEIVE';
 export const REQUEST: 'locale/REQUEST' = 'locale/REQUEST';

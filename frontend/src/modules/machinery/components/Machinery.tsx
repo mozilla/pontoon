@@ -5,10 +5,10 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import './Machinery.css';
 
 import { Translation } from './Translation';
-import { SkeletonLoader } from 'core/loaders';
-import { usePrevious } from 'hooks/usePrevious';
+import { SkeletonLoader } from '~/core/loaders';
+import { usePrevious } from '~/hooks/usePrevious';
 
-import type { Locale } from 'core/locale';
+import type { Locale } from '~/core/locale';
 import type { MachineryState } from '..';
 
 interface Props {

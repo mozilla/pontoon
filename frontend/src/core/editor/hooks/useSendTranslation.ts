@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
-import * as plural from 'core/plural';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
+import * as plural from '~/core/plural';
 
 import { actions } from '..';
 

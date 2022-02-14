@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 export default function useUpdateUnsavedChanges(richEditor: boolean) {
     const dispatch = useAppDispatch();

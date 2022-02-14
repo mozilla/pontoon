@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import type { Locale } from 'core/locale';
+import type { Locale } from '~/core/locale';
 
 type Props = {
     original: string;

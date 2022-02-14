@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import './EditorSelector.css';
 
-import { FluentEditor } from 'modules/fluenteditor';
-import { GenericEditor } from 'modules/genericeditor';
+import { FluentEditor } from '~/modules/fluenteditor';
+import { GenericEditor } from '~/modules/genericeditor';
 
 type Props = {
     fileFormat: string;

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { useAppSelector } from 'hooks';
-import * as entities from 'core/entities';
-import type { OtherLocaleTranslation } from 'core/api';
+import { useAppSelector } from '~/hooks';
+import * as entities from '~/core/entities';
+import type { OtherLocaleTranslation } from '~/core/api';
 
 import useUpdateTranslation from './useUpdateTranslation';
 

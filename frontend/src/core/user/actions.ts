@@ -1,8 +1,8 @@
-import api from 'core/api';
-import * as notification from 'core/notification';
+import api from '~/core/api';
+import * as notification from '~/core/notification';
 
-import type { UsersList } from 'core/api';
-import type { AppThunk } from 'store';
+import type { UsersList } from '~/core/api';
+import type { AppThunk } from '~/store';
 
 export const RECEIVE_USERS: 'users/RECEIVE_USERS' = 'users/RECEIVE_USERS';
 export const UPDATE: 'user/UPDATE' = 'user/UPDATE';

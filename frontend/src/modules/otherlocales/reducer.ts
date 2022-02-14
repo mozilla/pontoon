@@ -1,6 +1,6 @@
 import { RECEIVE, REQUEST } from './actions';
 
-import type { OtherLocaleTranslations } from 'core/api';
+import type { OtherLocaleTranslations } from '~/core/api';
 import type { ReceiveAction, RequestAction } from './actions';
 
 type Action = ReceiveAction | RequestAction;

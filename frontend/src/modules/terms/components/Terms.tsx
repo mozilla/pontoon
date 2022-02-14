@@ -3,9 +3,9 @@ import { Localized } from '@fluent/react';
 
 import './Terms.css';
 
-import { TermsList } from 'core/term';
+import { TermsList } from '~/core/term';
 
-import type { TermState } from 'core/term';
+import type { TermState } from '~/core/term';
 
 type Props = {
     isReadOnlyEditor: boolean;

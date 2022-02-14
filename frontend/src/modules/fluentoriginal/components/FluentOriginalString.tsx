@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { fluent } from 'core/utils';
+import { fluent } from '~/core/utils';
 
 import RichString from './RichString';
 import SimpleString from './SimpleString';
 import SourceString from './SourceString';
 
-import type { Entity } from 'core/api';
-import type { TermState } from 'core/term';
+import type { Entity } from '~/core/api';
+import type { TermState } from '~/core/term';
 
 type Props = {
     readonly entity: Entity;

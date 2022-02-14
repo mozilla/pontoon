@@ -4,14 +4,14 @@ import { Localized } from '@fluent/react';
 
 import './Translation.css';
 
-import { TranslationProxy } from 'core/translation';
-import { CommentsList } from 'core/comments';
-import { UserAvatar } from 'core/user';
-import * as utils from 'core/utils';
+import { TranslationProxy } from '~/core/translation';
+import { CommentsList } from '~/core/comments';
+import { UserAvatar } from '~/core/user';
+import * as utils from '~/core/utils';
 
-import type { Entity } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { UserState } from 'core/user';
+import type { Entity } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { UserState } from '~/core/user';
 
 import type { ChangeOperation, HistoryTranslation } from '..';
 

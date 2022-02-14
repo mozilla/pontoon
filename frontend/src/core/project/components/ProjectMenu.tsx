@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
 import './ProjectMenu.css';
 
 import ProjectItem from './ProjectItem';
 
-import type { LocaleState, Localization } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
-import type { ProjectState } from 'core/project';
+import type { LocaleState, Localization } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
+import type { ProjectState } from '~/core/project';
 
 type Props = {
     parameters: NavigationParams;

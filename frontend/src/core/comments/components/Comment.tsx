@@ -5,10 +5,10 @@ import { Localized } from '@fluent/react';
 
 import './Comment.css';
 
-import { Linkify } from 'core/linkify';
-import { UserAvatar } from 'core/user';
+import { Linkify } from '~/core/linkify';
+import { UserAvatar } from '~/core/user';
 
-import type { TranslationComment } from 'core/api';
+import type { TranslationComment } from '~/core/api';
 
 type Props = {
     comment: TranslationComment;

@@ -1,8 +1,8 @@
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { MachineryTranslation } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { AppThunk } from 'store';
+import type { MachineryTranslation } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { AppThunk } from '~/store';
 
 export const ADD_TRANSLATIONS = 'machinery/ADD_TRANSLATIONS';
 export const CONCORDANCE_SEARCH = 'machinery/CONCORDANCE_SEARCH';

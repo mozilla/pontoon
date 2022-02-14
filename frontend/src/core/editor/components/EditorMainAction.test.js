@@ -1,13 +1,13 @@
 import sinon from 'sinon';
 
-import * as user from 'core/user';
-import * as history from 'modules/history';
+import * as user from '~/core/user';
+import * as history from '~/modules/history';
 
 import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 import * as editor from '..';
 import EditorMainAction from './EditorMainAction';

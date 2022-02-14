@@ -3,18 +3,18 @@ import { push } from 'connected-react-router';
 
 import './Navigation.css';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
-import * as locale from 'core/locale';
-import * as navigation from 'core/navigation';
-import * as project from 'core/project';
-import * as resource from 'core/resource';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import * as locale from '~/core/locale';
+import * as navigation from '~/core/navigation';
+import * as project from '~/core/project';
+import * as resource from '~/core/resource';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
-import type { AppDispatch } from 'store';
-import type { LocaleState } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
-import type { ProjectState } from 'core/project';
-import type { ResourcesState } from 'core/resource';
+import type { AppDispatch } from '~/store';
+import type { LocaleState } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
+import type { ProjectState } from '~/core/project';
+import type { ResourcesState } from '~/core/resource';
 
 type Props = {
     locale: LocaleState;

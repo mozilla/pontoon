@@ -6,10 +6,10 @@ import './ResourceProgress.css';
 
 import ProgressChart from './ProgressChart';
 
-import { asLocaleString, useOnDiscard } from 'core/utils';
+import { asLocaleString, useOnDiscard } from '~/core/utils';
 
-import type { NavigationParams } from 'core/navigation';
-import type { Stats } from 'core/stats';
+import type { NavigationParams } from '~/core/navigation';
+import type { Stats } from '~/core/stats';
 
 type Props = {
     parameters: NavigationParams;

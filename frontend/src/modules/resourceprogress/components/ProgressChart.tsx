@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './ProgressChart.css';
 
-import type { Stats } from 'core/stats';
+import type { Stats } from '~/core/stats';
 
 type Props = {
     stats: Stats;

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { getMarker } from 'core/term';
+import { getMarker } from '~/core/term';
 
-import type { Entity } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { TermState } from 'core/term';
+import type { Entity } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { TermState } from '~/core/term';
 
 type Props = {
     readonly entity: Entity;

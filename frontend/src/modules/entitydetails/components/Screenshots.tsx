@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import './Screenshots.css';
-import { getImageURLs } from 'core/linkify';
-import { actions } from 'core/lightbox';
-import { useAppDispatch } from 'hooks';
+import { getImageURLs } from '~/core/linkify';
+import { actions } from '~/core/lightbox';
+import { useAppDispatch } from '~/hooks';
 
 type Props = {
     locale: string;

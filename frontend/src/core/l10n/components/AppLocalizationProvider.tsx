@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { LocalizationProvider } from '@fluent/react';
 
-import * as l10n from 'core/l10n';
-import { AppDispatch, RootState } from 'store';
+import * as l10n from '~/core/l10n';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     l10n: l10n.L10nState;

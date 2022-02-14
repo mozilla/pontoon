@@ -1,25 +1,25 @@
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as lightbox from 'core/lightbox';
-import * as locale from 'core/locale';
-import * as l10n from 'core/l10n';
-import * as notification from 'core/notification';
-import * as plural from 'core/plural';
-import * as project from 'core/project';
-import * as resource from 'core/resource';
-import * as stats from 'core/stats';
-import * as term from 'core/term';
-import * as user from 'core/user';
-import * as batchactions from 'modules/batchactions';
-import * as history from 'modules/history';
-import * as machinery from 'modules/machinery';
-import * as otherlocales from 'modules/otherlocales';
-import * as search from 'modules/search';
-import * as teamcomments from 'modules/teamcomments';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as lightbox from '~/core/lightbox';
+import * as locale from '~/core/locale';
+import * as l10n from '~/core/l10n';
+import * as notification from '~/core/notification';
+import * as plural from '~/core/plural';
+import * as project from '~/core/project';
+import * as resource from '~/core/resource';
+import * as stats from '~/core/stats';
+import * as term from '~/core/term';
+import * as user from '~/core/user';
+import * as batchactions from '~/modules/batchactions';
+import * as history from '~/modules/history';
+import * as machinery from '~/modules/machinery';
+import * as otherlocales from '~/modules/otherlocales';
+import * as search from '~/modules/search';
+import * as teamcomments from '~/modules/teamcomments';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 // Combine reducers from all modules, using their NAME constant as key.
 const reducers = {

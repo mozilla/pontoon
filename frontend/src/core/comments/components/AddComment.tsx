@@ -17,10 +17,10 @@ import escapeHtml from 'escape-html';
 
 import './AddComment.css';
 
-import { UserAvatar } from 'core/user';
+import { UserAvatar } from '~/core/user';
 
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
 
 type Props = {
     parameters: NavigationParams | null | undefined;

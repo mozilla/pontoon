@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
 import './ResourceMenu.css';
 
 import ResourceItem from './ResourceItem';
 import ResourcePercent from './ResourcePercent';
 
-import type { NavigationParams } from 'core/navigation';
+import type { NavigationParams } from '~/core/navigation';
 import type { ResourcesState } from '..';
 import type { Resource } from '../actions';
 

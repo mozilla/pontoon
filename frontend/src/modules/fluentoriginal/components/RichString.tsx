@@ -3,11 +3,11 @@ import { serializeVariantKey } from '@fluent/syntax';
 
 import './RichString.css';
 
-import { getMarker } from 'core/term';
-import { fluent } from 'core/utils';
+import { getMarker } from '~/core/term';
+import { fluent } from '~/core/utils';
 
-import type { Entity } from 'core/api';
-import type { TermState } from 'core/term';
+import type { Entity } from '~/core/api';
+import type { TermState } from '~/core/term';
 import type { Attribute, PatternElement, Pattern } from '@fluent/syntax';
 
 type Props = {
