@@ -13,8 +13,8 @@ const messages: Record<string, NotificationMessage> = {
     },
     TRANSLATION_UNAPPROVED: {
         content: (
-            <Localized id='notification--translation-unaproved'>
-                Translation unaproved
+            <Localized id='notification--translation-unapproved'>
+                Translation unapproved
             </Localized>
         ),
         type: 'info',
