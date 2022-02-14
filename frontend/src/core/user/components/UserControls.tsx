@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 
 import './UserControls.css';
 
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
-import * as user from 'core/user';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
+import * as user from '~/core/user';
 
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';
@@ -13,10 +13,10 @@ import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
 import { actions, NAME } from '..';
 
-import type { Entity } from 'core/api';
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
-import { AppDispatch, RootState } from 'store';
+import type { Entity } from '~/core/api';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     isTranslator: boolean;

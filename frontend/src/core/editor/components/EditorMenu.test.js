@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
 
 import EditorMenu from './EditorMenu';
 import EditorSettings from './EditorSettings';

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
-import * as editor from 'core/editor';
-import * as locale from 'core/locale';
+import * as editor from '~/core/editor';
+import * as locale from '~/core/locale';
 
 import { createReduxStore, mountComponentWithStore } from 'test/store';
 

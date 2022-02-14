@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { withDiff } from 'core/diff';
+import { withDiff } from '~/core/diff';
 import {
     WithPlaceablesForFluent,
     WithPlaceablesForFluentNoLeadingSpace,
-} from 'core/placeable';
-import { fluent } from 'core/utils';
-import { withSearch } from 'modules/search';
+} from '~/core/placeable';
+import { fluent } from '~/core/utils';
+import { withSearch } from '~/modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 

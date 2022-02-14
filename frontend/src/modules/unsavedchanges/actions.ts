@@ -1,4 +1,4 @@
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export const HIDE: 'unsavedchanges/HIDE' = 'unsavedchanges/HIDE';
 export const IGNORE: 'unsavedchanges/IGNORE' = 'unsavedchanges/IGNORE';

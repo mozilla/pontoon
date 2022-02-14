@@ -4,9 +4,9 @@ import sinon from 'sinon';
 
 import { createReduxStore, mountComponentWithStore } from 'test/store';
 
-import * as editor from 'core/editor';
-import * as history from 'modules/history';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import * as editor from '~/core/editor';
+import * as history from '~/modules/history';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 

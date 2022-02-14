@@ -3,25 +3,25 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import './EntitiesList.css';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as locale from 'core/locale';
-import * as navigation from 'core/navigation';
-import * as notification from 'core/notification';
-import * as user from 'core/user';
-import * as batchactions from 'modules/batchactions';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as locale from '~/core/locale';
+import * as navigation from '~/core/navigation';
+import * as notification from '~/core/notification';
+import * as user from '~/core/user';
+import * as batchactions from '~/modules/batchactions';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import Entity from './Entity';
-import { SkeletonLoader } from 'core/loaders';
+import { SkeletonLoader } from '~/core/loaders';
 
-import type { AppDispatch } from 'store';
-import type { BatchActionsState } from 'modules/batchactions';
-import type { Entity as EntityType } from 'core/api';
-import type { EntitiesState } from 'core/entities';
-import type { Locale } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
+import type { AppDispatch } from '~/store';
+import type { BatchActionsState } from '~/modules/batchactions';
+import type { Entity as EntityType } from '~/core/api';
+import type { EntitiesState } from '~/core/entities';
+import type { Locale } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
     batchactions: BatchActionsState;

@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 
-import * as entities from 'core/entities';
-import * as plural from 'core/plural';
-import { fluent } from 'core/utils';
-import * as history from 'modules/history';
+import * as entities from '~/core/entities';
+import * as plural from '~/core/plural';
+import { fluent } from '~/core/utils';
+import * as history from '~/modules/history';
 import { NAME } from '.';
 
 import type { RootState } from '../../store';

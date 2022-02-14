@@ -3,23 +3,23 @@ import isEqual from 'lodash.isequal';
 
 import './SearchBox.css';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
-import * as editor from 'core/editor';
-import * as navigation from 'core/navigation';
-import * as entities from 'core/entities';
-import { NAME as PROJECT_NAME } from 'core/project';
-import { NAME as STATS_NAME } from 'core/stats';
-import * as search from 'modules/search';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as navigation from '~/core/navigation';
+import * as entities from '~/core/entities';
+import { NAME as PROJECT_NAME } from '~/core/project';
+import { NAME as STATS_NAME } from '~/core/stats';
+import * as search from '~/modules/search';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import FiltersPanel from './FiltersPanel';
 
-import type { AppDispatch } from 'store';
-import type { NavigationParams } from 'core/navigation';
-import type { ProjectState } from 'core/project';
-import type { Stats } from 'core/stats';
-import type { SearchAndFilters } from 'modules/search';
+import type { AppDispatch } from '~/store';
+import type { NavigationParams } from '~/core/navigation';
+import type { ProjectState } from '~/core/project';
+import type { Stats } from '~/core/stats';
+import type { SearchAndFilters } from '~/modules/search';
 
 export type TimeRangeType = {
     from: number;

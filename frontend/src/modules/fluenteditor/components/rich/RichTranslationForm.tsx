@@ -4,14 +4,14 @@ import { Message, Term, serializeVariantKey } from '@fluent/syntax';
 
 import './RichTranslationForm.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as locale from 'core/locale';
-import { CLDR_PLURALS } from 'core/plural';
-import { fluent } from 'core/utils';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as locale from '~/core/locale';
+import { CLDR_PLURALS } from '~/core/plural';
+import { fluent } from '~/core/utils';
 
-import type { Translation } from 'core/editor';
+import type { Translation } from '~/core/editor';
 import type { Attribute, Entry } from '@fluent/syntax';
 import type {
     Pattern,

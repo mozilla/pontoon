@@ -8,7 +8,7 @@ import en from 'javascript-time-ago/locale/en.json';
 
 import './index.css';
 
-import { AppLocalizationProvider } from 'core/l10n';
+import { AppLocalizationProvider } from '~/core/l10n';
 
 import history from './historyInstance';
 import store from './store';

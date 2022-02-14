@@ -4,15 +4,15 @@ import { Localized } from '@fluent/react';
 import './ConcordanceSearch.css';
 import './Translation.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import { GenericTranslation } from 'core/translation';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import { GenericTranslation } from '~/core/translation';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { TranslationSource } from './TranslationSource';
 
-import type { MachineryTranslation } from 'core/api';
+import type { MachineryTranslation } from '~/core/api';
 
 type Props = {
     sourceString: string;

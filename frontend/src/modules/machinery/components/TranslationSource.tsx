@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import type { MachineryTranslation } from 'core/api';
-import type { Locale } from 'core/locale';
+import type { MachineryTranslation } from '~/core/api';
+import type { Locale } from '~/core/locale';
 
 import GoogleTranslation from './source/GoogleTranslation';
 import MicrosoftTranslation from './source/MicrosoftTranslation';

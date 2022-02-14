@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch } from '~/hooks';
 import { actions } from '..';
 
 /**

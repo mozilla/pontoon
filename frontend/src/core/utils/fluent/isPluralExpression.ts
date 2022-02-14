@@ -1,4 +1,4 @@
-import { CLDR_PLURALS } from 'core/plural';
+import { CLDR_PLURALS } from '~/core/plural';
 
 import type { SelectExpression } from '@fluent/syntax';
 

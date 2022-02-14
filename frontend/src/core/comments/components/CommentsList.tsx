@@ -3,12 +3,12 @@ import { Localized } from '@fluent/react';
 
 import './CommentsList.css';
 
-import { Comment, AddComment } from 'core/comments';
+import { Comment, AddComment } from '~/core/comments';
 
-import type { NavigationParams } from 'core/navigation';
-import type { TranslationComment } from 'core/api';
-import type { UserState } from 'core/user';
-import type { HistoryTranslation } from 'modules/history';
+import type { NavigationParams } from '~/core/navigation';
+import type { TranslationComment } from '~/core/api';
+import type { UserState } from '~/core/user';
+import type { HistoryTranslation } from '~/modules/history';
 
 type Props = {
     comments: Array<TranslationComment>;

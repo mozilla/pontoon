@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import { fluent } from 'core/utils';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import { fluent } from '~/core/utils';
 
 import RichTranslationForm from './RichTranslationForm';
 

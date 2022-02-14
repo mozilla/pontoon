@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
-import * as user from 'core/user';
-import * as history from 'modules/history';
+import * as user from '~/core/user';
+import * as history from '~/modules/history';
 
 import {
     createDefaultUser,

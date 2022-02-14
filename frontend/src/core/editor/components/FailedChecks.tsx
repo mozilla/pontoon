@@ -3,13 +3,13 @@ import { Localized } from '@fluent/react';
 
 import './FailedChecks.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as user from 'core/user';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as user from '~/core/user';
 
 import { actions, useUpdateTranslationStatus } from '..';
 
-import type { EditorState } from 'core/editor';
-import type { UserState } from 'core/user';
+import type { EditorState } from '~/core/editor';
+import type { UserState } from '~/core/user';
 
 type FailedChecksProps = {
     sendTranslation: (ignoreWarnings?: boolean) => void;

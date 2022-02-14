@@ -6,7 +6,7 @@ import {
     SET_ENTITY,
 } from './actions';
 
-import type { MachineryTranslation } from 'core/api';
+import type { MachineryTranslation } from '~/core/api';
 import type {
     ConcordanceSearchAction,
     AddTranslationsAction,

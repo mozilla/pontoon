@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { FluentOriginalString } from 'modules/fluentoriginal';
+import { FluentOriginalString } from '~/modules/fluentoriginal';
 
 import GenericOriginalString from './GenericOriginalString';
 
-import type { Entity } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { TermState } from 'core/term';
+import type { Entity } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { TermState } from '~/core/term';
 
 type Props = {
     readonly entity: Entity;

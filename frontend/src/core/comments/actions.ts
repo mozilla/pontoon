@@ -1,11 +1,11 @@
 import NProgress from 'nprogress';
 
-import api from 'core/api';
-import * as notification from 'core/notification';
-import * as history from 'modules/history';
-import * as teamcomments from 'modules/teamcomments';
+import api from '~/core/api';
+import * as notification from '~/core/notification';
+import * as history from '~/modules/history';
+import * as teamcomments from '~/modules/teamcomments';
 
-import type { AppDispatch } from 'store';
+import type { AppDispatch } from '~/store';
 
 export function addComment(
     entity: number,

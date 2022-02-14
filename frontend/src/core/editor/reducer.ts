@@ -1,4 +1,4 @@
-import type { SourceType } from 'core/api';
+import type { SourceType } from '~/core/api';
 
 import {
     END_UPDATE_TRANSLATION,

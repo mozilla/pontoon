@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 /**
  * Return a function to handle shortcuts in a translation form.

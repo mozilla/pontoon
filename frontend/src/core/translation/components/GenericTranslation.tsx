@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { withDiff } from 'core/diff';
-import { WithPlaceables, WithPlaceablesNoLeadingSpace } from 'core/placeable';
-import { withSearch } from 'modules/search';
+import { withDiff } from '~/core/diff';
+import { WithPlaceables, WithPlaceablesNoLeadingSpace } from '~/core/placeable';
+import { withSearch } from '~/modules/search';
 
 // @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);

@@ -1,9 +1,9 @@
 import sinon from 'sinon';
 
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
-import { fluent } from 'core/utils';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
+import { fluent } from '~/core/utils';
 
 import { createReduxStore, mountComponentWithStore } from 'test/store';
 

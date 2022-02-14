@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
 
 export default function useReplaceSelectionContent(
     updateTranslationSelectionWith: (content: string, source: string) => void,

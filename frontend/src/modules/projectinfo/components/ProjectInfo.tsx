@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
 import './ProjectInfo.css';
 
-import type { ProjectState } from 'core/project';
+import type { ProjectState } from '~/core/project';
 
 type Props = {
     projectSlug: string;

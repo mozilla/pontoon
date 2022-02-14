@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import './TermsPopup.css';
 
-import { TermsList } from 'core/term';
-import { useOnDiscard } from 'core/utils';
+import { TermsList } from '~/core/term';
+import { useOnDiscard } from '~/core/utils';
 
-import type { TermType } from 'core/api';
+import type { TermType } from '~/core/api';
 
 type Props = {
     readonly isReadOnlyEditor: boolean;

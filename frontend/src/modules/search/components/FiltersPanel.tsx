@@ -7,12 +7,12 @@ import './FiltersPanel.css';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 import TimeRangeFilter from './TimeRangeFilter';
 
-import { asLocaleString, useOnDiscard } from 'core/utils';
+import { asLocaleString, useOnDiscard } from '~/core/utils';
 
 import type { Author, TimeRangeType } from '..';
-import type { NavigationParams } from 'core/navigation';
-import type { Tag } from 'core/project';
-import type { Stats } from 'core/stats';
+import type { NavigationParams } from '~/core/navigation';
+import type { Tag } from '~/core/project';
+import type { Stats } from '~/core/stats';
 
 type Props = {
     statuses: Record<string, boolean>;

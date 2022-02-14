@@ -11,12 +11,12 @@ import Property from './Property';
 import Screenshots from './Screenshots';
 import TermsPopup from './TermsPopup';
 
-import type { Entity, TermType } from 'core/api';
-import { Linkify } from 'core/linkify';
-import type { Locale } from 'core/locale';
-import type { TermState } from 'core/term';
-import type { TeamCommentState } from 'modules/teamcomments';
-import type { UserState } from 'core/user';
+import type { Entity, TermType } from '~/core/api';
+import { Linkify } from '~/core/linkify';
+import type { Locale } from '~/core/locale';
+import type { TermState } from '~/core/term';
+import type { TeamCommentState } from '~/modules/teamcomments';
+import type { UserState } from '~/core/user';
 
 type Props = {
     readonly entity: Entity;

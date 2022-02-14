@@ -4,7 +4,7 @@ import './ResourceItem.css';
 
 import ResourcePercent from './ResourcePercent';
 
-import type { NavigationParams } from 'core/navigation';
+import type { NavigationParams } from '~/core/navigation';
 import type { Resource } from '..';
 
 type Props = {

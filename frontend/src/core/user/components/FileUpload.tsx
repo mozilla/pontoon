@@ -3,7 +3,7 @@ import { Localized } from '@fluent/react';
 
 import './FileUpload.css';
 
-import type { NavigationParams } from 'core/navigation';
+import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
     parameters: NavigationParams;

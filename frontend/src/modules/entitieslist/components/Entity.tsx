@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import './Entity.css';
 
-import { TranslationProxy } from 'core/translation';
+import { TranslationProxy } from '~/core/translation';
 import { Localized } from '@fluent/react';
 
-import type { Entity as EntityType } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
+import type { Entity as EntityType } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
     checkedForBatchEditing: boolean;

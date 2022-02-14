@@ -4,16 +4,16 @@ import { Localized } from '@fluent/react';
 
 import './BatchActions.css';
 
-import * as navigation from 'core/navigation';
-import * as batchactions from 'modules/batchactions';
+import * as navigation from '~/core/navigation';
+import * as batchactions from '~/modules/batchactions';
 
 import ApproveAll from './ApproveAll';
 import RejectAll from './RejectAll';
 import ReplaceAll from './ReplaceAll';
 
-import type { BatchActionsState } from 'modules/batchactions';
-import type { NavigationParams } from 'core/navigation';
-import { AppDispatch, RootState } from 'store';
+import type { BatchActionsState } from '~/modules/batchactions';
+import type { NavigationParams } from '~/core/navigation';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     batchactions: BatchActionsState;

@@ -1,6 +1,6 @@
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
 
 import {
     createDefaultUser,

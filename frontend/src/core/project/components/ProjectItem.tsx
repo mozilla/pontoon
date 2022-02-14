@@ -4,8 +4,8 @@ import './ProjectItem.css';
 
 import ProjectPercent from './ProjectPercent';
 
-import type { Localization } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
+import type { Localization } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
     parameters: NavigationParams;

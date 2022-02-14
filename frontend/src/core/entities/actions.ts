@@ -1,8 +1,8 @@
-import api from 'core/api';
-import * as stats from 'core/stats';
+import api from '~/core/api';
+import * as stats from '~/core/stats';
 
-import type { AppDispatch } from 'store';
-import type { Entities, EntityTranslation, EntitySiblings } from 'core/api';
+import type { AppDispatch } from '~/store';
+import type { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
 
 export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
 export const REQUEST: 'entities/REQUEST' = 'entities/REQUEST';

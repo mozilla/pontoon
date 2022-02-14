@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
 import './EditorSettings.css';
 
-import type { Settings } from 'core/user';
+import type { Settings } from '~/core/user';
 
 type Props = {
     settings: Settings;

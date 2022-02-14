@@ -5,7 +5,7 @@
 // import sinon from 'sinon';
 
 // import App from './App';
-// import store from 'store';
+// import store from '~/store';
 
 describe('<App>', () => {
     it('renders without crashing', () => {

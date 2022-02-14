@@ -1,4 +1,4 @@
-import { fluent } from 'core/utils';
+import { fluent } from '~/core/utils';
 
 import { _existingTranslation } from './selectors';
 

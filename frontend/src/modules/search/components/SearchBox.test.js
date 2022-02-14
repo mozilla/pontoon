@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { createReduxStore, mountComponentWithStore } from 'test/store';
 
-import { actions } from 'core/navigation';
+import { actions } from '~/core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 

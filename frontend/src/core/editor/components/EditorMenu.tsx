@@ -3,10 +3,10 @@ import { Localized } from '@fluent/react';
 
 import './EditorMenu.css';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as entities from 'core/entities';
-import * as user from 'core/user';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as entities from '~/core/entities';
+import * as user from '~/core/user';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import EditorMainAction from './EditorMainAction';
 import EditorSettings from './EditorSettings';

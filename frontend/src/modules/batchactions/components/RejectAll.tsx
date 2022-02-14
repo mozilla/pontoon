@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import type { BatchActionsState } from 'modules/batchactions';
+import type { BatchActionsState } from '~/modules/batchactions';
 
 type Props = {
     rejectAll: () => void;

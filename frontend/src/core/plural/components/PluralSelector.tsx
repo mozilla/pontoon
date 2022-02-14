@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import './PluralSelector.css';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
-import * as locale from 'core/locale';
-import * as unsavedchanges from 'modules/unsavedchanges';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import * as locale from '~/core/locale';
+import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import { actions, CLDR_PLURALS, selectors } from '..';
 
-import type { AppDispatch } from 'store';
-import type { Locale } from 'core/locale';
+import type { AppDispatch } from '~/store';
+import type { Locale } from '~/core/locale';
 
 type Props = {
     locale: Locale;

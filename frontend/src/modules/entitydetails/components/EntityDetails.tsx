@@ -3,39 +3,39 @@ import { push } from 'connected-react-router';
 
 import './EntityDetails.css';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
-import * as comments from 'core/comments';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import * as locale from 'core/locale';
-import * as navigation from 'core/navigation';
-import * as plural from 'core/plural';
-import * as terms from 'core/term';
-import * as user from 'core/user';
-import * as utils from 'core/utils';
-import * as history from 'modules/history';
-import * as machinery from 'modules/machinery';
-import * as otherlocales from 'modules/otherlocales';
-import * as teamcomments from 'modules/teamcomments';
-import * as unsavedchanges from 'modules/unsavedchanges';
-import * as notification from 'core/notification';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import * as comments from '~/core/comments';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import * as locale from '~/core/locale';
+import * as navigation from '~/core/navigation';
+import * as plural from '~/core/plural';
+import * as terms from '~/core/term';
+import * as user from '~/core/user';
+import * as utils from '~/core/utils';
+import * as history from '~/modules/history';
+import * as machinery from '~/modules/machinery';
+import * as otherlocales from '~/modules/otherlocales';
+import * as teamcomments from '~/modules/teamcomments';
+import * as unsavedchanges from '~/modules/unsavedchanges';
+import * as notification from '~/core/notification';
 
 import EditorSelector from './EditorSelector';
 import EntityNavigation from './EntityNavigation';
 import Metadata from './Metadata';
 import Helpers from './Helpers';
 
-import type { AppDispatch } from 'store';
-import type { Entity } from 'core/api';
-import type { Locale } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
-import type { TermState } from 'core/term';
-import type { UserState } from 'core/user';
-import type { ChangeOperation, HistoryState } from 'modules/history';
-import type { MachineryState } from 'modules/machinery';
-import type { LocalesState } from 'modules/otherlocales';
-import type { TeamCommentState } from 'modules/teamcomments';
-import type { FailedChecks } from 'core/editor/actions';
+import type { AppDispatch } from '~/store';
+import type { Entity } from '~/core/api';
+import type { Locale } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
+import type { TermState } from '~/core/term';
+import type { UserState } from '~/core/user';
+import type { ChangeOperation, HistoryState } from '~/modules/history';
+import type { MachineryState } from '~/modules/machinery';
+import type { LocalesState } from '~/modules/otherlocales';
+import type { TeamCommentState } from '~/modules/teamcomments';
+import type { FailedChecks } from '~/core/editor/actions';
 
 type Props = {
     activeTranslationString: string;

@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 
 import './Translation.css';
 
-import { TranslationProxy } from 'core/translation';
+import { TranslationProxy } from '~/core/translation';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as editor from 'core/editor';
-import * as entities from 'core/entities';
-import type { Entity, OtherLocaleTranslation } from 'core/api';
-import type { NavigationParams } from 'core/navigation';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as editor from '~/core/editor';
+import * as entities from '~/core/entities';
+import type { Entity, OtherLocaleTranslation } from '~/core/api';
+import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
     entity: Entity;

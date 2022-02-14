@@ -4,21 +4,21 @@ import { Localized } from '@fluent/react';
 
 import './Helpers.css';
 
-import { useAppDispatch } from 'hooks';
-import * as editor from 'core/editor';
-import { TeamComments, CommentCount } from 'modules/teamcomments';
-import { Terms, TermCount } from 'modules/terms';
-import { Machinery, MachineryCount } from 'modules/machinery';
-import { OtherLocales, OtherLocalesCount } from 'modules/otherlocales';
+import { useAppDispatch } from '~/hooks';
+import * as editor from '~/core/editor';
+import { TeamComments, CommentCount } from '~/modules/teamcomments';
+import { Terms, TermCount } from '~/modules/terms';
+import { Machinery, MachineryCount } from '~/modules/machinery';
+import { OtherLocales, OtherLocalesCount } from '~/modules/otherlocales';
 
-import type { Entity } from 'core/api';
-import type { TermState } from 'core/term';
-import type { TeamCommentState } from 'modules/teamcomments';
-import type { Locale } from 'core/locale';
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
-import type { MachineryState } from 'modules/machinery';
-import type { LocalesState } from 'modules/otherlocales';
+import type { Entity } from '~/core/api';
+import type { TermState } from '~/core/term';
+import type { TeamCommentState } from '~/modules/teamcomments';
+import type { Locale } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
+import type { MachineryState } from '~/modules/machinery';
+import type { LocalesState } from '~/modules/otherlocales';
 
 type Props = {
     entity: Entity;

@@ -5,7 +5,7 @@ import type {
     UpdateAction,
     UpdateSettingsAction,
 } from './actions';
-import type { UsersList } from 'core/api';
+import type { UsersList } from '~/core/api';
 
 type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
 

@@ -7,7 +7,7 @@ import './UnsavedChanges.css';
 import { actions, NAME } from '..';
 
 import type { UnsavedChangesState } from '../reducer';
-import { AppDispatch, RootState } from 'store';
+import { AppDispatch, RootState } from '~/store';
 
 type Props = {
     unsavedchanges: UnsavedChangesState;

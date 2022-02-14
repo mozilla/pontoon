@@ -1,6 +1,6 @@
 import { RECEIVE, REQUEST, RESET, UPDATE, RECEIVE_SIBLINGS } from './actions';
 
-import type { Entities, EntityTranslation, EntitySiblings } from 'core/api';
+import type { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
 import type {
     ReceiveAction,
     RequestAction,

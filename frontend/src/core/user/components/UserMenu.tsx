@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { useOnDiscard } from 'core/utils';
+import { useOnDiscard } from '~/core/utils';
 
 import './UserMenu.css';
 import FileUpload from './FileUpload';
 import SignOut from './SignOut';
 
-import type { NavigationParams } from 'core/navigation';
-import type { UserState } from 'core/user';
+import type { NavigationParams } from '~/core/navigation';
+import type { UserState } from '~/core/user';
 
 type Props = {
     isReadOnly: boolean;

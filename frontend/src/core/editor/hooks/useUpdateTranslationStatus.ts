@@ -1,12 +1,12 @@
-import { useAppDispatch, useAppSelector } from 'hooks';
-import * as entities from 'core/entities';
-import * as navigation from 'core/navigation';
-import * as plural from 'core/plural';
-import * as history from 'modules/history';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import * as entities from '~/core/entities';
+import * as navigation from '~/core/navigation';
+import * as plural from '~/core/plural';
+import * as history from '~/modules/history';
 
 import { actions } from '..';
 
-import type { ChangeOperation } from 'modules/history';
+import type { ChangeOperation } from '~/modules/history';
 
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.

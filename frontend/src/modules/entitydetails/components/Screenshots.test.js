@@ -1,4 +1,4 @@
-import * as lightbox from 'core/lightbox';
+import * as lightbox from '~/core/lightbox';
 
 import Screenshots from './Screenshots';
 import { createReduxStore, mountComponentWithStore } from 'test/store';

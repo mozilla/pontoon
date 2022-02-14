@@ -1,9 +1,9 @@
 import isEmpty from 'lodash.isempty';
 
-import api from 'core/api';
+import api from '~/core/api';
 
-import type { AppDispatch } from 'store';
-import type { OtherLocaleTranslations } from 'core/api';
+import type { AppDispatch } from '~/store';
+import type { OtherLocaleTranslations } from '~/core/api';
 
 export const RECEIVE: 'otherlocales/RECEIVE' = 'otherlocales/RECEIVE';
 export const REQUEST: 'otherlocales/REQUEST' = 'otherlocales/REQUEST';

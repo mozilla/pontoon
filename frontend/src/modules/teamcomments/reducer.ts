@@ -1,6 +1,6 @@
 import { RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
 
-import type { TeamComment } from 'core/api';
+import type { TeamComment } from '~/core/api';
 import type {
     ReceiveAction,
     RequestAction,

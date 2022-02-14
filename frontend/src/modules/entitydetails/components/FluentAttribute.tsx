@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import { fluent } from 'core/utils';
+import { fluent } from '~/core/utils';
 
 import Property from './Property';
 
-import type { Entity } from 'core/api';
+import type { Entity } from '~/core/api';
 
 type Props = {
     readonly entity: Entity;

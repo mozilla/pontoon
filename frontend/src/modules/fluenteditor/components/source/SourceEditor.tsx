@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import * as editor from 'core/editor';
+import * as editor from '~/core/editor';
 
-import { GenericTranslationForm } from 'modules/genericeditor';
+import { GenericTranslationForm } from '~/modules/genericeditor';
 
 type Props = {
     ftlSwitch: React.ReactNode;
