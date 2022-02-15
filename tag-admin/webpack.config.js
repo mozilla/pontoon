@@ -6,12 +6,12 @@ const BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   entry: {
-      'tag_admin': path.resolve(__dirname, 'tag-admin/src/index.js')
+      'tag_admin': path.resolve(__dirname, 'src/index.js')
   },
   output: {
     // This copies each source entry into the extension dist folder named
     // after its entry config key.
-      path: path.resolve(__dirname, 'assets/webpack_bundles/'),
+      path: path.resolve(__dirname, '../assets/webpack_bundles/'),
       filename: '[name].entry.chunk.js',
       chunkFilename: '[name].[chunkhash].js',
       publicPath: '/static/webpack_bundles/'

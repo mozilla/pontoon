@@ -27,10 +27,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global codecov npm@8
       - name: Install dependencies
         run: npm install
-      - name: Install globals
-        run: npm install -g codecov
       - name: Test
         run: npm test
       - name: codecov.io

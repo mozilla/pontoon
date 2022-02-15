@@ -35,6 +35,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm install
       - name: Install frontend
@@ -51,6 +53,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm install
       - name: prettier
