@@ -25,6 +25,7 @@ on:
       - '.*eslint*'
       - '.*prettier*'
       - .github/workflows/js-lint.yml
+  workflow_dispatch:
 
 jobs:
   eslint:
