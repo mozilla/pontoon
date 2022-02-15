@@ -61,7 +61,7 @@ USER pontoon
 # Install node requirements
 COPY package.json .
 COPY package-lock.json .
-COPY tag-admin/package.json ./tag-admin/
+COPY --chown=pontoon:pontoon tag-admin/package.json ./tag-admin/
 RUN npm ci
 
 COPY ./docker/config/server.env .env
