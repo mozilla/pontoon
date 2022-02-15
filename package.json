@@ -20,9 +20,9 @@
     "build": "npm run build -w tag-admin",
     "build-w": "npm run build-w -w tag-admin",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
-    "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/src/**/*.{js,css}'",
-    "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/src/**/*.{js,css}'",
-    "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/src/**/*.js'"
+    "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
+    "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
+    "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/**/*.js'"
   },
   "workspaces": [
     "tag-admin"

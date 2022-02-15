@@ -19,7 +19,6 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-table": "^6.11.5",
-    "style-loader": "^0.19.1",
     "webpack": "^4.46.0",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.12"
