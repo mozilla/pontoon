@@ -20,38 +20,22 @@
     "build": "webpack",
     "build-w": "webpack -w",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
-    "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
-    "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tests/**/*.{js,css}'",
-    "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tests/**/*.js'"
+    "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/src/**/*.{js,css}'",
+    "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/src/**/*.{js,css}'",
+    "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/src/**/*.js'"
   },
   "jest": {
     "testMatch": [
-      "**/tests/js/**/*.js?(x)"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/tests/js/__setup__"
+      "**/tag-admin/src/**/(*.)+test.[jt]s?(x)"
     ],
     "testURL": "https://nowhere.com/at/all",
-    "modulePaths": [
-      "<rootDir>/pontoon/static/js",
-      "<rootDir>/static/placeholder"
-    ],
     "moduleNameMapper": {
       "\\.(css|less)$": "identity-obj-proxy"
     },
     "setupFiles": [
-      "./tests/js/__setup__"
+      "./tag-admin/src/setupTests.js"
     ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/static/placeholder/**/*.{js,jsx}",
-      "**/pontoon/**/static/**/*.{js,jsx}",
-      "**/tests/js/**/*.{js,jsx}",
-      "!static/*",
-      "!**/*.min.js",
-      "!**/js/lib/**/*.js"
-    ]
+    "collectCoverage": true
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",

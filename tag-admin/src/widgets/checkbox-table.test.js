@@ -2,7 +2,7 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 
-import CheckboxTable from 'widgets/tables/checkbox';
+import CheckboxTable from './checkbox-table.js';
 
 test('CheckboxTable render', () => {
     // Test the rendering of the checkboxes table widget

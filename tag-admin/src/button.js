@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TagResourceManager } from './manager';
+import { TagResourceManager } from './manager.js';
 
 export default class TagResourcesButton extends React.Component {
     state = { open: false };

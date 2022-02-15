@@ -5,8 +5,7 @@ on:
     branches:
       - master
     paths:
-      - tests/**.js
-      - pontoon/static/js/**
+      - tag-admin/**
       - package.json
       - webpack.config.js
       - .github/workflows/non-frontend-js.yml
@@ -14,8 +13,7 @@ on:
     branches:
       - master
     paths:
-      - tests/**.js
-      - pontoon/static/js/**
+      - tag-admin/**
       - package.json
       - webpack.config.js
       - .github/workflows/non-frontend-js.yml

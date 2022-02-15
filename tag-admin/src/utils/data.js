@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ajax } from 'utils/ajax';
+import { ajax } from './ajax.js';
 
 export class DataManager {
     constructor(state) {

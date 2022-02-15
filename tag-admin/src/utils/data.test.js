@@ -2,9 +2,9 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 
-import { ajax } from 'utils/ajax';
+import { ajax } from './ajax.js';
 
-import { DataManager, dataManager } from 'utils/data';
+import { DataManager, dataManager } from './data.js';
 
 class MockComponent extends React.PureComponent {
     render() {

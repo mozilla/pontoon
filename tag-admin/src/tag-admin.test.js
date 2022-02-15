@@ -2,14 +2,14 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 
-import { Columns } from 'widgets/columns';
+import { Columns } from './widgets/columns.js';
 
-import CheckboxTable from 'widgets/tables/checkbox';
+import CheckboxTable from './widgets/checkbox-table.js';
 
-import TagResourcesButton from 'tags/admin/button';
-import { TagResourceManagerWidget } from 'tags/admin/manager';
-import TagResourceSearch from 'tags/admin/search';
-import TagResourceTable from 'tags/admin/table';
+import TagResourcesButton from './button.js';
+import { TagResourceManagerWidget } from './manager.js';
+import TagResourceSearch from './search.js';
+import TagResourceTable from './table.js';
 
 test('TagResourcesButton render', () => {
     // shallow render of TagResourcesButton to ensure that

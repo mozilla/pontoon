@@ -6,7 +6,7 @@ const BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   entry: {
-      'tag_admin': 'tags/admin'
+      'tag_admin': path.resolve(__dirname, 'tag-admin/src/index.js')
   },
   output: {
     // This copies each source entry into the extension dist folder named
@@ -37,7 +37,6 @@ module.exports = {
     // This allows you to import modules just like you would in a NodeJS app.
     extensions: ['.js', '.jsx'],
     modules: [
-      path.resolve(__dirname, 'pontoon/static/js/'),
       'node_modules',
     ]
   },
