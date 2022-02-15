@@ -34,9 +34,9 @@
     "@babel/preset-env": "^7.13.10",
     "@babel/preset-react": "^7.12.13",
     "@babel/runtime": "^7.13.10",
-    "eslint": "^7.22.0",
+    "eslint": "^8.9.0",
     "eslint-plugin-react": "^7.22.0",
-    "prettier": "2.2.0",
+    "prettier": "^2.5.1",
     "yuglify": "^2.0.0"
   },
   "prettier": {
