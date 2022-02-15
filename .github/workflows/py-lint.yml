@@ -15,6 +15,7 @@ on:
       - pontoon/**.py
       - .github/workflows/py-lint.yml
       - requirements/lint.txt
+  workflow_dispatch:
 
 jobs:
   flake8:
