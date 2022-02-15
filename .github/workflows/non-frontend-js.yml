@@ -19,6 +19,7 @@ on:
       - package.json
       - webpack.config.js
       - .github/workflows/non-frontend-js.yml
+  workflow_dispatch:
 
 jobs:
   test:
