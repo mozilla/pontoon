@@ -33,15 +33,8 @@ function ResourceProgress({
     stats,
     onDiscard,
 }: ResourceProgressProps) {
-    const {
-        approved,
-        fuzzy,
-        warnings,
-        errors,
-        missing,
-        unreviewed,
-        total,
-    } = stats;
+    const { approved, fuzzy, warnings, errors, missing, unreviewed, total } =
+        stats;
 
     const ref = React.useRef(null);
     useOnDiscard(ref, onDiscard);

@@ -169,12 +169,11 @@ export class BatchActionsBase extends React.Component<InternalProps> {
         );
     };
 
-    submitReplaceForm: (
-        event: React.SyntheticEvent<HTMLFormElement>,
-    ) => void = (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        this.replaceAll();
-    };
+    submitReplaceForm: (event: React.SyntheticEvent<HTMLFormElement>) => void =
+        (event: React.SyntheticEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            this.replaceAll();
+        };
 
     render(): React.ReactElement<'div'> {
         return (

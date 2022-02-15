@@ -218,11 +218,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         page?: number,
     ) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
-        const {
-            get,
-            getConcordanceSearchResults,
-            resetSearch,
-        } = machinery.actions;
+        const { get, getConcordanceSearchResults, resetSearch } =
+            machinery.actions;
 
         if (query) {
             if (page) {

@@ -251,9 +251,7 @@ export default class ResourceMenuBase extends React.Component<Props, State> {
             className += ' closed';
         }
 
-        let resourceName:
-            | string
-            | React.ReactElement<any> = parameters.resource
+        let resourceName: string | React.ReactElement<any> = parameters.resource
             .split('/')
             .slice(-1)[0];
 

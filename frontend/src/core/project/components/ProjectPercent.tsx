@@ -14,11 +14,8 @@ type Props = {
 export default function ProjectPercent(
     props: Props,
 ): React.ReactElement<'span'> {
-    const {
-        approvedStrings,
-        stringsWithWarnings,
-        totalStrings,
-    } = props.localization;
+    const { approvedStrings, stringsWithWarnings, totalStrings } =
+        props.localization;
     const completeStrings = approvedStrings + stringsWithWarnings;
 
     const percent = Math.floor((completeStrings / totalStrings) * 100) + '%';
