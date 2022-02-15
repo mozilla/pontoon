@@ -23,8 +23,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Root install
-        run: npm install
       - name: Install dependencies
         run: yarn
         working-directory: frontend
@@ -45,8 +43,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Root install
-        run: npm install
       - name: Install dependencies
         run: yarn
         working-directory: frontend
@@ -82,8 +78,7 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: |
-          npm install -g yarn codecov
+        run: npm install --global codecov
       - name: Install dependencies
         run: npm install
         working-directory: frontend

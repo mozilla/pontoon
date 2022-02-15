@@ -7,7 +7,6 @@ on:
     paths:
       - tag-admin/**
       - package.json
-      - webpack.config.js
       - .github/workflows/non-frontend-js.yml
   pull_request:
     branches:
@@ -15,12 +14,11 @@ on:
     paths:
       - tag-admin/**
       - package.json
-      - webpack.config.js
       - .github/workflows/non-frontend-js.yml
 
 jobs:
   test:
-    name: Test & webpack
+    name: Test & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,10 +28,10 @@ jobs:
       - name: Install globals
         run: npm install --global codecov npm@8
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Test
         run: npm test
       - name: codecov.io
         run: codecov -F non-frontend-js
-      - name: Ensure build
-        run: ./node_modules/.bin/webpack
+      - name: Build
+        run: npm run build

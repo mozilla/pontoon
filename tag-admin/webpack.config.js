@@ -3,8 +3,9 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleTracker = require('webpack-bundle-tracker');
 
-
+/** @type {import('webpack').Configuration} */
 module.exports = {
+  mode: 'production',
   entry: {
       'tag_admin': path.resolve(__dirname, 'src/index.js')
   },
@@ -42,12 +43,9 @@ module.exports = {
   },
 
   plugins: [
-    // Since some NodeJS modules expect to be running in Node, it is helpful
-    // to set this environment var to avoid reference errors.
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    }),
-    new BundleTracker({filename: './webpack-stats.json'}),
+    // Read by django-webpack-loader
+    new BundleTracker({ filename: '../webpack-stats.json' }),
+
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
@@ -55,6 +53,7 @@ module.exports = {
       chunkFilename: "[id].css"
     }),
   ],
+
   // This will expose source map files so that errors will point to your
   // original source files instead of the transpiled files.
   devtool: 'sourcemap'

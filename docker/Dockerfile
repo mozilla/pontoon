@@ -21,7 +21,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONPATH /app
 
 # JavaScript applications paths
-ENV WEBPACK_BINARY /app/node_modules/.bin/webpack
 ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
 ENV TERSER_BINARY /app/node_modules/.bin/terser
 
@@ -43,6 +42,7 @@ RUN apt-get update \
         postgresql-client \
         postgresql-server-dev-13 \
         yarn \
+    && npm install --global npm@8 \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
 
@@ -61,7 +61,8 @@ USER pontoon
 # Install node requirements
 COPY package.json .
 COPY package-lock.json .
-RUN npm install
+COPY tag-admin/package.json ./tag-admin/
+RUN npm ci
 
 COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
@@ -69,7 +70,7 @@ COPY --chown=pontoon:pontoon . /app/
 # Create the folder for front-end assets
 RUN mkdir -p assets
 # Run webpack to compile JS files
-RUN $WEBPACK_BINARY
+RUN npm run build
 
 COPY --from=frontend /frontend/ ./frontend/
 
