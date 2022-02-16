@@ -52,7 +52,7 @@ test('TagResourceManager checkboxing', async () => {
     await act(async () => {
         await flushPromises();
     });
-    manager.update()
+    manager.update();
 
     // Check the 'foo' checkbox
     manager

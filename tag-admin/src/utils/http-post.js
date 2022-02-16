@@ -67,8 +67,9 @@ export function isSameOrigin(url) {
  */
 export function post(url, data) {
     // this is a bit sketchy but the only afaict way due to session_csrf
-    const csrf = document.querySelector('input[name=csrfmiddlewaretoken]')
-        .value;
+    const csrf = document.querySelector(
+        'input[name=csrfmiddlewaretoken]',
+    ).value;
 
     const init = {
         body: asFormData(data),
