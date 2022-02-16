@@ -81,7 +81,7 @@ test: test-server test-frontend
 
 test-frontend: jest
 jest:
-	"${DC}" run --rm -w //frontend frontend yarn test
+	"${DC}" run --rm -w //frontend frontend npm test
 
 test-server: pytest
 pytest:
@@ -92,7 +92,7 @@ format: prettier pyupgrade black
 lint: types eslint check-prettier flake8 check-pyupgrade check-black
 
 types:
-	"${DC}" run --rm -w //frontend frontend yarn types
+	"${DC}" run --rm -w //frontend frontend npm run types
 
 eslint:
 	"${DC}" run --rm frontend npm run lint

@@ -10,8 +10,8 @@
     </tr>
     <tr>
         <td>Package manager</td>
-        <td>Yarn</td>
-        <td>https://yarnpkg.com/</td>
+        <td>npm</td>
+        <td>https://docs.npmjs.com/cli/v8</td>
     </tr>
     <tr>
         <td>Views</td>
@@ -74,7 +74,9 @@ Of course, more can be added if needed. For example, modules with a high number 
 
 ### Production
 
-The only required step for the front-end is to build static files with `yarn build`. Django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files. All of that is automated for deployement to Heroku.
+The only required step for the front-end is to build static files with `npm run build`.
+Django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files.
+All of that is automated for deployement to Heroku.
 
 ### Development
 
@@ -101,13 +103,15 @@ If you can't turn on websockets, you will see errors in the console (that's not 
 
 ## Dependencies
 
-We manage our JavaScript dependencies with `yarn`. Dependencies and their versions are listed in the `package.json` file, under `dependencies` for production and `devDependencies` for development.
+We manage our JavaScript dependencies with `npm`.
+Dependencies and their versions are listed in the `package.json` file,
+under `dependencies` for production and `devDependencies` for development.
 
 To add a new dependency, run the following commands:
 
 ```shell
     # Add the dependency. Make sure to use an exact version.
-    yarn add my-package@version
+    npm install my-package@version
 
     # Go back to the root folder.
     cd ..
@@ -120,7 +124,7 @@ To upgrade dependency to a specific version, run the following commands:
 
 ```shell
     # Upgrade dependency to the specified version.
-    yarn upgrade my-package@version
+    npm install my-package@version
 
     # Go back to the root folder.
     cd ..
@@ -129,7 +133,10 @@ To upgrade dependency to a specific version, run the following commands:
     make build-frontend
 ```
 
-Note that, in order to add new dependencies, you need to have `yarn` installed and perform the actions locally (outside docker). You might want to remove the `node_modules` folder after you've run the install or update command (and the `package.json` and `yarn.lock` files have been updated) and before rebuilding the image, to reduce the size of the docker context.
+Note that, in order to add new dependencies, you need to have `npm` installed and perform the actions locally (outside docker).
+You might want to remove the `node_modules` folder after you've run the install or update command
+(and the `package.json` and `package-lock.json` files have been updated)
+and before rebuilding the image, to reduce the size of the docker context.
 
 
 ## Type checking

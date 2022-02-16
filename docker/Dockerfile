@@ -1,11 +1,11 @@
 # Frontend build
 FROM node:14-bullseye AS frontend
 WORKDIR /frontend
-COPY frontend/package.json frontend/yarn.lock ./
-RUN yarn install
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
 COPY frontend/ .
-RUN yarn build
-CMD ["yarn", "start", "--host"]
+RUN npm run build
+CMD ["npm", "start", "--", "--host"]
 
 FROM python:3.9-bullseye AS server
 
@@ -30,9 +30,6 @@ RUN apt-get update \
     && apt-get install -y apt-transport-https \
     # Get source for node.js
     && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
-    # Get source for yarn
-    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
     # Install software
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -41,7 +38,6 @@ RUN apt-get update \
         nodejs \
         postgresql-client \
         postgresql-server-dev-13 \
-        yarn \
     && npm install --global npm@8 \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
