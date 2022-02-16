@@ -65,6 +65,7 @@ if not DEV and not DEBUG:
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
 FRONTEND_DIR = os.path.join(ROOT, "frontend")
+TAGADMIN_DIR = os.path.join(ROOT, "tag-admin")
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -291,6 +292,7 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/double_list_selector.css",
             "css/admin_project.css",
+            "tag_admin.css",
         ),
         "output_filename": "css/admin_project.min.css",
     },
@@ -425,6 +427,7 @@ PIPELINE_JS = {
             "js/lib/jquery-ui.js",
             "js/double_list_selector.js",
             "js/admin_project.js",
+            "tag_admin.js",
         ),
         "output_filename": "js/admin_project.min.js",
     },
@@ -573,6 +576,7 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     path("assets"),
     os.path.join(FRONTEND_DIR, "build", "static"),
+    os.path.join(TAGADMIN_DIR, "dist"),
 ]
 
 

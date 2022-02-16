@@ -5,6 +5,7 @@ pip-log.txt
 docs/_gh-pages
 build.py
 build
+dist
 .DS_Store
 node_modules
 *-min.css
