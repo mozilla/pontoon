@@ -24,9 +24,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
       - name: Check TypeScript
         run: npm run types --pretty
         working-directory: frontend
@@ -44,9 +45,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
       - id: noImplicitAny
         name: noImplicitAny
         uses: ./.github/actions/check-tsc
@@ -79,10 +81,9 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: npm install --global codecov
+        run: npm install --global codecov npm@8
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
       - name: Test
         run: npm test --coverage
         working-directory: frontend

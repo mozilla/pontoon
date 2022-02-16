@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@fluent/bundle": "0.16.1",
@@ -73,17 +72,13 @@
     "@types/shortid": "^0.0.29",
     "@types/sinon": "^10.0.1",
     "@types/styled-components": "^5.1.9",
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
-    "@typescript-eslint/parser": "^5.11.0",
     "@vitejs/plugin-react": "^1.2.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
-    "eslint": "^8.9.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "jest-each": "^27.5.1",
     "jest-watch-typeahead": "^1.0.0",
-    "prettier": "^2.5.1",
     "sinon": "9.2.4",
     "ts-jest": "^27.1.3",
     "tslib": "^2.3.1",
@@ -99,12 +94,5 @@
     "check-prettier": "prettier --check src/",
     "test": "jest",
     "types": "tsc"
-  },
-  "prettier": {
-    "endOfLine": "lf",
-    "trailingComma": "all",
-    "tabWidth": 4,
-    "jsxSingleQuote": true,
-    "singleQuote": true
   }
 }

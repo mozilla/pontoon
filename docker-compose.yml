@@ -12,10 +12,10 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend/index.html:/frontend/index.html
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
-      - ./frontend/vite.config.js:/frontend/vite.config.js
+      - ./frontend/index.html:/app/frontend/index.html
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/public:/app/frontend/public
+      - ./frontend/vite.config.js:/app/frontend/vite.config.js
 
   server:
     build:

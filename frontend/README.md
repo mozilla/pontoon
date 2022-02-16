@@ -107,34 +107,19 @@ We manage our JavaScript dependencies with `npm`.
 Dependencies and their versions are listed in the `package.json` file,
 under `dependencies` for production and `devDependencies` for development.
 
-To add a new dependency, run the following commands:
+To add or upgrade a dependency,
+run the following commands at the repo root:
 
 ```shell
-    # Add the dependency. Make sure to use an exact version.
-    npm install my-package@version
-
-    # Go back to the root folder.
-    cd ..
+    # Add or upgrade the dependency. Make sure to use an exact version.
+    npm install my-package@version -w frontend
 
     # Rebuild the Pontoon image so that it has the new dependencies.
     make build-frontend
 ```
 
-To upgrade dependency to a specific version, run the following commands:
-
-```shell
-    # Upgrade dependency to the specified version.
-    npm install my-package@version
-
-    # Go back to the root folder.
-    cd ..
-
-    # Rebuild the Pontoon image so that it has the upgraded dependencies.
-    make build-frontend
-```
-
 Note that, in order to add new dependencies, you need to have `npm` installed and perform the actions locally (outside docker).
-You might want to remove the `node_modules` folder after you've run the install or update command
+You might want to remove the `frontend/node_modules` folder after you've run the install or update command
 (and the `package.json` and `package-lock.json` files have been updated)
 and before rebuilding the image, to reduce the size of the docker context.
 

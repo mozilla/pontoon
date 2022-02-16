@@ -1,9 +1,11 @@
 # Frontend build
-FROM node:14-bullseye AS frontend
-WORKDIR /frontend
-COPY frontend/package.json frontend/package-lock.json ./
+FROM node:16-bullseye AS frontend
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY frontend/package.json ./frontend/
 RUN npm ci
-COPY frontend/ .
+COPY frontend/ ./frontend/
+WORKDIR /app/frontend
 RUN npm run build
 CMD ["npm", "start", "--", "--host"]
 
@@ -68,7 +70,7 @@ RUN mkdir -p assets
 # Run webpack to compile JS files
 RUN npm run build
 
-COPY --from=frontend /frontend/ ./frontend/
+COPY --from=frontend /app/frontend/ ./frontend/
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
