@@ -12,8 +12,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/public:/app/frontend/public
 
   server:
     build:

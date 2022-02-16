@@ -24,14 +24,15 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
-        run: yarn
-        working-directory: frontend
+        run: npm ci
       - name: Check TypeScript
-        run: yarn types --pretty
+        run: npm run types --pretty
         working-directory: frontend
       - name: build
-        run: yarn build
+        run: npm run build
         working-directory: frontend
 
   ts-strict:
@@ -44,26 +45,27 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - name: Install globals
+        run: npm install --global npm@8
       - name: Install dependencies
-        run: yarn
-        working-directory: frontend
+        run: npm ci
       - id: noImplicitAny
         name: noImplicitAny
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --noImplicitAny
+          run: npm run types --pretty --noImplicitAny
           working-directory: frontend
       - id: strictNullChecks
         name: strictNullChecks
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --strictNullChecks
+          run: npm run types --pretty --strictNullChecks
           working-directory: frontend
       - id: strict
         name: strict
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --strict
+          run: npm run types --pretty --strict
           working-directory: frontend
       - name: Summary
         run: |
@@ -79,12 +81,11 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: npm install --global codecov
+        run: npm install --global codecov npm@8
       - name: Install dependencies
-        run: npm install
-        working-directory: frontend
+        run: npm ci
       - name: Test
-        run: yarn test --coverage
+        run: npm test --coverage
         working-directory: frontend
       - name: codecov.io
         run: codecov -F frontend

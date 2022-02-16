@@ -51,7 +51,7 @@
     "@types/escape-html": "^1.0.1",
     "@types/history": "^4.7.8",
     "@types/javascript-time-ago": "^2.0.3",
-    "@types/jest": "^26.0.23",
+    "@types/jest": "^27.4.0",
     "@types/linkify-it": "^3.0.1",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/lodash.escaperegexp": "^4.1.6",
@@ -67,15 +67,11 @@
     "@types/react-router": "^5.1.14",
     "@types/react-router-dom": "^5.1.7",
     "@types/reactour": "^1.18.1",
-    "@types/redux": "^3.6.0",
     "@types/redux-logger": "^3.0.9",
     "@types/sinon": "^10.0.1",
     "@types/styled-components": "^5.1.9",
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
-    "@typescript-eslint/parser": "^5.11.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
-    "eslint": "^8.9.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "jest-each": "^27.5.1",
@@ -91,12 +87,5 @@
     "check-prettier": "prettier --check src/",
     "test": "jest",
     "types": "tsc"
-  },
-  "prettier": {
-    "endOfLine": "lf",
-    "trailingComma": "all",
-    "tabWidth": 4,
-    "jsxSingleQuote": true,
-    "singleQuote": true
   }
 }
