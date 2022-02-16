@@ -7,14 +7,14 @@ on:
     paths:
       - tag-admin/**
       - package.json
-      - .github/workflows/non-frontend-js.yml
+      - .github/workflows/tag-admin.yml
   pull_request:
     branches:
       - master
     paths:
       - tag-admin/**
       - package.json
-      - .github/workflows/non-frontend-js.yml
+      - .github/workflows/tag-admin.yml
 
 jobs:
   test:
