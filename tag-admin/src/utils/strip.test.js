@@ -1,4 +1,4 @@
-import { Strip, strip } from 'utils/strip';
+import { Strip, strip } from './strip.js';
 
 test('Strip instance', () => {
     expect(strip instanceof Strip).toBe(true);

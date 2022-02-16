@@ -2,6 +2,7 @@
 *.min.js
 *.min.css
 frontend/build
+coverage/
 
 # libraries
 **/base/static/js/lib*

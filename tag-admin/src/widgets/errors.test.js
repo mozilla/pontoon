@@ -2,7 +2,7 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 
-import { ErrorList, Error } from 'widgets/errors';
+import { ErrorList, Error } from './errors.js';
 
 test('Error render', () => {
     let error = shallow(<Error name='FOO' error='BAR' />);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { shallow } from 'enzyme';
 
-import { Columns, Container, Column } from 'widgets/columns';
+import { Columns, Container, Column } from './columns.js';
 
 test('Columns render', () => {
     const columndescriptors = [
