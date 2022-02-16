@@ -15,6 +15,7 @@ on:
       - tag-admin/**
       - package.json
       - .github/workflows/tag-admin.yml
+  workflow_dispatch:
 
 jobs:
   test:
