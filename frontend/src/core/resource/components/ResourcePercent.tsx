@@ -14,11 +14,8 @@ type Props = {
 export default function ResourcePercent(
     props: Props,
 ): React.ReactElement<'span'> {
-    const {
-        approvedStrings,
-        stringsWithWarnings,
-        totalStrings,
-    } = props.resource;
+    const { approvedStrings, stringsWithWarnings, totalStrings } =
+        props.resource;
     const completeStrings = approvedStrings + stringsWithWarnings;
 
     const percent = Math.floor((completeStrings / totalStrings) * 100) + '%';

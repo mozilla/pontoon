@@ -220,22 +220,21 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
         return date.isValid(value, INPUT_FORMAT);
     };
 
-    handleInputChange: (
-        event: React.SyntheticEvent<HTMLInputElement>,
-    ) => void = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        const name = event.currentTarget.name;
-        const value = event.currentTarget.value;
+    handleInputChange: (event: React.SyntheticEvent<HTMLInputElement>) => void =
+        (event: React.SyntheticEvent<HTMLInputElement>) => {
+            const name = event.currentTarget.name;
+            const value = event.currentTarget.value;
 
-        if (this.isValidInput(value)) {
-            const d = date.parse(value, INPUT_FORMAT);
-            this.updateChartExtremes('chart' + name, d.getTime());
-        }
+            if (this.isValidInput(value)) {
+                const d = date.parse(value, INPUT_FORMAT);
+                this.updateChartExtremes('chart' + name, d.getTime());
+            }
 
-        // @ts-expect-error
-        this.setState({
-            ['input' + name]: value,
-        });
-    };
+            // @ts-expect-error
+            this.setState({
+                ['input' + name]: value,
+            });
+        };
 
     toggleEditingTimeRange: (event: React.MouseEvent) => void = (
         event: React.MouseEvent,

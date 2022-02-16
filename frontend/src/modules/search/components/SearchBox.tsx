@@ -345,13 +345,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.props.dispatch(search.actions.setFocus(true));
     };
 
-    updateSearchInput: (
-        event: React.SyntheticEvent<HTMLInputElement>,
-    ) => void = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        this.setState({
-            search: event.currentTarget.value,
-        });
-    };
+    updateSearchInput: (event: React.SyntheticEvent<HTMLInputElement>) => void =
+        (event: React.SyntheticEvent<HTMLInputElement>) => {
+            this.setState({
+                search: event.currentTarget.value,
+            });
+        };
 
     handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void = (
         event: React.KeyboardEvent<HTMLInputElement>,

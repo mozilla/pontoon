@@ -103,14 +103,8 @@ type MainActionProps = {
  * Shows a button to ignore failed checks and proceed with the main editor action.
  */
 function MainAction(props: MainActionProps) {
-    const {
-        source,
-        user,
-        isTranslator,
-        errors,
-        approveAnyway,
-        submitAnyway,
-    } = props;
+    const { source, user, isTranslator, errors, approveAnyway, submitAnyway } =
+        props;
 
     if (source === 'stored' || errors.length) {
         return null;

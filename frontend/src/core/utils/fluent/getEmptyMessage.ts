@@ -116,5 +116,5 @@ export default function getEmptyMessage(source: Entry, locale: Locale): Entry {
 
     // Empty TextElements
     const transformer = new EmptyTransformer();
-    return (transformer.visit(flatMessage) as any) as Entry;
+    return transformer.visit(flatMessage) as any as Entry;
 }
