@@ -172,7 +172,6 @@ INSTALLED_APPS = (
     "allauth.socialaccount.providers.gitlab",
     "notifications",
     "graphene_django",
-    "webpack_loader",
     "django_ace",
 )
 
@@ -242,7 +241,6 @@ TEMPLATES = [
                 "django_jinja.builtins.extensions.StaticFilesExtension",
                 "django_jinja.builtins.extensions.DjangoFiltersExtension",
                 "pipeline.jinja2.PipelineExtension",
-                "webpack_loader.contrib.jinja2ext.WebpackExtension",
             ],
         },
     },
