@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Columns } from 'widgets/columns';
+import { Columns } from './widgets/columns.js';
 
 export default class TagResourceSearch extends React.PureComponent {
     get columns() {

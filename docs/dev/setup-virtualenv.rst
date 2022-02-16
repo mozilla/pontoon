@@ -16,7 +16,7 @@ This guide assumes you have already installed and set up the following:
 
 1. Git_
 2. `Python 2.7`_, pip_, and virtualenv_
-3. `Node.js`_ and npm_
+3. `Node.js`_ and npm_ v7 or later
 4. `Postgres 9.4 or 9.5`_
 
 These docs assume a Unix-like operating system, although the site should, in
@@ -150,11 +150,11 @@ Installation
 
       npm install
 
-11. Run webpack:
+11. Build the tag-admin client:
 
    .. code-block:: bash
 
-      ./node_modules/.bin/webpack -p
+      npm run build
 
 Once you've finished these steps, you should be able to start the site by
 running:

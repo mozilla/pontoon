@@ -1,0 +1,26 @@
+{
+  "name": "pontoon-tag-admin",
+  "private": true,
+  "author": "Mozilla",
+  "license": "BSD",
+  "scripts": {
+    "test": "jest",
+    "build": "webpack",
+    "build-w": "webpack -w"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "css-loader": "^3.6.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.6",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^24.9.0",
+    "mini-css-extract-plugin": "^0.4.5",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-table": "^6.11.5",
+    "webpack": "^4.46.0",
+    "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^3.3.12"
+  }
+}

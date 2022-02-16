@@ -1,5 +1,5 @@
-import { strip } from './strip';
-import { getCSRFToken } from './csrf';
+import { strip } from './strip.js';
+import { getCSRFToken } from './csrf.js';
 
 export class DjangoAjax {
     /**

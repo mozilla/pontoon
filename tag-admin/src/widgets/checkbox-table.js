@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
-import Checkbox from 'widgets/checkbox';
+import Checkbox from './checkbox.js';
 
 export default class CheckboxTable extends React.Component {
     constructor(props) {

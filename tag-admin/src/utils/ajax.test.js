@@ -1,4 +1,4 @@
-import { DjangoAjax, PontoonDjangoAjax, ajax } from 'utils/ajax';
+import { DjangoAjax, PontoonDjangoAjax, ajax } from './ajax.js';
 
 test('PontoonDjangoAjax instance', () => {
     expect(ajax instanceof DjangoAjax).toBe(true);

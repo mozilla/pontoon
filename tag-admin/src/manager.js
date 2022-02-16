@@ -1,12 +1,12 @@
 import React from 'react';
 
-import TagResourceSearch from './search';
-import TagResourceTable from './table';
-import { ErrorList } from 'widgets/errors';
+import TagResourceSearch from './search.js';
+import TagResourceTable from './table.js';
+import { ErrorList } from './widgets/errors.js';
 
 import './tag-resources.css';
 
-import { dataManager } from 'utils/data';
+import { dataManager } from './utils/data.js';
 
 export class TagResourceManagerWidget extends React.Component {
     state = { type: 'assoc', search: '' };

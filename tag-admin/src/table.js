@@ -1,6 +1,6 @@
 import React from 'react';
 
-import CheckboxTable from 'widgets/tables/checkbox';
+import CheckboxTable from './widgets/checkbox-table.js';
 
 export default class TagResourceTable extends React.PureComponent {
     submitClass = 'tag-resources-associate';
