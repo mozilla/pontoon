@@ -11,25 +11,23 @@ type DeepStringArray = Array<DeepStringArray> | string | null;
 export default function serialize(
     elements: Array<PatternElement>,
 ): DeepStringArray {
-    return elements.map(
-        (elt): DeepStringArray => {
-            if (elt.type === 'TextElement') {
-                return elt.value;
-            }
+    return elements.map((elt): DeepStringArray => {
+        if (elt.type === 'TextElement') {
+            return elt.value;
+        }
 
-            if (elt.type === 'Placeable') {
-                if (elt.expression.type === 'SelectExpression') {
-                    const defaultVariants = elt.expression.variants.filter(
-                        (v) => v.default,
-                    );
-                    return serialize(defaultVariants[0].value.elements);
-                } else {
-                    const expression = serializeExpression(elt.expression);
-                    return `{ ${expression} }`;
-                }
+        if (elt.type === 'Placeable') {
+            if (elt.expression.type === 'SelectExpression') {
+                const defaultVariants = elt.expression.variants.filter(
+                    (v) => v.default,
+                );
+                return serialize(defaultVariants[0].value.elements);
+            } else {
+                const expression = serializeExpression(elt.expression);
+                return `{ ${expression} }`;
             }
+        }
 
-            return null;
-        },
-    );
+        return null;
+    });
 }

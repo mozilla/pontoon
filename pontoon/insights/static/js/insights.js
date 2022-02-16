@@ -250,9 +250,8 @@ var Pontoon = (function (my) {
                             yPadding: 10,
                             callbacks: {
                                 label(items, chart) {
-                                    const { label } = chart.datasets[
-                                        items.datasetIndex
-                                    ];
+                                    const { label } =
+                                        chart.datasets[items.datasetIndex];
                                     return `${label}: ${items.value} days`;
                                 },
                             },
@@ -403,10 +402,11 @@ var Pontoon = (function (my) {
                                             return base + '%';
                                         case 'Human translations':
                                         case 'Machinery translations': {
-                                            const pct = Pontoon.insights.getPercent(
-                                                value,
-                                                human + machinery,
-                                            );
+                                            const pct =
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    human + machinery,
+                                                );
                                             return `${base} (${pct} of all translations)`;
                                         }
                                         default:
@@ -615,18 +615,20 @@ var Pontoon = (function (my) {
 
                                     switch (label) {
                                         case 'Self-approved': {
-                                            const pct = Pontoon.insights.getPercent(
-                                                value,
-                                                peerApproved + selfApproved,
-                                            );
+                                            const pct =
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    peerApproved + selfApproved,
+                                                );
                                             return `${base} (${pct} of all approvals)`;
                                         }
                                         case 'Peer-approved':
                                         case 'Rejected': {
-                                            const pct = Pontoon.insights.getPercent(
-                                                value,
-                                                peerApproved + rejected,
-                                            );
+                                            const pct =
+                                                Pontoon.insights.getPercent(
+                                                    value,
+                                                    peerApproved + rejected,
+                                                );
                                             return `${base} (${pct} of peer-reviews)`;
                                         }
                                         default:

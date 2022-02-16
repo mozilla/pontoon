@@ -232,62 +232,63 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         dispatch(entities.actions.getSiblingEntities(entity, locale.code));
     };
 
-    toggleForBatchEditing: (
-        entity: number,
-        shiftKeyPressed: boolean,
-    ) => void = (entity: number, shiftKeyPressed: boolean) => {
-        const props = this.props;
-        const { dispatch } = props;
+    toggleForBatchEditing: (entity: number, shiftKeyPressed: boolean) => void =
+        (entity: number, shiftKeyPressed: boolean) => {
+            const props = this.props;
+            const { dispatch } = props;
 
-        const state = this.props.store.getState();
-        const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-        const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+            const state = this.props.store.getState();
+            const unsavedChangesExist = state[unsavedchanges.NAME].exist;
+            const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
 
-        dispatch(
-            unsavedchanges.actions.check(
-                unsavedChangesExist,
-                unsavedChangesIgnored,
-                () => {
-                    // If holding Shift, check all entities in the entity list between the
-                    // lastCheckedEntity and the entity if entity not checked. If entity
-                    // checked, uncheck all entities in-between.
-                    const lastCheckedEntity =
-                        props.batchactions.lastCheckedEntity;
+            dispatch(
+                unsavedchanges.actions.check(
+                    unsavedChangesExist,
+                    unsavedChangesIgnored,
+                    () => {
+                        // If holding Shift, check all entities in the entity list between the
+                        // lastCheckedEntity and the entity if entity not checked. If entity
+                        // checked, uncheck all entities in-between.
+                        const lastCheckedEntity =
+                            props.batchactions.lastCheckedEntity;
 
-                    if (shiftKeyPressed && lastCheckedEntity) {
-                        const entityListIds = props.entities.entities.map(
-                            (e) => e.pk,
-                        );
-                        const start = entityListIds.indexOf(entity);
-                        const end = entityListIds.indexOf(lastCheckedEntity);
-
-                        const entitySelection = entityListIds.slice(
-                            Math.min(start, end),
-                            Math.max(start, end) + 1,
-                        );
-
-                        if (props.batchactions.entities.includes(entity)) {
-                            dispatch(
-                                batchactions.actions.uncheckSelection(
-                                    entitySelection,
-                                    entity,
-                                ),
+                        if (shiftKeyPressed && lastCheckedEntity) {
+                            const entityListIds = props.entities.entities.map(
+                                (e) => e.pk,
                             );
+                            const start = entityListIds.indexOf(entity);
+                            const end =
+                                entityListIds.indexOf(lastCheckedEntity);
+
+                            const entitySelection = entityListIds.slice(
+                                Math.min(start, end),
+                                Math.max(start, end) + 1,
+                            );
+
+                            if (props.batchactions.entities.includes(entity)) {
+                                dispatch(
+                                    batchactions.actions.uncheckSelection(
+                                        entitySelection,
+                                        entity,
+                                    ),
+                                );
+                            } else {
+                                dispatch(
+                                    batchactions.actions.checkSelection(
+                                        entitySelection,
+                                        entity,
+                                    ),
+                                );
+                            }
                         } else {
                             dispatch(
-                                batchactions.actions.checkSelection(
-                                    entitySelection,
-                                    entity,
-                                ),
+                                batchactions.actions.toggleSelection(entity),
                             );
                         }
-                    } else {
-                        dispatch(batchactions.actions.toggleSelection(entity));
-                    }
-                },
-            ),
-        );
-    };
+                    },
+                ),
+            );
+        };
 
     getMoreEntities: () => void = () => {
         const props = this.props;

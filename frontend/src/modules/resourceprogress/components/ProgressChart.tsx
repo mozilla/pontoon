@@ -45,14 +45,8 @@ export default class ProgressChart extends React.Component<Props> {
     }
 
     drawCanvas() {
-        const {
-            approved,
-            fuzzy,
-            warnings,
-            errors,
-            missing,
-            total,
-        } = this.props.stats;
+        const { approved, fuzzy, warnings, errors, missing, total } =
+            this.props.stats;
         const dpr = window.devicePixelRatio || 1;
         const canvas = this.canvas.current;
 

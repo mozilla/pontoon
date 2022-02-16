@@ -135,9 +135,8 @@ $(function () {
                         '</li>',
                 );
                 ul.append(li);
-                sourcesMap[data.original + data.translation] = li.find(
-                    '.sources',
-                );
+                sourcesMap[data.original + data.translation] =
+                    li.find('.sources');
                 if (data.source === 'Translation memory') {
                     preferred++;
                 } else {
@@ -383,8 +382,7 @@ $(function () {
                 .success(function (data) {
                     if (data.translation) {
                         append({
-                            url:
-                                'https://translate.systran.net/translationTools',
+                            url: 'https://translate.systran.net/translationTools',
                             title: 'Visit Systran Translate',
                             source: 'Systran Translate',
                             original: original,
