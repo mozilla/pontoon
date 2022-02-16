@@ -5,7 +5,7 @@ import * as entities from '~/core/entities';
 import * as navigation from '~/core/navigation';
 import { fluent } from '~/core/utils';
 
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import SimpleEditor from './SimpleEditor';
 

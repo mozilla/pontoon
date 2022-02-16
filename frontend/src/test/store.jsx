@@ -13,7 +13,7 @@ import { createMemoryHistory } from 'history';
 
 import * as user from '~/core/user';
 
-import createRootReducer from 'rootReducer';
+import createRootReducer from '~/rootReducer';
 
 const history = createMemoryHistory({
     initialEntries: ['/kg/firefox/all-resources/'],

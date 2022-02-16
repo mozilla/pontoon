@@ -1,7 +1,7 @@
 import * as lightbox from '~/core/lightbox';
 
 import Screenshots from './Screenshots';
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import sinon from 'sinon';
 
 describe('<Screenshots>', () => {

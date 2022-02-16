@@ -3,7 +3,7 @@ import { act } from 'react-dom/test-utils';
 import { shallow, mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore } from 'test/store';
+import { createReduxStore } from '~/test/store';
 
 import * as actions from '../actions';
 import Lightbox, { LightboxBase } from './Lightbox';

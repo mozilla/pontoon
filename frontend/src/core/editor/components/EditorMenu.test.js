@@ -12,7 +12,7 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 const SELECTED_ENTITY = {
     pk: 1,

@@ -6,7 +6,7 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 import FluentEditor from './FluentEditor';
 

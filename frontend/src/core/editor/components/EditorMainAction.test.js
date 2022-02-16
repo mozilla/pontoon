@@ -7,7 +7,7 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 import * as editor from '..';
 import EditorMainAction from './EditorMainAction';

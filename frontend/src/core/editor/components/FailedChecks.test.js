@@ -9,7 +9,7 @@ import {
     createDefaultUser,
     createReduxStore,
     mountComponentWithStore,
-} from 'test/store';
+} from '~/test/store';
 
 import FailedChecks from './FailedChecks';
 

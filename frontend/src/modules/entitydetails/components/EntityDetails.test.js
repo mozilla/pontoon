@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import * as editor from '~/core/editor';
 import * as history from '~/modules/history';

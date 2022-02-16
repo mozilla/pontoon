@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { actions } from '~/core/navigation';
 import SearchBox, { SearchBoxBase } from './SearchBox';

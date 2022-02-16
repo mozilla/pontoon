@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import { createReduxStore, mountComponentWithStore } from 'test/store';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import * as entities from '~/core/entities';
 import * as navigation from '~/core/navigation';

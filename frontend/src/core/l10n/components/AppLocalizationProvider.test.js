@@ -2,8 +2,8 @@ import React from 'react';
 import sinon from 'sinon';
 import { ReactLocalization } from '@fluent/react';
 
-import { createReduxStore } from 'test/store';
-import { shallowUntilTarget } from 'test/utils';
+import { createReduxStore } from '~/test/store';
+import { shallowUntilTarget } from '~/test/utils';
 
 import { actions } from '..';
 import AppLocalizationProvider, {

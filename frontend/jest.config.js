@@ -29,7 +29,6 @@ module.exports = {
         '\\.svg$': '<rootDir>/__mocks__/svg.js',
         '~(.*)$': '<rootDir>/src/$1',
     },
-    moduleDirectories: ['node_modules', '<rootDir>/node_modules', '.'],
     watchPlugins: [
         'jest-watch-typeahead/filename',
         'jest-watch-typeahead/testname',
