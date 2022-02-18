@@ -1,7 +1,6 @@
 import * as React from 'react';
 import escapeRegExp from 'lodash.escaperegexp';
 import createMarker from 'react-content-marker';
-import shortid from 'shortid';
 
 import {
     getRulesWithFluent,
@@ -10,6 +9,8 @@ import {
 } from 'core/placeable';
 
 import type { TermState } from 'core/term';
+
+let keyCounter = 0
 
 export default function getMarker(
     terms: TermState,
@@ -43,7 +44,7 @@ export default function getMarker(
                     <mark
                         className='term'
                         data-term={term.text}
-                        key={shortid.generate()}
+                        key={++keyCounter}
                     >
                         {x}
                     </mark>

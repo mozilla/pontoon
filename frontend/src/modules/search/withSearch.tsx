@@ -1,7 +1,8 @@
 import * as React from 'react';
-import shortid from 'shortid';
 import escapeRegExp from 'lodash.escaperegexp';
 import { mark } from 'react-content-marker';
+
+let keyCounter = 0
 
 export function markSearchTerms(
     base: React.ReactNodeArray | string,
@@ -30,7 +31,7 @@ export function markSearchTerms(
         for (let searchTerm of searchTerms) {
             const rule = new RegExp(escapeRegExp(searchTerm), 'i');
             const tag = (x: string) => (
-                <mark className='search' key={shortid.generate()}>
+                <mark className='search' key={++keyCounter}>
                     {x}
                 </mark>
             );

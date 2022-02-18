@@ -1,5 +1,3 @@
-import shortid from 'shortid';
-
 export const ADD: 'notification/ADD' = 'notification/ADD';
 
 export type NotificationType =
@@ -26,11 +24,13 @@ export type AddAction = {
     type: typeof ADD;
     message: NotificationMessage;
 };
+
+let keyCounter = 0
 export function add(message: NotificationMessage): AddAction {
     // This unique key is a mechanism to force React to re-render a notification
     // when the same one is added twice in a row.
     if (!message.key) {
-        message = { ...message, key: shortid() };
+        message = { ...message, key: String(++keyCounter) };
     }
 
     return {
