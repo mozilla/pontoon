@@ -25,7 +25,7 @@ export type AddAction = {
     message: NotificationMessage;
 };
 
-let keyCounter = 0
+let keyCounter = 0;
 export function add(message: NotificationMessage): AddAction {
     // This unique key is a mechanism to force React to re-render a notification
     // when the same one is added twice in a row.

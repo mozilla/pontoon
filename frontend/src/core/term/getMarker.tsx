@@ -10,7 +10,7 @@ import {
 
 import type { TermState } from 'core/term';
 
-let keyCounter = 0
+let keyCounter = 0;
 
 export default function getMarker(
     terms: TermState,

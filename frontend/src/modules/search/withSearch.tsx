@@ -2,7 +2,7 @@ import * as React from 'react';
 import escapeRegExp from 'lodash.escaperegexp';
 import { mark } from 'react-content-marker';
 
-let keyCounter = 0
+let keyCounter = 0;
 
 export function markSearchTerms(
     base: React.ReactNodeArray | string,
