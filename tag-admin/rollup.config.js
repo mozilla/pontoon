@@ -17,7 +17,7 @@ export default {
         resolve(),
         babel({
             babelHelpers: 'runtime',
-            configFile: path.resolve('.babelrc'),
+            configFile: path.resolve('../babel.config.json'),
         }),
         commonjs(),
         css({ output: 'tag_admin.css' }),
