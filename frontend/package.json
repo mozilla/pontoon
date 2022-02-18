@@ -11,6 +11,7 @@
     "connected-react-router": "6.8.0",
     "date-and-time": "0.14.2",
     "diff-match-patch": "1.0.4",
+    "escape-html": "^1.0.3",
     "highcharts": "9.0.0",
     "highcharts-react-official": "2.2.2",
     "html-react-parser": "0.13.0",
