@@ -59,21 +59,22 @@ USER pontoon
 # Install node requirements
 COPY package.json .
 COPY package-lock.json .
-COPY --chown=pontoon:pontoon tag-admin/package.json ./tag-admin/
+#COPY --chown=pontoon:pontoon tag-admin/package.json ./tag-admin/
 RUN npm ci
 
 COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
 # Create the folder for front-end assets
-RUN mkdir -p assets
+#RUN mkdir -p assets
 # Build JS files
-RUN npm run build
+#RUN npm run build
 
-COPY --from=frontend /app/frontend/ ./frontend/
+#COPY --from=frontend /app/frontend/ ./frontend/
 
 # Run collectstatic in container which puts files in the default place for
 # static files.
+RUN mkdir -p frontend/dist frontend/public tag-admin/dist
 RUN python manage.py collectstatic --noinput
 
 CMD ["/app/docker/server_run.sh"]

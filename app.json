@@ -63,7 +63,7 @@
     },
     "DISABLE_COLLECTSTATIC": {
       "description": "Disables running ``./manage.py collectstatic`` during the build. Should be set to ``1``.",
-      "value": "1"
+      "value": ""
     },
     "SSH_KEY": {
       "description": "SSH private key to use for authentication when Pontoon connects to VCS servers via SSH.",

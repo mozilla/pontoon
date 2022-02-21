@@ -4,19 +4,18 @@ DOCKER := $(shell which docker)
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
 # https://docs.djangoproject.com/en/dev/ref/django-admin/#runserver
-FRONTEND_URL ?= http://frontend:3000
 SITE_URL ?= http://localhost:8000
 
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-server server-env setup run clean shell ci test test-frontend test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb build-tagadmin build-tagadmin-w sync-projects requirements
+.PHONY: build build-frontend build-tagadmin build-server server-env setup run clean shell ci test test-frontend test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
 	@echo "The list of commands for local development:\n"
 	@echo "  build            Builds the docker images for the docker-compose setup"
-	@echo "  build-frontend   Builds just the frontend image"
+	@echo "  build-frontend   Builds just the translate frontend component"
 	@echo "  build-tagadmin   Builds just the tag-admin frontend component"
 	@echo "  build-server     Builds just the Django server image"
 	@echo "  server-env       Regenerates the env variable file used by server"
@@ -46,7 +45,7 @@ help:
 	@echo "  sync-projects    Runs the synchronization task on all projects"
 	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
-.frontend-build:
+frontend/dist:
 	make build-frontend
 tag-admin/dist:
 	make build-tagadmin
@@ -57,9 +56,8 @@ node_modules:
 
 build: build-frontend build-tagadmin build-server
 
-build-frontend: server-env
-	"${DC}" build frontend
-	touch .frontend-build
+build-frontend: node_modules
+	npm run build -w frontend
 
 build-tagadmin: node_modules
 	npm run build -w tag-admin
@@ -69,17 +67,17 @@ build-server: server-env
 	touch .server-build
 
 server-env:
-	cp ./docker/config/server.env.template ./docker/config/server.env
-	sed -i -e 's/#FRONTEND_URL#/$(subst /,\/,${FRONTEND_URL})/g;s/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' ./docker/config/server.env
+	sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
+	./docker/config/server.env.template > ./docker/config/server.env
 
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh
 
-run: .frontend-build tag-admin/dist .server-build
+run: frontend/dist tag-admin/dist .server-build
 	"${DC}" up
 
 clean:
-	rm -rf .docker-build .frontend-build tag-admin/dist .server-build
+	rm -rf frontend/dist tag-admin/dist .server-build
 
 shell:
 	"${DC}" run --rm server //bin/bash
@@ -90,7 +88,7 @@ test: test-server test-frontend test-tagadmin
 
 test-frontend: jest
 jest:
-	"${DC}" run --rm -w //frontend frontend npm test
+	npm test -w frontend
 
 test-tagadmin:
 	npm test -w tag-admin
@@ -104,19 +102,16 @@ format: prettier pyupgrade black
 lint: types eslint check-prettier flake8 check-pyupgrade check-black
 
 types:
-	"${DC}" run --rm -w //frontend frontend npm run types
+	npm run types -w frontend
 
 eslint:
-	"${DC}" run --rm frontend npm run lint
-	"${DC}" run --rm server npm run eslint
+	npm run eslint
 
 prettier:
-	"${DC}" run --rm frontend npm run prettier
-	"${DC}" run --rm server npm run prettier
+	npm run prettier
 
 check-prettier:
-	"${DC}" run --rm frontend npm run check-prettier
-	"${DC}" run --rm server npm run check-prettier
+	npm run check-prettier
 
 flake8:
 	"${DC}" run --rm server flake8 pontoon/
