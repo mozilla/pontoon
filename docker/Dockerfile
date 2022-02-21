@@ -22,16 +22,12 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONPATH /app
 
-# JavaScript applications paths
-ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
-ENV TERSER_BINARY /app/node_modules/.bin/terser
-
 # Install required software.
 RUN apt-get update \
     # Enable downloading packages over https
     && apt-get install -y apt-transport-https \
     # Get source for node.js
-    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
     # Install software
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -40,7 +36,6 @@ RUN apt-get update \
         nodejs \
         postgresql-client \
         postgresql-server-dev-13 \
-    && npm install --global npm@8 \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
 
@@ -56,25 +51,13 @@ RUN groupadd -r --gid=${GROUP_ID} pontoon && useradd --uid=${USER_ID} --no-log-i
 RUN chown -R pontoon:pontoon /app
 USER pontoon
 
-# Install node requirements
-COPY package.json .
-COPY package-lock.json .
-#COPY --chown=pontoon:pontoon tag-admin/package.json ./tag-admin/
-RUN npm ci
+# Install the server's Node.js requirements
+ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
+ENV TERSER_BINARY /app/node_modules/.bin/terser
+COPY pontoon/package.json .
+RUN npm install
 
 COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
-
-# Create the folder for front-end assets
-#RUN mkdir -p assets
-# Build JS files
-#RUN npm run build
-
-#COPY --from=frontend /app/frontend/ ./frontend/
-
-# Run collectstatic in container which puts files in the default place for
-# static files.
-RUN mkdir -p frontend/dist frontend/public tag-admin/dist
-RUN python manage.py collectstatic --noinput
 
 CMD ["/app/docker/server_run.sh"]
