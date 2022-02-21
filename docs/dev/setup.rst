@@ -17,7 +17,9 @@ Prerequisites
 2. Install `docker-compose <https://docs.docker.com/compose/install/>`_. You need
    1.10 or higher.
 
-3. Install `make <https://www.gnu.org/software/make/>`_ using either your
+3. Install `Node.js 14 and npm 7 or later <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_.
+
+4. Install `make <https://www.gnu.org/software/make/>`_ using either your
    system's package manager (Linux) or Xcode command line developer tools (OSX).
    On Windows, you can use `MozillaBuild <https://wiki.mozilla.org/MozillaBuild>`_.
 

@@ -1,170 +1,109 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactTable from 'react-table';
+
 import 'react-table/react-table.css';
 
-import Checkbox from './checkbox.js';
+import { Checkbox } from './checkbox.js';
 
-export default class CheckboxTable extends React.Component {
-    constructor(props) {
-        super(props);
-        this.visible = [];
-        this.state = { checked: new Set() };
-    }
+// Returns a copy of the `checked` set with only resource paths that are in `visible`
+const prune = (checked, visible) =>
+    new Set([...checked].filter((v) => visible.includes(v)));
 
-    get columns() {
-        return [this.columnSelect].concat(this.props.columns || []);
-    }
+export function CheckboxTable({ data, onSubmit, submitMessage }) {
+    const visible = useRef([]);
+    const [checked, setChecked] = useState(new Set());
+    const clearChecked = () => setChecked(new Set());
+    const pruneChecked = () =>
+        setChecked((checked) => prune(checked, visible.current));
 
-    get columnSelect() {
-        return {
-            Header: this.renderSelectAllCheckbox,
-            Cell: this.renderCheckbox,
-            sortable: false,
-            width: 45,
-        };
-    }
+    useEffect(() => {
+        visible.current.length = 0;
+        clearChecked();
+    }, [data]);
 
-    get defaultPageSize() {
-        return this.props.defaultPageSize || 5;
-    }
+    const selectAll = useCallback(() => {
+        setChecked((checked) => {
+            if (checked.size > 0) return new Set();
+            else return new Set([...visible.current.filter(Boolean)]);
+        });
+    }, []);
 
-    get selected() {
-        // get the pruned list of selected resources, returns all=true/false
-        // if all visible resources are selected
-        // some rows can be empty strings if there are more visible rows than
-        // resources
-        const checked = this.prune(this.state);
+    const selectOne = useCallback(({ target }) => {
+        setChecked((checked) => {
+            const next = new Set(checked);
+            if (target.checked) next.add(target.name);
+            else next.delete(target.name);
+            return next;
+        });
+    }, []);
+
+    const Header = () => {
+        const pruned = prune(checked, visible.current);
+        // some rows can be empty strings if there are more visible rows than resources
+        const some = pruned.size > 0;
         const all =
-            checked.size > 0 &&
-            checked.size === this.visible.filter((v) => v !== '').length;
-        return { all, checked };
-    }
+            some && pruned.size === visible.current.filter(Boolean).length;
 
-    clearTable() {
-        this.visible.length = 0;
-        this.setState({ checked: new Set() });
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
-            this.clearTable();
-        }
-    }
-
-    handleCheckboxClick = (evt) => {
-        // adds/removes paths for submission
-        const { name, checked: targetChecked } = evt.target;
-        this.setState((prevState) => {
-            let { checked } = prevState;
-            checked = new Set(checked);
-            targetChecked ? checked.add(name) : checked.delete(name);
-            return { checked };
-        });
-    };
-
-    handleSelectAll = () => {
-        // user clicked the select all checkbox...
-        // if there are some resources checked already, all are removed
-        // otherwise all visible are checked.
-        this.setState((prevState) => {
-            let { checked } = prevState;
-            checked =
-                checked.size > 0
-                    ? new Set()
-                    : new Set([...this.visible.filter((x) => x)]);
-            return { checked };
-        });
-    };
-
-    handleSubmit = async (evt) => {
-        // after emitting handleSubmit to parent with list of currently
-        // checked, clears the checkboxes
-        evt.preventDefault();
-        const { checked } = this.state;
-        await this.props.handleSubmit({ data: [...checked] });
-        this.setState({ checked: new Set() });
-    };
-
-    handleTableChange = () => {
-        this.clearTable();
-    };
-
-    handleTableResize = (pageSize) => {
-        this.visible.length = pageSize;
-        this.setState((prevState) => ({ checked: this.prune(prevState) }));
-    };
-
-    handleTableSortChange = () => {
-        this.setState((prevState) => ({ checked: this.prune(prevState) }));
-    };
-
-    prune(state) {
-        // Returns a copy of the checked set with any resource paths that are
-        // not in `this.visible` removed
-        let { checked } = state;
-        return new Set(
-            [...checked].filter((v) => this.visible.indexOf(v) !== -1),
-        );
-    }
-
-    render() {
-        return (
-            <div>
-                {this.renderTable()}
-                {this.renderSubmit()}
-            </div>
-        );
-    }
-
-    renderCheckbox = (item) => {
-        const { checked } = this.state;
-        this.visible.length = item.pageSize;
-        this.visible[item.viewIndex] = item.original[0];
-        return (
-            <Checkbox
-                checked={checked.has(item.original[0])}
-                name={item.original[0]}
-                onChange={this.handleCheckboxClick}
-            />
-        );
-    };
-
-    renderSelectAllCheckbox = () => {
-        // renders a select all checkbox, sets the check to
-        // indeterminate if only some of the visible resources
-        // are checked
-        let { all, checked } = this.selected;
         return (
             <Checkbox
                 checked={all}
-                indeterminate={!all && checked.size > 0}
-                onClick={this.handleSelectAll}
+                indeterminate={some && !all}
+                onChange={selectAll}
             />
         );
     };
 
-    renderSubmit() {
-        return (
-            <button
-                className={this.props.submitClass}
-                onClick={this.handleSubmit}
-            >
-                {this.props.submitMessage}
-            </button>
-        );
-    }
+    const Cell = (item) => {
+        const name = item.original[0];
+        visible.current.length = item.pageSize;
+        visible.current[item.viewIndex] = name;
 
-    renderTable() {
         return (
-            <ReactTable
-                defaultPageSize={this.defaultPageSize}
-                className='-striped -highlight'
-                data={this.props.data}
-                onPageChange={this.handleTableChange}
-                onPageSizeChange={this.handleTableResize}
-                onSortedChange={this.handleTableSortChange}
-                columns={this.columns}
+            <Checkbox
+                checked={checked.has(name)}
+                name={name}
+                onChange={selectOne}
             />
         );
-    }
+    };
+
+    const columns = [
+        { Header, Cell, sortable: false, width: 45 },
+        {
+            Header: 'Resource',
+            id: 'type',
+            Cell: (item) => <span>{item.original[0]}</span>,
+        },
+    ];
+
+    const handleSubmit = async (evt) => {
+        // after emitting handleSubmit to parent with list of currently
+        // checked, clears the checkboxes
+        evt.preventDefault();
+        await onSubmit({ data: [...checked] });
+        clearChecked();
+    };
+
+    return (
+        <div>
+            <ReactTable
+                defaultPageSize={5}
+                className='-striped -highlight'
+                data={data}
+                onPageChange={() => {
+                    visible.current.length = 0;
+                    clearChecked();
+                }}
+                onPageSizeChange={(pageSize) => {
+                    visible.current.length = pageSize;
+                    pruneChecked();
+                }}
+                onSortedChange={pruneChecked}
+                columns={columns}
+            />
+            <button className='tag-resources-associate' onClick={handleSubmit}>
+                {submitMessage}
+            </button>
+        </div>
+    );
 }

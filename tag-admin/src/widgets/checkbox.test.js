@@ -1,37 +1,22 @@
+import { mount } from 'enzyme';
 import React from 'react';
 
-import { mount, shallow } from 'enzyme';
-
-import Checkbox from './checkbox.js';
+import { Checkbox } from './checkbox.js';
 
 test('Checkbox render', () => {
-    let checkbox = shallow(<Checkbox />);
-    expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(false);
+    const checkbox = mount(<Checkbox id='x' />);
+    expect(checkbox.find('input[type="checkbox"]#x')).toHaveLength(1);
+});
 
-    checkbox = shallow(<Checkbox indeterminate='true' />);
-    expect(checkbox.text()).toBe('');
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toBe(undefined);
+test('Checkbox indeterminate', () => {
+    const checkbox = mount(<Checkbox indeterminate />);
+    expect(checkbox.getDOMNode().indeterminate).toBe(true);
+});
 
-    checkbox = mount(<Checkbox />);
-    // this time el is an HTML node
-    expect(checkbox.instance().el.indeterminate).toBe(false);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
+test('Checkbox switch', () => {
+    const checkbox = mount(<Checkbox indeterminate={0} />);
+    expect(checkbox.getDOMNode().indeterminate).toBe(false);
 
-    checkbox = mount(<Checkbox indeterminate={true} />);
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-
-    let prevProp = checkbox.props();
-    checkbox.setProps({ indeterminate: false });
-    checkbox.instance().componentDidUpdate(prevProp);
-    expect(checkbox.instance().el.indeterminate).toBe(false);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
-
-    prevProp = checkbox.props();
-    checkbox.setProps({ indeterminate: true });
-    checkbox.instance().componentDidUpdate(prevProp);
-    expect(checkbox.instance().el.indeterminate).toBe(true);
-    expect(checkbox.instance().el.nodeName).toEqual('INPUT');
+    checkbox.setProps({ indeterminate: 1 });
+    expect(checkbox.getDOMNode().indeterminate).toBe(true);
 });
