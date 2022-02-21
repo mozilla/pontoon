@@ -40,11 +40,12 @@
     "reselect": "^4.0.0",
     "slate": "^0.63.0",
     "slate-react": "^0.58.4",
-    "styled-components": "^4.3.2",
+    "styled-components": "^5.3.3",
     "tlds": "^1.218.0"
   },
   "scripts": {
     "build": "rollup -c",
+    "build:prod": "rollup -c --environment BUILD:production",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "prettier": "prettier --write src/",
     "check-prettier": "prettier --check src/",

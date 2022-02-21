@@ -1,14 +1,3 @@
-# Frontend build
-FROM node:16-bullseye AS frontend
-WORKDIR /app
-COPY package.json package-lock.json ./
-COPY frontend/package.json ./frontend/
-RUN npm ci
-COPY frontend/ ./frontend/
-WORKDIR /app/frontend
-RUN npm run build
-CMD ["npm", "start"]
-
 FROM python:3.9-bullseye AS server
 
 ARG USER_ID=1000

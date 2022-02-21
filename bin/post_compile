@@ -10,13 +10,9 @@ fi
 export PATH=/app/.heroku/node/bin:$PATH
 npm install --global npm@8
 npm ci
-pushd frontend && npm ci && popd
 
-echo "Building tag-admin..."
-npm run build
-
-echo "Building frontend..."
-pushd frontend && npm run build && popd
+echo "Building frontend & tag-admin..."
+npm run build:prod
 
 echo "Collecting static files..."
 ./manage.py migrate --noinput

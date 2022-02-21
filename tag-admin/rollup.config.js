@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 import path from 'path';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
@@ -9,10 +11,14 @@ import css from 'rollup-plugin-css-only';
 export default {
     input: { tag_admin: 'src/index.js' },
     output: { dir: 'dist/' },
+    treeshake: 'recommended',
+
     plugins: [
         replace({
             preventAssignment: true,
-            'process.env.NODE_ENV': JSON.stringify('production'),
+            'process.env.NODE_ENV': JSON.stringify(
+                process.env.BUILD ?? 'development',
+            ),
         }),
         resolve(),
         babel({

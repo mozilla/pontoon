@@ -17,8 +17,8 @@
   "license": "BSD",
   "scripts": {
     "test": "npm test --workspaces --if-present",
-    "build": "npm run build -w tag-admin",
-    "build-w": "npm run build-w -w tag-admin",
+    "build": "npm run build --workspaces --if-present",
+    "build:prod": "npm run build:prod --workspaces --if-present",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
     "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
     "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
