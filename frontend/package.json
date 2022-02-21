@@ -44,10 +44,11 @@
     "tlds": "^1.218.0"
   },
   "scripts": {
+    "build": "rollup -c",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "prettier": "prettier --write src/",
     "check-prettier": "prettier --check src/",
     "test": "jest",
-    "types": "tsc"
+    "types": "tsc --noEmit"
   }
 }

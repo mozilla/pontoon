@@ -5,9 +5,9 @@ import { mark } from 'react-content-marker';
 let keyCounter = 0;
 
 export function markSearchTerms(
-    base: React.ReactNodeArray | string,
+    base: React.ReactNode[] | string,
     search: string,
-): React.ReactNodeArray | string {
+): React.ReactNode[] | string {
     // Split search string on spaces except if between non-escaped quotes.
     const unusable = '☠';
     const searchTerms = search
