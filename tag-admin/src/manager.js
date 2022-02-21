@@ -1,51 +1,46 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import TagResourceSearch from './search.js';
-import TagResourceTable from './table.js';
-import { ErrorList } from './widgets/errors.js';
+import { TagResourceSearch } from './search.js';
+import { post } from './utils/http-post.js';
+import { CheckboxTable } from './widgets/checkbox-table.js';
+import { ErrorList } from './widgets/error-list.js';
 
 import './tag-resources.css';
 
-import { dataManager } from './utils/data.js';
+export function TagResourceManager({ api }) {
+    const [data, setData] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [type, setType] = useState('assoc');
+    const [search, setSearch] = useState('');
 
-export class TagResourceManagerWidget extends React.Component {
-    state = { type: 'assoc', search: '' };
+    const handleChange = useCallback(
+        async (params) => {
+            const response = await post(api, params);
+            const json = await response.json();
+            if (response.status === 200) {
+                setData(json.data || []);
+                setErrors({});
+            } else {
+                setErrors(json.errors || {});
+            }
+        },
+        [api],
+    );
 
-    componentDidMount() {
-        this.props.refreshData({ ...this.state });
-    }
+    useEffect(() => {
+        handleChange({ search, type });
+    }, [search, type]);
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState !== this.state) {
-            this.props.refreshData({ ...this.state });
-        }
-    }
-
-    handleSearchChange = (change) => {
-        this.setState(change);
-    };
-
-    handleSubmit = (checked) => {
-        return this.props.handleSubmit(Object.assign({}, this.state, checked));
-    };
-
-    render() {
-        const { data, errors } = this.props;
-        const { type } = this.state;
-        return (
-            <div className='tag-resource-widget'>
-                <TagResourceSearch
-                    handleSearchChange={this.handleSearchChange}
-                />
-                <ErrorList errors={errors || {}} />
-                <TagResourceTable
-                    data={data || []}
-                    type={type}
-                    handleSubmit={this.handleSubmit}
-                />
-            </div>
-        );
-    }
+    const message = type === 'assoc' ? 'Unlink resources' : 'Link resources';
+    return (
+        <div className='tag-resource-widget'>
+            <TagResourceSearch onSearch={setSearch} onType={setType} />
+            <ErrorList errors={errors} />
+            <CheckboxTable
+                data={data}
+                onSubmit={({ data }) => handleChange({ data, search, type })}
+                submitMessage={message}
+            />
+        </div>
+    );
 }
-
-export const TagResourceManager = dataManager(TagResourceManagerWidget);

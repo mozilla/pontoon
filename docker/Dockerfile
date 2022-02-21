@@ -69,7 +69,7 @@ COPY --chown=pontoon:pontoon . /app/
 
 # Create the folder for front-end assets
 RUN mkdir -p assets
-# Run webpack to compile JS files
+# Build JS files
 RUN npm run build
 
 COPY --from=frontend /frontend/ ./frontend/

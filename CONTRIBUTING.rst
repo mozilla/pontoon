@@ -21,13 +21,24 @@ Report a `new issue <https://github.com/mozilla/pontoon/issues/new>`_:
 Docker
 ======
 
-Everything runs in a Docker container. Thus Pontoon requires fewer things to get
-started and you're guaranteed to have the same setup as everyone else and it
-solves some other problems, too.
+While the front-end (JavaScript) build and tests use the host environment for development,
+the back-end systems (Python/Django, databases, etc.) run in Docker containers.
+For production use, also the front-end is built in a container.
+Thus Pontoon requires fewer things to get started
+and you're guaranteed to have the same server setup as everyone else.
 
 If you're not familiar with `Docker <https://docs.docker.com/>`_ and
 `docker-compose <https://docs.docker.com/compose/overview/>`_, it's worth
 reading up on.
+
+
+JavaScript setup
+================
+
+For working on the front-end, you need at least Node.js 14 and npm 7
+(`installation instructions <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_).
+Parts of the front-end use `npm workspaces <https://docs.npmjs.com/cli/v7/using-npm/workspaces>`_,
+which are not supported by earlier npm versions.
 
 
 Database
@@ -217,8 +228,8 @@ Style nits should be covered by linting as much as possible.
 Code reviews should review the changes in the context of the rest of the system.
 
 
-Dependencies
-============
+Python Dependencies
+===================
 
 Direct dependencies for Pontoon are distributed across four files:
 
@@ -389,7 +400,7 @@ steps, as they don't affect your setup if nothing has changed:
 Building front-end resources
 ============================
 
-We use webpack to build our JavaScript files for some pages
+We use Rollup to build our JavaScript files for some pages
 (currently only the tag admin UI).
 While `make build` will build those files for you,
 you might want to rebuild them while programming on the front.
@@ -397,11 +408,11 @@ To build the files just once, run:
 
 .. code-block:: shell
 
-    $ make build-tagadmin
+    $ npm run build
 
 If you want to have those files be built automatically when you make changes,
 you can run:
 
 .. code-block:: shell
 
-    $ make build-tagadmin-w
+    $ npm run build-w

@@ -1,45 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { TagResourceManager } from './manager.js';
 
-export default class TagResourcesButton extends React.Component {
-    state = { open: false };
+export function TagResourcesButton(props) {
+    const [open, setOpen] = useState(false);
+    const message = open
+        ? 'Hide the resource manager for this tag'
+        : 'Manage resources for this tag';
 
-    handleClick = (evt) => {
-        evt.preventDefault();
-        this.setState((prevState) => ({ open: !prevState.open }));
+    const toggle = (ev) => {
+        ev.preventDefault();
+        setOpen((open) => !open);
     };
 
-    renderButton() {
-        const { open } = this.state;
-        let message = 'Manage resources for this tag';
-        if (open) {
-            message = 'Hide the resource manager for this tag';
-        }
-        return <button onClick={this.handleClick}>{message}</button>;
-    }
-
-    renderResourceManager() {
-        const { open } = this.state;
-        if (!open) {
-            return '';
-        }
-        return (
-            <TagResourceManager
-                tag={this.props.tag}
-                api={this.props.api}
-                requestMethod='post'
-                project={this.props.project}
-            />
-        );
-    }
-
-    render() {
-        return (
-            <div>
-                {this.renderButton()}
-                {this.renderResourceManager()}
-            </div>
-        );
-    }
+    return (
+        <div>
+            <button onClick={toggle}>{message}</button>
+            {open ? <TagResourceManager {...props} /> : null}
+        </div>
+    );
 }

@@ -2,6 +2,7 @@
 *.min.js
 *.min.css
 frontend/build
+tag-admin/dist
 coverage/
 
 # libraries
