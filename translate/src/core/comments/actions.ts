@@ -8,28 +8,28 @@ import * as teamcomments from '~/modules/teamcomments';
 import type { AppDispatch } from '~/store';
 
 export function addComment(
-    entity: number,
-    locale: string,
-    pluralForm: number,
-    translation: number | null | undefined,
-    comment: string,
+  entity: number,
+  locale: string,
+  pluralForm: number,
+  translation: number | null | undefined,
+  comment: string,
 ) {
-    return async (dispatch: AppDispatch) => {
-        NProgress.start();
+  return async (dispatch: AppDispatch) => {
+    NProgress.start();
 
-        await api.comment.add(entity, locale, comment, translation);
+    await api.comment.add(entity, locale, comment, translation);
 
-        dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
-        if (translation) {
-            dispatch(history.actions.get(entity, locale, pluralForm));
-        } else {
-            dispatch(teamcomments.actions.get(entity, locale));
-        }
+    dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
+    if (translation) {
+      dispatch(history.actions.get(entity, locale, pluralForm));
+    } else {
+      dispatch(teamcomments.actions.get(entity, locale));
+    }
 
-        NProgress.done();
-    };
+    NProgress.done();
+  };
 }
 
 export default {
-    addComment,
+  addComment,
 };

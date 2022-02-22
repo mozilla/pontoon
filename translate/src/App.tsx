@@ -34,119 +34,114 @@ import type { Stats } from '~/core/stats';
 import { AppDispatch, RootState } from '~/store';
 
 type Props = {
-    batchactions: BatchActionsState;
-    l10n: L10nState;
-    locale: LocaleState;
-    notification: notification.NotificationState;
-    parameters: NavigationParams;
-    project: ProjectState;
-    stats: Stats;
+  batchactions: BatchActionsState;
+  l10n: L10nState;
+  locale: LocaleState;
+  notification: notification.NotificationState;
+  parameters: NavigationParams;
+  project: ProjectState;
+  stats: Stats;
 };
 
 type InternalProps = Props & {
-    dispatch: AppDispatch;
+  dispatch: AppDispatch;
 };
 
 /**
  * Main entry point to the application. Will render the structure of the page.
  */
 class App extends React.Component<InternalProps> {
-    componentDidMount() {
-        const { parameters } = this.props;
+  componentDidMount() {
+    const { parameters } = this.props;
 
-        this.props.dispatch(locale.actions.get(parameters.locale));
-        this.props.dispatch(project.actions.get(parameters.project));
-        this.props.dispatch(user.actions.getUsers());
+    this.props.dispatch(locale.actions.get(parameters.locale));
+    this.props.dispatch(project.actions.get(parameters.project));
+    this.props.dispatch(user.actions.getUsers());
 
-        // Load resources, unless we're in the All Projects view
-        if (parameters.project !== 'all-projects') {
-            this.props.dispatch(
-                resource.actions.get(parameters.locale, parameters.project),
-            );
-        }
+    // Load resources, unless we're in the All Projects view
+    if (parameters.project !== 'all-projects') {
+      this.props.dispatch(
+        resource.actions.get(parameters.locale, parameters.project),
+      );
     }
+  }
 
-    componentDidUpdate(prevProps: InternalProps) {
-        // If there's a notification in the DOM, passed by django, show it.
-        // Note that we only show it once, and only when the UI has already
-        // been rendered, to make sure users do see it.
-        if (
-            !this.props.l10n.fetching &&
-            !this.props.locale.fetching &&
-            (prevProps.l10n.fetching || prevProps.locale.fetching)
-        ) {
-            let notifications = [];
-            const rootElt = document.getElementById('root');
-            if (rootElt) {
-                notifications = JSON.parse(rootElt.dataset.notifications);
-            }
+  componentDidUpdate(prevProps: InternalProps) {
+    // If there's a notification in the DOM, passed by django, show it.
+    // Note that we only show it once, and only when the UI has already
+    // been rendered, to make sure users do see it.
+    if (
+      !this.props.l10n.fetching &&
+      !this.props.locale.fetching &&
+      (prevProps.l10n.fetching || prevProps.locale.fetching)
+    ) {
+      let notifications = [];
+      const rootElt = document.getElementById('root');
+      if (rootElt) {
+        notifications = JSON.parse(rootElt.dataset.notifications);
+      }
 
-            if (notifications.length) {
-                // Our notification system only supports showing one notification
-                // for the moment, so we only add the first notification here.
-                const notif = notifications[0];
-                this.props.dispatch(
-                    notification.actions.addRaw(notif.content, notif.type),
-                );
-            }
-        }
-    }
-
-    render() {
-        const state = this.props;
-
-        if (state.l10n.fetching || state.locale.fetching) {
-            return <WaveLoader />;
-        }
-
-        return (
-            <div id='app'>
-                <AddonPromotion />
-                <header>
-                    <Navigation />
-                    <ResourceProgress
-                        stats={state.stats}
-                        parameters={state.parameters}
-                    />
-                    <ProjectInfo
-                        projectSlug={state.parameters.project}
-                        project={state.project}
-                    />
-                    <notification.NotificationPanel
-                        notification={state.notification}
-                    />
-                    <UserControls />
-                </header>
-                <section className='main-content'>
-                    <section className='panel-list'>
-                        <SearchBox />
-                        <EntitiesList />
-                    </section>
-                    <section className='panel-content'>
-                        {state.batchactions.entities.length === 0 ? (
-                            <EntityDetails />
-                        ) : (
-                            <BatchActions />
-                        )}
-                    </section>
-                </section>
-                <Lightbox />
-                <InteractiveTour />
-            </div>
+      if (notifications.length) {
+        // Our notification system only supports showing one notification
+        // for the moment, so we only add the first notification here.
+        const notif = notifications[0];
+        this.props.dispatch(
+          notification.actions.addRaw(notif.content, notif.type),
         );
+      }
     }
+  }
+
+  render() {
+    const state = this.props;
+
+    if (state.l10n.fetching || state.locale.fetching) {
+      return <WaveLoader />;
+    }
+
+    return (
+      <div id='app'>
+        <AddonPromotion />
+        <header>
+          <Navigation />
+          <ResourceProgress stats={state.stats} parameters={state.parameters} />
+          <ProjectInfo
+            projectSlug={state.parameters.project}
+            project={state.project}
+          />
+          <notification.NotificationPanel notification={state.notification} />
+          <UserControls />
+        </header>
+        <section className='main-content'>
+          <section className='panel-list'>
+            <SearchBox />
+            <EntitiesList />
+          </section>
+          <section className='panel-content'>
+            {state.batchactions.entities.length === 0 ? (
+              <EntityDetails />
+            ) : (
+              <BatchActions />
+            )}
+          </section>
+        </section>
+        <Lightbox />
+        <InteractiveTour />
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = (state: RootState): Props => {
-    return {
-        batchactions: state[batchactions.NAME],
-        l10n: state[l10n.NAME],
-        locale: state[locale.NAME],
-        notification: state[notification.NAME],
-        parameters: navigation.selectors.getNavigationParams(state),
-        project: state[project.NAME],
-        stats: state[stats.NAME],
-    };
+  return {
+    batchactions: state[batchactions.NAME],
+    l10n: state[l10n.NAME],
+    locale: state[locale.NAME],
+    notification: state[notification.NAME],
+    parameters: navigation.selectors.getNavigationParams(state),
+    project: state[project.NAME],
+    stats: state[stats.NAME],
+  };
 };
 
 export default connect(mapStateToProps)(App);

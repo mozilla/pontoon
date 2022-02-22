@@ -1,9 +1,9 @@
 import {
-    Transformer,
-    BaseNode,
-    SelectExpression,
-    TextElement,
-    Variant,
+  Transformer,
+  BaseNode,
+  SelectExpression,
+  TextElement,
+  Variant,
 } from '@fluent/syntax';
 
 import flattenMessage from './flattenMessage';
@@ -18,52 +18,50 @@ import type { Locale } from '~/core/locale';
  * Gather custom (numeric) plural variants
  */
 function getNumericVariants(variants: Variant[]) {
-    return variants.filter((variant) => {
-        return variant.key.type === 'NumberLiteral';
-    });
+  return variants.filter((variant) => {
+    return variant.key.type === 'NumberLiteral';
+  });
 }
 
 /**
  * Generate a CLDR template variant
  */
 function getCldrTemplateVariant(
-    variants: ReadonlyArray<Variant>,
+  variants: ReadonlyArray<Variant>,
 ): Variant | null | undefined {
-    return variants.find((variant) => {
-        const key = variant.key;
-        return (
-            key.type === 'Identifier' && CLDR_PLURALS.indexOf(key.name) !== -1
-        );
-    });
+  return variants.find((variant) => {
+    const key = variant.key;
+    return key.type === 'Identifier' && CLDR_PLURALS.indexOf(key.name) !== -1;
+  });
 }
 
 /**
  * Generate locale plural variants from a template
  */
 function getLocaleVariants(locale: Locale, template: Variant) {
-    return locale.cldrPlurals.map((item) => {
-        const localeVariant = template.clone();
-        if (localeVariant.key.type === 'Identifier') {
-            localeVariant.key.name = CLDR_PLURALS[item];
-        }
-        localeVariant.default = false;
-        return localeVariant;
-    });
+  return locale.cldrPlurals.map((item) => {
+    const localeVariant = template.clone();
+    if (localeVariant.key.type === 'Identifier') {
+      localeVariant.key.name = CLDR_PLURALS[item];
+    }
+    localeVariant.default = false;
+    return localeVariant;
+  });
 }
 
 /**
  * Return variants with default variant set
  */
 function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
-    const defaultVariant = variants.find((variant) => {
-        return variant.default === true;
-    });
+  const defaultVariant = variants.find((variant) => {
+    return variant.default === true;
+  });
 
-    if (!defaultVariant) {
-        variants[variants.length - 1].default = true;
-    }
+  if (!defaultVariant) {
+    variants[variants.length - 1].default = true;
+  }
 
-    return variants;
+  return variants;
 }
 
 /**
@@ -82,39 +80,39 @@ function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
  * @returns {Entry} An emptied copy of the source.
  */
 export default function getEmptyMessage(source: Entry, locale: Locale): Entry {
-    class EmptyTransformer extends Transformer {
-        // Empty Text Elements
-        visitTextElement(node: TextElement): TextElement {
-            node.value = '';
-            return node;
-        }
-
-        // Create empty locale plural variants
-        visitSelectExpression(node: SelectExpression): BaseNode {
-            if (isPluralExpression(node)) {
-                const variants = node.variants;
-                const numericVariants = getNumericVariants(variants);
-
-                const template = getCldrTemplateVariant(variants);
-                const localeVariants = template
-                    ? getLocaleVariants(locale, template)
-                    : [];
-
-                node.variants = withDefaultVariant(
-                    numericVariants.concat(localeVariants),
-                );
-            }
-
-            return this.genericVisit(node);
-        }
+  class EmptyTransformer extends Transformer {
+    // Empty Text Elements
+    visitTextElement(node: TextElement): TextElement {
+      node.value = '';
+      return node;
     }
 
-    const message = source.clone();
+    // Create empty locale plural variants
+    visitSelectExpression(node: SelectExpression): BaseNode {
+      if (isPluralExpression(node)) {
+        const variants = node.variants;
+        const numericVariants = getNumericVariants(variants);
 
-    // Convert all simple elements to TextElements
-    const flatMessage = flattenMessage(message);
+        const template = getCldrTemplateVariant(variants);
+        const localeVariants = template
+          ? getLocaleVariants(locale, template)
+          : [];
 
-    // Empty TextElements
-    const transformer = new EmptyTransformer();
-    return transformer.visit(flatMessage) as any as Entry;
+        node.variants = withDefaultVariant(
+          numericVariants.concat(localeVariants),
+        );
+      }
+
+      return this.genericVisit(node);
+    }
+  }
+
+  const message = source.clone();
+
+  // Convert all simple elements to TextElements
+  const flatMessage = flattenMessage(message);
+
+  // Empty TextElements
+  const transformer = new EmptyTransformer();
+  return transformer.visit(flatMessage) as any as Entry;
 }

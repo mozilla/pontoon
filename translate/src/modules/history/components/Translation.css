@@ -1,121 +1,121 @@
 .history .wrapper {
-    border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid #5e6475;
 }
 
 .history .translation {
-    cursor: pointer;
-    padding: 15px 10px;
-    display: flex;
+  cursor: pointer;
+  padding: 15px 10px;
+  display: flex;
 }
 
 .history .translation.cannot-copy {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .history .translation:not(.cannot-copy):hover {
-    background: #333941;
+  background: #333941;
 }
 
 .history .translation .user-avatar {
-    padding-right: 8px;
-    position: relative;
-    top: 3px;
+  padding-right: 8px;
+  position: relative;
+  top: 3px;
 }
 
 .history .translation .user-avatar img {
-    border-radius: 6px;
-    border: 2px solid #5e6475;
+  border-radius: 6px;
+  border: 2px solid #5e6475;
 }
 
 .history .translation:hover .user-avatar img {
-    border-color: #637283;
+  border-color: #637283;
 }
 
 .history .translation .content {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .history .translation .content > header {
-    color: #aaaaaa;
-    display: block;
-    font-size: 11px;
-    font-weight: 300;
-    padding: 1px 0 5px;
+  color: #aaaaaa;
+  display: block;
+  font-size: 11px;
+  font-weight: 300;
+  padding: 1px 0 5px;
 }
 
 .history .translation .content > header .info {
-    float: left;
+  float: left;
 }
 
 .history .translation .content > header .toolbar {
-    display: block;
-    float: right;
+  display: block;
+  float: right;
 }
 
 .history .translation .content > header + p {
-    clear: both;
-    text-align: start;
-    white-space: pre-wrap;
+  clear: both;
+  text-align: start;
+  white-space: pre-wrap;
 }
 
 .history .translation .content > header .info time {
-    padding-left: 3px;
+  padding-left: 3px;
 }
 
 .history .translation .content > header .info time::before {
-    content: '•';
-    padding-right: 3px;
+  content: '•';
+  padding-right: 3px;
 }
 
 .history .translation .content > header .info a {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .history .translation .content > header .toggle {
-    background: #333941;
-    border: 1px solid #3f4752;
-    border-radius: 4px;
-    font-size: inherit;
-    font-weight: 100;
-    margin-right: 6px;
-    padding: 2px 4px;
-    pointer-events: auto;
+  background: #333941;
+  border: 1px solid #3f4752;
+  border-radius: 4px;
+  font-size: inherit;
+  font-weight: 100;
+  margin-right: 6px;
+  padding: 2px 4px;
+  pointer-events: auto;
 }
 
 .history .translation .content > header .toggle.on {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .history .translation:hover .content > header .toggle {
-    border-color: #4d5967;
+  border-color: #4d5967;
 }
 
 .history .translation .content > header .toggle:hover {
-    border-color: #637283;
+  border-color: #637283;
 }
 
 .history .translation .content > header .toggle.active .stress {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .history .translation .content > header button {
-    background: no-repeat transparent;
-    border: none;
-    color: #aaaaaa;
-    display: inline-block;
-    padding: 0;
-    outline: none;
+  background: no-repeat transparent;
+  border: none;
+  color: #aaaaaa;
+  display: inline-block;
+  padding: 0;
+  outline: none;
 }
 
 .history .translation .content > header button.fa,
 .history .translation .content > header button.far {
-    font-size: 1.8em;
-    height: 22px;
-    opacity: 0.5;
-    pointer-events: auto;
-    cursor: default;
-    vertical-align: bottom;
-    width: 22px;
+  font-size: 1.8em;
+  height: 22px;
+  opacity: 0.5;
+  pointer-events: auto;
+  cursor: default;
+  vertical-align: bottom;
+  width: 22px;
 }
 
 .history .translation.rejected.can-reject header button.delete,
@@ -123,98 +123,98 @@
 .history .translation.can-approve header button.unapprove,
 .history .translation.can-reject header button.reject,
 .history .translation.can-reject header button.unreject {
-    opacity: 1;
-    cursor: pointer;
+  opacity: 1;
+  cursor: pointer;
 }
 
 .history .translation.rejected {
-    opacity: 0.4;
+  opacity: 0.4;
 }
 
 .history .translation.rejected:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .history .translation.fuzzy .content > header button.approve:before {
-    color: #fed271;
+  color: #fed271;
 }
 
 .history .translation .content > header button.approve:before,
 .history .translation .content > header button.unapprove:before {
-    content: '';
+  content: '';
 }
 
 .history .translation.can-approve .content > header button.approve:hover:before,
 .history .translation .content > header button.unapprove:before {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .history .translation:not(.can-approve) .content > header button.approve:before,
 .history
-    .translation.can-approve
-    .content
-    > header
-    button.approve:not(:hover):before,
+  .translation.can-approve
+  .content
+  > header
+  button.approve:not(:hover):before,
 .history
-    .translation.can-approve
-    .content
-    > header
-    button.unapprove:hover:before {
-    font-weight: 400;
+  .translation.can-approve
+  .content
+  > header
+  button.unapprove:hover:before {
+  font-weight: 400;
 }
 
 .history .translation .content > header button.reject:before,
 .history .translation .content > header button.unreject:before {
-    content: '';
-    margin-left: 5px;
+  content: '';
+  margin-left: 5px;
 }
 
 .history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
-    color: #f36;
+  color: #f36;
 }
 
 .history .translation:not(.can-reject) .content > header button.reject:before,
 .history
-    .translation.can-reject
-    .content
-    > header
-    button.reject:not(:hover):before,
+  .translation.can-reject
+  .content
+  > header
+  button.reject:not(:hover):before,
 .history
-    .translation.can-reject
-    .content
-    > header
-    button.unreject:hover:before {
-    font-weight: 400;
+  .translation.can-reject
+  .content
+  > header
+  button.unreject:hover:before {
+  font-weight: 400;
 }
 
 .translation .content > header button.delete {
-    margin-right: 1px;
+  margin-right: 1px;
 }
 
 .translation .content > header button.delete:before {
-    content: '';
-    float: left;
-    font-size: 19px;
-    margin-top: -1px;
+  content: '';
+  float: left;
+  font-size: 19px;
+  margin-top: -1px;
 }
 
 .translation .content > header button.delete:hover:before {
-    color: #f36;
+  color: #f36;
 }
 
 .machinery-sources {
-    position: absolute;
-    top: 0;
-    left: -2px;
-    color: #7bc876;
-    font-size: 14px;
+  position: absolute;
+  top: 0;
+  left: -2px;
+  color: #7bc876;
+  font-size: 14px;
 }
 
 .machinery-sources::before {
-    content: '';
+  content: '';
 }
 
 .history .translation .avatar-container {
-    position: relative;
+  position: relative;
 }

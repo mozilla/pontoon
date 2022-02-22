@@ -1,14 +1,14 @@
 .other-locales {
-    line-height: 22px;
+  line-height: 22px;
 }
 
 .other-locales > ul {
-    list-style: none;
-    margin: 0;
+  list-style: none;
+  margin: 0;
 }
 
 .other-locales > p {
-    color: #aaa;
-    font-style: italic;
-    padding: 15px 10px;
+  color: #aaa;
+  font-style: italic;
+  padding: 15px 10px;
 }

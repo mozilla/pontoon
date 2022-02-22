@@ -6,22 +6,22 @@ import { FluentEditor } from '~/modules/fluenteditor';
 import { GenericEditor } from '~/modules/genericeditor';
 
 type Props = {
-    fileFormat: string;
+  fileFormat: string;
 };
 
 export default function EditorSelector(
-    props: Props,
+  props: Props,
 ): React.ReactElement<'div'> {
-    if (props.fileFormat === 'ftl') {
-        return (
-            <div className='editor'>
-                <FluentEditor />
-            </div>
-        );
-    }
+  if (props.fileFormat === 'ftl') {
     return (
-        <div className='editor'>
-            <GenericEditor />
-        </div>
+      <div className='editor'>
+        <FluentEditor />
+      </div>
     );
+  }
+  return (
+    <div className='editor'>
+      <GenericEditor />
+    </div>
+  );
 }

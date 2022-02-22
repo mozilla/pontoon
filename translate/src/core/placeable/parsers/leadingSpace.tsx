@@ -9,19 +9,16 @@ import { Localized } from '@fluent/react';
  *   " Hello, world"
  */
 const leadingSpace = {
-    rule: /(^ +)/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-leadingSpace'
-                attrs={{ title: true }}
-            >
-                <mark className='placeable' title='Leading space' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(^ +)/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-leadingSpace' attrs={{ title: true }}>
+        <mark className='placeable' title='Leading space' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default leadingSpace;

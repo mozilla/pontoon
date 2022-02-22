@@ -8,16 +8,16 @@ import type { Entry } from '@fluent/syntax';
  * elements are simple.
  */
 export default function isSimpleMessage(message: Entry): boolean {
-    if (
-        message &&
-        (message.type === 'Message' || message.type === 'Term') &&
-        message.attributes &&
-        !message.attributes.length &&
-        message.value &&
-        message.value.elements.every(isSimpleElement)
-    ) {
-        return true;
-    }
+  if (
+    message &&
+    (message.type === 'Message' || message.type === 'Term') &&
+    message.attributes &&
+    !message.attributes.length &&
+    message.value &&
+    message.value.elements.every(isSimpleElement)
+  ) {
+    return true;
+  }
 
-    return false;
+  return false;
 }

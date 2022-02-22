@@ -1,56 +1,56 @@
 .entity {
-    color: white;
-    cursor: pointer;
-    line-height: 2rem;
-    padding: 10px 25px 10px 43px;
-    position: relative;
-    vertical-align: baseline;
-    margin: 0;
-    border: 0;
-    outline: 0;
-    font-size: 100%;
+  color: white;
+  cursor: pointer;
+  line-height: 2rem;
+  padding: 10px 25px 10px 43px;
+  position: relative;
+  vertical-align: baseline;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
 }
 
 .entity.checked,
 .entity.selected,
 .entity.sibling:hover,
 .entity:hover {
-    background-color: #333941;
+  background-color: #333941;
 }
 
 .entity > div {
-    line-height: 20px;
+  line-height: 20px;
 }
 
 .entity mark.search {
-    color: #ffa10f;
-    font-weight: normal;
-    font-style: inherit;
-    background: #676054;
-    border-radius: 2px;
+  color: #ffa10f;
+  font-weight: normal;
+  font-style: inherit;
+  background: #676054;
+  border-radius: 2px;
 }
 
 .entity .source-string,
 .entity .translation-string {
-    display: inline-block;
-    margin: 0;
-    padding-bottom: 3px;
-    width: 100%;
-    vertical-align: top;
-    word-wrap: break-word;
+  display: inline-block;
+  margin: 0;
+  padding-bottom: 3px;
+  width: 100%;
+  vertical-align: top;
+  word-wrap: break-word;
 }
 
 .entity .translation-string {
-    color: #aaaaaa;
-    min-height: 20px;
-    text-align: start;
+  color: #aaaaaa;
+  min-height: 20px;
+  text-align: start;
 }
 
 .entity .translation-string[data-script='Latin'],
 .entity .translation-string[data-script='Greek'],
 .entity .translation-string[data-script='Cyrillic'],
 .entity .translation-string[data-script='Vietnamese'] {
-    font-style: italic;
+  font-style: italic;
 }
 
 /* Bug 1353135
@@ -59,65 +59,65 @@
  */
 .entity .translation-string[lang='mk'],
 .entity .translation-string[lang='sr'] {
-    font-family: 'Ubuntu Regular';
+  font-family: 'Ubuntu Regular';
 }
 
 /* Make selection area bigger and fit the entire row for easier use */
 .entity > .status {
-    margin: -13px -13px -13px -16px;
-    padding: 13px 13px 13px 16px;
-    font-size: 16px;
+  margin: -13px -13px -13px -16px;
+  padding: 13px 13px 13px 16px;
+  font-size: 16px;
 }
 
 .entity .status.fa {
-    left: 16px;
-    top: 13px;
-    position: absolute;
+  left: 16px;
+  top: 13px;
+  position: absolute;
 }
 
 .entity .status:before {
-    color: #5f7285;
-    content: '';
+  color: #5f7285;
+  content: '';
 }
 
 .entity.batch-editable .status:hover:before {
-    content: '';
+  content: '';
 }
 
 .entity.batch-editable.checked > .status:before {
-    content: '';
+  content: '';
 }
 
 .entity.approved .status:before {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .entity.fuzzy .status:before {
-    color: #fed271;
+  color: #fed271;
 }
 
 .entity.errors .status:before {
-    color: #f36;
+  color: #f36;
 }
 
 .entity.warnings .status:before {
-    color: #ffa10f;
+  color: #ffa10f;
 }
 
 .entity.sibling {
-    background-color: #4d5967;
+  background-color: #4d5967;
 }
 
 .entity .sibling-entities-icon {
-    color: #aaa;
-    left: 17px;
-    top: 39px;
-    position: absolute;
-    margin: 0 -13px -13px -17px;
-    padding: 0 13px 13px 17px;
-    font-size: 14px;
+  color: #aaa;
+  left: 17px;
+  top: 39px;
+  position: absolute;
+  margin: 0 -13px -13px -17px;
+  padding: 0 13px 13px 17px;
+  font-size: 14px;
 }
 
 .entity .sibling-entities-icon:hover {
-    color: #7bc876;
+  color: #7bc876;
 }

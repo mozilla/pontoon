@@ -1,81 +1,81 @@
 .comments-list ul .comment {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .comments-list .comment a {
-    color: #7bc876;
-    font-weight: 400;
+  color: #7bc876;
+  font-weight: 400;
 }
 
 .comments-list
-    .comment
-    .container
-    .content
-    a[href^='/contributors/']:not(.comment-author) {
-    background-color: #3f4752;
-    padding: 0 2px;
-    border-radius: 2px;
+  .comment
+  .container
+  .content
+  a[href^='/contributors/']:not(.comment-author) {
+  background-color: #3f4752;
+  padding: 0 2px;
+  border-radius: 2px;
 }
 
 .comments-list .comment-author {
-    margin-right: 4px;
+  margin-right: 4px;
 }
 
 .comments-list .comment .content {
-    background-color: #4d5967;
-    border: solid 1px #4d5967;
-    border-radius: 4px;
-    display: flex;
-    font-size: 11px;
-    padding: 6px;
-    word-break: break-word;
-    white-space: pre-wrap;
-    position: relative;
+  background-color: #4d5967;
+  border: solid 1px #4d5967;
+  border-radius: 4px;
+  display: flex;
+  font-size: 11px;
+  padding: 6px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  position: relative;
 }
 
 .comments-list .comment .content p,
 .comments-list .comment .content span {
-    color: #cccccc;
+  color: #cccccc;
 }
 
 .comments-list .comment .content p:first-child {
-    display: inline;
+  display: inline;
 }
 
 .comments-list .comment .info {
-    color: #aaaaaa;
-    font-size: 11px;
-    font-weight: 300;
-    margin-top: -2px;
-    padding-left: 8px;
+  color: #aaaaaa;
+  font-size: 11px;
+  font-weight: 300;
+  margin-top: -2px;
+  padding-left: 8px;
 }
 
 .comments-list .comment .info .pin-button:before {
-    content: '•';
-    padding: 0 3px 0 3px;
+  content: '•';
+  padding: 0 3px 0 3px;
 }
 
 .comments-list .comment .info .pin-button {
-    background-color: transparent;
-    border: none;
-    color: #aaaaaa;
-    font-size: 11px;
-    font-weight: 300;
-    padding: 0;
+  background-color: transparent;
+  border: none;
+  color: #aaaaaa;
+  font-size: 11px;
+  font-weight: 300;
+  padding: 0;
 }
 
 .comments-list .comment .info .pin-button:hover {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .comments-list .comment .comment-pin {
-    color: #7bc876;
-    font-size: 9px;
-    position: absolute;
-    right: 4px;
-    top: -10px;
+  color: #7bc876;
+  font-size: 9px;
+  position: absolute;
+  right: 4px;
+  top: -10px;
 }
 
 .comments-list .comment .comment-pin .fa {
-    padding-right: 2px;
+  padding-right: 2px;
 }

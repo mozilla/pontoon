@@ -1,73 +1,73 @@
 .machinery .translation {
-    border-bottom: 1px solid #5e6475;
-    cursor: pointer;
-    padding: 10px;
+  border-bottom: 1px solid #5e6475;
+  cursor: pointer;
+  padding: 10px;
 }
 
 .machinery .translation.cannot-copy {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .machinery .translation.cannot-copy .sources.projects {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .machinery .translation:not(.cannot-copy):hover,
 .machinery .translation.selected {
-    background: #333941;
+  background: #333941;
 }
 
 .machinery .translation > header {
-    color: #aaaaaa;
-    display: block;
-    font-size: 11px;
-    font-weight: 300;
-    padding: 1px 0 5px;
-    text-align: right;
+  color: #aaaaaa;
+  display: block;
+  font-size: 11px;
+  font-weight: 300;
+  padding: 1px 0 5px;
+  text-align: right;
 }
 
 .machinery .translation > header ul {
-    display: inline-block;
+  display: inline-block;
 }
 
 .machinery .translation > header ul li {
-    display: inline;
-    padding-left: 3px;
+  display: inline;
+  padding-left: 3px;
 }
 
 .machinery .translation > header a {
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .machinery .translation > header ul li:not(:first-child)::before {
-    content: '•';
-    padding-right: 3px;
+  content: '•';
+  padding-right: 3px;
 }
 
 .machinery .translation > header .quality::after {
-    content: '•';
-    color: #aaaaaa;
-    padding-left: 3px;
+  content: '•';
+  color: #aaaaaa;
+  padding-left: 3px;
 }
 
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .machinery .translation > header .projects {
-    max-width: calc(100% - 10px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  max-width: calc(100% - 10px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .machinery .translation p {
-    min-height: 22px;
-    text-align: start;
-    white-space: pre-wrap;
+  min-height: 22px;
+  text-align: start;
+  white-space: pre-wrap;
 }
 
 .machinery .translation p.original {
-    color: #aaaaaa;
+  color: #aaaaaa;
 }

@@ -6,8 +6,8 @@ import { actions } from '~/core/lightbox';
 import { useAppDispatch } from '~/hooks';
 
 type Props = {
-    locale: string;
-    source: string;
+  locale: string;
+  source: string;
 };
 
 /**
@@ -17,25 +17,25 @@ type Props = {
  * source string and then shows a miniature of those images.
  */
 export default function Screenshots(props: Props) {
-    const { locale, source } = props;
-    const dispatch = useAppDispatch();
+  const { locale, source } = props;
+  const dispatch = useAppDispatch();
 
-    const images = getImageURLs(source, locale);
+  const images = getImageURLs(source, locale);
 
-    if (images.length === 0) {
-        return null;
-    }
+  if (images.length === 0) {
+    return null;
+  }
 
-    return (
-        <div className='screenshots'>
-            {images.map((urlWithLocale) => (
-                <img
-                    src={urlWithLocale}
-                    alt=''
-                    key={urlWithLocale}
-                    onClick={() => dispatch(actions.open(urlWithLocale))}
-                />
-            ))}
-        </div>
-    );
+  return (
+    <div className='screenshots'>
+      {images.map((urlWithLocale) => (
+        <img
+          src={urlWithLocale}
+          alt=''
+          key={urlWithLocale}
+          onClick={() => dispatch(actions.open(urlWithLocale))}
+        />
+      ))}
+    </div>
+  );
 }

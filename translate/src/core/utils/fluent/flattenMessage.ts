@@ -14,26 +14,26 @@ import type { Entry } from '@fluent/syntax';
  * value and attributes elements.
  */
 export default function flattenMessage(message: Entry): Entry {
-    const flatMessage = message.clone();
-    if (flatMessage.type !== 'Message' && flatMessage.type !== 'Term') {
-        return flatMessage;
-    }
-
-    if (flatMessage.value && flatMessage.value.elements.length > 0) {
-        flatMessage.value.elements = flattenPatternElements(
-            flatMessage.value.elements,
-        );
-    }
-
-    if (flatMessage.attributes) {
-        flatMessage.attributes.forEach((attribute) => {
-            if (attribute.value && attribute.value.elements.length > 0) {
-                attribute.value.elements = flattenPatternElements(
-                    attribute.value.elements,
-                );
-            }
-        });
-    }
-
+  const flatMessage = message.clone();
+  if (flatMessage.type !== 'Message' && flatMessage.type !== 'Term') {
     return flatMessage;
+  }
+
+  if (flatMessage.value && flatMessage.value.elements.length > 0) {
+    flatMessage.value.elements = flattenPatternElements(
+      flatMessage.value.elements,
+    );
+  }
+
+  if (flatMessage.attributes) {
+    flatMessage.attributes.forEach((attribute) => {
+      if (attribute.value && attribute.value.elements.length > 0) {
+        attribute.value.elements = flattenPatternElements(
+          attribute.value.elements,
+        );
+      }
+    });
+  }
+
+  return flatMessage;
 }

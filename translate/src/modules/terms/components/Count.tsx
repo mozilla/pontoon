@@ -3,19 +3,19 @@ import * as React from 'react';
 import type { TermState } from '~/core/term';
 
 type Props = {
-    terms: TermState;
+  terms: TermState;
 };
 
 export default function TermCount(
-    props: Props,
+  props: Props,
 ): null | React.ReactElement<'span'> {
-    const { terms } = props;
+  const { terms } = props;
 
-    if (terms.fetching || !terms.terms) {
-        return null;
-    }
+  if (terms.fetching || !terms.terms) {
+    return null;
+  }
 
-    const termCount = terms.terms.length;
+  const termCount = terms.terms.length;
 
-    return <span className='count'>{termCount}</span>;
+  return <span className='count'>{termCount}</span>;
 }

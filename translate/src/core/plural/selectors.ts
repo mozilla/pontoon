@@ -8,13 +8,13 @@ import type { RootState } from '../../store';
 const pluralSelector = (state: RootState) => state.plural.pluralForm;
 
 export function _getPluralForm(
-    pluralForm: number,
-    entity: Entity | null | undefined,
+  pluralForm: number,
+  entity: Entity | null | undefined,
 ): number {
-    if (pluralForm === -1 && entity && entity.original_plural) {
-        return 0;
-    }
-    return pluralForm;
+  if (pluralForm === -1 && entity && entity.original_plural) {
+    return 0;
+  }
+  return pluralForm;
 }
 
 /**
@@ -25,28 +25,28 @@ export function _getPluralForm(
  * the plural form as stored in the state.
  */
 export const getPluralForm = createSelector(
-    pluralSelector,
-    (state: RootState) => entities.selectors.getSelectedEntity(state),
-    _getPluralForm,
+  pluralSelector,
+  (state: RootState) => entities.selectors.getSelectedEntity(state),
+  _getPluralForm,
 );
 
 export function _getTranslationForSelectedEntity(
-    entity: Entity,
-    pluralForm: number,
+  entity: Entity,
+  pluralForm: number,
 ): EntityTranslation | null | undefined {
-    if (pluralForm === -1) {
-        pluralForm = 0;
-    }
+  if (pluralForm === -1) {
+    pluralForm = 0;
+  }
 
-    if (
-        entity &&
-        entity.translation[pluralForm] &&
-        !entity.translation[pluralForm].rejected
-    ) {
-        return entity.translation[pluralForm];
-    }
+  if (
+    entity &&
+    entity.translation[pluralForm] &&
+    !entity.translation[pluralForm].rejected
+  ) {
+    return entity.translation[pluralForm];
+  }
 
-    return null;
+  return null;
 }
 
 /**
@@ -57,20 +57,20 @@ export function _getTranslationForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationForSelectedEntity = createSelector(
-    (state: RootState) => entities.selectors.getSelectedEntity(state),
-    getPluralForm,
-    _getTranslationForSelectedEntity,
+  (state: RootState) => entities.selectors.getSelectedEntity(state),
+  getPluralForm,
+  _getTranslationForSelectedEntity,
 );
 
 export function _getTranslationStringForSelectedEntity(
-    entity: Entity,
-    pluralForm: number,
+  entity: Entity,
+  pluralForm: number,
 ): string {
-    const translation = _getTranslationForSelectedEntity(entity, pluralForm);
-    if (translation && translation.string) {
-        return translation.string;
-    }
-    return '';
+  const translation = _getTranslationForSelectedEntity(entity, pluralForm);
+  if (translation && translation.string) {
+    return translation.string;
+  }
+  return '';
 }
 
 /**
@@ -81,13 +81,13 @@ export function _getTranslationStringForSelectedEntity(
  * most recent non-rejected one.
  */
 export const getTranslationStringForSelectedEntity = createSelector(
-    (state: RootState) => entities.selectors.getSelectedEntity(state),
-    getPluralForm,
-    _getTranslationStringForSelectedEntity,
+  (state: RootState) => entities.selectors.getSelectedEntity(state),
+  getPluralForm,
+  _getTranslationStringForSelectedEntity,
 );
 
 export default {
-    getPluralForm,
-    getTranslationForSelectedEntity,
-    getTranslationStringForSelectedEntity,
+  getPluralForm,
+  getTranslationForSelectedEntity,
+  getTranslationStringForSelectedEntity,
 };

@@ -17,24 +17,24 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L115
  */
 const pythonFormattingVariable = {
-    rule: /(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-pythonFormattingVariable'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Python string formatting variable'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized
+        id='placeable-parser-pythonFormattingVariable'
+        attrs={{ title: true }}
+      >
+        <mark
+          className='placeable'
+          title='Python string formatting variable'
+          dir='ltr'
+        >
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default pythonFormattingVariable;

@@ -1,38 +1,38 @@
 .skeleton-loader {
-    animation: fading 1.5s infinite;
+  animation: fading 1.5s infinite;
 }
 
 .skeleton-loader.entities {
-    pointer-events: none;
-    overflow: hidden;
-    height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100%;
 }
 
 .skeleton-loader.entities.scroll {
-    height: auto;
+  height: auto;
 }
 
 .skeleton-loader p {
-    height: 0.8125rem;
-    background-color: #e2e2e2;
-    padding-bottom: 3px;
+  height: 0.8125rem;
+  background-color: #e2e2e2;
+  padding-bottom: 3px;
 }
 
 .skeleton-loader .text-2 {
-    width: 50%;
-    display: inline-block;
+  width: 50%;
+  display: inline-block;
 }
 
 @keyframes fading {
-    0% {
-        opacity: 0.1;
-    }
+  0% {
+    opacity: 0.1;
+  }
 
-    50% {
-        opacity: 0.2;
-    }
+  50% {
+    opacity: 0.2;
+  }
 
-    100% {
-        opacity: 0.1;
-    }
+  100% {
+    opacity: 0.1;
+  }
 }

@@ -1,11 +1,11 @@
 .progress-chart canvas {
-    border-radius: 100%;
+  border-radius: 100%;
 }
 
 .progress-chart:hover .selector canvas {
-    background: #3f4752;
+  background: #3f4752;
 }
 
 .progress-chart .menu canvas {
-    margin: 10px auto;
+  margin: 10px auto;
 }

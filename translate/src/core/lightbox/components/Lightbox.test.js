@@ -9,88 +9,88 @@ import * as actions from '../actions';
 import Lightbox, { LightboxBase } from './Lightbox';
 
 describe('<LightboxBase>', () => {
-    it('renders the image correctly', () => {
-        const state = {
-            image: 'http://example.org/empty.png',
-            isOpen: true,
-        };
-        const wrapper = shallow(<LightboxBase lightbox={state} />).dive();
+  it('renders the image correctly', () => {
+    const state = {
+      image: 'http://example.org/empty.png',
+      isOpen: true,
+    };
+    const wrapper = shallow(<LightboxBase lightbox={state} />).dive();
 
-        expect(wrapper.find('img')).toHaveLength(1);
-        expect(wrapper.find('img').props().src).toEqual(
-            'http://example.org/empty.png',
-        );
-    });
+    expect(wrapper.find('img')).toHaveLength(1);
+    expect(wrapper.find('img').props().src).toEqual(
+      'http://example.org/empty.png',
+    );
+  });
 });
 
 describe('<Lightbox>', () => {
-    it('is hidden by default', () => {
-        const store = createReduxStore();
-        const wrapper = mount(<Lightbox store={store} />);
+  it('is hidden by default', () => {
+    const store = createReduxStore();
+    const wrapper = mount(<Lightbox store={store} />);
 
-        expect(wrapper.find('img')).toHaveLength(0);
+    expect(wrapper.find('img')).toHaveLength(0);
+  });
+
+  it('hides after the close action is called', () => {
+    const store = createReduxStore();
+    store.dispatch(actions.open('http://example.org/empty.png'));
+
+    const wrapper = mount(<Lightbox store={store} />);
+    expect(wrapper.find('img')).toHaveLength(1);
+
+    act(() => {
+      store.dispatch(actions.close());
     });
-
-    it('hides after the close action is called', () => {
-        const store = createReduxStore();
-        store.dispatch(actions.open('http://example.org/empty.png'));
-
-        const wrapper = mount(<Lightbox store={store} />);
-        expect(wrapper.find('img')).toHaveLength(1);
-
-        act(() => {
-            store.dispatch(actions.close());
-        });
-        expect(wrapper.update().find('img')).toHaveLength(0);
-    });
+    expect(wrapper.update().find('img')).toHaveLength(0);
+  });
 });
 
 describe('<LightboxEvents>', () => {
-    beforeAll(() => {
-        const closeMock = sinon.stub(actions, 'close');
-        closeMock.returns({ type: 'whatever' });
+  beforeAll(() => {
+    const closeMock = sinon.stub(actions, 'close');
+    closeMock.returns({ type: 'whatever' });
+  });
+
+  afterEach(() => {
+    // Make sure tests do not pollute one another.
+    actions.close.resetHistory();
+  });
+
+  afterAll(() => {
+    actions.close.restore();
+  });
+
+  it('closes on click', () => {
+    const store = createReduxStore();
+    store.dispatch(actions.open('http://example.org/empty.png'));
+
+    const wrapper = mount(<Lightbox store={store} />);
+
+    expect(wrapper.update().find('img')).toHaveLength(1);
+    wrapper.simulate('click');
+    expect(actions.close.calledOnce).toEqual(true);
+  });
+
+  it('closes on key presses if opened before', () => {
+    const store = createReduxStore();
+    store.dispatch(actions.open('http://example.org/empty.png'));
+
+    // Simulating the key presses on `document`.
+    // See https://github.com/airbnb/enzyme/issues/426
+    const eventsMap = {};
+    document.addEventListener = sinon.spy((event, cb) => {
+      eventsMap[event] = cb;
     });
 
-    afterEach(() => {
-        // Make sure tests do not pollute one another.
-        actions.close.resetHistory();
-    });
+    mount(<Lightbox store={store} />);
 
-    afterAll(() => {
-        actions.close.restore();
-    });
+    eventsMap.keydown({ keyCode: 13 });
+    expect(actions.close.callCount).toEqual(1);
 
-    it('closes on click', () => {
-        const store = createReduxStore();
-        store.dispatch(actions.open('http://example.org/empty.png'));
+    eventsMap.keydown({ keyCode: 27 });
+    expect(actions.close.callCount).toEqual(2);
 
-        const wrapper = mount(<Lightbox store={store} />);
-
-        expect(wrapper.update().find('img')).toHaveLength(1);
-        wrapper.simulate('click');
-        expect(actions.close.calledOnce).toEqual(true);
-    });
-
-    it('closes on key presses if opened before', () => {
-        const store = createReduxStore();
-        store.dispatch(actions.open('http://example.org/empty.png'));
-
-        // Simulating the key presses on `document`.
-        // See https://github.com/airbnb/enzyme/issues/426
-        const eventsMap = {};
-        document.addEventListener = sinon.spy((event, cb) => {
-            eventsMap[event] = cb;
-        });
-
-        mount(<Lightbox store={store} />);
-
-        eventsMap.keydown({ keyCode: 13 });
-        expect(actions.close.callCount).toEqual(1);
-
-        eventsMap.keydown({ keyCode: 27 });
-        expect(actions.close.callCount).toEqual(2);
-
-        eventsMap.keydown({ keyCode: 32 });
-        expect(actions.close.callCount).toEqual(3);
-    });
+    eventsMap.keydown({ keyCode: 32 });
+    expect(actions.close.callCount).toEqual(3);
+  });
 });

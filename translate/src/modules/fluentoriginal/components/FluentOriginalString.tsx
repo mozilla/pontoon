@@ -10,11 +10,11 @@ import type { Entity } from '~/core/api';
 import type { TermState } from '~/core/term';
 
 type Props = {
-    readonly entity: Entity;
-    readonly terms: TermState;
-    readonly handleClickOnPlaceable: (
-        event: React.MouseEvent<HTMLParagraphElement>,
-    ) => void;
+  readonly entity: Entity;
+  readonly terms: TermState;
+  readonly handleClickOnPlaceable: (
+    event: React.MouseEvent<HTMLParagraphElement>,
+  ) => void;
 };
 
 /**
@@ -24,37 +24,37 @@ type Props = {
  * as a rich UI or as the original, untouched string.
  */
 export default function FluentOriginalString(
-    props: Props,
+  props: Props,
 ): React.ReactElement<any> {
-    const message = fluent.parser.parseEntry(props.entity.original);
-    const syntax = fluent.getSyntaxType(message);
+  const message = fluent.parser.parseEntry(props.entity.original);
+  const syntax = fluent.getSyntaxType(message);
 
-    if (syntax === 'simple') {
-        return (
-            <SimpleString
-                entity={props.entity}
-                terms={props.terms}
-                handleClickOnPlaceable={props.handleClickOnPlaceable}
-            />
-        );
-    }
-
-    if (syntax === 'rich') {
-        return (
-            <RichString
-                entity={props.entity}
-                terms={props.terms}
-                handleClickOnPlaceable={props.handleClickOnPlaceable}
-            />
-        );
-    }
-
-    // Complex, unsupported strings.
+  if (syntax === 'simple') {
     return (
-        <SourceString
-            entity={props.entity}
-            terms={props.terms}
-            handleClickOnPlaceable={props.handleClickOnPlaceable}
-        />
+      <SimpleString
+        entity={props.entity}
+        terms={props.terms}
+        handleClickOnPlaceable={props.handleClickOnPlaceable}
+      />
     );
+  }
+
+  if (syntax === 'rich') {
+    return (
+      <RichString
+        entity={props.entity}
+        terms={props.terms}
+        handleClickOnPlaceable={props.handleClickOnPlaceable}
+      />
+    );
+  }
+
+  // Complex, unsupported strings.
+  return (
+    <SourceString
+      entity={props.entity}
+      terms={props.terms}
+      handleClickOnPlaceable={props.handleClickOnPlaceable}
+    />
+  );
 }

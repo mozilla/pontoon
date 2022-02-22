@@ -1,22 +1,22 @@
 .history {
-    line-height: 22px;
-    overflow: hidden;
+  line-height: 22px;
+  overflow: hidden;
 }
 
 .history ul {
-    height: 100%;
-    list-style: none;
-    margin: 0;
-    overflow: auto;
-    padding: 0;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
 }
 
 .history p {
-    min-height: 22px;
+  min-height: 22px;
 }
 
 .history > p {
-    color: #aaa;
-    font-style: italic;
-    padding: 15px 10px;
+  color: #aaa;
+  font-style: italic;
+  padding: 15px 10px;
 }

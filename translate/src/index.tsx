@@ -20,12 +20,12 @@ import App from './App';
 TimeAgo.addLocale(en);
 
 ReactDOM.render(
-    <Provider store={store}>
-        <ConnectedRouter history={history}>
-            <AppLocalizationProvider>
-                <App />
-            </AppLocalizationProvider>
-        </ConnectedRouter>
-    </Provider>,
-    document.getElementById('root'),
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <AppLocalizationProvider>
+        <App />
+      </AppLocalizationProvider>
+    </ConnectedRouter>
+  </Provider>,
+  document.getElementById('root'),
 );

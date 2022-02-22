@@ -1,18 +1,18 @@
 .project-menu .menu li.no-results,
 .project-menu .menu li a {
-    display: block;
-    padding: 2px 4px;
+  display: block;
+  padding: 2px 4px;
 }
 
 .project-menu .menu li a:hover {
-    background: #3f4752;
-    color: #fff;
+  background: #3f4752;
+  color: #fff;
 }
 
 .project-menu .menu li a .project {
-    display: inline-block;
-    max-width: 550px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  display: inline-block;
+  max-width: 550px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
