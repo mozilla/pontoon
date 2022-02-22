@@ -1,4 +1,5 @@
-/* global module */
+/* eslint-env node */
+
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',

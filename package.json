@@ -22,7 +22,7 @@
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
     "prettier": "prettier --write .",
     "check-prettier": "prettier --check .",
-    "eslint": "eslint 'translate/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/**/*.js'"
+    "eslint": "eslint ."
   },
   "workspaces": [
     "translate",

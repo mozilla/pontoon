@@ -47,7 +47,6 @@
     "start": "rollup -c --watch",
     "build": "rollup -c",
     "build:prod": "rollup -c --environment BUILD:production",
-    "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "test": "jest",
     "types": "tsc --noEmit"
   }
