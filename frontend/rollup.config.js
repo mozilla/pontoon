@@ -8,9 +8,10 @@ import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 
 /** @type {import('rollup').RollupOptions} */
-export default {
-    input: { frontend: 'src/index.tsx' },
-    output: { dir: 'dist/' },
+const config = {
+    input: 'src/index.tsx',
+    output: { file: 'dist/frontend.js' },
+
     treeshake: 'recommended',
 
     plugins: [
@@ -41,3 +42,5 @@ export default {
         warn(warning);
     },
 };
+
+export default config;

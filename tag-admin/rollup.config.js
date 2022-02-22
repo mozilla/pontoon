@@ -8,9 +8,10 @@ import replace from '@rollup/plugin-replace';
 import css from 'rollup-plugin-css-only';
 
 /** @type {import('rollup').RollupOptions} */
-export default {
-    input: { tag_admin: 'src/index.js' },
-    output: { dir: 'dist/' },
+const config = {
+    input: 'src/index.js',
+    output: { file: 'dist/tag_admin.js' },
+
     treeshake: 'recommended',
 
     plugins: [
@@ -29,3 +30,5 @@ export default {
         css({ output: 'tag_admin.css' }),
     ],
 };
+
+export default config;

@@ -6,7 +6,7 @@
     "test": "jest",
     "build": "rollup -c",
     "build:prod": "rollup -c --environment BUILD:production",
-    "build-w": "rollup -cw"
+    "watch": "rollup -c --watch --no-watch.clearScreen"
   },
   "dependencies": {
     "react": "^16.14.0",

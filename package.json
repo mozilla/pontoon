@@ -20,6 +20,7 @@
     "build": "npm run build --workspaces --if-present",
     "build:prod": "npm run build:prod --workspaces --if-present",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
+    "watch": "concurrently -n frontend,tagadmin -c cyan,magenta 'npm run watch -w frontend' 'npm run watch -w tag-admin'",
     "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
     "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
     "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/**/*.js'"
@@ -71,6 +72,7 @@
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
+    "concurrently": "^7.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint": "^8.9.0",

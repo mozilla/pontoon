@@ -400,8 +400,7 @@ steps, as they don't affect your setup if nothing has changed:
 Building front-end resources
 ============================
 
-We use Rollup to build our JavaScript files for some pages
-(currently only the tag admin UI).
+We use Rollup to build our JavaScript files for some pages.
 While `make build` will build those files for you,
 you might want to rebuild them while programming on the front.
 To build the files just once, run:
@@ -415,4 +414,4 @@ you can run:
 
 .. code-block:: shell
 
-    $ npm run build-w
+    $ npm run watch
