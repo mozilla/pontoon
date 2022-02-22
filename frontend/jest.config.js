@@ -19,7 +19,8 @@ module.exports = {
         },
     },
     transform: {
-        '\\.(ts|js)x?$': 'ts-jest',
+        '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
+        '\\.tsx?$': 'ts-jest',
     },
     transformIgnorePatterns: [
         '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',

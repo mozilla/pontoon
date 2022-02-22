@@ -49,4 +49,6 @@ RUN npm install
 COPY ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
+RUN python manage.py collectstatic
+
 CMD ["/app/docker/server_run.sh"]

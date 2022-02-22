@@ -62,7 +62,8 @@
       "generator": "secret"
     },
     "DISABLE_COLLECTSTATIC": {
-      "description": "Disables running ``./manage.py collectstatic`` during the build. Should be set to ``1``.",
+      "description": "Disables running ``./manage.py collectstatic`` during the build.",
+      "required": false,
       "value": ""
     },
     "SSH_KEY": {

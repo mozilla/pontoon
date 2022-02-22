@@ -62,7 +62,7 @@ build-frontend: node_modules
 build-tagadmin: node_modules
 	npm run build -w tag-admin
 
-build-server: server-env
+build-server: server-env frontend/dist tag-admin/dist
 	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
 	touch .server-build
 
