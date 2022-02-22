@@ -20,7 +20,6 @@
     "build": "npm run build --workspaces --if-present",
     "build:prod": "npm run build:prod --workspaces --if-present",
     "heroku-postbuild": "echo Build is taken care of in ./bin/post_compile",
-    "watch": "concurrently -n frontend,tagadmin -c cyan,magenta 'npm run watch -w frontend' 'npm run watch -w tag-admin'",
     "prettier": "prettier --write '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
     "check-prettier": "prettier --check '**/frontend/**/*.{js,ts,tsx,css}' '**/pontoon/**/*.{js,css}' '**/tag-admin/**/*.{js,css}'",
     "eslint": "eslint 'frontend/**/*.{js,ts,tsx}' 'pontoon/**/*.js' 'tag-admin/**/*.js'"

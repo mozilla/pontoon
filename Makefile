@@ -74,7 +74,9 @@ setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh
 
 run: frontend/dist tag-admin/dist .server-build
-	"${DC}" up
+	"${DC}" up --detach
+	bash -c 'set -m; bash ./bin/watch.sh'
+	"${DC}" stop
 
 clean:
 	rm -rf frontend/dist tag-admin/dist .server-build
