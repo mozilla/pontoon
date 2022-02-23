@@ -5,7 +5,7 @@ import { ReactLocalization } from '@fluent/react';
 import api from '~/core/api';
 
 import { AVAILABLE_LOCALES } from '.';
-import PSEUDO_STRATEGIES from './pseudolocalization';
+import { accented, bidi } from './pseudolocalization';
 
 import type { AppDispatch } from '~/store';
 
@@ -74,9 +74,14 @@ export function get(locales: ReadonlyArray<string>) {
 
           // We know this is English, let's make it weird before bundling it.
           if (usePseudoLocalization) {
-            bundleOptions = {
-              transform: PSEUDO_STRATEGIES[urlParams.get('pseudolocalization')],
-            };
+            switch (urlParams.get('pseudolocalization')) {
+              case 'accented':
+                bundleOptions = { transform: accented };
+                break;
+              case 'bidi':
+                bundleOptions = { transform: bidi };
+                break;
+            }
           }
 
           const bundle = new FluentBundle(locale, bundleOptions);
