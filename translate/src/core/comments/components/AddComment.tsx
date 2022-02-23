@@ -12,7 +12,13 @@ import {
   Node,
 } from 'slate';
 import type { Descendant } from 'slate';
-import { Slate, Editable, ReactEditor, withReact } from 'slate-react';
+import {
+  Editable,
+  ReactEditor,
+  RenderElementProps,
+  Slate,
+  withReact,
+} from 'slate-react';
 import escapeHtml from 'escape-html';
 
 import './AddComment.css';
@@ -450,7 +456,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
               name='comment'
               dir='auto'
               placeholder={`Write a comment…`}
-              renderElement={renderElement}
+              renderElement={RenderElement}
               onKeyDown={target ? handleMentionsKeyDown : handleEditorKeyDown}
             />
           </Localized>
@@ -522,20 +528,6 @@ const withMentions = (editor: BaseEditor & ReactEditor) => {
   return editor;
 };
 
-const renderElement = (props) => {
-  return <Element {...props} />;
-};
-
-const Element = (props) => {
-  const { attributes, children, element } = props;
-  switch (element.type) {
-    case 'mention':
-      return <MentionElement {...props} />;
-    default:
-      return <p {...attributes}>{children}</p>;
-  }
-};
-
 const insertMention = (
   editor: BaseEditor,
   character: string,
@@ -558,11 +550,12 @@ const insertMention = (
   Transforms.insertText(editor, ' ');
 };
 
-const MentionElement = ({ attributes, children, element }) => {
-  return (
+const RenderElement = ({ attributes, children, element }: RenderElementProps) =>
+  element.type === 'mention' ? (
     <span {...attributes} contentEditable={false} className='mention-element'>
       @{element.character}
       {children}
     </span>
+  ) : (
+    <p {...attributes}>{children}</p>
   );
-};

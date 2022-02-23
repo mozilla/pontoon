@@ -18,12 +18,8 @@ export default class APIBase {
   }
 
   getCSRFToken(): string {
-    let csrfToken = '';
-    const rootElt = document.getElementById('root');
-    if (rootElt) {
-      csrfToken = rootElt.dataset.csrfToken;
-    }
-    return csrfToken;
+    const root = document.getElementById('root');
+    return root?.dataset.csrfToken ?? '';
   }
 
   getFullURL(url: string): URL {

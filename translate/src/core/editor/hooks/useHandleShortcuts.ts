@@ -126,41 +126,35 @@ export default function useHandleShortcuts(): (
         return;
       }
 
-      let translations;
-      let searchResults;
-      let copyTranslationFn;
-      if (editorState.selectedHelperTabIndex === 0) {
-        translations = machineryTranslations;
-        searchResults = concordanceSearchResults;
-        copyTranslationFn = copyMachineryTranslation;
-      } else {
-        translations = otherLocaleTranslations;
-        copyTranslationFn = copyOtherLocaleTranslation;
-      }
+      const isMachinery = editorState.selectedHelperTabIndex === 0;
+      const numTranslations = isMachinery
+        ? machineryTranslations.length + concordanceSearchResults.length
+        : otherLocaleTranslations.length;
 
-      const numTranslations =
-        translations.length + (searchResults?.length || 0);
-      if (!numTranslations) {
+      if (numTranslations === 0) {
         return;
       }
 
       event.preventDefault();
 
       const currentIdx = editorState.selectedHelperElementIndex;
-      let nextIdx;
-      if (key === 40) {
-        nextIdx = (currentIdx + 1) % numTranslations;
-      } else {
-        nextIdx = (currentIdx - 1 + numTranslations) % numTranslations;
-      }
+      const nextIdx =
+        key === 40
+          ? (currentIdx + 1) % numTranslations
+          : (currentIdx - 1 + numTranslations) % numTranslations;
 
       dispatch(editor.actions.selectHelperElementIndex(nextIdx));
 
-      const newTranslation =
-        !searchResults || nextIdx < translations.length
-          ? translations[nextIdx]
-          : searchResults[nextIdx - translations.length];
-      copyTranslationFn(newTranslation);
+      if (isMachinery) {
+        const len = machineryTranslations.length;
+        const newTranslation =
+          nextIdx < len
+            ? machineryTranslations[nextIdx]
+            : concordanceSearchResults[nextIdx - len];
+        copyMachineryTranslation(newTranslation);
+      } else {
+        copyOtherLocaleTranslation(otherLocaleTranslations[nextIdx]);
+      }
     }
   };
 }

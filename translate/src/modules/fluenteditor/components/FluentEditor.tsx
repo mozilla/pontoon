@@ -197,12 +197,12 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   );
 
   // Choose which editor implementation to render.
-  let EditorImplementation = RichEditor;
-  if (forceSource || syntax === 'complex') {
-    EditorImplementation = SourceEditor;
-  } else if (syntax === 'simple') {
-    EditorImplementation = SimpleEditor;
-  }
+  const Editor =
+    forceSource || syntax === 'complex'
+      ? SourceEditor
+      : syntax === 'simple'
+      ? SimpleEditor
+      : RichEditor;
 
   // When the syntax is complex, the editor is blocked in source mode, and it
   // becomes impossible to switch to a different editor type. Thus we show a
@@ -244,5 +244,5 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
     }
   }
 
-  return <EditorImplementation ftlSwitch={ftlSwitch} />;
+  return <Editor ftlSwitch={ftlSwitch} />;
 }

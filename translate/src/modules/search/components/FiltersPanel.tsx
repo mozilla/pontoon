@@ -28,7 +28,7 @@ type Props = {
   applySingleFilter: (
     filter: string,
     type: FilterType,
-    callback?: () => void,
+    callback: () => void,
   ) => void;
   getAuthorsAndTimeRangeData: () => void;
   resetFilters: () => void;

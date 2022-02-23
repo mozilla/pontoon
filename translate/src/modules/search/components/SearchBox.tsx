@@ -61,66 +61,28 @@ export type FilterType =
  * Changes to the search input will be reflected in the URL.
  */
 export class SearchBoxBase extends React.Component<InternalProps, State> {
-  searchInput: React.RefObject<HTMLInputElement>;
+  searchInput = React.createRef<HTMLInputElement>();
 
-  constructor(props: InternalProps) {
-    super(props);
-
-    this.state = {
-      search: '',
-      statuses: {},
-      extras: {},
-      tags: {},
-      timeRange: null,
-      authors: {},
-    };
-
-    this.searchInput = React.createRef();
-  }
+  state: State = {
+    search: '',
+    statuses: {},
+    extras: {},
+    tags: {},
+    timeRange: null,
+    authors: {},
+  };
 
   updateFiltersFromURLParams = () => {
-    const props = this.props;
+    const { author, extra, status, tag, time } = this.props.parameters;
 
-    const statuses = this.getInitialStatuses();
-    if (props.parameters.status) {
-      props.parameters.status.split(',').forEach((f) => {
-        statuses[f] = true;
-      });
-    }
+    const next = this.getInitState();
+    if (author) for (const a of author.split(',')) next.authors[a] = true;
+    if (extra) for (const e of extra.split(',')) next.extras[e] = true;
+    if (status) for (const s of status.split(',')) next.statuses[s] = true;
+    if (tag) for (const t of tag.split(',')) next.tags[t] = true;
+    if (time) next.timeRange = this.getTimeRangeFromURLParameter(time);
 
-    const extras = this.getInitialExtras();
-    if (props.parameters.extra) {
-      props.parameters.extra.split(',').forEach((f) => {
-        extras[f] = true;
-      });
-    }
-
-    const tags = this.getInitialTags();
-    if (props.parameters.tag) {
-      props.parameters.tag.split(',').forEach((f) => {
-        tags[f] = true;
-      });
-    }
-
-    let timeRange = null;
-    if (props.parameters.time) {
-      timeRange = this.getTimeRangeFromURLParameter(props.parameters.time);
-    }
-
-    const authors = this.getInitialAuthors();
-    if (props.parameters.author) {
-      props.parameters.author.split(',').forEach((f) => {
-        authors[f] = true;
-      });
-    }
-
-    this.setState({
-      statuses,
-      extras,
-      tags,
-      timeRange,
-      authors,
-    });
+    this.setState(next);
   };
 
   componentDidMount() {
@@ -137,21 +99,15 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
   }
 
   componentDidUpdate(prevProps: InternalProps) {
+    const { parameters } = this.props;
     // Clear search field when navigating to a new file
-    if (
-      this.props.parameters.search === null &&
-      prevProps.parameters.search !== null
-    ) {
-      this.setState({
-        search: '',
-      });
+    if (parameters.search === null && prevProps.parameters.search !== null) {
+      this.setState({ search: '' });
     }
 
     // When the URL changes, for example from links in the ResourceProgress
     // component, reload the filters from the URL parameters.
-    if (this.props.parameters !== prevProps.parameters) {
-      this.updateFiltersFromURLParams();
-    }
+    if (parameters !== prevProps.parameters) this.updateFiltersFromURLParams();
   }
 
   componentWillUnmount() {
@@ -159,68 +115,31 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
   }
 
   getTimeRangeFromURLParameter(timeParameter: string): TimeRangeType {
-    const boundaries = timeParameter.split('-');
+    const [from, to] = timeParameter.split('-');
+    return { from: parseInt(from), to: parseInt(to) };
+  }
 
-    return {
-      from: parseInt(boundaries[0]),
-      to: parseInt(boundaries[1]),
+  getInitState() {
+    const { project, searchAndFilters } = this.props;
+    const state: Omit<State, 'search'> = {
+      authors: {},
+      extras: {},
+      statuses: {},
+      tags: {},
+      timeRange: null,
     };
-  }
 
-  getInitialStatuses(): Record<string, boolean> {
-    const statuses: Record<string, boolean> = {};
-    FILTERS_STATUS.forEach((s) => (statuses[s.slug] = false));
-    return statuses;
-  }
+    for (const { email } of searchAndFilters.authors)
+      state.authors[email] = false;
+    for (const { slug } of FILTERS_EXTRA) state.extras[slug] = false;
+    for (const { slug } of FILTERS_STATUS) state.statuses[slug] = false;
+    for (const { slug } of project.tags) state.tags[slug] = false;
 
-  getInitialExtras(): Record<string, boolean> {
-    const extras: Record<string, boolean> = {};
-    FILTERS_EXTRA.forEach((e) => (extras[e.slug] = false));
-    return extras;
-  }
-
-  getInitialTags(): Record<string, boolean> {
-    const tags: Record<string, boolean> = {};
-    this.props.project.tags.forEach((t) => (tags[t.slug] = false));
-    return tags;
-  }
-
-  getInitialAuthors(): Record<string, boolean> {
-    const authors: Record<string, boolean> = {};
-    this.props.searchAndFilters.authors.forEach(
-      (a) => (authors[a.email] = false),
-    );
-    return authors;
-  }
-
-  getSelectedStatuses(): Array<string> {
-    return Object.keys(this.state.statuses).filter(
-      (s) => this.state.statuses[s],
-    );
-  }
-
-  getSelectedExtras(): Array<string> {
-    return Object.keys(this.state.extras).filter((e) => this.state.extras[e]);
-  }
-
-  getSelectedTags(): Array<string> {
-    return Object.keys(this.state.tags).filter((t) => this.state.tags[t]);
-  }
-
-  getSelectedTimeRange(): TimeRangeType | null | undefined {
-    return this.state.timeRange;
-  }
-
-  getSelectedAuthors(): Array<string> {
-    return Object.keys(this.state.authors).filter((a) => this.state.authors[a]);
+    return state;
   }
 
   updateTimeRange = (filter: string) => {
-    let timeRange = this.getTimeRangeFromURLParameter(filter);
-
-    this.setState({
-      timeRange,
-    });
+    this.setState({ timeRange: this.getTimeRangeFromURLParameter(filter) });
   };
 
   toggleFilter = (filter: string, type: FilterType) => {
@@ -232,97 +151,48 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         timeRange = null;
       }
 
-      return this.setState({ timeRange });
+      this.setState({ timeRange });
+    } else {
+      this.setState((state) => {
+        const prev = state[type][filter];
+        return { ...state, [type]: { ...state[type], [filter]: !prev } };
+      });
     }
-
-    // @ts-expect-error
-    this.setState((state) => {
-      return {
-        [type]: {
-          ...state[type],
-          [filter]: !state[type][filter],
-        },
-      };
-    });
   };
 
   applySingleFilter = (
     filter: string,
     type: FilterType,
-    callback?: () => void,
+    callback: () => void,
   ) => {
-    const statuses = this.getInitialStatuses();
-    const extras = this.getInitialExtras();
-    const tags = this.getInitialTags();
-    let timeRange = null;
-    const authors = this.getInitialAuthors();
-
+    const next = this.getInitState();
     if (filter !== 'all') {
-      switch (type) {
-        case 'statuses':
-          statuses[filter] = true;
-          break;
-        case 'extras':
-          extras[filter] = true;
-          break;
-        case 'tags':
-          tags[filter] = true;
-          break;
-        case 'timeRange':
-          timeRange = this.getTimeRangeFromURLParameter(filter);
-          break;
-        case 'authors':
-          authors[filter] = true;
-          break;
-        default:
-      }
+      if (type === 'timeRange')
+        next.timeRange = this.getTimeRangeFromURLParameter(filter);
+      else next[type][filter] = true;
     }
-
-    if (callback) {
-      this.setState(
-        {
-          statuses,
-          extras,
-          tags,
-          timeRange,
-          authors,
-        },
-        callback,
-      );
-    } else {
-      this.setState({
-        statuses,
-        extras,
-        tags,
-        timeRange,
-        authors,
-      });
-    }
+    this.setState(next, callback);
   };
 
   resetFilters = () => {
-    this.setState({
-      statuses: this.getInitialStatuses(),
-      extras: this.getInitialExtras(),
-      tags: this.getInitialTags(),
-      timeRange: null,
-      authors: this.getInitialAuthors(),
-    });
+    this.setState(this.getInitState());
   };
 
   getAuthorsAndTimeRangeData = () => {
     const { locale, project, resource } = this.props.parameters;
-
     this.props.dispatch(
       search.actions.getAuthorsAndTimeRangeData(locale, project, resource),
     );
   };
 
-  handleShortcuts: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
-    const key = event.keyCode;
-
+  handleShortcuts = (event: KeyboardEvent) => {
     // On Ctrl + Shift + F, set focus on the search input.
-    if (key === 70 && !event.altKey && event.ctrlKey && event.shiftKey) {
+    if (
+      event.keyCode === 70 &&
+      !event.altKey &&
+      event.ctrlKey &&
+      event.shiftKey
+    ) {
       event.preventDefault();
       if (this.searchInput.current) {
         this.searchInput.current.focus();
@@ -352,35 +222,28 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
   };
 
   _update = () => {
-    const statuses = this.getSelectedStatuses();
-    let status: string | null = statuses.join(',');
+    const { authors, extras, search, statuses, tags, timeRange } = this.state;
 
-    if (status === 'all') {
-      status = null;
-    }
+    let status: string | null = Object.keys(statuses)
+      .filter((s) => statuses[s])
+      .join(',');
+    if (status === 'all') status = null;
 
-    const extras = this.getSelectedExtras();
-    const extra = extras.join(',');
-
-    const tags = this.getSelectedTags();
-    const tag = tags.join(',');
-
-    const timeRange = this.getSelectedTimeRange();
-    const time = timeRange ? [timeRange.from, timeRange.to].join('-') : '';
-
-    const authors = this.getSelectedAuthors();
-    const author = authors.join(',');
+    const author = Object.keys(authors).filter((a) => authors[a]);
+    const extra = Object.keys(extras).filter((e) => extras[e]);
+    const tag = Object.keys(tags).filter((t) => tags[t]);
+    const time = timeRange ? `${timeRange.from}-${timeRange.to}` : '';
 
     this.props.dispatch(entities.actions.reset());
     this.props.dispatch(editor.actions.reset());
     this.props.dispatch(
       navigation.actions.update(this.props.router, {
-        search: this.state.search,
+        author: author.join(','),
+        extra: extra.join(','),
+        search,
         status,
-        extra,
-        tag,
+        tag: tag.join(','),
         time,
-        author,
       }),
     );
   };
@@ -400,50 +263,22 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
   };
 
   composePlaceholder(): string {
-    const statuses = this.getSelectedStatuses();
-    const selectedStatuses = FILTERS_STATUS.filter((f) =>
-      statuses.includes(f.slug),
-    );
+    const { project, searchAndFilters } = this.props;
+    const { authors, extras, statuses, tags, timeRange } = this.state;
 
-    const extras = this.getSelectedExtras();
-    const selectedExtras = FILTERS_EXTRA.filter((f) => extras.includes(f.slug));
+    const selected: string[] = [];
+    for (const { name, slug } of FILTERS_STATUS)
+      if (statuses[slug]) selected.push(name);
+    for (const { name, slug } of FILTERS_EXTRA)
+      if (extras[slug]) selected.push(name);
+    for (const { name, slug } of project.tags)
+      if (tags[slug]) selected.push(name);
+    if (timeRange) selected.push('Time Range');
+    for (const { display_name, email } of searchAndFilters.authors)
+      if (authors[email]) selected.push(`${display_name}'s translations`);
 
-    const tags = this.getSelectedTags();
-    const selectedTags = this.props.project.tags.filter((f) =>
-      tags.includes(f.slug),
-    );
-
-    const authors = this.getSelectedAuthors();
-    const selectedAuthors = this.props.searchAndFilters.authors.filter((f) =>
-      authors.includes(f.email),
-    );
-
-    const selectedFilters = [].concat(
-      selectedStatuses,
-      selectedExtras,
-      selectedTags,
-    );
-
-    let selectedFiltersNames = selectedFilters.map((item) => item.name);
-
-    // Special case for Translation Time filter
-    if (this.getSelectedTimeRange()) {
-      selectedFiltersNames = selectedFiltersNames.concat(['Time Range']);
-    }
-
-    // Special case for Translation Authors filters
-    if (selectedAuthors.length) {
-      selectedFiltersNames = selectedFiltersNames.concat(
-        selectedAuthors.map((item) => item.display_name + "'s translations"),
-      );
-    }
-
-    let selectedFiltersString = 'All';
-    if (selectedFiltersNames.length) {
-      selectedFiltersString = selectedFiltersNames.join(', ');
-    }
-
-    return `Search in ${selectedFiltersString}`;
+    const str = selected.length > 0 ? selected.join(', ') : 'All';
+    return `Search in ${str}`;
   }
 
   render(): React.ReactElement<'div'> {

@@ -12,13 +12,8 @@ import { CLDR_PLURALS } from '~/core/plural';
 import { fluent } from '~/core/utils';
 
 import type { Translation } from '~/core/editor';
-import type { Attribute, Entry } from '@fluent/syntax';
-import type {
-  Pattern,
-  PatternElement,
-  Variant,
-  SyntaxNode,
-} from '@fluent/syntax';
+import type { Entry } from '@fluent/syntax';
+import type { Pattern, Variant } from '@fluent/syntax';
 
 type MessagePath = Array<string | number>;
 
@@ -376,7 +371,7 @@ export default function RichTranslationForm(
       example = pluralExamples[pluralForm];
     }
 
-    const vPath = [
+    const path = ePath.concat([
       eIndex,
       'expression',
       'variants',
@@ -385,38 +380,34 @@ export default function RichTranslationForm(
       'elements',
       0,
       'value',
-    ];
-
+    ]);
     return renderItem(
       value,
-      [].concat(ePath, vPath),
+      path,
       label,
       attributeName,
-      indent ? 'indented' : null,
+      indent ? 'indented' : undefined,
       example,
     );
   }
 
-  function renderElements(
-    elements: Array<PatternElement>,
+  function renderPattern(
+    { elements }: Pattern,
     path: MessagePath,
-    attributeName: string | null | undefined,
+    attributeName?: string,
   ) {
     let indent = false;
 
     return elements.map((element, eIndex) => {
-      let expression;
       if (
         element.type === 'Placeable' &&
-        (expression = element.expression) &&
-        expression.type === 'SelectExpression'
+        element.expression.type === 'SelectExpression'
       ) {
-        const variants = expression.variants;
-        let pluralExamples = null;
-        if (fluent.isPluralExpression(expression)) {
-          pluralExamples = locale.getPluralExamples(localeState);
-        }
-        const rendered_variants = variants.map((variant, vIndex) => {
+        const { expression } = element;
+        const pluralExamples = fluent.isPluralExpression(expression)
+          ? locale.getPluralExamples(localeState)
+          : null;
+        const rendered_variants = expression.variants.map((variant, vIndex) => {
           return renderVariant(
             variant,
             path,
@@ -440,45 +431,8 @@ export default function RichTranslationForm(
           return null;
         }
 
-        return renderItem(
-          element.value,
-          [].concat(path, [eIndex, 'value']),
-          label,
-        );
+        return renderItem(element.value, path.concat(eIndex, 'value'), label);
       }
-    });
-  }
-
-  function renderValue(
-    value: Pattern,
-    path: MessagePath,
-    attributeName?: string,
-  ) {
-    if (!value) {
-      return null;
-    }
-
-    return renderElements(
-      value.elements,
-      [].concat(path, ['elements']),
-      attributeName,
-    );
-  }
-
-  function renderAttributes(
-    attributes: Array<Attribute> | null | undefined,
-    path: MessagePath,
-  ) {
-    if (!attributes) {
-      return null;
-    }
-
-    return attributes.map((attribute, index) => {
-      return renderValue(
-        attribute.value,
-        [].concat(path, [index, 'value']),
-        attribute.id.name,
-      );
     });
   }
 
@@ -486,8 +440,18 @@ export default function RichTranslationForm(
     <div className='fluent-rich-translation-form'>
       <table>
         <tbody ref={tableBody}>
-          {renderValue(message.value, ['value'])}
-          {renderAttributes(message.attributes, ['attributes'])}
+          {message.value
+            ? renderPattern(message.value, ['value', 'elements'])
+            : null}
+          {message.attributes?.map(({ id, value }, index) =>
+            value
+              ? renderPattern(
+                  value,
+                  ['attributes', index, 'value', 'elements'],
+                  id.name,
+                )
+              : null,
+          )}
         </tbody>
       </table>
     </div>

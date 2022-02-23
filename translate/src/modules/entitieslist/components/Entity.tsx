@@ -123,26 +123,18 @@ export default class Entity extends React.Component<Props, State> {
     }
   };
 
-  areFiltersApplied: () => boolean = () => {
-    const parameters = this.props.parameters;
-    if (
-      parameters.status != null ||
-      parameters.extra != null ||
-      parameters.tag != null ||
-      parameters.time != null ||
-      parameters.author != null
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  showSiblingEntitiesButton: () => boolean = () => {
-    const isSearched = this.props.parameters.search;
-    const areFiltersApplied = this.areFiltersApplied();
-    const areSiblingsActive = !this.state.areSiblingsActive;
-
-    return (isSearched || areFiltersApplied) && areSiblingsActive;
+  showSiblingEntitiesButton = () => {
+    const { search, status, extra, tag, time, author } = this.props.parameters;
+    const { areSiblingsActive } = this.state;
+    return (
+      !areSiblingsActive &&
+      (search ||
+        status != null ||
+        extra != null ||
+        tag != null ||
+        time != null ||
+        author != null)
+    );
   };
 
   render(): React.ReactElement<'li'> {

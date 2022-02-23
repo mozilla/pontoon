@@ -72,21 +72,21 @@ export function signOut(url: string): AppThunk {
   };
 }
 
-function _getOperationNotif(setting, value) {
-  if (setting === 'runQualityChecks' && value) {
-    return notification.messages.CHECKS_ENABLED;
+function _getOperationNotif(setting: keyof Settings, value: boolean) {
+  const {
+    CHECKS_ENABLED,
+    CHECKS_DISABLED,
+    SUGGESTIONS_ENABLED,
+    SUGGESTIONS_DISABLED,
+  } = notification.messages;
+  switch (setting) {
+    case 'runQualityChecks':
+      return value ? CHECKS_ENABLED : CHECKS_DISABLED;
+    case 'forceSuggestions':
+      return value ? SUGGESTIONS_ENABLED : SUGGESTIONS_DISABLED;
+    default:
+      throw new Error('Unsupported operation on setting: ' + setting);
   }
-  if (setting === 'runQualityChecks' && !value) {
-    return notification.messages.CHECKS_DISABLED;
-  }
-  if (setting === 'forceSuggestions' && value) {
-    return notification.messages.SUGGESTIONS_ENABLED;
-  }
-  if (setting === 'forceSuggestions' && !value) {
-    return notification.messages.SUGGESTIONS_DISABLED;
-  }
-
-  throw new Error('Unsupported operation on setting: ' + setting);
 }
 
 export function saveSetting(
