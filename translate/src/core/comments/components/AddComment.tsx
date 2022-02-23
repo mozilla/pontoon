@@ -21,6 +21,7 @@ import { UserAvatar } from '~/core/user';
 
 import type { NavigationParams } from '~/core/navigation';
 import type { UserState } from '~/core/user';
+import type { UsersList } from '~/core/api';
 
 type Props = {
   parameters: NavigationParams | null | undefined;
@@ -61,7 +62,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
   } = props;
 
   const mentionList: any = React.useRef();
-  const [target, setTarget] = React.useState<Range>();
+  const [target, setTarget] = React.useState<Range | null>(null);
   const [index, setIndex] = React.useState(0);
   const [search, setSearch] = React.useState('');
   const [scrollPosition, setScrollPosition] = React.useState(0);
@@ -372,7 +373,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     setTarget(null);
   };
 
-  const Portal = ({ children }) => {
+  const Portal = ({ children }: { children: React.ReactNode }) => {
     if (!document.body) {
       return null;
     }
@@ -501,7 +502,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
   );
 }
 
-const withMentions = (editor: Editor) => {
+const withMentions = (editor: BaseEditor & ReactEditor) => {
   const { isInline, isVoid } = editor;
 
   editor.isInline = (element) => {
@@ -529,7 +530,11 @@ const Element = (props) => {
   }
 };
 
-const insertMention = (editor, character, users) => {
+const insertMention = (
+  editor: BaseEditor,
+  character: string,
+  users: UsersList[],
+) => {
   const selectedUser = users.find((user) => user.name === character);
   if (!selectedUser) {
     return;

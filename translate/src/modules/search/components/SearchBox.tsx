@@ -48,6 +48,13 @@ type State = {
   authors: Record<string, boolean>;
 };
 
+export type FilterType =
+  | 'authors'
+  | 'extras'
+  | 'statuses'
+  | 'tags'
+  | 'timeRange';
+
 /**
  * Shows and controls a search box, used to filter the list of entities.
  *
@@ -71,7 +78,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     this.searchInput = React.createRef();
   }
 
-  updateFiltersFromURLParams: () => void = () => {
+  updateFiltersFromURLParams = () => {
     const props = this.props;
 
     const statuses = this.getInitialStatuses();
@@ -208,7 +215,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     return Object.keys(this.state.authors).filter((a) => this.state.authors[a]);
   }
 
-  updateTimeRange: (filter: string) => void = (filter: string) => {
+  updateTimeRange = (filter: string) => {
     let timeRange = this.getTimeRangeFromURLParameter(filter);
 
     this.setState({
@@ -216,12 +223,10 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     });
   };
 
-  toggleFilter: (filter: string, type: string) => void = (
-    filter: string,
-    type: string,
-  ) => {
+  toggleFilter = (filter: string, type: FilterType) => {
     if (type === 'timeRange') {
-      let timeRange = this.getTimeRangeFromURLParameter(filter);
+      let timeRange: State['timeRange'] =
+        this.getTimeRangeFromURLParameter(filter);
 
       if (isEqual(timeRange, this.state.timeRange)) {
         timeRange = null;
@@ -241,11 +246,11 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     });
   };
 
-  applySingleFilter: (
+  applySingleFilter = (
     filter: string,
-    type: string,
+    type: FilterType,
     callback?: () => void,
-  ) => void = (filter: string, type: string, callback?: () => void) => {
+  ) => {
     const statuses = this.getInitialStatuses();
     const extras = this.getInitialExtras();
     const tags = this.getInitialTags();
@@ -295,7 +300,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
   };
 
-  resetFilters: () => void = () => {
+  resetFilters = () => {
     this.setState({
       statuses: this.getInitialStatuses(),
       extras: this.getInitialExtras(),
@@ -305,7 +310,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     });
   };
 
-  getAuthorsAndTimeRangeData: () => void = () => {
+  getAuthorsAndTimeRangeData = () => {
     const { locale, project, resource } = this.props.parameters;
 
     this.props.dispatch(
@@ -325,34 +330,30 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     }
   };
 
-  unsetFocus: () => void = () => {
+  unsetFocus = () => {
     this.props.dispatch(search.actions.setFocus(false));
   };
 
-  setFocus: () => void = () => {
+  setFocus = () => {
     this.props.dispatch(search.actions.setFocus(true));
   };
 
-  updateSearchInput: (event: React.SyntheticEvent<HTMLInputElement>) => void = (
-    event: React.SyntheticEvent<HTMLInputElement>,
-  ) => {
+  updateSearchInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
     this.setState({
       search: event.currentTarget.value,
     });
   };
 
-  handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
+  handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // Perform search on Enter
     if (event.keyCode === 13) {
       this.update();
     }
   };
 
-  _update: () => void = () => {
+  _update = () => {
     const statuses = this.getSelectedStatuses();
-    let status = statuses.join(',');
+    let status: string | null = statuses.join(',');
 
     if (status === 'all') {
       status = null;
@@ -384,7 +385,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
     );
   };
 
-  update: () => void = () => {
+  update = () => {
     const state = this.props.store.getState();
     const unsavedChangesExist = state[unsavedchanges.NAME].exist;
     const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;

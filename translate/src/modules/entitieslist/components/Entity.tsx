@@ -45,7 +45,7 @@ type State = {
  * translation, or the fuzzy translation, or the last suggested translation.
  */
 export default class Entity extends React.Component<Props, State> {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = { areSiblingsActive: false };
   }
@@ -157,13 +157,11 @@ export default class Entity extends React.Component<Props, State> {
     } = this.props;
 
     const classSelected = selected ? 'selected' : '';
-
     const classBatchEditable =
       isTranslator && !isReadOnlyEditor ? 'batch-editable' : '';
-
     const classChecked = checkedForBatchEditing ? 'checked' : '';
-
     const classSibling = entity.isSibling ? 'sibling' : '';
+
     return (
       <li
         className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}

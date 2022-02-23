@@ -23,7 +23,7 @@ import RichEditor from './rich/RichEditor';
  *      - "rich" if the translation is not simple but can be handled by the Rich editor
  *      - "complex" otherwise
  */
-function getSyntaxType(source): SyntaxType {
+function getSyntaxType(source: string | editor.Translation): SyntaxType {
   if (source && typeof source !== 'string') {
     return fluent.getSyntaxType(source);
   }
@@ -46,7 +46,7 @@ function getSyntaxType(source): SyntaxType {
  * It does *not* update that content when the user switches the "force source" mode though,
  * as that is dealt with by using the `useForceSource` hook.
  */
-function useLoadTranslation(forceSource) {
+function useLoadTranslation(forceSource: boolean) {
   const dispatch = useAppDispatch();
 
   const updateTranslation = editor.useUpdateTranslation();

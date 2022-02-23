@@ -49,7 +49,7 @@ type Props = {
 
 export default function withSearch<Config extends Record<string, any>>(
   WrappedComponent: React.ComponentType<Config>,
-): React.ComponentType<Config> {
+): React.ComponentType<Config & Props> {
   return function WithSearch(props: Config & Props) {
     return (
       <WrappedComponent {...props}>

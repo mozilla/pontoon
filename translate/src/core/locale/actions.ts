@@ -57,7 +57,9 @@ export function get(code: string) {
     const locale = {
       ...data,
       direction: data.direction.toLowerCase(),
-      cldrPlurals: data.cldrPlurals.split(',').map((i) => parseInt(i, 10)),
+      cldrPlurals: data.cldrPlurals
+        .split(',')
+        .map((i: string) => parseInt(i, 10)),
     };
     dispatch(receive(locale));
   };

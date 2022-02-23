@@ -5,7 +5,7 @@ import type { Entry, PatternElement, TextElement } from '@fluent/syntax';
 /**
  * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
  */
-function getTextElementsRecursivelly(
+function getTextElementsRecursively(
   elements: Array<PatternElement>,
 ): TextElement[] {
   const textElements = elements.map(
@@ -20,7 +20,7 @@ function getTextElementsRecursivelly(
         element.expression.type === 'SelectExpression'
       ) {
         return element.expression.variants.map((variant) => {
-          return getTextElementsRecursivelly(variant.value.elements);
+          return getTextElementsRecursively(variant.value.elements);
         });
       }
 
@@ -75,7 +75,7 @@ export default function extractAccessKeyCandidates(
   }
 
   // Only take TextElements
-  const textElements = getTextElementsRecursivelly(source.value.elements);
+  const textElements = getTextElementsRecursively(source.value.elements);
 
   // Collect values of TextElements
   const values = textElements.map((element) => {

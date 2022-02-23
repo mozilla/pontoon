@@ -21,7 +21,6 @@ import type {
 } from '@fluent/syntax';
 
 type MessagePath = Array<string | number>;
-type Child = SyntaxNode | Array<SyntaxNode>;
 
 /**
  * Return a clone of a translation with one of its elements replaced with a new
@@ -38,7 +37,11 @@ function getUpdatedTranslation(
   if (source.type !== 'Message' && source.type !== 'Term') {
     return source;
   }
-  let dest: Child = source;
+
+  // This should be `SyntaxNode | SyntaxNode[]`, but using `path` like this is so
+  // un-TypeScript that it doesn't really work.
+  let dest: any = source;
+
   // Walk the path until the next to last item.
   for (let i = 0, ln = path.length; i < ln - 1; i++) {
     dest = dest[path[i]];
@@ -92,7 +95,7 @@ export default function RichTranslationForm(
     (state) => state.unsavedchanges.exist,
   );
 
-  const tableBodyRef: { current: any } = React.useRef();
+  const tableBodyRef = React.useRef<HTMLTableSectionElement>();
 
   const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -235,7 +238,7 @@ export default function RichTranslationForm(
   function renderTextarea(
     value: string,
     path: MessagePath,
-    maxlength?: number | null | undefined,
+    maxlength?: number | undefined,
   ) {
     return (
       <textarea
@@ -259,9 +262,10 @@ export default function RichTranslationForm(
     const id = accessKeyElementIdRef.current;
     let accessKey = null;
     if (id && tableBodyRef.current) {
-      const accessKeyElement = tableBodyRef.current.querySelector(
-        'textarea#' + id,
-      );
+      const accessKeyElement =
+        tableBodyRef.current.querySelector<HTMLTextAreaElement>(
+          'textarea#' + id,
+        );
       if (accessKeyElement) {
         accessKey = accessKeyElement.value;
       }
@@ -327,7 +331,7 @@ export default function RichTranslationForm(
     path: MessagePath,
     label: string,
     attributeName?: string | null | undefined,
-    className?: string | null | undefined,
+    className?: string | undefined,
     example?: number | null | undefined,
   ) {
     return (
@@ -358,7 +362,7 @@ export default function RichTranslationForm(
     indent: boolean,
     eIndex: number,
     vIndex: number,
-    pluralExamples: any,
+    pluralExamples: Record<number, number> | null,
     attributeName: string | null | undefined,
   ) {
     let value: string;

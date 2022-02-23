@@ -90,7 +90,7 @@ function _getOperationNotif(setting, value) {
 }
 
 export function saveSetting(
-  setting: string,
+  setting: keyof Settings,
   value: boolean,
   username: string,
 ): AppThunk {

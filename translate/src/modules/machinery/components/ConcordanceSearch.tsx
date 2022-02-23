@@ -11,8 +11,8 @@ type Props = {
   translation: MachineryTranslation;
 };
 
-function ProjectList({ projects }: { projects: string[] }) {
-  const notEmpty = projects.filter(Boolean);
+function ProjectList({ projects }: { projects: (string | null)[] }) {
+  const notEmpty = projects.filter(Boolean) as string[];
 
   if (notEmpty.length === 0) {
     return <TranslationMemory />;

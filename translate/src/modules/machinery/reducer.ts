@@ -25,7 +25,7 @@ type Action =
 type Translations = Array<MachineryTranslation>;
 
 export type MachineryState = {
-  entity: number | null | undefined;
+  entity: number | null;
   sourceString: string;
   searchString: string;
   translations: Translations;

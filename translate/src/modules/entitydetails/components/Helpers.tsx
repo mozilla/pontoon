@@ -30,7 +30,7 @@ type Props = {
   terms: TermState;
   parameters: NavigationParams;
   user: UserState;
-  commentTabRef: Record<string, any>;
+  commentTabRef: any; // Used to access <Tab> _reactInternalFiber
   commentTabIndex: number;
   contactPerson: string;
   searchMachinery: (source: string) => void;

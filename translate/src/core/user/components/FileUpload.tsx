@@ -13,9 +13,7 @@ type Props = {
  * Render a File Upload button.
  */
 export default class FileUpload extends React.Component<Props> {
-  uploadForm: {
-    current: HTMLFormElement | null | undefined;
-  };
+  uploadForm: React.RefObject<HTMLFormElement>;
 
   constructor(props: Props) {
     super(props);
@@ -33,7 +31,7 @@ export default class FileUpload extends React.Component<Props> {
     const { parameters } = this.props;
 
     /* TODO: Refactor core.api.base and reuse getCSRFToken() here */
-    let csrfToken = '';
+    let csrfToken: string | undefined = '';
     const rootElt = document.getElementById('root');
     if (rootElt) {
       csrfToken = rootElt.dataset.csrfToken;

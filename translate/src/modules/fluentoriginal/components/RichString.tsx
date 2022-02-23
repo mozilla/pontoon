@@ -23,8 +23,8 @@ function renderItem(
   label: string,
   key: string,
   terms: TermState,
-  className?: string | null | undefined,
-  attributeName?: string | null | undefined,
+  className?: string,
+  attributeName?: string,
 ): React.ReactNode {
   const TermsAndPlaceablesMarker = getMarker(terms, true);
 
@@ -53,7 +53,7 @@ function renderItem(
 function renderElements(
   elements: Array<PatternElement>,
   terms: TermState,
-  attributeName: string | null | undefined,
+  attributeName: string | undefined,
 ): React.ReactNode {
   let indent = false;
   return elements.map((element, index) => {

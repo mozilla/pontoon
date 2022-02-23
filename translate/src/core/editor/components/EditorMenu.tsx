@@ -65,7 +65,7 @@ function MenuContent(props: Props) {
     );
   }
 
-  function updateSetting(setting: string, value: boolean) {
+  function updateSetting(setting: keyof user.Settings, value: boolean) {
     dispatch(user.actions.saveSetting(setting, value, userState.username));
   }
 

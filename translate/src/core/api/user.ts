@@ -1,3 +1,4 @@
+import type { Settings } from '../user';
 import APIBase from './base';
 
 const SETTINGS_NAMES_MAP = {
@@ -57,7 +58,7 @@ export default class UserAPI extends APIBase {
 
   async updateSetting(
     username: string,
-    setting: string,
+    setting: keyof Settings,
     value: boolean,
   ): Promise<string> {
     const csrfToken = this.getCSRFToken();

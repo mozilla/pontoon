@@ -8,11 +8,11 @@ import Highcharts from 'highcharts/highstock';
 import highchartsStock from 'highcharts/modules/stock';
 import HighchartsReact from 'highcharts-react-official';
 
-import './TimeRangeFilter.css';
-
-import { CHART_OPTIONS } from './chart-options';
-
 import type { TimeRangeType } from '..';
+import { CHART_OPTIONS } from './chart-options';
+import type { FilterType } from './SearchBox';
+
+import './TimeRangeFilter.css';
 
 const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
 const URL_FORMAT = 'YYYYMMDDHHmm';
@@ -21,8 +21,12 @@ type Props = {
   project: string;
   timeRange: TimeRangeType | null | undefined;
   timeRangeData: Array<Array<number>>;
-  applySingleFilter: (filter: string, type: string) => void;
-  toggleFilter: (filter: string, type: string, event: React.MouseEvent) => void;
+  applySingleFilter: (filter: string, type: FilterType) => void;
+  toggleFilter: (
+    filter: string,
+    type: 'timeRange',
+    event: React.MouseEvent,
+  ) => void;
   updateTimeRange: (filter: string) => void;
 };
 
@@ -50,7 +54,7 @@ type State = {
 /**
  * Shows a Time Range filter panel.
  */
-export default class TimeRangeFilterBase extends React.Component<Props, State> {
+export default class TimeRangeFilter extends React.Component<Props, State> {
   chart: { current: any };
 
   constructor(props: Props) {

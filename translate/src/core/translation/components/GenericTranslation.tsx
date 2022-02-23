@@ -11,7 +11,7 @@ const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {
-  content: string;
+  content: string | null | undefined;
   diffTarget?: string | null | undefined;
   search?: string | null | undefined;
 };

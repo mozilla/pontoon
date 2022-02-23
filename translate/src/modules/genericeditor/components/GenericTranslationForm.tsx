@@ -14,7 +14,7 @@ type Props = {
  */
 export default function GenericTranslationForm(
   props: Props,
-): React.ReactElement<'textarea'> {
+): React.ReactElement<'textarea'> | null {
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
@@ -32,7 +32,7 @@ export default function GenericTranslationForm(
 
   const handleShortcutsFn = editor.useHandleShortcuts();
 
-  const textareaRef = React.useRef(null);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   // Focus the textarea when something changes.
   React.useLayoutEffect(() => {

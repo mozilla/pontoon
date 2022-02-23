@@ -99,9 +99,9 @@ export type EditorState = {
 function extractFailedChecksOfType(
   failedChecks: FailedChecks,
   type: 'Errors' | 'Warnings',
-): Array<string> {
+): string[] {
   let extractedFailedChecks = [];
-  const keys = Object.keys(failedChecks);
+  const keys = Object.keys(failedChecks) as Array<keyof FailedChecks>;
 
   for (const key of keys) {
     if (key.endsWith(type)) {

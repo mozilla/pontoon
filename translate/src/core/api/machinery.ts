@@ -65,7 +65,7 @@ export default class MachineryAPI extends APIBase {
     pk: number | null | undefined,
   ): Promise<Translations> {
     const url = '/translation-memory/';
-    let params = {
+    let params: Record<string, string | number> = {
       text: source,
       locale: locale.code,
     };
