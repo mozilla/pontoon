@@ -170,7 +170,9 @@ export function ResourceMenu({
 
       <ul className='static-links'>
         <li
-          className={parameters.resource === 'all-resources' ? 'current' : null}
+          className={
+            parameters.resource === 'all-resources' ? 'current' : undefined
+          }
         >
           <a
             href={`/${parameters.locale}/${parameters.project}/all-resources/`}

@@ -162,11 +162,17 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
       '.comments-list .add-comment .comment-editor',
     );
     const commentEditorLineHeight =
-      parseInt(window.getComputedStyle(commentEditor).lineHeight) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).lineHeight)) ||
+      0;
     const commentEditorTopPadding =
-      parseInt(window.getComputedStyle(commentEditor).paddingTop) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).paddingTop)) ||
+      0;
     const commentEditorBottomPadding =
-      parseInt(window.getComputedStyle(commentEditor).paddingBottom) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).paddingBottom)) ||
+      0;
     const commentEditorSpan = document.querySelector(
       '.comments-list .add-comment .comment-editor p span',
     );
@@ -386,7 +392,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     }
 
     if (!node.type || !node.children) {
-      return;
+      return '';
     }
 
     const children = node.children.map((n) => serialize(n)).join('');

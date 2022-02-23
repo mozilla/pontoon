@@ -8,7 +8,7 @@ type Props = {
  * Regularly fetch user data to keep it up-to-date with the server.
  */
 export default class UserAutoUpdater extends React.Component<Props> {
-  timer: number | null;
+  timer: number | null = null;
 
   fetchUserData: () => void = () => {
     this.props.getUserData();

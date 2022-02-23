@@ -95,7 +95,9 @@ export default function GenericTranslationForm(
   return (
     <textarea
       placeholder={
-        isReadOnlyEditor ? null : 'Type translation and press Enter to save'
+        isReadOnlyEditor
+          ? undefined
+          : 'Type translation and press Enter to save'
       }
       readOnly={isReadOnlyEditor}
       ref={textareaRef}

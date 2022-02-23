@@ -98,7 +98,10 @@ export function FiltersPanel({
         </Localized>
 
         {FILTERS_STATUS.map((status, i) => {
-          const count = status.stat ? stats[status.stat] : stats[status.slug];
+          const count =
+            'stat' in status && status.stat
+              ? stats[status.stat]
+              : stats[status.slug];
           const selected = statuses[status.slug];
 
           let className = status.slug;
@@ -305,8 +308,6 @@ export function FiltersPanel({
  * Changes to the filters will be reflected in the URL.
  */
 export default class FiltersPanelBase extends React.Component<Props, State> {
-  menu: React.RefObject<HTMLDivElement>;
-
   constructor(props: Props) {
     super(props);
 

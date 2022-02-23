@@ -72,7 +72,7 @@ function renderElements(
           serializeVariantKey(variant.key),
           [index, i].join('-'),
           terms,
-          indent ? 'indented' : null,
+          indent ? 'indented' : undefined,
           attributeName,
         );
       });

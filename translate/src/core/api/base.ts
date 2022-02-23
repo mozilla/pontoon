@@ -69,7 +69,7 @@ export default class APIBase {
       response = await fetch(fullUrl.toString(), requestParams);
     } catch (e) {
       // Swallow Abort errors because we trigger them ourselves.
-      if (e.name === 'AbortError') {
+      if (e instanceof Error && e.name === 'AbortError') {
         return {};
       }
       throw e;

@@ -74,8 +74,8 @@ export default function RichTranslationForm(
     updateTranslation,
   } = props;
 
-  const accessKeyElementIdRef = React.useRef(null);
-  const focusedElementIdRef = React.useRef(null);
+  const accessKeyElementId = React.useRef('');
+  const focusedElementId = React.useRef('');
 
   const dispatch = useAppDispatch();
 
@@ -95,7 +95,7 @@ export default function RichTranslationForm(
     (state) => state.unsavedchanges.exist,
   );
 
-  const tableBodyRef = React.useRef<HTMLTableSectionElement>();
+  const tableBody = React.useRef<HTMLTableSectionElement>(null);
 
   const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -111,20 +111,15 @@ export default function RichTranslationForm(
     [message, updateTranslation],
   );
 
-  const getFirstInput = React.useCallback(() => {
-    if (tableBodyRef.current) {
-      return tableBodyRef.current.querySelector('textarea:first-of-type');
-    }
-    return null;
-  }, []);
+  const getFirstInput = React.useCallback(
+    () => tableBody.current?.querySelector('textarea:first-of-type'),
+    [],
+  );
 
   const getFocusedElement = React.useCallback(() => {
-    if (focusedElementIdRef.current && tableBodyRef.current) {
-      return tableBodyRef.current.querySelector(
-        'textarea#' + focusedElementIdRef.current,
-      );
-    }
-    return null;
+    const id = focusedElementId.current;
+    const el = tableBody.current;
+    return id && el ? el.querySelector(`textarea#${id}`) : null;
   }, []);
 
   // Replace selected content on external actions (for example, when a user clicks
@@ -160,7 +155,7 @@ export default function RichTranslationForm(
     if (changeSource === 'internal') {
       return;
     }
-    focusedElementIdRef.current = null;
+    focusedElementId.current = '';
   }, [entity, changeSource]);
 
   // Reset checks when content of the editor changes and some changes have been made.
@@ -226,13 +221,13 @@ export default function RichTranslationForm(
     }
 
     updateRichTranslation(
-      event.currentTarget.textContent,
-      accessKeyElementIdRef.current.split('-'),
+      event.currentTarget.textContent ?? '',
+      accessKeyElementId.current.split('-'),
     );
   }
 
   function setFocusedInput(event: React.FocusEvent<HTMLTextAreaElement>) {
-    focusedElementIdRef.current = event.currentTarget.id;
+    focusedElementId.current = event.currentTarget.id;
   }
 
   function renderTextarea(
@@ -259,13 +254,13 @@ export default function RichTranslationForm(
 
   function renderAccessKeys(candidates: Array<string>) {
     // Get selected access key
-    const id = accessKeyElementIdRef.current;
-    let accessKey = null;
-    if (id && tableBodyRef.current) {
-      const accessKeyElement =
-        tableBodyRef.current.querySelector<HTMLTextAreaElement>(
-          'textarea#' + id,
-        );
+    const id = accessKeyElementId.current;
+    const el = tableBody.current;
+    let accessKey: string | null = null;
+    if (id && el) {
+      const accessKeyElement = el.querySelector<HTMLTextAreaElement>(
+        'textarea#' + id,
+      );
       if (accessKeyElement) {
         accessKey = accessKeyElement.value;
       }
@@ -311,7 +306,7 @@ export default function RichTranslationForm(
 
     // Access Key UI
     if (candidates && candidates.length && value.length < 2) {
-      accessKeyElementIdRef.current = path.join('-');
+      accessKeyElementId.current = path.join('-');
       return (
         <td>
           {renderTextarea(value, path, 1)}
@@ -490,7 +485,7 @@ export default function RichTranslationForm(
   return (
     <div className='fluent-rich-translation-form'>
       <table>
-        <tbody ref={tableBodyRef}>
+        <tbody ref={tableBody}>
           {renderValue(message.value, ['value'])}
           {renderAttributes(message.attributes, ['attributes'])}
         </tbody>

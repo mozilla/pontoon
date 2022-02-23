@@ -60,7 +60,7 @@ export default class TranslationLength extends React.Component<Props> {
       <div className='translation-length'>
         {countdown !== null ? (
           <div className='countdown'>
-            <span className={countdown < 0 ? 'overflow' : null}>
+            <span className={countdown < 0 ? 'overflow' : undefined}>
               {countdown}
             </span>
           </div>

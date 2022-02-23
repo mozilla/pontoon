@@ -91,7 +91,7 @@ export class TranslationBase extends React.Component<InternalProps, State> {
     }
 
     // Ignore if selecting text
-    if (window.getSelection().toString()) {
+    if (window.getSelection()?.toString()) {
       return;
     }
 

@@ -19,7 +19,7 @@ type Props = {
 export default function ProjectItem(props: Props): React.ReactElement<'li'> {
   const { parameters, localization, navigateToPath } = props;
   const project = localization.project;
-  const className = parameters.project === project.slug ? 'current' : null;
+  const className = parameters.project === project.slug ? 'current' : undefined;
 
   return (
     <li className={className}>

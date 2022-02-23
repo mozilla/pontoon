@@ -297,9 +297,6 @@ export class EntitiesListBase extends React.Component<InternalProps> {
       return;
     }
 
-    // Do not return a specific list of entities defined by their IDs.
-    const entityIds: number[] = null;
-
     // Currently shown entities should be excluded from the next results.
     const currentEntityIds = props.entities.entities.map((entity) => entity.pk);
 
@@ -308,7 +305,7 @@ export class EntitiesListBase extends React.Component<InternalProps> {
         locale,
         project,
         resource,
-        entityIds,
+        null, // Do not return a specific list of entities defined by their IDs.
         currentEntityIds,
         entity.toString(),
         search,

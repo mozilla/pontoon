@@ -79,9 +79,10 @@ export const getPreviousEntity = createSelector(
   _getPreviousEntity,
 );
 
-export function _isReadOnlyEditor(entity: Entity, user: UserState): boolean {
-  return (entity && entity.readonly) || !user.isAuthenticated;
-}
+export const _isReadOnlyEditor = (
+  entity: Entity | undefined,
+  user: UserState,
+) => entity?.readonly || !user.isAuthenticated;
 
 /**
  * Return true if editor must be read-only, which happens when:

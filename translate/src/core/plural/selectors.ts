@@ -31,7 +31,7 @@ export const getPluralForm = createSelector(
 );
 
 export function _getTranslationForSelectedEntity(
-  entity: Entity,
+  entity: Entity | undefined,
   pluralForm: number,
 ): EntityTranslation | null | undefined {
   if (pluralForm === -1) {
@@ -63,14 +63,11 @@ export const getTranslationForSelectedEntity = createSelector(
 );
 
 export function _getTranslationStringForSelectedEntity(
-  entity: Entity,
+  entity: Entity | undefined,
   pluralForm: number,
 ): string {
   const translation = _getTranslationForSelectedEntity(entity, pluralForm);
-  if (translation && translation.string) {
-    return translation.string;
-  }
-  return '';
+  return translation?.string ?? '';
 }
 
 /**

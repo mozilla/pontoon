@@ -153,7 +153,7 @@ function useForceSource(): [boolean, () => void] {
       fromSyntax,
       toSyntax,
       translation,
-      entity.original,
+      entity?.original ?? '',
       activeTranslationString,
       locale,
     );

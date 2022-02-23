@@ -122,7 +122,7 @@ export default function reducer(
     case SET_ENTITY:
       return {
         ...state,
-        entity: action.entity,
+        entity: action.entity ?? null,
         sourceString: action.sourceString,
       };
     default:

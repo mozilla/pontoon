@@ -255,7 +255,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         unsavedChangesIgnored,
         () => {
           dispatch(
-            navigation.actions.updateEntity(router, nextEntity.pk.toString()),
+            navigation.actions.updateEntity(
+              router,
+              nextEntity?.pk.toString() ?? '',
+            ),
           );
           dispatch(editor.actions.reset());
         },
@@ -278,7 +281,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
           dispatch(
             navigation.actions.updateEntity(
               router,
-              previousEntity.pk.toString(),
+              previousEntity?.pk.toString() ?? '',
             ),
           );
           dispatch(editor.actions.reset());

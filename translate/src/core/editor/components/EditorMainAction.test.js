@@ -30,18 +30,20 @@ describe('<EditorMainAction>', () => {
     sinon.stub(user.selectors, 'isTranslator').returns(true);
     sinon.stub(editor.selectors, 'sameExistingTranslation').returns({ pk: 1 });
 
-    const [wrapper] = createComponent();
+    try {
+      const [wrapper] = createComponent();
 
-    expect(wrapper.find('.action-approve')).toHaveLength(1);
-    expect(wrapper.find('.action-suggest')).toHaveLength(0);
-    expect(wrapper.find('.action-save')).toHaveLength(0);
+      expect(wrapper.find('.action-approve')).toHaveLength(1);
+      expect(wrapper.find('.action-suggest')).toHaveLength(0);
+      expect(wrapper.find('.action-save')).toHaveLength(0);
 
-    wrapper.find('.action-approve').simulate('click');
-    expect(updateStatusMock.calledOnce).toBeTruthy();
-
-    user.selectors.isTranslator.restore();
-    editor.selectors.sameExistingTranslation.restore();
-    history.actions.updateStatus.restore();
+      wrapper.find('.action-approve').simulate('click');
+      expect(updateStatusMock.calledOnce).toBeTruthy();
+    } finally {
+      user.selectors.isTranslator.restore();
+      editor.selectors.sameExistingTranslation.restore();
+      history.actions.updateStatus.restore();
+    }
   });
 
   it('renders the Suggest button when force suggestion is on', () => {

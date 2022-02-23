@@ -37,7 +37,7 @@ export function ConcordanceSearch({
 }: Props): React.ReactElement {
   const locale = useAppSelector((state) => state.locale);
   const projects = translation.projectNames;
-  const title = !projects ? null : projects.filter(Boolean).join(' • ');
+  const title = !projects ? undefined : projects.filter(Boolean).join(' • ');
 
   return (
     <>
