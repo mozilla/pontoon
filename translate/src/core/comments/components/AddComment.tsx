@@ -407,10 +407,9 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
       case 'paragraph':
         return `<p>${children.trim()}</p>`;
       case 'mention':
-        if (node.url) {
-          return `<a href="${escapeHtml(node.url)}">${children}</a>`;
-        }
-        break;
+        return node.url
+          ? `<a href="${escapeHtml(node.url)}">${children}</a>`
+          : children;
       default:
         return children;
     }
