@@ -390,6 +390,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
       dispatch,
     } = this.props;
 
+    if (!selectedEntity) return;
+
     const state = this.props.store.getState();
     const unsavedChangesExist = state[unsavedchanges.NAME].exist;
     const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
