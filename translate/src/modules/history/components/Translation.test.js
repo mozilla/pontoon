@@ -49,7 +49,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getStatus()).toEqual('approved');
+      expect(wrapper.find('.approved')).toHaveLength(1);
     });
 
     it('returns the correct status for rejected translations', () => {
@@ -66,7 +66,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getStatus()).toEqual('rejected');
+      expect(wrapper.find('.rejected')).toHaveLength(1);
     });
 
     it('returns the correct status for fuzzy translations', () => {
@@ -83,7 +83,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getStatus()).toEqual('fuzzy');
+      expect(wrapper.find('.fuzzy')).toHaveLength(1);
     });
 
     it('returns the correct status for unreviewed translations', () => {
@@ -96,7 +96,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getStatus()).toEqual('unreviewed');
+      expect(wrapper.find('.unreviewed')).toHaveLength(1);
     });
   });
 
@@ -115,9 +115,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getApprovalTitle()).toEqual(
-        'Approved by Cespenar',
-      );
+      expect(wrapper.find('[title="Approved by Cespenar"]')).toHaveLength(2);
     });
 
     it('returns the correct approver title when unapproved', () => {
@@ -134,9 +132,7 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getApprovalTitle()).toEqual(
-        'Unapproved by Bhaal',
-      );
+      expect(wrapper.find('[title="Unapproved by Bhaal"]')).toHaveLength(2);
     });
 
     it('returns the correct approver title when neither approved or unapproved', () => {
@@ -149,11 +145,11 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.instance().getApprovalTitle()).toEqual('Not reviewed yet');
+      expect(wrapper.find('[title="Not reviewed yet"]')).toHaveLength(2);
     });
   });
 
-  describe('renderUser', () => {
+  describe('User', () => {
     it('returns a link when the author is known', () => {
       const translation = {
         ...DEFAULT_TRANSLATION,
@@ -168,10 +164,11 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      const link = wrapper.find('a');
-      expect(link).toHaveLength(1);
-      expect(link.at(0).props().children).toEqual('Sarevok');
-      expect(link.at(0).props().href).toEqual('/contributors/id_Sarevok');
+      const link = wrapper.find('User').dive().find('a');
+      expect(link.props()).toMatchObject({
+        children: 'Sarevok',
+        href: '/contributors/id_Sarevok',
+      });
     });
 
     it('returns no link when the author is not known', () => {
@@ -184,7 +181,8 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      expect(wrapper.find('a')).toHaveLength(0);
+      const link = wrapper.find('User').dive().find('a');
+      expect(link).toHaveLength(0);
     });
   });
 
@@ -350,7 +348,7 @@ describe('<TranslationBase>', () => {
     });
   });
 
-  describe('diff', () => {
+  describe('DiffToggle', () => {
     it('shows default translation and no Show/Hide diff button for the first translation', () => {
       const wrapper = shallow(
         <TranslationBase
@@ -366,8 +364,9 @@ describe('<TranslationBase>', () => {
       expect(wrapper.find('.default')).toHaveLength(1);
       expect(wrapper.find('.diff-visible')).toHaveLength(0);
 
-      expect(wrapper.find('.toggle.diff.off')).toHaveLength(0);
-      expect(wrapper.find('.toggle.diff.on')).toHaveLength(0);
+      const toggle = wrapper.find('DiffToggle').dive();
+      expect(toggle.find('.toggle.diff.off')).toHaveLength(0);
+      expect(toggle.find('.toggle.diff.on')).toHaveLength(0);
     });
 
     it('shows default translation and the Show diff button for a non-first translation', () => {
@@ -382,13 +381,12 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      wrapper.instance().setState({ isDiffVisible: false });
-
       expect(wrapper.find('.default')).toHaveLength(1);
       expect(wrapper.find('.diff-visible')).toHaveLength(0);
 
-      expect(wrapper.find('.toggle.diff.off')).toHaveLength(1);
-      expect(wrapper.find('.toggle.diff.on')).toHaveLength(0);
+      const toggle = wrapper.find('DiffToggle').dive();
+      expect(toggle.find('.toggle.diff.off')).toHaveLength(1);
+      expect(toggle.find('.toggle.diff.on')).toHaveLength(0);
     });
 
     it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
@@ -403,13 +401,14 @@ describe('<TranslationBase>', () => {
         />,
       );
 
-      wrapper.instance().setState({ isDiffVisible: true });
+      wrapper.find('DiffToggle').props().toggleVisible();
 
       expect(wrapper.find('.default')).toHaveLength(0);
       expect(wrapper.find('.diff-visible')).toHaveLength(1);
 
-      expect(wrapper.find('.toggle.diff.off')).toHaveLength(0);
-      expect(wrapper.find('.toggle.diff.on')).toHaveLength(1);
+      const toggle = wrapper.find('DiffToggle').dive();
+      expect(toggle.find('.toggle.diff.off')).toHaveLength(0);
+      expect(toggle.find('.toggle.diff.on')).toHaveLength(1);
     });
   });
 });
