@@ -1,13 +1,13 @@
-import * as React from 'react';
-
-import './Entity.css';
-
-import { TranslationProxy } from '~/core/translation';
 import { Localized } from '@fluent/react';
+import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
 
-import type { Entity as EntityType } from '~/core/api';
+import type { Entity as EntityType, EntityTranslation } from '~/core/api';
 import type { Locale } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
+import { TranslationProxy } from '~/core/translation';
+
+import './Entity.css';
 
 type Props = {
   checkedForBatchEditing: boolean;
@@ -20,10 +20,6 @@ type Props = {
   selectEntity: (entity: EntityType) => void;
   getSiblingEntities: (entityPK: number) => void;
   parameters: NavigationParams;
-};
-
-type State = {
-  areSiblingsActive: Boolean;
 };
 
 /**
@@ -44,157 +40,131 @@ type State = {
  * "Translation" is the current "best" translation. It shows either the approved
  * translation, or the fuzzy translation, or the last suggested translation.
  */
-export default class Entity extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { areSiblingsActive: false };
-  }
-  get status(): string {
-    const translations = this.props.entity.translation;
-    let approved = 0;
-    let fuzzy = 0;
-    let errors = 0;
-    let warnings = 0;
+export function Entity({
+  checkedForBatchEditing,
+  entity,
+  getSiblingEntities,
+  isReadOnlyEditor,
+  isTranslator,
+  locale,
+  parameters,
+  selected,
+  selectEntity,
+  toggleForBatchEditing,
+}: Props): React.ReactElement<'li'> {
+  const [areSiblingsActive, setSiblingsActive] = useState(false);
 
-    translations.forEach(function (translation) {
+  const handleSelectEntity = useCallback(
+    (ev: React.MouseEvent) => {
       if (
-        translation.errors.length &&
-        (translation.approved || translation.fuzzy)
-      ) {
-        errors++;
-      } else if (
-        translation.warnings.length &&
-        (translation.approved || translation.fuzzy)
-      ) {
-        warnings++;
-      } else if (translation.approved) {
-        approved++;
-      } else if (translation.fuzzy) {
-        fuzzy++;
+        !(
+          ev.target instanceof HTMLElement &&
+          ev.target.classList.contains('status')
+        )
+      )
+        selectEntity(entity);
+    },
+    [entity, selectEntity],
+  );
+
+  const showSiblingEntities = useCallback(
+    (ev: React.MouseEvent) => {
+      ev.stopPropagation();
+      getSiblingEntities(entity.pk);
+      setSiblingsActive(true);
+    },
+    [getSiblingEntities, entity.pk],
+  );
+
+  const handleForBatchEditing = useCallback(
+    (ev: React.MouseEvent) => {
+      if (isTranslator && !isReadOnlyEditor) {
+        ev.stopPropagation();
+        toggleForBatchEditing(entity.pk, ev.shiftKey);
       }
-    });
+    },
+    [entity, isReadOnlyEditor, isTranslator, toggleForBatchEditing],
+  );
 
-    if (errors) {
-      return 'errors';
-    }
-    if (warnings) {
-      return 'warnings';
-    }
-    if (approved === translations.length) {
-      return 'approved';
-    }
-    if (fuzzy === translations.length) {
-      return 'fuzzy';
-    }
-    if (approved > 0 || fuzzy > 0) {
-      return 'partial';
-    }
-    return 'missing';
-  }
-
-  selectEntity: (e: React.MouseEvent<HTMLLIElement>) => null | void = (
-    e: React.MouseEvent<HTMLLIElement>,
-  ) => {
-    if (
-      e.target instanceof HTMLElement &&
-      e.target.classList.contains('status')
-    ) {
-      return null;
-    }
-    this.props.selectEntity(this.props.entity);
-  };
-
-  getSiblingEntities: (e: React.MouseEvent<HTMLButtonElement>) => void = (
-    e: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    e.stopPropagation();
-    this.props.getSiblingEntities(this.props.entity.pk);
-    this.setState({ areSiblingsActive: true });
-  };
-
-  toggleForBatchEditing: (e: React.MouseEvent<HTMLSpanElement>) => void = (
-    e: React.MouseEvent<HTMLSpanElement>,
-  ) => {
-    const { entity, isReadOnlyEditor, isTranslator } = this.props;
-
-    if (isTranslator && !isReadOnlyEditor) {
-      e.stopPropagation();
-      this.props.toggleForBatchEditing(entity.pk, e.shiftKey);
-    }
-  };
-
-  showSiblingEntitiesButton = () => {
-    const { search, status, extra, tag, time, author } = this.props.parameters;
-    const { areSiblingsActive } = this.state;
+  const showSiblingEntitiesButton = () => {
+    const { search, status, extra, tag, time, author } = parameters;
     return (
-      !areSiblingsActive &&
-      (search ||
-        status != null ||
-        extra != null ||
-        tag != null ||
-        time != null ||
-        author != null)
+      search ||
+      status != null ||
+      extra != null ||
+      tag != null ||
+      time != null ||
+      author != null
     );
   };
 
-  render(): React.ReactElement<'li'> {
-    const {
-      checkedForBatchEditing,
-      entity,
-      isReadOnlyEditor,
-      isTranslator,
-      locale,
-      selected,
-      parameters,
-    } = this.props;
+  const cn = classNames(
+    'entity',
+    translationStatus(entity.translation),
+    selected && 'selected',
+    isTranslator && !isReadOnlyEditor && 'batch-editable',
+    checkedForBatchEditing && 'checked',
+    entity.isSibling && 'sibling',
+  );
 
-    const classSelected = selected ? 'selected' : '';
-    const classBatchEditable =
-      isTranslator && !isReadOnlyEditor ? 'batch-editable' : '';
-    const classChecked = checkedForBatchEditing ? 'checked' : '';
-    const classSibling = entity.isSibling ? 'sibling' : '';
-
-    return (
-      <li
-        className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}
-        onClick={this.selectEntity}
-      >
-        <span className='status fa' onClick={this.toggleForBatchEditing} />
-        {classSelected && !classSibling ? (
-          <div>
-            {this.showSiblingEntitiesButton() && (
-              <Localized id='entitieslist-Entity--sibling-strings-title'>
-                <i
-                  className={'sibling-entities-icon fas fa-expand-arrows-alt'}
-                  title='Click to reveal sibling strings'
-                  onClick={this.getSiblingEntities}
-                ></i>
-              </Localized>
-            )}
-          </div>
-        ) : null}
+  return (
+    <li className={cn} onClick={handleSelectEntity}>
+      <span className='status fa' onClick={handleForBatchEditing} />
+      {selected && !entity.isSibling ? (
         <div>
-          <p className='source-string'>
-            <TranslationProxy
-              content={entity.original}
-              format={entity.format}
-              search={parameters.search}
-            />
-          </p>
-          <p
-            className='translation-string'
-            dir={locale.direction}
-            lang={locale.code}
-            data-script={locale.script}
-          >
-            <TranslationProxy
-              content={entity.translation[0].string}
-              format={entity.format}
-              search={parameters.search}
-            />
-          </p>
+          {!areSiblingsActive && showSiblingEntitiesButton() && (
+            <Localized id='entitieslist-Entity--sibling-strings-title'>
+              <i
+                className={'sibling-entities-icon fas fa-expand-arrows-alt'}
+                title='Click to reveal sibling strings'
+                onClick={showSiblingEntities}
+              ></i>
+            </Localized>
+          )}
         </div>
-      </li>
-    );
+      ) : null}
+      <div>
+        <p className='source-string'>
+          <TranslationProxy
+            content={entity.original}
+            format={entity.format}
+            search={parameters.search}
+          />
+        </p>
+        <p
+          className='translation-string'
+          dir={locale.direction}
+          lang={locale.code}
+          data-script={locale.script}
+        >
+          <TranslationProxy
+            content={entity.translation[0].string}
+            format={entity.format}
+            search={parameters.search}
+          />
+        </p>
+      </div>
+    </li>
+  );
+}
+
+function translationStatus(translations: EntityTranslation[]): string {
+  let errors = false;
+  let warnings = false;
+  let approved = 0;
+  let fuzzy = 0;
+
+  for (const tx of translations) {
+    if (tx.errors.length && (tx.approved || tx.fuzzy)) errors = true;
+    else if (tx.warnings.length && (tx.approved || tx.fuzzy)) warnings = true;
+    else if (tx.approved) approved += 1;
+    else if (tx.fuzzy) fuzzy += 1;
   }
+
+  if (errors) return 'errors';
+  if (warnings) return 'warnings';
+  if (approved === translations.length) return 'approved';
+  if (fuzzy === translations.length) return 'fuzzy';
+  if (approved > 0 || fuzzy > 0) return 'partial';
+  return 'missing';
 }

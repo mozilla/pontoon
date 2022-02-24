@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Entity from './Entity';
+import { Entity } from './Entity';
 
 describe('<Entity>', () => {
   const ENTITY_A = {
@@ -104,32 +104,32 @@ describe('<Entity>', () => {
     let wrapper = shallow(
       <Entity entity={ENTITY_A} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('approved');
+    expect(wrapper.find('.approved')).toHaveLength(1);
 
     wrapper = shallow(
       <Entity entity={ENTITY_B} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('fuzzy');
+    expect(wrapper.find('.fuzzy')).toHaveLength(1);
 
     wrapper = shallow(
       <Entity entity={ENTITY_C} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('missing');
+    expect(wrapper.find('.missing')).toHaveLength(1);
 
     wrapper = shallow(
       <Entity entity={ENTITY_D} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('errors');
+    expect(wrapper.find('.errors')).toHaveLength(1);
 
     wrapper = shallow(
       <Entity entity={ENTITY_E} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('warnings');
+    expect(wrapper.find('.warnings')).toHaveLength(1);
 
     wrapper = shallow(
       <Entity entity={ENTITY_F} locale={DEFAULT_LOCALE} parameters={{}} />,
     );
-    expect(wrapper.instance().status).toEqual('partial');
+    expect(wrapper.find('.partial')).toHaveLength(1);
   });
 
   it('calls the selectEntity function on click on li', () => {
