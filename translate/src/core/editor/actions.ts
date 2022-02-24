@@ -223,7 +223,7 @@ export type StartUpdateTranslationAction = {
   readonly type: typeof START_UPDATE_TRANSLATION;
 };
 
-function startUpdateTranslation(): StartUpdateTranslationAction {
+export function startUpdateTranslation(): StartUpdateTranslationAction {
   return {
     type: START_UPDATE_TRANSLATION,
   };
@@ -232,7 +232,7 @@ function startUpdateTranslation(): StartUpdateTranslationAction {
 export type EndUpdateTranslationAction = {
   readonly type: typeof END_UPDATE_TRANSLATION;
 };
-function endUpdateTranslation(): EndUpdateTranslationAction {
+export function endUpdateTranslation(): EndUpdateTranslationAction {
   return {
     type: END_UPDATE_TRANSLATION,
   };

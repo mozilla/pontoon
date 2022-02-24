@@ -1,12 +1,11 @@
+import { getNextEntity, getSelectedEntity } from '~/core/entities/selectors';
+import { getNavigationParams } from '~/core/navigation/selectors';
+import { getPluralForm } from '~/core/plural/selectors';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
-import * as plural from '~/core/plural';
-import * as history from '~/modules/history';
-
-import { actions } from '..';
-
 import type { ChangeOperation } from '~/modules/history';
+import { updateStatus } from '~/modules/history/actions';
+
+import { startUpdateTranslation, endUpdateTranslation } from '../actions';
 
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.
@@ -18,19 +17,11 @@ export default function useUpdateTranslationStatus(): (
 ) => void {
   const dispatch = useAppDispatch();
 
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useAppSelector(getSelectedEntity);
   const locale = useAppSelector((state) => state.locale);
-  const parameters = useAppSelector((state) =>
-    navigation.selectors.getNavigationParams(state),
-  );
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
-  const nextEntity = useAppSelector((state) =>
-    entities.selectors.getNextEntity(state),
-  );
+  const parameters = useAppSelector(getNavigationParams);
+  const pluralForm = useAppSelector(getPluralForm);
+  const nextEntity = useAppSelector(getNextEntity);
   const router = useAppSelector((state) => state.router);
 
   return (
@@ -39,9 +30,9 @@ export default function useUpdateTranslationStatus(): (
     ignoreWarnings: boolean | null | undefined,
   ) => {
     dispatch(async (dispatch) => {
-      dispatch(actions.startUpdateTranslation());
+      dispatch(startUpdateTranslation());
       await dispatch(
-        history.actions.updateStatus(
+        updateStatus(
           change,
           // The EditorMainAction tests fail if this dispatch() is skipped on an empty entity
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -55,7 +46,7 @@ export default function useUpdateTranslationStatus(): (
           ignoreWarnings,
         ),
       );
-      dispatch(actions.endUpdateTranslation());
+      dispatch(endUpdateTranslation());
     });
   };
 }
