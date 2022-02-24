@@ -2,14 +2,13 @@ import * as React from 'react';
 
 import './PluralSelector.css';
 
+import { getPluralExamples, Locale, NAME as LOCALE } from '~/core/locale';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import * as locale from '~/core/locale';
-import * as unsavedchanges from '~/modules/unsavedchanges';
+import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
+import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import type { AppDispatch } from '~/store';
 
 import { actions, CLDR_PLURALS, selectors } from '..';
-
-import type { AppDispatch } from '~/store';
-import type { Locale } from '~/core/locale';
 
 type Props = {
   locale: Locale;
@@ -32,76 +31,60 @@ type InternalProps = Props &
  * Shows a list of available plural forms for the current locale, and allows
  * to change selected plural form.
  */
-export class PluralSelectorBase extends React.Component<InternalProps> {
-  selectPluralForm(pluralForm: number) {
-    if (this.props.pluralForm === pluralForm) {
-      return;
+export function PluralSelectorBase({
+  dispatch,
+  locale,
+  pluralForm,
+  resetEditor,
+  store,
+}: InternalProps): React.ReactElement<'nav'> | null {
+  function selectPluralForm(nextPluralForm: number) {
+    if (pluralForm !== nextPluralForm) {
+      const state = store.getState();
+      const { exist, ignored } = state[UNSAVEDCHANGES];
+
+      dispatch(
+        checkUnsavedChanges(exist, ignored, () => {
+          resetEditor();
+          dispatch(actions.select(nextPluralForm));
+        }),
+      );
     }
-
-    const { dispatch } = this.props;
-
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-    dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
-          this.props.resetEditor();
-          dispatch(actions.select(pluralForm));
-        },
-      ),
-    );
   }
 
-  render(): null | React.ReactElement<'nav'> {
-    const props = this.props;
-    const { pluralForm } = props;
-
-    if (
-      pluralForm === -1 ||
-      !props.locale ||
-      props.locale.cldrPlurals.length <= 1
-    ) {
-      return null;
-    }
-
-    const examples = locale.getPluralExamples(props.locale);
-
-    return (
-      <nav className='plural-selector'>
-        <ul>
-          {props.locale.cldrPlurals.map((item, i) => {
-            return (
-              <li key={item} className={i === pluralForm ? 'active' : ''}>
-                <button onClick={() => this.selectPluralForm(i)}>
-                  <span>{CLDR_PLURALS[item]}</span>
-                  <sup>{examples[item]}</sup>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-    );
+  if (pluralForm === -1 || !locale || locale.cldrPlurals.length <= 1) {
+    return null;
   }
+
+  const examples = getPluralExamples(locale);
+
+  return (
+    <nav className='plural-selector'>
+      <ul>
+        {locale.cldrPlurals.map((item, i) => {
+          return (
+            <li key={item} className={i === pluralForm ? 'active' : ''}>
+              <button onClick={() => selectPluralForm(i)}>
+                <span>{CLDR_PLURALS[item]}</span>
+                <sup>{examples[item]}</sup>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
 }
 
 export default function PluralSelector(
   props: WrapperProps,
 ): React.ReactElement<typeof PluralSelectorBase> {
-  const state = {
-    locale: useAppSelector((state) => state[locale.NAME]),
-    pluralForm: useAppSelector((state) => selectors.getPluralForm(state)),
-  };
-
   return (
     <PluralSelectorBase
       {...props}
-      {...state}
       dispatch={useAppDispatch()}
+      locale={useAppSelector((state) => state[LOCALE])}
+      pluralForm={useAppSelector((state) => selectors.getPluralForm(state))}
       store={useAppStore()}
     />
   );
