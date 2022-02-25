@@ -1,20 +1,23 @@
-import * as React from 'react';
 import { push } from 'connected-react-router';
+import React, { useCallback, useEffect, useRef } from 'react';
+
+import { LocaleState, NAME as LOCALE } from '~/core/locale';
+import type { NavigationParams } from '~/core/navigation';
+import { getNavigationParams } from '~/core/navigation/selectors';
+import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
+import { get as getProject } from '~/core/project/actions';
+import {
+  NAME as RESOURCE,
+  ResourceMenu,
+  ResourcesState,
+} from '~/core/resource';
+import { get as getResource } from '~/core/resource/actions';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
+import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import type { AppDispatch } from '~/store';
 
 import './Navigation.css';
-
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import * as locale from '~/core/locale';
-import * as navigation from '~/core/navigation';
-import * as project from '~/core/project';
-import * as resource from '~/core/resource';
-import * as unsavedchanges from '~/modules/unsavedchanges';
-
-import type { AppDispatch } from '~/store';
-import type { LocaleState } from '~/core/locale';
-import type { NavigationParams } from '~/core/navigation';
-import type { ProjectState } from '~/core/project';
-import type { ResourcesState } from '~/core/resource';
 
 type Props = {
   locale: LocaleState;
@@ -33,117 +36,91 @@ type InternalProps = Props & {
  *
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
-export class NavigationBase extends React.Component<InternalProps> {
-  componentDidMount() {
-    this.updateTitle();
-  }
+export function NavigationBase({
+  dispatch,
+  locale,
+  parameters,
+  project,
+  resources,
+  store,
+}: InternalProps): React.ReactElement<'nav'> | null {
+  useEffect(() => {
+    if (locale?.name && project?.name)
+      document.title = `${locale.name} (${locale.code}) · ${project.name}`;
+  }, [locale, project]);
 
-  componentDidUpdate(prevProps: InternalProps) {
-    const { parameters } = this.props;
-
-    // Update project and resource data if project changes
-    if (parameters.project !== prevProps.parameters.project) {
-      this.props.dispatch(project.actions.get(parameters.project));
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) {
+      dispatch(getProject(parameters.project));
 
       // Load resources, unless we're in the All Projects view
       if (parameters.project !== 'all-projects') {
-        this.props.dispatch(
-          resource.actions.get(parameters.locale, parameters.project),
-        );
+        dispatch(getResource(parameters.locale, parameters.project));
       }
-    }
+    } else mounted.current = true;
+  }, [dispatch, parameters.project]);
 
-    if (this.props.project !== prevProps.project) {
-      this.updateTitle();
-    }
-  }
-
-  updateTitle: () => null | void = () => {
-    const { locale, project } = this.props;
-
-    if (!locale || !locale.name) {
-      return null;
-    }
-
-    if (!project || !project.name) {
-      return null;
-    }
-
-    const projectName = project.name || 'All Projects';
-    document.title = `${locale.name} (${locale.code}) · ${projectName}`;
-  };
-
-  navigateToPath: (path: string) => void = (path: string) => {
-    const { dispatch } = this.props;
-
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-    dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
+  const navigateToPath = useCallback(
+    (path: string) => {
+      const state = store.getState();
+      const { exist, ignored } = state[UNSAVED_CHANGES];
+      dispatch(
+        checkUnsavedChanges(exist, ignored, () => {
           dispatch(push(path));
-        },
-      ),
-    );
-  };
+        }),
+      );
+    },
+    [dispatch, store],
+  );
 
-  render(): null | React.ReactElement<'nav'> {
-    const { locale, parameters, resources } = this.props;
-
-    if (!locale) {
-      return null;
-    }
-
-    return (
-      <nav className='navigation'>
-        <ul>
-          <li>
-            <a href='/'>
-              <img
-                src='/static/img/logo.svg'
-                width='32'
-                height='32'
-                alt='Pontoon logo'
-              />
-            </a>
-          </li>
-          <li>
-            <a href={`/${locale.code}/`}>
-              {locale.name}
-              <span className='locale-code'>{locale.code}</span>
-            </a>
-          </li>
-          <project.ProjectMenu
-            locale={locale}
-            parameters={parameters}
-            project={this.props.project}
-            navigateToPath={this.navigateToPath}
-          />
-          <resource.ResourceMenu
-            parameters={parameters}
-            resources={resources}
-            navigateToPath={this.navigateToPath}
-          />
-        </ul>
-      </nav>
-    );
+  if (!locale) {
+    return null;
   }
+
+  return (
+    <nav className='navigation'>
+      <ul>
+        <li>
+          <a href='/'>
+            <img
+              src='/static/img/logo.svg'
+              width='32'
+              height='32'
+              alt='Pontoon logo'
+            />
+          </a>
+        </li>
+        <li>
+          <a href={`/${locale.code}/`}>
+            {locale.name}
+            <span className='locale-code'>{locale.code}</span>
+          </a>
+        </li>
+        <ProjectMenu
+          locale={locale}
+          parameters={parameters}
+          project={project}
+          navigateToPath={navigateToPath}
+        />
+        <ResourceMenu
+          parameters={parameters}
+          resources={resources}
+          navigateToPath={navigateToPath}
+        />
+      </ul>
+    </nav>
+  );
 }
 
 export default function Navigation(): React.ReactElement<
   typeof NavigationBase
 > {
   const state = {
-    locale: useAppSelector((state) => state[locale.NAME]),
-    parameters: useAppSelector((state) =>
-      navigation.selectors.getNavigationParams(state),
-    ),
-    project: useAppSelector((state) => state[project.NAME]),
-    resources: useAppSelector((state) => state[resource.NAME]),
+    locale: useAppSelector((state) => state[LOCALE]),
+    parameters: useAppSelector(getNavigationParams),
+    project: useAppSelector((state) => state[PROJECT]),
+    resources: useAppSelector((state) => state[RESOURCE]),
   };
 
   return (
