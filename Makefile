@@ -17,6 +17,7 @@ help:
 	@echo "The list of commands for local development:\n"
 	@echo "  build            Builds the docker images for the docker-compose setup"
 	@echo "  build-frontend   Builds just the frontend image"
+	@echo "  build-tagadmin   Builds just the tag-admin frontend component"
 	@echo "  build-server     Builds just the Django server image"
 	@echo "  server-env       Regenerates the env variable file used by server"
 	@echo "  setup            Configures a local instance after a fresh build"
@@ -26,6 +27,7 @@ help:
 	@echo "  ci               Test and lint both frontend and server"
 	@echo "  test             Runs both frontend and server test suites"
 	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
+	@echo "  test-tagadmin    Runs the tag-admin test suite (Jest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
 	@echo "  format           Runs formatters for both the frontend and Python code"
 	@echo "  lint             Runs linters for both the frontend and Python code"
@@ -41,20 +43,27 @@ help:
 	@echo "  dropdb           Completely remove the postgres container and its data"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
-	@echo "  build-tagadmin   Builds the tag_admin frontend static files"
-	@echo "  build-tagadmin-w Watches the tag_admin frontend static files and builds on change"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
 	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
 .frontend-build:
 	make build-frontend
+tag-admin/dist:
+	make build-tagadmin
 .server-build:
 	make build-server
+node_modules:
+	npm install
 
-build: build-frontend build-server
+build: build-frontend build-tagadmin build-server
+
 build-frontend: server-env
 	"${DC}" build frontend
 	touch .frontend-build
+
+build-tagadmin: node_modules
+	npm run build -w tag-admin
+
 build-server: server-env
 	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
 	touch .server-build
@@ -66,22 +75,25 @@ server-env:
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh
 
-run: .frontend-build .server-build
+run: .frontend-build tag-admin/dist .server-build
 	"${DC}" up
 
 clean:
-	rm -f .docker-build .frontend-build .server-build
+	rm -rf .docker-build .frontend-build tag-admin/dist .server-build
 
 shell:
 	"${DC}" run --rm server //bin/bash
 
 ci: test lint
 
-test: test-server test-frontend
+test: test-server test-frontend test-tagadmin
 
 test-frontend: jest
 jest:
 	"${DC}" run --rm -w //frontend frontend yarn test
+
+test-tagadmin:
+	npm test -w tag-admin
 
 test-server: pytest
 pytest:
@@ -138,12 +150,6 @@ loaddb:
 	# that we need to send the dump file through STDIN. We thus are forced to
 	# use docker here instead.
 	"${DOCKER}" exec -i `"${DC}" ps -q postgresql` pg_restore -U pontoon -d pontoon -O < "${DB_DUMP_FILE}"
-
-build-tagadmin:
-	"${DC}" run --rm server npm run build
-
-build-tagadmin-w:
-	"${DC}" run --rm server npm run build-w
 
 sync-projects:
 	"${DC}" run --rm server .//manage.py sync_projects $(opts)

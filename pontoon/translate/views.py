@@ -22,11 +22,11 @@ from pontoon.base.models import (
 
 
 def static_serve_dev(request, path):
-    """Proxy missing static files to the webpack server.
+    """Proxy missing static files to the frontend server.
 
     This view replaces django's static files serve view. When a file is
     missing from django's paths, then we make a proxy request to the
-    webpack server to see if it's a front-end file.
+    frontend server to see if it's a front-end file.
 
     Note that to enable this view, you need to run your django with the
     nostatic option, like this::
@@ -39,7 +39,7 @@ def static_serve_dev(request, path):
         return serve(request, path, insecure=True)
     except Http404:
         # If the file couldn't be found in django's static files, then we
-        # try to proxy it to the webpack server.
+        # try to proxy it to the frontend server.
         return catchall_dev(request)
 
 
@@ -50,10 +50,10 @@ def catchall_dev(request, context=None):
     The implementation is very basic e.g. it doesn't handle HTTP headers.
 
     """
-    # URL to the development webpack server, used to redirect front-end requests.
+    # URL to the development frontend server, used to redirect front-end requests.
     upstream_url = settings.FRONTEND_URL + request.path
 
-    # Redirect websocket requests directly to the webpack server.
+    # Redirect websocket requests directly to the frontend server.
     if request.META.get("HTTP_UPGRADE", "").lower() == "websocket":
         return http.HttpResponseRedirect(upstream_url)
 

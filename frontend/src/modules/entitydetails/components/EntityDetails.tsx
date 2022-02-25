@@ -7,7 +7,6 @@ import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as comments from 'core/comments';
 import * as editor from 'core/editor';
 import * as entities from 'core/entities';
-import * as lightbox from 'core/lightbox';
 import * as locale from 'core/locale';
 import * as navigation from 'core/navigation';
 import * as plural from 'core/plural';
@@ -219,11 +218,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         page?: number,
     ) => {
         const { dispatch, locale, selectedEntity, user } = this.props;
-        const {
-            get,
-            getConcordanceSearchResults,
-            resetSearch,
-        } = machinery.actions;
+        const { get, getConcordanceSearchResults, resetSearch } =
+            machinery.actions;
 
         if (query) {
             if (page) {
@@ -323,10 +319,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                 },
             ),
         );
-    };
-
-    openLightbox: (image: string) => void = (image: string) => {
-        this.props.dispatch(lightbox.actions.open(image));
     };
 
     updateEditorTranslation: (
@@ -468,7 +460,6 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
                         locale={state.locale}
                         pluralForm={state.pluralForm}
                         terms={state.terms}
-                        openLightbox={this.openLightbox}
                         addTextToEditorTranslation={
                             this.addTextToEditorTranslation
                         }

@@ -29,7 +29,7 @@ services:
       - "8000:8000"
     volumes:
       - ./pontoon:/app/pontoon
-      - ./tests:/app/tests
+      - ./tag-admin:/app/tag-admin
       - ./requirements:/app/requirements
       - ~/.ssh:/home/pontoon/.ssh
 

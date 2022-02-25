@@ -81,23 +81,21 @@ export const setEntity = (
 /**
  * Get concordance search results for a given source string and locale.
  */
-export const getConcordanceSearchResults = (
-    source: string,
-    locale: Locale,
-    page?: number,
-): AppThunk => async (dispatch) => {
-    dispatch(request());
+export const getConcordanceSearchResults =
+    (source: string, locale: Locale, page?: number): AppThunk =>
+    async (dispatch) => {
+        dispatch(request());
 
-    // Abort all previously running requests.
-    await api.machinery.abort();
+        // Abort all previously running requests.
+        await api.machinery.abort();
 
-    const { results, hasMore } = await api.machinery.getConcordanceResults(
-        source,
-        locale,
-        page,
-    );
-    dispatch(concordanceSearch(results, hasMore));
-};
+        const { results, hasMore } = await api.machinery.getConcordanceResults(
+            source,
+            locale,
+            page,
+        );
+        dispatch(concordanceSearch(results, hasMore));
+    };
 
 /**
  * Get all machinery results for a given source string and locale.
@@ -110,64 +108,66 @@ export const getConcordanceSearchResults = (
  *  - Microsoft Terminology (if enabled for the locale)
  *  - Caighdean (if enabled for the locale)
  */
-export const get = (
-    source: string,
-    locale: Locale,
-    isAuthenticated: boolean,
-    pk: number | null | undefined,
-): AppThunk => async (dispatch) => {
-    // Abort all previously running requests.
-    await api.machinery.abort();
+export const get =
+    (
+        source: string,
+        locale: Locale,
+        isAuthenticated: boolean,
+        pk: number | null | undefined,
+    ): AppThunk =>
+    async (dispatch) => {
+        // Abort all previously running requests.
+        await api.machinery.abort();
 
-    if (pk) {
-        const results = await api.machinery.getTranslationMemory(
-            source,
-            locale,
-            pk,
-        );
-        dispatch(addTranslations(results));
-    }
+        if (pk) {
+            const results = await api.machinery.getTranslationMemory(
+                source,
+                locale,
+                pk,
+            );
+            dispatch(addTranslations(results));
+        }
 
-    // Only make requests to paid services if user is authenticated
-    if (isAuthenticated) {
-        if (locale.googleTranslateCode) {
-            const results = await api.machinery.getGoogleTranslation(
+        // Only make requests to paid services if user is authenticated
+        if (isAuthenticated) {
+            if (locale.googleTranslateCode) {
+                const results = await api.machinery.getGoogleTranslation(
+                    source,
+                    locale,
+                );
+                dispatch(addTranslations(results));
+            }
+
+            if (locale.msTranslatorCode) {
+                const results = await api.machinery.getMicrosoftTranslation(
+                    source,
+                    locale,
+                );
+                dispatch(addTranslations(results));
+            }
+
+            if (locale.systranTranslateCode) {
+                const results = await api.machinery.getSystranTranslation(
+                    source,
+                    locale,
+                );
+                dispatch(addTranslations(results));
+            }
+        }
+
+        if (locale.msTerminologyCode) {
+            const results = await api.machinery.getMicrosoftTerminology(
                 source,
                 locale,
             );
             dispatch(addTranslations(results));
         }
 
-        if (locale.msTranslatorCode) {
-            const results = await api.machinery.getMicrosoftTranslation(
-                source,
-                locale,
-            );
+        if (locale.code === 'ga-IE' && pk) {
+            const results = await api.machinery.getCaighdeanTranslation(pk);
             dispatch(addTranslations(results));
         }
-
-        if (locale.systranTranslateCode) {
-            const results = await api.machinery.getSystranTranslation(
-                source,
-                locale,
-            );
-            dispatch(addTranslations(results));
-        }
-    }
-
-    if (locale.msTerminologyCode) {
-        const results = await api.machinery.getMicrosoftTerminology(
-            source,
-            locale,
-        );
-        dispatch(addTranslations(results));
-    }
-
-    if (locale.code === 'ga-IE' && pk) {
-        const results = await api.machinery.getCaighdeanTranslation(pk);
-        dispatch(addTranslations(results));
-    }
-};
+    };
 
 export default {
     getConcordanceSearchResults,

@@ -2,6 +2,8 @@
 *.min.js
 *.min.css
 frontend/build
+tag-admin/dist
+coverage/
 
 # libraries
 **/base/static/js/lib*

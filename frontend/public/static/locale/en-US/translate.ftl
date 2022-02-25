@@ -501,7 +501,7 @@ machinery-TranslationMemory--number-occurrences =
 ## Messages shown to users after they perform actions.
 
 notification--translation-approved = Translation approved
-notification--translation-unaproved = Translation unaproved
+notification--translation-unapproved = Translation unapproved
 notification--translation-rejected = Translation rejected
 notification--translation-unrejected = Translation unrejected
 notification--translation-deleted = Translation deleted

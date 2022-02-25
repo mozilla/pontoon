@@ -17,8 +17,9 @@ module.exports = {
         },
         sourceType: 'module',
         babelOptions: {
-          configFile: __dirname + "/.babelrc",
+          presets: ['@babel/preset-react'],
         },
+        requireConfigFile: false,
     },
     globals: {
         gettext: false,

@@ -13,6 +13,7 @@ on:
     paths:
       - app.json
       - .github/workflows/heroku.yml
+  workflow_dispatch:
 
 jobs:
   app-json:

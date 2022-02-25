@@ -8,26 +8,25 @@ import type { Entry, PatternElement, TextElement } from '@fluent/syntax';
 function getTextElementsRecursivelly(
     elements: Array<PatternElement>,
 ): TextElement[] {
-    const textElements = elements.map((element):
-        | TextElement
-        | TextElement[]
-        | TextElement[][] => {
-        if (element.type === 'TextElement') {
-            return element;
-        }
+    const textElements = elements.map(
+        (element): TextElement | TextElement[] | TextElement[][] => {
+            if (element.type === 'TextElement') {
+                return element;
+            }
 
-        if (
-            element.type === 'Placeable' &&
-            element.expression &&
-            element.expression.type === 'SelectExpression'
-        ) {
-            return element.expression.variants.map((variant) => {
-                return getTextElementsRecursivelly(variant.value.elements);
-            });
-        }
+            if (
+                element.type === 'Placeable' &&
+                element.expression &&
+                element.expression.type === 'SelectExpression'
+            ) {
+                return element.expression.variants.map((variant) => {
+                    return getTextElementsRecursivelly(variant.value.elements);
+                });
+            }
 
-        return null;
-    });
+            return null;
+        },
+    );
 
     return flattenDeep(textElements);
 }

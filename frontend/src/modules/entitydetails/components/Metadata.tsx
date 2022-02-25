@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Linkify from 'react-linkify';
 import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
 
@@ -13,6 +12,7 @@ import Screenshots from './Screenshots';
 import TermsPopup from './TermsPopup';
 
 import type { Entity, TermType } from 'core/api';
+import { Linkify } from 'core/linkify';
 import type { Locale } from 'core/locale';
 import type { TermState } from 'core/term';
 import type { TeamCommentState } from 'modules/teamcomments';
@@ -27,7 +27,6 @@ type Props = {
     readonly teamComments: TeamCommentState;
     readonly user: UserState;
     readonly commentTabRef: Record<string, any>;
-    readonly openLightbox: (arg0: string) => void;
     readonly addTextToEditorTranslation: (text: string) => void;
     readonly navigateToPath: (path: string) => void;
     setCommentTabIndex: (id: number) => void;
@@ -344,7 +343,6 @@ export default class Metadata extends React.Component<Props, State> {
             entity,
             isReadOnlyEditor,
             locale,
-            openLightbox,
             pluralForm,
             terms,
             user,
@@ -361,11 +359,7 @@ export default class Metadata extends React.Component<Props, State> {
                         openTeamComments={this.openTeamComments}
                     />
                 )}
-                <Screenshots
-                    source={entity.comment}
-                    locale={locale.code}
-                    openLightbox={openLightbox}
-                />
+                <Screenshots source={entity.comment} locale={locale.code} />
                 <OriginalStringProxy
                     entity={entity}
                     locale={locale}

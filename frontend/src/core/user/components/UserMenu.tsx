@@ -257,13 +257,8 @@ export default class UserMenuBase extends React.Component<Props, State> {
     };
 
     render(): React.ReactElement<'div'> {
-        const {
-            isReadOnly,
-            isTranslator,
-            parameters,
-            signOut,
-            user,
-        } = this.props;
+        const { isReadOnly, isTranslator, parameters, signOut, user } =
+            this.props;
 
         return (
             <div className='user-menu'>

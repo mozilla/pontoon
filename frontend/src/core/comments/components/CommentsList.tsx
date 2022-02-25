@@ -52,6 +52,9 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
     };
 
     const pinnedComments = comments.filter((comment) => comment.pinned);
+    const unpinnedComments = comments.filter((comment) => !comment.pinned);
+    const hideAllComments =
+        !canComment && unpinnedComments.length === 0 && pinnedComments.length;
 
     return (
         <div className='comments-list'>
@@ -66,14 +69,17 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
                             renderComment(comment),
                         )}
                     </ul>
-
-                    <Localized id='comments-CommentsList--all-comments'>
-                        <h2 className='title'>ALL COMMENTS</h2>
-                    </Localized>
+                    {!hideAllComments ? (
+                        <Localized id='comments-CommentsList--all-comments'>
+                            <h2 className='title'>ALL COMMENTS</h2>
+                        </Localized>
+                    ) : null}
                 </section>
             ) : null}
             <section className='all-comments'>
-                <ul>{comments.map((comment) => renderComment(comment))}</ul>
+                <ul>
+                    {unpinnedComments.map((comment) => renderComment(comment))}
+                </ul>
                 {!canComment ? null : (
                     <AddComment
                         parameters={parameters}

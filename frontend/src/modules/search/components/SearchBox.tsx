@@ -6,6 +6,7 @@ import './SearchBox.css';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from 'hooks';
 import * as editor from 'core/editor';
 import * as navigation from 'core/navigation';
+import * as entities from 'core/entities';
 import { NAME as PROJECT_NAME } from 'core/project';
 import { NAME as STATS_NAME } from 'core/stats';
 import * as search from 'modules/search';
@@ -344,13 +345,12 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         this.props.dispatch(search.actions.setFocus(true));
     };
 
-    updateSearchInput: (
-        event: React.SyntheticEvent<HTMLInputElement>,
-    ) => void = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        this.setState({
-            search: event.currentTarget.value,
-        });
-    };
+    updateSearchInput: (event: React.SyntheticEvent<HTMLInputElement>) => void =
+        (event: React.SyntheticEvent<HTMLInputElement>) => {
+            this.setState({
+                search: event.currentTarget.value,
+            });
+        };
 
     handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void = (
         event: React.KeyboardEvent<HTMLInputElement>,
@@ -381,6 +381,7 @@ export class SearchBoxBase extends React.Component<InternalProps, State> {
         const authors = this.getSelectedAuthors();
         const author = authors.join(',');
 
+        this.props.dispatch(entities.actions.reset());
         this.props.dispatch(editor.actions.reset());
         this.props.dispatch(
             navigation.actions.update(this.props.router, {

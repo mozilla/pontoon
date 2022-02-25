@@ -17,6 +17,7 @@ on:
       - docker**
       - pontoon/**
       - .github/workflows/backend.yml
+  workflow_dispatch:
 
 jobs:
   test:
