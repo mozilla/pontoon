@@ -14,7 +14,6 @@ import {
   signOut,
 } from '../actions';
 import { NAME } from '../index';
-import { isTranslator } from '../selectors';
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';
 import UserNotificationsMenu from './UserNotificationsMenu';
@@ -23,7 +22,6 @@ import UserMenu from './UserMenu';
 import './UserControls.css';
 
 type Props = {
-  isTranslator: boolean;
   parameters: NavigationParams;
   selectedEntity?: Entity;
   user: UserState;
@@ -35,7 +33,6 @@ type InternalProps = Props & {
 
 export const UserControlsBase = ({
   dispatch,
-  isTranslator,
   parameters,
   selectedEntity,
   user,
@@ -45,7 +42,6 @@ export const UserControlsBase = ({
 
     <UserMenu
       isReadOnly={selectedEntity ? selectedEntity.readonly : true}
-      isTranslator={isTranslator}
       parameters={parameters}
       signOut={() => dispatch(signOut(user.signOutURL))}
       user={user}
@@ -62,7 +58,6 @@ export const UserControlsBase = ({
 
 const mapStateToProps = (state: RootState): Props => {
   return {
-    isTranslator: isTranslator(state),
     parameters: getNavigationParams(state),
     selectedEntity: getSelectedEntity(state),
     user: state[NAME],

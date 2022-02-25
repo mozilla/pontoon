@@ -1,8 +1,14 @@
+import { shallow } from 'enzyme';
 import React from 'react';
 import Tour from 'reactour';
-import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
+import * as hookModule from '~/hooks/useTranslator';
 import { InteractiveTourBase } from './InteractiveTour';
+
+beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeEach(() => hookModule.useTranslator.returns(false));
+afterAll(() => hookModule.useTranslator.restore());
 
 describe('<InteractiveTourBase>', () => {
   it('renders correctly on the tutorial page for unauthenticated user', () => {

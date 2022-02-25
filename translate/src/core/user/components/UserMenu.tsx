@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import type { NavigationParams } from '~/core/navigation';
 import type { UserState } from '~/core/user';
 import { useOnDiscard } from '~/core/utils';
+import { useTranslator } from '~/hooks/useTranslator';
 
 import FileUpload from './FileUpload';
 import SignOut from './SignOut';
@@ -12,7 +13,6 @@ import './UserMenu.css';
 
 type Props = {
   isReadOnly: boolean;
-  isTranslator: boolean;
   parameters: NavigationParams;
   signOut: () => void;
   user: UserState;
@@ -25,11 +25,12 @@ type UserMenuProps = Props & {
 export function UserMenu({
   user,
   parameters,
-  isTranslator,
   isReadOnly,
   signOut,
   onDiscard,
 }: UserMenuProps): React.ReactElement<'ul'> {
+  const isTranslator = useTranslator();
+
   const { locale, project, resource } = parameters;
 
   const canDownload =

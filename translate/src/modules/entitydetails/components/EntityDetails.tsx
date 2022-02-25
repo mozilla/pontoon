@@ -31,7 +31,6 @@ import {
 import { NAME as TERMS, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
-import { isTranslator } from '~/core/user/selectors';
 import { getOptimizedContent } from '~/core/utils';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { History, NAME as HISTORY } from '~/modules/history';
@@ -75,7 +74,6 @@ type Props = {
   activeTranslationString: string;
   history: HistoryState;
   isReadOnlyEditor: boolean;
-  isTranslator: boolean;
   locale: Locale;
   machinery: MachineryState;
   nextEntity?: Entity;
@@ -105,7 +103,6 @@ export function EntityDetailsBase({
   dispatch,
   history,
   isReadOnlyEditor,
-  isTranslator,
   locale,
   machinery,
   nextEntity,
@@ -401,7 +398,6 @@ export function EntityDetailsBase({
           entity={selectedEntity}
           history={history}
           isReadOnlyEditor={isReadOnlyEditor}
-          isTranslator={isTranslator}
           locale={locale}
           user={user}
           deleteTranslation={deleteTranslation_}
@@ -446,7 +442,6 @@ export default function EntityDetails(): React.ReactElement<
     ),
     history: useAppSelector((state) => state[HISTORY]),
     isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
-    isTranslator: useAppSelector(isTranslator),
     locale: useAppSelector((state) => state[LOCALE]),
     machinery: useAppSelector((state) => state[MACHINERY]),
     nextEntity: useAppSelector(getNextEntity),

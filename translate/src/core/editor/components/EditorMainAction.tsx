@@ -2,9 +2,9 @@ import { Localized } from '@fluent/react';
 import React from 'react';
 
 import { useAppSelector } from '~/hooks';
-import { isTranslator } from '~/core/user/selectors';
 import { sameExistingTranslation } from '../selectors';
 import { useUpdateTranslationStatus } from '..';
+import { useTranslator } from '~/hooks/useTranslator';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -30,7 +30,7 @@ export default function EditorMainAction({
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const isTranslator_ = useAppSelector(isTranslator);
+  const isTranslator = useTranslator();
   const sameExistingTranslation_ = useAppSelector(sameExistingTranslation);
 
   const updateTranslationStatus = useUpdateTranslationStatus();
@@ -51,7 +51,7 @@ export default function EditorMainAction({
   };
 
   if (
-    isTranslator_ &&
+    isTranslator &&
     sameExistingTranslation_ &&
     !sameExistingTranslation_.approved
   ) {
@@ -70,7 +70,7 @@ export default function EditorMainAction({
       btn.label = 'APPROVING';
       btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
     }
-  } else if (forceSuggestions || !isTranslator_) {
+  } else if (forceSuggestions || !isTranslator) {
     // Suggest button, will send an unreviewed translation.
     btn = {
       id: 'editor-EditorMenu--button-suggest',

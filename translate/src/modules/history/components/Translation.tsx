@@ -9,6 +9,7 @@ import type { Locale } from '~/core/locale';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/core/utils';
+import { useTranslator } from '~/hooks/useTranslator';
 
 import type { ChangeOperation, HistoryTranslation } from '../index';
 
@@ -17,7 +18,6 @@ import './Translation.css';
 type Props = {
   entity: Entity;
   isReadOnlyEditor: boolean;
-  isTranslator: boolean;
   translation: HistoryTranslation;
   activeTranslation: HistoryTranslation;
   locale: Locale;
@@ -147,7 +147,6 @@ export function TranslationBase({
   index,
   isActionDisabled,
   isReadOnlyEditor,
-  isTranslator,
   locale,
   translation,
   updateEditorTranslation,
@@ -156,6 +155,7 @@ export function TranslationBase({
 }: InternalProps): React.ReactElement<'li'> {
   const [isDiffVisible, setDiffVisible] = useState(false);
   const [areCommentsVisible, setCommentsVisible] = useState(false);
+  const isTranslator = useTranslator();
 
   const handleStatusChange = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {

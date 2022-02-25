@@ -6,6 +6,7 @@ import type { Entity as EntityType, EntityTranslation } from '~/core/api';
 import type { Locale } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import { TranslationProxy } from '~/core/translation';
+import { useTranslator } from '~/hooks/useTranslator';
 
 import './Entity.css';
 
@@ -14,7 +15,6 @@ type Props = {
   toggleForBatchEditing: (entityPK: number, shiftPressed: boolean) => void;
   entity: EntityType;
   isReadOnlyEditor: boolean;
-  isTranslator: boolean;
   locale: Locale;
   selected: boolean;
   selectEntity: (entity: EntityType) => void;
@@ -45,13 +45,13 @@ export function Entity({
   entity,
   getSiblingEntities,
   isReadOnlyEditor,
-  isTranslator,
   locale,
   parameters,
   selected,
   selectEntity,
   toggleForBatchEditing,
 }: Props): React.ReactElement<'li'> {
+  const isTranslator = useTranslator();
   const [areSiblingsActive, setSiblingsActive] = useState(false);
 
   const handleSelectEntity = useCallback(

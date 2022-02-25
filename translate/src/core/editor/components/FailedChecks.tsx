@@ -1,15 +1,14 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
-
-import './FailedChecks.css';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as user from '~/core/user';
-
-import { actions, useUpdateTranslationStatus } from '..';
+import React from 'react';
 
 import type { EditorState } from '~/core/editor';
 import type { UserState } from '~/core/user';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useTranslator } from '~/hooks/useTranslator';
+
+import { actions, useUpdateTranslationStatus } from '..';
+
+import './FailedChecks.css';
 
 type FailedChecksProps = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -28,7 +27,6 @@ export default function FailedChecks(
   const warnings = useAppSelector((state) => state.editor.warnings);
   const source = useAppSelector((state) => state.editor.source);
   const userState = useAppSelector((state) => state.user);
-  const isTranslator = useAppSelector(user.selectors.isTranslator);
 
   const updateTranslationStatus = useUpdateTranslationStatus();
 
@@ -79,7 +77,6 @@ export default function FailedChecks(
       <MainAction
         source={source}
         user={userState}
-        isTranslator={isTranslator}
         errors={errors}
         approveAnyway={approveAnyway}
         submitAnyway={submitAnyway}
@@ -90,7 +87,6 @@ export default function FailedChecks(
 type MainActionProps = {
   source: EditorState['source'];
   user: UserState;
-  isTranslator: boolean;
   errors: Array<string>;
   approveAnyway: () => void;
   submitAnyway: () => void;
@@ -99,9 +95,14 @@ type MainActionProps = {
 /**
  * Shows a button to ignore failed checks and proceed with the main editor action.
  */
-function MainAction(props: MainActionProps) {
-  const { source, user, isTranslator, errors, approveAnyway, submitAnyway } =
-    props;
+function MainAction({
+  source,
+  user,
+  errors,
+  approveAnyway,
+  submitAnyway,
+}: MainActionProps) {
+  const isTranslator = useTranslator();
 
   if (source === 'stored' || errors.length) {
     return null;

@@ -9,11 +9,10 @@ import { LocaleState, NAME as LOCALE } from '~/core/locale';
 import { NAME as PROJECT, ProjectState } from '~/core/project';
 import { NAME as USER, UserState } from '~/core/user';
 import { updateTourStatus } from '~/core/user/actions';
-import { isTranslator } from '~/core/user/selectors';
+import { useTranslator } from '~/hooks/useTranslator';
 import type { RootState, AppDispatch } from '~/store';
 
 type Props = {
-  isTranslator: boolean;
   locale: LocaleState;
   project: ProjectState;
   user: UserState;
@@ -27,12 +26,12 @@ type InternalProps = Props & { dispatch: AppDispatch };
  */
 export function InteractiveTourBase({
   dispatch,
-  isTranslator,
   locale,
   project,
   user,
 }: InternalProps): React.ReactElement | null {
   const [isOpen, setOpen] = useState(true);
+  const isTranslator = useTranslator();
 
   // Run the tour only on project with slug 'tutorial'
   if (project.slug !== 'tutorial') return null;
@@ -343,7 +342,6 @@ export function InteractiveTourBase({
 }
 
 const mapStateToProps = (state: RootState): Props => ({
-  isTranslator: isTranslator(state),
   locale: state[LOCALE],
   project: state[PROJECT],
   user: state[USER],

@@ -1,11 +1,16 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
+import sinon from 'sinon';
 
+import * as hookModule from '~/hooks/useTranslator';
+import { findLocalizedById } from '~/test/utils';
 import FileUpload from './FileUpload';
 import SignOut from './SignOut';
 import UserMenuBase, { UserMenu } from './UserMenu';
 
-import { findLocalizedById } from '~/test/utils';
+beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeEach(() => hookModule.useTranslator.returns(false));
+afterAll(() => hookModule.useTranslator.restore());
 
 function createShallowUserMenu({
   isAdmin = false,
@@ -16,10 +21,10 @@ function createShallowUserMenu({
   project = 'myproject',
   resource = 'myresource',
 } = {}) {
+  hookModule.useTranslator.returns(isTranslator);
   return shallow(
     <UserMenu
       isReadOnly={isReadOnly}
-      isTranslator={isTranslator}
       user={{ isAuthenticated, isAdmin }}
       parameters={{ locale, project, resource }}
     />,

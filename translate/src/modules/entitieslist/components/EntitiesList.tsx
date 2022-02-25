@@ -18,7 +18,6 @@ import { updateEntity } from '~/core/navigation/actions';
 import { getNavigationParams } from '~/core/navigation/selectors';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { isTranslator } from '~/core/user/selectors';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
   BatchActionsState,
@@ -43,7 +42,6 @@ type Props = {
   batchactions: BatchActionsState;
   entities: EntitiesState;
   isReadOnlyEditor: boolean;
-  isTranslator: boolean;
   locale: Locale;
   parameters: NavigationParams;
   router: Record<string, any>;
@@ -66,7 +64,6 @@ export function EntitiesListBase({
   dispatch,
   entities,
   isReadOnlyEditor,
-  isTranslator,
   locale,
   parameters,
   router,
@@ -300,7 +297,6 @@ export function EntitiesListBase({
                   toggleForBatchEditing={toggleForBatchEditing}
                   entity={entity}
                   isReadOnlyEditor={isReadOnlyEditor}
-                  isTranslator={isTranslator}
                   locale={locale}
                   selected={selected}
                   selectEntity={selectEntity}
@@ -330,7 +326,6 @@ export default function EntitiesList(): React.ReactElement<
     batchactions: useAppSelector((state) => state[BATCHACTIONS]),
     entities: useAppSelector((state) => state[ENTITIES]),
     isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
-    isTranslator: useAppSelector(isTranslator),
     parameters: useAppSelector(getNavigationParams),
     locale: useAppSelector((state) => state[LOCALE]),
     router: useAppSelector((state) => state.router),

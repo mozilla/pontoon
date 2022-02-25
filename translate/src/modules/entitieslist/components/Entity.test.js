@@ -1,8 +1,13 @@
-import React from 'react';
 import { mount, shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
+import * as hookModule from '~/hooks/useTranslator';
 import { Entity } from './Entity';
+
+beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeEach(() => hookModule.useTranslator.returns(false));
+afterAll(() => hookModule.useTranslator.restore());
 
 describe('<Entity>', () => {
   const ENTITY_A = {
@@ -147,11 +152,11 @@ describe('<Entity>', () => {
   });
 
   it('calls the toggleForBatchEditing function on click on .status', () => {
+    hookModule.useTranslator.returns(true);
     const toggleForBatchEditingFn = sinon.spy();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={true}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
         locale={DEFAULT_LOCALE}
@@ -168,7 +173,6 @@ describe('<Entity>', () => {
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={false}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
         selectEntity={selectEntityFn}
@@ -186,7 +190,6 @@ describe('<Entity>', () => {
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={false}
         isReadOnlyEditor={true}
         toggleForBatchEditing={toggleForBatchEditingFn}
         selectEntity={selectEntityFn}

@@ -1,7 +1,13 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
+import sinon from 'sinon';
 
+import * as hookModule from '~/hooks/useTranslator';
 import { TranslationBase } from './Translation';
+
+beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeEach(() => hookModule.useTranslator.returns(false));
+afterAll(() => hookModule.useTranslator.restore());
 
 describe('<TranslationBase>', () => {
   const DEFAULT_TRANSLATION = {
@@ -275,12 +281,12 @@ describe('<TranslationBase>', () => {
     });
 
     it('allows translators to review the translation', () => {
+      hookModule.useTranslator.returns(true);
       const wrapper = shallow(
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           locale={DEFAULT_LOCALE}
-          isTranslator={true}
           user={DEFAULT_USER}
         />,
       );
@@ -290,13 +296,13 @@ describe('<TranslationBase>', () => {
     });
 
     it('allows translators to delete the rejected translation', () => {
+      hookModule.useTranslator.returns(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: true };
       const wrapper = shallow(
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           locale={DEFAULT_LOCALE}
-          isTranslator={true}
           user={DEFAULT_USER}
         />,
       );
@@ -305,13 +311,13 @@ describe('<TranslationBase>', () => {
     });
 
     it('forbids translators to delete non-rejected translation', () => {
+      hookModule.useTranslator.returns(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: false };
       const wrapper = shallow(
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           locale={DEFAULT_LOCALE}
-          isTranslator={true}
           user={DEFAULT_USER}
         />,
       );
