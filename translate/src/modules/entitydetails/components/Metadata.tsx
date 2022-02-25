@@ -2,15 +2,16 @@ import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 
+import { Locale } from '~/context/locale';
 import type { Entity, TermType } from '~/core/api';
 import { Linkify } from '~/core/linkify';
-import type { Locale } from '~/core/locale';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
@@ -27,7 +28,6 @@ import './Metadata.css';
 type Props = {
   entity: Entity;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   pluralForm: number;
   terms: TermState;
   teamComments: TeamCommentState;
@@ -185,7 +185,6 @@ export default function Metadata({
   commentTabRef,
   entity,
   isReadOnlyEditor,
-  locale,
   navigateToPath,
   pluralForm,
   setCommentTabIndex,
@@ -196,6 +195,7 @@ export default function Metadata({
 }: Props): React.ReactElement {
   const [popupTerms, setPopupTerms] = useState<TermType[]>([]);
   const hidePopupTerms = useCallback(() => setPopupTerms([]), []);
+  const { code } = useContext(Locale);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -248,10 +248,9 @@ export default function Metadata({
       {showContextIssueButton && (
         <ContextIssueButton openTeamComments={openTeamComments} />
       )}
-      <Screenshots source={entity.comment} locale={locale.code} />
+      <Screenshots source={entity.comment} locale={code} />
       <OriginalStringProxy
         entity={entity}
-        locale={locale}
         pluralForm={pluralForm}
         terms={terms}
         handleClickOnPlaceable={handleClickOnPlaceable}
@@ -259,7 +258,6 @@ export default function Metadata({
       {popupTerms.length > 0 && (
         <TermsPopup
           isReadOnlyEditor={isReadOnlyEditor}
-          locale={locale.code}
           terms={popupTerms}
           addTextToEditorTranslation={addTextToEditorTranslation}
           hide={hidePopupTerms}
@@ -279,12 +277,10 @@ export default function Metadata({
       ) : null}
       <Localized id='entitydetails-Metadata--resource' attrs={{ title: true }}>
         <Property title='RESOURCE' className='resource'>
-          <a href={`/${locale.code}/${entity.project.slug}/`}>
-            {entity.project.name}
-          </a>
+          <a href={`/${code}/${entity.project.slug}/`}>{entity.project.name}</a>
           <span className='divider'>&bull;</span>
           <a
-            href={`/${locale.code}/${entity.project.slug}/${entity.path}/`}
+            href={`/${code}/${entity.project.slug}/${entity.path}/`}
             onClick={navigateToPath_}
             className='resource-path'
           >

@@ -1,7 +1,7 @@
 import { push } from 'connected-react-router';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import { Locale } from '~/context/locale';
 
-import { LocaleState, NAME as LOCALE } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import { getNavigationParams } from '~/core/navigation/selectors';
 import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
@@ -20,7 +20,6 @@ import type { AppDispatch } from '~/store';
 import './Navigation.css';
 
 type Props = {
-  locale: LocaleState;
   parameters: NavigationParams;
   project: ProjectState;
   resources: ResourcesState;
@@ -38,16 +37,16 @@ type InternalProps = Props & {
  */
 export function NavigationBase({
   dispatch,
-  locale,
   parameters,
   project,
   resources,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
+  const { code, name } = useContext(Locale);
   useEffect(() => {
-    if (locale?.name && project?.name)
-      document.title = `${locale.name} (${locale.code}) · ${project.name}`;
-  }, [locale, project]);
+    if (name && project?.name)
+      document.title = `${name} (${code}) · ${project.name}`;
+  }, [code, name, project]);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -74,10 +73,6 @@ export function NavigationBase({
     [dispatch, store],
   );
 
-  if (!locale) {
-    return null;
-  }
-
   return (
     <nav className='navigation'>
       <ul>
@@ -92,13 +87,12 @@ export function NavigationBase({
           </a>
         </li>
         <li>
-          <a href={`/${locale.code}/`}>
-            {locale.name}
-            <span className='locale-code'>{locale.code}</span>
+          <a href={`/${code}/`}>
+            {name}
+            <span className='locale-code'>{code}</span>
           </a>
         </li>
         <ProjectMenu
-          locale={locale}
           parameters={parameters}
           project={project}
           navigateToPath={navigateToPath}
@@ -117,7 +111,6 @@ export default function Navigation(): React.ReactElement<
   typeof NavigationBase
 > {
   const state = {
-    locale: useAppSelector((state) => state[LOCALE]),
     parameters: useAppSelector(getNavigationParams),
     project: useAppSelector((state) => state[PROJECT]),
     resources: useAppSelector((state) => state[RESOURCE]),

@@ -1,17 +1,17 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 
 import './PluralSelector.css';
 
-import { getPluralExamples, Locale, NAME as LOCALE } from '~/core/locale';
+import { Locale } from '~/context/locale';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import { actions, CLDR_PLURALS, selectors } from '..';
+import { usePluralExamples } from '~/hooks/usePluralExamples';
 
 type Props = {
-  locale: Locale;
   pluralForm: number;
 };
 
@@ -33,11 +33,13 @@ type InternalProps = Props &
  */
 export function PluralSelectorBase({
   dispatch,
-  locale,
   pluralForm,
   resetEditor,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
+  const { cldrPlurals } = useContext(Locale);
+  const examples = usePluralExamples();
+
   function selectPluralForm(nextPluralForm: number) {
     if (pluralForm !== nextPluralForm) {
       const state = store.getState();
@@ -52,25 +54,21 @@ export function PluralSelectorBase({
     }
   }
 
-  if (pluralForm === -1 || !locale || locale.cldrPlurals.length <= 1) {
+  if (pluralForm === -1 || cldrPlurals.length <= 1) {
     return null;
   }
-
-  const examples = getPluralExamples(locale);
 
   return (
     <nav className='plural-selector'>
       <ul>
-        {locale.cldrPlurals.map((item, i) => {
-          return (
-            <li key={item} className={i === pluralForm ? 'active' : ''}>
-              <button onClick={() => selectPluralForm(i)}>
-                <span>{CLDR_PLURALS[item]}</span>
-                <sup>{examples[item]}</sup>
-              </button>
-            </li>
-          );
-        })}
+        {cldrPlurals.map((item, i) => (
+          <li key={item} className={i === pluralForm ? 'active' : ''}>
+            <button onClick={() => selectPluralForm(i)}>
+              <span>{CLDR_PLURALS[item]}</span>
+              <sup>{examples[item]}</sup>
+            </button>
+          </li>
+        ))}
       </ul>
     </nav>
   );
@@ -83,7 +81,6 @@ export default function PluralSelector(
     <PluralSelectorBase
       {...props}
       dispatch={useAppDispatch()}
-      locale={useAppSelector((state) => state[LOCALE])}
       pluralForm={useAppSelector((state) => selectors.getPluralForm(state))}
       store={useAppStore()}
     />

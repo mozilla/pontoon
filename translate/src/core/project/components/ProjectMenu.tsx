@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
-import type { LocaleState, Localization } from '~/core/locale';
+import { Locale, Localization } from '~/context/locale';
 import type { NavigationParams } from '~/core/navigation';
 import type { ProjectState } from '~/core/project';
 import { useOnDiscard } from '~/core/utils';
@@ -13,25 +13,23 @@ import './ProjectMenu.css';
 
 type Props = {
   parameters: NavigationParams;
-  locale: LocaleState;
   project: ProjectState;
   navigateToPath: (arg0: string) => void;
 };
 
 type ProjectMenuProps = {
-  locale: LocaleState;
   parameters: NavigationParams;
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };
 
 export function ProjectMenu({
-  locale,
   parameters,
   onDiscard,
   onNavigate,
 }: ProjectMenuProps): React.ReactElement<'div'> {
   // Searching
+  const locale = useContext(Locale);
   const [search, setSearch] = useState('');
 
   const updateProjectList = (e: React.SyntheticEvent<HTMLInputElement>) => {
@@ -176,11 +174,11 @@ export function ProjectMenu({
  * regular view without reloading the Translate app.
  */
 export default function ProjectMenuBase({
-  locale,
   navigateToPath,
   parameters,
   project,
 }: Props): React.ReactElement<'li'> {
+  const { code } = useContext(Locale);
   const [visible, setVisible] = useState(false);
 
   const toggleVisibility = useCallback(() => setVisible((prev) => !prev), []);
@@ -198,7 +196,7 @@ export default function ProjectMenuBase({
   if (parameters.project !== 'all-projects') {
     return (
       <li>
-        <a href={`/${locale.code}/${project.slug}/`}>{project.name}</a>
+        <a href={`/${code}/${project.slug}/`}>{project.name}</a>
       </li>
     );
   }
@@ -214,7 +212,6 @@ export default function ProjectMenuBase({
       </div>
       {visible && (
         <ProjectMenu
-          locale={locale}
           parameters={parameters}
           onDiscard={handleDiscard}
           onNavigate={handleNavigate}

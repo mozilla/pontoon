@@ -30,12 +30,6 @@ describe('<TranslationBase>', () => {
     username: 'michel',
   };
 
-  const DEFAULT_LOCALE = {
-    direction: 'ltr',
-    code: 'kg',
-    script: 'Latin',
-  };
-
   const DEFAULT_ENTITY = {
     format: 'po',
   };
@@ -50,7 +44,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -67,7 +60,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -84,7 +76,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -97,7 +88,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -116,7 +106,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -133,7 +122,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -146,7 +134,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -165,7 +152,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -182,7 +168,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -202,7 +187,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -222,7 +206,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -238,7 +221,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -256,7 +238,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -271,7 +252,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -286,7 +266,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -302,7 +281,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -317,7 +295,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -331,7 +308,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
         />,
       );
@@ -345,7 +321,6 @@ describe('<TranslationBase>', () => {
         <TranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
-          locale={DEFAULT_LOCALE}
           user={{ username: 'Andy_Dwyer' }}
         />,
       );
@@ -361,7 +336,6 @@ describe('<TranslationBase>', () => {
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
           index={0}
         />,
@@ -381,7 +355,6 @@ describe('<TranslationBase>', () => {
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
           index={1}
         />,
@@ -401,7 +374,6 @@ describe('<TranslationBase>', () => {
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}
-          locale={DEFAULT_LOCALE}
           user={DEFAULT_USER}
           index={1}
         />,

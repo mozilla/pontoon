@@ -1,9 +1,13 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
+import sinon from 'sinon';
 
 import ProjectItem from './ProjectItem';
 
 import ProjectMenuBase, { ProjectMenu } from './ProjectMenu';
+
+beforeAll(() => sinon.stub(React, 'useContext'));
+afterAll(() => React.useContext.restore());
 
 function createShallowProjectMenu({
   project = {
@@ -11,21 +15,11 @@ function createShallowProjectMenu({
     name: 'Project',
   },
 } = {}) {
-  return shallow(
-    <ProjectMenu
-      parameters={{
-        project: project.slug,
-      }}
-      locale={{
-        code: 'locale',
-        localizations: [
-          {
-            project: project,
-          },
-        ],
-      }}
-    />,
-  );
+  React.useContext.returns({
+    code: 'locale',
+    localizations: [{ project }],
+  });
+  return shallow(<ProjectMenu parameters={{ project: project.slug }} />);
 }
 
 describe('<ProjectMenu>', () => {
@@ -76,18 +70,14 @@ function createShallowProjectMenuBase({
     name: 'Project',
   },
 } = {}) {
+  React.useContext.returns({
+    code: 'locale',
+    localizations: [{ project }],
+  });
   return shallow(
     <ProjectMenuBase
       parameters={{
         project: project.slug,
-      }}
-      locale={{
-        code: 'locale',
-        localizations: [
-          {
-            project: project,
-          },
-        ],
       }}
       project={{
         name: project.name,

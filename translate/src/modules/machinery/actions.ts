@@ -1,7 +1,5 @@
-import api from '~/core/api';
-
-import type { MachineryTranslation } from '~/core/api';
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
+import api, { MachineryTranslation } from '~/core/api';
 import type { AppThunk } from '~/store';
 
 export const ADD_TRANSLATIONS = 'machinery/ADD_TRANSLATIONS';
@@ -82,7 +80,7 @@ export const setEntity = (
  * Get concordance search results for a given source string and locale.
  */
 export const getConcordanceSearchResults =
-  (source: string, locale: Locale, page?: number): AppThunk =>
+  (source: string, locale: LocaleType, page?: number): AppThunk =>
   async (dispatch) => {
     dispatch(request());
 
@@ -111,7 +109,7 @@ export const getConcordanceSearchResults =
 export const get =
   (
     source: string,
-    locale: Locale,
+    locale: LocaleType,
     isAuthenticated: boolean,
     pk: number | null | undefined,
   ): AppThunk =>

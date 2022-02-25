@@ -1,7 +1,8 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
+import { Locale } from '~/context/locale';
 import type { MachineryTranslation } from '~/core/api';
 import { NAME as EDITOR, useCopyMachineryTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
@@ -97,14 +98,14 @@ function TranslationSuggestion({
   sourceString: string;
   translation: MachineryTranslation;
 }) {
-  const locale = useAppSelector((state) => state.locale);
+  const { code, direction, script } = useContext(Locale);
   return (
     <>
       <header>
         {translation.quality && (
           <span className='quality'>{translation.quality + '%'}</span>
         )}
-        <TranslationSource translation={translation} locale={locale} />
+        <TranslationSource translation={translation} />
       </header>
       <p className='original'>
         <GenericTranslation
@@ -118,9 +119,9 @@ function TranslationSuggestion({
       </p>
       <p
         className='suggestion'
-        dir={locale.direction}
-        data-script={locale.script}
-        lang={locale.code}
+        dir={direction}
+        data-script={script}
+        lang={code}
       >
         <GenericTranslation content={translation.translation} />
       </p>

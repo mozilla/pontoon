@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 
+import { Locale } from '~/context/locale';
 import {
   useHandleShortcuts,
   useReplaceSelectionContent,
@@ -28,7 +29,7 @@ export default function GenericTranslationForm({
   const searchInputFocused = useAppSelector(
     (state) => state.search.searchInputFocused,
   );
-  const { code, direction, script } = useAppSelector((state) => state.locale);
+  const { code, direction, script } = useContext(Locale);
   const readOnly = useAppSelector(isReadOnlyEditor);
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,

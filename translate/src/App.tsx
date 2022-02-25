@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
+
+import { initLocale, Locale, updateLocale } from './context/locale';
 
 import { L10nState, NAME as L10N } from './core/l10n';
 import { Lightbox } from './core/lightbox';
 import { WaveLoader } from './core/loaders';
-import { LocaleState, NAME as LOCALE } from './core/locale';
-import { get as getLocale } from './core/locale/actions';
 import type { NavigationParams } from './core/navigation';
 import { getNavigationParams } from './core/navigation/selectors';
 import {
@@ -42,7 +42,6 @@ import './App.css';
 type Props = {
   batchactions: BatchActionsState;
   l10n: L10nState;
-  locale: LocaleState;
   notification: NotificationState;
   parameters: NavigationParams;
   project: ProjectState;
@@ -60,13 +59,13 @@ function App({
   batchactions,
   dispatch,
   l10n,
-  locale,
   notification,
   parameters,
   project,
   stats,
 }: InternalProps) {
   const mounted = useRef(false);
+  const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
 
   useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
@@ -89,7 +88,7 @@ function App({
   }, [l10n.fetching, locale.fetching]);
 
   useEffect(() => {
-    dispatch(getLocale(parameters.locale));
+    updateLocale(locale, parameters.locale);
     dispatch(getProject(parameters.project));
     dispatch(getUsers());
 
@@ -105,31 +104,33 @@ function App({
   }
 
   return (
-    <div id='app'>
-      <AddonPromotion />
-      <header>
-        <Navigation />
-        <ResourceProgress stats={stats} parameters={parameters} />
-        <ProjectInfo projectSlug={parameters.project} project={project} />
-        <NotificationPanel notification={notification} />
-        <UserControls />
-      </header>
-      <section className='main-content'>
-        <section className='panel-list'>
-          <SearchBox />
-          <EntitiesList />
+    <Locale.Provider value={locale}>
+      <div id='app'>
+        <AddonPromotion />
+        <header>
+          <Navigation />
+          <ResourceProgress stats={stats} parameters={parameters} />
+          <ProjectInfo projectSlug={parameters.project} project={project} />
+          <NotificationPanel notification={notification} />
+          <UserControls />
+        </header>
+        <section className='main-content'>
+          <section className='panel-list'>
+            <SearchBox />
+            <EntitiesList />
+          </section>
+          <section className='panel-content'>
+            {batchactions.entities.length === 0 ? (
+              <EntityDetails />
+            ) : (
+              <BatchActions />
+            )}
+          </section>
         </section>
-        <section className='panel-content'>
-          {batchactions.entities.length === 0 ? (
-            <EntityDetails />
-          ) : (
-            <BatchActions />
-          )}
-        </section>
-      </section>
-      <Lightbox />
-      <InteractiveTour />
-    </div>
+        <Lightbox />
+        <InteractiveTour />
+      </div>
+    </Locale.Provider>
   );
 }
 
@@ -137,7 +138,6 @@ const mapStateToProps = (state: RootState): Props => {
   return {
     batchactions: state[BATCHACTIONS],
     l10n: state[L10N],
-    locale: state[LOCALE],
     notification: state[NOTIFICATION],
     parameters: getNavigationParams(state),
     project: state[PROJECT],

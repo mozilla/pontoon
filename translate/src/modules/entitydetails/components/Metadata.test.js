@@ -1,6 +1,9 @@
+import { mount } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { Provider } from 'react-redux';
 
+import { Locale } from '~/context/locale';
+import { createReduxStore } from '~/test/store';
 import Metadata from './Metadata';
 
 const ENTITY = {
@@ -16,34 +19,44 @@ const ENTITY = {
     name: 'CallMe',
   },
 };
+
 const LOCALE = {
   code: 'kg',
   cldrPlurals: [1, 3, 5],
+};
+
+const TERMS = {
+  fetching: false,
+  sourceString: '',
+  terms: [],
 };
 
 const USER = {
   user: 'A_Ludgate',
 };
 
-function createShallowMetadata(entity = ENTITY, pluralForm = -1) {
-  return shallow(
-    <Metadata
-      entity={entity}
-      locale={LOCALE}
-      pluralForm={pluralForm}
-      user={USER}
-    />,
+function createMetadata(entity = ENTITY, pluralForm = -1) {
+  const store = createReduxStore({ user: USER });
+  return mount(
+    <Provider store={store}>
+      <Locale.Provider value={LOCALE}>
+        <Metadata
+          entity={entity}
+          pluralForm={pluralForm}
+          terms={TERMS}
+          user={USER}
+        />
+      </Locale.Provider>
+    </Provider>,
   );
 }
 
 describe('<Metadata>', () => {
   it('renders correctly', () => {
-    const wrapper = createShallowMetadata();
+    const wrapper = createMetadata();
 
-    expect(wrapper.find('SourceArray').dive().text()).toContain(
-      ENTITY.source[0][0],
-    );
-    expect(wrapper.find('EntityComment').dive().props().children).toContain(
+    expect(wrapper.text()).toContain(ENTITY.source[0].join(':'));
+    expect(wrapper.find('#entitydetails-Metadata--comment').text()).toContain(
       ENTITY.comment,
     );
 
@@ -53,26 +66,20 @@ describe('<Metadata>', () => {
   });
 
   it('does not require a comment', () => {
-    const wrapper = createShallowMetadata({
+    const wrapper = createMetadata({
       ...ENTITY,
       ...{ comment: '' },
     });
 
-    expect(wrapper.find('SourceArray').dive().text()).toContain(
-      ENTITY.source[0][0],
-    );
-    expect(wrapper.find('EntityComment').dive().props().children).not.toContain(
-      ENTITY.comment,
-    );
+    expect(wrapper.text()).toContain(ENTITY.source[0].join(':'));
+    expect(wrapper.find('#entitydetails-Metadata--comment')).toHaveLength(0);
   });
 
   it('does not require a source', () => {
-    const wrapper = createShallowMetadata({ ...ENTITY, ...{ source: [] } });
+    const wrapper = createMetadata({ ...ENTITY, ...{ source: [] } });
 
-    expect(wrapper.find('SourceArray').dive().text()).not.toContain(
-      ENTITY.source[0][0],
-    );
-    expect(wrapper.find('EntityComment').dive().props().children).toContain(
+    expect(wrapper.text()).not.toContain(ENTITY.source[0].join(':'));
+    expect(wrapper.find('#entitydetails-Metadata--comment').text()).toContain(
       ENTITY.comment,
     );
   });
@@ -80,22 +87,16 @@ describe('<Metadata>', () => {
   it('handles sources as an object with examples', () => {
     const withSourceAsObject = {
       source: {
-        arg1: {
-          content: '',
-          example: 'example_1',
-        },
-        arg2: {
-          content: '',
-          example: 'example_2',
-        },
+        arg1: { content: '', example: 'example_1' },
+        arg2: { content: '', example: 'example_2' },
       },
     };
-    const wrapper = createShallowMetadata({
+    const wrapper = createMetadata({
       ...ENTITY,
       ...withSourceAsObject,
     });
 
-    expect(wrapper.find('SourceObject').dive().props().children).toBe(
+    expect(wrapper.find('div.placeholder .content').text()).toBe(
       '$ARG1$: example_1, $ARG2$: example_2',
     );
   });
@@ -103,19 +104,15 @@ describe('<Metadata>', () => {
   it('handles sources as an object without examples', () => {
     const withSourceAsObject = {
       source: {
-        arg1: {
-          content: '',
-        },
-        arg2: {
-          content: '',
-        },
+        arg1: { content: '' },
+        arg2: { content: '' },
       },
     };
-    const wrapper = createShallowMetadata({
+    const wrapper = createMetadata({
       ...ENTITY,
       ...withSourceAsObject,
     });
 
-    expect(wrapper.find('SourceObject').dive().props().children).toBe('');
+    expect(wrapper.find('div.placeholder')).toHaveLength(0);
   });
 });

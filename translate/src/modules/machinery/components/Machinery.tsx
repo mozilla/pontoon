@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
@@ -8,11 +8,9 @@ import { Translation } from './Translation';
 import { SkeletonLoader } from '~/core/loaders';
 import { usePrevious } from '~/hooks/usePrevious';
 
-import type { Locale } from '~/core/locale';
 import type { MachineryState } from '..';
 
 interface Props {
-  locale: Locale | null | undefined;
   machinery: MachineryState;
   searchMachinery: (query: string, page?: number) => void;
 }
@@ -25,7 +23,6 @@ interface Props {
  * third-party Machine Translation.
  */
 export const Machinery = ({
-  locale,
   machinery,
   searchMachinery,
 }: Props): null | React.ReactElement<'section'> => {
@@ -79,10 +76,6 @@ export const Machinery = ({
     setPage(1);
     if (searchInput.current) searchMachinery(searchInput.current.value);
   };
-
-  if (!locale) {
-    return null;
-  }
 
   const entity = machinery.searchString ? null : machinery.entity;
   const sourceString = machinery.searchString || machinery.sourceString;

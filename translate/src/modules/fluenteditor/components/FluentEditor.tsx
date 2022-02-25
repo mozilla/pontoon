@@ -1,6 +1,7 @@
 import type { Entry } from '@fluent/syntax';
-import React, { useLayoutEffect } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 
+import { Locale } from '~/context/locale';
 import { Translation, useUpdateTranslation } from '~/core/editor';
 import {
   setInitialTranslation,
@@ -57,7 +58,7 @@ function useLoadTranslation(forceSource: boolean) {
   const changeSource = useAppSelector((state) => state.editor.changeSource);
 
   const entity = useAppSelector(getSelectedEntity);
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
   const activeTranslationString = useAppSelector(
     getTranslationStringForSelectedEntity,
   );
@@ -128,7 +129,7 @@ function useForceSource(): [boolean, () => void] {
   const activeTranslationString = useAppSelector(
     getTranslationStringForSelectedEntity,
   );
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
 
   // Force using the source editor.
   const [forceSource, setForceSource] = React.useState(false);

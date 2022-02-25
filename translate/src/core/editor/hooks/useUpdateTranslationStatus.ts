@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+
+import { Locale } from '~/context/locale';
 import { getNextEntity, getSelectedEntity } from '~/core/entities/selectors';
 import { getNavigationParams } from '~/core/navigation/selectors';
 import { getPluralForm } from '~/core/plural/selectors';
@@ -18,7 +21,7 @@ export default function useUpdateTranslationStatus(): (
   const dispatch = useAppDispatch();
 
   const entity = useAppSelector(getSelectedEntity);
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
   const parameters = useAppSelector(getNavigationParams);
   const pluralForm = useAppSelector(getPluralForm);
   const nextEntity = useAppSelector(getNextEntity);

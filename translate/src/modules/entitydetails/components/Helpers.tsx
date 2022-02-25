@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Localized } from '@fluent/react';
 
@@ -14,7 +14,6 @@ import { OtherLocales, OtherLocalesCount } from '~/modules/otherlocales';
 import type { Entity } from '~/core/api';
 import type { TermState } from '~/core/term';
 import type { TeamCommentState } from '~/modules/teamcomments';
-import type { Locale } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import type { UserState } from '~/core/user';
 import type { MachineryState } from '~/modules/machinery';
@@ -23,7 +22,6 @@ import type { LocalesState } from '~/modules/otherlocales';
 type Props = {
   entity: Entity;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   machinery: MachineryState;
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
@@ -51,7 +49,6 @@ export default function Helpers(props: Props): React.ReactElement<any> {
   const {
     entity,
     isReadOnlyEditor,
-    locale,
     machinery,
     otherlocales,
     teamComments,
@@ -98,7 +95,6 @@ export default function Helpers(props: Props): React.ReactElement<any> {
             <TabPanel>
               <Terms
                 isReadOnlyEditor={isReadOnlyEditor}
-                locale={locale.code}
                 terms={terms}
                 addTextToEditorTranslation={addTextToEditorTranslation}
                 navigateToPath={navigateToPath}
@@ -144,7 +140,6 @@ export default function Helpers(props: Props): React.ReactElement<any> {
           </TabList>
           <TabPanel>
             <Machinery
-              locale={locale}
               machinery={machinery}
               searchMachinery={searchMachinery}
             />

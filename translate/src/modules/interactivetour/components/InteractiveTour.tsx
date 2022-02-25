@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import { Localized } from '@fluent/react';
+import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import Tour, { ReactourStep } from 'reactour';
-import { Localized } from '@fluent/react';
 
-import './InteractiveTour.css';
-
-import { LocaleState, NAME as LOCALE } from '~/core/locale';
+import { Locale } from '~/context/locale';
 import { NAME as PROJECT, ProjectState } from '~/core/project';
 import { NAME as USER, UserState } from '~/core/user';
 import { updateTourStatus } from '~/core/user/actions';
 import { useTranslator } from '~/hooks/useTranslator';
 import type { RootState, AppDispatch } from '~/store';
 
+import './InteractiveTour.css';
+
 type Props = {
-  locale: LocaleState;
   project: ProjectState;
   user: UserState;
 };
@@ -26,12 +25,12 @@ type InternalProps = Props & { dispatch: AppDispatch };
  */
 export function InteractiveTourBase({
   dispatch,
-  locale,
   project,
   user,
 }: InternalProps): React.ReactElement | null {
   const [isOpen, setOpen] = useState(true);
   const isTranslator = useTranslator();
+  const { code } = useContext(Locale);
 
   // Run the tour only on project with slug 'tutorial'
   if (project.slug !== 'tutorial') return null;
@@ -309,7 +308,7 @@ export function InteractiveTourBase({
           </Localized>
           <Localized
             id='interactivetour-InteractiveTour--end-footer'
-            elems={{ a: <a href={`/${locale.code}/`} /> }}
+            elems={{ a: <a href={`/${code}/`} /> }}
           >
             <p>{`Next, feel free to explore this tutorial project or move straight
               to <a>translating live projects</a>.`}</p>
@@ -342,7 +341,6 @@ export function InteractiveTourBase({
 }
 
 const mapStateToProps = (state: RootState): Props => ({
-  locale: state[LOCALE],
   project: state[PROJECT],
   user: state[USER],
 });

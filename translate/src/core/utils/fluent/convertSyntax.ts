@@ -6,7 +6,7 @@ import parser from './parser';
 import serializer from './serializer';
 
 import type { Entry } from '@fluent/syntax';
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
 
 type SyntaxType = 'simple' | 'rich' | 'complex' | '';
 
@@ -33,7 +33,7 @@ export function getComplexFromSimple(
   current: string,
   original: string,
   initial: string,
-  locale: Locale,
+  locale: LocaleType,
 ): [string, string] {
   let initialContent = initial;
 
@@ -57,7 +57,7 @@ export function getRichFromComplex(
   current: string,
   original: string,
   initial: string,
-  locale: Locale,
+  locale: LocaleType,
 ): [Entry, Entry] {
   let translationContent = flattenMessage(parser.parseEntry(current));
 
@@ -85,7 +85,7 @@ export function getComplexFromRich(
   current: Entry,
   original: string,
   initial: string,
-  locale: Locale,
+  locale: LocaleType,
 ): [string, string] {
   const translationContent = serializer.serializeEntry(current);
 
@@ -109,12 +109,12 @@ export function getComplexFromRich(
  * Update the content for the new type of form from the previous one. This
  * allows to keep changes made by the user when switching editing modes.
  *
- * @param {string} fromSyntax Syntax of the current translation.
- * @param {string} toSyntax Expected syntax of the output.
- * @param {string | Entry} current Current content of the translation, as entered by the user.
- * @param {string} original Original string of the entity.
- * @param {string} initial Currently active translation, if any.
- * @param {Locale} locale Current locale.
+ * @param fromSyntax Syntax of the current translation.
+ * @param toSyntax Expected syntax of the output.
+ * @param current Current content of the translation, as entered by the user.
+ * @param original Original string of the entity.
+ * @param initial Currently active translation, if any.
+ * @param locale Current locale.
  *
  * @returns {[ string | Entry, string ]} The converted current translation and initial translation.
  */
@@ -124,7 +124,7 @@ export default function convertSyntax(
   current: string | Entry,
   original: string,
   initial: string,
-  locale: Locale,
+  locale: LocaleType,
 ): [Entry, Entry] | [string, string] {
   if (
     fromSyntax === 'complex' &&

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
+import { Locale } from '~/context/locale';
 import type { MachineryTranslation } from '~/core/api';
 import { GenericTranslation } from '~/core/translation';
 import TranslationMemory from './source/TranslationMemory';
@@ -33,7 +34,7 @@ export function ConcordanceSearch({
   sourceString,
   translation,
 }: Props): React.ReactElement {
-  const { code, direction, script } = useAppSelector((state) => state.locale);
+  const { code, direction, script } = useContext(Locale);
   const projects = translation.projectNames;
   const title = projects?.filter(Boolean).join(' • ');
 

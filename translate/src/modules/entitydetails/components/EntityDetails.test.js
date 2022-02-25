@@ -75,7 +75,6 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
       navigation={NAVIGATION}
       selectedEntity={selectedEntity}
       parameters={PARAMETERS}
-      locale={{ code: 'kg' }}
       dispatch={() => {}}
       user={{ settings: {} }}
     />,

@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
+import { Locale } from '~/context/locale';
 import type { Entity } from '~/core/api';
-import type { Locale } from '~/core/locale';
 import { getMarker, TermState } from '~/core/term';
 
 type Props = {
   entity: Entity;
-  locale: Locale;
   pluralForm: number;
   terms: TermState;
   handleClickOnPlaceable: (
@@ -24,16 +23,16 @@ type Props = {
 export default function GenericOriginalString({
   entity,
   handleClickOnPlaceable,
-  locale,
   pluralForm,
   terms,
 }: Props): React.ReactElement {
+  const { cldrPlurals } = useContext(Locale);
   let title: React.ReactElement | null;
   let original: string;
   if (pluralForm === -1) {
     title = null;
     original = entity.original;
-  } else if (locale.cldrPlurals[pluralForm] === 1) {
+  } else if (cldrPlurals[pluralForm] === 1) {
     title = (
       <Localized id='entitydetails-GenericOriginalString--singular'>
         <h2>SINGULAR</h2>

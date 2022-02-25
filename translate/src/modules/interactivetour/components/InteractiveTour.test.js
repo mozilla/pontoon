@@ -14,7 +14,6 @@ describe('<InteractiveTourBase>', () => {
   it('renders correctly on the tutorial page for unauthenticated user', () => {
     const wrapper = shallow(
       <InteractiveTourBase
-        locale={{ code: 'lc' }}
         project={{ slug: 'tutorial' }}
         user={{ isAuthenticated: false }}
       />,
@@ -26,7 +25,6 @@ describe('<InteractiveTourBase>', () => {
   it('does not render on non-tutorial page', () => {
     const wrapper = shallow(
       <InteractiveTourBase
-        locale={{ code: 'lc' }}
         project={{ slug: 'firefox' }}
         user={{ isAuthenticated: false }}
       />,
@@ -38,7 +36,6 @@ describe('<InteractiveTourBase>', () => {
   it('does not render if the user has already seen the tutorial', () => {
     const wrapper = shallow(
       <InteractiveTourBase
-        locale={{ code: 'lc' }}
         project={{ slug: 'tutorial' }}
         // the user has seen the tutorial
         user={{ tourStatus: -1 }}

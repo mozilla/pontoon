@@ -1,5 +1,6 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 
+import { Locale } from '~/context/locale';
 import {
   EditorMenu,
   useSendTranslation,
@@ -32,7 +33,7 @@ export default function RichEditor(props: Props): React.ReactElement<any> {
   const translation = useAppSelector((state) => state.editor.translation);
   const entity = useAppSelector(getSelectedEntity);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
 
   /**
    * Hook that makes sure the translation is a Fluent message.

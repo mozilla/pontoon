@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { Locale } from '~/context/locale';
 import type { Entity as EntityType } from '~/core/api';
 import { reset as resetEditor } from '~/core/editor/actions';
 import { EntitiesState, NAME as ENTITIES } from '~/core/entities';
@@ -12,12 +12,12 @@ import {
 } from '~/core/entities/actions';
 import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { SkeletonLoader } from '~/core/loaders';
-import { Locale, NAME as LOCALE } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import { updateEntity } from '~/core/navigation/actions';
 import { getNavigationParams } from '~/core/navigation/selectors';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
   BatchActionsState,
@@ -42,7 +42,6 @@ type Props = {
   batchactions: BatchActionsState;
   entities: EntitiesState;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   parameters: NavigationParams;
   router: Record<string, any>;
 };
@@ -64,7 +63,6 @@ export function EntitiesListBase({
   dispatch,
   entities,
   isReadOnlyEditor,
-  locale,
   parameters,
   router,
   store,
@@ -73,7 +71,7 @@ export function EntitiesListBase({
   const list = useRef<HTMLDivElement>(null);
 
   const {
-    locale: lc,
+    locale,
     project,
     resource,
     search,
@@ -91,7 +89,7 @@ export function EntitiesListBase({
         ev.preventDefault();
         dispatch(
           selectAll(
-            lc,
+            locale,
             project,
             resource,
             search,
@@ -171,7 +169,7 @@ export function EntitiesListBase({
     if (mounted.current) dispatch(resetEntities());
   }, [
     dispatch,
-    lc,
+    locale,
     project,
     resource,
     search,
@@ -200,9 +198,10 @@ export function EntitiesListBase({
   }, [entities.entities.length]);
   useEffect(scrollToSelected, [parameters.entity]);
 
+  const { code } = useContext(Locale);
   const getSiblingEntities_ = useCallback(
-    (entity: number) => dispatch(getSiblingEntities(entity, locale.code)),
-    [dispatch, locale],
+    (entity: number) => dispatch(getSiblingEntities(entity, code)),
+    [dispatch, code],
   );
 
   const toggleForBatchEditing = useCallback(
@@ -247,7 +246,7 @@ export function EntitiesListBase({
     if (!entities.fetching) {
       dispatch(
         getEntities(
-          lc,
+          locale,
           project,
           resource,
           null, // Do not return a specific list of entities defined by their IDs.
@@ -297,7 +296,6 @@ export function EntitiesListBase({
                   toggleForBatchEditing={toggleForBatchEditing}
                   entity={entity}
                   isReadOnlyEditor={isReadOnlyEditor}
-                  locale={locale}
                   selected={selected}
                   selectEntity={selectEntity}
                   key={entity.pk}
@@ -327,7 +325,6 @@ export default function EntitiesList(): React.ReactElement<
     entities: useAppSelector((state) => state[ENTITIES]),
     isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
     parameters: useAppSelector(getNavigationParams),
-    locale: useAppSelector((state) => state[LOCALE]),
     router: useAppSelector((state) => state.router),
   };
 

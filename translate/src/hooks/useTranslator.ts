@@ -1,4 +1,6 @@
-import { NAME as LOCALE } from '~/core/locale';
+import { useContext } from 'react';
+
+import { Locale } from '~/context/locale';
 import { NAME as PROJECT } from '~/core/project';
 import { NAME as USER } from '~/core/user';
 import { useAppSelector } from '~/hooks';
@@ -8,7 +10,7 @@ import { useAppSelector } from '~/hooks';
  * and locale.
  */
 export function useTranslator(): boolean {
-  const { code } = useAppSelector((state) => state[LOCALE]);
+  const { code } = useContext(Locale);
   const { slug } = useAppSelector((state) => state[PROJECT]);
   const {
     isAuthenticated,

@@ -1,11 +1,11 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
+import { Locale } from '~/context/locale';
 
 import type { Entity } from '~/core/api';
 import { CommentsList } from '~/core/comments';
-import type { Locale } from '~/core/locale';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/core/utils';
@@ -20,7 +20,6 @@ type Props = {
   isReadOnlyEditor: boolean;
   translation: HistoryTranslation;
   activeTranslation: HistoryTranslation;
-  locale: Locale;
   user: UserState;
   index: number;
   deleteTranslation: (id: number) => void;
@@ -147,7 +146,6 @@ export function TranslationBase({
   index,
   isActionDisabled,
   isReadOnlyEditor,
-  locale,
   translation,
   updateEditorTranslation,
   updateTranslationStatus,
@@ -156,6 +154,7 @@ export function TranslationBase({
   const [isDiffVisible, setDiffVisible] = useState(false);
   const [areCommentsVisible, setCommentsVisible] = useState(false);
   const isTranslator = useTranslator();
+  const { code, direction, script } = useContext(Locale);
 
   const handleStatusChange = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -398,9 +397,9 @@ export function TranslationBase({
             </header>
             <p
               className={isDiffVisible ? 'diff-visible' : 'default'}
-              dir={locale.direction}
-              lang={locale.code}
-              data-script={locale.script}
+              dir={direction}
+              lang={code}
+              data-script={script}
             >
               <TranslationProxy
                 content={translation.string}
@@ -424,4 +423,4 @@ export function TranslationBase({
   );
 }
 
-export default withActionsDisabled(TranslationBase) as any;
+export default withActionsDisabled(TranslationBase);

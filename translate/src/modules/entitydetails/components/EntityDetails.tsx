@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { push } from 'connected-react-router';
 
+import { Locale } from '~/context/locale';
 import type { Entity } from '~/core/api';
 import { addComment } from '~/core/comments/actions';
 import {
@@ -18,7 +25,6 @@ import {
   getSelectedEntity,
   isReadOnlyEditor,
 } from '~/core/entities/selectors';
-import { Locale, NAME as LOCALE } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import { updateEntity } from '~/core/navigation/actions';
 import { getNavigationParams } from '~/core/navigation/selectors';
@@ -74,7 +80,6 @@ type Props = {
   activeTranslationString: string;
   history: HistoryState;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   machinery: MachineryState;
   nextEntity?: Entity;
   previousEntity?: Entity;
@@ -103,7 +108,6 @@ export function EntityDetailsBase({
   dispatch,
   history,
   isReadOnlyEditor,
-  locale,
   machinery,
   nextEntity,
   previousEntity,
@@ -122,6 +126,7 @@ export function EntityDetailsBase({
   const [commentTabIndex, setCommentTabIndex] = useState(0);
   const [contactPerson, setContactPerson] = useState('');
   const resetContactPerson = useCallback(() => setContactPerson(''), []);
+  const locale = useContext(Locale);
 
   const { entity, locale: lc, project } = parameters;
 
@@ -156,7 +161,7 @@ export function EntityDetailsBase({
    * Also fetch history data if the pluralForm changes.
    */
   const fetchHelpersData = () => {
-    if (!entity || !selectedEntity || !locale) return;
+    if (!entity || !selectedEntity) return;
 
     dispatch(resetHelperElementIndex());
 
@@ -365,7 +370,6 @@ export function EntityDetailsBase({
     ],
   );
 
-  if (!locale) return null;
   if (!selectedEntity) return <section className='entity-details'></section>;
 
   return (
@@ -379,7 +383,6 @@ export function EntityDetailsBase({
         <Metadata
           entity={selectedEntity}
           isReadOnlyEditor={isReadOnlyEditor}
-          locale={locale}
           pluralForm={pluralForm}
           terms={terms}
           addTextToEditorTranslation={addTextToEditorTranslation}
@@ -398,7 +401,6 @@ export function EntityDetailsBase({
           entity={selectedEntity}
           history={history}
           isReadOnlyEditor={isReadOnlyEditor}
-          locale={locale}
           user={user}
           deleteTranslation={deleteTranslation_}
           addComment={addComment_}
@@ -410,7 +412,6 @@ export function EntityDetailsBase({
         <Helpers
           entity={selectedEntity}
           isReadOnlyEditor={isReadOnlyEditor}
-          locale={locale}
           machinery={machinery}
           otherlocales={otherlocales}
           teamComments={teamComments}
@@ -442,7 +443,6 @@ export default function EntityDetails(): React.ReactElement<
     ),
     history: useAppSelector((state) => state[HISTORY]),
     isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
-    locale: useAppSelector((state) => state[LOCALE]),
     machinery: useAppSelector((state) => state[MACHINERY]),
     nextEntity: useAppSelector(getNextEntity),
     previousEntity: useAppSelector(getPreviousEntity),

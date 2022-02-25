@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 import {
   Entry,
@@ -9,13 +9,14 @@ import {
   Variant,
 } from '@fluent/syntax';
 
+import { Locale } from '~/context/locale';
 import * as editor from '~/core/editor';
 import type { Translation } from '~/core/editor';
 import * as entities from '~/core/entities';
-import * as locale from '~/core/locale';
 import { CLDR_PLURALS } from '~/core/plural';
 import { fluent } from '~/core/utils';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { usePluralExamples } from '~/hooks/usePluralExamples';
 
 import './RichTranslationForm.css';
 
@@ -80,7 +81,7 @@ export default function RichTranslationForm(
 
   const message = useAppSelector((state) => state.editor.translation);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
-  const localeState = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
   const isReadOnlyEditor = useAppSelector((state) =>
     entities.selectors.isReadOnlyEditor(state),
   );
@@ -93,6 +94,7 @@ export default function RichTranslationForm(
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,
   );
+  const pluralExamples = usePluralExamples();
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);
 
@@ -244,9 +246,9 @@ export default function RichTranslationForm(
         onChange={createHandleChange(path)}
         onFocus={setFocusedInput}
         onKeyDown={handleShortcuts}
-        dir={localeState.direction}
-        lang={localeState.code}
-        data-script={localeState.script}
+        dir={locale.direction}
+        lang={locale.code}
+        data-script={locale.script}
       />
     );
   }
@@ -408,9 +410,6 @@ export default function RichTranslationForm(
         element.expression.type === 'SelectExpression'
       ) {
         const { expression } = element;
-        const pluralExamples = fluent.isPluralExpression(expression)
-          ? locale.getPluralExamples(localeState)
-          : null;
         const rendered_variants = expression.variants.map((variant, vIndex) => {
           return renderVariant(
             variant,
@@ -418,7 +417,7 @@ export default function RichTranslationForm(
             indent,
             eIndex,
             vIndex,
-            pluralExamples,
+            fluent.isPluralExpression(expression) ? pluralExamples : null,
             attributeName,
           );
         });

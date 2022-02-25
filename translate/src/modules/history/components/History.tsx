@@ -6,7 +6,6 @@ import './History.css';
 import Translation from './Translation';
 
 import type { Entity } from '~/core/api';
-import type { Locale } from '~/core/locale';
 import type { UserState } from '~/core/user';
 import type { ChangeOperation, HistoryState } from '..';
 
@@ -14,7 +13,6 @@ type Props = {
   entity: Entity;
   history: HistoryState;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   user: UserState;
   deleteTranslation: (arg0: number) => void;
   addComment: (arg0: string, arg1: number | null | undefined) => void;
@@ -43,7 +41,6 @@ export default class History extends React.Component<Props> {
       entity,
       history,
       isReadOnlyEditor,
-      locale,
       user,
       deleteTranslation,
       addComment,
@@ -69,7 +66,6 @@ export default class History extends React.Component<Props> {
                 activeTranslation={history.translations[0]}
                 entity={entity}
                 isReadOnlyEditor={isReadOnlyEditor}
-                locale={locale}
                 user={user}
                 deleteTranslation={deleteTranslation}
                 addComment={addComment}

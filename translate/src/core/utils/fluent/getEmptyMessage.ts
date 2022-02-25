@@ -12,7 +12,7 @@ import isPluralExpression from './isPluralExpression';
 import { CLDR_PLURALS } from '~/core/plural';
 
 import type { Entry } from '@fluent/syntax';
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
 
 /**
  * Gather custom (numeric) plural variants
@@ -38,8 +38,8 @@ function getCldrTemplateVariant(
 /**
  * Generate locale plural variants from a template
  */
-function getLocaleVariants(locale: Locale, template: Variant) {
-  return locale.cldrPlurals.map((item) => {
+function getLocaleVariants(cldrPlurals: number[], template: Variant) {
+  return cldrPlurals.map((item) => {
     const localeVariant = template.clone();
     if (localeVariant.key.type === 'Identifier') {
       localeVariant.key.name = CLDR_PLURALS[item];
@@ -79,7 +79,10 @@ function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
  * @param {Entry} source A Fluent AST to empty.
  * @returns {Entry} An emptied copy of the source.
  */
-export default function getEmptyMessage(source: Entry, locale: Locale): Entry {
+export default function getEmptyMessage(
+  source: Entry,
+  { cldrPlurals }: LocaleType,
+): Entry {
   class EmptyTransformer extends Transformer {
     // Empty Text Elements
     visitTextElement(node: TextElement): TextElement {
@@ -95,7 +98,7 @@ export default function getEmptyMessage(source: Entry, locale: Locale): Entry {
 
         const template = getCldrTemplateVariant(variants);
         const localeVariants = template
-          ? getLocaleVariants(locale, template)
+          ? getLocaleVariants(cldrPlurals, template)
           : [];
 
         node.variants = withDefaultVariant(

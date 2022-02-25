@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+
+import { Locale } from '~/context/locale';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as entities from '~/core/entities';
 import * as navigation from '~/core/navigation';
@@ -27,7 +30,7 @@ export default function useSendTranslation(): (
   const entity = useAppSelector((state) =>
     entities.selectors.getSelectedEntity(state),
   );
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
   const user = useAppSelector((state) => state.user);
   const router = useAppSelector((state) => state.router);
   const pluralForm = useAppSelector((state) =>

@@ -1,19 +1,20 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useContext } from 'react';
 
-import type { Locale } from '~/core/locale';
+import { Locale } from '~/context/locale';
 
 type Props = {
   original: string;
-  locale: Locale;
 };
 
 /**
  * Show the translation source from Microsoft Terminology.
  */
-export default function MicrosoftTerminology(
-  props: Props,
-): React.ReactElement<'li'> {
+export default function MicrosoftTerminology({
+  original,
+}: Props): React.ReactElement<'li'> {
+  const { msTerminologyCode } = useContext(Locale);
+  const url = `https://www.microsoft.com/Language/en-US/Search.aspx?sString=${original}&langID=${msTerminologyCode}`;
   return (
     <li>
       <Localized
@@ -22,12 +23,7 @@ export default function MicrosoftTerminology(
       >
         <a
           className='translation-source'
-          href={
-            'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-            props.original +
-            '&langID=' +
-            props.locale.msTerminologyCode
-          }
+          href={url}
           title={
             'Visit Microsoft Terminology Service API.\n' +
             '© 2018 Microsoft Corporation. All rights reserved.'

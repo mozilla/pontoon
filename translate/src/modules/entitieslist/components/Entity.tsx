@@ -1,9 +1,9 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
+import { Locale } from '~/context/locale';
 import type { Entity as EntityType, EntityTranslation } from '~/core/api';
-import type { Locale } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import { TranslationProxy } from '~/core/translation';
 import { useTranslator } from '~/hooks/useTranslator';
@@ -15,7 +15,6 @@ type Props = {
   toggleForBatchEditing: (entityPK: number, shiftPressed: boolean) => void;
   entity: EntityType;
   isReadOnlyEditor: boolean;
-  locale: Locale;
   selected: boolean;
   selectEntity: (entity: EntityType) => void;
   getSiblingEntities: (entityPK: number) => void;
@@ -45,7 +44,6 @@ export function Entity({
   entity,
   getSiblingEntities,
   isReadOnlyEditor,
-  locale,
   parameters,
   selected,
   selectEntity,
@@ -98,6 +96,8 @@ export function Entity({
     );
   };
 
+  const { code, direction, script } = useContext(Locale);
+
   const cn = classNames(
     'entity',
     translationStatus(entity.translation),
@@ -133,9 +133,9 @@ export function Entity({
         </p>
         <p
           className='translation-string'
-          dir={locale.direction}
-          lang={locale.code}
-          data-script={locale.script}
+          dir={direction}
+          lang={code}
+          data-script={script}
         >
           <TranslationProxy
             content={entity.translation[0].string}

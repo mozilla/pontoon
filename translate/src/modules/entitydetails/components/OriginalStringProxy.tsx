@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type { Entity } from '~/core/api';
-import type { Locale } from '~/core/locale';
 import type { TermState } from '~/core/term';
 import { FluentOriginalString } from '~/modules/fluentoriginal';
 
@@ -9,7 +8,6 @@ import GenericOriginalString from './GenericOriginalString';
 
 type Props = {
   entity: Entity;
-  locale: Locale;
   pluralForm: number;
   terms: TermState;
   handleClickOnPlaceable: (
@@ -25,7 +23,6 @@ type Props = {
  */
 export const OriginalStringProxy = ({
   entity,
-  locale,
   pluralForm,
   terms,
   handleClickOnPlaceable,
@@ -39,7 +36,6 @@ export const OriginalStringProxy = ({
   ) : (
     <GenericOriginalString
       entity={entity}
-      locale={locale}
       pluralForm={pluralForm}
       terms={terms}
       handleClickOnPlaceable={handleClickOnPlaceable}
