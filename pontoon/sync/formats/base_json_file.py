@@ -30,7 +30,7 @@ class JSONResource(ParsedResource):
             # but we have a source resource,
             # we can keep going, we'll just not have any translations.
             if source_resource:
-                return
+                return {}
             else:
                 raise ParseError(err)
 

@@ -1,6 +1,6 @@
 """
 Parser for key-value JSON, a nested Object structure of String values.
-This implementation does not support plurals.
+This implementation does not supports plurals.
 
 Each key can be associated with either a String or an Object value.
 Therefore, the format support nested values.
