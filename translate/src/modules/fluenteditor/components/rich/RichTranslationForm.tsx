@@ -1,19 +1,23 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
-import { Message, Term, serializeVariantKey } from '@fluent/syntax';
+import {
+  Entry,
+  Message,
+  Pattern,
+  serializeVariantKey,
+  Term,
+  Variant,
+} from '@fluent/syntax';
 
-import './RichTranslationForm.css';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as editor from '~/core/editor';
+import type { Translation } from '~/core/editor';
 import * as entities from '~/core/entities';
 import * as locale from '~/core/locale';
 import { CLDR_PLURALS } from '~/core/plural';
 import { fluent } from '~/core/utils';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import type { Translation } from '~/core/editor';
-import type { Entry } from '@fluent/syntax';
-import type { Pattern, Variant } from '@fluent/syntax';
+import './RichTranslationForm.css';
 
 type MessagePath = Array<string | number>;
 

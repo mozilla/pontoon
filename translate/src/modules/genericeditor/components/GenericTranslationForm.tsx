@@ -1,8 +1,13 @@
-import * as React from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 
+import {
+  useHandleShortcuts,
+  useReplaceSelectionContent,
+  useUpdateUnsavedChanges,
+} from '~/core/editor';
+import { resetFailedChecks } from '~/core/editor/actions';
+import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -12,9 +17,10 @@ type Props = {
 /**
  * Shows a generic translation form, a simple textarea.
  */
-export default function GenericTranslationForm(
-  props: Props,
-): React.ReactElement<'textarea'> | null {
+export default function GenericTranslationForm({
+  sendTranslation,
+  updateTranslation,
+}: Props): React.ReactElement<'textarea'> | null {
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
@@ -22,46 +28,38 @@ export default function GenericTranslationForm(
   const searchInputFocused = useAppSelector(
     (state) => state.search.searchInputFocused,
   );
-  const locale = useAppSelector((state) => state.locale);
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
+  const { code, direction, script } = useAppSelector((state) => state.locale);
+  const readOnly = useAppSelector(isReadOnlyEditor);
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,
   );
 
-  const handleShortcutsFn = editor.useHandleShortcuts();
+  const handleShortcutsFn = useHandleShortcuts();
 
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Focus the textarea when something changes.
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const input = textareaRef.current;
-
-    if (!input || searchInputFocused) {
-      return;
-    }
-
-    input.focus();
-
-    if (changeSource !== 'internal') {
-      input.setSelectionRange(0, 0);
+    if (input && !searchInputFocused) {
+      input.focus();
+      if (changeSource !== 'internal') input.setSelectionRange(0, 0);
     }
   }, [translation, changeSource, searchInputFocused]);
 
   // Reset checks when content of the editor changes and some changes have been made.
-  React.useEffect(() => {
+  useEffect(() => {
     if (unsavedChangesExist) {
-      dispatch(editor.actions.resetFailedChecks());
+      dispatch(resetFailedChecks());
     }
   }, [dispatch, translation, unsavedChangesExist]);
 
   // When the translation or the initial translation changes, check for unsaved changes.
-  editor.useUpdateUnsavedChanges(false);
+  useUpdateUnsavedChanges(false);
 
   // Replace selected content on external actions (for example, when a user clicks
   // on a placeable).
-  editor.useReplaceSelectionContent((content: string) => {
+  useReplaceSelectionContent((content: string) => {
     const input = textareaRef.current;
 
     if (!input) {
@@ -77,36 +75,26 @@ export default function GenericTranslationForm(
     input.setSelectionRange(newSelectionPos, newSelectionPos);
 
     // Update the state to show the new content in the Editor.
-    props.updateTranslation(input.value);
+    updateTranslation(input.value);
   });
 
   if (typeof translation !== 'string') {
     return null;
   }
 
-  function handleChange(event: React.SyntheticEvent<HTMLTextAreaElement>) {
-    props.updateTranslation(event.currentTarget.value);
-  }
-
-  function handleShortcuts(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    handleShortcutsFn(event, props.sendTranslation);
-  }
-
   return (
     <textarea
       placeholder={
-        isReadOnlyEditor
-          ? undefined
-          : 'Type translation and press Enter to save'
+        readOnly ? undefined : 'Type translation and press Enter to save'
       }
-      readOnly={isReadOnlyEditor}
+      readOnly={readOnly}
       ref={textareaRef}
       value={translation}
-      onKeyDown={handleShortcuts}
-      onChange={handleChange}
-      dir={locale.direction}
-      lang={locale.code}
-      data-script={locale.script}
+      onKeyDown={(ev) => handleShortcutsFn(ev, sendTranslation)}
+      onChange={(ev) => updateTranslation(ev.currentTarget.value)}
+      dir={direction}
+      lang={code}
+      data-script={script}
     />
   );
 }

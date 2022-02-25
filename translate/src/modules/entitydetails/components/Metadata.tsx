@@ -6,7 +6,7 @@ import './Metadata.css';
 
 import ContextIssueButton from './ContextIssueButton';
 import FluentAttribute from './FluentAttribute';
-import OriginalStringProxy from './OriginalStringProxy';
+import { OriginalStringProxy } from './OriginalStringProxy';
 import Property from './Property';
 import Screenshots from './Screenshots';
 import TermsPopup from './TermsPopup';

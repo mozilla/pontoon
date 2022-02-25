@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import type { LocaleState, Localization } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
@@ -32,7 +32,7 @@ export function ProjectMenu({
   onNavigate,
 }: ProjectMenuProps): React.ReactElement<'div'> {
   // Searching
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = useState('');
 
   const updateProjectList = (e: React.SyntheticEvent<HTMLInputElement>) => {
     setSearch(e.currentTarget.value);
@@ -72,7 +72,7 @@ export function ProjectMenu({
   const progressClass = sortActive === 'progress' ? sort : '';
 
   // Discarding menu
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   useOnDiscard(ref, onDiscard);
 
   return (

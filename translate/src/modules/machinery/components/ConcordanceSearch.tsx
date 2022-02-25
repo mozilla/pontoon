@@ -1,10 +1,8 @@
-import * as React from 'react';
-
-import { useAppSelector } from '~/hooks';
-import { GenericTranslation } from '~/core/translation';
-import TranslationMemory from './source/TranslationMemory';
+import React from 'react';
 
 import type { MachineryTranslation } from '~/core/api';
+import { GenericTranslation } from '~/core/translation';
+import TranslationMemory from './source/TranslationMemory';
 
 type Props = {
   sourceString: string;
@@ -35,9 +33,9 @@ export function ConcordanceSearch({
   sourceString,
   translation,
 }: Props): React.ReactElement {
-  const locale = useAppSelector((state) => state.locale);
+  const { code, direction, script } = useAppSelector((state) => state.locale);
   const projects = translation.projectNames;
-  const title = !projects ? undefined : projects.filter(Boolean).join(' • ');
+  const title = projects?.filter(Boolean).join(' • ');
 
   return (
     <>
@@ -54,9 +52,9 @@ export function ConcordanceSearch({
       </p>
       <p
         className='suggestion'
-        dir={locale.direction}
-        data-script={locale.script}
-        lang={locale.code}
+        dir={direction}
+        data-script={script}
+        lang={code}
       >
         <GenericTranslation
           content={translation.translation}

@@ -1,9 +1,13 @@
-import * as React from 'react';
+import React, { useLayoutEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import {
+  EditorMenu,
+  useSendTranslation,
+  useUpdateTranslation,
+} from '~/core/editor';
+import { getSelectedEntity } from '~/core/entities/selectors';
 import { fluent } from '~/core/utils';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import RichTranslationForm from './RichTranslationForm';
 
@@ -22,20 +26,18 @@ type Props = {
 export default function RichEditor(props: Props): React.ReactElement<any> {
   const dispatch = useAppDispatch();
 
-  const sendTranslation = editor.useSendTranslation();
-  const updateTranslation = editor.useUpdateTranslation();
+  const sendTranslation = useSendTranslation();
+  const updateTranslation = useUpdateTranslation();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useAppSelector(getSelectedEntity);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const locale = useAppSelector((state) => state.locale);
 
   /**
    * Hook that makes sure the translation is a Fluent message.
    */
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (typeof translation === 'string') {
       const message = fluent.parser.parseEntry(translation);
       // We need to check the syntax, because it can happen that a
@@ -82,7 +84,7 @@ export default function RichEditor(props: Props): React.ReactElement<any> {
         sendTranslation={sendFluentTranslation}
         updateTranslation={updateTranslation}
       />
-      <editor.EditorMenu
+      <EditorMenu
         firstItemHook={props.ftlSwitch}
         clearEditor={clearEditor}
         copyOriginalIntoEditor={copyOriginalIntoEditor}

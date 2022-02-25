@@ -65,8 +65,8 @@ import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
 import EntityNavigation from './EntityNavigation';
-import Metadata from './Metadata';
 import Helpers from './Helpers';
+import Metadata from './Metadata';
 
 import './EntityDetails.css';
 
@@ -437,8 +437,8 @@ export default function EntityDetails(): React.ReactElement<
   typeof EntityDetailsBase
 > {
   const state = {
-    activeTranslationString: useAppSelector((state) =>
-      getTranslationStringForSelectedEntity(state),
+    activeTranslationString: useAppSelector(
+      getTranslationStringForSelectedEntity,
     ),
     history: useAppSelector((state) => state[HISTORY]),
     isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
