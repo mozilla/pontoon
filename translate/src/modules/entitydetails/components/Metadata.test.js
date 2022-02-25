@@ -40,13 +40,12 @@ describe('<Metadata>', () => {
   it('renders correctly', () => {
     const wrapper = createShallowMetadata();
 
-    expect(wrapper.text()).toContain(ENTITY.source[0][0]);
-
-    // Comments are hidden in a Linkify component.
-    const content = wrapper
-      .find('Linkify')
-      .map((item) => item.props().children);
-    expect(content).toContain(ENTITY.comment);
+    expect(wrapper.find('SourceArray').dive().text()).toContain(
+      ENTITY.source[0][0],
+    );
+    expect(wrapper.find('EntityComment').dive().props().children).toContain(
+      ENTITY.comment,
+    );
 
     expect(
       wrapper.find('#entitydetails-Metadata--resource a.resource-path').text(),
@@ -59,25 +58,23 @@ describe('<Metadata>', () => {
       ...{ comment: '' },
     });
 
-    expect(wrapper.text()).toContain(ENTITY.source[0][0]);
-
-    // Comments are hidden in a Linkify component.
-    const content = wrapper
-      .find('Linkify')
-      .map((item) => item.props().children);
-    expect(content).not.toContain(ENTITY.comment);
+    expect(wrapper.find('SourceArray').dive().text()).toContain(
+      ENTITY.source[0][0],
+    );
+    expect(wrapper.find('EntityComment').dive().props().children).not.toContain(
+      ENTITY.comment,
+    );
   });
 
   it('does not require a source', () => {
     const wrapper = createShallowMetadata({ ...ENTITY, ...{ source: [] } });
 
-    expect(wrapper.text()).not.toContain(ENTITY.source[0][0]);
-
-    // Comments are hidden in a Linkify component.
-    const content = wrapper
-      .find('Linkify')
-      .map((item) => item.props().children);
-    expect(content).toContain(ENTITY.comment);
+    expect(wrapper.find('SourceArray').dive().text()).not.toContain(
+      ENTITY.source[0][0],
+    );
+    expect(wrapper.find('EntityComment').dive().props().children).toContain(
+      ENTITY.comment,
+    );
   });
 
   it('handles sources as an object with examples', () => {
@@ -98,11 +95,9 @@ describe('<Metadata>', () => {
       ...withSourceAsObject,
     });
 
-    const sourceContent = wrapper
-      .find('Property[title="PLACEHOLDER EXAMPLES"] Linkify')
-      .props().children;
-    expect(sourceContent).toContain('$ARG1$: example_1');
-    expect(sourceContent).toContain('$ARG2$: example_2');
+    expect(wrapper.find('SourceObject').dive().props().children).toBe(
+      '$ARG1$: example_1, $ARG2$: example_2',
+    );
   });
 
   it('handles sources as an object without examples', () => {
@@ -121,8 +116,6 @@ describe('<Metadata>', () => {
       ...withSourceAsObject,
     });
 
-    expect(
-      wrapper.find('Property[title="PLACEHOLDER EXAMPLES"]').exists(),
-    ).toBeFalsy();
+    expect(wrapper.find('SourceObject').dive().props().children).toBe('');
   });
 });
