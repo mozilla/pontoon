@@ -2,9 +2,7 @@ import React from 'react';
 
 import { TranslationDiff } from '~/core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from '~/core/placeable';
-import { withSearch } from '~/modules/search';
-
-const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
+import { SearchTerms } from '~/modules/search';
 
 export type TranslationProps = {
   content: string | null | undefined;
@@ -27,9 +25,9 @@ export default function GenericTranslation({
 
   if (search) {
     return (
-      <TranslationPlaceablesSearch search={search}>
-        {content}
-      </TranslationPlaceablesSearch>
+      <WithPlaceablesNoLeadingSpace>
+        <SearchTerms search={search}>{content ?? ''}</SearchTerms>
+      </WithPlaceablesNoLeadingSpace>
     );
   }
 

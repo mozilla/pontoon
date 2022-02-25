@@ -2,7 +2,7 @@ export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
 export { default as SearchBox } from './components/SearchBox';
-export { default as withSearch } from './withSearch';
+export { SearchTerms } from './components/SearchTerms';
 
 export type { Author } from './actions';
 export type { SearchAndFilters } from './reducer';

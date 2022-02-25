@@ -6,13 +6,9 @@ import {
   WithPlaceablesForFluentNoLeadingSpace,
 } from '~/core/placeable';
 import { fluent } from '~/core/utils';
-import { withSearch } from '~/modules/search';
+import { SearchTerms } from '~/modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
-
-const TranslationPlaceablesSearch = withSearch(
-  WithPlaceablesForFluentNoLeadingSpace,
-);
 
 export default function FluentTranslation({
   content,
@@ -32,9 +28,9 @@ export default function FluentTranslation({
 
   if (search) {
     return (
-      <TranslationPlaceablesSearch search={search}>
-        {preview}
-      </TranslationPlaceablesSearch>
+      <WithPlaceablesForFluentNoLeadingSpace>
+        <SearchTerms search={search}>{preview}</SearchTerms>
+      </WithPlaceablesForFluentNoLeadingSpace>
     );
   }
 
