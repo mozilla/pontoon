@@ -1,25 +1,21 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
-
-import { useOnDiscard } from '~/core/utils';
-
-import './ProjectMenu.css';
-
-import ProjectItem from './ProjectItem';
+import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
 
 import type { LocaleState, Localization } from '~/core/locale';
 import type { NavigationParams } from '~/core/navigation';
 import type { ProjectState } from '~/core/project';
+import { useOnDiscard } from '~/core/utils';
+
+import ProjectItem from './ProjectItem';
+
+import './ProjectMenu.css';
 
 type Props = {
   parameters: NavigationParams;
   locale: LocaleState;
   project: ProjectState;
   navigateToPath: (arg0: string) => void;
-};
-
-type State = {
-  visible: boolean;
 };
 
 type ProjectMenuProps = {
@@ -179,71 +175,51 @@ export function ProjectMenu({
  * In the All projects view, render project menu, which allows switching to the
  * regular view without reloading the Translate app.
  */
-export default class ProjectMenuBase extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-  }
+export default function ProjectMenuBase({
+  locale,
+  navigateToPath,
+  parameters,
+  project,
+}: Props): React.ReactElement<'li'> {
+  const [visible, setVisible] = useState(false);
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const toggleVisibility = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
+  const handleNavigate = useCallback(
+    (ev: React.MouseEvent<HTMLAnchorElement>) => {
+      ev.preventDefault();
+      navigateToPath(ev.currentTarget.pathname);
+      setVisible(false);
+    },
+    [navigateToPath],
+  );
 
-  navigateToPath: (event: React.MouseEvent<HTMLAnchorElement>) => void = (
-    event: React.MouseEvent<HTMLAnchorElement>,
-  ) => {
-    event.preventDefault();
-
-    const path = event.currentTarget.pathname;
-    this.props.navigateToPath(path);
-
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): React.ReactElement<'li'> {
-    const { locale, parameters, project } = this.props;
-
-    if (parameters.project !== 'all-projects') {
-      return (
-        <li>
-          <a href={`/${locale.code}/${project.slug}/`}>{project.name}</a>
-        </li>
-      );
-    }
-
-    let className = 'project-menu';
-    if (!this.state.visible) {
-      className += ' closed';
-    }
+  if (parameters.project !== 'all-projects') {
     return (
-      <li className={className}>
-        <div className='selector unselectable' onClick={this.toggleVisibility}>
-          <Localized id='project-ProjectMenu--all-projects'>
-            <span>All Projects</span>
-          </Localized>
-          <span className='icon fa fa-caret-down'></span>
-        </div>
-        {this.state.visible && (
-          <ProjectMenu
-            locale={locale}
-            parameters={parameters}
-            onDiscard={this.handleDiscard}
-            onNavigate={this.navigateToPath}
-          />
-        )}
+      <li>
+        <a href={`/${locale.code}/${project.slug}/`}>{project.name}</a>
       </li>
     );
   }
+
+  const className = classNames('project-menu', visible ? null : 'closed');
+  return (
+    <li className={className}>
+      <div className='selector unselectable' onClick={toggleVisibility}>
+        <Localized id='project-ProjectMenu--all-projects'>
+          <span>All Projects</span>
+        </Localized>
+        <span className='icon fa fa-caret-down'></span>
+      </div>
+      {visible && (
+        <ProjectMenu
+          locale={locale}
+          parameters={parameters}
+          onDiscard={handleDiscard}
+          onNavigate={handleNavigate}
+        />
+      )}
+    </li>
+  );
 }
