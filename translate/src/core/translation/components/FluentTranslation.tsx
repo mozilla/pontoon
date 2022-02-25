@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 
-import { withDiff } from '~/core/diff';
+import { TranslationDiff } from '~/core/diff';
 import {
   WithPlaceablesForFluent,
   WithPlaceablesForFluentNoLeadingSpace,
@@ -10,12 +10,6 @@ import { withSearch } from '~/modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 
-// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
-const TranslationPlaceablesDiff = withDiff(
-  WithPlaceablesForFluentNoLeadingSpace,
-);
-
-// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesSearch = withSearch(
   WithPlaceablesForFluentNoLeadingSpace,
 );
@@ -30,9 +24,9 @@ export default function FluentTranslation({
   if (diffTarget) {
     const fluentTarget = fluent.getSimplePreview(diffTarget);
     return (
-      <TranslationPlaceablesDiff diffTarget={fluentTarget}>
-        {preview}
-      </TranslationPlaceablesDiff>
+      <WithPlaceablesForFluentNoLeadingSpace>
+        <TranslationDiff base={fluentTarget} target={preview} />
+      </WithPlaceablesForFluentNoLeadingSpace>
     );
   }
 

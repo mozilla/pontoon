@@ -1,13 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 
-import { withDiff } from '~/core/diff';
+import { TranslationDiff } from '~/core/diff';
 import { WithPlaceables, WithPlaceablesNoLeadingSpace } from '~/core/placeable';
 import { withSearch } from '~/modules/search';
 
-// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
-const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
-
-// @ts-ignore: https://github.com/mozilla/pontoon/issues/2294.
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {
@@ -23,9 +19,9 @@ export default function GenericTranslation({
 }: TranslationProps): React.ReactElement<React.ElementType> {
   if (diffTarget) {
     return (
-      <TranslationPlaceablesDiff diffTarget={diffTarget}>
-        {content}
-      </TranslationPlaceablesDiff>
+      <WithPlaceablesNoLeadingSpace>
+        <TranslationDiff base={diffTarget} target={content ?? ''} />
+      </WithPlaceablesNoLeadingSpace>
     );
   }
 
