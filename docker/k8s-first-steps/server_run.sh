@@ -21,8 +21,9 @@ fi
 echo ">>> Setting up the db for Django" >> /app/server_run.log
 python manage.py migrate >> /app/server_run.log
 
-echo ">>> Starting frontend build process in the background" >> /app/server_run.log
-cd frontend && npm start &
+echo ">>> Starting frontend & tag-admin builds in the background" >> /app/server_run.log
+npm start -w frontend &
+npm start -w tag-admin &
 
 # syncing projects if env SYNC_INTERVAL is set, if it is set and you need to "work" on the bash, kill the process syncprojects.sh
 echo ">>> starting continuos syncing projects" >> /app/server_run.log

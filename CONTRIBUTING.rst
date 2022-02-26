@@ -403,15 +403,15 @@ Building front-end resources
 We use Rollup to build our JavaScript files for some pages.
 While `make build` will build those files for you,
 you might want to rebuild them while programming on the front.
-To build the files just once, run:
+To build the files just once, run at the project root:
 
 .. code-block:: shell
 
     $ npm run build
 
 If you want to have those files be built automatically when you make changes,
-you can run:
+you can run in each subdirectory:
 
 .. code-block:: shell
 
-    $ npm run watch
+    $ npm start

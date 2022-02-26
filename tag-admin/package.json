@@ -3,10 +3,10 @@
   "private": true,
   "license": "BSD",
   "scripts": {
-    "test": "jest",
+    "start": "rollup -c --watch",
     "build": "rollup -c",
     "build:prod": "rollup -c --environment BUILD:production",
-    "watch": "rollup -c --watch"
+    "test": "jest"
   },
   "dependencies": {
     "react": "^16.14.0",

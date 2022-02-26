@@ -44,9 +44,9 @@
     "tlds": "^1.218.0"
   },
   "scripts": {
+    "start": "rollup -c --watch",
     "build": "rollup -c",
     "build:prod": "rollup -c --environment BUILD:production",
-    "watch": "rollup -c --watch",
     "lint": "eslint 'src/**/*.{js,ts,tsx}'",
     "prettier": "prettier --write src/",
     "check-prettier": "prettier --check src/",
