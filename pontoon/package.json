@@ -1,7 +1,7 @@
 {
   "name": "server",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "terser": "^5.10.0",
     "yuglify": "^2.0.0"
   }
