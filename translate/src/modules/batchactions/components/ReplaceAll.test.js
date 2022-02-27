@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
 import ReplaceAll from './ReplaceAll';
@@ -13,9 +13,7 @@ const DEFAULT_BATCH_ACTIONS = {
 
 describe('<ReplaceAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = shallow(
-      <ReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />,
-    );
+    const wrapper = mount(<ReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />);
 
     expect(wrapper.find('.replace-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(1);
@@ -26,7 +24,7 @@ describe('<ReplaceAll>', () => {
   });
 
   it('renders error button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -47,7 +45,7 @@ describe('<ReplaceAll>', () => {
   });
 
   it('renders success button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -68,7 +66,7 @@ describe('<ReplaceAll>', () => {
   });
 
   it('renders success with invalid button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -92,7 +90,7 @@ describe('<ReplaceAll>', () => {
   it('performs replace all action when Replace All button is clicked', () => {
     const mockReplaceAll = sinon.spy();
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <ReplaceAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         replaceAll={mockReplaceAll}

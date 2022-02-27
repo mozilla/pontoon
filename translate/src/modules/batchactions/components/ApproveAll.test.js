@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
 import ApproveAll from './ApproveAll';
@@ -13,9 +13,7 @@ const DEFAULT_BATCH_ACTIONS = {
 
 describe('<ApproveAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = shallow(
-      <ApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />,
-    );
+    const wrapper = mount(<ApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />);
 
     expect(wrapper.find('.approve-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(1);
@@ -26,7 +24,7 @@ describe('<ApproveAll>', () => {
   });
 
   it('renders error button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -47,7 +45,7 @@ describe('<ApproveAll>', () => {
   });
 
   it('renders success button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -68,7 +66,7 @@ describe('<ApproveAll>', () => {
   });
 
   it('renders success with invalid button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <ApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -92,7 +90,7 @@ describe('<ApproveAll>', () => {
   it('performs approve all action when Approve All button is clicked', () => {
     const mockApproveAll = sinon.spy();
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <ApproveAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         approveAll={mockApproveAll}

@@ -1,7 +1,7 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-export { default as BatchActions } from './components/BatchActions';
+export { BatchActions } from './components/BatchActions';
 
 export type { BatchActionsState } from './reducer';
 

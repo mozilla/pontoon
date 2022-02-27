@@ -1,296 +1,232 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
 import { Localized } from '@fluent/react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
-import './BatchActions.css';
+import { getNavigationParams } from '~/core/navigation/selectors';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import * as navigation from '~/core/navigation';
-import * as batchactions from '~/modules/batchactions';
+import { performAction, resetSelection, selectAll } from '../actions';
+import { NAME as BATCHACTIONS } from '../index';
 
 import ApproveAll from './ApproveAll';
+import './BatchActions.css';
 import RejectAll from './RejectAll';
 import ReplaceAll from './ReplaceAll';
-
-import type { BatchActionsState } from '~/modules/batchactions';
-import type { NavigationParams } from '~/core/navigation';
-import { AppDispatch, RootState } from '~/store';
-
-type Props = {
-  batchactions: BatchActionsState;
-  parameters: NavigationParams;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-};
 
 /**
  * Renders batch editor, used for performing mass actions on translations.
  */
-export class BatchActionsBase extends React.Component<InternalProps> {
-  find: React.RefObject<HTMLInputElement>;
-  replace: React.RefObject<HTMLInputElement>;
+export function BatchActions(): React.ReactElement<'div'> {
+  const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
+  const parameters = useAppSelector(getNavigationParams);
+  const dispatch = useAppDispatch();
 
-  constructor(props: InternalProps) {
-    super(props);
+  const find = useRef<HTMLInputElement>(null);
+  const replace = useRef<HTMLInputElement>(null);
 
-    this.find = React.createRef();
-    this.replace = React.createRef();
-  }
+  const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleShortcuts);
-  }
+  const {
+    entity,
+    locale,
+    project,
+    resource,
+    search,
+    status,
+    extra,
+    tag,
+    author,
+    time,
+  } = parameters;
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleShortcuts);
-  }
+  useEffect(() => {
+    const handleShortcuts = (ev: KeyboardEvent) => {
+      // On Esc, quit batch actions
+      if (ev.keyCode === 27) quitBatchActions();
+    };
 
-  handleShortcuts: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
-    const key = event.keyCode;
+    document.addEventListener('keydown', handleShortcuts);
+    return () => document.removeEventListener('keydown', handleShortcuts);
+  }, []);
 
-    // On Esc, quit batch actions
-    if (key === 27) {
-      this.quitBatchActions();
-    }
-  };
-
-  quitBatchActions: () => void = () => {
-    this.props.dispatch(batchactions.actions.resetSelection());
-  };
-
-  selectAllEntities: () => void = () => {
-    const {
-      locale,
-      project,
-      resource,
-      search,
-      status,
-      extra,
-      tag,
-      author,
-      time,
-    } = this.props.parameters;
-
-    this.props.dispatch(
-      batchactions.actions.selectAll(
-        locale,
-        project,
-        resource,
-        search,
-        status,
-        extra,
-        tag,
-        author,
-        time,
+  const selectAllEntities = useCallback(
+    () =>
+      dispatch(
+        selectAll(
+          locale,
+          project,
+          resource,
+          search,
+          status,
+          extra,
+          tag,
+          author,
+          time,
+        ),
       ),
-    );
-  };
+    [dispatch, parameters],
+  );
 
-  approveAll: () => void = () => {
-    if (this.props.batchactions.requestInProgress) {
-      return;
+  const approveAll = useCallback(() => {
+    if (!batchactions.requestInProgress) {
+      dispatch(
+        performAction(
+          'approve',
+          locale,
+          project,
+          resource,
+          entity,
+          batchactions.entities,
+        ),
+      );
     }
+  }, [dispatch, entity, locale, project, resource, batchactions]);
 
-    const { entity, locale, project, resource } = this.props.parameters;
-
-    this.props.dispatch(
-      batchactions.actions.performAction(
-        'approve',
-        locale,
-        project,
-        resource,
-        entity,
-        this.props.batchactions.entities,
-      ),
-    );
-  };
-
-  rejectAll: () => void = () => {
-    if (this.props.batchactions.requestInProgress) {
-      return;
+  const rejectAll = useCallback(() => {
+    if (!batchactions.requestInProgress) {
+      dispatch(
+        performAction(
+          'reject',
+          locale,
+          project,
+          resource,
+          entity,
+          batchactions.entities,
+        ),
+      );
     }
+  }, [dispatch, entity, locale, project, resource, batchactions]);
 
-    const { entity, locale, project, resource } = this.props.parameters;
-
-    this.props.dispatch(
-      batchactions.actions.performAction(
-        'reject',
-        locale,
-        project,
-        resource,
-        entity,
-        this.props.batchactions.entities,
-      ),
-    );
-  };
-
-  replaceAll: () => void = () => {
-    if (this.props.batchactions.requestInProgress) {
-      return;
+  const replaceAll = useCallback(() => {
+    if (find.current && replace.current && !batchactions.requestInProgress) {
+      const fv = find.current.value;
+      const rv = replace.current.value;
+      if (fv === '') {
+        find.current.focus();
+      } else if (fv === rv) {
+        replace.current.focus();
+      } else {
+        dispatch(
+          performAction(
+            'replace',
+            locale,
+            project,
+            resource,
+            entity,
+            batchactions.entities,
+            encodeURIComponent(fv),
+            encodeURIComponent(rv),
+          ),
+        );
+      }
     }
+  }, [dispatch, entity, locale, project, resource, batchactions]);
 
-    const find = this.find.current;
-    const replace = this.replace.current;
+  const submitReplaceForm = useCallback(
+    (ev: React.SyntheticEvent<HTMLFormElement>) => {
+      ev.preventDefault();
+      replaceAll();
+    },
+    [replaceAll],
+  );
 
-    if (!find || !replace) {
-      return;
-    }
-
-    if (find.value === '') {
-      find.focus();
-      return;
-    }
-
-    if (find.value === replace.value) {
-      replace.focus();
-      return;
-    }
-
-    const { entity, locale, project, resource } = this.props.parameters;
-
-    this.props.dispatch(
-      batchactions.actions.performAction(
-        'replace',
-        locale,
-        project,
-        resource,
-        entity,
-        this.props.batchactions.entities,
-        encodeURIComponent(find.value),
-        encodeURIComponent(replace.value),
-      ),
-    );
-  };
-
-  submitReplaceForm: (event: React.SyntheticEvent<HTMLFormElement>) => void = (
-    event: React.SyntheticEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    this.replaceAll();
-  };
-
-  render(): React.ReactElement<'div'> {
-    return (
-      <div className='batch-actions'>
-        <div className='topbar clearfix'>
+  return (
+    <div className='batch-actions'>
+      <div className='topbar clearfix'>
+        <Localized
+          id='batchactions-BatchActions--header-select-all'
+          attrs={{ title: true }}
+          elems={{ glyph: <i className='fa fa-check fa-lg' /> }}
+        >
+          <button
+            className='select-all'
+            title='Select All Strings (Ctrl + Shift + A)'
+            onClick={selectAllEntities}
+          >
+            {'<glyph></glyph> SELECT ALL'}
+          </button>
+        </Localized>
+        {batchactions.requestInProgress === 'select-all' ? (
+          <div className='selecting fa fa-sync fa-spin'></div>
+        ) : (
           <Localized
-            id='batchactions-BatchActions--header-select-all'
+            id='batchactions-BatchActions--header-selected-count'
             attrs={{ title: true }}
-            elems={{ glyph: <i className='fa fa-check fa-lg' /> }}
+            elems={{
+              glyph: <i className='fa fa-times fa-lg' />,
+              stress: <span className='stress' />,
+            }}
+            vars={{ count: batchactions.entities.length }}
           >
             <button
-              className='select-all'
-              title='Select All Strings (Ctrl + Shift + A)'
-              onClick={this.selectAllEntities}
+              className='selected-count'
+              title='Quit Batch Editing (Esc)'
+              onClick={quitBatchActions}
             >
-              {'<glyph></glyph> SELECT ALL'}
+              {'<glyph></glyph> <stress>{ $count }</stress> STRINGS SELECTED'}
             </button>
           </Localized>
-          {this.props.batchactions.requestInProgress === 'select-all' ? (
-            <div className='selecting fa fa-sync fa-spin'></div>
-          ) : (
-            <Localized
-              id='batchactions-BatchActions--header-selected-count'
-              attrs={{ title: true }}
-              elems={{
-                glyph: <i className='fa fa-times fa-lg' />,
-                stress: <span className='stress' />,
-              }}
-              vars={{
-                count: this.props.batchactions.entities.length,
-              }}
-            >
-              <button
-                className='selected-count'
-                title='Quit Batch Editing (Esc)'
-                onClick={this.quitBatchActions}
-              >
-                {'<glyph></glyph> <stress>{ $count }</stress> STRINGS SELECTED'}
-              </button>
-            </Localized>
-          )}
+        )}
+      </div>
+
+      <div className='actions-panel'>
+        <div className='intro'>
+          <Localized
+            id='batchactions-BatchActions--warning'
+            elems={{ stress: <span className='stress' /> }}
+          >
+            <p>
+              {
+                '<stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.'
+              }
+            </p>
+          </Localized>
         </div>
 
-        <div className='actions-panel'>
-          <div className='intro'>
+        <div className='review'>
+          <Localized id='batchactions-BatchActions--review-heading'>
+            <h2>REVIEW TRANSLATIONS</h2>
+          </Localized>
+
+          <ApproveAll approveAll={approveAll} batchactions={batchactions} />
+          <RejectAll rejectAll={rejectAll} batchactions={batchactions} />
+        </div>
+
+        <div className='find-replace'>
+          <Localized id='batchactions-BatchActions--find-replace-heading'>
+            <h2>FIND & REPLACE IN TRANSLATIONS</h2>
+          </Localized>
+
+          <form onSubmit={submitReplaceForm}>
             <Localized
-              id='batchactions-BatchActions--warning'
-              elems={{ stress: <span className='stress' /> }}
+              id='batchactions-BatchActions--find'
+              attrs={{ placeholder: true }}
             >
-              <p>
-                {
-                  '<stress>Warning:</stress> These actions will be applied to all selected strings and cannot be undone.'
-                }
-              </p>
-            </Localized>
-          </div>
-
-          <div className='review'>
-            <Localized id='batchactions-BatchActions--review-heading'>
-              <h2>REVIEW TRANSLATIONS</h2>
-            </Localized>
-
-            <ApproveAll
-              approveAll={this.approveAll}
-              batchactions={this.props.batchactions}
-            />
-
-            <RejectAll
-              rejectAll={this.rejectAll}
-              batchactions={this.props.batchactions}
-            />
-          </div>
-
-          <div className='find-replace'>
-            <Localized id='batchactions-BatchActions--find-replace-heading'>
-              <h2>FIND & REPLACE IN TRANSLATIONS</h2>
-            </Localized>
-
-            <form onSubmit={this.submitReplaceForm}>
-              <Localized
-                id='batchactions-BatchActions--find'
-                attrs={{ placeholder: true }}
-              >
-                <input
-                  className='find'
-                  type='search'
-                  autoComplete='off'
-                  placeholder='Find'
-                  ref={this.find}
-                />
-              </Localized>
-
-              <Localized
-                id='batchactions-BatchActions--replace-with'
-                attrs={{ placeholder: true }}
-              >
-                <input
-                  className='replace'
-                  type='search'
-                  autoComplete='off'
-                  placeholder='Replace with'
-                  ref={this.replace}
-                />
-              </Localized>
-
-              <ReplaceAll
-                replaceAll={this.replaceAll}
-                batchactions={this.props.batchactions}
+              <input
+                className='find'
+                type='search'
+                autoComplete='off'
+                placeholder='Find'
+                ref={find}
               />
-            </form>
-          </div>
+            </Localized>
+
+            <Localized
+              id='batchactions-BatchActions--replace-with'
+              attrs={{ placeholder: true }}
+            >
+              <input
+                className='replace'
+                type='search'
+                autoComplete='off'
+                placeholder='Replace with'
+                ref={replace}
+              />
+            </Localized>
+
+            <ReplaceAll replaceAll={replaceAll} batchactions={batchactions} />
+          </form>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-const mapStateToProps = (state: RootState): Props => {
-  return {
-    batchactions: state[batchactions.NAME],
-    parameters: navigation.selectors.getNavigationParams(state),
-  };
-};
-
-export default connect(mapStateToProps)(BatchActionsBase) as any;
