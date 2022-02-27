@@ -1,13 +1,11 @@
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import { shallow } from 'enzyme';
-
 import api from '~/core/api';
-
+import { UserNotification } from './UserNotification';
 import UserNotificationsMenuBase, {
   UserNotificationsMenu,
 } from './UserNotificationsMenu';
-import UserNotification from './UserNotification';
 
 describe('<UserNotificationsMenu>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
@@ -54,14 +52,8 @@ describe('<UserNotificationsMenu>', () => {
 
 describe('<UserNotificationsMenuBase>', () => {
   const sandbox = sinon.createSandbox();
-
-  beforeEach(function () {
-    sandbox.spy(api.uxaction, 'log');
-  });
-
-  afterEach(function () {
-    sandbox.restore();
-  });
+  beforeEach(() => sandbox.spy(api.uxaction, 'log'));
+  afterEach(() => sandbox.restore());
 
   it('hides the notifications icon when the user is logged out', () => {
     const user = {
@@ -96,7 +88,7 @@ describe('<UserNotificationsMenuBase>', () => {
         unread_count: '5',
       },
     };
-    const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
+    const wrapper = mount(<UserNotificationsMenuBase user={user} />);
 
     expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
     expect(api.uxaction.log.called).toEqual(true);
@@ -118,10 +110,13 @@ describe('<UserNotificationsMenuBase>', () => {
       />,
     );
 
-    wrapper.setState({
-      visible: false,
-    });
-    wrapper.find('.selector').simulate('click');
-    expect(api.uxaction.log.called).toEqual(true);
+    // shallow() does not handle useEffect()
+    expect(api.uxaction.log.called).toEqual(false);
+
+    wrapper.find('.selector').simulate('click', {});
+    expect(api.uxaction.log.calledOnce).toEqual(true);
+
+    wrapper.find('.selector').simulate('click', {});
+    expect(api.uxaction.log.calledOnce).toEqual(true);
   });
 });

@@ -1,13 +1,13 @@
 import React from 'react';
 import sinon from 'sinon';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
-import UserAutoUpdater from './UserAutoUpdater';
+import { UserAutoUpdater } from './UserAutoUpdater';
 
 describe('<UserAutoUpdater>', () => {
   it('fetches user data on mount', () => {
     const getUserData = sinon.spy();
-    shallow(<UserAutoUpdater getUserData={getUserData} />);
+    mount(<UserAutoUpdater getUserData={getUserData} />);
 
     expect(getUserData.callCount).toEqual(1);
   });
@@ -16,7 +16,7 @@ describe('<UserAutoUpdater>', () => {
     jest.useFakeTimers();
 
     const getUserData = sinon.spy();
-    shallow(<UserAutoUpdater getUserData={getUserData} />);
+    mount(<UserAutoUpdater getUserData={getUserData} />);
 
     jest.advanceTimersByTime(2 * 60 * 1000);
     expect(getUserData.callCount).toEqual(2);

@@ -1,19 +1,19 @@
 import { Localized } from '@fluent/react';
 import React, { useRef, useState } from 'react';
+import { getSelectedEntity } from '~/core/entities/selectors';
 
-import type { NavigationParams } from '~/core/navigation';
-import type { UserState } from '~/core/user';
+import { getNavigationParams } from '~/core/navigation/selectors';
 import { useOnDiscard } from '~/core/utils';
+import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import FileUpload from './FileUpload';
-import SignOut from './SignOut';
+import type { UserState } from '../index';
+import { FileUpload } from './FileUpload';
+import { SignOut } from './SignOut';
 
 import './UserMenu.css';
 
 type Props = {
-  isReadOnly: boolean;
-  parameters: NavigationParams;
   signOut: () => void;
   user: UserState;
 };
@@ -23,14 +23,16 @@ type UserMenuProps = Props & {
 };
 
 export function UserMenu({
-  user,
-  parameters,
-  isReadOnly,
-  signOut,
   onDiscard,
+  signOut,
+  user,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
 
+  const selectedEntity = useAppSelector(getSelectedEntity);
+  const isReadOnly = selectedEntity?.readonly ?? true;
+
+  const parameters = useAppSelector(getNavigationParams);
   const { locale, project, resource } = parameters;
 
   const canDownload =

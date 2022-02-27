@@ -1,7 +1,7 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-export { default as SignInLink } from './components/SignInLink';
+export { SignInLink } from './components/SignInLink';
 export { default as UserControls } from './components/UserControls';
 export { default as UserAvatar } from './components/UserAvatar';
 
