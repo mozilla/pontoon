@@ -1,23 +1,15 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-import './ResourceProgress.css';
-
-import ProgressChart from './ProgressChart';
-
-import { asLocaleString, useOnDiscard } from '~/core/utils';
-
 import type { NavigationParams } from '~/core/navigation';
 import type { Stats } from '~/core/stats';
+import { asLocaleString, useOnDiscard } from '~/core/utils';
+import ProgressChart from './ProgressChart';
+import './ResourceProgress.css';
 
 type Props = {
   parameters: NavigationParams;
   stats: Stats;
-};
-
-type State = {
-  visible: boolean;
 };
 
 type ResourceProgressProps = {
@@ -163,56 +155,38 @@ function ResourceProgress({
 /**
  * Show a panel with progress chart and stats for the current resource.
  */
-export default class ResourceProgressBase extends React.Component<
-  Props,
-  State
-> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
+export default function ResourceProgressBase({
+  parameters,
+  stats,
+}: Props): React.ReactElement<'div'> | null {
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
+
+  // Do not show resource progress until stats are available
+  if (!stats.total) {
+    return null;
   }
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const complete = stats.approved + stats.warnings;
+  const percent = Math.floor((complete / stats.total) * 100);
+  const { locale, project, resource } = parameters;
+  const currentPath = `/${locale}/${project}/${resource}/`;
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): null | React.ReactElement<'div'> {
-    const { parameters, stats } = this.props;
-
-    // Do not show resource progress until stats are available
-    if (!stats.total) {
-      return null;
-    }
-
-    const complete = stats.approved + stats.warnings;
-    const percent = Math.floor((complete / stats.total) * 100);
-    const currentPath = `/${parameters.locale}/${parameters.project}/${parameters.resource}/`;
-
-    return (
-      <div className='progress-chart'>
-        <div className='selector' onClick={this.toggleVisibility}>
-          <ProgressChart stats={stats} size={44} />
-          <span className='percent unselectable'>{percent}</span>
-        </div>
-        {this.state.visible && (
-          <ResourceProgress
-            currentPath={currentPath}
-            percent={percent}
-            stats={stats}
-            onDiscard={this.handleDiscard}
-          />
-        )}
+  return (
+    <div className='progress-chart'>
+      <div className='selector' onClick={toggleVisible}>
+        <ProgressChart stats={stats} size={44} />
+        <span className='percent unselectable'>{percent}</span>
       </div>
-    );
-  }
+      {visible ? (
+        <ResourceProgress
+          currentPath={currentPath}
+          percent={percent}
+          stats={stats}
+          onDiscard={handleDiscard}
+        />
+      ) : null}
+    </div>
+  );
 }

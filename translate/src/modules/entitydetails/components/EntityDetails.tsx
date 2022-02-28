@@ -70,7 +70,7 @@ import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
-import EntityNavigation from './EntityNavigation';
+import { EntityNavigation } from './EntityNavigation';
 import Helpers from './Helpers';
 import Metadata from './Metadata';
 

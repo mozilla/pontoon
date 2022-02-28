@@ -148,7 +148,6 @@ export default function Helpers(props: Props): React.ReactElement<any> {
             <OtherLocales
               entity={entity}
               otherlocales={otherlocales}
-              user={user}
               parameters={parameters}
             />
           </TabPanel>
