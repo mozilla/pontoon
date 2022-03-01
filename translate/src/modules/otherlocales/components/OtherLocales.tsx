@@ -7,7 +7,7 @@ import type { NavigationParams } from '~/core/navigation';
 import type { LocalesState } from '../index';
 
 import './OtherLocales.css';
-import Translation from './Translation';
+import { Translation } from './Translation';
 
 type Props = {
   entity: Entity;

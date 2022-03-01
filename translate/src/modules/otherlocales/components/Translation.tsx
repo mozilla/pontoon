@@ -1,16 +1,17 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-import './Translation.css';
-
-import { TranslationProxy } from '~/core/translation';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
 import type { Entity, OtherLocaleTranslation } from '~/core/api';
+import { NAME as EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
+import { selectHelperElementIndex } from '~/core/editor/actions';
+import { isReadOnlyEditor } from '~/core/entities/selectors';
 import type { NavigationParams } from '~/core/navigation';
+import { TranslationProxy } from '~/core/translation';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+
+import './Translation.css';
 
 type Props = {
   entity: Entity;
@@ -25,44 +26,36 @@ type Props = {
  * Show the translation of a given entity in a different locale, as well as the
  * locale and its code.
  */
-export default function Translation(
-  props: Props,
-): React.ReactElement<React.ElementType> {
-  const { entity, translation, parameters, index } = props;
-
+export function Translation({
+  entity,
+  translation,
+  parameters,
+  index,
+}: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
-
-  let className = 'translation';
-  if (isReadOnlyEditor) {
-    // Copying into the editor is not allowed
-    className += ' cannot-copy';
-  }
+  const readonly = useAppSelector(isReadOnlyEditor);
 
   const selectedHelperElementIndex = useAppSelector(
-    (state) => state[editor.NAME].selectedHelperElementIndex,
+    (state) => state[EDITOR].selectedHelperElementIndex,
   );
-  const changeSource = useAppSelector(
-    (state) => state[editor.NAME].changeSource,
-  );
+  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
   const isSelected =
     changeSource === 'otherlocales' && selectedHelperElementIndex === index;
 
-  if (isSelected) {
-    // Highlight other locale entries upon selection
-    className += ' selected';
-  }
+  const className = classNames(
+    'translation',
+    readonly && 'cannot-copy',
+    isSelected && 'selected',
+  );
 
-  const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
-  const copyTranslationIntoEditor = React.useCallback(() => {
-    dispatch(editor.actions.selectHelperElementIndex(index));
+  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const copyTranslationIntoEditor = useCallback(() => {
+    dispatch(selectHelperElementIndex(index));
     copyOtherLocaleTranslation(translation);
   }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
-  const translationRef = React.useRef<HTMLLIElement>(null);
-  React.useEffect(() => {
+  const translationRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
     if (selectedHelperElementIndex === index) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const behavior = mediaQuery.matches ? 'auto' : 'smooth';
