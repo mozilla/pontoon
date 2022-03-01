@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "translate",
   "private": true,
   "dependencies": {
     "@fluent/bundle": "^0.16.1",

@@ -11,7 +11,7 @@ export PATH=/app/.heroku/node/bin:$PATH
 npm install --global npm@8
 npm ci
 
-echo "Building frontend & tag-admin..."
+echo "Building translate & tag-admin..."
 npm run build:prod
 
 echo "Collecting static files..."

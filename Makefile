@@ -9,13 +9,13 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-frontend build-tagadmin build-server server-env setup run clean shell ci test test-frontend test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-tagadmin build-server server-env setup run clean shell ci test test-translate test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
 	@echo "The list of commands for local development:\n"
 	@echo "  build            Builds the docker images for the docker-compose setup"
-	@echo "  build-frontend   Builds just the translate frontend component"
+	@echo "  build-translate  Builds just the translate frontend component"
 	@echo "  build-tagadmin   Builds just the tag-admin frontend component"
 	@echo "  build-server     Builds just the Django server image"
 	@echo "  server-env       Regenerates the env variable file used by server"
@@ -23,17 +23,17 @@ help:
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
 	@echo "  shell            Opens a Bash shell in a server docker container"
-	@echo "  ci               Test and lint both frontend and server"
-	@echo "  test             Runs both frontend and server test suites"
-	@echo "  test-frontend    Runs the translate frontend test suite (Jest)"
+	@echo "  ci               Test and lint all code"
+	@echo "  test             Runs all test suites"
+	@echo "  test-translate   Runs the translate frontend test suite (Jest)"
 	@echo "  test-tagadmin    Runs the tag-admin test suite (Jest)"
 	@echo "  test-server      Runs the server test suite (Pytest)"
-	@echo "  format           Runs formatters for both the frontend and Python code"
-	@echo "  lint             Runs linters for both the frontend and Python code"
+	@echo "  format           Runs all formatters"
+	@echo "  lint             Runs all linters"
 	@echo "  types            Runs the tsc compiler to check TypeScript on all frontend code"
 	@echo "  eslint           Runs a code linter on the JavaScript code"
-	@echo "  prettier         Runs the prettier formatter on the frontend code"
-	@echo "  check-prettier   Runs a check for format issues with the prettier formatter"
+	@echo "  prettier         Runs the Prettier formatter"
+	@echo "  check-prettier   Runs a check for format issues with the Prettier formatter"
 	@echo "  flake8           Runs the flake8 style guides on all Python code"
 	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
 	@echo "  check-pyupgrade  Runs a check for outdated syntax of Python with the pyupgrade formatter"
@@ -45,8 +45,8 @@ help:
 	@echo "  sync-projects    Runs the synchronization task on all projects"
 	@echo "  requirements     Compiles all requirements files with pip-compile\n"
 
-frontend/dist:
-	make build-frontend
+translate/dist:
+	make build-translate
 tag-admin/dist:
 	make build-tagadmin
 .server-build:
@@ -54,15 +54,15 @@ tag-admin/dist:
 node_modules:
 	npm install
 
-build: build-frontend build-tagadmin build-server
+build: build-translate build-tagadmin build-server
 
-build-frontend: node_modules
-	npm run build -w frontend
+build-translate: node_modules
+	npm run build -w translate
 
 build-tagadmin: node_modules
 	npm run build -w tag-admin
 
-build-server: server-env frontend/dist tag-admin/dist
+build-server: server-env translate/dist tag-admin/dist
 	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
 	touch .server-build
 
@@ -73,24 +73,24 @@ server-env:
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh
 
-run: frontend/dist tag-admin/dist .server-build
+run: translate/dist tag-admin/dist .server-build
 	"${DC}" up --detach
 	bash -c 'set -m; bash ./bin/watch.sh'
 	"${DC}" stop
 
 clean:
-	rm -rf frontend/dist tag-admin/dist .server-build
+	rm -rf translate/dist tag-admin/dist .server-build
 
 shell:
 	"${DC}" run --rm server //bin/bash
 
 ci: test lint
 
-test: test-server test-frontend test-tagadmin
+test: test-server test-translate test-tagadmin
 
-test-frontend: jest
+test-translate: jest
 jest:
-	npm test -w frontend
+	npm test -w translate
 
 test-tagadmin:
 	npm test -w tag-admin
@@ -104,7 +104,7 @@ format: prettier pyupgrade black
 lint: types eslint check-prettier flake8 check-pyupgrade check-black
 
 types:
-	npm run types -w frontend
+	npm run types -w translate
 
 eslint:
 	npm run eslint

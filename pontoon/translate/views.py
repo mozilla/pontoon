@@ -18,12 +18,12 @@ from pontoon.base.models import (
 
 @csrf_exempt
 def catchall_dev(request, context=None):
-    return render(request, "frontend.html", context=context, using="jinja2")
+    return render(request, "translate.html", context=context, using="jinja2")
 
 
 @ensure_csrf_cookie
 def catchall_prod(request, context=None):
-    return render(request, "frontend.html", context=context, using="jinja2")
+    return render(request, "translate.html", context=context, using="jinja2")
 
 
 def get_preferred_locale(request):

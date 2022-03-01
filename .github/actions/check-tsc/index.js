@@ -6,7 +6,7 @@ async function run() {
     console.log('::group::tsc');
     let errors = '0';
     const run = process.env['INPUT_RUN'] || 'npm run types --pretty ';
-    const cwd = process.env['INPUT_WORKING-DIRECTORY'] || 'frontend';
+    const cwd = process.env['INPUT_WORKING-DIRECTORY'] || 'translate';
     let stdout, stderr;
     try {
         ({ stdout, stderr } = await asyncExec(run, {

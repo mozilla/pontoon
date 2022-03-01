@@ -85,7 +85,7 @@ In general, imports ought to be ordered first from the most general to the most 
 ### Production
 
 The only required step for the front-end is to build static files with `npm run build`.
-Django is configured to collect the `frontend.html` and static files
+Django is configured to collect the `translate.html` and static files
 from the `build` folder and put them with other static files.
 All of that is automated for deployement to Heroku.
 
@@ -100,7 +100,7 @@ A common case during development is to have 2 terminals open: one for the dev se
     $ make run
 
     # terminal 2
-    $ make test-frontend
+    $ make test-translate
 ```
 
 #### Enabling websocket and warm-reloading for dev
@@ -123,14 +123,14 @@ run the following commands at the repo root:
 
 ```shell
     # Add or upgrade the dependency. Make sure to use an exact version.
-    npm install my-package@version -w frontend
+    npm install my-package@version -w translate
 
     # Rebuild the Pontoon image so that it has the new dependencies.
-    make build-frontend
+    make build-translate
 ```
 
 Note that, in order to add new dependencies, you need to have `npm` installed and perform the actions locally (outside docker).
-You might want to remove the `frontend/node_modules` folder after you've run the install or update command
+You might want to remove the `translate/node_modules` folder after you've run the install or update command
 (and the `package.json` and `package-lock.json` files have been updated)
 and before rebuilding the image, to reduce the size of the docker context.
 
@@ -150,7 +150,7 @@ Tests are run using [`jest`](https://facebook.github.io/jest/). We use [`enzyme`
 
 To run the test suite, use:
 
-    $ make test-frontend
+    $ make test-translate
 
 It will start an auto-reloading test runner, that will refresh every time you make a change to the code or tests.
 
@@ -197,7 +197,10 @@ class Editor extends React.Component {
 
 The second thing you need to do is to add that new string into our main translation files. Translations available to localizers are based on those files, so if you forget to put the new content there, no one will be able to translate that content.
 
-The source language for our application is `en-US` (that is what you should use by default when writing content in the code, and in the language files). You can find them in `frontend/public/static/locale/en-US/`. We currently have only one file, named `translate.ftl`, and that is where all content should be added.
+The source language for our application is `en-US`
+(that is what you should use by default when writing content in the code, and in the language files).
+You can find them in `translate/public/static/locale/en-US/`.
+We currently have only one file, named `translate.ftl`, and that is where all content should be added.
 
 Those files use the FTL format. In its simplest form, a string in such a file (called a `message` in Fluent vocabulary) looks like this: `message-id = Content`. There are, however, lots of tools that you can use in that syntax, and you are encouraged to read [Fluent's Syntax Guide](https://projectfluent.org/fluent/guide/) to familiarize yourself with them. Make sure you also take a look at the [Good Practices for Developers](https://github.com/projectfluent/fluent/wiki/Good-Practices-for-Developers#prefer-separate-messages-over-variants-for-ui-logic) guide.
 

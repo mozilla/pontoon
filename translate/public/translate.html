@@ -19,7 +19,7 @@
     <link href="/static/css/fontawesome-all.css" rel="stylesheet" />
     <link href="/static/css/boilerplate.css" rel="stylesheet" />
     <link href="/static/css/fonts.css" rel="stylesheet" />
-    {% stylesheet 'frontend' %}
+    {% stylesheet 'translate' %}
 
     {% include "tracker.html" %}
   </head>
@@ -32,6 +32,6 @@
         data-csrf-token="{{ csrf_token }}"
         data-notifications="{{ notifications | to_json }}"
     ></div>
-    {% javascript 'frontend' %}
+    {% javascript 'translate' %}
   </body>
 </html>

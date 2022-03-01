@@ -11,4 +11,5 @@ exclude =
     setup.py,
     node_modules,
     bin,
-    frontend
+    tag-admin,
+    translate
