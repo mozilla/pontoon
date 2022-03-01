@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
-import * as plural from '~/core/plural';
+import { usePluralForm } from '~/core/plural/hooks';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useLocation } from '~/hooks/useLocation';
 
@@ -31,9 +31,7 @@ export default function useSendTranslation(): (
   const locale = useContext(Locale);
   const user = useAppSelector((state) => state.user);
   const router = useAppSelector((state) => state.router);
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
+  const pluralForm = usePluralForm(entity);
   const nextEntity = useNextEntity();
   const { resource } = useLocation();
 

@@ -28,10 +28,7 @@ import type { NavigationParams } from '~/core/navigation';
 import { updateEntity } from '~/core/navigation/actions';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import {
-  getPluralForm,
-  getTranslationStringForSelectedEntity,
-} from '~/core/plural/selectors';
+import { usePluralForm, useTranslationForEntity } from '~/core/plural/hooks';
 import { NAME as TERMS, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
@@ -441,10 +438,9 @@ export function EntityDetailsBase({
 export default function EntityDetails(): React.ReactElement<
   typeof EntityDetailsBase
 > {
+  const entity = useSelectedEntity();
   const state = {
-    activeTranslationString: useAppSelector(
-      getTranslationStringForSelectedEntity,
-    ),
+    activeTranslationString: useTranslationForEntity(entity)?.string ?? '',
     history: useAppSelector((state) => state[HISTORY]),
     isReadOnlyEditor: useReadonlyEditor(),
     machinery: useAppSelector((state) => state[MACHINERY]),
@@ -454,9 +450,9 @@ export default function EntityDetails(): React.ReactElement<
     teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
     terms: useAppSelector((state) => state[TERMS]),
     parameters: useLocation(),
-    pluralForm: useAppSelector(getPluralForm),
+    pluralForm: usePluralForm(entity),
     router: useAppSelector((state) => state.router),
-    selectedEntity: useSelectedEntity(),
+    selectedEntity: entity,
     user: useAppSelector((state) => state[USER]),
   };
   return (

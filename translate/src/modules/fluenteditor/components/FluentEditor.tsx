@@ -10,7 +10,7 @@ import {
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { messages as notificationMessages } from '~/core/notification';
 import { add as addNotification } from '~/core/notification/actions';
-import { getTranslationStringForSelectedEntity } from '~/core/plural/selectors';
+import { useTranslationForEntity } from '~/core/plural/hooks';
 import { fluent } from '~/core/utils';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -60,9 +60,7 @@ function useLoadTranslation(forceSource: boolean) {
 
   const entity = useSelectedEntity();
   const locale = useContext(Locale);
-  const activeTranslationString = useAppSelector(
-    getTranslationStringForSelectedEntity,
-  );
+  const activeTranslationString = useTranslationForEntity(entity)?.string ?? '';
 
   // We do not want to perform any formatting when the user switches "force source",
   // as that is handled in the `useForceSource` hook. We thus keep track of that variable's
@@ -127,9 +125,7 @@ function useForceSource(): [boolean, () => void] {
 
   const translation = useAppSelector((state) => state.editor.translation);
   const entity = useSelectedEntity();
-  const activeTranslationString = useAppSelector(
-    getTranslationStringForSelectedEntity,
-  );
+  const activeTranslation = useTranslationForEntity(entity);
   const locale = useContext(Locale);
 
   // Force using the source editor.
@@ -156,7 +152,7 @@ function useForceSource(): [boolean, () => void] {
       toSyntax,
       translation,
       entity?.original ?? '',
-      activeTranslationString,
+      activeTranslation?.string ?? '',
       locale,
     );
     dispatch(setInitialTranslation(initialContent));
@@ -178,9 +174,7 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   const translation = useAppSelector((state) => state.editor.translation);
   const readonly = useReadonlyEditor();
   const entity = useSelectedEntity();
-  const activeTranslationString = useAppSelector(
-    getTranslationStringForSelectedEntity,
-  );
+  const activeTranslation = useTranslationForEntity(entity);
   const user = useAppSelector((state) => state.user);
 
   const [forceSource, changeForceSource] = useForceSource();
@@ -191,7 +185,7 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   }
 
   const syntax = getSyntaxType(
-    translation || activeTranslationString || entity.original,
+    translation || activeTranslation?.string || entity.original,
   );
 
   // Choose which editor implementation to render.

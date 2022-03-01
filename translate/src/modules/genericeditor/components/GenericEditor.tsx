@@ -2,7 +2,8 @@ import * as React from 'react';
 
 import * as editor from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import * as plural from '~/core/plural';
+import { PluralSelector } from '~/core/plural';
+import { usePluralForm, useTranslationForEntity } from '~/core/plural/hooks';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import GenericTranslationForm from './GenericTranslationForm';
@@ -17,12 +18,8 @@ function useLoadTranslation() {
 
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const entity = useSelectedEntity();
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
-  const activeTranslationString = useAppSelector((state) =>
-    plural.selectors.getTranslationStringForSelectedEntity(state),
-  );
+  const pluralForm = usePluralForm(entity);
+  const activeTranslationString = useTranslationForEntity(entity)?.string ?? '';
 
   React.useLayoutEffect(() => {
     // We want to run this only when the editor state has been reset.
@@ -58,9 +55,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
 
   const translation = useAppSelector((state) => state.editor.translation);
   const entity = useSelectedEntity();
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
+  const pluralForm = usePluralForm(entity);
 
   if (!entity || typeof translation !== 'string') {
     return null;
@@ -74,7 +69,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
 
   return (
     <>
-      <plural.PluralSelector resetEditor={resetEditor} />
+      <PluralSelector resetEditor={resetEditor} />
       <GenericTranslationForm
         sendTranslation={sendTranslation}
         updateTranslation={updateTranslation}
