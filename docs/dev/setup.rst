@@ -39,6 +39,13 @@ Quickstart
 
 2. From the root of the repository, run::
 
+     $ npm install
+
+   This will install all the frontend dependencies.
+
+
+3. From the root of the repository, run::
+
      $ make build
 
    That will build the containers required for development:
@@ -51,7 +58,7 @@ Quickstart
         ``make build SITE_URL="http://192.168.1.14:8000"``.
 
 
-3. Run the webapp::
+4. Run the webapp::
 
       $ make run
 
@@ -69,7 +76,7 @@ Quickstart
         ``make run``.
 
 
-4. Finally, you need to run some setup steps, while the server is running::
+5. Finally, you need to run some setup steps, while the server is running::
 
       $ make setup
 

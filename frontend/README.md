@@ -69,13 +69,24 @@ Here are the files commonly found in a module:
 
 Of course, more can be added if needed. For example, modules with a high number of action types might want to have an `actionTypes.js` file to separate them from actions.
 
+### Imports
+
+To import code from further away than the parent directory,
+use paths starting with `~` to refer to the root of the `src/` directory.
+For example:
+```js
+import { SearchBox } from '~/modules/search';
+```
+
+In general, imports ought to be ordered first from the most general to the most specific, and then alphabetically.
 
 ## Running and deploying
 
 ### Production
 
 The only required step for the front-end is to build static files with `npm run build`.
-Django is configured to collect the `index.html` and static files from the `build` folder and put them with other static files.
+Django is configured to collect the `frontend.html` and static files
+from the `build` folder and put them with other static files.
 All of that is automated for deployement to Heroku.
 
 ### Development
