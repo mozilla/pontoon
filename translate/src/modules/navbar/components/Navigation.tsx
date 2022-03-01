@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Locale } from '~/context/locale';
 
 import type { NavigationParams } from '~/core/navigation';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
 import { get as getProject } from '~/core/project/actions';
 import {
@@ -13,6 +12,7 @@ import {
 } from '~/core/resource';
 import { get as getResource } from '~/core/resource/actions';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useLocation } from '~/hooks/useLocation';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
@@ -111,7 +111,7 @@ export default function Navigation(): React.ReactElement<
   typeof NavigationBase
 > {
   const state = {
-    parameters: useAppSelector(getNavigationParams),
+    parameters: useLocation(),
     project: useAppSelector((state) => state[PROJECT]),
     resources: useAppSelector((state) => state[RESOURCE]),
   };

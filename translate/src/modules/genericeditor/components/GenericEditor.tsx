@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import * as plural from '~/core/plural';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import GenericTranslationForm from './GenericTranslationForm';
 
@@ -16,9 +16,7 @@ function useLoadTranslation() {
   const updateTranslation = editor.useUpdateTranslation();
 
   const changeSource = useAppSelector((state) => state.editor.changeSource);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
   const pluralForm = useAppSelector((state) =>
     plural.selectors.getPluralForm(state),
   );
@@ -59,9 +57,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
   const sendTranslation = editor.useSendTranslation();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
   const pluralForm = useAppSelector((state) =>
     plural.selectors.getPluralForm(state),
   );

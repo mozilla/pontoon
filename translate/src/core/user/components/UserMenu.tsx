@@ -1,10 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useRef, useState } from 'react';
-import { getSelectedEntity } from '~/core/entities/selectors';
 
-import { getNavigationParams } from '~/core/navigation/selectors';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { useOnDiscard } from '~/core/utils';
-import { useAppSelector } from '~/hooks';
+import { useLocation } from '~/hooks/useLocation';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import type { UserState } from '../index';
@@ -28,18 +27,17 @@ export function UserMenu({
   user,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
+  const entity = useSelectedEntity();
+  const readonly = entity?.readonly ?? true;
 
-  const selectedEntity = useAppSelector(getSelectedEntity);
-  const isReadOnly = selectedEntity?.readonly ?? true;
-
-  const parameters = useAppSelector(getNavigationParams);
-  const { locale, project, resource } = parameters;
+  const location = useLocation();
+  const { locale, project, resource } = location;
 
   const canDownload =
     project !== 'all-projects' && resource !== 'all-resources';
 
   /* TODO: Also disable for subpages (in-context l10n) when supported */
-  const canUpload = canDownload && isTranslator && !isReadOnly;
+  const canUpload = canDownload && isTranslator && !readonly;
 
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
@@ -98,7 +96,7 @@ export function UserMenu({
 
       {canUpload && (
         <li>
-          <FileUpload parameters={parameters} />
+          <FileUpload parameters={location} />
         </li>
       )}
 

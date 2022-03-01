@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import React, {
   useCallback,
   useContext,
@@ -5,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { push } from 'connected-react-router';
 
 import { Locale } from '~/context/locale';
 import type { Entity } from '~/core/api';
@@ -20,14 +20,12 @@ import {
   updateSelection,
 } from '~/core/editor/actions';
 import {
-  getNextEntity,
-  getPreviousEntity,
-  getSelectedEntity,
-  isReadOnlyEditor,
-} from '~/core/entities/selectors';
+  useNextEntity,
+  usePreviousEntity,
+  useSelectedEntity,
+} from '~/core/entities/hooks';
 import type { NavigationParams } from '~/core/navigation';
 import { updateEntity } from '~/core/navigation/actions';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import {
@@ -39,42 +37,47 @@ import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { History, NAME as HISTORY } from '~/modules/history';
+import { useLocation } from '~/hooks/useLocation';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import {
+  ChangeOperation,
+  History,
+  HistoryState,
+  NAME as HISTORY,
+} from '~/modules/history';
 import {
   deleteTranslation,
   get as getHistory,
   request as requestHistory,
   updateStatus,
 } from '~/modules/history/actions';
-import { NAME as MACHINERY } from '~/modules/machinery';
+import { MachineryState, NAME as MACHINERY } from '~/modules/machinery';
 import {
   get as getMachinery,
   getConcordanceSearchResults,
   resetSearch,
   setEntity,
 } from '~/modules/machinery/actions';
-import { NAME as OTHERLOCALES } from '~/modules/otherlocales';
+import { LocalesState, NAME as OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
-import { NAME as TEAM_COMMENTS } from '~/modules/teamcomments';
-import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
-import type { ChangeOperation, HistoryState } from '~/modules/history';
-import type { MachineryState } from '~/modules/machinery';
-import type { LocalesState } from '~/modules/otherlocales';
-import type { TeamCommentState } from '~/modules/teamcomments';
+import {
+  NAME as TEAM_COMMENTS,
+  TeamCommentState,
+} from '~/modules/teamcomments';
 import {
   get as getTeamComments,
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
+import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
+import './EntityDetails.css';
 import { EntityNavigation } from './EntityNavigation';
 import Helpers from './Helpers';
 import Metadata from './Metadata';
-
-import './EntityDetails.css';
 
 type Props = {
   activeTranslationString: string;
@@ -443,17 +446,17 @@ export default function EntityDetails(): React.ReactElement<
       getTranslationStringForSelectedEntity,
     ),
     history: useAppSelector((state) => state[HISTORY]),
-    isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
+    isReadOnlyEditor: useReadonlyEditor(),
     machinery: useAppSelector((state) => state[MACHINERY]),
-    nextEntity: useAppSelector(getNextEntity),
-    previousEntity: useAppSelector(getPreviousEntity),
+    nextEntity: useNextEntity(),
+    previousEntity: usePreviousEntity(),
     otherlocales: useAppSelector((state) => state[OTHERLOCALES]),
     teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
     terms: useAppSelector((state) => state[TERMS]),
-    parameters: useAppSelector(getNavigationParams),
+    parameters: useLocation(),
     pluralForm: useAppSelector(getPluralForm),
     router: useAppSelector((state) => state.router),
-    selectedEntity: useAppSelector(getSelectedEntity),
+    selectedEntity: useSelectedEntity(),
     user: useAppSelector((state) => state[USER]),
   };
   return (

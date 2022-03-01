@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useLocation } from '~/hooks/useLocation';
 
 import { performAction, resetSelection, selectAll } from '../actions';
 import { NAME as BATCHACTIONS } from '../index';
@@ -17,7 +17,7 @@ import ReplaceAll from './ReplaceAll';
  */
 export function BatchActions(): React.ReactElement<'div'> {
   const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
-  const parameters = useAppSelector(getNavigationParams);
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   const find = useRef<HTMLInputElement>(null);
@@ -36,7 +36,7 @@ export function BatchActions(): React.ReactElement<'div'> {
     tag,
     author,
     time,
-  } = parameters;
+  } = location;
 
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
@@ -63,7 +63,7 @@ export function BatchActions(): React.ReactElement<'div'> {
           time,
         ),
       ),
-    [dispatch, parameters],
+    [dispatch, location],
   );
 
   const approveAll = useCallback(() => {

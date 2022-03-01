@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 
 /**
@@ -24,9 +24,7 @@ export default function useHandleShortcuts(): (
   const unsavedChangesShown = useAppSelector(
     (state) => state.unsavedchanges.shown,
   );
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
+  const readonly = useReadonlyEditor();
   const sameExistingTranslation = useAppSelector((state) =>
     editor.selectors.sameExistingTranslation(state),
   );
@@ -54,7 +52,7 @@ export default function useHandleShortcuts(): (
     const key = event.keyCode;
 
     // Disable keyboard shortcuts when editor is in read only.
-    if (isReadOnlyEditor) {
+    if (readonly) {
       return;
     }
 

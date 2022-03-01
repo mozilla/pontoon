@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
+
+import './App.css';
 
 import { initLocale, Locale, updateLocale } from './context/locale';
 
@@ -7,7 +8,6 @@ import { L10nState, NAME as L10N } from './core/l10n';
 import { Lightbox } from './core/lightbox';
 import { WaveLoader } from './core/loaders';
 import type { NavigationParams } from './core/navigation';
-import { getNavigationParams } from './core/navigation/selectors';
 import {
   NAME as NOTIFICATION,
   NotificationPanel,
@@ -20,6 +20,9 @@ import { get as getResource } from './core/resource/actions';
 import { NAME as STATS, Stats } from './core/stats';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';
+
+import { useAppDispatch, useAppSelector } from './hooks';
+import { useLocation } from './hooks/useLocation';
 
 import { AddonPromotion } from './modules/addonpromotion';
 import {
@@ -35,9 +38,7 @@ import { ProjectInfo } from './modules/projectinfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
-import { AppDispatch, RootState } from './store';
-
-import './App.css';
+import { AppDispatch } from './store';
 
 type Props = {
   batchactions: BatchActionsState;
@@ -134,15 +135,15 @@ function App({
   );
 }
 
-const mapStateToProps = (state: RootState): Props => {
-  return {
+export default function AppWrapper() {
+  const props = useAppSelector((state) => ({
     batchactions: state[BATCHACTIONS],
     l10n: state[L10N],
     notification: state[NOTIFICATION],
-    parameters: getNavigationParams(state),
     project: state[PROJECT],
     stats: state[STATS],
-  };
-};
-
-export default connect(mapStateToProps)(App);
+  }));
+  return (
+    <App dispatch={useAppDispatch()} parameters={useLocation()} {...props} />
+  );
+}

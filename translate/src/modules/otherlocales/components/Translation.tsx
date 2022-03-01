@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 import type { Entity, OtherLocaleTranslation } from '~/core/api';
 import { NAME as EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
-import { isReadOnlyEditor } from '~/core/entities/selectors';
 import type { NavigationParams } from '~/core/navigation';
 import { TranslationProxy } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Translation.css';
 
@@ -33,7 +33,6 @@ export function Translation({
   index,
 }: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
-  const readonly = useAppSelector(isReadOnlyEditor);
 
   const selectedHelperElementIndex = useAppSelector(
     (state) => state[EDITOR].selectedHelperElementIndex,
@@ -44,7 +43,7 @@ export function Translation({
 
   const className = classNames(
     'translation',
-    readonly && 'cannot-copy',
+    useReadonlyEditor() && 'cannot-copy',
     isSelected && 'selected',
   );
 

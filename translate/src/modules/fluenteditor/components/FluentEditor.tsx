@@ -7,13 +7,14 @@ import {
   setInitialTranslation,
   update as updateEditor,
 } from '~/core/editor/actions';
-import { getSelectedEntity, isReadOnlyEditor } from '~/core/entities/selectors';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { messages as notificationMessages } from '~/core/notification';
 import { add as addNotification } from '~/core/notification/actions';
 import { getTranslationStringForSelectedEntity } from '~/core/plural/selectors';
 import { fluent } from '~/core/utils';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './FluentEditor.css';
 import RichEditor from './rich/RichEditor';
@@ -57,7 +58,7 @@ function useLoadTranslation(forceSource: boolean) {
   const updateTranslation = useUpdateTranslation();
   const changeSource = useAppSelector((state) => state.editor.changeSource);
 
-  const entity = useAppSelector(getSelectedEntity);
+  const entity = useSelectedEntity();
   const locale = useContext(Locale);
   const activeTranslationString = useAppSelector(
     getTranslationStringForSelectedEntity,
@@ -125,7 +126,7 @@ function useForceSource(): [boolean, () => void] {
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector(getSelectedEntity);
+  const entity = useSelectedEntity();
   const activeTranslationString = useAppSelector(
     getTranslationStringForSelectedEntity,
   );
@@ -175,8 +176,8 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const readOnly = useAppSelector(isReadOnlyEditor);
-  const entity = useAppSelector(getSelectedEntity);
+  const readonly = useReadonlyEditor();
+  const entity = useSelectedEntity();
   const activeTranslationString = useAppSelector(
     getTranslationStringForSelectedEntity,
   );
@@ -213,7 +214,7 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   // Show a button to allow switching to the source editor.
   let ftlSwitch = null;
   // But only if the user is logged in and the string is not read-only.
-  if (user.isAuthenticated && !readOnly) {
+  if (user.isAuthenticated && !readonly) {
     if (syntax === 'complex') {
       // TODO: To Localize
       ftlSwitch = (

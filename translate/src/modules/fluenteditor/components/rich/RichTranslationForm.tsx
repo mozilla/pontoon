@@ -1,4 +1,3 @@
-import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 import {
   Entry,
@@ -8,15 +7,17 @@ import {
   Term,
   Variant,
 } from '@fluent/syntax';
+import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
-import * as editor from '~/core/editor';
 import type { Translation } from '~/core/editor';
-import * as entities from '~/core/entities';
+import * as editor from '~/core/editor';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/plural';
 import { fluent } from '~/core/utils';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './RichTranslationForm.css';
 
@@ -82,15 +83,11 @@ export default function RichTranslationForm(
   const message = useAppSelector((state) => state.editor.translation);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const locale = useContext(Locale);
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
+  const readonly = useReadonlyEditor();
   const searchInputFocused = useAppSelector(
     (state) => state.search.searchInputFocused,
   );
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,
   );
@@ -217,7 +214,7 @@ export default function RichTranslationForm(
   }
 
   function handleAccessKeyClick(event: React.MouseEvent<HTMLButtonElement>) {
-    if (isReadOnlyEditor) {
+    if (readonly) {
       return null;
     }
 
@@ -240,7 +237,7 @@ export default function RichTranslationForm(
       <textarea
         id={`${path.join('-')}`}
         key={`${path.join('-')}`}
-        readOnly={isReadOnlyEditor}
+        readOnly={readonly}
         value={value}
         maxLength={maxlength}
         onChange={createHandleChange(path)}

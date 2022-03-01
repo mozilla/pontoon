@@ -10,15 +10,15 @@ import {
   getSiblingEntities,
   reset as resetEntities,
 } from '~/core/entities/actions';
-import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { SkeletonLoader } from '~/core/loaders';
 import type { NavigationParams } from '~/core/navigation';
 import { updateEntity } from '~/core/navigation/actions';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useLocation } from '~/hooks/useLocation';
 import { usePrevious } from '~/hooks/usePrevious';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   BatchActionsState,
   NAME as BATCHACTIONS,
@@ -34,9 +34,8 @@ import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
-import { Entity } from './Entity';
-
 import './EntitiesList.css';
+import { Entity } from './Entity';
 
 type Props = {
   batchactions: BatchActionsState;
@@ -319,8 +318,8 @@ export default function EntitiesList(): React.ReactElement<
   const state = {
     batchactions: useAppSelector((state) => state[BATCHACTIONS]),
     entities: useAppSelector((state) => state[ENTITIES]),
-    isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
-    parameters: useAppSelector(getNavigationParams),
+    isReadOnlyEditor: useReadonlyEditor(),
+    parameters: useLocation(),
     router: useAppSelector((state) => state.router),
   };
 

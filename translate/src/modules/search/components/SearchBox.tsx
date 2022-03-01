@@ -11,12 +11,12 @@ import { reset as resetEditor } from '~/core/editor/actions';
 import { reset as resetEntities } from '~/core/entities/actions';
 import type { NavigationParams } from '~/core/navigation';
 import { update as updateNavigation } from '~/core/navigation/actions';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import type { ProjectState } from '~/core/project';
 import { NAME as PROJECT } from '~/core/project';
 import type { Stats } from '~/core/stats';
 import { NAME as STATS } from '~/core/stats';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useLocation } from '~/hooks/useLocation';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
@@ -275,7 +275,7 @@ export function SearchBoxBase({
 export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
-    parameters: useAppSelector(getNavigationParams),
+    parameters: useLocation(),
     project: useAppSelector((state) => state[PROJECT]),
     stats: useAppSelector((state) => state[STATS]),
     router: useAppSelector((state) => state.router),
