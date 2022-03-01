@@ -20,7 +20,6 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.isempty": "^4.4.0",
-    "lodash.isequal": "^4.5.0",
     "nprogress": "^0.2.0",
     "react": "^16.14.0",
     "react-content-marker": "^2.0.0",

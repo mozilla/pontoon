@@ -20,13 +20,8 @@ type Props = {
   project: string;
   timeRange: TimeRangeType | null | undefined;
   timeRangeData: Array<Array<number>>;
-  applySingleFilter: (filter: string, type: 'timeRange') => void;
-  toggleFilter: (
-    filter: string,
-    type: 'timeRange',
-    event: React.MouseEvent,
-  ) => void;
-  updateTimeRange: (filter: string) => void;
+  applySingleFilter: (value: string, filter: 'timeRange') => void;
+  setTimeRange: (value: string | null) => void;
 };
 
 type State = {
@@ -96,7 +91,7 @@ export default class TimeRangeFilter extends React.Component<Props, State> {
       props.timeRange &&
       (chartFrom !== prevState.chartFrom || chartTo !== prevState.chartTo)
     ) {
-      props.updateTimeRange([chartFrom, chartTo].join('-'));
+      props.setTimeRange([chartFrom, chartTo].join('-'));
     }
   }
 
@@ -231,11 +226,8 @@ export default class TimeRangeFilter extends React.Component<Props, State> {
     if (visible) {
       // Make sure Time Range filter is selected
       if (!this.props.timeRange) {
-        this.props.toggleFilter(
-          [chartFrom, chartTo].join('-'),
-          'timeRange',
-          event,
-        );
+        event.stopPropagation();
+        this.props.setTimeRange([chartFrom, chartTo].join('-'));
       }
 
       // Make sure inputs are in sync with chart
@@ -255,13 +247,15 @@ export default class TimeRangeFilter extends React.Component<Props, State> {
   toggleTimeRangeFilter: (event: React.MouseEvent) => void = (
     event: React.MouseEvent,
   ) => {
+    const { setTimeRange, timeRange } = this.props;
     const { chartFrom, chartTo, visible } = this.state;
 
     if (visible) {
       return;
     }
 
-    this.props.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
+    event.stopPropagation();
+    setTimeRange(timeRange ? null : [chartFrom, chartTo].join('-'));
   };
 
   applyTimeRangeFilter: () => void = () => {

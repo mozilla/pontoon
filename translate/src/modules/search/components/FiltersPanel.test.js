@@ -1,154 +1,142 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import FiltersPanelBase, { FiltersPanel } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 
-const FILTERS = [].concat(FILTERS_STATUS, FILTERS_EXTRA);
-
 describe('<FiltersPanel>', () => {
   it('correctly sets filter as selected', () => {
-    const statuses = {
-      warnings: true,
-      errors: false,
-      missing: true,
-    };
+    const statuses = ['warnings', 'missing'];
+    const extras = ['rejected'];
 
-    const extras = {
-      unchanged: false,
-      rejected: true,
-    };
-
-    const wrapper = shallow(
+    const wrapper = mount(
       <FiltersPanel
+        filters={{ authors: [], extras, statuses, tags: [] }}
         authorsData={[]}
-        extras={extras}
         stats={{}}
-        statuses={statuses}
         tagsData={[]}
+        timeRangeData={[]}
       />,
     );
 
-    for (let filter of FILTERS) {
-      let isFilterSelected;
-
-      if (FILTERS_STATUS.includes(filter)) {
-        isFilterSelected = statuses[filter.slug];
-      } else if (FILTERS_EXTRA.includes(filter)) {
-        isFilterSelected = extras[filter.slug];
-      }
-
-      const isClassSet = wrapper
-        .find(`.menu .${filter.slug}`)
-        .hasClass('selected');
-
-      if (isFilterSelected) {
-        expect(isClassSet).toBeTruthy();
-      } else {
-        expect(isClassSet).toBeFalsy();
-      }
-    }
-  });
-
-  it('applies a single filter on click on a filter title', () => {
-    let applySingleFilter;
-
-    for (let filter of FILTERS) {
-      let statuses = {};
-      let extras = {};
-
-      const value = {
-        [filter.slug]: true,
-      };
-
-      if (FILTERS_STATUS.includes(filter)) {
-        statuses = value;
-      } else if (FILTERS_EXTRA.includes(filter)) {
-        extras = value;
-      }
-
-      applySingleFilter = sinon.spy();
-
-      const wrapper = shallow(
-        <FiltersPanel
-          authorsData={[]}
-          extras={extras}
-          stats={{}}
-          statuses={statuses}
-          tagsData={[]}
-          onApplyFilter={applySingleFilter}
-        />,
+    for (let filter of FILTERS_STATUS) {
+      expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
+        statuses.includes(filter.slug),
       );
-      wrapper.find(`.menu .${filter.slug}`).simulate('click');
-
-      expect(applySingleFilter.calledWith(filter.slug)).toBeTruthy();
     }
-  });
 
-  it('toggles a filter on click on a filter status icon', () => {
-    let toggleFilter;
-
-    for (let filter of FILTERS) {
-      let statuses = {};
-      let extras = {};
-
-      const value = {
-        [filter.slug]: false,
-      };
-
-      if (FILTERS_STATUS.includes(filter)) {
-        statuses = value;
-      } else if (FILTERS_EXTRA.includes(filter)) {
-        extras = value;
-      }
-
-      toggleFilter = sinon.spy();
-      const wrapper = shallow(
-        <FiltersPanel
-          authorsData={[]}
-          extras={extras}
-          parameters={{}}
-          stats={{}}
-          statuses={statuses}
-          tagsData={[]}
-          onToggleFilter={toggleFilter}
-        />,
+    for (let filter of FILTERS_EXTRA) {
+      expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
+        extras.includes(filter.slug),
       );
-      wrapper.find(`.menu .${filter.slug} .status`).simulate('click');
-
-      expect(toggleFilter.calledWith(filter.slug)).toBeTruthy();
     }
   });
+
+  for (let { slug } of FILTERS_STATUS) {
+    describe(`status: ${slug}`, () => {
+      it('applies a single filter on click on a filter title', () => {
+        const applySingleFilter = sinon.spy();
+        const wrapper = mount(
+          <FiltersPanel
+            filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
+            authorsData={[]}
+            stats={{}}
+            tagsData={[]}
+            onApplyFilter={applySingleFilter}
+            timeRangeData={[]}
+          />,
+        );
+        wrapper.find(`.menu .${slug}`).simulate('click');
+
+        expect(applySingleFilter.calledWith(slug)).toBeTruthy();
+      });
+
+      it('toggles a filter on click on a filter status icon', () => {
+        const toggleFilter = sinon.spy();
+        const wrapper = mount(
+          <FiltersPanel
+            filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
+            authorsData={[]}
+            parameters={{}}
+            stats={{}}
+            tagsData={[]}
+            onToggleFilter={toggleFilter}
+            timeRangeData={[]}
+          />,
+        );
+        wrapper.find(`.menu .${slug} .status`).simulate('click');
+
+        expect(toggleFilter.calledWith(slug)).toBeTruthy();
+      });
+    });
+  }
+
+  for (let { slug } of FILTERS_EXTRA) {
+    describe(`extra: ${slug}`, () => {
+      it('applies a single filter on click on a filter title', () => {
+        const applySingleFilter = sinon.spy();
+        const wrapper = mount(
+          <FiltersPanel
+            filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
+            authorsData={[]}
+            stats={{}}
+            tagsData={[]}
+            onApplyFilter={applySingleFilter}
+            timeRangeData={[]}
+          />,
+        );
+        wrapper.find(`.menu .${slug}`).simulate('click');
+
+        expect(applySingleFilter.calledWith(slug)).toBeTruthy();
+      });
+
+      it('toggles a filter on click on a filter status icon', () => {
+        const toggleFilter = sinon.spy();
+        const wrapper = mount(
+          <FiltersPanel
+            filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
+            authorsData={[]}
+            parameters={{}}
+            stats={{}}
+            tagsData={[]}
+            onToggleFilter={toggleFilter}
+            timeRangeData={[]}
+          />,
+        );
+        wrapper.find(`.menu .${slug} .status`).simulate('click');
+
+        expect(toggleFilter.calledWith(slug)).toBeTruthy();
+      });
+    });
+  }
 
   it('shows the toolbar when some filters are selected', () => {
     const wrapper = shallow(
       <FiltersPanel
+        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
-        extras={{}}
         selectedFiltersCount={1}
         stats={{}}
-        statuses={{}}
         tagsData={[]}
       />,
     );
 
-    expect(wrapper.find('.toolbar')).toHaveLength(1);
+    expect(wrapper.find('FilterToolbar')).toHaveLength(1);
   });
 
   it('hides the toolbar when no filters are selected', () => {
     const wrapper = shallow(
       <FiltersPanel
+        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
-        extras={{}}
         selectedFiltersCount={0}
         stats={{}}
-        statuses={{}}
         tagsData={[]}
       />,
     );
 
-    expect(wrapper.find('.toolbar')).toHaveLength(0);
+    expect(wrapper.find('FilterToolbar')).toHaveLength(0);
   });
 
   it('resets selected filters on click on the Clear button', () => {
@@ -156,17 +144,20 @@ describe('<FiltersPanel>', () => {
 
     const wrapper = shallow(
       <FiltersPanel
+        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
-        extras={{}}
         selectedFiltersCount={1}
         stats={{}}
-        statuses={{}}
         tagsData={[]}
         onResetFilters={resetFilters}
       />,
     );
 
-    wrapper.find('.toolbar .clear-selection').simulate('click');
+    wrapper
+      .find('FilterToolbar')
+      .dive()
+      .find('.clear-selection')
+      .simulate('click');
 
     expect(resetFilters.called).toBeTruthy();
   });
@@ -176,17 +167,20 @@ describe('<FiltersPanel>', () => {
 
     const wrapper = shallow(
       <FiltersPanel
+        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
-        extras={{}}
         selectedFiltersCount={1}
         stats={{}}
-        statuses={{}}
         tagsData={[]}
         onApplyFilters={update}
       />,
     );
 
-    wrapper.find('.toolbar .apply-selected').simulate('click');
+    wrapper
+      .find('FilterToolbar')
+      .dive()
+      .find('.apply-selected')
+      .simulate('click');
 
     expect(update.called).toBeTruthy();
   });
@@ -194,22 +188,16 @@ describe('<FiltersPanel>', () => {
 
 describe('<FiltersPanelBase>', () => {
   it('shows a panel with filters on click', () => {
-    const statuses = {};
-    const extras = {};
-
     const wrapper = shallow(
       <FiltersPanelBase
-        statuses={statuses}
-        extras={extras}
-        tags={{}}
-        authors={{}}
+        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
         timeRangeData={[]}
         tagsData={[]}
         stats={{}}
         parameters={{}}
         getAuthorsAndTimeRangeData={sinon.spy()}
-        updateFiltersFromURLParams={sinon.spy()}
+        updateFiltersFromURL={sinon.spy()}
       />,
     );
 
@@ -219,26 +207,10 @@ describe('<FiltersPanelBase>', () => {
   });
 
   it('has the correct icon based on parameters', () => {
-    for (let filter of FILTERS) {
-      let statuses = {};
-      let extras = {};
-
-      const value = {
-        [filter.slug]: true,
-      };
-
-      if (FILTERS_STATUS.includes(filter)) {
-        statuses = value;
-      } else if (FILTERS_EXTRA.includes(filter)) {
-        extras = value;
-      }
-
+    for (let { slug } of FILTERS_STATUS) {
       const wrapper = shallow(
         <FiltersPanelBase
-          statuses={statuses}
-          extras={extras}
-          tags={{}}
-          authors={{}}
+          filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
           authorsData={[]}
           timeRangeData={[]}
           tagsData={[]}
@@ -248,9 +220,23 @@ describe('<FiltersPanelBase>', () => {
         />,
       );
 
-      expect(
-        wrapper.find('.visibility-switch').hasClass(filter.slug),
-      ).toBeTruthy();
+      expect(wrapper.find('.visibility-switch').hasClass(slug)).toBeTruthy();
+    }
+
+    for (let { slug } of FILTERS_EXTRA) {
+      const wrapper = shallow(
+        <FiltersPanelBase
+          filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
+          authorsData={[]}
+          timeRangeData={[]}
+          tagsData={[]}
+          stats={{}}
+          parameters={{}}
+          getAuthorsAndTimeRangeData={sinon.spy()}
+        />,
+      );
+
+      expect(wrapper.find('.visibility-switch').hasClass(slug)).toBeTruthy();
     }
   });
 });

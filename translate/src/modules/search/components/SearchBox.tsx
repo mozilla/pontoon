@@ -1,25 +1,33 @@
-import * as React from 'react';
-import isEqual from 'lodash.isequal';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 
-import './SearchBox.css';
-
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as navigation from '~/core/navigation';
-import * as entities from '~/core/entities';
-import { NAME as PROJECT_NAME } from '~/core/project';
-import { NAME as STATS_NAME } from '~/core/stats';
-import * as search from '~/modules/search';
-import * as unsavedchanges from '~/modules/unsavedchanges';
-
-import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-import FiltersPanel from './FiltersPanel';
-
-import type { AppDispatch } from '~/store';
+import { reset as resetEditor } from '~/core/editor/actions';
+import { reset as resetEntities } from '~/core/entities/actions';
 import type { NavigationParams } from '~/core/navigation';
+import { update as updateNavigation } from '~/core/navigation/actions';
+import { getNavigationParams } from '~/core/navigation/selectors';
 import type { ProjectState } from '~/core/project';
+import { NAME as PROJECT } from '~/core/project';
 import type { Stats } from '~/core/stats';
+import { NAME as STATS } from '~/core/stats';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
+import { NAME as SEARCH } from '~/modules/search';
+import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
+import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import type { AppDispatch } from '~/store';
+
+import { getAuthorsAndTimeRangeData, setFocus } from '../actions';
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
+
+import FiltersPanel from './FiltersPanel';
+import './SearchBox.css';
 
 export type TimeRangeType = {
   from: number;
@@ -39,301 +47,237 @@ type InternalProps = Props & {
   dispatch: AppDispatch;
 };
 
-type State = {
-  search: string;
-  statuses: Record<string, boolean>;
-  extras: Record<string, boolean>;
-  tags: Record<string, boolean>;
-  timeRange: TimeRangeType | null | undefined;
-  authors: Record<string, boolean>;
+export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
+
+function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
+  const [from, to] = timeParameter.split('-');
+  return { from: parseInt(from), to: parseInt(to) };
+}
+
+export type FilterState = {
+  authors: string[];
+  extras: string[];
+  statuses: string[];
+  tags: string[];
 };
 
-export type FilterType =
-  | 'authors'
-  | 'extras'
-  | 'statuses'
-  | 'tags'
-  | 'timeRange';
+export type FilterAction = {
+  filter: FilterType;
+  value: string | string[] | null | undefined;
+};
 
 /**
  * Shows and controls a search box, used to filter the list of entities.
  *
  * Changes to the search input will be reflected in the URL.
  */
-export class SearchBoxBase extends React.Component<InternalProps, State> {
-  searchInput = React.createRef<HTMLInputElement>();
+export function SearchBoxBase({
+  dispatch,
+  parameters,
+  project,
+  searchAndFilters,
+  stats,
+  router,
+  store,
+}: InternalProps): React.ReactElement<'div'> {
+  const applyOnChange = useRef(false);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState('');
+  const [timeRange, setTimeRange] = useReducer(
+    (_prev: unknown, value: string | null | undefined) =>
+      value ? getTimeRangeFromURL(value) : null,
+    null,
+  );
+  const [filters, updateFilters] = useReducer(
+    (state: FilterState, action: FilterAction[]) => {
+      const next = { ...state };
+      for (const { filter, value } of action) {
+        next[filter] = Array.isArray(value)
+          ? value
+          : typeof value === 'string'
+          ? value.split(',')
+          : [];
+      }
+      return next;
+    },
+    { authors: [], extras: [], statuses: [], tags: [] },
+  );
 
-  state: State = {
-    search: '',
-    statuses: {},
-    extras: {},
-    tags: {},
-    timeRange: null,
-    authors: {},
-  };
+  useEffect(() => {
+    const handleShortcuts = (ev: KeyboardEvent) => {
+      // On Ctrl + Shift + F, set focus on the search input.
+      if (ev.code === 'KeyF' && !ev.altKey && ev.ctrlKey && ev.shiftKey) {
+        ev.preventDefault();
+        searchInput.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleShortcuts);
+    return () => document.removeEventListener('keydown', handleShortcuts);
+  }, []);
 
-  updateFiltersFromURLParams = () => {
-    const { author, extra, status, tag, time } = this.props.parameters;
+  const updateFiltersFromURL = useCallback(() => {
+    const { author, extra, status, tag, time } = parameters;
+    updateFilters([
+      { filter: 'authors', value: author },
+      { filter: 'extras', value: extra },
+      { filter: 'statuses', value: status },
+      { filter: 'tags', value: tag },
+    ]);
+    setTimeRange(time);
+  }, [parameters]);
 
-    const next = this.getInitState();
-    if (author) for (const a of author.split(',')) next.authors[a] = true;
-    if (extra) for (const e of extra.split(',')) next.extras[e] = true;
-    if (status) for (const s of status.split(',')) next.statuses[s] = true;
-    if (tag) for (const t of tag.split(',')) next.tags[t] = true;
-    if (time) next.timeRange = this.getTimeRangeFromURLParameter(time);
+  // When the URL changes, for example from links in the ResourceProgress
+  // component, reload the filters from the URL parameters.
+  useEffect(updateFiltersFromURL, [parameters]);
 
-    this.setState(next);
-  };
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleShortcuts);
-    this.updateFiltersFromURLParams();
-
+  const mounted = useRef(false);
+  useEffect(() => {
     // On mount, update the search input content based on URL.
     // This is not in the `updateFiltersFromURLParams` method because we want to
     // do this *only* on mount. The behavior is slightly different on update.
-    const searchParam = this.props.parameters.search;
-    this.setState({
-      search: searchParam ? searchParam.toString() : '',
-    });
-  }
-
-  componentDidUpdate(prevProps: InternalProps) {
-    const { parameters } = this.props;
-    // Clear search field when navigating to a new file
-    if (parameters.search === null && prevProps.parameters.search !== null) {
-      this.setState({ search: '' });
-    }
-
-    // When the URL changes, for example from links in the ResourceProgress
-    // component, reload the filters from the URL parameters.
-    if (parameters !== prevProps.parameters) this.updateFiltersFromURLParams();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleShortcuts);
-  }
-
-  getTimeRangeFromURLParameter(timeParameter: string): TimeRangeType {
-    const [from, to] = timeParameter.split('-');
-    return { from: parseInt(from), to: parseInt(to) };
-  }
-
-  getInitState() {
-    const { project, searchAndFilters } = this.props;
-    const state: Omit<State, 'search'> = {
-      authors: {},
-      extras: {},
-      statuses: {},
-      tags: {},
-      timeRange: null,
-    };
-
-    for (const { email } of searchAndFilters.authors)
-      state.authors[email] = false;
-    for (const { slug } of FILTERS_EXTRA) state.extras[slug] = false;
-    for (const { slug } of FILTERS_STATUS) state.statuses[slug] = false;
-    for (const { slug } of project.tags) state.tags[slug] = false;
-
-    return state;
-  }
-
-  updateTimeRange = (filter: string) => {
-    this.setState({ timeRange: this.getTimeRangeFromURLParameter(filter) });
-  };
-
-  toggleFilter = (filter: string, type: FilterType) => {
-    if (type === 'timeRange') {
-      let timeRange: State['timeRange'] =
-        this.getTimeRangeFromURLParameter(filter);
-
-      if (isEqual(timeRange, this.state.timeRange)) {
-        timeRange = null;
-      }
-
-      this.setState({ timeRange });
+    if (mounted.current) {
+      if (parameters.search == null) setSearch('');
     } else {
-      this.setState((state) => {
-        const prev = state[type][filter];
-        return { ...state, [type]: { ...state[type], [filter]: !prev } };
-      });
+      setSearch(parameters.search ?? '');
+      mounted.current = true;
     }
-  };
+  }, [parameters.search]);
 
-  applySingleFilter = (
-    filter: string,
-    type: FilterType,
-    callback: () => void,
-  ) => {
-    const next = this.getInitState();
-    if (filter !== 'all') {
-      if (type === 'timeRange')
-        next.timeRange = this.getTimeRangeFromURLParameter(filter);
-      else next[type][filter] = true;
-    }
-    this.setState(next, callback);
-  };
+  const toggleFilter = useCallback(
+    (value: string, filter: FilterType) => {
+      const next = [...filters[filter]];
+      const prev = next.indexOf(value);
+      if (prev === -1) next.push(value);
+      else next.splice(prev, 1);
+      updateFilters([{ filter, value: next }]);
+    },
+    [filters],
+  );
 
-  resetFilters = () => {
-    this.setState(this.getInitState());
-  };
+  const resetFilters = useCallback(() => {
+    updateFilters([
+      { filter: 'authors', value: [] },
+      { filter: 'extras', value: [] },
+      { filter: 'statuses', value: [] },
+      { filter: 'tags', value: [] },
+    ]);
+    setTimeRange(null);
+  }, []);
 
-  getAuthorsAndTimeRangeData = () => {
-    const { locale, project, resource } = this.props.parameters;
-    this.props.dispatch(
-      search.actions.getAuthorsAndTimeRangeData(locale, project, resource),
-    );
-  };
+  const applySingleFilter = useCallback(
+    (value: string, filter: FilterType | 'timeRange') => {
+      resetFilters();
+      applyOnChange.current = true;
+      if (filter === 'timeRange') setTimeRange(value);
+      else updateFilters([{ filter, value }]);
+    },
+    [],
+  );
 
-  handleShortcuts = (event: KeyboardEvent) => {
-    // On Ctrl + Shift + F, set focus on the search input.
-    if (
-      event.keyCode === 70 &&
-      !event.altKey &&
-      event.ctrlKey &&
-      event.shiftKey
-    ) {
-      event.preventDefault();
-      if (this.searchInput.current) {
-        this.searchInput.current.focus();
-      }
-    }
-  };
+  const handleGetAuthorsAndTimeRangeData = useCallback(() => {
+    const { locale, project, resource } = parameters;
+    dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
+  }, [parameters]);
 
-  unsetFocus = () => {
-    this.props.dispatch(search.actions.setFocus(false));
-  };
+  const applyFilters = useCallback(() => {
+    const state = store.getState();
+    const { exist, ignored } = state[UNSAVED_CHANGES];
 
-  setFocus = () => {
-    this.props.dispatch(search.actions.setFocus(true));
-  };
+    dispatch(
+      checkUnsavedChanges(exist, ignored, () => {
+        const { authors, extras, statuses, tags } = filters;
 
-  updateSearchInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    this.setState({
-      search: event.currentTarget.value,
-    });
-  };
+        let status: string | null = statuses.join(',');
+        if (status === 'all') status = null;
 
-  handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // Perform search on Enter
-    if (event.keyCode === 13) {
-      this.update();
-    }
-  };
-
-  _update = () => {
-    const { authors, extras, search, statuses, tags, timeRange } = this.state;
-
-    let status: string | null = Object.keys(statuses)
-      .filter((s) => statuses[s])
-      .join(',');
-    if (status === 'all') status = null;
-
-    const author = Object.keys(authors).filter((a) => authors[a]);
-    const extra = Object.keys(extras).filter((e) => extras[e]);
-    const tag = Object.keys(tags).filter((t) => tags[t]);
-    const time = timeRange ? `${timeRange.from}-${timeRange.to}` : '';
-
-    this.props.dispatch(entities.actions.reset());
-    this.props.dispatch(editor.actions.reset());
-    this.props.dispatch(
-      navigation.actions.update(this.props.router, {
-        author: author.join(','),
-        extra: extra.join(','),
-        search,
-        status,
-        tag: tag.join(','),
-        time,
+        dispatch(resetEntities());
+        dispatch(resetEditor());
+        dispatch(
+          updateNavigation(router, {
+            author: authors.join(','),
+            extra: extras.join(','),
+            search,
+            status,
+            tag: tags.join(','),
+            time: timeRange ? `${timeRange.from}-${timeRange.to}` : '',
+          }),
+        );
       }),
     );
-  };
+  }, [dispatch, store, search, filters]);
 
-  update = () => {
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+  useEffect(() => {
+    if (applyOnChange.current) {
+      applyOnChange.current = false;
+      applyFilters();
+    }
+  }, [filters, timeRange]);
 
-    this.props.dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        this._update,
-      ),
-    );
-  };
-
-  composePlaceholder(): string {
-    const { project, searchAndFilters } = this.props;
-    const { authors, extras, statuses, tags, timeRange } = this.state;
+  const placeholder = useMemo(() => {
+    const { authors, extras, statuses, tags } = filters;
 
     const selected: string[] = [];
     for (const { name, slug } of FILTERS_STATUS)
-      if (statuses[slug]) selected.push(name);
+      if (statuses.includes(slug)) selected.push(name);
     for (const { name, slug } of FILTERS_EXTRA)
-      if (extras[slug]) selected.push(name);
+      if (extras.includes(slug)) selected.push(name);
     for (const { name, slug } of project.tags)
-      if (tags[slug]) selected.push(name);
+      if (tags.includes(slug)) selected.push(name);
     if (timeRange) selected.push('Time Range');
     for (const { display_name, email } of searchAndFilters.authors)
-      if (authors[email]) selected.push(`${display_name}'s translations`);
+      if (authors.includes(email))
+        selected.push(`${display_name}'s translations`);
 
     const str = selected.length > 0 ? selected.join(', ') : 'All';
     return `Search in ${str}`;
-  }
+  }, [filters, project.tags, searchAndFilters.authors, timeRange]);
 
-  render(): React.ReactElement<'div'> {
-    const { searchAndFilters, parameters, project, stats } = this.props;
-
-    return (
-      <div className='search-box clearfix'>
-        <label htmlFor='search'>
-          <div className='fa fa-search'></div>
-        </label>
-        <input
-          id='search'
-          ref={this.searchInput}
-          autoComplete='off'
-          placeholder={this.composePlaceholder()}
-          title='Search Strings (Ctrl + Shift + F)'
-          type='search'
-          value={this.state.search}
-          onBlur={this.unsetFocus}
-          onChange={this.updateSearchInput}
-          onFocus={this.setFocus}
-          onKeyDown={this.handleKeyDown}
-        />
-        <FiltersPanel
-          statuses={this.state.statuses}
-          extras={this.state.extras}
-          tags={this.state.tags}
-          timeRange={this.state.timeRange}
-          authors={this.state.authors}
-          tagsData={project.tags}
-          timeRangeData={searchAndFilters.countsPerMinute}
-          authorsData={searchAndFilters.authors}
-          stats={stats}
-          parameters={parameters}
-          applySingleFilter={this.applySingleFilter}
-          getAuthorsAndTimeRangeData={this.getAuthorsAndTimeRangeData}
-          resetFilters={this.resetFilters}
-          toggleFilter={this.toggleFilter}
-          update={this.update}
-          updateTimeRange={this.updateTimeRange}
-          updateFiltersFromURLParams={this.updateFiltersFromURLParams}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className='search-box clearfix'>
+      <label htmlFor='search'>
+        <div className='fa fa-search'></div>
+      </label>
+      <input
+        id='search'
+        ref={searchInput}
+        autoComplete='off'
+        placeholder={placeholder}
+        title='Search Strings (Ctrl + Shift + F)'
+        type='search'
+        value={search}
+        onBlur={() => dispatch(setFocus(false))}
+        onChange={(ev) => setSearch(ev.currentTarget.value)}
+        onFocus={() => dispatch(setFocus(true))}
+        onKeyDown={(ev) => {
+          if (ev.key === 'Enter') applyFilters();
+        }}
+      />
+      <FiltersPanel
+        filters={filters}
+        tagsData={project.tags}
+        timeRange={timeRange}
+        timeRangeData={searchAndFilters.countsPerMinute}
+        authorsData={searchAndFilters.authors}
+        stats={stats}
+        parameters={parameters}
+        applyFilters={applyFilters}
+        applySingleFilter={applySingleFilter}
+        getAuthorsAndTimeRangeData={handleGetAuthorsAndTimeRangeData}
+        resetFilters={resetFilters}
+        toggleFilter={toggleFilter}
+        setTimeRange={setTimeRange}
+        updateFiltersFromURL={updateFiltersFromURL}
+      />
+    </div>
+  );
 }
 
 export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
   const state = {
-    searchAndFilters: useAppSelector((state) => state[search.NAME]),
-    parameters: useAppSelector((state) =>
-      navigation.selectors.getNavigationParams(state),
-    ),
-    project: useAppSelector((state) => state[PROJECT_NAME]),
-    stats: useAppSelector((state) => state[STATS_NAME]),
+    searchAndFilters: useAppSelector((state) => state[SEARCH]),
+    parameters: useAppSelector(getNavigationParams),
+    project: useAppSelector((state) => state[PROJECT]),
+    stats: useAppSelector((state) => state[STATS]),
     router: useAppSelector((state) => state.router),
   };
 
