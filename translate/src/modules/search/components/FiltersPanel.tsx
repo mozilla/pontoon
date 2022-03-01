@@ -132,9 +132,6 @@ export function FiltersPanel({
             </Localized>
 
             {tagsData
-              .sort((a, b) => {
-                return b.priority - a.priority;
-              })
               .map((tag, i) => {
                 const selected = tags[tag.slug];
 

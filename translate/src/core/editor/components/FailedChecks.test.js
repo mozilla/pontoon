@@ -17,7 +17,7 @@ import FailedChecks from './FailedChecks';
 function createFailedChecks() {
   const store = createReduxStore();
   createDefaultUser(store);
-  store.dispatch(project.actions.receive({ slug: 'firefox' }));
+  store.dispatch(project.actions.receive({ slug: 'firefox', tags: [] }));
 
   const Component = () => (
     <Locale.Provider value={{ code: 'kg' }}>
