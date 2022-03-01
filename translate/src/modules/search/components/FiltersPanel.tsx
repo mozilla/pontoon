@@ -12,7 +12,7 @@ import type { Author } from '../index';
 
 import './FiltersPanel.css';
 import type { FilterState, FilterType, TimeRangeType } from './SearchBox';
-import TimeRangeFilter from './TimeRangeFilter';
+import { TimeRangeFilter } from './TimeRangeFilter';
 
 type Props = {
   filters: FilterState;
