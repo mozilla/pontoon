@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import * as hookModule from '~/hooks/useTranslator';
+import * as Translator from '~/hooks/useTranslator';
 import * as historyActions from '~/modules/history/actions';
 import {
   createDefaultUser,
@@ -9,12 +9,21 @@ import {
 } from '~/test/store';
 
 import * as editorActions from '../actions';
-import * as editorSelectors from '../selectors';
+import * as ExistingTranslation from '../hooks/useExistingTranslation';
 import EditorMainAction from './EditorMainAction';
 
-beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
-beforeEach(() => hookModule.useTranslator.returns(true));
-afterAll(() => hookModule.useTranslator.restore());
+beforeAll(() => {
+  sinon.stub(Translator, 'useTranslator');
+  sinon.stub(ExistingTranslation, 'useExistingTranslation');
+});
+beforeEach(() => {
+  Translator.useTranslator.returns(true);
+  ExistingTranslation.useExistingTranslation.returns(undefined);
+});
+afterAll(() => {
+  Translator.useTranslator.restore();
+  ExistingTranslation.useExistingTranslation.restore();
+});
 
 function createComponent(sendTranslationMock) {
   const store = createReduxStore();
@@ -29,9 +38,8 @@ function createComponent(sendTranslationMock) {
 
 describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
-    const updateStatusMock = sinon.spy();
-    sinon.stub(historyActions, 'updateStatus').returns(updateStatusMock);
-    sinon.stub(editorSelectors, 'sameExistingTranslation').returns({ pk: 1 });
+    sinon.stub(historyActions, 'updateStatus').returns(sinon.spy());
+    ExistingTranslation.useExistingTranslation.returns({ pk: 1 });
 
     try {
       const [wrapper] = createComponent();
@@ -41,9 +49,8 @@ describe('<EditorMainAction>', () => {
       expect(wrapper.find('.action-save')).toHaveLength(0);
 
       wrapper.find('.action-approve').simulate('click');
-      expect(updateStatusMock.calledOnce).toBeTruthy();
+      expect(historyActions.updateStatus.calledOnce).toBeTruthy();
     } finally {
-      editorSelectors.sameExistingTranslation.restore();
       historyActions.updateStatus.restore();
     }
   });
@@ -64,7 +71,7 @@ describe('<EditorMainAction>', () => {
   });
 
   it('renders the Suggest button when user does not have permission', () => {
-    hookModule.useTranslator.returns(false);
+    Translator.useTranslator.returns(false);
 
     const [wrapper] = createComponent();
 

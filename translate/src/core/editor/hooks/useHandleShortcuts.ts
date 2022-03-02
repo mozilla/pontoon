@@ -5,11 +5,11 @@ import {
   ignore as ignoreUnsavedChanges,
 } from '~/modules/unsavedchanges/actions';
 import { resetFailedChecks, selectHelperElementIndex } from '../actions';
-import { sameExistingTranslation } from '../selectors';
 import useClearEditor from './useClearEditor';
 import useCopyMachineryTranslation from './useCopyMachineryTranslation';
 import useCopyOriginalIntoEditor from './useCopyOriginalIntoEditor';
 import useCopyOtherLocaleTranslation from './useCopyOtherLocaleTranslation';
+import { useExistingTranslation } from './useExistingTranslation';
 import useUpdateTranslationStatus from './useUpdateTranslationStatus';
 
 /**
@@ -40,7 +40,7 @@ export default function useHandleShortcuts(): (
     (state) => state.unsavedchanges.shown,
   );
   const readonly = useReadonlyEditor();
-  const sameExistingTranslation_ = useAppSelector(sameExistingTranslation);
+  const existingTranslation = useExistingTranslation();
 
   const machineryTranslations = useAppSelector(
     (state) => state.machinery.translations,
@@ -80,12 +80,9 @@ export default function useHandleShortcuts(): (
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
-          } else if (
-            sameExistingTranslation_ &&
-            !sameExistingTranslation_.approved
-          ) {
+          } else if (existingTranslation && !existingTranslation.approved) {
             updateTranslationStatus(
-              sameExistingTranslation_.pk,
+              existingTranslation.pk,
               'approve',
               ignoreWarnings,
             );
