@@ -1,7 +1,7 @@
-export { default as actions } from './actions';
-export { default as selectors } from './selectors';
+import type { Location } from '~/hooks/useLocation';
+export type NavigationParams = Location;
 
-export type { NavigationParams } from './selectors';
+export { default as actions } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
