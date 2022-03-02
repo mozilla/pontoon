@@ -6,5 +6,5 @@ locales = [
 ]
 
 [[paths]]
-    reference = "frontend/public/static/locale/en-US/*.ftl"
-    l10n = "frontend/public/static/locale/{locale}/*.ftl"
+    reference = "translate/public/static/locale/en-US/*.ftl"
+    l10n = "translate/public/static/locale/{locale}/*.ftl"

@@ -143,7 +143,7 @@ var Pontoon = (function (my) {
 /* Main code */
 $(function () {
     /*
-     * If Google Analytics is enabled, frontend will send additional about Ajax calls.
+     * If Google Analytics is enabled, the translate frontend will send additional about Ajax calls.
      *
      * To send an event to GA, We pass following informations:
      * event category - hardcoded 'ajax' string.

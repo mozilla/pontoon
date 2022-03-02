@@ -20,7 +20,7 @@ class BatchActionsForm(forms.Form):
 
     def decode_field(self, param_name):
         """
-        The frontend sends quoted form fields to avoid issues with e.g. non breakable spaces.
+        The translate frontend sends quoted form fields to avoid issues with e.g. non breakable spaces.
 
         Related bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1438575
         """

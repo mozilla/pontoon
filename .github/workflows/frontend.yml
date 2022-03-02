@@ -5,13 +5,13 @@ on:
     branches:
       - master
     paths:
-      - frontend/**
+      - translate/**
       - .github/workflows/frontend.yml
   pull_request:
     branches:
       - master
     paths:
-      - frontend/**
+      - translate/**
       - .github/workflows/frontend.yml
   workflow_dispatch:
 
@@ -22,17 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+        with: { node-version: '16' }
       - name: Install dependencies
-        run: yarn
-        working-directory: frontend
+        run: npm ci
       - name: Check TypeScript
-        run: yarn types --pretty
-        working-directory: frontend
+        run: npm run types -- --pretty
+        working-directory: translate
       - name: build
-        run: yarn build
-        working-directory: frontend
+        run: npm run build
+        working-directory: translate
 
   ts-strict:
     name: Stricter TypeScript
@@ -42,29 +40,27 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+        with: { node-version: '16' }
       - name: Install dependencies
-        run: yarn
-        working-directory: frontend
+        run: npm ci
       - id: noImplicitAny
         name: noImplicitAny
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --noImplicitAny
-          working-directory: frontend
+          run: npm run types -- --pretty --noImplicitAny
+          working-directory: translate
       - id: strictNullChecks
         name: strictNullChecks
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --strictNullChecks
-          working-directory: frontend
+          run: npm run types -- --pretty --strictNullChecks
+          working-directory: translate
       - id: strict
         name: strict
         uses: ./.github/actions/check-tsc
         with:
-          run: yarn types --pretty --strict
-          working-directory: frontend
+          run: npm run types -- --pretty --strict
+          working-directory: translate
       - name: Summary
         run: |
           echo "noImplicitAny:    ${{ steps.noImplicitAny.outputs.errors }}"
@@ -79,12 +75,11 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: npm install --global codecov
+        run: npm install --global codecov npm@8
       - name: Install dependencies
-        run: npm install
-        working-directory: frontend
+        run: npm ci
       - name: Test
-        run: yarn test --coverage
-        working-directory: frontend
+        run: npm test --coverage
+        working-directory: translate
       - name: codecov.io
         run: codecov -F frontend
