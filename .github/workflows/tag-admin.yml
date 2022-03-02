@@ -32,6 +32,7 @@ jobs:
         run: npm ci
       - name: Test
         run: npm test
+        working-directory: tag-admin
       - name: codecov.io
         run: codecov -F non-frontend-js
       - name: Build

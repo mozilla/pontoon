@@ -172,7 +172,7 @@ Additionally, there are linting rules that are defined in our
 In the rare case when you cannot fix an eslint error, use ``// eslint-disable`` to make the linter
 ignore that error. Note that in most cases, it is better to fix the issues than ignore them.
 
-For more specifics about the ```frontend`` folder, look at the README.md file there.
+For more specifics about the ```translate`` folder, look at the README.md file there.
 
 
 Git conventions
@@ -309,7 +309,7 @@ To run the entire test suite, do:
     $ make test
 
 
-To run only the ``frontend`` tests:
+To run only the ``translate`` tests:
 
 .. code-block:: shell
 
@@ -395,24 +395,3 @@ steps, as they don't affect your setup if nothing has changed:
 
    # Run database migrations.
    python manage.py migrate
-
-
-Building front-end resources
-============================
-
-We use Rollup to build our JavaScript files for some pages
-(currently only the tag admin UI).
-While `make build` will build those files for you,
-you might want to rebuild them while programming on the front.
-To build the files just once, run:
-
-.. code-block:: shell
-
-    $ npm run build
-
-If you want to have those files be built automatically when you make changes,
-you can run:
-
-.. code-block:: shell
-
-    $ npm run build-w

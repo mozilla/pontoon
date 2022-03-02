@@ -64,8 +64,8 @@ if not DEV and not DEBUG:
         DATABASES["default"]["OPTIONS"] = {}
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
-FRONTEND_DIR = os.path.join(ROOT, "frontend")
 TAGADMIN_DIR = os.path.join(ROOT, "tag-admin")
+TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -81,7 +81,6 @@ SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "True") != "Fals
 
 APP_URL_KEY = "APP_URL"
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")
 
 # Custom LD_LIBRARY_PATH environment variable for SVN
@@ -154,7 +153,6 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.sessions",
-    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Django sites app is required by django-allauth
     "django.contrib.sites",
@@ -208,7 +206,7 @@ TEMPLATES = [
         "BACKEND": "django_jinja.backend.Jinja2",
         "NAME": "jinja2",
         "APP_DIRS": True,
-        "DIRS": [os.path.join(FRONTEND_DIR, "build")],
+        "DIRS": [os.path.join(TRANSLATE_DIR, "public")],
         "OPTIONS": {
             "match_extension": "",
             "match_regex": re.compile(
@@ -278,6 +276,10 @@ PIPELINE_CSS = {
             "css/style.css",
         ),
         "output_filename": "css/base.min.css",
+    },
+    "translate": {
+        "source_filenames": ("translate.css",),
+        "output_filename": "css/translate.min.css",
     },
     "admin": {
         "source_filenames": (
@@ -415,6 +417,10 @@ PIPELINE_JS = {
             "js/main.js",
         ),
         "output_filename": "js/base.min.js",
+    },
+    "translate": {
+        "source_filenames": ("translate.js",),
+        "output_filename": "js/translate.min.js",
     },
     "admin": {
         "source_filenames": ("js/table.js",),
@@ -572,8 +578,8 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 STATICFILES_DIRS = [
-    path("assets"),
-    os.path.join(FRONTEND_DIR, "build", "static"),
+    os.path.join(TRANSLATE_DIR, "dist"),
+    os.path.join(TRANSLATE_DIR, "public"),
     os.path.join(TAGADMIN_DIR, "dist"),
 ]
 

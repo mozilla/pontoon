@@ -28,16 +28,6 @@ venv
 coverage/
 
 # Docker
-.frontend-build
 .server-build
 docker/config/server.env
 docker/config/server.env-e
-
-# Obsolete Docker
-.docker-build
-docker/config/webapp.env
-docker/config/webapp.env-e
-
-# Webpack
-/assets/
-webpack-stats.json

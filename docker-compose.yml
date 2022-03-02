@@ -3,18 +3,6 @@
 # Note: Requires docker-compose 1.10+.
 version: "2.3"
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-      target: frontend
-    image: local/pontoon-frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
-
   server:
     build:
       context: .
@@ -29,8 +17,9 @@ services:
       - "8000:8000"
     volumes:
       - ./pontoon:/app/pontoon
-      - ./tag-admin:/app/tag-admin
       - ./requirements:/app/requirements
+      - ./tag-admin:/app/tag-admin
+      - ./translate:/app/translate
       - ~/.ssh:/home/pontoon/.ssh
 
   # Database

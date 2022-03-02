@@ -8,15 +8,11 @@ fi
 
 # Compile static assets
 export PATH=/app/.heroku/node/bin:$PATH
-npm install --global npm@8 yarn
+npm install --global npm@8
 npm ci
-pushd frontend && yarn && popd
 
-echo "Building tag-admin..."
-npm run build
-
-echo "Building frontend..."
-pushd frontend && yarn run build && popd
+echo "Building translate & tag-admin..."
+npm run build:prod
 
 echo "Collecting static files..."
 ./manage.py migrate --noinput

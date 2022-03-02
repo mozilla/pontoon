@@ -1,7 +1,7 @@
 # minified code
 *.min.js
 *.min.css
-frontend/build
+translate/dist
 tag-admin/dist
 coverage/
 

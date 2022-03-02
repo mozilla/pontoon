@@ -8,5 +8,8 @@ module.exports = {
         '\\.(css|less)$': 'identity-obj-proxy',
     },
     setupFiles: ['./src/setupTests.js'],
+    transform: {
+        '\\.[jt]sx?$': ['babel-jest', { configFile: '../babel.config.json' }],
+    },
     collectCoverage: true,
 };

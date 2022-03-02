@@ -8,7 +8,7 @@ flags:
 
   frontend:
     paths:
-      - frontend/
+      - translate/
     carryforward: true
 
   non-frontend-js:
