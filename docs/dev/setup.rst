@@ -39,17 +39,10 @@ Quickstart
 
 2. From the root of the repository, run::
 
-     $ npm install
-
-   This will install all the frontend dependencies.
-
-
-3. From the root of the repository, run::
-
      $ make build
 
-   That will build the containers required for development:
-   frontend and server.
+   That will install Pontoon's JS dependencies,
+   build the frontend packages, and build the server container.
 
    .. Note::
 
@@ -58,7 +51,7 @@ Quickstart
         ``make build SITE_URL="http://192.168.1.14:8000"``.
 
 
-4. Run the webapp::
+3. Run the webapp::
 
       $ make run
 
@@ -76,7 +69,7 @@ Quickstart
         ``make run``.
 
 
-5. Finally, you need to run some setup steps, while the server is running::
+4. Finally, you need to run some setup steps, while the server is running::
 
       $ make setup
 
@@ -84,16 +77,6 @@ Quickstart
    account settings.
 
 The app should now be available at http://localhost:8000 or the custom SITE_URL.
-
-   .. Warning::
-
-        After you execute ``make run``, the console output might trick you into
-        accessing Pontoon in the browser at http://localhost:3000/. Note that
-        the URL only refers to the frontend app, which is not meant to be used
-        standalone.
-
-        To access Pontoon app, you should use http://localhost:8000 or the
-        custom SITE_URL.
 
 And with that, you're ready to start :doc:`contributing`!
 
