@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import type { MachineryTranslation, SourceType } from '~/core/api';
-import * as editor from '~/core/editor';
+import { NAME as EDITOR } from '~/core/editor';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -29,9 +29,8 @@ export default function useCopyMachineryTranslation(
   );
 
   const readonly = useReadonlyEditor();
-  const isFluentTranslationMessage = useAppSelector((state) =>
-    editor.selectors.isFluentTranslationMessage(state),
-  );
+  const translation = useAppSelector(state => state[EDITOR].translation)
+  const isFluentTranslationMessage = typeof translation !== 'string'
 
   return useCallback(
     (translation: MachineryTranslation) => {
