@@ -1,45 +1,52 @@
 {
-   "name": "pontoon",
-   "description": "In-place localization tool.",
-   "keywords": ["l10n", "localization", "mozilla", "collaboration", "python", "django"],
-   "website": "https://pontoon.mozilla.org",
-   "logo": "https://pontoon.mozilla.org/static/img/logo.svg",
-   "success_url": "/",
-   "image": "heroku/python",
-   "addons": [
-     {
-       "plan": "newrelic:wayne"
-     },
-     {
-       "plan": "raygun:cr-free"
-     },
-     {
-       "plan": "papertrail:choklad"
-     },
-     {
-       "plan": "cloudamqp",
-       "as": "RABBITMQ"
-     },
-     {
-       "plan": "memcachier",
-       "as": "MEMCACHE"
-     },
-     {
-       "plan": "heroku-postgresql",
-       "options": {
-         "version": "11"
-       }
-     }
-   ],
-   "env": {
-     "SITE_URL": {
-       "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
-       "required": true
-     },
-     "ADMIN_EMAIL": {
-       "value": "pontoon@example.com",
-       "description": "Email address for the ``ADMINS`` setting."
-     },
+  "name": "pontoon",
+  "description": "In-place localization tool.",
+  "keywords": [
+    "l10n",
+    "localization",
+    "mozilla",
+    "collaboration",
+    "python",
+    "django"
+  ],
+  "website": "https://pontoon.mozilla.org",
+  "logo": "https://pontoon.mozilla.org/static/img/logo.svg",
+  "success_url": "/",
+  "image": "heroku/python",
+  "addons": [
+    {
+      "plan": "newrelic:wayne"
+    },
+    {
+      "plan": "raygun:cr-free"
+    },
+    {
+      "plan": "papertrail:choklad"
+    },
+    {
+      "plan": "cloudamqp",
+      "as": "RABBITMQ"
+    },
+    {
+      "plan": "memcachier",
+      "as": "MEMCACHE"
+    },
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "11"
+      }
+    }
+  ],
+  "env": {
+    "SITE_URL": {
+      "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
+      "required": true
+    },
+    "ADMIN_EMAIL": {
+      "value": "pontoon@example.com",
+      "description": "Email address for the ``ADMINS`` setting."
+    },
     "ADMIN_NAME": {
       "value": "pontoon-admin",
       "description": "Name for the ``ADMINS`` setting."
@@ -93,7 +100,7 @@
     "SVN_LD_LIBRARY_PATH": {
       "description": "Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary on Heroku because the Python buildpack alters the path in a way that breaks the built-in SVN command.",
       "value": "/usr/lib/x86_64-linux-gnu/"
-   },
+    },
     "TZ": {
       "description": "Timezone for the dynos that will run the app. Pontoon operates in UTC",
       "value": "UTC"
@@ -114,30 +121,30 @@
       "description": "Optional. Default committer's email used when committing translations to version control system.",
       "value": "pontoon@example.com"
     }
-   },
-   "buildpacks": [
-     {
-       "url": "https://github.com/dmathieu/heroku-buildpack-submodules#0caf30af7737bf1bc32b7aafc009f19af3e603c1"
-     },
-     {
-       "url": "https://github.com/Osmose/heroku-buildpack-ssh"
-     },
-     {
-       "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
-     },
-     {
-       "url": "heroku/nodejs"
-     },
-     {
-       "url": "heroku/python"
-     }
-   ],
-   "scripts": {
-     "postdeploy": "./bin/heroku_postdeploy && ./manage.py heroku_deploy_setup"
-   },
-   "formation": {
-     "worker": {
-       "quantity": 1
-     }
-   }
+  },
+  "buildpacks": [
+    {
+      "url": "https://github.com/dmathieu/heroku-buildpack-submodules#0caf30af7737bf1bc32b7aafc009f19af3e603c1"
+    },
+    {
+      "url": "https://github.com/Osmose/heroku-buildpack-ssh"
+    },
+    {
+      "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
+    },
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "./bin/heroku_postdeploy && ./manage.py heroku_deploy_setup"
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1
+    }
+  }
 }

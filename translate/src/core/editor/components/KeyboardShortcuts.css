@@ -1,60 +1,60 @@
 .keyboard-shortcuts {
-    color: #aaaaaa;
-    cursor: pointer;
-    float: left;
+  color: #aaaaaa;
+  cursor: pointer;
+  float: left;
 }
 
 .keyboard-shortcuts .selector {
-    font-size: 22px;
-    padding: 9px 5px;
+  font-size: 22px;
+  padding: 9px 5px;
 }
 
 .keyboard-shortcuts .overlay {
-    background: #272a2f;
-    border: 1px solid #333941;
-    font-size: 13px;
-    width: 400px;
-    height: 435px;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    position: fixed;
-    z-index: 20;
-    margin: auto;
-    padding: 10px 24px;
+  background: #272a2f;
+  border: 1px solid #333941;
+  font-size: 13px;
+  width: 400px;
+  height: 435px;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  position: fixed;
+  z-index: 20;
+  margin: auto;
+  padding: 10px 24px;
 }
 
 .keyboard-shortcuts .overlay h2 {
-    font-size: 20px;
-    font-weight: 300;
-    padding-bottom: 30px;
-    text-align: center;
+  font-size: 20px;
+  font-weight: 300;
+  padding-bottom: 30px;
+  text-align: center;
 }
 
 .keyboard-shortcuts .overlay table {
-    width: 100%;
+  width: 100%;
 }
 
 .keyboard-shortcuts .overlay td {
-    padding: 0;
+  padding: 0;
 }
 
 .keyboard-shortcuts .overlay td:first-child {
-    font-weight: 300;
-    height: 35px;
-    width: 60%;
+  font-weight: 300;
+  height: 35px;
+  width: 60%;
 }
 
 .keyboard-shortcuts .overlay td:last-child {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .keyboard-shortcuts .overlay span {
-    background: #3f4752;
-    border: 1px solid #5e6475;
-    border-radius: 2px;
-    font-weight: 300;
-    margin: 0 4px;
-    padding: 0 4px;
+  background: #3f4752;
+  border: 1px solid #5e6475;
+  border-radius: 2px;
+  font-weight: 300;
+  margin: 0 4px;
+  padding: 0 4px;
 }

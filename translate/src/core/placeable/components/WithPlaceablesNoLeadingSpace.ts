@@ -8,12 +8,12 @@ import leadingSpace from '../parsers/leadingSpace';
 import unusualSpace from '../parsers/unusualSpace';
 
 export function getRulesWithoutLeadingSpace(
-    rules: Array<Parser>,
+  rules: Array<Parser>,
 ): Array<Parser> {
-    let newRules = [...rules];
-    newRules.splice(newRules.indexOf(leadingSpace), 1);
-    newRules.splice(newRules.indexOf(unusualSpace), 1);
-    return newRules;
+  let newRules = [...rules];
+  newRules.splice(newRules.indexOf(leadingSpace), 1);
+  newRules.splice(newRules.indexOf(unusualSpace), 1);
+  return newRules;
 }
 
 /**
@@ -28,7 +28,7 @@ export function getRulesWithoutLeadingSpace(
  * combination with other parsing tools (like diff).
  */
 const WithPlaceablesNoLeadingSpace: any = createMarker(
-    getRulesWithoutLeadingSpace(rules),
+  getRulesWithoutLeadingSpace(rules),
 );
 
 export default WithPlaceablesNoLeadingSpace;

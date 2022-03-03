@@ -1,56 +1,56 @@
 .terms-list .term {
-    border-bottom: 1px solid #5e6475;
-    cursor: pointer;
-    padding: 10px;
+  border-bottom: 1px solid #5e6475;
+  cursor: pointer;
+  padding: 10px;
 }
 
 .terms-list .term.cannot-copy {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .terms-list .term:not(.cannot-copy):hover {
-    background: #333941;
-    border-color: #5e6475;
+  background: #333941;
+  border-color: #5e6475;
 }
 
 .terms-list .term .text {
-    color: #aaa;
+  color: #aaa;
 }
 
 .terms-list .term .part-of-speech {
-    color: #aaa;
-    font-size: 11px;
-    font-weight: 300;
-    padding-left: 3px;
-    text-transform: uppercase;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: 300;
+  padding-left: 3px;
+  text-transform: uppercase;
 }
 
 .terms-list .term .part-of-speech::before {
-    content: '•';
-    padding-right: 3px;
+  content: '•';
+  padding-right: 3px;
 }
 
 .terms-list .term .translate {
-    color: #7bc876;
-    float: right;
-    font-size: 11px;
-    font-weight: 300;
-    pointer-events: auto;
-    text-transform: uppercase;
+  color: #7bc876;
+  float: right;
+  font-size: 11px;
+  font-weight: 300;
+  pointer-events: auto;
+  text-transform: uppercase;
 }
 
 .terms-list .term .translation {
-    color: #ebebeb;
+  color: #ebebeb;
 }
 
 .terms-list .term .details {
-    color: #aaa;
-    font-style: italic;
-    padding: 5px 0 0 15px;
+  color: #aaa;
+  font-style: italic;
+  padding: 5px 0 0 15px;
 }
 
 .terms-list .term .usage .title {
-    color: #7bc876;
-    font-size: 11px;
-    margin-right: 3px;
+  color: #7bc876;
+  font-size: 11px;
+  margin-right: 3px;
 }

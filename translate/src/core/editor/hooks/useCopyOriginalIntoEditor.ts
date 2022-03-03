@@ -8,22 +8,22 @@ import useUpdateTranslation from './useUpdateTranslation';
  * Return a function to copy the original translation into the editor.
  */
 export default function useCopyOriginalIntoEditor(): () => void {
-    const updateTranslation = useUpdateTranslation();
+  const updateTranslation = useUpdateTranslation();
 
-    const entity = useAppSelector((state) =>
-        entities.selectors.getSelectedEntity(state),
-    );
-    const pluralForm = useAppSelector((state) =>
-        plural.selectors.getPluralForm(state),
-    );
+  const entity = useAppSelector((state) =>
+    entities.selectors.getSelectedEntity(state),
+  );
+  const pluralForm = useAppSelector((state) =>
+    plural.selectors.getPluralForm(state),
+  );
 
-    return () => {
-        if (entity) {
-            if (pluralForm === -1 || pluralForm === 0) {
-                updateTranslation(entity.original, 'original');
-            } else {
-                updateTranslation(entity.original_plural, 'original');
-            }
-        }
-    };
+  return () => {
+    if (entity) {
+      if (pluralForm === -1 || pluralForm === 0) {
+        updateTranslation(entity.original, 'original');
+      } else {
+        updateTranslation(entity.original_plural, 'original');
+      }
+    }
+  };
 }

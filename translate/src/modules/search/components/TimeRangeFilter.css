@@ -1,87 +1,87 @@
 .filters-panel .menu li.for-time-range button {
-    background: transparent;
-    border: none;
-    color: #aaaaaa;
-    float: right;
-    font-weight: 300;
-    margin: -3px 4px 0 0;
-    padding: 1px 0;
+  background: transparent;
+  border: none;
+  color: #aaaaaa;
+  float: right;
+  font-weight: 300;
+  margin: -3px 4px 0 0;
+  padding: 1px 0;
 }
 
 .filters-panel .menu .for-time-range button.save-range {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .filters-panel .menu li.for-time-range button:hover {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .filters-panel .menu li.for-time-range button .fa {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 .filters-panel .menu li.time-range {
-    padding: 4px 0;
+  padding: 4px 0;
 }
 
 .filters-panel .menu li.time-range.editing {
-    cursor: auto;
+  cursor: auto;
 }
 
 .filters-panel .menu li.time-range.editing:hover {
-    background: transparent;
+  background: transparent;
 }
 
 .filters-panel .menu li.time-range label {
-    color: #ffffff;
-    float: left;
-    font-size: 13px;
+  color: #ffffff;
+  float: left;
+  font-size: 13px;
 }
 
 .filters-panel .menu li.time-range label.from {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .filters-panel .menu li.time-range label.to {
-    float: right;
-    margin-right: 4px;
+  float: right;
+  margin-right: 4px;
 }
 
 .filters-panel .menu li.time-range input {
-    background: transparent;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    color: #aaaaaa;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 13px;
-    font-weight: 300;
-    height: 17px;
-    margin-left: 5px;
-    outline: none;
-    vertical-align: baseline;
-    width: 109px;
+  background: transparent;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  color: #aaaaaa;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 300;
+  height: 17px;
+  margin-left: 5px;
+  outline: none;
+  vertical-align: baseline;
+  width: 109px;
 }
 
 .filters-panel .menu li.time-range.editing input {
-    border-color: #525a65;
-    cursor: auto;
+  border-color: #525a65;
+  cursor: auto;
 }
 
 .filters-panel .menu li.time-range input[disabled] {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .filters-panel .menu li.time-range input.error {
-    color: #f36;
+  color: #f36;
 }
 
 .filters-panel .menu li.time-range .to input {
-    text-align: right;
+  text-align: right;
 }
 
 .filters-panel .menu li.time-range .chart {
-    height: 120px;
-    margin: 0 auto;
-    width: 306px;
+  height: 120px;
+  margin: 0 auto;
+  width: 306px;
 }

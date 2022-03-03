@@ -1,82 +1,82 @@
 .fluent-rich-translation-form {
-    height: 100%;
-    line-height: 22px;
-    padding: 10px;
-    overflow: auto;
+  height: 100%;
+  line-height: 22px;
+  padding: 10px;
+  overflow: auto;
 }
 
 .fluent-rich-translation-form table {
-    width: 100%;
+  width: 100%;
 }
 
 .fluent-rich-translation-form table tr > td:first {
-    width: calc(25% - 5px);
+  width: calc(25% - 5px);
 }
 
 .fluent-rich-translation-form table tr > td:last-child {
-    width: 75%;
+  width: 75%;
 }
 
 .fluent-rich-translation-form table tr > td > label {
-    background: transparent;
-    border: 1px solid #5e6475;
-    box-sizing: border-box;
-    color: #aaaaaa;
-    display: block;
-    font-weight: normal;
-    margin: 2px 5px 2px 0;
-    padding: 0 4px;
+  background: transparent;
+  border: 1px solid #5e6475;
+  box-sizing: border-box;
+  color: #aaaaaa;
+  display: block;
+  font-weight: normal;
+  margin: 2px 5px 2px 0;
+  padding: 0 4px;
 }
 
 .fluent-rich-translation-form table tr.indented > td > label {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .fluent-rich-translation-form table tr > td > label .divider {
-    color: #7bc876;
-    padding: 0 3px;
+  color: #7bc876;
+  padding: 0 3px;
 }
 
 .fluent-rich-translation-form table tr > td > label .stress {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .fluent-rich-translation-form table tr > td > textarea {
-    min-height: 0;
-    height: 24px;
-    margin: 2px 0;
-    padding: 0 4px;
+  min-height: 0;
+  height: 24px;
+  margin: 2px 0;
+  padding: 0 4px;
 }
 
 .fluent-rich-translation-form table tr > td > textarea[maxlength='1'] {
-    float: left;
-    margin-right: 3px;
-    resize: none;
-    text-align: center;
-    width: 24px;
+  float: left;
+  margin-right: 3px;
+  resize: none;
+  text-align: center;
+  width: 24px;
 }
 
 .fluent-rich-translation-form table tr > td > .accesskeys {
-    float: right;
-    margin: 2px 0;
-    width: calc(100% - 27px);
+  float: right;
+  margin: 2px 0;
+  width: calc(100% - 27px);
 }
 
 .fluent-rich-translation-form table tr > td > .accesskeys .key {
-    border: 1px solid #5e6475;
-    background: #4d5967;
-    color: #ebebeb;
-    cursor: pointer;
-    display: inline-block;
-    line-height: 22px;
-    margin-right: 3px;
-    padding: 0;
-    text-align: center;
-    vertical-align: top;
-    width: 24px;
+  border: 1px solid #5e6475;
+  background: #4d5967;
+  color: #ebebeb;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 22px;
+  margin-right: 3px;
+  padding: 0;
+  text-align: center;
+  vertical-align: top;
+  width: 24px;
 }
 
 .fluent-rich-translation-form table tr > td > .accesskeys .key.active,
 .fluent-rich-translation-form table tr > td > .accesskeys .key:hover {
-    border-color: #7bc876;
+  border-color: #7bc876;
 }

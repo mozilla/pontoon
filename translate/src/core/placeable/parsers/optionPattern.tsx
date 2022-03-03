@@ -13,24 +13,17 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L317
  */
 const optionPattern = {
-    rule: /(\B(-[a-zA-Z]|--[a-z-]+)\b)/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-optionPattern'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Command line option'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(\B(-[a-zA-Z]|--[a-z-]+)\b)/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-optionPattern' attrs={{ title: true }}>
+        <mark className='placeable' title='Command line option' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default optionPattern;

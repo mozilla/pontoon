@@ -9,13 +9,13 @@ import type { Locale } from '~/core/locale';
 import type { TermState } from '~/core/term';
 
 type Props = {
-    readonly entity: Entity;
-    readonly locale: Locale;
-    readonly pluralForm: number;
-    readonly terms: TermState;
-    readonly handleClickOnPlaceable: (
-        event: React.MouseEvent<HTMLParagraphElement>,
-    ) => void;
+  readonly entity: Entity;
+  readonly locale: Locale;
+  readonly pluralForm: number;
+  readonly terms: TermState;
+  readonly handleClickOnPlaceable: (
+    event: React.MouseEvent<HTMLParagraphElement>,
+  ) => void;
 };
 
 /**
@@ -25,25 +25,25 @@ type Props = {
  * component. For everything else, return a generic OriginalString component.
  */
 export default function OriginalStringProxy(
-    props: Props,
+  props: Props,
 ): React.ReactElement<any> {
-    if (props.entity.format === 'ftl') {
-        return (
-            <FluentOriginalString
-                entity={props.entity}
-                terms={props.terms}
-                handleClickOnPlaceable={props.handleClickOnPlaceable}
-            />
-        );
-    }
-
+  if (props.entity.format === 'ftl') {
     return (
-        <GenericOriginalString
-            entity={props.entity}
-            locale={props.locale}
-            pluralForm={props.pluralForm}
-            terms={props.terms}
-            handleClickOnPlaceable={props.handleClickOnPlaceable}
-        />
+      <FluentOriginalString
+        entity={props.entity}
+        terms={props.terms}
+        handleClickOnPlaceable={props.handleClickOnPlaceable}
+      />
     );
+  }
+
+  return (
+    <GenericOriginalString
+      entity={props.entity}
+      locale={props.locale}
+      pluralForm={props.pluralForm}
+      terms={props.terms}
+      handleClickOnPlaceable={props.handleClickOnPlaceable}
+    />
+  );
 }

@@ -13,19 +13,16 @@ import { Localized } from '@fluent/react';
  *   $FIRST_NAME$
  */
 const jsonPlaceholder = {
-    rule: /(\$[A-Z0-9_]+\$)/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-jsonPlaceholder'
-                attrs={{ title: true }}
-            >
-                <mark className='placeable' title='JSON placeholder' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(\$[A-Z0-9_]+\$)/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-jsonPlaceholder' attrs={{ title: true }}>
+        <mark className='placeable' title='JSON placeholder' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default jsonPlaceholder;

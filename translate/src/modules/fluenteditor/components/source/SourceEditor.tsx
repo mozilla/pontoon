@@ -5,7 +5,7 @@ import * as editor from '~/core/editor';
 import { GenericTranslationForm } from '~/modules/genericeditor';
 
 type Props = {
-    ftlSwitch: React.ReactNode;
+  ftlSwitch: React.ReactNode;
 };
 
 /**
@@ -15,23 +15,23 @@ type Props = {
  * forces showing the Fluent source.
  */
 export default function SourceEditor(props: Props): React.ReactElement<any> {
-    const clearEditor = editor.useClearEditor();
-    const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
-    const sendTranslation = editor.useSendTranslation();
-    const updateTranslation = editor.useUpdateTranslation();
+  const clearEditor = editor.useClearEditor();
+  const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
+  const sendTranslation = editor.useSendTranslation();
+  const updateTranslation = editor.useUpdateTranslation();
 
-    return (
-        <>
-            <GenericTranslationForm
-                sendTranslation={sendTranslation}
-                updateTranslation={updateTranslation}
-            />
-            <editor.EditorMenu
-                firstItemHook={props.ftlSwitch}
-                clearEditor={clearEditor}
-                copyOriginalIntoEditor={copyOriginalIntoEditor}
-                sendTranslation={sendTranslation}
-            />
-        </>
-    );
+  return (
+    <>
+      <GenericTranslationForm
+        sendTranslation={sendTranslation}
+        updateTranslation={updateTranslation}
+      />
+      <editor.EditorMenu
+        firstItemHook={props.ftlSwitch}
+        clearEditor={clearEditor}
+        copyOriginalIntoEditor={copyOriginalIntoEditor}
+        sendTranslation={sendTranslation}
+      />
+    </>
+  );
 }

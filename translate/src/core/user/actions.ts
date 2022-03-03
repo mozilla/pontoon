@@ -9,114 +9,114 @@ export const UPDATE: 'user/UPDATE' = 'user/UPDATE';
 export const UPDATE_SETTINGS: 'user/UPDATE_SETTINGS' = 'user/UPDATE_SETTINGS';
 
 export type ReceiveAction = {
-    readonly type: typeof RECEIVE_USERS;
-    readonly users: Array<UsersList>;
+  readonly type: typeof RECEIVE_USERS;
+  readonly users: Array<UsersList>;
 };
 export function receive(users: Array<UsersList>): ReceiveAction {
-    return {
-        type: RECEIVE_USERS,
-        users,
-    };
+  return {
+    type: RECEIVE_USERS,
+    users,
+  };
 }
 
 /**
  * Update Interactive Tour status to a given step.
  */
 export function updateTourStatus(step: number): AppThunk {
-    return async () => {
-        await api.user.updateTourStatus(step);
-    };
+  return async () => {
+    await api.user.updateTourStatus(step);
+  };
 }
 
 export type Settings = {
-    runQualityChecks?: boolean;
-    forceSuggestions?: boolean;
+  runQualityChecks?: boolean;
+  forceSuggestions?: boolean;
 };
 
 /**
  * Update the user settings.
  */
 export type UpdateSettingsAction = {
-    readonly type: typeof UPDATE_SETTINGS;
-    readonly settings: Settings;
+  readonly type: typeof UPDATE_SETTINGS;
+  readonly settings: Settings;
 };
 export function updateSettings(settings: Settings): UpdateSettingsAction {
-    return {
-        type: UPDATE_SETTINGS,
-        settings,
-    };
+  return {
+    type: UPDATE_SETTINGS,
+    settings,
+  };
 }
 
 /**
  * Update the user data.
  */
 export type UpdateAction = {
-    readonly type: typeof UPDATE;
-    readonly data: Record<string, any>;
+  readonly type: typeof UPDATE;
+  readonly data: Record<string, any>;
 };
 export function update(data: Record<string, any>): UpdateAction {
-    return {
-        type: UPDATE,
-        data,
-    };
+  return {
+    type: UPDATE,
+    data,
+  };
 }
 
 /**
  * Sign out the current user.
  */
 export function signOut(url: string): AppThunk {
-    return async (dispatch) => {
-        await api.user.signOut(url);
+  return async (dispatch) => {
+    await api.user.signOut(url);
 
-        dispatch(get());
-    };
+    dispatch(get());
+  };
 }
 
 function _getOperationNotif(setting, value) {
-    if (setting === 'runQualityChecks' && value) {
-        return notification.messages.CHECKS_ENABLED;
-    }
-    if (setting === 'runQualityChecks' && !value) {
-        return notification.messages.CHECKS_DISABLED;
-    }
-    if (setting === 'forceSuggestions' && value) {
-        return notification.messages.SUGGESTIONS_ENABLED;
-    }
-    if (setting === 'forceSuggestions' && !value) {
-        return notification.messages.SUGGESTIONS_DISABLED;
-    }
+  if (setting === 'runQualityChecks' && value) {
+    return notification.messages.CHECKS_ENABLED;
+  }
+  if (setting === 'runQualityChecks' && !value) {
+    return notification.messages.CHECKS_DISABLED;
+  }
+  if (setting === 'forceSuggestions' && value) {
+    return notification.messages.SUGGESTIONS_ENABLED;
+  }
+  if (setting === 'forceSuggestions' && !value) {
+    return notification.messages.SUGGESTIONS_DISABLED;
+  }
 
-    throw new Error('Unsupported operation on setting: ' + setting);
+  throw new Error('Unsupported operation on setting: ' + setting);
 }
 
 export function saveSetting(
-    setting: string,
-    value: boolean,
-    username: string,
+  setting: string,
+  value: boolean,
+  username: string,
 ): AppThunk {
-    return async (dispatch) => {
-        dispatch(updateSettings({ [setting]: value }));
+  return async (dispatch) => {
+    dispatch(updateSettings({ [setting]: value }));
 
-        await api.user.updateSetting(username, setting, value);
+    await api.user.updateSetting(username, setting, value);
 
-        const notif = _getOperationNotif(setting, value);
-        dispatch(notification.actions.add(notif));
-    };
+    const notif = _getOperationNotif(setting, value);
+    dispatch(notification.actions.add(notif));
+  };
 }
 
 export function markAllNotificationsAsRead(): AppThunk {
-    return async (dispatch) => {
-        await api.user.markAllNotificationsAsRead();
+  return async (dispatch) => {
+    await api.user.markAllNotificationsAsRead();
 
-        dispatch(get());
-    };
+    dispatch(get());
+  };
 }
 
 export function getUsers(): AppThunk {
-    return async (dispatch) => {
-        const content = await api.user.getUsers();
-        dispatch(receive(content));
-    };
+  return async (dispatch) => {
+    const content = await api.user.getUsers();
+    dispatch(receive(content));
+  };
 }
 
 /**
@@ -126,28 +126,28 @@ export function getUsers(): AppThunk {
  * and if so, get their information and permissions.
  */
 export function get(): AppThunk {
-    return async (dispatch) => {
-        const content = await api.user.get();
-        dispatch(update(content));
-    };
+  return async (dispatch) => {
+    const content = await api.user.get();
+    dispatch(update(content));
+  };
 }
 
 export function dismissAddonPromotion(): AppThunk {
-    return async (dispatch) => {
-        await api.user.dismissAddonPromotion();
+  return async (dispatch) => {
+    await api.user.dismissAddonPromotion();
 
-        dispatch(get());
-    };
+    dispatch(get());
+  };
 }
 
 export default {
-    dismissAddonPromotion,
-    get,
-    getUsers,
-    markAllNotificationsAsRead,
-    saveSetting,
-    signOut,
-    update,
-    updateSettings,
-    updateTourStatus,
+  dismissAddonPromotion,
+  get,
+  getUsers,
+  markAllNotificationsAsRead,
+  saveSetting,
+  signOut,
+  update,
+  updateSettings,
+  updateTourStatus,
 };

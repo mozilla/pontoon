@@ -9,48 +9,48 @@ export const RECEIVE: 'terms/RECEIVE' = 'terms/RECEIVE';
 export const REQUEST: 'terms/REQUEST' = 'terms/REQUEST';
 
 export type ReceiveAction = {
-    readonly type: typeof RECEIVE;
-    readonly terms: Array<TermType>;
+  readonly type: typeof RECEIVE;
+  readonly terms: Array<TermType>;
 };
 export function receive(terms: Array<TermType>): ReceiveAction {
-    return {
-        type: RECEIVE,
-        terms,
-    };
+  return {
+    type: RECEIVE,
+    terms,
+  };
 }
 
 export type RequestAction = {
-    readonly type: typeof REQUEST;
-    readonly sourceString: string;
+  readonly type: typeof REQUEST;
+  readonly sourceString: string;
 };
 export function request(sourceString: string): RequestAction {
-    return {
-        type: REQUEST,
-        sourceString,
-    };
+  return {
+    type: REQUEST,
+    sourceString,
+  };
 }
 
 export function get(sourceString: string, locale: string) {
-    return async (dispatch: AppDispatch) => {
-        dispatch(request(sourceString));
+  return async (dispatch: AppDispatch) => {
+    dispatch(request(sourceString));
 
-        // Abort all previously running requests.
-        await api.entity.abort();
+    // Abort all previously running requests.
+    await api.entity.abort();
 
-        let content = await api.entity.getTerms(sourceString, locale);
+    let content = await api.entity.getTerms(sourceString, locale);
 
-        // The default return value of aborted requests is {},
-        // which is incompatible with reducer
-        if (isEmpty(content)) {
-            content = [];
-        }
+    // The default return value of aborted requests is {},
+    // which is incompatible with reducer
+    if (isEmpty(content)) {
+      content = [];
+    }
 
-        dispatch(receive(content));
-    };
+    dispatch(receive(content));
+  };
 }
 
 export default {
-    get,
-    receive,
-    request,
+  get,
+  receive,
+  request,
 };

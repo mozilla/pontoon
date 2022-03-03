@@ -1,18 +1,16 @@
 export const ADD: 'notification/ADD' = 'notification/ADD';
 
 export type NotificationType =
-    | 'debug'
-    | 'error'
-    | 'info'
-    | 'success'
-    | 'warning';
+  | 'debug'
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning';
 
 export type NotificationMessage = {
-    readonly type: NotificationType;
-    readonly content:
-        | string
-        | React.ReactElement<React.ComponentProps<any>, any>;
-    readonly key?: string;
+  readonly type: NotificationType;
+  readonly content: string | React.ReactElement<React.ComponentProps<any>, any>;
+  readonly key?: string;
 };
 
 /**
@@ -21,22 +19,22 @@ export type NotificationMessage = {
  * Accepts a notification message as defined in `./messages.js`.
  */
 export type AddAction = {
-    type: typeof ADD;
-    message: NotificationMessage;
+  type: typeof ADD;
+  message: NotificationMessage;
 };
 
 let keyCounter = 0;
 export function add(message: NotificationMessage): AddAction {
-    // This unique key is a mechanism to force React to re-render a notification
-    // when the same one is added twice in a row.
-    if (!message.key) {
-        message = { ...message, key: String(++keyCounter) };
-    }
+  // This unique key is a mechanism to force React to re-render a notification
+  // when the same one is added twice in a row.
+  if (!message.key) {
+    message = { ...message, key: String(++keyCounter) };
+  }
 
-    return {
-        type: ADD,
-        message,
-    };
+  return {
+    type: ADD,
+    message,
+  };
 }
 
 /**
@@ -49,10 +47,10 @@ export function add(message: NotificationMessage): AddAction {
  * that come from a different system (like django) and are not localizable yet.
  */
 export function addRaw(content: string, type: NotificationType): AddAction {
-    return add({ content, type });
+  return add({ content, type });
 }
 
 export default {
-    add,
-    addRaw,
+  add,
+  addRaw,
 };

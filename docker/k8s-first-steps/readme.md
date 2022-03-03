@@ -100,7 +100,7 @@ For a k8s deplyoment example yaml see the k8s-pontoon-example.yaml in this folde
 
 #### TODO:
 
-- "_Pontoon sends email when users request projects to be enabled for teams, or teams to be added to projects_" 
+- "_Pontoon sends email when users request projects to be enabled for teams, or teams to be added to projects_"
   **e-mails are not yet tested in the image**
 
 ---
@@ -117,4 +117,3 @@ For a k8s deplyoment example yaml see the k8s-pontoon-example.yaml in this folde
 * syncing all projects with writing changes to the soruce code `python manage.py sync_projects`.
   This is done by shell script every 30 minutes (evn var SYNC_INTERVAL)
 * to see if the sync works look at: http://127.0.0.1:8000/__sync/log/__
-

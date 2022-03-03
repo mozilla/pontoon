@@ -11,31 +11,31 @@ const TranslationPlaceablesDiff = withDiff(WithPlaceablesNoLeadingSpace);
 const TranslationPlaceablesSearch = withSearch(WithPlaceablesNoLeadingSpace);
 
 export type TranslationProps = {
-    content: string;
-    diffTarget?: string | null | undefined;
-    search?: string | null | undefined;
+  content: string;
+  diffTarget?: string | null | undefined;
+  search?: string | null | undefined;
 };
 
 export default function GenericTranslation({
-    content,
-    diffTarget,
-    search,
+  content,
+  diffTarget,
+  search,
 }: TranslationProps): React.ReactElement<React.ElementType> {
-    if (diffTarget) {
-        return (
-            <TranslationPlaceablesDiff diffTarget={diffTarget}>
-                {content}
-            </TranslationPlaceablesDiff>
-        );
-    }
+  if (diffTarget) {
+    return (
+      <TranslationPlaceablesDiff diffTarget={diffTarget}>
+        {content}
+      </TranslationPlaceablesDiff>
+    );
+  }
 
-    if (search) {
-        return (
-            <TranslationPlaceablesSearch search={search}>
-                {content}
-            </TranslationPlaceablesSearch>
-        );
-    }
+  if (search) {
+    return (
+      <TranslationPlaceablesSearch search={search}>
+        {content}
+      </TranslationPlaceablesSearch>
+    );
+  }
 
-    return <WithPlaceables>{content}</WithPlaceables>;
+  return <WithPlaceables>{content}</WithPlaceables>;
 }

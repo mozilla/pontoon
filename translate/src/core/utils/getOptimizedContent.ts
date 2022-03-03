@@ -9,14 +9,14 @@ import fluent from './fluent';
  * version of the translation. Otherwise, return the original translation.
  */
 export default function getOptimizedContent(
-    translation: string | null | undefined,
-    format: string,
+  translation: string | null | undefined,
+  format: string,
 ): string {
-    if (!translation) {
-        return '';
-    }
-    if (format === 'ftl') {
-        return fluent.getSimplePreview(translation);
-    }
-    return translation;
+  if (!translation) {
+    return '';
+  }
+  if (format === 'ftl') {
+    return fluent.getSimplePreview(translation);
+  }
+  return translation;
 }

@@ -1,8 +1,8 @@
 export class NotImplementedError extends Error {
-    constructor(...args) {
-        super(...args);
-        Error.captureStackTrace(this, NotImplementedError);
-    }
+  constructor(...args) {
+    super(...args);
+    Error.captureStackTrace(this, NotImplementedError);
+  }
 }
 
 NotImplementedError.prototype = Error.prototype;

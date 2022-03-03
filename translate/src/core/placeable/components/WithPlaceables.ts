@@ -34,49 +34,49 @@ import xmlTag from '../parsers/xmlTag';
 
 // Note: the order of these MATTERS!
 export const rules = [
-    newlineEscape,
-    newlineCharacter,
-    tabCharacter,
-    escapeSequence,
+  newlineEscape,
+  newlineCharacter,
+  tabCharacter,
+  escapeSequence,
 
-    // The spaces placeable can match '\n  ' and mask the newline,
-    // so it has to come later.
-    leadingSpace,
-    unusualSpace,
-    nonBreakingSpace,
-    narrowNonBreakingSpace,
-    thinSpace,
-    multipleSpaces,
+  // The spaces placeable can match '\n  ' and mask the newline,
+  // so it has to come later.
+  leadingSpace,
+  unusualSpace,
+  nonBreakingSpace,
+  narrowNonBreakingSpace,
+  thinSpace,
+  multipleSpaces,
 
-    // The XML placeables must be marked before variable placeables
-    // to avoid marking variables, but leaving out tags. See:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1334926
-    xmlTag,
-    altAttribute,
-    xmlEntity,
+  // The XML placeables must be marked before variable placeables
+  // to avoid marking variables, but leaving out tags. See:
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=1334926
+  xmlTag,
+  altAttribute,
+  xmlEntity,
 
-    pythonFormatNamedString,
-    pythonFormatString,
-    pythonFormattingVariable,
-    javaFormattingVariable,
-    stringFormattingVariable,
-    // JSON Placeholder parser Must come before NSIS Variable parser,
-    // otherwise JSON Placeholders are marked up without the trailing $
-    jsonPlaceholder,
-    nsisVariable,
+  pythonFormatNamedString,
+  pythonFormatString,
+  pythonFormattingVariable,
+  javaFormattingVariable,
+  stringFormattingVariable,
+  // JSON Placeholder parser Must come before NSIS Variable parser,
+  // otherwise JSON Placeholders are marked up without the trailing $
+  jsonPlaceholder,
+  nsisVariable,
 
-    // The Qt variables can consume the %1 in %1$s which will mask a printf
-    // placeable, so it has to come later.
-    qtFormatting,
+  // The Qt variables can consume the %1 in %1$s which will mask a printf
+  // placeable, so it has to come later.
+  qtFormatting,
 
-    uriPattern,
-    filePattern,
-    emailPattern,
-    shortCapitalNumberString,
-    camelCaseString,
-    optionPattern,
-    punctuation,
-    numberString,
+  uriPattern,
+  filePattern,
+  emailPattern,
+  shortCapitalNumberString,
+  camelCaseString,
+  optionPattern,
+  punctuation,
+  numberString,
 ];
 
 /**

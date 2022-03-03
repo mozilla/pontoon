@@ -27,26 +27,26 @@ import serialize from './serialize';
  * content if it isn't a valid Fluent message.
  */
 export default function getSimplePreview(
-    content: string | null | undefined,
+  content: string | null | undefined,
 ): string {
-    if (!content) {
-        return '';
-    }
+  if (!content) {
+    return '';
+  }
 
-    const message = parser.parseEntry(content);
+  const message = parser.parseEntry(content);
 
-    if (message.type !== 'Message' && message.type !== 'Term') {
-        return content;
-    }
+  if (message.type !== 'Message' && message.type !== 'Term') {
+    return content;
+  }
 
-    let tree;
-    if (message.value) {
-        tree = message.value;
-    } else {
-        tree = message.attributes[0].value;
-    }
+  let tree;
+  if (message.value) {
+    tree = message.value;
+  } else {
+    tree = message.attributes[0].value;
+  }
 
-    let elements = serialize(tree.elements);
+  let elements = serialize(tree.elements);
 
-    return flattenDeep(elements).join('');
+  return flattenDeep(elements).join('');
 }

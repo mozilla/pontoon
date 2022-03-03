@@ -1,56 +1,56 @@
 .editor-menu {
-    color: #fff;
-    padding: 10px;
-    position: relative;
+  color: #fff;
+  padding: 10px;
+  position: relative;
 }
 
 .editor-menu .actions {
-    float: right;
+  float: right;
 }
 
 .editor-menu .actions button {
-    background: transparent;
-    border: none;
-    color: #ebebeb;
-    height: 40px;
-    margin: 0 2px;
-    padding: 10px 3px;
+  background: transparent;
+  border: none;
+  color: #ebebeb;
+  height: 40px;
+  margin: 0 2px;
+  padding: 10px 3px;
 }
 
 .editor-menu .actions button:hover {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .editor-menu .actions button .fa {
-    margin-right: 4px;
+  margin-right: 4px;
 }
 
 .editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
-    background: #7bc876;
-    border-radius: 3px;
-    color: #272a2f;
-    font-weight: 600;
-    margin-left: 10px;
-    padding: 10px;
+  background: #7bc876;
+  border-radius: 3px;
+  color: #272a2f;
+  font-weight: 600;
+  margin-left: 10px;
+  padding: 10px;
 }
 
 .editor-menu .actions .action-suggest {
-    background: #4fc4f6;
+  background: #4fc4f6;
 }
 
 .editor-menu .actions .action-approve:hover,
 .editor-menu .actions .action-save:hover,
 .editor-menu .actions .action-suggest:hover {
-    color: #ebebeb;
+  color: #ebebeb;
 }
 
 .editor-menu .banner {
-    font-style: italic;
-    line-height: 40px;
+  font-style: italic;
+  line-height: 40px;
 }
 
 .editor-menu .banner a {
-    color: #7bc876;
+  color: #7bc876;
 }

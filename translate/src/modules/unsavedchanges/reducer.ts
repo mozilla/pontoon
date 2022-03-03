@@ -1,59 +1,59 @@
 import { HIDE, IGNORE, SHOW, UPDATE } from './actions';
 
 import type {
-    HideAction,
-    IgnoreAction,
-    ShowAction,
-    UpdateAction,
+  HideAction,
+  IgnoreAction,
+  ShowAction,
+  UpdateAction,
 } from './actions';
 
 type Action = HideAction | IgnoreAction | ShowAction | UpdateAction;
 
 export type UnsavedChangesState = {
-    readonly callback: ShowAction['callback'] | null;
-    readonly exist: boolean;
-    readonly ignored: boolean;
-    readonly shown: boolean;
+  readonly callback: ShowAction['callback'] | null;
+  readonly exist: boolean;
+  readonly ignored: boolean;
+  readonly shown: boolean;
 };
 
 const initialState: UnsavedChangesState = {
-    callback: null,
-    exist: false,
-    ignored: false,
-    shown: false,
+  callback: null,
+  exist: false,
+  ignored: false,
+  shown: false,
 };
 
 export default function reducer(
-    state: UnsavedChangesState = initialState,
-    action: Action,
+  state: UnsavedChangesState = initialState,
+  action: Action,
 ): UnsavedChangesState {
-    switch (action.type) {
-        case HIDE:
-            return {
-                ...state,
-                callback: null,
-                exist: false,
-                ignored: false,
-                shown: false,
-            };
-        case IGNORE:
-            return {
-                ...state,
-                ignored: true,
-            };
-        case SHOW:
-            return {
-                ...state,
-                shown: true,
-                callback: action.callback,
-            };
-        case UPDATE:
-            return {
-                ...state,
-                exist: action.exist,
-                ignored: false,
-            };
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case HIDE:
+      return {
+        ...state,
+        callback: null,
+        exist: false,
+        ignored: false,
+        shown: false,
+      };
+    case IGNORE:
+      return {
+        ...state,
+        ignored: true,
+      };
+    case SHOW:
+      return {
+        ...state,
+        shown: true,
+        callback: action.callback,
+      };
+    case UPDATE:
+      return {
+        ...state,
+        exist: action.exist,
+        ignored: false,
+      };
+    default:
+      return state;
+  }
 }

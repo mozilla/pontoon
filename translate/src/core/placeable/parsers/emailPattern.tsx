@@ -14,20 +14,17 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L220
  */
 const emailPattern = {
-    rule: /(((mailto:)|)[A-Za-z0-9]+[-a-zA-Z0-9._%]*@(([-A-Za-z0-9]+)\.)+[a-zA-Z]{2,4})/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-emailPattern'
-                attrs={{ title: true }}
-            >
-                <mark className='placeable' title='Email' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(((mailto:)|)[A-Za-z0-9]+[-a-zA-Z0-9._%]*@(([-A-Za-z0-9]+)\.)+[a-zA-Z]{2,4})/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-emailPattern' attrs={{ title: true }}>
+        <mark className='placeable' title='Email' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default emailPattern;

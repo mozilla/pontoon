@@ -24,24 +24,21 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L80
  */
 const qtFormatting = {
-    rule: /(%L?[1-9]\d{0,1}(?=([^\d]|$)))/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-qtFormatting'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Qt string formatting variable'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(%L?[1-9]\d{0,1}(?=([^\d]|$)))/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-qtFormatting' attrs={{ title: true }}>
+        <mark
+          className='placeable'
+          title='Qt string formatting variable'
+          dir='ltr'
+        >
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default qtFormatting;

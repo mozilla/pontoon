@@ -7,5 +7,5 @@
  * @returns {string} A language-sensitive representation of the number.
  */
 export default function asLocaleString(number: number): string {
-    return Number(number).toLocaleString('en-GB');
+  return Number(number).toLocaleString('en-GB');
 }

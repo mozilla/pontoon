@@ -10,42 +10,42 @@ export const SELECT: 'plural/SELECT' = 'plural/SELECT';
  * Move to next Entity or pluralForm.
  */
 export function moveToNextTranslation(
-    dispatch: AppDispatch,
-    router: Record<string, any>,
-    entity: number,
-    nextEntity: number,
-    pluralForm: number,
-    locale: Locale,
+  dispatch: AppDispatch,
+  router: Record<string, any>,
+  entity: number,
+  nextEntity: number,
+  pluralForm: number,
+  locale: Locale,
 ): void {
-    if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-        dispatch(select(pluralForm + 1));
-    } else if (nextEntity !== entity) {
-        dispatch(navActions.updateEntity(router, nextEntity.toString()));
-    }
+  if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+    dispatch(select(pluralForm + 1));
+  } else if (nextEntity !== entity) {
+    dispatch(navActions.updateEntity(router, nextEntity.toString()));
+  }
 }
 
 export type ResetAction = {
-    type: typeof RESET;
+  type: typeof RESET;
 };
 export function reset(): ResetAction {
-    return {
-        type: RESET,
-    };
+  return {
+    type: RESET,
+  };
 }
 
 export type SelectAction = {
-    type: typeof SELECT;
-    pluralForm: number;
+  type: typeof SELECT;
+  pluralForm: number;
 };
 export function select(pluralForm: number): SelectAction {
-    return {
-        type: SELECT,
-        pluralForm,
-    };
+  return {
+    type: SELECT,
+    pluralForm,
+  };
 }
 
 export default {
-    moveToNextTranslation,
-    reset,
-    select,
+  moveToNextTranslation,
+  reset,
+  select,
 };

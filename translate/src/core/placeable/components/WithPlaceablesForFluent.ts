@@ -11,16 +11,16 @@ import fluentTerm from '../parsers/fluentTerm';
 import multipleSpaces from '../parsers/multipleSpaces';
 
 export function getRulesWithFluent(rules: Array<Parser>): Array<Parser> {
-    const newRules = [...rules];
+  const newRules = [...rules];
 
-    // Insert after the last space-related rule.
-    let insertAfter = newRules.indexOf(multipleSpaces);
-    newRules.splice(insertAfter, 0, fluentFunction);
-    newRules.splice(insertAfter++, 0, fluentString);
-    newRules.splice(insertAfter++, 0, fluentParametrizedTerm);
-    newRules.splice(insertAfter++, 0, fluentTerm);
+  // Insert after the last space-related rule.
+  let insertAfter = newRules.indexOf(multipleSpaces);
+  newRules.splice(insertAfter, 0, fluentFunction);
+  newRules.splice(insertAfter++, 0, fluentString);
+  newRules.splice(insertAfter++, 0, fluentParametrizedTerm);
+  newRules.splice(insertAfter++, 0, fluentTerm);
 
-    return newRules;
+  return newRules;
 }
 
 /**

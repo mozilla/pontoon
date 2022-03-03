@@ -16,13 +16,13 @@ import type { Entry } from '@fluent/syntax';
  *      - "complex": can only be shown in a source editor.
  */
 export default function getSyntaxType(message: Entry): SyntaxType {
-    if (!isSupportedMessage(message)) {
-        return 'complex';
-    }
+  if (!isSupportedMessage(message)) {
+    return 'complex';
+  }
 
-    if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
-        return 'simple';
-    }
+  if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
+    return 'simple';
+  }
 
-    return 'rich';
+  return 'rich';
 }

@@ -1,37 +1,37 @@
 .navigation {
-    float: left;
-    font-size: 14px;
-    line-height: 60px;
+  float: left;
+  font-size: 14px;
+  line-height: 60px;
 }
 
 .navigation > ul > li {
-    float: left;
+  float: left;
 }
 
 .navigation > ul > li + li::before {
-    color: #4d5967;
-    content: '/';
-    font-size: 28px;
-    font-weight: 100;
-    vertical-align: bottom;
+  color: #4d5967;
+  content: '/';
+  font-size: 28px;
+  font-weight: 100;
+  vertical-align: bottom;
 }
 
 .navigation > ul > li > a {
-    color: #ebebeb;
-    font-weight: 300;
-    padding: 0 12px;
+  color: #ebebeb;
+  font-weight: 300;
+  padding: 0 12px;
 }
 
 .navigation > ul > li > a:hover {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .navigation img {
-    margin-top: -2px;
-    vertical-align: middle;
+  margin-top: -2px;
+  vertical-align: middle;
 }
 
 .navigation .locale-code {
-    color: #7bc876;
-    padding-left: 7px;
+  color: #7bc876;
+  padding-left: 7px;
 }

@@ -13,24 +13,20 @@ import { Localized } from '@fluent/react';
  *   { -brand-name(foo-bar: "now that's a value!") }
  */
 const fluentParametrizedTerm = {
-    rule: /({ ?-[^}]*([^}]*: ?[^}]*) ?})/ as RegExp,
-    matchIndex: 1,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-fluentParametrizedTerm'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Fluent parametrized term'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /({ ?-[^}]*([^}]*: ?[^}]*) ?})/ as RegExp,
+  matchIndex: 1,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized
+        id='placeable-parser-fluentParametrizedTerm'
+        attrs={{ title: true }}
+      >
+        <mark className='placeable' title='Fluent parametrized term' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default fluentParametrizedTerm;
