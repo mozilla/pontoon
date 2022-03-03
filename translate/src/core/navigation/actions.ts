@@ -60,21 +60,6 @@ export function update(
 }
 
 /**
- * Update the URL with a new `author` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateAuthor(
-  router: Record<string, any>,
-  author: string | null | undefined,
-) {
-  return update(router, { author });
-}
-
-/**
  * Update the URL with a new `string` parameter.
  *
  * This function keeps all other parameters in the URL the same.
@@ -87,88 +72,7 @@ export function updateEntity(
   return update(router, { string: entity }, replaceHistory);
 }
 
-/**
- * Update the URL with a new `extra` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateExtra(
-  router: Record<string, any>,
-  extra: string | null | undefined,
-) {
-  return update(router, { extra });
-}
-
-/**
- * Update the URL with a new `search` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateSearch(
-  router: Record<string, any>,
-  search: string | null | undefined,
-) {
-  return update(router, { search });
-}
-
-/**
- * Update the URL with a new `status` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateStatus(
-  router: Record<string, any>,
-  status: string | null | undefined,
-) {
-  return update(router, { status });
-}
-
-/**
- * Update the URL with a new `tag` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateTag(
-  router: Record<string, any>,
-  tag: string | null | undefined,
-) {
-  return update(router, { tag });
-}
-
-/**
- * Update the URL with a new `time` parameter.
- *
- * This function removes the `string` parameter from the URL if any, because
- * it is possible that after the results have changed, the currently selected
- * entity won't be available anymore.
- * It keeps all other parameters in the URL the same.
- */
-export function updateTime(
-  router: Record<string, any>,
-  time: string | null | undefined,
-) {
-  return update(router, { time });
-}
-
 export default {
   update,
-  updateAuthor,
   updateEntity,
-  updateExtra,
-  updateSearch,
-  updateStatus,
-  updateTag,
-  updateTime,
 };
