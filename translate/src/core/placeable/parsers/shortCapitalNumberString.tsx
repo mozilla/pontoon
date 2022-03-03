@@ -11,23 +11,23 @@ import { Localized } from '@fluent/react';
  *   A4
  */
 const shortCapitalNumberString = {
-    rule: /(\b([A-Z][0-9])|([0-9][A-Z])\b)/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-shortCapitalNumberString'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Short capital letter and number string'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(\b([A-Z][0-9])|([0-9][A-Z])\b)/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized
+        id='placeable-parser-shortCapitalNumberString'
+        attrs={{ title: true }}
+      >
+        <mark
+          className='placeable'
+          title='Short capital letter and number string'
+          dir='ltr'
+        >
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default shortCapitalNumberString;

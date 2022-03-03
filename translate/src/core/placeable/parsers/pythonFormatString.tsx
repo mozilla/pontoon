@@ -14,23 +14,19 @@ import { Localized } from '@fluent/react';
  *   {foo[42]}
  */
 const pythonFormatString = {
-    rule: /(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-pythonFormatString'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Python format string'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized
+        id='placeable-parser-pythonFormatString'
+        attrs={{ title: true }}
+      >
+        <mark className='placeable' title='Python format string' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default pythonFormatString;

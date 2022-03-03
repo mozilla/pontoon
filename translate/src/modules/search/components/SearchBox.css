@@ -1,136 +1,136 @@
 .search-box {
-    margin: 9px 5px 11px;
-    position: static;
+  margin: 9px 5px 11px;
+  position: static;
 }
 
 .search-box input[type='search'] {
-    background: #333941;
-    border: none;
-    border-radius: 20px;
-    box-sizing: border-box;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 23px;
-    padding: 5px 33px 5px 37px;
-    width: 100%;
+  background: #333941;
+  border: none;
+  border-radius: 20px;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 23px;
+  padding: 5px 33px 5px 37px;
+  width: 100%;
 }
 
 /* Remove highlight in Chrome */
 .search-box input[type='search']:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Remove cancel button in Chrome */
 .search-box input[type='search']::-webkit-search-cancel-button {
-    display: none;
+  display: none;
 }
 
 /* Style placeholder color in Chrome */
 .search-box input[type='search']::-webkit-input-placeholder {
-    color: #aaaaaa;
+  color: #aaaaaa;
 }
 
 .search-box > label {
-    color: #aaaaaa;
-    cursor: text;
-    font-size: 17px;
-    left: auto;
-    position: absolute;
-    right: 16px;
-    top: 16px;
+  color: #aaaaaa;
+  cursor: text;
+  font-size: 17px;
+  left: auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
 }
 
 .search-box .status.fa {
-    position: absolute;
-    left: 16px;
-    top: 9px;
+  position: absolute;
+  left: 16px;
+  top: 9px;
 }
 
 .search-box .all .status {
-    left: 15px;
-    top: 9px;
+  left: 15px;
+  top: 9px;
 }
 
 .search-box .status.fa::before {
-    color: #aaaaaa;
-    content: '';
+  color: #aaaaaa;
+  content: '';
 }
 
 .search-box .all .status::before {
-    content: '';
-    font-size: 16px;
+  content: '';
+  font-size: 16px;
 }
 
 .search-box .translated .status:before {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .search-box .fuzzy .status:before {
-    color: #fed271;
+  color: #fed271;
 }
 
 .search-box .warnings .status:before {
-    color: #ffa10f;
+  color: #ffa10f;
 }
 
 .search-box .errors .status:before {
-    color: #f36;
+  color: #f36;
 }
 
 .search-box .missing .status:before {
-    color: #5f7285;
+  color: #5f7285;
 }
 
 .search-box .unreviewed .status:before {
-    color: #4fc4f6;
-    content: '';
-    font-size: 18px;
+  color: #4fc4f6;
+  content: '';
+  font-size: 18px;
 }
 
 .search-box .unreviewed.selected .status:before,
 .search-box .unreviewed:not(.visibility-switch) .status:hover:before {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 .search-box .unchanged .status:before {
-    content: '';
+  content: '';
 }
 
 .search-box .empty .status:before {
-    content: '\f111';
-    font-weight: 100;
+  content: '\f111';
+  font-weight: 100;
 }
 
 .search-box .menu .empty.selected .status:before,
 .search-box .menu .empty .status:hover:before {
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .search-box .rejected .status:before {
-    content: '';
+  content: '';
 }
 
 .search-box .missing-without-unreviewed .status:before {
-    content: '\f0eb';
-    font-size: 18px;
-    margin-left: 1px;
+  content: '\f0eb';
+  font-size: 18px;
+  margin-left: 1px;
 }
 
 .filters-panel .menu .missing-without-unreviewed.selected .status::before,
 .filters-panel .menu .missing-without-unreviewed .status:hover:before {
-    font-size: 16px;
-    margin-left: 0;
+  font-size: 16px;
+  margin-left: 0;
 }
 
 .search-box .tag .status:before {
-    content: '';
+  content: '';
 }
 
 .search-box .time-range .status:before {
-    content: '';
+  content: '';
 }
 
 .search-box .author .status:before {
-    content: '';
+  content: '';
 }

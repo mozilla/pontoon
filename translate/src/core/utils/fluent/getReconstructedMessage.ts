@@ -7,46 +7,44 @@ import type { Entry } from '@fluent/syntax';
  * translated content.
  */
 export default function getReconstructedMessage(
-    original: string,
-    translation: string,
+  original: string,
+  translation: string,
 ): Entry {
-    const message = parser.parseEntry(original);
-    if (message.type !== 'Message' && message.type !== 'Term') {
-        throw new Error(
-            `Unexpected type '${message.type}' in getReconstructedMessage`,
-        );
-    }
-    let key = message.id.name;
+  const message = parser.parseEntry(original);
+  if (message.type !== 'Message' && message.type !== 'Term') {
+    throw new Error(
+      `Unexpected type '${message.type}' in getReconstructedMessage`,
+    );
+  }
+  let key = message.id.name;
 
-    // For Terms, the leading dash is removed in the identifier. We need to add
-    // it back manually.
-    if (message.type === 'Term') {
-        key = '-' + key;
-    }
+  // For Terms, the leading dash is removed in the identifier. We need to add
+  // it back manually.
+  if (message.type === 'Term') {
+    key = '-' + key;
+  }
 
-    const isMultilineTranslation = translation.indexOf('\n') > -1;
+  const isMultilineTranslation = translation.indexOf('\n') > -1;
 
-    let content: string;
+  let content: string;
 
-    if (message.attributes && message.attributes.length === 1) {
-        const attribute = message.attributes[0].id.name;
+  if (message.attributes && message.attributes.length === 1) {
+    const attribute = message.attributes[0].id.name;
 
-        if (isMultilineTranslation) {
-            content = `${key} =\n    .${attribute} =`;
-            translation
-                .split('\n')
-                .forEach((t) => (content += `\n        ${t}`));
-        } else {
-            content = `${key} =\n    .${attribute} = ${translation}`;
-        }
+    if (isMultilineTranslation) {
+      content = `${key} =\n    .${attribute} =`;
+      translation.split('\n').forEach((t) => (content += `\n        ${t}`));
     } else {
-        if (isMultilineTranslation) {
-            content = `${key} =`;
-            translation.split('\n').forEach((t) => (content += `\n    ${t}`));
-        } else {
-            content = `${key} = ${translation}`;
-        }
+      content = `${key} =\n    .${attribute} = ${translation}`;
     }
+  } else {
+    if (isMultilineTranslation) {
+      content = `${key} =`;
+      translation.split('\n').forEach((t) => (content += `\n    ${t}`));
+    } else {
+      content = `${key} = ${translation}`;
+    }
+  }
 
-    return parser.parseEntry(content);
+  return parser.parseEntry(content);
 }

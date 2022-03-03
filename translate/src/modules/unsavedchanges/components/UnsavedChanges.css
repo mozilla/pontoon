@@ -1,58 +1,58 @@
 .unsaved-changes {
-    background: #272a2f;
-    border-top: 1px solid #5e6475;
-    bottom: 0;
-    box-sizing: border-box;
-    left: 0;
-    line-height: 22px;
-    min-height: 90px;
-    padding: 10px;
-    position: absolute;
-    text-align: left;
-    width: 100%;
-    z-index: 10;
+  background: #272a2f;
+  border-top: 1px solid #5e6475;
+  bottom: 0;
+  box-sizing: border-box;
+  left: 0;
+  line-height: 22px;
+  min-height: 90px;
+  padding: 10px;
+  position: absolute;
+  text-align: left;
+  width: 100%;
+  z-index: 10;
 }
 
 .unsaved-changes .close {
-    background: none;
-    border: none;
-    color: #aaaaaa;
-    float: right;
-    font-size: 24px;
-    font-weight: 100;
-    line-height: 22px;
-    margin-top: -3px;
-    padding: 0;
+  background: none;
+  border: none;
+  color: #aaaaaa;
+  float: right;
+  font-size: 24px;
+  font-weight: 100;
+  line-height: 22px;
+  margin-top: -3px;
+  padding: 0;
 }
 
 .unsaved-changes .close:hover {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .unsaved-changes .title {
-    color: #f36;
-    font-size: 14px;
-    font-weight: 300;
-    padding-bottom: 5px;
+  color: #f36;
+  font-size: 14px;
+  font-weight: 300;
+  padding-bottom: 5px;
 }
 
 .unsaved-changes .body {
-    font-style: italic;
+  font-style: italic;
 }
 
 .unsaved-changes .anyway {
-    background: #ff0a43;
-    border: none;
-    border-radius: 3px;
-    bottom: 10px;
-    color: #272a2f;
-    font-weight: 600;
-    margin-left: 10px;
-    padding: 10px;
-    position: absolute;
-    right: 10px;
+  background: #ff0a43;
+  border: none;
+  border-radius: 3px;
+  bottom: 10px;
+  color: #272a2f;
+  font-weight: 600;
+  margin-left: 10px;
+  padding: 10px;
+  position: absolute;
+  right: 10px;
 }
 
 .unsaved-changes .anyway:hover {
-    color: #ebebeb;
+  color: #ebebeb;
 }

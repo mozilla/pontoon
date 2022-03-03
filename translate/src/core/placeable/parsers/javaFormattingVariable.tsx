@@ -22,24 +22,24 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L127
  */
 const javaFormattingVariable = {
-    rule: /({[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?})/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-javaFormattingVariable'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Java Message formatting variable'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /({[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?})/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized
+        id='placeable-parser-javaFormattingVariable'
+        attrs={{ title: true }}
+      >
+        <mark
+          className='placeable'
+          title='Java Message formatting variable'
+          dir='ltr'
+        >
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default javaFormattingVariable;

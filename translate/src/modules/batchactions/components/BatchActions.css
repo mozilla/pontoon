@@ -1,133 +1,133 @@
 .batch-actions {
-    height: 100%;
-    line-height: 22px;
+  height: 100%;
+  line-height: 22px;
 }
 
 .batch-actions .topbar {
-    background: #4d5967;
-    border-bottom: 1px solid #5e6475;
-    padding: 12px 10px 13px;
+  background: #4d5967;
+  border-bottom: 1px solid #5e6475;
+  padding: 12px 10px 13px;
 }
 
 .batch-actions .topbar .selecting {
-    color: #cccccc;
-    float: right;
-    margin-top: 2px;
+  color: #cccccc;
+  float: right;
+  margin-top: 2px;
 }
 
 .batch-actions .topbar button {
-    background: none;
-    border: none;
-    color: #cccccc;
-    font-weight: 300;
-    padding: 0;
+  background: none;
+  border: none;
+  color: #cccccc;
+  font-weight: 300;
+  padding: 0;
 }
 
 .batch-actions .topbar button:hover {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .batch-actions .topbar button.select-all {
-    float: left;
+  float: left;
 }
 
 .batch-actions .topbar button.selected-count {
-    float: right;
+  float: right;
 }
 
 .batch-actions .topbar button.selected-count .stress {
-    color: #7bc876;
+  color: #7bc876;
 }
 
 .batch-actions .topbar button .fa {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 .batch-actions .topbar .selected-count .fa-times {
-    display: inline;
+  display: inline;
 }
 
 .batch-actions .actions-panel {
-    overflow: auto;
-    position: absolute;
-    top: 44px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  overflow: auto;
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .batch-actions .actions-panel div {
-    margin: 0 auto;
-    min-width: 300px;
-    padding: 20px;
-    width: 50%;
+  margin: 0 auto;
+  min-width: 300px;
+  padding: 20px;
+  width: 50%;
 }
 
 .batch-actions .actions-panel h2 {
-    color: #cccccc;
-    font-size: 14px;
-    font-weight: 300;
-    padding-bottom: 2px;
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 300;
+  padding-bottom: 2px;
 }
 
 .batch-actions .actions-panel .intro p {
-    color: #aaaaaa;
-    font-style: italic;
+  color: #aaaaaa;
+  font-style: italic;
 }
 
 .batch-actions .actions-panel .intro p .stress {
-    color: #f36;
+  color: #f36;
 }
 
 .batch-actions .actions-panel button,
 .batch-actions .actions-panel input {
-    display: block;
-    width: 100%;
+  display: block;
+  width: 100%;
 }
 
 .batch-actions .actions-panel button {
-    background: #7bc876;
-    border: none;
-    border-radius: 3px;
-    color: #272a2f;
-    font-weight: 600;
-    margin-top: 10px;
-    padding: 15px 5px;
-    position: relative;
+  background: #7bc876;
+  border: none;
+  border-radius: 3px;
+  color: #272a2f;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 15px 5px;
+  position: relative;
 }
 
 .batch-actions .actions-panel button .fa {
-    position: absolute;
-    right: 10px;
-    top: 12px;
-    opacity: 0.5;
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  opacity: 0.5;
 }
 
 .batch-actions .actions-panel button.reject-all {
-    background: #f36;
+  background: #f36;
 }
 
 .batch-actions .actions-panel input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #5e6475;
-    color: #ffffff;
-    float: none;
-    margin-bottom: 10px;
-    padding: 15px 0 5px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #5e6475;
+  color: #ffffff;
+  float: none;
+  margin-bottom: 10px;
+  padding: 15px 0 5px;
 }
 
 /* Remove highlight in Chrome */
 .batch-actions .actions-panel input:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Remove cancel button in Chrome */
 .batch-actions .actions-panel input::-webkit-search-cancel-button {
-    display: none;
+  display: none;
 }
 
 /* Style placeholder color in Chrome */
 .batch-actions .actions-panel input::-webkit-input-placeholder {
-    color: #aaaaaa;
+  color: #aaaaaa;
 }

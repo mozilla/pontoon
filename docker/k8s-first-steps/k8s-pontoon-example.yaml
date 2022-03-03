@@ -32,11 +32,11 @@ data:
     worker_processes 3;
     error_log /var/log/nginx/error.log warn;
     pid /tmp/nginx.pid;
-   
+
     events {
       worker_connections 1024;
     }
-   
+
     http {
       server {
         listen 8080 ssl http2 default_server;
@@ -121,20 +121,20 @@ spec:
               memory: 1Gi
               cpu: 0.3
           volumeMounts:
-          - name: vol-nginx
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
-          - name: vol-cert
-            mountPath: /etc/nginx/cert
-            readOnly: true
+            - name: vol-nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: vol-cert
+              mountPath: /etc/nginx/cert
+              readOnly: true
       volumes:
-      - name: vol-nginx
-        configMap:
-          name: cfg-nginx
-      - name: vol-cert
-        secret:
-          secretName: sec-cert
+        - name: vol-nginx
+          configMap:
+            name: cfg-nginx
+        - name: vol-cert
+          secret:
+            secretName: sec-cert
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -152,43 +152,43 @@ spec:
         app: pontoon
     spec:
       containers:
-      - name: con-pontoon
-        imagePullPolicy: Always
-        image: <pontoon-prod image>
-        ports:
-        - protocol: TCP
-          containerPort: 3000
-        - protocol: TCP
-          containerPort: 8000
-        resources:
-          limits:
-            memory: 3Gi
-            cpu: 0.5
-        env:
-        - name: SECRET_KEY
-          value: "<the pontoon secret key>"
-        - name: DJANGO_LOGIN
-          value: "true"
-        - name: DJANGO_DEV
-          value: "false"
-        - name: DJANGO_DEBUG
-          value: "true"
-        - name: CI
-          value: "true"
-        - name: DATABASE_URL
-          value: "<pontoon database URL>"
-        - name: ALLOWED_HOSTS
-          value: "<comma seperated list of allowd hosts>"
-        - name: SITE_URL
-          value: "http://127.0.0.10"
-        - name: SYNC_INTERVAL
-          value: "30"
-        - name: KNOWN_HOSTS
-          value: "<base64 encoded file content of .ssh/known_hosts>"
-        - name: SSH_KEY
-          value: "<base64 encoded ssh private key from .ssh/id_rsa>"
+        - name: con-pontoon
+          imagePullPolicy: Always
+          image: <pontoon-prod image>
+          ports:
+            - protocol: TCP
+              containerPort: 3000
+            - protocol: TCP
+              containerPort: 8000
+          resources:
+            limits:
+              memory: 3Gi
+              cpu: 0.5
+          env:
+            - name: SECRET_KEY
+              value: '<the pontoon secret key>'
+            - name: DJANGO_LOGIN
+              value: 'true'
+            - name: DJANGO_DEV
+              value: 'false'
+            - name: DJANGO_DEBUG
+              value: 'true'
+            - name: CI
+              value: 'true'
+            - name: DATABASE_URL
+              value: '<pontoon database URL>'
+            - name: ALLOWED_HOSTS
+              value: '<comma seperated list of allowd hosts>'
+            - name: SITE_URL
+              value: 'http://127.0.0.10'
+            - name: SYNC_INTERVAL
+              value: '30'
+            - name: KNOWN_HOSTS
+              value: '<base64 encoded file content of .ssh/known_hosts>'
+            - name: SSH_KEY
+              value: '<base64 encoded ssh private key from .ssh/id_rsa>'
       imagePullSecrets:
-      - name: sec-dockerhub
+        - name: sec-dockerhub
 ---
 kind: Service
 apiVersion: v1
@@ -202,7 +202,7 @@ spec:
   ports:
     - name: https-web
       protocol: TCP
-#the port is not really used but mandatory
+      #the port is not really used but mandatory
       port: 2049
       targetPort: 8080
       nodePort: <your assigned node port!>
@@ -216,11 +216,11 @@ spec:
   selector:
     app: pontoon
   ports:
-  - name: http-deprecated
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
-  - name: http-ui
-    protocol: TCP
-    port: 8000
-    targetPort: 8000
+    - name: http-deprecated
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+    - name: http-ui
+      protocol: TCP
+      port: 8000
+      targetPort: 8000

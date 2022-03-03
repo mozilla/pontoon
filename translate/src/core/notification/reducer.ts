@@ -5,23 +5,23 @@ import type { AddAction, NotificationMessage } from './actions';
 type Action = AddAction;
 
 export type NotificationState = {
-    readonly message: NotificationMessage | null | undefined;
+  readonly message: NotificationMessage | null | undefined;
 };
 
 const initial: NotificationState = {
-    message: null,
+  message: null,
 };
 
 export default function reducer(
-    state: NotificationState = initial,
-    action: Action,
+  state: NotificationState = initial,
+  action: Action,
 ): NotificationState {
-    switch (action.type) {
-        case ADD:
-            return {
-                message: action.message,
-            };
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case ADD:
+      return {
+        message: action.message,
+      };
+    default:
+      return state;
+  }
 }

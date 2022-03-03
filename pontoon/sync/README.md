@@ -9,7 +9,6 @@ directly, as well as to write its own changes back.
 
 This document describes that sync process in detail.
 
-
 ## Triggering a Sync
 
 Pontoon is assumed to run a sync once an hour, although this is configurable.
@@ -17,7 +16,6 @@ When a sync is triggered, Pontoon finds all projects that are not marked as
 disabled within the admin interface and schedules a sync task for each one.
 Sync tasks are executed in parallel, using [Celery](http://www.celeryproject.org/)
 to manage the worker queue.
-
 
 ## Syncing a Project
 
@@ -46,7 +44,6 @@ The second step is syncing translations:
   changes, no commit is made.
 - Clean up leftover information in the database.
 
-
 ## Comparing Entities
 
 The heart of the syncing process is comparing an entity stored in Pontoon's
@@ -70,7 +67,6 @@ The actual comparison logic goes something like this:
 
 ![](./sync-process-diagram.png)
 
-
 ## Executing Changes
 
 Entity comparison produces a Changeset, which is used to make the necessary
@@ -80,24 +76,24 @@ Changesets can perform 4 different operations on an entity:
 
 **Update Pontoon from VCS**
 
-   &emsp;Add a translation from VCS to Pontoon if necessary. Existing translations
-   that match the VCS translation are re-used, and all non-matching translations
-   are marked as unapproved.
+&emsp;Add a translation from VCS to Pontoon if necessary. Existing translations
+that match the VCS translation are re-used, and all non-matching translations
+are marked as unapproved.
 
 **Update VCS from Pontoon**
 
-   &emsp;Add a translation from Pontoon to VCS, overwriting the existing translation
-   if it exists.
+&emsp;Add a translation from Pontoon to VCS, overwriting the existing translation
+if it exists.
 
 **Create New Entity in Pontoon**
 
-   &emsp;Create a new entity in the Pontoon database, including the VCS translation if
-   it is present.
+&emsp;Create a new entity in the Pontoon database, including the VCS translation if
+it is present.
 
 **Obsolete Pontoon Entity**
 
-   &emsp;Mark an entity in the database as obsolete, due to it not existing in VCS.
-   The entity will no longer appear on the website.
+&emsp;Mark an entity in the database as obsolete, due to it not existing in VCS.
+The entity will no longer appear on the website.
 
 When possible, Changesets perform database operations in bulk in order to speed
 up the syncing process.

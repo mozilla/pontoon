@@ -45,7 +45,6 @@
     </tr>
 </table>
 
-
 ## Code architecture
 
 ### Where code goes
@@ -74,6 +73,7 @@ Of course, more can be added if needed. For example, modules with a high number 
 To import code from further away than the parent directory,
 use paths starting with `~` to refer to the root of the `src/` directory.
 For example:
+
 ```js
 import { SearchBox } from '~/modules/search';
 ```
@@ -111,7 +111,6 @@ As far as we know, it is not possible to make that work in Chrome or Edge. This 
 
 If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your Django server regularly, because polling requests don't close, and after so many web page reloads, the Django process won't be able to accept new requests.
 
-
 ## Dependencies
 
 We manage our JavaScript dependencies with `npm`.
@@ -134,7 +133,6 @@ You might want to remove the `translate/node_modules` folder after you've run th
 (and the `package.json` and `package-lock.json` files have been updated)
 and before rebuilding the image, to reduce the size of the docker context.
 
-
 ## Type checking
 
 Our code uses TypeScript for type-checking the production code. Tests are not type-checked in general, which allows for smaller test fixtures. Visit the [TypeScript documentation](https://www.typescriptlang.org/docs) to learn more about TypeScript.
@@ -142,7 +140,6 @@ Our code uses TypeScript for type-checking the production code. Tests are not ty
 To check for TypeScript errors locally, run:
 
     $ make types
-
 
 ## Testing
 
@@ -158,7 +155,7 @@ Tests are put in files called `fileToTest.test.js` in the same directory as the 
 
 ```javascript
 describe('<Component>', () => {
-    // test suite here
+  // test suite here
 });
 ```
 
@@ -166,12 +163,11 @@ Individual tests follow `mocha`'s descriptive syntax. Try to be as explicit as p
 
 ```javascript
 it('does something specific', () => {
-    // unit test here
+  // unit test here
 });
 ```
 
 We use `jest`'s [`expect`](https://facebook.github.io/jest/docs/en/expect.html) assertion tool.
-
 
 ## Localization
 
@@ -185,13 +181,15 @@ That would give:
 
 ```js
 class Editor extends React.Component {
-    render() {
-        return <div>
-            <Localized id="entitydetails-Editor--button-update">
-                <button>Update</button>
-            </Localized>
-        </div>;
-    }
+  render() {
+    return (
+      <div>
+        <Localized id='entitydetails-Editor--button-update'>
+          <button>Update</button>
+        </Localized>
+      </div>
+    );
+  }
 }
 ```
 
@@ -206,7 +204,7 @@ Those files use the FTL format. In its simplest form, a string in such a file (c
 
 ### Semantic identifiers
 
-Fluent uses the concept of a *social contract* between developer and localizers. This contract is established by the selection of a unique identifier, called `l10n-id`, which carries a promise of being used in a particular place to carry a particular meaning.
+Fluent uses the concept of a _social contract_ between developer and localizers. This contract is established by the selection of a unique identifier, called `l10n-id`, which carries a promise of being used in a particular place to carry a particular meaning.
 
 You should consider the `l10n-id` as a variable name. If the meaning of the content changes, then you should also change the ID. This will notify localizers that the content is different from before and that a new translation is needed. However, if you make minor changes (fix a typo, make a change that keeps the same meaning) you should instead keep the same ID.
 
@@ -220,10 +218,9 @@ In Fluent, the developer is not to be bothered with inner logic and complexity t
 
 In order to easily verify that a string is effectively localized, you can turn on pseudo-localization. To do that, add `pseudolocalization=accented` or `pseudolocalization=bidi` to the URL, then refresh the page.
 
-Pseudo-localization turns every supported string into a different version of itself. We support two modes: "accented" (transforms "Accented English" into "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ") and "bidi" (transforms "Reversed English" into "‮ᴚǝʌǝɹsǝp Ǝuƃʅısɥ‬"). Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are *not* properly localized in the interface.
+Pseudo-localization turns every supported string into a different version of itself. We support two modes: "accented" (transforms "Accented English" into "Ȧȧƈƈḗḗƞŧḗḗḓ Ḗḗƞɠŀīīşħ") and "bidi" (transforms "Reversed English" into "‮ᴚǝʌǝɹsǝp Ǝuƃʅısɥ‬"). Because only strings that are actually localized (they exist in our reference en-US FTL file and they are properly set in a `<Localized>` component) get that transformation, it is easy to spot which strings are _not_ properly localized in the interface.
 
 You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.org/wiki/Pseudolocalization).
-
 
 ## Development resources
 

@@ -5,8 +5,8 @@ import './TranslationDiff.css';
 import { getDiff } from '../withDiff';
 
 type Props = {
-    base: string;
-    target: string;
+  base: string;
+  target: string;
 };
 
 /**
@@ -17,8 +17,8 @@ type Props = {
  * Removed slices are wrapped in <del>.
  */
 export default class TranslationDiff extends React.Component<Props> {
-    render(): React.ReactNode {
-        const { base, target } = this.props;
-        return getDiff(base, target);
-    }
+  render(): React.ReactNode {
+    const { base, target } = this.props;
+    return getDiff(base, target);
+  }
 }

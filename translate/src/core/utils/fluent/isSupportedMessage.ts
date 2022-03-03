@@ -8,26 +8,24 @@ import type { Entry } from '@fluent/syntax';
  * and all attribute elements are supported.
  */
 export default function isSupportedMessage(message: Entry): boolean {
-    // Parse error
-    if (message.type === 'Junk') {
-        return false;
-    }
-    // Comments
-    if (
-        message.type === 'Comment' ||
-        message.type === 'GroupComment' ||
-        message.type === 'ResourceComment'
-    ) {
-        return false;
-    }
+  // Parse error
+  if (message.type === 'Junk') {
+    return false;
+  }
+  // Comments
+  if (
+    message.type === 'Comment' ||
+    message.type === 'GroupComment' ||
+    message.type === 'ResourceComment'
+  ) {
+    return false;
+  }
 
-    if (message.value && !areSupportedElements(message.value.elements)) {
-        return false;
-    }
+  if (message.value && !areSupportedElements(message.value.elements)) {
+    return false;
+  }
 
-    return message.attributes.every((attribute) => {
-        return (
-            attribute.value && areSupportedElements(attribute.value.elements)
-        );
-    });
+  return message.attributes.every((attribute) => {
+    return attribute.value && areSupportedElements(attribute.value.elements);
+  });
 }

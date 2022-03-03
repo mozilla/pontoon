@@ -1,114 +1,114 @@
 #locale-settings {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 #preferred-locale {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #locale-settings .label {
-    color: #aaa;
-    display: inline-block;
-    font-size: 16px;
-    font-weight: 300;
-    margin: 6px 10px 0 0;
-    text-align: right;
-    width: 280px;
-    vertical-align: top;
+  color: #aaa;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 300;
+  margin: 6px 10px 0 0;
+  text-align: right;
+  width: 280px;
+  vertical-align: top;
 }
 
 #locale-settings .locale-selector {
-    display: inline-block;
+  display: inline-block;
 }
 
 #locale-settings .locale-selector .locale.select {
-    width: 280px;
+  width: 280px;
 }
 
 #locale-settings .locale-selector .locale.select .button {
-    background: #272a2f;
-    color: #aaaaaa;
-    font-size: 16px;
-    font-weight: 400;
-    height: 36px;
-    margin: 0;
-    padding: 8px 12px;
-    width: 100%;
+  background: #272a2f;
+  color: #aaaaaa;
+  font-size: 16px;
+  font-weight: 400;
+  height: 36px;
+  margin: 0;
+  padding: 8px 12px;
+  width: 100%;
 }
 
 #locale-settings .locale-selector .locale.select .menu {
-    background: #272a2f;
-    border: 1px solid #333941;
-    border-top: none;
-    top: 36px;
-    left: -1px;
-    width: 282px;
-    z-index: 30;
+  background: #272a2f;
+  border: 1px solid #333941;
+  border-top: none;
+  top: 36px;
+  left: -1px;
+  width: 282px;
+  z-index: 30;
 }
 
 #main form {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 #main form section {
-    margin: 0 auto 70px;
+  margin: 0 auto 70px;
 }
 
 #main form section h3 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 #main .controls .cancel {
-    float: none;
-    margin: 9px;
+  float: none;
+  margin: 9px;
 }
 
 #profile-form {
-    display: block;
-    position: relative;
-    text-align: left;
-    width: 620px;
+  display: block;
+  position: relative;
+  text-align: left;
+  width: 620px;
 }
 
 #profile-form .field {
-    text-align: left;
+  text-align: left;
 }
 
 #profile-form .field:not(:last-child) {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 #profile-form .field input {
-    color: #ffffff;
-    background: #333941;
-    border: 1px solid #4d5967;
-    border-radius: 3px;
-    float: none;
-    width: 290px;
-    padding: 4px;
+  color: #ffffff;
+  background: #333941;
+  border: 1px solid #4d5967;
+  border-radius: 3px;
+  float: none;
+  width: 290px;
+  padding: 4px;
 
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #profile-form button {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #profile-form .help {
-    color: #888888;
-    font-style: italic;
-    margin-top: 5px;
+  color: #888888;
+  font-style: italic;
+  margin-top: 5px;
 }
 
 .errorlist {
-    color: #f36;
-    list-style: none;
-    margin: 0;
-    margin-top: 5px;
-    text-align: left;
+  color: #f36;
+  list-style: none;
+  margin: 0;
+  margin-top: 5px;
+  text-align: left;
 }
 
 .check-list {
-    cursor: pointer;
+  cursor: pointer;
 }

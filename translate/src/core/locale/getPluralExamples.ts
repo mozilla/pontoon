@@ -15,32 +15,32 @@ import type { Locale } from './actions';
  * @returns {Object} A map of locale's cldrPlurals and their plural examples.
  */
 export default function getPluralExamples(
-    locale: Locale,
+  locale: Locale,
 ): Record<number, number> {
-    const pluralsCount = locale.cldrPlurals.length;
-    const examples = {};
+  const pluralsCount = locale.cldrPlurals.length;
+  const examples = {};
 
-    if (pluralsCount === 2) {
-        examples[locale.cldrPlurals[0]] = 1;
-        examples[locale.cldrPlurals[1]] = 2;
-    } else {
-        const getRule = new Function('n', `return ${locale.pluralRule}`) as (
-            n: number,
-        ) => number | boolean;
-        let n = 0;
-        while (Object.keys(examples).length < pluralsCount) {
-            const rule = locale.cldrPlurals[Number(getRule(n))];
-            if (!examples[rule]) {
-                examples[rule] = n;
-            }
-            n++;
-            // Protection against infinite loop
-            if (n === 1000) {
-                console.error('Unable to generate plural examples.');
-                break;
-            }
-        }
+  if (pluralsCount === 2) {
+    examples[locale.cldrPlurals[0]] = 1;
+    examples[locale.cldrPlurals[1]] = 2;
+  } else {
+    const getRule = new Function('n', `return ${locale.pluralRule}`) as (
+      n: number,
+    ) => number | boolean;
+    let n = 0;
+    while (Object.keys(examples).length < pluralsCount) {
+      const rule = locale.cldrPlurals[Number(getRule(n))];
+      if (!examples[rule]) {
+        examples[rule] = n;
+      }
+      n++;
+      // Protection against infinite loop
+      if (n === 1000) {
+        console.error('Unable to generate plural examples.');
+        break;
+      }
     }
+  }
 
-    return examples;
+  return examples;
 }

@@ -20,37 +20,35 @@ import { shallow } from 'enzyme';
  * you want to retrieve from the component tree.
  */
 export function shallowUntilTarget(
-    componentInstance,
-    TargetComponent,
-    { maxTries = 10, shallowOptions = undefined, _shallow = shallow } = {},
+  componentInstance,
+  TargetComponent,
+  { maxTries = 10, shallowOptions = undefined, _shallow = shallow } = {},
 ) {
-    if (!componentInstance) {
-        throw new Error('componentInstance parameter is required');
-    }
-    if (!TargetComponent) {
-        throw new Error('TargetComponent parameter is required');
-    }
+  if (!componentInstance) {
+    throw new Error('componentInstance parameter is required');
+  }
+  if (!TargetComponent) {
+    throw new Error('TargetComponent parameter is required');
+  }
 
-    let root = _shallow(componentInstance, shallowOptions);
+  let root = _shallow(componentInstance, shallowOptions);
 
-    if (typeof root.type() === 'string') {
-        // If type() is a string then it's a DOM Node.
-        // If it were wrapped, it would be a React component.
-        throw new Error(
-            'Cannot unwrap this component because it is not wrapped',
-        );
+  if (typeof root.type() === 'string') {
+    // If type() is a string then it's a DOM Node.
+    // If it were wrapped, it would be a React component.
+    throw new Error('Cannot unwrap this component because it is not wrapped');
+  }
+
+  for (let tries = 1; tries <= maxTries; tries++) {
+    if (root.is(TargetComponent)) {
+      // Now that we found the target component, render it.
+      return root.shallow(shallowOptions);
     }
+    // Unwrap the next component in the hierarchy.
+    root = root.dive();
+  }
 
-    for (let tries = 1; tries <= maxTries; tries++) {
-        if (root.is(TargetComponent)) {
-            // Now that we found the target component, render it.
-            return root.shallow(shallowOptions);
-        }
-        // Unwrap the next component in the hierarchy.
-        root = root.dive();
-    }
-
-    throw new Error(`Could not find ${TargetComponent} in rendered
+  throw new Error(`Could not find ${TargetComponent} in rendered
         instance: ${componentInstance}; gave up after ${maxTries} tries`);
 }
 
@@ -60,7 +58,7 @@ export function shallowUntilTarget(
  * Source: https://stackoverflow.com/questions/951021
  */
 export function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /*
@@ -69,9 +67,9 @@ export function sleep(ms) {
  * Source: https://github.com/mozilla/testpilot/blob/93c9ea7aa6104fbbdc21508e44d486d7ca7c77aa/frontend/test/app/util.js
  */
 export function findLocalizedById(wrapper, id) {
-    return wrapper.findWhere(
-        (elem) => elem.type() === Localized && elem.prop('id') === id,
-    );
+  return wrapper.findWhere(
+    (elem) => elem.type() === Localized && elem.prop('id') === id,
+  );
 }
 
 /*
@@ -80,17 +78,17 @@ export function findLocalizedById(wrapper, id) {
  * Source: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
  */
 export function mockMatchMedia() {
-    return Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: jest.fn().mockImplementation((query) => ({
-            matches: false,
-            media: query,
-            onchange: null,
-            addListener: jest.fn(), // deprecated
-            removeListener: jest.fn(), // deprecated
-            addEventListener: jest.fn(),
-            removeEventListener: jest.fn(),
-            dispatchEvent: jest.fn(),
-        })),
-    });
+  return Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(), // deprecated
+      removeListener: jest.fn(), // deprecated
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
 }

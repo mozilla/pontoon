@@ -6,224 +6,220 @@ import type { MachineryTranslation } from './types';
 type Translations = Array<MachineryTranslation>;
 
 type ConcordanceTranslations = {
-    results: Array<MachineryTranslation>;
-    hasMore: boolean;
+  results: Array<MachineryTranslation>;
+  hasMore: boolean;
 };
 
 export default class MachineryAPI extends APIBase {
-    private _get(url: string, params: Record<string, any>): Promise<any> {
-        const payload = new URLSearchParams(params);
-        const headers = new Headers({ 'X-Requested-With': 'XMLHttpRequest' });
-        return this.fetch(url, 'GET', payload, headers);
+  private _get(url: string, params: Record<string, any>): Promise<any> {
+    const payload = new URLSearchParams(params);
+    const headers = new Headers({ 'X-Requested-With': 'XMLHttpRequest' });
+    return this.fetch(url, 'GET', payload, headers);
+  }
+
+  /**
+   * Return results from Concordance search.
+   */
+  async getConcordanceResults(
+    source: string,
+    locale: Locale,
+    page?: number,
+  ): Promise<ConcordanceTranslations> {
+    const url = '/concordance-search/';
+    const params = {
+      text: source,
+      locale: locale.code,
+      page: (page || 1).toString(),
+    };
+
+    const { results, has_next } = (await this._get(url, params)) as {
+      results: Array<{
+        source: string;
+        target: string;
+        project_names: string[];
+      }>;
+      has_next: boolean;
+    };
+
+    if (!Array.isArray(results)) {
+      return { results: [], hasMore: false };
     }
 
-    /**
-     * Return results from Concordance search.
-     */
-    async getConcordanceResults(
-        source: string,
-        locale: Locale,
-        page?: number,
-    ): Promise<ConcordanceTranslations> {
-        const url = '/concordance-search/';
-        const params = {
-            text: source,
-            locale: locale.code,
-            page: (page || 1).toString(),
-        };
+    return {
+      results: results.map((item) => ({
+        sources: ['concordance-search'],
+        original: item.source,
+        translation: item.target,
+        projectNames: item.project_names,
+      })),
+      hasMore: has_next,
+    };
+  }
 
-        const { results, has_next } = (await this._get(url, params)) as {
-            results: Array<{
-                source: string;
-                target: string;
-                project_names: string[];
-            }>;
-            has_next: boolean;
-        };
+  /**
+   * Return translations from Pontoon's memory.
+   */
+  async getTranslationMemory(
+    source: string,
+    locale: Locale,
+    pk: number | null | undefined,
+  ): Promise<Translations> {
+    const url = '/translation-memory/';
+    let params = {
+      text: source,
+      locale: locale.code,
+    };
 
-        if (!Array.isArray(results)) {
-            return { results: [], hasMore: false };
-        }
-
-        return {
-            results: results.map((item) => ({
-                sources: ['concordance-search'],
-                original: item.source,
-                translation: item.target,
-                projectNames: item.project_names,
-            })),
-            hasMore: has_next,
-        };
+    if (pk) {
+      params[pk] = pk;
     }
 
-    /**
-     * Return translations from Pontoon's memory.
-     */
-    async getTranslationMemory(
-        source: string,
-        locale: Locale,
-        pk: number | null | undefined,
-    ): Promise<Translations> {
-        const url = '/translation-memory/';
-        let params = {
-            text: source,
-            locale: locale.code,
-        };
+    const results = (await this._get(url, params)) as Array<{
+      count: number;
+      source: string;
+      target: string;
+      quality: number;
+    }>;
 
-        if (pk) {
-            params[pk] = pk;
-        }
-
-        const results = (await this._get(url, params)) as Array<{
-            count: number;
-            source: string;
-            target: string;
-            quality: number;
-        }>;
-
-        if (!Array.isArray(results)) {
-            return [];
-        }
-
-        return results.map((item) => ({
-            sources: ['translation-memory'],
-            itemCount: item.count,
-            original: item.source,
-            translation: item.target,
-            quality: Math.round(item.quality),
-        }));
+    if (!Array.isArray(results)) {
+      return [];
     }
 
-    /**
-     * Return translation by Google Translate.
-     */
-    async getGoogleTranslation(
-        source: string,
-        locale: Locale,
-    ): Promise<Translations> {
-        const url = '/google-translate/';
-        const params = {
-            text: source,
-            locale: locale.googleTranslateCode,
-        };
+    return results.map((item) => ({
+      sources: ['translation-memory'],
+      itemCount: item.count,
+      original: item.source,
+      translation: item.target,
+      quality: Math.round(item.quality),
+    }));
+  }
 
-        const { translation } = (await this._get(url, params)) as {
-            translation: string;
-        };
+  /**
+   * Return translation by Google Translate.
+   */
+  async getGoogleTranslation(
+    source: string,
+    locale: Locale,
+  ): Promise<Translations> {
+    const url = '/google-translate/';
+    const params = {
+      text: source,
+      locale: locale.googleTranslateCode,
+    };
 
-        if (!translation) {
-            return [];
-        }
+    const { translation } = (await this._get(url, params)) as {
+      translation: string;
+    };
 
-        return [
-            { sources: ['google-translate'], original: source, translation },
-        ];
+    if (!translation) {
+      return [];
     }
 
-    /**
-     * Return translation by Microsoft Translator.
-     */
-    async getMicrosoftTranslation(
-        source: string,
-        locale: Locale,
-    ): Promise<Translations> {
-        const url = '/microsoft-translator/';
-        const params = {
-            text: source,
-            locale: locale.msTranslatorCode,
-        };
+    return [{ sources: ['google-translate'], original: source, translation }];
+  }
 
-        const { translation } = (await this._get(url, params)) as {
-            translation: string;
-        };
+  /**
+   * Return translation by Microsoft Translator.
+   */
+  async getMicrosoftTranslation(
+    source: string,
+    locale: Locale,
+  ): Promise<Translations> {
+    const url = '/microsoft-translator/';
+    const params = {
+      text: source,
+      locale: locale.msTranslatorCode,
+    };
 
-        if (!translation) {
-            return [];
-        }
+    const { translation } = (await this._get(url, params)) as {
+      translation: string;
+    };
 
-        return [
-            {
-                sources: ['microsoft-translator'],
-                original: source,
-                translation,
-            },
-        ];
+    if (!translation) {
+      return [];
     }
 
-    /**
-     * Return translations by SYSTRAN.
-     */
-    async getSystranTranslation(
-        source: string,
-        locale: Locale,
-    ): Promise<Translations> {
-        const url = '/systran-translate/';
-        const params = {
-            text: source,
-            locale: locale.systranTranslateCode,
-        };
+    return [
+      {
+        sources: ['microsoft-translator'],
+        original: source,
+        translation,
+      },
+    ];
+  }
 
-        const { translation } = (await this._get(url, params)) as {
-            translation: string;
-        };
+  /**
+   * Return translations by SYSTRAN.
+   */
+  async getSystranTranslation(
+    source: string,
+    locale: Locale,
+  ): Promise<Translations> {
+    const url = '/systran-translate/';
+    const params = {
+      text: source,
+      locale: locale.systranTranslateCode,
+    };
 
-        if (!translation) {
-            return [];
-        }
+    const { translation } = (await this._get(url, params)) as {
+      translation: string;
+    };
 
-        return [
-            { sources: ['systran-translate'], original: source, translation },
-        ];
+    if (!translation) {
+      return [];
     }
 
-    /**
-     * Return translations from Microsoft Terminology.
-     */
-    async getMicrosoftTerminology(
-        source: string,
-        locale: Locale,
-    ): Promise<Translations> {
-        const url = '/microsoft-terminology/';
-        const params = {
-            text: source,
-            locale: locale.msTerminologyCode,
-        };
+    return [{ sources: ['systran-translate'], original: source, translation }];
+  }
 
-        const { translations } = (await this._get(url, params)) as {
-            translations: Array<{ source: string; target: string }>;
-        };
+  /**
+   * Return translations from Microsoft Terminology.
+   */
+  async getMicrosoftTerminology(
+    source: string,
+    locale: Locale,
+  ): Promise<Translations> {
+    const url = '/microsoft-terminology/';
+    const params = {
+      text: source,
+      locale: locale.msTerminologyCode,
+    };
 
-        if (!translations) {
-            return [];
-        }
+    const { translations } = (await this._get(url, params)) as {
+      translations: Array<{ source: string; target: string }>;
+    };
 
-        return translations.map((item) => ({
-            sources: ['microsoft-terminology'],
-            original: item.source,
-            translation: item.target,
-        }));
+    if (!translations) {
+      return [];
     }
 
-    /**
-     * Return translation by Caighdean Machine Translation.
-     *
-     * Works only for the `ga-IE` locale.
-     */
-    async getCaighdeanTranslation(pk: number): Promise<Translations> {
-        const url = '/caighdean/';
-        const params = {
-            id: pk,
-        };
+    return translations.map((item) => ({
+      sources: ['microsoft-terminology'],
+      original: item.source,
+      translation: item.target,
+    }));
+  }
 
-        const { original, translation } = (await this._get(url, params)) as {
-            original: string;
-            translation: string;
-        };
+  /**
+   * Return translation by Caighdean Machine Translation.
+   *
+   * Works only for the `ga-IE` locale.
+   */
+  async getCaighdeanTranslation(pk: number): Promise<Translations> {
+    const url = '/caighdean/';
+    const params = {
+      id: pk,
+    };
 
-        if (!translation) {
-            return [];
-        }
+    const { original, translation } = (await this._get(url, params)) as {
+      original: string;
+      translation: string;
+    };
 
-        return [{ sources: ['caighdean'], original, translation }];
+    if (!translation) {
+      return [];
     }
+
+    return [{ sources: ['caighdean'], original, translation }];
+  }
 }

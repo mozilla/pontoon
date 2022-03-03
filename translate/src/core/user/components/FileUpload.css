@@ -1,10 +1,10 @@
 .file-upload label {
-    line-height: 22px;
-    display: block;
+  line-height: 22px;
+  display: block;
 }
 
 .file-upload input[name='uploadfile'] {
-    position: absolute;
-    visibility: hidden;
-    width: 0;
+  position: absolute;
+  visibility: hidden;
+  width: 0;
 }

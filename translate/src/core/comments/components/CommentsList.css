@@ -1,46 +1,46 @@
 .comments-list {
-    line-height: 22px;
-    padding: 8px 0;
+  line-height: 22px;
+  padding: 8px 0;
 }
 
 .comments-list .pinned-comments > * {
-    padding: 0 8px;
+  padding: 0 8px;
 }
 
 .comments-list .pinned-comments .title {
-    color: #aaa;
-    font-size: 11px;
-    font-weight: 100;
-    margin-bottom: 6px;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: 100;
+  margin-bottom: 6px;
 }
 
 .comments-list .pinned-comments ul {
-    border-bottom: 1px solid #5e6475;
-    margin-bottom: 8px;
+  border-bottom: 1px solid #5e6475;
+  margin-bottom: 8px;
 }
 
 .comments-list .all-comments {
-    padding: 0 8px;
+  padding: 0 8px;
 }
 
 .comments-list .comment {
-    display: flex;
-    margin-left: 58px;
+  display: flex;
+  margin-left: 58px;
 }
 
 .comments-list .comment .user-avatar {
-    padding-right: 8px;
+  padding-right: 8px;
 }
 
 .comments-list .comment .user-avatar img {
-    border-radius: 4px;
-    border: 2px solid #5e6475;
-    width: 32px;
-    height: 32px;
+  border-radius: 4px;
+  border: 2px solid #5e6475;
+  width: 32px;
+  height: 32px;
 }
 
 .comments-list .comment .container {
-    display: flex;
-    flex-flow: column wrap;
-    width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  width: 100%;
 }

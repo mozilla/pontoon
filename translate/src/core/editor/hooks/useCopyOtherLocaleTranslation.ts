@@ -10,26 +10,26 @@ import useUpdateTranslation from './useUpdateTranslation';
  * Return a function to copy the other locale translation into the editor.
  */
 export default function useCopyOtherLocaleTranslation(): (
-    translation: OtherLocaleTranslation,
+  translation: OtherLocaleTranslation,
 ) => void {
-    const updateTranslation = useUpdateTranslation();
-    const isReadOnlyEditor = useAppSelector((state) =>
-        entities.selectors.isReadOnlyEditor(state),
-    );
+  const updateTranslation = useUpdateTranslation();
+  const isReadOnlyEditor = useAppSelector((state) =>
+    entities.selectors.isReadOnlyEditor(state),
+  );
 
-    return useCallback(
-        (translation: OtherLocaleTranslation) => {
-            if (isReadOnlyEditor) {
-                return;
-            }
+  return useCallback(
+    (translation: OtherLocaleTranslation) => {
+      if (isReadOnlyEditor) {
+        return;
+      }
 
-            // Ignore if selecting text
-            if (window.getSelection().toString()) {
-                return;
-            }
+      // Ignore if selecting text
+      if (window.getSelection().toString()) {
+        return;
+      }
 
-            updateTranslation(translation.translation, 'otherlocales');
-        },
-        [isReadOnlyEditor, updateTranslation],
-    );
+      updateTranslation(translation.translation, 'otherlocales');
+    },
+    [isReadOnlyEditor, updateTranslation],
+  );
 }

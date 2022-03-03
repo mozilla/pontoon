@@ -1,96 +1,96 @@
 .metadata {
-    background-color: #3f4752;
-    color: #aaa;
-    flex-shrink: 0;
-    font-size: 12px;
-    font-style: italic;
-    height: 20%;
-    min-height: 100px;
-    line-height: 22px;
-    overflow: auto;
-    padding: 10px;
+  background-color: #3f4752;
+  color: #aaa;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-style: italic;
+  height: 20%;
+  min-height: 100px;
+  line-height: 22px;
+  overflow: auto;
+  padding: 10px;
 }
 
 .metadata h2 {
-    font-style: normal;
-    font-size: 11px;
-    font-weight: 300;
-    line-height: 11px;
-    margin-top: 6px;
-    padding-bottom: 2px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 11px;
+  margin-top: 6px;
+  padding-bottom: 2px;
 }
 
 .metadata .title {
-    color: #888;
+  color: #888;
 }
 
 .metadata div a {
-    color: #7bc876;
-    text-decoration: none;
+  color: #7bc876;
+  text-decoration: none;
 }
 
 .metadata .comment .content p {
-    display: inline;
+  display: inline;
 }
 
 .metadata div .divider {
-    font-style: normal;
-    font-weight: 100;
-    margin: 0 3px;
+  font-style: normal;
+  font-weight: 100;
+  margin: 0 3px;
 }
 
 .metadata .original {
-    color: white;
-    font-size: 14px;
-    font-style: normal;
-    line-height: 22px;
-    margin-top: -2px; /* Align with the source string comment button */
-    padding-bottom: 6px;
-    text-align: start;
-    white-space: pre-wrap;
+  color: white;
+  font-size: 14px;
+  font-style: normal;
+  line-height: 22px;
+  margin-top: -2px; /* Align with the source string comment button */
+  padding-bottom: 6px;
+  text-align: start;
+  white-space: pre-wrap;
 }
 
 .metadata .original .placeable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .metadata .original .term {
-    background: inherit;
-    border-bottom: 1px solid #7bc876;
-    color: inherit;
-    cursor: pointer;
-    font-weight: normal;
-    font-style: inherit;
+  background: inherit;
+  border-bottom: 1px solid #7bc876;
+  color: inherit;
+  cursor: pointer;
+  font-weight: normal;
+  font-style: inherit;
 }
 
 .metadata ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .metadata button {
-    background: none;
-    border: none;
-    color: #7bc876;
-    font-style: italic;
-    padding: 0 0 0 2px;
+  background: none;
+  border: none;
+  color: #7bc876;
+  font-style: italic;
+  padding: 0 0 0 2px;
 }
 
 .metadata .resource-comment {
-    display: flex;
+  display: flex;
 }
 
 .metadata .resource-comment .comment {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .metadata .resource-comment .comment.expanded {
-    white-space: normal;
+  white-space: normal;
 }
 
 .metadata .resource-comment button {
-    white-space: nowrap;
+  white-space: nowrap;
 }

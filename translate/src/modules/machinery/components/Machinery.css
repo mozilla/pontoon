@@ -1,93 +1,93 @@
 #react-tabs-5 {
-    overflow-y: hidden;
+  overflow-y: hidden;
 }
 
 .machinery {
-    height: 100%;
-    line-height: 22px;
+  height: 100%;
+  line-height: 22px;
 }
 
 .machinery .list-wrapper {
-    height: calc(100% - 53px);
-    overflow-y: auto;
+  height: calc(100% - 53px);
+  overflow-y: auto;
 }
 
 .machinery ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .machinery > .search-wrapper {
-    padding: 10px 5px;
-    position: relative;
+  padding: 10px 5px;
+  position: relative;
 }
 
 .machinery > .search-wrapper > label {
-    color: #aaaaaa;
-    cursor: text;
-    font-size: 17px;
-    left: auto;
-    position: absolute;
-    right: 16px;
-    top: 16px;
+  color: #aaaaaa;
+  cursor: text;
+  font-size: 17px;
+  left: auto;
+  position: absolute;
+  right: 16px;
+  top: 16px;
 }
 
 .machinery > .search-wrapper > label > button {
-    background-color: transparent;
-    border: none;
-    color: #aaaaaa;
-    padding: 0 4px;
+  background-color: transparent;
+  border: none;
+  color: #aaaaaa;
+  padding: 0 4px;
 }
 
 .machinery > .search-wrapper input[type='search'] {
-    background: #333941;
-    border: none;
-    border-radius: 20px;
-    box-sizing: border-box;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 23px;
-    padding: 5px 33px 5px 12px;
-    width: 100%;
+  background: #333941;
+  border: none;
+  border-radius: 20px;
+  box-sizing: border-box;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 23px;
+  padding: 5px 33px 5px 12px;
+  width: 100%;
 }
 
 /* Remove highlight in Chrome */
 .machinery > .search-wrapper input[type='search']:focus {
-    outline: none;
+  outline: none;
 }
 
 /* Remove cancel button in Chrome */
 .machinery
-    > .search-wrapper
-    input[type='search']::-webkit-search-cancel-button {
-    display: none;
+  > .search-wrapper
+  input[type='search']::-webkit-search-cancel-button {
+  display: none;
 }
 
 /* Style placeholder color in Chrome */
 .machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
-    color: #aaaaaa;
+  color: #aaaaaa;
 }
 
 .machinery .load-more-container {
-    display: flex;
-    justify-content: center;
-    padding: 15px 0 20px 0;
+  display: flex;
+  justify-content: center;
+  padding: 15px 0 20px 0;
 }
 
 .machinery .load-more-button {
-    background: #333941;
-    border: 1px solid #3f4752;
-    border-radius: 4px;
-    color: #aaa;
-    font-size: 11px;
-    font-weight: 100;
-    margin-right: 6px;
-    padding: 2px 4px;
-    pointer-events: auto;
+  background: #333941;
+  border: 1px solid #3f4752;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: 100;
+  margin-right: 6px;
+  padding: 2px 4px;
+  pointer-events: auto;
 }
 
 .machinery .load-more-button:hover {
-    border-color: #637283;
+  border-color: #637283;
 }

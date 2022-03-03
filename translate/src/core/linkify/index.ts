@@ -12,11 +12,11 @@ const linkify = new LinkifyIt();
 linkify.tlds(tlds);
 
 export function getImageURLs(source: string, locale: string) {
-    const matches = linkify.match(source);
-    if (!matches) {
-        return [];
-    }
-    return matches
-        .filter((match) => /(https?:\/\/.*\.(?:png|jpg))/im.test(match.url))
-        .map((match) => match.url.replace(/en-US\//gi, locale + '/'));
+  const matches = linkify.match(source);
+  if (!matches) {
+    return [];
+  }
+  return matches
+    .filter((match) => /(https?:\/\/.*\.(?:png|jpg))/im.test(match.url))
+    .map((match) => match.url.replace(/en-US\//gi, locale + '/'));
 }

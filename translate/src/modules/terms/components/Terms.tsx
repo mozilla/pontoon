@@ -8,44 +8,42 @@ import { TermsList } from '~/core/term';
 import type { TermState } from '~/core/term';
 
 type Props = {
-    isReadOnlyEditor: boolean;
-    locale: string;
-    terms: TermState;
-    addTextToEditorTranslation: (arg0: string) => void;
-    navigateToPath: (arg0: string) => void;
+  isReadOnlyEditor: boolean;
+  locale: string;
+  terms: TermState;
+  addTextToEditorTranslation: (arg0: string) => void;
+  navigateToPath: (arg0: string) => void;
 };
 
 /**
  * Shows all terms found in the source string.
  */
 export default function Terms(
-    props: Props,
+  props: Props,
 ): null | React.ReactElement<'section'> {
-    const { terms } = props;
+  const { terms } = props;
 
-    if (terms.fetching || !terms.terms) {
-        return null;
-    }
+  if (terms.fetching || !terms.terms) {
+    return null;
+  }
 
-    const termlist = terms.terms;
+  const termlist = terms.terms;
 
-    return (
-        <section className='terms'>
-            {!termlist.length ? (
-                <Localized id='entitydetails-Helpers--no-terms'>
-                    <p className='no-terms'>No terms available.</p>
-                </Localized>
-            ) : (
-                <TermsList
-                    isReadOnlyEditor={props.isReadOnlyEditor}
-                    locale={props.locale}
-                    terms={termlist}
-                    addTextToEditorTranslation={
-                        props.addTextToEditorTranslation
-                    }
-                    navigateToPath={props.navigateToPath}
-                />
-            )}
-        </section>
-    );
+  return (
+    <section className='terms'>
+      {!termlist.length ? (
+        <Localized id='entitydetails-Helpers--no-terms'>
+          <p className='no-terms'>No terms available.</p>
+        </Localized>
+      ) : (
+        <TermsList
+          isReadOnlyEditor={props.isReadOnlyEditor}
+          locale={props.locale}
+          terms={termlist}
+          addTextToEditorTranslation={props.addTextToEditorTranslation}
+          navigateToPath={props.navigateToPath}
+        />
+      )}
+    </section>
+  );
 }

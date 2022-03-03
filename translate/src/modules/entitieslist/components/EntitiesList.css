@@ -1,44 +1,44 @@
 .entities {
-    background-color: #3f4752;
-    height: calc(100% - 53px);
-    overflow-y: auto;
-    position: relative;
-    width: 100%;
+  background-color: #3f4752;
+  height: calc(100% - 53px);
+  overflow-y: auto;
+  position: relative;
+  width: 100%;
 }
 
 .entities.unselectable {
-    -moz-user-select: -moz-none;
-    -khtml-user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 .entities ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: left;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 .entities > div {
-    height: 100%;
+  height: 100%;
 }
 
 .entities .no-results {
-    color: #ffffff;
-    font-size: 28px;
-    font-style: italic;
-    font-weight: 300;
-    letter-spacing: -1px;
-    padding-top: 60px;
-    text-align: center;
+  color: #ffffff;
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -1px;
+  padding-top: 60px;
+  text-align: center;
 }
 
 .entities .no-results div {
-    color: #7bc876;
-    display: block;
-    font-size: 128px;
-    margin-bottom: 20px;
+  color: #7bc876;
+  display: block;
+  font-size: 128px;
+  margin-bottom: 20px;
 }

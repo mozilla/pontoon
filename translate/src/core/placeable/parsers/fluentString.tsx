@@ -12,23 +12,16 @@ import { Localized } from '@fluent/react';
  *   { "Hello, World" }
  */
 const fluentString = {
-    rule: /({ ?"[^}]*" ?})/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-fluentString'
-                attrs={{ title: true }}
-            >
-                <mark
-                    className='placeable'
-                    title='Fluent string expression'
-                    dir='ltr'
-                >
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /({ ?"[^}]*" ?})/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-fluentString' attrs={{ title: true }}>
+        <mark className='placeable' title='Fluent string expression' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default fluentString;

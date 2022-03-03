@@ -7,7 +7,7 @@ import * as user from '~/core/user';
 import * as editor from '..';
 
 type Props = {
-    sendTranslation: (ignoreWarnings?: boolean) => void;
+  sendTranslation: (ignoreWarnings?: boolean) => void;
 };
 
 /**
@@ -22,107 +22,103 @@ type Props = {
  * Otherwise, it renders "Save".
  */
 export default function EditorMainAction(
-    props: Props,
+  props: Props,
 ): React.ReactElement<React.ElementType> {
-    const isRunningRequest = useAppSelector(
-        (state) => state.editor.isRunningRequest,
-    );
-    const forceSuggestions = useAppSelector(
-        (state) => state.user.settings.forceSuggestions,
-    );
-    const isTranslator = useAppSelector((state) =>
-        user.selectors.isTranslator(state),
-    );
-    const sameExistingTranslation = useAppSelector((state) =>
-        editor.selectors.sameExistingTranslation(state),
-    );
+  const isRunningRequest = useAppSelector(
+    (state) => state.editor.isRunningRequest,
+  );
+  const forceSuggestions = useAppSelector(
+    (state) => state.user.settings.forceSuggestions,
+  );
+  const isTranslator = useAppSelector((state) =>
+    user.selectors.isTranslator(state),
+  );
+  const sameExistingTranslation = useAppSelector((state) =>
+    editor.selectors.sameExistingTranslation(state),
+  );
 
-    const updateTranslationStatus = editor.useUpdateTranslationStatus();
+  const updateTranslationStatus = editor.useUpdateTranslationStatus();
 
-    function approveTranslation() {
-        if (sameExistingTranslation) {
-            updateTranslationStatus(sameExistingTranslation.pk, 'approve');
-        }
+  function approveTranslation() {
+    if (sameExistingTranslation) {
+      updateTranslationStatus(sameExistingTranslation.pk, 'approve');
     }
+  }
 
-    let btn: {
-        id: string;
-        className: string;
-        action: (event: React.SyntheticEvent) => void;
-        title: string;
-        label: string;
-        glyph: React.ReactElement<'i'> | null | undefined;
+  let btn: {
+    id: string;
+    className: string;
+    action: (event: React.SyntheticEvent) => void;
+    title: string;
+    label: string;
+    glyph: React.ReactElement<'i'> | null | undefined;
+  };
+
+  if (
+    isTranslator &&
+    sameExistingTranslation &&
+    !sameExistingTranslation.approved
+  ) {
+    // Approve button, will approve the translation.
+    btn = {
+      id: 'editor-EditorMenu--button-approve',
+      className: 'action-approve',
+      action: approveTranslation,
+      title: 'Approve Translation (Enter)',
+      label: 'APPROVE',
+      glyph: null,
     };
 
-    if (
-        isTranslator &&
-        sameExistingTranslation &&
-        !sameExistingTranslation.approved
-    ) {
-        // Approve button, will approve the translation.
-        btn = {
-            id: 'editor-EditorMenu--button-approve',
-            className: 'action-approve',
-            action: approveTranslation,
-            title: 'Approve Translation (Enter)',
-            label: 'APPROVE',
-            glyph: null,
-        };
-
-        if (isRunningRequest) {
-            btn.id = 'editor-EditorMenu--button-approving';
-            btn.label = 'APPROVING';
-            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-        }
-    } else if (forceSuggestions || !isTranslator) {
-        // Suggest button, will send an unreviewed translation.
-        btn = {
-            id: 'editor-EditorMenu--button-suggest',
-            className: 'action-suggest',
-            action: () => props.sendTranslation(),
-            title: 'Suggest Translation (Enter)',
-            label: 'SUGGEST',
-            glyph: null,
-        };
-
-        if (isRunningRequest) {
-            btn.id = 'editor-EditorMenu--button-suggesting';
-            btn.label = 'SUGGESTING';
-            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-        }
-    } else {
-        // Save button, will send an approved translation.
-        btn = {
-            id: 'editor-EditorMenu--button-save',
-            className: 'action-save',
-            action: () => props.sendTranslation(),
-            title: 'Save Translation (Enter)',
-            label: 'SAVE',
-            glyph: null,
-        };
-
-        if (isRunningRequest) {
-            btn.id = 'editor-EditorMenu--button-saving';
-            btn.label = 'SAVING';
-            btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-        }
+    if (isRunningRequest) {
+      btn.id = 'editor-EditorMenu--button-approving';
+      btn.label = 'APPROVING';
+      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
     }
+  } else if (forceSuggestions || !isTranslator) {
+    // Suggest button, will send an unreviewed translation.
+    btn = {
+      id: 'editor-EditorMenu--button-suggest',
+      className: 'action-suggest',
+      action: () => props.sendTranslation(),
+      title: 'Suggest Translation (Enter)',
+      label: 'SUGGEST',
+      glyph: null,
+    };
 
-    return (
-        <Localized
-            id={btn.id}
-            attrs={{ title: true }}
-            elems={{ glyph: btn.glyph }}
-        >
-            <button
-                className={btn.className}
-                onClick={btn.action}
-                title={btn.title}
-                disabled={isRunningRequest}
-            >
-                {btn.glyph}
-                {btn.label}
-            </button>
-        </Localized>
-    );
+    if (isRunningRequest) {
+      btn.id = 'editor-EditorMenu--button-suggesting';
+      btn.label = 'SUGGESTING';
+      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
+    }
+  } else {
+    // Save button, will send an approved translation.
+    btn = {
+      id: 'editor-EditorMenu--button-save',
+      className: 'action-save',
+      action: () => props.sendTranslation(),
+      title: 'Save Translation (Enter)',
+      label: 'SAVE',
+      glyph: null,
+    };
+
+    if (isRunningRequest) {
+      btn.id = 'editor-EditorMenu--button-saving';
+      btn.label = 'SAVING';
+      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
+    }
+  }
+
+  return (
+    <Localized id={btn.id} attrs={{ title: true }} elems={{ glyph: btn.glyph }}>
+      <button
+        className={btn.className}
+        onClick={btn.action}
+        title={btn.title}
+        disabled={isRunningRequest}
+      >
+        {btn.glyph}
+        {btn.label}
+      </button>
+    </Localized>
+  );
 }

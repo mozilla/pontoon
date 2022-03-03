@@ -8,16 +8,16 @@ import type { SelectExpression } from '@fluent/syntax';
  * Keys of all variants of such elements are either CLDR plurals or numbers.
  */
 export default function isPluralExpression(
-    expression: Readonly<SelectExpression>,
+  expression: Readonly<SelectExpression>,
 ): boolean {
-    if (!expression || expression.type !== 'SelectExpression') {
-        return false;
-    }
+  if (!expression || expression.type !== 'SelectExpression') {
+    return false;
+  }
 
-    return expression.variants.every((variant) => {
-        return (
-            variant.key.type === 'NumberLiteral' ||
-            (variant.key.name && CLDR_PLURALS.indexOf(variant.key.name) !== -1)
-        );
-    });
+  return expression.variants.every((variant) => {
+    return (
+      variant.key.type === 'NumberLiteral' ||
+      (variant.key.name && CLDR_PLURALS.indexOf(variant.key.name) !== -1)
+    );
+  });
 }

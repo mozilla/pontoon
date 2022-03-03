@@ -14,19 +14,16 @@ import { Localized } from '@fluent/react';
  *   "hello  world"
  */
 const unusualSpace = {
-    rule: /( +$|[\r\n\t]( +)| {2,})/ as RegExp,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-unusualSpace'
-                attrs={{ title: true }}
-            >
-                <mark className='placeable' title='Unusual space' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /( +$|[\r\n\t]( +)| {2,})/ as RegExp,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-unusualSpace' attrs={{ title: true }}>
+        <mark className='placeable' title='Unusual space' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default unusualSpace;

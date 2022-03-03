@@ -1,25 +1,25 @@
 import * as React from 'react';
 
 type Props = {
-    children?: React.ReactNode;
-    url: string;
+  children?: React.ReactNode;
+  url: string;
 };
 
 /*
  * Render a link to the Sign In process.
  */
 export default class SignInLink extends React.Component<Props> {
-    generateSignInURL(): string {
-        const absoluteUrl = window.location.origin + this.props.url;
-        const parsedUrl = new URL(absoluteUrl);
-        const next = window.location.pathname + window.location.search;
+  generateSignInURL(): string {
+    const absoluteUrl = window.location.origin + this.props.url;
+    const parsedUrl = new URL(absoluteUrl);
+    const next = window.location.pathname + window.location.search;
 
-        parsedUrl.searchParams.set('next', next);
+    parsedUrl.searchParams.set('next', next);
 
-        return parsedUrl.toString();
-    }
+    return parsedUrl.toString();
+  }
 
-    render(): React.ReactElement<'a'> {
-        return <a href={this.generateSignInURL()}>{this.props.children}</a>;
-    }
+  render(): React.ReactElement<'a'> {
+    return <a href={this.generateSignInURL()}>{this.props.children}</a>;
+  }
 }

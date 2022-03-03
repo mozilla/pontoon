@@ -14,17 +14,17 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L301
  */
 const xmlTag = {
-    rule: /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/ as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized id='placeable-parser-xmlTag' attrs={{ title: true }}>
-                <mark className='placeable' title='XML tag' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/ as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-xmlTag' attrs={{ title: true }}>
+        <mark className='placeable' title='XML tag' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default xmlTag;

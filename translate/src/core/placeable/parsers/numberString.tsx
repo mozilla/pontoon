@@ -15,20 +15,17 @@ import { Localized } from '@fluent/react';
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L72
  */
 const numberString = {
-    rule: /([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u as RegExp,
-    matchIndex: 0,
-    tag: (x: string): React.ReactElement<React.ElementType> => {
-        return (
-            <Localized
-                id='placeable-parser-numberString'
-                attrs={{ title: true }}
-            >
-                <mark className='placeable' title='Number' dir='ltr'>
-                    {x}
-                </mark>
-            </Localized>
-        );
-    },
+  rule: /([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u as RegExp,
+  matchIndex: 0,
+  tag: (x: string): React.ReactElement<React.ElementType> => {
+    return (
+      <Localized id='placeable-parser-numberString' attrs={{ title: true }}>
+        <mark className='placeable' title='Number' dir='ltr'>
+          {x}
+        </mark>
+      </Localized>
+    );
+  },
 };
 
 export default numberString;

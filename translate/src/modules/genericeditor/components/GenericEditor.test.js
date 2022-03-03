@@ -4,102 +4,96 @@ import * as navigation from '~/core/navigation';
 import * as plural from '~/core/plural';
 
 import {
-    createDefaultUser,
-    createReduxStore,
-    mountComponentWithStore,
+  createDefaultUser,
+  createReduxStore,
+  mountComponentWithStore,
 } from '~/test/store';
 
 import GenericEditor from './GenericEditor';
 
 const ENTITIES = [
-    {
-        pk: 1,
-        original: 'something',
-        translation: [
-            {
-                string: 'quelque chose',
-            },
-        ],
-    },
-    {
-        pk: 2,
-        original: 'second',
-        original_plural: 'seconds',
-        translation: [{ string: 'deuxième' }, { string: 'deuxièmes' }],
-    },
+  {
+    pk: 1,
+    original: 'something',
+    translation: [
+      {
+        string: 'quelque chose',
+      },
+    ],
+  },
+  {
+    pk: 2,
+    original: 'second',
+    original_plural: 'seconds',
+    translation: [{ string: 'deuxième' }, { string: 'deuxièmes' }],
+  },
 ];
 
 async function selectEntity(store, entityIndex) {
-    await store.dispatch(
-        navigation.actions.updateEntity(store.getState().router, entityIndex),
-    );
-    store.dispatch(editor.actions.reset());
+  await store.dispatch(
+    navigation.actions.updateEntity(store.getState().router, entityIndex),
+  );
+  store.dispatch(editor.actions.reset());
 }
 
 async function selectPlural(store, pluralForm) {
-    await store.dispatch(plural.actions.select(pluralForm));
-    store.dispatch(editor.actions.reset());
+  await store.dispatch(plural.actions.select(pluralForm));
+  store.dispatch(editor.actions.reset());
 }
 
 async function createComponent(entityIndex = 0) {
-    const store = createReduxStore();
-    createDefaultUser(store);
+  const store = createReduxStore();
+  createDefaultUser(store);
 
-    const wrapper = mountComponentWithStore(GenericEditor, store);
+  const wrapper = mountComponentWithStore(GenericEditor, store);
 
-    store.dispatch(entities.actions.receive(ENTITIES));
-    await selectEntity(store, entityIndex);
+  store.dispatch(entities.actions.receive(ENTITIES));
+  await selectEntity(store, entityIndex);
 
-    // Force a re-render.
-    wrapper.setProps({});
+  // Force a re-render.
+  wrapper.setProps({});
 
-    return [wrapper, store];
+  return [wrapper, store];
 }
 
 describe('<Editor>', () => {
-    it('updates translation on mount', async () => {
-        const [, store] = await createComponent(1);
-        expect(store.getState().editor.translation).toEqual('quelque chose');
-    });
+  it('updates translation on mount', async () => {
+    const [, store] = await createComponent(1);
+    expect(store.getState().editor.translation).toEqual('quelque chose');
+  });
 
-    it('sets initial translation on mount', async () => {
-        const [, store] = await createComponent(1);
-        expect(store.getState().editor.initialTranslation).toEqual(
-            'quelque chose',
-        );
-    });
+  it('sets initial translation on mount', async () => {
+    const [, store] = await createComponent(1);
+    expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
+  });
 
-    it('updates translation when entity or plural change', async () => {
-        const [wrapper, store] = await createComponent(1);
+  it('updates translation when entity or plural change', async () => {
+    const [wrapper, store] = await createComponent(1);
 
-        await selectEntity(store, 2);
-        expect(store.getState().editor.translation).toEqual('deuxième');
+    await selectEntity(store, 2);
+    expect(store.getState().editor.translation).toEqual('deuxième');
 
-        await selectPlural(store, 1);
-        wrapper.setProps({});
-        expect(store.getState().editor.translation).toEqual('deuxièmes');
-    });
+    await selectPlural(store, 1);
+    wrapper.setProps({});
+    expect(store.getState().editor.translation).toEqual('deuxièmes');
+  });
 
-    it('sets initial translation when entity or plural change', async () => {
-        const [wrapper, store] = await createComponent(1);
+  it('sets initial translation when entity or plural change', async () => {
+    const [wrapper, store] = await createComponent(1);
 
-        await selectEntity(store, 2);
-        expect(store.getState().editor.initialTranslation).toEqual('deuxième');
+    await selectEntity(store, 2);
+    expect(store.getState().editor.initialTranslation).toEqual('deuxième');
 
-        await selectPlural(store, 1);
-        wrapper.setProps({});
-        expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
-    });
+    await selectPlural(store, 1);
+    wrapper.setProps({});
+    expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
+  });
 
-    it('does not set initial translation when translation changes', async () => {
-        const [, store] = await createComponent(1);
-        expect(store.getState().editor.initialTranslation).toEqual(
-            'quelque chose',
-        );
+  it('does not set initial translation when translation changes', async () => {
+    const [, store] = await createComponent(1);
+    expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
 
-        store.dispatch(editor.actions.update('autre chose'));
-        expect(store.getState().editor.initialTranslation).toEqual(
-            'quelque chose',
-        );
-    });
+    store.dispatch(editor.actions.update('autre chose'));
+    expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
+  });
 });

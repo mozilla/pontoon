@@ -23,33 +23,33 @@ import * as unsavedchanges from '~/modules/unsavedchanges';
 
 // Combine reducers from all modules, using their NAME constant as key.
 const reducers = {
-    // Core modules
-    [editor.NAME]: editor.reducer,
-    [entities.NAME]: entities.reducer,
-    [lightbox.NAME]: lightbox.reducer,
-    [locale.NAME]: locale.reducer,
-    [l10n.NAME]: l10n.reducer,
-    [notification.NAME]: notification.reducer,
-    [plural.NAME]: plural.reducer,
-    [project.NAME]: project.reducer,
-    [resource.NAME]: resource.reducer,
-    [stats.NAME]: stats.reducer,
-    [user.NAME]: user.reducer,
-    // Application modules
-    [batchactions.NAME]: batchactions.reducer,
-    [history.NAME]: history.reducer,
-    [machinery.NAME]: machinery.reducer,
-    [otherlocales.NAME]: otherlocales.reducer,
-    [search.NAME]: search.reducer,
-    [teamcomments.NAME]: teamcomments.reducer,
-    [term.NAME]: term.reducer,
-    [unsavedchanges.NAME]: unsavedchanges.reducer,
+  // Core modules
+  [editor.NAME]: editor.reducer,
+  [entities.NAME]: entities.reducer,
+  [lightbox.NAME]: lightbox.reducer,
+  [locale.NAME]: locale.reducer,
+  [l10n.NAME]: l10n.reducer,
+  [notification.NAME]: notification.reducer,
+  [plural.NAME]: plural.reducer,
+  [project.NAME]: project.reducer,
+  [resource.NAME]: resource.reducer,
+  [stats.NAME]: stats.reducer,
+  [user.NAME]: user.reducer,
+  // Application modules
+  [batchactions.NAME]: batchactions.reducer,
+  [history.NAME]: history.reducer,
+  [machinery.NAME]: machinery.reducer,
+  [otherlocales.NAME]: otherlocales.reducer,
+  [search.NAME]: search.reducer,
+  [teamcomments.NAME]: teamcomments.reducer,
+  [term.NAME]: term.reducer,
+  [unsavedchanges.NAME]: unsavedchanges.reducer,
 };
 
 const combinedReducers = (browserHistory: History) => ({
-    // System modules
-    router: connectRouter(browserHistory),
-    ...reducers,
+  // System modules
+  router: connectRouter(browserHistory),
+  ...reducers,
 });
 
 export default combinedReducers;

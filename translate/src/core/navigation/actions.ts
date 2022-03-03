@@ -15,48 +15,48 @@ import type { AppDispatch } from '~/store';
  * @param {boolean} replaceHistory Whether or not to push a new URL or replace the current one in the browser history.
  */
 export function update(
-    router: Record<string, any>,
-    params: Record<string, string | null | undefined>,
-    replaceHistory?: boolean,
+  router: Record<string, any>,
+  params: Record<string, string | null | undefined>,
+  replaceHistory?: boolean,
 ) {
-    return (dispatch: AppDispatch) => {
-        const queryString = router.location.search;
-        const currentParams = new URLSearchParams(queryString);
+  return (dispatch: AppDispatch) => {
+    const queryString = router.location.search;
+    const currentParams = new URLSearchParams(queryString);
 
-        Object.keys(params).forEach((param: string) => {
-            const prev = currentParams.get(param);
-            const value = params[param];
+    Object.keys(params).forEach((param: string) => {
+      const prev = currentParams.get(param);
+      const value = params[param];
 
-            if (value === prev || (!value && !prev)) {
-                return;
-            }
+      if (value === prev || (!value && !prev)) {
+        return;
+      }
 
-            if (!value) {
-                currentParams.delete(param);
-            } else {
-                currentParams.set(param, value);
-            }
-        });
+      if (!value) {
+        currentParams.delete(param);
+      } else {
+        currentParams.set(param, value);
+      }
+    });
 
-        // If the URL did not change, don't do anything.
-        if (queryString === '?' + currentParams.toString()) {
-            return;
-        }
+    // If the URL did not change, don't do anything.
+    if (queryString === '?' + currentParams.toString()) {
+      return;
+    }
 
-        // When we change the URL, we want to remove the `string` parameter
-        // because with the new results, that entity might not be available
-        // anymore.
-        if (!params['string']) {
-            currentParams.delete('string');
-        }
+    // When we change the URL, we want to remove the `string` parameter
+    // because with the new results, that entity might not be available
+    // anymore.
+    if (!params['string']) {
+      currentParams.delete('string');
+    }
 
-        let updateMethod = push;
-        if (replaceHistory) {
-            updateMethod = replace;
-        }
+    let updateMethod = push;
+    if (replaceHistory) {
+      updateMethod = replace;
+    }
 
-        dispatch(updateMethod('?' + currentParams.toString()));
-    };
+    dispatch(updateMethod('?' + currentParams.toString()));
+  };
 }
 
 /**
@@ -68,10 +68,10 @@ export function update(
  * It keeps all other parameters in the URL the same.
  */
 export function updateAuthor(
-    router: Record<string, any>,
-    author: string | null | undefined,
+  router: Record<string, any>,
+  author: string | null | undefined,
 ) {
-    return update(router, { author });
+  return update(router, { author });
 }
 
 /**
@@ -80,11 +80,11 @@ export function updateAuthor(
  * This function keeps all other parameters in the URL the same.
  */
 export function updateEntity(
-    router: Record<string, any>,
-    entity: string,
-    replaceHistory?: boolean,
+  router: Record<string, any>,
+  entity: string,
+  replaceHistory?: boolean,
 ) {
-    return update(router, { string: entity }, replaceHistory);
+  return update(router, { string: entity }, replaceHistory);
 }
 
 /**
@@ -96,10 +96,10 @@ export function updateEntity(
  * It keeps all other parameters in the URL the same.
  */
 export function updateExtra(
-    router: Record<string, any>,
-    extra: string | null | undefined,
+  router: Record<string, any>,
+  extra: string | null | undefined,
 ) {
-    return update(router, { extra });
+  return update(router, { extra });
 }
 
 /**
@@ -111,10 +111,10 @@ export function updateExtra(
  * It keeps all other parameters in the URL the same.
  */
 export function updateSearch(
-    router: Record<string, any>,
-    search: string | null | undefined,
+  router: Record<string, any>,
+  search: string | null | undefined,
 ) {
-    return update(router, { search });
+  return update(router, { search });
 }
 
 /**
@@ -126,10 +126,10 @@ export function updateSearch(
  * It keeps all other parameters in the URL the same.
  */
 export function updateStatus(
-    router: Record<string, any>,
-    status: string | null | undefined,
+  router: Record<string, any>,
+  status: string | null | undefined,
 ) {
-    return update(router, { status });
+  return update(router, { status });
 }
 
 /**
@@ -141,10 +141,10 @@ export function updateStatus(
  * It keeps all other parameters in the URL the same.
  */
 export function updateTag(
-    router: Record<string, any>,
-    tag: string | null | undefined,
+  router: Record<string, any>,
+  tag: string | null | undefined,
 ) {
-    return update(router, { tag });
+  return update(router, { tag });
 }
 
 /**
@@ -156,19 +156,19 @@ export function updateTag(
  * It keeps all other parameters in the URL the same.
  */
 export function updateTime(
-    router: Record<string, any>,
-    time: string | null | undefined,
+  router: Record<string, any>,
+  time: string | null | undefined,
 ) {
-    return update(router, { time });
+  return update(router, { time });
 }
 
 export default {
-    update,
-    updateAuthor,
-    updateEntity,
-    updateExtra,
-    updateSearch,
-    updateStatus,
-    updateTag,
-    updateTime,
+  update,
+  updateAuthor,
+  updateEntity,
+  updateExtra,
+  updateSearch,
+  updateStatus,
+  updateTag,
+  updateTime,
 };

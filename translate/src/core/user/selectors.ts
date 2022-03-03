@@ -12,25 +12,25 @@ const localeSelector = (state: RootState) => state[LOCALE_NAME];
 const projectSelector = (state: RootState) => state[PROJECT_NAME];
 
 export function _isTranslator(
-    user: ReturnType<typeof userSelector>,
-    locale: ReturnType<typeof localeSelector>,
-    project: ReturnType<typeof projectSelector>,
+  user: ReturnType<typeof userSelector>,
+  locale: ReturnType<typeof localeSelector>,
+  project: ReturnType<typeof projectSelector>,
 ): boolean {
-    const localeProject = locale.code + '-' + project.slug;
+  const localeProject = locale.code + '-' + project.slug;
 
-    if (!user.isAuthenticated) {
-        return false;
-    }
+  if (!user.isAuthenticated) {
+    return false;
+  }
 
-    if (user.managerForLocales.indexOf(locale.code) !== -1) {
-        return true;
-    }
+  if (user.managerForLocales.indexOf(locale.code) !== -1) {
+    return true;
+  }
 
-    if (Object.hasOwnProperty.call(user.translatorForProjects, localeProject)) {
-        return user.translatorForProjects[localeProject];
-    }
+  if (Object.hasOwnProperty.call(user.translatorForProjects, localeProject)) {
+    return user.translatorForProjects[localeProject];
+  }
 
-    return user.translatorForLocales.indexOf(locale.code) !== -1;
+  return user.translatorForLocales.indexOf(locale.code) !== -1;
 }
 
 /**
@@ -38,12 +38,12 @@ export function _isTranslator(
  * and locale.
  */
 export const isTranslator = createSelector(
-    userSelector,
-    localeSelector,
-    projectSelector,
-    _isTranslator,
+  userSelector,
+  localeSelector,
+  projectSelector,
+  _isTranslator,
 );
 
 export default {
-    isTranslator,
+  isTranslator,
 };

@@ -9,18 +9,18 @@ import type { PatternElement } from '@fluent/syntax';
  * - select expressions, whose variants are simple elements
  */
 export default function areSupportedElements(
-    elements: Array<PatternElement>,
+  elements: Array<PatternElement>,
 ): boolean {
-    return elements.every((element) => {
-        return (
-            isSimpleElement(element) ||
-            (element.type === 'Placeable' &&
-                element.expression.type === 'SelectExpression' &&
-                element.expression.variants.every((variant) => {
-                    return variant.value.elements.every((element) =>
-                        isSimpleElement(element),
-                    );
-                }))
-        );
-    });
+  return elements.every((element) => {
+    return (
+      isSimpleElement(element) ||
+      (element.type === 'Placeable' &&
+        element.expression.type === 'SelectExpression' &&
+        element.expression.variants.every((variant) => {
+          return variant.value.elements.every((element) =>
+            isSimpleElement(element),
+          );
+        }))
+    );
+  });
 }

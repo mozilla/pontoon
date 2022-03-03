@@ -1,44 +1,44 @@
 .other-locales .translation {
-    border-bottom: 1px solid #5e6475;
-    cursor: pointer;
-    padding: 10px;
+  border-bottom: 1px solid #5e6475;
+  cursor: pointer;
+  padding: 10px;
 }
 
 .other-locales ul.preferred-list .translation:last-child {
-    border-bottom-color: #7bc876;
+  border-bottom-color: #7bc876;
 }
 
 .other-locales .translation.cannot-copy {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .other-locales .translation:not(.cannot-copy):hover,
 .other-locales .translation.selected {
-    background: #333941;
-    border-color: #5e6475;
+  background: #333941;
+  border-color: #5e6475;
 }
 
 .other-locales .translation > header {
-    color: #aaaaaa;
-    display: block;
-    font-size: 11px;
-    font-weight: 300;
-    padding: 1px 0 5px;
-    text-align: right;
-    text-transform: uppercase;
+  color: #aaaaaa;
+  display: block;
+  font-size: 11px;
+  font-weight: 300;
+  padding: 1px 0 5px;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 .other-locales .translation > header span {
-    color: #7bc876;
-    padding-left: 3px;
+  color: #7bc876;
+  padding-left: 3px;
 }
 
 .other-locales .translation > p {
-    min-height: 22px;
-    text-align: start;
-    white-space: pre-wrap;
+  min-height: 22px;
+  text-align: start;
+  white-space: pre-wrap;
 }
 
 .other-locales .translation > header a {
-    pointer-events: auto;
+  pointer-events: auto;
 }
