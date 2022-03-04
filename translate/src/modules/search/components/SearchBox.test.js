@@ -251,7 +251,7 @@ describe('<SearchBox>', () => {
     const spy = sinon.spy();
     history.listen(spy);
 
-    const store = createReduxStore({}, history);
+    const store = createReduxStore();
     const wrapper = mountComponentWithStore(SearchBox, store, {}, history);
 
     // `simulate()` doesn't quite work in conjunction with `mount()`, so

@@ -1,6 +1,3 @@
-import { connectRouter } from 'connected-react-router';
-import { History } from 'history';
-
 import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
 import * as lightbox from '~/core/lightbox';
@@ -20,7 +17,7 @@ import * as teamcomments from '~/modules/teamcomments';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 
 // Combine reducers from all modules, using their NAME constant as key.
-const reducers = {
+export const reducer = {
   // Core modules
   [editor.NAME]: editor.reducer,
   [entities.NAME]: entities.reducer,
@@ -41,11 +38,3 @@ const reducers = {
   [term.NAME]: term.reducer,
   [unsavedchanges.NAME]: unsavedchanges.reducer,
 };
-
-const combinedReducers = (browserHistory: History) => ({
-  // System modules
-  router: connectRouter(browserHistory),
-  ...reducers,
-});
-
-export default combinedReducers;

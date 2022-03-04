@@ -1,20 +1,18 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
-import { routerMiddleware } from 'connected-react-router';
 
-import history from './historyInstance';
-import createRootReducer from './rootReducer';
+import { reducer } from './rootReducer';
 
 const store = configureStore({
-  // @ts-ignore Here be dragons
-  reducer: createRootReducer(history),
+  // @ts-expect-error Here be dragons
+  reducer,
 
-  // @ts-ignore Here be dragons
+  // @ts-expect-error Here be dragons
   middleware(getDefaultMiddleware) {
     const middleware = getDefaultMiddleware({
       serializableCheck: false,
       immutableCheck: false,
-    }).prepend(routerMiddleware(history));
+    });
 
     if (process.env.NODE_ENV === 'development') middleware.push(createLogger());
 

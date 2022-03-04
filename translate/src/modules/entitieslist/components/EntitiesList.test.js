@@ -68,7 +68,7 @@ describe('<EntitiesList>', () => {
       initialEntries: ['/kg/firefox/all-resources/?string=1'],
     });
 
-    const store = createReduxStore({}, history);
+    const store = createReduxStore();
     store.dispatch(EntitiesActions.receive(ENTITIES, false));
 
     const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
@@ -97,7 +97,7 @@ describe('<EntitiesList>', () => {
     const spy = sinon.spy();
     history.listen(spy);
 
-    const store = createReduxStore({}, history);
+    const store = createReduxStore();
     store.dispatch(EntitiesActions.receive(ENTITIES, false));
 
     mountComponentWithStore(EntitiesList, store, {}, history);

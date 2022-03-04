@@ -18,16 +18,12 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
-const stubSelector = (sel) =>
-  sel({
-    //router: { location: { pathname: '/locale/project/resource/', search: '' } },
-    [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS,
-  });
-
 describe('<BatchActions>', () => {
   beforeAll(() => {
     sinon.stub(Hooks, 'useAppDispatch').returns(() => {});
-    sinon.stub(Hooks, 'useAppSelector').callsFake(stubSelector);
+    sinon
+      .stub(Hooks, 'useAppSelector')
+      .callsFake((sel) => sel({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }));
     sinon.stub(Actions, 'resetSelection').returns({ type: 'whatever' });
     sinon.stub(Actions, 'selectAll').returns({ type: 'whatever' });
   });

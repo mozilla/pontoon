@@ -1,4 +1,3 @@
-import { ConnectedRouter } from 'connected-react-router';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import React from 'react';
@@ -20,15 +19,13 @@ TimeAgo.addLocale(en);
 
 render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <LocationProvider history={history}>
-        <PluralFormProvider>
-          <AppLocalizationProvider>
-            <App />
-          </AppLocalizationProvider>
-        </PluralFormProvider>
-      </LocationProvider>
-    </ConnectedRouter>
+    <LocationProvider history={history}>
+      <PluralFormProvider>
+        <AppLocalizationProvider>
+          <App />
+        </AppLocalizationProvider>
+      </PluralFormProvider>
+    </LocationProvider>
   </Provider>,
   document.getElementById('root'),
 );
