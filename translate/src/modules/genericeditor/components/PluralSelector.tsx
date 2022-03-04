@@ -3,13 +3,13 @@ import React, { useContext } from 'react';
 import { Locale } from '~/context/locale';
 import { PluralFormType, usePluralForm } from '~/context/pluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
+import { CLDR_PLURALS } from '~/core/utils/constants';
 import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
-import { CLDR_PLURALS } from '../index';
 import './PluralSelector.css';
 
 type Props = {

@@ -1,6 +1,6 @@
-import { CLDR_PLURALS } from '~/core/plural';
-
 import type { SelectExpression } from '@fluent/syntax';
+
+import { CLDR_PLURALS } from '../constants';
 
 /**
  * Return true when AST element represents a pluralized string.

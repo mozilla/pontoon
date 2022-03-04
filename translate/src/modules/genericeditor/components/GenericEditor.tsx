@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import * as editor from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { PluralSelector } from '~/core/plural';
 import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import GenericTranslationForm from './GenericTranslationForm';
+import PluralSelector from './PluralSelector';
 
 /**
  * Hook to update the editor content whenever the entity changes.
