@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
+import { PluralFormType, usePluralForm } from '~/context/pluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
@@ -8,12 +9,11 @@ import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
-import { usePluralForm } from '../hooks';
-import { actions, CLDR_PLURALS } from '../index';
+import { CLDR_PLURALS } from '../index';
 import './PluralSelector.css';
 
 type Props = {
-  pluralForm: number;
+  pluralForm: PluralFormType;
 };
 
 type WrapperProps = {
@@ -34,7 +34,7 @@ type InternalProps = Props &
  */
 export function PluralSelectorBase({
   dispatch,
-  pluralForm,
+  pluralForm: { pluralForm, setPluralForm },
   resetEditor,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
@@ -50,7 +50,7 @@ export function PluralSelectorBase({
       dispatch(
         checkUnsavedChanges(exist, ignored, () => {
           resetEditor();
-          dispatch(actions.select(nextPluralForm));
+          setPluralForm(nextPluralForm);
         }),
       );
     }

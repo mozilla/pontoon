@@ -6,7 +6,6 @@ import * as entities from '~/core/entities';
 import * as lightbox from '~/core/lightbox';
 import * as l10n from '~/core/l10n';
 import * as notification from '~/core/notification';
-import * as plural from '~/core/plural';
 import * as project from '~/core/project';
 import * as resource from '~/core/resource';
 import * as stats from '~/core/stats';
@@ -28,7 +27,6 @@ const reducers = {
   [lightbox.NAME]: lightbox.reducer,
   [l10n.NAME]: l10n.reducer,
   [notification.NAME]: notification.reducer,
-  [plural.NAME]: plural.reducer,
   [project.NAME]: project.reducer,
   [resource.NAME]: resource.reducer,
   [stats.NAME]: stats.reducer,

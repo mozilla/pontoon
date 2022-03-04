@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 
 import App from './App';
 import { LocationProvider } from './context/location';
+import { PluralFormProvider } from './context/pluralForm';
 import { AppLocalizationProvider } from './core/l10n';
 import history from './historyInstance';
 import './index.css';
@@ -21,9 +22,11 @@ render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <LocationProvider history={history}>
-        <AppLocalizationProvider>
-          <App />
-        </AppLocalizationProvider>
+        <PluralFormProvider>
+          <AppLocalizationProvider>
+            <App />
+          </AppLocalizationProvider>
+        </PluralFormProvider>
       </LocationProvider>
     </ConnectedRouter>
   </Provider>,

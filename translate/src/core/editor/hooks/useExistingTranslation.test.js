@@ -1,9 +1,9 @@
 import sinon from 'sinon';
+import * as PluralForm from '~/context/pluralForm';
 import fluentParser from '~/core/utils/fluent/parser';
 import flattenMessage from '~/core/utils/fluent/flattenMessage';
 import * as Hooks from '~/hooks';
 import * as SelectedEntity from '~/core/entities/hooks';
-import * as TranslationForEntity from '~/core/plural/hooks';
 
 import { useExistingTranslation } from './useExistingTranslation';
 
@@ -50,16 +50,16 @@ const fluentSelector =
 beforeAll(() => {
   sinon.stub(Hooks, 'useAppSelector');
   sinon.stub(SelectedEntity, 'useSelectedEntity');
-  sinon.stub(TranslationForEntity, 'useTranslationForEntity');
+  sinon.stub(PluralForm, 'useTranslationForEntity');
 });
 beforeEach(() => {
-  TranslationForEntity.useTranslationForEntity.returns(ACTIVE_TRANSLATION);
+  PluralForm.useTranslationForEntity.returns(ACTIVE_TRANSLATION);
   SelectedEntity.useSelectedEntity.returns(ENTITY_STRING);
 });
 afterAll(() => {
   Hooks.useAppSelector.restore();
   SelectedEntity.useSelectedEntity.restore();
-  TranslationForEntity.useTranslationForEntity.restore();
+  PluralForm.useTranslationForEntity.restore();
 });
 
 describe('useExistingTranslation', () => {

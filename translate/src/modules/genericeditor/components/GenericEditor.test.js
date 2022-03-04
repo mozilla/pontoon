@@ -4,10 +4,11 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
+import { Locale } from '~/context/locale';
 import { LocationProvider } from '~/context/location';
+import { PluralFormProvider } from '~/context/pluralForm';
 import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
-import * as plural from '~/core/plural';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 
@@ -36,11 +37,6 @@ function selectEntity(store, history, entityIndex) {
   store.dispatch(editor.actions.reset());
 }
 
-function selectPlural(store, pluralForm) {
-  store.dispatch(plural.actions.select(pluralForm));
-  store.dispatch(editor.actions.reset());
-}
-
 function createComponent(entityIndex = 0) {
   const store = createReduxStore();
   createDefaultUser(store);
@@ -52,7 +48,11 @@ function createComponent(entityIndex = 0) {
   const wrapper = mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <GenericEditor />
+        <PluralFormProvider>
+          <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
+            <GenericEditor />
+          </Locale.Provider>
+        </PluralFormProvider>
       </LocationProvider>
     </Provider>,
   );
@@ -77,26 +77,22 @@ describe('<Editor>', () => {
     expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
   });
 
-  it('updates translation when entity or plural change', () => {
+  it('updates translation & initialTranslation when entity or plural change', () => {
     const [wrapper, store, history] = createComponent(1);
 
     selectEntity(store, history, 2);
-    expect(store.getState().editor.translation).toEqual('deuxième');
+    expect(store.getState().editor).toMatchObject({
+      initialTranslation: 'deuxième',
+      translation: 'deuxième',
+    });
 
-    selectPlural(store, 1);
-    wrapper.setProps({});
-    expect(store.getState().editor.translation).toEqual('deuxièmes');
-  });
+    wrapper.update();
+    wrapper.find('.plural-selector li:last-child button').simulate('click', {});
 
-  it('sets initial translation when entity or plural change', () => {
-    const [wrapper, store, history] = createComponent(1);
-
-    selectEntity(store, history, 2);
-    expect(store.getState().editor.initialTranslation).toEqual('deuxième');
-
-    selectPlural(store, 1);
-    wrapper.setProps({});
-    expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
+    expect(store.getState().editor).toMatchObject({
+      initialTranslation: 'deuxièmes',
+      translation: 'deuxièmes',
+    });
   });
 
   it('does not set initial translation when translation changes', () => {

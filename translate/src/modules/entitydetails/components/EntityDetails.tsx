@@ -8,6 +8,11 @@ import React, {
 
 import { Locale } from '~/context/locale';
 import { Location, LocationType } from '~/context/location';
+import {
+  PluralFormType,
+  usePluralForm,
+  useTranslationForEntity,
+} from '~/context/pluralForm';
 import type { Entity } from '~/core/api';
 import { addComment } from '~/core/comments/actions';
 import {
@@ -26,7 +31,6 @@ import {
 } from '~/core/entities/hooks';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { usePluralForm, useTranslationForEntity } from '~/core/plural/hooks';
 import { NAME as TERMS, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
@@ -84,7 +88,7 @@ type Props = {
   teamComments: TeamCommentState;
   terms: TermState;
   parameters: LocationType;
-  pluralForm: number;
+  pluralForm: PluralFormType;
   selectedEntity?: Entity;
   user: UserState;
 };
@@ -111,7 +115,7 @@ export function EntityDetailsBase({
   teamComments,
   terms,
   parameters,
-  pluralForm,
+  pluralForm: { pluralForm, setPluralForm },
   selectedEntity,
   store,
   user,
@@ -342,7 +346,7 @@ export function EntityDetailsBase({
               change,
               selectedEntity,
               locale,
-              pluralForm,
+              { pluralForm, setPluralForm },
               translationId,
               nextEntity,
               parameters,

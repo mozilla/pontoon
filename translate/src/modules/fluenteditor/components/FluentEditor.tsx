@@ -2,6 +2,7 @@ import type { Entry } from '@fluent/syntax';
 import React, { useContext, useLayoutEffect } from 'react';
 
 import { Locale } from '~/context/locale';
+import { useTranslationForEntity } from '~/context/pluralForm';
 import { Translation, useUpdateTranslation } from '~/core/editor';
 import {
   setInitialTranslation,
@@ -10,7 +11,6 @@ import {
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { messages as notificationMessages } from '~/core/notification';
 import { add as addNotification } from '~/core/notification/actions';
-import { useTranslationForEntity } from '~/core/plural/hooks';
 import { fluent } from '~/core/utils';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 import { useAppDispatch, useAppSelector } from '~/hooks';

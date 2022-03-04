@@ -1,5 +1,5 @@
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { usePluralForm } from '~/core/plural/hooks';
+import { usePluralForm } from '~/context/pluralForm';
 
 import useUpdateTranslation from './useUpdateTranslation';
 
@@ -10,7 +10,7 @@ export default function useCopyOriginalIntoEditor(): () => void {
   const updateTranslation = useUpdateTranslation();
 
   const entity = useSelectedEntity();
-  const pluralForm = usePluralForm(entity);
+  const { pluralForm } = usePluralForm(entity);
 
   return () => {
     if (entity) {

@@ -1,16 +1,20 @@
 import { shallow } from 'enzyme';
-import React from 'react';
+import React, { useContext } from 'react';
 import sinon from 'sinon';
 
 import { Locale } from '~/context/locale';
+import { PluralForm, PluralFormProvider } from '~/context/pluralForm';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
-
-import { actions } from '..';
 
 import PluralSelector, { PluralSelectorBase } from './PluralSelector';
 
-const createShallowPluralSelector = (plural) =>
-  shallow(<PluralSelectorBase pluralForm={plural} resetEditor={sinon.spy()} />);
+const createShallowPluralSelector = (pluralForm) =>
+  shallow(
+    <PluralSelectorBase
+      pluralForm={{ pluralForm }}
+      resetEditor={sinon.spy()}
+    />,
+  );
 
 describe('<PluralSelectorBase>', () => {
   beforeAll(() =>
@@ -70,24 +74,26 @@ describe('<PluralSelectorBase>', () => {
 
 describe('<PluralSelector>', () => {
   it('selects the correct form when clicking a choice', () => {
-    const initialState = { plural: { pluralForm: 1 } };
-    const store = createReduxStore(initialState);
-    const dispatchSpy = sinon.spy(store, 'dispatch');
+    const store = createReduxStore({
+      entities: { entities: [{ pk: 0, original_plural: 'exists' }] },
+    });
 
+    const pfLog = [];
+    const Spy = () => {
+      pfLog.push(useContext(PluralForm).pluralForm);
+      return null;
+    };
     const Component = () => (
-      <Locale.Provider value={{ code: 'kg', cldrPlurals: [1, 5] }}>
-        <PluralSelector resetEditor={sinon.spy()} />
-      </Locale.Provider>
+      <PluralFormProvider>
+        <Spy />
+        <Locale.Provider value={{ code: 'kg', cldrPlurals: [1, 5] }}>
+          <PluralSelector resetEditor={sinon.spy()} />
+        </Locale.Provider>
+      </PluralFormProvider>
     );
     const wrapper = mountComponentWithStore(Component, store);
+    wrapper.find('li:last-child button').simulate('click', {});
 
-    const button = wrapper.find('button').first();
-    // `simulate()` doesn't quite work in conjunction with `mount()`, so
-    // invoking the `prop()` callback directly is the way to go as suggested
-    // by the enzyme maintainer...
-    button.prop('onClick')();
-
-    const expectedAction = actions.select(0);
-    expect(dispatchSpy.calledWith(expectedAction)).toBeTruthy();
+    expect(pfLog).toEqual([-1, 1]);
   });
 });

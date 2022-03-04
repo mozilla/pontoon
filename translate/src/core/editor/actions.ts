@@ -3,10 +3,10 @@ import NProgress from 'nprogress';
 
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
+import { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, SourceType } from '~/core/api';
 import { actions as entitiesActions } from '~/core/entities';
 import * as notification from '~/core/notification';
-import { actions as pluralActions } from '~/core/plural';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import * as unsavedchanges from '~/modules/unsavedchanges';
@@ -243,7 +243,7 @@ export function sendTranslation(
   entity: Entity,
   translation: string,
   locale: LocaleType,
-  pluralForm: number,
+  { pluralForm, setPluralForm }: PluralFormType,
   forceSuggestions: boolean,
   nextEntity: Entity | null | undefined,
   location: LocationType,
@@ -305,14 +305,11 @@ export function sendTranslation(
 
       if (nextEntity) {
         // The change did work, we want to move on to the next Entity or pluralForm.
-        pluralActions.moveToNextTranslation(
-          dispatch,
-          location,
-          entity.pk,
-          nextEntity.pk,
-          pluralForm,
-          locale,
-        );
+        if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+          setPluralForm(pluralForm + 1);
+        } else if (nextEntity.pk !== entity.pk) {
+          location.push({ entity: nextEntity.pk });
+        }
         dispatch(reset());
       }
     }

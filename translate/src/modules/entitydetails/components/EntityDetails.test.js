@@ -51,7 +51,6 @@ const LOCATION = {
   project: 'pro',
   resource: 'all',
   entity: ENTITIES[0].pk,
-  pluralForm: 0,
 };
 const HISTORY = {
   translations: [],
@@ -74,6 +73,7 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
       otherlocales={LOCALES}
       selectedEntity={selectedEntity}
       parameters={LOCATION}
+      pluralForm={{}}
       dispatch={() => {}}
       user={{ settings: {} }}
     />,
@@ -140,7 +140,7 @@ describe('<EntityDetailsBase>', () => {
     expect(editorActions.resetFailedChecks.calledOnce).toBeTruthy();
 
     wrapper.setProps({
-      pluralForm: -1,
+      pluralForm: { pluralForm: -1 },
       selectedEntity: {
         pk: 2,
         original: 'something',
@@ -170,7 +170,7 @@ describe('<EntityDetailsBase>', () => {
     expect(editorActions.resetFailedChecks.calledOnce).toBeTruthy();
 
     wrapper.setProps({
-      pluralForm: -1,
+      pluralForm: { pluralForm: -1 },
       selectedEntity: {
         pk: 2,
         original: 'something',

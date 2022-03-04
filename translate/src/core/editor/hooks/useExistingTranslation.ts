@@ -1,5 +1,5 @@
+import { useTranslationForEntity } from '~/context/pluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { useTranslationForEntity } from '~/core/plural/hooks';
 import getReconstructedMessage from '~/core/utils/fluent/getReconstructedMessage';
 import fluentParser from '~/core/utils/fluent/parser';
 import fluentSerializer from '~/core/utils/fluent/serializer';

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
-import { usePluralForm } from '~/core/plural/hooks';
+import { usePluralForm } from '~/context/pluralForm';
 import { useAppDispatch } from '~/hooks';
 import type { ChangeOperation } from '~/modules/history';
 import { updateStatus } from '~/modules/history/actions';

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as editor from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { PluralSelector } from '~/core/plural';
-import { usePluralForm, useTranslationForEntity } from '~/core/plural/hooks';
+import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import GenericTranslationForm from './GenericTranslationForm';
@@ -18,7 +18,7 @@ function useLoadTranslation() {
 
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const entity = useSelectedEntity();
-  const pluralForm = usePluralForm(entity);
+  const { pluralForm } = usePluralForm(entity);
   const activeTranslationString = useTranslationForEntity(entity)?.string ?? '';
 
   React.useLayoutEffect(() => {
@@ -55,7 +55,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
 
   const translation = useAppSelector((state) => state.editor.translation);
   const entity = useSelectedEntity();
-  const pluralForm = usePluralForm(entity);
+  const { pluralForm } = usePluralForm(entity);
 
   if (!entity || typeof translation !== 'string') {
     return null;
