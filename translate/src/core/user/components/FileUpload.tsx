@@ -1,12 +1,12 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useRef } from 'react';
 
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 
 import './FileUpload.css';
 
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
 };
 
 /*

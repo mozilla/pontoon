@@ -2,6 +2,7 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+import { Location } from '~/context/location';
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
 import { findLocalizedById } from '~/test/utils';
@@ -12,25 +13,36 @@ import UserMenuBase, { UserMenu } from './UserMenu';
 
 describe('<UserMenu>', () => {
   beforeAll(() => {
+    sinon.stub(React, 'useContext');
     sinon.stub(Hooks, 'useAppSelector');
     sinon.stub(Translator, 'useTranslator');
   });
   afterAll(() => {
+    React.useContext.restore();
     Hooks.useAppSelector.restore();
     Translator.useTranslator.restore();
   });
+
+  const LOCATION = {
+    locale: 'my',
+    project: 'proj',
+    resource: 'res',
+    entity: 42,
+  };
 
   function createUserMenu({
     isAdmin = false,
     isReadOnly = false,
     isTranslator = true,
     isAuthenticated = true,
-    pathname = '/mylocale/myproject/myresource/',
+    location = LOCATION,
   } = {}) {
+    React.useContext.callsFake((ctx) =>
+      ctx === Location ? location : undefined,
+    );
     Hooks.useAppSelector.callsFake((sel) =>
       sel({
         entities: { entities: [{ pk: 42, readonly: isReadOnly }] },
-        router: { location: { pathname, search: '?string=42' } },
       }),
     );
     Translator.useTranslator.returns(isTranslator);
@@ -63,7 +75,9 @@ describe('<UserMenu>', () => {
   });
 
   it('hides upload & download menu items when translating all projects', () => {
-    const wrapper = createUserMenu({ pathname: '/locale/all-projects/' });
+    const wrapper = createUserMenu({
+      location: { ...LOCATION, project: 'all-projects' },
+    });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
     expect(
@@ -73,7 +87,7 @@ describe('<UserMenu>', () => {
 
   it('hides upload & download menu items when translating all resources', () => {
     const wrapper = createUserMenu({
-      pathname: '/locale/project/all-resources/',
+      location: { ...LOCATION, resource: 'all-resources' },
     });
 
     expect(wrapper.find(FileUpload)).toHaveLength(0);
@@ -98,9 +112,7 @@ describe('<UserMenu>', () => {
     const wrapper = createUserMenu({ isAdmin: true });
 
     expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
-    expect(wrapper.find('a[href="/admin/projects/myproject/"]')).toHaveLength(
-      1,
-    );
+    expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(1);
   });
 });
 

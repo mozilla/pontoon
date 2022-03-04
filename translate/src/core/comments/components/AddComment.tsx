@@ -1,17 +1,18 @@
-import * as React from 'react';
-import ReactDOM from 'react-dom';
 import { Localized } from '@fluent/react';
+import escapeHtml from 'escape-html';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import type { Descendant } from 'slate';
 import {
   BaseEditor,
+  createEditor,
   Editor,
   Element as SlateElement,
-  Transforms,
-  Range,
-  createEditor,
-  Text,
   Node,
+  Range,
+  Text,
+  Transforms,
 } from 'slate';
-import type { Descendant } from 'slate';
 import {
   Editable,
   ReactEditor,
@@ -19,18 +20,16 @@ import {
   Slate,
   withReact,
 } from 'slate-react';
-import escapeHtml from 'escape-html';
+
+import type { LocationType } from '~/context/location';
+import type { UsersList } from '~/core/api';
+import type { UserState } from '~/core/user';
+import { UserAvatar } from '~/core/user';
 
 import './AddComment.css';
 
-import { UserAvatar } from '~/core/user';
-
-import type { NavigationParams } from '~/core/navigation';
-import type { UserState } from '~/core/user';
-import type { UsersList } from '~/core/api';
-
 type Props = {
-  parameters: NavigationParams | null | undefined;
+  parameters: LocationType | null | undefined;
   translation?: number | null | undefined;
   user: UserState;
   contactPerson?: string;

@@ -1,13 +1,15 @@
+import { mount } from 'enzyme';
+import { createMemoryHistory } from 'history';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
+
+import { LocationProvider } from '~/context/location';
 import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
 import * as plural from '~/core/plural';
 
-import {
-  createDefaultUser,
-  createReduxStore,
-  mountComponentWithStore,
-} from '~/test/store';
+import { createDefaultUser, createReduxStore } from '~/test/store';
 
 import GenericEditor from './GenericEditor';
 
@@ -29,68 +31,76 @@ const ENTITIES = [
   },
 ];
 
-async function selectEntity(store, entityIndex) {
-  await store.dispatch(
-    navigation.actions.updateEntity(store.getState().router, entityIndex),
-  );
+function selectEntity(store, history, entityIndex) {
+  act(() => history.push(`?string=${entityIndex}`));
   store.dispatch(editor.actions.reset());
 }
 
-async function selectPlural(store, pluralForm) {
-  await store.dispatch(plural.actions.select(pluralForm));
+function selectPlural(store, pluralForm) {
+  store.dispatch(plural.actions.select(pluralForm));
   store.dispatch(editor.actions.reset());
 }
 
-async function createComponent(entityIndex = 0) {
+function createComponent(entityIndex = 0) {
   const store = createReduxStore();
   createDefaultUser(store);
 
-  const wrapper = mountComponentWithStore(GenericEditor, store);
+  const history = createMemoryHistory({
+    initialEntries: ['/kg/firefox/all-resources/'],
+  });
+
+  const wrapper = mount(
+    <Provider store={store}>
+      <LocationProvider history={history}>
+        <GenericEditor />
+      </LocationProvider>
+    </Provider>,
+  );
 
   store.dispatch(entities.actions.receive(ENTITIES));
-  await selectEntity(store, entityIndex);
+  selectEntity(store, history, entityIndex);
 
   // Force a re-render.
   wrapper.setProps({});
 
-  return [wrapper, store];
+  return [wrapper, store, history];
 }
 
 describe('<Editor>', () => {
-  it('updates translation on mount', async () => {
-    const [, store] = await createComponent(1);
+  it('updates translation on mount', () => {
+    const [, store] = createComponent(1);
     expect(store.getState().editor.translation).toEqual('quelque chose');
   });
 
-  it('sets initial translation on mount', async () => {
-    const [, store] = await createComponent(1);
+  it('sets initial translation on mount', () => {
+    const [, store] = createComponent(1);
     expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
   });
 
-  it('updates translation when entity or plural change', async () => {
-    const [wrapper, store] = await createComponent(1);
+  it('updates translation when entity or plural change', () => {
+    const [wrapper, store, history] = createComponent(1);
 
-    await selectEntity(store, 2);
+    selectEntity(store, history, 2);
     expect(store.getState().editor.translation).toEqual('deuxième');
 
-    await selectPlural(store, 1);
+    selectPlural(store, 1);
     wrapper.setProps({});
     expect(store.getState().editor.translation).toEqual('deuxièmes');
   });
 
-  it('sets initial translation when entity or plural change', async () => {
-    const [wrapper, store] = await createComponent(1);
+  it('sets initial translation when entity or plural change', () => {
+    const [wrapper, store, history] = createComponent(1);
 
-    await selectEntity(store, 2);
+    selectEntity(store, history, 2);
     expect(store.getState().editor.initialTranslation).toEqual('deuxième');
 
-    await selectPlural(store, 1);
+    selectPlural(store, 1);
     wrapper.setProps({});
     expect(store.getState().editor.initialTranslation).toEqual('deuxièmes');
   });
 
-  it('does not set initial translation when translation changes', async () => {
-    const [, store] = await createComponent(1);
+  it('does not set initial translation when translation changes', () => {
+    const [, store] = createComponent(1);
     expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
 
     store.dispatch(editor.actions.update('autre chose'));

@@ -29,8 +29,8 @@ export default function useCopyMachineryTranslation(
   );
 
   const readonly = useReadonlyEditor();
-  const translation = useAppSelector(state => state[EDITOR].translation)
-  const isFluentTranslationMessage = typeof translation !== 'string'
+  const translation = useAppSelector((state) => state[EDITOR].translation);
+  const isFluentTranslationMessage = typeof translation !== 'string';
 
   return useCallback(
     (translation: MachineryTranslation) => {

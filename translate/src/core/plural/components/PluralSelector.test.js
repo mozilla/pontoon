@@ -70,24 +70,7 @@ describe('<PluralSelectorBase>', () => {
 
 describe('<PluralSelector>', () => {
   it('selects the correct form when clicking a choice', () => {
-    const initialState = {
-      plural: {
-        pluralForm: 1,
-      },
-      router: {
-        location: {
-          pathname: '/kg/firefox/all-resources/',
-          search: '?string=42',
-        },
-        // `action` is required because
-        // https://github.com/supasate/connected-react-router/issues/312#issuecomment-500968504
-        // Please note the initial `LOCATION_CHANGE` action can and must
-        // be supressed via the `noInitialPop` prop in
-        // `ConnectedRouter`, otherwise it'll cause side-effects like
-        // executing reducers and hence altering initial state values.
-        action: 'some-string-to-please-connected-react-router',
-      },
-    };
+    const initialState = { plural: { pluralForm: 1 } };
     const store = createReduxStore(initialState);
     const dispatchSpy = sinon.spy(store, 'dispatch');
 

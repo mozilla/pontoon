@@ -2,14 +2,13 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 import type { Tag } from '~/core/project';
 import type { Stats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import type { Author } from '../index';
-
 import './FiltersPanel.css';
 import type { FilterState, FilterType, TimeRangeType } from './SearchBox';
 import { TimeRangeFilter } from './TimeRangeFilter';
@@ -17,7 +16,7 @@ import { TimeRangeFilter } from './TimeRangeFilter';
 type Props = {
   filters: FilterState;
   authorsData: Author[];
-  parameters: NavigationParams;
+  parameters: LocationType;
   stats: Stats;
   tagsData: Tag[];
   timeRange: TimeRangeType | null;

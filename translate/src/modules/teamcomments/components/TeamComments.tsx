@@ -1,16 +1,15 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
-import './TeamComments.css';
-
+import type { LocationType } from '~/context/location';
 import { CommentsList } from '~/core/comments';
-
-import type { NavigationParams } from '~/core/navigation';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
+import './TeamComments.css';
+
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   teamComments: TeamCommentState;
   user: UserState;
   contactPerson: string;

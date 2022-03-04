@@ -1,22 +1,21 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
   useRef,
   useState,
 } from 'react';
+import { Location, LocationType } from '~/context/location';
 
 import { reset as resetEditor } from '~/core/editor/actions';
 import { reset as resetEntities } from '~/core/entities/actions';
-import type { NavigationParams } from '~/core/navigation';
-import { update as updateNavigation } from '~/core/navigation/actions';
 import type { ProjectState } from '~/core/project';
 import { NAME as PROJECT } from '~/core/project';
 import type { Stats } from '~/core/stats';
 import { NAME as STATS } from '~/core/stats';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { useLocation } from '~/hooks/useLocation';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
@@ -36,10 +35,9 @@ export type TimeRangeType = {
 
 type Props = {
   searchAndFilters: SearchAndFilters;
-  parameters: NavigationParams;
+  parameters: LocationType;
   project: ProjectState;
   stats: Stats;
-  router: Record<string, any>;
 };
 
 type InternalProps = Props & {
@@ -77,7 +75,6 @@ export function SearchBoxBase({
   project,
   searchAndFilters,
   stats,
-  router,
   store,
 }: InternalProps): React.ReactElement<'div'> {
   const applyOnChange = useRef(false);
@@ -192,19 +189,18 @@ export function SearchBoxBase({
 
         dispatch(resetEntities());
         dispatch(resetEditor());
-        dispatch(
-          updateNavigation(router, {
-            author: authors.join(','),
-            extra: extras.join(','),
-            search,
-            status,
-            tag: tags.join(','),
-            time: timeRange ? `${timeRange.from}-${timeRange.to}` : '',
-          }),
-        );
+        parameters.push({
+          author: authors.join(','),
+          extra: extras.join(','),
+          search,
+          status,
+          tag: tags.join(','),
+          time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
+          entity: 0, // With the new results, the current entity might not be available anymore.
+        });
       }),
     );
-  }, [dispatch, store, search, filters]);
+  }, [dispatch, store, parameters, search, filters]);
 
   useEffect(() => {
     if (applyOnChange.current) {
@@ -275,10 +271,9 @@ export function SearchBoxBase({
 export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
-    parameters: useLocation(),
+    parameters: useContext(Location),
     project: useAppSelector((state) => state[PROJECT]),
     stats: useAppSelector((state) => state[STATS]),
-    router: useAppSelector((state) => state.router),
   };
 
   return (

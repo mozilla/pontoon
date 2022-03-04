@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
+import { Location } from '~/context/location';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { useLocation } from '~/hooks/useLocation';
 
 import { performAction, resetSelection, selectAll } from '../actions';
 import { NAME as BATCHACTIONS } from '../index';
@@ -17,7 +17,7 @@ import ReplaceAll from './ReplaceAll';
  */
 export function BatchActions(): React.ReactElement<'div'> {
   const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
-  const location = useLocation();
+  const location = useContext(Location);
   const dispatch = useAppDispatch();
 
   const find = useRef<HTMLInputElement>(null);

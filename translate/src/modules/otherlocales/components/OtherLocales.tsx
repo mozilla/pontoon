@@ -1,18 +1,17 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
 
+import type { LocationType } from '~/context/location';
 import type { Entity } from '~/core/api';
-import type { NavigationParams } from '~/core/navigation';
 
 import type { LocalesState } from '../index';
-
 import './OtherLocales.css';
 import { Translation } from './Translation';
 
 type Props = {
   entity: Entity;
   otherlocales: LocalesState;
-  parameters: NavigationParams;
+  parameters: LocationType;
 };
 
 /**

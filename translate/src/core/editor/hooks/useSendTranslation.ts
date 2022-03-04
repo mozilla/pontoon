@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
+import { Location } from '~/context/location';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm } from '~/core/plural/hooks';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { useLocation } from '~/hooks/useLocation';
 
 import actions from '../actions';
 
@@ -30,10 +30,9 @@ export default function useSendTranslation(): (
   const entity = useSelectedEntity();
   const locale = useContext(Locale);
   const user = useAppSelector((state) => state.user);
-  const router = useAppSelector((state) => state.router);
   const pluralForm = usePluralForm(entity);
   const nextEntity = useNextEntity();
-  const { resource } = useLocation();
+  const location = useContext(Location);
 
   return (ignoreWarnings?: boolean, content?: string) => {
     if (isRunningRequest || !entity || !locale) {
@@ -62,8 +61,7 @@ export default function useSendTranslation(): (
         pluralForm,
         user.settings.forceSuggestions,
         nextEntity,
-        router,
-        resource,
+        location,
         ignoreWarnings,
         realMachinerySources,
       ),

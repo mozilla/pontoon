@@ -1,6 +1,7 @@
 import NProgress from 'nprogress';
 
 import type { LocaleType } from '~/context/locale';
+import { LocationType } from '~/context/location';
 import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
 import { actions as entitiesActions } from '~/core/entities';
@@ -140,11 +141,10 @@ export function updateStatus(
   change: ChangeOperation,
   entity: Entity,
   locale: LocaleType,
-  resource: string,
   pluralForm: number,
   translation: number,
   nextEntity: Entity | null | undefined,
-  router: Record<string, any>,
+  location: LocationType,
   ignoreWarnings?: boolean | null | undefined,
 ) {
   return async (dispatch: AppDispatch) => {
@@ -153,7 +153,7 @@ export function updateStatus(
     const results = await updateStatusOnServer(
       change,
       translation,
-      resource,
+      location.resource,
       ignoreWarnings,
     );
 
@@ -172,7 +172,7 @@ export function updateStatus(
         // The change did work, we want to move on to the next Entity or pluralForm.
         pluralActions.moveToNextTranslation(
           dispatch,
-          router,
+          location,
           entity.pk,
           nextEntity.pk,
           pluralForm,

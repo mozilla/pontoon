@@ -2,24 +2,23 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 import { useOnDiscard } from '~/core/utils';
 
 import type { Resource } from '../actions';
 import type { ResourcesState } from '../index';
-
 import ResourceItem from './ResourceItem';
 import './ResourceMenu.css';
 import ResourcePercent from './ResourcePercent';
 
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   resources: ResourcesState;
   navigateToPath: (path: string) => void;
 };
 
 type ResourceMenuProps = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   resources: ResourcesState;
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;

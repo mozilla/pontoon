@@ -1,9 +1,9 @@
 import { Localized } from '@fluent/react';
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 
+import { Location } from '~/context/location';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { useOnDiscard } from '~/core/utils';
-import { useLocation } from '~/hooks/useLocation';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import type { UserState } from '../index';
@@ -30,7 +30,7 @@ export function UserMenu({
   const entity = useSelectedEntity();
   const readonly = entity?.readonly ?? true;
 
-  const location = useLocation();
+  const location = useContext(Location);
   const { locale, project, resource } = location;
 
   const canDownload =

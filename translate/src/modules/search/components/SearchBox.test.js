@@ -1,9 +1,9 @@
 import { mount, shallow } from 'enzyme';
+import { createMemoryHistory } from 'history';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
-import * as actions from '~/core/navigation/actions';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
@@ -19,18 +19,6 @@ const SEARCH_AND_FILTERS = {
 };
 
 describe('<SearchBoxBase>', () => {
-  beforeAll(() => {
-    sinon.stub(actions, 'update').returns({ type: 'whatever' });
-  });
-
-  afterEach(() => {
-    actions.update.reset();
-  });
-
-  afterAll(() => {
-    actions.update.restore();
-  });
-
   it('shows a search input', () => {
     const params = {
       search: '',
@@ -177,13 +165,13 @@ describe('<SearchBoxBase>', () => {
   });
 
   it('sets status to null when "all" is selected', () => {
+    const push = sinon.spy();
     const wrapper = mount(
       <SearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
-        parameters={{}}
+        parameters={{ push }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
-        router={{}}
         store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
@@ -194,22 +182,28 @@ describe('<SearchBoxBase>', () => {
     });
     wrapper.update();
 
-    expect(
-      actions.update.calledWith(
-        {},
-        { status: null, extra: '', tag: '', time: '', author: '', search: '' },
-      ),
-    ).toBeTruthy();
+    expect(push.callCount).toBe(1);
+    expect(push.firstCall.args).toMatchObject([
+      {
+        author: '',
+        extra: '',
+        search: '',
+        status: null,
+        tag: '',
+        time: null,
+        entity: 0,
+      },
+    ]);
   });
 
   it('sets correct status', () => {
+    const push = sinon.spy();
     const wrapper = mount(
       <SearchBoxBase
         dispatch={(a) => (typeof a === 'function' ? a() : {})}
-        parameters={{}}
+        parameters={{ push }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
-        router={{}}
         store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
@@ -236,27 +230,29 @@ describe('<SearchBoxBase>', () => {
     apply();
 
     expect(
-      actions.update.calledWith(
-        {},
-        {
-          status: 'missing,warnings',
-          extra: 'unchanged',
-          tag: 'browser',
-          time: '111111111111-111111111111',
-          author: 'user@example.com',
-          search: '',
-        },
-      ),
+      push.calledWith({
+        author: 'user@example.com',
+        extra: 'unchanged',
+        search: '',
+        status: 'missing,warnings',
+        tag: 'browser',
+        time: '111111111111-111111111111',
+        entity: 0,
+      }),
     ).toBeTruthy();
   });
 });
 
 describe('<SearchBox>', () => {
   it('updates the search text after a delay', () => {
-    const store = createReduxStore();
-    const wrapper = mountComponentWithStore(SearchBox, store);
+    const history = createMemoryHistory({
+      initialEntries: ['/kg/firefox/all-resources/'],
+    });
+    const spy = sinon.spy();
+    history.listen(spy);
 
-    const updateSpy = sinon.spy(actions, 'update');
+    const store = createReduxStore({}, history);
+    const wrapper = mountComponentWithStore(SearchBox, store, {}, history);
 
     // `simulate()` doesn't quite work in conjunction with `mount()`, so
     // invoking the `prop()` callback directly is the way to go as suggested
@@ -273,12 +269,20 @@ describe('<SearchBox>', () => {
     expect(wrapper.find('input#search').prop('value')).toEqual('test');
 
     // ... but it wasn't propagated to the global redux store yet.
-    expect(updateSpy.calledOnce).toBeFalsy();
+    expect(spy.callCount).toBe(0);
 
     // Wait until Enter is pressed.
     wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
 
-    expect(updateSpy.calledOnce).toBeTruthy();
+    expect(spy.callCount).toBe(1);
+    expect(spy.firstCall.args).toMatchObject([
+      {
+        pathname: '/kg/firefox/all-resources/',
+        search: '?search=test',
+        hash: '',
+      },
+      'PUSH',
+    ]);
   });
 
   it('puts focus on the search input on Ctrl + Shift + F', () => {

@@ -20,7 +20,7 @@ const DEFAULT_BATCH_ACTIONS = {
 
 const stubSelector = (sel) =>
   sel({
-    router: { location: { pathname: '/locale/project/resource/', search: '' } },
+    //router: { location: { pathname: '/locale/project/resource/', search: '' } },
     [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS,
   });
 

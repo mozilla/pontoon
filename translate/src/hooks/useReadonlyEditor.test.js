@@ -1,15 +1,15 @@
+import React from 'react';
 import sinon from 'sinon';
 import * as Hooks from '~/hooks';
-import * as Location from '~/hooks/useLocation';
 import { useReadonlyEditor } from './useReadonlyEditor';
 
 beforeAll(() => {
+  sinon.stub(React, 'useContext').returns({ entity: 42 });
   sinon.stub(Hooks, 'useAppSelector');
-  sinon.stub(Location, 'useLocation').returns({ entity: 42 });
 });
 afterAll(() => {
+  React.useContext.restore();
   Hooks.useAppSelector.restore();
-  Location.useLocation.restore();
 });
 
 const fakeSelector = (readonly, isAuthenticated) => (cb) =>

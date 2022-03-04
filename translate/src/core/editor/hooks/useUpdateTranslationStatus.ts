@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
+import { Location } from '~/context/location';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm } from '~/core/plural/hooks';
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import { useLocation } from '~/hooks/useLocation';
+import { useAppDispatch } from '~/hooks';
 import type { ChangeOperation } from '~/modules/history';
 import { updateStatus } from '~/modules/history/actions';
 
@@ -22,10 +22,9 @@ export default function useUpdateTranslationStatus(): (
 
   const entity = useSelectedEntity();
   const locale = useContext(Locale);
-  const { resource } = useLocation();
+  const location = useContext(Location);
   const pluralForm = usePluralForm(entity);
   const nextEntity = useNextEntity();
-  const router = useAppSelector((state) => state.router);
 
   return (
     translationId: number,
@@ -41,11 +40,10 @@ export default function useUpdateTranslationStatus(): (
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           entity!,
           locale,
-          resource,
           pluralForm,
           translationId,
           nextEntity,
-          router,
+          location,
           ignoreWarnings,
         ),
       );

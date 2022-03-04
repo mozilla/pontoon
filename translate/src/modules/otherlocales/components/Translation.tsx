@@ -1,12 +1,11 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 
+import type { LocationType } from '~/context/location';
 import type { Entity, OtherLocaleTranslation } from '~/core/api';
 import { NAME as EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
-import type { NavigationParams } from '~/core/navigation';
 import { TranslationProxy } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -16,7 +15,7 @@ import './Translation.css';
 type Props = {
   entity: Entity;
   translation: OtherLocaleTranslation;
-  parameters: NavigationParams;
+  parameters: LocationType;
   index: number;
 };
 
@@ -27,9 +26,9 @@ type Props = {
  * locale and its code.
  */
 export function Translation({
-  entity,
+  entity: { format },
   translation,
-  parameters,
+  parameters: { project, resource, entity },
   index,
 }: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
@@ -88,16 +87,16 @@ export function Translation({
                 code: translation.locale.code,
               }}
             >
-              <Link
-                to={`/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}`}
+              <a
+                href={`/${translation.locale.code}/${project}/${resource}/?string=${entity}`}
                 target='_blank'
                 rel='noopener noreferrer'
                 title='Open string in { $locale } ({ $code })'
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                onClick={(ev) => ev.stopPropagation()}
               >
                 {translation.locale.name}
                 <span>{translation.locale.code}</span>
-              </Link>
+              </a>
             </Localized>
           )}
         </header>
@@ -106,10 +105,7 @@ export function Translation({
           dir={translation.locale.direction}
           data-script={translation.locale.script}
         >
-          <TranslationProxy
-            content={translation.translation}
-            format={entity.format}
-          />
+          <TranslationProxy content={translation.translation} format={format} />
         </p>
       </li>
     </Localized>

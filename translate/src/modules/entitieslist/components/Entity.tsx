@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 
 import { Locale } from '~/context/locale';
+import type { LocationType } from '~/context/location';
 import type { Entity as EntityType, EntityTranslation } from '~/core/api';
-import type { NavigationParams } from '~/core/navigation';
 import { TranslationProxy } from '~/core/translation';
 import { useTranslator } from '~/hooks/useTranslator';
 
@@ -18,7 +18,7 @@ type Props = {
   selected: boolean;
   selectEntity: (entity: EntityType) => void;
   getSiblingEntities: (entityPK: number) => void;
-  parameters: NavigationParams;
+  parameters: LocationType;
 };
 
 /**

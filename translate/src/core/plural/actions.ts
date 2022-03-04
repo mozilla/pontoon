@@ -1,7 +1,6 @@
-import { actions as navActions } from '~/core/navigation';
-
-import type { AppDispatch } from '~/store';
 import type { LocaleType } from '~/context/locale';
+import type { LocationType } from '~/context/location';
+import type { AppDispatch } from '~/store';
 
 export const RESET: 'plural/RESET' = 'plural/RESET';
 export const SELECT: 'plural/SELECT' = 'plural/SELECT';
@@ -11,7 +10,7 @@ export const SELECT: 'plural/SELECT' = 'plural/SELECT';
  */
 export function moveToNextTranslation(
   dispatch: AppDispatch,
-  router: Record<string, any>,
+  location: LocationType,
   entity: number,
   nextEntity: number,
   pluralForm: number,
@@ -20,7 +19,7 @@ export function moveToNextTranslation(
   if (pluralForm !== -1 && pluralForm < cldrPlurals.length - 1) {
     dispatch(select(pluralForm + 1));
   } else if (nextEntity !== entity) {
-    dispatch(navActions.updateEntity(router, nextEntity.toString()));
+    location.push({ entity: nextEntity });
   }
 }
 

@@ -1,18 +1,18 @@
+import { mount } from 'enzyme';
+import { createMemoryHistory } from 'history';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 
+import { LocationProvider } from '~/context/location';
 import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
 
 import EditorMenu from './EditorMenu';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
 
-import {
-  createDefaultUser,
-  createReduxStore,
-  mountComponentWithStore,
-} from '~/test/store';
+import { createDefaultUser, createReduxStore } from '~/test/store';
 
 const SELECTED_ENTITY = {
   pk: 1,
@@ -21,7 +21,7 @@ const SELECTED_ENTITY = {
   translation: [{ string: 'test' }, { string: 'test plural' }],
 };
 
-async function createEditorMenu({
+function createEditorMenu({
   forceSuggestions = true,
   isAuthenticated = true,
   entity = SELECTED_ENTITY,
@@ -37,13 +37,20 @@ async function createEditorMenu({
 
   store.dispatch(entities.actions.receive([entity], false));
 
-  const wrapper = mountComponentWithStore(EditorMenu, store, {
-    firstItemHook,
+  const history = createMemoryHistory({
+    initialEntries: ['/kg/firefox/all-resources/'],
   });
 
-  await store.dispatch(
-    navigation.actions.updateEntity(store.getState().router, 1),
+  const wrapper = mount(
+    <Provider store={store}>
+      <LocationProvider history={history}>
+        <EditorMenu firstItemHook={firstItemHook} />
+      </LocationProvider>
+    </Provider>,
   );
+
+  act(() => history.push(`?string=1`));
+  wrapper.update();
 
   return wrapper;
 }
@@ -57,8 +64,8 @@ function expectHiddenSettingsAndActions(wrapper) {
 }
 
 describe('<EditorMenu>', () => {
-  it('renders correctly', async () => {
-    const wrapper = await createEditorMenu();
+  it('renders correctly', () => {
+    const wrapper = createEditorMenu();
 
     // 3 buttons to control the editor.
     expect(wrapper.find('.action-copy').exists()).toBeTruthy();
@@ -66,8 +73,8 @@ describe('<EditorMenu>', () => {
     expect(wrapper.find('EditorMainAction')).toHaveLength(1);
   });
 
-  it('hides the settings and actions when the user is logged out', async () => {
-    const wrapper = await createEditorMenu({ isAuthenticated: false });
+  it('hides the settings and actions when the user is logged out', () => {
+    const wrapper = createEditorMenu({ isAuthenticated: false });
 
     expectHiddenSettingsAndActions(wrapper);
 
@@ -76,12 +83,9 @@ describe('<EditorMenu>', () => {
     ).toHaveLength(1);
   });
 
-  it('hides the settings and actions when the entity is read-only', async () => {
-    const entity = {
-      ...SELECTED_ENTITY,
-      readonly: true,
-    };
-    const wrapper = await createEditorMenu({ entity });
+  it('hides the settings and actions when the entity is read-only', () => {
+    const entity = { ...SELECTED_ENTITY, readonly: true };
+    const wrapper = createEditorMenu({ entity });
 
     expectHiddenSettingsAndActions(wrapper);
 
@@ -90,9 +94,9 @@ describe('<EditorMenu>', () => {
     ).toHaveLength(1);
   });
 
-  it('accepts a firstItemHook and shows it as its first child', async () => {
+  it('accepts a firstItemHook and shows it as its first child', () => {
     const firstItemHook = <p>Hello</p>;
-    const wrapper = await createEditorMenu({ firstItemHook });
+    const wrapper = createEditorMenu({ firstItemHook });
 
     expect(wrapper.find('menu').children().first().text()).toEqual('Hello');
   });

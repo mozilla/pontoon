@@ -1,4 +1,3 @@
-import { push } from 'connected-react-router';
 import React, {
   useCallback,
   useContext,
@@ -8,6 +7,7 @@ import React, {
 } from 'react';
 
 import { Locale } from '~/context/locale';
+import { Location, LocationType } from '~/context/location';
 import type { Entity } from '~/core/api';
 import { addComment } from '~/core/comments/actions';
 import {
@@ -24,8 +24,6 @@ import {
   usePreviousEntity,
   useSelectedEntity,
 } from '~/core/entities/hooks';
-import type { NavigationParams } from '~/core/navigation';
-import { updateEntity } from '~/core/navigation/actions';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { usePluralForm, useTranslationForEntity } from '~/core/plural/hooks';
@@ -34,7 +32,6 @@ import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { useLocation } from '~/hooks/useLocation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   ChangeOperation,
@@ -86,9 +83,8 @@ type Props = {
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
-  parameters: NavigationParams;
+  parameters: LocationType;
   pluralForm: number;
-  router: Record<string, any>;
   selectedEntity?: Entity;
   user: UserState;
 };
@@ -116,7 +112,6 @@ export function EntityDetailsBase({
   terms,
   parameters,
   pluralForm,
-  router,
   selectedEntity,
   store,
   user,
@@ -266,11 +261,11 @@ export function EntityDetailsBase({
 
     dispatch(
       checkUnsavedChanges(exist, ignored, () => {
-        dispatch(updateEntity(router, nextEntity?.pk.toString() ?? ''));
+        parameters.push({ entity: nextEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
     );
-  }, [dispatch, nextEntity, router, store]);
+  }, [dispatch, parameters, nextEntity, store]);
 
   const goToPreviousEntity = useCallback(() => {
     const state = store.getState();
@@ -278,11 +273,11 @@ export function EntityDetailsBase({
 
     dispatch(
       checkUnsavedChanges(exist, ignored, () => {
-        dispatch(updateEntity(router, previousEntity?.pk.toString() ?? ''));
+        parameters.push({ entity: previousEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
     );
-  }, [dispatch, previousEntity, router, store]);
+  }, [dispatch, parameters, previousEntity, store]);
 
   const navigateToPath = useCallback(
     (path: string) => {
@@ -290,12 +285,10 @@ export function EntityDetailsBase({
       const { exist, ignored } = state[UNSAVED_CHANGES];
 
       dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
-          dispatch(push(path));
-        }),
+        checkUnsavedChanges(exist, ignored, () => parameters.push(path)),
       );
     },
-    [dispatch, store],
+    [dispatch, parameters, store],
   );
 
   const updateEditorTranslation = useCallback(
@@ -349,11 +342,10 @@ export function EntityDetailsBase({
               change,
               selectedEntity,
               locale,
-              parameters.resource,
               pluralForm,
               translationId,
               nextEntity,
-              router,
+              parameters,
             ),
           );
         }),
@@ -365,7 +357,6 @@ export function EntityDetailsBase({
       nextEntity,
       parameters,
       pluralForm,
-      router,
       selectedEntity,
       store,
     ],
@@ -449,9 +440,8 @@ export default function EntityDetails(): React.ReactElement<
     otherlocales: useAppSelector((state) => state[OTHERLOCALES]),
     teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
     terms: useAppSelector((state) => state[TERMS]),
-    parameters: useLocation(),
+    parameters: useContext(Location),
     pluralForm: usePluralForm(entity),
-    router: useAppSelector((state) => state.router),
     selectedEntity: entity,
     user: useAppSelector((state) => state[USER]),
   };

@@ -1,12 +1,14 @@
+import { mount } from 'enzyme';
+import { createMemoryHistory } from 'history';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
+
+import { LocationProvider } from '~/context/location';
 import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
 
-import {
-  createDefaultUser,
-  createReduxStore,
-  mountComponentWithStore,
-} from '~/test/store';
+import { createDefaultUser, createReduxStore } from '~/test/store';
 
 import FluentEditor from './FluentEditor';
 
@@ -59,53 +61,60 @@ const ENTITIES = [
   },
 ];
 
-async function createComponent(entityPk = 1) {
+function createComponent(entityPk = 1) {
   const store = createReduxStore();
   createDefaultUser(store);
 
-  const wrapper = mountComponentWithStore(FluentEditor, store);
+  const history = createMemoryHistory({
+    initialEntries: ['/kg/firefox/all-resources/'],
+  });
+
+  const wrapper = mount(
+    <Provider store={store}>
+      <LocationProvider history={history}>
+        <FluentEditor />
+      </LocationProvider>
+    </Provider>,
+  );
 
   store.dispatch(entities.actions.receive(ENTITIES));
-  await store.dispatch(
-    navigation.actions.updateEntity(store.getState().router, entityPk),
-  );
   store.dispatch(editor.actions.reset());
-
+  act(() => history.push(`?string=${entityPk}`));
   wrapper.update();
 
   return [wrapper, store];
 }
 
 describe('<FluentEditor>', () => {
-  it('renders the simple form when passing a simple string', async () => {
-    const [wrapper] = await createComponent(1);
+  it('renders the simple form when passing a simple string', () => {
+    const [wrapper] = createComponent(1);
 
     expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
     expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
   });
 
-  it('renders the simple form when passing a simple string with one attribute', async () => {
-    const [wrapper] = await createComponent(2);
+  it('renders the simple form when passing a simple string with one attribute', () => {
+    const [wrapper] = createComponent(2);
 
     expect(wrapper.find('SourceEditor').exists()).toBeFalsy();
     expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
   });
 
-  it('renders the rich form when passing a supported rich message', async () => {
-    const [wrapper] = await createComponent(5);
+  it('renders the rich form when passing a supported rich message', () => {
+    const [wrapper] = createComponent(5);
 
     expect(wrapper.find('RichEditor').exists()).toBeTruthy();
   });
 
-  it('renders the source form when passing a complex string', async () => {
-    const [wrapper] = await createComponent(3);
+  it('renders the source form when passing a complex string', () => {
+    const [wrapper] = createComponent(3);
 
     expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
     expect(wrapper.find('SimpleEditor').exists()).toBeFalsy();
   });
 
-  it('converts translation when switching source mode', async () => {
-    const [wrapper] = await createComponent(1);
+  it('converts translation when switching source mode', () => {
+    const [wrapper] = createComponent(1);
     expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
 
     // Force source mode.
@@ -115,8 +124,8 @@ describe('<FluentEditor>', () => {
     expect(wrapper.find('textarea').text()).toEqual('my-message = Salut\n');
   });
 
-  it('sets empty initial translation in source mode when untranslated', async () => {
-    const [wrapper] = await createComponent(4);
+  it('sets empty initial translation in source mode when untranslated', () => {
+    const [wrapper] = createComponent(4);
 
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');
@@ -125,8 +134,8 @@ describe('<FluentEditor>', () => {
     expect(wrapper.find('textarea').text()).toEqual('my-message = ');
   });
 
-  it('changes editor implementation when changing translation syntax', async () => {
-    const [wrapper, store] = await createComponent(1);
+  it('changes editor implementation when changing translation syntax', () => {
+    const [wrapper, store] = createComponent(1);
     expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
 
     // Change translation to a rich string.
