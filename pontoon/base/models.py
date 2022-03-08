@@ -20,7 +20,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.postgres.fields import ArrayField
 
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
+from django.core.validators import URLValidator, validate_email
 from django.db import models
 from django.db.models import (
     Count,
@@ -1796,6 +1796,20 @@ class ProjectLocale(AggregatedStats):
         ).distinct().aggregate_stats(self)
 
 
+def repository_url_validator(url):
+    # Regular URLs
+    validator = URLValidator(["http", "https", "ftp", "ftps", "ssh", "svn+ssh"])
+
+    # Git SCP-like URL
+    pattern = r"(?P<user>git@([\w\.@]+)(/|:))(?P<server>[\w,\-,\_]+)/(?P<project>[\w,\-,\_]+)(.git){0,1}((/){0,1})"
+
+    try:
+        validator(url)
+    except ValidationError:
+        if not re.match(pattern, url):
+            raise ValidationError("Invalid URL")
+
+
 class Repository(models.Model):
     """
     A remote VCS repository that stores resource files for a project.
@@ -1808,7 +1822,9 @@ class Repository(models.Model):
 
     project = models.ForeignKey(Project, models.CASCADE, related_name="repositories")
     type = models.CharField(max_length=255, default=Type.GIT, choices=Type.choices)
-    url = models.CharField("URL", max_length=2000)
+    url = models.CharField(
+        "URL", max_length=2000, validators=[repository_url_validator]
+    )
     branch = models.CharField("Branch", blank=True, max_length=2000)
 
     website = models.URLField("Public Repository Website", blank=True, max_length=2000)
