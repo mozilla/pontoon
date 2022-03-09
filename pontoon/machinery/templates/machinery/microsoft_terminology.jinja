@@ -6,9 +6,10 @@
             <text>{{ text }}</text>
             <from>en-US</from>
             <to>{{ to }}</to>
-            <sources>
-                <TranslationSource>Terms</TranslationSource>
-                <TranslationSource>UiStrings</TranslationSource>
+            <sources xmlns:a="https://api.terminology.microsoft.com/terminology"
+                xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <a:TranslationSource>Terms</a:TranslationSource>
+                <a:TranslationSource>UiStrings</a:TranslationSource>
             </sources>
             <maxTranslations>{{ max_result }}</maxTranslations>
         </GetTranslations>
