@@ -1801,7 +1801,7 @@ def repository_url_validator(url):
     validator = URLValidator(["http", "https", "ftp", "ftps", "ssh", "svn+ssh"])
 
     # Git SCP-like URL
-    pattern = r"(?P<user>git@([\w\.@]+)(/|:))(?P<server>[\w,\-,\_]+)/(?P<project>[\w,\-,\_]+)(.git){0,1}((/){0,1})"
+    pattern = r"git@[\w\.@]+[/:][\w-]+/[\w-]+(.git)?/?"
 
     try:
         validator(url)
