@@ -312,16 +312,20 @@ def microsoft_terminology(request):
         r.raise_for_status()
 
         translations = []
-        xpath = ".//{http://api.terminology.microsoft.com/terminology}"
+        namespaces = {"a": "https://api.terminology.microsoft.com/terminology"}
         root = ET.fromstring(r.content)
-        results = root.find(xpath + "GetTranslationsResult")
+        results = root.find(
+            ".//{http://api.terminology.microsoft.com/terminology}GetTranslationsResult"
+        )
 
         if results is not None:
             for translation in results:
                 translations.append(
                     {
-                        "source": translation.find(xpath + "OriginalText").text,
-                        "target": translation.find(xpath + "TranslatedText").text,
+                        "source": translation.find("a:OriginalText", namespaces).text,
+                        "target": translation.find(
+                            ".//a:TranslatedText", namespaces
+                        ).text,
                     }
                 )
 
