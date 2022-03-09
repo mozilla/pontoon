@@ -4,6 +4,9 @@ from urllib.parse import urlparse
 
 import pytest
 
+from django.core.exceptions import ValidationError
+
+from pontoon.base.models import repository_url_validator
 from pontoon.test.factories import ProjectLocaleFactory
 
 
@@ -222,3 +225,18 @@ def test_repo_commit_multi_locale(repo_git):
             "https://example.com/for_path",
         )
         assert repo_git.url_for_path.call_args[0] == ("path",)
+
+
+def test_repository_url_validator():
+    """
+    The validity of the Repository URL.
+    """
+    regular_url = "https://example.com/"
+    assert repository_url_validator(regular_url) is None
+
+    git_scp_url = "git@github.com:user/repository.git"
+    assert repository_url_validator(git_scp_url) is None
+
+    invalid_url = "--evil=parameter"
+    with pytest.raises(ValidationError):
+        repository_url_validator(invalid_url)
