@@ -172,7 +172,7 @@ Additionally, there are linting rules that are defined in our
 In the rare case when you cannot fix an eslint error, use ``// eslint-disable`` to make the linter
 ignore that error. Note that in most cases, it is better to fix the issues than ignore them.
 
-For more specifics about the ```translate`` folder, look at the README.md file there.
+For more specifics about the ``translate`` folder, look at the README.md file there.
 
 
 Git conventions
