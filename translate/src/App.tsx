@@ -1,3 +1,4 @@
+import { useLocalization } from '@fluent/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import './App.css';
@@ -5,7 +6,6 @@ import './App.css';
 import { initLocale, Locale, updateLocale } from './context/locale';
 import { Location, LocationType } from './context/location';
 
-import { L10nState, NAME as L10N } from './core/l10n';
 import { WaveLoader } from './core/loaders';
 import {
   NAME as NOTIFICATION,
@@ -40,7 +40,6 @@ import { AppDispatch } from './store';
 
 type Props = {
   batchactions: BatchActionsState;
-  l10n: L10nState;
   notification: NotificationState;
   location: LocationType;
   project: ProjectState;
@@ -57,22 +56,23 @@ type InternalProps = Props & {
 function App({
   batchactions,
   dispatch,
-  l10n,
   notification,
   location,
   project,
   stats,
 }: InternalProps) {
   const mounted = useRef(false);
+  const { l10n } = useLocalization();
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
 
+  const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
 
   useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
     // Note that we only show it once, and only when the UI has already
     // been rendered, to make sure users do see it.
-    if (mounted.current && !l10n.fetching && !locale.fetching) {
+    if (mounted.current && l10nReady && !locale.fetching) {
       let notifications = [];
       const rootElt = document.getElementById('root');
       if (rootElt?.dataset.notifications) {
@@ -86,7 +86,7 @@ function App({
         dispatch(addRawNotification(notif.content, notif.type));
       }
     }
-  }, [l10n.fetching, locale.fetching]);
+  }, [l10nReady, locale.fetching]);
 
   useEffect(() => {
     updateLocale(locale, location.locale);
@@ -100,7 +100,7 @@ function App({
     mounted.current = true;
   }, []);
 
-  if (l10n.fetching || locale.fetching) {
+  if (!l10nReady || locale.fetching) {
     return <WaveLoader />;
   }
 
@@ -137,7 +137,6 @@ function App({
 export default function AppWrapper() {
   const props = useAppSelector((state) => ({
     batchactions: state[BATCHACTIONS],
-    l10n: state[L10N],
     notification: state[NOTIFICATION],
     project: state[PROJECT],
     stats: state[STATS],
