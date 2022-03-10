@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import parse from 'html-react-parser';
 import React, { useEffect, useRef, useState } from 'react';
+// @ts-expect-error Working types are unavailable for react-linkify 0.2.2
+import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
-
-import { Linkify } from '~/core/linkify';
 
 import './UserNotification.css';
 

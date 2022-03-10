@@ -8,10 +8,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
+// @ts-expect-error Working types are unavailable for react-linkify 0.2.2
+import Linkify from 'react-linkify';
 
 import { Locale } from '~/context/locale';
 import type { Entity, TermType } from '~/core/api';
-import { Linkify } from '~/core/linkify';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
