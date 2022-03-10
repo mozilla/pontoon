@@ -180,16 +180,14 @@ Every time you add a piece of UI that contains some content, there are 2 things 
 That would give:
 
 ```js
-class Editor extends React.Component {
-  render() {
-    return (
-      <div>
-        <Localized id='entitydetails-Editor--button-update'>
-          <button>Update</button>
-        </Localized>
-      </div>
-    );
-  }
+function Editor() {
+  return (
+    <div>
+      <Localized id='entitydetails-Editor--button-update'>
+        <button>Update</button>
+      </Localized>
+    </div>
+  );
 }
 ```
 
