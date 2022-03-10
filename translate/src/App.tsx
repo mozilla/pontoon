@@ -22,7 +22,7 @@ import { getUsers } from './core/user/actions';
 
 import { useAppDispatch, useAppSelector } from './hooks';
 
-import { AddonPromotion } from './modules/addonpromotion';
+import { AddonPromotion } from './modules/addonpromotion/components/AddonPromotion';
 import {
   BatchActions,
   BatchActionsState,
