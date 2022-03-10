@@ -1,8 +1,22 @@
+import LinkifyIt from 'linkify-it';
 import React, { useEffect, useState } from 'react';
-
-import { getImageURLs } from '~/core/linkify';
+import tlds from 'tlds';
 
 import './Screenshots.css';
+
+// Create and configure a URLs matcher.
+const linkify = new LinkifyIt();
+linkify.tlds(tlds);
+
+function getImageURLs(source: string, locale: string) {
+  const matches = linkify.match(source);
+  if (!matches) {
+    return [];
+  }
+  return matches
+    .filter((match) => /(https?:\/\/.*\.(?:png|jpg))/im.test(match.url))
+    .map((match) => match.url.replace(/en-US\//gi, locale + '/'));
+}
 
 type Props = {
   locale: string;
