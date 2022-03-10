@@ -21,7 +21,7 @@ type Props = {
   project: string;
   timeRange: TimeRangeType | null | undefined;
   timeRangeData: Array<Array<number>>;
-  applySingleFilter: (filter: string, type: FilterType) => void;
+  applySingleFilter: (filter: string, type: 'timeRange') => void;
   toggleFilter: (
     filter: string,
     type: 'timeRange',
