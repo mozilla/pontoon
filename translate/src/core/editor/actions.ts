@@ -6,7 +6,8 @@ import type { LocationType } from '~/context/location';
 import { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, SourceType } from '~/core/api';
 import { actions as entitiesActions } from '~/core/entities';
-import * as notification from '~/core/notification';
+import { addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import * as unsavedchanges from '~/modules/unsavedchanges';
@@ -271,14 +272,10 @@ export function sendTranslation(
     } else if (content.same) {
       // The translation that was provided is the same as an existing
       // translation for that entity.
-      dispatch(
-        notification.actions.add(notification.messages.SAME_TRANSLATION),
-      );
+      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
     } else if (content.status) {
       // Notify the user of the change that happened.
-      dispatch(
-        notification.actions.add(notification.messages.TRANSLATION_SAVED),
-      );
+      dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
 
       // Ignore existing unsavedchanges because they are saved now.
       dispatch(unsavedchanges.actions.ignore());

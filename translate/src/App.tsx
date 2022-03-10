@@ -12,7 +12,7 @@ import {
   NotificationPanel,
   NotificationState,
 } from './core/notification';
-import { addRaw } from './core/notification/actions';
+import { addRawNotification } from './core/notification/actions';
 import { NAME as PROJECT, ProjectState } from './core/project';
 import { get as getProject } from './core/project/actions';
 import { get as getResource } from './core/resource/actions';
@@ -83,7 +83,7 @@ function App({
         // Our notification system only supports showing one notification
         // for the moment, so we only add the first notification here.
         const notif = notifications[0];
-        dispatch(addRaw(notif.content, notif.type));
+        dispatch(addRawNotification(notif.content, notif.type));
       }
     }
   }, [l10n.fetching, locale.fetching]);

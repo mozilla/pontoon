@@ -29,7 +29,7 @@ import {
   usePreviousEntity,
   useSelectedEntity,
 } from '~/core/entities/hooks';
-import { add as addNotification } from '~/core/notification/actions';
+import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { NAME as TERMS, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';

@@ -12,7 +12,7 @@ import {
   reset as resetEntities,
 } from '~/core/entities/actions';
 import { SkeletonLoader } from '~/core/loaders';
-import { add as addNotification } from '~/core/notification/actions';
+import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
