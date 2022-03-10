@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { Link } from '~/context/location';
 import type { Stats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
-import ProgressChart from './ProgressChart';
+import { ProgressChart } from './ProgressChart';
 import './ResourceProgress.css';
 
 type Props = {
