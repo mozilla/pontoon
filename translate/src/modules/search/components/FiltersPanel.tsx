@@ -1,18 +1,16 @@
-import * as React from 'react';
-
 import { Localized } from '@fluent/react';
+import * as React from 'react';
 
 import type { NavigationParams } from '~/core/navigation';
 import type { Tag } from '~/core/project';
 import type { Stats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 
-import type { Author, TimeRangeType } from '..';
-import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-import TimeRangeFilter from './TimeRangeFilter';
-import type { FilterType } from './SearchBox';
-
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
+import type { Author, TimeRangeType } from '../index';
 import './FiltersPanel.css';
+import type { FilterType } from './SearchBox';
+import TimeRangeFilter from './TimeRangeFilter';
 
 type Props = {
   statuses: Record<string, boolean>;

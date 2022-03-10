@@ -101,11 +101,10 @@ function extractFailedChecksOfType(
   type: 'Errors' | 'Warnings',
 ): string[] {
   let extractedFailedChecks = [];
-  const keys = Object.keys(failedChecks) as Array<keyof FailedChecks>;
 
-  for (const key of keys) {
+  for (const [key, messages] of Object.entries(failedChecks)) {
     if (key.endsWith(type)) {
-      for (const message of failedChecks[key]) {
+      for (const message of messages) {
         extractedFailedChecks.push(message);
       }
     }

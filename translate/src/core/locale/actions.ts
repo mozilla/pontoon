@@ -53,7 +53,9 @@ export function get(code: string) {
   return async (dispatch: AppDispatch) => {
     dispatch(request());
     const results = await api.locale.get(code);
-    const data = results.data.locale;
+    const data = results.data.locale as Omit<Locale, 'cldrPlurals'> & {
+      readonly cldrPlurals: string;
+    };
     const locale = {
       ...data,
       direction: data.direction.toLowerCase(),

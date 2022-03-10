@@ -10,7 +10,6 @@ import HighchartsReact from 'highcharts-react-official';
 
 import type { TimeRangeType } from '..';
 import { CHART_OPTIONS } from './chart-options';
-import type { FilterType } from './SearchBox';
 
 import './TimeRangeFilter.css';
 
