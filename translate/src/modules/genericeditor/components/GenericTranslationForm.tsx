@@ -44,7 +44,9 @@ export default function GenericTranslationForm({
     const input = textareaRef.current;
     if (input && !searchInputFocused) {
       input.focus();
-      if (changeSource !== 'internal') input.setSelectionRange(0, 0);
+      if (changeSource !== 'internal') {
+        input.setSelectionRange(0, 0);
+      }
     }
   }, [translation, changeSource, searchInputFocused]);
 

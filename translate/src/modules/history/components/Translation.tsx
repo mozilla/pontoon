@@ -90,7 +90,9 @@ function DiffToggle({
   toggleVisible: () => void;
   visible: boolean;
 }) {
-  if (index === 0) return null;
+  if (index === 0) {
+    return null;
+  }
   return (
     <Localized id='history-Translation--toggle-diff' attrs={{ title: true }}>
       <button
@@ -158,7 +160,9 @@ export function TranslationBase({
 
   const handleStatusChange = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (isActionDisabled) return;
+      if (isActionDisabled) {
+        return;
+      }
 
       disableAction();
       event.stopPropagation();
@@ -170,7 +174,9 @@ export function TranslationBase({
 
   const delete_ = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (isActionDisabled) return;
+      if (isActionDisabled) {
+        return;
+      }
 
       disableAction();
       event.stopPropagation();
@@ -181,7 +187,9 @@ export function TranslationBase({
 
   const copyTranslationIntoEditor = useCallback(() => {
     // Ignore if selecting text
-    if (isReadOnlyEditor || window.getSelection()?.toString()) return;
+    if (isReadOnlyEditor || window.getSelection()?.toString()) {
+      return;
+    }
     updateEditorTranslation(translation.string, 'history');
   }, [isReadOnlyEditor, translation.string, updateEditorTranslation]);
 

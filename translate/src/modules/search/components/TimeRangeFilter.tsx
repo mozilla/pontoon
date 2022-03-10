@@ -27,7 +27,9 @@ type Props = {
 const asTime = (n: number) => date.parse(String(n), URL_FORMAT, true).getTime();
 
 function getTimeForInput(urlTime: number | null) {
-  if (!urlTime) return '';
+  if (!urlTime) {
+    return '';
+  }
   const d = date.parse(urlTime.toString(), URL_FORMAT, true);
   return isNaN(Number(d)) ? urlTime.toString() : date.format(d, INPUT_FORMAT);
 }
@@ -84,7 +86,9 @@ export function TimeRangeFilter({
 
   useEffect(() => {
     // In case of no translations
-    if (timeRangeData.length === 0) return;
+    if (timeRangeData.length === 0) {
+      return;
+    }
 
     // Set chart boundaries from the URL parameter if given,
     // else use default chart boundaries (full chart)
@@ -120,7 +124,9 @@ export function TimeRangeFilter({
     // we also need to propagate changes to the SearchBox state.
     // Without this code, if you have Time Range filter applied and then change range and
     // click the Apply Filter button, nothing happens. As described in bug 1469611.
-    if (timeRange) setTimeRange([chartFrom, chartTo].join('-'));
+    if (timeRange) {
+      setTimeRange([chartFrom, chartTo].join('-'));
+    }
   }, [chartFrom, chartTo]);
 
   const isValidInput = (value: string) => date.isValid(value, INPUT_FORMAT);
@@ -138,8 +144,11 @@ export function TimeRangeFilter({
         chart.current?.chart.xAxis[0].setExtremes(from, to);
       }
 
-      if (isFrom) setInputFrom(value);
-      else if (isTo) setInputTo(value);
+      if (isFrom) {
+        setInputFrom(value);
+      } else if (isTo) {
+        setInputTo(value);
+      }
     },
     [chartFrom, chartTo],
   );
@@ -175,8 +184,9 @@ export function TimeRangeFilter({
   );
 
   const applyTimeRangeFilter = useCallback(() => {
-    if (!visible)
+    if (!visible) {
       applySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
+    }
   }, [chartFrom, chartTo, visible]);
 
   // In case of no translations or the All Projects view

@@ -43,8 +43,9 @@ export function NavigationBase({
   const { code, name } = useContext(Locale);
   const { locale, project, push } = parameters;
   useEffect(() => {
-    if (name && projectState?.name)
+    if (name && projectState?.name) {
       document.title = `${name} (${code}) · ${projectState.name}`;
+    }
   }, [code, name, projectState]);
 
   const mounted = useRef(false);
@@ -56,7 +57,9 @@ export function NavigationBase({
       if (project !== 'all-projects') {
         dispatch(getResource(locale, project));
       }
-    } else mounted.current = true;
+    } else {
+      mounted.current = true;
+    }
   }, [dispatch, project]);
 
   const navigateToPath = useCallback(

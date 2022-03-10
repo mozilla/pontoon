@@ -366,8 +366,9 @@ export default function FiltersPanelBase({
   }, [updateFiltersFromURL]);
 
   useEffect(() => {
-    if (visible && parameters.project !== 'all-projects')
+    if (visible && parameters.project !== 'all-projects') {
       getAuthorsAndTimeRangeData();
+    }
   }, [getAuthorsAndTimeRangeData, parameters.project, visible]);
 
   const handleToggleFilter = useCallback(

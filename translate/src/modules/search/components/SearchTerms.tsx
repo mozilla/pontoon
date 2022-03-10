@@ -17,7 +17,9 @@ export function SearchTerms({
     .replace(/\\"/g, unusable)
     .match(/[^\s"]+|"[^"]+"/g);
 
-  if (!searchTerms) return <>{children}</>;
+  if (!searchTerms) {
+    return <>{children}</>;
+  }
 
   const reg = new RegExp(unusable, 'g');
   for (let i = searchTerms.length - 1; i >= 0; --i) {

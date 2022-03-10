@@ -14,7 +14,9 @@ const store = configureStore({
       immutableCheck: false,
     });
 
-    if (process.env.NODE_ENV === 'development') middleware.push(createLogger());
+    if (process.env.NODE_ENV === 'development') {
+      middleware.push(createLogger());
+    }
 
     return middleware;
   },

@@ -22,7 +22,9 @@ export function TranslationSource({
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
   for (const source of translation.sources) {
-    if (seen.includes(source)) continue;
+    if (seen.includes(source)) {
+      continue;
+    }
     seen.push(source);
     switch (source) {
       case 'translation-memory':

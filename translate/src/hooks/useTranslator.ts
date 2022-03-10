@@ -19,13 +19,18 @@ export function useTranslator(): boolean {
     translatorForProjects,
   } = useAppSelector((state) => state[USER]);
 
-  if (!isAuthenticated) return false;
+  if (!isAuthenticated) {
+    return false;
+  }
 
-  if (managerForLocales.includes(code)) return true;
+  if (managerForLocales.includes(code)) {
+    return true;
+  }
 
   const localeProject = `${code}-${slug}`;
-  if (Object.hasOwnProperty.call(translatorForProjects, localeProject))
+  if (Object.hasOwnProperty.call(translatorForProjects, localeProject)) {
     return translatorForProjects[localeProject];
+  }
 
   return translatorForLocales.includes(code);
 }
