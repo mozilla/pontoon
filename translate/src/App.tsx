@@ -6,7 +6,6 @@ import { initLocale, Locale, updateLocale } from './context/locale';
 import { Location, LocationType } from './context/location';
 
 import { L10nState, NAME as L10N } from './core/l10n';
-import { Lightbox } from './core/lightbox';
 import { WaveLoader } from './core/loaders';
 import {
   NAME as NOTIFICATION,
@@ -127,7 +126,6 @@ function App({
             )}
           </section>
         </section>
-        <Lightbox />
         <InteractiveTour />
       </div>
     </Locale.Provider>

@@ -1,22 +1,40 @@
-import * as lightbox from '~/core/lightbox';
-
+import React from 'react';
+import { act } from 'react-dom/test-utils';
 import Screenshots from './Screenshots';
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
-import sinon from 'sinon';
+import { mount } from 'enzyme';
 
 describe('<Screenshots>', () => {
   it('shows a Lightbox on image click', () => {
-    const store = createReduxStore();
-    const stub = sinon.stub(store, 'dispatch');
     const source = 'That is an image URL: http://link.to/image.png';
-    const wrapper = mountComponentWithStore(Screenshots, store, {
-      locale: 'kg',
-      source,
-    });
+    const wrapper = mount(<Screenshots locale='kg' source={source} />);
+
+    expect(wrapper.find('.lightbox')).toHaveLength(0);
+
     wrapper.find('img').simulate('click');
-    expect(
-      stub.calledOnceWith(lightbox.actions.open('http://link.to/image.png')),
-    ).toBeTruthy();
-    store.dispatch.restore();
+
+    expect(wrapper.find('.lightbox')).toHaveLength(1);
+  });
+
+  it('Lightbox closes on click', () => {
+    const source = 'That is an image URL: http://link.to/image.png';
+    const wrapper = mount(<Screenshots locale='kg' source={source} />);
+    wrapper.find('img').simulate('click');
+    wrapper.find('.lightbox').simulate('click');
+
+    expect(wrapper.find('.lightbox')).toHaveLength(0);
+  });
+
+  it('Lightbox closes on key press', () => {
+    const source = 'That is an image URL: http://link.to/image.png';
+    const wrapper = mount(<Screenshots locale='kg' source={source} />);
+    wrapper.find('img').simulate('click');
+    act(() => {
+      window.document.dispatchEvent(
+        new KeyboardEvent('keydown', { code: 'Escape' }),
+      );
+    });
+    wrapper.update();
+
+    expect(wrapper.find('.lightbox')).toHaveLength(0);
   });
 });
