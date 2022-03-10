@@ -32,7 +32,7 @@ import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
 import { InteractiveTour } from './modules/interactivetour';
 import { Navigation } from './modules/navbar';
-import { ProjectInfo } from './modules/projectinfo';
+import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
@@ -66,6 +66,8 @@ function App({
   const mounted = useRef(false);
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
 
+  const allProjects = location.project === 'all-projects';
+
   useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
     // Note that we only show it once, and only when the UI has already
@@ -92,7 +94,7 @@ function App({
     dispatch(getUsers());
 
     // Load resources, unless we're in the All Projects view
-    if (location.project !== 'all-projects') {
+    if (!allProjects) {
       dispatch(getResource(location.locale, location.project));
     }
     mounted.current = true;
@@ -109,7 +111,7 @@ function App({
         <header>
           <Navigation />
           <ResourceProgress stats={stats} />
-          <ProjectInfo projectSlug={location.project} project={project} />
+          {allProjects ? null : <ProjectInfo project={project} />}
           <NotificationPanel notification={notification} />
           <UserControls />
         </header>
