@@ -1,15 +1,12 @@
-import * as React from 'react';
-
-import './NotificationPanel.css';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { NotificationState } from '../reducer';
 
+import './NotificationPanel.css';
+
 type Props = {
   notification: NotificationState;
-};
-
-type State = {
-  hiding: boolean;
 };
 
 /**
@@ -19,55 +16,34 @@ type State = {
  * once at a time. The notification will hide after a 2s timeout, or when
  * clicked.
  */
-export default class NotificationPanel extends React.Component<Props, State> {
-  hideTimeout?: number;
+export function NotificationPanel({
+  notification: { message },
+}: Props): React.ReactElement<'div'> {
+  const [visible, setVisible] = useState(false);
+  const timeout = useRef(0);
+  const hide = useCallback(() => {
+    clearTimeout(timeout.current);
+    setVisible(false);
+  }, []);
 
-  constructor(props: Props) {
-    super(props);
-
-    // This state is used to start the in and out animations for
-    // notifications.
-    this.state = {
-      hiding: false,
-    };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (
-      this.props.notification.message &&
-      prevProps.notification.message !== this.props.notification.message
-    ) {
-      this.setState({ hiding: false });
-      clearTimeout(this.hideTimeout);
-      this.hideTimeout = window.setTimeout(() => {
-        this.hide();
-      }, 2000);
+  useEffect(() => {
+    clearTimeout(timeout.current);
+    if (message) {
+      setVisible(true);
+      timeout.current = window.setTimeout(hide, 2000);
+    } else {
+      setVisible(false);
     }
-  }
+  }, [message]);
 
-  hide: () => void = () => {
-    clearTimeout(this.hideTimeout);
-    this.setState({ hiding: true });
-  };
+  const className = classNames(
+    'notification-panel',
+    message && visible && 'showing',
+  );
 
-  render(): React.ReactElement<'div'> {
-    const { notification } = this.props;
-
-    let hideClass = '';
-    if (notification.message && !this.state.hiding) {
-      hideClass = ' showing';
-    }
-
-    const notif = notification.message;
-
-    return (
-      <div className={'notification-panel' + hideClass} onClick={this.hide}>
-        {!notif ? (
-          <span />
-        ) : (
-          <span className={notif.type}>{notif.content}</span>
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className={className} onClick={hide}>
+      <span className={message?.type}>{message?.content}</span>
+    </div>
+  );
 }
