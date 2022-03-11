@@ -9,7 +9,7 @@ import type { Settings } from '~/core/user';
 
 type Props = {
   settings: Settings;
-  updateSetting: (name: string, value: boolean) => void;
+  updateSetting: (name: keyof Settings, value: boolean) => void;
 };
 
 type State = {
@@ -18,7 +18,7 @@ type State = {
 
 type EditorSettingsProps = {
   settings: Settings;
-  toggleSetting: (name: string) => void;
+  toggleSetting: (name: keyof Settings) => void;
   onDiscard: () => void;
 };
 
@@ -97,7 +97,7 @@ export default class EditorSettingsBase extends React.Component<Props, State> {
     });
   };
 
-  toggleSetting(name: string) {
+  toggleSetting(name: keyof Settings) {
     this.props.updateSetting(name, !this.props.settings[name]);
     this.toggleVisibility();
   }

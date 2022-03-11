@@ -1,18 +1,16 @@
+import { Localized } from '@fluent/react';
 import * as React from 'react';
 
-import { Localized } from '@fluent/react';
-
-import './FiltersPanel.css';
-
-import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-import TimeRangeFilter from './TimeRangeFilter';
-
-import { asLocaleString, useOnDiscard } from '~/core/utils';
-
-import type { Author, TimeRangeType } from '..';
 import type { NavigationParams } from '~/core/navigation';
 import type { Tag } from '~/core/project';
 import type { Stats } from '~/core/stats';
+import { asLocaleString, useOnDiscard } from '~/core/utils';
+
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
+import type { Author, TimeRangeType } from '../index';
+import './FiltersPanel.css';
+import type { FilterType } from './SearchBox';
+import TimeRangeFilter from './TimeRangeFilter';
 
 type Props = {
   statuses: Record<string, boolean>;
@@ -27,12 +25,12 @@ type Props = {
   parameters: NavigationParams;
   applySingleFilter: (
     filter: string,
-    type: string,
-    callback?: () => void,
+    type: FilterType,
+    callback: () => void,
   ) => void;
   getAuthorsAndTimeRangeData: () => void;
   resetFilters: () => void;
-  toggleFilter: (arg0: string, arg1: string) => void;
+  toggleFilter: (filter: string, type: FilterType) => void;
   update: () => void;
   updateTimeRange: (filter: string) => void;
   updateFiltersFromURLParams: () => void;
@@ -56,13 +54,13 @@ type FiltersPanelProps = {
   timeRange: TimeRangeType | null | undefined;
   timeRangeData: Array<Array<number>>;
   updateTimeRange: (filter: string) => void;
-  onApplyFilter: (arg0: string, arg1: string) => void;
+  onApplyFilter: (filter: string, type: FilterType) => void;
   onApplyFilters: () => void;
   onResetFilters: () => void;
   onToggleFilter: (
-    arg0: string,
-    arg1: string,
-    arg2: React.MouseEvent<any>,
+    filter: string,
+    type: FilterType,
+    event: React.MouseEvent,
   ) => void;
   onDiscard: () => void;
 };
@@ -98,7 +96,10 @@ export function FiltersPanel({
         </Localized>
 
         {FILTERS_STATUS.map((status, i) => {
-          const count = status.stat ? stats[status.stat] : stats[status.slug];
+          const count =
+            'stat' in status && status.stat
+              ? stats[status.stat]
+              : stats[status.slug];
           const selected = statuses[status.slug];
 
           let className = status.slug;
@@ -305,8 +306,6 @@ export function FiltersPanel({
  * Changes to the filters will be reflected in the URL.
  */
 export default class FiltersPanelBase extends React.Component<Props, State> {
-  menu: React.RefObject<HTMLDivElement>;
-
   constructor(props: Props) {
     super(props);
 
@@ -349,11 +348,11 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
     return this.props.update();
   };
 
-  toggleFilter: (
+  toggleFilter = (
     filter: string,
-    type: string,
+    type: FilterType,
     event: React.MouseEvent,
-  ) => void = (filter: string, type: string, event: React.MouseEvent) => {
+  ) => {
     if (filter === 'all') {
       return;
     }
@@ -362,10 +361,7 @@ export default class FiltersPanelBase extends React.Component<Props, State> {
     this.props.toggleFilter(filter, type);
   };
 
-  applySingleFilter: (filter: string, type: string) => void = (
-    filter: string,
-    type: string,
-  ) => {
+  applySingleFilter = (filter: string, type: FilterType) => {
     this.toggleVisibility();
     this.props.applySingleFilter(filter, type, this.props.update);
   };

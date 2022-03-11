@@ -41,11 +41,9 @@ export class InteractiveTourBase extends React.Component<InternalProps, State> {
     };
   }
 
-  createUpdateTourStatus: (
-    totalSteps: number,
-  ) => null | ((currentStep: number) => void) = (totalSteps: number) => {
+  createUpdateTourStatus = (totalSteps: number) => {
     if (!this.props.user.isAuthenticated) {
-      return null;
+      return undefined;
     }
 
     return (currentStep: number) => {

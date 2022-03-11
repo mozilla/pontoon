@@ -61,12 +61,11 @@ export default function Translation(
     copyOtherLocaleTranslation(translation);
   }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
-  const translationRef = React.useRef();
+  const translationRef = React.useRef<HTMLLIElement>(null);
   React.useEffect(() => {
     if (selectedHelperElementIndex === index) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const behavior = mediaQuery.matches ? 'auto' : 'smooth';
-      // @ts-expect-error: What can be undefined here?
       translationRef.current?.scrollIntoView?.({
         behavior: behavior,
         block: 'nearest',

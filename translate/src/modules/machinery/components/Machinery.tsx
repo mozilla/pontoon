@@ -30,21 +30,25 @@ export const Machinery = ({
   searchMachinery,
 }: Props): null | React.ReactElement<'section'> => {
   const [page, setPage] = React.useState(1);
-  const searchInput = React.useRef<HTMLInputElement>();
+  const searchInput = React.useRef<HTMLInputElement>(null);
   const prevEntity = usePrevious(machinery.entity);
   const prevPage = usePrevious(page);
 
   React.useEffect(() => {
     // Restore custom input in search field,
     // e.g. when switching from Locales tab back to Machinery
-    if (machinery.searchString) {
+    if (searchInput.current && machinery.searchString) {
       searchInput.current.value = machinery.searchString;
     }
   }, []);
 
   React.useEffect(() => {
     // Clear search field after switching to a different entity
-    if (!machinery.searchString && machinery.entity !== prevEntity) {
+    if (
+      searchInput.current &&
+      !machinery.searchString &&
+      machinery.entity !== prevEntity
+    ) {
       searchInput.current.value = '';
       setPage(1);
     }
@@ -52,28 +56,28 @@ export const Machinery = ({
 
   React.useEffect(() => {
     // Fetch next page of search results
-    if (prevPage && page !== prevPage) {
+    if (searchInput.current && prevPage && page !== prevPage) {
       searchMachinery(searchInput.current.value, page);
     }
   }, [page, searchMachinery]);
 
   const [sentryRef, { rootRef }] = useInfiniteScroll({
     loading: machinery.fetching,
-    hasNextPage: machinery.hasMore,
+    hasNextPage: machinery.hasMore ?? false,
     onLoadMore: () => setPage((page) => page + 1),
     rootMargin: '0px 0px 400px 0px',
   });
 
   const resetSearch = () => {
     searchMachinery('');
-    searchInput.current.value = '';
+    if (searchInput.current) searchInput.current.value = '';
     setPage(1);
   };
 
   const submitForm = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPage(1);
-    searchMachinery(searchInput.current.value);
+    if (searchInput.current) searchMachinery(searchInput.current.value);
   };
 
   if (!locale) {

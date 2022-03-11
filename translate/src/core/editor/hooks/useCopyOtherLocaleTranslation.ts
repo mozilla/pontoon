@@ -24,7 +24,7 @@ export default function useCopyOtherLocaleTranslation(): (
       }
 
       // Ignore if selecting text
-      if (window.getSelection().toString()) {
+      if (window.getSelection()?.toString()) {
         return;
       }
 

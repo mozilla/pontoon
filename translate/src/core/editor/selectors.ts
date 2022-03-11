@@ -53,7 +53,7 @@ export function _existingTranslation(
   // If translation is a string, from the generic editor.
   // Except it might actually be a Fluent message from the Simple or Source
   // editors.
-  if (entity.format === 'ftl') {
+  if (entity?.format === 'ftl') {
     // For Fluent files, the translation can be stored as a simple string
     // when the Source editor or the Simple editor are on. Because of that,
     // we want to turn the string into a Fluent message, as that's simpler

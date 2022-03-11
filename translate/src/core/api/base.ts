@@ -18,12 +18,8 @@ export default class APIBase {
   }
 
   getCSRFToken(): string {
-    let csrfToken = '';
-    const rootElt = document.getElementById('root');
-    if (rootElt) {
-      csrfToken = rootElt.dataset.csrfToken;
-    }
-    return csrfToken;
+    const root = document.getElementById('root');
+    return root?.dataset.csrfToken ?? '';
   }
 
   getFullURL(url: string): URL {
@@ -69,7 +65,7 @@ export default class APIBase {
       response = await fetch(fullUrl.toString(), requestParams);
     } catch (e) {
       // Swallow Abort errors because we trigger them ourselves.
-      if (e.name === 'AbortError') {
+      if (e instanceof Error && e.name === 'AbortError') {
         return {};
       }
       throw e;

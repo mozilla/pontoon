@@ -1,11 +1,11 @@
-import { FluentBundle, FluentResource } from '@fluent/bundle';
+import { FluentBundle, FluentResource, TextTransform } from '@fluent/bundle';
 import { negotiateLanguages } from '@fluent/langneg';
 import { ReactLocalization } from '@fluent/react';
 
 import api from '~/core/api';
 
 import { AVAILABLE_LOCALES } from '.';
-import PSEUDO_STRATEGIES from './pseudolocalization';
+import { accented, bidi } from './pseudolocalization';
 
 import type { AppDispatch } from '~/store';
 
@@ -70,13 +70,18 @@ export function get(locales: ReadonlyArray<string>) {
     const bundles = await Promise.all(
       languages.map((locale) => {
         return api.l10n.get(locale).then((content) => {
-          let bundleOptions = {};
+          let bundleOptions: { transform?: TextTransform } = {};
 
           // We know this is English, let's make it weird before bundling it.
           if (usePseudoLocalization) {
-            bundleOptions = {
-              transform: PSEUDO_STRATEGIES[urlParams.get('pseudolocalization')],
-            };
+            switch (urlParams.get('pseudolocalization')) {
+              case 'accented':
+                bundleOptions = { transform: accented };
+                break;
+              case 'bidi':
+                bundleOptions = { transform: bidi };
+                break;
+            }
           }
 
           const bundle = new FluentBundle(locale, bundleOptions);

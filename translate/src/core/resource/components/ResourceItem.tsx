@@ -18,7 +18,8 @@ type Props = {
  */
 export default function ResourceItem(props: Props): React.ReactElement<'li'> {
   const { parameters, resource, navigateToPath } = props;
-  const className = parameters.resource === resource.path ? 'current' : null;
+  const className =
+    parameters.resource === resource.path ? 'current' : undefined;
 
   return (
     <li className={className}>

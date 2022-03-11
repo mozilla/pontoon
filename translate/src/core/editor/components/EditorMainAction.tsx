@@ -108,8 +108,9 @@ export default function EditorMainAction(
     }
   }
 
+  const elems = btn.glyph ? { glyph: btn.glyph } : undefined;
   return (
-    <Localized id={btn.id} attrs={{ title: true }} elems={{ glyph: btn.glyph }}>
+    <Localized id={btn.id} attrs={{ title: true }} elems={elems}>
       <button
         className={btn.className}
         onClick={btn.action}

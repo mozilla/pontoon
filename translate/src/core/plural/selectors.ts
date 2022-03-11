@@ -31,22 +31,12 @@ export const getPluralForm = createSelector(
 );
 
 export function _getTranslationForSelectedEntity(
-  entity: Entity,
+  entity: Entity | undefined,
   pluralForm: number,
 ): EntityTranslation | null | undefined {
-  if (pluralForm === -1) {
-    pluralForm = 0;
-  }
-
-  if (
-    entity &&
-    entity.translation[pluralForm] &&
-    !entity.translation[pluralForm].rejected
-  ) {
-    return entity.translation[pluralForm];
-  }
-
-  return null;
+  if (pluralForm === -1) pluralForm = 0;
+  const pf = entity?.translation[pluralForm];
+  return pf && !pf.rejected ? pf : null;
 }
 
 /**
@@ -63,14 +53,11 @@ export const getTranslationForSelectedEntity = createSelector(
 );
 
 export function _getTranslationStringForSelectedEntity(
-  entity: Entity,
+  entity: Entity | undefined,
   pluralForm: number,
 ): string {
   const translation = _getTranslationForSelectedEntity(entity, pluralForm);
-  if (translation && translation.string) {
-    return translation.string;
-  }
-  return '';
+  return translation?.string ?? '';
 }
 
 /**

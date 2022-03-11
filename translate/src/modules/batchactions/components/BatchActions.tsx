@@ -28,12 +28,8 @@ type InternalProps = Props & {
  * Renders batch editor, used for performing mass actions on translations.
  */
 export class BatchActionsBase extends React.Component<InternalProps> {
-  find: {
-    current: HTMLInputElement | null | undefined;
-  };
-  replace: {
-    current: HTMLInputElement | null | undefined;
-  };
+  find: React.RefObject<HTMLInputElement>;
+  replace: React.RefObject<HTMLInputElement>;
 
   constructor(props: InternalProps) {
     super(props);

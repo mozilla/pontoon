@@ -43,7 +43,7 @@ export default function useCopyMachineryTranslation(
       }
 
       // Ignore if selecting text
-      if (window.getSelection().toString()) {
+      if (window.getSelection()?.toString()) {
         return;
       }
 

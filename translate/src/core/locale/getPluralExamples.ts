@@ -18,7 +18,7 @@ export default function getPluralExamples(
   locale: Locale,
 ): Record<number, number> {
   const pluralsCount = locale.cldrPlurals.length;
-  const examples = {};
+  const examples: Record<number, number> = {};
 
   if (pluralsCount === 2) {
     examples[locale.cldrPlurals[0]] = 1;

@@ -5,7 +5,7 @@ export default class CommentAPI extends APIBase {
     entity: number,
     locale: string,
     comment: string,
-    translation: number,
+    translation: number | null | undefined,
   ): Promise<any> {
     const payload = new URLSearchParams();
     payload.append('entity', entity.toString());

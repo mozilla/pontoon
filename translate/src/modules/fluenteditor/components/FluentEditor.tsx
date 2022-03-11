@@ -23,7 +23,7 @@ import RichEditor from './rich/RichEditor';
  *      - "rich" if the translation is not simple but can be handled by the Rich editor
  *      - "complex" otherwise
  */
-function getSyntaxType(source): SyntaxType {
+function getSyntaxType(source: string | editor.Translation): SyntaxType {
   if (source && typeof source !== 'string') {
     return fluent.getSyntaxType(source);
   }
@@ -46,7 +46,7 @@ function getSyntaxType(source): SyntaxType {
  * It does *not* update that content when the user switches the "force source" mode though,
  * as that is dealt with by using the `useForceSource` hook.
  */
-function useLoadTranslation(forceSource) {
+function useLoadTranslation(forceSource: boolean) {
   const dispatch = useAppDispatch();
 
   const updateTranslation = editor.useUpdateTranslation();
@@ -153,7 +153,7 @@ function useForceSource(): [boolean, () => void] {
       fromSyntax,
       toSyntax,
       translation,
-      entity.original,
+      entity?.original ?? '',
       activeTranslationString,
       locale,
     );
@@ -197,12 +197,12 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   );
 
   // Choose which editor implementation to render.
-  let EditorImplementation = RichEditor;
-  if (forceSource || syntax === 'complex') {
-    EditorImplementation = SourceEditor;
-  } else if (syntax === 'simple') {
-    EditorImplementation = SimpleEditor;
-  }
+  const Editor =
+    forceSource || syntax === 'complex'
+      ? SourceEditor
+      : syntax === 'simple'
+      ? SimpleEditor
+      : RichEditor;
 
   // When the syntax is complex, the editor is blocked in source mode, and it
   // becomes impossible to switch to a different editor type. Thus we show a
@@ -244,5 +244,5 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
     }
   }
 
-  return <EditorImplementation ftlSwitch={ftlSwitch} />;
+  return <Editor ftlSwitch={ftlSwitch} />;
 }

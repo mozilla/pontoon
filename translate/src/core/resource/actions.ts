@@ -62,7 +62,8 @@ export function get(locale: string, project: string) {
 
     const allResources = resources.pop();
 
-    dispatch(receive(resources, allResources));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    dispatch(receive(resources, allResources!));
   };
 }
 

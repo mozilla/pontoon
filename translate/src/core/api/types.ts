@@ -126,5 +126,5 @@ export type MachineryTranslation = {
   original: string;
   translation: string;
   quality?: number;
-  projectNames?: Array<string | null | undefined>;
+  projectNames?: Array<string | null>;
 };

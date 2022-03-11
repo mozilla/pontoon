@@ -43,7 +43,9 @@ export default function useUpdateTranslationStatus(): (
       await dispatch(
         history.actions.updateStatus(
           change,
-          entity,
+          // The EditorMainAction tests fail if this dispatch() is skipped on an empty entity
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          entity!,
           locale,
           parameters.resource,
           pluralForm,

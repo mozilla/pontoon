@@ -77,7 +77,7 @@ class App extends React.Component<InternalProps> {
     ) {
       let notifications = [];
       const rootElt = document.getElementById('root');
-      if (rootElt) {
+      if (rootElt?.dataset.notifications) {
         notifications = JSON.parse(rootElt.dataset.notifications);
       }
 

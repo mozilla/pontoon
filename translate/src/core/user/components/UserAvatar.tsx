@@ -14,7 +14,7 @@ export default function UserAvatar(props: Props): React.ReactElement<'div'> {
     <div className='user-avatar'>
       <a
         href={`/contributors/${username}`}
-        title={!title ? null : title}
+        title={title}
         target='_blank'
         rel='noopener noreferrer'
         onClick={(e: React.MouseEvent) => e.stopPropagation()}

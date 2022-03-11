@@ -12,16 +12,10 @@ import { CLDR_PLURALS } from '~/core/plural';
 import { fluent } from '~/core/utils';
 
 import type { Translation } from '~/core/editor';
-import type { Attribute, Entry } from '@fluent/syntax';
-import type {
-  Pattern,
-  PatternElement,
-  Variant,
-  SyntaxNode,
-} from '@fluent/syntax';
+import type { Entry } from '@fluent/syntax';
+import type { Pattern, Variant } from '@fluent/syntax';
 
 type MessagePath = Array<string | number>;
-type Child = SyntaxNode | Array<SyntaxNode>;
 
 /**
  * Return a clone of a translation with one of its elements replaced with a new
@@ -38,7 +32,11 @@ function getUpdatedTranslation(
   if (source.type !== 'Message' && source.type !== 'Term') {
     return source;
   }
-  let dest: Child = source;
+
+  // This should be `SyntaxNode | SyntaxNode[]`, but using `path` like this is so
+  // un-TypeScript that it doesn't really work.
+  let dest: any = source;
+
   // Walk the path until the next to last item.
   for (let i = 0, ln = path.length; i < ln - 1; i++) {
     dest = dest[path[i]];
@@ -71,8 +69,8 @@ export default function RichTranslationForm(
     updateTranslation,
   } = props;
 
-  const accessKeyElementIdRef = React.useRef(null);
-  const focusedElementIdRef = React.useRef(null);
+  const accessKeyElementId = React.useRef('');
+  const focusedElementId = React.useRef('');
 
   const dispatch = useAppDispatch();
 
@@ -92,7 +90,7 @@ export default function RichTranslationForm(
     (state) => state.unsavedchanges.exist,
   );
 
-  const tableBodyRef: { current: any } = React.useRef();
+  const tableBody = React.useRef<HTMLTableSectionElement>(null);
 
   const handleShortcutsFn = editor.useHandleShortcuts();
 
@@ -108,20 +106,15 @@ export default function RichTranslationForm(
     [message, updateTranslation],
   );
 
-  const getFirstInput = React.useCallback(() => {
-    if (tableBodyRef.current) {
-      return tableBodyRef.current.querySelector('textarea:first-of-type');
-    }
-    return null;
-  }, []);
+  const getFirstInput = React.useCallback(
+    () => tableBody.current?.querySelector('textarea:first-of-type'),
+    [],
+  );
 
   const getFocusedElement = React.useCallback(() => {
-    if (focusedElementIdRef.current && tableBodyRef.current) {
-      return tableBodyRef.current.querySelector(
-        'textarea#' + focusedElementIdRef.current,
-      );
-    }
-    return null;
+    const id = focusedElementId.current;
+    const el = tableBody.current;
+    return id && el ? el.querySelector(`textarea#${id}`) : null;
   }, []);
 
   // Replace selected content on external actions (for example, when a user clicks
@@ -157,7 +150,7 @@ export default function RichTranslationForm(
     if (changeSource === 'internal') {
       return;
     }
-    focusedElementIdRef.current = null;
+    focusedElementId.current = '';
   }, [entity, changeSource]);
 
   // Reset checks when content of the editor changes and some changes have been made.
@@ -223,19 +216,19 @@ export default function RichTranslationForm(
     }
 
     updateRichTranslation(
-      event.currentTarget.textContent,
-      accessKeyElementIdRef.current.split('-'),
+      event.currentTarget.textContent ?? '',
+      accessKeyElementId.current.split('-'),
     );
   }
 
   function setFocusedInput(event: React.FocusEvent<HTMLTextAreaElement>) {
-    focusedElementIdRef.current = event.currentTarget.id;
+    focusedElementId.current = event.currentTarget.id;
   }
 
   function renderTextarea(
     value: string,
     path: MessagePath,
-    maxlength?: number | null | undefined,
+    maxlength?: number | undefined,
   ) {
     return (
       <textarea
@@ -256,10 +249,11 @@ export default function RichTranslationForm(
 
   function renderAccessKeys(candidates: Array<string>) {
     // Get selected access key
-    const id = accessKeyElementIdRef.current;
-    let accessKey = null;
-    if (id && tableBodyRef.current) {
-      const accessKeyElement = tableBodyRef.current.querySelector(
+    const id = accessKeyElementId.current;
+    const el = tableBody.current;
+    let accessKey: string | null = null;
+    if (id && el) {
+      const accessKeyElement = el.querySelector<HTMLTextAreaElement>(
         'textarea#' + id,
       );
       if (accessKeyElement) {
@@ -307,7 +301,7 @@ export default function RichTranslationForm(
 
     // Access Key UI
     if (candidates && candidates.length && value.length < 2) {
-      accessKeyElementIdRef.current = path.join('-');
+      accessKeyElementId.current = path.join('-');
       return (
         <td>
           {renderTextarea(value, path, 1)}
@@ -327,7 +321,7 @@ export default function RichTranslationForm(
     path: MessagePath,
     label: string,
     attributeName?: string | null | undefined,
-    className?: string | null | undefined,
+    className?: string | undefined,
     example?: number | null | undefined,
   ) {
     return (
@@ -358,7 +352,7 @@ export default function RichTranslationForm(
     indent: boolean,
     eIndex: number,
     vIndex: number,
-    pluralExamples: any,
+    pluralExamples: Record<number, number> | null,
     attributeName: string | null | undefined,
   ) {
     let value: string;
@@ -377,7 +371,7 @@ export default function RichTranslationForm(
       example = pluralExamples[pluralForm];
     }
 
-    const vPath = [
+    const path = ePath.concat([
       eIndex,
       'expression',
       'variants',
@@ -386,38 +380,34 @@ export default function RichTranslationForm(
       'elements',
       0,
       'value',
-    ];
-
+    ]);
     return renderItem(
       value,
-      [].concat(ePath, vPath),
+      path,
       label,
       attributeName,
-      indent ? 'indented' : null,
+      indent ? 'indented' : undefined,
       example,
     );
   }
 
-  function renderElements(
-    elements: Array<PatternElement>,
+  function renderPattern(
+    { elements }: Pattern,
     path: MessagePath,
-    attributeName: string | null | undefined,
+    attributeName?: string,
   ) {
     let indent = false;
 
     return elements.map((element, eIndex) => {
-      let expression;
       if (
         element.type === 'Placeable' &&
-        (expression = element.expression) &&
-        expression.type === 'SelectExpression'
+        element.expression.type === 'SelectExpression'
       ) {
-        const variants = expression.variants;
-        let pluralExamples = null;
-        if (fluent.isPluralExpression(expression)) {
-          pluralExamples = locale.getPluralExamples(localeState);
-        }
-        const rendered_variants = variants.map((variant, vIndex) => {
+        const { expression } = element;
+        const pluralExamples = fluent.isPluralExpression(expression)
+          ? locale.getPluralExamples(localeState)
+          : null;
+        const rendered_variants = expression.variants.map((variant, vIndex) => {
           return renderVariant(
             variant,
             path,
@@ -441,54 +431,27 @@ export default function RichTranslationForm(
           return null;
         }
 
-        return renderItem(
-          element.value,
-          [].concat(path, [eIndex, 'value']),
-          label,
-        );
+        return renderItem(element.value, path.concat(eIndex, 'value'), label);
       }
-    });
-  }
-
-  function renderValue(
-    value: Pattern,
-    path: MessagePath,
-    attributeName?: string,
-  ) {
-    if (!value) {
-      return null;
-    }
-
-    return renderElements(
-      value.elements,
-      [].concat(path, ['elements']),
-      attributeName,
-    );
-  }
-
-  function renderAttributes(
-    attributes: Array<Attribute> | null | undefined,
-    path: MessagePath,
-  ) {
-    if (!attributes) {
-      return null;
-    }
-
-    return attributes.map((attribute, index) => {
-      return renderValue(
-        attribute.value,
-        [].concat(path, [index, 'value']),
-        attribute.id.name,
-      );
     });
   }
 
   return (
     <div className='fluent-rich-translation-form'>
       <table>
-        <tbody ref={tableBodyRef}>
-          {renderValue(message.value, ['value'])}
-          {renderAttributes(message.attributes, ['attributes'])}
+        <tbody ref={tableBody}>
+          {message.value
+            ? renderPattern(message.value, ['value', 'elements'])
+            : null}
+          {message.attributes?.map(({ id, value }, index) =>
+            value
+              ? renderPattern(
+                  value,
+                  ['attributes', index, 'value', 'elements'],
+                  id.name,
+                )
+              : null,
+          )}
         </tbody>
       </table>
     </div>

@@ -49,6 +49,10 @@ export default class ProgressChart extends React.Component<Props> {
       this.props.stats;
     const dpr = window.devicePixelRatio || 1;
     const canvas = this.canvas.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
 
     const data = [
       {
@@ -72,12 +76,6 @@ export default class ProgressChart extends React.Component<Props> {
         color: '#5F7285',
       },
     ];
-
-    if (!canvas) {
-      return;
-    }
-
-    const context = canvas.getContext('2d');
 
     // Clear old canvas content to avoid aliasing
     context.clearRect(0, 0, canvas.width, canvas.height);

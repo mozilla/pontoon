@@ -16,12 +16,5 @@ export default function reducer(
   state: NotificationState = initial,
   action: Action,
 ): NotificationState {
-  switch (action.type) {
-    case ADD:
-      return {
-        message: action.message,
-      };
-    default:
-      return state;
-  }
+  return action.type === ADD ? { message: action.message } : state;
 }

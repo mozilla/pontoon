@@ -13,7 +13,6 @@ import isSimpleMessage from './isSimpleMessage';
 import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
 import isSupportedMessage from './isSupportedMessage';
 import parser from './parser';
-import serialize from './serialize';
 import serializer from './serializer';
 
 export default {
@@ -32,6 +31,5 @@ export default {
   isSimpleSingleAttributeMessage,
   isSupportedMessage,
   parser,
-  serialize,
   serializer,
 };

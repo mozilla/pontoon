@@ -32,8 +32,8 @@ export const getNavigationParams = createSelector(
     parts.shift();
     parts.pop();
 
-    const locale = parts.shift();
-    const project = parts.shift();
+    const locale = parts.shift() ?? '';
+    const project = parts.shift() ?? '';
     const resource = parts.join('/');
 
     const params = new URLSearchParams(query);

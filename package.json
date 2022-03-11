@@ -64,6 +64,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/react-router": "^5.1.14",
     "@types/react-router-dom": "^5.1.7",
+    "@types/react-tabs": "^2.3.4",
     "@types/reactour": "^1.18.1",
     "@types/redux-logger": "^3.0.9",
     "@types/shortid": "^0.0.29",

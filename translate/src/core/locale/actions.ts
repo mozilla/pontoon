@@ -53,11 +53,15 @@ export function get(code: string) {
   return async (dispatch: AppDispatch) => {
     dispatch(request());
     const results = await api.locale.get(code);
-    const data = results.data.locale;
+    const data = results.data.locale as Omit<Locale, 'cldrPlurals'> & {
+      readonly cldrPlurals: string;
+    };
     const locale = {
       ...data,
       direction: data.direction.toLowerCase(),
-      cldrPlurals: data.cldrPlurals.split(',').map((i) => parseInt(i, 10)),
+      cldrPlurals: data.cldrPlurals
+        .split(',')
+        .map((i: string) => parseInt(i, 10)),
     };
     dispatch(receive(locale));
   };

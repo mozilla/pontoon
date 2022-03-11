@@ -32,7 +32,7 @@ export default function Term(
     }
 
     // Ignore if selecting text
-    if (window.getSelection().toString()) {
+    if (window.getSelection()?.toString()) {
       return;
     }
 

@@ -91,47 +91,6 @@ describe('<SearchBoxBase>', () => {
     expect(wrapper.state().search).toEqual('');
   });
 
-  it('returns correct list of selected statuses', () => {
-    const wrapper = shallow(
-      <SearchBoxBase
-        parameters={{}}
-        project={PROJECT}
-        searchAndFilters={SEARCH_AND_FILTERS}
-      />,
-    );
-
-    wrapper.setState({
-      statuses: {
-        warnings: true,
-        errors: true,
-        missing: false,
-      },
-    });
-
-    const selected = wrapper.instance().getSelectedStatuses();
-    expect(selected).toEqual(['warnings', 'errors']);
-  });
-
-  it('returns correct list of selected extras', () => {
-    const wrapper = shallow(
-      <SearchBoxBase
-        parameters={{}}
-        project={PROJECT}
-        searchAndFilters={SEARCH_AND_FILTERS}
-      />,
-    );
-
-    wrapper.setState({
-      extras: {
-        unchanged: true,
-        rejected: false,
-      },
-    });
-
-    const selected = wrapper.instance().getSelectedExtras();
-    expect(selected).toEqual(['unchanged']);
-  });
-
   it('toggles a filter', () => {
     const wrapper = shallow(
       <SearchBoxBase

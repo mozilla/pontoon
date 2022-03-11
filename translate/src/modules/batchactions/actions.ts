@@ -1,4 +1,4 @@
-import api from '~/core/api';
+import api, { EntityTranslation } from '~/core/api';
 
 import { actions as entitiesActions } from '~/core/entities';
 import { actions as resourceActions } from '~/core/resource';
@@ -71,7 +71,10 @@ function updateUI(
 
     // Update entity translation data now that it has changed on the server.
     for (let entity of entitiesData.entities) {
-      entity.translation.forEach(function (translation, pluralForm) {
+      entity.translation.forEach(function (
+        translation: EntityTranslation,
+        pluralForm: number,
+      ) {
         dispatch(
           entitiesActions.updateEntityTranslation(
             entity.pk,

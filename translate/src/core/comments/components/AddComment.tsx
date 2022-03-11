@@ -12,7 +12,13 @@ import {
   Node,
 } from 'slate';
 import type { Descendant } from 'slate';
-import { Slate, Editable, ReactEditor, withReact } from 'slate-react';
+import {
+  Editable,
+  ReactEditor,
+  RenderElementProps,
+  Slate,
+  withReact,
+} from 'slate-react';
 import escapeHtml from 'escape-html';
 
 import './AddComment.css';
@@ -21,6 +27,7 @@ import { UserAvatar } from '~/core/user';
 
 import type { NavigationParams } from '~/core/navigation';
 import type { UserState } from '~/core/user';
+import type { UsersList } from '~/core/api';
 
 type Props = {
   parameters: NavigationParams | null | undefined;
@@ -61,7 +68,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
   } = props;
 
   const mentionList: any = React.useRef();
-  const [target, setTarget] = React.useState<Range>();
+  const [target, setTarget] = React.useState<Range | null>(null);
   const [index, setIndex] = React.useState(0);
   const [search, setSearch] = React.useState('');
   const [scrollPosition, setScrollPosition] = React.useState(0);
@@ -161,11 +168,17 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
       '.comments-list .add-comment .comment-editor',
     );
     const commentEditorLineHeight =
-      parseInt(window.getComputedStyle(commentEditor).lineHeight) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).lineHeight)) ||
+      0;
     const commentEditorTopPadding =
-      parseInt(window.getComputedStyle(commentEditor).paddingTop) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).paddingTop)) ||
+      0;
     const commentEditorBottomPadding =
-      parseInt(window.getComputedStyle(commentEditor).paddingBottom) || 0;
+      (commentEditor &&
+        parseInt(window.getComputedStyle(commentEditor).paddingBottom)) ||
+      0;
     const commentEditorSpan = document.querySelector(
       '.comments-list .add-comment .comment-editor p span',
     );
@@ -372,7 +385,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     setTarget(null);
   };
 
-  const Portal = ({ children }) => {
+  const Portal = ({ children }: { children: React.ReactNode }) => {
     if (!document.body) {
       return null;
     }
@@ -385,7 +398,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     }
 
     if (!node.type || !node.children) {
-      return;
+      return '';
     }
 
     const children = node.children.map((n) => serialize(n)).join('');
@@ -394,10 +407,9 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
       case 'paragraph':
         return `<p>${children.trim()}</p>`;
       case 'mention':
-        if (node.url) {
-          return `<a href="${escapeHtml(node.url)}">${children}</a>`;
-        }
-        break;
+        return node.url
+          ? `<a href="${escapeHtml(node.url)}">${children}</a>`
+          : children;
       default:
         return children;
     }
@@ -443,7 +455,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
               name='comment'
               dir='auto'
               placeholder={`Write a comment…`}
-              renderElement={renderElement}
+              renderElement={RenderElement}
               onKeyDown={target ? handleMentionsKeyDown : handleEditorKeyDown}
             />
           </Localized>
@@ -501,7 +513,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
   );
 }
 
-const withMentions = (editor: Editor) => {
+const withMentions = (editor: BaseEditor & ReactEditor) => {
   const { isInline, isVoid } = editor;
 
   editor.isInline = (element) => {
@@ -515,21 +527,11 @@ const withMentions = (editor: Editor) => {
   return editor;
 };
 
-const renderElement = (props) => {
-  return <Element {...props} />;
-};
-
-const Element = (props) => {
-  const { attributes, children, element } = props;
-  switch (element.type) {
-    case 'mention':
-      return <MentionElement {...props} />;
-    default:
-      return <p {...attributes}>{children}</p>;
-  }
-};
-
-const insertMention = (editor, character, users) => {
+const insertMention = (
+  editor: BaseEditor,
+  character: string,
+  users: UsersList[],
+) => {
   const selectedUser = users.find((user) => user.name === character);
   if (!selectedUser) {
     return;
@@ -547,11 +549,12 @@ const insertMention = (editor, character, users) => {
   Transforms.insertText(editor, ' ');
 };
 
-const MentionElement = ({ attributes, children, element }) => {
-  return (
+const RenderElement = ({ attributes, children, element }: RenderElementProps) =>
+  element.type === 'mention' ? (
     <span {...attributes} contentEditable={false} className='mention-element'>
       @{element.character}
       {children}
     </span>
+  ) : (
+    <p {...attributes}>{children}</p>
   );
-};
