@@ -25,7 +25,7 @@ type Action =
 type Translations = Array<MachineryTranslation>;
 
 export type MachineryState = {
-  entity: number | null | undefined;
+  entity: number | null;
   sourceString: string;
   searchString: string;
   translations: Translations;
@@ -122,7 +122,7 @@ export default function reducer(
     case SET_ENTITY:
       return {
         ...state,
-        entity: action.entity,
+        entity: action.entity ?? null,
         sourceString: action.sourceString,
       };
     default:

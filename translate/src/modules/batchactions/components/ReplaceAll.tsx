@@ -38,7 +38,7 @@ export default class ReplaceAll extends React.Component<Props> {
     return (
       <Localized
         id='batchactions-ReplaceAll--invalid'
-        vars={{ invalidCount: response.invalidCount }}
+        vars={{ invalidCount: response.invalidCount ?? -1 }}
       >
         {'{ $invalidCount } FAILED'}
       </Localized>
@@ -55,7 +55,7 @@ export default class ReplaceAll extends React.Component<Props> {
     return (
       <Localized
         id='batchactions-ReplaceAll--success'
-        vars={{ changedCount: response.changedCount }}
+        vars={{ changedCount: response.changedCount ?? -1 }}
       >
         {'{ $changedCount } STRINGS REPLACED'}
       </Localized>

@@ -8,11 +8,10 @@ import Highcharts from 'highcharts/highstock';
 import highchartsStock from 'highcharts/modules/stock';
 import HighchartsReact from 'highcharts-react-official';
 
-import './TimeRangeFilter.css';
-
+import type { TimeRangeType } from '..';
 import { CHART_OPTIONS } from './chart-options';
 
-import type { TimeRangeType } from '..';
+import './TimeRangeFilter.css';
 
 const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
 const URL_FORMAT = 'YYYYMMDDHHmm';
@@ -21,8 +20,12 @@ type Props = {
   project: string;
   timeRange: TimeRangeType | null | undefined;
   timeRangeData: Array<Array<number>>;
-  applySingleFilter: (filter: string, type: string) => void;
-  toggleFilter: (filter: string, type: string, event: React.MouseEvent) => void;
+  applySingleFilter: (filter: string, type: 'timeRange') => void;
+  toggleFilter: (
+    filter: string,
+    type: 'timeRange',
+    event: React.MouseEvent,
+  ) => void;
   updateTimeRange: (filter: string) => void;
 };
 
@@ -50,7 +53,7 @@ type State = {
 /**
  * Shows a Time Range filter panel.
  */
-export default class TimeRangeFilterBase extends React.Component<Props, State> {
+export default class TimeRangeFilter extends React.Component<Props, State> {
   chart: { current: any };
 
   constructor(props: Props) {
@@ -118,27 +121,15 @@ export default class TimeRangeFilterBase extends React.Component<Props, State> {
   ) => {
     const { chartFrom, chartTo } = this.state;
 
-    if (!chartFrom || !chartTo) {
-      return;
+    if (chartFrom && chartTo && this.chart.current) {
+      const asTime = (str: string) =>
+        date.parse(str, URL_FORMAT, true).getTime();
+      const from =
+        key === 'chartFrom' && value ? value : asTime(chartFrom.toString());
+      const to =
+        key === 'chartTo' && value ? value : asTime(chartTo.toString());
+      this.chart.current.chart.xAxis[0].setExtremes(from, to);
     }
-
-    if (!this.chart.current) {
-      return;
-    }
-
-    let extremes = {
-      chartFrom: date.parse(chartFrom.toString(), URL_FORMAT, true).getTime(),
-      chartTo: date.parse(chartTo.toString(), URL_FORMAT, true).getTime(),
-    };
-
-    if (key && value) {
-      extremes[key] = value;
-    }
-
-    this.chart.current.chart.xAxis[0].setExtremes(
-      extremes.chartFrom,
-      extremes.chartTo,
-    );
   };
 
   plotChart: () => null | void = () => {

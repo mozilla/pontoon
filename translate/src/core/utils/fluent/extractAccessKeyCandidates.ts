@@ -1,34 +1,28 @@
-import flattenDeep from 'lodash.flattendeep';
-
-import type { Entry, PatternElement, TextElement } from '@fluent/syntax';
+import type { Entry, Pattern, TextElement } from '@fluent/syntax';
 
 /**
  * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
  */
-function getTextElementsRecursivelly(
-  elements: Array<PatternElement>,
+function getTextElementsRecursively(
+  { elements }: Pattern,
+  result: TextElement[] = [],
 ): TextElement[] {
-  const textElements = elements.map(
-    (element): TextElement | TextElement[] | TextElement[][] => {
-      if (element.type === 'TextElement') {
-        return element;
-      }
+  for (const element of elements) {
+    switch (element.type) {
+      case 'TextElement':
+        result.push(element);
+        break;
+      case 'Placeable':
+        if (element.expression.type === 'SelectExpression') {
+          for (const variant of element.expression.variants) {
+            getTextElementsRecursively(variant.value, result);
+          }
+        }
+        break;
+    }
+  }
 
-      if (
-        element.type === 'Placeable' &&
-        element.expression &&
-        element.expression.type === 'SelectExpression'
-      ) {
-        return element.expression.variants.map((variant) => {
-          return getTextElementsRecursivelly(variant.value.elements);
-        });
-      }
-
-      return null;
-    },
-  );
-
-  return flattenDeep(textElements);
+  return result;
 }
 
 /**
@@ -74,8 +68,7 @@ export default function extractAccessKeyCandidates(
     return null;
   }
 
-  // Only take TextElements
-  const textElements = getTextElementsRecursivelly(source.value.elements);
+  const textElements = getTextElementsRecursively(source.value);
 
   // Collect values of TextElements
   const values = textElements.map((element) => {

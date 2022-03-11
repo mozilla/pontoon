@@ -45,7 +45,7 @@ type State = {
  * translation, or the fuzzy translation, or the last suggested translation.
  */
 export default class Entity extends React.Component<Props, State> {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = { areSiblingsActive: false };
   }
@@ -123,26 +123,18 @@ export default class Entity extends React.Component<Props, State> {
     }
   };
 
-  areFiltersApplied: () => boolean = () => {
-    const parameters = this.props.parameters;
-    if (
-      parameters.status != null ||
-      parameters.extra != null ||
-      parameters.tag != null ||
-      parameters.time != null ||
-      parameters.author != null
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  showSiblingEntitiesButton: () => boolean = () => {
-    const isSearched = this.props.parameters.search;
-    const areFiltersApplied = this.areFiltersApplied();
-    const areSiblingsActive = !this.state.areSiblingsActive;
-
-    return (isSearched || areFiltersApplied) && areSiblingsActive;
+  showSiblingEntitiesButton = () => {
+    const { search, status, extra, tag, time, author } = this.props.parameters;
+    const { areSiblingsActive } = this.state;
+    return (
+      !areSiblingsActive &&
+      (search ||
+        status != null ||
+        extra != null ||
+        tag != null ||
+        time != null ||
+        author != null)
+    );
   };
 
   render(): React.ReactElement<'li'> {
@@ -157,13 +149,11 @@ export default class Entity extends React.Component<Props, State> {
     } = this.props;
 
     const classSelected = selected ? 'selected' : '';
-
     const classBatchEditable =
       isTranslator && !isReadOnlyEditor ? 'batch-editable' : '';
-
     const classChecked = checkedForBatchEditing ? 'checked' : '';
-
     const classSibling = entity.isSibling ? 'sibling' : '';
+
     return (
       <li
         className={`entity ${this.status} ${classSelected} ${classBatchEditable} ${classChecked} ${classSibling}`}

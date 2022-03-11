@@ -2,8 +2,8 @@ import React from 'react';
 
 import './SkeletonLoader.css';
 
-export default function SkeletonLoader(props) {
-  const firstLoad = props.items.length === 0;
+export default function SkeletonLoader({ items }: { items: unknown[] }) {
+  const firstLoad = items.length === 0;
   const itemCount = firstLoad ? 30 : 2;
   const list = Array.from(Array(itemCount).keys());
 

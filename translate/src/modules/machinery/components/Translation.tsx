@@ -68,7 +68,7 @@ export function Translation({
   React.useEffect(() => {
     if (selectedHelperElementIndex === index) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      translationRef.current.scrollIntoView({
+      translationRef.current?.scrollIntoView({
         behavior: mediaQuery.matches ? 'auto' : 'smooth',
         block: 'nearest',
       });

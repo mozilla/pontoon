@@ -21,7 +21,7 @@ import { AppDispatch, RootState } from '~/store';
 type Props = {
   isTranslator: boolean;
   parameters: NavigationParams;
-  selectedEntity: Entity;
+  selectedEntity?: Entity;
   user: UserState;
 };
 

@@ -44,15 +44,15 @@ type Props = {
   isTranslator: boolean;
   locale: Locale;
   machinery: MachineryState;
-  nextEntity: Entity;
-  previousEntity: Entity;
+  nextEntity?: Entity;
+  previousEntity?: Entity;
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
   parameters: NavigationParams;
   pluralForm: number;
   router: Record<string, any>;
-  selectedEntity: Entity;
+  selectedEntity?: Entity;
   user: UserState;
 };
 
@@ -73,7 +73,7 @@ type State = {
  * Shows the metadata of the entity and an editor for translations.
  */
 export class EntityDetailsBase extends React.Component<InternalProps, State> {
-  commentTabRef: { current: Record<string, any> };
+  commentTabRef: React.RefObject<{ _reactInternalFiber: { index: number } }>;
 
   constructor(props: InternalProps, state: State) {
     super(props);
@@ -255,7 +255,10 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         unsavedChangesIgnored,
         () => {
           dispatch(
-            navigation.actions.updateEntity(router, nextEntity.pk.toString()),
+            navigation.actions.updateEntity(
+              router,
+              nextEntity?.pk.toString() ?? '',
+            ),
           );
           dispatch(editor.actions.reset());
         },
@@ -278,7 +281,7 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
           dispatch(
             navigation.actions.updateEntity(
               router,
-              previousEntity.pk.toString(),
+              previousEntity?.pk.toString() ?? '',
             ),
           );
           dispatch(editor.actions.reset());
@@ -386,6 +389,8 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
       selectedEntity,
       dispatch,
     } = this.props;
+
+    if (!selectedEntity) return;
 
     const state = this.props.store.getState();
     const unsavedChangesExist = state[unsavedchanges.NAME].exist;

@@ -20,7 +20,7 @@ type State = {
  * clicked.
  */
 export default class NotificationPanel extends React.Component<Props, State> {
-  hideTimeout: number;
+  hideTimeout?: number;
 
   constructor(props: Props) {
     super(props);

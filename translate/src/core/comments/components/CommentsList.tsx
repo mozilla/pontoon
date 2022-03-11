@@ -40,7 +40,7 @@ export default function CommentsList(props: Props): React.ReactElement<'div'> {
   const translationId = translation ? translation.pk : null;
 
   // rendering comment
-  const renderComment = (comment) => {
+  const renderComment = (comment: TranslationComment) => {
     return (
       <Comment
         comment={comment}

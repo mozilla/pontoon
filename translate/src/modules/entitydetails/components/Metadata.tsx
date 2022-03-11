@@ -26,7 +26,9 @@ type Props = {
   readonly terms: TermState;
   readonly teamComments: TeamCommentState;
   readonly user: UserState;
-  readonly commentTabRef: Record<string, any>;
+  readonly commentTabRef: React.RefObject<{
+    _reactInternalFiber: { index: number };
+  }>;
   readonly addTextToEditorTranslation: (text: string) => void;
   readonly navigateToPath: (path: string) => void;
   setCommentTabIndex: (id: number) => void;
@@ -323,7 +325,7 @@ export default class Metadata extends React.Component<Props, State> {
 
   openTeamComments: () => void = () => {
     const teamCommentsTab = this.props.commentTabRef.current;
-    const index = teamCommentsTab._reactInternalFiber.index;
+    const index = teamCommentsTab?._reactInternalFiber.index ?? 0;
     this.props.setCommentTabIndex(index);
     this.props.setContactPerson(this.props.entity.project.contact.name);
   };

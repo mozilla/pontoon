@@ -60,52 +60,50 @@ const FLIPPED_MAP = {
   ],
 };
 
-function transformString(
-  map,
-  elongate = false,
-  prefix = '',
-  postfix = '',
-  msg,
-) {
-  // Exclude access-keys and other single-char messages
-  if (msg.length === 1) {
-    return msg;
-  }
-  // XML entities (&#x202a;) and XML tags.
-  const reExcluded = /(&[#\w]+;|<\s*.+?\s*>)/;
-
-  const parts = msg.split(reExcluded);
-  const modified = parts.map((part) => {
-    if (reExcluded.test(part)) {
-      return part;
+const getTransform = (
+  map: typeof ACCENTED_MAP | typeof FLIPPED_MAP,
+  elongate: boolean,
+  prefix: string,
+  postfix: string,
+) =>
+  function (msg: string) {
+    // Exclude access-keys and other single-char messages
+    if (msg.length === 1) {
+      return msg;
     }
-    return (
-      prefix +
-      part.replace(/[a-z]/gi, (ch) => {
-        let cc = ch.charCodeAt(0);
-        if (cc >= 97 && cc <= 122) {
-          const newChar = String.fromCodePoint(map.small[cc - 97]);
-          // duplicate "a", "e", "o" and "u" to emulate ~30% longer text
-          if (
-            elongate &&
-            (cc === 97 || cc === 101 || cc === 111 || cc === 117)
-          ) {
-            return newChar + newChar;
-          }
-          return newChar;
-        }
-        if (cc >= 65 && cc <= 90) {
-          return String.fromCodePoint(map.caps[cc - 65]);
-        }
-        return ch;
-      }) +
-      postfix
-    );
-  });
-  return modified.join('');
-}
+    // XML entities (&#x202a;) and XML tags.
+    const reExcluded = /(&[#\w]+;|<\s*.+?\s*>)/;
 
-export default {
-  accented: transformString.bind(null, ACCENTED_MAP, true, '', ''),
-  bidi: transformString.bind(null, FLIPPED_MAP, false, '\u202e', '\u202c'),
-};
+    const parts = msg.split(reExcluded);
+    const modified = parts.map((part) => {
+      if (reExcluded.test(part)) {
+        return part;
+      }
+      return (
+        prefix +
+        part.replace(/[a-z]/gi, (ch) => {
+          let cc = ch.charCodeAt(0);
+          if (cc >= 97 && cc <= 122) {
+            const newChar = String.fromCodePoint(map.small[cc - 97]);
+            // duplicate "a", "e", "o" and "u" to emulate ~30% longer text
+            if (
+              elongate &&
+              (cc === 97 || cc === 101 || cc === 111 || cc === 117)
+            ) {
+              return newChar + newChar;
+            }
+            return newChar;
+          }
+          if (cc >= 65 && cc <= 90) {
+            return String.fromCodePoint(map.caps[cc - 65]);
+          }
+          return ch;
+        }) +
+        postfix
+      );
+    });
+    return modified.join('');
+  };
+
+export const accented = getTransform(ACCENTED_MAP, true, '', '');
+export const bidi = getTransform(FLIPPED_MAP, false, '\u202e', '\u202c');

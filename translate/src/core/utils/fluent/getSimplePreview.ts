@@ -1,7 +1,29 @@
-import flattenDeep from 'lodash.flattendeep';
+import { Pattern, serializeExpression } from '@fluent/syntax';
 
 import parser from './parser';
-import serialize from './serialize';
+
+function serialize({ elements }: Pattern): string {
+  let result = '';
+  for (const elt of elements) {
+    switch (elt.type) {
+      case 'TextElement':
+        result += elt.value;
+        break;
+
+      case 'Placeable':
+        if (elt.expression.type === 'SelectExpression') {
+          const { variants } = elt.expression;
+          const dv = variants.find((v) => v.default) || variants[0];
+          result += serialize(dv.value);
+        } else {
+          const expression = serializeExpression(elt.expression);
+          result += `{ ${expression} }`;
+        }
+        break;
+    }
+  }
+  return result;
+}
 
 /**
  * Turn a Fluent message into a simple string, without any syntax sigils.
@@ -29,24 +51,10 @@ import serialize from './serialize';
 export default function getSimplePreview(
   content: string | null | undefined,
 ): string {
-  if (!content) {
-    return '';
-  }
+  if (!content) return '';
 
   const message = parser.parseEntry(content);
-
-  if (message.type !== 'Message' && message.type !== 'Term') {
-    return content;
-  }
-
-  let tree;
-  if (message.value) {
-    tree = message.value;
-  } else {
-    tree = message.attributes[0].value;
-  }
-
-  let elements = serialize(tree.elements);
-
-  return flattenDeep(elements).join('');
+  return message.type === 'Message' || message.type === 'Term'
+    ? serialize(message.value || message.attributes[0].value)
+    : content;
 }

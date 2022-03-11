@@ -6,15 +6,18 @@ import history from './historyInstance';
 import createRootReducer from './rootReducer';
 
 const store = configureStore({
+  // @ts-ignore Here be dragons
   reducer: createRootReducer(history),
-  middleware: (getDefaultMiddleware) => {
+
+  // @ts-ignore Here be dragons
+  middleware(getDefaultMiddleware) {
     const middleware = getDefaultMiddleware({
       serializableCheck: false,
       immutableCheck: false,
     }).prepend(routerMiddleware(history));
-    if (process.env.NODE_ENV === 'development') {
-      middleware.push(createLogger());
-    }
+
+    if (process.env.NODE_ENV === 'development') middleware.push(createLogger());
+
     return middleware;
   },
 });

@@ -31,7 +31,7 @@ export const FILTERS_STATUS = [
     name: 'Unreviewed',
     slug: 'unreviewed',
   },
-];
+] as const;
 
 // List of available extra filters.
 // This list controls the creation of the UI.
@@ -52,4 +52,4 @@ export const FILTERS_EXTRA = [
     name: 'Missing without Unreviewed',
     slug: 'missing-without-unreviewed',
   },
-];
+] as const;

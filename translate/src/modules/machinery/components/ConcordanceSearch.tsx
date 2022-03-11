@@ -11,8 +11,8 @@ type Props = {
   translation: MachineryTranslation;
 };
 
-function ProjectList({ projects }: { projects: string[] }) {
-  const notEmpty = projects.filter(Boolean);
+function ProjectList({ projects }: { projects: (string | null)[] }) {
+  const notEmpty = projects.filter(Boolean) as string[];
 
   if (notEmpty.length === 0) {
     return <TranslationMemory />;
@@ -37,7 +37,7 @@ export function ConcordanceSearch({
 }: Props): React.ReactElement {
   const locale = useAppSelector((state) => state.locale);
   const projects = translation.projectNames;
-  const title = !projects ? null : projects.filter(Boolean).join(' • ');
+  const title = !projects ? undefined : projects.filter(Boolean).join(' • ');
 
   return (
     <>
