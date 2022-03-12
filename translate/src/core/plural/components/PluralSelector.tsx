@@ -37,8 +37,9 @@ export function PluralSelectorBase({
   resetEditor,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
-  const { cldrPlurals } = useContext(Locale);
-  const examples = usePluralExamples();
+  const locale = useContext(Locale);
+  const { cldrPlurals } = locale;
+  const examples = usePluralExamples(locale);
 
   function selectPluralForm(nextPluralForm: number) {
     if (pluralForm !== nextPluralForm) {

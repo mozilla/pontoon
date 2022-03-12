@@ -94,7 +94,7 @@ export default function RichTranslationForm(
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,
   );
-  const pluralExamples = usePluralExamples();
+  const pluralExamples = usePluralExamples(locale);
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);
 

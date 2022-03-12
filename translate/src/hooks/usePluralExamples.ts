@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { Locale, LocaleType } from '~/context/locale';
+import type { LocaleType } from '~/context/locale';
 
 const cache = new WeakMap<LocaleType, Record<number, number>>();
 
@@ -16,8 +15,7 @@ const cache = new WeakMap<LocaleType, Record<number, number>>();
  *
  * @returns A map of locale's cldrPlurals and their plural examples.
  */
-export function usePluralExamples(): Record<number, number> {
-  const locale = useContext(Locale);
+export function usePluralExamples(locale: LocaleType): Record<number, number> {
   const prev = cache.get(locale);
   if (prev) return prev;
   const examples = findPluralExamples(locale);

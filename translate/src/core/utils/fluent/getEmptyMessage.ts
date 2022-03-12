@@ -38,7 +38,7 @@ function getCldrTemplateVariant(
 /**
  * Generate locale plural variants from a template
  */
-function getLocaleVariants(cldrPlurals: number[], template: Variant) {
+function getLocaleVariants(cldrPlurals: readonly number[], template: Variant) {
   return cldrPlurals.map((item) => {
     const localeVariant = template.clone();
     if (localeVariant.key.type === 'Identifier') {

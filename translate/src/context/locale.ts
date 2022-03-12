@@ -11,7 +11,7 @@ export type Localization = Readonly<{
 export type LocaleType = Readonly<{
   code: string;
   name: string;
-  cldrPlurals: Array<number>;
+  cldrPlurals: readonly number[];
   pluralRule: string;
   direction: string;
   script: string;
@@ -19,7 +19,7 @@ export type LocaleType = Readonly<{
   msTranslatorCode: string;
   systranTranslateCode: string;
   msTerminologyCode: string;
-  localizations: Localization[];
+  localizations: readonly Localization[];
 
   fetching: boolean;
   set: (locale: LocaleType) => void;
@@ -77,11 +77,13 @@ export async function updateLocale(locale: LocaleType, code: string) {
   headers.append('X-Requested-With', 'XMLHttpRequest');
   const res = await new APIBase().fetch('/graphql', 'GET', payload, headers);
 
-  const next = res.data.locale;
-  next.cldrPlurals = next.cldrPlurals
+  const next = res.data.locale as Omit<LocaleType, 'cldrPlurals'> & {
+    cldrPlurals: string;
+  };
+  const cldrPlurals = next.cldrPlurals
     .split(',')
     .map((i: string) => parseInt(i, 10));
-  next.direction = next.direction.toLowerCase();
+  const direction = next.direction.toLowerCase();
 
-  set({ ...next, fetching: false, set });
+  set({ ...next, cldrPlurals, direction, fetching: false, set });
 }
