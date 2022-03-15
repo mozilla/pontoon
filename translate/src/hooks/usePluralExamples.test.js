@@ -1,6 +1,18 @@
+import React from 'react';
+import sinon from 'sinon';
 import { usePluralExamples } from './usePluralExamples';
 
 describe('usePluralExamples', () => {
+  beforeAll(() => {
+    sinon.stub(console, 'error');
+    sinon.stub(React, 'useMemo').callsFake((cb) => cb());
+  });
+  afterEach(() => console.error.resetHistory());
+  afterAll(() => {
+    console.error.restore();
+    React.useMemo.restore();
+  });
+
   it('returns a map of Slovenian plural examples', () => {
     const res = usePluralExamples({
       cldrPlurals: [1, 2, 3, 5],
@@ -9,23 +21,16 @@ describe('usePluralExamples', () => {
     });
 
     expect(res).toEqual({ 1: 1, 2: 2, 3: 3, 5: 0 });
+    expect(console.error.callCount).toBe(0);
   });
 
   it('prevents infinite loop if locale plurals are not configured properly', () => {
-    const onError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const res = usePluralExamples({
+      cldrPlurals: [0, 1, 2, 3, 4, 5],
+      pluralRule: '(n != 1)',
+    });
 
-    try {
-      const res = usePluralExamples({
-        cldrPlurals: [0, 1, 2, 3, 4, 5],
-        pluralRule: '(n != 1)',
-      });
-
-      expect(res).toEqual({ 0: 1, 1: 2 });
-      expect(onError).toHaveBeenCalledWith(
-        'Unable to generate plural examples.',
-      );
-    } finally {
-      onError.mockRestore();
-    }
+    expect(res).toEqual({ 0: 1, 1: 2 });
+    expect(console.error.callCount).toBe(1);
   });
 });
