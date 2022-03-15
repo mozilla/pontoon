@@ -7,13 +7,17 @@ import pontoon.base.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0020_notification_subscriptions'),
+        ("base", "0020_notification_subscriptions"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='repository',
-            name='url',
-            field=models.CharField(max_length=2000, validators=[pontoon.base.models.repository_url_validator], verbose_name='URL'),
+            model_name="repository",
+            name="url",
+            field=models.CharField(
+                max_length=2000,
+                validators=[pontoon.base.models.repository_url_validator],
+                verbose_name="URL",
+            ),
         ),
     ]
