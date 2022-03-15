@@ -73,6 +73,7 @@
             {{ Checkbox.checkbox('Project deadline notifications', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project deadline approaches') }}
             {{ Checkbox.checkbox('Comment notifications', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
             {{ Checkbox.checkbox('Unreviewed suggestion notifications', class='unreviewed-suggestion-notifications', attribute='unreviewed_suggestion_notifications', is_enabled=user.profile.unreviewed_suggestion_notifications, title='Get notified when new suggestions are ready for review') }}
+            {{ Checkbox.checkbox('Approved/rejected suggestion notifications', class='approved-suggestion-notifications', attribute='approved_suggestion_notifications', is_enabled=user.profile.approved_suggestion_notifications, title='Get notified when your suggestions are approved or rejected') }}
         </ul>
     </section>
 
