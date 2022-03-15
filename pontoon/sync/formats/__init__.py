@@ -4,11 +4,13 @@ Parsing resource files.
 See base.py for the ParsedResource base class.
 """
 import os.path
+import fnmatch
 
 from pontoon.sync.formats import (
     compare_locales,
     ftl,
     json_extensions,
+    json_keyvalue,
     lang,
     po,
     silme,
@@ -19,35 +21,39 @@ from pontoon.sync.formats import (
 # where the key is the extension you're parsing and the value is a
 # callable returning an instance of a ParsedResource subclass.
 SUPPORTED_FORMAT_PARSERS = {
-    ".dtd": silme.parse_dtd,
-    ".ftl": ftl.parse,
-    ".inc": silme.parse_inc,
-    ".ini": silme.parse_ini,
-    ".json": json_extensions.parse,
-    ".lang": lang.parse,
-    ".po": po.parse,
-    ".pot": po.parse,
-    ".properties": silme.parse_properties,
-    ".xlf": xliff.parse,
-    ".xliff": xliff.parse,
-    ".xml": compare_locales.parse,
+    "*.dtd": silme.parse_dtd,
+    "*.ftl": ftl.parse,
+    "*.inc": silme.parse_inc,
+    "*.ini": silme.parse_ini,
+    "messages.json": json_extensions.parse,
+    "*.json": json_keyvalue.parse,
+    "*.lang": lang.parse,
+    "*.po": po.parse,
+    "*.pot": po.parse,
+    "*.properties": silme.parse_properties,
+    "*.xlf": xliff.parse,
+    "*.xliff": xliff.parse,
+    "*.xml": compare_locales.parse,
 }
 
 
-def are_compatible_formats(extension_a, extension_b):
+def get_format_parser(file_name):
+    for format, parser in SUPPORTED_FORMAT_PARSERS.items():
+        if fnmatch.fnmatch(file_name, format):
+            return parser
+    return None
+
+
+def are_compatible_files(file_a, file_b):
     """
-    Return True if given file extensions belong to the same file format.
-    We test that by comparing parsers used by each file extenion.
-    Note that some formats (e.g. Gettext, XLIFF) use multiple file extensions.
+    Return True if the given file names correspond to the same file format.
+    Note that some formats (e.g. Gettext, XLIFF) use multiple file name patterns.
     """
-    try:
-        return (
-            SUPPORTED_FORMAT_PARSERS[extension_a]
-            == SUPPORTED_FORMAT_PARSERS[extension_b]
-        )
-    # File extension not supported
-    except KeyError:
-        return False
+    parser_a = get_format_parser(file_a)
+    parser_b = get_format_parser(file_b)
+    if parser_a:
+        return parser_a == parser_b
+    return False
 
 
 def parse(path, source_path=None, locale=None):
@@ -65,10 +71,9 @@ def parse(path, source_path=None, locale=None):
         Object which describes information about currently processed locale.
         Some of the formats require information about things like e.g. plural form.
     """
+    filename = os.path.basename(path)
+    parser = get_format_parser(filename)
+    if parser:
+        return parser(path, source_path=source_path, locale=locale)
     root, extension = os.path.splitext(path)
-    if extension in SUPPORTED_FORMAT_PARSERS:
-        return SUPPORTED_FORMAT_PARSERS[extension](
-            path, source_path=source_path, locale=locale
-        )
-    else:
-        raise ValueError(f"Translation format {extension} is not supported.")
+    raise ValueError(f"Translation format {extension} is not supported.")
