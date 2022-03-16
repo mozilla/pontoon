@@ -59,18 +59,21 @@ class Command(BaseCommand):
         data = defaultdict(lambda: (list(), list()))
         start = timezone.now() - timedelta(days=1)
         for suggestion in Translation.objects.filter(
-            Q(approved_date__gt=start) | Q(rejected_date__gt=start)
+            (Q(approved_date__gt=start) | Q(rejected_date__gt=start))
+            & Q(user__profile__review_notifications=True)
         ):
             author = suggestion.user
-            if not author.profile.review_notifications:
-                continue
             locale = suggestion.locale
             project = suggestion.entity.resource.project
             key = (author, locale, project)
 
-            if suggestion.approved and suggestion.active:
+            if (
+                suggestion.approved
+                and suggestion.active
+                and suggestion.approved_user != author
+            ):
                 data[key][0].append(suggestion.entity.pk)
-            elif suggestion.rejected:
+            elif suggestion.rejected and suggestion.rejected_user != author:
                 data[key][1].append(suggestion.entity.pk)
 
         for ((author, locale, project), (approved, rejected)) in data.items():
