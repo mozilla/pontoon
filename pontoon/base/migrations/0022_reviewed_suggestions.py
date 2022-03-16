@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="userprofile",
-            name="approved_suggestion_notifications",
+            name="review_notifications",
             field=models.BooleanField(default=True),
         ),
     ]

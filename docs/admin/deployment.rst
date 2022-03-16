@@ -359,14 +359,16 @@ designed to run on a weekly basis.
 
    ./manage.py send_suggestion_notifications
 
-Send Approved Notifications
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This job sends notifications about newly approved & rejected suggestions to the
-authors of those suggestions. The command is designed to run on a daily basis.
+Send Review Notifications
+~~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends notifications about newly reviewed (approved or rejected)
+suggestions to the authors of those suggestions.
+
+The command is designed to run on a daily basis.
 
 .. code-block:: bash
 
-   ./manage.py send_approved_notifications
+   ./manage.py send_review_notifications
 
 .. _collect-insights:
 

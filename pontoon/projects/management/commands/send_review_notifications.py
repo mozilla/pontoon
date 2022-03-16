@@ -11,7 +11,7 @@ from pontoon.base.models import Translation
 
 
 class Command(BaseCommand):
-    help = "Notify translators about their newly approved/rejected suggestions"
+    help = "Notify translators about their newly reviewed suggestions"
 
     def get_description(self, author, locale, project, approved, rejected):
         url = reverse(
@@ -48,12 +48,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        This command sends notifications about newly approved & rejected
+        This command sends notifications about newly reviewed
         suggestions to the authors of those suggestions.
 
         The command is designed to run on a daily basis.
         """
-        self.stdout.write("Sending approve/reject notifications.")
+        self.stdout.write("Sending review notifications.")
 
         # (author, locale, project) -> (approved, rejected)
         data = defaultdict(lambda: (list(), list()))
@@ -62,7 +62,7 @@ class Command(BaseCommand):
             Q(approved_date__gt=start) | Q(rejected_date__gt=start)
         ):
             author = suggestion.user
-            if not author.profile.approved_suggestion_notifications:
+            if not author.profile.review_notifications:
                 continue
             locale = suggestion.locale
             project = suggestion.entity.resource.project
@@ -81,8 +81,8 @@ class Command(BaseCommand):
             notify.send(
                 sender=author,
                 recipient=author,
-                verb="has approved/rejected suggestions",
+                verb="has reviewed suggestions",
                 description=desc,
             )
 
-        self.stdout.write(f"Sent {len(data)} approved-suggestion notifications.")
+        self.stdout.write(f"Sent {len(data)} review notifications.")
