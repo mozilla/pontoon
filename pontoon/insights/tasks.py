@@ -61,7 +61,7 @@ def collect_project_locale_insights(start_of_today, activities, entities):
                 activities,
                 count_entities(
                     entities,
-                    locale=project_locale.project.id,
+                    locale=project_locale.locale.id,
                     project=project_locale.project.id,
                 ),
             )
