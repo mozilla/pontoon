@@ -8,7 +8,6 @@ import GenericTranslationForm from './GenericTranslationForm';
 
 function createComponent(updateTranslation) {
   const store = createReduxStore();
-  //store.dispatch(locale.actions.receive({ code: 'kg' }));
   store.dispatch(updateEditor('Hello'));
 
   const wrapper = mountComponentWithStore(GenericTranslationForm, store, {

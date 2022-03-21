@@ -155,13 +155,9 @@ export function EntitiesListBase({
   // Notes:
   //  * It might seem to be an anti-pattern to change the state after the
   //    component has rendered, but that's actually the easiest way to
-  //    implement that feature. Note that the first render is not shown
-  //    to the user, so there should be no blinking here.
-  //    Cf. https://reactjs.org/docs/react-component.html#componentdidupdate
-  //  * Other solutions might involve using `connected-react-router`'s
-  //    redux actions (see https://stackoverflow.com/a/37911318/1462501)
-  //    or using `history.listen` to trigger an action on each location
-  //    change.
+  //    implement that feature.
+  //  * Other solutions might involve using `history.listen` to trigger
+  //    an action on each location change.
   //  * I haven't been able to figure out how to test this feature. It
   //    is possible that going for another possible solutions will make
   //    testing easier, which would be very desirable.
