@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 
-import * as editor from '~/core/editor';
-import * as locale from '~/core/locale';
+import { update as updateEditor, updateSelection } from '~/core/editor/actions';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
@@ -9,8 +8,7 @@ import GenericTranslationForm from './GenericTranslationForm';
 
 function createComponent(updateTranslation) {
   const store = createReduxStore();
-  store.dispatch(locale.actions.receive({ code: 'kg' }));
-  store.dispatch(editor.actions.update('Hello'));
+  store.dispatch(updateEditor('Hello'));
 
   const wrapper = mountComponentWithStore(GenericTranslationForm, store, {
     updateTranslation,
@@ -42,7 +40,7 @@ describe('<GenericTranslationForm>', () => {
     const updateMock = sinon.spy();
     const [wrapper, store] = createComponent(updateMock);
 
-    await store.dispatch(editor.actions.updateSelection('World, '));
+    await store.dispatch(updateSelection('World, '));
 
     // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
     wrapper.setProps({});

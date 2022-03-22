@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 import './Terms.css';
@@ -9,7 +9,6 @@ import type { TermState } from '~/core/term';
 
 type Props = {
   isReadOnlyEditor: boolean;
-  locale: string;
   terms: TermState;
   addTextToEditorTranslation: (arg0: string) => void;
   navigateToPath: (arg0: string) => void;
@@ -38,7 +37,6 @@ export default function Terms(
       ) : (
         <TermsList
           isReadOnlyEditor={props.isReadOnlyEditor}
-          locale={props.locale}
           terms={termlist}
           addTextToEditorTranslation={props.addTextToEditorTranslation}
           navigateToPath={props.navigateToPath}

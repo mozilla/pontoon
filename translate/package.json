@@ -7,6 +7,7 @@
     "@fluent/react": "^0.13.1",
     "@fluent/syntax": "^0.17.0",
     "@reduxjs/toolkit": "^1.6.1",
+    "classnames": "^2.3.1",
     "connected-react-router": "^6.8.0",
     "date-and-time": "^0.14.2",
     "diff-match-patch": "^1.0.4",

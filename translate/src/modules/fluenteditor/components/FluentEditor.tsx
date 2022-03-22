@@ -1,29 +1,34 @@
-import * as React from 'react';
+import type { Entry } from '@fluent/syntax';
+import React, { useContext, useLayoutEffect } from 'react';
 
-import './FluentEditor.css';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
-import * as notification from '~/core/notification';
-import * as plural from '~/core/plural';
+import { Locale } from '~/context/locale';
+import { Translation, useUpdateTranslation } from '~/core/editor';
+import {
+  setInitialTranslation,
+  update as updateEditor,
+} from '~/core/editor/actions';
+import { getSelectedEntity, isReadOnlyEditor } from '~/core/entities/selectors';
+import { messages as notificationMessages } from '~/core/notification';
+import { add as addNotification } from '~/core/notification/actions';
+import { getTranslationStringForSelectedEntity } from '~/core/plural/selectors';
 import { fluent } from '~/core/utils';
 import type { SyntaxType } from '~/core/utils/fluent/types';
-import type { Entry } from '@fluent/syntax';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import SourceEditor from './source/SourceEditor';
-import SimpleEditor from './simple/SimpleEditor';
+import './FluentEditor.css';
 import RichEditor from './rich/RichEditor';
+import SimpleEditor from './simple/SimpleEditor';
+import SourceEditor from './source/SourceEditor';
 
 /**
  * Function to analyze a translation and determine what its appropriate syntax is.
  *
- * @returns { string } The syntax of the translation, can be "simple", "rich" or "complex".
+ * @returns The syntax of the translation, can be "simple", "rich" or "complex".
  *      - "simple" if the translation can be shown as a simple preview
  *      - "rich" if the translation is not simple but can be handled by the Rich editor
  *      - "complex" otherwise
  */
-function getSyntaxType(source: string | editor.Translation): SyntaxType {
+function getSyntaxType(source: string | Translation): SyntaxType {
   if (source && typeof source !== 'string') {
     return fluent.getSyntaxType(source);
   }
@@ -49,15 +54,13 @@ function getSyntaxType(source: string | editor.Translation): SyntaxType {
 function useLoadTranslation(forceSource: boolean) {
   const dispatch = useAppDispatch();
 
-  const updateTranslation = editor.useUpdateTranslation();
+  const updateTranslation = useUpdateTranslation();
   const changeSource = useAppSelector((state) => state.editor.changeSource);
 
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
-  const locale = useAppSelector((state) => state.locale);
-  const activeTranslationString = useAppSelector((state) =>
-    plural.selectors.getTranslationStringForSelectedEntity(state),
+  const entity = useAppSelector(getSelectedEntity);
+  const locale = useContext(Locale);
+  const activeTranslationString = useAppSelector(
+    getTranslationStringForSelectedEntity,
   );
 
   // We do not want to perform any formatting when the user switches "force source",
@@ -65,7 +68,7 @@ function useLoadTranslation(forceSource: boolean) {
   // value and only update when it didn't change since the last render.
   const prevForceSource = React.useRef(forceSource);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (
       prevForceSource.current !== forceSource ||
       !entity ||
@@ -98,7 +101,7 @@ function useLoadTranslation(forceSource: boolean) {
         );
       }
     }
-    dispatch(editor.actions.setInitialTranslation(translationContent));
+    dispatch(setInitialTranslation(translationContent));
     updateTranslation(translationContent, 'initial');
   }, [
     changeSource,
@@ -122,13 +125,11 @@ function useForceSource(): [boolean, () => void] {
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
+  const entity = useAppSelector(getSelectedEntity);
+  const activeTranslationString = useAppSelector(
+    getTranslationStringForSelectedEntity,
   );
-  const activeTranslationString = useAppSelector((state) =>
-    plural.selectors.getTranslationStringForSelectedEntity(state),
-  );
-  const locale = useAppSelector((state) => state.locale);
+  const locale = useContext(Locale);
 
   // Force using the source editor.
   const [forceSource, setForceSource] = React.useState(false);
@@ -157,8 +158,8 @@ function useForceSource(): [boolean, () => void] {
       activeTranslationString,
       locale,
     );
-    dispatch(editor.actions.setInitialTranslation(initialContent));
-    dispatch(editor.actions.update(translationContent));
+    dispatch(setInitialTranslation(initialContent));
+    dispatch(updateEditor(translationContent));
     setForceSource(!forceSource);
   }
 
@@ -174,14 +175,10 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
-  const activeTranslationString = useAppSelector((state) =>
-    plural.selectors.getTranslationStringForSelectedEntity(state),
+  const readOnly = useAppSelector(isReadOnlyEditor);
+  const entity = useAppSelector(getSelectedEntity);
+  const activeTranslationString = useAppSelector(
+    getTranslationStringForSelectedEntity,
   );
   const user = useAppSelector((state) => state.user);
 
@@ -209,16 +206,14 @@ export default function FluentEditor(): null | React.ReactElement<React.ElementT
   // notification to the user if they try to use the "FTL" switch button.
   function showUnsupportedMessage() {
     dispatch(
-      notification.actions.add(
-        notification.messages.FTL_NOT_SUPPORTED_RICH_EDITOR,
-      ),
+      addNotification(notificationMessages.FTL_NOT_SUPPORTED_RICH_EDITOR),
     );
   }
 
   // Show a button to allow switching to the source editor.
   let ftlSwitch = null;
   // But only if the user is logged in and the string is not read-only.
-  if (user.isAuthenticated && !isReadOnlyEditor) {
+  if (user.isAuthenticated && !readOnly) {
     if (syntax === 'complex') {
       // TODO: To Localize
       ftlSwitch = (

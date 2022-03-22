@@ -1,6 +1,6 @@
 import APIBase from './base';
 
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
 import type { MachineryTranslation } from './types';
 
 type Translations = Array<MachineryTranslation>;
@@ -22,7 +22,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getConcordanceResults(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
     page?: number,
   ): Promise<ConcordanceTranslations> {
     const url = '/concordance-search/';
@@ -61,7 +61,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getTranslationMemory(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
     pk: number | null | undefined,
   ): Promise<Translations> {
     const url = '/translation-memory/';
@@ -99,7 +99,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getGoogleTranslation(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
   ): Promise<Translations> {
     const url = '/google-translate/';
     const params = {
@@ -123,7 +123,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getMicrosoftTranslation(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
   ): Promise<Translations> {
     const url = '/microsoft-translator/';
     const params = {
@@ -153,7 +153,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getSystranTranslation(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
   ): Promise<Translations> {
     const url = '/systran-translate/';
     const params = {
@@ -177,7 +177,7 @@ export default class MachineryAPI extends APIBase {
    */
   async getMicrosoftTerminology(
     source: string,
-    locale: Locale,
+    locale: LocaleType,
   ): Promise<Translations> {
     const url = '/microsoft-terminology/';
     const params = {

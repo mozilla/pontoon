@@ -1,7 +1,7 @@
 import { actions as navActions } from '~/core/navigation';
 
 import type { AppDispatch } from '~/store';
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
 
 export const RESET: 'plural/RESET' = 'plural/RESET';
 export const SELECT: 'plural/SELECT' = 'plural/SELECT';
@@ -15,9 +15,9 @@ export function moveToNextTranslation(
   entity: number,
   nextEntity: number,
   pluralForm: number,
-  locale: Locale,
+  { cldrPlurals }: LocaleType,
 ): void {
-  if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+  if (pluralForm !== -1 && pluralForm < cldrPlurals.length - 1) {
     dispatch(select(pluralForm + 1));
   } else if (nextEntity !== entity) {
     dispatch(navActions.updateEntity(router, nextEntity.toString()));

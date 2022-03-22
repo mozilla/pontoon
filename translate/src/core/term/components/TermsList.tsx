@@ -1,14 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 
-import './TermsList.css';
+import { Locale } from '~/context/locale';
+import type { TermType } from '~/core/api';
 
 import Term from './Term';
-
-import type { TermType } from '~/core/api';
+import './TermsList.css';
 
 type Props = {
   isReadOnlyEditor: boolean;
-  locale: string;
   terms: Array<TermType>;
   addTextToEditorTranslation: (arg0: string) => void;
   navigateToPath: (arg0: string) => void;
@@ -18,6 +17,7 @@ type Props = {
  * Shows a list of terms.
  */
 export default function TermsList(props: Props): React.ReactElement<'ul'> {
+  const { code } = React.useContext(Locale);
   return (
     <ul className='terms-list'>
       {props.terms.map((term, i) => {
@@ -25,7 +25,7 @@ export default function TermsList(props: Props): React.ReactElement<'ul'> {
           <Term
             key={i}
             isReadOnlyEditor={props.isReadOnlyEditor}
-            locale={props.locale}
+            locale={code}
             term={term}
             addTextToEditorTranslation={props.addTextToEditorTranslation}
             navigateToPath={props.navigateToPath}

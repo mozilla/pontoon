@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 
-import './ProjectItem.css';
+import type { Localization } from '~/context/locale';
+import type { NavigationParams } from '~/core/navigation';
 
 import ProjectPercent from './ProjectPercent';
 
-import type { Localization } from '~/core/locale';
-import type { NavigationParams } from '~/core/navigation';
+import './ProjectItem.css';
 
 type Props = {
   parameters: NavigationParams;

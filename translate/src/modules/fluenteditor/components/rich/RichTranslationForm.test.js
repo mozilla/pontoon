@@ -1,7 +1,8 @@
 import sinon from 'sinon';
+import React from 'react';
 
+import { Locale } from '~/context/locale';
 import * as editor from '~/core/editor';
-import * as locale from '~/core/locale';
 import { fluent } from '~/core/utils';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
@@ -21,16 +22,18 @@ function createComponent(entityString, updateTranslation) {
   }
 
   const store = createReduxStore();
-  store.dispatch(locale.actions.receive(DEFAULT_LOCALE));
-
   const message = fluent.parser.parseEntry(entityString);
   store.dispatch(editor.actions.update(message));
   store.dispatch(editor.actions.setInitialTranslation(message));
 
-  const wrapper = mountComponentWithStore(RichTranslationForm, store, {
-    updateTranslation,
-  });
-
+  const wrapper = mountComponentWithStore(
+    () => (
+      <Locale.Provider value={DEFAULT_LOCALE}>
+        <RichTranslationForm updateTranslation={updateTranslation} />
+      </Locale.Provider>
+    ),
+    store,
+  );
   wrapper.update();
 
   return [wrapper, store];

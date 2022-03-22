@@ -1,6 +1,5 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
-export { default as selectors } from './selectors';
 
 export { default as SignInLink } from './components/SignInLink';
 export { default as UserControls } from './components/UserControls';

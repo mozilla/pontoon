@@ -1,7 +1,8 @@
+import React from 'react';
 import sinon from 'sinon';
 
+import { Locale } from '~/context/locale';
 import * as editor from '~/core/editor';
-import * as locale from '~/core/locale';
 import * as project from '~/core/project';
 import * as user from '~/core/user';
 
@@ -16,12 +17,14 @@ import FailedChecks from './FailedChecks';
 function createFailedChecks() {
   const store = createReduxStore();
   createDefaultUser(store);
-  store.dispatch(locale.actions.receive({ code: 'kg' }));
   store.dispatch(project.actions.receive({ slug: 'firefox' }));
 
-  const comp = mountComponentWithStore(FailedChecks, store, {
-    sendTranslation: sinon.mock(),
-  });
+  const Component = () => (
+    <Locale.Provider value={{ code: 'kg' }}>
+      <FailedChecks sendTranslation={sinon.mock()} />
+    </Locale.Provider>
+  );
+  const comp = mountComponentWithStore(Component, store);
 
   return [comp, store];
 }

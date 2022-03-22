@@ -1,8 +1,13 @@
-import React from 'react';
 import { mount, shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
-import Entity from './Entity';
+import * as hookModule from '~/hooks/useTranslator';
+import { Entity } from './Entity';
+
+beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeEach(() => hookModule.useTranslator.returns(false));
+afterAll(() => hookModule.useTranslator.restore());
 
 describe('<Entity>', () => {
   const ENTITY_A = {
@@ -82,16 +87,8 @@ describe('<Entity>', () => {
     ],
   };
 
-  const DEFAULT_LOCALE = {
-    direction: 'ltr',
-    code: 'kg',
-    script: 'Latin',
-  };
-
   it('renders the source string and the first translation', () => {
-    const wrapper = shallow(
-      <Entity entity={ENTITY_A} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
+    const wrapper = shallow(<Entity entity={ENTITY_A} parameters={{}} />);
 
     const contents = wrapper.find('TranslationProxy');
     expect(contents.first().props().content).toContain(ENTITY_A.original);
@@ -101,35 +98,23 @@ describe('<Entity>', () => {
   });
 
   it('shows the correct status class', () => {
-    let wrapper = shallow(
-      <Entity entity={ENTITY_A} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('approved');
+    let wrapper = shallow(<Entity entity={ENTITY_A} parameters={{}} />);
+    expect(wrapper.find('.approved')).toHaveLength(1);
 
-    wrapper = shallow(
-      <Entity entity={ENTITY_B} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('fuzzy');
+    wrapper = shallow(<Entity entity={ENTITY_B} parameters={{}} />);
+    expect(wrapper.find('.fuzzy')).toHaveLength(1);
 
-    wrapper = shallow(
-      <Entity entity={ENTITY_C} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('missing');
+    wrapper = shallow(<Entity entity={ENTITY_C} parameters={{}} />);
+    expect(wrapper.find('.missing')).toHaveLength(1);
 
-    wrapper = shallow(
-      <Entity entity={ENTITY_D} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('errors');
+    wrapper = shallow(<Entity entity={ENTITY_D} parameters={{}} />);
+    expect(wrapper.find('.errors')).toHaveLength(1);
 
-    wrapper = shallow(
-      <Entity entity={ENTITY_E} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('warnings');
+    wrapper = shallow(<Entity entity={ENTITY_E} parameters={{}} />);
+    expect(wrapper.find('.warnings')).toHaveLength(1);
 
-    wrapper = shallow(
-      <Entity entity={ENTITY_F} locale={DEFAULT_LOCALE} parameters={{}} />,
-    );
-    expect(wrapper.instance().status).toEqual('partial');
+    wrapper = shallow(<Entity entity={ENTITY_F} parameters={{}} />);
+    expect(wrapper.find('.partial')).toHaveLength(1);
   });
 
   it('calls the selectEntity function on click on li', () => {
@@ -138,7 +123,6 @@ describe('<Entity>', () => {
       <Entity
         entity={ENTITY_A}
         selectEntity={selectEntityFn}
-        locale={DEFAULT_LOCALE}
         parameters={{}}
       />,
     );
@@ -147,14 +131,13 @@ describe('<Entity>', () => {
   });
 
   it('calls the toggleForBatchEditing function on click on .status', () => {
+    hookModule.useTranslator.returns(true);
     const toggleForBatchEditingFn = sinon.spy();
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={true}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
-        locale={DEFAULT_LOCALE}
         parameters={{}}
       />,
     );
@@ -168,11 +151,9 @@ describe('<Entity>', () => {
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={false}
         isReadOnlyEditor={false}
         toggleForBatchEditing={toggleForBatchEditingFn}
         selectEntity={selectEntityFn}
-        locale={DEFAULT_LOCALE}
         parameters={{}}
       />,
     );
@@ -186,11 +167,9 @@ describe('<Entity>', () => {
     const wrapper = mount(
       <Entity
         entity={ENTITY_A}
-        isTranslator={false}
         isReadOnlyEditor={true}
         toggleForBatchEditing={toggleForBatchEditingFn}
         selectEntity={selectEntityFn}
-        locale={DEFAULT_LOCALE}
         parameters={{}}
       />,
     );

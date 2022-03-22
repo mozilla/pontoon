@@ -1,6 +1,7 @@
+import { mount } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
 
+import { Locale } from '~/context/locale';
 import GenericOriginalString from './GenericOriginalString';
 
 const ENTITY = {
@@ -14,16 +15,16 @@ const LOCALE = {
   cldrPlurals: [1, 3, 5],
 };
 
-function createGenericOriginalString(pluralForm = -1) {
-  return shallow(
-    <GenericOriginalString
-      entity={ENTITY}
-      locale={LOCALE}
-      pluralForm={pluralForm}
-      terms={{}}
-    />,
+const createGenericOriginalString = (pluralForm = -1) =>
+  mount(
+    <Locale.Provider value={LOCALE}>
+      <GenericOriginalString
+        entity={ENTITY}
+        pluralForm={pluralForm}
+        terms={{}}
+      />
+    </Locale.Provider>,
   );
-}
 
 describe('<GenericOriginalString>', () => {
   it('renders correctly', () => {

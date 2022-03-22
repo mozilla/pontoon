@@ -1,25 +1,27 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import './UserControls.css';
+import type { Entity } from '~/core/api';
+import { getSelectedEntity } from '~/core/entities/selectors';
+import type { NavigationParams } from '~/core/navigation';
+import { getNavigationParams } from '~/core/navigation/selectors';
+import type { UserState } from '~/core/user';
+import { AppDispatch, RootState } from '~/store';
 
-import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
-import * as user from '~/core/user';
-
+import {
+  get as getUserData,
+  markAllNotificationsAsRead,
+  signOut,
+} from '../actions';
+import { NAME } from '../index';
 import SignIn from './SignIn';
 import UserAutoUpdater from './UserAutoUpdater';
 import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
-import { actions, NAME } from '..';
 
-import type { Entity } from '~/core/api';
-import type { NavigationParams } from '~/core/navigation';
-import type { UserState } from '~/core/user';
-import { AppDispatch, RootState } from '~/store';
+import './UserControls.css';
 
 type Props = {
-  isTranslator: boolean;
   parameters: NavigationParams;
   selectedEntity?: Entity;
   user: UserState;
@@ -29,53 +31,35 @@ type InternalProps = Props & {
   dispatch: AppDispatch;
 };
 
-export class UserControlsBase extends React.Component<InternalProps> {
-  getUserData: () => void = () => {
-    this.props.dispatch(actions.get());
-  };
+export const UserControlsBase = ({
+  dispatch,
+  parameters,
+  selectedEntity,
+  user,
+}: InternalProps): React.ReactElement<'div'> => (
+  <div className='user-controls'>
+    <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
 
-  markAllNotificationsAsRead: () => void = () => {
-    this.props.dispatch(actions.markAllNotificationsAsRead());
-  };
+    <UserMenu
+      isReadOnly={selectedEntity ? selectedEntity.readonly : true}
+      parameters={parameters}
+      signOut={() => dispatch(signOut(user.signOutURL))}
+      user={user}
+    />
 
-  signUserOut: () => void = () => {
-    const { user } = this.props;
-    this.props.dispatch(actions.signOut(user.signOutURL));
-  };
+    <UserNotificationsMenu
+      markAllNotificationsAsRead={() => dispatch(markAllNotificationsAsRead())}
+      user={user}
+    />
 
-  render(): React.ReactElement<'div'> {
-    const { isTranslator, parameters, user, selectedEntity } = this.props;
-
-    const isReadOnly = selectedEntity ? selectedEntity.readonly : true;
-
-    return (
-      <div className='user-controls'>
-        <UserAutoUpdater getUserData={this.getUserData} />
-
-        <UserMenu
-          isReadOnly={isReadOnly}
-          isTranslator={isTranslator}
-          parameters={parameters}
-          signOut={this.signUserOut}
-          user={user}
-        />
-
-        <UserNotificationsMenu
-          markAllNotificationsAsRead={this.markAllNotificationsAsRead}
-          user={user}
-        />
-
-        {user.isAuthenticated ? null : <SignIn url={user.signInURL} />}
-      </div>
-    );
-  }
-}
+    {user.isAuthenticated ? null : <SignIn url={user.signInURL} />}
+  </div>
+);
 
 const mapStateToProps = (state: RootState): Props => {
   return {
-    isTranslator: user.selectors.isTranslator(state),
-    parameters: navigation.selectors.getNavigationParams(state),
-    selectedEntity: entities.selectors.getSelectedEntity(state),
+    parameters: getNavigationParams(state),
+    selectedEntity: getSelectedEntity(state),
     user: state[NAME],
   };
 };

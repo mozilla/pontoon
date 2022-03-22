@@ -10,7 +10,7 @@ import { actions as statsActions } from '~/core/stats';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import type { Entity, SourceType } from '~/core/api';
-import type { Locale } from '~/core/locale';
+import type { LocaleType } from '~/context/locale';
 import type { Entry } from '@fluent/syntax';
 import { AppThunk } from '~/store';
 
@@ -118,7 +118,7 @@ export type SelectHelperElementIndexAction = {
   readonly type: typeof SELECT_HELPER_ELEMENT_INDEX;
   readonly index: number;
 };
-function selectHelperElementIndex(
+export function selectHelperElementIndex(
   index: number,
 ): SelectHelperElementIndexAction {
   return {
@@ -223,7 +223,7 @@ export type StartUpdateTranslationAction = {
   readonly type: typeof START_UPDATE_TRANSLATION;
 };
 
-function startUpdateTranslation(): StartUpdateTranslationAction {
+export function startUpdateTranslation(): StartUpdateTranslationAction {
   return {
     type: START_UPDATE_TRANSLATION,
   };
@@ -232,7 +232,7 @@ function startUpdateTranslation(): StartUpdateTranslationAction {
 export type EndUpdateTranslationAction = {
   readonly type: typeof END_UPDATE_TRANSLATION;
 };
-function endUpdateTranslation(): EndUpdateTranslationAction {
+export function endUpdateTranslation(): EndUpdateTranslationAction {
   return {
     type: END_UPDATE_TRANSLATION,
   };
@@ -244,7 +244,7 @@ function endUpdateTranslation(): EndUpdateTranslationAction {
 export function sendTranslation(
   entity: Entity,
   translation: string,
-  locale: Locale,
+  locale: LocaleType,
   pluralForm: number,
   forceSuggestions: boolean,
   nextEntity: Entity | null | undefined,
