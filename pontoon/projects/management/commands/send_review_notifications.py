@@ -25,12 +25,11 @@ class Command(BaseCommand):
                     "resource": "all-resources",
                 },
             )
+            url += "?" + urlencode({"author": author.email})
             if len(approved) == 1 and len(rejected) == 0:
-                url += "?" + urlencode({"string": approved[0]})
+                url += "&" + urlencode({"string": approved[0]})
             elif len(approved) == 0 and len(rejected) == 1:
-                url += "?" + urlencode({"string": rejected[0]})
-            else:
-                url += "?" + urlencode({"author": author.email})
+                url += "&" + urlencode({"string": rejected[0]})
 
             # Filter out rejections where the author's own suggestion replaced the previous
             rejected = [x for x in rejected if x not in approved]
