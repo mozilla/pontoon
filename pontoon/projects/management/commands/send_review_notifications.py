@@ -13,38 +13,38 @@ from pontoon.base.models import Translation
 class Command(BaseCommand):
     help = "Notify translators about their newly reviewed suggestions"
 
-    def get_description(self, author, locale, project, approved, rejected):
-        url = reverse(
-            "pontoon.translate",
-            kwargs={
-                "locale": locale.code,
-                "project": project.slug,
-                "resource": "all-resources",
-            },
-        )
-        if len(approved) == 1 and len(rejected) == 0:
-            url += "?" + urlencode({"string": approved[0]})
-        elif len(approved) == 0 and len(rejected) == 1:
-            url += "?" + urlencode({"string": rejected[0]})
-        else:
-            url += "?" + urlencode({"author": author.email})
+    def get_description(self, author, notifyData):
+        desc = "Your suggestions have been reviewed:"
 
-        if len(approved) == 0:
-            if len(rejected) == 1:
-                msg = "one of your suggestions was rejected"
+        for (locale, project), (approved, rejected) in notifyData.items():
+            url = reverse(
+                "pontoon.translate",
+                kwargs={
+                    "locale": locale.code,
+                    "project": project.slug,
+                    "resource": "all-resources",
+                },
+            )
+            if len(approved) == 1 and len(rejected) == 0:
+                url += "?" + urlencode({"string": approved[0]})
+            elif len(approved) == 0 and len(rejected) == 1:
+                url += "?" + urlencode({"string": rejected[0]})
             else:
-                msg = f"{len(rejected)} of your suggestions were rejected"
-        else:
-            if len(approved) == 1:
-                msg = "one of your suggestions was approved"
-            else:
-                msg = f"{len(approved)} of your suggestions were approved"
-            if len(rejected) == 1:
-                msg += ", and one was rejected"
-            elif len(rejected) > 1:
-                msg += f", and {len(rejected)} were rejected"
+                url += "?" + urlencode({"author": author.email})
 
-        return f'In {project.name} ({locale.name}), <a href="{url}">{msg}</a>.'
+            # Filter out rejections where the author's own suggestion replaced the previous
+            rejected = [x for x in rejected if x not in approved]
+
+            if len(approved) == 0:
+                msg = f"{len(rejected)} Rejected"
+            else:
+                msg = f"{len(approved)} Approved"
+                if len(rejected) > 0:
+                    msg += f", {len(rejected)} Rejected"
+
+            desc += f'\n* {project.name} ({locale.name} · {locale.code}): <a href="{url}">{msg}</a>'
+
+        return desc
 
     def handle(self, *args, **options):
         """
@@ -53,10 +53,10 @@ class Command(BaseCommand):
 
         The command is designed to run on a daily basis.
         """
-        self.stdout.write("Sending review notifications.")
+        self.stdout.write("Sending review notifications...")
 
-        # (author, locale, project) -> (approved, rejected)
-        data = defaultdict(lambda: (list(), list()))
+        # (author) -> (locale, project) -> (approved, rejected)
+        data = defaultdict(lambda: defaultdict(lambda: (list(), list())))
         start = timezone.now() - timedelta(days=1)
         for suggestion in Translation.objects.filter(
             (Q(approved_date__gt=start) | Q(rejected_date__gt=start))
@@ -65,22 +65,14 @@ class Command(BaseCommand):
             author = suggestion.user
             locale = suggestion.locale
             project = suggestion.entity.resource.project
-            key = (author, locale, project)
 
-            if (
-                suggestion.approved
-                and suggestion.active
-                and suggestion.approved_user != author
-            ):
-                data[key][0].append(suggestion.entity.pk)
+            if suggestion.approved and suggestion.approved_user != author:
+                data[author][(locale, project)][0].append(suggestion.entity.pk)
             elif suggestion.rejected and suggestion.rejected_user != author:
-                data[key][1].append(suggestion.entity.pk)
+                data[author][(locale, project)][1].append(suggestion.entity.pk)
 
-        for ((author, locale, project), (approved, rejected)) in data.items():
-            # Filter out rejections where the author's own suggestion replaced the previous
-            rejected = [x for x in rejected if x not in approved]
-
-            desc = self.get_description(author, locale, project, approved, rejected)
+        for author, notifyData in data.items():
+            desc = self.get_description(author, notifyData)
             notify.send(
                 sender=author,
                 recipient=author,
