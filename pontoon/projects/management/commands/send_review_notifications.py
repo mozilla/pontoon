@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = "Notify translators about their newly reviewed suggestions"
 
     def get_description(self, author, notifyData):
-        desc = "Your suggestions have been reviewed:"
+        desc = "Your suggestions have been reviewed:\n<ul>"
 
         for (locale, project), (approved, rejected) in notifyData.items():
             url = reverse(
@@ -42,9 +42,9 @@ class Command(BaseCommand):
                 if len(rejected) > 0:
                     msg += f", {len(rejected)} Rejected"
 
-            desc += f'\n* {project.name} ({locale.name} · {locale.code}): <a href="{url}">{msg}</a>'
+            desc += f'\n<li>{project.name} ({locale.name} · {locale.code}): <a href="{url}">{msg}</a></li>'
 
-        return desc
+        return desc + "\n</ul>"
 
     def handle(self, *args, **options):
         """
