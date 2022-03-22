@@ -1,17 +1,14 @@
 import NProgress from 'nprogress';
 
-import api from '~/core/api';
-
+import type { LocaleType } from '~/context/locale';
+import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
 import { actions as entitiesActions } from '~/core/entities';
 import * as notification from '~/core/notification';
 import { actions as pluralActions } from '~/core/plural';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
-
 import type { AppDispatch } from '~/store';
-import type { Entity, TranslationComment } from '~/core/api';
-import type { Locale } from '~/core/locale';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
 export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
@@ -141,7 +138,7 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
 export function updateStatus(
   change: ChangeOperation,
   entity: Entity,
-  locale: Locale,
+  locale: LocaleType,
   resource: string,
   pluralForm: number,
   translation: number,

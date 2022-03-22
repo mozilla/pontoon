@@ -1,18 +1,20 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import classNames from 'classnames';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import './ConcordanceSearch.css';
-import './Translation.css';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { Locale } from '~/context/locale';
+import type { MachineryTranslation } from '~/core/api';
+import { NAME as EDITOR, useCopyMachineryTranslation } from '~/core/editor';
+import { selectHelperElementIndex } from '~/core/editor/actions';
+import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { GenericTranslation } from '~/core/translation';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { TranslationSource } from './TranslationSource';
 
-import type { MachineryTranslation } from '~/core/api';
+import './ConcordanceSearch.css';
+import './Translation.css';
 
 type Props = {
   sourceString: string;
@@ -35,45 +37,35 @@ export function Translation({
   entity,
 }: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
 
-  const copyMachineryTranslation = editor.useCopyMachineryTranslation(entity);
-  const copyTranslationIntoEditor = React.useCallback(() => {
-    dispatch(editor.actions.selectHelperElementIndex(index));
+  const copyMachineryTranslation = useCopyMachineryTranslation(entity);
+  const copyTranslationIntoEditor = useCallback(() => {
+    dispatch(selectHelperElementIndex(index));
     copyMachineryTranslation(translation);
   }, [dispatch, index, translation, copyMachineryTranslation]);
 
-  let className = 'translation';
-  if (isReadOnlyEditor) {
-    // Copying into the editor is not allowed
-    className += ' cannot-copy';
-  }
-
-  const selectedHelperElementIndex = useAppSelector(
-    (state) => state[editor.NAME].selectedHelperElementIndex,
+  const selIdx = useAppSelector(
+    (state) => state[EDITOR].selectedHelperElementIndex,
   );
-  const changeSource = useAppSelector(
-    (state) => state[editor.NAME].changeSource,
-  );
-  const isSelected =
-    changeSource === 'machinery' && selectedHelperElementIndex === index;
-  if (isSelected) {
-    // Highlight Machinery entries upon selection
-    className += ' selected';
-  }
+  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
+  const isSelected = changeSource === 'machinery' && selIdx === index;
 
-  const translationRef = React.useRef<HTMLLIElement>(null);
-  React.useEffect(() => {
-    if (selectedHelperElementIndex === index) {
+  const className = classNames(
+    'translation',
+    useAppSelector(isReadOnlyEditor) && 'cannot-copy',
+    isSelected && 'selected', // Highlight Machinery entries upon selection
+  );
+
+  const translationRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    if (selIdx === index) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       translationRef.current?.scrollIntoView({
         behavior: mediaQuery.matches ? 'auto' : 'smooth',
         block: 'nearest',
       });
     }
-  }, [selectedHelperElementIndex, index]);
+  }, [selIdx, index]);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
@@ -106,14 +98,14 @@ function TranslationSuggestion({
   sourceString: string;
   translation: MachineryTranslation;
 }) {
-  const locale = useAppSelector((state) => state.locale);
+  const { code, direction, script } = useContext(Locale);
   return (
     <>
       <header>
         {translation.quality && (
           <span className='quality'>{translation.quality + '%'}</span>
         )}
-        <TranslationSource translation={translation} locale={locale} />
+        <TranslationSource translation={translation} />
       </header>
       <p className='original'>
         <GenericTranslation
@@ -127,9 +119,9 @@ function TranslationSuggestion({
       </p>
       <p
         className='suggestion'
-        dir={locale.direction}
-        data-script={locale.script}
-        lang={locale.code}
+        dir={direction}
+        data-script={script}
+        lang={code}
       >
         <GenericTranslation content={translation.translation} />
       </p>

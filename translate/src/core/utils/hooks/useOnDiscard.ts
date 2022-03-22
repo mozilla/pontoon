@@ -1,29 +1,21 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 
 export default function useOnDiscard(
-  ref: { current: null | React.ElementRef<any> },
+  ref: React.RefObject<unknown>,
   onDiscard: () => void,
 ) {
-  const handleClick = React.useCallback(
-    (e: MouseEvent) => {
+  useEffect(() => {
+    const handleClick = (ev: MouseEvent) => {
       const el = ref.current;
       if (
-        !(el instanceof HTMLElement) ||
-        !(e.target instanceof Element) ||
-        el.contains(e.target)
+        el instanceof HTMLElement &&
+        ev.target instanceof Element &&
+        !el.contains(ev.target)
       ) {
-        return;
+        onDiscard();
       }
-
-      onDiscard();
-    },
-    [ref, onDiscard],
-  );
-
-  React.useEffect(() => {
-    window.document.addEventListener('click', handleClick);
-    return () => {
-      window.document.removeEventListener('click', handleClick);
     };
-  }, [handleClick]);
+    window.document.addEventListener('click', handleClick);
+    return () => window.document.removeEventListener('click', handleClick);
+  }, [ref, onDiscard]);
 }

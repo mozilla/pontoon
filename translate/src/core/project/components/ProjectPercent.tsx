@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './ProjectPercent.css';
 
-import type { Localization } from '~/core/locale';
+import type { Localization } from '~/context/locale';
 
 type Props = {
   localization: Localization;

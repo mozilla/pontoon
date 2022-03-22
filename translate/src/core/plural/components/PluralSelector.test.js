@@ -1,56 +1,58 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
+import { Locale } from '~/context/locale';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { actions } from '..';
 
 import PluralSelector, { PluralSelectorBase } from './PluralSelector';
 
-function createShallowPluralSelector(plural, locale) {
-  return shallow(
-    <PluralSelectorBase
-      pluralForm={plural}
-      locale={locale}
-      resetEditor={sinon.spy()}
-    />,
-  );
-}
+const createShallowPluralSelector = (plural) =>
+  shallow(<PluralSelectorBase pluralForm={plural} resetEditor={sinon.spy()} />);
 
 describe('<PluralSelectorBase>', () => {
+  beforeAll(() =>
+    sinon.stub(React, 'useContext').returns({ code: 'mylocale' }),
+  );
+  afterAll(() => React.useContext.restore());
+
   it('returns null when the locale is missing', () => {
-    const wrapper = createShallowPluralSelector(0, null);
+    React.useContext.returns({ cldrPlurals: [] });
+    const wrapper = createShallowPluralSelector(0);
     expect(wrapper.type()).toBeNull();
   });
 
   it('returns null when the locale has only one plural form', () => {
-    const wrapper = createShallowPluralSelector(0, { cldrPlurals: [5] });
+    React.useContext.returns({ cldrPlurals: [5] });
+    const wrapper = createShallowPluralSelector(0);
     expect(wrapper.type()).toBeNull();
   });
 
   it('returns null when the selected plural form is -1', () => {
+    React.useContext.returns({ cldrPlurals: [1, 5] });
     // If pluralForm is -1, it means the entity has no plural string.
-    const wrapper = createShallowPluralSelector(-1, {
-      cldrPlurals: [1, 5],
-    });
+    const wrapper = createShallowPluralSelector(-1);
     expect(wrapper.type()).toBeNull();
   });
 
   it('shows the correct list of plural choices for locale with 2 forms', () => {
-    const wrapper = createShallowPluralSelector(0, { cldrPlurals: [1, 5] });
+    React.useContext.returns({ cldrPlurals: [1, 5] });
+    const wrapper = createShallowPluralSelector(0);
 
     expect(wrapper.find('li')).toHaveLength(2);
     expect(wrapper.find('ul').text()).toEqual('one1other2');
   });
 
   it('shows the correct list of plural choices for locale with all 6 forms', () => {
-    const wrapper = createShallowPluralSelector(0, {
+    // This is the pluralRule for Arabic.
+    React.useContext.returns({
       cldrPlurals: [0, 1, 2, 3, 4, 5],
-      // This is the pluralRule for Arabic.
       pluralRule:
         '(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)',
     });
+    const wrapper = createShallowPluralSelector(0);
 
     expect(wrapper.find('li')).toHaveLength(6);
     expect(wrapper.find('ul').text()).toEqual(
@@ -59,7 +61,8 @@ describe('<PluralSelectorBase>', () => {
   });
 
   it('marks the right choice as active', () => {
-    const wrapper = createShallowPluralSelector(1, { cldrPlurals: [1, 5] });
+    React.useContext.returns({ cldrPlurals: [1, 5] });
+    const wrapper = createShallowPluralSelector(1);
 
     expect(wrapper.find('li.active').text()).toEqual('other2');
   });
@@ -70,10 +73,6 @@ describe('<PluralSelector>', () => {
     const initialState = {
       plural: {
         pluralForm: 1,
-      },
-      locale: {
-        code: 'kg',
-        cldrPlurals: [1, 5],
       },
       router: {
         location: {
@@ -92,10 +91,12 @@ describe('<PluralSelector>', () => {
     const store = createReduxStore(initialState);
     const dispatchSpy = sinon.spy(store, 'dispatch');
 
-    const root = mountComponentWithStore(PluralSelector, store, {
-      resetEditor: sinon.spy(),
-    });
-    const wrapper = root.find(PluralSelectorBase);
+    const Component = () => (
+      <Locale.Provider value={{ code: 'kg', cldrPlurals: [1, 5] }}>
+        <PluralSelector resetEditor={sinon.spy()} />
+      </Locale.Provider>
+    );
+    const wrapper = mountComponentWithStore(Component, store);
 
     const button = wrapper.find('button').first();
     // `simulate()` doesn't quite work in conjunction with `mount()`, so

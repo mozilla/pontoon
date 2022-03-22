@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
 import { useAppSelector } from '~/hooks';
-import * as user from '~/core/user';
-
-import * as editor from '..';
+import { sameExistingTranslation } from '../selectors';
+import { useUpdateTranslationStatus } from '..';
+import { useTranslator } from '~/hooks/useTranslator';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -21,27 +21,23 @@ type Props = {
  * Otherwise, if the "force suggestion" user setting is on, it renders "Suggest".
  * Otherwise, it renders "Save".
  */
-export default function EditorMainAction(
-  props: Props,
-): React.ReactElement<React.ElementType> {
+export default function EditorMainAction({
+  sendTranslation,
+}: Props): React.ReactElement<React.ElementType> {
   const isRunningRequest = useAppSelector(
     (state) => state.editor.isRunningRequest,
   );
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const isTranslator = useAppSelector((state) =>
-    user.selectors.isTranslator(state),
-  );
-  const sameExistingTranslation = useAppSelector((state) =>
-    editor.selectors.sameExistingTranslation(state),
-  );
+  const isTranslator = useTranslator();
+  const sameExistingTranslation_ = useAppSelector(sameExistingTranslation);
 
-  const updateTranslationStatus = editor.useUpdateTranslationStatus();
+  const updateTranslationStatus = useUpdateTranslationStatus();
 
   function approveTranslation() {
-    if (sameExistingTranslation) {
-      updateTranslationStatus(sameExistingTranslation.pk, 'approve');
+    if (sameExistingTranslation_) {
+      updateTranslationStatus(sameExistingTranslation_.pk, 'approve');
     }
   }
 
@@ -56,8 +52,8 @@ export default function EditorMainAction(
 
   if (
     isTranslator &&
-    sameExistingTranslation &&
-    !sameExistingTranslation.approved
+    sameExistingTranslation_ &&
+    !sameExistingTranslation_.approved
   ) {
     // Approve button, will approve the translation.
     btn = {
@@ -79,7 +75,7 @@ export default function EditorMainAction(
     btn = {
       id: 'editor-EditorMenu--button-suggest',
       className: 'action-suggest',
-      action: () => props.sendTranslation(),
+      action: () => sendTranslation(),
       title: 'Suggest Translation (Enter)',
       label: 'SUGGEST',
       glyph: null,
@@ -95,7 +91,7 @@ export default function EditorMainAction(
     btn = {
       id: 'editor-EditorMenu--button-save',
       className: 'action-save',
-      action: () => props.sendTranslation(),
+      action: () => sendTranslation(),
       title: 'Save Translation (Enter)',
       label: 'SAVE',
       glyph: null,

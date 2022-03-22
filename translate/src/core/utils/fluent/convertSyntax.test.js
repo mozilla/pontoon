@@ -14,8 +14,9 @@ describe('getComplexFromRich', () => {
     const current = parser.parseEntry('title = Mon titre');
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromRich(current, original, initial);
+    const res = getComplexFromRich(current, original, initial, locale);
 
     expect(res[0]).toEqual('title = Mon titre\n');
   });
@@ -24,8 +25,9 @@ describe('getComplexFromRich', () => {
     const current = parser.parseEntry('title = Mon titre');
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromRich(current, original, initial);
+    const res = getComplexFromRich(current, original, initial, locale);
 
     expect(res[1]).toEqual('title = Mien titre\n');
   });
@@ -35,8 +37,9 @@ describe('getComplexFromRich', () => {
     const original = 'title = My title';
     // Initial is empty, there's no active translation.
     const initial = '';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromRich(current, original, initial);
+    const res = getComplexFromRich(current, original, initial, locale);
 
     expect(res[1]).toEqual('title = \n');
   });
@@ -47,8 +50,9 @@ describe('getComplexFromSimple', () => {
     const current = 'Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromSimple(current, original, initial);
+    const res = getComplexFromSimple(current, original, initial, locale);
 
     expect(res[0]).toEqual('title = Mon titre\n');
   });
@@ -57,8 +61,9 @@ describe('getComplexFromSimple', () => {
     const current = 'Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromSimple(current, original, initial);
+    const res = getComplexFromSimple(current, original, initial, locale);
 
     expect(res[1]).toEqual('title = Mien titre');
   });
@@ -68,8 +73,9 @@ describe('getComplexFromSimple', () => {
     const original = 'title = My title';
     // Initial is empty, there's no active translation.
     const initial = '';
+    const locale = { cldrPlurals: [] };
 
-    const res = getComplexFromSimple(current, original, initial);
+    const res = getComplexFromSimple(current, original, initial, locale);
 
     expect(res[1]).toEqual('title = \n');
   });
@@ -80,8 +86,9 @@ describe('getRichFromComplex', () => {
     const current = 'title = Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getRichFromComplex(current, original, initial);
+    const res = getRichFromComplex(current, original, initial, locale);
 
     expect(res[0]).toEqual(parser.parseEntry('title = Mon titre\n'));
   });
@@ -90,8 +97,9 @@ describe('getRichFromComplex', () => {
     const current = 'title = Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getRichFromComplex(current, original, initial);
+    const res = getRichFromComplex(current, original, initial, locale);
 
     expect(res[1]).toEqual(parser.parseEntry('title = Mien titre'));
   });
@@ -101,10 +109,13 @@ describe('getRichFromComplex', () => {
     const original = 'title = My title';
     // Initial is empty, there's no active translation.
     const initial = '';
+    const locale = { cldrPlurals: [] };
 
-    const res = getRichFromComplex(current, original, initial);
+    const res = getRichFromComplex(current, original, initial, locale);
 
-    expect(res[1]).toEqual(getEmptyMessage(parser.parseEntry('title = a')));
+    expect(res[1]).toEqual(
+      getEmptyMessage(parser.parseEntry('title = a'), locale),
+    );
   });
 });
 
@@ -113,8 +124,9 @@ describe('getSimpleFromComplex', () => {
     const current = 'title = Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getSimpleFromComplex(current, original, initial);
+    const res = getSimpleFromComplex(current, original, initial, locale);
 
     expect(res[0]).toEqual('Mon titre');
   });
@@ -123,8 +135,9 @@ describe('getSimpleFromComplex', () => {
     const current = 'title = Mon titre';
     const original = 'title = My title';
     const initial = 'title = Mien titre';
+    const locale = { cldrPlurals: [] };
 
-    const res = getSimpleFromComplex(current, original, initial);
+    const res = getSimpleFromComplex(current, original, initial, locale);
 
     expect(res[1]).toEqual('Mien titre');
   });
@@ -134,8 +147,9 @@ describe('getSimpleFromComplex', () => {
     const original = 'title = My title';
     // Initial is empty, there's no active translation.
     const initial = '';
+    const locale = { cldrPlurals: [] };
 
-    const res = getSimpleFromComplex(current, original, initial);
+    const res = getSimpleFromComplex(current, original, initial, locale);
 
     expect(res[1]).toEqual('');
   });

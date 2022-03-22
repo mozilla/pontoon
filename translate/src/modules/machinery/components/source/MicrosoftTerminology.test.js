@@ -1,19 +1,20 @@
+import { mount } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
 
+import { Locale } from '~/context/locale';
 import MicrosoftTerminology from './MicrosoftTerminology';
 
+const LOCALE = { msTerminologyCode: 'en-US' };
 const PROPS = {
   original: 'A horse, a horse! My kingdom for a horse',
-  locale: {
-    msTerminologyCode: 'en-US',
-  },
 };
 
 describe('<MicrosoftTerminology>', () => {
   it('renders the MicrosoftTerminology component properly', () => {
-    const wrapper = shallow(
-      <MicrosoftTerminology original={PROPS.original} locale={PROPS.locale} />,
+    const wrapper = mount(
+      <Locale.Provider value={LOCALE}>
+        <MicrosoftTerminology original={PROPS.original} />
+      </Locale.Provider>,
     );
 
     expect(wrapper.find('li')).toHaveLength(1);
@@ -24,7 +25,7 @@ describe('<MicrosoftTerminology>', () => {
       'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
         PROPS.original +
         '&langID=' +
-        PROPS.locale.msTerminologyCode,
+        LOCALE.msTerminologyCode,
     );
     expect(wrapper.find('li a').props().title).toContain(
       'Visit Microsoft Terminology Service API.',

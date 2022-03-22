@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { MachineryTranslation } from '~/core/api';
-import type { Locale } from '~/core/locale';
 
 import GoogleTranslation from './source/GoogleTranslation';
 import MicrosoftTranslation from './source/MicrosoftTranslation';
@@ -12,7 +11,6 @@ import TranslationMemory from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;
-  locale: Locale;
 };
 
 /**
@@ -20,7 +18,6 @@ type Props = {
  */
 export function TranslationSource({
   translation,
-  locale,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
@@ -44,11 +41,7 @@ export function TranslationSource({
         break;
       case 'microsoft-terminology':
         sources.push(
-          <MicrosoftTerminology
-            original={translation.original}
-            locale={locale}
-            key={source}
-          />,
+          <MicrosoftTerminology original={translation.original} key={source} />,
         );
         break;
       case 'caighdean':

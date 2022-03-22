@@ -4,18 +4,12 @@ import { mount, shallow } from 'enzyme';
 import { Machinery } from './Machinery';
 
 describe('<Machinery>', () => {
-  const LOCALE = {
-    code: 'kg',
-  };
-
   it('shows a search form', () => {
     const machinery = {
       translations: [],
       searchResults: [],
     };
-    const wrapper = shallow(
-      <Machinery machinery={machinery} locale={LOCALE} />,
-    );
+    const wrapper = shallow(<Machinery machinery={machinery} />);
 
     expect(wrapper.find('.search-wrapper')).toHaveLength(1);
     expect(
@@ -28,18 +22,9 @@ describe('<Machinery>', () => {
       translations: [{ original: '1' }, { original: '2' }, { original: '3' }],
       searchResults: [{ original: '4' }, { original: '5' }],
     };
-    const wrapper = shallow(
-      <Machinery machinery={machinery} locale={LOCALE} />,
-    );
+    const wrapper = shallow(<Machinery machinery={machinery} />);
 
     expect(wrapper.find('Translation')).toHaveLength(5);
-  });
-
-  it('returns null if there is no locale', () => {
-    const machinery = {};
-    const wrapper = shallow(<Machinery machinery={machinery} locale={null} />);
-
-    expect(wrapper.type()).toBeNull();
   });
 
   it('renders a reset button if a source string is present', () => {
@@ -48,7 +33,7 @@ describe('<Machinery>', () => {
       searchResults: [],
       searchString: 'test',
     };
-    const wrapper = mount(<Machinery machinery={machinery} locale={LOCALE} />);
+    const wrapper = mount(<Machinery machinery={machinery} />);
 
     expect(wrapper.find('button')).toHaveLength(1);
   });

@@ -1,48 +1,85 @@
-import * as React from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { push } from 'connected-react-router';
 
-import './EntityDetails.css';
-
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import * as comments from '~/core/comments';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
-import * as locale from '~/core/locale';
-import * as navigation from '~/core/navigation';
-import * as plural from '~/core/plural';
-import * as terms from '~/core/term';
-import * as user from '~/core/user';
-import * as utils from '~/core/utils';
-import * as history from '~/modules/history';
-import * as machinery from '~/modules/machinery';
-import * as otherlocales from '~/modules/otherlocales';
-import * as teamcomments from '~/modules/teamcomments';
-import * as unsavedchanges from '~/modules/unsavedchanges';
-import * as notification from '~/core/notification';
-
-import EditorSelector from './EditorSelector';
-import EntityNavigation from './EntityNavigation';
-import Metadata from './Metadata';
-import Helpers from './Helpers';
-
-import type { AppDispatch } from '~/store';
+import { Locale } from '~/context/locale';
 import type { Entity } from '~/core/api';
-import type { Locale } from '~/core/locale';
+import { addComment } from '~/core/comments/actions';
+import {
+  FailedChecks,
+  reset as resetEditor,
+  resetFailedChecks,
+  resetHelperElementIndex,
+  update as updateEditor,
+  updateFailedChecks,
+  updateSelection,
+} from '~/core/editor/actions';
+import {
+  getNextEntity,
+  getPreviousEntity,
+  getSelectedEntity,
+  isReadOnlyEditor,
+} from '~/core/entities/selectors';
 import type { NavigationParams } from '~/core/navigation';
-import type { TermState } from '~/core/term';
-import type { UserState } from '~/core/user';
+import { updateEntity } from '~/core/navigation/actions';
+import { getNavigationParams } from '~/core/navigation/selectors';
+import { add as addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
+import {
+  getPluralForm,
+  getTranslationStringForSelectedEntity,
+} from '~/core/plural/selectors';
+import { NAME as TERMS, TermState } from '~/core/term';
+import { get as getTerms } from '~/core/term/actions';
+import { NAME as USER, UserState } from '~/core/user';
+import { getOptimizedContent } from '~/core/utils';
+import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { History, NAME as HISTORY } from '~/modules/history';
+import {
+  deleteTranslation,
+  get as getHistory,
+  request as requestHistory,
+  updateStatus,
+} from '~/modules/history/actions';
+import { NAME as MACHINERY } from '~/modules/machinery';
+import {
+  get as getMachinery,
+  getConcordanceSearchResults,
+  resetSearch,
+  setEntity,
+} from '~/modules/machinery/actions';
+import { NAME as OTHERLOCALES } from '~/modules/otherlocales';
+import { get as getOtherLocales } from '~/modules/otherlocales/actions';
+import { NAME as TEAM_COMMENTS } from '~/modules/teamcomments';
+import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import type { ChangeOperation, HistoryState } from '~/modules/history';
 import type { MachineryState } from '~/modules/machinery';
 import type { LocalesState } from '~/modules/otherlocales';
 import type { TeamCommentState } from '~/modules/teamcomments';
-import type { FailedChecks } from '~/core/editor/actions';
+import {
+  get as getTeamComments,
+  request as requestTeamComments,
+  togglePinnedStatus as togglePinnedTeamCommentStatus,
+} from '~/modules/teamcomments/actions';
+import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import type { AppDispatch } from '~/store';
+
+import EditorSelector from './EditorSelector';
+import EntityNavigation from './EntityNavigation';
+import Helpers from './Helpers';
+import Metadata from './Metadata';
+
+import './EntityDetails.css';
 
 type Props = {
   activeTranslationString: string;
   history: HistoryState;
   isReadOnlyEditor: boolean;
-  isTranslator: boolean;
-  locale: Locale;
   machinery: MachineryState;
   nextEntity?: Entity;
   previousEntity?: Entity;
@@ -61,122 +98,40 @@ type InternalProps = Props & {
   store: AppStore;
 };
 
-type State = {
-  translation: string;
-  commentTabIndex: number;
-  contactPerson: string;
-};
-
 /**
  * Component showing details about an entity.
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export class EntityDetailsBase extends React.Component<InternalProps, State> {
-  commentTabRef: React.RefObject<{ _reactInternalFiber: { index: number } }>;
+export function EntityDetailsBase({
+  activeTranslationString,
+  dispatch,
+  history,
+  isReadOnlyEditor,
+  machinery,
+  nextEntity,
+  previousEntity,
+  otherlocales,
+  teamComments,
+  terms,
+  parameters,
+  pluralForm,
+  router,
+  selectedEntity,
+  store,
+  user,
+}: InternalProps): React.ReactElement<'section'> | null {
+  const commentTabRef =
+    useRef<{ _reactInternalFiber: { index: number } }>(null);
+  const [commentTabIndex, setCommentTabIndex] = useState(0);
+  const [contactPerson, setContactPerson] = useState('');
+  const resetContactPerson = useCallback(() => setContactPerson(''), []);
+  const locale = useContext(Locale);
 
-  constructor(props: InternalProps, state: State) {
-    super(props);
-    this.state = {
-      ...state,
-      commentTabIndex: 0,
-      contactPerson: '',
-    };
-    this.commentTabRef = React.createRef();
-  }
-  componentDidMount() {
-    this.updateFailedChecks();
-    this.fetchHelpersData();
-  }
+  const { entity, locale: lc, project } = parameters;
 
-  componentDidUpdate(prevProps: InternalProps) {
-    const { activeTranslationString, nextEntity, pluralForm, selectedEntity } =
-      this.props;
-
-    if (
-      pluralForm !== prevProps.pluralForm ||
-      selectedEntity !== prevProps.selectedEntity ||
-      (selectedEntity === nextEntity &&
-        activeTranslationString !== prevProps.activeTranslationString)
-    ) {
-      this.updateFailedChecks();
-      this.fetchHelpersData();
-    }
-  }
-
-  /*
-   * Only fetch helpers data if the entity changes.
-   * Also fetch history data if the pluralForm changes.
-   */
-  fetchHelpersData() {
-    const {
-      dispatch,
-      locale,
-      nextEntity,
-      parameters,
-      pluralForm,
-      selectedEntity,
-      user,
-    } = this.props;
-
-    if (!parameters.entity || !selectedEntity || !locale) {
-      return;
-    }
-
-    dispatch(editor.actions.resetHelperElementIndex());
-
-    if (
-      selectedEntity.pk !== this.props.history.entity ||
-      pluralForm !== this.props.history.pluralForm ||
-      selectedEntity === nextEntity
-    ) {
-      dispatch(history.actions.request(parameters.entity, pluralForm));
-      dispatch(
-        history.actions.get(parameters.entity, parameters.locale, pluralForm),
-      );
-    }
-
-    const source = utils.getOptimizedContent(
-      selectedEntity.machinery_original,
-      selectedEntity.format,
-    );
-
-    if (
-      source !== this.props.terms.sourceString &&
-      parameters.project !== 'terminology'
-    ) {
-      dispatch(terms.actions.get(source, parameters.locale));
-    }
-
-    if (selectedEntity.pk !== this.props.machinery.entity) {
-      dispatch(machinery.actions.resetSearch(''));
-      dispatch(machinery.actions.setEntity(selectedEntity.pk, source));
-      dispatch(
-        machinery.actions.get(
-          source,
-          locale,
-          user.isAuthenticated,
-          selectedEntity.pk,
-        ),
-      );
-    }
-
-    if (selectedEntity.pk !== this.props.otherlocales.entity) {
-      dispatch(otherlocales.actions.get(parameters.entity, parameters.locale));
-    }
-
-    if (selectedEntity.pk !== this.props.teamComments.entity) {
-      dispatch(teamcomments.actions.request(parameters.entity));
-      dispatch(teamcomments.actions.get(parameters.entity, parameters.locale));
-    }
-  }
-
-  updateFailedChecks() {
-    const { dispatch, pluralForm, selectedEntity } = this.props;
-
-    if (!selectedEntity) {
-      return;
-    }
+  const updateFailedChecks_ = useCallback(() => {
+    if (!selectedEntity) return;
 
     const plural = pluralForm === -1 ? 0 : pluralForm;
     const translation = selectedEntity.translation[plural];
@@ -195,216 +150,201 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
         pndbWarnings: [],
         ttWarnings: [],
       };
-      dispatch(editor.actions.updateFailedChecks(failedChecks, 'stored'));
+      dispatch(updateFailedChecks(failedChecks, 'stored'));
     } else {
-      dispatch(editor.actions.resetFailedChecks());
+      dispatch(resetFailedChecks());
     }
-  }
+  }, [dispatch, pluralForm, selectedEntity]);
 
-  searchMachinery: (query: string, page?: number) => void = (
-    query: string,
-    page?: number,
-  ) => {
-    const { dispatch, locale, selectedEntity, user } = this.props;
-    const { get, getConcordanceSearchResults, resetSearch } = machinery.actions;
+  /*
+   * Only fetch helpers data if the entity changes.
+   * Also fetch history data if the pluralForm changes.
+   */
+  const fetchHelpersData = () => {
+    if (!entity || !selectedEntity) return;
 
-    if (query) {
-      if (page) {
-        dispatch(getConcordanceSearchResults(query, locale, page));
-      } else {
-        dispatch(resetSearch(query));
-        dispatch(getConcordanceSearchResults(query, locale));
-        dispatch(get(query, locale, user.isAuthenticated, null));
-      }
-    } else {
+    dispatch(resetHelperElementIndex());
+
+    const { pk } = selectedEntity;
+
+    if (
+      pk !== history.entity ||
+      pluralForm !== history.pluralForm ||
+      selectedEntity === nextEntity
+    ) {
+      dispatch(requestHistory(entity, pluralForm));
+      dispatch(getHistory(entity, lc, pluralForm));
+    }
+
+    const source = getOptimizedContent(
+      selectedEntity.machinery_original,
+      selectedEntity.format,
+    );
+
+    if (source !== terms.sourceString && project !== 'terminology') {
+      dispatch(getTerms(source, lc));
+    }
+
+    if (pk !== machinery.entity) {
       dispatch(resetSearch(''));
-      if (selectedEntity) {
-        // On empty query, use source string as input
-        const source = utils.getOptimizedContent(
-          selectedEntity.machinery_original,
-          selectedEntity.format,
-        );
-        const pk = selectedEntity.pk;
-        dispatch(get(source, locale, user.isAuthenticated, pk));
-      }
+      dispatch(setEntity(pk, source));
+      dispatch(getMachinery(source, locale, user.isAuthenticated, pk));
+    }
+
+    if (pk !== otherlocales.entity) {
+      dispatch(getOtherLocales(entity, lc));
+    }
+
+    if (pk !== teamComments.entity) {
+      dispatch(requestTeamComments(entity));
+      dispatch(getTeamComments(entity, lc));
     }
   };
 
-  copyLinkToClipboard: () => void = () => {
-    const { locale, project, resource, entity } = this.props.parameters;
+  useEffect(() => {
+    updateFailedChecks_();
+    fetchHelpersData();
+  }, [pluralForm, selectedEntity]);
+
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (mounted.current) {
+      if (selectedEntity === nextEntity) {
+        updateFailedChecks_();
+        fetchHelpersData();
+      }
+    } else mounted.current = true;
+  }, [activeTranslationString]);
+
+  const searchMachinery = useCallback(
+    (query: string, page?: number) => {
+      if (query) {
+        if (page) {
+          dispatch(getConcordanceSearchResults(query, locale, page));
+        } else {
+          dispatch(resetSearch(query));
+          dispatch(getConcordanceSearchResults(query, locale));
+          dispatch(getMachinery(query, locale, user.isAuthenticated, null));
+        }
+      } else {
+        dispatch(resetSearch(''));
+        if (selectedEntity) {
+          // On empty query, use source string as input
+          const source = getOptimizedContent(
+            selectedEntity.machinery_original,
+            selectedEntity.format,
+          );
+          dispatch(
+            getMachinery(
+              source,
+              locale,
+              user.isAuthenticated,
+              selectedEntity.pk,
+            ),
+          );
+        }
+      }
+    },
+    [dispatch, locale, selectedEntity, user.isAuthenticated],
+  );
+
+  const copyLinkToClipboard = useCallback(async () => {
+    const { locale, project, resource, entity } = parameters;
     const { protocol, host } = window.location;
 
     const string_link = `${protocol}//${host}/${locale}/${project}/${resource}/?string=${entity}`;
-    navigator.clipboard.writeText(string_link).then(() => {
-      // Notify the user of the change that happened.
-      const notif = notification.messages.STRING_LINK_COPIED;
-      this.props.dispatch(notification.actions.add(notif));
-    });
-  };
+    await navigator.clipboard.writeText(string_link);
 
-  goToNextEntity: () => void = () => {
-    const { dispatch, nextEntity, router } = this.props;
+    // Notify the user of the change that happened.
+    dispatch(addNotification(notificationMessages.STRING_LINK_COPIED));
+  }, [dispatch, parameters]);
 
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+  const goToNextEntity = useCallback(() => {
+    const state = store.getState();
+    const { exist, ignored } = state[UNSAVED_CHANGES];
 
     dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
-          dispatch(
-            navigation.actions.updateEntity(
-              router,
-              nextEntity?.pk.toString() ?? '',
-            ),
-          );
-          dispatch(editor.actions.reset());
-        },
-      ),
+      checkUnsavedChanges(exist, ignored, () => {
+        dispatch(updateEntity(router, nextEntity?.pk.toString() ?? ''));
+        dispatch(resetEditor());
+      }),
     );
-  };
+  }, [dispatch, nextEntity, router, store]);
 
-  goToPreviousEntity: () => void = () => {
-    const { dispatch, previousEntity, router } = this.props;
-
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
+  const goToPreviousEntity = useCallback(() => {
+    const state = store.getState();
+    const { exist, ignored } = state[UNSAVED_CHANGES];
 
     dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
-          dispatch(
-            navigation.actions.updateEntity(
-              router,
-              previousEntity?.pk.toString() ?? '',
-            ),
-          );
-          dispatch(editor.actions.reset());
-        },
-      ),
+      checkUnsavedChanges(exist, ignored, () => {
+        dispatch(updateEntity(router, previousEntity?.pk.toString() ?? ''));
+        dispatch(resetEditor());
+      }),
     );
-  };
+  }, [dispatch, previousEntity, router, store]);
 
-  navigateToPath: (path: string) => void = (path: string) => {
-    const { dispatch } = this.props;
+  const navigateToPath = useCallback(
+    (path: string) => {
+      const state = store.getState();
+      const { exist, ignored } = state[UNSAVED_CHANGES];
 
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-    dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
+      dispatch(
+        checkUnsavedChanges(exist, ignored, () => {
           dispatch(push(path));
-        },
-      ),
-    );
-  };
-
-  updateEditorTranslation: (translation: string, changeSource: string) => void =
-    (translation: string, changeSource: string) => {
-      this.props.dispatch(editor.actions.update(translation, changeSource));
-    };
-
-  addTextToEditorTranslation: (content: string, changeSource?: string) => void =
-    (content: string, changeSource?: string) => {
-      this.props.dispatch(
-        editor.actions.updateSelection(content, changeSource),
+        }),
       );
-    };
+    },
+    [dispatch, store],
+  );
 
-  deleteTranslation: (translationId: number) => void = (
-    translationId: number,
-  ) => {
-    const { parameters, pluralForm, dispatch } = this.props;
-    dispatch(
-      history.actions.deleteTranslation(
-        parameters.entity,
-        parameters.locale,
-        pluralForm,
-        translationId,
-      ),
-    );
-  };
+  const updateEditorTranslation = useCallback(
+    (translation: string, changeSource: string) =>
+      dispatch(updateEditor(translation, changeSource)),
+    [dispatch],
+  );
 
-  setCommentTabIndex: (tab: number) => void = (tab: number) => {
-    this.setState({ commentTabIndex: tab });
-  };
+  const addTextToEditorTranslation = useCallback(
+    (content: string, changeSource?: string) =>
+      dispatch(updateSelection(content, changeSource)),
+    [dispatch],
+  );
 
-  setContactPerson: (contact: string) => void = (contact: string) => {
-    this.setState({ contactPerson: contact });
-  };
+  const deleteTranslation_ = useCallback(
+    (translationId: number) =>
+      dispatch(deleteTranslation(entity, lc, pluralForm, translationId)),
+    [dispatch, entity, lc, pluralForm],
+  );
 
-  resetContactPerson: () => void = () => {
-    this.setState({ contactPerson: '' });
-  };
+  const addComment_ = useCallback(
+    (comment: string, translation: number | null | undefined) =>
+      dispatch(addComment(entity, lc, pluralForm, translation, comment)),
+    [dispatch, entity, lc, pluralForm],
+  );
 
-  addComment: (
-    comment: string,
-    translation: number | null | undefined,
-  ) => void = (comment: string, translation: number | null | undefined) => {
-    const { parameters, pluralForm, dispatch } = this.props;
-    dispatch(
-      comments.actions.addComment(
-        parameters.entity,
-        parameters.locale,
-        pluralForm,
-        translation,
-        comment,
-      ),
-    );
-  };
-
-  togglePinnedStatus: (pinned: boolean, commentId: number) => void = (
-    pinned: boolean,
-    commentId: number,
-  ) => {
-    this.props.dispatch(
-      teamcomments.actions.togglePinnedStatus(pinned, commentId),
-    );
-  };
+  const togglePinnedStatus = useCallback(
+    (pinned: boolean, commentId: number) =>
+      dispatch(togglePinnedTeamCommentStatus(pinned, commentId)),
+    [dispatch],
+  );
 
   /*
    * This is a copy of EditorBase.updateTranslationStatus().
    * When changing this function, you probably want to change both.
    * We might want to refactor to keep the logic in one place only.
    */
-  updateTranslationStatus: (
-    translationId: number,
-    change: ChangeOperation,
-  ) => void = (translationId: number, change: ChangeOperation) => {
-    const {
-      locale,
-      nextEntity,
-      parameters,
-      pluralForm,
-      router,
-      selectedEntity,
-      dispatch,
-    } = this.props;
+  const updateTranslationStatus = useCallback(
+    (translationId: number, change: ChangeOperation) => {
+      if (!selectedEntity) return;
 
-    if (!selectedEntity) return;
+      const state = store.getState();
+      const { exist, ignored } = state[UNSAVED_CHANGES];
 
-    const state = this.props.store.getState();
-    const unsavedChangesExist = state[unsavedchanges.NAME].exist;
-    const unsavedChangesIgnored = state[unsavedchanges.NAME].ignored;
-
-    // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
-    // because it cannot be triggered for the use case of bug 1508474.
-    dispatch(
-      unsavedchanges.actions.check(
-        unsavedChangesExist,
-        unsavedChangesIgnored,
-        () => {
+      // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
+      // because it cannot be triggered for the use case of bug 1508474.
+      dispatch(
+        checkUnsavedChanges(exist, ignored, () => {
           dispatch(
-            history.actions.updateStatus(
+            updateStatus(
               change,
               selectedEntity,
               locale,
@@ -415,123 +355,105 @@ export class EntityDetailsBase extends React.Component<InternalProps, State> {
               router,
             ),
           );
-        },
-      ),
-    );
-  };
+        }),
+      );
+    },
+    [
+      dispatch,
+      locale,
+      nextEntity,
+      parameters,
+      pluralForm,
+      router,
+      selectedEntity,
+      store,
+    ],
+  );
 
-  render(): null | React.ReactElement<'section'> {
-    const state = this.props;
+  if (!selectedEntity) return <section className='entity-details'></section>;
 
-    if (!state.locale) {
-      return null;
-    }
-
-    if (!state.selectedEntity) {
-      return <section className='entity-details'></section>;
-    }
-
-    return (
-      <section className='entity-details'>
-        <section className='main-column'>
-          <EntityNavigation
-            copyLinkToClipboard={this.copyLinkToClipboard}
-            goToNextEntity={this.goToNextEntity}
-            goToPreviousEntity={this.goToPreviousEntity}
-          />
-          <Metadata
-            entity={state.selectedEntity}
-            isReadOnlyEditor={state.isReadOnlyEditor}
-            locale={state.locale}
-            pluralForm={state.pluralForm}
-            terms={state.terms}
-            addTextToEditorTranslation={this.addTextToEditorTranslation}
-            navigateToPath={this.navigateToPath}
-            teamComments={state.teamComments}
-            user={state.user}
-            commentTabRef={this.commentTabRef}
-            setCommentTabIndex={this.setCommentTabIndex}
-            setContactPerson={this.setContactPerson}
-          />
-          <EditorSelector
-            fileFormat={state.selectedEntity.format}
-            key={state.selectedEntity.pk}
-          />
-          <history.History
-            entity={state.selectedEntity}
-            history={state.history}
-            isReadOnlyEditor={state.isReadOnlyEditor}
-            isTranslator={state.isTranslator}
-            locale={state.locale}
-            user={state.user}
-            deleteTranslation={this.deleteTranslation}
-            addComment={this.addComment}
-            updateTranslationStatus={this.updateTranslationStatus}
-            updateEditorTranslation={this.updateEditorTranslation}
-          />
-        </section>
-        <section className='third-column'>
-          <Helpers
-            entity={state.selectedEntity}
-            isReadOnlyEditor={state.isReadOnlyEditor}
-            locale={state.locale}
-            machinery={state.machinery}
-            otherlocales={state.otherlocales}
-            teamComments={state.teamComments}
-            terms={state.terms}
-            addComment={this.addComment}
-            togglePinnedStatus={this.togglePinnedStatus}
-            parameters={state.parameters}
-            user={state.user}
-            searchMachinery={this.searchMachinery}
-            addTextToEditorTranslation={this.addTextToEditorTranslation}
-            navigateToPath={this.navigateToPath}
-            commentTabRef={this.commentTabRef}
-            commentTabIndex={this.state.commentTabIndex}
-            setCommentTabIndex={this.setCommentTabIndex}
-            contactPerson={this.state.contactPerson}
-            resetContactPerson={this.resetContactPerson}
-          />
-        </section>
+  return (
+    <section className='entity-details'>
+      <section className='main-column'>
+        <EntityNavigation
+          copyLinkToClipboard={copyLinkToClipboard}
+          goToNextEntity={goToNextEntity}
+          goToPreviousEntity={goToPreviousEntity}
+        />
+        <Metadata
+          entity={selectedEntity}
+          isReadOnlyEditor={isReadOnlyEditor}
+          pluralForm={pluralForm}
+          terms={terms}
+          addTextToEditorTranslation={addTextToEditorTranslation}
+          navigateToPath={navigateToPath}
+          teamComments={teamComments}
+          user={user}
+          commentTabRef={commentTabRef}
+          setCommentTabIndex={setCommentTabIndex}
+          setContactPerson={setContactPerson}
+        />
+        <EditorSelector
+          fileFormat={selectedEntity.format}
+          key={selectedEntity.pk}
+        />
+        <History
+          entity={selectedEntity}
+          history={history}
+          isReadOnlyEditor={isReadOnlyEditor}
+          user={user}
+          deleteTranslation={deleteTranslation_}
+          addComment={addComment_}
+          updateTranslationStatus={updateTranslationStatus}
+          updateEditorTranslation={updateEditorTranslation}
+        />
       </section>
-    );
-  }
+      <section className='third-column'>
+        <Helpers
+          entity={selectedEntity}
+          isReadOnlyEditor={isReadOnlyEditor}
+          machinery={machinery}
+          otherlocales={otherlocales}
+          teamComments={teamComments}
+          terms={terms}
+          addComment={addComment_}
+          togglePinnedStatus={togglePinnedStatus}
+          parameters={parameters}
+          user={user}
+          searchMachinery={searchMachinery}
+          addTextToEditorTranslation={addTextToEditorTranslation}
+          navigateToPath={navigateToPath}
+          commentTabRef={commentTabRef}
+          commentTabIndex={commentTabIndex}
+          setCommentTabIndex={setCommentTabIndex}
+          contactPerson={contactPerson}
+          resetContactPerson={resetContactPerson}
+        />
+      </section>
+    </section>
+  );
 }
 
 export default function EntityDetails(): React.ReactElement<
   typeof EntityDetailsBase
 > {
   const state = {
-    activeTranslationString: useAppSelector((state) =>
-      plural.selectors.getTranslationStringForSelectedEntity(state),
+    activeTranslationString: useAppSelector(
+      getTranslationStringForSelectedEntity,
     ),
-    history: useAppSelector((state) => state[history.NAME]),
-    isReadOnlyEditor: useAppSelector((state) =>
-      entities.selectors.isReadOnlyEditor(state),
-    ),
-    isTranslator: useAppSelector((state) => user.selectors.isTranslator(state)),
-    locale: useAppSelector((state) => state[locale.NAME]),
-    machinery: useAppSelector((state) => state[machinery.NAME]),
-    nextEntity: useAppSelector((state) =>
-      entities.selectors.getNextEntity(state),
-    ),
-    previousEntity: useAppSelector((state) =>
-      entities.selectors.getPreviousEntity(state),
-    ),
-    otherlocales: useAppSelector((state) => state[otherlocales.NAME]),
-    teamComments: useAppSelector((state) => state[teamcomments.NAME]),
-    terms: useAppSelector((state) => state[terms.NAME]),
-    parameters: useAppSelector((state) =>
-      navigation.selectors.getNavigationParams(state),
-    ),
-    pluralForm: useAppSelector((state) =>
-      plural.selectors.getPluralForm(state),
-    ),
+    history: useAppSelector((state) => state[HISTORY]),
+    isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
+    machinery: useAppSelector((state) => state[MACHINERY]),
+    nextEntity: useAppSelector(getNextEntity),
+    previousEntity: useAppSelector(getPreviousEntity),
+    otherlocales: useAppSelector((state) => state[OTHERLOCALES]),
+    teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
+    terms: useAppSelector((state) => state[TERMS]),
+    parameters: useAppSelector(getNavigationParams),
+    pluralForm: useAppSelector(getPluralForm),
     router: useAppSelector((state) => state.router),
-    selectedEntity: useAppSelector((state) =>
-      entities.selectors.getSelectedEntity(state),
-    ),
-    user: useAppSelector((state) => state[user.NAME]),
+    selectedEntity: useAppSelector(getSelectedEntity),
+    user: useAppSelector((state) => state[USER]),
   };
   return (
     <EntityDetailsBase
