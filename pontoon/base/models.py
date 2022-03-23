@@ -300,7 +300,7 @@ def serialized_notifications(self):
                             "part": "all-resources",
                         },
                     )
-                    + "?status=missing,fuzzy",
+                    + "?status=missing",
                 }
             else:
                 actor = {
