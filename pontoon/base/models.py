@@ -2267,26 +2267,6 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def fuzzy(self, locale, project=None):
-        """Return a filter to be used to select entities marked as "fuzzy".
-
-        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
-        translation.
-
-        :arg Locale locale: a Locale object to get translations for
-
-        :returns: a django ORM Q object to use as a filter
-
-        """
-        return Q(
-            pk__in=self.get_filtered_entities(
-                locale,
-                Q(fuzzy=True, warnings__isnull=True, errors__isnull=True),
-                lambda x: x.fuzzy,
-                project=project,
-            )
-        )
-
     def warnings(self, locale, project=None):
         """Return a filter to be used to select entities with translations with warnings.
 
@@ -2407,6 +2387,26 @@ class EntityQuerySet(models.QuerySet):
                 locale,
                 Q(approved=True) | Q(fuzzy=True) | Q(rejected=False),
                 lambda x: x.approved or x.fuzzy or not x.rejected,
+                project=project,
+            )
+        )
+
+    def fuzzy(self, locale, project=None):
+        """Return a filter to be used to select entities marked as "fuzzy".
+
+        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
+        translation.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(fuzzy=True, warnings__isnull=True, errors__isnull=True),
+                lambda x: x.fuzzy,
                 project=project,
             )
         )
@@ -2846,7 +2846,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = (
                 "missing",
-                "fuzzy",
                 "warnings",
                 "errors",
                 "translated",
@@ -2864,6 +2863,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "rejected",
                 "unchanged",
                 "empty",
+                "fuzzy",
                 "missing-without-unreviewed",
             )
             post_filters.append(

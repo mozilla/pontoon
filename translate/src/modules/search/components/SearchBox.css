@@ -66,10 +66,6 @@
   color: #7bc876;
 }
 
-.search-box .fuzzy .status:before {
-  color: #fed271;
-}
-
 .search-box .warnings .status:before {
   color: #ffa10f;
 }
@@ -101,6 +97,10 @@
   content: '\f111';
   font-weight: 100;
 }
+
+.search-box .fuzzy .status:before {
+    content: '\f059';
+  }
 
 .search-box .menu .empty.selected .status:before,
 .search-box .menu .empty .status:hover:before {
