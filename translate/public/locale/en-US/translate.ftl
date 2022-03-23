@@ -621,13 +621,13 @@ search-FiltersPanel--heading-extra = EXTRA FILTERS
 search-FiltersPanel--heading-authors = TRANSLATION AUTHORS
 search-FiltersPanel--status-name-all = All
 search-FiltersPanel--status-name-translated = Translated
-search-FiltersPanel--status-name-fuzzy = Fuzzy
 search-FiltersPanel--status-name-warnings = Warnings
 search-FiltersPanel--status-name-errors = Errors
 search-FiltersPanel--status-name-missing = Missing
 search-FiltersPanel--status-name-unreviewed = Unreviewed
 search-FiltersPanel--extra-name-unchanged = Unchanged
 search-FiltersPanel--extra-name-empty = Empty
+search-FiltersPanel--extra-name-fuzzy = Fuzzy
 search-FiltersPanel--extra-name-rejected = Rejected
 
 search-FiltersPanel--clear-selection = <glyph></glyph>CLEAR
