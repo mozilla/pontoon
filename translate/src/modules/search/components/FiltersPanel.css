@@ -71,11 +71,6 @@
   background-color: #3f4752;
 }
 
-.filters-panel .menu li:not(.horizontal-separator) {
-  padding: 4px 0 4px 30px;
-  position: relative;
-}
-
 .filters-panel .menu li .status {
   font-size: 16px;
   margin: -3px -13px -3px -16px;
