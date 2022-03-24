@@ -10,7 +10,7 @@ class Tagged:
     def __init__(self, **kwargs):
         self._latest_translation = kwargs.pop("latest_translation", None)
         self.approved_strings = kwargs.get("approved_strings")
-        self.fuzzy_strings = kwargs.get("fuzzy_strings")
+        self.pretranslated_strings = kwargs.get("pretranslated_strings")
         self.strings_with_warnings = kwargs.get("strings_with_warnings")
         self.strings_with_errors = kwargs.get("strings_with_errors")
         self.total_strings = kwargs.get("total_strings")

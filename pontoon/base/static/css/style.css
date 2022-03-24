@@ -25,8 +25,8 @@
   color: #7bc876;
 }
 
-.fuzzy .status.fa:before {
-  color: #fed271;
+.pretranslated .status.fa:before {
+  color: #c0ff00;
 }
 
 .warnings .status.fa:before {
@@ -461,8 +461,8 @@ tfoot td a {
   background: #7bc876;
 }
 
-.select .menu ul li .chart span.fuzzy {
-  background: #fed271;
+.select .menu ul li .chart span.pretranslated {
+  background: #c0ff00;
 }
 
 .select .menu ul li .chart span.missing {
@@ -638,8 +638,8 @@ img.rounded {
   border-color: #7bc876;
 }
 
-.details div.fuzzy {
-  border-color: #fed271;
+.details div.pretranslated {
+  border-color: #c0ff00;
 }
 
 .details div.warnings {

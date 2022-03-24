@@ -109,7 +109,7 @@ def ajax_resources(request, code, slug):
 
         part["chart"] = {
             "unreviewed_strings": part["unreviewed_strings"],
-            "fuzzy_strings": part["fuzzy_strings"],
+            "pretranslated_strings": part["pretranslated_strings"],
             "strings_with_errors": part["strings_with_errors"],
             "strings_with_warnings": part["strings_with_warnings"],
             "total_strings": part["resource__total_strings"],
@@ -120,8 +120,8 @@ def ajax_resources(request, code, slug):
             "unreviewed_share": round(
                 part["unreviewed_strings"] / part["resource__total_strings"] * 100
             ),
-            "fuzzy_share": round(
-                part["fuzzy_strings"] / part["resource__total_strings"] * 100
+            "pretranslated_share": round(
+                part["pretranslated_strings"] / part["resource__total_strings"] * 100
             ),
             "errors_share": round(
                 part["strings_with_errors"] / part["resource__total_strings"] * 100
