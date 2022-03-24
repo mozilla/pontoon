@@ -5,7 +5,7 @@ class TagChart:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.approved_strings = kwargs.get("approved_strings")
-        self.fuzzy_strings = kwargs.get("fuzzy_strings")
+        self.pretranslated_strings = kwargs.get("pretranslated_strings")
         self.strings_with_warnings = kwargs.get("strings_with_warnings")
         self.strings_with_errors = kwargs.get("strings_with_errors")
         self.total_strings = kwargs.get("total_strings")
@@ -26,8 +26,8 @@ class TagChart:
         return self._share(self.approved_strings)
 
     @property
-    def fuzzy_share(self):
-        return self._share(self.fuzzy_strings)
+    def pretranslated_share(self):
+        return self._share(self.pretranslated_strings)
 
     @property
     def warnings_share(self):

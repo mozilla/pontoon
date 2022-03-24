@@ -5,7 +5,7 @@ export type EntityTranslation = {
   readonly pk: number;
   readonly string: string | null | undefined;
   readonly approved: boolean;
-  readonly fuzzy: boolean;
+  readonly pretranslated: boolean;
   readonly rejected: boolean;
   readonly errors: Array<string>;
   readonly warnings: Array<string>;

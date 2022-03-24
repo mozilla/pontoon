@@ -33,8 +33,15 @@ function ResourceProgress({
   stats,
   onDiscard,
 }: ResourceProgressProps) {
-  const { approved, fuzzy, warnings, errors, missing, unreviewed, total } =
-    stats;
+  const {
+    approved,
+    pretranslated,
+    warnings,
+    errors,
+    missing,
+    unreviewed,
+    total,
+  } = stats;
 
   const ref = React.useRef(null);
   useOnDiscard(ref, onDiscard);
@@ -77,20 +84,20 @@ function ResourceProgress({
             </Link>
           </p>
         </div>
-        <div className='fuzzy'>
+        <div className='pretranslated'>
           <span className='title'>
-            <Localized id='resourceprogress-ResourceProgress--fuzzy'>
-              FUZZY
+            <Localized id='resourceprogress-ResourceProgress--pretranslated'>
+              PRETRANSLATED
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
             <Link
               to={{
                 pathname: currentPath,
-                search: '?status=fuzzy',
+                search: '?status=pretranslated',
               }}
             >
-              {asLocaleString(fuzzy)}
+              {asLocaleString(pretranslated)}
             </Link>
           </p>
         </div>

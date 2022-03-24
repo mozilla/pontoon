@@ -99,8 +99,8 @@
 }
 
 .search-box .fuzzy .status:before {
-    content: '\f059';
-  }
+  content: '\f059';
+}
 
 .search-box .menu .empty.selected .status:before,
 .search-box .menu .empty .status:hover:before {

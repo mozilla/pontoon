@@ -6,7 +6,7 @@ type Action = UpdateAction;
 
 const initial: Stats = {
   approved: 0,
-  fuzzy: 0,
+  pretranslated: 0,
   warnings: 0,
   errors: 0,
   missing: 0,

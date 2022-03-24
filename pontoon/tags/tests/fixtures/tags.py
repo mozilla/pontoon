@@ -32,7 +32,7 @@ def _assert_tags(expected, data):
         "total_strings",
         "approved_strings",
         "unreviewed_strings",
-        "fuzzy_strings",
+        "pretranslated_strings",
     ]
     for slug, stats in results.items():
         _exp = expected[slug]
@@ -105,7 +105,7 @@ def _calculate_tags(**kwargs):
     attrs = [
         "approved_strings",
         "unreviewed_strings",
-        "fuzzy_strings",
+        "pretranslated_strings",
     ]
     totals = {}
     resource_attrs = [

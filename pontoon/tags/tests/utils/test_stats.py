@@ -191,5 +191,5 @@ def test_util_tags_stats_tool_groupby_locale(
     for locale in data:
         locale_exp = exp[locale["locale"]]
         assert locale_exp["total_strings"] == locale["total_strings"]
-        assert locale_exp["fuzzy_strings"] == locale["fuzzy_strings"]
+        assert locale_exp["pretranslated_strings"] == locale["pretranslated_strings"]
         assert locale_exp["approved_strings"] == locale["approved_strings"]
