@@ -49,8 +49,8 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     # Total pretranslations = 2(tr_ax) + 2(tr_bx) + 2(tr_ay)
     assert len(translations) == 6
 
-    # fuzzy count == total pretranslations.
-    assert project_a.fuzzy_strings == 6
+    # pretranslated count == total pretranslations.
+    assert project_a.pretranslated_strings == 6
 
     # latest_translation belongs to pretranslations.
     assert project_a.latest_translation in translations

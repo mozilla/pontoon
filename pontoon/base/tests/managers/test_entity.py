@@ -420,7 +420,7 @@ def test_mgr_entity_filter_missing(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
-        fuzzy=True,
+        pretranslated=True,
     )
     TranslationFactory.create(
         locale=locale_a,
@@ -555,13 +555,13 @@ def test_mgr_entity_filter_missing_plural(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
-        fuzzy=True,
+        pretranslated=True,
         plural_form=0,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
-        fuzzy=True,
+        pretranslated=True,
         plural_form=1,
     )
     TranslationFactory.create(
