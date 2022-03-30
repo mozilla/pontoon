@@ -26,7 +26,7 @@ body.top-contributors #heading .legend li .status.fa {
 .contributor {
   display: inline-block;
   position: relative;
-  width: 580px;
+  width: 670px;
 }
 
 .contributor img {
@@ -57,10 +57,24 @@ body.top-contributors #heading .legend li .status.fa {
   top: 42px;
 }
 
+.details div {
+  display: inline-block;
+  width: 90px;
+}
+
+.details div span {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.details div p {
+  color: #ffffff;
+}
+
 th:last-child,
 .stats .details {
   text-align: center;
-  width: 360px;
+  width: 270px;
 }
 
 th:last-child {
@@ -78,10 +92,6 @@ th:last-child sup {
 
 .stats .details div.approved {
   color: #7bc876;
-}
-
-.stats .details div.fuzzy {
-  color: #fed271;
 }
 
 .stats .details div.unreviewed {

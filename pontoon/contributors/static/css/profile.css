@@ -2,16 +2,37 @@
   padding: 1em 0;
 }
 
-#middle .container p {
-  line-height: 18px;
-}
-
 #middle .container div {
-  width: 244px;
+  width: 326px;
+  border-top: 5px solid;
+  color: #aaaaaa;
+  display: inline-block;
+  margin-right: 1px;
 }
 
 #middle .container div:last-child {
-  width: 245px;
+  margin-right: 0;
+}
+
+#middle .container div.translated {
+  border-color: #7bc876;
+}
+
+#middle .container div.unreviewed {
+  border-color: #4fc4f6;
+}
+
+#middle .container div span {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+#middle .container div p {
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 18px;
+  padding: 10px 0;
+  position: relative;
 }
 
 #main {

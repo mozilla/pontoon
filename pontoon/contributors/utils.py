@@ -46,7 +46,6 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     * translations_approved_count
     * translations_rejected_count
     * translations_unapproved_count
-    * translations_needs_work_count
     * user_role
 
     All counts will be returned from start_date to now().
@@ -66,9 +65,9 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
 
     # Count('user') returns 0 if the user is None.
     # See https://docs.djangoproject.com/en/1.11/topics/db/aggregation/#values.
-    translations = translations.values(
-        "user", "approved", "fuzzy", "rejected"
-    ).annotate(count=Count("approved"))
+    translations = translations.values("user", "approved", "rejected").annotate(
+        count=Count("approved")
+    )
 
     for translation in translations:
         count = translation["count"]
@@ -76,8 +75,6 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
 
         if translation["approved"]:
             status = "approved"
-        elif translation["fuzzy"]:
-            status = "fuzzy"
         elif translation["rejected"]:
             status = "rejected"
         else:
@@ -88,7 +85,6 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
                 "total": 0,
                 "approved": 0,
                 "unreviewed": 0,
-                "fuzzy": 0,
                 "rejected": 0,
             }
 
@@ -128,7 +124,6 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
         contributor.translations_approved_count = user["approved"]
         contributor.translations_rejected_count = user["rejected"]
         contributor.translations_unapproved_count = user["unreviewed"]
-        contributor.translations_needs_work_count = user["fuzzy"]
 
         if contributor.pk is None:
             contributor.user_role = "System User"
