@@ -41,7 +41,9 @@ class Command(BaseCommand):
                 if len(rejected) > 0:
                     msg += f", {len(rejected)} Rejected"
 
-            desc += f'\n<li><a href="{url}">{project.name} ({locale.code})</a>: {msg}</li>'
+            desc += (
+                f'\n<li><a href="{url}">{project.name} ({locale.code})</a>: {msg}</li>'
+            )
 
         return desc + "\n</ul>"
 
