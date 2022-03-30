@@ -66,6 +66,10 @@
   color: #7bc876;
 }
 
+.search-box .pretranslated .status:before {
+  color: #c0ff00;
+}
+
 .search-box .warnings .status:before {
   color: #ffa10f;
 }
