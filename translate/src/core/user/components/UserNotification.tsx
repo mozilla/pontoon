@@ -39,7 +39,9 @@ export default class UserNotification extends React.Component<Props, State> {
 
     const description = notification.description.content;
     const isSuggestion =
-      description && description.startsWith('Unreviewed suggestions');
+      description &&
+      (description.startsWith('Unreviewed suggestions') ||
+        notification.verb === 'has reviewed suggestions');
     const isComment = !description
       ? false
       : notification.description.is_comment;
