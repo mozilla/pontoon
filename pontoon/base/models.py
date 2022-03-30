@@ -2322,11 +2322,29 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
+    def pretranslated(self, locale, project=None):
+        """Return a filter to be used to select entities marked as "pretranslated".
+
+        An entity is marked as "pretranslated" if all of its plural forms have a pretranslated translation.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(pretranslated=True, warnings__isnull=True, errors__isnull=True),
+                lambda x: x.pretranslated,
+                project=project,
+            )
+        )
+
     def translated(self, locale, project):
         """Return a filter to be used to select entities marked as "approved".
 
-        An entity is marked as "approved" if all of its plural forms have an approved
-        translation.
+        An entity is marked as "approved" if all of its plural forms have an approved translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2869,6 +2887,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "missing",
                 "warnings",
                 "errors",
+                "pretranslated",
                 "translated",
                 "unreviewed",
             )
