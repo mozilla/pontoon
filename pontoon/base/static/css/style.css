@@ -621,55 +621,6 @@ img.rounded {
   border: 2px solid #4d5967;
 }
 
-.details div {
-  border-top: 5px solid;
-  color: #aaaaaa;
-  display: inline-block;
-  margin-right: 1px;
-  width: 89px;
-}
-
-.details div:last-child {
-  margin-right: 0;
-  width: 90px;
-}
-
-.details div.translated {
-  border-color: #7bc876;
-}
-
-.details div.pretranslated {
-  border-color: #c0ff00;
-}
-
-.details div.warnings {
-  border-color: #ffa10f;
-}
-
-.details div.errors {
-  border-color: #f36;
-}
-
-.details div.missing {
-  border-color: #5f7285;
-}
-
-.details div.unreviewed {
-  border-color: #4fc4f6;
-}
-
-.details div span {
-  font-size: 10px;
-  text-transform: uppercase;
-}
-
-.details div p {
-  color: #ffffff;
-  font-size: 28px;
-  padding: 10px 0;
-  position: relative;
-}
-
 #error {
   background: #333941;
   bottom: 0;
