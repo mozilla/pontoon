@@ -88,6 +88,7 @@ def approve_translations(form, user, translations, locale):
         rejected=False,
         rejected_user=None,
         rejected_date=None,
+        pretranslated=False,
         fuzzy=False,
     )
 
@@ -143,6 +144,7 @@ def reject_translations(form, user, translations, locale):
         approved=False,
         approved_user=None,
         approved_date=None,
+        pretranslated=False,
         fuzzy=False,
     )
 
@@ -200,6 +202,7 @@ def replace_translations(form, user, translations, locale):
         rejected=True,
         rejected_user=user,
         rejected_date=timezone.now(),
+        pretranslated=False,
         fuzzy=False,
     )
 
