@@ -135,8 +135,12 @@
   opacity: 1;
 }
 
-.history .translation.fuzzy .content > header button.approve:before {
+.history .translation.pretranslated .content > header button.approve:before {
   color: #fed271;
+}
+
+.history .translation.fuzzy .content > header button.approve:before {
+  color: #c0ff00;
 }
 
 .history .translation .content > header button.approve:before,
