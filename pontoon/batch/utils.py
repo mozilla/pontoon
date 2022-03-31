@@ -115,6 +115,7 @@ def find_and_replace(translations, find, replace, user):
         new_translation.rejected = False
         new_translation.rejected_date = None
         new_translation.rejected_user = None
+        new_translation.pretranslated = False
         new_translation.fuzzy = False
 
         if new_translation.entity.resource.format in DB_FORMATS:
