@@ -43,7 +43,7 @@ export function _getTranslationForSelectedEntity(
  * Return the active translation for the currently selected entity
  * and plural form.
  *
- * The active translation is either the approved one, the fuzzy one, or the
+ * The active translation is either the approved one, the pretranslated one, the fuzzy one, or the
  * most recent non-rejected one.
  */
 export const getTranslationForSelectedEntity = createSelector(
@@ -64,7 +64,7 @@ export function _getTranslationStringForSelectedEntity(
  * Return the active translation *string* for the currently selected entity
  * and plural form.
  *
- * The active translation is either the approved one, the fuzzy one, or the
+ * The active translation is either the approved one, the pretranslated one, the fuzzy one, or the
  * most recent non-rejected one.
  */
 export const getTranslationStringForSelectedEntity = createSelector(
