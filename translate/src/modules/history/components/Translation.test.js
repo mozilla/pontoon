@@ -13,6 +13,7 @@ describe('<TranslationBase>', () => {
   const DEFAULT_TRANSLATION = {
     approved: false,
     approvedUser: '',
+    pretranslated: false,
     date: '',
     dateIso: '',
     fuzzy: false,
@@ -65,6 +66,22 @@ describe('<TranslationBase>', () => {
       );
 
       expect(wrapper.find('.rejected')).toHaveLength(1);
+    });
+
+    it('returns the correct status for pretranslated translations', () => {
+      const translation = {
+        ...DEFAULT_TRANSLATION,
+        ...{ pretranslated: true },
+      };
+      const wrapper = shallow(
+        <TranslationBase
+          translation={translation}
+          entity={DEFAULT_ENTITY}
+          user={DEFAULT_USER}
+        />,
+      );
+
+      expect(wrapper.find('.pretranslated')).toHaveLength(1);
     });
 
     it('returns the correct status for fuzzy translations', () => {
