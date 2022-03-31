@@ -1,6 +1,6 @@
 - Feature Name: Redesign of the Profile Page
 - Created: 2022-03-30
-- Associated Issue: -
+- Associated Issue: #2028, #2203, #2112
 
 # Summary
 
@@ -61,6 +61,7 @@ When selecting a specific time range, the data displayed below the graph is upda
 
 The sidebar displays contact information for the contributor:
 * Name.
+* Nickname.
 * Description.
 * Contact email address.
 * External accounts.
@@ -102,6 +103,10 @@ Users should be able to provide a series of external accounts to help locale man
 ### Vanity URL
 
 In order to share a profile more easily, users should be able to set up a vanity URL — a unique identifier, easier to remember, that can be used in the URL instead of the random ID assigned by Pontoon.
+
+### Nickname
+
+Users can set up a *Nickname*, different from their existing *Name*, and a *Description* (maximum length of 100 characters). The *Nickname* can be used for mentions in comments.
 
 # Mockup
 
