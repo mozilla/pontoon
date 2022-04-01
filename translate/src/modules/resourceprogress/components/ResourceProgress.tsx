@@ -84,6 +84,7 @@ function ResourceProgress({
             </Link>
           </p>
         </div>
+        {/*
         <div className='pretranslated'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--pretranslated'>
@@ -101,6 +102,7 @@ function ResourceProgress({
             </Link>
           </p>
         </div>
+        */}
         <div className='warnings'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--warnings'>
