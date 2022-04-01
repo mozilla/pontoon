@@ -96,12 +96,12 @@
   color: #aaaaaa;
   display: inline-block;
   margin-right: 1px;
-  width: 79px;
+  width: 99px;
 }
 
 .progress-chart .menu .details div:last-child {
   margin-right: 0;
-  width: 80px;
+  width: 100px;
 }
 
 .progress-chart .menu .details div.approved {

@@ -12,11 +12,6 @@ export const FILTERS_STATUS = [
     stat: 'approved',
   },
   {
-    name: 'Pretranslated',
-    slug: 'pretranslated',
-    stat: 'pretranslated',
-  },
-  {
     name: 'Warnings',
     slug: 'warnings',
   },
