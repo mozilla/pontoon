@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
@@ -5,6 +6,7 @@ from pontoon.base.utils import require_AJAX
 from pontoon.tour.forms import UserTourStatusForm
 
 
+@login_required(redirect_field_name="", login_url="/403")
 @require_AJAX
 @require_POST
 def update_tour_status(request):
