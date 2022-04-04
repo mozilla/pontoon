@@ -25,7 +25,8 @@
           <div class="value" data-value="{{ chart.approved_strings }}">{{ chart.approved_strings|comma_or_prefix }}</div>
         </a>
       </li>
-      <!--
+      <!-- Pretranslation feature is not ready yet, so we're disabling the Pretranslated status
+           in dashboards to avoid showing unnecessary zeros.
       <li class="pretranslated">
         <a href="{{ link }}{% if link_parameter %}{% if not has_params %}?{% else %}&{% endif %}status=pretranslated{% endif %}">
           <div class="title">Pre</div>

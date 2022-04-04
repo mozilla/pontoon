@@ -84,7 +84,8 @@ function ResourceProgress({
             </Link>
           </p>
         </div>
-        {/*
+        {/* Pretranslation feature is not ready yet, so we're disabling the
+            Pretranslated filter, which wouldn't catch anything.
         <div className='pretranslated'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--pretranslated'>
