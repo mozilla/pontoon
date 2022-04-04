@@ -2284,10 +2284,8 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(warnings__isnull=False)
-                ),
+                (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(warnings__isnull=False),
                 lambda x: (x.approved or x.pretranslated or x.fuzzy)
                 and x.warnings.count(),
                 match_all=False,
@@ -2310,10 +2308,8 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(
-                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                    & Q(errors__isnull=False)
-                ),
+                (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(errors__isnull=False),
                 lambda x: (x.approved or x.pretranslated or x.fuzzy)
                 and x.errors.count(),
                 match_all=False,
@@ -2474,12 +2470,9 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(
-                    Q(active=True)
-                    & Q(
-                        Q(string=F("entity__string"))
-                        | Q(string=F("entity__string_plural"))
-                    )
+                Q(active=True)
+                & (
+                    Q(string=F("entity__string")) | Q(string=F("entity__string_plural"))
                 ),
                 lambda x: x.active
                 and (x.string == x.entity.string or x.string == x.entity.string_plural),
