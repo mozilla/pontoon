@@ -12,7 +12,7 @@ The current profile page only provides minimal information on a contributor. The
 
 Contributors should be able to find all the information about their work in the profile page, and use it to promote themselves internally, e.g. to ask locale managers or administrators for translator permissions, and externally, e.g. to prove their experience as a volunteer. Their contributions should be easily accessible through links in the profile page.
 
-Locale managers and administrator should be able to determine the quality of contributions from the profile page, and find all the relevant contact information to get in touch.
+Locale managers and administrators should be able to determine the quality of contributions from the profile page, and find all the relevant contact information to get in touch.
 
 # Feature explanation
 
@@ -32,7 +32,7 @@ Examples:
 * If a person submits 100 translations, but 20 are rejected, the approval ratio will be 80%.
 * If a person submits 100 translations, 20 are rejected, 20 are self-approved, the approval ratio will be 75% (60 over 80).
 
-The graph displays both the selected month’s ratio and the average for the previous 12 months.
+The graph displays both the specific month’s ratio and the average for the previous 12 months.
 
 ## Self-approval ratio
 
@@ -40,7 +40,7 @@ Displayed in a graph, it’s the ratio between the number of translations submit
 
 Example: if a person has 100 approved translations, but 60 are self-approved, the self-approval ratio will be 60%.
 
-The graph displays both the selected month’s ratio and the average for the previous 12 months.
+The graph displays both the specific month’s ratio and the average for the previous 12 months.
 
 ## Contribution graph
 
@@ -51,7 +51,7 @@ The contribution graph displays data over time about the following actions:
 * `Submissions and reviews`: submissions + reviews performed.
 * `All activities`: submissions + reviews performed + reviews received.
 
-Only one data point is displayed at a time, and it can be selected using the dropdown list above the graph. The default view is `All activities`, since it provides a good picture of the user’s activity in Pontoon.
+Only one data point is displayed at a time, and it can be selected using the dropdown list above the graph. The default view is `Submissions and reviews`, since it provides a good picture of the user’s direct activity in Pontoon.
 
 Each square in the graph represents a day, with color changing depending on the amount of contributions. It’s possible to click on a column to select a specific week, or change the year currently displayed using the links in the rightmost column.
 
@@ -61,9 +61,8 @@ When selecting a specific time range, the data displayed below the graph is upda
 
 The sidebar displays contact information for the contributor:
 * Name.
-* Nickname.
 * Description.
-* Contact email address.
+* Email address.
 * External accounts.
 * Last login.
 * Latest activity.
@@ -86,27 +85,23 @@ Limited means that non authenticated users, and other contributors, won’t be a
 
 ## Dependencies and other changes
 
-### Contact email address
+### Email address
 
-In order to support this new profile, users should be able to provide a contact email address:
+Users should be able to provide a *contact email address*:
 * This is the address that will be displayed in the profile page (pending personal visibility settings), and can be different from the one used to log in to Pontoon.
-* Locale managers and administrators must provide a contact email address, and its visibility can only be public, since contributors need to be able to contact them.
+* If not provided, the email address associated to the account used to log in to Pontoon will be displayed.
+
+The email address can only be set as public for locale managers and administrators, since contributors need to be able to contact them.
 
 ### External accounts
 
-Users should be able to provide a series of external accounts to help locale managers and administrator contacting them:
+Users should be able to provide a series of external accounts to help locale managers and administrators contacting them:
 * Bugzilla (email address).
 * GitHub (username).
-* Telegram (username).
-* Matrix (username).
 
 ### Vanity URL
 
 In order to share a profile more easily, users should be able to set up a vanity URL — a unique identifier, easier to remember, that can be used in the URL instead of the random ID assigned by Pontoon.
-
-### Nickname
-
-Users can set up a *Nickname*, different from their existing *Name*, and a *Description* (maximum length of 100 characters). The *Nickname* can be used for mentions in comments.
 
 # Mockup
 
