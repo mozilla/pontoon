@@ -76,10 +76,10 @@ The sidebar displays contact information for the contributor:
 Most of the data will be visible by default to all users, including non authenticated visitors (i.e. users not logged in to Pontoon).
 
 Visibility for the following fields can be limited by user settings:
-* Email address.
-* External accounts.
-* Self-approval ratio.
-* Approval ratio.
+* Email address (default: limited for contributors and translators, public for locale managers and administrators).
+* External accounts (default: limited).
+* Self-approval ratio (default: public).
+* Approval ratio (default: public).
 
 Limited means that non authenticated users, and other contributors, won’t be able to see this information when they visit the profile page. But this information will be always visible to users with translator rights for any locale in Pontoon (translators, locale managers, administrators).
 
@@ -87,17 +87,16 @@ Limited means that non authenticated users, and other contributors, won’t be a
 
 ### Email address
 
-Users should be able to provide a *contact email address*:
-* This is the address that will be displayed in the profile page (pending personal visibility settings), and can be different from the one used to log in to Pontoon.
-* If not provided, the email address associated to the account used to log in to Pontoon will be displayed.
+Users should be able to provide a *contact email address* that will be displayed in the profile page (pending personal visibility settings). If not provided, the email address associated to the account used to log in to Pontoon will be displayed.
 
-The email address can only be set as public for locale managers and administrators, since contributors need to be able to contact them.
+The email address of managers and administrators will always be public, since contributors need to be able to contact them.
 
 ### External accounts
 
 Users should be able to provide a series of external accounts to help locale managers and administrators contacting them:
 * Bugzilla (email address).
 * GitHub (username).
+* Matrix (username).
 
 ### Vanity URL
 
