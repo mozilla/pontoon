@@ -20,7 +20,7 @@
   padding-right: 5px;
 }
 
-.filters-panel .menu li.time-range {
+.filters-panel .menu li:not(.horizontal-separator).time-range {
   padding: 4px 0;
 }
 

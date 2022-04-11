@@ -301,19 +301,19 @@ def test_mgr_entity_filter_warnings_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[0],
         plural_form=1,
-        fuzzy=True,
+        pretranslated=True,
     )
     translation20 = TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=0,
-        fuzzy=True,
+        pretranslated=True,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         plural_form=1,
-        fuzzy=True,
+        pretranslated=True,
     )
 
     WarningFactory.create(translation=translation20)
@@ -403,6 +403,85 @@ def test_mgr_entity_filter_fuzzy_plurals(resource_a, locale_a):
 
 
 @pytest.mark.django_db
+def test_mgr_entity_filter_pretranslated(resource_a, locale_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+        )
+        for i in range(0, 3)
+    ]
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        pretranslated=True,
+    )
+    assert set(Entity.objects.filter(Entity.objects.pretranslated(locale_a))) == {
+        entities[0],
+        entities[2],
+    }
+
+
+@pytest.mark.django_db
+def test_mgr_entity_filter_pretranslated_plurals(resource_a, locale_a):
+    locale_a.cldr_plurals = "1,5"
+    locale_a.save()
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="testentity%s" % i,
+            string_plural="testpluralentity%s" % i,
+        )
+        for i in range(0, 3)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=0,
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        plural_form=1,
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        plural_form=0,
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=0,
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
+        plural_form=1,
+        pretranslated=True,
+    )
+    assert set(Entity.objects.filter(Entity.objects.pretranslated(locale_a))) == {
+        entities[0],
+        entities[2],
+    }
+
+
+@pytest.mark.django_db
 def test_mgr_entity_filter_missing(resource_a, locale_a):
     entities = [
         EntityFactory.create(
@@ -420,7 +499,7 @@ def test_mgr_entity_filter_missing(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
-        fuzzy=True,
+        pretranslated=True,
     )
     TranslationFactory.create(
         locale=locale_a,
@@ -495,6 +574,11 @@ def test_mgr_entity_filter_unreviewed(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
+        pretranslated=True,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[2],
         string="translation for 2",
     )
     assert set(Entity.objects.filter(Entity.objects.unreviewed(locale_a))) == {
@@ -510,12 +594,19 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
             resource=resource_a,
             string="Unchanged string",
         )
-        for i in range(0, 3)
+        for i in range(0, 4)
     ]
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         active=True,
+        approved=True,
+        string="Unchanged string",
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        active=False,
         approved=True,
         string="Unchanged string",
     )
@@ -528,14 +619,15 @@ def test_mgr_entity_filter_unchanged(resource_a, locale_a):
     )
     TranslationFactory.create(
         locale=locale_a,
-        entity=entities[1],
-        active=False,
-        approved=True,
+        entity=entities[3],
+        active=True,
+        pretranslated=True,
         string="Unchanged string",
     )
     assert set(Entity.objects.filter(Entity.objects.unchanged(locale_a))) == {
         entities[0],
         entities[2],
+        entities[3],
     }
 
 
@@ -555,13 +647,13 @@ def test_mgr_entity_filter_missing_plural(resource_a, locale_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
-        fuzzy=True,
+        pretranslated=True,
         plural_form=0,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
-        fuzzy=True,
+        pretranslated=True,
         plural_form=1,
     )
     TranslationFactory.create(
@@ -598,28 +690,28 @@ def test_mgr_entity_filter_unreviewed_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[0],
         approved=False,
-        fuzzy=False,
+        pretranslated=False,
         plural_form=0,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
         approved=False,
-        fuzzy=False,
+        pretranslated=False,
         plural_form=1,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=False,
-        fuzzy=False,
+        pretranslated=False,
         plural_form=0,
     )
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[2],
         approved=False,
-        fuzzy=False,
+        pretranslated=False,
         plural_form=1,
     )
     assert set(Entity.objects.filter(Entity.objects.unreviewed(locale_a))) == {
@@ -661,7 +753,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[1],
         active=False,
-        fuzzy=True,
+        pretranslated=True,
         plural_form=0,
         string="Unchanged string",
     )
@@ -669,7 +761,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[1],
         active=False,
-        fuzzy=True,
+        pretranslated=True,
         plural_form=1,
         string="Unchanged plural string",
     )
@@ -677,7 +769,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
         active=True,
-        fuzzy=True,
+        pretranslated=True,
         plural_form=0,
         string="Unchanged string",
     )
@@ -685,7 +777,7 @@ def test_mgr_entity_filter_unchanged_plural(resource_a, locale_a):
         locale=locale_a,
         entity=entities[2],
         active=True,
-        fuzzy=True,
+        pretranslated=True,
         plural_form=1,
         string="Unchanged plural string",
     )
@@ -1131,7 +1223,7 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
             resource=resource_a,
             string="testentity%s" % i,
         )
-        for i in range(0, 4)
+        for i in range(0, 5)
     ] + [
         EntityFactory(
             resource=resource_a,
@@ -1186,27 +1278,41 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
         fuzzy=True,
     )
 
-    # Translations for Entity 4 - pluralized:
+    # Translations for Entity 4:
+    # Pretranslated and unreviewed translation
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[4],
+        string=entities[4].string + " translation1",
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[4],
+        string=entities[4].string + " translation2",
+        pretranslated=True,
+    )
+
+    # Translations for Entity 5 - pluralized:
     # Approved and unreviewed translation for first form,
     # a single unreviewed translation for second form
     TranslationFactory.create(
         locale=locale_a,
-        entity=entities[4],
+        entity=entities[5],
         plural_form=0,
-        string=entities[4].string + " translation1",
+        string=entities[5].string + " translation1",
         approved=True,
     )
     TranslationFactory.create(
         locale=locale_a,
-        entity=entities[4],
+        entity=entities[5],
         plural_form=0,
-        string=entities[4].string + " translation2",
+        string=entities[5].string + " translation2",
     )
     TranslationFactory.create(
         locale=locale_a,
-        entity=entities[4],
+        entity=entities[5],
         plural_form=1,
-        string=entities[4].string_plural + " translation1plural",
+        string=entities[5].string_plural + " translation1plural",
     )
 
     entities_qs.reset_active_translations(locale=locale_a)
@@ -1236,12 +1342,19 @@ def test_mgr_entity_reset_active_translations(resource_a, locale_a):
         == entities[3].string + " translation2"
     )
 
-    # Active translations for Entity 4 - pluralized:
+    # Active translations for Entity 4:
+    # pretranslated translation is active
+    assert (
+        entities[4].translation_set.get(active=True).string
+        == entities[4].string + " translation2"
+    )
+
+    # Active translations for Entity 5 - pluralized:
     # Approved translation for first form,
     # a single unreviewed translation for second form
-    active = entities[4].translation_set.filter(active=True)
-    assert active[0].string == entities[4].string + " translation1"
-    assert active[1].string == entities[4].string_plural + " translation1plural"
+    active = entities[5].translation_set.filter(active=True)
+    assert active[0].string == entities[5].string + " translation1"
+    assert active[1].string == entities[5].string_plural + " translation1plural"
 
 
 @pytest.mark.parametrize(

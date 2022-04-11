@@ -280,7 +280,11 @@ class ChangeSet:
             # Modify existing translation.
             if db_translation:
                 new_action = None
-                if not db_translation.approved and not vcs_translation.fuzzy:
+                if (
+                    not db_translation.approved
+                    and not db_translation.pretranslated
+                    and not vcs_translation.fuzzy
+                ):
                     new_action = ActionLog(
                         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
                         performed_by=user or self.sync_user,
@@ -299,7 +303,7 @@ class ChangeSet:
                         self.actions_to_log.append(new_action)
                 if db_translation.fuzzy:
                     fuzzy_translations.append(db_translation)
-                else:
+                elif not db_translation.pretranslated:
                     approved_translations.append(db_translation)
 
             # Create new translation.

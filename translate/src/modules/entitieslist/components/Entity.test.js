@@ -27,7 +27,7 @@ describe('<Entity>', () => {
     translation: [
       {
         string: 'chaine b',
-        fuzzy: true,
+        pretranslated: true,
         errors: [],
         warnings: [],
       },
@@ -62,7 +62,7 @@ describe('<Entity>', () => {
     translation: [
       {
         string: 'chaine e',
-        fuzzy: true,
+        pretranslated: true,
         errors: [],
         warnings: ['warning'],
       },
@@ -80,7 +80,7 @@ describe('<Entity>', () => {
       },
       {
         string: 'chaine f2',
-        fuzzy: true,
+        pretranslated: true,
         errors: [],
         warnings: [],
       },
@@ -102,7 +102,7 @@ describe('<Entity>', () => {
     expect(wrapper.find('.approved')).toHaveLength(1);
 
     wrapper = shallow(<Entity entity={ENTITY_B} parameters={{}} />);
-    expect(wrapper.find('.fuzzy')).toHaveLength(1);
+    expect(wrapper.find('.pretranslated')).toHaveLength(1);
 
     wrapper = shallow(<Entity entity={ENTITY_C} parameters={{}} />);
     expect(wrapper.find('.missing')).toHaveLength(1);

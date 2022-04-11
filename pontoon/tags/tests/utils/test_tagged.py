@@ -173,7 +173,7 @@ def test_util_tag_chart():
 
     chart = TagChart()
     assert chart.approved_strings is None
-    assert chart.fuzzy_strings is None
+    assert chart.pretranslated_strings is None
     assert chart.total_strings is None
     assert chart.unreviewed_strings is None
 
@@ -187,12 +187,12 @@ def test_util_tag_chart():
 
     chart = TagChart(
         total_strings=73,
-        fuzzy_strings=7,
+        pretranslated_strings=7,
         approved_strings=13,
         strings_with_warnings=0,
         unreviewed_strings=23,
     )
     assert chart.approved_share == 18.0
-    assert chart.fuzzy_share == 10.0
+    assert chart.pretranslated_share == 10.0
     assert chart.unreviewed_share == 32.0
     assert chart.completion_percent == 17

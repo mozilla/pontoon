@@ -124,7 +124,8 @@ var Pontoon = (function (my) {
               all = legend.find('.all .value').data('value') || 0,
               translated =
                 legend.find('.translated .value').data('value') / all || 0,
-              fuzzy = legend.find('.fuzzy .value').data('value') / all || 0;
+              pretranslated =
+                legend.find('.pretranslated .value').data('value') / all || 0;
 
             if ($(el).find('.progress .not-ready').length) {
               return 'not-ready';
@@ -132,7 +133,7 @@ var Pontoon = (function (my) {
 
             return {
               translated: translated,
-              fuzzy: fuzzy,
+              pretranslated: pretranslated,
             };
           }
 
@@ -188,7 +189,7 @@ var Pontoon = (function (my) {
           node.addClass(cls);
 
           items.sort(function (a, b) {
-            // Sort by translated, then by fuzzy percentage
+            // Sort by translated, then by pretranslated percentage
             if (node.is('.progress')) {
               var chartA = getProgress(a),
                 chartB = getProgress(b);
@@ -206,7 +207,7 @@ var Pontoon = (function (my) {
 
               return (
                 (chartA.translated - chartB.translated) * dir ||
-                (chartA.fuzzy - chartB.fuzzy) * dir
+                (chartA.pretranslated - chartB.pretranslated) * dir
               );
 
               // Sort by unreviewed state

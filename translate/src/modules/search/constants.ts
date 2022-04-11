@@ -12,10 +12,6 @@ export const FILTERS_STATUS = [
     stat: 'approved',
   },
   {
-    name: 'Fuzzy',
-    slug: 'fuzzy',
-  },
-  {
     name: 'Warnings',
     slug: 'warnings',
   },
@@ -43,6 +39,10 @@ export const FILTERS_EXTRA = [
   {
     name: 'Empty',
     slug: 'empty',
+  },
+  {
+    name: 'Fuzzy',
+    slug: 'fuzzy',
   },
   {
     name: 'Rejected',

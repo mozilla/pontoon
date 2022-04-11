@@ -6,7 +6,7 @@ import ResourceProgressBase from './ResourceProgress';
 describe('<ResourceProgressBase>', () => {
   const STATS = {
     approved: 5,
-    fuzzy: 4,
+    pretranslated: 4,
     unreviewed: 5,
     warnings: 3,
     errors: 2,

@@ -154,6 +154,7 @@ def get_suggestions():
         # Make sure TranslatedResource is still enabled for the locale
         locale=F("entity__resource__translatedresources__locale"),
         approved=False,
+        pretranslated=False,
         fuzzy=False,
         rejected=False,
         entity__obsolete=False,
@@ -270,7 +271,7 @@ def get_locale_insights_snapshot(
         # AggregatedStats
         total_strings=locale.total_strings,
         approved_strings=locale.approved_strings,
-        fuzzy_strings=locale.fuzzy_strings,
+        pretranslated_strings=locale.pretranslated_strings,
         strings_with_errors=locale.strings_with_errors,
         strings_with_warnings=locale.strings_with_warnings,
         unreviewed_strings=locale.unreviewed_strings,
@@ -323,7 +324,7 @@ def get_project_locale_insights_snapshot(
         # AggregatedStats
         total_strings=project_locale.total_strings,
         approved_strings=project_locale.approved_strings,
-        fuzzy_strings=project_locale.fuzzy_strings,
+        pretranslated_strings=project_locale.pretranslated_strings,
         strings_with_errors=project_locale.strings_with_errors,
         strings_with_warnings=project_locale.strings_with_warnings,
         unreviewed_strings=project_locale.unreviewed_strings,

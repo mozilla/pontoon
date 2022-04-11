@@ -125,20 +125,17 @@ def test_mgr_user_translation_counts(
     assert top_contribs[0].translations_count == 16
     assert top_contribs[0].translations_approved_count == 5
     assert top_contribs[0].translations_rejected_count == 9
-    assert top_contribs[0].translations_unapproved_count == 0
-    assert top_contribs[0].translations_needs_work_count == 2
+    assert top_contribs[0].translations_unapproved_count == 2
 
     assert top_contribs[1].translations_count == 12
     assert top_contribs[1].translations_approved_count == 7
     assert top_contribs[1].translations_rejected_count == 3
-    assert top_contribs[1].translations_unapproved_count == 0
-    assert top_contribs[1].translations_needs_work_count == 2
+    assert top_contribs[1].translations_unapproved_count == 2
 
     assert top_contribs[2].translations_count == 8
     assert top_contribs[2].translations_approved_count == 1
     assert top_contribs[2].translations_rejected_count == 0
-    assert top_contribs[2].translations_unapproved_count == 2
-    assert top_contribs[2].translations_needs_work_count == 5
+    assert top_contribs[2].translations_unapproved_count == 7
 
 
 @pytest.mark.django_db
@@ -235,33 +232,28 @@ def test_mgr_user_period_filters(
     assert top_contribs[0].translations_approved_count == 5
     assert top_contribs[0].translations_rejected_count == 0
     assert top_contribs[0].translations_unapproved_count == 0
-    assert top_contribs[0].translations_needs_work_count == 0
 
     top_contribs = users_with_translations_counts(aware_datetime(2015, 5, 10))
     assert len(top_contribs) == 2
     assert top_contribs[0].translations_count == 15
     assert top_contribs[0].translations_approved_count == 2
     assert top_contribs[0].translations_rejected_count == 0
-    assert top_contribs[0].translations_unapproved_count == 11
-    assert top_contribs[0].translations_needs_work_count == 2
+    assert top_contribs[0].translations_unapproved_count == 13
     assert top_contribs[1].translations_count == 5
     assert top_contribs[1].translations_approved_count == 5
     assert top_contribs[1].translations_rejected_count == 0
     assert top_contribs[1].translations_unapproved_count == 0
-    assert top_contribs[1].translations_needs_work_count == 0
 
     top_contribs = users_with_translations_counts(aware_datetime(2015, 1, 10))
     assert len(top_contribs) == 2
     assert top_contribs[0].translations_count == 20
     assert top_contribs[0].translations_approved_count == 17
     assert top_contribs[0].translations_rejected_count == 0
-    assert top_contribs[0].translations_unapproved_count == 1
-    assert top_contribs[0].translations_needs_work_count == 2
+    assert top_contribs[0].translations_unapproved_count == 3
     assert top_contribs[1].translations_count == 15
     assert top_contribs[1].translations_approved_count == 2
     assert top_contribs[1].translations_rejected_count == 0
-    assert top_contribs[1].translations_unapproved_count == 11
-    assert top_contribs[1].translations_needs_work_count == 2
+    assert top_contribs[1].translations_unapproved_count == 13
 
 
 @pytest.mark.django_db
@@ -314,14 +306,12 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[0].translations_count == 24
     assert top_contribs[0].translations_approved_count == 10
     assert top_contribs[0].translations_rejected_count == 0
-    assert top_contribs[0].translations_unapproved_count == 12
-    assert top_contribs[0].translations_needs_work_count == 2
+    assert top_contribs[0].translations_unapproved_count == 14
     assert top_contribs[1] == contributors[0]
     assert top_contribs[1].translations_count == 15
     assert top_contribs[1].translations_approved_count == 12
     assert top_contribs[1].translations_rejected_count == 0
-    assert top_contribs[1].translations_unapproved_count == 1
-    assert top_contribs[1].translations_needs_work_count == 2
+    assert top_contribs[1].translations_unapproved_count == 3
 
     top_contribs = users_with_translations_counts(
         aware_datetime(2015, 1, 1),
@@ -332,5 +322,4 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[0].translations_count == 14
     assert top_contribs[0].translations_approved_count == 11
     assert top_contribs[0].translations_rejected_count == 0
-    assert top_contribs[0].translations_unapproved_count == 1
-    assert top_contribs[0].translations_needs_work_count == 2
+    assert top_contribs[0].translations_unapproved_count == 3

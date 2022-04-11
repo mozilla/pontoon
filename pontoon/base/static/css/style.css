@@ -25,8 +25,8 @@
   color: #7bc876;
 }
 
-.fuzzy .status.fa:before {
-  color: #fed271;
+.pretranslated .status.fa:before {
+  color: #c0ff00;
 }
 
 .warnings .status.fa:before {
@@ -461,8 +461,8 @@ tfoot td a {
   background: #7bc876;
 }
 
-.select .menu ul li .chart span.fuzzy {
-  background: #fed271;
+.select .menu ul li .chart span.pretranslated {
+  background: #c0ff00;
 }
 
 .select .menu ul li .chart span.missing {
@@ -619,55 +619,6 @@ tfoot td a {
 img.rounded {
   border-radius: 6px;
   border: 2px solid #4d5967;
-}
-
-.details div {
-  border-top: 5px solid;
-  color: #aaaaaa;
-  display: inline-block;
-  margin-right: 1px;
-  width: 89px;
-}
-
-.details div:last-child {
-  margin-right: 0;
-  width: 90px;
-}
-
-.details div.translated {
-  border-color: #7bc876;
-}
-
-.details div.fuzzy {
-  border-color: #fed271;
-}
-
-.details div.warnings {
-  border-color: #ffa10f;
-}
-
-.details div.errors {
-  border-color: #f36;
-}
-
-.details div.missing {
-  border-color: #5f7285;
-}
-
-.details div.unreviewed {
-  border-color: #4fc4f6;
-}
-
-.details div span {
-  font-size: 10px;
-  text-transform: uppercase;
-}
-
-.details div p {
-  color: #ffffff;
-  font-size: 28px;
-  padding: 10px 0;
-  position: relative;
 }
 
 #error {
