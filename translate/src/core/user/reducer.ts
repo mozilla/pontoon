@@ -129,25 +129,30 @@ export default function reducer(
       };
     case UPDATE:
       return {
-        ...state,
-        isAuthenticated: action.data.is_authenticated,
-        isAdmin: action.data.is_admin,
-        id: action.data.id,
-        displayName: action.data.display_name,
-        nameOrEmail: action.data.name_or_email,
-        email: action.data.email,
-        username: action.data.username,
-        managerForLocales: action.data.manager_for_locales,
-        translatorForLocales: action.data.translator_for_locales,
-        translatorForProjects: action.data.translator_for_projects,
+        isAuthenticated: action.data.is_authenticated ?? false,
+        isAdmin: action.data.is_admin ?? false,
+        id: action.data.id ?? '',
+        displayName: action.data.display_name ?? '',
+        nameOrEmail: action.data.name_or_email ?? '',
+        email: action.data.email ?? '',
+        username: action.data.username ?? '',
+        managerForLocales: action.data.manager_for_locales ?? [],
+        translatorForLocales: action.data.translator_for_locales ?? [],
+        translatorForProjects: action.data.translator_for_projects ?? {},
         settings: settings(state.settings, action),
-        tourStatus: action.data.tour_status,
-        hasDismissedAddonPromotion: action.data.has_dismissed_addon_promotion,
-        signInURL: action.data.login_url,
-        signOutURL: action.data.logout_url,
-        gravatarURLSmall: action.data.gravatar_url_small,
-        gravatarURLBig: action.data.gravatar_url_big,
-        notifications: action.data.notifications,
+        tourStatus: action.data.tour_status ?? null,
+        hasDismissedAddonPromotion:
+          action.data.has_dismissed_addon_promotion ?? false,
+        signInURL: action.data.login_url ?? '',
+        signOutURL: action.data.logout_url ?? '',
+        gravatarURLSmall: action.data.gravatar_url_small ?? '',
+        gravatarURLBig: action.data.gravatar_url_big ?? '',
+        notifications: action.data.notifications ?? {
+          has_unread: false,
+          notifications: [],
+          unread_count: '0',
+        },
+        users: state.users
       };
     case UPDATE_SETTINGS:
       return {
