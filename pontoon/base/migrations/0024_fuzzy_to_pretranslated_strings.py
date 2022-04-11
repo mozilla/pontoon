@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("base", "0022_fuzzy_to_missing"),
+        ("base", "0023_fuzzy_to_missing"),
     ]
 
     operations = [
