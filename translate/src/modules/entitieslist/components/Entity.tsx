@@ -27,17 +27,17 @@ type Props = {
  * The format of this element is: "[Status] Source (Translation)"
  *
  * "Status" is the current status of the translation. Can be:
- *   - "errors": one of the plural forms has errors and is approved or fuzzy
- *   - "warnings": one of the plural forms has warnings and is approved or fuzzy
+ *   - "errors": one of the plural forms has errors and is approved, pretranslated or fuzzy
+ *   - "warnings": one of the plural forms has warnings and is approved, pretranslated or fuzzy
  *   - "approved": all plural forms are approved and don't have errors or warnings
- *   - "fuzzy": all plural forms are fuzzy and don't have errors or warnings
- *   - "partial": some plural forms have either approved or fuzzy translations, but not all
- *   - "missing": none of the plural forms have an approved or fuzzy translation
+ *   - "pretranslated": all plural forms are pretranslated and don't have errors or warnings
+ *   - "partial": some plural forms have either approved or pretranslated translations, but not all
+ *   - "missing": none of the plural forms have an approved or pretranslated translation
  *
  * "Source" is the original string from the project. Usually it's the en-US string.
  *
- * "Translation" is the current "best" translation. It shows either the approved
- * translation, or the fuzzy translation, or the last suggested translation.
+ * "Translation" is the current "best" translation. It shows either the approved,
+ * pretranslated or fuzzy translation, or the last suggested translation.
  */
 export function Entity({
   checkedForBatchEditing,
@@ -152,19 +152,24 @@ function translationStatus(translations: EntityTranslation[]): string {
   let errors = false;
   let warnings = false;
   let approved = 0;
-  let fuzzy = 0;
+  let pretranslated = 0;
 
   for (const tx of translations) {
-    if (tx.errors.length && (tx.approved || tx.fuzzy)) errors = true;
-    else if (tx.warnings.length && (tx.approved || tx.fuzzy)) warnings = true;
+    if (tx.errors.length && (tx.approved || tx.pretranslated || tx.fuzzy))
+      errors = true;
+    else if (
+      tx.warnings.length &&
+      (tx.approved || tx.pretranslated || tx.fuzzy)
+    )
+      warnings = true;
     else if (tx.approved) approved += 1;
-    else if (tx.fuzzy) fuzzy += 1;
+    else if (tx.pretranslated) pretranslated += 1;
   }
 
   if (errors) return 'errors';
   if (warnings) return 'warnings';
   if (approved === translations.length) return 'approved';
-  if (fuzzy === translations.length) return 'fuzzy';
-  if (approved > 0 || fuzzy > 0) return 'partial';
+  if (pretranslated === translations.length) return 'pretranslated';
+  if (approved > 0 || pretranslated > 0) return 'partial';
   return 'missing';
 }

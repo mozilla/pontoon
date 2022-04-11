@@ -116,7 +116,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
                     string=string,
                     user=user,
                     approved=False,
-                    fuzzy=True,
+                    pretranslated=True,
                     active=True,
                     plural_form=plural_form,
                 )

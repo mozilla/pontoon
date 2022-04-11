@@ -287,8 +287,8 @@ table.table.project-list.hidden {
   background: #7bc876;
 }
 
-.table .progress .chart-wrapper .fuzzy {
-  background: #fed271;
+.table .progress .chart-wrapper .pretranslated {
+  background: #c0ff00;
 }
 
 .table .progress .chart-wrapper .warnings {
@@ -325,11 +325,11 @@ table.table.project-list.hidden {
   display: inline-block;
   padding: 0;
   text-align: center;
-  width: 51px;
+  width: 60px;
 }
 
 .table .progress .legend li:last-child {
-  width: 54px;
+  width: 60px;
 }
 
 .table .progress .legend li a {
@@ -349,8 +349,8 @@ table.table.project-list.hidden {
   color: #7bc876;
 }
 
-.table .progress .legend li.fuzzy .title {
-  color: #fed271;
+.table .progress .legend li.pretranslated .title {
+  color: #c0ff00;
 }
 
 .table .progress .legend li.warnings .title {

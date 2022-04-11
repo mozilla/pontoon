@@ -2,7 +2,7 @@ export const UPDATE: 'stats/UPDATE' = 'stats/UPDATE';
 
 export type APIStats = {
   approved: number;
-  fuzzy: number;
+  pretranslated: number;
   warnings: number;
   errors: number;
   unreviewed: number;
@@ -23,7 +23,7 @@ export function update(stats: APIStats): UpdateAction {
     missing:
       stats.total -
       stats.approved -
-      stats.fuzzy -
+      stats.pretranslated -
       stats.errors -
       stats.warnings,
   };

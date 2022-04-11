@@ -17,6 +17,7 @@ export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
 export type HistoryTranslation = {
   readonly approved: boolean;
   readonly approvedUser: string;
+  readonly pretranslated: boolean;
   readonly date: string;
   readonly dateIso: string;
   readonly fuzzy: boolean;

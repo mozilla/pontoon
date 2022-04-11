@@ -22,7 +22,7 @@ def update_terminology_project_stats():
         [
             "total_strings",
             "approved_strings",
-            "fuzzy_strings",
+            "pretranslated_strings",
             "strings_with_errors",
             "strings_with_warnings",
             "unreviewed_strings",

@@ -136,12 +136,13 @@ export function EntityDetailsBase({
     const plural = pluralForm === -1 ? 0 : pluralForm;
     const translation = selectedEntity.translation[plural];
 
-    // Only show failed checks for active translations that are approved or fuzzy,
-    // i.e. when their status icon is colored as error/warning in the string list
+    // Only show failed checks for active translations that are approved,
+    // pretranslated or fuzzy, i.e. when their status icon is colored as
+    // error/warning in the string list
     if (
       translation &&
       (translation.errors.length || translation.warnings.length) &&
-      (translation.approved || translation.fuzzy)
+      (translation.approved || translation.pretranslated || translation.fuzzy)
     ) {
       const failedChecks: FailedChecks = {
         clErrors: translation.errors,

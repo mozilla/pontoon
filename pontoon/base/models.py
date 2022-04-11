@@ -300,7 +300,7 @@ def serialized_notifications(self):
                             "part": "all-resources",
                         },
                     )
-                    + "?status=missing,fuzzy",
+                    + "?status=missing",
                 }
             else:
                 actor = {
@@ -443,7 +443,7 @@ class PermissionChangelog(models.Model):
 class AggregatedStats(models.Model):
     total_strings = models.PositiveIntegerField(default=0)
     approved_strings = models.PositiveIntegerField(default=0)
-    fuzzy_strings = models.PositiveIntegerField(default=0)
+    pretranslated_strings = models.PositiveIntegerField(default=0)
     strings_with_errors = models.PositiveIntegerField(default=0)
     strings_with_warnings = models.PositiveIntegerField(default=0)
     unreviewed_strings = models.PositiveIntegerField(default=0)
@@ -459,7 +459,7 @@ class AggregatedStats(models.Model):
         return {
             "total_strings": sum(x.total_strings for x in qs),
             "approved_strings": sum(x.approved_strings for x in qs),
-            "fuzzy_strings": sum(x.fuzzy_strings for x in qs),
+            "pretranslated_strings": sum(x.pretranslated_strings for x in qs),
             "strings_with_errors": sum(x.strings_with_errors for x in qs),
             "strings_with_warnings": sum(x.strings_with_warnings for x in qs),
             "unreviewed_strings": sum(x.unreviewed_strings for x in qs),
@@ -481,14 +481,16 @@ class AggregatedStats(models.Model):
         self,
         total_strings_diff,
         approved_strings_diff,
-        fuzzy_strings_diff,
+        pretranslated_strings_diff,
         strings_with_errors_diff,
         strings_with_warnings_diff,
         unreviewed_strings_diff,
     ):
         self.total_strings = F("total_strings") + total_strings_diff
         self.approved_strings = F("approved_strings") + approved_strings_diff
-        self.fuzzy_strings = F("fuzzy_strings") + fuzzy_strings_diff
+        self.pretranslated_strings = (
+            F("pretranslated_strings") + pretranslated_strings_diff
+        )
         self.strings_with_errors = F("strings_with_errors") + strings_with_errors_diff
         self.strings_with_warnings = (
             F("strings_with_warnings") + strings_with_warnings_diff
@@ -499,7 +501,7 @@ class AggregatedStats(models.Model):
             update_fields=[
                 "total_strings",
                 "approved_strings",
-                "fuzzy_strings",
+                "pretranslated_strings",
                 "strings_with_errors",
                 "strings_with_warnings",
                 "unreviewed_strings",
@@ -511,7 +513,7 @@ class AggregatedStats(models.Model):
         return (
             self.total_strings
             - self.approved_strings
-            - self.fuzzy_strings
+            - self.pretranslated_strings
             - self.strings_with_errors
             - self.strings_with_warnings
         )
@@ -533,8 +535,8 @@ class AggregatedStats(models.Model):
         return self.percent_of_total(self.approved_strings)
 
     @property
-    def fuzzy_percent(self):
-        return self.percent_of_total(self.fuzzy_strings)
+    def pretranslated_percent(self):
+        return self.percent_of_total(self.pretranslated_strings)
 
     @property
     def errors_percent(self):
@@ -973,7 +975,7 @@ class Locale(AggregatedStats):
                 "title": "all-resources",
                 "resource__path": [],
                 "resource__total_strings": self.total_strings,
-                "fuzzy_strings": self.fuzzy_strings,
+                "pretranslated_strings": self.pretranslated_strings,
                 "strings_with_errors": self.strings_with_errors,
                 "strings_with_warnings": self.strings_with_warnings,
                 "unreviewed_strings": self.unreviewed_strings,
@@ -991,7 +993,7 @@ class Locale(AggregatedStats):
                 "resource__path",
                 "resource__deadline",
                 "resource__total_strings",
-                "fuzzy_strings",
+                "pretranslated_strings",
                 "strings_with_errors",
                 "strings_with_warnings",
                 "unreviewed_strings",
@@ -1028,8 +1030,8 @@ class Locale(AggregatedStats):
                         resource__path=F("resources__path"),
                         resource__deadline=F("resources__deadline"),
                         resource__total_strings=F("resources__total_strings"),
-                        fuzzy_strings=F(
-                            "resources__translatedresources__fuzzy_strings"
+                        pretranslated_strings=F(
+                            "resources__translatedresources__pretranslated_strings"
                         ),
                         strings_with_errors=F(
                             "resources__translatedresources__strings_with_errors"
@@ -1056,8 +1058,8 @@ class Locale(AggregatedStats):
                         resource__path=F("project__resources__path"),
                         resource__deadline=F("project__resources__deadline"),
                         resource__total_strings=F("project__resources__total_strings"),
-                        fuzzy_strings=F(
-                            "project__resources__translatedresources__fuzzy_strings"
+                        pretranslated_strings=F(
+                            "project__resources__translatedresources__pretranslated_strings"
                         ),
                         strings_with_errors=F(
                             "project__resources__translatedresources__strings_with_errors"
@@ -1092,7 +1094,7 @@ class Locale(AggregatedStats):
                 "resource__path": [],
                 "resource__deadline": [],
                 "resource__total_strings": all_resources.total_strings,
-                "fuzzy_strings": all_resources.fuzzy_strings,
+                "pretranslated_strings": all_resources.pretranslated_strings,
                 "strings_with_errors": all_resources.strings_with_errors,
                 "strings_with_warnings": all_resources.strings_with_warnings,
                 "unreviewed_strings": all_resources.unreviewed_strings,
@@ -1637,7 +1639,7 @@ class ProjectLocaleQuerySet(models.QuerySet):
         return self.aggregate(
             total_strings=Sum("total_strings"),
             approved_strings=Sum("approved_strings"),
-            fuzzy_strings=Sum("fuzzy_strings"),
+            pretranslated_strings=Sum("pretranslated_strings"),
             strings_with_errors=Sum("strings_with_errors"),
             strings_with_warnings=Sum("strings_with_warnings"),
             unreviewed_strings=Sum("unreviewed_strings"),
@@ -1776,12 +1778,12 @@ class ProjectLocale(AggregatedStats):
             return {
                 "total_strings": obj.total_strings,
                 "approved_strings": obj.approved_strings,
-                "fuzzy_strings": obj.fuzzy_strings,
+                "pretranslated_strings": obj.pretranslated_strings,
                 "strings_with_errors": obj.strings_with_errors,
                 "strings_with_warnings": obj.strings_with_warnings,
                 "unreviewed_strings": obj.unreviewed_strings,
                 "approved_share": round(obj.approved_percent),
-                "fuzzy_share": round(obj.fuzzy_percent),
+                "pretranslated_share": round(obj.pretranslated_percent),
                 "errors_share": round(obj.errors_percent),
                 "warnings_share": round(obj.warnings_percent),
                 "unreviewed_share": round(obj.unreviewed_percent),
@@ -2252,7 +2254,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities marked as "missing".
 
         An entity is marked as "missing" if at least one of its plural forms
-        has no approved or fuzzy translations.
+        has no approved or pretranslated translations.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2262,28 +2264,8 @@ class EntityQuerySet(models.QuerySet):
         return ~Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(approved=True) | Q(fuzzy=True),
-                lambda x: x.approved or x.fuzzy,
-                project=project,
-            )
-        )
-
-    def fuzzy(self, locale, project=None):
-        """Return a filter to be used to select entities marked as "fuzzy".
-
-        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
-        translation.
-
-        :arg Locale locale: a Locale object to get translations for
-
-        :returns: a django ORM Q object to use as a filter
-
-        """
-        return Q(
-            pk__in=self.get_filtered_entities(
-                locale,
-                Q(fuzzy=True, warnings__isnull=True, errors__isnull=True),
-                lambda x: x.fuzzy,
+                Q(approved=True) | Q(pretranslated=True),
+                lambda x: x.approved or x.pretranslated,
                 project=project,
             )
         )
@@ -2292,7 +2274,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities with translations with warnings.
 
         This filter will return an entity if at least one of its plural forms
-        has an approved or fuzzy translation with a warning.
+        has an approved, pretranslated or fuzzy translation with a warning.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2302,8 +2284,10 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(Q(Q(approved=True) | Q(fuzzy=True)) & Q(warnings__isnull=False)),
-                lambda x: (x.approved or x.fuzzy) and x.warnings.count(),
+                (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(warnings__isnull=False),
+                lambda x: (x.approved or x.pretranslated or x.fuzzy)
+                and x.warnings.count(),
                 match_all=False,
                 prefetch=Prefetch("warnings"),
                 project=project,
@@ -2314,7 +2298,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities with translations with errors.
 
         This filter will return an entity if at least one of its plural forms
-        has an approved or fuzzy translation with an error.
+        has an approved, pretranslated or fuzzy translation with an error.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2324,10 +2308,31 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(Q(Q(approved=True) | Q(fuzzy=True)) & Q(errors__isnull=False)),
-                lambda x: (x.approved or x.fuzzy) and x.errors.count(),
+                (Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                & Q(errors__isnull=False),
+                lambda x: (x.approved or x.pretranslated or x.fuzzy)
+                and x.errors.count(),
                 match_all=False,
                 prefetch=Prefetch("errors"),
+                project=project,
+            )
+        )
+
+    def pretranslated(self, locale, project=None):
+        """Return a filter to be used to select entities marked as "pretranslated".
+
+        An entity is marked as "pretranslated" if all of its plural forms have a pretranslated translation.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(pretranslated=True, warnings__isnull=True, errors__isnull=True),
+                lambda x: x.pretranslated,
                 project=project,
             )
         )
@@ -2335,8 +2340,7 @@ class EntityQuerySet(models.QuerySet):
     def translated(self, locale, project):
         """Return a filter to be used to select entities marked as "approved".
 
-        An entity is marked as "approved" if all of its plural forms have an approved
-        translation.
+        An entity is marked as "approved" if all of its plural forms have an approved translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2356,7 +2360,7 @@ class EntityQuerySet(models.QuerySet):
         """Return a filter to be used to select entities with suggested translations.
 
         An entity is said to have suggestions if at least one of its plural forms
-        has at least one unreviewed suggestion (not fuzzy, not approved, not rejected).
+        has at least one unreviewed suggestion (not approved, not rejected, not pretranslated, not fuzzy).
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2366,8 +2370,11 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(approved=False, rejected=False, fuzzy=False),
-                lambda x: not x.approved and not x.rejected and not x.fuzzy,
+                Q(approved=False, rejected=False, pretranslated=False, fuzzy=False),
+                lambda x: not x.approved
+                and not x.rejected
+                and not x.pretranslated
+                and not x.fuzzy,
                 match_all=False,
                 project=project,
             )
@@ -2376,8 +2383,7 @@ class EntityQuerySet(models.QuerySet):
     def rejected(self, locale, project=None):
         """Return a filter to be used to select entities with rejected translations.
 
-        This filter will return all entities that have a rejected translation, whether
-        they have approved or fuzzy translations or not.
+        This filter will return all entities that have a rejected translation.
 
         :arg Locale locale: a Locale object to get translations for
 
@@ -2406,8 +2412,28 @@ class EntityQuerySet(models.QuerySet):
         return ~Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(approved=True) | Q(fuzzy=True) | Q(rejected=False),
-                lambda x: x.approved or x.fuzzy or not x.rejected,
+                Q(approved=True) | Q(pretranslated=True) | Q(rejected=False),
+                lambda x: x.approved or x.pretranslated or not x.rejected,
+                project=project,
+            )
+        )
+
+    def fuzzy(self, locale, project=None):
+        """Return a filter to be used to select entities marked as "fuzzy".
+
+        An entity is marked as "fuzzy" if all of its plural forms have a fuzzy
+        translation.
+
+        :arg Locale locale: a Locale object to get translations for
+
+        :returns: a django ORM Q object to use as a filter
+
+        """
+        return Q(
+            pk__in=self.get_filtered_entities(
+                locale,
+                Q(fuzzy=True, warnings__isnull=True, errors__isnull=True),
+                lambda x: x.fuzzy,
                 project=project,
             )
         )
@@ -2444,12 +2470,9 @@ class EntityQuerySet(models.QuerySet):
         return Q(
             pk__in=self.get_filtered_entities(
                 locale,
-                Q(
-                    Q(active=True)
-                    & Q(
-                        Q(string=F("entity__string"))
-                        | Q(string=F("entity__string_plural"))
-                    )
+                Q(active=True)
+                & (
+                    Q(string=F("entity__string")) | Q(string=F("entity__string_plural"))
                 ),
                 lambda x: x.active
                 and (x.string == x.entity.string or x.string == x.entity.string_plural),
@@ -2529,14 +2552,17 @@ class EntityQuerySet(models.QuerySet):
         # First, deactivate all translations
         translations.update(active=False)
 
-        # Mark all approved and fuzzy translations as active.
-        translations.filter(Q(approved=True) | Q(fuzzy=True)).update(active=True)
+        # Mark all approved, pretranslated and fuzzy translations as active.
+        translations.filter(
+            Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True)
+        ).update(active=True)
 
         # Mark most recent unreviewed suggestions without active siblings
         # for any given combination of (locale, entity, plural_form) as active.
         unreviewed_pks = set()
         unreviewed = translations.filter(
             approved=False,
+            pretranslated=False,
             fuzzy=False,
             rejected=False,
         ).values_list("entity", "plural_form")
@@ -2641,35 +2667,36 @@ class Entity(DirtyFieldsMixin, models.Model):
             ]
         )
 
-        fuzzy_strings_count = len(
+        pretranslated_strings_count = len(
             [
                 t
                 for t in translations
-                if t.fuzzy and not (t.errors.exists() or t.warnings.exists())
+                if t.pretranslated and not (t.errors.exists() or t.warnings.exists())
             ]
         )
 
         if self.string_plural:
             approved = int(approved_strings_count == locale.nplurals)
-            fuzzy = int(fuzzy_strings_count == locale.nplurals)
+            pretranslated = int(pretranslated_strings_count == locale.nplurals)
 
         else:
             approved = int(approved_strings_count > 0)
-            fuzzy = int(fuzzy_strings_count > 0)
+            pretranslated = int(pretranslated_strings_count > 0)
 
-        if not (approved or fuzzy):
+        if not (approved or pretranslated):
             has_errors = bool(
                 [
                     t
                     for t in translations
-                    if (t.approved or t.fuzzy) and t.errors.exists()
+                    if (t.approved or t.pretranslated or t.fuzzy) and t.errors.exists()
                 ]
             )
             has_warnings = bool(
                 [
                     t
                     for t in translations
-                    if (t.approved or t.fuzzy) and t.warnings.exists()
+                    if (t.approved or t.pretranslated or t.fuzzy)
+                    and t.warnings.exists()
                 ]
             )
 
@@ -2681,13 +2708,17 @@ class Entity(DirtyFieldsMixin, models.Model):
             warnings = 0
 
         unreviewed_count = len(
-            [t for t in translations if not (t.approved or t.fuzzy or t.rejected)]
+            [
+                t
+                for t in translations
+                if not (t.approved or t.pretranslated or t.fuzzy or t.rejected)
+            ]
         )
 
         return {
             "total_strings_diff": 0,
             "approved_strings_diff": approved,
-            "fuzzy_strings_diff": fuzzy,
+            "pretranslated_strings_diff": pretranslated,
             "strings_with_errors_diff": errors,
             "strings_with_warnings_diff": warnings,
             "unreviewed_strings_diff": unreviewed_count,
@@ -2735,7 +2766,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     def reset_active_translation(self, locale, plural_form=None):
         """
-        Reset active translation for given entity, locale and plural for.
+        Reset active translation for given entity, locale and plural form.
         Return active translation if exists or empty Translation instance.
         """
         translations = self.translation_set.filter(locale=locale)
@@ -2746,7 +2777,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         translations.update(active=False)
 
         candidates = translations.filter(rejected=False).order_by(
-            "-approved", "-fuzzy", "-date"
+            "-approved", "-pretranslated", "-fuzzy", "-date"
         )
 
         if candidates:
@@ -2847,9 +2878,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Apply a combination of filters based on the list of statuses the user sent.
             status_filter_choices = (
                 "missing",
-                "fuzzy",
                 "warnings",
                 "errors",
+                "pretranslated",
                 "translated",
                 "unreviewed",
             )
@@ -2865,6 +2896,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "rejected",
                 "unchanged",
                 "empty",
+                "fuzzy",
                 "missing-without-unreviewed",
             )
             post_filters.append(
@@ -3094,6 +3126,7 @@ class Translation(DirtyFieldsMixin, models.Model):
     # each (entity, locale, plural_form) combination. See bug 1481175.
     active = models.BooleanField(default=False)
 
+    pretranslated = models.BooleanField(default=False)
     fuzzy = models.BooleanField(default=False)
 
     approved = models.BooleanField(default=False)
@@ -3158,8 +3191,9 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     class Meta:
         index_together = (
-            ("entity", "user", "approved", "fuzzy"),
+            ("entity", "user", "approved", "pretranslated"),
             ("entity", "locale", "approved"),
+            ("entity", "locale", "pretranslated"),
             ("entity", "locale", "fuzzy"),
             ("locale", "user", "entity"),
             ("date", "locale"),
@@ -3279,6 +3313,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                 rejected=True,
                 rejected_user=self.approved_user,
                 rejected_date=self.approved_date,
+                pretranslated=False,
                 fuzzy=False,
             )
 
@@ -3357,6 +3392,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.approved_user = user
         self.approved_date = timezone.now()
 
+        self.pretranslated = False
         self.fuzzy = False
 
         self.unapproved_user = None
@@ -3396,9 +3432,9 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Reject translation.
         """
-        # Check if translation was approved or fuzzy.
-        # We must do this before unapproving/unfuzzying it.
-        if self.approved or self.fuzzy:
+        # Check if translation was approved or pretranslated or fuzzy.
+        # We must do this before rejecting it.
+        if self.approved or self.pretranslated or self.fuzzy:
             TranslationMemoryEntry.objects.filter(translation=self).delete()
             self.entity.mark_changed(self.locale)
 
@@ -3408,6 +3444,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.approved = False
         self.approved_user = None
         self.approved_date = None
+        self.pretranslated = False
         self.fuzzy = False
         self.save()
 
@@ -3426,6 +3463,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             "string": self.string,
             "approved": self.approved,
             "rejected": self.rejected,
+            "pretranslated": self.pretranslated,
             "fuzzy": self.fuzzy,
             "errors": [error.message for error in self.errors.all()],
             "warnings": [warning.message for warning in self.warnings.all()],
@@ -3585,7 +3623,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         return self.aggregate(
             total=Sum("resource__total_strings"),
             approved=Sum("approved_strings"),
-            fuzzy=Sum("fuzzy_strings"),
+            pretranslated=Sum("pretranslated_strings"),
             errors=Sum("strings_with_errors"),
             warnings=Sum("strings_with_warnings"),
             unreviewed=Sum("unreviewed_strings"),
@@ -3596,7 +3634,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
 
         instance.total_strings = aggregated_stats["total"] or 0
         instance.approved_strings = aggregated_stats["approved"] or 0
-        instance.fuzzy_strings = aggregated_stats["fuzzy"] or 0
+        instance.pretranslated_strings = aggregated_stats["pretranslated"] or 0
         instance.strings_with_errors = aggregated_stats["errors"] or 0
         instance.strings_with_warnings = aggregated_stats["warnings"] or 0
         instance.unreviewed_strings = aggregated_stats["unreviewed"] or 0
@@ -3605,7 +3643,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
             update_fields=[
                 "total_strings",
                 "approved_strings",
-                "fuzzy_strings",
+                "pretranslated_strings",
                 "strings_with_errors",
                 "strings_with_warnings",
                 "unreviewed_strings",
@@ -3665,7 +3703,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
             fields=[
                 "total_strings",
                 "approved_strings",
-                "fuzzy_strings",
+                "pretranslated_strings",
                 "strings_with_errors",
                 "strings_with_warnings",
                 "unreviewed_strings",
@@ -3750,15 +3788,18 @@ class TranslatedResource(AggregatedStats):
             warnings__isnull=True,
         ).count()
 
-        fuzzy = translations.filter(
-            fuzzy=True,
+        pretranslated = translations.filter(
+            pretranslated=True,
             errors__isnull=True,
             warnings__isnull=True,
         ).count()
 
         errors = (
             translations.filter(
-                Q(Q(Q(approved=True) | Q(fuzzy=True)) & Q(errors__isnull=False)),
+                Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(errors__isnull=False)
+                ),
             )
             .distinct()
             .count()
@@ -3766,7 +3807,10 @@ class TranslatedResource(AggregatedStats):
 
         warnings = (
             translations.filter(
-                Q(Q(Q(approved=True) | Q(fuzzy=True)) & Q(warnings__isnull=False)),
+                Q(
+                    Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
+                    & Q(warnings__isnull=False)
+                ),
             )
             .distinct()
             .count()
@@ -3774,8 +3818,9 @@ class TranslatedResource(AggregatedStats):
 
         unreviewed = translations.filter(
             approved=False,
-            fuzzy=False,
             rejected=False,
+            pretranslated=False,
+            fuzzy=False,
         ).count()
 
         # Plural
@@ -3792,21 +3837,21 @@ class TranslatedResource(AggregatedStats):
                 warnings__isnull=True,
             ).count()
 
-            plural_fuzzy_count = translations.filter(
-                fuzzy=True,
+            plural_pretranslated_count = translations.filter(
+                pretranslated=True,
                 errors__isnull=True,
                 warnings__isnull=True,
             ).count()
 
             if plural_approved_count == nplurals:
                 approved += 1
-            elif plural_fuzzy_count == nplurals:
-                fuzzy += 1
+            elif plural_pretranslated_count == nplurals:
+                pretranslated += 1
             else:
                 plural_errors_count = (
                     translations.filter(
                         Q(
-                            Q(Q(approved=True) | Q(fuzzy=True))
+                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
                             & Q(errors__isnull=False)
                         ),
                     )
@@ -3817,7 +3862,7 @@ class TranslatedResource(AggregatedStats):
                 plural_warnings_count = (
                     translations.filter(
                         Q(
-                            Q(Q(approved=True) | Q(fuzzy=True))
+                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
                             & Q(warnings__isnull=False)
                         ),
                     )
@@ -3831,7 +3876,7 @@ class TranslatedResource(AggregatedStats):
                     warnings += 1
 
             plural_unreviewed_count = translations.filter(
-                approved=False, fuzzy=False, rejected=False
+                approved=False, pretranslated=False, fuzzy=False, rejected=False
             ).count()
             if plural_unreviewed_count:
                 unreviewed += plural_unreviewed_count
@@ -3839,7 +3884,7 @@ class TranslatedResource(AggregatedStats):
         if not save:
             self.total_strings = resource.total_strings
             self.approved_strings = approved
-            self.fuzzy_strings = fuzzy
+            self.pretranslated_strings = pretranslated
             self.strings_with_errors = errors
             self.strings_with_warnings = warnings
             self.unreviewed_strings = unreviewed
@@ -3849,7 +3894,7 @@ class TranslatedResource(AggregatedStats):
         # Calculate diffs to reduce DB queries
         total_strings_diff = resource.total_strings - self.total_strings
         approved_strings_diff = approved - self.approved_strings
-        fuzzy_strings_diff = fuzzy - self.fuzzy_strings
+        pretranslated_strings_diff = pretranslated - self.pretranslated_strings
         strings_with_errors_diff = errors - self.strings_with_errors
         strings_with_warnings_diff = warnings - self.strings_with_warnings
         unreviewed_strings_diff = unreviewed - self.unreviewed_strings
@@ -3857,7 +3902,7 @@ class TranslatedResource(AggregatedStats):
         self.adjust_all_stats(
             total_strings_diff,
             approved_strings_diff,
-            fuzzy_strings_diff,
+            pretranslated_strings_diff,
             strings_with_errors_diff,
             strings_with_warnings_diff,
             unreviewed_strings_diff,

@@ -20,7 +20,7 @@ class TagsStatsTool(TagsTRTool):
     # from the perspective of translated resources
     _default_annotations = (
         ("total_strings", Coalesce(Sum("resource__total_strings"), Value(0))),
-        ("fuzzy_strings", Coalesce(Sum("fuzzy_strings"), Value(0))),
+        ("pretranslated_strings", Coalesce(Sum("pretranslated_strings"), Value(0))),
         ("strings_with_warnings", Coalesce(Sum("strings_with_warnings"), Value(0))),
         ("strings_with_errors", Coalesce(Sum("strings_with_errors"), Value(0))),
         ("approved_strings", Coalesce(Sum("approved_strings"), Value(0))),

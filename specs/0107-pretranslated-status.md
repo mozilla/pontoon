@@ -34,7 +34,7 @@ Let's have a closer look at each of them.
 
 We treat Gettext Fuzzy strings as Missing instead of Pretranslated on dashboards, in string list, in progress chart, i.e. everywhere.
 
-Internally, we keep using the fuzzy=True flag for Fuzzy strings, which allows us to distinct them from Missing and:
+Internally, we keep using the fuzzy=True flag for Fuzzy strings, which allows us to distinguish them from Missing and:
 1. Sync them with version control system.
 2. Run quality checks on them.
 3. Set fuzzy flag accordingly in the .po file.

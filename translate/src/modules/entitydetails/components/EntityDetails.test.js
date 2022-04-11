@@ -140,7 +140,7 @@ describe('<EntityDetailsBase>', () => {
 
   // enzyme shallow rendering doesn't support useEffect()
   // https://github.com/enzymejs/enzyme/issues/2086
-  it.skip('shows failed checks for approved (or fuzzy) translations with errors or warnings', () => {
+  it.skip('shows failed checks for approved translations with errors or warnings', () => {
     const wrapper = createShallowEntityDetails();
 
     // componentDidMount(): reset failed checks
@@ -170,7 +170,7 @@ describe('<EntityDetailsBase>', () => {
 
   // enzyme shallow rendering doesn't support useEffect()
   // https://github.com/enzymejs/enzyme/issues/2086
-  it.skip('hides failed checks for approved (or fuzzy) translations without errors or warnings', () => {
+  it.skip('hides failed checks for pretranslated translations without errors or warnings', () => {
     const wrapper = createShallowEntityDetails();
 
     // componentDidMount(): reset failed checks
@@ -184,7 +184,7 @@ describe('<EntityDetailsBase>', () => {
         original: 'something',
         translation: [
           {
-            approved: true,
+            pretranslated: true,
             string: 'quelque chose',
             errors: [],
             warnings: [],

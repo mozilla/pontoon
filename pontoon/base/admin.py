@@ -20,7 +20,7 @@ from pontoon.teams.utils import log_user_groups
 AGGREGATED_STATS_FIELDS = (
     "total_strings",
     "approved_strings",
-    "fuzzy_strings",
+    "pretranslated_strings",
     "strings_with_errors",
     "strings_with_warnings",
     "unreviewed_strings",

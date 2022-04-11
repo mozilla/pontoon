@@ -209,6 +209,8 @@ export function TranslationBase({
     'translation',
     translation.approved
       ? 'approved'
+      : translation.pretranslated
+      ? 'pretranslated'
       : translation.fuzzy
       ? 'fuzzy'
       : translation.rejected

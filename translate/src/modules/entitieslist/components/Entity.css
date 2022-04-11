@@ -92,8 +92,8 @@
   color: #7bc876;
 }
 
-.entity.fuzzy .status:before {
-  color: #fed271;
+.entity.pretranslated .status:before {
+  color: #c0ff00;
 }
 
 .entity.errors .status:before {

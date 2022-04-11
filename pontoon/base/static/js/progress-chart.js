@@ -21,7 +21,7 @@ $(function () {
 
     var fraction = {
         translated: stats.all ? stats.translated / stats.all : 0,
-        fuzzy: stats.all ? stats.fuzzy / stats.all : 0,
+        pretranslated: stats.all ? stats.pretranslated / stats.all : 0,
         warnings: stats.all ? stats.warnings / stats.all : 0,
         errors: stats.all ? stats.errors / stats.all : 0,
         missing: stats.all

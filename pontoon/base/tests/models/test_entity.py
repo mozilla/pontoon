@@ -109,6 +109,21 @@ def test_reset_active_translation_single_approved(translation_a):
 
 
 @pytest.mark.django_db
+def test_reset_active_translation_single_pretranslated(translation_a):
+    """
+    Test if active translations gets set properly for an entity
+    with a single pretranslated translation.
+    """
+    entity = translation_a.entity
+    locale = translation_a.locale
+
+    translation_a.pretranslated = True
+    translation_a.save()
+
+    assert entity.reset_active_translation(locale) == translation_a
+
+
+@pytest.mark.django_db
 def test_reset_active_translation_single_fuzzy(translation_a):
     """
     Test if active translations gets set properly for an entity
@@ -292,6 +307,7 @@ def test_entity_project_locale_no_paths(
         "translation": [
             {
                 "pk": tr0.pk,
+                "pretranslated": False,
                 "fuzzy": False,
                 "string": str(tr0.string),
                 "approved": False,
@@ -301,6 +317,7 @@ def test_entity_project_locale_no_paths(
             },
             {
                 "pk": tr0pl.pk,
+                "pretranslated": False,
                 "fuzzy": False,
                 "string": str(tr0pl.string),
                 "approved": False,
