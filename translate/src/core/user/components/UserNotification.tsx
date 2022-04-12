@@ -121,10 +121,12 @@ export function UserNotification({
     else mounted.current = true;
   }, [unread]);
 
+  const content = description?.content;
   const isSuggestion =
-    description?.content.startsWith('Unreviewed suggestions') ||
+    (typeof content === 'string' &&
+      content.startsWith('Unreviewed suggestions')) ||
     verb === 'has reviewed suggestions';
-  const isComment = description?.is_comment;
+  const isComment: boolean = description?.is_comment ?? false;
 
   const className = classNames(
     'user-notification',
