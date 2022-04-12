@@ -152,7 +152,7 @@ export default function reducer(
           notifications: [],
           unread_count: '0',
         },
-        users: state.users
+        users: state.users,
       };
     case UPDATE_SETTINGS:
       return {
