@@ -1,34 +1,22 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
-import { Link } from 'react-router-dom';
-
+import React, { useCallback, useState } from 'react';
+import { Link } from '~/context/location';
+import type { Stats } from '~/core/stats';
+import { asLocaleString, useOnDiscard } from '~/core/utils';
+import ProgressChart from './ProgressChart';
 import './ResourceProgress.css';
 
-import ProgressChart from './ProgressChart';
-
-import { asLocaleString, useOnDiscard } from '~/core/utils';
-
-import type { NavigationParams } from '~/core/navigation';
-import type { Stats } from '~/core/stats';
-
 type Props = {
-  parameters: NavigationParams;
   stats: Stats;
 };
 
-type State = {
-  visible: boolean;
-};
-
 type ResourceProgressProps = {
-  currentPath: string;
   percent: number;
   stats: Stats;
   onDiscard: () => void;
 };
 
 function ResourceProgress({
-  currentPath,
   percent,
   stats,
   onDiscard,
@@ -74,12 +62,7 @@ function ResourceProgress({
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link
-              to={{
-                pathname: currentPath,
-                search: '?status=translated',
-              }}
-            >
+            <Link to={{ status: 'translated' }}>
               {asLocaleString(approved)}
             </Link>
           </p>
@@ -93,12 +76,7 @@ function ResourceProgress({
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link
-              to={{
-                pathname: currentPath,
-                search: '?status=pretranslated',
-              }}
-            >
+            <Link to={{ status: 'pretranslated' }}>
               {asLocaleString(pretranslated)}
             </Link>
           </p>
@@ -111,14 +89,7 @@ function ResourceProgress({
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link
-              to={{
-                pathname: currentPath,
-                search: '?status=warnings',
-              }}
-            >
-              {asLocaleString(warnings)}
-            </Link>
+            <Link to={{ status: 'warnings' }}>{asLocaleString(warnings)}</Link>
           </p>
         </div>
         <div className='errors'>
@@ -128,14 +99,7 @@ function ResourceProgress({
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link
-              to={{
-                pathname: currentPath,
-                search: '?status=errors',
-              }}
-            >
-              {asLocaleString(errors)}
-            </Link>
+            <Link to={{ status: 'errors' }}>{asLocaleString(errors)}</Link>
           </p>
         </div>
         <div className='missing'>
@@ -145,14 +109,7 @@ function ResourceProgress({
             </Localized>
           </span>
           <p className='value' onClick={onDiscard}>
-            <Link
-              to={{
-                pathname: currentPath,
-                search: '?status=missing',
-              }}
-            >
-              {asLocaleString(missing)}
-            </Link>
+            <Link to={{ status: 'missing' }}>{asLocaleString(missing)}</Link>
           </p>
         </div>
       </div>
@@ -163,56 +120,34 @@ function ResourceProgress({
 /**
  * Show a panel with progress chart and stats for the current resource.
  */
-export default class ResourceProgressBase extends React.Component<
-  Props,
-  State
-> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
+export default function ResourceProgressBase({
+  stats,
+}: Props): React.ReactElement<'div'> | null {
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
+
+  // Do not show resource progress until stats are available
+  if (!stats.total) {
+    return null;
   }
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const complete = stats.approved + stats.warnings;
+  const percent = Math.floor((complete / stats.total) * 100);
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): null | React.ReactElement<'div'> {
-    const { parameters, stats } = this.props;
-
-    // Do not show resource progress until stats are available
-    if (!stats.total) {
-      return null;
-    }
-
-    const complete = stats.approved + stats.warnings;
-    const percent = Math.floor((complete / stats.total) * 100);
-    const currentPath = `/${parameters.locale}/${parameters.project}/${parameters.resource}/`;
-
-    return (
-      <div className='progress-chart'>
-        <div className='selector' onClick={this.toggleVisibility}>
-          <ProgressChart stats={stats} size={44} />
-          <span className='percent unselectable'>{percent}</span>
-        </div>
-        {this.state.visible && (
-          <ResourceProgress
-            currentPath={currentPath}
-            percent={percent}
-            stats={stats}
-            onDiscard={this.handleDiscard}
-          />
-        )}
+  return (
+    <div className='progress-chart'>
+      <div className='selector' onClick={toggleVisible}>
+        <ProgressChart stats={stats} size={44} />
+        <span className='percent unselectable'>{percent}</span>
       </div>
-    );
-  }
+      {visible ? (
+        <ResourceProgress
+          percent={percent}
+          stats={stats}
+          onDiscard={handleDiscard}
+        />
+      ) : null}
+    </div>
+  );
 }

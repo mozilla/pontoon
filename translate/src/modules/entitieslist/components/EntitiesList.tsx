@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { Locale } from '~/context/locale';
+import { Location, LocationType } from '~/context/location';
 import type { Entity as EntityType } from '~/core/api';
 import { reset as resetEditor } from '~/core/editor/actions';
 import { EntitiesState, NAME as ENTITIES } from '~/core/entities';
@@ -10,15 +11,12 @@ import {
   getSiblingEntities,
   reset as resetEntities,
 } from '~/core/entities/actions';
-import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { SkeletonLoader } from '~/core/loaders';
-import type { NavigationParams } from '~/core/navigation';
-import { updateEntity } from '~/core/navigation/actions';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   BatchActionsState,
   NAME as BATCHACTIONS,
@@ -34,16 +32,14 @@ import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
-import { Entity } from './Entity';
-
 import './EntitiesList.css';
+import { Entity } from './Entity';
 
 type Props = {
   batchactions: BatchActionsState;
   entities: EntitiesState;
   isReadOnlyEditor: boolean;
-  parameters: NavigationParams;
-  router: Record<string, any>;
+  parameters: LocationType;
 };
 
 type InternalProps = Props & {
@@ -64,7 +60,6 @@ export function EntitiesListBase({
   entities,
   isReadOnlyEditor,
   parameters,
-  router,
   store,
 }: InternalProps): React.ReactElement<'div'> {
   const mounted = useRef(false);
@@ -117,14 +112,14 @@ export function EntitiesListBase({
           checkUnsavedChanges(exist, ignored, () => {
             dispatch(resetSelection());
             dispatch(resetEditor());
-            dispatch(
-              updateEntity(router, entity.pk.toString(), replaceHistory),
-            );
+            const nextLocation = { entity: entity.pk };
+            if (replaceHistory) parameters.replace(nextLocation);
+            else parameters.push(nextLocation);
           }),
         );
       }
     },
-    [dispatch, parameters.entity, router, store],
+    [dispatch, parameters, store],
   );
 
   /*
@@ -165,6 +160,7 @@ export function EntitiesListBase({
     if (mounted.current) dispatch(resetEntities());
   }, [
     dispatch,
+    // Note: entity is explicitly not included here
     locale,
     project,
     resource,
@@ -319,9 +315,8 @@ export default function EntitiesList(): React.ReactElement<
   const state = {
     batchactions: useAppSelector((state) => state[BATCHACTIONS]),
     entities: useAppSelector((state) => state[ENTITIES]),
-    isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
-    parameters: useAppSelector(getNavigationParams),
-    router: useAppSelector((state) => state.router),
+    isReadOnlyEditor: useReadonlyEditor(),
+    parameters: useContext(Location),
   };
 
   return (

@@ -1,14 +1,15 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
-import { BatchActionsBase } from './BatchActions';
+import * as Hooks from '~/hooks';
+import * as Actions from '../actions';
+import { NAME as BATCHACTIONS } from '../index';
 
 import ApproveAll from './ApproveAll';
+import { BatchActions } from './BatchActions';
 import RejectAll from './RejectAll';
 import ReplaceAll from './ReplaceAll';
-
-import { actions } from '..';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],
@@ -17,26 +18,30 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
-describe('<BatchActionsBase>', () => {
+describe('<BatchActions>', () => {
   beforeAll(() => {
-    sinon.stub(actions, 'resetSelection').returns({ type: 'whatever' });
-    sinon.stub(actions, 'selectAll').returns({ type: 'whatever' });
+    sinon.stub(Hooks, 'useAppDispatch').returns(() => {});
+    sinon
+      .stub(Hooks, 'useAppSelector')
+      .callsFake((sel) => sel({ [BATCHACTIONS]: DEFAULT_BATCH_ACTIONS }));
+    sinon.stub(Actions, 'resetSelection').returns({ type: 'whatever' });
+    sinon.stub(Actions, 'selectAll').returns({ type: 'whatever' });
   });
 
   afterEach(() => {
-    actions.resetSelection.reset();
-    actions.selectAll.reset();
+    Actions.resetSelection.reset();
+    Actions.selectAll.reset();
   });
 
   afterAll(() => {
-    actions.resetSelection.restore();
-    actions.selectAll.restore();
+    Hooks.useAppDispatch.restore();
+    Hooks.useAppSelector.restore();
+    Actions.resetSelection.restore();
+    Actions.selectAll.restore();
   });
 
   it('renders correctly', () => {
-    const wrapper = shallow(
-      <BatchActionsBase batchactions={DEFAULT_BATCH_ACTIONS} />,
-    );
+    const wrapper = shallow(<BatchActions />);
 
     expect(wrapper.find('.batch-actions')).toHaveLength(1);
 
@@ -65,27 +70,16 @@ describe('<BatchActionsBase>', () => {
   });
 
   it('closes batch actions panel when the Close button with selected count is clicked', () => {
-    const wrapper = shallow(
-      <BatchActionsBase
-        batchactions={DEFAULT_BATCH_ACTIONS}
-        dispatch={() => {}}
-      />,
-    );
+    const wrapper = shallow(<BatchActions />);
 
     wrapper.find('.selected-count').simulate('click');
-    expect(actions.resetSelection.called).toBeTruthy();
+    expect(Actions.resetSelection.called).toBeTruthy();
   });
 
   it('selects all entities when the Select All button is clicked', () => {
-    const wrapper = shallow(
-      <BatchActionsBase
-        batchactions={DEFAULT_BATCH_ACTIONS}
-        dispatch={() => {}}
-        parameters={{}}
-      />,
-    );
+    const wrapper = shallow(<BatchActions />);
 
     wrapper.find('.select-all').simulate('click');
-    expect(actions.selectAll.called).toBeTruthy();
+    expect(Actions.selectAll.called).toBeTruthy();
   });
 });

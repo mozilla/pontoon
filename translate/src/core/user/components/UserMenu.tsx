@@ -1,19 +1,18 @@
 import { Localized } from '@fluent/react';
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 
-import type { NavigationParams } from '~/core/navigation';
-import type { UserState } from '~/core/user';
+import { Location } from '~/context/location';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { useOnDiscard } from '~/core/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import FileUpload from './FileUpload';
-import SignOut from './SignOut';
+import type { UserState } from '../index';
+import { FileUpload } from './FileUpload';
+import { SignOut } from './SignOut';
 
 import './UserMenu.css';
 
 type Props = {
-  isReadOnly: boolean;
-  parameters: NavigationParams;
   signOut: () => void;
   user: UserState;
 };
@@ -23,21 +22,22 @@ type UserMenuProps = Props & {
 };
 
 export function UserMenu({
-  user,
-  parameters,
-  isReadOnly,
-  signOut,
   onDiscard,
+  signOut,
+  user,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
+  const entity = useSelectedEntity();
+  const readonly = entity?.readonly ?? true;
 
-  const { locale, project, resource } = parameters;
+  const location = useContext(Location);
+  const { locale, project, resource } = location;
 
   const canDownload =
     project !== 'all-projects' && resource !== 'all-resources';
 
   /* TODO: Also disable for subpages (in-context l10n) when supported */
-  const canUpload = canDownload && isTranslator && !isReadOnly;
+  const canUpload = canDownload && isTranslator && !readonly;
 
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
@@ -96,7 +96,7 @@ export function UserMenu({
 
       {canUpload && (
         <li>
-          <FileUpload parameters={parameters} />
+          <FileUpload parameters={location} />
         </li>
       )}
 

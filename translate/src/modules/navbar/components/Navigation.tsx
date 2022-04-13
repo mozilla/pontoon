@@ -1,9 +1,7 @@
-import { push } from 'connected-react-router';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Locale } from '~/context/locale';
+import { Location, LocationType } from '~/context/location';
 
-import type { NavigationParams } from '~/core/navigation';
-import { getNavigationParams } from '~/core/navigation/selectors';
 import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
 import { get as getProject } from '~/core/project/actions';
 import {
@@ -20,7 +18,7 @@ import type { AppDispatch } from '~/store';
 import './Navigation.css';
 
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   project: ProjectState;
   resources: ResourcesState;
 };
@@ -38,37 +36,34 @@ type InternalProps = Props & {
 export function NavigationBase({
   dispatch,
   parameters,
-  project,
+  project: projectState,
   resources,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
   const { code, name } = useContext(Locale);
+  const { locale, project, push } = parameters;
   useEffect(() => {
-    if (name && project?.name)
-      document.title = `${name} (${code}) · ${project.name}`;
-  }, [code, name, project]);
+    if (name && projectState?.name)
+      document.title = `${name} (${code}) · ${projectState.name}`;
+  }, [code, name, projectState]);
 
   const mounted = useRef(false);
   useEffect(() => {
     if (mounted.current) {
-      dispatch(getProject(parameters.project));
+      dispatch(getProject(project));
 
       // Load resources, unless we're in the All Projects view
-      if (parameters.project !== 'all-projects') {
-        dispatch(getResource(parameters.locale, parameters.project));
+      if (project !== 'all-projects') {
+        dispatch(getResource(locale, project));
       }
     } else mounted.current = true;
-  }, [dispatch, parameters.project]);
+  }, [dispatch, project]);
 
   const navigateToPath = useCallback(
     (path: string) => {
       const state = store.getState();
       const { exist, ignored } = state[UNSAVED_CHANGES];
-      dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
-          dispatch(push(path));
-        }),
-      );
+      dispatch(checkUnsavedChanges(exist, ignored, () => push(path)));
     },
     [dispatch, store],
   );
@@ -94,7 +89,7 @@ export function NavigationBase({
         </li>
         <ProjectMenu
           parameters={parameters}
-          project={project}
+          project={projectState}
           navigateToPath={navigateToPath}
         />
         <ResourceMenu
@@ -111,7 +106,7 @@ export default function Navigation(): React.ReactElement<
   typeof NavigationBase
 > {
   const state = {
-    parameters: useAppSelector(getNavigationParams),
+    parameters: useContext(Location),
     project: useAppSelector((state) => state[PROJECT]),
     resources: useAppSelector((state) => state[RESOURCE]),
   };

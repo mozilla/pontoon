@@ -1,11 +1,12 @@
 import NProgress from 'nprogress';
 
 import type { LocaleType } from '~/context/locale';
+import type { LocationType } from '~/context/location';
+import type { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
 import { actions as entitiesActions } from '~/core/entities';
 import * as notification from '~/core/notification';
-import { actions as pluralActions } from '~/core/plural';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import type { AppDispatch } from '~/store';
@@ -140,11 +141,10 @@ export function updateStatus(
   change: ChangeOperation,
   entity: Entity,
   locale: LocaleType,
-  resource: string,
-  pluralForm: number,
+  { pluralForm, setPluralForm }: PluralFormType,
   translation: number,
   nextEntity: Entity | null | undefined,
-  router: Record<string, any>,
+  location: LocationType,
   ignoreWarnings?: boolean | null | undefined,
 ) {
   return async (dispatch: AppDispatch) => {
@@ -153,7 +153,7 @@ export function updateStatus(
     const results = await updateStatusOnServer(
       change,
       translation,
-      resource,
+      location.resource,
       ignoreWarnings,
     );
 
@@ -170,14 +170,11 @@ export function updateStatus(
 
       if (results.translation && change === 'approve' && nextEntity) {
         // The change did work, we want to move on to the next Entity or pluralForm.
-        pluralActions.moveToNextTranslation(
-          dispatch,
-          router,
-          entity.pk,
-          nextEntity.pk,
-          pluralForm,
-          locale,
-        );
+        if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+          setPluralForm(pluralForm + 1);
+        } else if (nextEntity.pk !== entity.pk) {
+          location.push({ entity: nextEntity.pk });
+        }
         dispatch(editorActions.reset());
       } else {
         dispatch(get(entity.pk, locale.code, pluralForm));

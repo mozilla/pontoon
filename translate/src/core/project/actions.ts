@@ -46,7 +46,7 @@ export function receive(project: Project): ReceiveAction {
     slug: project.slug,
     name: project.name,
     info: project.info,
-    tags: project.tags,
+    tags: project.tags.sort((a, b) => b.priority - a.priority),
   };
 }
 

@@ -1,27 +1,32 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
+import type { LocationType } from '~/context/location';
+import type { Entity } from '~/core/api';
+
+import type { LocalesState } from '../index';
 import './OtherLocales.css';
-
-import Translation from './Translation';
-
-import type { Entity, OtherLocaleTranslation } from '~/core/api';
-import type { NavigationParams } from '~/core/navigation';
-import type { UserState } from '~/core/user';
-import type { LocalesState } from '..';
+import { Translation } from './Translation';
 
 type Props = {
   entity: Entity;
   otherlocales: LocalesState;
-  parameters: NavigationParams;
-  user: UserState;
+  parameters: LocationType;
 };
 
 /**
  * Shows all translations of an entity in locales other than the current one.
  */
-export default class OtherLocales extends React.Component<Props> {
-  renderNoResults(): React.ReactElement<'section'> {
+export default function OtherLocales({
+  entity,
+  otherlocales: { fetching, translations },
+  parameters,
+}: Props): React.ReactElement<'section'> | null {
+  if (fetching) {
+    return null;
+  }
+
+  if (!translations.length) {
     return (
       <section className='other-locales'>
         <Localized id='history-history-no-translations'>
@@ -31,52 +36,35 @@ export default class OtherLocales extends React.Component<Props> {
     );
   }
 
-  renderTranslations(
-    translation: OtherLocaleTranslation,
-    index: number,
-  ): React.ReactElement<React.ElementType> {
-    return (
-      <Translation
-        index={index}
-        entity={this.props.entity}
-        translation={translation}
-        parameters={this.props.parameters}
-        key={index}
-      />
-    );
-  }
+  return (
+    <section className='other-locales'>
+      <ul className='preferred-list'>
+        {translations.map((translation, index) =>
+          translation.is_preferred ? (
+            <Translation
+              entity={entity}
+              index={index}
+              key={index}
+              parameters={parameters}
+              translation={translation}
+            />
+          ) : null,
+        )}
+      </ul>
 
-  render(): null | React.ReactElement<'section'> {
-    const { otherlocales } = this.props;
-
-    if (otherlocales.fetching) {
-      return null;
-    }
-
-    const translations = otherlocales.translations;
-
-    if (!translations.length) {
-      return this.renderNoResults();
-    }
-
-    return (
-      <section className='other-locales'>
-        <ul className='preferred-list'>
-          {translations.map((translation, index) =>
-            translation.is_preferred
-              ? this.renderTranslations(translation, index)
-              : null,
-          )}
-        </ul>
-
-        <ul>
-          {translations.map((translation, index) =>
-            !translation.is_preferred
-              ? this.renderTranslations(translation, index)
-              : null,
-          )}
-        </ul>
-      </section>
-    );
-  }
+      <ul>
+        {translations.map((translation, index) =>
+          translation.is_preferred ? null : (
+            <Translation
+              entity={entity}
+              index={index}
+              key={index}
+              parameters={parameters}
+              translation={translation}
+            />
+          ),
+        )}
+      </ul>
+    </section>
+  );
 }

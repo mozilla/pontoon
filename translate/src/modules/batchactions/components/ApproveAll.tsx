@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
-import type { BatchActionsState } from '~/modules/batchactions';
+import type { ResponseType } from '../actions';
+import type { BatchActionsState } from '../reducer';
 
 type Props = {
   approveAll: () => void;
@@ -11,87 +12,58 @@ type Props = {
 /**
  * Renders Approve All batch action button.
  */
-export default class ApproveAll extends React.Component<Props> {
-  renderDefault(): React.ReactElement<React.ElementType> {
+export default function ApproveAll({
+  approveAll,
+  batchactions: { response, requestInProgress },
+}: Props): React.ReactElement<'button'> {
+  return (
+    <button className='approve-all' onClick={approveAll}>
+      <Title {...response} />
+      {requestInProgress === 'approve' ? (
+        <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+      ) : null}
+    </button>
+  );
+}
+
+function Title({
+  action,
+  changedCount,
+  error,
+  invalidCount,
+}: Partial<ResponseType>) {
+  if (action !== 'approve') {
     return (
-      <Localized id='batchactions-ApproveAll--default'>
-        {'APPROVE ALL'}
-      </Localized>
+      <Localized id='batchactions-ApproveAll--default'>APPROVE ALL</Localized>
     );
   }
 
-  renderError(): React.ReactElement<React.ElementType> {
+  if (error) {
     return (
       <Localized id='batchactions-ApproveAll--error'>
-        {'OOPS, SOMETHING WENT WRONG'}
+        OOPS, SOMETHING WENT WRONG
       </Localized>
     );
   }
 
-  renderInvalid(): null | React.ReactElement<React.ElementType> {
-    const { response } = this.props.batchactions;
+  const success = (
+    <Localized
+      id='batchactions-ApproveAll--success'
+      vars={{ changedCount: changedCount ?? -1 }}
+    >
+      {'{ $changedCount } STRINGS APPROVED'}
+    </Localized>
+  );
 
-    if (!response) {
-      return null;
-    }
-
-    return (
-      <Localized
-        id='batchactions-ApproveAll--invalid'
-        vars={{ invalidCount: response.invalidCount ?? -1 }}
-      >
+  return invalidCount ? (
+    <>
+      {success}
+      {' · '}
+      <Localized id='batchactions-ApproveAll--invalid' vars={{ invalidCount }}>
         {'{ $invalidCount } FAILED'}
       </Localized>
-    );
-  }
-
-  renderSuccess(): null | React.ReactElement<React.ElementType> {
-    const { response } = this.props.batchactions;
-
-    if (!response) {
-      return null;
-    }
-
-    return (
-      <Localized
-        id='batchactions-ApproveAll--success'
-        vars={{ changedCount: response.changedCount ?? -1 }}
-      >
-        {'{ $changedCount } STRINGS APPROVED'}
-      </Localized>
-    );
-  }
-
-  renderTitle(): null | React.ReactNode {
-    const { response } = this.props.batchactions;
-
-    if (response && response.action === 'approve') {
-      if (response.error) {
-        return this.renderError();
-      } else if (response.invalidCount) {
-        return (
-          <>
-            {this.renderSuccess()}
-            {' · '}
-            {this.renderInvalid()}
-          </>
-        );
-      } else {
-        return this.renderSuccess();
-      }
-    } else {
-      return this.renderDefault();
-    }
-  }
-
-  render(): React.ReactElement<'button'> {
-    return (
-      <button className='approve-all' onClick={this.props.approveAll}>
-        {this.renderTitle()}
-        {this.props.batchactions.requestInProgress !== 'approve' ? null : (
-          <i className='fa fa-2x fa-circle-notch fa-spin'></i>
-        )}
-      </button>
-    );
-  }
+    </>
+  ) : (
+    success
+  );
 }

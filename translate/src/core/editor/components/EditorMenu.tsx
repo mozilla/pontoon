@@ -1,14 +1,13 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import * as React from 'react';
 
-import './EditorMenu.css';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as entities from '~/core/entities';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import * as user from '~/core/user';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 
 import EditorMainAction from './EditorMainAction';
+import './EditorMenu.css';
 import EditorSettings from './EditorSettings';
 import FailedChecks from './FailedChecks';
 import KeyboardShortcuts from './KeyboardShortcuts';
@@ -41,9 +40,7 @@ export default function EditorMenu(props: Props): React.ReactElement<'menu'> {
 
 function MenuContent(props: Props) {
   const dispatch = useAppDispatch();
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
   const userState = useAppSelector((state) => state.user);
 
   if (!userState.isAuthenticated) {
@@ -57,7 +54,7 @@ function MenuContent(props: Props) {
     );
   }
 
-  if (entity && entity.readonly) {
+  if (entity?.readonly) {
     return (
       <Localized id='editor-EditorMenu--read-only-localization'>
         <p className='banner'>This is a read-only localization.</p>

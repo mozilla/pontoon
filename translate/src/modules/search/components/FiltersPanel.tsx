@@ -1,84 +1,241 @@
 import { Localized } from '@fluent/react';
-import * as React from 'react';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 import type { Tag } from '~/core/project';
 import type { Stats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
-import type { Author, TimeRangeType } from '../index';
+import type { Author } from '../index';
 import './FiltersPanel.css';
-import type { FilterType } from './SearchBox';
-import TimeRangeFilter from './TimeRangeFilter';
+import type { FilterState, FilterType, TimeRangeType } from './SearchBox';
+import { TimeRangeFilter } from './TimeRangeFilter';
 
 type Props = {
-  statuses: Record<string, boolean>;
-  extras: Record<string, boolean>;
-  tags: Record<string, boolean>;
-  timeRange: TimeRangeType | null | undefined;
-  authors: Record<string, boolean>;
-  tagsData: Array<Tag>;
-  timeRangeData: Array<Array<number>>;
-  authorsData: Array<Author>;
+  filters: FilterState;
+  authorsData: Author[];
+  parameters: LocationType;
   stats: Stats;
-  parameters: NavigationParams;
-  applySingleFilter: (
-    filter: string,
-    type: FilterType,
-    callback: () => void,
-  ) => void;
+  tagsData: Tag[];
+  timeRange: TimeRangeType | null;
+  timeRangeData: number[][];
+  applyFilters: () => void;
+  applySingleFilter: (value: string, filter: FilterType | 'timeRange') => void;
   getAuthorsAndTimeRangeData: () => void;
   resetFilters: () => void;
-  toggleFilter: (filter: string, type: FilterType) => void;
-  update: () => void;
-  updateTimeRange: (filter: string) => void;
-  updateFiltersFromURLParams: () => void;
-};
-
-type State = {
-  visible: boolean;
+  toggleFilter: (value: string, filter: FilterType) => void;
+  setTimeRange: (value: string | null) => void;
+  updateFiltersFromURL: () => void;
 };
 
 type FiltersPanelProps = {
-  authors: Record<string, boolean>;
-  authorsData: Array<Author>;
-  extras: Record<string, boolean>;
+  authorsData: Author[];
+  filters: FilterState;
   project: string;
   resource: string;
   selectedFiltersCount: number;
   stats: Stats;
-  statuses: Record<string, boolean>;
-  tags: Record<string, boolean>;
-  tagsData: Array<Tag>;
-  timeRange: TimeRangeType | null | undefined;
-  timeRangeData: Array<Array<number>>;
-  updateTimeRange: (filter: string) => void;
-  onApplyFilter: (filter: string, type: FilterType) => void;
+  tagsData: Tag[];
+  timeRange: TimeRangeType | null;
+  timeRangeData: number[][];
+  setTimeRange: (value: string | null) => void;
+  onApplyFilter: (value: string, filter: FilterType | 'timeRange') => void;
   onApplyFilters: () => void;
   onResetFilters: () => void;
   onToggleFilter: (
-    filter: string,
-    type: FilterType,
-    event: React.MouseEvent,
+    value: string,
+    filter: FilterType,
+    event?: React.MouseEvent,
   ) => void;
   onDiscard: () => void;
 };
 
+const StatusFilter = ({
+  onSelect,
+  onToggle,
+  selected,
+  stats,
+  status,
+}: {
+  onSelect: () => void;
+  onToggle: () => void;
+  selected: boolean;
+  stats: Stats;
+  status: typeof FILTERS_STATUS[number];
+}) => (
+  <li
+    className={classNames(
+      status.slug,
+      selected && status.slug !== 'all' && 'selected',
+    )}
+    onClick={onSelect}
+  >
+    <span
+      className='status fa'
+      onClick={(ev) => {
+        ev.stopPropagation();
+        onToggle();
+      }}
+    ></span>
+    <Localized id={`search-FiltersPanel--status-name-${status.slug}`}>
+      <span className='title'>{status.name}</span>
+    </Localized>
+    <span className='count'>
+      {asLocaleString(stats['stat' in status ? status.stat : status.slug])}
+    </span>
+  </li>
+);
+
+const TagFilter = ({
+  onSelect,
+  selected,
+  tag: { name, priority, slug },
+}: {
+  onSelect: () => void;
+  selected: boolean;
+  tag: Tag;
+}) => (
+  <li
+    className={classNames('tag', slug, selected && 'selected')}
+    onClick={onSelect}
+  >
+    <span className='status fa' onClick={onSelect}></span>
+    <span className='title'>{name}</span>
+    <span className='priority'>
+      {[1, 2, 3, 4, 5].map((index) => (
+        <span
+          className={classNames('fa', 'fa-star', index <= priority && 'active')}
+          key={index}
+        ></span>
+      ))}
+    </span>
+  </li>
+);
+
+const ExtraFilter = ({
+  extra: { name, slug },
+  onSelect,
+  onToggle,
+  selected,
+}: {
+  extra: typeof FILTERS_EXTRA[number];
+  onSelect: () => void;
+  onToggle: () => void;
+  selected: boolean;
+}) => (
+  <li className={classNames(slug, selected && 'selected')} onClick={onSelect}>
+    <span
+      className='status fa'
+      onClick={(ev) => {
+        ev.stopPropagation();
+        onToggle();
+      }}
+    ></span>
+    <Localized id={`search-FiltersPanel--extra-name-${slug}`}>
+      <span className='title'>{name}</span>
+    </Localized>
+  </li>
+);
+
+const AuthorFilter = ({
+  author: { display_name, gravatar_url, role, translation_count },
+  onSelect,
+  onToggle,
+  selected,
+}: {
+  author: Author;
+  onSelect: () => void;
+  onToggle: () => void;
+  selected: boolean;
+}) => (
+  <li
+    className={classNames('author', selected && 'selected')}
+    onClick={onSelect}
+  >
+    <figure>
+      <span className='sel'>
+        <span
+          className='status fa'
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onToggle();
+          }}
+        ></span>
+        <img
+          alt=''
+          className='rounded'
+          src={gravatar_url}
+          width='44'
+          height='44'
+        />
+      </span>
+      <figcaption>
+        <p className='name'>{display_name}</p>
+        <p className='role'>{role}</p>
+      </figcaption>
+      <span className='count'>{asLocaleString(translation_count)}</span>
+    </figure>
+  </li>
+);
+
+const FilterToolbar = ({
+  count,
+  onApply,
+  onReset,
+}: {
+  count: number;
+  onApply: () => void;
+  onReset: () => void;
+}) => (
+  <div className='toolbar clearfix'>
+    <Localized
+      id='search-FiltersPanel--clear-selection'
+      attrs={{ title: true }}
+      elems={{
+        glyph: <i className='fa fa-times fa-lg' />,
+      }}
+    >
+      <button
+        title='Uncheck selected filters'
+        onClick={onReset}
+        className='clear-selection'
+      >
+        {'<glyph></glyph> CLEAR'}
+      </button>
+    </Localized>
+    <Localized
+      id='search-FiltersPanel--apply-filters'
+      attrs={{ title: true }}
+      elems={{
+        glyph: <i className='fa fa-check fa-lg' />,
+        stress: <span className='applied-count' />,
+      }}
+      vars={{ count }}
+    >
+      <button
+        title='Apply Selected Filters'
+        onClick={onApply}
+        className='apply-selected'
+      >
+        {'<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'}
+      </button>
+    </Localized>
+  </div>
+);
+
 export function FiltersPanel({
-  authors,
   authorsData,
-  extras,
+  filters: { authors, extras, statuses, tags },
   project,
   resource,
   selectedFiltersCount,
   stats,
-  statuses,
-  tags,
   tagsData,
   timeRange,
   timeRangeData,
-  updateTimeRange,
+  setTimeRange,
   onApplyFilter,
   onApplyFilters,
   onResetFilters,
@@ -95,207 +252,82 @@ export function FiltersPanel({
           <li className='horizontal-separator'>TRANSLATION STATUS</li>
         </Localized>
 
-        {FILTERS_STATUS.map((status, i) => {
-          const count =
-            'stat' in status && status.stat
-              ? stats[status.stat]
-              : stats[status.slug];
-          const selected = statuses[status.slug];
+        {FILTERS_STATUS.map((status, i) => (
+          <StatusFilter
+            key={i}
+            onSelect={() => onApplyFilter(status.slug, 'statuses')}
+            onToggle={() => onToggleFilter(status.slug, 'statuses')}
+            selected={statuses.includes(status.slug)}
+            stats={stats}
+            status={status}
+          />
+        ))}
 
-          let className = status.slug;
-          if (selected && status.slug !== 'all') {
-            className += ' selected';
-          }
-
-          return (
-            <li
-              className={className}
-              key={i}
-              onClick={() => onApplyFilter(status.slug, 'statuses')}
-            >
-              <span
-                className='status fa'
-                onClick={(e) => onToggleFilter(status.slug, 'statuses', e)}
-              ></span>
-              <Localized id={`search-FiltersPanel--status-name-${status.slug}`}>
-                <span className='title'>{status.name}</span>
-              </Localized>
-              <span className='count'>{asLocaleString(count)}</span>
-            </li>
-          );
-        })}
-
-        {tagsData.length === 0 || resource !== 'all-resources' ? null : (
+        {tagsData.length > 0 && resource === 'all-resources' ? (
           <>
             <Localized id='search-FiltersPanel--heading-tags'>
               <li className='horizontal-separator'>TAGS</li>
             </Localized>
 
-            {tagsData
-              .sort((a, b) => {
-                return b.priority - a.priority;
-              })
-              .map((tag, i) => {
-                const selected = tags[tag.slug];
-
-                let className = tag.slug;
-                if (selected) {
-                  className += ' selected';
-                }
-
-                return (
-                  <li
-                    className={`tag ${className}`}
-                    key={i}
-                    onClick={() => onApplyFilter(tag.slug, 'tags')}
-                  >
-                    <span
-                      className='status fa'
-                      onClick={() => onApplyFilter(tag.slug, 'tags')}
-                    ></span>
-                    <span className='title'>{tag.name}</span>
-                    <span className='priority'>
-                      {[1, 2, 3, 4, 5].map((index) => {
-                        const active = index <= tag.priority ? 'active' : '';
-                        return (
-                          <span
-                            className={`fa fa-star ${active}`}
-                            key={index}
-                          ></span>
-                        );
-                      })}
-                    </span>
-                  </li>
-                );
-              })}
+            {tagsData.map((tag, i) => (
+              <TagFilter
+                key={i}
+                onSelect={() => onApplyFilter(tag.slug, 'tags')}
+                selected={tags.includes(tag.slug)}
+                tag={tag}
+              />
+            ))}
           </>
-        )}
+        ) : null}
 
         <Localized id='search-FiltersPanel--heading-extra'>
           <li className='horizontal-separator'>EXTRA FILTERS</li>
         </Localized>
 
-        {FILTERS_EXTRA.map((extra, i) => {
-          const selected = extras[extra.slug];
-
-          let className = extra.slug;
-          if (selected) {
-            className += ' selected';
-          }
-
-          return (
-            <li
-              className={className}
-              key={i}
-              onClick={() => onApplyFilter(extra.slug, 'extras')}
-            >
-              <span
-                className='status fa'
-                onClick={(e) => onToggleFilter(extra.slug, 'extras', e)}
-              ></span>
-              <Localized id={`search-FiltersPanel--extra-name-${extra.slug}`}>
-                <span className='title'>{extra.name}</span>
-              </Localized>
-            </li>
-          );
-        })}
+        {FILTERS_EXTRA.map((extra, i) => (
+          <ExtraFilter
+            extra={extra}
+            key={i}
+            onSelect={() => onApplyFilter(extra.slug, 'extras')}
+            onToggle={() => onToggleFilter(extra.slug, 'extras')}
+            selected={extras.includes(extra.slug)}
+          />
+        ))}
 
         <TimeRangeFilter
           project={project}
           timeRange={timeRange}
           timeRangeData={timeRangeData}
           applySingleFilter={onApplyFilter}
-          toggleFilter={onToggleFilter}
-          updateTimeRange={updateTimeRange}
+          setTimeRange={setTimeRange}
         />
 
-        {authorsData.length === 0 || project === 'all-projects' ? null : (
+        {authorsData.length > 0 && project !== 'all-projects' ? (
           <>
             <Localized id='search-FiltersPanel--heading-authors'>
               <li className='horizontal-separator'>TRANSLATION AUTHORS</li>
             </Localized>
 
-            {authorsData.map((author, i) => {
-              const selected = authors[author.email];
-
-              let className = 'author';
-              if (selected) {
-                className += ' selected';
-              }
-
-              return (
-                <li
-                  className={`${className}`}
-                  key={i}
-                  onClick={() => onApplyFilter(author.email, 'authors')}
-                >
-                  <figure>
-                    <span className='sel'>
-                      <span
-                        className='status fa'
-                        onClick={(e) =>
-                          onToggleFilter(author.email, 'authors', e)
-                        }
-                      ></span>
-                      <img
-                        alt=''
-                        className='rounded'
-                        src={author.gravatar_url}
-                        width='44'
-                        height='44'
-                      />
-                    </span>
-                    <figcaption>
-                      <p className='name'>{author.display_name}</p>
-                      <p className='role'>{author.role}</p>
-                    </figcaption>
-                    <span className='count'>
-                      {asLocaleString(author.translation_count)}
-                    </span>
-                  </figure>
-                </li>
-              );
-            })}
+            {authorsData.map((author, i) => (
+              <AuthorFilter
+                author={author}
+                key={i}
+                onSelect={() => onApplyFilter(author.email, 'authors')}
+                onToggle={() => onToggleFilter(author.email, 'authors')}
+                selected={authors.includes(author.email)}
+              />
+            ))}
           </>
-        )}
+        ) : null}
       </ul>
 
-      {selectedFiltersCount === 0 ? null : (
-        <div className='toolbar clearfix'>
-          <Localized
-            id='search-FiltersPanel--clear-selection'
-            attrs={{ title: true }}
-            elems={{
-              glyph: <i className='fa fa-times fa-lg' />,
-            }}
-          >
-            <button
-              title='Uncheck selected filters'
-              onClick={onResetFilters}
-              className='clear-selection'
-            >
-              {'<glyph></glyph> CLEAR'}
-            </button>
-          </Localized>
-          <Localized
-            id='search-FiltersPanel--apply-filters'
-            attrs={{ title: true }}
-            elems={{
-              glyph: <i className='fa fa-check fa-lg' />,
-              stress: <span className='applied-count' />,
-            }}
-            vars={{ count: selectedFiltersCount }}
-          >
-            <button
-              title='Apply Selected Filters'
-              onClick={onApplyFilters}
-              className='apply-selected'
-            >
-              {'<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'}
-            </button>
-          </Localized>
-        </div>
-      )}
+      {selectedFiltersCount > 0 ? (
+        <FilterToolbar
+          count={selectedFiltersCount}
+          onApply={onApplyFilters}
+          onReset={onResetFilters}
+        />
+      ) : null}
     </div>
   );
 }
@@ -305,179 +337,114 @@ export function FiltersPanel({
  *
  * Changes to the filters will be reflected in the URL.
  */
-export default class FiltersPanelBase extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+export default function FiltersPanelBase({
+  filters,
+  tagsData,
+  timeRangeData,
+  authorsData,
+  stats,
+  parameters,
+  timeRange,
+  applyFilters,
+  applySingleFilter,
+  getAuthorsAndTimeRangeData,
+  resetFilters,
+  toggleFilter,
+  updateFiltersFromURL,
+  setTimeRange: setTimeRange,
+}: Props): React.ReactElement<'div'> | null {
+  const [visible, setVisible] = useState(false);
 
-    this.state = {
-      visible: false,
-    };
-  }
+  const toggleVisible = useCallback(() => {
+    setVisible((prev) => !prev);
+    updateFiltersFromURL();
+  }, [updateFiltersFromURL]);
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const props = this.props;
-    const state = this.state;
+  const handleDiscard = useCallback(() => {
+    setVisible(false);
+    updateFiltersFromURL();
+  }, [updateFiltersFromURL]);
 
-    if (
-      state.visible &&
-      !prevState.visible &&
-      props.parameters.project !== 'all-projects'
-    ) {
-      props.getAuthorsAndTimeRangeData();
-    }
-  }
+  useEffect(() => {
+    if (visible && parameters.project !== 'all-projects')
+      getAuthorsAndTimeRangeData();
+  }, [getAuthorsAndTimeRangeData, parameters.project, visible]);
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-    this.props.updateFiltersFromURLParams();
-  };
-
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-    this.props.updateFiltersFromURLParams();
-  };
-
-  applyFilters: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-    return this.props.update();
-  };
-
-  toggleFilter = (
-    filter: string,
-    type: FilterType,
-    event: React.MouseEvent,
-  ) => {
-    if (filter === 'all') {
-      return;
-    }
-
-    event.stopPropagation();
-    this.props.toggleFilter(filter, type);
-  };
-
-  applySingleFilter = (filter: string, type: FilterType) => {
-    this.toggleVisibility();
-    this.props.applySingleFilter(filter, type, this.props.update);
-  };
-
-  getSelectedFilters(): {
-    statuses: Array<string>;
-    extras: Array<string>;
-    tags: Array<string>;
-    timeRange: TimeRangeType | null | undefined;
-    authors: Array<string>;
-  } {
-    const { statuses, extras, tags, timeRange, authors } = this.props;
-
-    return {
-      statuses: Object.keys(statuses).filter((s) => statuses[s]),
-      extras: Object.keys(extras).filter((e) => extras[e]),
-      tags: Object.keys(tags).filter((t) => tags[t]),
-      timeRange,
-      authors: Object.keys(authors).filter((a) => authors[a]),
-    };
-  }
-
-  getSelectedFiltersCount: () => number = () => {
-    const selected = this.getSelectedFilters();
-
-    return (
-      selected.statuses.length +
-      selected.extras.length +
-      selected.tags.length +
-      (selected.timeRange ? 1 : 0) +
-      selected.authors.length
-    );
-  };
-
-  getFilterIcon: () => any | string = () => {
-    const { authorsData, tagsData, timeRange } = this.props;
-    const selected = this.getSelectedFilters();
-    const selectedFiltersCount = this.getSelectedFiltersCount();
-
-    // If there are zero or several selected statuses, show the "All" icon.
-    let filterIcon = 'all';
-
-    // Otherwise show the approriate status icon.
-    if (selectedFiltersCount === 1) {
-      const selectedStatus = FILTERS_STATUS.find(
-        (f) => f.slug === selected.statuses[0],
-      );
-      if (selectedStatus) {
-        filterIcon = selectedStatus.slug;
+  const handleToggleFilter = useCallback(
+    (value: string, filter: FilterType, ev?: React.MouseEvent) => {
+      if (value !== 'all') {
+        ev?.stopPropagation();
+        toggleFilter(value, filter);
       }
+    },
+    [toggleFilter],
+  );
 
-      const selectedExtra = FILTERS_EXTRA.find(
-        (f) => f.slug === selected.extras[0],
-      );
-      if (selectedExtra) {
-        filterIcon = selectedExtra.slug;
-      }
+  const handleApplyFilter = useCallback(
+    (value: string, filter: FilterType | 'timeRange') => {
+      toggleVisible();
+      applySingleFilter(value, filter);
+    },
+    [applySingleFilter],
+  );
 
-      const selectedTag = tagsData.find((f) => f.slug === selected.tags[0]);
-      if (selectedTag) {
-        filterIcon = 'tag';
-      }
+  const handleApplyFilters = useCallback(() => {
+    setVisible(false);
+    applyFilters();
+  }, [applyFilters]);
 
-      if (timeRange) {
-        filterIcon = 'time-range';
-      }
-
-      const selectedAuthor = authorsData.find(
-        (f) => f.email === selected.authors[0],
-      );
-      if (selectedAuthor) {
-        filterIcon = 'author';
+  const { filterIcon, selectedCount } = useMemo(() => {
+    const { authors, extras, statuses, tags } = filters;
+    let selectedCount = 0;
+    let filterIcon: string | null = null;
+    for (const [source, data, field] of [
+      [statuses, FILTERS_STATUS, 'slug'],
+      [extras, FILTERS_EXTRA, 'slug'],
+      [tags, tagsData, 'slug'],
+      [authors, authorsData, 'email'],
+    ] as [string[], Record<string, unknown>[], string][]) {
+      for (const selected of source) {
+        selectedCount += 1;
+        filterIcon ??= data.some((f) => f[field] === selected)
+          ? selected
+          : null;
       }
     }
+    if (timeRange) {
+      selectedCount += 1;
+      filterIcon ??= 'time-range';
+    }
+    filterIcon ??= 'all';
+    return { filterIcon, selectedCount };
+  }, [filters, tagsData, authorsData]);
 
-    return filterIcon;
-  };
-
-  render(): React.ReactElement<'div'> {
-    const props = this.props;
-    const { project, resource } = this.props.parameters;
-
-    const selectedFiltersCount = this.getSelectedFiltersCount();
-    const filterIcon = this.getFilterIcon();
-
-    return (
-      <div className='filters-panel'>
-        <div
-          className={`visibility-switch ${filterIcon}`}
-          onClick={this.toggleVisibility}
-        >
-          <span className='status fa'></span>
-        </div>
-        {this.state.visible && (
-          <FiltersPanel
-            authors={props.authors}
-            authorsData={props.authorsData}
-            extras={props.extras}
-            project={project}
-            resource={resource}
-            selectedFiltersCount={selectedFiltersCount}
-            stats={props.stats}
-            statuses={props.statuses}
-            tags={props.tags}
-            tagsData={props.tagsData}
-            timeRange={props.timeRange}
-            timeRangeData={props.timeRangeData}
-            updateTimeRange={props.updateTimeRange}
-            onApplyFilter={this.applySingleFilter}
-            onApplyFilters={this.applyFilters}
-            onDiscard={this.handleDiscard}
-            onResetFilters={props.resetFilters}
-            onToggleFilter={this.toggleFilter}
-          />
-        )}
+  return (
+    <div className='filters-panel'>
+      <div
+        className={`visibility-switch ${filterIcon}`}
+        onClick={toggleVisible}
+      >
+        <span className='status fa'></span>
       </div>
-    );
-  }
+      {visible ? (
+        <FiltersPanel
+          authorsData={authorsData}
+          filters={filters}
+          project={parameters.project}
+          resource={parameters.resource}
+          selectedFiltersCount={selectedCount}
+          stats={stats}
+          tagsData={tagsData}
+          timeRange={timeRange}
+          timeRangeData={timeRangeData}
+          setTimeRange={setTimeRange}
+          onApplyFilter={handleApplyFilter}
+          onApplyFilters={handleApplyFilters}
+          onDiscard={handleDiscard}
+          onResetFilters={resetFilters}
+          onToggleFilter={handleToggleFilter}
+        />
+      ) : null}
+    </div>
+  );
 }

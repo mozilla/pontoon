@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { Locale, Localization } from '~/context/locale';
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 import type { ProjectState } from '~/core/project';
 import { useOnDiscard } from '~/core/utils';
 
@@ -12,13 +12,13 @@ import ProjectItem from './ProjectItem';
 import './ProjectMenu.css';
 
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   project: ProjectState;
   navigateToPath: (arg0: string) => void;
 };
 
 type ProjectMenuProps = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };

@@ -6,7 +6,6 @@ import { Locale } from '~/context/locale';
 import type { MachineryTranslation } from '~/core/api';
 import { NAME as EDITOR, useCopyMachineryTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
-import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { GenericTranslation } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
@@ -15,6 +14,7 @@ import { TranslationSource } from './TranslationSource';
 
 import './ConcordanceSearch.css';
 import './Translation.css';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 type Props = {
   sourceString: string;
@@ -52,7 +52,7 @@ export function Translation({
 
   const className = classNames(
     'translation',
-    useAppSelector(isReadOnlyEditor) && 'cannot-copy',
+    useReadonlyEditor() && 'cannot-copy',
     isSelected && 'selected', // Highlight Machinery entries upon selection
   );
 

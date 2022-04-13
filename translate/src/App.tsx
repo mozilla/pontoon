@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+
+import './App.css';
 
 import { initLocale, Locale, updateLocale } from './context/locale';
+import { Location, LocationType } from './context/location';
 
 import { L10nState, NAME as L10N } from './core/l10n';
 import { Lightbox } from './core/lightbox';
 import { WaveLoader } from './core/loaders';
-import type { NavigationParams } from './core/navigation';
-import { getNavigationParams } from './core/navigation/selectors';
 import {
   NAME as NOTIFICATION,
   NotificationPanel,
@@ -20,6 +20,8 @@ import { get as getResource } from './core/resource/actions';
 import { NAME as STATS, Stats } from './core/stats';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';
+
+import { useAppDispatch, useAppSelector } from './hooks';
 
 import { AddonPromotion } from './modules/addonpromotion';
 import {
@@ -35,15 +37,13 @@ import { ProjectInfo } from './modules/projectinfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
-import { AppDispatch, RootState } from './store';
-
-import './App.css';
+import { AppDispatch } from './store';
 
 type Props = {
   batchactions: BatchActionsState;
   l10n: L10nState;
   notification: NotificationState;
-  parameters: NavigationParams;
+  location: LocationType;
   project: ProjectState;
   stats: Stats;
 };
@@ -60,7 +60,7 @@ function App({
   dispatch,
   l10n,
   notification,
-  parameters,
+  location,
   project,
   stats,
 }: InternalProps) {
@@ -88,13 +88,13 @@ function App({
   }, [l10n.fetching, locale.fetching]);
 
   useEffect(() => {
-    updateLocale(locale, parameters.locale);
-    dispatch(getProject(parameters.project));
+    updateLocale(locale, location.locale);
+    dispatch(getProject(location.project));
     dispatch(getUsers());
 
     // Load resources, unless we're in the All Projects view
-    if (parameters.project !== 'all-projects') {
-      dispatch(getResource(parameters.locale, parameters.project));
+    if (location.project !== 'all-projects') {
+      dispatch(getResource(location.locale, location.project));
     }
     mounted.current = true;
   }, []);
@@ -109,8 +109,8 @@ function App({
         <AddonPromotion />
         <header>
           <Navigation />
-          <ResourceProgress stats={stats} parameters={parameters} />
-          <ProjectInfo projectSlug={parameters.project} project={project} />
+          <ResourceProgress stats={stats} />
+          <ProjectInfo projectSlug={location.project} project={project} />
           <NotificationPanel notification={notification} />
           <UserControls />
         </header>
@@ -134,15 +134,19 @@ function App({
   );
 }
 
-const mapStateToProps = (state: RootState): Props => {
-  return {
+export default function AppWrapper() {
+  const props = useAppSelector((state) => ({
     batchactions: state[BATCHACTIONS],
     l10n: state[L10N],
     notification: state[NOTIFICATION],
-    parameters: getNavigationParams(state),
     project: state[PROJECT],
     stats: state[STATS],
-  };
-};
-
-export default connect(mapStateToProps)(App);
+  }));
+  return (
+    <App
+      dispatch={useAppDispatch()}
+      location={useContext(Location)}
+      {...props}
+    />
+  );
+}

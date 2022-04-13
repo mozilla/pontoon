@@ -2,9 +2,10 @@ import { Localized } from '@fluent/react';
 import React from 'react';
 
 import { useAppSelector } from '~/hooks';
-import { sameExistingTranslation } from '../selectors';
-import { useUpdateTranslationStatus } from '..';
 import { useTranslator } from '~/hooks/useTranslator';
+
+import { useExistingTranslation } from '../hooks/useExistingTranslation';
+import { useUpdateTranslationStatus } from '../index';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -31,13 +32,13 @@ export default function EditorMainAction({
     (state) => state.user.settings.forceSuggestions,
   );
   const isTranslator = useTranslator();
-  const sameExistingTranslation_ = useAppSelector(sameExistingTranslation);
+  const existingTranslation = useExistingTranslation();
 
   const updateTranslationStatus = useUpdateTranslationStatus();
 
   function approveTranslation() {
-    if (sameExistingTranslation_) {
-      updateTranslationStatus(sameExistingTranslation_.pk, 'approve');
+    if (existingTranslation) {
+      updateTranslationStatus(existingTranslation.pk, 'approve');
     }
   }
 
@@ -50,11 +51,7 @@ export default function EditorMainAction({
     glyph: React.ReactElement<'i'> | null | undefined;
   };
 
-  if (
-    isTranslator &&
-    sameExistingTranslation_ &&
-    !sameExistingTranslation_.approved
-  ) {
+  if (isTranslator && existingTranslation && !existingTranslation.approved) {
     // Approve button, will approve the translation.
     btn = {
       id: 'editor-EditorMenu--button-approve',

@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
+import { Location } from '~/context/location';
+import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
+import { usePluralForm } from '~/context/pluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as entities from '~/core/entities';
-import * as navigation from '~/core/navigation';
-import * as plural from '~/core/plural';
 
-import { actions } from '..';
+import actions from '../actions';
 
 /**
  * Return a function to send a translation to the server.
@@ -27,21 +27,12 @@ export default function useSendTranslation(): (
   const machineryTranslation = useAppSelector(
     (state) => state.editor.machineryTranslation,
   );
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
   const locale = useContext(Locale);
   const user = useAppSelector((state) => state.user);
-  const router = useAppSelector((state) => state.router);
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
-  const nextEntity = useAppSelector((state) =>
-    entities.selectors.getNextEntity(state),
-  );
-  const parameters = useAppSelector((state) =>
-    navigation.selectors.getNavigationParams(state),
-  );
+  const pluralForm = usePluralForm(entity);
+  const nextEntity = useNextEntity();
+  const location = useContext(Location);
 
   return (ignoreWarnings?: boolean, content?: string) => {
     if (isRunningRequest || !entity || !locale) {
@@ -70,8 +61,7 @@ export default function useSendTranslation(): (
         pluralForm,
         user.settings.forceSuggestions,
         nextEntity,
-        router,
-        parameters.resource,
+        location,
         ignoreWarnings,
         realMachinerySources,
       ),

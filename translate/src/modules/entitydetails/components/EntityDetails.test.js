@@ -46,12 +46,11 @@ const SELECTED_ENTITY = {
   original: 'le test',
   translation: [{ string: TRANSLATION }],
 };
-const NAVIGATION = {
-  entity: 42,
+const LOCATION = {
   locale: 'kg',
-};
-const PARAMETERS = {
-  pluralForm: 0,
+  project: 'pro',
+  resource: 'all',
+  entity: ENTITIES[0].pk,
 };
 const HISTORY = {
   translations: [],
@@ -72,9 +71,9 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
       activeTranslationString={TRANSLATION}
       history={HISTORY}
       otherlocales={LOCALES}
-      navigation={NAVIGATION}
       selectedEntity={selectedEntity}
-      parameters={PARAMETERS}
+      parameters={LOCATION}
+      pluralForm={{}}
       dispatch={() => {}}
       user={{ settings: {} }}
     />,
@@ -87,13 +86,6 @@ function createEntityDetailsWithStore() {
       entities: ENTITIES,
     },
     user: USER,
-    router: {
-      location: {
-        pathname: '/kg/pro/all/',
-        search: '?string=' + ENTITIES[0].pk,
-      },
-      action: 'some-string-to-please-connected-react-router',
-    },
     locale: {
       code: 'kg',
     },
@@ -148,7 +140,7 @@ describe('<EntityDetailsBase>', () => {
     expect(editorActions.resetFailedChecks.calledOnce).toBeTruthy();
 
     wrapper.setProps({
-      pluralForm: -1,
+      pluralForm: { pluralForm: -1 },
       selectedEntity: {
         pk: 2,
         original: 'something',
@@ -178,7 +170,7 @@ describe('<EntityDetailsBase>', () => {
     expect(editorActions.resetFailedChecks.calledOnce).toBeTruthy();
 
     wrapper.setProps({
-      pluralForm: -1,
+      pluralForm: { pluralForm: -1 },
       selectedEntity: {
         pk: 2,
         original: 'something',
@@ -209,6 +201,7 @@ describe.skip('<EntityDetails>', () => {
   beforeAll(() => {
     if (!hasFetch)
       global.fetch = (url) => Promise.reject(new Error(`Mock fetch: ${url}`));
+    sinon.stub(React, 'useContext').returns(LOCATION);
     sinon.stub(editorActions, 'update').returns({ type: 'whatever' });
     sinon.stub(historyActions, 'updateStatus').returns({ type: 'whatever' });
   });
@@ -219,6 +212,7 @@ describe.skip('<EntityDetails>', () => {
 
   afterAll(() => {
     if (!hasFetch) delete global.fetch;
+    React.useContext.restore();
     editorActions.update.restore();
     historyActions.updateStatus.restore();
   });

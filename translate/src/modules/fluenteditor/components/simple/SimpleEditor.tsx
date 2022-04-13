@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useAppSelector } from '~/hooks';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { fluent } from '~/core/utils';
+import { useAppSelector } from '~/hooks';
 import { GenericTranslationForm } from '~/modules/genericeditor';
 
 type Props = {
@@ -26,9 +26,7 @@ export default function SimpleEditor(
 
   const translation = useAppSelector((state) => state.editor.translation);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
 
   // Transform the translation into a simple preview whenever it changes from
   // an external source.

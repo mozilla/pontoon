@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
-import type { BatchActionsState } from '~/modules/batchactions';
+import type { ResponseType } from '../actions';
+import type { BatchActionsState } from '../reducer';
 
 type Props = {
   replaceAll: () => void;
@@ -11,87 +12,58 @@ type Props = {
 /**
  * Renders Replace All batch action button.
  */
-export default class ReplaceAll extends React.Component<Props> {
-  renderDefault(): React.ReactElement<React.ElementType> {
+export default function ReplaceAll({
+  replaceAll,
+  batchactions: { response, requestInProgress },
+}: Props): React.ReactElement<'button'> {
+  return (
+    <button className='replace-all' onClick={replaceAll}>
+      <Title {...response} />
+      {requestInProgress !== 'replace' ? null : (
+        <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+      )}
+    </button>
+  );
+}
+
+function Title({
+  action,
+  changedCount,
+  error,
+  invalidCount,
+}: Partial<ResponseType>) {
+  if (action !== 'replace') {
     return (
-      <Localized id='batchactions-ReplaceAll--default'>
-        {'REPLACE ALL'}
-      </Localized>
+      <Localized id='batchactions-ReplaceAll--default'>REPLACE ALL</Localized>
     );
   }
 
-  renderError(): React.ReactElement<React.ElementType> {
+  if (error) {
     return (
       <Localized id='batchactions-ReplaceAll--error'>
-        {'OOPS, SOMETHING WENT WRONG'}
+        OOPS, SOMETHING WENT WRONG
       </Localized>
     );
   }
 
-  renderInvalid(): null | React.ReactElement<React.ElementType> {
-    const { response } = this.props.batchactions;
+  const success = (
+    <Localized
+      id='batchactions-ReplaceAll--success'
+      vars={{ changedCount: changedCount ?? -1 }}
+    >
+      {'{ $changedCount } STRINGS REPLACED'}
+    </Localized>
+  );
 
-    if (!response) {
-      return null;
-    }
-
-    return (
-      <Localized
-        id='batchactions-ReplaceAll--invalid'
-        vars={{ invalidCount: response.invalidCount ?? -1 }}
-      >
+  return invalidCount ? (
+    <>
+      {success}
+      {' · '}
+      <Localized id='batchactions-ReplaceAll--invalid' vars={{ invalidCount }}>
         {'{ $invalidCount } FAILED'}
       </Localized>
-    );
-  }
-
-  renderSuccess(): null | React.ReactElement<React.ElementType> {
-    const { response } = this.props.batchactions;
-
-    if (!response) {
-      return null;
-    }
-
-    return (
-      <Localized
-        id='batchactions-ReplaceAll--success'
-        vars={{ changedCount: response.changedCount ?? -1 }}
-      >
-        {'{ $changedCount } STRINGS REPLACED'}
-      </Localized>
-    );
-  }
-
-  renderTitle(): null | React.ReactNode {
-    const { response } = this.props.batchactions;
-
-    if (response && response.action === 'replace') {
-      if (response.error) {
-        return this.renderError();
-      } else if (response.invalidCount) {
-        return (
-          <>
-            {this.renderSuccess()}
-            {' · '}
-            {this.renderInvalid()}
-          </>
-        );
-      } else {
-        return this.renderSuccess();
-      }
-    } else {
-      return this.renderDefault();
-    }
-  }
-
-  render(): React.ReactElement<'button'> {
-    return (
-      <button className='replace-all' onClick={this.props.replaceAll}>
-        {this.renderTitle()}
-        {this.props.batchactions.requestInProgress !== 'replace' ? null : (
-          <i className='fa fa-2x fa-circle-notch fa-spin'></i>
-        )}
-      </button>
-    );
-  }
+    </>
+  ) : (
+    success
+  );
 }

@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
-import { getNextEntity, getSelectedEntity } from '~/core/entities/selectors';
-import { getNavigationParams } from '~/core/navigation/selectors';
-import { getPluralForm } from '~/core/plural/selectors';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { Location } from '~/context/location';
+import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
+import { usePluralForm } from '~/context/pluralForm';
+import { useAppDispatch } from '~/hooks';
 import type { ChangeOperation } from '~/modules/history';
 import { updateStatus } from '~/modules/history/actions';
 
@@ -20,12 +20,11 @@ export default function useUpdateTranslationStatus(): (
 ) => void {
   const dispatch = useAppDispatch();
 
-  const entity = useAppSelector(getSelectedEntity);
+  const entity = useSelectedEntity();
   const locale = useContext(Locale);
-  const parameters = useAppSelector(getNavigationParams);
-  const pluralForm = useAppSelector(getPluralForm);
-  const nextEntity = useAppSelector(getNextEntity);
-  const router = useAppSelector((state) => state.router);
+  const location = useContext(Location);
+  const pluralForm = usePluralForm(entity);
+  const nextEntity = useNextEntity();
 
   return (
     translationId: number,
@@ -41,11 +40,10 @@ export default function useUpdateTranslationStatus(): (
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           entity!,
           locale,
-          parameters.resource,
           pluralForm,
           translationId,
           nextEntity,
-          router,
+          location,
           ignoreWarnings,
         ),
       );
