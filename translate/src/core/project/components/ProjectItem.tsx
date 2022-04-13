@@ -1,14 +1,13 @@
 import React from 'react';
 
 import type { Localization } from '~/context/locale';
-import type { NavigationParams } from '~/core/navigation';
-
-import ProjectPercent from './ProjectPercent';
+import type { LocationType } from '~/context/location';
 
 import './ProjectItem.css';
+import ProjectPercent from './ProjectPercent';
 
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   localization: Localization;
   navigateToPath: (arg0: React.MouseEvent<HTMLAnchorElement>) => void;
 };

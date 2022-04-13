@@ -1,14 +1,13 @@
 import * as React from 'react';
 
-import './ResourceItem.css';
+import type { LocationType } from '~/context/location';
 
+import type { Resource } from '../index';
+import './ResourceItem.css';
 import ResourcePercent from './ResourcePercent';
 
-import type { NavigationParams } from '~/core/navigation';
-import type { Resource } from '..';
-
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   resource: Resource;
   navigateToPath: (arg0: React.MouseEvent<HTMLAnchorElement>) => void;
 };

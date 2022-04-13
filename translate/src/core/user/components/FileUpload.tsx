@@ -1,66 +1,51 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useCallback, useRef } from 'react';
+
+import type { LocationType } from '~/context/location';
 
 import './FileUpload.css';
 
-import type { NavigationParams } from '~/core/navigation';
-
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
 };
 
 /*
  * Render a File Upload button.
  */
-export default class FileUpload extends React.Component<Props> {
-  uploadForm: React.RefObject<HTMLFormElement>;
+export function FileUpload({ parameters }: Props): React.ReactElement<'form'> {
+  const uploadForm = useRef<HTMLFormElement>(null);
 
-  constructor(props: Props) {
-    super(props);
-    this.uploadForm = React.createRef();
-  }
+  const submitForm = useCallback(() => {
+    uploadForm.current?.submit();
+  }, []);
 
-  submitForm: () => void = () => {
-    const form = this.uploadForm.current;
-    if (form) {
-      form.submit();
-    }
-  };
+  /* TODO: Refactor core.api.base and reuse getCSRFToken() here */
+  const rootElt = document.getElementById('root');
+  const csrfToken = rootElt?.dataset.csrfToken ?? '';
 
-  render(): React.ReactElement<'form'> {
-    const { parameters } = this.props;
-
-    /* TODO: Refactor core.api.base and reuse getCSRFToken() here */
-    let csrfToken: string | undefined = '';
-    const rootElt = document.getElementById('root');
-    if (rootElt) {
-      csrfToken = rootElt.dataset.csrfToken;
-    }
-
-    return (
-      <form
-        action='/upload/'
-        className='file-upload'
-        encType='multipart/form-data'
-        method='POST'
-        ref={this.uploadForm}
-      >
-        <input name='csrfmiddlewaretoken' type='hidden' value={csrfToken} />
-        <input name='code' type='hidden' value={parameters.locale} />
-        <input name='slug' type='hidden' value={parameters.project} />
-        <input name='part' type='hidden' value={parameters.resource} />
-        <label>
-          <Localized
-            id='user-UserMenu--upload-translations'
-            elems={{
-              glyph: <i className='fa fa-cloud-upload-alt fa-fw' />,
-            }}
-          >
-            <span>{'<glyph></glyph>Upload Translations'}</span>
-          </Localized>
-          <input name='uploadfile' type='file' onChange={this.submitForm} />
-        </label>
-      </form>
-    );
-  }
+  return (
+    <form
+      action='/upload/'
+      className='file-upload'
+      encType='multipart/form-data'
+      method='POST'
+      ref={uploadForm}
+    >
+      <input name='csrfmiddlewaretoken' type='hidden' value={csrfToken} />
+      <input name='code' type='hidden' value={parameters.locale} />
+      <input name='slug' type='hidden' value={parameters.project} />
+      <input name='part' type='hidden' value={parameters.resource} />
+      <label>
+        <Localized
+          id='user-UserMenu--upload-translations'
+          elems={{
+            glyph: <i className='fa fa-cloud-upload-alt fa-fw' />,
+          }}
+        >
+          <span>{'<glyph></glyph>Upload Translations'}</span>
+        </Localized>
+        <input name='uploadfile' type='file' onChange={submitForm} />
+      </label>
+    </form>
+  );
 }

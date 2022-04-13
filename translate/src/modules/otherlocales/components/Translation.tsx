@@ -1,21 +1,21 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
-import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useRef } from 'react';
+
+import type { LocationType } from '~/context/location';
+import type { Entity, OtherLocaleTranslation } from '~/core/api';
+import { NAME as EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
+import { selectHelperElementIndex } from '~/core/editor/actions';
+import { TranslationProxy } from '~/core/translation';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Translation.css';
-
-import { TranslationProxy } from '~/core/translation';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
-import type { Entity, OtherLocaleTranslation } from '~/core/api';
-import type { NavigationParams } from '~/core/navigation';
 
 type Props = {
   entity: Entity;
   translation: OtherLocaleTranslation;
-  parameters: NavigationParams;
+  parameters: LocationType;
   index: number;
 };
 
@@ -25,44 +25,35 @@ type Props = {
  * Show the translation of a given entity in a different locale, as well as the
  * locale and its code.
  */
-export default function Translation(
-  props: Props,
-): React.ReactElement<React.ElementType> {
-  const { entity, translation, parameters, index } = props;
-
+export function Translation({
+  entity: { format },
+  translation,
+  parameters: { project, resource, entity },
+  index,
+}: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
-
-  let className = 'translation';
-  if (isReadOnlyEditor) {
-    // Copying into the editor is not allowed
-    className += ' cannot-copy';
-  }
 
   const selectedHelperElementIndex = useAppSelector(
-    (state) => state[editor.NAME].selectedHelperElementIndex,
+    (state) => state[EDITOR].selectedHelperElementIndex,
   );
-  const changeSource = useAppSelector(
-    (state) => state[editor.NAME].changeSource,
-  );
+  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
   const isSelected =
     changeSource === 'otherlocales' && selectedHelperElementIndex === index;
 
-  if (isSelected) {
-    // Highlight other locale entries upon selection
-    className += ' selected';
-  }
+  const className = classNames(
+    'translation',
+    useReadonlyEditor() && 'cannot-copy',
+    isSelected && 'selected',
+  );
 
-  const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
-  const copyTranslationIntoEditor = React.useCallback(() => {
-    dispatch(editor.actions.selectHelperElementIndex(index));
+  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const copyTranslationIntoEditor = useCallback(() => {
+    dispatch(selectHelperElementIndex(index));
     copyOtherLocaleTranslation(translation);
   }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
-  const translationRef = React.useRef<HTMLLIElement>(null);
-  React.useEffect(() => {
+  const translationRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
     if (selectedHelperElementIndex === index) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       const behavior = mediaQuery.matches ? 'auto' : 'smooth';
@@ -96,16 +87,16 @@ export default function Translation(
                 code: translation.locale.code,
               }}
             >
-              <Link
-                to={`/${translation.locale.code}/${parameters.project}/${parameters.resource}/?string=${parameters.entity}`}
+              <a
+                href={`/${translation.locale.code}/${project}/${resource}/?string=${entity}`}
                 target='_blank'
                 rel='noopener noreferrer'
                 title='Open string in { $locale } ({ $code })'
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                onClick={(ev) => ev.stopPropagation()}
               >
                 {translation.locale.name}
                 <span>{translation.locale.code}</span>
-              </Link>
+              </a>
             </Localized>
           )}
         </header>
@@ -114,10 +105,7 @@ export default function Translation(
           dir={translation.locale.direction}
           data-script={translation.locale.script}
         >
-          <TranslationProxy
-            content={translation.translation}
-            format={entity.format}
-          />
+          <TranslationProxy content={translation.translation} format={format} />
         </p>
       </li>
     </Localized>

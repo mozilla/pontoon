@@ -1,15 +1,15 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import EntityNavigation from './EntityNavigation';
+import { EntityNavigation } from './EntityNavigation';
 
 describe('<EntityNavigation>', () => {
-  function getEntityNav({ create = shallow } = {}) {
+  function getEntityNav() {
     const copyMock = sinon.stub();
     const nextMock = sinon.stub();
     const prevMock = sinon.stub();
-    const wrapper = create(
+    const wrapper = mount(
       <EntityNavigation
         copyLinkToClipboard={copyMock}
         goToNextEntity={nextMock}
@@ -49,12 +49,12 @@ describe('<EntityNavigation>', () => {
       eventsMap[event] = cb;
     });
 
-    const { nextMock } = getEntityNav(mount);
+    const { nextMock } = getEntityNav();
 
     expect(nextMock.calledOnce).toBeFalsy();
     const event = {
       preventDefault: sinon.spy(),
-      keyCode: 40, // Down
+      key: 'ArrowDown',
       altKey: true,
       ctrlKey: false,
       shiftKey: false,
@@ -79,12 +79,12 @@ describe('<EntityNavigation>', () => {
       eventsMap[event] = cb;
     });
 
-    const { prevMock } = getEntityNav(mount);
+    const { prevMock } = getEntityNav();
 
     expect(prevMock.calledOnce).toBeFalsy();
     const event = {
       preventDefault: sinon.spy(),
-      keyCode: 38, // Up
+      key: 'ArrowUp',
       altKey: true,
       ctrlKey: false,
       shiftKey: false,

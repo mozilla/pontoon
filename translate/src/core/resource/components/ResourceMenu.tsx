@@ -1,29 +1,24 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import classNames from 'classnames';
+import React, { useCallback, useRef, useState } from 'react';
 
+import type { LocationType } from '~/context/location';
 import { useOnDiscard } from '~/core/utils';
 
-import './ResourceMenu.css';
-
+import type { Resource } from '../actions';
+import type { ResourcesState } from '../index';
 import ResourceItem from './ResourceItem';
+import './ResourceMenu.css';
 import ResourcePercent from './ResourcePercent';
 
-import type { NavigationParams } from '~/core/navigation';
-import type { ResourcesState } from '..';
-import type { Resource } from '../actions';
-
 type Props = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   resources: ResourcesState;
   navigateToPath: (path: string) => void;
 };
 
-type State = {
-  visible: boolean;
-};
-
 type ResourceMenuProps = {
-  parameters: NavigationParams;
+  parameters: LocationType;
   resources: ResourcesState;
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
@@ -36,7 +31,7 @@ export function ResourceMenu({
   onNavigate,
 }: ResourceMenuProps): React.ReactElement<'div'> {
   // Searching
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = useState('');
   const resourceElements = resources.resources.filter(
     (resource) =>
       resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1,
@@ -47,8 +42,8 @@ export function ResourceMenu({
   };
 
   // Sorting
-  const [sortActive, setSortActive] = React.useState('resource');
-  const [sortAsc, setSortAsc] = React.useState(true);
+  const [sortActive, setSortActive] = useState('resource');
+  const [sortAsc, setSortAsc] = useState(true);
 
   const sortByResource = () => {
     setSortActive('resource');
@@ -74,7 +69,7 @@ export function ResourceMenu({
   const progressClass = sortActive === 'progress' ? sort : '';
 
   // Discarding menu
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -204,83 +199,58 @@ export function ResourceMenu({
  *
  * Allows to switch between resources without reloading the Translate app.
  */
-export default class ResourceMenuBase extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
+export default function ResourceMenuBase({
+  navigateToPath,
+  parameters,
+  resources,
+}: Props): React.ReactElement<'li'> | null {
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
+
+  const handleNavigate = useCallback(
+    (ev: React.MouseEvent<HTMLAnchorElement>) => {
+      ev.preventDefault();
+      navigateToPath(ev.currentTarget.pathname);
+      setVisible(false);
+    },
+    [navigateToPath],
+  );
+
+  if (parameters.project === 'all-projects') {
+    return null;
   }
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const className = classNames('resource-menu', visible ? null : 'closed');
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  navigateToPath: (event: React.MouseEvent<HTMLAnchorElement>) => void = (
-    event: React.MouseEvent<HTMLAnchorElement>,
-  ) => {
-    event.preventDefault();
-
-    const path = event.currentTarget.pathname;
-    this.props.navigateToPath(path);
-
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): null | React.ReactElement<'li'> {
-    const { parameters, resources } = this.props;
-
-    if (parameters.project === 'all-projects') {
-      return null;
-    }
-
-    let className = 'resource-menu';
-    if (!this.state.visible) {
-      className += ' closed';
-    }
-
-    let resourceName: string | React.ReactElement<any> = parameters.resource
-      .split('/')
-      .slice(-1)[0];
-
-    if (parameters.resource === 'all-resources') {
-      resourceName = (
-        <Localized id='resource-ResourceMenu--all-resources'>
-          All Resources
-        </Localized>
-      );
-    }
-
-    return (
-      <li className={className}>
-        <div
-          className='selector unselectable'
-          onClick={this.toggleVisibility}
-          title={parameters.resource}
-        >
-          <span>{resourceName}</span>
-          <span className='icon fa fa-caret-down'></span>
-        </div>
-
-        {this.state.visible && (
-          <ResourceMenu
-            parameters={parameters}
-            resources={resources}
-            onDiscard={this.handleDiscard}
-            onNavigate={this.navigateToPath}
-          />
-        )}
-      </li>
+  const resourceName =
+    parameters.resource === 'all-resources' ? (
+      <Localized id='resource-ResourceMenu--all-resources'>
+        All Resources
+      </Localized>
+    ) : (
+      parameters.resource.split('/').slice(-1)[0]
     );
-  }
+
+  return (
+    <li className={className}>
+      <div
+        className='selector unselectable'
+        onClick={toggleVisible}
+        title={parameters.resource}
+      >
+        <span>{resourceName}</span>
+        <span className='icon fa fa-caret-down'></span>
+      </div>
+
+      {visible && (
+        <ResourceMenu
+          parameters={parameters}
+          resources={resources}
+          onDiscard={handleDiscard}
+          onNavigate={handleNavigate}
+        />
+      )}
+    </li>
+  );
 }

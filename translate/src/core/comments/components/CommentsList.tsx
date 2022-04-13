@@ -1,18 +1,17 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
-import './CommentsList.css';
-
-import { Comment, AddComment } from '~/core/comments';
-
-import type { NavigationParams } from '~/core/navigation';
+import type { LocationType } from '~/context/location';
 import type { TranslationComment } from '~/core/api';
+import { AddComment, Comment } from '~/core/comments';
 import type { UserState } from '~/core/user';
 import type { HistoryTranslation } from '~/modules/history';
 
+import './CommentsList.css';
+
 type Props = {
   comments: Array<TranslationComment>;
-  parameters?: NavigationParams;
+  parameters?: LocationType;
   translation?: HistoryTranslation;
   user: UserState;
   contactPerson?: string;

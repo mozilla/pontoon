@@ -1,18 +1,19 @@
 import React, { useContext } from 'react';
 
-import './PluralSelector.css';
-
 import { Locale } from '~/context/locale';
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { PluralFormType, usePluralForm } from '~/context/pluralForm';
+import { useSelectedEntity } from '~/core/entities/hooks';
+import { CLDR_PLURALS } from '~/core/utils/constants';
+import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
+import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
-import { actions, CLDR_PLURALS, selectors } from '..';
-import { usePluralExamples } from '~/hooks/usePluralExamples';
+import './PluralSelector.css';
 
 type Props = {
-  pluralForm: number;
+  pluralForm: PluralFormType;
 };
 
 type WrapperProps = {
@@ -33,7 +34,7 @@ type InternalProps = Props &
  */
 export function PluralSelectorBase({
   dispatch,
-  pluralForm,
+  pluralForm: { pluralForm, setPluralForm },
   resetEditor,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
@@ -49,7 +50,7 @@ export function PluralSelectorBase({
       dispatch(
         checkUnsavedChanges(exist, ignored, () => {
           resetEditor();
-          dispatch(actions.select(nextPluralForm));
+          setPluralForm(nextPluralForm);
         }),
       );
     }
@@ -82,7 +83,7 @@ export default function PluralSelector(
     <PluralSelectorBase
       {...props}
       dispatch={useAppDispatch()}
-      pluralForm={useAppSelector((state) => selectors.getPluralForm(state))}
+      pluralForm={usePluralForm(useSelectedEntity())}
       store={useAppStore()}
     />
   );

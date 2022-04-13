@@ -12,7 +12,7 @@ export type ReceiveAction = {
   readonly type: typeof RECEIVE_USERS;
   readonly users: Array<UsersList>;
 };
-export function receive(users: Array<UsersList>): ReceiveAction {
+export function receive(users: UsersList[] = []): ReceiveAction {
   return {
     type: RECEIVE_USERS,
     users,

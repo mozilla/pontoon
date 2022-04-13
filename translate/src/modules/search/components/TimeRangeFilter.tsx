@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import date from 'date-and-time';
 import { Localized } from '@fluent/react';
-import cloneDeep from 'lodash.clonedeep';
 
 import Highcharts from 'highcharts/highstock';
 import highchartsStock from 'highcharts/modules/stock';
@@ -12,362 +11,251 @@ import type { TimeRangeType } from '..';
 import { CHART_OPTIONS } from './chart-options';
 
 import './TimeRangeFilter.css';
+import classNames from 'classnames';
 
 const INPUT_FORMAT = 'DD/MM/YYYY HH:mm';
 const URL_FORMAT = 'YYYYMMDDHHmm';
 
 type Props = {
   project: string;
-  timeRange: TimeRangeType | null | undefined;
+  timeRange: TimeRangeType | null;
   timeRangeData: Array<Array<number>>;
-  applySingleFilter: (filter: string, type: 'timeRange') => void;
-  toggleFilter: (
-    filter: string,
-    type: 'timeRange',
-    event: React.MouseEvent,
-  ) => void;
-  updateTimeRange: (filter: string) => void;
+  applySingleFilter: (value: string, filter: 'timeRange') => void;
+  setTimeRange: (value: string | null) => void;
 };
 
-type State = {
-  chartFrom: number | null | undefined;
-  chartTo: number | null | undefined;
-  chartOptions: {
-    series: Array<{
-      data: Array<any>;
-    }>;
-    xAxis: Array<{
-      events: {
-        setExtremes:
-          | ((arg0: { min: number; max: number }) => void)
-          | null
-          | undefined;
-      };
-    }>;
-  };
-  inputFrom: string;
-  inputTo: string;
-  visible: boolean;
-};
+const asTime = (n: number) => date.parse(String(n), URL_FORMAT, true).getTime();
+
+function getTimeForInput(urlTime: number | null) {
+  if (!urlTime) return '';
+  const d = date.parse(urlTime.toString(), URL_FORMAT, true);
+  return isNaN(Number(d)) ? urlTime.toString() : date.format(d, INPUT_FORMAT);
+}
+
+function getTimeForURL(unixTime: number) {
+  const d = new Date(unixTime);
+  return parseInt(date.format(d, URL_FORMAT, true));
+}
 
 /**
  * Shows a Time Range filter panel.
  */
-export default class TimeRangeFilter extends React.Component<Props, State> {
-  chart: { current: any };
+export function TimeRangeFilter({
+  project,
+  timeRange,
+  timeRangeData,
+  applySingleFilter,
+  setTimeRange,
+}: Props): React.ReactElement | null {
+  const chart = useRef<HighchartsReact>(null);
+  const [chartFrom, setChartFrom] = useState<number | null>(null);
+  const [chartTo, setChartTo] = useState<number | null>(null);
+  const [chartOptions, setChartOptions] = useState<{
+    series: { data: unknown[] }[];
+    xAxis: {
+      events: {
+        setExtremes: ((arg0: { min: number; max: number }) => void) | null;
+      };
+    }[];
+  }>(CHART_OPTIONS);
+  const [inputFrom, setInputFrom] = useState('');
+  const [inputTo, setInputTo] = useState('');
+  const [visible, setVisible] = useState(false);
 
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => {
+    // Initialize the highchartsStock module
+    highchartsStock(Highcharts);
 
-    this.state = {
-      chartFrom: null,
-      chartTo: null,
-      chartOptions: CHART_OPTIONS,
-      inputFrom: '',
-      inputTo: '',
-      visible: false,
+    // Set global options
+    Highcharts.setOptions({ lang: { rangeSelectorZoom: '' } });
+
+    // Set the callback function that fires when the minimum and maximum is set for the axis,
+    // either by calling the .setExtremes() method or by selecting an area in the chart.
+    chartOptions.xAxis[0].events.setExtremes = ({ min, max }) => {
+      const chartFrom = getTimeForURL(min);
+      const chartTo = getTimeForURL(max);
+
+      setChartFrom(chartFrom);
+      setChartTo(chartTo);
+      setInputFrom(getTimeForInput(chartFrom));
+      setInputTo(getTimeForInput(chartTo));
     };
+  }, []);
 
-    this.initializeChart();
+  useEffect(() => {
+    // In case of no translations
+    if (timeRangeData.length === 0) return;
 
-    this.chart = React.createRef();
-  }
+    // Set chart boundaries from the URL parameter if given,
+    // else use default chart boundaries (full chart)
+    const chartFrom = timeRange?.from ?? getTimeForURL(timeRangeData[0][0]);
+    const chartTo =
+      timeRange?.to ??
+      getTimeForURL(timeRangeData[timeRangeData.length - 1][0]);
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const props = this.props;
-    const state = this.state;
+    setChartFrom(chartFrom);
+    setChartTo(chartTo);
+    setInputFrom(getTimeForInput(chartFrom));
+    setInputTo(getTimeForInput(chartTo));
 
-    if (props.timeRangeData !== prevProps.timeRangeData) {
-      this.plotChart();
+    setChartOptions({
+      ...chartOptions,
+      series: [{ data: timeRangeData }, ...chartOptions.series.slice(1)],
+    });
+  }, [timeRangeData]);
+
+  useEffect(() => {
+    if (chartFrom && chartTo) {
+      chart.current?.chart.xAxis[0].setExtremes(
+        asTime(chartFrom),
+        asTime(chartTo),
+      );
     }
+  }, [visible]);
 
-    if (state.visible !== prevState.visible) {
-      this.updateChartExtremes();
-    }
-
+  useEffect(() => {
     // When filters are toggled or applied, we update the filters state in the SearchBox
     // component, so that we can request entities accordingly. But the Time Range filter
     // state also changes when chartFrom and chartTo values change, so when that happens,
     // we also need to propagate changes to the SearchBox state.
     // Without this code, if you have Time Range filter applied and then change range and
     // click the Apply Filter button, nothing happens. As described in bug 1469611.
-    const { chartFrom, chartTo } = state;
-    if (
-      props.timeRange &&
-      (chartFrom !== prevState.chartFrom || chartTo !== prevState.chartTo)
-    ) {
-      props.updateTimeRange([chartFrom, chartTo].join('-'));
-    }
-  }
+    if (timeRange) setTimeRange([chartFrom, chartTo].join('-'));
+  }, [chartFrom, chartTo]);
 
-  initializeChart: () => void = () => {
-    // Initialize the highchartsStock module
-    highchartsStock(Highcharts);
+  const isValidInput = (value: string) => date.isValid(value, INPUT_FORMAT);
 
-    // Set global options
-    Highcharts.setOptions({
-      lang: {
-        rangeSelectorZoom: '',
-      },
-    });
-  };
+  const handleInputChange = useCallback(
+    (ev: React.SyntheticEvent<HTMLInputElement>) => {
+      const { name, value } = ev.currentTarget;
+      const isFrom = name === 'From';
+      const isTo = name === 'To';
 
-  updateChartExtremes: (
-    key?: string | null | undefined,
-    value?: number | null | undefined,
-  ) => void = (
-    key: string | null | undefined,
-    value: number | null | undefined,
-  ) => {
-    const { chartFrom, chartTo } = this.state;
-
-    if (chartFrom && chartTo && this.chart.current) {
-      const asTime = (str: string) =>
-        date.parse(str, URL_FORMAT, true).getTime();
-      const from =
-        key === 'chartFrom' && value ? value : asTime(chartFrom.toString());
-      const to =
-        key === 'chartTo' && value ? value : asTime(chartTo.toString());
-      this.chart.current.chart.xAxis[0].setExtremes(from, to);
-    }
-  };
-
-  plotChart: () => null | void = () => {
-    const { timeRange, timeRangeData } = this.props;
-
-    // In case of no translations
-    if (timeRangeData.length === 0) {
-      return null;
-    }
-
-    // Set default chart boundaries (full chart)
-    let chartFrom = this.getTimeForURL(timeRangeData[0][0]);
-    let chartTo = this.getTimeForURL(
-      timeRangeData[timeRangeData.length - 1][0],
-    );
-
-    // Set chart boundaries from the URL parameter if given
-    if (timeRange) {
-      chartFrom = timeRange.from;
-      chartTo = timeRange.to;
-    }
-
-    // Set chart data
-    const chartOptions = cloneDeep(this.state.chartOptions);
-    chartOptions.series[0].data = timeRangeData;
-
-    // Set the callback function that fires when the minimum and maximum is set for the axis,
-    // either by calling the .setExtremes() method or by selecting an area in the chart.
-    chartOptions.xAxis[0].events.setExtremes = (event) => {
-      const chartFrom = this.getTimeForURL(event.min);
-      const chartTo = this.getTimeForURL(event.max);
-
-      this.setState({
-        chartFrom,
-        chartTo,
-        inputFrom: this.getTimeForInput(chartFrom),
-        inputTo: this.getTimeForInput(chartTo),
-      });
-    };
-
-    this.setState({
-      chartFrom,
-      chartTo,
-      chartOptions,
-      inputFrom: this.getTimeForInput(chartFrom),
-      inputTo: this.getTimeForInput(chartTo),
-    });
-  };
-
-  getTimeForURL: (unixTime: number) => number = (unixTime: number) => {
-    const d = new Date(unixTime);
-
-    return parseInt(date.format(d, URL_FORMAT, true));
-  };
-
-  getTimeForInput: (urlTime: number | null | undefined) => any | string = (
-    urlTime: number | null | undefined,
-  ) => {
-    if (!urlTime) {
-      return '';
-    }
-
-    const d = date.parse(urlTime.toString(), URL_FORMAT, true);
-
-    if (isNaN(Number(d))) {
-      return urlTime.toString();
-    }
-
-    return date.format(d, INPUT_FORMAT);
-  };
-
-  isValidInput: (value: string) => any = (value: string) => {
-    return date.isValid(value, INPUT_FORMAT);
-  };
-
-  handleInputChange: (event: React.SyntheticEvent<HTMLInputElement>) => void = (
-    event: React.SyntheticEvent<HTMLInputElement>,
-  ) => {
-    const name = event.currentTarget.name;
-    const value = event.currentTarget.value;
-
-    if (this.isValidInput(value)) {
-      const d = date.parse(value, INPUT_FORMAT);
-      this.updateChartExtremes('chart' + name, d.getTime());
-    }
-
-    // @ts-expect-error
-    this.setState({
-      ['input' + name]: value,
-    });
-  };
-
-  toggleEditingTimeRange: (event: React.MouseEvent) => void = (
-    event: React.MouseEvent,
-  ) => {
-    const { chartFrom, chartTo, visible } = this.state;
-
-    // After Save Range is clicked...
-    if (visible) {
-      // Make sure Time Range filter is selected
-      if (!this.props.timeRange) {
-        this.props.toggleFilter(
-          [chartFrom, chartTo].join('-'),
-          'timeRange',
-          event,
-        );
+      if (isValidInput(value) && chartFrom && chartTo) {
+        const time = date.parse(value, INPUT_FORMAT).getTime();
+        const from = isFrom ? time : asTime(chartFrom);
+        const to = isTo ? time : asTime(chartTo);
+        chart.current?.chart.xAxis[0].setExtremes(from, to);
       }
 
-      // Make sure inputs are in sync with chart
-      this.setState((state) => {
-        return {
-          inputFrom: this.getTimeForInput(state.chartFrom),
-          inputTo: this.getTimeForInput(state.chartTo),
-        };
-      });
-    }
+      if (isFrom) setInputFrom(value);
+      else if (isTo) setInputTo(value);
+    },
+    [chartFrom, chartTo],
+  );
 
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const toggleEditingTimeRange = useCallback(
+    (ev: React.MouseEvent) => {
+      // After Save Range is clicked...
+      if (visible) {
+        // Make sure Time Range filter is selected
+        if (!timeRange) {
+          ev.stopPropagation();
+          setTimeRange([chartFrom, chartTo].join('-'));
+        }
 
-  toggleTimeRangeFilter: (event: React.MouseEvent) => void = (
-    event: React.MouseEvent,
-  ) => {
-    const { chartFrom, chartTo, visible } = this.state;
+        // Make sure inputs are in sync with chart
+        setInputFrom(getTimeForInput(chartFrom));
+        setInputTo(getTimeForInput(chartTo));
+      }
 
-    if (visible) {
-      return;
-    }
+      setVisible((prev) => !prev);
+    },
+    [chartFrom, chartTo, setTimeRange, timeRange, visible],
+  );
 
-    this.props.toggleFilter([chartFrom, chartTo].join('-'), 'timeRange', event);
-  };
+  const toggleTimeRangeFilter = useCallback(
+    (ev: React.MouseEvent) => {
+      if (!visible) {
+        ev.stopPropagation();
+        setTimeRange(timeRange ? null : [chartFrom, chartTo].join('-'));
+      }
+    },
+    [chartFrom, chartTo, setTimeRange, timeRange, visible],
+  );
 
-  applyTimeRangeFilter: () => void = () => {
-    const { chartFrom, chartTo, visible } = this.state;
+  const applyTimeRangeFilter = useCallback(() => {
+    if (!visible)
+      applySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
+  }, [chartFrom, chartTo, visible]);
 
-    if (visible) {
-      return;
-    }
-
-    this.props.applySingleFilter([chartFrom, chartTo].join('-'), 'timeRange');
-  };
-
-  render(): null | React.ReactNode {
-    const props = this.props;
-
-    // In case of no translations or the All Projects view
-    if (props.timeRangeData.length === 0 || props.project === 'all-projects') {
-      return null;
-    }
-
-    let timeRangeClass = 'time-range clearfix';
-    if (this.state.visible) {
-      timeRangeClass += ' editing';
-    }
-    if (props.timeRange) {
-      timeRangeClass += ' selected';
-    }
-
-    return (
-      <>
-        <li className='horizontal-separator for-time-range'>
-          <Localized id='search-TimeRangeFilter--heading-time'>
-            <span>TRANSLATION TIME</span>
-          </Localized>
-
-          {!this.state.visible ? (
-            <Localized
-              id='search-TimeRangeFilter--edit-range'
-              elems={{
-                glyph: <i className='fa fa-chart-area' />,
-              }}
-            >
-              <button
-                onClick={this.toggleEditingTimeRange}
-                className='edit-range'
-              >
-                {'<glyph></glyph>EDIT RANGE'}
-              </button>
-            </Localized>
-          ) : (
-            <Localized id='search-TimeRangeFilter--save-range'>
-              <button
-                onClick={this.toggleEditingTimeRange}
-                className='save-range'
-              >
-                SAVE RANGE
-              </button>
-            </Localized>
-          )}
-        </li>
-        <li className={`${timeRangeClass}`} onClick={this.applyTimeRangeFilter}>
-          <span
-            className='status fa'
-            onClick={this.toggleTimeRangeFilter}
-          ></span>
-
-          <span className='clearfix'>
-            <label className='from'>
-              From
-              <input
-                type='datetime'
-                name='From'
-                className={
-                  this.isValidInput(this.state.inputFrom) ? '' : 'error'
-                }
-                disabled={!this.state.visible}
-                onChange={this.handleInputChange}
-                value={this.state.inputFrom}
-              />
-            </label>
-            <label className='to'>
-              To
-              <input
-                type='datetime'
-                name='To'
-                className={this.isValidInput(this.state.inputTo) ? '' : 'error'}
-                disabled={!this.state.visible}
-                onChange={this.handleInputChange}
-                value={this.state.inputTo}
-              />
-            </label>
-          </span>
-
-          {!this.state.visible ? null : (
-            <HighchartsReact
-              highcharts={Highcharts}
-              // @ts-expect-error
-              options={this.state.chartOptions}
-              constructorType={'stockChart'}
-              allowChartUpdate={false}
-              containerProps={{ className: 'chart' }}
-              ref={this.chart}
-            />
-          )}
-        </li>
-      </>
-    );
+  // In case of no translations or the All Projects view
+  if (timeRangeData.length === 0 || project === 'all-projects') {
+    return null;
   }
+
+  const timeRangeClass = classNames(
+    'time-range clearfix',
+    visible && 'editing',
+    timeRange && 'selected',
+  );
+
+  return (
+    <>
+      <li className='horizontal-separator for-time-range'>
+        <Localized id='search-TimeRangeFilter--heading-time'>
+          <span>TRANSLATION TIME</span>
+        </Localized>
+
+        {!visible ? (
+          <Localized
+            id='search-TimeRangeFilter--edit-range'
+            elems={{
+              glyph: <i className='fa fa-chart-area' />,
+            }}
+          >
+            <button onClick={toggleEditingTimeRange} className='edit-range'>
+              {'<glyph></glyph>EDIT RANGE'}
+            </button>
+          </Localized>
+        ) : (
+          <Localized id='search-TimeRangeFilter--save-range'>
+            <button onClick={toggleEditingTimeRange} className='save-range'>
+              SAVE RANGE
+            </button>
+          </Localized>
+        )}
+      </li>
+      <li className={timeRangeClass} onClick={applyTimeRangeFilter}>
+        <span className='status fa' onClick={toggleTimeRangeFilter}></span>
+
+        <span className='clearfix'>
+          <label className='from'>
+            From
+            <input
+              type='datetime'
+              name='From'
+              className={isValidInput(inputFrom) ? '' : 'error'}
+              disabled={!visible}
+              onChange={handleInputChange}
+              value={inputFrom}
+            />
+          </label>
+          <label className='to'>
+            To
+            <input
+              type='datetime'
+              name='To'
+              className={isValidInput(inputTo) ? '' : 'error'}
+              disabled={!visible}
+              onChange={handleInputChange}
+              value={inputTo}
+            />
+          </label>
+        </span>
+
+        {visible ? (
+          <HighchartsReact
+            highcharts={Highcharts}
+            // @ts-expect-error
+            options={chartOptions}
+            constructorType={'stockChart'}
+            allowChartUpdate={false}
+            containerProps={{ className: 'chart' }}
+            ref={chart}
+          />
+        ) : null}
+      </li>
+    </>
+  );
 }

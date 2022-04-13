@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 
 type Props = {
   getUserData: () => void;
@@ -7,26 +7,18 @@ type Props = {
 /**
  * Regularly fetch user data to keep it up-to-date with the server.
  */
-export default class UserAutoUpdater extends React.Component<Props> {
-  timer: number | null = null;
+export function UserAutoUpdater({ getUserData }: Props): null {
+  const timer = useRef<number | null>(null);
+  useEffect(() => {
+    getUserData();
+    timer.current = window.setInterval(getUserData, 2 * 60 * 1000);
+    return () => {
+      if (typeof timer.current === 'number') {
+        window.clearInterval(timer.current);
+        timer.current = null;
+      }
+    };
+  }, []);
 
-  fetchUserData: () => void = () => {
-    this.props.getUserData();
-  };
-
-  componentDidMount() {
-    this.fetchUserData();
-    this.timer = window.setInterval(this.fetchUserData, 2 * 60 * 1000);
-  }
-
-  componentWillUnmount() {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-  }
-
-  render(): null {
-    return null;
-  }
+  return null;
 }

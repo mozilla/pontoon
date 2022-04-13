@@ -1,15 +1,9 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useCallback, useState } from 'react';
 
 import { useOnDiscard } from '~/core/utils';
 
 import './KeyboardShortcuts.css';
-
-type Props = {};
-
-type State = {
-  visible: boolean;
-};
 
 type KeyboardShortcutsProps = {
   onDiscard: () => void;
@@ -206,47 +200,22 @@ function KeyboardShortcuts({ onDiscard }: KeyboardShortcutsProps) {
 /*
  * Shows a list of keyboard shortcuts.
  */
-export default class KeyboardShortcutsBase extends React.Component<
-  Props,
-  State
-> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-  }
+export default function KeyboardShortcutsBase(): React.ReactElement<'div'> {
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  return (
+    <div className='keyboard-shortcuts'>
+      <Localized id='editor-KeyboardShortcuts--button' attrs={{ title: true }}>
+        <div
+          className='selector far fa-keyboard'
+          title='Keyboard Shortcuts'
+          onClick={toggleVisible}
+        />
+      </Localized>
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): React.ReactElement<'div'> {
-    return (
-      <div className='keyboard-shortcuts'>
-        <Localized
-          id='editor-KeyboardShortcuts--button'
-          attrs={{ title: true }}
-        >
-          <div
-            className='selector far fa-keyboard'
-            title='Keyboard Shortcuts'
-            onClick={this.toggleVisibility}
-          />
-        </Localized>
-
-        {this.state.visible && (
-          <KeyboardShortcuts onDiscard={this.handleDiscard} />
-        )}
-      </div>
-    );
-  }
+      {visible && <KeyboardShortcuts onDiscard={handleDiscard} />}
+    </div>
+  );
 }

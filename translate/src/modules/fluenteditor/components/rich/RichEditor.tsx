@@ -6,7 +6,7 @@ import {
   useSendTranslation,
   useUpdateTranslation,
 } from '~/core/editor';
-import { getSelectedEntity } from '~/core/entities/selectors';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { fluent } from '~/core/utils';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
@@ -31,7 +31,7 @@ export default function RichEditor(props: Props): React.ReactElement<any> {
   const updateTranslation = useUpdateTranslation();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector(getSelectedEntity);
+  const entity = useSelectedEntity();
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const locale = useContext(Locale);
 

@@ -1,5 +1,5 @@
+import { mount } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import RejectAll from './RejectAll';
@@ -13,7 +13,7 @@ const DEFAULT_BATCH_ACTIONS = {
 
 describe('<RejectAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = shallow(<RejectAll batchactions={DEFAULT_BATCH_ACTIONS} />);
+    const wrapper = mount(<RejectAll batchactions={DEFAULT_BATCH_ACTIONS} />);
 
     expect(wrapper.find('.reject-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(1);
@@ -24,7 +24,7 @@ describe('<RejectAll>', () => {
   });
 
   it('renders error button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <RejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -45,7 +45,7 @@ describe('<RejectAll>', () => {
   });
 
   it('renders success button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <RejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -66,7 +66,7 @@ describe('<RejectAll>', () => {
   });
 
   it('renders success with invalid button correctly', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <RejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
@@ -90,7 +90,7 @@ describe('<RejectAll>', () => {
   it('raise confirmation warning when Reject All button is clicked', () => {
     const mockRejectAll = sinon.spy();
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <RejectAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         rejectAll={mockRejectAll}
@@ -108,16 +108,15 @@ describe('<RejectAll>', () => {
   it('performs reject all action when Reject All button is confirmed', () => {
     const mockRejectAll = sinon.spy();
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <RejectAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         rejectAll={mockRejectAll}
       />,
     );
 
-    wrapper.instance().setState({ isConfirmationVisible: true });
-
     expect(mockRejectAll.called).toBeFalsy();
+    wrapper.find('.reject-all').simulate('click');
     wrapper.find('.reject-all').simulate('click');
     expect(mockRejectAll.called).toBeTruthy();
   });

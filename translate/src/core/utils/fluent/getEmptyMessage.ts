@@ -1,18 +1,17 @@
 import {
-  Transformer,
   BaseNode,
+  Entry,
   SelectExpression,
   TextElement,
+  Transformer,
   Variant,
 } from '@fluent/syntax';
 
+import type { LocaleType } from '~/context/locale';
+
+import { CLDR_PLURALS } from '../constants';
 import flattenMessage from './flattenMessage';
 import isPluralExpression from './isPluralExpression';
-
-import { CLDR_PLURALS } from '~/core/plural';
-
-import type { Entry } from '@fluent/syntax';
-import type { LocaleType } from '~/context/locale';
 
 /**
  * Gather custom (numeric) plural variants

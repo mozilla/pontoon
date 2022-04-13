@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import { useAppDispatch, useAppSelector } from '~/hooks';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
-import * as plural from '~/core/plural';
+import { useSelectedEntity } from '~/core/entities/hooks';
+import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import GenericTranslationForm from './GenericTranslationForm';
+import PluralSelector from './PluralSelector';
 
 /**
  * Hook to update the editor content whenever the entity changes.
@@ -16,15 +17,9 @@ function useLoadTranslation() {
   const updateTranslation = editor.useUpdateTranslation();
 
   const changeSource = useAppSelector((state) => state.editor.changeSource);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
-  const activeTranslationString = useAppSelector((state) =>
-    plural.selectors.getTranslationStringForSelectedEntity(state),
-  );
+  const entity = useSelectedEntity();
+  const { pluralForm } = usePluralForm(entity);
+  const activeTranslationString = useTranslationForEntity(entity)?.string ?? '';
 
   React.useLayoutEffect(() => {
     // We want to run this only when the editor state has been reset.
@@ -59,12 +54,8 @@ export default function GenericEditor(): null | React.ReactElement<any> {
   const sendTranslation = editor.useSendTranslation();
 
   const translation = useAppSelector((state) => state.editor.translation);
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
+  const entity = useSelectedEntity();
+  const { pluralForm } = usePluralForm(entity);
 
   if (!entity || typeof translation !== 'string') {
     return null;
@@ -78,7 +69,7 @@ export default function GenericEditor(): null | React.ReactElement<any> {
 
   return (
     <>
-      <plural.PluralSelector resetEditor={resetEditor} />
+      <PluralSelector resetEditor={resetEditor} />
       <GenericTranslationForm
         sendTranslation={sendTranslation}
         updateTranslation={updateTranslation}

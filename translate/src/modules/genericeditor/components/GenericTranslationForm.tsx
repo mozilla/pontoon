@@ -7,8 +7,8 @@ import {
   useUpdateUnsavedChanges,
 } from '~/core/editor';
 import { resetFailedChecks } from '~/core/editor/actions';
-import { isReadOnlyEditor } from '~/core/entities/selectors';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -30,7 +30,7 @@ export default function GenericTranslationForm({
     (state) => state.search.searchInputFocused,
   );
   const { code, direction, script } = useContext(Locale);
-  const readOnly = useAppSelector(isReadOnlyEditor);
+  const readonly = useReadonlyEditor();
   const unsavedChangesExist = useAppSelector(
     (state) => state.unsavedchanges.exist,
   );
@@ -86,9 +86,9 @@ export default function GenericTranslationForm({
   return (
     <textarea
       placeholder={
-        readOnly ? undefined : 'Type translation and press Enter to save'
+        readonly ? undefined : 'Type translation and press Enter to save'
       }
-      readOnly={readOnly}
+      readOnly={readonly}
       ref={textareaRef}
       value={translation}
       onKeyDown={(ev) => handleShortcutsFn(ev, sendTranslation)}

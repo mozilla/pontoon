@@ -1,23 +1,16 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
-
-import './UserNotificationsMenu.css';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import api from '~/core/api';
-
-import UserNotification from './UserNotification';
-
 import { useOnDiscard } from '~/core/utils';
 
-import type { UserState, Notification } from '~/core/user';
+import type { Notification, UserState } from '../index';
+import { UserNotification } from './UserNotification';
+import './UserNotificationsMenu.css';
 
 type Props = {
   markAllNotificationsAsRead: () => void;
   user: UserState;
-};
-
-type State = {
-  visible: boolean;
 };
 
 type UserNotificationsMenuProps = {
@@ -29,7 +22,7 @@ export function UserNotificationsMenu({
   notifications,
   onDiscard,
 }: UserNotificationsMenuProps): React.ReactElement<'div'> {
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -71,85 +64,51 @@ export function UserNotificationsMenu({
 /**
  * Renders user notifications.
  */
-export default class UserNotificationsMenuBase extends React.Component<
-  Props,
-  State
-> {
-  constructor(props: Props) {
-    super(props);
+export default function UserNotificationsMenuBase({
+  markAllNotificationsAsRead,
+  user,
+}: Props): null | React.ReactElement<'div'> {
+  const [visible, setVisible] = useState(false);
+  const handleDiscard = useCallback(() => setVisible(false), []);
 
-    this.state = {
-      visible: false,
-    };
-  }
+  const unread = user?.notifications.has_unread;
 
-  componentDidMount() {
-    if (!this.props.user.isAuthenticated) {
-      return;
+  useEffect(() => {
+    if (user.isAuthenticated && unread) {
+      api.uxaction.log(
+        'Render: Unread notifications icon',
+        'Notifications 1.0',
+        { pathname: window.location.pathname },
+      );
     }
+  }, []);
 
-    if (!this.props.user.notifications.has_unread) {
-      return;
-    }
-
-    api.uxaction.log('Render: Unread notifications icon', 'Notifications 1.0', {
-      pathname: window.location.pathname,
-    });
-  }
-
-  handleClick: () => void = () => {
-    if (!this.state.visible) {
+  const handleClick = useCallback(() => {
+    if (visible) {
+      setVisible(false);
+    } else {
+      setVisible(true);
       api.uxaction.log('Click: Notifications icon', 'Notifications 1.0', {
         pathname: window.location.pathname,
-        unread: this.props.user.notifications.has_unread,
+        unread,
       });
     }
+    if (unread) markAllNotificationsAsRead();
+  }, [markAllNotificationsAsRead, unread, visible]);
 
-    this.toggleVisibility();
-    this.markAllNotificationsAsRead();
-  };
-
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
-
-  markAllNotificationsAsRead: () => void = () => {
-    if (this.props.user.notifications.has_unread) {
-      this.props.markAllNotificationsAsRead();
-    }
-  };
-
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-  render(): null | React.ReactElement<'div'> {
-    const { user } = this.props;
-
-    if (!user || !user.isAuthenticated) {
-      return null;
-    }
-
-    return (
-      <div className='user-notifications-menu'>
-        <div className='selector' onClick={this.handleClick}>
-          <i className='icon far fa-bell fa-fw'></i>
-          {user.notifications.has_unread && (
-            <i className='badge'>{user.notifications.unread_count}</i>
-          )}
-        </div>
-
-        {this.state.visible && (
-          <UserNotificationsMenu
-            notifications={user.notifications.notifications}
-            onDiscard={this.handleDiscard}
-          />
-        )}
+  return user?.isAuthenticated ? (
+    <div className='user-notifications-menu'>
+      <div className='selector' onClick={handleClick}>
+        <i className='icon far fa-bell fa-fw'></i>
+        {unread && <i className='badge'>{user.notifications.unread_count}</i>}
       </div>
-    );
-  }
+
+      {visible && (
+        <UserNotificationsMenu
+          notifications={user.notifications.notifications}
+          onDiscard={handleDiscard}
+        />
+      )}
+    </div>
+  ) : null;
 }

@@ -1,6 +1,5 @@
-import { useAppSelector } from '~/hooks';
-import * as entities from '~/core/entities';
-import * as plural from '~/core/plural';
+import { useSelectedEntity } from '~/core/entities/hooks';
+import { usePluralForm } from '~/context/pluralForm';
 
 import useUpdateTranslation from './useUpdateTranslation';
 
@@ -10,12 +9,8 @@ import useUpdateTranslation from './useUpdateTranslation';
 export default function useCopyOriginalIntoEditor(): () => void {
   const updateTranslation = useUpdateTranslation();
 
-  const entity = useAppSelector((state) =>
-    entities.selectors.getSelectedEntity(state),
-  );
-  const pluralForm = useAppSelector((state) =>
-    plural.selectors.getPluralForm(state),
-  );
+  const entity = useSelectedEntity();
+  const { pluralForm } = usePluralForm(entity);
 
   return () => {
     if (entity) {

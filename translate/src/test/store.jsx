@@ -8,41 +8,37 @@ import React from 'react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 
+import { LocationProvider } from '~/context/location';
 import * as user from '~/core/user';
+import { reducer } from '~/rootReducer';
 
-import createRootReducer from '~/rootReducer';
-
-const history = createMemoryHistory({
+const HISTORY = createMemoryHistory({
   initialEntries: ['/kg/firefox/all-resources/'],
 });
 
-export function createReduxStore(initialState = {}) {
-  return configureStore({
-    reducer: createRootReducer(history),
-    middleware: (getDefaultMiddleware) => {
-      return getDefaultMiddleware({ serializableCheck: false }).prepend(
-        routerMiddleware(history),
-      );
-    },
+export const createReduxStore = (initialState = {}) =>
+  configureStore({
+    reducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }),
     preloadedState: initialState,
   });
-}
 
-export function mountComponentWithStore(Component, store, props = {}) {
-  return mount(
+export const mountComponentWithStore = (
+  Component,
+  store,
+  props = {},
+  history = HISTORY,
+) =>
+  mount(
     <Provider store={store}>
-      {/* `noInitialPop` is required to omit an initial navigation dispatch
-            from the router, which could have side-effects like resetting some
-            initial state passed to the root reducer factory function.*/}
-      <ConnectedRouter history={history} noInitialPop>
+      <LocationProvider history={history}>
         <Component {...props} />
-      </ConnectedRouter>
+      </LocationProvider>
     </Provider>,
   );
-}
 
 export function createDefaultUser(store, initial = {}) {
   const userData = {

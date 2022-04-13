@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
 
-import { actions } from '..';
-
-import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
 import type { MachineryTranslation, SourceType } from '~/core/api';
+import { NAME as EDITOR } from '~/core/editor';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
+import actions from '../actions';
 import useAddTextToTranslation from './useAddTextToTranslation';
 import useUpdateTranslation from './useUpdateTranslation';
 
@@ -29,16 +28,13 @@ export default function useCopyMachineryTranslation(
     [dispatch],
   );
 
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
-  const isFluentTranslationMessage = useAppSelector((state) =>
-    editor.selectors.isFluentTranslationMessage(state),
-  );
+  const readonly = useReadonlyEditor();
+  const translation = useAppSelector((state) => state[EDITOR].translation);
+  const isFluentTranslationMessage = typeof translation !== 'string';
 
   return useCallback(
     (translation: MachineryTranslation) => {
-      if (isReadOnlyEditor) {
+      if (readonly) {
         return;
       }
 
@@ -65,7 +61,7 @@ export default function useCopyMachineryTranslation(
     },
     [
       isFluentTranslationMessage,
-      isReadOnlyEditor,
+      readonly,
       entity,
       addTextToTranslation,
       updateTranslation,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 type Props = {
   children?: React.ReactNode;
@@ -8,18 +8,9 @@ type Props = {
 /*
  * Render a link to the Sign In process.
  */
-export default class SignInLink extends React.Component<Props> {
-  generateSignInURL(): string {
-    const absoluteUrl = window.location.origin + this.props.url;
-    const parsedUrl = new URL(absoluteUrl);
-    const next = window.location.pathname + window.location.search;
-
-    parsedUrl.searchParams.set('next', next);
-
-    return parsedUrl.toString();
-  }
-
-  render(): React.ReactElement<'a'> {
-    return <a href={this.generateSignInURL()}>{this.props.children}</a>;
-  }
+export function SignInLink({ children, url }: Props): React.ReactElement<'a'> {
+  const { origin, pathname, search } = window.location;
+  const parsedUrl = new URL(url, origin);
+  parsedUrl.searchParams.set('next', pathname + search);
+  return <a href={parsedUrl.toString()}>{children}</a>;
 }

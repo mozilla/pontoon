@@ -1,9 +1,6 @@
 import { useCallback } from 'react';
-
-import { useAppSelector } from '~/hooks';
-import * as entities from '~/core/entities';
 import type { OtherLocaleTranslation } from '~/core/api';
-
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import useUpdateTranslation from './useUpdateTranslation';
 
 /**
@@ -13,13 +10,11 @@ export default function useCopyOtherLocaleTranslation(): (
   translation: OtherLocaleTranslation,
 ) => void {
   const updateTranslation = useUpdateTranslation();
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
+  const readonly = useReadonlyEditor();
 
   return useCallback(
     (translation: OtherLocaleTranslation) => {
-      if (isReadOnlyEditor) {
+      if (readonly) {
         return;
       }
 
@@ -30,6 +25,6 @@ export default function useCopyOtherLocaleTranslation(): (
 
       updateTranslation(translation.translation, 'otherlocales');
     },
-    [isReadOnlyEditor, updateTranslation],
+    [readonly, updateTranslation],
   );
 }

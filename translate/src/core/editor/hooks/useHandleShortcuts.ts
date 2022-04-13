@@ -1,7 +1,16 @@
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
-import * as unsavedchanges from '~/modules/unsavedchanges';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import {
+  hide as hideUnsavedChanges,
+  ignore as ignoreUnsavedChanges,
+} from '~/modules/unsavedchanges/actions';
+import { resetFailedChecks, selectHelperElementIndex } from '../actions';
+import useClearEditor from './useClearEditor';
+import useCopyMachineryTranslation from './useCopyMachineryTranslation';
+import useCopyOriginalIntoEditor from './useCopyOriginalIntoEditor';
+import useCopyOtherLocaleTranslation from './useCopyOtherLocaleTranslation';
+import { useExistingTranslation } from './useExistingTranslation';
+import useUpdateTranslationStatus from './useUpdateTranslationStatus';
 
 /**
  * Return a function to handle shortcuts in a translation form.
@@ -14,22 +23,24 @@ export default function useHandleShortcuts(): (
 ) => void {
   const dispatch = useAppDispatch();
 
-  const clearEditor = editor.useClearEditor();
-  const copyMachineryTranslation = editor.useCopyMachineryTranslation();
-  const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
-  const copyOtherLocaleTranslation = editor.useCopyOtherLocaleTranslation();
-  const updateTranslationStatus = editor.useUpdateTranslationStatus();
+  const clearEditor = useClearEditor();
+  const copyMachineryTranslation = useCopyMachineryTranslation();
+  const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
+  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const updateTranslationStatus = useUpdateTranslationStatus();
 
-  const editorState = useAppSelector((state) => state.editor);
+  const {
+    errors,
+    selectedHelperElementIndex,
+    selectedHelperTabIndex,
+    source,
+    warnings,
+  } = useAppSelector((state) => state.editor);
   const unsavedChangesShown = useAppSelector(
     (state) => state.unsavedchanges.shown,
   );
-  const isReadOnlyEditor = useAppSelector((state) =>
-    entities.selectors.isReadOnlyEditor(state),
-  );
-  const sameExistingTranslation = useAppSelector((state) =>
-    editor.selectors.sameExistingTranslation(state),
-  );
+  const readonly = useReadonlyEditor();
+  const existingTranslation = useExistingTranslation();
 
   const machineryTranslations = useAppSelector(
     (state) => state.machinery.translations,
@@ -41,120 +52,112 @@ export default function useHandleShortcuts(): (
     (state) => state.otherlocales.translations,
   );
 
+  // Disable keyboard shortcuts when editor is in read only.
+  if (readonly) {
+    return () => {};
+  }
+
   return (
-    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    ev: React.KeyboardEvent<HTMLTextAreaElement>,
     sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
     clearEditorCustom?: () => void,
     copyOriginalIntoEditorCustom?: () => void,
   ) => {
-    const clearEditorFn = clearEditorCustom || clearEditor;
-    const copyOriginalIntoEditorFn =
-      copyOriginalIntoEditorCustom || copyOriginalIntoEditor;
+    // FIXME: When updating to react@17, use ev.code
+    switch (ev.nativeEvent.code) {
+      // On Enter:
+      //   - If unsaved changes popup is shown, proceed.
+      //   - If failed checks popup is shown after approving a translation, approve it anyway.
+      //   - In other cases, send current translation.
+      case 'Enter':
+        if (!ev.ctrlKey && !ev.shiftKey && !ev.altKey) {
+          ev.preventDefault();
 
-    const key = event.keyCode;
+          const ignoreWarnings = errors.length + warnings.length > 0;
 
-    // Disable keyboard shortcuts when editor is in read only.
-    if (isReadOnlyEditor) {
-      return;
-    }
+          if (unsavedChangesShown) {
+            // There are unsaved changes, proceed.
+            dispatch(ignoreUnsavedChanges());
+          } else if (typeof source === 'number') {
+            // Approve anyway.
+            updateTranslationStatus(source, 'approve', ignoreWarnings);
+          } else if (existingTranslation && !existingTranslation.approved) {
+            updateTranslationStatus(
+              existingTranslation.pk,
+              'approve',
+              ignoreWarnings,
+            );
+          } else {
+            sendTranslation(ignoreWarnings);
+          }
+        }
+        break;
 
-    // On Enter:
-    //   - If unsaved changes popup is shown, proceed.
-    //   - If failed checks popup is shown after approving a translation, approve it anyway.
-    //   - In other cases, send current translation.
-    if (key === 13 && !event.ctrlKey && !event.shiftKey && !event.altKey) {
-      event.preventDefault();
+      // On Esc, close unsaved changes and failed checks popups if open.
+      case 'Escape':
+        ev.preventDefault();
+        if (unsavedChangesShown) {
+          // Close unsaved changes popup
+          dispatch(hideUnsavedChanges());
+        } else if (errors.length || warnings.length) {
+          // Close failed checks popup
+          dispatch(resetFailedChecks());
+        }
+        break;
 
-      const errors = editorState.errors;
-      const warnings = editorState.warnings;
-      const source = editorState.source;
-      const ignoreWarnings = !!(errors.length || warnings.length);
+      // On Ctrl + Shift + C, copy the original translation.
+      case 'KeyC':
+        if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
+          ev.preventDefault();
+          (copyOriginalIntoEditorCustom || copyOriginalIntoEditor)();
+        }
+        break;
 
-      // There are unsaved changes, proceed.
-      if (unsavedChangesShown) {
-        dispatch(unsavedchanges.actions.ignore());
-      }
-      // Approve anyway.
-      else if (typeof source === 'number') {
-        updateTranslationStatus(source, 'approve', ignoreWarnings);
-      } else if (sameExistingTranslation && !sameExistingTranslation.approved) {
-        updateTranslationStatus(
-          sameExistingTranslation.pk,
-          'approve',
-          ignoreWarnings,
-        );
-      }
-      // Send translation.
-      else {
-        sendTranslation(ignoreWarnings);
-      }
-    }
+      // On Ctrl + Shift + Backspace, clear the content.
+      case 'Backspace':
+        if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
+          ev.preventDefault();
+          (clearEditorCustom || clearEditor)();
+        }
+        break;
 
-    // On Esc, close unsaved changes and failed checks popups if open.
-    if (key === 27) {
-      event.preventDefault();
+      // On Ctrl + Shift + Up/Down, copy next/previous entry from active
+      // helper tab (Machinery or Locales) into translation.
+      case 'ArrowDown':
+      case 'ArrowUp':
+        if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
+          const isMachinery = selectedHelperTabIndex === 0;
+          const numTranslations = isMachinery
+            ? machineryTranslations.length + concordanceSearchResults.length
+            : otherLocaleTranslations.length;
 
-      const errors = editorState.errors;
-      const warnings = editorState.warnings;
+          if (numTranslations === 0) {
+            return;
+          }
 
-      // Close unsaved changes popup
-      if (unsavedChangesShown) {
-        dispatch(unsavedchanges.actions.hide());
-      }
-      // Close failed checks popup
-      else if (errors.length || warnings.length) {
-        dispatch(editor.actions.resetFailedChecks());
-      }
-    }
+          ev.preventDefault();
 
-    // On Ctrl + Shift + C, copy the original translation.
-    if (key === 67 && event.ctrlKey && event.shiftKey && !event.altKey) {
-      event.preventDefault();
-      copyOriginalIntoEditorFn();
-    }
+          const nextIdx =
+            // FIXME: When updating to react@17, use ev.code
+            ev.nativeEvent.code === 'ArrowDown'
+              ? (selectedHelperElementIndex + 1) % numTranslations
+              : (selectedHelperElementIndex - 1 + numTranslations) %
+                numTranslations;
 
-    // On Ctrl + Shift + Backspace, clear the content.
-    if (key === 8 && event.ctrlKey && event.shiftKey && !event.altKey) {
-      event.preventDefault();
-      clearEditorFn();
-    }
+          dispatch(selectHelperElementIndex(nextIdx));
 
-    // On Ctrl + Shift + Up/Down, copy next/previous entry from active
-    // helper tab (Machinery or Locales) into translation.
-    if (event.ctrlKey && event.shiftKey && !event.altKey) {
-      if (key !== 38 && key !== 40) {
-        return;
-      }
-
-      const isMachinery = editorState.selectedHelperTabIndex === 0;
-      const numTranslations = isMachinery
-        ? machineryTranslations.length + concordanceSearchResults.length
-        : otherLocaleTranslations.length;
-
-      if (numTranslations === 0) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const currentIdx = editorState.selectedHelperElementIndex;
-      const nextIdx =
-        key === 40
-          ? (currentIdx + 1) % numTranslations
-          : (currentIdx - 1 + numTranslations) % numTranslations;
-
-      dispatch(editor.actions.selectHelperElementIndex(nextIdx));
-
-      if (isMachinery) {
-        const len = machineryTranslations.length;
-        const newTranslation =
-          nextIdx < len
-            ? machineryTranslations[nextIdx]
-            : concordanceSearchResults[nextIdx - len];
-        copyMachineryTranslation(newTranslation);
-      } else {
-        copyOtherLocaleTranslation(otherLocaleTranslations[nextIdx]);
-      }
+          if (isMachinery) {
+            const len = machineryTranslations.length;
+            const newTranslation =
+              nextIdx < len
+                ? machineryTranslations[nextIdx]
+                : concordanceSearchResults[nextIdx - len];
+            copyMachineryTranslation(newTranslation);
+          } else {
+            copyOtherLocaleTranslation(otherLocaleTranslations[nextIdx]);
+          }
+        }
+        break;
     }
   };
 }

@@ -1,17 +1,15 @@
+import type { Entry } from '@fluent/syntax';
 import NProgress from 'nprogress';
 
-import api from '~/core/api';
-
+import type { LocaleType } from '~/context/locale';
+import type { LocationType } from '~/context/location';
+import { PluralFormType } from '~/context/pluralForm';
+import api, { Entity, SourceType } from '~/core/api';
 import { actions as entitiesActions } from '~/core/entities';
 import * as notification from '~/core/notification';
-import { actions as pluralActions } from '~/core/plural';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import * as unsavedchanges from '~/modules/unsavedchanges';
-
-import type { Entity, SourceType } from '~/core/api';
-import type { LocaleType } from '~/context/locale';
-import type { Entry } from '@fluent/syntax';
 import { AppThunk } from '~/store';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
@@ -245,11 +243,10 @@ export function sendTranslation(
   entity: Entity,
   translation: string,
   locale: LocaleType,
-  pluralForm: number,
+  { pluralForm, setPluralForm }: PluralFormType,
   forceSuggestions: boolean,
   nextEntity: Entity | null | undefined,
-  router: Record<string, any>,
-  resource: string,
+  location: LocationType,
   ignoreWarnings: boolean | null | undefined,
   machinerySources: Array<SourceType>,
 ): AppThunk {
@@ -264,7 +261,7 @@ export function sendTranslation(
       pluralForm,
       entity.original,
       forceSuggestions,
-      resource,
+      location.resource,
       ignoreWarnings,
       machinerySources,
     );
@@ -308,14 +305,11 @@ export function sendTranslation(
 
       if (nextEntity) {
         // The change did work, we want to move on to the next Entity or pluralForm.
-        pluralActions.moveToNextTranslation(
-          dispatch,
-          router,
-          entity.pk,
-          nextEntity.pk,
-          pluralForm,
-          locale,
-        );
+        if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
+          setPluralForm(pluralForm + 1);
+        } else if (nextEntity.pk !== entity.pk) {
+          location.push({ entity: nextEntity.pk });
+        }
         dispatch(reset());
       }
     }

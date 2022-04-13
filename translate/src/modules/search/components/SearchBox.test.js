@@ -1,14 +1,13 @@
-import React from 'react';
 import { mount, shallow } from 'enzyme';
+import { createMemoryHistory } from 'history';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import { actions } from '~/core/navigation';
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import SearchBox, { SearchBoxBase } from './SearchBox';
-import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-
-const FILTERS = [].concat(FILTERS_STATUS, FILTERS_EXTRA);
 
 const PROJECT = {
   tags: [],
@@ -20,18 +19,6 @@ const SEARCH_AND_FILTERS = {
 };
 
 describe('<SearchBoxBase>', () => {
-  beforeAll(() => {
-    sinon.stub(actions, 'update').returns({ type: 'whatever' });
-  });
-
-  afterEach(() => {
-    actions.update.reset();
-  });
-
-  afterAll(() => {
-    actions.update.restore();
-  });
-
   it('shows a search input', () => {
     const params = {
       search: '',
@@ -48,51 +35,48 @@ describe('<SearchBoxBase>', () => {
   });
 
   it('has the correct placeholder based on parameters', () => {
-    for (let filter of FILTERS) {
-      let params;
-
-      if (FILTERS_STATUS.includes(filter)) {
-        params = { status: filter.slug };
-      } else if (FILTERS_EXTRA.includes(filter)) {
-        params = { extra: filter.slug };
-      }
-
-      const wrapper = shallow(
+    for (let { name, slug } of FILTERS_STATUS) {
+      const wrapper = mount(
         <SearchBoxBase
-          parameters={params}
+          parameters={{ status: slug }}
           project={PROJECT}
           searchAndFilters={SEARCH_AND_FILTERS}
         />,
       );
-      expect(wrapper.find('input#search').prop('placeholder')).toContain(
-        filter.name,
+      expect(wrapper.find('input#search').prop('placeholder')).toContain(name);
+    }
+
+    for (let { name, slug } of FILTERS_EXTRA) {
+      const wrapper = mount(
+        <SearchBoxBase
+          parameters={{ extra: slug }}
+          project={PROJECT}
+          searchAndFilters={SEARCH_AND_FILTERS}
+        />,
       );
+      expect(wrapper.find('input#search').prop('placeholder')).toContain(name);
     }
   });
 
   it('empties the search field after navigation parameter "search" gets removed', () => {
-    const params = {
-      search: 'search',
-    };
-    const wrapper = shallow(
+    const wrapper = mount(
       <SearchBoxBase
-        parameters={params}
+        parameters={{ search: 'search' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
       />,
     );
 
-    wrapper.setProps({
-      parameters: {
-        search: null,
-      },
-    });
+    expect(wrapper.find('input').prop('value')).toEqual('search');
 
-    expect(wrapper.state().search).toEqual('');
+    wrapper.setProps({ parameters: { search: null } });
+    wrapper.update();
+
+    expect(wrapper.find('input').prop('value')).toEqual('');
   });
 
   it('toggles a filter', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <SearchBoxBase
         parameters={{}}
         project={PROJECT}
@@ -100,41 +84,50 @@ describe('<SearchBoxBase>', () => {
       />,
     );
 
-    wrapper.setState({ statuses: { missing: false } });
-    expect(wrapper.state('statuses').missing).toBeFalsy();
+    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual(
+      [],
+    );
 
-    wrapper.instance().toggleFilter('missing', 'statuses');
-    expect(wrapper.state('statuses').missing).toBeTruthy();
+    act(() => {
+      wrapper.find('FiltersPanelBase').prop('toggleFilter')(
+        'missing',
+        'statuses',
+      );
+    });
+    wrapper.update();
+
+    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual([
+      'missing',
+    ]);
   });
 
   it('sets a single filter', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
       <SearchBoxBase
+        dispatch={() => {}}
         parameters={{}}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
 
-    wrapper.setState({
-      statuses: {
-        warnings: true,
-        errors: false,
-        missing: false,
-      },
+    act(() => {
+      const { toggleFilter, applySingleFilter } = wrapper
+        .find('FiltersPanelBase')
+        .props();
+      toggleFilter('missing', 'statuses');
+      applySingleFilter('warnings', 'statuses');
     });
-    expect(wrapper.state('statuses').warnings).toBeTruthy();
-    expect(wrapper.state('statuses').errors).toBeFalsy();
-    expect(wrapper.state('statuses').missing).toBeFalsy();
+    wrapper.update();
 
-    wrapper.instance().applySingleFilter('missing', 'statuses');
-    expect(wrapper.state('statuses').warnings).toBeFalsy();
-    expect(wrapper.state('statuses').errors).toBeFalsy();
-    expect(wrapper.state('statuses').missing).toBeTruthy();
+    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual([
+      'warnings',
+    ]);
   });
 
-  it('resets to initial statuses', () => {
-    const wrapper = shallow(
+  it('sets multiple & resets to initial statuses', () => {
+    const wrapper = mount(
       <SearchBoxBase
         parameters={{}}
         project={PROJECT}
@@ -142,146 +135,177 @@ describe('<SearchBoxBase>', () => {
       />,
     );
 
-    wrapper.setState({
-      statuses: {
-        warnings: true,
-        errors: true,
-        missing: false,
-      },
-      extras: {
-        unchanged: false,
-        rejected: true,
-      },
+    act(() => {
+      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      toggle('warnings', 'statuses');
+      toggle('rejected', 'extras');
+    });
+    wrapper.update();
+
+    act(() => {
+      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      toggle('errors', 'statuses');
+    });
+    wrapper.update();
+
+    expect(wrapper.find('FiltersPanelBase').prop('filters')).toMatchObject({
+      extras: ['rejected'],
+      statuses: ['warnings', 'errors'],
     });
 
-    wrapper.instance().resetFilters();
-    expect(wrapper.state('statuses').warnings).toBeFalsy();
-    expect(wrapper.state('statuses').errors).toBeFalsy();
-    expect(wrapper.state('statuses').missing).toBeFalsy();
-    expect(wrapper.state('extras').unchanged).toBeFalsy();
-    expect(wrapper.state('extras').rejected).toBeFalsy();
+    act(() => {
+      wrapper.find('FiltersPanelBase').prop('resetFilters')();
+    });
+    wrapper.update();
+
+    expect(wrapper.find('FiltersPanelBase').prop('filters')).toMatchObject({
+      extras: [],
+      statuses: [],
+    });
   });
 
   it('sets status to null when "all" is selected', () => {
-    const wrapper = shallow(
+    const push = sinon.spy();
+    const wrapper = mount(
       <SearchBoxBase
-        parameters={{}}
+        dispatch={(a) => (typeof a === 'function' ? a() : {})}
+        parameters={{ push }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
-        router={{}}
-        dispatch={() => {}}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
-    wrapper.setState({ statuses: { all: true } });
 
-    wrapper.instance()._update();
-    expect(
-      actions.update.calledWith(
-        {},
-        {
-          status: null,
-          extra: '',
-          tag: '',
-          time: '',
-          author: '',
-          search: '',
-        },
-      ),
-    ).toBeTruthy();
+    act(() => {
+      const apply = wrapper.find('FiltersPanelBase').prop('applySingleFilter');
+      apply('all', 'statuses');
+    });
+    wrapper.update();
+
+    expect(push.callCount).toBe(1);
+    expect(push.firstCall.args).toMatchObject([
+      {
+        author: '',
+        extra: '',
+        search: '',
+        status: null,
+        tag: '',
+        time: null,
+        entity: 0,
+      },
+    ]);
   });
 
   it('sets correct status', () => {
-    const wrapper = shallow(
+    const push = sinon.spy();
+    const wrapper = mount(
       <SearchBoxBase
-        parameters={{}}
+        dispatch={(a) => (typeof a === 'function' ? a() : {})}
+        parameters={{ push }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
-        router={{}}
-        dispatch={() => {}}
+        store={{ getState: () => ({ unsavedchanges: {} }) }}
       />,
     );
-    wrapper.setState({
-      statuses: { missing: true, warnings: true },
-      extras: { unchanged: true },
-      tags: { browser: true },
-      timeRange: { from: '111111111111', to: '111111111111' },
-      authors: { 'user@example.com': true },
-    });
 
-    wrapper.instance()._update();
+    act(() => {
+      const panel = wrapper.find('FiltersPanelBase');
+      const toggle = panel.prop('toggleFilter');
+      const setTimeRange = panel.prop('setTimeRange');
+      toggle('missing', 'statuses');
+      toggle('unchanged', 'extras');
+      toggle('browser', 'tags');
+      toggle('user@example.com', 'authors');
+      setTimeRange('111111111111-111111111111');
+    });
+    wrapper.update();
+
+    act(() => {
+      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      toggle('warnings', 'statuses');
+    });
+    wrapper.update();
+
+    const apply = wrapper.find('FiltersPanelBase').prop('applyFilters');
+    apply();
+
     expect(
-      actions.update.calledWith(
-        {},
-        {
-          status: 'missing,warnings',
-          extra: 'unchanged',
-          tag: 'browser',
-          time: '111111111111-111111111111',
-          author: 'user@example.com',
-          search: '',
-        },
-      ),
+      push.calledWith({
+        author: 'user@example.com',
+        extra: 'unchanged',
+        search: '',
+        status: 'missing,warnings',
+        tag: 'browser',
+        time: '111111111111-111111111111',
+        entity: 0,
+      }),
     ).toBeTruthy();
   });
 });
 
 describe('<SearchBox>', () => {
   it('updates the search text after a delay', () => {
+    const history = createMemoryHistory({
+      initialEntries: ['/kg/firefox/all-resources/'],
+    });
+    const spy = sinon.spy();
+    history.listen(spy);
+
     const store = createReduxStore();
-    const root = mountComponentWithStore(SearchBox, store);
-    const wrapper = root.find(SearchBoxBase);
+    const wrapper = mountComponentWithStore(SearchBox, store, {}, history);
 
-    const updateSpy = sinon.spy(actions, 'update');
-
-    const inputChanged = { currentTarget: { value: 'test' } };
-    const input = wrapper.find('input#search');
     // `simulate()` doesn't quite work in conjunction with `mount()`, so
     // invoking the `prop()` callback directly is the way to go as suggested
     // by the enzyme maintainer...
-    input.prop('onChange')(inputChanged);
+    act(() => {
+      wrapper.find('input#search').prop('onChange')({
+        currentTarget: { value: 'test' },
+      });
+    });
+    wrapper.update();
 
+    //console.log(wrapper.find('input#search').props())
     // The state has been updated correctly...
-    expect(wrapper.state().search).toEqual('test');
+    expect(wrapper.find('input#search').prop('value')).toEqual('test');
 
     // ... but it wasn't propagated to the global redux store yet.
-    expect(updateSpy.calledOnce).toBeFalsy();
+    expect(spy.callCount).toBe(0);
 
     // Wait until Enter is pressed.
-    const enterPressed = { keyCode: 13 };
-    input.simulate('keydown', enterPressed);
-    expect(updateSpy.calledOnce).toBeTruthy();
+    wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
+
+    expect(spy.callCount).toBe(1);
+    expect(spy.firstCall.args).toMatchObject([
+      {
+        pathname: '/kg/firefox/all-resources/',
+        search: '?search=test',
+        hash: '',
+      },
+      'PUSH',
+    ]);
   });
 
   it('puts focus on the search input on Ctrl + Shift + F', () => {
-    // Simulating the key presses on `document`.
-    // See https://github.com/airbnb/enzyme/issues/426
-    const eventsMap = {};
-    document.addEventListener = sinon.spy((event, cb) => {
-      eventsMap[event] = cb;
-    });
-
-    const params = {
-      search: '',
-    };
     const wrapper = mount(
       <SearchBoxBase
-        parameters={params}
+        parameters={{ search: '' }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
       />,
     );
-    const searchInput = wrapper.instance().searchInput;
 
-    const focusMock = sinon.spy(searchInput.current, 'focus');
-    expect(focusMock.calledOnce).toBeFalsy();
-    const event = {
-      preventDefault: sinon.spy(),
-      keyCode: 70, // Up
-      altKey: false,
-      ctrlKey: true,
-      shiftKey: true,
-    };
-    eventsMap.keydown(event);
+    const focusMock = sinon.spy(
+      wrapper.find('input#search').instance(),
+      'focus',
+    );
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        code: 'KeyF',
+        ctrlKey: true,
+        shiftKey: true,
+      }),
+    );
+
     expect(focusMock.calledOnce).toBeTruthy();
   });
 });

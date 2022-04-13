@@ -5,9 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { push } from 'connected-react-router';
 
 import { Locale } from '~/context/locale';
+import { Location, LocationType } from '~/context/location';
+import {
+  PluralFormType,
+  usePluralForm,
+  useTranslationForEntity,
+} from '~/context/pluralForm';
 import type { Entity } from '~/core/api';
 import { addComment } from '~/core/comments/actions';
 import {
@@ -20,61 +25,57 @@ import {
   updateSelection,
 } from '~/core/editor/actions';
 import {
-  getNextEntity,
-  getPreviousEntity,
-  getSelectedEntity,
-  isReadOnlyEditor,
-} from '~/core/entities/selectors';
-import type { NavigationParams } from '~/core/navigation';
-import { updateEntity } from '~/core/navigation/actions';
-import { getNavigationParams } from '~/core/navigation/selectors';
+  useNextEntity,
+  usePreviousEntity,
+  useSelectedEntity,
+} from '~/core/entities/hooks';
 import { add as addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import {
-  getPluralForm,
-  getTranslationStringForSelectedEntity,
-} from '~/core/plural/selectors';
 import { NAME as TERMS, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { NAME as USER, UserState } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { History, NAME as HISTORY } from '~/modules/history';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import {
+  ChangeOperation,
+  History,
+  HistoryState,
+  NAME as HISTORY,
+} from '~/modules/history';
 import {
   deleteTranslation,
   get as getHistory,
   request as requestHistory,
   updateStatus,
 } from '~/modules/history/actions';
-import { NAME as MACHINERY } from '~/modules/machinery';
+import { MachineryState, NAME as MACHINERY } from '~/modules/machinery';
 import {
   get as getMachinery,
   getConcordanceSearchResults,
   resetSearch,
   setEntity,
 } from '~/modules/machinery/actions';
-import { NAME as OTHERLOCALES } from '~/modules/otherlocales';
+import { LocalesState, NAME as OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
-import { NAME as TEAM_COMMENTS } from '~/modules/teamcomments';
-import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
-import type { ChangeOperation, HistoryState } from '~/modules/history';
-import type { MachineryState } from '~/modules/machinery';
-import type { LocalesState } from '~/modules/otherlocales';
-import type { TeamCommentState } from '~/modules/teamcomments';
+import {
+  NAME as TEAM_COMMENTS,
+  TeamCommentState,
+} from '~/modules/teamcomments';
 import {
   get as getTeamComments,
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
+import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
-import EntityNavigation from './EntityNavigation';
+import './EntityDetails.css';
+import { EntityNavigation } from './EntityNavigation';
 import Helpers from './Helpers';
 import Metadata from './Metadata';
-
-import './EntityDetails.css';
 
 type Props = {
   activeTranslationString: string;
@@ -86,9 +87,8 @@ type Props = {
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
-  parameters: NavigationParams;
-  pluralForm: number;
-  router: Record<string, any>;
+  parameters: LocationType;
+  pluralForm: PluralFormType;
   selectedEntity?: Entity;
   user: UserState;
 };
@@ -115,8 +115,7 @@ export function EntityDetailsBase({
   teamComments,
   terms,
   parameters,
-  pluralForm,
-  router,
+  pluralForm: { pluralForm, setPluralForm },
   selectedEntity,
   store,
   user,
@@ -266,11 +265,11 @@ export function EntityDetailsBase({
 
     dispatch(
       checkUnsavedChanges(exist, ignored, () => {
-        dispatch(updateEntity(router, nextEntity?.pk.toString() ?? ''));
+        parameters.push({ entity: nextEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
     );
-  }, [dispatch, nextEntity, router, store]);
+  }, [dispatch, parameters, nextEntity, store]);
 
   const goToPreviousEntity = useCallback(() => {
     const state = store.getState();
@@ -278,11 +277,11 @@ export function EntityDetailsBase({
 
     dispatch(
       checkUnsavedChanges(exist, ignored, () => {
-        dispatch(updateEntity(router, previousEntity?.pk.toString() ?? ''));
+        parameters.push({ entity: previousEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
     );
-  }, [dispatch, previousEntity, router, store]);
+  }, [dispatch, parameters, previousEntity, store]);
 
   const navigateToPath = useCallback(
     (path: string) => {
@@ -290,12 +289,10 @@ export function EntityDetailsBase({
       const { exist, ignored } = state[UNSAVED_CHANGES];
 
       dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
-          dispatch(push(path));
-        }),
+        checkUnsavedChanges(exist, ignored, () => parameters.push(path)),
       );
     },
-    [dispatch, store],
+    [dispatch, parameters, store],
   );
 
   const updateEditorTranslation = useCallback(
@@ -349,11 +346,10 @@ export function EntityDetailsBase({
               change,
               selectedEntity,
               locale,
-              parameters.resource,
-              pluralForm,
+              { pluralForm, setPluralForm },
               translationId,
               nextEntity,
-              router,
+              parameters,
             ),
           );
         }),
@@ -365,7 +361,6 @@ export function EntityDetailsBase({
       nextEntity,
       parameters,
       pluralForm,
-      router,
       selectedEntity,
       store,
     ],
@@ -438,22 +433,20 @@ export function EntityDetailsBase({
 export default function EntityDetails(): React.ReactElement<
   typeof EntityDetailsBase
 > {
+  const entity = useSelectedEntity();
   const state = {
-    activeTranslationString: useAppSelector(
-      getTranslationStringForSelectedEntity,
-    ),
+    activeTranslationString: useTranslationForEntity(entity)?.string ?? '',
     history: useAppSelector((state) => state[HISTORY]),
-    isReadOnlyEditor: useAppSelector(isReadOnlyEditor),
+    isReadOnlyEditor: useReadonlyEditor(),
     machinery: useAppSelector((state) => state[MACHINERY]),
-    nextEntity: useAppSelector(getNextEntity),
-    previousEntity: useAppSelector(getPreviousEntity),
+    nextEntity: useNextEntity(),
+    previousEntity: usePreviousEntity(),
     otherlocales: useAppSelector((state) => state[OTHERLOCALES]),
     teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
     terms: useAppSelector((state) => state[TERMS]),
-    parameters: useAppSelector(getNavigationParams),
-    pluralForm: useAppSelector(getPluralForm),
-    router: useAppSelector((state) => state.router),
-    selectedEntity: useAppSelector(getSelectedEntity),
+    parameters: useContext(Location),
+    pluralForm: usePluralForm(entity),
+    selectedEntity: entity,
     user: useAppSelector((state) => state[USER]),
   };
   return (

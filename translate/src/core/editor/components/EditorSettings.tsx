@@ -1,19 +1,14 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useCallback, useRef, useState } from 'react';
 
+import type { Settings } from '~/core/user';
 import { useOnDiscard } from '~/core/utils';
 
 import './EditorSettings.css';
 
-import type { Settings } from '~/core/user';
-
 type Props = {
   settings: Settings;
   updateSetting: (name: keyof Settings, value: boolean) => void;
-};
-
-type State = {
-  visible: boolean;
 };
 
 type EditorSettingsProps = {
@@ -27,7 +22,7 @@ export function EditorSettings({
   toggleSetting,
   onDiscard,
 }: EditorSettingsProps): React.ReactElement<'ul'> {
-  const ref = React.useRef(null);
+  const ref = useRef(null);
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -77,48 +72,37 @@ export function EditorSettings({
 /*
  * Renders settings to be used to customize interactions with the Editor.
  */
-export default class EditorSettingsBase extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-  }
+export default function EditorSettingsBase({
+  settings,
+  updateSetting,
+}: Props): React.ReactElement<'div'> {
+  const [visible, setVisible] = useState(false);
+  const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
+  const handleDiscard = useCallback(() => setVisible(false), []);
 
-  toggleVisibility: () => void = () => {
-    this.setState((state) => {
-      return { visible: !state.visible };
-    });
-  };
+  const toggleSetting = useCallback(
+    (name: keyof Settings) => {
+      updateSetting(name, !settings[name]);
+      toggleVisible();
+    },
+    [settings, updateSetting],
+  );
 
-  handleDiscard: () => void = () => {
-    this.setState({
-      visible: false,
-    });
-  };
+  return (
+    <div className='editor-settings'>
+      <div
+        className='selector fa fa-cog'
+        title='Settings'
+        onClick={toggleVisible}
+      />
 
-  toggleSetting(name: keyof Settings) {
-    this.props.updateSetting(name, !this.props.settings[name]);
-    this.toggleVisibility();
-  }
-
-  render(): React.ReactElement<'div'> {
-    return (
-      <div className='editor-settings'>
-        <div
-          className='selector fa fa-cog'
-          title='Settings'
-          onClick={this.toggleVisibility}
+      {visible && (
+        <EditorSettings
+          settings={settings}
+          toggleSetting={toggleSetting}
+          onDiscard={handleDiscard}
         />
-
-        {this.state.visible && (
-          <EditorSettings
-            settings={this.props.settings}
-            toggleSetting={this.toggleSetting.bind(this)}
-            onDiscard={this.handleDiscard}
-          />
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
