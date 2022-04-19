@@ -81,7 +81,7 @@ export function get(entity: number, locale: string, pluralForm: number) {
 
     const content = await api.entity.getHistory(entity, locale, pluralForm);
 
-    dispatch(receive(content));
+    dispatch(receive(content as HistoryTranslation[]));
   };
 }
 
