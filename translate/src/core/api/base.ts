@@ -75,10 +75,12 @@ export default class APIBase {
       return await response.json();
     } catch (e) {
       // Catch non-JSON responses
-      /* eslint-disable no-console */
-      console.error('The response content is not JSON-compatible');
-      console.error(`URL: ${url} - Method: ${method}`);
-      console.error(e);
+      if (!(e instanceof Error) || e.name !== 'AbortError') {
+        /* eslint-disable no-console */
+        console.error('The response content is not JSON-compatible');
+        console.error(`URL: ${url} - Method: ${method}`);
+        console.error(e);
+      }
 
       return {};
     }
