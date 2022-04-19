@@ -118,7 +118,7 @@ export default class EntityAPI extends APIBase {
     entity: number,
     locale: string,
     pluralForm: number = -1,
-  ): Promise<any> {
+  ): Promise<unknown[]> {
     const payload = new URLSearchParams();
     payload.append('entity', entity.toString());
     payload.append('locale', locale);
@@ -129,7 +129,8 @@ export default class EntityAPI extends APIBase {
 
     const results = await this.fetch('/get-history/', 'GET', payload, headers);
 
-    return this.keysToCamelCase(results);
+    // On error or abort, fetch() returns an empty object
+    return Array.isArray(results) ? this.keysToCamelCase(results) : [];
   }
 
   async getSiblingEntities(entity: number, locale: string): Promise<any> {
