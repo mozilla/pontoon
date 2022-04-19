@@ -300,7 +300,7 @@ describe('<SearchBox>', () => {
     );
     document.dispatchEvent(
       new KeyboardEvent('keydown', {
-        code: 'KeyF',
+        key: 'F',
         ctrlKey: true,
         shiftKey: true,
       }),
