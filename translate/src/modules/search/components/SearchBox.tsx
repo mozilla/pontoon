@@ -103,7 +103,7 @@ export function SearchBoxBase({
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
       // On Ctrl + Shift + F, set focus on the search input.
-      if (ev.code === 'KeyF' && !ev.altKey && ev.ctrlKey && ev.shiftKey) {
+      if (ev.key === 'F' && !ev.altKey && ev.ctrlKey && ev.shiftKey) {
         ev.preventDefault();
         searchInput.current?.focus();
       }
