@@ -63,8 +63,7 @@ export default function useHandleShortcuts(): (
     clearEditorCustom?: () => void,
     copyOriginalIntoEditorCustom?: () => void,
   ) => {
-    // FIXME: When updating to react@17, use ev.code
-    switch (ev.nativeEvent.code) {
+    switch (ev.key) {
       // On Enter:
       //   - If unsaved changes popup is shown, proceed.
       //   - If failed checks popup is shown after approving a translation, approve it anyway.
@@ -106,7 +105,7 @@ export default function useHandleShortcuts(): (
         break;
 
       // On Ctrl + Shift + C, copy the original translation.
-      case 'KeyC':
+      case 'C':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
           ev.preventDefault();
           (copyOriginalIntoEditorCustom || copyOriginalIntoEditor)();
@@ -138,8 +137,7 @@ export default function useHandleShortcuts(): (
           ev.preventDefault();
 
           const nextIdx =
-            // FIXME: When updating to react@17, use ev.code
-            ev.nativeEvent.code === 'ArrowDown'
+            ev.key === 'ArrowDown'
               ? (selectedHelperElementIndex + 1) % numTranslations
               : (selectedHelperElementIndex - 1 + numTranslations) %
                 numTranslations;
