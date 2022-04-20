@@ -20,24 +20,34 @@ export function ProjectInfo({
   const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
   const handleDiscard = useCallback(() => setVisible(false), []);
 
-  const ref = useRef<HTMLElement>(null);
-  useOnDiscard(ref, handleDiscard);
-
   return fetching || !info ? null : (
     <div className='project-info'>
       <div className='button' onClick={toggleVisible}>
         <span className='fa fa-info'></span>
       </div>
-      {visible ? (
-        <aside ref={ref} className='panel'>
-          <Localized id='projectinfo-ProjectInfo--project-info-title'>
-            <h2>PROJECT INFO</h2>
-          </Localized>
-          {/* We can safely use project.info because it is validated by
-              bleach before being saved into the database. */}
-          <p dangerouslySetInnerHTML={{ __html: info }} />
-        </aside>
-      ) : null}
+      {visible && <ProjectInfoPanel info={info} onDiscard={handleDiscard} />}
     </div>
+  );
+}
+
+function ProjectInfoPanel({
+  info,
+  onDiscard,
+}: {
+  info: string;
+  onDiscard: () => void;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  useOnDiscard(ref, onDiscard);
+
+  return (
+    <aside ref={ref} className='panel'>
+      <Localized id='projectinfo-ProjectInfo--project-info-title'>
+        <h2>PROJECT INFO</h2>
+      </Localized>
+      {/* We can safely use project.info because it is validated
+          by bleach before being saved into the database. */}
+      <p dangerouslySetInnerHTML={{ __html: info }} />
+    </aside>
   );
 }

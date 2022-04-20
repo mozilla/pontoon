@@ -17,7 +17,7 @@ describe('<ProjectInfo>', () => {
     const wrapper = shallow(<ProjectInfo project={PROJECT} />);
     wrapper.find('.button').simulate('click');
 
-    expect(wrapper.find('aside').exists()).toBeTruthy();
+    expect(wrapper.find('ProjectInfoPanel').exists()).toBeTruthy();
   });
 
   it('returns null when data is being fetched', () => {
@@ -41,6 +41,8 @@ describe('<ProjectInfo>', () => {
     );
     wrapper.find('.button').simulate('click');
 
-    expect(wrapper.find('p').html()).toContain(PREVALIDATED_HTML);
+    expect(wrapper.find('ProjectInfoPanel').html()).toContain(
+      PREVALIDATED_HTML,
+    );
   });
 });
