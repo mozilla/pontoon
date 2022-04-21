@@ -26,7 +26,9 @@ class Command(BaseCommand):
             else:
                 continue
 
-            self.stdout.write(f"Sending target date notifications for project {project}.")
+            self.stdout.write(
+                f"Sending target date notifications for project {project}."
+            )
 
             is_project_public = project.visibility == Project.Visibility.PUBLIC
             verb = f"due in {days_left} days"
