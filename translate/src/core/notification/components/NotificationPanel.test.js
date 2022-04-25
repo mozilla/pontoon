@@ -1,7 +1,8 @@
+import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 
-import NotificationPanel from './NotificationPanel';
+import { NotificationPanel } from './NotificationPanel';
 
 describe('<NotificationPanel>', () => {
   const EMPTY_NOTIF = {
@@ -29,25 +30,28 @@ describe('<NotificationPanel>', () => {
     jest.useFakeTimers();
 
     // Create a NotificationPanel with no message.
-    const wrapper = shallow(<NotificationPanel notification={EMPTY_NOTIF} />);
+    const wrapper = mount(<NotificationPanel notification={EMPTY_NOTIF} />);
 
     expect(wrapper.find('span').text()).toEqual('');
 
     // Add a message to the NotificationPanel, that message is shown.
     wrapper.setProps({ notification: NOTIF });
+    wrapper.update();
 
     expect(wrapper.find('span').text()).toEqual(NOTIF.message.content);
     expect(wrapper.find('.showing')).toHaveLength(1);
 
     // Run time forward, the message with disappear.
-    jest.runAllTimers();
+    act(() => jest.runAllTimers());
+    wrapper.update();
 
     expect(wrapper.children()).toHaveLength(1);
     expect(wrapper.find('.showing')).toHaveLength(0);
   });
 
   it('hides a message on click', () => {
-    const wrapper = shallow(<NotificationPanel notification={NOTIF} />);
+    const wrapper = mount(<NotificationPanel notification={NOTIF} />);
+    wrapper.update();
 
     expect(wrapper.find('.showing')).toHaveLength(1);
     wrapper.simulate('click');

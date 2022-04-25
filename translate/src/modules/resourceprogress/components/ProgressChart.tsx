@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import './ProgressChart.css';
 
@@ -12,99 +12,64 @@ type Props = {
 /**
  * Render current resource progress data on canvas.
  */
-export default class ProgressChart extends React.Component<Props> {
-  canvas: { current: HTMLCanvasElement | null };
+export function ProgressChart({
+  size,
+  stats,
+}: Props): React.ReactElement<'canvas'> {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const dpr = window.devicePixelRatio || 1;
 
-  constructor(props: Props) {
-    super(props);
-    this.canvas = React.createRef();
-  }
-
-  componentDidMount() {
-    this.setUpCanvas();
-    this.drawCanvas();
-  }
-
-  componentDidUpdate() {
-    this.drawCanvas();
-  }
-
-  setUpCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    const canvas = this.canvas.current;
-
-    if (!canvas) {
-      return;
+  useEffect(() => {
+    if (canvas.current) {
+      const { height, width } = canvas.current;
+      // Set up canvas to be HiDPI display ready
+      canvas.current.style.width = width + 'px';
+      canvas.current.style.height = height + 'px';
+      canvas.current.width = width * dpr;
+      canvas.current.height = height * dpr;
     }
+  }, [dpr]);
 
-    // Set up canvas to be HiDPI display ready
-    canvas.style.width = canvas.width + 'px';
-    canvas.style.height = canvas.height + 'px';
-    canvas.width = canvas.width * dpr;
-    canvas.height = canvas.height * dpr;
-  }
+  useEffect(() => {
+    const { approved, pretranslated, warnings, errors, missing, total } = stats;
 
-  drawCanvas() {
-    const { approved, pretranslated, warnings, errors, missing, total } =
-      this.props.stats;
-    const dpr = window.devicePixelRatio || 1;
-    const canvas = this.canvas.current;
-    if (!canvas) return;
-
-    const context = canvas.getContext('2d');
+    if (!canvas.current || !total) return;
+    const { height, width } = canvas.current;
+    const context = canvas.current.getContext('2d');
     if (!context) return;
 
     const data = [
-      {
-        type: total ? approved / total : 0,
-        color: '#7BC876',
-      },
-      {
-        type: total ? pretranslated / total : 0,
-        color: '#C0FF00',
-      },
-      {
-        type: total ? warnings / total : 0,
-        color: '#FFA10F',
-      },
-      {
-        type: total ? errors / total : 0,
-        color: '#F36',
-      },
-      {
-        type: total ? missing / total : 0,
-        color: '#5F7285',
-      },
+      { type: approved, color: '#7BC876' },
+      { type: pretranslated, color: '#C0FF00' },
+      { type: warnings, color: '#FFA10F' },
+      { type: errors, color: '#F36' },
+      { type: missing, color: '#5F7285' },
     ];
 
     // Clear old canvas content to avoid aliasing
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, width, height);
     context.lineWidth = 3 * dpr;
 
-    const x = canvas.width / 2;
-    const y = canvas.height / 2;
-    const radius = (canvas.width - context.lineWidth) / 2;
-    let end = -0.5;
+    // Range: -0.25 .. 0.75
+    let end = -0.25;
 
-    data.forEach((item) => {
-      const length = item.type * 2;
+    const radius = (width - context.lineWidth) / 2;
+    for (const { color, type } of data) {
       const start = end;
-      end = start + length;
+      end += type / total;
 
       context.beginPath();
-      context.arc(x, y, radius, start * Math.PI, end * Math.PI);
-      context.strokeStyle = item.color;
+      context.arc(
+        width / 2,
+        height / 2,
+        radius,
+        start * 2 * Math.PI,
+        end * 2 * Math.PI,
+      );
+      context.strokeStyle = color;
       context.stroke();
-    });
-  }
+    }
+  }, [stats]);
 
-  render(): React.ReactElement<'canvas'> {
-    return (
-      <canvas
-        ref={this.canvas}
-        height={this.props.size}
-        width={this.props.size}
-      />
-    );
-  }
+  return <canvas ref={canvas} height={size} width={size} />;
 }

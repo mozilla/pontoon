@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { UnsavedChangesBase } from './UnsavedChanges';
 
-import { actions } from '..';
+import * as actions from '../actions';
 
 describe('<UnsavedChangesBase>', () => {
   beforeAll(() => {

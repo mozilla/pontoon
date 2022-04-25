@@ -1,10 +1,10 @@
 import NProgress from 'nprogress';
 
 import api from '~/core/api';
-import * as notification from '~/core/notification';
-import * as history from '~/modules/history';
-import * as teamcomments from '~/modules/teamcomments';
-
+import { addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
+import { get as getHistory } from '~/modules/history/actions';
+import { get as getTeamComments } from '~/modules/teamcomments/actions';
 import type { AppDispatch } from '~/store';
 
 export function addComment(
@@ -19,11 +19,11 @@ export function addComment(
 
     await api.comment.add(entity, locale, comment, translation);
 
-    dispatch(notification.actions.add(notification.messages.COMMENT_ADDED));
+    dispatch(addNotification(notificationMessages.COMMENT_ADDED));
     if (translation) {
-      dispatch(history.actions.get(entity, locale, pluralForm));
+      dispatch(getHistory(entity, locale, pluralForm));
     } else {
-      dispatch(teamcomments.actions.get(entity, locale));
+      dispatch(getTeamComments(entity, locale));
     }
 
     NProgress.done();

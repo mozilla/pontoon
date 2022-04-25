@@ -1,17 +1,10 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { LocalizationProvider } from '@fluent/react';
+import React, { useEffect, useState } from 'react';
+import { LocalizationProvider, ReactLocalization } from '@fluent/react';
 
-import * as l10n from '~/core/l10n';
-import { AppDispatch, RootState } from '~/store';
+import { getLocalization } from '../getLocalization';
 
 type Props = {
-  l10n: l10n.L10nState;
-};
-
-type InternalProps = Props & {
   children: React.ReactNode;
-  dispatch: AppDispatch;
 };
 
 /**
@@ -20,40 +13,22 @@ type InternalProps = Props & {
  * This Component is in charge of fetching translations for the application's
  * context and providing them to the underlying Localized elements.
  *
- * Until the translations are received, a loader is displayed.
+ * Until the translations are received, `localization.parseMarkup === null` is true.
  */
-export class AppLocalizationProviderBase extends React.Component<InternalProps> {
-  componentDidMount() {
-    // By default, we want to use the user's browser preferences to choose
-    // which locales to fetch and show.
-    let locales = navigator.languages;
+export function AppLocalizationProvider({
+  children,
+}: Props): React.ReactElement {
+  const [localization, setLocalization] = useState<ReactLocalization>(
+    () => new ReactLocalization([], null),
+  );
 
-    // However, if the user has chosen a specific locale, we want to
-    // fetch and show that instead.
-    // We use the `<html lang="">` attribute in the index.html file
-    // to pass the user defined locale if there is one.
-    if (document.documentElement && document.documentElement.lang) {
-      locales = [document.documentElement.lang];
-    }
+  useEffect(() => {
+    const lang = document.documentElement?.lang;
+    const locales = lang ? [lang] : navigator.languages;
+    getLocalization(locales).then(setLocalization);
+  }, []);
 
-    this.props.dispatch(l10n.actions.get(locales));
-  }
-
-  render(): React.ReactElement<React.ElementType> {
-    const { children, l10n } = this.props;
-
-    return (
-      <LocalizationProvider l10n={l10n.localization}>
-        {children}
-      </LocalizationProvider>
-    );
-  }
+  return (
+    <LocalizationProvider l10n={localization}>{children}</LocalizationProvider>
+  );
 }
-
-const mapStateToProps = (state: RootState): Props => {
-  return {
-    l10n: state[l10n.NAME],
-  };
-};
-
-export default connect(mapStateToProps)(AppLocalizationProviderBase) as any;

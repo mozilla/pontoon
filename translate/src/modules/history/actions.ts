@@ -6,7 +6,8 @@ import type { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
 import { actions as entitiesActions } from '~/core/entities';
-import * as notification from '~/core/notification';
+import { addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import type { AppDispatch } from '~/store';
@@ -111,26 +112,26 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
   if (success) {
     switch (change) {
       case 'approve':
-        return notification.messages.TRANSLATION_APPROVED;
+        return notificationMessages.TRANSLATION_APPROVED;
       case 'unapprove':
-        return notification.messages.TRANSLATION_UNAPPROVED;
+        return notificationMessages.TRANSLATION_UNAPPROVED;
       case 'reject':
-        return notification.messages.TRANSLATION_REJECTED;
+        return notificationMessages.TRANSLATION_REJECTED;
       case 'unreject':
-        return notification.messages.TRANSLATION_UNREJECTED;
+        return notificationMessages.TRANSLATION_UNREJECTED;
       default:
         throw new Error('Unexpected translation status change: ' + change);
     }
   } else {
     switch (change) {
       case 'approve':
-        return notification.messages.UNABLE_TO_APPROVE_TRANSLATION;
+        return notificationMessages.UNABLE_TO_APPROVE_TRANSLATION;
       case 'unapprove':
-        return notification.messages.UNABLE_TO_UNAPPROVE_TRANSLATION;
+        return notificationMessages.UNABLE_TO_UNAPPROVE_TRANSLATION;
       case 'reject':
-        return notification.messages.UNABLE_TO_REJECT_TRANSLATION;
+        return notificationMessages.UNABLE_TO_REJECT_TRANSLATION;
       case 'unreject':
-        return notification.messages.UNABLE_TO_UNREJECT_TRANSLATION;
+        return notificationMessages.UNABLE_TO_UNREJECT_TRANSLATION;
       default:
         throw new Error('Unexpected translation status change: ' + change);
     }
@@ -166,7 +167,7 @@ export function updateStatus(
     } else {
       // Show a notification to explain what happened.
       const notif = _getOperationNotif(change, !!results.translation);
-      dispatch(notification.actions.add(notif));
+      dispatch(addNotification(notif));
 
       if (results.translation && change === 'approve' && nextEntity) {
         // The change did work, we want to move on to the next Entity or pluralForm.
@@ -222,15 +223,11 @@ export function deleteTranslation(
     const results = await api.translation.delete(translation);
 
     if (results.status) {
-      dispatch(
-        notification.actions.add(notification.messages.TRANSLATION_DELETED),
-      );
+      dispatch(addNotification(notificationMessages.TRANSLATION_DELETED));
       dispatch(get(entity, locale, pluralForm));
     } else {
       dispatch(
-        notification.actions.add(
-          notification.messages.UNABLE_TO_DELETE_TRANSLATION,
-        ),
+        addNotification(notificationMessages.UNABLE_TO_DELETE_TRANSLATION),
       );
     }
 

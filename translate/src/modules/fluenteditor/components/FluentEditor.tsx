@@ -9,8 +9,8 @@ import {
   update as updateEditor,
 } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { messages as notificationMessages } from '~/core/notification';
-import { add as addNotification } from '~/core/notification/actions';
+import { addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
 import { fluent } from '~/core/utils';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 import { useAppDispatch, useAppSelector } from '~/hooks';

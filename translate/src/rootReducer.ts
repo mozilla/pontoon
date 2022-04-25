@@ -1,7 +1,5 @@
 import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
-import * as lightbox from '~/core/lightbox';
-import * as l10n from '~/core/l10n';
 import * as notification from '~/core/notification';
 import * as project from '~/core/project';
 import * as resource from '~/core/resource';
@@ -21,8 +19,6 @@ export const reducer = {
   // Core modules
   [editor.NAME]: editor.reducer,
   [entities.NAME]: entities.reducer,
-  [lightbox.NAME]: lightbox.reducer,
-  [l10n.NAME]: l10n.reducer,
   [notification.NAME]: notification.reducer,
   [project.NAME]: project.reducer,
   [resource.NAME]: resource.reducer,
