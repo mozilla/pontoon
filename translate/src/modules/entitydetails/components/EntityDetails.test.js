@@ -199,8 +199,9 @@ describe('<EntityDetailsBase>', () => {
 describe.skip('<EntityDetails>', () => {
   const hasFetch = typeof fetch === 'function';
   beforeAll(() => {
-    if (!hasFetch)
+    if (!hasFetch) {
       global.fetch = (url) => Promise.reject(new Error(`Mock fetch: ${url}`));
+    }
     sinon.stub(React, 'useContext').returns(LOCATION);
     sinon.stub(editorActions, 'update').returns({ type: 'whatever' });
     sinon.stub(historyActions, 'updateStatus').returns({ type: 'whatever' });
@@ -211,7 +212,9 @@ describe.skip('<EntityDetails>', () => {
   });
 
   afterAll(() => {
-    if (!hasFetch) delete global.fetch;
+    if (!hasFetch) {
+      delete global.fetch;
+    }
     React.useContext.restore();
     editorActions.update.restore();
     historyActions.updateStatus.restore();

@@ -133,7 +133,9 @@ export function SearchBoxBase({
     // This is not in the `updateFiltersFromURLParams` method because we want to
     // do this *only* on mount. The behavior is slightly different on update.
     if (mounted.current) {
-      if (parameters.search == null) setSearch('');
+      if (parameters.search == null) {
+        setSearch('');
+      }
     } else {
       setSearch(parameters.search ?? '');
       mounted.current = true;
@@ -144,8 +146,11 @@ export function SearchBoxBase({
     (value: string, filter: FilterType) => {
       const next = [...filters[filter]];
       const prev = next.indexOf(value);
-      if (prev === -1) next.push(value);
-      else next.splice(prev, 1);
+      if (prev === -1) {
+        next.push(value);
+      } else {
+        next.splice(prev, 1);
+      }
       updateFilters([{ filter, value: next }]);
     },
     [filters],
@@ -165,8 +170,11 @@ export function SearchBoxBase({
     (value: string, filter: FilterType | 'timeRange') => {
       resetFilters();
       applyOnChange.current = true;
-      if (filter === 'timeRange') setTimeRange(value);
-      else updateFilters([{ filter, value }]);
+      if (filter === 'timeRange') {
+        setTimeRange(value);
+      } else {
+        updateFilters([{ filter, value }]);
+      }
     },
     [],
   );
@@ -185,7 +193,9 @@ export function SearchBoxBase({
         const { authors, extras, statuses, tags } = filters;
 
         let status: string | null = statuses.join(',');
-        if (status === 'all') status = null;
+        if (status === 'all') {
+          status = null;
+        }
 
         dispatch(resetEntities());
         dispatch(resetEditor());
@@ -213,16 +223,29 @@ export function SearchBoxBase({
     const { authors, extras, statuses, tags } = filters;
 
     const selected: string[] = [];
-    for (const { name, slug } of FILTERS_STATUS)
-      if (statuses.includes(slug)) selected.push(name);
-    for (const { name, slug } of FILTERS_EXTRA)
-      if (extras.includes(slug)) selected.push(name);
-    for (const { name, slug } of project.tags)
-      if (tags.includes(slug)) selected.push(name);
-    if (timeRange) selected.push('Time Range');
-    for (const { display_name, email } of searchAndFilters.authors)
-      if (authors.includes(email))
+    for (const { name, slug } of FILTERS_STATUS) {
+      if (statuses.includes(slug)) {
+        selected.push(name);
+      }
+    }
+    for (const { name, slug } of FILTERS_EXTRA) {
+      if (extras.includes(slug)) {
+        selected.push(name);
+      }
+    }
+    for (const { name, slug } of project.tags) {
+      if (tags.includes(slug)) {
+        selected.push(name);
+      }
+    }
+    if (timeRange) {
+      selected.push('Time Range');
+    }
+    for (const { display_name, email } of searchAndFilters.authors) {
+      if (authors.includes(email)) {
         selected.push(`${display_name}'s translations`);
+      }
+    }
 
     const str = selected.length > 0 ? selected.join(', ') : 'All';
     return `Search in ${str}`;
@@ -245,7 +268,9 @@ export function SearchBoxBase({
         onChange={(ev) => setSearch(ev.currentTarget.value)}
         onFocus={() => dispatch(setFocus(true))}
         onKeyDown={(ev) => {
-          if (ev.key === 'Enter') applyFilters();
+          if (ev.key === 'Enter') {
+            applyFilters();
+          }
         }}
       />
       <FiltersPanel

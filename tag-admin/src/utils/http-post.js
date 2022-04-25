@@ -9,7 +9,9 @@ function asFormData(data) {
   if (data) {
     for (const [k, v] of Object.entries(data)) {
       if (Array.isArray(v)) {
-        for (const item of v) formData.append(k, item);
+        for (const item of v) {
+          formData.append(k, item);
+        }
       } else {
         formData.append(k, v);
       }

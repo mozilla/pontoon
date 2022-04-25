@@ -67,14 +67,18 @@ export const Machinery = ({
 
   const resetSearch = () => {
     searchMachinery('');
-    if (searchInput.current) searchInput.current.value = '';
+    if (searchInput.current) {
+      searchInput.current.value = '';
+    }
     setPage(1);
   };
 
   const submitForm = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPage(1);
-    if (searchInput.current) searchMachinery(searchInput.current.value);
+    if (searchInput.current) {
+      searchMachinery(searchInput.current.value);
+    }
   };
 
   const entity = machinery.searchString ? null : machinery.entity;

@@ -40,7 +40,9 @@ export function PluralFormProvider({
  */
 export function usePluralForm(entity: Entity | undefined): PluralFormType {
   let { pluralForm, setPluralForm } = useContext(PluralForm);
-  if (pluralForm === -1 && entity?.original_plural) pluralForm = 0;
+  if (pluralForm === -1 && entity?.original_plural) {
+    pluralForm = 0;
+  }
   return { pluralForm, setPluralForm };
 }
 
@@ -54,7 +56,9 @@ export function useTranslationForEntity(
   entity: Entity | undefined,
 ): EntityTranslation | undefined {
   let { pluralForm } = useContext(PluralForm);
-  if (pluralForm === -1) pluralForm = 0;
+  if (pluralForm === -1) {
+    pluralForm = 0;
+  }
   const tx = entity?.translation[pluralForm];
   return tx && !tx.rejected ? tx : undefined;
 }

@@ -130,7 +130,9 @@ export function EntityDetailsBase({
   const { entity, locale: lc, project } = parameters;
 
   const updateFailedChecks_ = useCallback(() => {
-    if (!selectedEntity) return;
+    if (!selectedEntity) {
+      return;
+    }
 
     const plural = pluralForm === -1 ? 0 : pluralForm;
     const translation = selectedEntity.translation[plural];
@@ -161,7 +163,9 @@ export function EntityDetailsBase({
    * Also fetch history data if the pluralForm changes.
    */
   const fetchHelpersData = () => {
-    if (!entity || !selectedEntity) return;
+    if (!entity || !selectedEntity) {
+      return;
+    }
 
     dispatch(resetHelperElementIndex());
 
@@ -213,7 +217,9 @@ export function EntityDetailsBase({
         updateFailedChecks_();
         fetchHelpersData();
       }
-    } else mounted.current = true;
+    } else {
+      mounted.current = true;
+    }
   }, [activeTranslationString]);
 
   const searchMachinery = useCallback(
@@ -332,7 +338,9 @@ export function EntityDetailsBase({
    */
   const updateTranslationStatus = useCallback(
     (translationId: number, change: ChangeOperation) => {
-      if (!selectedEntity) return;
+      if (!selectedEntity) {
+        return;
+      }
 
       const state = store.getState();
       const { exist, ignored } = state[UNSAVED_CHANGES];
@@ -366,7 +374,9 @@ export function EntityDetailsBase({
     ],
   );
 
-  if (!selectedEntity) return <section className='entity-details'></section>;
+  if (!selectedEntity) {
+    return <section className='entity-details'></section>;
+  }
 
   return (
     <section className='entity-details'>

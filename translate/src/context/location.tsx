@@ -81,7 +81,9 @@ function parse(
 }
 
 function stringify(prev: LocationType, next: string | Partial<LocationType>) {
-  if (typeof next === 'string') return next;
+  if (typeof next === 'string') {
+    return next;
+  }
 
   const locale = next.locale || prev.locale;
   const project = next.project || prev.project;
@@ -99,7 +101,9 @@ function stringify(prev: LocationType, next: string | Partial<LocationType>) {
     'entity',
   ] as const) {
     const value = key in next ? next[key] : prev[key];
-    if (value) params.set(key === 'entity' ? 'string' : key, String(value));
+    if (value) {
+      params.set(key === 'entity' ? 'string' : key, String(value));
+    }
   }
 
   const ps = params.toString();

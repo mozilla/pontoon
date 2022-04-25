@@ -93,7 +93,9 @@ export default function UserNotificationsMenuBase({
         unread,
       });
     }
-    if (unread) markAllNotificationsAsRead();
+    if (unread) {
+      markAllNotificationsAsRead();
+    }
   }, [markAllNotificationsAsRead, unread, visible]);
 
   return user?.isAuthenticated ? (

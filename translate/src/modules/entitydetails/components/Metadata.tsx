@@ -104,7 +104,9 @@ function ResourceComment({ comment }: { comment: string }) {
 
   useLayoutEffect(() => {
     const body = ref.current?.querySelector<HTMLDivElement>('.comment');
-    if (body && body.scrollWidth > body.offsetWidth) setOverflow(true);
+    if (body && body.scrollWidth > body.offsetWidth) {
+      setOverflow(true);
+    }
   }, []);
 
   return !comment ? null : (
@@ -154,7 +156,9 @@ function SourceObject({
   const examples: string[] = [];
   for (const [value, { example }] of Object.entries(source)) {
     // Only placeholders with examples
-    if (example) examples.push(`$${value.toUpperCase()}$: ${example}`);
+    if (example) {
+      examples.push(`$${value.toUpperCase()}$: ${example}`);
+    }
   }
 
   return (
@@ -200,15 +204,20 @@ export default function Metadata({
 
   const mounted = useRef(false);
   useEffect(() => {
-    if (mounted.current) setPopupTerms([]);
-    else mounted.current = true;
+    if (mounted.current) {
+      setPopupTerms([]);
+    } else {
+      mounted.current = true;
+    }
   }, [entity]);
 
   const handleClickOnPlaceable = useCallback(
     ({ target }: React.MouseEvent<HTMLParagraphElement>) => {
       if (target instanceof HTMLElement) {
         if (target.classList.contains('placeable')) {
-          if (isReadOnlyEditor) return;
+          if (isReadOnlyEditor) {
+            return;
+          }
           if (target.dataset['match']) {
             addTextToEditorTranslation(target.dataset['match']);
           } else if (target.firstChild instanceof Text) {

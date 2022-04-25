@@ -51,7 +51,9 @@ function serialize({ elements }: Pattern): string {
 export default function getSimplePreview(
   content: string | null | undefined,
 ): string {
-  if (!content) return '';
+  if (!content) {
+    return '';
+  }
 
   const message = parser.parseEntry(content);
   return message.type === 'Message' || message.type === 'Term'
