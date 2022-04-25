@@ -1,7 +1,6 @@
-import api from '~/core/api';
-import * as notification from '~/core/notification';
-
-import type { UsersList } from '~/core/api';
+import api, { UsersList } from '~/core/api';
+import { addNotification } from '~/core/notification/actions';
+import notificationMessages from '~/core/notification/messages';
 import type { AppThunk } from '~/store';
 
 export const RECEIVE_USERS: 'users/RECEIVE_USERS' = 'users/RECEIVE_USERS';
@@ -78,7 +77,7 @@ function _getOperationNotif(setting: keyof Settings, value: boolean) {
     CHECKS_DISABLED,
     SUGGESTIONS_ENABLED,
     SUGGESTIONS_DISABLED,
-  } = notification.messages;
+  } = notificationMessages;
   switch (setting) {
     case 'runQualityChecks':
       return value ? CHECKS_ENABLED : CHECKS_DISABLED;
@@ -100,7 +99,7 @@ export function saveSetting(
     await api.user.updateSetting(username, setting, value);
 
     const notif = _getOperationNotif(setting, value);
-    dispatch(notification.actions.add(notif));
+    dispatch(addNotification(notif));
   };
 }
 

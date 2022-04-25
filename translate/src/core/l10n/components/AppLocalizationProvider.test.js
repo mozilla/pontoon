@@ -1,56 +1,41 @@
+import { mount } from 'enzyme';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
-import { ReactLocalization } from '@fluent/react';
 
-import { createReduxStore } from '~/test/store';
-import { shallowUntilTarget } from '~/test/utils';
+import api from '~/core/api';
 
-import { actions } from '..';
-import AppLocalizationProvider, {
-  AppLocalizationProviderBase,
-} from './AppLocalizationProvider';
+import { AppLocalizationProvider } from './AppLocalizationProvider';
 
 describe('<AppLocalizationProvider>', () => {
-  beforeAll(() => {
-    const getMock = sinon.stub(actions, 'get');
-    getMock.returns({ type: 'whatever' });
-  });
+  beforeAll(() => sinon.stub(api.l10n, 'get'));
+  afterEach(() => api.l10n.get.resetHistory());
+  afterAll(() => api.l10n.get.restore());
 
-  afterEach(() => {
-    // Make sure tests do not pollute one another.
-    actions.get.resetHistory();
-  });
-
-  afterAll(() => {
-    actions.get.restore();
-  });
-
-  it('fetches a locale when the component mounts', () => {
-    const store = createReduxStore();
-
-    shallowUntilTarget(
-      <AppLocalizationProvider store={store}>
+  it('fetches a locale when the component mounts', async () => {
+    api.l10n.get.resolves('');
+    mount(
+      <AppLocalizationProvider>
         <div />
       </AppLocalizationProvider>,
-      AppLocalizationProviderBase,
     );
+    await act(() => new Promise((resolve) => setTimeout(resolve)));
 
-    expect(actions.get.callCount).toEqual(1);
+    expect(api.l10n.get.callCount).toEqual(1);
   });
 
-  it('renders its children when locales are loaded', () => {
-    const store = createReduxStore();
-    store.dispatch(actions.receive(new ReactLocalization([])));
-
-    const wrapper = shallowUntilTarget(
-      <AppLocalizationProvider store={store}>
-        <div id='content-test-AppLocalizationProvider' />
+  it('renders messages and children when loaded', async () => {
+    api.l10n.get.resolves('key = message\n');
+    const wrapper = mount(
+      <AppLocalizationProvider>
+        <div id='test' />
       </AppLocalizationProvider>,
-      AppLocalizationProviderBase,
     );
+    await act(() => new Promise((resolve) => setTimeout(resolve)));
+    wrapper.update();
 
-    expect(wrapper.find('#content-test-AppLocalizationProvider')).toHaveLength(
-      1,
-    );
+    const localization = wrapper.find('LocalizationProvider').prop('l10n');
+    expect(localization.getString('key')).toEqual('message');
+    expect(wrapper.find('#test')).toHaveLength(1);
   });
 });

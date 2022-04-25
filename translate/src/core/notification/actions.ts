@@ -24,17 +24,14 @@ export type AddAction = {
 };
 
 let keyCounter = 0;
-export function add(message: NotificationMessage): AddAction {
+export function addNotification(message: NotificationMessage): AddAction {
   // This unique key is a mechanism to force React to re-render a notification
   // when the same one is added twice in a row.
   if (!message.key) {
     message = { ...message, key: String(++keyCounter) };
   }
 
-  return {
-    type: ADD,
-    message,
-  };
+  return { type: ADD, message };
 }
 
 /**
@@ -46,11 +43,9 @@ export function add(message: NotificationMessage): AddAction {
  * message defined in `./messages.js`. This can be useful to pass notifications
  * that come from a different system (like django) and are not localizable yet.
  */
-export function addRaw(content: string, type: NotificationType): AddAction {
-  return add({ content, type });
+export function addRawNotification(
+  content: string,
+  type: NotificationType,
+): AddAction {
+  return addNotification({ content, type });
 }
-
-export default {
-  add,
-  addRaw,
-};

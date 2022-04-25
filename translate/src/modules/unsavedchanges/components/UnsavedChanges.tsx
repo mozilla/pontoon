@@ -1,13 +1,17 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Localized } from '@fluent/react';
 
 import './UnsavedChanges.css';
 
-import { actions, NAME } from '..';
+import { NAME } from '..';
 
 import type { UnsavedChangesState } from '../reducer';
 import { AppDispatch, RootState } from '~/store';
+import {
+  hide as hideUnsavedChanges,
+  ignore as ignoreUnsavedChanges,
+} from '../actions';
 
 type Props = {
   unsavedchanges: UnsavedChangesState;
@@ -20,66 +24,51 @@ type InternalProps = Props & {
 /*
  * Renders the unsaved changes popup.
  */
-export class UnsavedChangesBase extends React.Component<InternalProps> {
-  componentDidUpdate(prevProps: InternalProps) {
-    if (
-      !prevProps.unsavedchanges.ignored &&
-      this.props.unsavedchanges.ignored
-    ) {
-      if (this.props.unsavedchanges.callback) {
-        this.props.unsavedchanges.callback();
-        this.props.dispatch(actions.hide());
-      }
+export function UnsavedChangesBase({
+  dispatch,
+  unsavedchanges: { callback, ignored, shown },
+}: InternalProps): React.ReactElement<'div'> | null {
+  useEffect(() => {
+    if (ignored && callback) {
+      callback();
+      dispatch(hideUnsavedChanges());
     }
+  }, [ignored]);
+
+  if (!shown) {
+    return null;
   }
 
-  hideUnsavedChanges: () => void = () => {
-    this.props.dispatch(actions.hide());
-  };
-
-  ignoreUnsavedChanges: () => void = () => {
-    this.props.dispatch(actions.ignore());
-  };
-
-  render(): null | React.ReactElement<'div'> {
-    if (!this.props.unsavedchanges.shown) {
-      return null;
-    }
-
-    return (
-      <div className='unsaved-changes'>
-        <Localized
-          id='editor-UnsavedChanges--close'
-          attrs={{ ariaLabel: true }}
+  return (
+    <div className='unsaved-changes'>
+      <Localized id='editor-UnsavedChanges--close' attrs={{ ariaLabel: true }}>
+        <button
+          aria-label='Close unsaved changes popup'
+          className='close'
+          onClick={() => dispatch(hideUnsavedChanges())}
         >
-          <button
-            aria-label='Close unsaved changes popup'
-            className='close'
-            onClick={this.hideUnsavedChanges}
-          >
-            ×
-          </button>
-        </Localized>
+          ×
+        </button>
+      </Localized>
 
-        <Localized id='editor-UnsavedChanges--title'>
-          <p className='title'>YOU HAVE UNSAVED CHANGES</p>
-        </Localized>
+      <Localized id='editor-UnsavedChanges--title'>
+        <p className='title'>YOU HAVE UNSAVED CHANGES</p>
+      </Localized>
 
-        <Localized id='editor-UnsavedChanges--body'>
-          <p className='body'>Are you sure you want to proceed?</p>
-        </Localized>
+      <Localized id='editor-UnsavedChanges--body'>
+        <p className='body'>Are you sure you want to proceed?</p>
+      </Localized>
 
-        <Localized id='editor-UnsavedChanges--proceed'>
-          <button
-            className='proceed anyway'
-            onClick={this.ignoreUnsavedChanges}
-          >
-            PROCEED
-          </button>
-        </Localized>
-      </div>
-    );
-  }
+      <Localized id='editor-UnsavedChanges--proceed'>
+        <button
+          className='proceed anyway'
+          onClick={() => dispatch(ignoreUnsavedChanges())}
+        >
+          PROCEED
+        </button>
+      </Localized>
+    </div>
+  );
 }
 
 const mapStateToProps = (state: RootState): Props => {

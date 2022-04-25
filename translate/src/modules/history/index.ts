@@ -1,7 +1,7 @@
 export { default as actions } from './actions';
 export { default as reducer } from './reducer';
 
-export { default as History } from './components/History';
+export { History } from './components/History';
 
 export type { ChangeOperation, HistoryTranslation } from './actions';
 export type { HistoryState } from './reducer';

@@ -1,11 +1,12 @@
 import * as React from 'react';
+// @ts-expect-error Working types are unavailable for react-linkify 0.2.2
+import Linkify from 'react-linkify';
 import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago';
 import { Localized } from '@fluent/react';
 
 import './Comment.css';
 
-import { Linkify } from '~/core/linkify';
 import { UserAvatar } from '~/core/user';
 
 import type { TranslationComment } from '~/core/api';

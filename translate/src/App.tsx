@@ -1,3 +1,4 @@
+import { useLocalization } from '@fluent/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import './App.css';
@@ -5,15 +6,13 @@ import './App.css';
 import { initLocale, Locale, updateLocale } from './context/locale';
 import { Location, LocationType } from './context/location';
 
-import { L10nState, NAME as L10N } from './core/l10n';
-import { Lightbox } from './core/lightbox';
 import { WaveLoader } from './core/loaders';
 import {
   NAME as NOTIFICATION,
   NotificationPanel,
   NotificationState,
 } from './core/notification';
-import { addRaw } from './core/notification/actions';
+import { addRawNotification } from './core/notification/actions';
 import { NAME as PROJECT, ProjectState } from './core/project';
 import { get as getProject } from './core/project/actions';
 import { get as getResource } from './core/resource/actions';
@@ -23,7 +22,7 @@ import { getUsers } from './core/user/actions';
 
 import { useAppDispatch, useAppSelector } from './hooks';
 
-import { AddonPromotion } from './modules/addonpromotion';
+import { AddonPromotion } from './modules/addonpromotion/components/AddonPromotion';
 import {
   BatchActions,
   BatchActionsState,
@@ -33,7 +32,7 @@ import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
 import { InteractiveTour } from './modules/interactivetour';
 import { Navigation } from './modules/navbar';
-import { ProjectInfo } from './modules/projectinfo';
+import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
@@ -41,7 +40,6 @@ import { AppDispatch } from './store';
 
 type Props = {
   batchactions: BatchActionsState;
-  l10n: L10nState;
   notification: NotificationState;
   location: LocationType;
   project: ProjectState;
@@ -58,20 +56,23 @@ type InternalProps = Props & {
 function App({
   batchactions,
   dispatch,
-  l10n,
   notification,
   location,
   project,
   stats,
 }: InternalProps) {
   const mounted = useRef(false);
+  const { l10n } = useLocalization();
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
+
+  const l10nReady = !!l10n.parseMarkup;
+  const allProjects = location.project === 'all-projects';
 
   useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
     // Note that we only show it once, and only when the UI has already
     // been rendered, to make sure users do see it.
-    if (mounted.current && !l10n.fetching && !locale.fetching) {
+    if (mounted.current && l10nReady && !locale.fetching) {
       let notifications = [];
       const rootElt = document.getElementById('root');
       if (rootElt?.dataset.notifications) {
@@ -82,10 +83,10 @@ function App({
         // Our notification system only supports showing one notification
         // for the moment, so we only add the first notification here.
         const notif = notifications[0];
-        dispatch(addRaw(notif.content, notif.type));
+        dispatch(addRawNotification(notif.content, notif.type));
       }
     }
-  }, [l10n.fetching, locale.fetching]);
+  }, [l10nReady, locale.fetching]);
 
   useEffect(() => {
     updateLocale(locale, location.locale);
@@ -93,13 +94,13 @@ function App({
     dispatch(getUsers());
 
     // Load resources, unless we're in the All Projects view
-    if (location.project !== 'all-projects') {
+    if (!allProjects) {
       dispatch(getResource(location.locale, location.project));
     }
     mounted.current = true;
   }, []);
 
-  if (l10n.fetching || locale.fetching) {
+  if (!l10nReady || locale.fetching) {
     return <WaveLoader />;
   }
 
@@ -110,7 +111,7 @@ function App({
         <header>
           <Navigation />
           <ResourceProgress stats={stats} />
-          <ProjectInfo projectSlug={location.project} project={project} />
+          {allProjects ? null : <ProjectInfo project={project} />}
           <NotificationPanel notification={notification} />
           <UserControls />
         </header>
@@ -127,7 +128,6 @@ function App({
             )}
           </section>
         </section>
-        <Lightbox />
         <InteractiveTour />
       </div>
     </Locale.Provider>
@@ -137,7 +137,6 @@ function App({
 export default function AppWrapper() {
   const props = useAppSelector((state) => ({
     batchactions: state[BATCHACTIONS],
-    l10n: state[L10N],
     notification: state[NOTIFICATION],
     project: state[PROJECT],
     stats: state[STATS],
