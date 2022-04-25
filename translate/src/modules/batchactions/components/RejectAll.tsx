@@ -19,7 +19,9 @@ export default function RejectAll({
   const [confirmationVisible, setConfirmationVisible] = useState(false);
 
   const handleRejectAll = useCallback(() => {
-    if (confirmationVisible) rejectAll();
+    if (confirmationVisible) {
+      rejectAll();
+    }
     setConfirmationVisible(!confirmationVisible);
   }, [confirmationVisible, rejectAll]);
 

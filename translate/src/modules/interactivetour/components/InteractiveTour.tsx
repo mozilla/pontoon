@@ -33,11 +33,15 @@ export function InteractiveTourBase({
   const { code } = useContext(Locale);
 
   // Run the tour only on project with slug 'tutorial'
-  if (project.slug !== 'tutorial') return null;
+  if (project.slug !== 'tutorial') {
+    return null;
+  }
 
   // Run the tour only if the user hasn't completed it yet
   const tourStatus = user.tourStatus || 0;
-  if (tourStatus === -1) return null;
+  if (tourStatus === -1) {
+    return null;
+  }
 
   const steps: ReactourStep[] = [
     {

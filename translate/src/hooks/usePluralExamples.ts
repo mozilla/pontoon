@@ -28,7 +28,9 @@ export function usePluralExamples(locale: LocaleType): Record<number, number> {
     let found = 0;
     const examples: Record<number, number> = {};
     for (let n = 0; n < 1000; ++n) {
-      if (found >= cldrPlurals.length) return examples;
+      if (found >= cldrPlurals.length) {
+        return examples;
+      }
       const rule = cldrPlurals[getRule(n)];
       if (!examples[rule]) {
         examples[rule] = n;

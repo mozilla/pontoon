@@ -33,10 +33,14 @@ export function ProgressChart({
   useEffect(() => {
     const { approved, pretranslated, warnings, errors, missing, total } = stats;
 
-    if (!canvas.current || !total) return;
+    if (!canvas.current || !total) {
+      return;
+    }
     const { height, width } = canvas.current;
     const context = canvas.current.getContext('2d');
-    if (!context) return;
+    if (!context) {
+      return;
+    }
 
     const data = [
       { type: approved, color: '#7BC876' },

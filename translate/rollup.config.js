@@ -35,7 +35,9 @@ const config = {
         case 'SOURCEMAP_ERROR':
           return;
         case 'THIS_IS_UNDEFINED':
-          if (warning.frame?.includes('this && this')) return;
+          if (warning.frame?.includes('this && this')) {
+            return;
+          }
       }
     }
 

@@ -41,7 +41,9 @@ export function BatchActions(): React.ReactElement<'div'> {
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
       // On Esc, quit batch actions
-      if (ev.keyCode === 27) quitBatchActions();
+      if (ev.keyCode === 27) {
+        quitBatchActions();
+      }
     };
 
     document.addEventListener('keydown', handleShortcuts);

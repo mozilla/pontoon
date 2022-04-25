@@ -49,7 +49,9 @@ export default function flattenPatternElements(
           }
         }
       }
-      if (textFragment) textFragment = '';
+      if (textFragment) {
+        textFragment = '';
+      }
 
       flatElements.push(element);
       prevSelect = element.expression;

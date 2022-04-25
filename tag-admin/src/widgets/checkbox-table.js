@@ -23,16 +23,22 @@ export function CheckboxTable({ data, onSubmit, submitMessage }) {
 
   const selectAll = useCallback(() => {
     setChecked((checked) => {
-      if (checked.size > 0) return new Set();
-      else return new Set([...visible.current.filter(Boolean)]);
+      if (checked.size > 0) {
+        return new Set();
+      } else {
+        return new Set([...visible.current.filter(Boolean)]);
+      }
     });
   }, []);
 
   const selectOne = useCallback(({ target }) => {
     setChecked((checked) => {
       const next = new Set(checked);
-      if (target.checked) next.add(target.name);
-      else next.delete(target.name);
+      if (target.checked) {
+        next.add(target.name);
+      } else {
+        next.delete(target.name);
+      }
       return next;
     });
   }, []);

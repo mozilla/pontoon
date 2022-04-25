@@ -57,6 +57,7 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+    curly: 'error',
     'react/display-name': 0,
     'react/prefer-es6-class': 1,
     'react/prefer-stateless-function': 0,

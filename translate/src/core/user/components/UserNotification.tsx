@@ -117,8 +117,11 @@ export function UserNotification({
   const { description, id, level, unread, verb } = notification;
 
   useEffect(() => {
-    if (mounted.current) setMarkAsRead(true);
-    else mounted.current = true;
+    if (mounted.current) {
+      setMarkAsRead(true);
+    } else {
+      mounted.current = true;
+    }
   }, [unread]);
 
   const content = description?.content;

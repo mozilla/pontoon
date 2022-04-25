@@ -59,8 +59,9 @@ export function Entity({
           ev.target instanceof HTMLElement &&
           ev.target.classList.contains('status')
         )
-      )
+      ) {
         selectEntity(entity);
+      }
     },
     [entity, selectEntity],
   );
@@ -155,21 +156,33 @@ function translationStatus(translations: EntityTranslation[]): string {
   let pretranslated = 0;
 
   for (const tx of translations) {
-    if (tx.errors.length && (tx.approved || tx.pretranslated || tx.fuzzy))
-      errors = true;
-    else if (
-      tx.warnings.length &&
-      (tx.approved || tx.pretranslated || tx.fuzzy)
-    )
-      warnings = true;
-    else if (tx.approved) approved += 1;
-    else if (tx.pretranslated) pretranslated += 1;
+    if (tx.approved || tx.pretranslated || tx.fuzzy) {
+      if (tx.errors.length) {
+        errors = true;
+      } else if (tx.warnings.length) {
+        warnings = true;
+      } else if (tx.approved) {
+        approved += 1;
+      } else if (tx.pretranslated) {
+        pretranslated += 1;
+      }
+    }
   }
 
-  if (errors) return 'errors';
-  if (warnings) return 'warnings';
-  if (approved === translations.length) return 'approved';
-  if (pretranslated === translations.length) return 'pretranslated';
-  if (approved > 0 || pretranslated > 0) return 'partial';
+  if (errors) {
+    return 'errors';
+  }
+  if (warnings) {
+    return 'warnings';
+  }
+  if (approved === translations.length) {
+    return 'approved';
+  }
+  if (pretranslated === translations.length) {
+    return 'pretranslated';
+  }
+  if (approved > 0 || pretranslated > 0) {
+    return 'partial';
+  }
   return 'missing';
 }

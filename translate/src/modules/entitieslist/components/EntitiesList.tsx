@@ -113,8 +113,11 @@ export function EntitiesListBase({
             dispatch(resetSelection());
             dispatch(resetEditor());
             const nextLocation = { entity: entity.pk };
-            if (replaceHistory) parameters.replace(nextLocation);
-            else parameters.push(nextLocation);
+            if (replaceHistory) {
+              parameters.replace(nextLocation);
+            } else {
+              parameters.push(nextLocation);
+            }
           }),
         );
       }
@@ -157,7 +160,9 @@ export function EntitiesListBase({
   //    is possible that going for another possible solutions will make
   //    testing easier, which would be very desirable.
   useEffect(() => {
-    if (mounted.current) dispatch(resetEntities());
+    if (mounted.current) {
+      dispatch(resetEntities());
+    }
   }, [
     dispatch,
     // Note: entity is explicitly not included here
@@ -173,7 +178,9 @@ export function EntitiesListBase({
   ]);
 
   const scrollToSelected = useCallback(() => {
-    if (!mounted.current) return;
+    if (!mounted.current) {
+      return;
+    }
     const element = list.current?.querySelector('li.selected');
     const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     element?.scrollIntoView?.({
@@ -186,7 +193,9 @@ export function EntitiesListBase({
   // and when entity list loads for the first time
   const prevEntityCount = usePrevious(entities.entities.length);
   useEffect(() => {
-    if (!prevEntityCount && entities.entities.length > 0) scrollToSelected();
+    if (!prevEntityCount && entities.entities.length > 0) {
+      scrollToSelected();
+    }
   }, [entities.entities.length]);
   useEffect(scrollToSelected, [parameters.entity]);
 

@@ -36,7 +36,9 @@ export default function Screenshots({ locale, source }: Props) {
   const [openImage, setOpenImage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!openImage) return;
+    if (!openImage) {
+      return;
+    }
 
     const handleKeyDown = ({ code }: KeyboardEvent) => {
       if (

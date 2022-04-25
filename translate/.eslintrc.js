@@ -10,6 +10,7 @@ module.exports = {
     jest: true,
   },
   rules: {
+    curly: 'error',
     'prefer-const': 0,
     'no-var': 0,
     '@typescript-eslint/ban-ts-comment': 0,

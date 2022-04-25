@@ -97,7 +97,9 @@ var Pontoon = (function (my) {
       },
       renderUnreviewedSuggestionsLifespan: function () {
         var chart = $('#unreviewed-suggestions-lifespan-chart');
-        if (chart.length === 0) return;
+        if (chart.length === 0) {
+          return;
+        }
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
@@ -179,7 +181,9 @@ var Pontoon = (function (my) {
       },
       renderTimeToReviewSuggestions: function () {
         var chart = $('#time-to-review-suggestions-chart');
-        if (chart.length === 0) return;
+        if (chart.length === 0) {
+          return;
+        }
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
@@ -278,7 +282,9 @@ var Pontoon = (function (my) {
       },
       renderTranslationActivity: function () {
         var chart = $('#translation-activity-chart');
-        if (chart.length === 0) return;
+        if (chart.length === 0) {
+          return;
+        }
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -465,7 +471,9 @@ var Pontoon = (function (my) {
       },
       renderReviewActivity: function () {
         var chart = $('#review-activity-chart');
-        if (chart.length === 0) return;
+        if (chart.length === 0) {
+          return;
+        }
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -572,7 +580,9 @@ var Pontoon = (function (my) {
                   const value = items.yLabel;
                   const base = label + ': ' + nf.format(value);
 
-                  if (chart.datasets.length < 4) return base;
+                  if (chart.datasets.length < 4) {
+                    return base;
+                  }
 
                   const peerApproved = chart.datasets[1].data[items.index];
                   const selfApproved = chart.datasets[2].data[items.index];
