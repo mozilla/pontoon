@@ -52,6 +52,7 @@ class ChangeSet:
         self.entities_to_update = []
         self.translations_to_update = {}
         self.translations_to_create = []
+        self.rejected_translations = []
         self.actions_to_log = []
 
         self.commit_authors_per_locale = defaultdict(list)
@@ -154,6 +155,9 @@ class ChangeSet:
             # Run checks and create TM entries for translations that pass them
             valid_translations = self.bulk_check_translations()
             self.bulk_create_translation_memory_entries(valid_translations)
+
+            # Remove any TM entries of translations that got rejected
+            self.bulk_remove_translation_memory_entries()
 
     def execute_update_vcs(self):
         resources = self.vcs_project.resources
@@ -356,6 +360,7 @@ class ChangeSet:
                     )
 
                 if translation.is_dirty():
+                    self.rejected_translations.append(translation)
                     self.translations_to_update[translation.pk] = translation
                     self.actions_to_log.append(new_action)
 
@@ -529,6 +534,14 @@ class ChangeSet:
         ]
 
         TranslationMemoryEntry.objects.bulk_create(memory_entries)
+
+    def bulk_remove_translation_memory_entries(self):
+        """
+        Remove Translation Memory entries of translations that got rejected
+        """
+        TranslationMemoryEntry.objects.filter(
+            translation__in=self.rejected_translations
+        ).delete()
 
     def bulk_check_translations(self):
         """
