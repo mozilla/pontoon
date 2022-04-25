@@ -3306,6 +3306,12 @@ class Translation(DirtyFieldsMixin, models.Model):
                     translation=t,
                 )
 
+            # Remove any TM entries of old translations that will get rejected.
+            # Must be executed before translations set changes.
+            TranslationMemoryEntry.objects.filter(
+                translation__in=approved_translations
+            ).delete()
+
             approved_translations.update(
                 approved=False,
                 approved_user=None,

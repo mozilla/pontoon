@@ -421,6 +421,9 @@ def handle_upload_content(slug, code, part, f, user):
         valid_translations = changeset.bulk_check_translations()
         changeset.bulk_create_translation_memory_entries(valid_translations)
 
+        # Remove any TM entries of translations that got rejected
+        changeset.bulk_remove_translation_memory_entries()
+
     TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed

@@ -193,6 +193,10 @@ def replace_translations(form, user, translations, locale):
     ]
     ActionLog.objects.bulk_create(actions_to_log)
 
+    # Remove any TM entries of old translations that will get rejected.
+    # Must be executed before translations set changes.
+    TranslationMemoryEntry.objects.filter(translation__in=old_translations).delete()
+
     # Deactivate and unapprove old translations
     old_translations.update(
         active=False,
