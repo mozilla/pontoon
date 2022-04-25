@@ -49,6 +49,8 @@
 
 ### Where code goes
 
+`src/context/` contains components and hooks for React Context -based commonly accessible features/modules/data stores.
+
 `src/core/` contains features that are shared in the application, in the form of modules. There should be as little code as possible in this folder.
 
 `src/modules/` contains the self-contained features of the application, separated in modules.
@@ -57,7 +59,9 @@
 
 ### Modules
 
-Each module should be in a folder and have an `index.js` file that serves as the module's public interface. Outside of the module, always import from the module's index, and never from specific files. This allows us to easily evolve modules and keep things decoupled, which reduces code complexity.
+Each module should be in a folder and have an `index.js` file that serves as the module's public interface.
+Outside of the module, always import from the module's index if it's available.
+This allows us to easily evolve modules and keep things decoupled, which reduces code complexity.
 
 Here are the files commonly found in a module:
 
@@ -67,6 +71,11 @@ Here are the files commonly found in a module:
 - `components/` — a folder containing components, with file names in CamelCase
 
 Of course, more can be added if needed. For example, modules with a high number of action types might want to have an `actionTypes.js` file to separate them from actions.
+
+**Note**: As the codebase is currently migrating away from Redux,
+its structure is also evolving.
+This means that you may be able to find inconsistencies in the actual code,
+as we're actively determining the new structure.
 
 ### Imports
 
