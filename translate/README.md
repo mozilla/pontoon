@@ -112,14 +112,6 @@ A common case during development is to have 2 terminals open: one for the dev se
     $ make test-translate
 ```
 
-#### Enabling websocket and warm-reloading for dev
-
-Currently websocket requests are redirected by Django to the webpack server. Sadly, by default major browsers do not support websocket redirection. To enable it in Firefox, go to `about:config` and turn `network.websocket.auto-follow-http-redirect` to `true`. Note that there is a bug filed to get rid of that option entirely: https://bugzilla.mozilla.org/show_bug.cgi?id=1052909
-
-As far as we know, it is not possible to make that work in Chrome or Edge. This only impacts development, as there's no hot reloading in production.
-
-If you can't turn on websockets, you will see errors in the console (that's not very impacting) and you'll have to reload your Django server regularly, because polling requests don't close, and after so many web page reloads, the Django process won't be able to accept new requests.
-
 ## Dependencies
 
 We manage our JavaScript dependencies with `npm`.
