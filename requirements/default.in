@@ -15,7 +15,7 @@
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 bleach==3.3.0
-celery==4.3.0
+celery==5.2.6
 compare-locales==8.2.0
 dj-database-url==0.3.0
 Django==3.2.13
@@ -43,7 +43,7 @@ psycopg2==2.8.5
 python-dateutil==2.8.1
 python-dotenv==0.17.0
 python-levenshtein==0.12.2
-pytz==2019.3
+pytz==2022.1
 raygun4py==4.3.0
 sacremoses==0.0.43
 translate-toolkit==3.3.2
