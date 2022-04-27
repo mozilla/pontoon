@@ -38,9 +38,9 @@ pip-tools==5.5.0 \
     --hash=sha256:10841c1e56c234d610d0466447685b9ea4ee4a2c274f858c0ef3c33d9bd0d985 \
     --hash=sha256:cb0108391366b3ef336185097b3c2c0f3fa115b15098dafbda5e78aef70ea114
     # via -r requirements/dev.in
-pytz==2019.3 \
-    --hash=sha256:1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d \
-    --hash=sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be
+pytz==2022.1 \
+    --hash=sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7 \
+    --hash=sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c
     # via
     #   -c requirements/default.txt
     #   django
