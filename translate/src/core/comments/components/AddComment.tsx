@@ -355,7 +355,7 @@ export default function AddComment(props: Props): React.ReactElement<'div'> {
     [users],
   );
 
-  const handleEditorOnChange = (value: Node[]) => {
+  const handleEditorOnChange = (value: Descendant[]) => {
     setValue(value);
     const { selection } = editor;
 
@@ -527,7 +527,7 @@ const withMentions = (editor: BaseEditor & ReactEditor) => {
 };
 
 const insertMention = (
-  editor: BaseEditor,
+  editor: BaseEditor & ReactEditor,
   character: string,
   users: UsersList[],
 ) => {
@@ -537,7 +537,7 @@ const insertMention = (
   }
   const userUrl = selectedUser.url;
   const name = selectedUser.name;
-  const mention = {
+  const mention: Mention = {
     type: 'mention',
     character,
     url: userUrl,

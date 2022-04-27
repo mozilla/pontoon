@@ -33,8 +33,8 @@
     "redux": "^4.1.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "slate": "^0.63.0",
-    "slate-react": "^0.58.4",
+    "slate": "^0.78.0",
+    "slate-react": "^0.77.4",
     "styled-components": "^5.3.3",
     "tlds": "^1.218.0"
   },
