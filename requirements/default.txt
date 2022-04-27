@@ -571,8 +571,8 @@ rx==1.6.1 \
 sacremoses==0.0.43 \
     --hash=sha256:123c1bf2664351fb05e16f87d3786dbe44a050cfd7b85161c09ad9a63a8e2948
     # via -r requirements/default.in
-https://github.com/mathjazz/silme/archive/v0.10.0.zip#egg=silme==0.10.0 \
-    --hash=sha256:6227f6cb9b2e3a5898ce6761e339dad9ee6166a449d895202045c92815dc995d
+https://github.com/mozilla/silme/archive/v0.11.2.zip#egg=silme==0.11.2 \
+    --hash=sha256:74a098a9a3b05d0c262e7231225f9200b02342e552eda997d2e8ec07d00d1371
     # via -r requirements/default.in
 singledispatch==3.7.0 \
     --hash=sha256:bc77afa97c8a22596d6d4fc20f1b7bdd2b86edc2a65a4262bdd7cc3cc19aa989 \
