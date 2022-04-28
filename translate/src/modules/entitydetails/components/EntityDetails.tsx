@@ -120,8 +120,9 @@ export function EntityDetailsBase({
   store,
   user,
 }: InternalProps): React.ReactElement<'section'> | null {
-  const commentTabRef =
-    useRef<{ _reactInternalFiber: { index: number } }>(null);
+  const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
+    null,
+  );
   const [commentTabIndex, setCommentTabIndex] = useState(0);
   const [contactPerson, setContactPerson] = useState('');
   const resetContactPerson = useCallback(() => setContactPerson(''), []);
