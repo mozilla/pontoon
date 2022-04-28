@@ -6,6 +6,7 @@ import * as editor from '~/core/editor';
 import { fluent } from '~/core/utils';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import RichTranslationForm from './RichTranslationForm';
 
@@ -29,7 +30,9 @@ function createComponent(entityString, updateTranslation) {
   const wrapper = mountComponentWithStore(
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
-        <RichTranslationForm updateTranslation={updateTranslation} />
+        <MockLocalizationProvider>
+          <RichTranslationForm updateTranslation={updateTranslation} />
+        </MockLocalizationProvider>
       </Locale.Provider>
     ),
     store,

@@ -2,6 +2,8 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import { EntityNavigation } from './EntityNavigation';
 
 describe('<EntityNavigation>', () => {
@@ -10,11 +12,13 @@ describe('<EntityNavigation>', () => {
     const nextMock = sinon.stub();
     const prevMock = sinon.stub();
     const wrapper = mount(
-      <EntityNavigation
-        copyLinkToClipboard={copyMock}
-        goToNextEntity={nextMock}
-        goToPreviousEntity={prevMock}
-      />,
+      <MockLocalizationProvider>
+        <EntityNavigation
+          copyLinkToClipboard={copyMock}
+          goToNextEntity={nextMock}
+          goToPreviousEntity={prevMock}
+        />
+      </MockLocalizationProvider>,
     );
 
     return {

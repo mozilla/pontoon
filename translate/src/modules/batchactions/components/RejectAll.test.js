@@ -2,6 +2,8 @@ import { mount } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import RejectAll from './RejectAll';
 
 const DEFAULT_BATCH_ACTIONS = {
@@ -11,9 +13,17 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
+const WrapRejectAll = (props) => (
+  <MockLocalizationProvider>
+    <RejectAll {...props} />
+  </MockLocalizationProvider>
+);
+
 describe('<RejectAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = mount(<RejectAll batchactions={DEFAULT_BATCH_ACTIONS} />);
+    const wrapper = mount(
+      <WrapRejectAll batchactions={DEFAULT_BATCH_ACTIONS} />,
+    );
 
     expect(wrapper.find('.reject-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-RejectAll--default')).toHaveLength(1);
@@ -25,7 +35,7 @@ describe('<RejectAll>', () => {
 
   it('renders error button correctly', () => {
     const wrapper = mount(
-      <RejectAll
+      <WrapRejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -46,7 +56,7 @@ describe('<RejectAll>', () => {
 
   it('renders success button correctly', () => {
     const wrapper = mount(
-      <RejectAll
+      <WrapRejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -67,7 +77,7 @@ describe('<RejectAll>', () => {
 
   it('renders success with invalid button correctly', () => {
     const wrapper = mount(
-      <RejectAll
+      <WrapRejectAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -91,7 +101,7 @@ describe('<RejectAll>', () => {
     const mockRejectAll = sinon.spy();
 
     const wrapper = mount(
-      <RejectAll
+      <WrapRejectAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         rejectAll={mockRejectAll}
       />,
@@ -109,7 +119,7 @@ describe('<RejectAll>', () => {
     const mockRejectAll = sinon.spy();
 
     const wrapper = mount(
-      <RejectAll
+      <WrapRejectAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         rejectAll={mockRejectAll}
       />,

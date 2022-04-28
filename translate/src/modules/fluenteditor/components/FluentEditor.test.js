@@ -9,6 +9,7 @@ import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import FluentEditor from './FluentEditor';
 
@@ -72,7 +73,9 @@ function createComponent(entityPk = 1) {
   const wrapper = mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <FluentEditor />
+        <MockLocalizationProvider>
+          <FluentEditor />
+        </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,
   );

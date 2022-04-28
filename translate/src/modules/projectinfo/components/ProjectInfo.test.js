@@ -1,5 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
+
+import { MockLocalizationProvider } from '~/test/utils';
 
 import { ProjectInfo } from './ProjectInfo';
 
@@ -36,8 +38,10 @@ describe('<ProjectInfo>', () => {
 
   it('displays project info with HTML unchanged (', () => {
     const PREVALIDATED_HTML = '<a href="#">test</a>';
-    const wrapper = shallow(
-      <ProjectInfo project={{ info: PREVALIDATED_HTML }} />,
+    const wrapper = mount(
+      <MockLocalizationProvider>
+        <ProjectInfo project={{ info: PREVALIDATED_HTML }} />
+      </MockLocalizationProvider>,
     );
     wrapper.find('.button').simulate('click');
 

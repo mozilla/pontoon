@@ -2,6 +2,8 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import ReplaceAll from './ReplaceAll';
 
 const DEFAULT_BATCH_ACTIONS = {
@@ -11,9 +13,17 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
+const WrapReplaceAll = (props) => (
+  <MockLocalizationProvider>
+    <ReplaceAll {...props} />
+  </MockLocalizationProvider>
+);
+
 describe('<ReplaceAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = mount(<ReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />);
+    const wrapper = mount(
+      <WrapReplaceAll batchactions={DEFAULT_BATCH_ACTIONS} />,
+    );
 
     expect(wrapper.find('.replace-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ReplaceAll--default')).toHaveLength(1);
@@ -25,7 +35,7 @@ describe('<ReplaceAll>', () => {
 
   it('renders error button correctly', () => {
     const wrapper = mount(
-      <ReplaceAll
+      <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -46,7 +56,7 @@ describe('<ReplaceAll>', () => {
 
   it('renders success button correctly', () => {
     const wrapper = mount(
-      <ReplaceAll
+      <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -67,7 +77,7 @@ describe('<ReplaceAll>', () => {
 
   it('renders success with invalid button correctly', () => {
     const wrapper = mount(
-      <ReplaceAll
+      <WrapReplaceAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -91,7 +101,7 @@ describe('<ReplaceAll>', () => {
     const mockReplaceAll = sinon.spy();
 
     const wrapper = mount(
-      <ReplaceAll
+      <WrapReplaceAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         replaceAll={mockReplaceAll}
       />,

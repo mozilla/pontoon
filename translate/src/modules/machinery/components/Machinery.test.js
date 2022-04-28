@@ -1,6 +1,8 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import { Machinery } from './Machinery';
 
 describe('<Machinery>', () => {
@@ -33,7 +35,11 @@ describe('<Machinery>', () => {
       searchResults: [],
       searchString: 'test',
     };
-    const wrapper = mount(<Machinery machinery={machinery} />);
+    const wrapper = mount(
+      <MockLocalizationProvider>
+        <Machinery machinery={machinery} />
+      </MockLocalizationProvider>,
+    );
 
     expect(wrapper.find('button')).toHaveLength(1);
   });

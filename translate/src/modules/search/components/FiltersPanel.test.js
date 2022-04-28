@@ -2,8 +2,16 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import sinon from 'sinon';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import FiltersPanelBase, { FiltersPanel } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
+
+const WrapFiltersPanel = (props) => (
+  <MockLocalizationProvider>
+    <FiltersPanel {...props} />
+  </MockLocalizationProvider>
+);
 
 describe('<FiltersPanel>', () => {
   it('correctly sets filter as selected', () => {
@@ -11,7 +19,7 @@ describe('<FiltersPanel>', () => {
     const extras = ['rejected'];
 
     const wrapper = mount(
-      <FiltersPanel
+      <WrapFiltersPanel
         filters={{ authors: [], extras, statuses, tags: [] }}
         authorsData={[]}
         stats={{}}
@@ -38,7 +46,7 @@ describe('<FiltersPanel>', () => {
       it('applies a single filter on click on a filter title', () => {
         const applySingleFilter = sinon.spy();
         const wrapper = mount(
-          <FiltersPanel
+          <WrapFiltersPanel
             filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
             authorsData={[]}
             stats={{}}
@@ -55,7 +63,7 @@ describe('<FiltersPanel>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const toggleFilter = sinon.spy();
         const wrapper = mount(
-          <FiltersPanel
+          <WrapFiltersPanel
             filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
             authorsData={[]}
             parameters={{}}
@@ -77,7 +85,7 @@ describe('<FiltersPanel>', () => {
       it('applies a single filter on click on a filter title', () => {
         const applySingleFilter = sinon.spy();
         const wrapper = mount(
-          <FiltersPanel
+          <WrapFiltersPanel
             filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
             authorsData={[]}
             stats={{}}
@@ -94,7 +102,7 @@ describe('<FiltersPanel>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const toggleFilter = sinon.spy();
         const wrapper = mount(
-          <FiltersPanel
+          <WrapFiltersPanel
             filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
             authorsData={[]}
             parameters={{}}

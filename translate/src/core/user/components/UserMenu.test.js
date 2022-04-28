@@ -5,7 +5,8 @@ import sinon from 'sinon';
 import { Location } from '~/context/location';
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
-import { findLocalizedById } from '~/test/utils';
+
+import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
 import { SignOut } from './SignOut';
@@ -13,12 +14,10 @@ import UserMenuBase, { UserMenu } from './UserMenu';
 
 describe('<UserMenu>', () => {
   beforeAll(() => {
-    sinon.stub(React, 'useContext');
     sinon.stub(Hooks, 'useAppSelector');
     sinon.stub(Translator, 'useTranslator');
   });
   afterAll(() => {
-    React.useContext.restore();
     Hooks.useAppSelector.restore();
     Translator.useTranslator.restore();
   });
@@ -37,16 +36,19 @@ describe('<UserMenu>', () => {
     isAuthenticated = true,
     location = LOCATION,
   } = {}) {
-    React.useContext.callsFake((ctx) =>
-      ctx === Location ? location : undefined,
-    );
     Hooks.useAppSelector.callsFake((sel) =>
       sel({
         entities: { entities: [{ pk: 42, readonly: isReadOnly }] },
       }),
     );
     Translator.useTranslator.returns(isTranslator);
-    return mount(<UserMenu user={{ isAuthenticated, isAdmin }} />);
+    return mount(
+      <Location.Provider value={location}>
+        <MockLocalizationProvider>
+          <UserMenu user={{ isAuthenticated, isAdmin }} />
+        </MockLocalizationProvider>
+      </Location.Provider>,
+    );
   }
 
   it('shows the right menu items when the user is logged in', () => {

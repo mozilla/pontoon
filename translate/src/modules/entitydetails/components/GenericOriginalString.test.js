@@ -2,6 +2,9 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { Locale } from '~/context/locale';
+
+import { MockLocalizationProvider } from '~/test/utils';
+
 import GenericOriginalString from './GenericOriginalString';
 
 const ENTITY = {
@@ -18,11 +21,13 @@ const LOCALE = {
 const createGenericOriginalString = (pluralForm = -1) =>
   mount(
     <Locale.Provider value={LOCALE}>
-      <GenericOriginalString
-        entity={ENTITY}
-        pluralForm={pluralForm}
-        terms={{}}
-      />
+      <MockLocalizationProvider>
+        <GenericOriginalString
+          entity={ENTITY}
+          pluralForm={pluralForm}
+          terms={{}}
+        />
+      </MockLocalizationProvider>
     </Locale.Provider>,
   );
 

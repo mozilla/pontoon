@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 
 import { Locale } from '~/context/locale';
 import { createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
+
 import Metadata from './Metadata';
 
 const ENTITY = {
@@ -39,14 +41,16 @@ function createMetadata(entity = ENTITY, pluralForm = -1) {
   const store = createReduxStore({ user: USER });
   return mount(
     <Provider store={store}>
-      <Locale.Provider value={LOCALE}>
-        <Metadata
-          entity={entity}
-          pluralForm={pluralForm}
-          terms={TERMS}
-          user={USER}
-        />
-      </Locale.Provider>
+      <MockLocalizationProvider>
+        <Locale.Provider value={LOCALE}>
+          <Metadata
+            entity={entity}
+            pluralForm={pluralForm}
+            terms={TERMS}
+            user={USER}
+          />
+        </Locale.Provider>
+      </MockLocalizationProvider>
     </Provider>,
   );
 }
