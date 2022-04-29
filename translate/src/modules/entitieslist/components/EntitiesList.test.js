@@ -13,7 +13,7 @@ import {
   mountComponentWithStore,
 } from '~/test/store';
 
-import EntitiesList, { EntitiesListBase } from './EntitiesList';
+import { EntitiesList } from './EntitiesList';
 
 class MockIntersectionObserver {
   static map = new Map();
