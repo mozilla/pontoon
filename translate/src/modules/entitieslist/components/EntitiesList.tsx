@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import { Locale } from '~/context/locale';
-import { Location, LocationType } from '~/context/location';
+import { Location } from '~/context/location';
 import type { Entity as EntityType } from '~/core/api';
 import { reset as resetEditor } from '~/core/editor/actions';
-import { EntitiesState, NAME as ENTITIES } from '~/core/entities';
+import { NAME as ENTITIES } from '~/core/entities';
 import {
   get as getEntities,
   getSiblingEntities,
@@ -14,13 +14,10 @@ import {
 import { SkeletonLoader } from '~/core/loaders';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import {
-  BatchActionsState,
-  NAME as BATCHACTIONS,
-} from '~/modules/batchactions';
+import { NAME as BATCHACTIONS } from '~/modules/batchactions';
 import {
   checkSelection,
   resetSelection,
@@ -30,22 +27,9 @@ import {
 } from '~/modules/batchactions/actions';
 import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
-import type { AppDispatch } from '~/store';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
-
-type Props = {
-  batchactions: BatchActionsState;
-  entities: EntitiesState;
-  isReadOnlyEditor: boolean;
-  parameters: LocationType;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-  store: AppStore;
-};
 
 /**
  * Displays a list of entities and their current translation.
@@ -54,14 +38,17 @@ type InternalProps = Props & {
  * entities. It interacts with `core/navigation` when an entity is selected.
  *
  */
-export function EntitiesListBase({
-  batchactions,
-  dispatch,
-  entities,
-  isReadOnlyEditor,
-  parameters,
-  store,
-}: InternalProps): React.ReactElement<'div'> {
+export function EntitiesList(): React.ReactElement<'div'> {
+  const dispatch = useAppDispatch();
+  const store = useAppStore();
+
+  const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
+  const { entities, fetchCount, fetching, hasMore } = useAppSelector(
+    (state) => state[ENTITIES],
+  );
+  const isReadOnlyEditor = useReadonlyEditor();
+  const parameters = useContext(Location);
+
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);
 
@@ -131,15 +118,15 @@ export function EntitiesListBase({
    */
   useEffect(() => {
     const selectedEntity = parameters.entity;
-    const firstEntity = entities.entities[0];
-    const isValid = entities.entities.some(({ pk }) => pk === selectedEntity);
+    const firstEntity = entities[0];
+    const isValid = entities.some(({ pk }) => pk === selectedEntity);
 
     if ((!selectedEntity || !isValid) && firstEntity) {
       // Replace the last history item instead of pushing a new one.
       selectEntity(firstEntity, true);
 
       // Only do this the very first time entities are loaded.
-      if (entities.fetchCount === 1 && selectedEntity && !isValid) {
+      if (fetchCount === 1 && selectedEntity && !isValid) {
         dispatch(addNotification(notificationMessages.ENTITY_NOT_FOUND));
       }
     }
@@ -191,12 +178,12 @@ export function EntitiesListBase({
 
   // Scroll to selected entity when entity changes
   // and when entity list loads for the first time
-  const prevEntityCount = usePrevious(entities.entities.length);
+  const prevEntityCount = usePrevious(entities.length);
   useEffect(() => {
-    if (!prevEntityCount && entities.entities.length > 0) {
+    if (!prevEntityCount && entities.length > 0) {
       scrollToSelected();
     }
-  }, [entities.entities.length]);
+  }, [entities.length]);
   useEffect(scrollToSelected, [parameters.entity]);
 
   const { code } = useContext(Locale);
@@ -216,7 +203,7 @@ export function EntitiesListBase({
           // lastCheckedEntity and the entity if entity not checked. If entity
           // checked, uncheck all entities in-between.
           if (shiftKeyPressed && batchactions.lastCheckedEntity) {
-            const entityListIds = entities.entities.map((e) => e.pk);
+            const entityListIds = entities.map((e) => e.pk);
             const start = entityListIds.indexOf(entity);
             const end = entityListIds.indexOf(batchactions.lastCheckedEntity);
 
@@ -236,22 +223,18 @@ export function EntitiesListBase({
         }),
       );
     },
-    [batchactions, dispatch, entities.entities, store],
+    [batchactions, dispatch, entities, store],
   );
 
   const getMoreEntities = useCallback(() => {
-    // Temporary fix for the infinite number of requests from InfiniteScroller
-    // More info at:
-    // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
-    // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
-    if (!entities.fetching) {
+    if (!fetching) {
       dispatch(
         getEntities(
           locale,
           project,
           resource,
           null, // Do not return a specific list of entities defined by their IDs.
-          entities.entities.map((entity) => entity.pk), // Currently shown entities should be excluded from the next results.
+          entities.map((entity) => entity.pk), // Currently shown entities should be excluded from the next results.
           parameters.entity.toString(),
           search,
           status,
@@ -262,77 +245,57 @@ export function EntitiesListBase({
         ),
       );
     }
-  }, [dispatch, entities, parameters]);
+  }, [dispatch, entities, fetching, parameters]);
 
   // Must be after other useEffect() calls, as they are run in order during mount
   useEffect(() => {
     mounted.current = true;
   }, []);
 
-  // InfiniteScroll will display information about loading during the request
-  const hasMore = entities.fetching || entities.hasMore;
+  const hasNextPage = fetching || hasMore;
+
+  const [sentryRef, { rootRef }] = useInfiniteScroll({
+    loading: fetching,
+    hasNextPage,
+    onLoadMore: getMoreEntities,
+    rootMargin: '0px 0px 600px 0px',
+  });
+  useEffect(() => {
+    rootRef(list.current);
+  });
+
+  if (entities.length === 0 && !hasNextPage) {
+    // When there are no results for the current search.
+    return (
+      <div className='entities unselectable' ref={list}>
+        <h3 className='no-results'>
+          <div className='fa fa-exclamation-circle'></div>
+          No results
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <div className='entities unselectable' ref={list}>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={getMoreEntities}
-        hasMore={hasMore}
-        loader={<SkeletonLoader key={0} items={entities.entities} />}
-        useWindow={false}
-        threshold={600}
-      >
-        {hasMore || entities.entities.length ? (
-          <ul>
-            {entities.entities.map((entity) => {
-              const selected =
-                !batchactions.entities.length &&
-                entity.pk === parameters.entity;
-
-              return (
-                <Entity
-                  checkedForBatchEditing={batchactions.entities.includes(
-                    entity.pk,
-                  )}
-                  toggleForBatchEditing={toggleForBatchEditing}
-                  entity={entity}
-                  isReadOnlyEditor={isReadOnlyEditor}
-                  selected={selected}
-                  selectEntity={selectEntity}
-                  key={entity.pk}
-                  getSiblingEntities={getSiblingEntities_}
-                  parameters={parameters}
-                />
-              );
-            })}
-          </ul>
-        ) : (
-          // When there are no results for the current search.
-          <h3 className='no-results'>
-            <div className='fa fa-exclamation-circle'></div>
-            No results
-          </h3>
-        )}
-      </InfiniteScroll>
+      <ul>
+        {entities.map((entity) => (
+          <Entity
+            key={entity.pk}
+            checkedForBatchEditing={batchactions.entities.includes(entity.pk)}
+            toggleForBatchEditing={toggleForBatchEditing}
+            entity={entity}
+            isReadOnlyEditor={isReadOnlyEditor}
+            selected={
+              !batchactions.entities.length && entity.pk === parameters.entity
+            }
+            selectEntity={selectEntity}
+            getSiblingEntities={getSiblingEntities_}
+            parameters={parameters}
+          />
+        ))}
+      </ul>
+      {hasNextPage && <SkeletonLoader items={entities} sentryRef={sentryRef} />}
     </div>
-  );
-}
-
-export default function EntitiesList(): React.ReactElement<
-  typeof EntitiesListBase
-> {
-  const state = {
-    batchactions: useAppSelector((state) => state[BATCHACTIONS]),
-    entities: useAppSelector((state) => state[ENTITIES]),
-    isReadOnlyEditor: useReadonlyEditor(),
-    parameters: useContext(Location),
-  };
-
-  return (
-    <EntitiesListBase
-      {...state}
-      dispatch={useAppDispatch()}
-      store={useAppStore()}
-    />
   );
 }

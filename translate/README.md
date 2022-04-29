@@ -247,7 +247,6 @@ You can read [more about pseudo-localization on Wikipedia](https://en.wikipedia.
 - [create-react-app](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md)
 - [Jest](http://jestjs.io/docs/en/getting-started)
 - [sinon](https://sinonjs.org/releases/v6.0.0/)
-- [Infinite Scroller](https://cassetterocks.github.io/react-infinite-scroller/)
 - [Linkify](https://tasti.github.io/react-linkify/)
 - [ReactTimeAgo](https://github.com/catamphetamine/react-time-ago)
 - [react-tabs](https://github.com/reactjs/react-tabs)

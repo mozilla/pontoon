@@ -133,9 +133,10 @@ export const Machinery = ({
           ))}
         </ul>
         {(machinery.fetching || machinery.hasMore) && (
-          <div ref={sentryRef}>
-            <SkeletonLoader key={0} items={machinery.searchResults} />
-          </div>
+          <SkeletonLoader
+            items={machinery.searchResults}
+            sentryRef={sentryRef}
+          />
         )}
       </div>
     </section>
