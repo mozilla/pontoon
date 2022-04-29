@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import { Locale } from '~/context/locale';
 import { Location, LocationType } from '~/context/location';
@@ -240,10 +240,6 @@ export function EntitiesListBase({
   );
 
   const getMoreEntities = useCallback(() => {
-    // Temporary fix for the infinite number of requests from InfiniteScroller
-    // More info at:
-    // * https://github.com/CassetteRocks/react-infinite-scroller/issues/149
-    // * https://github.com/CassetteRocks/react-infinite-scroller/issues/163
     if (!entities.fetching) {
       dispatch(
         getEntities(
@@ -269,51 +265,52 @@ export function EntitiesListBase({
     mounted.current = true;
   }, []);
 
-  // InfiniteScroll will display information about loading during the request
-  const hasMore = entities.fetching || entities.hasMore;
+  const hasNextPage = entities.fetching || entities.hasMore;
+
+  const [sentryRef, { rootRef }] = useInfiniteScroll({
+    loading: entities.fetching,
+    hasNextPage,
+    onLoadMore: getMoreEntities,
+    rootMargin: '0px 0px 600px 0px',
+  });
+  useEffect(() => {
+    rootRef(list.current);
+  });
+
+  if (entities.entities.length === 0 && !hasNextPage) {
+    // When there are no results for the current search.
+    return (
+      <div className='entities unselectable' ref={list}>
+        <h3 className='no-results'>
+          <div className='fa fa-exclamation-circle'></div>
+          No results
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <div className='entities unselectable' ref={list}>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={getMoreEntities}
-        hasMore={hasMore}
-        loader={<SkeletonLoader key={0} items={entities.entities} />}
-        useWindow={false}
-        threshold={600}
-      >
-        {hasMore || entities.entities.length ? (
-          <ul>
-            {entities.entities.map((entity) => {
-              const selected =
-                !batchactions.entities.length &&
-                entity.pk === parameters.entity;
-
-              return (
-                <Entity
-                  checkedForBatchEditing={batchactions.entities.includes(
-                    entity.pk,
-                  )}
-                  toggleForBatchEditing={toggleForBatchEditing}
-                  entity={entity}
-                  isReadOnlyEditor={isReadOnlyEditor}
-                  selected={selected}
-                  selectEntity={selectEntity}
-                  key={entity.pk}
-                  getSiblingEntities={getSiblingEntities_}
-                  parameters={parameters}
-                />
-              );
-            })}
-          </ul>
-        ) : (
-          // When there are no results for the current search.
-          <h3 className='no-results'>
-            <div className='fa fa-exclamation-circle'></div>
-            No results
-          </h3>
-        )}
-      </InfiniteScroll>
+      <ul>
+        {entities.entities.map((entity) => (
+          <Entity
+            key={entity.pk}
+            checkedForBatchEditing={batchactions.entities.includes(entity.pk)}
+            toggleForBatchEditing={toggleForBatchEditing}
+            entity={entity}
+            isReadOnlyEditor={isReadOnlyEditor}
+            selected={
+              !batchactions.entities.length && entity.pk === parameters.entity
+            }
+            selectEntity={selectEntity}
+            getSiblingEntities={getSiblingEntities_}
+            parameters={parameters}
+          />
+        ))}
+      </ul>
+      {hasNextPage && (
+        <SkeletonLoader items={entities.entities} sentryRef={sentryRef} />
+      )}
     </div>
   );
 }
