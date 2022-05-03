@@ -11,6 +11,7 @@ import * as editor from '~/core/editor';
 import * as entities from '~/core/entities';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import GenericEditor from './GenericEditor';
 
@@ -48,11 +49,13 @@ function createComponent(entityIndex = 0) {
   const wrapper = mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <PluralFormProvider>
-          <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
-            <GenericEditor />
-          </Locale.Provider>
-        </PluralFormProvider>
+        <MockLocalizationProvider>
+          <PluralFormProvider>
+            <Locale.Provider value={{ cldrPlurals: [1, 5] }}>
+              <GenericEditor />
+            </Locale.Provider>
+          </PluralFormProvider>
+        </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,
   );

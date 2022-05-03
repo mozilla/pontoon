@@ -7,12 +7,13 @@ import { Provider } from 'react-redux';
 import { LocationProvider } from '~/context/location';
 import * as entities from '~/core/entities';
 
+import { createDefaultUser, createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
+
 import EditorMenu from './EditorMenu';
 import EditorSettings from './EditorSettings';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import TranslationLength from './TranslationLength';
-
-import { createDefaultUser, createReduxStore } from '~/test/store';
 
 const SELECTED_ENTITY = {
   pk: 1,
@@ -44,7 +45,9 @@ function createEditorMenu({
   const wrapper = mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <EditorMenu firstItemHook={firstItemHook} />
+        <MockLocalizationProvider>
+          <EditorMenu firstItemHook={firstItemHook} />
+        </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,
   );

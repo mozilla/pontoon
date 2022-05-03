@@ -14,6 +14,8 @@ import { LocationProvider } from '~/context/location';
 import * as user from '~/core/user';
 import { reducer } from '~/rootReducer';
 
+import { MockLocalizationProvider } from './utils';
+
 const HISTORY = createMemoryHistory({
   initialEntries: ['/kg/firefox/all-resources/'],
 });
@@ -35,7 +37,9 @@ export const mountComponentWithStore = (
   mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <Component {...props} />
+        <MockLocalizationProvider>
+          <Component {...props} />
+        </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,
   );

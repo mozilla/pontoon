@@ -1,5 +1,10 @@
-import { Localized } from '@fluent/react';
+import {
+  LocalizationProvider,
+  Localized,
+  ReactLocalization,
+} from '@fluent/react';
 import { shallow } from 'enzyme';
+import React from 'react';
 
 /*
  * Taken from https://github.com/mozilla/addons-frontend/blob/58d1315409f1ad6dc9b979440794df44c1128455/tests/unit/helpers.js#L276
@@ -91,4 +96,17 @@ export function mockMatchMedia() {
       dispatchEvent: jest.fn(),
     })),
   });
+}
+
+/**
+ * Mock the @fluent/react LocalizationProvider,
+ * which is required as a wrapper for Localization.
+ */
+export function MockLocalizationProvider({ children }) {
+  const l10n = new ReactLocalization([], null);
+
+  // https://github.com/projectfluent/fluent.js/issues/411
+  l10n.reportError = () => {};
+
+  return <LocalizationProvider l10n={l10n}>{children}</LocalizationProvider>;
 }

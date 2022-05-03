@@ -11,6 +11,7 @@ import * as entities from '~/core/entities';
 import { fluent } from '~/core/utils';
 
 import { createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
 import SimpleEditor from './SimpleEditor';
 
@@ -36,7 +37,9 @@ function createSimpleEditor(entityIndex = 1) {
   const wrapper = mount(
     <Provider store={store}>
       <LocationProvider history={history}>
-        <SimpleEditor ftlSwitch={null} />
+        <MockLocalizationProvider>
+          <SimpleEditor ftlSwitch={null} />
+        </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,
   );
