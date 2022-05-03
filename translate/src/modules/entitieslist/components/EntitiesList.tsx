@@ -262,7 +262,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   });
   useEffect(() => {
     rootRef(list.current);
-  });
+  }, [list.current]);
 
   if (entities.length === 0 && !hasNextPage) {
     // When there are no results for the current search.
