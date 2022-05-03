@@ -1,46 +1,42 @@
-import { RECEIVE, UPDATE } from './actions';
+import {
+  Action,
+  Resource,
+  RECEIVE_RESOURCES,
+  UPDATE_RESOURCE,
+} from './actions';
 
-import type { Resource, ReceiveAction, UpdateAction } from './actions';
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const NAME = 'resource';
 
-type Action = ReceiveAction | UpdateAction;
-
-export type ResourcesState = {
-  readonly resources: Array<Resource>;
+type ResourcesState = {
+  readonly resources: Resource[];
   readonly allResources: Resource;
 };
 
-function updateResource(
-  resources: Array<Resource>,
+const updateResource = (
+  { resources }: ResourcesState,
   resourcePath: string,
   approvedStrings: number,
   stringsWithWarnings: number,
-): Array<Resource> {
-  return resources.map((item) => {
-    if (item.path === resourcePath) {
-      return {
-        ...item,
-        approvedStrings,
-        stringsWithWarnings,
-      };
-    } else {
-      return item;
-    }
-  });
-}
+): Resource[] =>
+  resources.map((item) =>
+    item.path === resourcePath
+      ? { ...item, approvedStrings, stringsWithWarnings }
+      : item,
+  );
 
 function updateAllResources(
-  state: ResourcesState,
+  { allResources, resources }: ResourcesState,
   resourcePath: string,
   approvedStrings: number,
   stringsWithWarnings: number,
 ): Resource {
-  const updatedResource = state.resources.find(
-    (item) => item.path === resourcePath,
-  );
+  const updatedResource = resources.find((item) => item.path === resourcePath);
 
   // That can happen in All Projects view
   if (!updatedResource) {
-    return state.allResources;
+    return allResources;
   }
 
   const diffApproved = approvedStrings - updatedResource.approvedStrings;
@@ -48,9 +44,9 @@ function updateAllResources(
     stringsWithWarnings - updatedResource.stringsWithWarnings;
 
   return {
-    ...state.allResources,
-    approvedStrings: state.allResources.approvedStrings + diffApproved,
-    stringsWithWarnings: state.allResources.stringsWithWarnings + diffWarnings,
+    ...allResources,
+    approvedStrings: allResources.approvedStrings + diffApproved,
+    stringsWithWarnings: allResources.stringsWithWarnings + diffWarnings,
   };
 }
 
@@ -64,22 +60,22 @@ const initial: ResourcesState = {
   },
 };
 
-export default function reducer(
+export function reducer(
   state: ResourcesState = initial,
   action: Action,
 ): ResourcesState {
   switch (action.type) {
-    case RECEIVE:
+    case RECEIVE_RESOURCES:
       return {
         ...state,
         resources: action.resources,
         allResources: action.allResources,
       };
-    case UPDATE:
+    case UPDATE_RESOURCE:
       return {
         ...state,
         resources: updateResource(
-          state.resources,
+          state,
           action.resourcePath,
           action.approvedStrings,
           action.stringsWithWarnings,

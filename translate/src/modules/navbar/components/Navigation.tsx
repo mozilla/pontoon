@@ -4,12 +4,8 @@ import { Location, LocationType } from '~/context/location';
 
 import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
 import { get as getProject } from '~/core/project/actions';
-import {
-  NAME as RESOURCE,
-  ResourceMenu,
-  ResourcesState,
-} from '~/core/resource';
-import { get as getResource } from '~/core/resource/actions';
+import { getResource } from '~/core/resource/actions';
+import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
@@ -20,7 +16,6 @@ import './Navigation.css';
 type Props = {
   parameters: LocationType;
   project: ProjectState;
-  resources: ResourcesState;
 };
 
 type InternalProps = Props & {
@@ -37,7 +32,6 @@ export function NavigationBase({
   dispatch,
   parameters,
   project: projectState,
-  resources,
   store,
 }: InternalProps): React.ReactElement<'nav'> | null {
   const { code, name } = useContext(Locale);
@@ -95,11 +89,7 @@ export function NavigationBase({
           project={projectState}
           navigateToPath={navigateToPath}
         />
-        <ResourceMenu
-          parameters={parameters}
-          resources={resources}
-          navigateToPath={navigateToPath}
-        />
+        <ResourceMenu navigateToPath={navigateToPath} />
       </ul>
     </nav>
   );
@@ -111,7 +101,6 @@ export default function Navigation(): React.ReactElement<
   const state = {
     parameters: useContext(Location),
     project: useAppSelector((state) => state[PROJECT]),
-    resources: useAppSelector((state) => state[RESOURCE]),
   };
 
   return (

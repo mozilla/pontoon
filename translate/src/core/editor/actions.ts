@@ -8,7 +8,7 @@ import api, { Entity, SourceType } from '~/core/api';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { actions as resourceActions } from '~/core/resource';
+import { updateResource } from '~/core/resource/actions';
 import { actions as statsActions } from '~/core/stats';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 import { AppThunk } from '~/store';
@@ -288,7 +288,7 @@ export function sendTranslation(
       if (content.stats) {
         dispatch(statsActions.update(content.stats));
         dispatch(
-          resourceActions.update(
+          updateResource(
             entity.path,
             content.stats.approved,
             content.stats.warnings,

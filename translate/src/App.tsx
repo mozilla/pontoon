@@ -15,7 +15,7 @@ import {
 import { addRawNotification } from './core/notification/actions';
 import { NAME as PROJECT, ProjectState } from './core/project';
 import { get as getProject } from './core/project/actions';
-import { get as getResource } from './core/resource/actions';
+import { getResource } from './core/resource/actions';
 import { NAME as STATS, Stats } from './core/stats';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';

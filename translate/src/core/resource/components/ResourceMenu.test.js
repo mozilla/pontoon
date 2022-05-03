@@ -1,41 +1,49 @@
+import { mount } from 'enzyme';
+import { createMemoryHistory } from 'history';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 
-import ResourceItem from './ResourceItem';
+import { LocationProvider } from '~/context/location';
 
-import ResourceMenuBase, { ResourceMenu } from './ResourceMenu';
+import { createReduxStore } from '~/test/store';
+import { MockLocalizationProvider } from '~/test/utils';
 
-function createShallowResourceMenu({
+import { ResourceItem } from './ResourceItem';
+import { ResourceMenu } from './ResourceMenu';
+
+function createResourceMenu({
   project = 'project',
   resource = 'path/to.file',
 } = {}) {
-  return shallow(
-    <ResourceMenu
-      parameters={{
-        locale: 'locale',
-        project: project,
-        resource: resource,
-      }}
-      resources={{
-        resources: [
-          {
-            path: 'resourceAbc',
-          },
-          {
-            path: 'resourceBcd',
-          },
-          {
-            path: 'resourceCde',
-          },
-        ],
-      }}
-    />,
+  const store = createReduxStore({
+    resource: {
+      allResources: {},
+      resources: [
+        { path: 'resourceAbc' },
+        { path: 'resourceBcd' },
+        { path: 'resourceCde' },
+      ],
+    },
+  });
+  const history = createMemoryHistory({
+    initialEntries: [`/locale/${project}/${resource}/`],
+  });
+  return mount(
+    <Provider store={store}>
+      <LocationProvider history={history}>
+        <MockLocalizationProvider>
+          <ResourceMenu />
+        </MockLocalizationProvider>
+      </LocationProvider>
+    </Provider>,
   );
 }
 
 describe('<ResourceMenu>', () => {
   it('renders resource menu correctly', () => {
-    const wrapper = createShallowResourceMenu();
+    const wrapper = createResourceMenu();
+    wrapper.find('.selector').simulate('click');
 
     expect(wrapper.find('.menu .search-wrapper')).toHaveLength(1);
     expect(wrapper.find('.menu > ul')).toHaveLength(2);
@@ -51,72 +59,40 @@ describe('<ResourceMenu>', () => {
 
   it('searches resource items correctly', () => {
     const SEARCH = 'bc';
-    const wrapper = createShallowResourceMenu();
-    wrapper
-      .find('.menu .search-wrapper input')
-      .simulate('change', { currentTarget: { value: SEARCH } });
+    const wrapper = createResourceMenu();
+    wrapper.find('.selector').simulate('click');
+
+    act(() => {
+      wrapper.find('.menu .search-wrapper input').prop('onChange')({
+        currentTarget: { value: SEARCH },
+      });
+    });
+    wrapper.update();
 
     expect(wrapper.find('.menu .search-wrapper input').prop('value')).toEqual(
       SEARCH,
     );
     expect(wrapper.find('.menu > ul').find(ResourceItem)).toHaveLength(2);
   });
-});
 
-function createShallowResourceMenuBase({
-  project = 'project',
-  resource = 'path/to.file',
-} = {}) {
-  return shallow(
-    <ResourceMenuBase
-      parameters={{
-        locale: 'locale',
-        project: project,
-        resource: resource,
-      }}
-      resources={{
-        resources: [
-          {
-            path: 'resourceAbc',
-          },
-          {
-            path: 'resourceBcd',
-          },
-          {
-            path: 'resourceCde',
-          },
-        ],
-      }}
-    />,
-  );
-}
-
-describe('<ResourceMenuBase>', () => {
   it('hides resource selector for all-projects', () => {
-    const wrapper = createShallowResourceMenuBase({
-      project: 'all-projects',
-    });
+    const wrapper = createResourceMenu({ project: 'all-projects' });
 
     expect(wrapper.find('.resource-menu .selector')).toHaveLength(0);
   });
 
   it('renders resource selector correctly', () => {
-    const wrapper = createShallowResourceMenuBase();
+    const wrapper = createResourceMenu();
 
-    expect(wrapper.find('.resource-menu .selector')).toHaveLength(1);
-    expect(wrapper.find('.resource-menu .selector').prop('title')).toEqual(
-      'path/to.file',
-    );
-    expect(
-      wrapper.find('.resource-menu .selector span:first-child').text(),
-    ).toEqual('to.file');
-    expect(wrapper.find('.resource-menu .selector .icon')).toHaveLength(1);
+    const selector = wrapper.find('.resource-menu .selector');
+    expect(selector).toHaveLength(1);
+    expect(selector.prop('title')).toEqual('path/to.file');
+    expect(selector.find('span:first-child').text()).toEqual('to.file');
+    expect(selector.find('.icon')).toHaveLength(1);
   });
 
   it('sets a localized resource name correctly for all-resources', () => {
-    const wrapper = createShallowResourceMenuBase({
-      resource: 'all-resources',
-    });
+    const wrapper = createResourceMenu({ resource: 'all-resources' });
 
     expect(wrapper.find('#resource-ResourceMenu--all-resources')).toHaveLength(
       1,
@@ -124,10 +100,10 @@ describe('<ResourceMenuBase>', () => {
   });
 
   it('renders resource menu correctly', () => {
-    const wrapper = createShallowResourceMenuBase();
+    const wrapper = createResourceMenu();
 
-    expect(wrapper.find('ResourceMenu')).toHaveLength(0);
+    expect(wrapper.find('ResourceMenuDialog')).toHaveLength(0);
     wrapper.find('.selector').simulate('click');
-    expect(wrapper.find('ResourceMenu')).toHaveLength(1);
+    expect(wrapper.find('ResourceMenuDialog')).toHaveLength(1);
   });
 });

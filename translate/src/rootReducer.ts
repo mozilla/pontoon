@@ -2,7 +2,7 @@ import * as editor from '~/core/editor';
 import * as entities from '~/core/entities/reducer';
 import * as notification from '~/core/notification';
 import * as project from '~/core/project';
-import * as resource from '~/core/resource';
+import * as resource from '~/core/resource/reducer';
 import * as stats from '~/core/stats';
 import * as term from '~/core/term';
 import * as user from '~/core/user';

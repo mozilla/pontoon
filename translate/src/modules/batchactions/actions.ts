@@ -1,7 +1,7 @@
 import api, { EntityTranslation } from '~/core/api';
 
 import { updateEntityTranslation } from '~/core/entities/actions';
-import { actions as resourceActions } from '~/core/resource';
+import { updateResource } from '~/core/resource/actions';
 import { actions as statsActions } from '~/core/stats';
 import { actions as historyActions } from '~/modules/history';
 
@@ -60,7 +60,7 @@ function updateUI(
        */
       if (resource !== 'all-resources') {
         dispatch(
-          resourceActions.update(
+          updateResource(
             resource,
             entitiesData.stats.approved,
             entitiesData.stats.warnings,

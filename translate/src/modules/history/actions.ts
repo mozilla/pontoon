@@ -8,7 +8,7 @@ import { actions as editorActions } from '~/core/editor';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { actions as resourceActions } from '~/core/resource';
+import { updateResource } from '~/core/resource/actions';
 import { actions as statsActions } from '~/core/stats';
 import type { AppDispatch } from '~/store';
 
@@ -188,7 +188,7 @@ export function updateStatus(
 
       // Update stats in the resource menu.
       dispatch(
-        resourceActions.update(
+        updateResource(
           entity.path,
           results.stats.approved,
           results.stats.warnings,
