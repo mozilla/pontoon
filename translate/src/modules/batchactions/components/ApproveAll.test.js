@@ -2,6 +2,8 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
+import { MockLocalizationProvider } from '~/test/utils';
+
 import ApproveAll from './ApproveAll';
 
 const DEFAULT_BATCH_ACTIONS = {
@@ -11,9 +13,17 @@ const DEFAULT_BATCH_ACTIONS = {
   response: null,
 };
 
+const WrapApproveAll = (props) => (
+  <MockLocalizationProvider>
+    <ApproveAll {...props} />
+  </MockLocalizationProvider>
+);
+
 describe('<ApproveAll>', () => {
   it('renders default button correctly', () => {
-    const wrapper = mount(<ApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />);
+    const wrapper = mount(
+      <WrapApproveAll batchactions={DEFAULT_BATCH_ACTIONS} />,
+    );
 
     expect(wrapper.find('.approve-all')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ApproveAll--default')).toHaveLength(1);
@@ -25,7 +35,7 @@ describe('<ApproveAll>', () => {
 
   it('renders error button correctly', () => {
     const wrapper = mount(
-      <ApproveAll
+      <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -46,7 +56,7 @@ describe('<ApproveAll>', () => {
 
   it('renders success button correctly', () => {
     const wrapper = mount(
-      <ApproveAll
+      <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -67,7 +77,7 @@ describe('<ApproveAll>', () => {
 
   it('renders success with invalid button correctly', () => {
     const wrapper = mount(
-      <ApproveAll
+      <WrapApproveAll
         batchactions={{
           ...DEFAULT_BATCH_ACTIONS,
           response: {
@@ -91,7 +101,7 @@ describe('<ApproveAll>', () => {
     const mockApproveAll = sinon.spy();
 
     const wrapper = mount(
-      <ApproveAll
+      <WrapApproveAll
         batchactions={DEFAULT_BATCH_ACTIONS}
         approveAll={mockApproveAll}
       />,

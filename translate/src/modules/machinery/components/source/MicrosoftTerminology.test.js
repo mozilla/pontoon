@@ -2,6 +2,9 @@ import { mount } from 'enzyme';
 import React from 'react';
 
 import { Locale } from '~/context/locale';
+
+import { MockLocalizationProvider } from '~/test/utils';
+
 import MicrosoftTerminology from './MicrosoftTerminology';
 
 const LOCALE = { msTerminologyCode: 'en-US' };
@@ -13,7 +16,9 @@ describe('<MicrosoftTerminology>', () => {
   it('renders the MicrosoftTerminology component properly', () => {
     const wrapper = mount(
       <Locale.Provider value={LOCALE}>
-        <MicrosoftTerminology original={PROPS.original} />
+        <MockLocalizationProvider>
+          <MicrosoftTerminology original={PROPS.original} />
+        </MockLocalizationProvider>
       </Locale.Provider>,
     );
 
