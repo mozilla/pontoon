@@ -5,7 +5,7 @@ import type { LocationType } from '~/context/location';
 import type { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
-import { actions as entitiesActions } from '~/core/entities';
+import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { actions as resourceActions } from '~/core/resource';
@@ -199,11 +199,7 @@ export function updateStatus(
     // Update entity translation data now that it has changed on the server.
     if (results.translation) {
       dispatch(
-        entitiesActions.updateEntityTranslation(
-          entity.pk,
-          pluralForm,
-          results.translation,
-        ),
+        updateEntityTranslation(entity.pk, pluralForm, results.translation),
       );
     }
 

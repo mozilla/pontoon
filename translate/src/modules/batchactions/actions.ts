@@ -1,6 +1,6 @@
 import api, { EntityTranslation } from '~/core/api';
 
-import { actions as entitiesActions } from '~/core/entities';
+import { updateEntityTranslation } from '~/core/entities/actions';
 import { actions as resourceActions } from '~/core/resource';
 import { actions as statsActions } from '~/core/stats';
 import { actions as historyActions } from '~/modules/history';
@@ -75,13 +75,7 @@ function updateUI(
         translation: EntityTranslation,
         pluralForm: number,
       ) {
-        dispatch(
-          entitiesActions.updateEntityTranslation(
-            entity.pk,
-            pluralForm,
-            translation,
-          ),
-        );
+        dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
 
         if (entity.pk === selectedEntity) {
           dispatch(historyActions.request(entity.pk, pluralForm));

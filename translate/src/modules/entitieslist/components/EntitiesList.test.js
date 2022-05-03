@@ -52,25 +52,29 @@ describe('<EntitiesList>', () => {
   beforeAll(() => {
     sinon.stub(BatchActions, 'resetSelection').returns({ type: 'whatever' });
     sinon.stub(BatchActions, 'toggleSelection').returns({ type: 'whatever' });
-    sinon.stub(EntitiesActions, 'get').returns({ type: 'whatever' });
+    sinon.stub(EntitiesActions, 'fetchEntities').returns({ type: 'whatever' });
   });
 
   beforeEach(() => {
     // Make sure tests do not pollute one another.
     BatchActions.resetSelection.resetHistory();
     BatchActions.toggleSelection.resetHistory();
-    EntitiesActions.get.resetHistory();
+    EntitiesActions.fetchEntities.resetHistory();
   });
 
   afterAll(() => {
     BatchActions.resetSelection.restore();
     BatchActions.toggleSelection.restore();
-    EntitiesActions.get.restore();
+    EntitiesActions.fetchEntities.restore();
   });
 
   it('shows a loading animation when there are more entities to load', () => {
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, true));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: true,
+    });
     const wrapper = mountComponentWithStore(EntitiesList, store);
 
     expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
@@ -78,7 +82,11 @@ describe('<EntitiesList>', () => {
 
   it("doesn't display a loading animation when there aren't entities to load", () => {
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, false));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
     const wrapper = mountComponentWithStore(EntitiesList, store);
 
     expect(wrapper.find('SkeletonLoader')).toHaveLength(0);
@@ -86,7 +94,7 @@ describe('<EntitiesList>', () => {
 
   it('shows a loading animation when entities are being fetched from the server', () => {
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.request());
+    store.dispatch({ type: EntitiesActions.REQUEST_ENTITIES });
     const wrapper = mountComponentWithStore(EntitiesList, store);
 
     expect(wrapper.find('SkeletonLoader')).toHaveLength(1);
@@ -98,7 +106,11 @@ describe('<EntitiesList>', () => {
     });
 
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, false));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
     const wrapper = mountComponentWithStore(EntitiesList, store, {}, history);
 
     expect(wrapper.find('Entity')).toHaveLength(2);
@@ -108,14 +120,18 @@ describe('<EntitiesList>', () => {
     jest.useFakeTimers();
 
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, true));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: true,
+    });
     mountComponentWithStore(EntitiesList, store);
 
     act(() => MockIntersectionObserver.set(true));
     jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
 
     const currentEntPks = ENTITIES.map((ent) => ent.pk);
-    expect(EntitiesActions.get.args[0][4]).toEqual(currentEntPks);
+    expect(EntitiesActions.fetchEntities.args[0][4]).toEqual(currentEntPks);
   });
 
   it('redirects to the first entity when none is selected', () => {
@@ -126,7 +142,11 @@ describe('<EntitiesList>', () => {
     history.listen(spy);
 
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, false));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
 
     mountComponentWithStore(EntitiesList, store, {}, history);
 
@@ -142,7 +162,11 @@ describe('<EntitiesList>', () => {
 
   it('toggles entity for batch editing', () => {
     const store = createReduxStore();
-    store.dispatch(EntitiesActions.receive(ENTITIES, false));
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: false,
+    });
 
     // HACK to get isTranslator === true in Entity
     createDefaultUser(store, { translator_for_locales: [''] });

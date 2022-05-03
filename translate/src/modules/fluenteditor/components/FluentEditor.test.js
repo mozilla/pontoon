@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 
 import { LocationProvider } from '~/context/location';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -80,7 +80,11 @@ function createComponent(entityPk = 1) {
     </Provider>,
   );
 
-  store.dispatch(entities.actions.receive(ENTITIES));
+  store.dispatch({
+    type: RECEIVE_ENTITIES,
+    entities: ENTITIES,
+    hasMore: false,
+  });
   store.dispatch(editor.actions.reset());
   act(() => history.push(`?string=${entityPk}`));
   wrapper.update();

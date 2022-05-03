@@ -5,12 +5,12 @@ import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
 import type { Entity as EntityType } from '~/core/api';
 import { reset as resetEditor } from '~/core/editor/actions';
-import { NAME as ENTITIES } from '~/core/entities';
 import {
-  get as getEntities,
-  getSiblingEntities,
-  reset as resetEntities,
+  fetchEntities,
+  fetchSiblingEntities,
+  resetEntities,
 } from '~/core/entities/actions';
+import { useEntities } from '~/core/entities/hooks';
 import { SkeletonLoader } from '~/core/loaders';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
@@ -43,9 +43,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const store = useAppStore();
 
   const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
-  const { entities, fetchCount, fetching, hasMore } = useAppSelector(
-    (state) => state[ENTITIES],
-  );
+  const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
   const parameters = useContext(Location);
 
@@ -187,8 +185,8 @@ export function EntitiesList(): React.ReactElement<'div'> {
   useEffect(scrollToSelected, [parameters.entity]);
 
   const { code } = useContext(Locale);
-  const getSiblingEntities_ = useCallback(
-    (entity: number) => dispatch(getSiblingEntities(entity, code)),
+  const getSiblingEntities = useCallback(
+    (entity: number) => dispatch(fetchSiblingEntities(entity, code)),
     [dispatch, code],
   );
 
@@ -229,7 +227,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const getMoreEntities = useCallback(() => {
     if (!fetching) {
       dispatch(
-        getEntities(
+        fetchEntities(
           locale,
           project,
           resource,
@@ -290,7 +288,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
               !batchactions.entities.length && entity.pk === parameters.entity
             }
             selectEntity={selectEntity}
-            getSiblingEntities={getSiblingEntities_}
+            getSiblingEntities={getSiblingEntities}
             parameters={parameters}
           />
         ))}

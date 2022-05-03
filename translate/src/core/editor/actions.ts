@@ -5,7 +5,7 @@ import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 import { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, SourceType } from '~/core/api';
-import { actions as entitiesActions } from '~/core/entities';
+import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { actions as resourceActions } from '~/core/resource';
@@ -281,11 +281,7 @@ export function sendTranslation(
       dispatch(unsavedchanges.actions.ignore());
 
       dispatch(
-        entitiesActions.updateEntityTranslation(
-          entity.pk,
-          pluralForm,
-          content.translation,
-        ),
+        updateEntityTranslation(entity.pk, pluralForm, content.translation),
       );
 
       // Update stats in the filter panel and resource menu if possible.

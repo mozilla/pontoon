@@ -10,7 +10,7 @@ import React, {
 import { Location, LocationType } from '~/context/location';
 
 import { reset as resetEditor } from '~/core/editor/actions';
-import { reset as resetEntities } from '~/core/entities/actions';
+import { resetEntities } from '~/core/entities/actions';
 import type { ProjectState } from '~/core/project';
 import { NAME as PROJECT } from '~/core/project';
 import type { Stats } from '~/core/stats';
