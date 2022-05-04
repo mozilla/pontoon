@@ -130,8 +130,7 @@ describe('<EntitiesList>', () => {
     act(() => MockIntersectionObserver.set(true));
     jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
 
-    const currentEntPks = ENTITIES.map((ent) => ent.pk);
-    expect(EntitiesActions.fetchEntities.args[0][4]).toEqual(currentEntPks);
+    expect(EntitiesActions.fetchEntities.args[0][1]).toEqual(ENTITIES);
   });
 
   it('redirects to the first entity when none is selected', () => {

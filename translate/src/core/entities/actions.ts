@@ -1,3 +1,4 @@
+import { LocationType } from '~/context/location';
 import api, { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
 import { update as updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
@@ -56,38 +57,14 @@ export const updateEntityTranslation = (
 
 /** Fetch entities and their translation.  */
 export const fetchEntities =
-  (
-    locale: string,
-    project: string,
-    resource: string,
-    entityIds: Array<number> | null | undefined,
-    exclude: Array<number>,
-    entity: string | null | undefined,
-    search: string | null | undefined,
-    status: string | null | undefined,
-    extra: string | null | undefined,
-    tag: string | null | undefined,
-    author: string | null | undefined,
-    time: string | null | undefined,
-  ) =>
+  (location: LocationType, exclude: Entities) =>
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_ENTITIES });
 
-    const content = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      entityIds,
-      exclude,
-      entity,
-      search,
-      status,
-      extra,
-      tag,
-      author,
-      time,
-      false,
-    );
+    const content = await api.entity.getEntities(location, {
+      entity: location.entity,
+      exclude: exclude.map((ent) => ent.pk),
+    });
 
     if (content.entities) {
       dispatch({

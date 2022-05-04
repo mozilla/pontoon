@@ -1,3 +1,4 @@
+import { LocationType } from '~/context/location';
 import api, { EntityTranslation } from '~/core/api';
 
 import { updateEntityTranslation } from '~/core/entities/actions';
@@ -75,20 +76,16 @@ export const checkSelection = (
   lastCheckedEntity,
 });
 
-function updateUI(
-  locale: string,
-  project: string,
-  resource: string,
-  selectedEntity: number,
-  entities: Array<number>,
-) {
-  return async (dispatch: AppDispatch) => {
+const updateUI =
+  (
+    { locale, project, resource }: LocationType,
+    selectedEntity: number,
+    entityIds: number[],
+  ) =>
+  async (dispatch: AppDispatch) => {
     const entitiesData = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      entities,
-      [],
+      { locale, project, resource },
+      { entityIds },
     );
 
     if (entitiesData.stats) {
@@ -127,25 +124,23 @@ function updateUI(
       });
     }
   };
-}
 
-export function performAction(
-  action: string,
-  locale: string,
-  project: string,
-  resource: string,
-  selectedEntity: number,
-  entities: Array<number>,
-  find?: string,
-  replace?: string,
-) {
-  return async (dispatch: AppDispatch) => {
+export const performAction =
+  (
+    location: LocationType,
+    action: string,
+    selectedEntity: number,
+    entityIds: number[],
+    find?: string,
+    replace?: string,
+  ) =>
+  async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: action });
 
     const data = await api.entity.batchEdit(
       action,
-      locale,
-      entities,
+      location.locale,
+      entityIds,
       find,
       replace,
     );
@@ -162,7 +157,7 @@ export function performAction(
       response.invalidCount = data.invalid_translation_count;
 
       if (data.count > 0) {
-        dispatch(updateUI(locale, project, resource, selectedEntity, entities));
+        dispatch(updateUI(location, selectedEntity, entityIds));
       }
     } else {
       response.error = true;
@@ -174,45 +169,19 @@ export function performAction(
       dispatch({ type: RESET_BATCHACTIONS_RESPONSE });
     }, 3000);
   };
-}
 
 export const resetSelection = (): ResetAction => ({ type: RESET_BATCHACTIONS });
 
 export const selectAll =
-  (
-    locale: string,
-    project: string,
-    resource: string,
-    search: string | null | undefined,
-    status: string | null | undefined,
-    extra: string | null | undefined,
-    tag: string | null | undefined,
-    author: string | null | undefined,
-    time: string | null | undefined,
-  ) =>
-  async (dispatch: AppDispatch) => {
+  (location: LocationType) => async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: 'select-all' });
 
-    const content = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      null,
-      [],
-      null,
-      search,
-      status,
-      extra,
-      tag,
-      author,
-      time,
-      true,
-    );
+    const content = await api.entity.getEntities(location, { pkOnly: true });
 
-    const entities = content.entity_pks;
+    const entityIds = content.entity_pks;
 
     dispatch({ type: RECEIVE_BATCHACTIONS, response: undefined });
-    dispatch(checkSelection(entities, entities[0]));
+    dispatch(checkSelection(entityIds, entityIds[0]));
   };
 
 export const toggleSelection = (entity: number): ToggleAction => ({

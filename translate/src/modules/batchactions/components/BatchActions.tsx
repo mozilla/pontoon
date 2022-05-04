@@ -25,18 +25,7 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
-  const {
-    entity,
-    locale,
-    project,
-    resource,
-    search,
-    status,
-    extra,
-    tag,
-    author,
-    time,
-  } = location;
+  const { entity, locale, project, resource } = location;
 
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
@@ -51,34 +40,14 @@ export function BatchActions(): React.ReactElement<'div'> {
   }, []);
 
   const selectAllEntities = useCallback(
-    () =>
-      dispatch(
-        selectAll(
-          locale,
-          project,
-          resource,
-          search,
-          status,
-          extra,
-          tag,
-          author,
-          time,
-        ),
-      ),
+    () => dispatch(selectAll(location)),
     [dispatch, location],
   );
 
   const approveAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
       dispatch(
-        performAction(
-          'approve',
-          locale,
-          project,
-          resource,
-          entity,
-          batchactions.entities,
-        ),
+        performAction(location, 'approve', entity, batchactions.entities),
       );
     }
   }, [dispatch, entity, locale, project, resource, batchactions]);
@@ -86,14 +55,7 @@ export function BatchActions(): React.ReactElement<'div'> {
   const rejectAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
       dispatch(
-        performAction(
-          'reject',
-          locale,
-          project,
-          resource,
-          entity,
-          batchactions.entities,
-        ),
+        performAction(location, 'reject', entity, batchactions.entities),
       );
     }
   }, [dispatch, entity, locale, project, resource, batchactions]);
@@ -109,10 +71,8 @@ export function BatchActions(): React.ReactElement<'div'> {
       } else {
         dispatch(
           performAction(
+            location,
             'replace',
-            locale,
-            project,
-            resource,
             entity,
             batchactions.entities,
             encodeURIComponent(fv),

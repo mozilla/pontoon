@@ -45,51 +45,27 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const batchactions = useBatchactions();
   const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
-  const parameters = useContext(Location);
+  const location = useContext(Location);
 
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);
-
-  const {
-    locale,
-    project,
-    resource,
-    search,
-    status,
-    extra,
-    tag,
-    author,
-    time,
-  } = parameters;
 
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
       // On Ctrl + Shift + A, select all entities for batch editing.
       if (ev.keyCode === 65 && !ev.altKey && ev.ctrlKey && ev.shiftKey) {
         ev.preventDefault();
-        dispatch(
-          selectAll(
-            locale,
-            project,
-            resource,
-            search,
-            status,
-            extra,
-            tag,
-            author,
-            time,
-          ),
-        );
+        dispatch(selectAll(location));
       }
     };
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
-  }, [dispatch, parameters]);
+  }, [dispatch, location]);
 
   const selectEntity = useCallback(
     (entity: EntityType, replaceHistory?: boolean) => {
       // Do not re-select already selected entity
-      if (entity.pk !== parameters.entity) {
+      if (entity.pk !== location.entity) {
         const state = store.getState();
         const { exist, ignored } = state[UNSAVEDCHANGES];
 
@@ -99,15 +75,15 @@ export function EntitiesList(): React.ReactElement<'div'> {
             dispatch(resetEditor());
             const nextLocation = { entity: entity.pk };
             if (replaceHistory) {
-              parameters.replace(nextLocation);
+              location.replace(nextLocation);
             } else {
-              parameters.push(nextLocation);
+              location.push(nextLocation);
             }
           }),
         );
       }
     },
-    [dispatch, parameters, store],
+    [dispatch, location, store],
   );
 
   /*
@@ -115,7 +91,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
    * cannot be found, select the first entity in the list.
    */
   useEffect(() => {
-    const selectedEntity = parameters.entity;
+    const selectedEntity = location.entity;
     const firstEntity = entities[0];
     const isValid = entities.some(({ pk }) => pk === selectedEntity);
 
@@ -150,16 +126,16 @@ export function EntitiesList(): React.ReactElement<'div'> {
     }
   }, [
     dispatch,
-    // Note: entity is explicitly not included here
-    locale,
-    project,
-    resource,
-    search,
-    status,
-    extra,
-    tag,
-    author,
-    time,
+    // Note: location.entity is explicitly not included here
+    location.locale,
+    location.project,
+    location.resource,
+    location.search,
+    location.status,
+    location.extra,
+    location.tag,
+    location.author,
+    location.time,
   ]);
 
   const scrollToSelected = useCallback(() => {
@@ -182,7 +158,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
       scrollToSelected();
     }
   }, [entities.length]);
-  useEffect(scrollToSelected, [parameters.entity]);
+  useEffect(scrollToSelected, [location.entity]);
 
   const { code } = useContext(Locale);
   const getSiblingEntities = useCallback(
@@ -226,24 +202,10 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
   const getMoreEntities = useCallback(() => {
     if (!fetching) {
-      dispatch(
-        fetchEntities(
-          locale,
-          project,
-          resource,
-          null, // Do not return a specific list of entities defined by their IDs.
-          entities.map((entity) => entity.pk), // Currently shown entities should be excluded from the next results.
-          parameters.entity.toString(),
-          search,
-          status,
-          extra,
-          tag,
-          author,
-          time,
-        ),
-      );
+      // Currently shown entities should be excluded from the next results.
+      dispatch(fetchEntities(location, entities));
     }
-  }, [dispatch, entities, fetching, parameters]);
+  }, [dispatch, entities, fetching, location]);
 
   // Must be after other useEffect() calls, as they are run in order during mount
   useEffect(() => {
@@ -285,11 +247,11 @@ export function EntitiesList(): React.ReactElement<'div'> {
             entity={entity}
             isReadOnlyEditor={isReadOnlyEditor}
             selected={
-              !batchactions.entities.length && entity.pk === parameters.entity
+              !batchactions.entities.length && entity.pk === location.entity
             }
             selectEntity={selectEntity}
             getSiblingEntities={getSiblingEntities}
-            parameters={parameters}
+            parameters={location}
           />
         ))}
       </ul>
