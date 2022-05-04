@@ -1,19 +1,15 @@
 import { useLocalization } from '@fluent/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
 import { initLocale, Locale, updateLocale } from './context/locale';
-import { Location, LocationType } from './context/location';
+import { Location } from './context/location';
 
 import { WaveLoader } from './core/loaders';
-import {
-  NAME as NOTIFICATION,
-  NotificationPanel,
-  NotificationState,
-} from './core/notification';
+import { NAME as NOTIFICATION, NotificationPanel } from './core/notification';
 import { addRawNotification } from './core/notification/actions';
-import { NAME as PROJECT, ProjectState } from './core/project';
+import { NAME as PROJECT } from './core/project';
 import { get as getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user';
@@ -32,26 +28,18 @@ import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
-import { AppDispatch } from './store';
-
-type Props = {
-  notification: NotificationState;
-  location: LocationType;
-  project: ProjectState;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-};
-
 /**
  * Main entry point to the application. Will render the structure of the page.
  */
-function App({ dispatch, notification, location, project }: InternalProps) {
-  const mounted = useRef(false);
-  const { l10n } = useLocalization();
-  const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
+export function App() {
+  const dispatch = useAppDispatch();
+  const location = useContext(Location);
   const batchactions = useBatchactions();
+  const notification = useAppSelector((state) => state[NOTIFICATION]);
+  const project = useAppSelector((state) => state[PROJECT]);
+  const { l10n } = useLocalization();
+
+  const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
 
   const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
@@ -60,7 +48,7 @@ function App({ dispatch, notification, location, project }: InternalProps) {
     // If there's a notification in the DOM, passed by django, show it.
     // Note that we only show it once, and only when the UI has already
     // been rendered, to make sure users do see it.
-    if (mounted.current && l10nReady && !locale.fetching) {
+    if (l10nReady && !locale.fetching) {
       let notifications = [];
       const rootElt = document.getElementById('root');
       if (rootElt?.dataset.notifications) {
@@ -85,7 +73,6 @@ function App({ dispatch, notification, location, project }: InternalProps) {
     if (!allProjects) {
       dispatch(getResource(location.locale, location.project));
     }
-    mounted.current = true;
   }, []);
 
   if (!l10nReady || locale.fetching) {
@@ -119,19 +106,5 @@ function App({ dispatch, notification, location, project }: InternalProps) {
         <InteractiveTour />
       </div>
     </Locale.Provider>
-  );
-}
-
-export default function AppWrapper() {
-  const props = useAppSelector((state) => ({
-    notification: state[NOTIFICATION],
-    project: state[PROJECT],
-  }));
-  return (
-    <App
-      dispatch={useAppDispatch()}
-      location={useContext(Location)}
-      {...props}
-    />
   );
 }
