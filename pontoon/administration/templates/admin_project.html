@@ -236,7 +236,7 @@
 
   <div class="deadline-priority-contact clearfix">
     <section class="deadline clearfix">
-      {{ form.deadline.label_tag() }}
+      <label for="id_deadline">Target Date</label>
       <input id="id_deadline" name="deadline" value="{{ form.deadline.value() or '' }}" type="text" placeholder="YYYY-MM-DD">
       {{ form.deadline.errors }}
     </section>
