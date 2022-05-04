@@ -5,7 +5,7 @@ import { Location } from '~/context/location';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { performAction, resetSelection, selectAll } from '../actions';
-import { NAME as BATCHACTIONS } from '../index';
+import { NAME as BATCHACTIONS } from '../reducer';
 
 import ApproveAll from './ApproveAll';
 import './BatchActions.css';

@@ -23,11 +23,8 @@ import { getUsers } from './core/user/actions';
 import { useAppDispatch, useAppSelector } from './hooks';
 
 import { AddonPromotion } from './modules/addonpromotion/components/AddonPromotion';
-import {
-  BatchActions,
-  BatchActionsState,
-  NAME as BATCHACTIONS,
-} from './modules/batchactions';
+import { BatchActions } from './modules/batchactions/components/BatchActions';
+import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
 import { InteractiveTour } from './modules/interactivetour';
@@ -39,7 +36,6 @@ import { SearchBox } from './modules/search';
 import { AppDispatch } from './store';
 
 type Props = {
-  batchactions: BatchActionsState;
   notification: NotificationState;
   location: LocationType;
   project: ProjectState;
@@ -54,7 +50,6 @@ type InternalProps = Props & {
  * Main entry point to the application. Will render the structure of the page.
  */
 function App({
-  batchactions,
   dispatch,
   notification,
   location,
@@ -64,6 +59,7 @@ function App({
   const mounted = useRef(false);
   const { l10n } = useLocalization();
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
+  const batchactions = useBatchactions();
 
   const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
@@ -136,7 +132,6 @@ function App({
 
 export default function AppWrapper() {
   const props = useAppSelector((state) => ({
-    batchactions: state[BATCHACTIONS],
     notification: state[NOTIFICATION],
     project: state[PROJECT],
     stats: state[STATS],

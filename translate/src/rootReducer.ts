@@ -6,7 +6,7 @@ import * as resource from '~/core/resource/reducer';
 import * as stats from '~/core/stats';
 import * as term from '~/core/term';
 import * as user from '~/core/user';
-import * as batchactions from '~/modules/batchactions';
+import * as batchactions from '~/modules/batchactions/reducer';
 import * as history from '~/modules/history';
 import * as machinery from '~/modules/machinery';
 import * as otherlocales from '~/modules/otherlocales';

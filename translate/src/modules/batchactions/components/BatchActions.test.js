@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
-import { NAME as BATCHACTIONS } from '../index';
+import { NAME as BATCHACTIONS } from '../reducer';
 
 import ApproveAll from './ApproveAll';
 import { BatchActions } from './BatchActions';

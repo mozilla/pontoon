@@ -14,10 +14,9 @@ import { useEntities } from '~/core/entities/hooks';
 import { SkeletonLoader } from '~/core/loaders';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useAppDispatch, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { NAME as BATCHACTIONS } from '~/modules/batchactions';
 import {
   checkSelection,
   resetSelection,
@@ -25,6 +24,7 @@ import {
   toggleSelection,
   uncheckSelection,
 } from '~/modules/batchactions/actions';
+import { useBatchactions } from '~/modules/batchactions/hooks';
 import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
@@ -42,7 +42,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const dispatch = useAppDispatch();
   const store = useAppStore();
 
-  const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
+  const batchactions = useBatchactions();
   const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
   const parameters = useContext(Location);
