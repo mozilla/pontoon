@@ -177,7 +177,7 @@ form a:visited {
   margin-top: 17px;
 }
 
-.controls a {
+.controls .cancel {
   margin: 5px 9px;
 }
 
@@ -230,6 +230,10 @@ form .locale.select.selected {
   margin-right: 49px;
 }
 
+form .locales-pretranslate .locale.select.selected {
+  margin-left: 49px;
+}
+
 .locale.select.readonly {
   float: right;
 }
@@ -245,7 +249,8 @@ form .locale.select.selected {
 }
 
 #id_locales,
-#id_locales_readonly {
+#id_locales_readonly,
+#id_locales_pretranslate {
   display: none;
 }
 

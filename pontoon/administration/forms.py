@@ -31,6 +31,10 @@ class ProjectForm(forms.ModelForm):
         queryset=Locale.objects.all(),
         required=False,
     )
+    locales_pretranslate = forms.ModelMultipleChoiceField(
+        queryset=Locale.objects.all(),
+        required=False,
+    )
 
     def clean(self):
         cleaned_data = super().clean()

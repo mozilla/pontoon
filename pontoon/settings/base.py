@@ -291,6 +291,7 @@ PIPELINE_CSS = {
     "admin_project": {
         "source_filenames": (
             "css/double_list_selector.css",
+            "css/multiple_team_selector.css",
             "css/admin_project.css",
             "tag_admin.css",
         ),
@@ -430,6 +431,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/jquery-ui.js",
             "js/double_list_selector.js",
+            "js/multiple_team_selector.js",
             "js/admin_project.js",
             "tag_admin.js",
         ),

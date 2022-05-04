@@ -93,6 +93,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     tag_formset = TagInlineFormSet()
     locales_readonly = Locale.objects.none()
     locales_selected = Locale.objects.none()
+    locales_pretranslate = Locale.objects.none()
     subtitle = "Add project"
     pk = None
     project = None
@@ -105,6 +106,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
         locales_selected = Locale.objects.filter(
             pk__in=request.POST.getlist("locales")
         ).exclude(pk__in=locales_readonly)
+        locales_pretranslate = Locale.objects.filter(
+            pk__in=request.POST.getlist("locales_pretranslate")
+        )
 
         # Update existing project
         try:
@@ -164,15 +168,28 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 for locale in locales:
                     ProjectLocale.objects.get_or_create(project=project, locale=locale)
 
+                project_locales = ProjectLocale.objects.filter(project=project)
+
                 # Update readonly flags
                 locales_readonly_pks = [l.pk for l in locales_readonly_form]
-                project_locales = ProjectLocale.objects.filter(project=project)
                 project_locales.exclude(locale__pk__in=locales_readonly_pks).update(
                     readonly=False
                 )
                 project_locales.filter(
                     locale__pk__in=locales_readonly_pks,
                 ).update(readonly=True)
+
+                # Update pretranslate flags
+                locales_pretranslate_form = form.cleaned_data.get(
+                    "locales_pretranslate", []
+                )
+                locales_pretranslate_pks = [l.pk for l in locales_pretranslate_form]
+                project_locales.exclude(locale__pk__in=locales_pretranslate_pks).update(
+                    pretranslation_enabled=False
+                )
+                project_locales.filter(
+                    locale__pk__in=locales_pretranslate_pks,
+                ).update(pretranslation_enabled=True)
 
                 subpage_formset.save()
                 repo_formset.save()
@@ -217,6 +234,10 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 project_locale__project=project,
             )
             locales_selected = project.locales.exclude(pk__in=locales_readonly)
+            locales_pretranslate = Locale.objects.filter(
+                project_locale__pretranslation_enabled=True,
+                project_locale__project=project,
+            )
             subtitle = "Edit project"
         except Project.DoesNotExist:
             form = ProjectForm(initial={"slug": slug})
@@ -242,6 +263,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     locales_readonly = locales_readonly.order_by("code")
     locales_selected = locales_selected.order_by("code")
     locales_available = locales_available.order_by("code")
+    locales_pretranslate = locales_pretranslate.order_by("code")
 
     data = {
         "slug": slug,
@@ -253,6 +275,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
         "locales_readonly": locales_readonly,
         "locales_selected": locales_selected,
         "locales_available": locales_available,
+        "locales_pretranslate": locales_pretranslate,
         "subtitle": subtitle,
         "pk": pk,
         "project": project,
