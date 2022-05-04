@@ -9,7 +9,7 @@ import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
-import { actions as statsActions } from '~/core/stats';
+import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
@@ -184,7 +184,7 @@ export function updateStatus(
 
     if (results.stats) {
       // Update stats in the progress chart and the filter panel.
-      dispatch(statsActions.update(results.stats));
+      dispatch(updateStats(results.stats));
 
       // Update stats in the resource menu.
       dispatch(

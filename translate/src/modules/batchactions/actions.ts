@@ -3,7 +3,7 @@ import api, { EntityTranslation } from '~/core/api';
 
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
-import { actions as statsActions } from '~/core/stats';
+import { updateStats } from '~/core/stats/actions';
 import { actions as historyActions } from '~/modules/history';
 
 import type { AppDispatch } from '~/store';
@@ -90,7 +90,7 @@ const updateUI =
 
     if (entitiesData.stats) {
       // Update stats in progress chart and filter panel.
-      dispatch(statsActions.update(entitiesData.stats));
+      dispatch(updateStats(entitiesData.stats));
 
       /*
        * Update stats in the resource menu.

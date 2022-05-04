@@ -9,7 +9,7 @@ import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
-import { actions as statsActions } from '~/core/stats';
+import { updateStats } from '~/core/stats/actions';
 import * as unsavedchanges from '~/modules/unsavedchanges';
 import { AppThunk } from '~/store';
 
@@ -286,7 +286,7 @@ export function sendTranslation(
 
       // Update stats in the filter panel and resource menu if possible.
       if (content.stats) {
-        dispatch(statsActions.update(content.stats));
+        dispatch(updateStats(content.stats));
         dispatch(
           updateResource(
             entity.path,

@@ -1,6 +1,6 @@
 import { LocationType } from '~/context/location';
 import api, { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
-import { update as updateStats } from '~/core/stats/actions';
+import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
 export const RECEIVE_ENTITIES = 'entities/RECEIVE';

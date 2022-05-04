@@ -13,8 +13,6 @@ import { reset as resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import type { ProjectState } from '~/core/project';
 import { NAME as PROJECT } from '~/core/project';
-import type { Stats } from '~/core/stats';
-import { NAME as STATS } from '~/core/stats';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
@@ -37,7 +35,6 @@ type Props = {
   searchAndFilters: SearchAndFilters;
   parameters: LocationType;
   project: ProjectState;
-  stats: Stats;
 };
 
 type InternalProps = Props & {
@@ -74,7 +71,6 @@ export function SearchBoxBase({
   parameters,
   project,
   searchAndFilters,
-  stats,
   store,
 }: InternalProps): React.ReactElement<'div'> {
   const applyOnChange = useRef(false);
@@ -279,7 +275,6 @@ export function SearchBoxBase({
         timeRange={timeRange}
         timeRangeData={searchAndFilters.countsPerMinute}
         authorsData={searchAndFilters.authors}
-        stats={stats}
         parameters={parameters}
         applyFilters={applyFilters}
         applySingleFilter={applySingleFilter}
@@ -298,7 +293,6 @@ export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
     parameters: useContext(Location),
     project: useAppSelector((state) => state[PROJECT]),
-    stats: useAppSelector((state) => state[STATS]),
   };
 
   return (

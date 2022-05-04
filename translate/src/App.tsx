@@ -16,7 +16,6 @@ import { addRawNotification } from './core/notification/actions';
 import { NAME as PROJECT, ProjectState } from './core/project';
 import { get as getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
-import { NAME as STATS, Stats } from './core/stats';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';
 
@@ -39,7 +38,6 @@ type Props = {
   notification: NotificationState;
   location: LocationType;
   project: ProjectState;
-  stats: Stats;
 };
 
 type InternalProps = Props & {
@@ -49,13 +47,7 @@ type InternalProps = Props & {
 /**
  * Main entry point to the application. Will render the structure of the page.
  */
-function App({
-  dispatch,
-  notification,
-  location,
-  project,
-  stats,
-}: InternalProps) {
+function App({ dispatch, notification, location, project }: InternalProps) {
   const mounted = useRef(false);
   const { l10n } = useLocalization();
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -106,7 +98,7 @@ function App({
         <AddonPromotion />
         <header>
           <Navigation />
-          <ResourceProgress stats={stats} />
+          <ResourceProgress />
           {allProjects ? null : <ProjectInfo project={project} />}
           <NotificationPanel notification={notification} />
           <UserControls />
@@ -134,7 +126,6 @@ export default function AppWrapper() {
   const props = useAppSelector((state) => ({
     notification: state[NOTIFICATION],
     project: state[PROJECT],
-    stats: state[STATS],
   }));
   return (
     <App

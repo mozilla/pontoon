@@ -1,32 +1,24 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { MockLocalizationProvider } from '~/test/utils';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import FiltersPanelBase, { FiltersPanel } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
-
-const WrapFiltersPanel = (props) => (
-  <MockLocalizationProvider>
-    <FiltersPanel {...props} />
-  </MockLocalizationProvider>
-);
 
 describe('<FiltersPanel>', () => {
   it('correctly sets filter as selected', () => {
     const statuses = ['warnings', 'missing'];
     const extras = ['rejected'];
 
-    const wrapper = mount(
-      <WrapFiltersPanel
-        filters={{ authors: [], extras, statuses, tags: [] }}
-        authorsData={[]}
-        stats={{}}
-        tagsData={[]}
-        timeRangeData={[]}
-      />,
-    );
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+      filters: { authors: [], extras, statuses, tags: [] },
+      authorsData: [],
+      tagsData: [],
+      timeRangeData: [],
+    });
 
     for (let filter of FILTERS_STATUS) {
       expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
@@ -44,38 +36,36 @@ describe('<FiltersPanel>', () => {
   for (let { slug } of FILTERS_STATUS) {
     describe(`status: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
-        const applySingleFilter = sinon.spy();
-        const wrapper = mount(
-          <WrapFiltersPanel
-            filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
-            authorsData={[]}
-            stats={{}}
-            tagsData={[]}
-            onApplyFilter={applySingleFilter}
-            timeRangeData={[]}
-          />,
-        );
+        const onApplyFilter = sinon.spy();
+        const store = createReduxStore();
+        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+          filters: { authors: [], extras: [], statuses: [slug], tags: [] },
+          onApplyFilter,
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+        });
+
         wrapper.find(`.menu .${slug}`).simulate('click');
 
-        expect(applySingleFilter.calledWith(slug)).toBeTruthy();
+        expect(onApplyFilter.calledWith(slug)).toBeTruthy();
       });
 
       it('toggles a filter on click on a filter status icon', () => {
-        const toggleFilter = sinon.spy();
-        const wrapper = mount(
-          <WrapFiltersPanel
-            filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
-            authorsData={[]}
-            parameters={{}}
-            stats={{}}
-            tagsData={[]}
-            onToggleFilter={toggleFilter}
-            timeRangeData={[]}
-          />,
-        );
+        const onToggleFilter = sinon.spy();
+        const store = createReduxStore();
+        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+          filters: { authors: [], extras: [], statuses: [slug], tags: [] },
+          onToggleFilter,
+          parameters: {},
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+        });
+
         wrapper.find(`.menu .${slug} .status`).simulate('click');
 
-        expect(toggleFilter.calledWith(slug)).toBeTruthy();
+        expect(onToggleFilter.calledWith(slug)).toBeTruthy();
       });
     });
   }
@@ -83,114 +73,98 @@ describe('<FiltersPanel>', () => {
   for (let { slug } of FILTERS_EXTRA) {
     describe(`extra: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
-        const applySingleFilter = sinon.spy();
-        const wrapper = mount(
-          <WrapFiltersPanel
-            filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
-            authorsData={[]}
-            stats={{}}
-            tagsData={[]}
-            onApplyFilter={applySingleFilter}
-            timeRangeData={[]}
-          />,
-        );
+        const onApplyFilter = sinon.spy();
+        const store = createReduxStore();
+        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+          filters: { authors: [], extras: [slug], statuses: [], tags: [] },
+          onApplyFilter,
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+        });
+
         wrapper.find(`.menu .${slug}`).simulate('click');
 
-        expect(applySingleFilter.calledWith(slug)).toBeTruthy();
+        expect(onApplyFilter.calledWith(slug)).toBeTruthy();
       });
 
       it('toggles a filter on click on a filter status icon', () => {
-        const toggleFilter = sinon.spy();
-        const wrapper = mount(
-          <WrapFiltersPanel
-            filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
-            authorsData={[]}
-            parameters={{}}
-            stats={{}}
-            tagsData={[]}
-            onToggleFilter={toggleFilter}
-            timeRangeData={[]}
-          />,
-        );
+        const onToggleFilter = sinon.spy();
+        const store = createReduxStore();
+        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+          filters: { authors: [], extras: [slug], statuses: [], tags: [] },
+          onToggleFilter,
+          parameters: {},
+          authorsData: [],
+          tagsData: [],
+          timeRangeData: [],
+        });
+
         wrapper.find(`.menu .${slug} .status`).simulate('click');
 
-        expect(toggleFilter.calledWith(slug)).toBeTruthy();
+        expect(onToggleFilter.calledWith(slug)).toBeTruthy();
       });
     });
   }
 
   it('shows the toolbar when some filters are selected', () => {
-    const wrapper = shallow(
-      <FiltersPanel
-        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
-        authorsData={[]}
-        selectedFiltersCount={1}
-        stats={{}}
-        tagsData={[]}
-      />,
-    );
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+      filters: { authors: [], extras: [], statuses: [], tags: [] },
+      selectedFiltersCount: 1,
+      authorsData: [],
+      tagsData: [],
+      timeRangeData: [],
+    });
 
     expect(wrapper.find('FilterToolbar')).toHaveLength(1);
   });
 
   it('hides the toolbar when no filters are selected', () => {
-    const wrapper = shallow(
-      <FiltersPanel
-        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
-        authorsData={[]}
-        selectedFiltersCount={0}
-        stats={{}}
-        tagsData={[]}
-      />,
-    );
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+      filters: { authors: [], extras: [], statuses: [], tags: [] },
+      selectedFiltersCount: 0,
+      authorsData: [],
+      tagsData: [],
+      timeRangeData: [],
+    });
 
     expect(wrapper.find('FilterToolbar')).toHaveLength(0);
   });
 
   it('resets selected filters on click on the Clear button', () => {
-    const resetFilters = sinon.spy();
+    const onResetFilters = sinon.spy();
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+      filters: { authors: [], extras: [], statuses: [], tags: [] },
+      onResetFilters,
+      selectedFiltersCount: 1,
+      authorsData: [],
+      tagsData: [],
+      timeRangeData: [],
+    });
 
-    const wrapper = shallow(
-      <FiltersPanel
-        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
-        authorsData={[]}
-        selectedFiltersCount={1}
-        stats={{}}
-        tagsData={[]}
-        onResetFilters={resetFilters}
-      />,
-    );
+    wrapper.find('FilterToolbar .clear-selection').simulate('click');
 
-    wrapper
-      .find('FilterToolbar')
-      .dive()
-      .find('.clear-selection')
-      .simulate('click');
-
-    expect(resetFilters.called).toBeTruthy();
+    expect(onResetFilters.called).toBeTruthy();
   });
 
   it('applies selected filters on click on the Apply button', () => {
-    const update = sinon.spy();
+    const onApplyFilters = sinon.spy();
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+      filters: { authors: [], extras: [], statuses: [], tags: [] },
+      onApplyFilters,
+      selectedFiltersCount: 1,
+      authorsData: [],
+      tagsData: [],
+      timeRangeData: [],
+    });
 
-    const wrapper = shallow(
-      <FiltersPanel
-        filters={{ authors: [], extras: [], statuses: [], tags: [] }}
-        authorsData={[]}
-        selectedFiltersCount={1}
-        stats={{}}
-        tagsData={[]}
-        onApplyFilters={update}
-      />,
-    );
+    wrapper.find('FilterToolbar .apply-selected').simulate('click');
 
-    wrapper
-      .find('FilterToolbar')
-      .dive()
-      .find('.apply-selected')
-      .simulate('click');
-
-    expect(update.called).toBeTruthy();
+    expect(onApplyFilters.called).toBeTruthy();
   });
 });
 
@@ -200,9 +174,8 @@ describe('<FiltersPanelBase>', () => {
       <FiltersPanelBase
         filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
-        timeRangeData={[]}
         tagsData={[]}
-        stats={{}}
+        timeRangeData={[]}
         parameters={{}}
         getAuthorsAndTimeRangeData={sinon.spy()}
         updateFiltersFromURL={sinon.spy()}
@@ -220,9 +193,8 @@ describe('<FiltersPanelBase>', () => {
         <FiltersPanelBase
           filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
           authorsData={[]}
-          timeRangeData={[]}
           tagsData={[]}
-          stats={{}}
+          timeRangeData={[]}
           parameters={{}}
           getAuthorsAndTimeRangeData={sinon.spy()}
         />,
@@ -236,9 +208,8 @@ describe('<FiltersPanelBase>', () => {
         <FiltersPanelBase
           filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
           authorsData={[]}
-          timeRangeData={[]}
           tagsData={[]}
-          stats={{}}
+          timeRangeData={[]}
           parameters={{}}
           getAuthorsAndTimeRangeData={sinon.spy()}
         />,

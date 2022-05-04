@@ -1,1 +1,1 @@
-export { default as ResourceProgress } from './components/ResourceProgress';
+export { ResourceProgress } from './components/ResourceProgress';
