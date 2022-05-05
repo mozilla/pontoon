@@ -15,6 +15,9 @@ from pontoon.test.factories import (
 @patch("pontoon.pretranslation.tasks.get_translations")
 @pytest.mark.django_db
 def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
+    project_a.pretranslation_enabled = True
+    project_a.save()
+
     resources = [
         ResourceFactory(project=project_a, path=x, format="po")
         for x in ["resource_x.po", "resource_y.po"]
@@ -33,10 +36,12 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     ProjectLocaleFactory.create(
         project=project_a,
         locale=locale_a,
+        pretranslation_enabled=True,
     )
     ProjectLocaleFactory.create(
         project=project_a,
         locale=locale_b,
+        pretranslation_enabled=True,
     )
 
     tm_user = User.objects.get(email="pontoon-tm@example.com")

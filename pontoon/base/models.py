@@ -1673,6 +1673,7 @@ class ProjectLocale(AggregatedStats):
     project = models.ForeignKey(Project, models.CASCADE, related_name="project_locale")
     locale = models.ForeignKey(Locale, models.CASCADE, related_name="project_locale")
     readonly = models.BooleanField(default=False)
+    pretranslation_enabled = models.BooleanField(default=False)
 
     #: Most recent translation approved or created for this project in
     #: this locale.

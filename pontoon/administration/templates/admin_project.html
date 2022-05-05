@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% import 'admin_team_selector.html' as admin_team_selector %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'admin_inline_formset.html' as inline_formset %}
 {% import 'tag_inline_formset.html' as tag_inline_formset %}
 
@@ -314,9 +315,14 @@
       <button class="pretranslate button clearfix">Pretranslate</button>
       <div class="checkbox clearfix">
         <label for="id_pretranslation_enabled">
-            {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
+          {{ form.pretranslation_enabled }}{{ form.pretranslation_enabled.label }}
         </label>
       </div>
+    </div>
+    <div class="locales-pretranslate clearfix">
+      {{ multiple_team_selector.render(locales_selected, locales_pretranslate) }}
+      {{ form.locales_pretranslate }}
+      {{ form.locales_pretranslate.errors }}
     </div>
   </section>
 

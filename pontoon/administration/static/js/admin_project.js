@@ -4,17 +4,21 @@ $(function () {
     // Update locales
     var locales = [
       {
-        list: 'selected',
+        selector: '.admin-team-selector .locale.selected',
         input: $('#id_locales'),
       },
       {
-        list: 'readonly',
+        selector: '.admin-team-selector .locale.readonly',
         input: $('#id_locales_readonly'),
+      },
+      {
+        selector: '.multiple-team-selector .locale.selected',
+        input: $('#id_locales_pretranslate'),
       },
     ];
 
     locales.forEach(function (type) {
-      var ids = $('.admin-team-selector .locale.' + type.list)
+      var ids = $(type.selector)
         .find('li[data-id]')
         .map(function () {
           return $(this).data('id');
