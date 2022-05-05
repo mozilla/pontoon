@@ -1,47 +1,40 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
-import { AppDispatch, RootState } from '~/store';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import {
   get as getUserData,
   markAllNotificationsAsRead,
   signOut,
 } from '../actions';
-import { NAME, UserState } from '../index';
+import { NAME } from '../index';
 import { SignIn } from './SignIn';
 import { UserAutoUpdater } from './UserAutoUpdater';
+import './UserControls.css';
 import UserNotificationsMenu from './UserNotificationsMenu';
 import UserMenu from './UserMenu';
 
-import './UserControls.css';
+export function UserControls(): React.ReactElement<'div'> {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state[NAME]);
 
-type Props = {
-  user: UserState;
-};
+  return (
+    <div className='user-controls'>
+      <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
 
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-};
+      <UserMenu
+        signOut={() => dispatch(signOut(user.signOutURL))}
+        user={user}
+      />
 
-export const UserControlsBase = ({
-  dispatch,
-  user,
-}: InternalProps): React.ReactElement<'div'> => (
-  <div className='user-controls'>
-    <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
+      <UserNotificationsMenu
+        markAllNotificationsAsRead={() =>
+          dispatch(markAllNotificationsAsRead())
+        }
+        user={user}
+      />
 
-    <UserMenu signOut={() => dispatch(signOut(user.signOutURL))} user={user} />
-
-    <UserNotificationsMenu
-      markAllNotificationsAsRead={() => dispatch(markAllNotificationsAsRead())}
-      user={user}
-    />
-
-    {user.isAuthenticated ? null : <SignIn url={user.signInURL} />}
-  </div>
-);
-
-const mapStateToProps = (state: RootState): Props => ({ user: state[NAME] });
-
-export default connect(mapStateToProps)(UserControlsBase) as any;
+      {user.isAuthenticated ? null : <SignIn url={user.signInURL} />}
+    </div>
+  );
+}
