@@ -189,6 +189,7 @@ class ProjectLocaleInline(admin.TabularInline):
     fields = (
         "locale",
         "readonly",
+        "pretranslation_enabled",
     )
 
 
@@ -282,7 +283,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class ProjectLocaleAdmin(admin.ModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
-    list_display = ("pk", "project", "locale", "readonly")
+    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
     ordering = ("-pk",)
 
 

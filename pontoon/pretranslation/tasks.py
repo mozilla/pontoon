@@ -37,7 +37,9 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     """
     project = Project.objects.get(pk=project_pk)
 
-    log.info(f"Fetching pretranslations for project {project.name} started")
+    if not project.pretranslation_enabled:
+        log.info(f"Pretranslation not enabled for project {project.name}")
+        return
 
     if locales:
         locales = project.locales.filter(pk__in=locales)
@@ -45,10 +47,20 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         locales = project.locales
 
     locales = (
-        locales.filter(project_locale__readonly=False)
+        locales.filter(
+            project_locale__readonly=False, project_locale__pretranslation_enabled=True
+        )
         .distinct()
         .prefetch_project_locale(project)
     )
+
+    if not locales:
+        log.info(
+            f"Pretranslation not enabled for any locale within project {project.name}"
+        )
+        return
+
+    log.info(f"Fetching pretranslations for project {project.name} started")
 
     if not entities:
         entities = Entity.objects.filter(
