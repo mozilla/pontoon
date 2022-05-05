@@ -12,7 +12,6 @@ import * as machinery from '~/modules/machinery';
 import * as otherlocales from '~/modules/otherlocales';
 import * as search from '~/modules/search';
 import * as teamcomments from '~/modules/teamcomments';
-import * as unsavedchanges from '~/modules/unsavedchanges/reducer';
 
 // Combine reducers from all modules, using their NAME constant as key.
 export const reducer = {
@@ -32,5 +31,4 @@ export const reducer = {
   [search.NAME]: search.reducer,
   [teamcomments.NAME]: teamcomments.reducer,
   [term.NAME]: term.reducer,
-  [unsavedchanges.NAME]: unsavedchanges.reducer,
 };

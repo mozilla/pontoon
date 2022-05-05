@@ -1,10 +1,9 @@
+import { useContext } from 'react';
+
+import { UnsavedChanges } from '~/context/unsavedChanges';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { useUnsavedChanges } from '~/modules/unsavedchanges';
-import {
-  hideUnsavedChanges,
-  ignoreUnsavedChanges,
-} from '~/modules/unsavedchanges/actions';
+
 import { resetFailedChecks, selectHelperElementIndex } from '../actions';
 import useClearEditor from './useClearEditor';
 import useCopyMachineryTranslation from './useCopyMachineryTranslation';
@@ -37,7 +36,7 @@ export default function useHandleShortcuts(): (
     source,
     warnings,
   } = useAppSelector((state) => state.editor);
-  const unsavedChanges = useUnsavedChanges();
+  const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
 
@@ -73,9 +72,9 @@ export default function useHandleShortcuts(): (
 
           const ignoreWarnings = errors.length + warnings.length > 0;
 
-          if (unsavedChanges.shown) {
+          if (unsavedChanges.show) {
             // There are unsaved changes, proceed.
-            dispatch(ignoreUnsavedChanges());
+            unsavedChanges.set({ ignore: true });
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
@@ -94,9 +93,9 @@ export default function useHandleShortcuts(): (
       // On Esc, close unsaved changes and failed checks popups if open.
       case 'Escape':
         ev.preventDefault();
-        if (unsavedChanges.shown) {
+        if (unsavedChanges.show) {
           // Close unsaved changes popup
-          dispatch(hideUnsavedChanges());
+          unsavedChanges.set(null);
         } else if (errors.length || warnings.length) {
           // Close failed checks popup
           dispatch(resetFailedChecks());

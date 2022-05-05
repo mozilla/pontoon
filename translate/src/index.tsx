@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { App } from './App';
 import { LocationProvider } from './context/location';
 import { PluralFormProvider } from './context/pluralForm';
+import { UnsavedChangesProvider } from './context/unsavedChanges';
 import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';
 import history from './historyInstance';
 import './index.css';
@@ -22,7 +23,9 @@ render(
     <LocationProvider history={history}>
       <PluralFormProvider>
         <AppLocalizationProvider>
-          <App />
+          <UnsavedChangesProvider>
+            <App />
+          </UnsavedChangesProvider>
         </AppLocalizationProvider>
       </PluralFormProvider>
     </LocationProvider>

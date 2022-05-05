@@ -2,11 +2,12 @@ import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
+import { useSetUnsavedChanges } from '~/context/unsavedChanges';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm } from '~/context/pluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import actions from '../actions';
+import { sendTranslation_ } from '../actions';
 
 /**
  * Return a function to send a translation to the server.
@@ -33,6 +34,7 @@ export default function useSendTranslation(): (
   const pluralForm = usePluralForm(entity);
   const nextEntity = useNextEntity();
   const location = useContext(Location);
+  const setUnsavedChanges = useSetUnsavedChanges();
 
   return (ignoreWarnings?: boolean, content?: string) => {
     if (isRunningRequest || !entity || !locale) {
@@ -54,7 +56,7 @@ export default function useSendTranslation(): (
     }
 
     dispatch(
-      actions.sendTranslation(
+      sendTranslation_(
         entity,
         translationContent,
         locale,
@@ -64,6 +66,7 @@ export default function useSendTranslation(): (
         location,
         ignoreWarnings,
         realMachinerySources,
+        setUnsavedChanges,
       ),
     );
   };

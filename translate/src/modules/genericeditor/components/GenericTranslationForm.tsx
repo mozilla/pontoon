@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 
 import { Locale } from '~/context/locale';
+import { UnsavedChanges } from '~/context/unsavedChanges';
 import {
   useHandleShortcuts,
   useReplaceSelectionContent,
@@ -9,7 +10,6 @@ import {
 import { resetFailedChecks } from '~/core/editor/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { useUnsavedChanges } from '~/modules/unsavedchanges';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -32,7 +32,7 @@ export default function GenericTranslationForm({
   );
   const { code, direction, script } = useContext(Locale);
   const readonly = useReadonlyEditor();
-  const unsavedChanges = useUnsavedChanges();
+  const unsavedChanges = useContext(UnsavedChanges);
 
   const handleShortcutsFn = useHandleShortcuts();
 

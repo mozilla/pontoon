@@ -2,28 +2,20 @@ import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { PluralFormType, usePluralForm } from '~/context/pluralForm';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
-import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
-import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
-import type { AppDispatch } from '~/store';
 
 import './PluralSelector.css';
 
-type Props = {
-  pluralForm: PluralFormType;
-};
-
-type WrapperProps = {
+interface Props {
   resetEditor: () => void;
-};
+}
 
-type InternalProps = Props &
-  WrapperProps & {
-    dispatch: AppDispatch;
-    store: AppStore;
-  };
+interface InternalProps extends Props {
+  pluralForm: PluralFormType;
+}
 
 /**
  * Plural form picker component.
@@ -32,23 +24,20 @@ type InternalProps = Props &
  * to change selected plural form.
  */
 export function PluralSelectorBase({
-  dispatch,
   pluralForm: { pluralForm, setPluralForm },
   resetEditor,
-  store,
 }: InternalProps): React.ReactElement<'nav'> | null {
   const locale = useContext(Locale);
   const { cldrPlurals } = locale;
   const examples = usePluralExamples(locale);
+  const checkUnsavedChanges = useCheckUnsavedChanges();
 
   function selectPluralForm(nextPluralForm: number) {
     if (pluralForm !== nextPluralForm) {
-      dispatch(
-        checkUnsavedChanges(store, () => {
-          resetEditor();
-          setPluralForm(nextPluralForm);
-        }),
-      );
+      checkUnsavedChanges(() => {
+        resetEditor();
+        setPluralForm(nextPluralForm);
+      });
     }
   }
 
@@ -73,14 +62,12 @@ export function PluralSelectorBase({
 }
 
 export default function PluralSelector(
-  props: WrapperProps,
+  props: Props,
 ): React.ReactElement<typeof PluralSelectorBase> {
   return (
     <PluralSelectorBase
       {...props}
-      dispatch={useAppDispatch()}
       pluralForm={usePluralForm(useSelectedEntity())}
-      store={useAppStore()}
     />
   );
 }
