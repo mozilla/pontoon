@@ -6,8 +6,7 @@ import { useProject } from '~/core/project';
 import { ProjectMenu } from '~/core/project/components/ProjectMenu';
 import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
 import { useAppDispatch, useAppStore } from '~/hooks';
-import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
-import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
 import './Navigation.css';
 
@@ -31,9 +30,7 @@ export function Navigation(): React.ReactElement<'nav'> {
 
   const navigateToPath = useCallback(
     (path: string) => {
-      const state = store.getState();
-      const { exist, ignored } = state[UNSAVED_CHANGES];
-      dispatch(checkUnsavedChanges(exist, ignored, () => location.push(path)));
+      dispatch(checkUnsavedChanges(store, () => location.push(path)));
     },
     [dispatch, store],
   );

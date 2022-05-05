@@ -10,7 +10,7 @@ import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
-import * as unsavedchanges from '~/modules/unsavedchanges';
+import { ignoreUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import { AppThunk } from '~/store';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
@@ -278,7 +278,7 @@ export function sendTranslation(
       dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
 
       // Ignore existing unsavedchanges because they are saved now.
-      dispatch(unsavedchanges.actions.ignore());
+      dispatch(ignoreUnsavedChanges());
 
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, content.translation),

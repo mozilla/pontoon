@@ -8,7 +8,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import * as editorActions from '~/core/editor/actions';
 import * as historyActions from '~/modules/history/actions';
-import * as unsavedchangesActions from '~/modules/unsavedchanges/actions';
+import { ignoreUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 
@@ -225,7 +225,7 @@ describe.skip('<EntityDetails>', () => {
 
     wrapper.instance().updateTranslationStatus(42, 'fake translation');
     // Proceed with changes even if unsaved
-    store.dispatch(unsavedchangesActions.ignore());
+    store.dispatch(ignoreUnsavedChanges());
     expect(historyActions.updateStatus.calledOnce).toBeTruthy();
   });
 });

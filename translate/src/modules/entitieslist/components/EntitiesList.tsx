@@ -25,8 +25,7 @@ import {
   uncheckSelection,
 } from '~/modules/batchactions/actions';
 import { useBatchactions } from '~/modules/batchactions/hooks';
-import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
-import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
@@ -66,11 +65,8 @@ export function EntitiesList(): React.ReactElement<'div'> {
     (entity: EntityType, replaceHistory?: boolean) => {
       // Do not re-select already selected entity
       if (entity.pk !== location.entity) {
-        const state = store.getState();
-        const { exist, ignored } = state[UNSAVEDCHANGES];
-
         dispatch(
-          checkUnsavedChanges(exist, ignored, () => {
+          checkUnsavedChanges(store, () => {
             dispatch(resetSelection());
             dispatch(resetEditor());
             const nextLocation = { entity: entity.pk };
@@ -168,11 +164,8 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
   const toggleForBatchEditing = useCallback(
     (entity: number, shiftKeyPressed: boolean) => {
-      const state = store.getState();
-      const { exist, ignored } = state[UNSAVEDCHANGES];
-
       dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
+        checkUnsavedChanges(store, () => {
           // If holding Shift, check all entities in the entity list between the
           // lastCheckedEntity and the entity if entity not checked. If entity
           // checked, uncheck all entities in-between.

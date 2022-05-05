@@ -1,33 +1,20 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Localized } from '@fluent/react';
 
+import { useAppDispatch } from '~/hooks';
+
+import { hideUnsavedChanges, ignoreUnsavedChanges } from '../actions';
+import { useUnsavedChanges } from '../hooks';
+
 import './UnsavedChanges.css';
-
-import { NAME } from '..';
-
-import type { UnsavedChangesState } from '../reducer';
-import { AppDispatch, RootState } from '~/store';
-import {
-  hide as hideUnsavedChanges,
-  ignore as ignoreUnsavedChanges,
-} from '../actions';
-
-type Props = {
-  unsavedchanges: UnsavedChangesState;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-};
 
 /*
  * Renders the unsaved changes popup.
  */
-export function UnsavedChangesBase({
-  dispatch,
-  unsavedchanges: { callback, ignored, shown },
-}: InternalProps): React.ReactElement<'div'> | null {
+export function UnsavedChanges(): React.ReactElement<'div'> | null {
+  const dispatch = useAppDispatch();
+  const { callback, ignored, shown } = useUnsavedChanges();
+
   useEffect(() => {
     if (ignored && callback) {
       callback();
@@ -35,11 +22,7 @@ export function UnsavedChangesBase({
     }
   }, [ignored]);
 
-  if (!shown) {
-    return null;
-  }
-
-  return (
+  return shown ? (
     <div className='unsaved-changes'>
       <Localized id='editor-UnsavedChanges--close' attrs={{ ariaLabel: true }}>
         <button
@@ -68,13 +51,5 @@ export function UnsavedChangesBase({
         </button>
       </Localized>
     </div>
-  );
+  ) : null;
 }
-
-const mapStateToProps = (state: RootState): Props => {
-  return {
-    unsavedchanges: state[NAME],
-  };
-};
-
-export default connect(mapStateToProps)(UnsavedChangesBase) as any;

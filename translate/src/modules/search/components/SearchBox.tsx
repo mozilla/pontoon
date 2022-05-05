@@ -15,8 +15,7 @@ import { ProjectState, useProject } from '~/core/project';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
-import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
-import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData, setFocus } from '../actions';
@@ -180,11 +179,8 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const applyFilters = useCallback(() => {
-    const state = store.getState();
-    const { exist, ignored } = state[UNSAVED_CHANGES];
-
     dispatch(
-      checkUnsavedChanges(exist, ignored, () => {
+      checkUnsavedChanges(store, () => {
         const { authors, extras, statuses, tags } = filters;
 
         let status: string | null = statuses.join(',');
