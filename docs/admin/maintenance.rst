@@ -30,7 +30,7 @@ First, you need to purge the queue:
 .. code-block:: bash
 
    # Replace my-app-name with your Heroku app's name.
-   celery amqp --broker=`heroku config:get RABBITMQ_URL --app=my-app-name`
+   celery --broker=`heroku config:get RABBITMQ_URL --app=my-app-name` amqp
    # Replace my-queue-name with your queue's name (e.g. celery).
    1> queue.purge my-queue-name
 
@@ -39,4 +39,4 @@ Finally, you need to simply access the worker:
 .. code-block:: bash
 
    # Replace my-app-name with your Heroku app's name.
-   celery worker --broker=`heroku config:get RABBITMQ_URL --app=my-app-name`
+   celery --broker=`heroku config:get RABBITMQ_URL --app=my-app-name` worker
