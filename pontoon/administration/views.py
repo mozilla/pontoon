@@ -175,9 +175,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 project_locales.exclude(locale__pk__in=locales_readonly_pks).update(
                     readonly=False
                 )
-                project_locales.filter(
-                    locale__pk__in=locales_readonly_pks,
-                ).update(readonly=True)
+                project_locales.filter(locale__pk__in=locales_readonly_pks).update(
+                    readonly=True
+                )
 
                 # Update pretranslate flags
                 locales_pretranslate_form = form.cleaned_data.get(
@@ -187,9 +187,9 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 project_locales.exclude(locale__pk__in=locales_pretranslate_pks).update(
                     pretranslation_enabled=False
                 )
-                project_locales.filter(
-                    locale__pk__in=locales_pretranslate_pks,
-                ).update(pretranslation_enabled=True)
+                project_locales.filter(locale__pk__in=locales_pretranslate_pks).update(
+                    pretranslation_enabled=True
+                )
 
                 subpage_formset.save()
                 repo_formset.save()
