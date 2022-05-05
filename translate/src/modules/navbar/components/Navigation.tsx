@@ -1,67 +1,39 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { Locale } from '~/context/locale';
-import { Location, LocationType } from '~/context/location';
+import { Location } from '~/context/location';
 
-import { ProjectState, useProject } from '~/core/project';
-import { getProject } from '~/core/project/actions';
+import { useProject } from '~/core/project';
 import { ProjectMenu } from '~/core/project/components/ProjectMenu';
-import { getResource } from '~/core/resource/actions';
 import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
-import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
+import { useAppDispatch, useAppStore } from '~/hooks';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
-import type { AppDispatch } from '~/store';
 
 import './Navigation.css';
-
-type Props = {
-  parameters: LocationType;
-  project: ProjectState;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-  store: AppStore;
-};
 
 /**
  * Render a breadcrumb-like navigation bar.
  *
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
-export function NavigationBase({
-  dispatch,
-  parameters,
-  project: projectState,
-  store,
-}: InternalProps): React.ReactElement<'nav'> | null {
+export function Navigation(): React.ReactElement<'nav'> {
+  const dispatch = useAppDispatch();
+  const store = useAppStore();
+  const location = useContext(Location);
   const { code, name } = useContext(Locale);
-  const { locale, project, push } = parameters;
+  const projectState = useProject();
+
   useEffect(() => {
     if (name && projectState?.name) {
       document.title = `${name} (${code}) · ${projectState.name}`;
     }
   }, [code, name, projectState]);
 
-  const mounted = useRef(false);
-  useEffect(() => {
-    if (mounted.current) {
-      dispatch(getProject(project));
-
-      // Load resources, unless we're in the All Projects view
-      if (project !== 'all-projects') {
-        dispatch(getResource(locale, project));
-      }
-    } else {
-      mounted.current = true;
-    }
-  }, [dispatch, project]);
-
   const navigateToPath = useCallback(
     (path: string) => {
       const state = store.getState();
       const { exist, ignored } = state[UNSAVED_CHANGES];
-      dispatch(checkUnsavedChanges(exist, ignored, () => push(path)));
+      dispatch(checkUnsavedChanges(exist, ignored, () => location.push(path)));
     },
     [dispatch, store],
   );
@@ -86,29 +58,12 @@ export function NavigationBase({
           </a>
         </li>
         <ProjectMenu
-          parameters={parameters}
+          parameters={location}
           project={projectState}
           navigateToPath={navigateToPath}
         />
         <ResourceMenu navigateToPath={navigateToPath} />
       </ul>
     </nav>
-  );
-}
-
-export default function Navigation(): React.ReactElement<
-  typeof NavigationBase
-> {
-  const state = {
-    parameters: useContext(Location),
-    project: useProject(),
-  };
-
-  return (
-    <NavigationBase
-      {...state}
-      dispatch={useAppDispatch()}
-      store={useAppStore()}
-    />
   );
 }

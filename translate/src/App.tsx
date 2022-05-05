@@ -22,7 +22,7 @@ import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
-import { Navigation } from './modules/navbar';
+import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
@@ -41,6 +41,11 @@ export function App() {
 
   const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
+
+  useEffect(() => {
+    updateLocale(locale, location.locale);
+    dispatch(getUsers());
+  }, []);
 
   useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
@@ -63,15 +68,11 @@ export function App() {
   }, [l10nReady, locale.fetching]);
 
   useEffect(() => {
-    updateLocale(locale, location.locale);
     dispatch(getProject(location.project));
-    dispatch(getUsers());
-
-    // Load resources, unless we're in the All Projects view
     if (!allProjects) {
       dispatch(getResource(location.locale, location.project));
     }
-  }, []);
+  }, [location.locale, location.project]);
 
   if (!l10nReady || locale.fetching) {
     return <WaveLoader />;
