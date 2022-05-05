@@ -2,9 +2,9 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import ProjectItem from './ProjectItem';
+import { ProjectItem } from './ProjectItem';
 
-import ProjectMenuBase, { ProjectMenu } from './ProjectMenu';
+import { ProjectMenu, ProjectMenuDialog } from './ProjectMenu';
 
 beforeAll(() => sinon.stub(React, 'useContext'));
 afterAll(() => React.useContext.restore());
@@ -19,7 +19,7 @@ function createShallowProjectMenu({
     code: 'locale',
     localizations: [{ project }],
   });
-  return shallow(<ProjectMenu parameters={{ project: project.slug }} />);
+  return shallow(<ProjectMenuDialog parameters={{ project: project.slug }} />);
 }
 
 describe('<ProjectMenu>', () => {
@@ -75,7 +75,7 @@ function createShallowProjectMenuBase({
     localizations: [{ project }],
   });
   return shallow(
-    <ProjectMenuBase
+    <ProjectMenu
       parameters={{
         project: project.slug,
       }}
@@ -112,6 +112,6 @@ describe('<ProjectMenuBase>', () => {
     const wrapper = createShallowProjectMenuBase({ project: ALL_PROJECTS });
     wrapper.find('.selector').simulate('click');
 
-    expect(wrapper.find('ProjectMenu')).toHaveLength(1);
+    expect(wrapper.find('ProjectMenuDialog')).toHaveLength(1);
   });
 });

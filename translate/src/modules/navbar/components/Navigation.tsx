@@ -2,11 +2,12 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Locale } from '~/context/locale';
 import { Location, LocationType } from '~/context/location';
 
-import { NAME as PROJECT, ProjectMenu, ProjectState } from '~/core/project';
-import { get as getProject } from '~/core/project/actions';
+import { ProjectState, useProject } from '~/core/project';
+import { getProject } from '~/core/project/actions';
+import { ProjectMenu } from '~/core/project/components/ProjectMenu';
 import { getResource } from '~/core/resource/actions';
 import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
 import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
 import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
@@ -100,7 +101,7 @@ export default function Navigation(): React.ReactElement<
 > {
   const state = {
     parameters: useContext(Location),
-    project: useAppSelector((state) => state[PROJECT]),
+    project: useProject(),
   };
 
   return (

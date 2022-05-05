@@ -9,8 +9,7 @@ import { Location } from './context/location';
 import { WaveLoader } from './core/loaders';
 import { NAME as NOTIFICATION, NotificationPanel } from './core/notification';
 import { addRawNotification } from './core/notification/actions';
-import { NAME as PROJECT } from './core/project';
-import { get as getProject } from './core/project/actions';
+import { getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';
@@ -22,7 +21,7 @@ import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
-import { InteractiveTour } from './modules/interactivetour';
+import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
@@ -36,7 +35,6 @@ export function App() {
   const location = useContext(Location);
   const batchactions = useBatchactions();
   const notification = useAppSelector((state) => state[NOTIFICATION]);
-  const project = useAppSelector((state) => state[PROJECT]);
   const { l10n } = useLocalization();
 
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -86,7 +84,7 @@ export function App() {
         <header>
           <Navigation />
           <ResourceProgress />
-          {allProjects ? null : <ProjectInfo project={project} />}
+          {allProjects ? null : <ProjectInfo />}
           <NotificationPanel notification={notification} />
           <UserControls />
         </header>

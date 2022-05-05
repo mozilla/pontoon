@@ -11,8 +11,7 @@ import { Location, LocationType } from '~/context/location';
 
 import { reset as resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
-import type { ProjectState } from '~/core/project';
-import { NAME as PROJECT } from '~/core/project';
+import { ProjectState, useProject } from '~/core/project';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
@@ -292,7 +291,7 @@ export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
     parameters: useContext(Location),
-    project: useAppSelector((state) => state[PROJECT]),
+    project: useProject(),
   };
 
   return (

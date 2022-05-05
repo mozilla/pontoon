@@ -4,10 +4,9 @@ import type { Localization } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 
 import './ProjectItem.css';
-import ProjectPercent from './ProjectPercent';
 
 type Props = {
-  parameters: LocationType;
+  location: LocationType;
   localization: Localization;
   navigateToPath: (arg0: React.MouseEvent<HTMLAnchorElement>) => void;
 };
@@ -15,21 +14,26 @@ type Props = {
 /**
  * Render a project menu item.
  */
-export default function ProjectItem(props: Props): React.ReactElement<'li'> {
-  const { parameters, localization, navigateToPath } = props;
-  const project = localization.project;
-  const className = parameters.project === project.slug ? 'current' : undefined;
+export function ProjectItem({
+  location: { locale, project },
+  localization,
+  navigateToPath,
+}: Props): React.ReactElement<'li'> {
+  const { name, slug } = localization.project;
+  const className = project === slug ? 'current' : undefined;
+
+  const { approvedStrings, stringsWithWarnings, totalStrings } = localization;
+  const percent =
+    Math.floor(((approvedStrings + stringsWithWarnings) / totalStrings) * 100) +
+    '%';
 
   return (
     <li className={className}>
-      <a
-        href={`/${parameters.locale}/${project.slug}/all-resources/`}
-        onClick={navigateToPath}
-      >
-        <span className='project' title={project.name}>
-          {project.name}
+      <a href={`/${locale}/${slug}/all-resources/`} onClick={navigateToPath}>
+        <span className='project' title={name}>
+          {name}
         </span>
-        <ProjectPercent localization={localization} />
+        <span className='percent'>{percent}</span>
       </a>
     </li>
   );

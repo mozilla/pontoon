@@ -1,8 +1,10 @@
 import { RECEIVE, REQUEST } from './actions';
 
-import type { ReceiveAction, RequestAction, Tag } from './actions';
+import type { Action, Tag } from './actions';
 
-type Action = ReceiveAction | RequestAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const NAME = 'project';
 
 export type ProjectState = {
   readonly fetching: boolean;
@@ -20,7 +22,7 @@ const initial: ProjectState = {
   tags: [],
 };
 
-export default function reducer(
+export function reducer(
   state: ProjectState = initial,
   action: Action,
 ): ProjectState {

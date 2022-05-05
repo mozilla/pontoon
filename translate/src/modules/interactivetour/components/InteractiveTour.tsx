@@ -1,45 +1,33 @@
 import { Localized } from '@fluent/react';
 import React, { useContext, useState } from 'react';
-import { connect } from 'react-redux';
 import Tour, { ReactourStep } from 'reactour';
 
 import { Locale } from '~/context/locale';
-import { NAME as PROJECT, ProjectState } from '~/core/project';
-import { NAME as USER, UserState } from '~/core/user';
+import { useProject } from '~/core/project';
+import { NAME as USER } from '~/core/user';
 import { updateTourStatus } from '~/core/user/actions';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
-import type { RootState, AppDispatch } from '~/store';
 
 import './InteractiveTour.css';
-
-type Props = {
-  project: ProjectState;
-  user: UserState;
-};
-
-type InternalProps = Props & { dispatch: AppDispatch };
 
 /**
  * Interactive Tour to be displayed on the "Tutorial" project
  * introducing the translate page of Pontoon.
  */
-export function InteractiveTourBase({
-  dispatch,
-  project,
-  user,
-}: InternalProps): React.ReactElement | null {
-  const [isOpen, setOpen] = useState(true);
-  const isTranslator = useTranslator();
+export function InteractiveTour(): React.ReactElement | null {
+  const dispatch = useAppDispatch();
   const { code } = useContext(Locale);
+  const { slug } = useProject();
+  const { isAuthenticated, tourStatus } = useAppSelector(
+    (state) => state[USER],
+  );
+  const isTranslator = useTranslator();
+  const [isOpen, setOpen] = useState(true);
 
   // Run the tour only on project with slug 'tutorial'
-  if (project.slug !== 'tutorial') {
-    return null;
-  }
-
-  // Run the tour only if the user hasn't completed it yet
-  const tourStatus = user.tourStatus || 0;
-  if (tourStatus === -1) {
+  // and if the user hasn't completed it yet
+  if (slug !== 'tutorial' || tourStatus === -1) {
     return null;
   }
 
@@ -163,7 +151,7 @@ export function InteractiveTourBase({
           <Localized id='interactivetour-InteractiveTour--submit-title'>
             <h3>Submit a Translation</h3>
           </Localized>
-          {!user.isAuthenticated ? (
+          {!isAuthenticated ? (
             <Localized id='interactivetour-InteractiveTour--submit-content-unauthenticated'>
               <p>
                 A user needs to be logged in to be able to submit translations.
@@ -322,7 +310,7 @@ export function InteractiveTourBase({
     },
   ];
 
-  const updateTourStatus_ = user.isAuthenticated
+  const updateTourStatus_ = isAuthenticated
     ? undefined
     : (currentStep: number) => {
         const step = currentStep === steps.length - 1 ? -1 : currentStep + 1;
@@ -338,15 +326,8 @@ export function InteractiveTourBase({
       isOpen={isOpen}
       onRequestClose={() => setOpen(false)}
       maskSpace={0}
-      startAt={tourStatus}
+      startAt={tourStatus ?? 0}
       steps={steps}
     />
   );
 }
-
-const mapStateToProps = (state: RootState): Props => ({
-  project: state[PROJECT],
-  user: state[USER],
-});
-
-export default connect(mapStateToProps)(InteractiveTourBase) as any;

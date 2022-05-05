@@ -2,8 +2,8 @@ import api from '~/core/api';
 
 import type { AppDispatch } from '~/store';
 
-export const RECEIVE: 'project/RECEIVE' = 'project/RECEIVE';
-export const REQUEST: 'project/REQUEST' = 'project/REQUEST';
+export const RECEIVE = 'project/RECEIVE';
+export const REQUEST = 'project/REQUEST';
 
 export type Tag = {
   readonly slug: string;
@@ -18,55 +18,37 @@ type Project = {
   tags: Array<Tag>;
 };
 
-/**
- * Notify that project data is being fetched.
- */
-export type RequestAction = {
+export type Action = ReceiveAction | RequestAction;
+
+/** Notify that project data is being fetched.  */
+type RequestAction = {
   readonly type: typeof REQUEST;
 };
-export function request(): RequestAction {
-  return {
-    type: REQUEST,
-  };
-}
 
-/**
- * Receive project data.
- */
-export type ReceiveAction = {
+/** Receive project data.  */
+type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly slug: string;
   readonly name: string;
   readonly info: string;
   readonly tags: Array<Tag>;
 };
-export function receive(project: Project): ReceiveAction {
-  return {
-    type: RECEIVE,
-    slug: project.slug,
-    name: project.name,
-    info: project.info,
-    tags: project.tags.sort((a, b) => b.priority - a.priority),
-  };
-}
 
 /**
  * Get data about the current project.
  */
-export function get(slug: string) {
-  return async (dispatch: AppDispatch) => {
-    // When 'all-projects' are selected, we do not fetch data.
-    if (slug === 'all-projects') {
-      return;
-    }
-    dispatch(request());
+export const getProject = (slug: string) => async (dispatch: AppDispatch) => {
+  // When 'all-projects' are selected, we do not fetch data.
+  if (slug !== 'all-projects') {
+    dispatch({ type: REQUEST });
     const results = await api.project.get(slug);
-    dispatch(receive(results.data.project));
-  };
-}
-
-export default {
-  get,
-  receive,
-  request,
+    const { info, name, slug: slug_, tags } = results.data.project as Project;
+    dispatch({
+      type: RECEIVE,
+      slug: slug_,
+      name: name,
+      info: info,
+      tags: tags.sort((a, b) => b.priority - a.priority),
+    });
+  }
 };
