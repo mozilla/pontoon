@@ -1,18 +1,16 @@
-import {
-  ADD_TRANSLATIONS,
-  CONCORDANCE_SEARCH,
-  REQUEST,
-  RESET_SEARCH,
-  SET_ENTITY,
-} from './actions';
+import type { MachineryTranslation } from '~/api/machinery';
 
-import type { MachineryTranslation } from '~/core/api';
-import type {
+import {
   ConcordanceSearchAction,
   AddTranslationsAction,
   RequestAction,
   ResetSearchAction,
   SetEntityAction,
+  ADD_TRANSLATIONS,
+  CONCORDANCE_SEARCH,
+  REQUEST,
+  RESET_SEARCH,
+  SET_ENTITY,
 } from './actions';
 
 type Action =

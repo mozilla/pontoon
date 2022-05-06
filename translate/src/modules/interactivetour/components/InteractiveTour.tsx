@@ -2,11 +2,11 @@ import { Localized } from '@fluent/react';
 import React, { useContext, useState } from 'react';
 import Tour, { ReactourStep } from 'reactour';
 
+import { updateTourStatus } from '~/api/user';
 import { Locale } from '~/context/locale';
 import { useProject } from '~/core/project';
 import { NAME as USER } from '~/core/user';
-import { updateTourStatus } from '~/core/user/actions';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './InteractiveTour.css';
@@ -16,7 +16,6 @@ import './InteractiveTour.css';
  * introducing the translate page of Pontoon.
  */
 export function InteractiveTour(): React.ReactElement | null {
-  const dispatch = useAppDispatch();
   const { code } = useContext(Locale);
   const { slug } = useProject();
   const { isAuthenticated, tourStatus } = useAppSelector(
@@ -314,7 +313,7 @@ export function InteractiveTour(): React.ReactElement | null {
     ? undefined
     : (currentStep: number) => {
         const step = currentStep === steps.length - 1 ? -1 : currentStep + 1;
-        dispatch(updateTourStatus(step));
+        updateTourStatus(step);
       };
 
   return (

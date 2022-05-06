@@ -3,7 +3,6 @@ import sinon from 'sinon';
 
 import { Locale } from '~/context/locale';
 import * as editor from '~/core/editor';
-import * as user from '~/core/user';
 
 import {
   createDefaultUser,
@@ -13,9 +12,9 @@ import {
 
 import FailedChecks from './FailedChecks';
 
-function createFailedChecks() {
+function createFailedChecks(user) {
   const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
-  createDefaultUser(store);
+  createDefaultUser(store, user);
 
   const Component = () => (
     <Locale.Provider value={{ code: 'kg' }}>
@@ -56,25 +55,15 @@ describe('<FailedChecks>', () => {
   });
 
   it('renders save anyway button if translation with warnings submitted', () => {
-    const [wrapper, store] = createFailedChecks();
+    const [wrapper, store] = createFailedChecks({
+      settings: { force_suggestions: false },
+    });
 
     store.dispatch(
       editor.actions.updateFailedChecks(
         { pndbWarnings: ['a warning'] },
         'submitted',
       ),
-    );
-    store.dispatch(
-      user.actions.update({
-        settings: {
-          force_suggestions: false,
-        },
-        is_authenticated: true,
-        username: 'Franck',
-        manager_for_locales: ['kg'],
-        translator_for_locales: [],
-        translator_for_projects: {},
-      }),
     );
     wrapper.update();
 
@@ -82,25 +71,15 @@ describe('<FailedChecks>', () => {
   });
 
   it('renders suggest anyway button if translation with warnings suggested', () => {
-    const [wrapper, store] = createFailedChecks();
+    const [wrapper, store] = createFailedChecks({
+      settings: { force_suggestions: true },
+    });
 
     store.dispatch(
       editor.actions.updateFailedChecks(
         { pndbWarnings: ['a warning'] },
         'submitted',
       ),
-    );
-    store.dispatch(
-      user.actions.update({
-        settings: {
-          force_suggestions: true,
-        },
-        is_authenticated: true,
-        username: 'Franck',
-        manager_for_locales: [],
-        translator_for_locales: [],
-        translator_for_projects: {},
-      }),
     );
     wrapper.update();
 
@@ -108,25 +87,13 @@ describe('<FailedChecks>', () => {
   });
 
   it('renders suggest anyway button if user does not have sufficient permissions', () => {
-    const [wrapper, store] = createFailedChecks();
+    const [wrapper, store] = createFailedChecks({ manager_for_locales: [] });
 
     store.dispatch(
       editor.actions.updateFailedChecks(
         { pndbWarnings: ['a warning'] },
         'submitted',
       ),
-    );
-    store.dispatch(
-      user.actions.update({
-        settings: {
-          force_suggestions: false,
-        },
-        is_authenticated: true,
-        username: 'Franck',
-        manager_for_locales: [],
-        translator_for_locales: [],
-        translator_for_projects: {},
-      }),
     );
     wrapper.update();
 

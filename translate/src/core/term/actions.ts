@@ -1,23 +1,13 @@
-import isEmpty from 'lodash.isempty';
-
-import api from '~/core/api';
-
+import { fetchTerms, TermType } from '~/api/terminology';
 import type { AppDispatch } from '~/store';
-import type { TermType } from '~/core/api';
 
-export const RECEIVE: 'terms/RECEIVE' = 'terms/RECEIVE';
-export const REQUEST: 'terms/REQUEST' = 'terms/REQUEST';
+export const RECEIVE = 'terms/RECEIVE';
+export const REQUEST = 'terms/REQUEST';
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly terms: Array<TermType>;
 };
-export function receive(terms: Array<TermType>): ReceiveAction {
-  return {
-    type: RECEIVE,
-    terms,
-  };
-}
 
 export type RequestAction = {
   readonly type: typeof REQUEST;
@@ -33,24 +23,12 @@ export function request(sourceString: string): RequestAction {
 export function get(sourceString: string, locale: string) {
   return async (dispatch: AppDispatch) => {
     dispatch(request(sourceString));
-
-    // Abort all previously running requests.
-    await api.entity.abort();
-
-    let content = await api.entity.getTerms(sourceString, locale);
-
-    // The default return value of aborted requests is {},
-    // which is incompatible with reducer
-    if (isEmpty(content)) {
-      content = [];
-    }
-
-    dispatch(receive(content));
+    const terms = await fetchTerms(sourceString, locale);
+    dispatch({ type: RECEIVE, terms });
   };
 }
 
 export default {
   get,
-  receive,
   request,
 };

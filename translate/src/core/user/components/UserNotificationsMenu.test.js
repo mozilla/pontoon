@@ -1,7 +1,9 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
-import api from '~/core/api';
+
+import * as api from '~/api/uxaction';
+
 import { UserNotification } from './UserNotification';
 import UserNotificationsMenuBase, {
   UserNotificationsMenu,
@@ -52,7 +54,7 @@ describe('<UserNotificationsMenu>', () => {
 
 describe('<UserNotificationsMenuBase>', () => {
   const sandbox = sinon.createSandbox();
-  beforeEach(() => sandbox.spy(api.uxaction, 'log'));
+  beforeEach(() => sandbox.spy(api, 'logUXAction'));
   afterEach(() => sandbox.restore());
 
   it('hides the notifications icon when the user is logged out', () => {
@@ -91,7 +93,7 @@ describe('<UserNotificationsMenuBase>', () => {
     const wrapper = mount(<UserNotificationsMenuBase user={user} />);
 
     expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
-    expect(api.uxaction.log.called).toEqual(true);
+    expect(api.logUXAction.called).toEqual(true);
   });
 
   it('calls the logUxAction function on click on the icon if menu not visible', () => {
@@ -111,12 +113,12 @@ describe('<UserNotificationsMenuBase>', () => {
     );
 
     // shallow() does not handle useEffect()
-    expect(api.uxaction.log.called).toEqual(false);
+    expect(api.logUXAction.called).toEqual(false);
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.uxaction.log.calledOnce).toEqual(true);
+    expect(api.logUXAction.calledOnce).toEqual(true);
 
     wrapper.find('.selector').simulate('click', {});
-    expect(api.uxaction.log.calledOnce).toEqual(true);
+    expect(api.logUXAction.calledOnce).toEqual(true);
   });
 });

@@ -2,8 +2,8 @@ import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm } from '~/context/pluralForm';
+import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { useAppDispatch } from '~/hooks';
 import type { ChangeOperation } from '~/modules/history';
 import { updateStatus } from '~/modules/history/actions';
@@ -16,7 +16,7 @@ import { startUpdateTranslation, endUpdateTranslation } from '../actions';
 export default function useUpdateTranslationStatus(): (
   translationId: number,
   change: ChangeOperation,
-  ignoreWarnings?: boolean | null | undefined,
+  ignoreWarnings: boolean,
 ) => void {
   const dispatch = useAppDispatch();
 
@@ -29,7 +29,7 @@ export default function useUpdateTranslationStatus(): (
   return (
     translationId: number,
     change: ChangeOperation,
-    ignoreWarnings: boolean | null | undefined,
+    ignoreWarnings: boolean,
   ) => {
     dispatch(async (dispatch) => {
       dispatch(startUpdateTranslation());

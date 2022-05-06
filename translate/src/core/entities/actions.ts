@@ -1,5 +1,11 @@
+import {
+  Entity,
+  EntitySiblings,
+  fetchEntities,
+  fetchSiblingEntities,
+} from '~/api/entity';
+import { EntityTranslation } from '~/api/translation';
 import { LocationType } from '~/context/location';
-import api, { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
 import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
@@ -17,7 +23,7 @@ type RequestAction = {
 /** Update entities to a new set.  */
 type ReceiveAction = {
   type: typeof RECEIVE_ENTITIES;
-  entities: Entities;
+  entities: Entity[];
   hasMore: boolean;
 };
 
@@ -56,15 +62,12 @@ export const updateEntityTranslation = (
 ): UpdateAction => ({ type: UPDATE_ENTITIES, entity, pluralForm, translation });
 
 /** Fetch entities and their translation.  */
-export const fetchEntities =
-  (location: LocationType, exclude: Entities) =>
+export const getEntities =
+  (location: LocationType, exclude: Entity[]) =>
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_ENTITIES });
 
-    const content = await api.entity.getEntities(location, {
-      entity: location.entity,
-      exclude: exclude.map((ent) => ent.pk),
-    });
+    const content = await fetchEntities(location, exclude);
 
     if (content.entities) {
       dispatch({
@@ -76,9 +79,9 @@ export const fetchEntities =
     }
   };
 
-export const fetchSiblingEntities =
+export const getSiblingEntities =
   (entity: number, locale: string) => async (dispatch: AppDispatch) => {
-    const siblings = await api.entity.getSiblingEntities(entity, locale);
+    const siblings = await fetchSiblingEntities(entity, locale);
     if (siblings) {
       dispatch({ type: RECEIVE_ENTITY_SIBLINGS, siblings, entity });
     }

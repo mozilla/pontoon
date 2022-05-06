@@ -1,5 +1,15 @@
+import {
+  abortMachineryRequests,
+  fetchCaighdeanTranslation,
+  fetchConcordanceResults,
+  fetchGoogleTranslation,
+  fetchMicrosoftTerminology,
+  fetchMicrosoftTranslation,
+  fetchSystranTranslation,
+  fetchTranslationMemory,
+  MachineryTranslation,
+} from '~/api/machinery';
 import type { LocaleType } from '~/context/locale';
-import api, { MachineryTranslation } from '~/core/api';
 import type { AppThunk } from '~/store';
 
 export const ADD_TRANSLATIONS = 'machinery/ADD_TRANSLATIONS';
@@ -84,10 +94,9 @@ export const getConcordanceSearchResults =
   async (dispatch) => {
     dispatch(request());
 
-    // Abort all previously running requests.
-    await api.machinery.abort();
+    abortMachineryRequests();
 
-    const { results, hasMore } = await api.machinery.getConcordanceResults(
+    const { results, hasMore } = await fetchConcordanceResults(
       source,
       locale,
       page,
@@ -114,61 +123,43 @@ export const get =
     pk: number | null | undefined,
   ): AppThunk =>
   async (dispatch) => {
-    // Abort all previously running requests.
-    await api.machinery.abort();
+    abortMachineryRequests();
 
     if (pk) {
-      const results = await api.machinery.getTranslationMemory(
-        source,
-        locale,
-        pk,
-      );
+      const results = await fetchTranslationMemory(source, locale, pk);
       dispatch(addTranslations(results));
     }
 
     // Only make requests to paid services if user is authenticated
     if (isAuthenticated) {
       if (locale.googleTranslateCode) {
-        const results = await api.machinery.getGoogleTranslation(
-          source,
-          locale,
-        );
+        const results = await fetchGoogleTranslation(source, locale);
         dispatch(addTranslations(results));
       }
 
       if (locale.msTranslatorCode) {
-        const results = await api.machinery.getMicrosoftTranslation(
-          source,
-          locale,
-        );
+        const results = await fetchMicrosoftTranslation(source, locale);
         dispatch(addTranslations(results));
       }
 
       if (locale.systranTranslateCode) {
-        const results = await api.machinery.getSystranTranslation(
-          source,
-          locale,
-        );
+        const results = await fetchSystranTranslation(source, locale);
         dispatch(addTranslations(results));
       }
     }
 
     if (locale.msTerminologyCode) {
-      const results = await api.machinery.getMicrosoftTerminology(
-        source,
-        locale,
-      );
+      const results = await fetchMicrosoftTerminology(source, locale);
       dispatch(addTranslations(results));
     }
 
     if (locale.code === 'ga-IE' && pk) {
-      const results = await api.machinery.getCaighdeanTranslation(pk);
+      const results = await fetchCaighdeanTranslation(pk);
       dispatch(addTranslations(results));
     }
   };
 
 export default {
-  getConcordanceSearchResults,
   addTranslations,
   get,
   resetSearch,

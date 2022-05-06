@@ -2,11 +2,7 @@ import React from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import {
-  get as getUserData,
-  markAllNotificationsAsRead,
-  signOut,
-} from '../actions';
+import { getUserData, markAllNotificationsAsRead_, signOut_ } from '../actions';
 import { NAME } from '../index';
 import { SignIn } from './SignIn';
 import { UserAutoUpdater } from './UserAutoUpdater';
@@ -23,13 +19,13 @@ export function UserControls(): React.ReactElement<'div'> {
       <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
 
       <UserMenu
-        signOut={() => dispatch(signOut(user.signOutURL))}
+        signOut={() => dispatch(signOut_(user.signOutURL))}
         user={user}
       />
 
       <UserNotificationsMenu
         markAllNotificationsAsRead={() =>
-          dispatch(markAllNotificationsAsRead())
+          dispatch(markAllNotificationsAsRead_())
         }
         user={user}
       />

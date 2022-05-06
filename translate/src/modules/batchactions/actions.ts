@@ -1,11 +1,14 @@
-import { LocationType } from '~/context/location';
-import api, { EntityTranslation } from '~/core/api';
-
+import {
+  batchEditEntities,
+  fetchEntitiesById,
+  fetchEntityIds,
+} from '~/api/entity';
+import type { EntityTranslation } from '~/api/translation';
+import type { LocationType } from '~/context/location';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { actions as historyActions } from '~/modules/history';
-
 import type { AppDispatch } from '~/store';
 
 export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
@@ -77,16 +80,9 @@ export const checkSelection = (
 });
 
 const updateUI =
-  (
-    { locale, project, resource }: LocationType,
-    selectedEntity: number,
-    entityIds: number[],
-  ) =>
+  (location: LocationType, selectedEntity: number, entityIds: number[]) =>
   async (dispatch: AppDispatch) => {
-    const entitiesData = await api.entity.getEntities(
-      { locale, project, resource },
-      { entityIds },
-    );
+    const entitiesData = await fetchEntitiesById(location, entityIds);
 
     if (entitiesData.stats) {
       // Update stats in progress chart and filter panel.
@@ -98,10 +94,10 @@ const updateUI =
        * TODO: Update stats for all affected resources. ATM that's not possbile,
        * since the backend only returns stats for the passed resource.
        */
-      if (resource !== 'all-resources') {
+      if (location.resource !== 'all-resources') {
         dispatch(
           updateResource(
-            resource,
+            location.resource,
             entitiesData.stats.approved,
             entitiesData.stats.warnings,
           ),
@@ -119,7 +115,7 @@ const updateUI =
 
         if (entity.pk === selectedEntity) {
           dispatch(historyActions.request(entity.pk, pluralForm));
-          dispatch(historyActions.get(entity.pk, locale, pluralForm));
+          dispatch(historyActions.get(entity.pk, location.locale, pluralForm));
         }
       });
     }
@@ -137,7 +133,7 @@ export const performAction =
   async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: action });
 
-    const data = await api.entity.batchEdit(
+    const data = await batchEditEntities(
       action,
       location.locale,
       entityIds,
@@ -176,10 +172,7 @@ export const selectAll =
   (location: LocationType) => async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: 'select-all' });
 
-    const content = await api.entity.getEntities(location, { pkOnly: true });
-
-    const entityIds = content.entity_pks;
-
+    const entityIds = await fetchEntityIds(location);
     dispatch({ type: RECEIVE_BATCHACTIONS, response: undefined });
     dispatch(checkSelection(entityIds, entityIds[0]));
   };

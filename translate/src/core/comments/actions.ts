@@ -1,13 +1,13 @@
 import NProgress from 'nprogress';
 
-import api from '~/core/api';
+import { addComment } from '~/api/comment';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { get as getHistory } from '~/modules/history/actions';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 import type { AppDispatch } from '~/store';
 
-export function addComment(
+export function addComment_(
   entity: number,
   locale: string,
   pluralForm: number,
@@ -17,7 +17,7 @@ export function addComment(
   return async (dispatch: AppDispatch) => {
     NProgress.start();
 
-    await api.comment.add(entity, locale, comment, translation);
+    await addComment(entity, locale, comment, translation);
 
     dispatch(addNotification(notificationMessages.COMMENT_ADDED));
     if (translation) {
@@ -31,5 +31,5 @@ export function addComment(
 }
 
 export default {
-  addComment,
+  addComment: addComment_,
 };

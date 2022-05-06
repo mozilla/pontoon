@@ -52,20 +52,20 @@ describe('<EntitiesList>', () => {
   beforeAll(() => {
     sinon.stub(BatchActions, 'resetSelection').returns({ type: 'whatever' });
     sinon.stub(BatchActions, 'toggleSelection').returns({ type: 'whatever' });
-    sinon.stub(EntitiesActions, 'fetchEntities').returns({ type: 'whatever' });
+    sinon.stub(EntitiesActions, 'getEntities').returns({ type: 'whatever' });
   });
 
   beforeEach(() => {
     // Make sure tests do not pollute one another.
     BatchActions.resetSelection.resetHistory();
     BatchActions.toggleSelection.resetHistory();
-    EntitiesActions.fetchEntities.resetHistory();
+    EntitiesActions.getEntities.resetHistory();
   });
 
   afterAll(() => {
     BatchActions.resetSelection.restore();
     BatchActions.toggleSelection.restore();
-    EntitiesActions.fetchEntities.restore();
+    EntitiesActions.getEntities.restore();
   });
 
   it('shows a loading animation when there are more entities to load', () => {
@@ -130,7 +130,7 @@ describe('<EntitiesList>', () => {
     act(() => MockIntersectionObserver.set(true));
     jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
 
-    expect(EntitiesActions.fetchEntities.args[0][1]).toEqual(ENTITIES);
+    expect(EntitiesActions.getEntities.args[0][1]).toEqual(ENTITIES);
   });
 
   it('redirects to the first entity when none is selected', () => {

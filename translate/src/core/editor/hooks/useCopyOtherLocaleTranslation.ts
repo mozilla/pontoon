@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
-import type { OtherLocaleTranslation } from '~/core/api';
+
+import type { OtherLocaleTranslation } from '~/api/other-locales';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+
 import useUpdateTranslation from './useUpdateTranslation';
 
 /**

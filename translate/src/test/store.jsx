@@ -11,7 +11,7 @@ import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 
 import { LocationProvider } from '~/context/location';
-import * as user from '~/core/user';
+import { UPDATE } from '~/core/user/actions';
 import { reducer } from '~/rootReducer';
 
 import { MockLocalizationProvider } from './utils';
@@ -45,21 +45,14 @@ export const mountComponentWithStore = (
   );
 
 export function createDefaultUser(store, initial = {}) {
-  const userData = {
-    settings: {
-      force_suggestions: false,
-    },
+  const data = {
+    settings: { force_suggestions: false },
     username: 'Franck',
     is_authenticated: true,
     manager_for_locales: ['kg'],
     translator_for_locales: [],
     translator_for_projects: {},
-  };
-
-  const data = {
-    ...userData,
     ...initial,
   };
-
-  store.dispatch(user.actions.update(data));
+  store.dispatch({ type: UPDATE, data });
 }

@@ -1,15 +1,14 @@
-import * as React from 'react';
+import { Localized } from '@fluent/react';
+import parse from 'html-react-parser';
+import React from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
-import parse from 'html-react-parser';
 import ReactTimeAgo from 'react-time-ago';
-import { Localized } from '@fluent/react';
 
-import './Comment.css';
-
+import type { TranslationComment } from '~/api/comment';
 import { UserAvatar } from '~/core/user';
 
-import type { TranslationComment } from '~/core/api';
+import './Comment.css';
 
 type Props = {
   comment: TranslationComment;

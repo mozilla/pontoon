@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { MachineryTranslation } from '~/core/api';
+import type { MachineryTranslation } from '~/api/machinery';
 
 import GoogleTranslation from './source/GoogleTranslation';
 import MicrosoftTranslation from './source/MicrosoftTranslation';

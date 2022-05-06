@@ -3,17 +3,17 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
-import api from '~/core/api';
+import * as api from '~/api/l10n';
 
 import { AppLocalizationProvider } from './AppLocalizationProvider';
 
 describe('<AppLocalizationProvider>', () => {
-  beforeAll(() => sinon.stub(api.l10n, 'get'));
-  afterEach(() => api.l10n.get.resetHistory());
-  afterAll(() => api.l10n.get.restore());
+  beforeAll(() => sinon.stub(api, 'fetchL10n'));
+  afterEach(() => api.fetchL10n.resetHistory());
+  afterAll(() => api.fetchL10n.restore());
 
   it('fetches a locale when the component mounts', async () => {
-    api.l10n.get.resolves('');
+    api.fetchL10n.resolves('');
     mount(
       <AppLocalizationProvider>
         <div />
@@ -21,11 +21,11 @@ describe('<AppLocalizationProvider>', () => {
     );
     await act(() => new Promise((resolve) => setTimeout(resolve)));
 
-    expect(api.l10n.get.callCount).toEqual(1);
+    expect(api.fetchL10n.callCount).toEqual(1);
   });
 
   it('renders messages and children when loaded', async () => {
-    api.l10n.get.resolves('key = message\n');
+    api.fetchL10n.resolves('key = message\n');
     const wrapper = mount(
       <AppLocalizationProvider>
         <div id='test' />

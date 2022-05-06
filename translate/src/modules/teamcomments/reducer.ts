@@ -1,10 +1,12 @@
-import { RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
+import type { TeamComment } from '~/api/comment';
 
-import type { TeamComment } from '~/core/api';
-import type {
+import {
   ReceiveAction,
   RequestAction,
   TogglePinnedAction,
+  RECEIVE,
+  REQUEST,
+  TOGGLE_PINNED,
 } from './actions';
 
 type Action = ReceiveAction | RequestAction | TogglePinnedAction;
