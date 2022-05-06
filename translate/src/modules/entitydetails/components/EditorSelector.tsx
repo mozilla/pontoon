@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import './EditorSelector.css';
 
@@ -9,9 +9,7 @@ type Props = {
   fileFormat: string;
 };
 
-export default function EditorSelector(
-  props: Props,
-): React.ReactElement<'div'> {
+export function EditorSelector(props: Props): React.ReactElement<'div'> {
   if (props.fileFormat === 'ftl') {
     return (
       <div className='editor'>

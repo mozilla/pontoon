@@ -1,5 +1,6 @@
-import isSimpleElement from './isSimpleElement';
 import type { PatternElement } from '@fluent/syntax';
+
+import { isSimpleElement } from './isSimpleElement';
 
 /**
  * Return true when all elements are supported in rich FTL editor.
@@ -8,9 +9,7 @@ import type { PatternElement } from '@fluent/syntax';
  * - simple elements or
  * - select expressions, whose variants are simple elements
  */
-export default function areSupportedElements(
-  elements: Array<PatternElement>,
-): boolean {
+export function areSupportedElements(elements: Array<PatternElement>): boolean {
   return elements.every((element) => {
     return (
       isSimpleElement(element) ||

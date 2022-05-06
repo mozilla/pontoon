@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import numberString from './numberString';
+import { numberString } from './numberString';
 
 describe('numberString', () => {
   each([

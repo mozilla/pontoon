@@ -2,12 +2,12 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import EditorSettingsBase, { EditorSettings } from './EditorSettings';
+import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
 
-function createEditorSettings() {
+function createEditorSettingsDialog() {
   const toggleSettingMock = sinon.stub();
   const wrapper = shallow(
-    <EditorSettings
+    <EditorSettingsDialog
       settings={{
         runQualityChecks: false,
         forceSuggestions: false,
@@ -18,9 +18,9 @@ function createEditorSettings() {
   return [wrapper, toggleSettingMock];
 }
 
-describe('<EditorSettings>', () => {
+describe('<EditorSettingsDialog>', () => {
   it('toggles the runQualityChecks setting', () => {
-    const [wrapper, toggleSettingMock] = createEditorSettings();
+    const [wrapper, toggleSettingMock] = createEditorSettingsDialog();
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(0).simulate('click');
@@ -36,7 +36,7 @@ describe('<EditorSettings>', () => {
   });
 
   it('toggles the forceSuggestions setting', () => {
-    const [wrapper, toggleSettingMock] = createEditorSettings();
+    const [wrapper, toggleSettingMock] = createEditorSettingsDialog();
 
     // Do it once to turn it on.
     wrapper.find('.menu li').at(1).simulate('click');
@@ -52,15 +52,15 @@ describe('<EditorSettings>', () => {
   });
 });
 
-describe('<EditorSettingsBase>', () => {
+describe('<EditorSettings>', () => {
   it('toggles the settings menu when clicking the gear icon', () => {
-    const wrapper = shallow(<EditorSettingsBase />);
-    expect(wrapper.find('EditorSettings')).toHaveLength(0);
+    const wrapper = shallow(<EditorSettings />);
+    expect(wrapper.find('EditorSettingsDialog')).toHaveLength(0);
 
     wrapper.find('.selector').simulate('click');
-    expect(wrapper.find('EditorSettings')).toHaveLength(1);
+    expect(wrapper.find('EditorSettingsDialog')).toHaveLength(1);
 
     wrapper.find('.selector').simulate('click');
-    expect(wrapper.find('EditorSettings')).toHaveLength(0);
+    expect(wrapper.find('EditorSettingsDialog')).toHaveLength(0);
   });
 });

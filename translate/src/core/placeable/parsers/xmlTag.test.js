@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import xmlTag from './xmlTag';
+import { xmlTag } from './xmlTag';
 
 describe('xmlTag', () => {
   each([

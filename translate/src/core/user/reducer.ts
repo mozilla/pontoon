@@ -1,15 +1,10 @@
 import type { UsersList } from '~/api/user';
 
-import {
-  ReceiveAction,
-  UpdateAction,
-  UpdateSettingsAction,
-  RECEIVE_USERS,
-  UPDATE,
-  UPDATE_SETTINGS,
-} from './actions';
+import { Action, RECEIVE_USERS, UPDATE, UPDATE_SETTINGS } from './actions';
 
-type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const USER = 'user';
 
 export type SettingsState = {
   readonly runQualityChecks: boolean;
@@ -119,10 +114,7 @@ const initial: UserState = {
   users: [],
 };
 
-export default function reducer(
-  state: UserState = initial,
-  action: Action,
-): UserState {
+export function reducer(state: UserState = initial, action: Action): UserState {
   switch (action.type) {
     case RECEIVE_USERS:
       return {

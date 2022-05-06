@@ -4,12 +4,12 @@ import sinon from 'sinon';
 
 import * as Hooks from '~/hooks';
 import * as Actions from '../actions';
-import { NAME as BATCHACTIONS } from '../reducer';
+import { BATCHACTIONS } from '../reducer';
 
-import ApproveAll from './ApproveAll';
+import { ApproveAll } from './ApproveAll';
 import { BatchActions } from './BatchActions';
-import RejectAll from './RejectAll';
-import ReplaceAll from './ReplaceAll';
+import { RejectAll } from './RejectAll';
+import { ReplaceAll } from './ReplaceAll';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],

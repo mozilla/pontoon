@@ -4,7 +4,7 @@ import type { Entity } from '~/api/entity';
 import type { TermState } from '~/core/term';
 import { FluentOriginalString } from '~/modules/fluentoriginal';
 
-import GenericOriginalString from './GenericOriginalString';
+import { GenericOriginalString } from './GenericOriginalString';
 
 type Props = {
   entity: Entity;

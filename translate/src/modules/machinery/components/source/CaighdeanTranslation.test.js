@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import CaighdeanTranslation from './CaighdeanTranslation';
+import { CaighdeanTranslation } from './CaighdeanTranslation';
 
 describe('<CaighdeanTranslation>', () => {
   it('renders the CaighdeanTranslation component properly', () => {

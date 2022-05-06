@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -12,7 +12,7 @@ import { Localized } from '@fluent/react';
  *   { -brand }
  *   { -brand-name }
  */
-const fluentTerm = {
+export const fluentTerm = {
   rule: /({ ?-[^}]* ?})/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -24,5 +24,3 @@ const fluentTerm = {
     );
   },
 };
-
-export default fluentTerm;

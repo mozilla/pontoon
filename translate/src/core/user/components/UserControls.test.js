@@ -5,7 +5,7 @@ import { UserControls } from './UserControls';
 
 jest.mock('./UserAutoUpdater', () => ({ UserAutoUpdater: () => null }));
 
-describe('<UserControlsBase>', () => {
+describe('<UserControls>', () => {
   it('shows a Sign in link when user is logged out', () => {
     const store = createReduxStore({
       user: { isAuthenticated: false, notifications: {} },

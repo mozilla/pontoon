@@ -6,7 +6,7 @@ import { Locale } from '~/context/locale';
 import { PluralForm, PluralFormProvider } from '~/context/pluralForm';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import PluralSelector, { PluralSelectorBase } from './PluralSelector';
+import { PluralSelector, PluralSelectorBase } from './PluralSelector';
 
 const createShallowPluralSelector = (pluralForm) =>
   shallow(

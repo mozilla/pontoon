@@ -1,5 +1,6 @@
-import areSupportedElements from './areSupportedElements';
 import type { Entry } from '@fluent/syntax';
+
+import { areSupportedElements } from './areSupportedElements';
 
 /**
  * Return true when message represents a message, supported in rich FTL editor.
@@ -7,7 +8,7 @@ import type { Entry } from '@fluent/syntax';
  * Message is supported if it's valid and all value elements
  * and all attribute elements are supported.
  */
-export default function isSupportedMessage(message: Entry): boolean {
+export function isSupportedMessage(message: Entry): boolean {
   // Parse error
   if (message.type === 'Junk') {
     return false;

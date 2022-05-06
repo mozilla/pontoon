@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
 
 /**
  * Marks `alt` attributes and their values inside XML tags.
@@ -12,7 +12,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L55
  */
-const altAttribute = {
+export const altAttribute = {
   rule: /(alt=".*?")/i as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -28,5 +28,3 @@ const altAttribute = {
     );
   },
 };
-
-export default altAttribute;

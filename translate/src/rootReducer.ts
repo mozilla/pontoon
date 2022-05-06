@@ -1,34 +1,34 @@
-import * as editor from '~/core/editor';
+import * as editor from '~/core/editor/reducer';
 import * as entities from '~/core/entities/reducer';
-import * as notification from '~/core/notification';
+import * as notification from '~/core/notification/reducer';
 import * as project from '~/core/project/reducer';
 import * as resource from '~/core/resource/reducer';
 import * as stats from '~/core/stats/reducer';
-import * as term from '~/core/term';
-import * as user from '~/core/user';
+import * as term from '~/core/term/reducer';
+import * as user from '~/core/user/reducer';
 import * as batchactions from '~/modules/batchactions/reducer';
-import * as history from '~/modules/history';
-import * as machinery from '~/modules/machinery';
-import * as otherlocales from '~/modules/otherlocales';
-import * as search from '~/modules/search';
-import * as teamcomments from '~/modules/teamcomments';
+import * as history from '~/modules/history/reducer';
+import * as machinery from '~/modules/machinery/reducer';
+import * as otherlocales from '~/modules/otherlocales/reducer';
+import * as search from '~/modules/search/reducer';
+import * as teamcomments from '~/modules/teamcomments/reducer';
 
 // Combine reducers from all modules, using their NAME constant as key.
 export const reducer = {
   // Core modules
-  [editor.NAME]: editor.reducer,
-  [entities.NAME]: entities.reducer,
-  [notification.NAME]: notification.reducer,
-  [project.NAME]: project.reducer,
-  [resource.NAME]: resource.reducer,
-  [stats.NAME]: stats.reducer,
-  [user.NAME]: user.reducer,
+  [editor.EDITOR]: editor.reducer,
+  [entities.ENTITIES]: entities.reducer,
+  [notification.NOTIFICATION]: notification.reducer,
+  [project.PROJECT]: project.reducer,
+  [resource.RESOURCE]: resource.reducer,
+  [stats.STATS]: stats.reducer,
+  [user.USER]: user.reducer,
   // Application modules
-  [batchactions.NAME]: batchactions.reducer,
-  [history.NAME]: history.reducer,
-  [machinery.NAME]: machinery.reducer,
-  [otherlocales.NAME]: otherlocales.reducer,
-  [search.NAME]: search.reducer,
-  [teamcomments.NAME]: teamcomments.reducer,
-  [term.NAME]: term.reducer,
+  [batchactions.BATCHACTIONS]: batchactions.reducer,
+  [history.HISTORY]: history.reducer,
+  [machinery.MACHINERY]: machinery.reducer,
+  [otherlocales.OTHERLOCALES]: otherlocales.reducer,
+  [search.SEARCH]: search.reducer,
+  [teamcomments.TEAM_COMMENTS]: teamcomments.reducer,
+  [term.TERM]: term.reducer,
 };

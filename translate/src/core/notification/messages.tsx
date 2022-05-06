@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 import type { NotificationMessage } from './actions';
 
-const messages: Record<string, NotificationMessage> = {
+export const notificationMessages: Record<string, NotificationMessage> = {
   TRANSLATION_APPROVED: {
     content: (
       <Localized id='notification--translation-approved'>
@@ -162,5 +162,3 @@ const messages: Record<string, NotificationMessage> = {
     type: 'info',
   },
 };
-
-export default messages;

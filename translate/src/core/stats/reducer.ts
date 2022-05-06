@@ -4,7 +4,7 @@ import type { Action, Stats } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME = 'stats';
+export const STATS = 'stats';
 
 const initial: Stats = {
   approved: 0,

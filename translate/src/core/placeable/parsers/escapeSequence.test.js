@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import escapeSequence from './escapeSequence';
+import { escapeSequence } from './escapeSequence';
 
 describe('escapeSequence', () => {
   it('marks the right parts of a string', () => {

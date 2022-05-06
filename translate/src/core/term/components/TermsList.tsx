@@ -3,7 +3,7 @@ import React from 'react';
 import type { TermType } from '~/api/terminology';
 import { Locale } from '~/context/locale';
 
-import Term from './Term';
+import { Term } from './Term';
 import './TermsList.css';
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 /**
  * Shows a list of terms.
  */
-export default function TermsList(props: Props): React.ReactElement<'ul'> {
+export function TermsList(props: Props): React.ReactElement<'ul'> {
   const { code } = React.useContext(Locale);
   return (
     <ul className='terms-list'>

@@ -1,35 +1,16 @@
-import areSupportedElements from './areSupportedElements';
-import convertSyntax from './convertSyntax';
-import extractAccessKeyCandidates from './extractAccessKeyCandidates';
-import flattenPatternElements from './flattenPatternElements';
-import flattenMessage from './flattenMessage';
-import getEmptyMessage from './getEmptyMessage';
-import getReconstructedMessage from './getReconstructedMessage';
-import getSimplePreview from './getSimplePreview';
-import getSyntaxType from './getSyntaxType';
-import isPluralExpression from './isPluralExpression';
-import isSimpleElement from './isSimpleElement';
-import isSimpleMessage from './isSimpleMessage';
-import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
-import isSupportedMessage from './isSupportedMessage';
-import parser from './parser';
-import serializer from './serializer';
-
-export default {
-  areSupportedElements,
-  convertSyntax,
-  extractAccessKeyCandidates,
-  flattenPatternElements,
-  flattenMessage,
-  getEmptyMessage,
-  getReconstructedMessage,
-  getSimplePreview,
-  getSyntaxType,
-  isPluralExpression,
-  isSimpleElement,
-  isSimpleMessage,
-  isSimpleSingleAttributeMessage,
-  isSupportedMessage,
-  parser,
-  serializer,
-};
+export { areSupportedElements } from './areSupportedElements';
+export { convertSyntax } from './convertSyntax';
+export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
+export { flattenPatternElements } from './flattenPatternElements';
+export { flattenMessage } from './flattenMessage';
+export { getEmptyMessage } from './getEmptyMessage';
+export { getReconstructedMessage } from './getReconstructedMessage';
+export { getSimplePreview } from './getSimplePreview';
+export { getSyntaxType } from './getSyntaxType';
+export { isPluralExpression } from './isPluralExpression';
+export { isSimpleElement } from './isSimpleElement';
+export { isSimpleMessage } from './isSimpleMessage';
+export { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
+export { isSupportedMessage } from './isSupportedMessage';
+export { parser } from './parser';
+export { serializer } from './serializer';

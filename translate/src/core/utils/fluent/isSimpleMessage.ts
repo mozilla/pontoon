@@ -1,5 +1,6 @@
-import isSimpleElement from './isSimpleElement';
 import type { Entry } from '@fluent/syntax';
+
+import { isSimpleElement } from './isSimpleElement';
 
 /**
  * Return true when message represents a simple message.
@@ -7,7 +8,7 @@ import type { Entry } from '@fluent/syntax';
  * A simple message has no attributes and all value
  * elements are simple.
  */
-export default function isSimpleMessage(message: Entry): boolean {
+export function isSimpleMessage(message: Entry): boolean {
   if (
     message &&
     (message.type === 'Message' || message.type === 'Term') &&

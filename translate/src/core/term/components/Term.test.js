@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Term from './Term';
+import { Term } from './Term';
 
 describe('<Term>', () => {
   const TERM = {

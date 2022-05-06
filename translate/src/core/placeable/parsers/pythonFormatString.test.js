@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import pythonFormatString from './pythonFormatString';
+import { pythonFormatString } from './pythonFormatString';
 
 describe('pythonFormatString', () => {
   each([

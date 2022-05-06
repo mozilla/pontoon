@@ -1,5 +1,3 @@
 import { FluentParser } from '@fluent/syntax';
 
-const fluentParser: FluentParser = new FluentParser({ withSpans: false });
-
-export default fluentParser;
+export const parser = new FluentParser({ withSpans: false });

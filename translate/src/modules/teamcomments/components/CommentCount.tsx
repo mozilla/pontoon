@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { TeamCommentState } from '~/modules/teamcomments';
 
@@ -6,7 +6,7 @@ type Props = {
   teamComments: TeamCommentState;
 };
 
-export default function Count(props: Props): null | React.ReactElement<'span'> {
+export function CommentCount(props: Props): null | React.ReactElement<'span'> {
   const { teamComments } = props;
 
   if (teamComments.fetching || !teamComments.comments) {

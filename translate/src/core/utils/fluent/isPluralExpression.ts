@@ -7,7 +7,7 @@ import { CLDR_PLURALS } from '../constants';
  *
  * Keys of all variants of such elements are either CLDR plurals or numbers.
  */
-export default function isPluralExpression(
+export function isPluralExpression(
   expression: Readonly<SelectExpression>,
 ): boolean {
   if (!expression || expression.type !== 'SelectExpression') {

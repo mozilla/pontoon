@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import './TranslationLength.css';
 
@@ -16,7 +16,7 @@ type Props = {
  * syntax in the comment to define maximum translation length. MAX_LENGTH
  * is provided for strings without HTML tags, so they need to be stripped.
  */
-export default function TranslationLength({
+export function TranslationLength({
   comment,
   format,
   original,

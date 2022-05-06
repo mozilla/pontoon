@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -15,7 +15,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L154
  */
-const stringFormattingVariable = {
+export const stringFormattingVariable = {
   rule: /(%(\d+\$)?[-+0#'I]?((\d+)|[*])?(\.\d+)?[hlI]?[cCdiouxXeEfgGnpsS])/ as RegExp,
   matchIndex: 0,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -35,5 +35,3 @@ const stringFormattingVariable = {
     );
   },
 };
-
-export default stringFormattingVariable;

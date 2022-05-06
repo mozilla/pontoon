@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -7,7 +7,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L229
  */
-const punctuation = {
+export const punctuation = {
   rule: new RegExp(
     '(' +
       '(' +
@@ -35,5 +35,3 @@ const punctuation = {
     );
   },
 };
-
-export default punctuation;

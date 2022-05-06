@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks the thin space character (Unicode U+2009).
  */
-const thinSpace = {
+export const thinSpace = {
   rule: /([\u2009])/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -16,5 +16,3 @@ const thinSpace = {
     );
   },
 };
-
-export default thinSpace;

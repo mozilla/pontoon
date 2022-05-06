@@ -1,13 +1,12 @@
-import isSimpleElement from './isSimpleElement';
 import type { Entry } from '@fluent/syntax';
+
+import { isSimpleElement } from './isSimpleElement';
 
 /**
  * Return true when message has no value and a single attribute with only simple
  * elements.
  */
-export default function isSimpleSingleAttributeMessage(
-  message: Entry,
-): boolean {
+export function isSimpleSingleAttributeMessage(message: Entry): boolean {
   if (
     message.type === 'Message' &&
     !message.value &&

@@ -4,7 +4,10 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 import type { Entity } from '~/api/entity';
 import type { LocationType } from '~/context/location';
-import * as editor from '~/core/editor';
+import {
+  resetHelperElementIndex,
+  selectHelperTabIndex,
+} from '~/core/editor/actions';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import { useAppDispatch } from '~/hooks';
@@ -44,7 +47,7 @@ type Props = {
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export default function Helpers(props: Props): React.ReactElement<any> {
+export function Helpers(props: Props): React.ReactElement<any> {
   const {
     entity,
     isReadOnlyEditor,
@@ -119,8 +122,8 @@ export default function Helpers(props: Props): React.ReactElement<any> {
             if (index === lastIndex) {
               return false;
             }
-            dispatch(editor.actions.selectHelperTabIndex(index));
-            dispatch(editor.actions.resetHelperElementIndex());
+            dispatch(selectHelperTabIndex(index));
+            dispatch(resetHelperElementIndex());
           }}
         >
           <TabList>

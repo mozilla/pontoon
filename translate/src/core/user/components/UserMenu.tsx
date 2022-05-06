@@ -21,7 +21,7 @@ type UserMenuProps = Props & {
   onDiscard: () => void;
 };
 
-export function UserMenu({
+export function UserMenuDialog({
   onDiscard,
   signOut,
   user,
@@ -202,7 +202,7 @@ export function UserMenu({
   );
 }
 
-export default function UserMenuBase(props: Props): React.ReactElement<'div'> {
+export function UserMenu(props: Props): React.ReactElement<'div'> {
   const [visible, setVisible] = useState(false);
   return (
     <div className='user-menu'>
@@ -222,7 +222,9 @@ export default function UserMenuBase(props: Props): React.ReactElement<'div'> {
         )}
       </div>
 
-      {visible && <UserMenu {...props} onDiscard={() => setVisible(false)} />}
+      {visible && (
+        <UserMenuDialog {...props} onDiscard={() => setVisible(false)} />
+      )}
     </div>
   );
 }

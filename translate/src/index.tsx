@@ -9,9 +9,9 @@ import { LocationProvider } from './context/location';
 import { PluralFormProvider } from './context/pluralForm';
 import { UnsavedChangesProvider } from './context/unsavedChanges';
 import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';
-import history from './historyInstance';
+import { history } from './historyInstance';
 import './index.css';
-import store from './store';
+import { store } from './store';
 
 // TODO: Once we have support for more locales in Pontoon, we should
 // make TimeAgo internationalized and initialize all locales here.

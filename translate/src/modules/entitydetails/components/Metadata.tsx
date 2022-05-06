@@ -18,12 +18,12 @@ import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
-import ContextIssueButton from './ContextIssueButton';
-import FluentAttribute from './FluentAttribute';
+import { ContextIssueButton } from './ContextIssueButton';
+import { FluentAttribute } from './FluentAttribute';
 import { OriginalStringProxy } from './OriginalStringProxy';
-import Property from './Property';
-import Screenshots from './Screenshots';
-import TermsPopup from './TermsPopup';
+import { Property } from './Property';
+import { Screenshots } from './Screenshots';
+import { TermsPopup } from './TermsPopup';
 
 import './Metadata.css';
 
@@ -186,7 +186,7 @@ function SourceObject({
  *  - a link to the resource
  *  - a link to the project
  */
-export default function Metadata({
+export function Metadata({
   addTextToEditorTranslation,
   commentTabRef,
   entity,

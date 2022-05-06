@@ -4,7 +4,8 @@ import React from 'react';
 import type { TranslationComment } from '~/api/comment';
 import type { HistoryTranslation } from '~/api/translation';
 import type { LocationType } from '~/context/location';
-import { AddComment, Comment } from '~/core/comments';
+import { AddComment } from '~/core/comments/components/AddComment';
+import { Comment } from '~/core/comments/components/Comment';
 import type { UserState } from '~/core/user';
 
 import './CommentsList.css';
@@ -22,7 +23,7 @@ type Props = {
   resetContactPerson?: () => void;
 };
 
-export default function CommentsList(props: Props): React.ReactElement<'div'> {
+export function CommentsList(props: Props): React.ReactElement<'div'> {
   const {
     comments,
     parameters,

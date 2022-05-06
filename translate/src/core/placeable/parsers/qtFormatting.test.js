@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import qtFormatting from './qtFormatting';
+import { qtFormatting } from './qtFormatting';
 
 describe('qtFormatting', () => {
   each([

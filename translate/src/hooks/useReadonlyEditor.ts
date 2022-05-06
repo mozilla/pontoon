@@ -1,5 +1,5 @@
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { NAME as USER } from '~/core/user';
+import { USER } from '~/core/user';
 import { useAppSelector } from '~/hooks';
 
 export function useReadonlyEditor(): boolean {

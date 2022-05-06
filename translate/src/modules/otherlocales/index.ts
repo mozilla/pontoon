@@ -1,11 +1,5 @@
-export { default as actions } from './actions';
-export { default as reducer } from './reducer';
+export { OtherLocales } from './components/OtherLocales';
+export { OtherLocalesCount } from './components/OtherLocalesCount';
 
-export { default as OtherLocales } from './components/OtherLocales';
-export { default as OtherLocalesCount } from './components/Count';
-
+export { OTHERLOCALES } from './reducer';
 export type { LocalesState } from './reducer';
-
-// Name of this module.
-// Used as the key to store this module's reducer.
-export const NAME = 'otherlocales';

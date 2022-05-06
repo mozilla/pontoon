@@ -5,7 +5,7 @@ import { Locale } from '~/context/locale';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-import GenericOriginalString from './GenericOriginalString';
+import { GenericOriginalString } from './GenericOriginalString';
 
 const ENTITY = {
   pk: 42,

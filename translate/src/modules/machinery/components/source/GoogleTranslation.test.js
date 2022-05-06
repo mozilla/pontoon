@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import GoogleTranslation from './GoogleTranslation';
+import { GoogleTranslation } from './GoogleTranslation';
 
 describe('<GoogleTranslation>', () => {
   it('renders the GoogleTranslation component properly', () => {

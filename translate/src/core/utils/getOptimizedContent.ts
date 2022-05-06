@@ -1,4 +1,4 @@
-import fluent from './fluent';
+import { getSimplePreview } from './fluent';
 
 /**
  * Return an optimized version of a given translation content.
@@ -8,7 +8,7 @@ import fluent from './fluent';
  * @returns {string} If the format is Fluent ('ftl'), return a simplified
  * version of the translation. Otherwise, return the original translation.
  */
-export default function getOptimizedContent(
+export function getOptimizedContent(
   translation: string | null | undefined,
   format: string,
 ): string {
@@ -16,7 +16,7 @@ export default function getOptimizedContent(
     return '';
   }
   if (format === 'ftl') {
-    return fluent.getSimplePreview(translation);
+    return getSimplePreview(translation);
   }
   return translation;
 }

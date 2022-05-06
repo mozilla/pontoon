@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Count from './Count';
+import { CommentCount } from './CommentCount';
 
-describe('<Count>', () => {
+describe('<CommentCount>', () => {
   it('shows the correct number of pinned comments', () => {
     const teamComments = {
       comments: [
@@ -15,7 +15,7 @@ describe('<Count>', () => {
         },
       ],
     };
-    const wrapper = shallow(<Count teamComments={teamComments} />);
+    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
 
     // There are only pinned results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -30,7 +30,7 @@ describe('<Count>', () => {
     const teamComments = {
       comments: [{}, {}, {}],
     };
-    const wrapper = shallow(<Count teamComments={teamComments} />);
+    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
 
     // There are only remaining results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -56,7 +56,7 @@ describe('<Count>', () => {
         {},
       ],
     };
-    const wrapper = shallow(<Count teamComments={teamComments} />);
+    const wrapper = shallow(<CommentCount teamComments={teamComments} />);
 
     // There are both pinned and remaining, and the '+' sign.
     expect(wrapper.find('.count > span')).toHaveLength(3);

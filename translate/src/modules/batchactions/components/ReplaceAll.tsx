@@ -12,7 +12,7 @@ type Props = {
 /**
  * Renders Replace All batch action button.
  */
-export default function ReplaceAll({
+export function ReplaceAll({
   replaceAll,
   batchactions: { response, requestInProgress },
 }: Props): React.ReactElement<'button'> {

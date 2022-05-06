@@ -13,6 +13,8 @@ export type NotificationMessage = {
   readonly key?: string;
 };
 
+export type Action = AddAction;
+
 /**
  * Add a localized notification to display.
  *

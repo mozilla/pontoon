@@ -5,12 +5,12 @@ import { Location } from '~/context/location';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { performAction, resetSelection, selectAll } from '../actions';
-import { NAME as BATCHACTIONS } from '../reducer';
+import { BATCHACTIONS } from '../reducer';
 
-import ApproveAll from './ApproveAll';
+import { ApproveAll } from './ApproveAll';
 import './BatchActions.css';
-import RejectAll from './RejectAll';
-import ReplaceAll from './ReplaceAll';
+import { RejectAll } from './RejectAll';
+import { ReplaceAll } from './ReplaceAll';
 
 /**
  * Renders batch editor, used for performing mass actions on translations.

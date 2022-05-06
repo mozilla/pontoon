@@ -4,7 +4,7 @@ import type { Entity } from '~/api/entity';
 import { Location } from '~/context/location';
 import { useAppSelector } from '~/hooks';
 
-import { NAME as ENTITIES } from './reducer';
+import { ENTITIES } from './reducer';
 
 export const useEntities = () => useAppSelector((state) => state[ENTITIES]);
 

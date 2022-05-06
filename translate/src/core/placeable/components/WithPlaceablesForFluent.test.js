@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import WithPlaceablesForFluent from './WithPlaceablesForFluent';
+import { WithPlaceablesForFluent } from './WithPlaceablesForFluent';
 
 describe('<WithPlaceablesForFluent>', () => {
   each([

@@ -5,17 +5,17 @@ import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { resetFailedChecks, selectHelperElementIndex } from '../actions';
-import useClearEditor from './useClearEditor';
-import useCopyMachineryTranslation from './useCopyMachineryTranslation';
-import useCopyOriginalIntoEditor from './useCopyOriginalIntoEditor';
-import useCopyOtherLocaleTranslation from './useCopyOtherLocaleTranslation';
+import { useClearEditor } from './useClearEditor';
+import { useCopyMachineryTranslation } from './useCopyMachineryTranslation';
+import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
+import { useCopyOtherLocaleTranslation } from './useCopyOtherLocaleTranslation';
 import { useExistingTranslation } from './useExistingTranslation';
-import useUpdateTranslationStatus from './useUpdateTranslationStatus';
+import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
 /**
  * Return a function to handle shortcuts in a translation form.
  */
-export default function useHandleShortcuts(): (
+export function useHandleShortcuts(): (
   event: React.KeyboardEvent<HTMLTextAreaElement>,
   sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
   clearEditorCustom?: () => void,

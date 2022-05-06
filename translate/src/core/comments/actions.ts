@@ -2,7 +2,7 @@ import NProgress from 'nprogress';
 
 import { addComment } from '~/api/comment';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
+import { notificationMessages } from '~/core/notification/messages';
 import { get as getHistory } from '~/modules/history/actions';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 import type { AppDispatch } from '~/store';
@@ -29,7 +29,3 @@ export function addComment_(
     NProgress.done();
   };
 }
-
-export default {
-  addComment: addComment_,
-};

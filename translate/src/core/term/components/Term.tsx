@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { TermType } from '~/api/terminology';
@@ -16,9 +16,7 @@ type Props = {
 /**
  * Shows term entry with its metadata.
  */
-export default function Term(
-  props: Props,
-): React.ReactElement<React.ElementType> {
+export function Term(props: Props): React.ReactElement<React.ElementType> {
   const { isReadOnlyEditor, locale, term } = props;
 
   const copyTermIntoEditor = (translation: string) => {

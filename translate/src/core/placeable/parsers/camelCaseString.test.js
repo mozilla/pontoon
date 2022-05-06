@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import camelCaseString from './camelCaseString';
+import { camelCaseString } from './camelCaseString';
 
 describe('camelCaseString', () => {
   each([

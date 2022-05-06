@@ -1,12 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { TermState } from '~/core/term';
-import { fluent } from '~/core/utils';
+import { getSyntaxType, parser } from '~/core/utils/fluent';
 
-import RichString from './RichString';
-import SimpleString from './SimpleString';
-import SourceString from './SourceString';
+import { RichString } from './RichString';
+import { SimpleString } from './SimpleString';
+import { SourceString } from './SourceString';
 
 type Props = {
   readonly entity: Entity;
@@ -22,11 +22,9 @@ type Props = {
  * Based on the syntax type of the string, render it as a simple string preview,
  * as a rich UI or as the original, untouched string.
  */
-export default function FluentOriginalString(
-  props: Props,
-): React.ReactElement<any> {
-  const message = fluent.parser.parseEntry(props.entity.original);
-  const syntax = fluent.getSyntaxType(message);
+export function FluentOriginalString(props: Props): React.ReactElement<any> {
+  const message = parser.parseEntry(props.entity.original);
+  const syntax = getSyntaxType(message);
 
   if (syntax === 'simple') {
     return (

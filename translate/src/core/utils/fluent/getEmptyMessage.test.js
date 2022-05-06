@@ -1,5 +1,5 @@
-import getEmptyMessage from './getEmptyMessage';
-import parser from './parser';
+import { getEmptyMessage } from './getEmptyMessage';
+import { parser } from './parser';
 
 const LOCALE = {
   code: 'sl',

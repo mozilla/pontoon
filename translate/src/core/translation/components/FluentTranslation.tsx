@@ -5,20 +5,20 @@ import {
   WithPlaceablesForFluent,
   WithPlaceablesForFluentNoLeadingSpace,
 } from '~/core/placeable';
-import { fluent } from '~/core/utils';
+import { getSimplePreview } from '~/core/utils/fluent';
 import { SearchTerms } from '~/modules/search';
 
 import type { TranslationProps } from './GenericTranslation';
 
-export default function FluentTranslation({
+export function FluentTranslation({
   content,
   diffTarget,
   search,
 }: TranslationProps): React.ReactElement<React.ElementType> {
-  const preview = fluent.getSimplePreview(content);
+  const preview = getSimplePreview(content);
 
   if (diffTarget) {
-    const fluentTarget = fluent.getSimplePreview(diffTarget);
+    const fluentTarget = getSimplePreview(diffTarget);
     return (
       <WithPlaceablesForFluentNoLeadingSpace>
         <TranslationDiff base={fluentTarget} target={preview} />

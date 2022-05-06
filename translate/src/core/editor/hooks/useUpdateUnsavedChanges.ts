@@ -3,7 +3,7 @@ import { UnsavedChanges } from '~/context/unsavedChanges';
 
 import { useAppSelector } from '~/hooks';
 
-export default function useUpdateUnsavedChanges(richEditor: boolean) {
+export function useUpdateUnsavedChanges(richEditor: boolean) {
   const translation = useAppSelector((state) => state.editor.translation);
   const initialTranslation = useAppSelector(
     (state) => state.editor.initialTranslation,

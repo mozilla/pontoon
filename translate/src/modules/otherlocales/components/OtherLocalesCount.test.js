@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Count from './Count';
+import { OtherLocalesCount } from './OtherLocalesCount';
 
-describe('<Count>', () => {
+describe('<OtherLocalesCount>', () => {
   it('shows the correct number of preferred translations', () => {
     const otherlocales = {
       translations: [
@@ -21,7 +21,7 @@ describe('<Count>', () => {
         },
       ],
     };
-    const wrapper = shallow(<Count otherlocales={otherlocales} />);
+    const wrapper = shallow(<OtherLocalesCount otherlocales={otherlocales} />);
 
     // There are only preferred results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -52,7 +52,7 @@ describe('<Count>', () => {
         },
       ],
     };
-    const wrapper = shallow(<Count otherlocales={otherlocales} />);
+    const wrapper = shallow(<OtherLocalesCount otherlocales={otherlocales} />);
 
     // There are only remaining results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -96,7 +96,7 @@ describe('<Count>', () => {
         },
       ],
     };
-    const wrapper = shallow(<Count otherlocales={otherlocales} />);
+    const wrapper = shallow(<OtherLocalesCount otherlocales={otherlocales} />);
 
     // There are both preferred and remaining, and the '+' sign.
     expect(wrapper.find('.count > span')).toHaveLength(3);

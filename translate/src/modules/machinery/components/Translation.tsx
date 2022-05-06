@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/locale';
-import { NAME as EDITOR, useCopyMachineryTranslation } from '~/core/editor';
+import { EDITOR, useCopyMachineryTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
 import { GenericTranslation } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';

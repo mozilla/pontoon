@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -13,7 +13,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L208
  */
-const filePattern = {
+export const filePattern = {
   rule: /(^|\s)((~\/|\/|\.\/)([-A-Za-z0-9_$.+!*(),;:@&=?/~#%]|\\){3,})/ as RegExp,
   matchIndex: 2,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -26,5 +26,3 @@ const filePattern = {
     );
   },
 };
-
-export default filePattern;

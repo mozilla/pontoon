@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 
-import FluentTranslation from './FluentTranslation';
-import GenericTranslation from './GenericTranslation';
+import { FluentTranslation } from './FluentTranslation';
+import { GenericTranslation } from './GenericTranslation';
 
 type Props = {
   content: string | null | undefined;
@@ -10,7 +10,7 @@ type Props = {
   search?: string | null | undefined;
 };
 
-export default function TranslationProxy({
+export function TranslationProxy({
   format,
   ...props
 }: Props): null | React.ReactElement<React.ElementType> {

@@ -2,6 +2,8 @@ import type { SourceType } from '~/api/machinery';
 import type { FailedChecks } from '~/api/translation';
 
 import {
+  Action,
+  Translation,
   END_UPDATE_TRANSLATION,
   RESET_FAILED_CHECKS,
   RESET_SELECTION,
@@ -17,37 +19,9 @@ import {
   UPDATE_MACHINERY_SOURCES,
 } from './actions';
 
-import type {
-  EndUpdateTranslationAction,
-  InitialTranslationAction,
-  ResetEditorAction,
-  ResetHelperElementIndexAction,
-  ResetFailedChecksAction,
-  ResetSelectionAction,
-  SelectHelperElementIndexAction,
-  SelectHelperTabIndexAction,
-  StartUpdateTranslationAction,
-  Translation,
-  UpdateAction,
-  UpdateFailedChecksAction,
-  UpdateSelectionAction,
-  UpdateMachinerySourcesAction,
-} from './actions';
-
-type Action =
-  | EndUpdateTranslationAction
-  | InitialTranslationAction
-  | ResetEditorAction
-  | ResetHelperElementIndexAction
-  | ResetFailedChecksAction
-  | ResetSelectionAction
-  | SelectHelperElementIndexAction
-  | SelectHelperTabIndexAction
-  | StartUpdateTranslationAction
-  | UpdateAction
-  | UpdateFailedChecksAction
-  | UpdateSelectionAction
-  | UpdateMachinerySourcesAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const EDITOR = 'editor';
 
 export type EditorState = {
   readonly translation: Translation;
@@ -128,7 +102,7 @@ const initial: EditorState = {
   selectedHelperTabIndex: 0,
 };
 
-export default function reducer(
+export function reducer(
   state: EditorState = initial,
   action: Action,
 ): EditorState {

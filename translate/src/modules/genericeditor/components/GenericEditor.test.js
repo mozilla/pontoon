@@ -7,13 +7,13 @@ import { Provider } from 'react-redux';
 import { Locale } from '~/context/locale';
 import { LocationProvider } from '~/context/location';
 import { PluralFormProvider } from '~/context/pluralForm';
-import * as editor from '~/core/editor';
+import { resetEditor, updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import GenericEditor from './GenericEditor';
+import { GenericEditor } from './GenericEditor';
 
 const ENTITIES = [
   {
@@ -35,7 +35,7 @@ const ENTITIES = [
 
 function selectEntity(store, history, entityIndex) {
   act(() => history.push(`?string=${entityIndex}`));
-  store.dispatch(editor.actions.reset());
+  store.dispatch(resetEditor());
 }
 
 function createComponent(entityIndex = 0) {
@@ -106,7 +106,7 @@ describe('<Editor>', () => {
     const [, store] = createComponent(1);
     expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
 
-    store.dispatch(editor.actions.update('autre chose'));
+    store.dispatch(updateTranslation('autre chose'));
     expect(store.getState().editor.initialTranslation).toEqual('quelque chose');
   });
 });

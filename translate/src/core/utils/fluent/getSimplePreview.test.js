@@ -1,4 +1,4 @@
-import getSimplePreview from './getSimplePreview';
+import { getSimplePreview } from './getSimplePreview';
 
 describe('getSimplePreview', () => {
   it('works for an empty string', () => {

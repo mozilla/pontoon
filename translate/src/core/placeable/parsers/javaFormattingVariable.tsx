@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -21,7 +21,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L127
  */
-const javaFormattingVariable = {
+export const javaFormattingVariable = {
   rule: /({[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?})/ as RegExp,
   matchIndex: 0,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -41,5 +41,3 @@ const javaFormattingVariable = {
     );
   },
 };
-
-export default javaFormattingVariable;

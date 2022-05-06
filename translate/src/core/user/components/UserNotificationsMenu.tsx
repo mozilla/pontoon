@@ -18,7 +18,7 @@ type UserNotificationsMenuProps = {
   onDiscard: () => void;
 };
 
-export function UserNotificationsMenu({
+export function UserNotificationsMenuDialog({
   notifications,
   onDiscard,
 }: UserNotificationsMenuProps): React.ReactElement<'div'> {
@@ -64,7 +64,7 @@ export function UserNotificationsMenu({
 /**
  * Renders user notifications.
  */
-export default function UserNotificationsMenuBase({
+export function UserNotificationsMenu({
   markAllNotificationsAsRead,
   user,
 }: Props): null | React.ReactElement<'div'> {
@@ -104,7 +104,7 @@ export default function UserNotificationsMenuBase({
       </div>
 
       {visible && (
-        <UserNotificationsMenu
+        <UserNotificationsMenuDialog
           notifications={user.notifications.notifications}
           onDiscard={handleDiscard}
         />

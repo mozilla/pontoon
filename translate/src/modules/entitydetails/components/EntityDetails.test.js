@@ -9,7 +9,7 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import * as editorActions from '~/core/editor/actions';
 import * as historyActions from '~/modules/history/actions';
 
-import EntityDetails, { EntityDetailsBase } from './EntityDetails';
+import { EntityDetails, EntityDetailsBase } from './EntityDetails';
 
 const ENTITIES = [
   {

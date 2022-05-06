@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Comment from './Comment';
+import { Comment } from './Comment';
 
 describe('<Comment>', () => {
   const DEFAULT_COMMENT = {

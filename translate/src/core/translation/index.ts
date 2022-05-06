@@ -1,2 +1,2 @@
-export { default as GenericTranslation } from './components/GenericTranslation';
-export { default as TranslationProxy } from './components/TranslationProxy';
+export { GenericTranslation } from './components/GenericTranslation';
+export { TranslationProxy } from './components/TranslationProxy';

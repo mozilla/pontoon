@@ -1,8 +1,10 @@
 import type { OtherLocaleTranslation } from '~/api/other-locales';
 
-import { ReceiveAction, RequestAction, RECEIVE, REQUEST } from './actions';
+import { Action, RECEIVE, REQUEST } from './actions';
 
-type Action = ReceiveAction | RequestAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const OTHERLOCALES = 'otherlocales';
 
 export type LocalesState = {
   readonly fetching: boolean;
@@ -16,7 +18,7 @@ const initialState: LocalesState = {
   translations: [],
 };
 
-export default function reducer(
+export function reducer(
   state: LocalesState = initialState,
   action: Action,
 ): LocalesState {

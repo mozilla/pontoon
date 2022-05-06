@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Show the translation source from Caighdean Machine Translation.
  */
-export default function CaighdeanTranslation(): React.ReactElement<'li'> {
+export function CaighdeanTranslation(): React.ReactElement<'li'> {
   return (
     <li>
       <Localized

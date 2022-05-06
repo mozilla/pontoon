@@ -2,6 +2,10 @@ import type { Author } from '~/api/filter';
 
 import { Action, UPDATE, SET_FOCUS } from './actions';
 
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const SEARCH = 'search';
+
 export type SearchAndFilters = {
   readonly authors: Author[];
   readonly countsPerMinute: number[][];
@@ -14,7 +18,7 @@ const initial: SearchAndFilters = {
   searchInputFocused: false,
 };
 
-export default function reducer(
+export function reducer(
   state: SearchAndFilters = initial,
   action: Action,
 ): SearchAndFilters {

@@ -1,5 +1,5 @@
-import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
-import parser from './parser';
+import { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
+import { parser } from './parser';
 
 describe('isSimpleSingleAttributeMessage', () => {
   it('returns true for a string with a single attribute', () => {

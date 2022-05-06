@@ -1,6 +1,6 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import Screenshots from './Screenshots';
+import { Screenshots } from './Screenshots';
 import { mount } from 'enzyme';
 
 describe('<Screenshots>', () => {
