@@ -13,6 +13,10 @@ export type LocationType = {
   project: string;
   resource: string;
   entity: number;
+
+  /** If set, other optional query parameters are ignored.  */
+  list: number[] | null;
+
   search: string | null;
   status: string | null;
   extra: string | null;
@@ -22,7 +26,7 @@ export type LocationType = {
 };
 
 const emptyParams = {
-  entity: 0,
+  list: null,
   search: null,
   status: null,
   extra: null,
@@ -37,6 +41,7 @@ export const Location = createContext<LocationType>({
   locale: '',
   project: '',
   resource: '',
+  entity: 0,
   ...emptyParams,
 });
 
@@ -63,20 +68,29 @@ function parse(
 ): LocationType {
   const [locale, project, ...resource] = pathname.split('/').filter(Boolean);
   const params = new URLSearchParams(search);
-  const location: LocationType = {
-    push: (next) => history.push(stringify(location, next)),
-    replace: (next) => history.replace(stringify(location, next)),
+  const common = {
+    push: (next: string | Partial<LocationType>) =>
+      history.push(stringify(location, next)),
+    replace: (next: string | Partial<LocationType>) =>
+      history.replace(stringify(location, next)),
     locale: locale ?? '',
     project: project ?? '',
     resource: resource.join('/'),
     entity: Number(params.get('string')),
-    search: params.get('search'),
-    status: params.get('status'),
-    extra: params.get('extra'),
-    tag: params.get('tag'),
-    author: params.get('author'),
-    time: params.get('time'),
   };
+  const list = params.get('list');
+  const location: LocationType = list
+    ? { ...common, ...emptyParams, list: list.split(',').map(Number) }
+    : {
+        ...common,
+        search: params.get('search'),
+        status: params.get('status'),
+        extra: params.get('extra'),
+        tag: params.get('tag'),
+        author: params.get('author'),
+        time: params.get('time'),
+        list: null,
+      };
   return location;
 }
 
@@ -91,22 +105,34 @@ function stringify(prev: LocationType, next: string | Partial<LocationType>) {
   const pathname = `/${locale}/${project}/${resource}/`;
 
   const params = new URLSearchParams();
-  for (const key of [
-    'search',
-    'status',
-    'extra',
-    'tag',
-    'author',
-    'time',
-    'entity',
-  ] as const) {
-    const value = key in next ? next[key] : prev[key];
-    if (value) {
-      params.set(key === 'entity' ? 'string' : key, String(value));
+  if (next.list) {
+    params.set('list', next.list.join(','));
+  } else {
+    let keepList = !('list' in next);
+    for (const key of [
+      'search',
+      'status',
+      'extra',
+      'tag',
+      'author',
+      'time',
+    ] as const) {
+      const value = key in next ? next[key] : prev[key];
+      if (value) {
+        params.set(key, value);
+        keepList &&= false;
+      }
+    }
+    if (keepList && prev.list) {
+      params.set('list', prev.list.join(','));
     }
   }
+  const entity = 'entity' in next ? next.entity : prev.entity;
+  if (entity) {
+    params.set('string', String(entity));
+  }
 
-  const ps = params.toString();
+  const ps = String(params).replace(/%2C/g, ',');
   return ps ? `${pathname}?${ps}` : pathname;
 }
 
@@ -127,6 +153,7 @@ export function Link({
     locale,
     project,
     resource,
+    entity: 0,
     ...emptyParams,
     ...to,
   };

@@ -1,8 +1,4 @@
-import {
-  batchEditEntities,
-  fetchEntitiesById,
-  fetchEntityIds,
-} from '~/api/entity';
+import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
 import type { LocationType } from '~/context/location';
 import { updateEntityTranslation } from '~/core/entities/actions';
@@ -85,7 +81,7 @@ export const checkSelection = (
 const updateUI =
   (location: LocationType, selectedEntity: number, entityIds: number[]) =>
   async (dispatch: AppDispatch) => {
-    const entitiesData = await fetchEntitiesById(location, entityIds);
+    const entitiesData = await fetchEntities({ ...location, list: entityIds });
 
     if (entitiesData.stats) {
       // Update stats in progress chart and filter panel.
