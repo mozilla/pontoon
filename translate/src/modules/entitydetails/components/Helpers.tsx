@@ -34,7 +34,6 @@ type Props = {
   commentTabIndex: number;
   contactPerson: string;
   searchMachinery: (source: string) => void;
-  addComment: (comment: string, id: number | null | undefined) => void;
   togglePinnedStatus: (status: boolean, id: number) => void;
   addTextToEditorTranslation: (text: string) => void;
   navigateToPath: (path: string) => void;
@@ -47,28 +46,28 @@ type Props = {
  *
  * Shows the metadata of the entity and an editor for translations.
  */
-export function Helpers(props: Props): React.ReactElement<any> {
-  const {
-    entity,
-    isReadOnlyEditor,
-    machinery,
-    otherlocales,
-    teamComments,
-    terms,
-    parameters,
-    user,
-    commentTabRef,
-    commentTabIndex,
-    contactPerson,
-    searchMachinery,
-    addComment,
-    togglePinnedStatus,
-    addTextToEditorTranslation,
-    navigateToPath,
-    setCommentTabIndex,
-    resetContactPerson,
-  } = props;
+export function Helpers({
+  entity,
+  isReadOnlyEditor,
+  machinery,
+  otherlocales,
+  teamComments,
+  terms,
+  parameters,
+  user,
+  commentTabRef,
+  commentTabIndex,
+  contactPerson,
+  searchMachinery,
+  togglePinnedStatus,
+  addTextToEditorTranslation,
+  navigateToPath,
+  setCommentTabIndex,
+  resetContactPerson,
+}: Props): React.ReactElement<any> {
   const dispatch = useAppDispatch();
+
+  const isTerminologyProject = parameters.project === 'terminology';
 
   return (
     <>
@@ -78,7 +77,7 @@ export function Helpers(props: Props): React.ReactElement<any> {
           onSelect={(tab) => setCommentTabIndex(tab)}
         >
           <TabList>
-            {parameters.project === 'terminology' ? null : (
+            {isTerminologyProject ? null : (
               <Tab>
                 <Localized id='entitydetails-Helpers--terms'>
                   {'TERMS'}
@@ -93,7 +92,7 @@ export function Helpers(props: Props): React.ReactElement<any> {
               <CommentCount teamComments={teamComments} />
             </Tab>
           </TabList>
-          {parameters.project === 'terminology' ? null : (
+          {isTerminologyProject ? null : (
             <TabPanel>
               <Terms
                 isReadOnlyEditor={isReadOnlyEditor}
@@ -105,12 +104,11 @@ export function Helpers(props: Props): React.ReactElement<any> {
           )}
           <TabPanel>
             <TeamComments
-              parameters={parameters}
+              contactPerson={contactPerson}
+              initFocus={!isTerminologyProject}
               teamComments={teamComments}
               user={user}
-              addComment={addComment}
               togglePinnedStatus={togglePinnedStatus}
-              contactPerson={contactPerson}
               resetContactPerson={resetContactPerson}
             />
           </TabPanel>

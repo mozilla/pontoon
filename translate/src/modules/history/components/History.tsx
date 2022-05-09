@@ -14,7 +14,6 @@ type Props = {
   isReadOnlyEditor: boolean;
   user: UserState;
   deleteTranslation: (arg0: number) => void;
-  addComment: (arg0: string, arg1: number | null | undefined) => void;
   updateEditorTranslation: (arg0: string, arg1: string) => void;
   updateTranslationStatus: (id: number, operation: ChangeOperation) => void;
 };
@@ -30,7 +29,6 @@ export function History({
   isReadOnlyEditor,
   user,
   deleteTranslation,
-  addComment,
   updateEditorTranslation,
   updateTranslationStatus,
 }: Props): React.ReactElement<'section'> | null {
@@ -55,7 +53,6 @@ export function History({
             isReadOnlyEditor={isReadOnlyEditor}
             user={user}
             deleteTranslation={deleteTranslation}
-            addComment={addComment}
             updateEditorTranslation={updateEditorTranslation}
             updateTranslationStatus={updateTranslationStatus}
             key={index}

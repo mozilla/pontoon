@@ -1,7 +1,8 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { CommentsList } from './CommentsList';
+
+jest.mock('react-time-ago', () => () => null);
 
 describe('<CommentsList>', () => {
   const DEFAULT_USER = 'AnnPerkins';
@@ -13,16 +14,18 @@ describe('<CommentsList>', () => {
   };
 
   it('shows the correct number of comments', () => {
-    const comments = [{ id: 1 }, { id: 2 }, { id: 3 }];
-
-    const wrapper = shallow(
-      <CommentsList
-        comments={comments}
-        user={DEFAULT_USER}
-        isTranslator={true}
-        translation={DEFAULT_TRANSLATION}
-      />,
-    );
+    const store = createReduxStore();
+    const wrapper = mountComponentWithStore(CommentsList, store, {
+      translation: {
+        ...DEFAULT_TRANSLATION,
+        comments: [
+          { id: 1, content: '11' },
+          { id: 2, content: '22' },
+          { id: 3, content: '33' },
+        ],
+      },
+      user: DEFAULT_USER,
+    });
 
     expect(wrapper.find('ul > *')).toHaveLength(3);
   });

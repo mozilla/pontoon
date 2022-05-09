@@ -27,7 +27,6 @@ import {
 } from 'slate-react';
 
 import type { UsersList } from '~/api/user';
-import type { LocationType } from '~/context/location';
 import type { UserState } from '~/core/user';
 import { UserAvatar } from '~/core/user';
 
@@ -35,12 +34,11 @@ import './AddComment.css';
 import { MentionList } from './MentionList';
 
 type Props = {
-  parameters: LocationType | null | undefined;
-  translation?: number | null | undefined;
-  user: UserState;
   contactPerson?: string;
-  addComment: (arg0: string, arg1: number | null | undefined) => void;
+  initFocus: boolean;
+  onAddComment(comment: string): void;
   resetContactPerson?: () => void;
+  user: UserState;
 };
 
 type Paragraph = {
@@ -63,12 +61,11 @@ declare module 'slate' {
 }
 
 export function AddComment({
-  parameters,
-  translation,
-  user: { gravatarURLSmall, username, users },
   contactPerson,
-  addComment,
+  initFocus,
+  onAddComment,
   resetContactPerson,
+  user: { gravatarURLSmall, username, users },
 }: Props): React.ReactElement<'div'> {
   const [mentionTarget, setMentionTarget] = useState<Range | null>(null);
   const [mentionIndex, setMentionIndex] = useState(0);
@@ -126,10 +123,10 @@ export function AddComment({
 
   // Set focus on Editor
   useEffect(() => {
-    if (!parameters || parameters.project !== 'terminology') {
+    if (initFocus) {
       placeFocus();
     }
-  }, [parameters, placeFocus]);
+  }, [initFocus]);
 
   const suggestedUsers = users
     .filter((user) =>
@@ -222,7 +219,7 @@ export function AddComment({
   const submitComment = () => {
     if (Node.string(editor).trim() !== '') {
       const comment = editor.children.map((node) => serialize(node)).join('');
-      addComment(comment, translation);
+      onAddComment(comment);
 
       Transforms.select(editor, {
         anchor: { path: [0, 0], offset: 0 },

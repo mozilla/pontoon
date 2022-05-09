@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
 import type { Entity } from '~/api/entity';
-import { HistoryTranslation } from '~/api/translation';
+import type { HistoryTranslation } from '~/api/translation';
 import { Locale } from '~/context/locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
 import { TranslationProxy } from '~/core/translation';
@@ -24,7 +24,6 @@ type Props = {
   user: UserState;
   index: number;
   deleteTranslation: (id: number) => void;
-  addComment: (comment: string, id: number | null | undefined) => void;
   updateEditorTranslation: (arg0: string, arg1: string) => void;
   updateTranslationStatus: (id: number, operation: ChangeOperation) => void;
 };
@@ -142,7 +141,6 @@ const User = ({
  */
 export function TranslationBase({
   activeTranslation,
-  addComment,
   deleteTranslation,
   disableAction,
   entity,
@@ -173,7 +171,7 @@ export function TranslationBase({
     [disableAction, isActionDisabled, translation.pk, updateTranslationStatus],
   );
 
-  const delete_ = useCallback(
+  const handleDelete = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (isActionDisabled) {
         return;
@@ -293,7 +291,7 @@ export function TranslationBase({
                     <button
                       className='delete far'
                       title='Delete'
-                      onClick={delete_}
+                      onClick={handleDelete}
                       disabled={isActionDisabled}
                     />
                   </Localized>
@@ -422,13 +420,7 @@ export function TranslationBase({
         </div>
       </Localized>
       {areCommentsVisible && (
-        <CommentsList
-          comments={translation.comments}
-          translation={translation}
-          user={user}
-          canComment={canComment}
-          addComment={addComment}
-        />
+        <CommentsList translation={translation} user={user} />
       )}
     </li>
   );

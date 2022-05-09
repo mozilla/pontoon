@@ -1,3 +1,4 @@
+import type { HistoryTranslation } from './translation';
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
 import { keysToCamelCase } from './utils/keysToCamelCase';
@@ -34,7 +35,7 @@ export function addComment(
   entity: number,
   locale: string,
   comment: string,
-  translation: number | null | undefined,
+  translation: HistoryTranslation | null,
 ): Promise<void> {
   const payload = new URLSearchParams({
     entity: String(entity),
@@ -42,7 +43,7 @@ export function addComment(
     comment,
   });
   if (translation) {
-    payload.append('translation', translation.toString());
+    payload.append('translation', String(translation.pk));
   }
   const headers = new Headers({ 'X-CSRFToken': getCSRFToken() });
   return POST('/add-comment/', payload, { headers });
