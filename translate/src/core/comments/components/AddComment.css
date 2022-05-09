@@ -19,6 +19,11 @@
   word-break: break-word;
 }
 
+/* Override Slate, to account for the padding in .comment-editor */
+.comments-list .add-comment .comment-editor span[data-slate-placeholder] {
+  max-width: calc(100% - 14px) !important;
+}
+
 .comments-list .add-comment .comment-editor .mention-element {
   color: #7bc876;
 }
