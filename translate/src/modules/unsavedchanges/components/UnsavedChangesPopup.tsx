@@ -1,34 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
-import { useAppDispatch } from '~/hooks';
+import { UnsavedChanges } from '~/context/unsavedChanges';
 
-import { hideUnsavedChanges, ignoreUnsavedChanges } from '../actions';
-import { useUnsavedChanges } from '../hooks';
-
-import './UnsavedChanges.css';
+import './UnsavedChangesPopup.css';
 
 /*
  * Renders the unsaved changes popup.
  */
-export function UnsavedChanges(): React.ReactElement<'div'> | null {
-  const dispatch = useAppDispatch();
-  const { callback, ignored, shown } = useUnsavedChanges();
+export function UnsavedChangesPopup(): React.ReactElement<'div'> | null {
+  const { show, set } = useContext(UnsavedChanges);
 
-  useEffect(() => {
-    if (ignored && callback) {
-      callback();
-      dispatch(hideUnsavedChanges());
-    }
-  }, [ignored]);
-
-  return shown ? (
+  return show ? (
     <div className='unsaved-changes'>
       <Localized id='editor-UnsavedChanges--close' attrs={{ ariaLabel: true }}>
         <button
           aria-label='Close unsaved changes popup'
           className='close'
-          onClick={() => dispatch(hideUnsavedChanges())}
+          onClick={() => set(null)}
         >
           ×
         </button>
@@ -45,7 +34,7 @@ export function UnsavedChanges(): React.ReactElement<'div'> | null {
       <Localized id='editor-UnsavedChanges--proceed'>
         <button
           className='proceed anyway'
-          onClick={() => dispatch(ignoreUnsavedChanges())}
+          onClick={() => set({ ignore: true })}
         >
           PROCEED
         </button>

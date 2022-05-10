@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import * as user from '~/core/user';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { UnsavedChanges } from '~/modules/unsavedchanges/components/UnsavedChanges';
+import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
 
 import EditorMainAction from './EditorMainAction';
 import './EditorMenu.css';
@@ -32,7 +32,7 @@ export default function EditorMenu(props: Props): React.ReactElement<'menu'> {
     <menu className='editor-menu'>
       {props.firstItemHook}
       <FailedChecks sendTranslation={props.sendTranslation} />
-      <UnsavedChanges />
+      <UnsavedChangesPopup />
       <MenuContent {...props} />
     </menu>
   );

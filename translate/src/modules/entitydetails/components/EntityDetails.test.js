@@ -8,7 +8,6 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import * as editorActions from '~/core/editor/actions';
 import * as historyActions from '~/modules/history/actions';
-import { ignoreUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
 import EntityDetails, { EntityDetailsBase } from './EntityDetails';
 
@@ -78,22 +77,6 @@ function createShallowEntityDetails(selectedEntity = SELECTED_ENTITY) {
       user={{ settings: {} }}
     />,
   );
-}
-
-function createEntityDetailsWithStore() {
-  const initialState = {
-    entities: {
-      entities: ENTITIES,
-    },
-    user: USER,
-    locale: {
-      code: 'kg',
-    },
-  };
-  const store = createReduxStore(initialState);
-  const root = mountComponentWithStore(EntityDetails, store);
-
-  return [root.find(EntityDetailsBase), store];
 }
 
 describe('<EntityDetailsBase>', () => {
@@ -221,11 +204,26 @@ describe.skip('<EntityDetails>', () => {
   });
 
   it('dispatches the updateStatus action when updateTranslationStatus is called', () => {
-    const [wrapper, store] = createEntityDetailsWithStore();
+    const initialState = {
+      entities: {
+        entities: ENTITIES,
+      },
+      user: USER,
+      locale: {
+        code: 'kg',
+      },
+    };
+    const store = createReduxStore(initialState);
+    const wrapper = mountComponentWithStore(EntityDetails, store);
 
-    wrapper.instance().updateTranslationStatus(42, 'fake translation');
+    wrapper
+      .find(EntityDetailsBase)
+      .instance()
+      .updateTranslationStatus(42, 'fake translation');
+
     // Proceed with changes even if unsaved
-    store.dispatch(ignoreUnsavedChanges());
+    //store.dispatch(ignoreUnsavedChanges());
+
     expect(historyActions.updateStatus.calledOnce).toBeTruthy();
   });
 });

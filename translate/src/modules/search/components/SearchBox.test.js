@@ -105,7 +105,7 @@ describe('<SearchBoxBase>', () => {
     const wrapper = mount(
       <SearchBoxBase
         dispatch={() => {}}
-        parameters={{}}
+        parameters={{ push() {} }}
         project={PROJECT}
         searchAndFilters={SEARCH_AND_FILTERS}
         store={{ getState: () => ({ unsavedchanges: {} }) }}

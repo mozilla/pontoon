@@ -4,13 +4,13 @@ import NProgress from 'nprogress';
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 import { PluralFormType } from '~/context/pluralForm';
+import type { UnsavedChanges } from '~/context/unsavedChanges';
 import api, { Entity, SourceType } from '~/core/api';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
-import { ignoreUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import { AppThunk } from '~/store';
 
 export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
@@ -240,7 +240,7 @@ export function endUpdateTranslation(): EndUpdateTranslationAction {
 /**
  * Save the current translation.
  */
-export function sendTranslation(
+export function sendTranslation_(
   entity: Entity,
   translation: string,
   locale: LocaleType,
@@ -250,6 +250,7 @@ export function sendTranslation(
   location: LocationType,
   ignoreWarnings: boolean | null | undefined,
   machinerySources: Array<SourceType>,
+  setUnsavedChanges: (next: Partial<UnsavedChanges> | null) => void,
 ): AppThunk {
   return async (dispatch) => {
     NProgress.start();
@@ -278,7 +279,7 @@ export function sendTranslation(
       dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
 
       // Ignore existing unsavedchanges because they are saved now.
-      dispatch(ignoreUnsavedChanges());
+      setUnsavedChanges({ ignore: true });
 
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, content.translation),
@@ -318,7 +319,6 @@ export default {
   resetFailedChecks,
   resetHelperElementIndex,
   resetSelection,
-  sendTranslation,
   selectHelperElementIndex,
   selectHelperTabIndex,
   setInitialTranslation,
