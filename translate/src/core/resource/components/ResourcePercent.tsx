@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 
 import './ResourcePercent.css';
 
-import type { Resource } from '..';
+import type { Resource } from '../actions';
 
 type Props = {
   resource: Resource;
@@ -11,13 +11,11 @@ type Props = {
 /**
  * Render a resource item percentage.
  */
-export default function ResourcePercent(
-  props: Props,
-): React.ReactElement<'span'> {
-  const { approvedStrings, stringsWithWarnings, totalStrings } = props.resource;
-  const completeStrings = approvedStrings + stringsWithWarnings;
-
-  const percent = Math.floor((completeStrings / totalStrings) * 100) + '%';
-
+export function ResourcePercent({
+  resource: { approvedStrings, stringsWithWarnings, totalStrings },
+}: Props): React.ReactElement<'span'> {
+  const percent =
+    Math.floor(((approvedStrings + stringsWithWarnings) / totalStrings) * 100) +
+    '%';
   return <span className='percent'>{percent}</span>;
 }

@@ -67,8 +67,7 @@ import {
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
-import { NAME as UNSAVED_CHANGES } from '~/modules/unsavedchanges';
-import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
@@ -267,11 +266,8 @@ export function EntityDetailsBase({
   }, [dispatch, parameters]);
 
   const goToNextEntity = useCallback(() => {
-    const state = store.getState();
-    const { exist, ignored } = state[UNSAVED_CHANGES];
-
     dispatch(
-      checkUnsavedChanges(exist, ignored, () => {
+      checkUnsavedChanges(store, () => {
         parameters.push({ entity: nextEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
@@ -279,11 +275,8 @@ export function EntityDetailsBase({
   }, [dispatch, parameters, nextEntity, store]);
 
   const goToPreviousEntity = useCallback(() => {
-    const state = store.getState();
-    const { exist, ignored } = state[UNSAVED_CHANGES];
-
     dispatch(
-      checkUnsavedChanges(exist, ignored, () => {
+      checkUnsavedChanges(store, () => {
         parameters.push({ entity: previousEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
@@ -292,12 +285,7 @@ export function EntityDetailsBase({
 
   const navigateToPath = useCallback(
     (path: string) => {
-      const state = store.getState();
-      const { exist, ignored } = state[UNSAVED_CHANGES];
-
-      dispatch(
-        checkUnsavedChanges(exist, ignored, () => parameters.push(path)),
-      );
+      dispatch(checkUnsavedChanges(store, () => parameters.push(path)));
     },
     [dispatch, parameters, store],
   );
@@ -343,13 +331,10 @@ export function EntityDetailsBase({
         return;
       }
 
-      const state = store.getState();
-      const { exist, ignored } = state[UNSAVED_CHANGES];
-
       // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
       // because it cannot be triggered for the use case of bug 1508474.
       dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
+        checkUnsavedChanges(store, () => {
           dispatch(
             updateStatus(
               change,

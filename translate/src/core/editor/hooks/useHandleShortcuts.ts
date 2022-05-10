@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useUnsavedChanges } from '~/modules/unsavedchanges';
 import {
-  hide as hideUnsavedChanges,
-  ignore as ignoreUnsavedChanges,
+  hideUnsavedChanges,
+  ignoreUnsavedChanges,
 } from '~/modules/unsavedchanges/actions';
 import { resetFailedChecks, selectHelperElementIndex } from '../actions';
 import useClearEditor from './useClearEditor';
@@ -36,9 +37,7 @@ export default function useHandleShortcuts(): (
     source,
     warnings,
   } = useAppSelector((state) => state.editor);
-  const unsavedChangesShown = useAppSelector(
-    (state) => state.unsavedchanges.shown,
-  );
+  const unsavedChanges = useUnsavedChanges();
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
 
@@ -74,7 +73,7 @@ export default function useHandleShortcuts(): (
 
           const ignoreWarnings = errors.length + warnings.length > 0;
 
-          if (unsavedChangesShown) {
+          if (unsavedChanges.shown) {
             // There are unsaved changes, proceed.
             dispatch(ignoreUnsavedChanges());
           } else if (typeof source === 'number') {
@@ -95,7 +94,7 @@ export default function useHandleShortcuts(): (
       // On Esc, close unsaved changes and failed checks popups if open.
       case 'Escape':
         ev.preventDefault();
-        if (unsavedChangesShown) {
+        if (unsavedChanges.shown) {
           // Close unsaved changes popup
           dispatch(hideUnsavedChanges());
         } else if (errors.length || warnings.length) {

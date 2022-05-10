@@ -6,8 +6,7 @@ import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
 import { AppStore, useAppDispatch, useAppStore } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
-import { NAME as UNSAVEDCHANGES } from '~/modules/unsavedchanges';
-import { check as checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import './PluralSelector.css';
@@ -44,11 +43,8 @@ export function PluralSelectorBase({
 
   function selectPluralForm(nextPluralForm: number) {
     if (pluralForm !== nextPluralForm) {
-      const state = store.getState();
-      const { exist, ignored } = state[UNSAVEDCHANGES];
-
       dispatch(
-        checkUnsavedChanges(exist, ignored, () => {
+        checkUnsavedChanges(store, () => {
           resetEditor();
           setPluralForm(nextPluralForm);
         }),

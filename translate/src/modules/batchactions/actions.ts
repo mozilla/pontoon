@@ -1,56 +1,96 @@
+import { LocationType } from '~/context/location';
 import api, { EntityTranslation } from '~/core/api';
 
-import { actions as entitiesActions } from '~/core/entities';
-import { actions as resourceActions } from '~/core/resource';
-import { actions as statsActions } from '~/core/stats';
+import { updateEntityTranslation } from '~/core/entities/actions';
+import { updateResource } from '~/core/resource/actions';
+import { updateStats } from '~/core/stats/actions';
 import { actions as historyActions } from '~/modules/history';
 
 import type { AppDispatch } from '~/store';
 
-export const CHECK: 'batchactions/CHECK' = 'batchactions/CHECK';
-export const RECEIVE: 'batchactions/RECEIVE' = 'batchactions/RECEIVE';
-export const REQUEST: 'batchactions/REQUEST' = 'batchactions/REQUEST';
-export const RESET: 'batchactions/RESET' = 'batchactions/RESET';
-export const RESET_RESPONSE: 'batchactions/RESET_RESPONSE' =
-  'batchactions/RESET_RESPONSE';
-export const TOGGLE: 'batchactions/TOGGLE' = 'batchactions/TOGGLE';
-export const UNCHECK: 'batchactions/UNCHECK' = 'batchactions/UNCHECK';
+export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
+export const RECEIVE_BATCHACTIONS = 'batchactions/RECEIVE';
+export const REQUEST_BATCHACTIONS = 'batchactions/REQUEST';
+export const RESET_BATCHACTIONS = 'batchactions/RESET';
+export const RESET_BATCHACTIONS_RESPONSE = 'batchactions/RESET_RESPONSE';
+export const TOGGLE_BATCHACTIONS = 'batchactions/TOGGLE';
+export const UNCHECK_BATCHACTIONS = 'batchactions/UNCHECK';
 
-export type CheckAction = {
-  type: typeof CHECK;
+export type ResponseType = {
+  action: string;
+  changedCount: number | null | undefined;
+  invalidCount: number | null | undefined;
+  error: boolean | null | undefined;
+};
+
+export type Action =
+  | CheckAction
+  | ReceiveAction
+  | RequestAction
+  | ResetAction
+  | ResetResponseAction
+  | ToggleAction
+  | UncheckAction;
+
+type CheckAction = {
+  type: typeof CHECK_BATCHACTIONS;
   entities: Array<number>;
   lastCheckedEntity: number;
 };
-export function checkSelection(
+
+type ReceiveAction = {
+  type: typeof RECEIVE_BATCHACTIONS;
+  response: ResponseType | null | undefined;
+};
+
+type RequestAction = {
+  type: typeof REQUEST_BATCHACTIONS;
+  source: string;
+};
+
+type ResetAction = {
+  type: typeof RESET_BATCHACTIONS;
+};
+
+type ResetResponseAction = {
+  type: typeof RESET_BATCHACTIONS_RESPONSE;
+};
+
+type ToggleAction = {
+  type: typeof TOGGLE_BATCHACTIONS;
+  entity: number;
+};
+
+type UncheckAction = {
+  type: typeof UNCHECK_BATCHACTIONS;
+  entities: Array<number>;
+  lastCheckedEntity: number;
+};
+
+export const checkSelection = (
   entities: Array<number>,
   lastCheckedEntity: number,
-): CheckAction {
-  return {
-    type: CHECK,
-    entities,
-    lastCheckedEntity,
-  };
-}
+): CheckAction => ({
+  type: CHECK_BATCHACTIONS,
+  entities,
+  lastCheckedEntity,
+});
 
-function updateUI(
-  locale: string,
-  project: string,
-  resource: string,
-  selectedEntity: number,
-  entities: Array<number>,
-) {
-  return async (dispatch: AppDispatch) => {
+const updateUI =
+  (
+    { locale, project, resource }: LocationType,
+    selectedEntity: number,
+    entityIds: number[],
+  ) =>
+  async (dispatch: AppDispatch) => {
     const entitiesData = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      entities,
-      [],
+      { locale, project, resource },
+      { entityIds },
     );
 
     if (entitiesData.stats) {
       // Update stats in progress chart and filter panel.
-      dispatch(statsActions.update(entitiesData.stats));
+      dispatch(updateStats(entitiesData.stats));
 
       /*
        * Update stats in the resource menu.
@@ -60,7 +100,7 @@ function updateUI(
        */
       if (resource !== 'all-resources') {
         dispatch(
-          resourceActions.update(
+          updateResource(
             resource,
             entitiesData.stats.approved,
             entitiesData.stats.warnings,
@@ -75,13 +115,7 @@ function updateUI(
         translation: EntityTranslation,
         pluralForm: number,
       ) {
-        dispatch(
-          entitiesActions.updateEntityTranslation(
-            entity.pk,
-            pluralForm,
-            translation,
-          ),
-        );
+        dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
 
         if (entity.pk === selectedEntity) {
           dispatch(historyActions.request(entity.pk, pluralForm));
@@ -90,25 +124,23 @@ function updateUI(
       });
     }
   };
-}
 
-export function performAction(
-  action: string,
-  locale: string,
-  project: string,
-  resource: string,
-  selectedEntity: number,
-  entities: Array<number>,
-  find?: string,
-  replace?: string,
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(request(action));
+export const performAction =
+  (
+    location: LocationType,
+    action: string,
+    selectedEntity: number,
+    entityIds: number[],
+    find?: string,
+    replace?: string,
+  ) =>
+  async (dispatch: AppDispatch) => {
+    dispatch({ type: REQUEST_BATCHACTIONS, source: action });
 
     const data = await api.entity.batchEdit(
       action,
-      locale,
-      entities,
+      location.locale,
+      entityIds,
       find,
       replace,
     );
@@ -125,138 +157,43 @@ export function performAction(
       response.invalidCount = data.invalid_translation_count;
 
       if (data.count > 0) {
-        dispatch(updateUI(locale, project, resource, selectedEntity, entities));
+        dispatch(updateUI(location, selectedEntity, entityIds));
       }
     } else {
       response.error = true;
     }
 
-    dispatch(receive(response));
+    dispatch({ type: RECEIVE_BATCHACTIONS, response });
 
     setTimeout(() => {
-      dispatch(reset_response());
+      dispatch({ type: RESET_BATCHACTIONS_RESPONSE });
     }, 3000);
   };
-}
 
-export type ResponseType = {
-  action: string;
-  changedCount: number | null | undefined;
-  invalidCount: number | null | undefined;
-  error: boolean | null | undefined;
-};
+export const resetSelection = (): ResetAction => ({ type: RESET_BATCHACTIONS });
 
-export type ReceiveAction = {
-  type: typeof RECEIVE;
-  response: ResponseType | null | undefined;
-};
-export function receive(
-  response?: ResponseType | null | undefined,
-): ReceiveAction {
-  return {
-    type: RECEIVE,
-    response,
+export const selectAll =
+  (location: LocationType) => async (dispatch: AppDispatch) => {
+    dispatch({ type: REQUEST_BATCHACTIONS, source: 'select-all' });
+
+    const content = await api.entity.getEntities(location, { pkOnly: true });
+
+    const entityIds = content.entity_pks;
+
+    dispatch({ type: RECEIVE_BATCHACTIONS, response: undefined });
+    dispatch(checkSelection(entityIds, entityIds[0]));
   };
-}
 
-export type RequestAction = {
-  type: typeof REQUEST;
-  source: string;
-};
-export function request(source: string): RequestAction {
-  return {
-    type: REQUEST,
-    source,
-  };
-}
+export const toggleSelection = (entity: number): ToggleAction => ({
+  type: TOGGLE_BATCHACTIONS,
+  entity,
+});
 
-export type ResetResponseAction = {
-  type: typeof RESET_RESPONSE;
-};
-export function reset_response(): ResetResponseAction {
-  return {
-    type: RESET_RESPONSE,
-  };
-}
-
-export type ResetAction = {
-  type: typeof RESET;
-};
-export function resetSelection(): ResetAction {
-  return {
-    type: RESET,
-  };
-}
-
-export function selectAll(
-  locale: string,
-  project: string,
-  resource: string,
-  search: string | null | undefined,
-  status: string | null | undefined,
-  extra: string | null | undefined,
-  tag: string | null | undefined,
-  author: string | null | undefined,
-  time: string | null | undefined,
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(request('select-all'));
-
-    const content = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      null,
-      [],
-      null,
-      search,
-      status,
-      extra,
-      tag,
-      author,
-      time,
-      true,
-    );
-
-    const entities = content.entity_pks;
-
-    dispatch(receive());
-    dispatch(checkSelection(entities, entities[0]));
-  };
-}
-
-export type ToggleAction = {
-  type: typeof TOGGLE;
-  entity: number;
-};
-export function toggleSelection(entity: number): ToggleAction {
-  return {
-    type: TOGGLE,
-    entity,
-  };
-}
-
-export type UncheckAction = {
-  type: typeof UNCHECK;
-  entities: Array<number>;
-  lastCheckedEntity: number;
-};
-export function uncheckSelection(
+export const uncheckSelection = (
   entities: Array<number>,
   lastCheckedEntity: number,
-): UncheckAction {
-  return {
-    type: UNCHECK,
-    entities,
-    lastCheckedEntity,
-  };
-}
-
-export default {
-  checkSelection,
-  performAction,
-  resetSelection,
-  selectAll,
-  toggleSelection,
-  uncheckSelection,
-};
+): UncheckAction => ({
+  type: UNCHECK_BATCHACTIONS,
+  entities,
+  lastCheckedEntity,
+});

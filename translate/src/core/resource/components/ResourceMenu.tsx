@@ -1,41 +1,37 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 
-import type { LocationType } from '~/context/location';
+import { Location } from '~/context/location';
 import { useOnDiscard } from '~/core/utils';
 
 import type { Resource } from '../actions';
-import type { ResourcesState } from '../index';
-import ResourceItem from './ResourceItem';
+import { useResource } from '../hooks';
+import { ResourceItem } from './ResourceItem';
 import './ResourceMenu.css';
-import ResourcePercent from './ResourcePercent';
+import { ResourcePercent } from './ResourcePercent';
 
 type Props = {
-  parameters: LocationType;
-  resources: ResourcesState;
   navigateToPath: (path: string) => void;
 };
 
-type ResourceMenuProps = {
-  parameters: LocationType;
-  resources: ResourcesState;
+type DialogProps = {
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };
 
-export function ResourceMenu({
-  parameters,
-  resources,
+function ResourceMenuDialog({
   onDiscard,
   onNavigate,
-}: ResourceMenuProps): React.ReactElement<'div'> {
+}: DialogProps): React.ReactElement<'div'> {
   // Searching
   const [search, setSearch] = useState('');
-  const resourceElements = resources.resources.filter(
+  const { allResources, resources } = useResource();
+  const resourceElements = resources.filter(
     (resource) =>
       resource.path.toLowerCase().indexOf(search.toLowerCase()) > -1,
   );
+  const location = useContext(Location);
 
   const updateResourceList = (e: React.SyntheticEvent<HTMLInputElement>) => {
     setSearch(e.currentTarget.value);
@@ -148,7 +144,7 @@ export function ResourceMenu({
           ).map((resource, index) => {
             return (
               <ResourceItem
-                parameters={parameters}
+                location={location}
                 resource={resource}
                 navigateToPath={onNavigate}
                 key={index}
@@ -166,22 +162,22 @@ export function ResourceMenu({
       <ul className='static-links'>
         <li
           className={
-            parameters.resource === 'all-resources' ? 'current' : undefined
+            location.resource === 'all-resources' ? 'current' : undefined
           }
         >
           <a
-            href={`/${parameters.locale}/${parameters.project}/all-resources/`}
+            href={`/${location.locale}/${location.project}/all-resources/`}
             onClick={onNavigate}
           >
             <Localized id='resource-ResourceMenu--all-resources'>
               <span>All Resources</span>
             </Localized>
-            <ResourcePercent resource={resources.allResources} />
+            <ResourcePercent resource={allResources} />
           </a>
         </li>
         <li>
           <a
-            href={`/${parameters.locale}/all-projects/all-resources/`}
+            href={`/${location.locale}/all-projects/all-resources/`}
             onClick={onNavigate}
           >
             <Localized id='resource-ResourceMenu--all-projects'>
@@ -199,14 +195,13 @@ export function ResourceMenu({
  *
  * Allows to switch between resources without reloading the Translate app.
  */
-export default function ResourceMenuBase({
+export function ResourceMenu({
   navigateToPath,
-  parameters,
-  resources,
 }: Props): React.ReactElement<'li'> | null {
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
   const handleDiscard = useCallback(() => setVisible(false), []);
+  const { project, resource } = useContext(Location);
 
   const handleNavigate = useCallback(
     (ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -217,19 +212,19 @@ export default function ResourceMenuBase({
     [navigateToPath],
   );
 
-  if (parameters.project === 'all-projects') {
+  if (project === 'all-projects') {
     return null;
   }
 
   const className = classNames('resource-menu', visible ? null : 'closed');
 
   const resourceName =
-    parameters.resource === 'all-resources' ? (
+    resource === 'all-resources' ? (
       <Localized id='resource-ResourceMenu--all-resources'>
         All Resources
       </Localized>
     ) : (
-      parameters.resource.split('/').slice(-1)[0]
+      resource.split('/').slice(-1)[0]
     );
 
   return (
@@ -237,16 +232,14 @@ export default function ResourceMenuBase({
       <div
         className='selector unselectable'
         onClick={toggleVisible}
-        title={parameters.resource}
+        title={resource}
       >
         <span>{resourceName}</span>
         <span className='icon fa fa-caret-down'></span>
       </div>
 
       {visible && (
-        <ResourceMenu
-          parameters={parameters}
-          resources={resources}
+        <ResourceMenuDialog
           onDiscard={handleDiscard}
           onNavigate={handleNavigate}
         />

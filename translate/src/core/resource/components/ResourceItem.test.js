@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import ResourceItem from './ResourceItem';
-import ResourcePercent from './ResourcePercent';
+import { ResourceItem } from './ResourceItem';
+import { ResourcePercent } from './ResourcePercent';
 
 function createShallowResourceItem({ path = 'path' } = {}) {
   return shallow(
     <ResourceItem
-      parameters={{
+      location={{
         locale: 'locale',
         project: 'project',
         resource: 'resource',

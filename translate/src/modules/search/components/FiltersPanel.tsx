@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { LocationType } from '~/context/location';
 import type { Tag } from '~/core/project';
-import type { Stats } from '~/core/stats';
+import { Stats, useStats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
@@ -17,7 +17,6 @@ type Props = {
   filters: FilterState;
   authorsData: Author[];
   parameters: LocationType;
-  stats: Stats;
   tagsData: Tag[];
   timeRange: TimeRangeType | null;
   timeRangeData: number[][];
@@ -36,7 +35,6 @@ type FiltersPanelProps = {
   project: string;
   resource: string;
   selectedFiltersCount: number;
-  stats: Stats;
   tagsData: Tag[];
   timeRange: TimeRangeType | null;
   timeRangeData: number[][];
@@ -231,7 +229,6 @@ export function FiltersPanel({
   project,
   resource,
   selectedFiltersCount,
-  stats,
   tagsData,
   timeRange,
   timeRangeData,
@@ -242,6 +239,7 @@ export function FiltersPanel({
   onToggleFilter,
   onDiscard,
 }: FiltersPanelProps): React.ReactElement<'div'> {
+  const stats = useStats();
   const ref = React.useRef(null);
   useOnDiscard(ref, onDiscard);
 
@@ -342,7 +340,6 @@ export default function FiltersPanelBase({
   tagsData,
   timeRangeData,
   authorsData,
-  stats,
   parameters,
   timeRange,
   applyFilters,
@@ -434,7 +431,6 @@ export default function FiltersPanelBase({
           project={parameters.project}
           resource={parameters.resource}
           selectedFiltersCount={selectedCount}
-          stats={stats}
           tagsData={tagsData}
           timeRange={timeRange}
           timeRangeData={timeRangeData}

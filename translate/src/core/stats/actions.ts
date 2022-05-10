@@ -1,6 +1,6 @@
-export const UPDATE: 'stats/UPDATE' = 'stats/UPDATE';
+export const UPDATE_STATS = 'stats/UPDATE';
 
-export type APIStats = {
+type APIStats = {
   approved: number;
   pretranslated: number;
   warnings: number;
@@ -13,26 +13,22 @@ export type Stats = APIStats & {
   missing: number;
 };
 
-export type UpdateAction = {
-  readonly type: typeof UPDATE;
+export type Action = UpdateAction;
+
+type UpdateAction = {
+  readonly type: typeof UPDATE_STATS;
   readonly stats: Stats;
 };
-export function update(stats: APIStats): UpdateAction {
-  const newStats: Stats = {
-    ...stats,
-    missing:
-      stats.total -
-      stats.approved -
-      stats.pretranslated -
-      stats.errors -
-      stats.warnings,
-  };
+
+export function updateStats(stats: APIStats): UpdateAction {
+  const missing =
+    stats.total -
+    stats.approved -
+    stats.pretranslated -
+    stats.errors -
+    stats.warnings;
   return {
-    type: UPDATE,
-    stats: newStats,
+    type: UPDATE_STATS,
+    stats: { ...stats, missing },
   };
 }
-
-export default {
-  update,
-};

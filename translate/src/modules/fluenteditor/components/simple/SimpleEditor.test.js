@@ -7,7 +7,7 @@ import sinon from 'sinon';
 
 import { LocationProvider } from '~/context/location';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 import { fluent } from '~/core/utils';
 
 import { createReduxStore } from '~/test/store';
@@ -44,7 +44,11 @@ function createSimpleEditor(entityIndex = 1) {
     </Provider>,
   );
 
-  store.dispatch(entities.actions.receive(ENTITIES));
+  store.dispatch({
+    type: RECEIVE_ENTITIES,
+    entities: ENTITIES,
+    hasMore: false,
+  });
   act(() => history.push(`?string=${entityIndex}`));
 
   wrapper.update();

@@ -18,6 +18,7 @@ import { CLDR_PLURALS } from '~/core/utils/constants';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useUnsavedChanges } from '~/modules/unsavedchanges';
 
 import './RichTranslationForm.css';
 
@@ -88,9 +89,7 @@ export default function RichTranslationForm(
     (state) => state.search.searchInputFocused,
   );
   const entity = useSelectedEntity();
-  const unsavedChangesExist = useAppSelector(
-    (state) => state.unsavedchanges.exist,
-  );
+  const unsavedChanges = useUnsavedChanges();
   const pluralExamples = usePluralExamples(locale);
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);
@@ -158,10 +157,10 @@ export default function RichTranslationForm(
 
   // Reset checks when content of the editor changes and some changes have been made.
   React.useEffect(() => {
-    if (unsavedChangesExist) {
+    if (unsavedChanges.exist) {
       dispatch(editor.actions.resetFailedChecks());
     }
-  }, [message, dispatch, unsavedChangesExist]);
+  }, [message, dispatch, unsavedChanges.exist]);
 
   // When content of the translation changes, update unsaved changes.
   editor.useUpdateUnsavedChanges(false);

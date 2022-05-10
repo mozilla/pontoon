@@ -1,78 +1,57 @@
 import { useLocalization } from '@fluent/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
 import { initLocale, Locale, updateLocale } from './context/locale';
-import { Location, LocationType } from './context/location';
+import { Location } from './context/location';
 
 import { WaveLoader } from './core/loaders';
-import {
-  NAME as NOTIFICATION,
-  NotificationPanel,
-  NotificationState,
-} from './core/notification';
+import { NAME as NOTIFICATION, NotificationPanel } from './core/notification';
 import { addRawNotification } from './core/notification/actions';
-import { NAME as PROJECT, ProjectState } from './core/project';
-import { get as getProject } from './core/project/actions';
-import { get as getResource } from './core/resource/actions';
-import { NAME as STATS, Stats } from './core/stats';
+import { getProject } from './core/project/actions';
+import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user';
 import { getUsers } from './core/user/actions';
 
 import { useAppDispatch, useAppSelector } from './hooks';
 
 import { AddonPromotion } from './modules/addonpromotion/components/AddonPromotion';
-import {
-  BatchActions,
-  BatchActionsState,
-  NAME as BATCHACTIONS,
-} from './modules/batchactions';
+import { BatchActions } from './modules/batchactions/components/BatchActions';
+import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
 import { EntityDetails } from './modules/entitydetails';
-import { InteractiveTour } from './modules/interactivetour';
-import { Navigation } from './modules/navbar';
+import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
+import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search';
 
-import { AppDispatch } from './store';
-
-type Props = {
-  batchactions: BatchActionsState;
-  notification: NotificationState;
-  location: LocationType;
-  project: ProjectState;
-  stats: Stats;
-};
-
-type InternalProps = Props & {
-  dispatch: AppDispatch;
-};
-
 /**
  * Main entry point to the application. Will render the structure of the page.
  */
-function App({
-  batchactions,
-  dispatch,
-  notification,
-  location,
-  project,
-  stats,
-}: InternalProps) {
-  const mounted = useRef(false);
+export function App() {
+  const dispatch = useAppDispatch();
+  const location = useContext(Location);
+  const batchactions = useBatchactions();
+  const notification = useAppSelector((state) => state[NOTIFICATION]);
   const { l10n } = useLocalization();
+
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
 
   const l10nReady = !!l10n.parseMarkup;
   const allProjects = location.project === 'all-projects';
 
   useEffect(() => {
+    updateLocale(locale, location.locale);
+    dispatch(getUsers());
+  }, []);
+
+  useEffect(() => {
     // If there's a notification in the DOM, passed by django, show it.
     // Note that we only show it once, and only when the UI has already
     // been rendered, to make sure users do see it.
-    if (mounted.current && l10nReady && !locale.fetching) {
+    if (l10nReady && !locale.fetching) {
       let notifications = [];
       const rootElt = document.getElementById('root');
       if (rootElt?.dataset.notifications) {
@@ -89,16 +68,11 @@ function App({
   }, [l10nReady, locale.fetching]);
 
   useEffect(() => {
-    updateLocale(locale, location.locale);
     dispatch(getProject(location.project));
-    dispatch(getUsers());
-
-    // Load resources, unless we're in the All Projects view
     if (!allProjects) {
       dispatch(getResource(location.locale, location.project));
     }
-    mounted.current = true;
-  }, []);
+  }, [location.locale, location.project]);
 
   if (!l10nReady || locale.fetching) {
     return <WaveLoader />;
@@ -110,8 +84,8 @@ function App({
         <AddonPromotion />
         <header>
           <Navigation />
-          <ResourceProgress stats={stats} />
-          {allProjects ? null : <ProjectInfo project={project} />}
+          <ResourceProgress />
+          {allProjects ? null : <ProjectInfo />}
           <NotificationPanel notification={notification} />
           <UserControls />
         </header>
@@ -131,21 +105,5 @@ function App({
         <InteractiveTour />
       </div>
     </Locale.Provider>
-  );
-}
-
-export default function AppWrapper() {
-  const props = useAppSelector((state) => ({
-    batchactions: state[BATCHACTIONS],
-    notification: state[NOTIFICATION],
-    project: state[PROJECT],
-    stats: state[STATS],
-  }));
-  return (
-    <App
-      dispatch={useAppDispatch()}
-      location={useContext(Location)}
-      {...props}
-    />
   );
 }

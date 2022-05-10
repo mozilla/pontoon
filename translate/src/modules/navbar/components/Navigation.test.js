@@ -1,29 +1,38 @@
-import { shallow } from 'enzyme';
+import { createMemoryHistory } from 'history';
 import React from 'react';
-import sinon from 'sinon';
 
-import { NavigationBase } from './Navigation';
+import { Locale } from '~/context/locale';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
+
+import { Navigation } from './Navigation';
+
+const HISTORY = createMemoryHistory({
+  initialEntries: ['/kg/mark42/stuff.ftl/'],
+});
+
+const LOCALE = {
+  code: 'kg',
+  name: 'Klingon',
+};
+
+const PROJECT = {
+  name: 'Mark 42',
+};
+
+const NavigationWrapper = () => (
+  <Locale.Provider value={LOCALE}>
+    <Navigation />
+  </Locale.Provider>
+);
 
 describe('<Navigation>', () => {
-  const LOCALE = {
-    code: 'kg',
-    name: 'Klingon',
-  };
-  const PROJECT = {
-    name: 'Mark 42',
-  };
-  const PARAMETERS = {
-    locale: 'kg',
-    project: 'mark42',
-    resource: 'stuff.ftl',
-  };
-
-  beforeAll(() => sinon.stub(React, 'useContext').returns(LOCALE));
-  afterAll(() => React.useContext.restore());
-
   it('shows navigation', () => {
-    const wrapper = shallow(
-      <NavigationBase parameters={PARAMETERS} project={PROJECT} />,
+    const store = createReduxStore({ project: PROJECT });
+    const wrapper = mountComponentWithStore(
+      NavigationWrapper,
+      store,
+      {},
+      HISTORY,
     );
 
     expect(wrapper.text()).toContain('Klingon');

@@ -16,3 +16,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.project-menu .menu .percent {
+  color: #7bc876;
+  float: right;
+}

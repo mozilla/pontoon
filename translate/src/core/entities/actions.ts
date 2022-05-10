@@ -1,151 +1,85 @@
-import api from '~/core/api';
-import * as stats from '~/core/stats';
-
+import { LocationType } from '~/context/location';
+import api, { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
+import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
-import type { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
 
-export const RECEIVE: 'entities/RECEIVE' = 'entities/RECEIVE';
-export const REQUEST: 'entities/REQUEST' = 'entities/REQUEST';
-export const RESET: 'entities/RESET' = 'entities/RESET';
-export const UPDATE: 'entities/UPDATE' = 'entities/UPDATE';
-export const RECEIVE_SIBLINGS: 'entities/RECEIVE_SIBLINGS' =
-  'entities/RECEIVE_SIBLINGS';
+export const RECEIVE_ENTITIES = 'entities/RECEIVE';
+export const REQUEST_ENTITIES = 'entities/REQUEST';
+export const RESET_ENTITIES = 'entities/RESET';
+export const UPDATE_ENTITIES = 'entities/UPDATE';
+export const RECEIVE_ENTITY_SIBLINGS = 'entities/RECEIVE_SIBLINGS';
 
-/**
- * Indicate that entities are currently being fetched.
- */
-export type RequestAction = {
-  type: typeof REQUEST;
+/** Indicate that entities are currently being fetched.  */
+type RequestAction = {
+  type: typeof REQUEST_ENTITIES;
 };
-export function request(): RequestAction {
-  return {
-    type: REQUEST,
-  };
-}
 
-/**
- * Update entities to a new set.
- */
-export type ReceiveAction = {
-  type: typeof RECEIVE;
+/** Update entities to a new set.  */
+type ReceiveAction = {
+  type: typeof RECEIVE_ENTITIES;
   entities: Entities;
   hasMore: boolean;
 };
-export function receive(entities: Entities, hasMore: boolean): ReceiveAction {
-  return {
-    type: RECEIVE,
-    entities,
-    hasMore,
-  };
-}
-/**
- * Update the siblings of an entity.
- */
-export type ReceiveSiblingsAction = {
-  type: typeof RECEIVE_SIBLINGS;
+
+/** Update the siblings of an entity.  */
+type ReceiveSiblingsAction = {
+  type: typeof RECEIVE_ENTITY_SIBLINGS;
   siblings: EntitySiblings;
   entity: number;
 };
-export function receiveSiblings(
-  siblings: EntitySiblings,
-  entity: number,
-): ReceiveSiblingsAction {
-  return {
-    type: RECEIVE_SIBLINGS,
-    siblings,
-    entity,
-  };
-}
 
-/**
- * Update the active translation of an entity.
- */
-export type UpdateAction = {
-  type: typeof UPDATE;
+type ResetAction = {
+  type: typeof RESET_ENTITIES;
+};
+
+/** Update the active translation of an entity.  */
+type UpdateAction = {
+  type: typeof UPDATE_ENTITIES;
   entity: number;
   pluralForm: number;
   translation: EntityTranslation;
 };
-export function updateEntityTranslation(
+
+export type Action =
+  | ReceiveAction
+  | ReceiveSiblingsAction
+  | RequestAction
+  | ResetAction
+  | UpdateAction;
+
+export const resetEntities = (): ResetAction => ({ type: RESET_ENTITIES });
+
+export const updateEntityTranslation = (
   entity: number,
   pluralForm: number,
   translation: EntityTranslation,
-): UpdateAction {
-  return {
-    type: UPDATE,
-    entity,
-    pluralForm,
-    translation,
-  };
-}
+): UpdateAction => ({ type: UPDATE_ENTITIES, entity, pluralForm, translation });
 
-/**
- * Fetch entities and their translation.
- */
-export function get(
-  locale: string,
-  project: string,
-  resource: string,
-  entityIds: Array<number> | null | undefined,
-  exclude: Array<number>,
-  entity: string | null | undefined,
-  search: string | null | undefined,
-  status: string | null | undefined,
-  extra: string | null | undefined,
-  tag: string | null | undefined,
-  author: string | null | undefined,
-  time: string | null | undefined,
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(request());
+/** Fetch entities and their translation.  */
+export const fetchEntities =
+  (location: LocationType, exclude: Entities) =>
+  async (dispatch: AppDispatch) => {
+    dispatch({ type: REQUEST_ENTITIES });
 
-    const content = await api.entity.getEntities(
-      locale,
-      project,
-      resource,
-      entityIds,
-      exclude,
-      entity,
-      search,
-      status,
-      extra,
-      tag,
-      author,
-      time,
-      false,
-    );
+    const content = await api.entity.getEntities(location, {
+      entity: location.entity,
+      exclude: exclude.map((ent) => ent.pk),
+    });
 
     if (content.entities) {
-      dispatch(receive(content.entities, content.has_next));
-      dispatch(stats.actions.update(content.stats));
+      dispatch({
+        type: RECEIVE_ENTITIES,
+        entities: content.entities,
+        hasMore: content.has_next,
+      });
+      dispatch(updateStats(content.stats));
     }
   };
-}
 
-export function getSiblingEntities(entity: number, locale: string) {
-  return async (dispatch: AppDispatch) => {
+export const fetchSiblingEntities =
+  (entity: number, locale: string) => async (dispatch: AppDispatch) => {
     const siblings = await api.entity.getSiblingEntities(entity, locale);
     if (siblings) {
-      dispatch(receiveSiblings(siblings, entity));
+      dispatch({ type: RECEIVE_ENTITY_SIBLINGS, siblings, entity });
     }
   };
-}
-
-export type ResetAction = {
-  type: typeof RESET;
-};
-export function reset(): ResetAction {
-  return {
-    type: RESET,
-  };
-}
-
-export default {
-  get,
-  getSiblingEntities,
-  receive,
-  request,
-  reset,
-  receiveSiblings,
-  updateEntityTranslation,
-};

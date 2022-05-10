@@ -1,22 +1,25 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { SignIn } from './SignIn';
-import { UserControlsBase } from './UserControls';
+import { UserControls } from './UserControls';
+
+jest.mock('./UserAutoUpdater', () => ({ UserAutoUpdater: () => null }));
 
 describe('<UserControlsBase>', () => {
   it('shows a Sign in link when user is logged out', () => {
-    const wrapper = shallow(
-      <UserControlsBase user={{ isAuthenticated: false }} />,
-    );
+    const store = createReduxStore({
+      user: { isAuthenticated: false, notifications: {} },
+    });
+    const wrapper = mountComponentWithStore(UserControls, store);
 
     expect(wrapper.find(SignIn)).toHaveLength(1);
   });
 
   it('hides a Sign in link when user is logged in', () => {
-    const wrapper = shallow(
-      <UserControlsBase user={{ isAuthenticated: true }} />,
-    );
+    const store = createReduxStore({
+      user: { isAuthenticated: true, notifications: {} },
+    });
+    const wrapper = mountComponentWithStore(UserControls, store);
 
     expect(wrapper.find(SignIn)).toHaveLength(0);
   });

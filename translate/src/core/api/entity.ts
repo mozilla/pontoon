@@ -1,3 +1,4 @@
+import { LocationType } from '~/context/location';
 import APIBase from './base';
 
 import type { OtherLocaleTranslations } from './types';
@@ -6,7 +7,7 @@ export default class EntityAPI extends APIBase {
   async batchEdit(
     action: string,
     locale: string,
-    entities: Array<number>,
+    entityIds: number[],
     find: string | undefined,
     replace: string | undefined,
   ): Promise<any> {
@@ -17,7 +18,7 @@ export default class EntityAPI extends APIBase {
 
     payload.append('action', action);
     payload.append('locale', locale);
-    payload.append('entities', entities.join(','));
+    payload.append('entities', entityIds.join(','));
 
     if (find) {
       payload.append('find', find);
@@ -46,20 +47,22 @@ export default class EntityAPI extends APIBase {
    * the query. Use this to query for the next set of entities.
    */
   async getEntities(
-    locale: string,
-    project: string,
-    resource: string,
-    entityIds: Array<number> | null | undefined,
-    exclude: Array<number>,
-    entity?: string | null | undefined,
-    search?: string | null | undefined,
-    status?: string | null | undefined,
-    extra?: string | null | undefined,
-    tag?: string | null | undefined,
-    author?: string | null | undefined,
-    time?: string | null | undefined,
-    pkOnly?: boolean | null | undefined,
+    location: Pick<LocationType, 'locale' | 'project' | 'resource'> &
+      Partial<LocationType>,
+    {
+      entity,
+      entityIds = [],
+      exclude = [],
+      pkOnly = false,
+    }: {
+      entity?: number;
+      entityIds?: number[];
+      exclude?: number[];
+      pkOnly?: boolean;
+    },
   ): Promise<Record<string, any>> {
+    const { locale, project, resource } = location;
+
     const payload = new FormData();
     payload.append('locale', locale);
     payload.append('project', project);
@@ -68,7 +71,7 @@ export default class EntityAPI extends APIBase {
       payload.append('paths[]', resource);
     }
 
-    if (entityIds && entityIds.length) {
+    if (entityIds.length > 0) {
       payload.append('entity_ids', entityIds.join(','));
     }
 
@@ -77,31 +80,21 @@ export default class EntityAPI extends APIBase {
     }
 
     if (entity) {
-      payload.append('entity', entity);
+      payload.append('entity', String(entity));
     }
 
-    if (search) {
-      payload.append('search', search);
-    }
-
-    if (status) {
-      payload.append('status', status);
-    }
-
-    if (extra) {
-      payload.append('extra', extra);
-    }
-
-    if (tag) {
-      payload.append('tag', tag);
-    }
-
-    if (author) {
-      payload.append('author', author);
-    }
-
-    if (time) {
-      payload.append('time', time);
+    for (const key of [
+      'search',
+      'status',
+      'extra',
+      'tag',
+      'author',
+      'time',
+    ] as const) {
+      const value = location[key];
+      if (value) {
+        payload.append(key, value);
+      }
     }
 
     if (pkOnly) {

@@ -3,7 +3,6 @@ import sinon from 'sinon';
 
 import { Locale } from '~/context/locale';
 import * as editor from '~/core/editor';
-import * as project from '~/core/project';
 import * as user from '~/core/user';
 
 import {
@@ -15,9 +14,8 @@ import {
 import FailedChecks from './FailedChecks';
 
 function createFailedChecks() {
-  const store = createReduxStore();
+  const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
   createDefaultUser(store);
-  store.dispatch(project.actions.receive({ slug: 'firefox', tags: [] }));
 
   const Component = () => (
     <Locale.Provider value={{ code: 'kg' }}>
