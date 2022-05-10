@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import sinon from 'sinon';
 
 import { LocationProvider } from '~/context/location';
-import * as editor from '~/core/editor';
+import * as editorActions from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 import { fluent } from '~/core/utils';
 
@@ -61,7 +61,7 @@ describe('<SimpleEditor>', () => {
     const [wrapper, store] = createSimpleEditor();
 
     // Update the content with a non-formatted Fluent string.
-    store.dispatch(editor.actions.update('my-message = Coucou', 'external'));
+    store.dispatch(editorActions.update('my-message = Coucou', 'external'));
 
     // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
     wrapper.setProps({});
@@ -75,7 +75,7 @@ describe('<SimpleEditor>', () => {
 
     // Update the content with a non-formatted Fluent string.
     store.dispatch(
-      editor.actions.update(fluent.parser.parseEntry('hello = World')),
+      editorActions.update(fluent.parser.parseEntry('hello = World')),
     );
     wrapper.update();
 
@@ -83,22 +83,25 @@ describe('<SimpleEditor>', () => {
   });
 
   it('passes a reconstructed translation to sendTranslation', () => {
-    const sendTranslationMock = sinon.stub(editor.actions, 'sendTranslation');
-    sendTranslationMock.returns({ type: 'whatever' });
+    const sendTranslationMock = sinon
+      .stub(editorActions, 'sendTranslation_')
+      .returns({ type: 'whatever' });
 
-    const [wrapper, store] = createSimpleEditor();
+    try {
+      const [wrapper, store] = createSimpleEditor();
 
-    store.dispatch(editor.actions.update('Coucou'));
-    wrapper.update();
+      store.dispatch(editorActions.update('Coucou'));
+      wrapper.update();
 
-    // Intercept the sendTranslation prop and call it directly.
-    wrapper.find('GenericTranslationForm').prop('sendTranslation')();
+      // Intercept the sendTranslation prop and call it directly.
+      wrapper.find('GenericTranslationForm').prop('sendTranslation')();
 
-    expect(sendTranslationMock.calledOnce).toBeTruthy();
-    expect(sendTranslationMock.lastCall.args[1]).toEqual(
-      'my-message = Coucou\n',
-    );
-
-    sendTranslationMock.restore();
+      expect(sendTranslationMock.calledOnce).toBeTruthy();
+      expect(sendTranslationMock.lastCall.args[1]).toEqual(
+        'my-message = Coucou\n',
+      );
+    } finally {
+      sendTranslationMock.restore();
+    }
   });
 });

@@ -1,12 +1,11 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
 import { useProject } from '~/core/project';
 import { ProjectMenu } from '~/core/project/components/ProjectMenu';
 import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
-import { useAppDispatch, useAppStore } from '~/hooks';
-import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 
 import './Navigation.css';
 
@@ -16,11 +15,10 @@ import './Navigation.css';
  * Allows to exit the Translate app to go back to team or project dashboards.
  */
 export function Navigation(): React.ReactElement<'nav'> {
-  const dispatch = useAppDispatch();
-  const store = useAppStore();
   const location = useContext(Location);
   const { code, name } = useContext(Locale);
   const projectState = useProject();
+  const checkUnsavedChanges = useCheckUnsavedChanges();
 
   useEffect(() => {
     if (name && projectState?.name) {
@@ -29,10 +27,8 @@ export function Navigation(): React.ReactElement<'nav'> {
   }, [code, name, projectState]);
 
   const navigateToPath = useCallback(
-    (path: string) => {
-      dispatch(checkUnsavedChanges(store, () => location.push(path)));
-    },
-    [dispatch, store],
+    (path: string) => checkUnsavedChanges(() => location.push(path)),
+    [],
   );
 
   return (

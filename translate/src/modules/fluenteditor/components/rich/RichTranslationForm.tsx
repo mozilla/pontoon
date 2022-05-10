@@ -10,6 +10,7 @@ import {
 import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
+import { UnsavedChanges } from '~/context/unsavedChanges';
 import type { Translation } from '~/core/editor';
 import * as editor from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
@@ -18,7 +19,6 @@ import { CLDR_PLURALS } from '~/core/utils/constants';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { useUnsavedChanges } from '~/modules/unsavedchanges';
 
 import './RichTranslationForm.css';
 
@@ -89,7 +89,7 @@ export default function RichTranslationForm(
     (state) => state.search.searchInputFocused,
   );
   const entity = useSelectedEntity();
-  const unsavedChanges = useUnsavedChanges();
+  const unsavedChanges = useContext(UnsavedChanges);
   const pluralExamples = usePluralExamples(locale);
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);

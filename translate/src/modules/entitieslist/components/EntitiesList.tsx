@@ -25,7 +25,7 @@ import {
   uncheckSelection,
 } from '~/modules/batchactions/actions';
 import { useBatchactions } from '~/modules/batchactions/hooks';
-import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
@@ -45,6 +45,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
+  const checkUnsavedChanges = useCheckUnsavedChanges();
 
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);
@@ -65,18 +66,16 @@ export function EntitiesList(): React.ReactElement<'div'> {
     (entity: EntityType, replaceHistory?: boolean) => {
       // Do not re-select already selected entity
       if (entity.pk !== location.entity) {
-        dispatch(
-          checkUnsavedChanges(store, () => {
-            dispatch(resetSelection());
-            dispatch(resetEditor());
-            const nextLocation = { entity: entity.pk };
-            if (replaceHistory) {
-              location.replace(nextLocation);
-            } else {
-              location.push(nextLocation);
-            }
-          }),
-        );
+        checkUnsavedChanges(() => {
+          dispatch(resetSelection());
+          dispatch(resetEditor());
+          const nextLocation = { entity: entity.pk };
+          if (replaceHistory) {
+            location.replace(nextLocation);
+          } else {
+            location.push(nextLocation);
+          }
+        });
       }
     },
     [dispatch, location, store],
@@ -164,31 +163,29 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
   const toggleForBatchEditing = useCallback(
     (entity: number, shiftKeyPressed: boolean) => {
-      dispatch(
-        checkUnsavedChanges(store, () => {
-          // If holding Shift, check all entities in the entity list between the
-          // lastCheckedEntity and the entity if entity not checked. If entity
-          // checked, uncheck all entities in-between.
-          if (shiftKeyPressed && batchactions.lastCheckedEntity) {
-            const entityListIds = entities.map((e) => e.pk);
-            const start = entityListIds.indexOf(entity);
-            const end = entityListIds.indexOf(batchactions.lastCheckedEntity);
+      checkUnsavedChanges(() => {
+        // If holding Shift, check all entities in the entity list between the
+        // lastCheckedEntity and the entity if entity not checked. If entity
+        // checked, uncheck all entities in-between.
+        if (shiftKeyPressed && batchactions.lastCheckedEntity) {
+          const entityListIds = entities.map((e) => e.pk);
+          const start = entityListIds.indexOf(entity);
+          const end = entityListIds.indexOf(batchactions.lastCheckedEntity);
 
-            const entitySelection = entityListIds.slice(
-              Math.min(start, end),
-              Math.max(start, end) + 1,
-            );
+          const entitySelection = entityListIds.slice(
+            Math.min(start, end),
+            Math.max(start, end) + 1,
+          );
 
-            if (batchactions.entities.includes(entity)) {
-              dispatch(uncheckSelection(entitySelection, entity));
-            } else {
-              dispatch(checkSelection(entitySelection, entity));
-            }
+          if (batchactions.entities.includes(entity)) {
+            dispatch(uncheckSelection(entitySelection, entity));
           } else {
-            dispatch(toggleSelection(entity));
+            dispatch(checkSelection(entitySelection, entity));
           }
-        }),
-      );
+        } else {
+          dispatch(toggleSelection(entity));
+        }
+      });
     },
     [batchactions, dispatch, entities, store],
   );

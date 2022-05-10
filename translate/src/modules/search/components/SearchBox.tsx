@@ -8,14 +8,14 @@ import React, {
   useState,
 } from 'react';
 import { Location, LocationType } from '~/context/location';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
 import { reset as resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
-import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { NAME as SEARCH } from '~/modules/search';
-import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData, setFocus } from '../actions';
@@ -36,7 +36,6 @@ type Props = {
 };
 
 type InternalProps = Props & {
-  store: AppStore;
   dispatch: AppDispatch;
 };
 
@@ -69,8 +68,8 @@ export function SearchBoxBase({
   parameters,
   project,
   searchAndFilters,
-  store,
 }: InternalProps): React.ReactElement<'div'> {
+  const checkUnsavedChanges = useCheckUnsavedChanges();
   const applyOnChange = useRef(false);
   const searchInput = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
@@ -178,9 +177,9 @@ export function SearchBoxBase({
     dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
   }, [parameters]);
 
-  const applyFilters = useCallback(() => {
-    dispatch(
-      checkUnsavedChanges(store, () => {
+  const applyFilters = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
         const { authors, extras, statuses, tags } = filters;
 
         let status: string | null = statuses.join(',');
@@ -200,8 +199,8 @@ export function SearchBoxBase({
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),
-    );
-  }, [dispatch, store, parameters, search, filters]);
+    [dispatch, parameters, search, filters],
+  );
 
   useEffect(() => {
     if (applyOnChange.current) {
@@ -290,11 +289,5 @@ export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
     project: useProject(),
   };
 
-  return (
-    <SearchBoxBase
-      {...state}
-      dispatch={useAppDispatch()}
-      store={useAppStore()}
-    />
-  );
+  return <SearchBoxBase {...state} dispatch={useAppDispatch()} />;
 }

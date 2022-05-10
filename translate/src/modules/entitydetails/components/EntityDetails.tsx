@@ -13,6 +13,7 @@ import {
   usePluralForm,
   useTranslationForEntity,
 } from '~/context/pluralForm';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import type { Entity } from '~/core/api';
 import { addComment } from '~/core/comments/actions';
 import {
@@ -67,7 +68,6 @@ import {
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
-import { checkUnsavedChanges } from '~/modules/unsavedchanges/actions';
 import type { AppDispatch } from '~/store';
 
 import EditorSelector from './EditorSelector';
@@ -126,6 +126,7 @@ export function EntityDetailsBase({
   const [contactPerson, setContactPerson] = useState('');
   const resetContactPerson = useCallback(() => setContactPerson(''), []);
   const locale = useContext(Locale);
+  const checkUnsavedChanges = useCheckUnsavedChanges();
 
   const { entity, locale: lc, project } = parameters;
 
@@ -265,28 +266,26 @@ export function EntityDetailsBase({
     dispatch(addNotification(notificationMessages.STRING_LINK_COPIED));
   }, [dispatch, parameters]);
 
-  const goToNextEntity = useCallback(() => {
-    dispatch(
-      checkUnsavedChanges(store, () => {
+  const goToNextEntity = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
         parameters.push({ entity: nextEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
-    );
-  }, [dispatch, parameters, nextEntity, store]);
+    [dispatch, parameters, nextEntity, store],
+  );
 
-  const goToPreviousEntity = useCallback(() => {
-    dispatch(
-      checkUnsavedChanges(store, () => {
+  const goToPreviousEntity = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
         parameters.push({ entity: previousEntity?.pk ?? 0 });
         dispatch(resetEditor());
       }),
-    );
-  }, [dispatch, parameters, previousEntity, store]);
+    [dispatch, parameters, previousEntity, store],
+  );
 
   const navigateToPath = useCallback(
-    (path: string) => {
-      dispatch(checkUnsavedChanges(store, () => parameters.push(path)));
-    },
+    (path: string) => checkUnsavedChanges(() => parameters.push(path)),
     [dispatch, parameters, store],
   );
 
@@ -333,20 +332,18 @@ export function EntityDetailsBase({
 
       // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
       // because it cannot be triggered for the use case of bug 1508474.
-      dispatch(
-        checkUnsavedChanges(store, () => {
-          dispatch(
-            updateStatus(
-              change,
-              selectedEntity,
-              locale,
-              { pluralForm, setPluralForm },
-              translationId,
-              nextEntity,
-              parameters,
-            ),
-          );
-        }),
+      checkUnsavedChanges(() =>
+        dispatch(
+          updateStatus(
+            change,
+            selectedEntity,
+            locale,
+            { pluralForm, setPluralForm },
+            translationId,
+            nextEntity,
+            parameters,
+          ),
+        ),
       );
     },
     [
