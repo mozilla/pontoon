@@ -7,7 +7,7 @@ import type { LocationType } from '~/context/location';
 import type { ProjectState } from '~/core/project';
 import { useOnDiscard } from '~/core/utils';
 
-import ProjectItem from './ProjectItem';
+import { ProjectItem } from './ProjectItem';
 
 import './ProjectMenu.css';
 
@@ -23,27 +23,23 @@ type ProjectMenuProps = {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };
 
-export function ProjectMenu({
+export function ProjectMenuDialog({
   parameters,
   onDiscard,
   onNavigate,
 }: ProjectMenuProps): React.ReactElement<'div'> {
   // Searching
-  const locale = useContext(Locale);
+  const { localizations } = useContext(Locale);
   const [search, setSearch] = useState('');
 
   const updateProjectList = (e: React.SyntheticEvent<HTMLInputElement>) => {
     setSearch(e.currentTarget.value);
   };
 
-  const localizationElements = locale.localizations.filter(
-    (localization) =>
-      localization.project.name.toLowerCase().indexOf(search.toLowerCase()) >
-      -1,
-  );
-
   // Sorting
-  const [sortActive, setSortActive] = React.useState('project');
+  const [sortActive, setSortActive] = React.useState<'project' | 'progress'>(
+    'project',
+  );
   const [sortAsc, setSortAsc] = React.useState(true);
 
   const sortByProject = () => {
@@ -55,16 +51,6 @@ export function ProjectMenu({
     setSortAsc(sortActive !== 'progress' || !sortAsc);
   };
 
-  const getProgress = (local: Localization) => {
-    const completeStrings = local.approvedStrings + local.stringsWithWarnings;
-    const percent = Math.floor((completeStrings / local.totalStrings) * 100);
-    return percent;
-  };
-
-  const getProject = (local: Localization) => {
-    return local.project.name;
-  };
-
   const sort = sortAsc ? 'fa fa-caret-up' : 'fa fa-caret-down';
   const projectClass = sortActive === 'project' ? sort : '';
   const progressClass = sortActive === 'progress' ? sort : '';
@@ -72,6 +58,11 @@ export function ProjectMenu({
   // Discarding menu
   const ref = useRef(null);
   useOnDiscard(ref, onDiscard);
+
+  const search_ = search.toLowerCase();
+  const localizationElements = localizations
+    .filter((lc) => !search_ || lc.project.name.toLowerCase().includes(search_))
+    .sort(sortBy(sortActive, sortAsc));
 
   return (
     <div ref={ref} className='menu'>
@@ -115,47 +106,14 @@ export function ProjectMenu({
 
       <ul>
         {localizationElements.length ? (
-          (sortActive === 'project'
-            ? localizationElements.sort((a, b) => {
-                const projectA = getProject(a);
-                const projectB = getProject(b);
-
-                let result = 0;
-
-                if (projectA < projectB) {
-                  result = -1;
-                }
-                if (projectA > projectB) {
-                  result = 1;
-                }
-
-                return sortAsc ? result : result * -1;
-              })
-            : localizationElements.sort((a, b) => {
-                const percentA = getProgress(a);
-                const percentB = getProgress(b);
-
-                let result = 0;
-
-                if (percentA < percentB) {
-                  result = -1;
-                }
-                if (percentA > percentB) {
-                  result = 1;
-                }
-
-                return sortAsc ? result : result * -1;
-              })
-          ).map((localization, index) => {
-            return (
-              <ProjectItem
-                parameters={parameters}
-                localization={localization}
-                navigateToPath={onNavigate}
-                key={index}
-              />
-            );
-          })
+          localizationElements.map((localization, index) => (
+            <ProjectItem
+              location={parameters}
+              localization={localization}
+              navigateToPath={onNavigate}
+              key={index}
+            />
+          ))
         ) : (
           // No projects found
           <Localized id='project-ProjectMenu--no-results'>
@@ -173,7 +131,7 @@ export function ProjectMenu({
  * In the All projects view, render project menu, which allows switching to the
  * regular view without reloading the Translate app.
  */
-export default function ProjectMenuBase({
+export function ProjectMenu({
   navigateToPath,
   parameters,
   project,
@@ -211,7 +169,7 @@ export default function ProjectMenuBase({
         <span className='icon fa fa-caret-down'></span>
       </div>
       {visible && (
-        <ProjectMenu
+        <ProjectMenuDialog
           parameters={parameters}
           onDiscard={handleDiscard}
           onNavigate={handleNavigate}
@@ -219,4 +177,24 @@ export default function ProjectMenuBase({
       )}
     </li>
   );
+}
+
+function sortBy(sortActive: 'project' | 'progress', sortAsc: boolean) {
+  const get =
+    sortActive === 'project'
+      ? (lc: Localization) => lc.project.name
+      : (lc: Localization) =>
+          (lc.approvedStrings + lc.stringsWithWarnings) / lc.totalStrings;
+
+  return function (a: Localization, b: Localization) {
+    const aa = get(a);
+    const bb = get(b);
+    if (aa < bb) {
+      return sortAsc ? -1 : 1;
+    }
+    if (aa > bb) {
+      return sortAsc ? 1 : -1;
+    }
+    return 0;
+  };
 }

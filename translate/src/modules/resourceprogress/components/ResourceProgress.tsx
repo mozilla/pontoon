@@ -1,37 +1,21 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useState } from 'react';
 import { Link } from '~/context/location';
-import type { Stats } from '~/core/stats';
+import { Stats, useStats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 import { ProgressChart } from './ProgressChart';
 import './ResourceProgress.css';
 
 type Props = {
-  stats: Stats;
-};
-
-type ResourceProgressProps = {
   percent: number;
   stats: Stats;
   onDiscard: () => void;
 };
 
-function ResourceProgress({
-  percent,
-  stats,
-  onDiscard,
-}: ResourceProgressProps) {
-  const {
-    approved,
-    pretranslated,
-    warnings,
-    errors,
-    missing,
-    unreviewed,
-    total,
-  } = stats;
+function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
+  const { approved, warnings, errors, missing, unreviewed, total } = stats;
 
-  const ref = React.useRef(null);
+  const ref = React.useRef<HTMLElement>(null);
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -120,9 +104,8 @@ function ResourceProgress({
 /**
  * Show a panel with progress chart and stats for the current resource.
  */
-export default function ResourceProgressBase({
-  stats,
-}: Props): React.ReactElement<'div'> | null {
+export function ResourceProgress(): React.ReactElement<'div'> | null {
+  const stats = useStats();
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
   const handleDiscard = useCallback(() => setVisible(false), []);
@@ -142,7 +125,7 @@ export default function ResourceProgressBase({
         <span className='percent unselectable'>{percent}</span>
       </div>
       {visible ? (
-        <ResourceProgress
+        <ResourceProgressDialog
           percent={percent}
           stats={stats}
           onDiscard={handleDiscard}

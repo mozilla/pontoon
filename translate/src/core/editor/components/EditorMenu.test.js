@@ -5,7 +5,7 @@ import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
 import { LocationProvider } from '~/context/location';
-import * as entities from '~/core/entities';
+import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -36,7 +36,11 @@ function createEditorMenu({
     },
   });
 
-  store.dispatch(entities.actions.receive([entity], false));
+  store.dispatch({
+    type: RECEIVE_ENTITIES,
+    entities: [entity],
+    hasMore: false,
+  });
 
   const history = createMemoryHistory({
     initialEntries: ['/kg/firefox/all-resources/'],

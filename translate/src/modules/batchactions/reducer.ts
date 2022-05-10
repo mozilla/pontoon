@@ -1,32 +1,18 @@
 import {
-  CHECK,
-  RECEIVE,
-  REQUEST,
-  RESET,
-  RESET_RESPONSE,
-  TOGGLE,
-  UNCHECK,
-} from './actions';
-
-import type {
-  CheckAction,
-  ReceiveAction,
-  RequestAction,
-  ResetAction,
-  ResetResponseAction,
+  Action,
   ResponseType,
-  ToggleAction,
-  UncheckAction,
+  CHECK_BATCHACTIONS,
+  RECEIVE_BATCHACTIONS,
+  REQUEST_BATCHACTIONS,
+  RESET_BATCHACTIONS,
+  RESET_BATCHACTIONS_RESPONSE,
+  TOGGLE_BATCHACTIONS,
+  UNCHECK_BATCHACTIONS,
 } from './actions';
 
-type Action =
-  | CheckAction
-  | ReceiveAction
-  | RequestAction
-  | ResetAction
-  | ResetResponseAction
-  | ToggleAction
-  | UncheckAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const NAME = 'batchactions';
 
 export type BatchActionsState = {
   readonly entities: Array<number>;
@@ -42,72 +28,65 @@ const initial: BatchActionsState = {
   response: null,
 };
 
-function checkEntities(
+const checkEntities = (
   stateEntities: Array<number>,
   actionEntities: Array<number>,
-) {
+) =>
   // Union with duplicates removed
-  return stateEntities.concat(
-    actionEntities.filter((e) => stateEntities.indexOf(e) < 0),
+  stateEntities.concat(
+    actionEntities.filter((e) => !stateEntities.includes(e)),
   );
-}
 
-function toggleEntity(entities: Array<number>, entity: number) {
-  // Remove entity if present
-  if (entities.includes(entity)) {
-    return entities.filter((e) => e !== entity);
-  }
-  // Add entity if not present
-  else {
-    return entities.concat([entity]);
-  }
-}
+const toggleEntity = (entities: Array<number>, entity: number) =>
+  entities.includes(entity)
+    ? // Remove entity if present
+      entities.filter((e) => e !== entity)
+    : // Add entity if not present
+      entities.concat([entity]);
 
-function uncheckEntities(
+const uncheckEntities = (
   stateEntities: Array<number>,
   actionEntities: Array<number>,
-) {
-  return stateEntities.filter((e) => actionEntities.indexOf(e) < 0);
-}
+) => stateEntities.filter((e) => actionEntities.indexOf(e) < 0);
 
-export default function reducer(
+export function reducer(
   state: BatchActionsState = initial,
   action: Action,
 ): BatchActionsState {
   switch (action.type) {
-    case CHECK:
+    case CHECK_BATCHACTIONS:
       return {
         ...state,
         entities: checkEntities(state.entities, action.entities),
         lastCheckedEntity: action.lastCheckedEntity,
       };
-    case RECEIVE:
+    case RECEIVE_BATCHACTIONS:
       return {
         ...state,
         requestInProgress: null,
         response: action.response,
       };
-    case REQUEST:
+    case REQUEST_BATCHACTIONS:
       return {
         ...state,
         requestInProgress: action.source,
       };
-    case RESET:
+    case RESET_BATCHACTIONS:
       return {
         ...initial,
       };
-    case RESET_RESPONSE:
+    case RESET_BATCHACTIONS_RESPONSE:
       return {
         ...state,
         response: initial.response,
       };
-    case TOGGLE:
+    case TOGGLE_BATCHACTIONS:
       return {
         ...state,
         entities: toggleEntity(state.entities, action.entity),
         lastCheckedEntity: action.entity,
       };
-    case UNCHECK:
+    case UNCHECK_BATCHACTIONS:
       return {
         ...state,
         entities: uncheckEntities(state.entities, action.entities),

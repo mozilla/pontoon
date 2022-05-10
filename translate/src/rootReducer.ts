@@ -1,18 +1,18 @@
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import * as entities from '~/core/entities/reducer';
 import * as notification from '~/core/notification';
-import * as project from '~/core/project';
-import * as resource from '~/core/resource';
-import * as stats from '~/core/stats';
+import * as project from '~/core/project/reducer';
+import * as resource from '~/core/resource/reducer';
+import * as stats from '~/core/stats/reducer';
 import * as term from '~/core/term';
 import * as user from '~/core/user';
-import * as batchactions from '~/modules/batchactions';
+import * as batchactions from '~/modules/batchactions/reducer';
 import * as history from '~/modules/history';
 import * as machinery from '~/modules/machinery';
 import * as otherlocales from '~/modules/otherlocales';
 import * as search from '~/modules/search';
 import * as teamcomments from '~/modules/teamcomments';
-import * as unsavedchanges from '~/modules/unsavedchanges';
+import * as unsavedchanges from '~/modules/unsavedchanges/reducer';
 
 // Combine reducers from all modules, using their NAME constant as key.
 export const reducer = {

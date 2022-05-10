@@ -1,23 +1,19 @@
-import { RECEIVE, REQUEST, RESET, UPDATE, RECEIVE_SIBLINGS } from './actions';
-
 import type { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
-import type {
-  ReceiveAction,
-  RequestAction,
-  ResetAction,
-  UpdateAction,
-  ReceiveSiblingsAction,
+
+import {
+  Action,
+  RECEIVE_ENTITIES,
+  REQUEST_ENTITIES,
+  RESET_ENTITIES,
+  UPDATE_ENTITIES,
+  RECEIVE_ENTITY_SIBLINGS,
 } from './actions';
 
-export type Action =
-  | ReceiveAction
-  | RequestAction
-  | ResetAction
-  | UpdateAction
-  | ReceiveSiblingsAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const NAME = 'entities';
 
-// Read-only state.
-export type EntitiesState = {
+type EntitiesState = {
   readonly entities: Entities;
   readonly fetching: boolean;
   readonly fetchCount: number;
@@ -87,12 +83,12 @@ const initial: EntitiesState = {
   hasMore: true,
 };
 
-export default function reducer(
+export function reducer(
   state: EntitiesState = initial,
   action: Action,
 ): EntitiesState {
   switch (action.type) {
-    case RECEIVE:
+    case RECEIVE_ENTITIES:
       return {
         ...state,
         entities: [...state.entities, ...action.entities],
@@ -100,20 +96,20 @@ export default function reducer(
         fetchCount: state.fetchCount + 1,
         hasMore: action.hasMore,
       };
-    case REQUEST:
+    case REQUEST_ENTITIES:
       return {
         ...state,
         fetching: true,
         hasMore: false,
       };
-    case RESET:
+    case RESET_ENTITIES:
       return {
         ...state,
         entities: [],
         fetching: false,
         hasMore: true,
       };
-    case UPDATE:
+    case UPDATE_ENTITIES:
       return {
         ...state,
         entities: updateEntityTranslation(
@@ -123,7 +119,7 @@ export default function reducer(
           action.translation,
         ),
       };
-    case RECEIVE_SIBLINGS:
+    case RECEIVE_ENTITY_SIBLINGS:
       return {
         ...state,
         entities: injectSiblingEntities(

@@ -1,31 +1,33 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import * as ReactRedux from 'react-redux';
 import sinon from 'sinon';
 
-import { UnsavedChangesBase } from './UnsavedChanges';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import * as actions from '../actions';
 
-describe('<UnsavedChangesBase>', () => {
+import { UnsavedChanges } from './UnsavedChanges';
+
+describe('<UnsavedChanges>', () => {
   beforeAll(() => {
-    sinon.stub(actions, 'hide').returns({ type: 'whatever' });
-    sinon.stub(actions, 'ignore').returns({ type: 'whatever' });
+    sinon.stub(ReactRedux, 'useDispatch').returns(() => {});
+    sinon.stub(actions, 'hideUnsavedChanges').returns({ type: 'whatever' });
+    sinon.stub(actions, 'ignoreUnsavedChanges').returns({ type: 'whatever' });
   });
 
   afterEach(() => {
-    actions.hide.reset();
-    actions.ignore.reset();
+    actions.hideUnsavedChanges.reset();
+    actions.ignoreUnsavedChanges.reset();
   });
 
   afterAll(() => {
-    actions.hide.restore();
-    actions.ignore.restore();
+    ReactRedux.useDispatch.restore();
+    actions.hideUnsavedChanges.restore();
+    actions.ignoreUnsavedChanges.restore();
   });
 
   it('renders correctly if shown', () => {
-    const wrapper = shallow(
-      <UnsavedChangesBase unsavedchanges={{ shown: true }} />,
-    );
+    const store = createReduxStore({ unsavedchanges: { shown: true } });
+    const wrapper = mountComponentWithStore(UnsavedChanges, store);
 
     expect(wrapper.find('.unsaved-changes')).toHaveLength(1);
     expect(wrapper.find('.close')).toHaveLength(1);
@@ -35,34 +37,25 @@ describe('<UnsavedChangesBase>', () => {
   });
 
   it('does not render if not shown', () => {
-    const wrapper = shallow(
-      <UnsavedChangesBase unsavedchanges={{ shown: false }} />,
-    );
+    const store = createReduxStore({ unsavedchanges: { shown: false } });
+    const wrapper = mountComponentWithStore(UnsavedChanges, store);
 
     expect(wrapper.find('.unsaved-changes')).toHaveLength(0);
   });
 
   it('closes the unsaved changes popup when the Close button is clicked', () => {
-    const wrapper = shallow(
-      <UnsavedChangesBase
-        unsavedchanges={{ shown: true }}
-        dispatch={() => {}}
-      />,
-    );
+    const store = createReduxStore({ unsavedchanges: { shown: true } });
+    const wrapper = mountComponentWithStore(UnsavedChanges, store);
 
     wrapper.find('.close').simulate('click');
-    expect(actions.hide.calledOnce).toBeTruthy();
+    expect(actions.hideUnsavedChanges.calledOnce).toBeTruthy();
   });
 
   it('ignores the unsaved changes popup when the Proceed button is clicked', () => {
-    const wrapper = shallow(
-      <UnsavedChangesBase
-        unsavedchanges={{ shown: true }}
-        dispatch={() => {}}
-      />,
-    );
+    const store = createReduxStore({ unsavedchanges: { shown: true } });
+    const wrapper = mountComponentWithStore(UnsavedChanges, store);
 
     wrapper.find('.proceed.anyway').simulate('click');
-    expect(actions.ignore.calledOnce).toBeTruthy();
+    expect(actions.ignoreUnsavedChanges.calledOnce).toBeTruthy();
   });
 });

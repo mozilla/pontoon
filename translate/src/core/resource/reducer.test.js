@@ -1,5 +1,5 @@
-import reducer from './reducer';
-import { RECEIVE, UPDATE } from './actions';
+import { reducer } from './reducer';
+import { RECEIVE_RESOURCES, UPDATE_RESOURCE } from './actions';
 
 describe('reducer', () => {
   const RESOURCES = [
@@ -37,7 +37,7 @@ describe('reducer', () => {
     const res = reducer(
       {},
       {
-        type: RECEIVE,
+        type: RECEIVE_RESOURCES,
         resources: RESOURCES,
         allResources: ALL_RESOURCES,
       },
@@ -73,7 +73,7 @@ describe('reducer', () => {
         allResources: ALL_RESOURCES,
       },
       {
-        type: UPDATE,
+        type: UPDATE_RESOURCE,
         resourcePath: 'path/to.file',
         approvedStrings: 2,
         stringsWithWarnings: 0,

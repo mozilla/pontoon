@@ -4,7 +4,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 
-import App from './App';
+import { App } from './App';
 import { LocationProvider } from './context/location';
 import { PluralFormProvider } from './context/pluralForm';
 import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';

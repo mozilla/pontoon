@@ -8,7 +8,7 @@ import { Locale } from '~/context/locale';
 import { LocationProvider } from '~/context/location';
 import { PluralFormProvider } from '~/context/pluralForm';
 import * as editor from '~/core/editor';
-import * as entities from '~/core/entities';
+import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -60,7 +60,11 @@ function createComponent(entityIndex = 0) {
     </Provider>,
   );
 
-  store.dispatch(entities.actions.receive(ENTITIES));
+  store.dispatch({
+    type: RECEIVE_ENTITIES,
+    entities: ENTITIES,
+    hasMore: false,
+  });
   selectEntity(store, history, entityIndex);
 
   // Force a re-render.

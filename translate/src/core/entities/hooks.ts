@@ -3,7 +3,9 @@ import { useContext } from 'react';
 import { Location } from '~/context/location';
 import type { Entity } from '~/core/api';
 import { useAppSelector } from '~/hooks';
-import { NAME as ENTITIES } from './index';
+import { NAME as ENTITIES } from './reducer';
+
+export const useEntities = () => useAppSelector((state) => state[ENTITIES]);
 
 /** Return the currently selected Entity object.  */
 export function useSelectedEntity(): Entity | undefined {

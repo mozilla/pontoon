@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import { NAME as PROJECT } from '~/core/project';
+import { NAME as PROJECT } from '~/core/project/reducer';
 import { NAME as USER } from '~/core/user';
 import * as Hooks from '~/hooks';
 

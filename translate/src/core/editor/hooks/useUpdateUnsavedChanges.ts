@@ -1,7 +1,11 @@
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as unsavedchanges from '~/modules/unsavedchanges';
+import { useUnsavedChanges } from '~/modules/unsavedchanges';
+import {
+  hideUnsavedChanges,
+  updateUnsavedChanges,
+} from '~/modules/unsavedchanges/actions';
 
 export default function useUpdateUnsavedChanges(richEditor: boolean) {
   const dispatch = useAppDispatch();
@@ -10,45 +14,34 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
   const initialTranslation = useAppSelector(
     (state) => state.editor.initialTranslation,
   );
-  const unsavedChangesExist = useAppSelector(
-    (state) => state.unsavedchanges.exist,
-  );
-  const unsavedChangesShown = useAppSelector(
-    (state) => state.unsavedchanges.shown,
-  );
+  const { exist, shown } = useUnsavedChanges();
 
   // When the translation or the initial translation changes, check for unsaved changes.
-  React.useEffect(() => {
-    let exist: boolean;
+  useEffect(() => {
+    let next: boolean;
     if (typeof translation === 'string') {
       if (richEditor) {
         return;
       }
-      exist = translation !== initialTranslation;
+      next = translation !== initialTranslation;
     } else {
-      exist =
+      next =
         typeof initialTranslation !== 'string' &&
         !translation.equals(initialTranslation);
     }
 
-    if (exist !== unsavedChangesExist) {
-      dispatch(unsavedchanges.actions.update(exist));
+    if (next !== exist) {
+      dispatch(updateUnsavedChanges(next));
     }
-  }, [
-    richEditor,
-    translation,
-    initialTranslation,
-    unsavedChangesExist,
-    dispatch,
-  ]);
+  }, [richEditor, translation, initialTranslation, exist, dispatch]);
 
   // When the translation changes, hide unsaved changes notice.
   // We need to track the translation value, because this hook depends on the
   // `shown` value of the unsavedchanges module, but we don't want to hide
   // the notice automatically after it's displayed. We thus only update when
   // the translation has effectively changed.
-  const prevTranslation = React.useRef(translation);
-  React.useEffect(() => {
+  const prevTranslation = useRef(translation);
+  useEffect(() => {
     let sameTranslation;
     if (richEditor) {
       if (typeof translation === 'string') {
@@ -60,9 +53,9 @@ export default function useUpdateUnsavedChanges(richEditor: boolean) {
     } else {
       sameTranslation = prevTranslation.current === translation;
     }
-    if (!sameTranslation && unsavedChangesShown) {
-      dispatch(unsavedchanges.actions.hide());
+    if (!sameTranslation && shown) {
+      dispatch(hideUnsavedChanges());
     }
     prevTranslation.current = translation;
-  }, [richEditor, translation, prevTranslation, unsavedChangesShown, dispatch]);
+  }, [richEditor, translation, prevTranslation, shown, dispatch]);
 }

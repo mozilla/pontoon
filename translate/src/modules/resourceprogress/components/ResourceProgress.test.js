@@ -1,9 +1,8 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import ResourceProgressBase from './ResourceProgress';
+import { ResourceProgress } from './ResourceProgress';
 
-describe('<ResourceProgressBase>', () => {
+describe('<ResourceProgress>', () => {
   const STATS = {
     approved: 5,
     pretranslated: 4,
@@ -22,21 +21,27 @@ describe('<ResourceProgressBase>', () => {
     search: null,
   };
 
+  beforeAll(() => {
+    HTMLCanvasElement.prototype.getContext = jest.fn();
+  });
+
   it('shows only a selector by default', () => {
-    const wrapper = shallow(
-      <ResourceProgressBase stats={STATS} parameters={PARAMETERS} />,
-    );
+    const store = createReduxStore({ stats: STATS });
+    const wrapper = mountComponentWithStore(ResourceProgress, store, {
+      parameters: PARAMETERS,
+    });
 
     expect(wrapper.find('.selector').exists()).toBeTruthy();
-    expect(wrapper.find('ResourceProgress').exists()).toBeFalsy();
+    expect(wrapper.find('ResourceProgressDialog').exists()).toBeFalsy();
   });
 
   it('shows the info menu after a click', () => {
-    const wrapper = shallow(
-      <ResourceProgressBase stats={STATS} parameters={PARAMETERS} />,
-    );
+    const store = createReduxStore({ stats: STATS });
+    const wrapper = mountComponentWithStore(ResourceProgress, store, {
+      parameters: PARAMETERS,
+    });
     wrapper.find('.selector').simulate('click');
 
-    expect(wrapper.find('ResourceProgress').exists()).toBeTruthy();
+    expect(wrapper.find('ResourceProgressDialog').exists()).toBeTruthy();
   });
 });

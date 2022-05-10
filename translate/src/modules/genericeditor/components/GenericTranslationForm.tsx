@@ -9,6 +9,7 @@ import {
 import { resetFailedChecks } from '~/core/editor/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useUnsavedChanges } from '~/modules/unsavedchanges';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -31,9 +32,7 @@ export default function GenericTranslationForm({
   );
   const { code, direction, script } = useContext(Locale);
   const readonly = useReadonlyEditor();
-  const unsavedChangesExist = useAppSelector(
-    (state) => state.unsavedchanges.exist,
-  );
+  const unsavedChanges = useUnsavedChanges();
 
   const handleShortcutsFn = useHandleShortcuts();
 
@@ -52,10 +51,10 @@ export default function GenericTranslationForm({
 
   // Reset checks when content of the editor changes and some changes have been made.
   useEffect(() => {
-    if (unsavedChangesExist) {
+    if (unsavedChanges.exist) {
       dispatch(resetFailedChecks());
     }
-  }, [dispatch, translation, unsavedChangesExist]);
+  }, [dispatch, translation, unsavedChanges.exist]);
 
   // When the translation or the initial translation changes, check for unsaved changes.
   useUpdateUnsavedChanges(false);

@@ -5,11 +5,11 @@ import type { LocationType } from '~/context/location';
 import type { PluralFormType } from '~/context/pluralForm';
 import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
-import { actions as entitiesActions } from '~/core/entities';
+import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
-import { actions as resourceActions } from '~/core/resource';
-import { actions as statsActions } from '~/core/stats';
+import { updateResource } from '~/core/resource/actions';
+import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
 export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
@@ -184,11 +184,11 @@ export function updateStatus(
 
     if (results.stats) {
       // Update stats in the progress chart and the filter panel.
-      dispatch(statsActions.update(results.stats));
+      dispatch(updateStats(results.stats));
 
       // Update stats in the resource menu.
       dispatch(
-        resourceActions.update(
+        updateResource(
           entity.path,
           results.stats.approved,
           results.stats.warnings,
@@ -199,11 +199,7 @@ export function updateStatus(
     // Update entity translation data now that it has changed on the server.
     if (results.translation) {
       dispatch(
-        entitiesActions.updateEntityTranslation(
-          entity.pk,
-          pluralForm,
-          results.translation,
-        ),
+        updateEntityTranslation(entity.pk, pluralForm, results.translation),
       );
     }
 

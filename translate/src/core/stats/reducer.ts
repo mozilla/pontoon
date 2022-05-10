@@ -1,8 +1,10 @@
-import { UPDATE } from './actions';
+import { UPDATE_STATS } from './actions';
 
-import type { UpdateAction, Stats } from './actions';
+import type { Action, Stats } from './actions';
 
-type Action = UpdateAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const NAME = 'stats';
 
 const initial: Stats = {
   approved: 0,
@@ -14,9 +16,9 @@ const initial: Stats = {
   total: 0,
 };
 
-export default function reducer(state: Stats = initial, action: Action): Stats {
+export function reducer(state: Stats = initial, action: Action): Stats {
   switch (action.type) {
-    case UPDATE:
+    case UPDATE_STATS:
       return {
         ...action.stats,
       };
