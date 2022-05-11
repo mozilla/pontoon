@@ -1,38 +1,82 @@
 import { Localized } from '@fluent/react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
+
+import { Location } from '~/context/location';
+import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { resetEditor } from '~/core/editor/actions';
+import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
+import { addNotification } from '~/core/notification/actions';
+import { notificationMessages } from '~/core/notification/messages';
+import { useAppDispatch } from '~/hooks';
 
 import './EntityNavigation.css';
-
-type Props = {
-  copyLinkToClipboard: () => void;
-  goToNextEntity: () => void;
-  goToPreviousEntity: () => void;
-};
 
 /**
  * Component showing entity navigation toolbar.
  *
  * Shows copy link and next/previous buttons.
  */
-export function EntityNavigation({
-  copyLinkToClipboard,
-  goToNextEntity,
-  goToPreviousEntity,
-}: Props): React.ReactElement {
-  useEffect(() => {
-    const handleShortcuts = (ev: KeyboardEvent) => {
-      // On Alt + Up, move to the previous entity.
-      if (ev.key === 'ArrowUp' && ev.altKey && !ev.ctrlKey && !ev.shiftKey) {
-        ev.preventDefault();
-        goToPreviousEntity();
-      }
+export function EntityNavigation(): React.ReactElement {
+  const dispatch = useAppDispatch();
+  const location = useContext(Location);
+  const nextEntity = useNextEntity();
+  const previousEntity = usePreviousEntity();
+  const checkUnsavedChanges = useCheckUnsavedChanges();
 
-      // On Alt + Down, move to the next entity.
-      if (ev.key === 'ArrowDown' && ev.altKey && !ev.ctrlKey && !ev.shiftKey) {
-        ev.preventDefault();
-        goToNextEntity();
+  const copyLinkToClipboard = useCallback(async () => {
+    const { locale, project, resource, entity } = location;
+
+    const url = new URL(
+      `/${locale}/${project}/${resource}/`,
+      window.location.href,
+    );
+    url.searchParams.append('string', String(entity));
+    await navigator.clipboard.writeText(String(url));
+
+    dispatch(addNotification(notificationMessages.STRING_LINK_COPIED));
+  }, [location]);
+
+  const goToEntity = useCallback(
+    (entity: number | undefined) => {
+      if (entity) {
+        checkUnsavedChanges(() => {
+          location.push({ entity });
+          dispatch(resetEditor());
+        });
       }
-    };
+    },
+    [location],
+  );
+
+  const goToNextEntity = useCallback(
+    () => goToEntity(nextEntity?.pk),
+    [goToEntity, nextEntity],
+  );
+
+  const goToPreviousEntity = useCallback(
+    () => goToEntity(previousEntity?.pk),
+    [goToEntity, previousEntity],
+  );
+
+  useEffect(() => {
+    function handleShortcuts(ev: KeyboardEvent) {
+      if (ev.altKey && !ev.ctrlKey && !ev.shiftKey) {
+        switch (ev.key) {
+          // On Alt + Up, move to the previous entity.
+          case 'ArrowUp':
+            ev.preventDefault();
+            goToPreviousEntity();
+            break;
+
+          // On Alt + Down, move to the next entity.
+          case 'ArrowDown':
+            ev.preventDefault();
+            goToNextEntity();
+            break;
+        }
+      }
+    }
+
     document.addEventListener('keydown', handleShortcuts);
     return () => document.removeEventListener('keydown', handleShortcuts);
   }, [goToNextEntity, goToPreviousEntity]);
