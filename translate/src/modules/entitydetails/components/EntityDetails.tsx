@@ -87,25 +87,24 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   const { entity, locale: lc, project } = location;
 
-  const updateFailedChecks_ = useCallback(() => {
+  useEffect(() => {
     if (!selectedEntity) {
       return;
     }
-
-    const plural = pluralForm === -1 ? 0 : pluralForm;
-    const translation = selectedEntity.translation[plural];
 
     // Only show failed checks for active translations that are approved,
     // pretranslated or fuzzy, i.e. when their status icon is colored as
     // error/warning in the string list
     if (
-      translation &&
-      (translation.errors.length || translation.warnings.length) &&
-      (translation.approved || translation.pretranslated || translation.fuzzy)
+      activeTranslation &&
+      (activeTranslation.errors.length || activeTranslation.warnings.length) &&
+      (activeTranslation.approved ||
+        activeTranslation.pretranslated ||
+        activeTranslation.fuzzy)
     ) {
       const failedChecks: FailedChecks = {
-        clErrors: translation.errors,
-        clWarnings: translation.warnings,
+        clErrors: activeTranslation.errors,
+        clWarnings: activeTranslation.warnings,
         pErrors: [],
         pndbWarnings: [],
         ttWarnings: [],
@@ -114,34 +113,13 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     } else {
       dispatch(resetFailedChecks());
     }
-  }, [dispatch, pluralForm, selectedEntity]);
-
-  /*
-   * Only fetch helpers data if the entity changes.
-   * Also fetch history data if the pluralForm changes.
-   */
-  const fetchHelpersData = () => {
-    if (!entity || !selectedEntity) {
-      return;
-    }
 
     dispatch(resetHelperElementIndex());
+    dispatch(requestHistory(entity, pluralForm));
+    dispatch(getHistory(entity, lc, pluralForm));
 
-    const { pk } = selectedEntity;
-
-    if (
-      pk !== history.entity ||
-      pluralForm !== history.pluralForm ||
-      selectedEntity === nextEntity
-    ) {
-      dispatch(requestHistory(entity, pluralForm));
-      dispatch(getHistory(entity, lc, pluralForm));
-    }
-
-    const source = getOptimizedContent(
-      selectedEntity.machinery_original,
-      selectedEntity.format,
-    );
+    const { format, machinery_original, pk } = selectedEntity;
+    const source = getOptimizedContent(machinery_original, format);
 
     if (source !== terms.sourceString && project !== 'terminology') {
       dispatch(getTerms(source, lc));
@@ -161,24 +139,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       dispatch(requestTeamComments(entity));
       dispatch(getTeamComments(entity, lc));
     }
-  };
-
-  useEffect(() => {
-    updateFailedChecks_();
-    fetchHelpersData();
-  }, [pluralForm, selectedEntity]);
-
-  const mounted = useRef(false);
-  useEffect(() => {
-    if (mounted.current) {
-      if (selectedEntity === nextEntity) {
-        updateFailedChecks_();
-        fetchHelpersData();
-      }
-    } else {
-      mounted.current = true;
-    }
-  }, [activeTranslation?.string]);
+  }, [activeTranslation]);
 
   const searchMachinery = useCallback(
     (query: string, page?: number) => {

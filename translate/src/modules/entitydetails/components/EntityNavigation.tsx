@@ -96,34 +96,38 @@ export function EntityNavigation(): React.ReactElement {
           {'<glyph></glyph>COPY LINK'}
         </button>
       </Localized>
-      <Localized
-        id='entitydetails-EntityNavigation--next'
-        attrs={{ title: true }}
-        elems={{
-          glyph: <i className='fa fa-chevron-down fa-lg' />,
-        }}
-      >
-        <button
-          className='next'
-          title='Go To Next String (Alt + Down)'
-          onClick={goToNextEntity}
+      {nextEntity ? (
+        <Localized
+          id='entitydetails-EntityNavigation--next'
+          attrs={{ title: true }}
+          elems={{
+            glyph: <i className='fa fa-chevron-down fa-lg' />,
+          }}
         >
-          {'<glyph></glyph>NEXT'}
-        </button>
-      </Localized>
-      <Localized
-        id='entitydetails-EntityNavigation--previous'
-        attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-chevron-up fa-lg' /> }}
-      >
-        <button
-          className='previous'
-          title='Go To Previous String (Alt + Up)'
-          onClick={goToPreviousEntity}
+          <button
+            className='next'
+            title='Go To Next String (Alt + Down)'
+            onClick={goToNextEntity}
+          >
+            {'<glyph></glyph>NEXT'}
+          </button>
+        </Localized>
+      ) : null}
+      {previousEntity ? (
+        <Localized
+          id='entitydetails-EntityNavigation--previous'
+          attrs={{ title: true }}
+          elems={{ glyph: <i className='fa fa-chevron-up fa-lg' /> }}
         >
-          {'<glyph></glyph>PREVIOUS'}
-        </button>
-      </Localized>
+          <button
+            className='previous'
+            title='Go To Previous String (Alt + Up)'
+            onClick={goToPreviousEntity}
+          >
+            {'<glyph></glyph>PREVIOUS'}
+          </button>
+        </Localized>
+      ) : null}
     </div>
   );
 }
