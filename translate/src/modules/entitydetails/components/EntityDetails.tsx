@@ -12,20 +12,13 @@ import { Location } from '~/context/location';
 import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import {
-  resetEditor,
   resetFailedChecks,
   resetHelperElementIndex,
   updateTranslation,
   updateFailedChecks,
   updateSelection,
 } from '~/core/editor/actions';
-import {
-  useNextEntity,
-  usePreviousEntity,
-  useSelectedEntity,
-} from '~/core/entities/hooks';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
@@ -72,7 +65,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const location = useContext(Location);
   const machinery = useAppSelector((state) => state[MACHINERY]);
   const nextEntity = useNextEntity();
-  const previousEntity = usePreviousEntity();
   const otherlocales = useAppSelector((state) => state[OTHERLOCALES]);
   const teamComments = useAppSelector((state) => state[TEAM_COMMENTS]);
   const terms = useAppSelector((state) => state[TERM]);
@@ -220,35 +212,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     [dispatch, locale, selectedEntity, user.isAuthenticated],
   );
 
-  const copyLinkToClipboard = useCallback(async () => {
-    const { locale, project, resource, entity } = location;
-    const { protocol, host } = window.location;
-
-    const string_link = `${protocol}//${host}/${locale}/${project}/${resource}/?string=${entity}`;
-    await navigator.clipboard.writeText(string_link);
-
-    // Notify the user of the change that happened.
-    dispatch(addNotification(notificationMessages.STRING_LINK_COPIED));
-  }, [dispatch, location]);
-
-  const goToNextEntity = useCallback(
-    () =>
-      checkUnsavedChanges(() => {
-        location.push({ entity: nextEntity?.pk ?? 0 });
-        dispatch(resetEditor());
-      }),
-    [dispatch, location, nextEntity, store],
-  );
-
-  const goToPreviousEntity = useCallback(
-    () =>
-      checkUnsavedChanges(() => {
-        location.push({ entity: previousEntity?.pk ?? 0 });
-        dispatch(resetEditor());
-      }),
-    [dispatch, location, previousEntity, store],
-  );
-
   const navigateToPath = useCallback(
     (path: string) => checkUnsavedChanges(() => location.push(path)),
     [dispatch, location, store],
@@ -316,11 +279,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   return (
     <section className='entity-details'>
       <section className='main-column'>
-        <EntityNavigation
-          copyLinkToClipboard={copyLinkToClipboard}
-          goToNextEntity={goToNextEntity}
-          goToPreviousEntity={goToPreviousEntity}
-        />
+        <EntityNavigation />
         <Metadata
           entity={selectedEntity}
           isReadOnlyEditor={isReadOnlyEditor}
