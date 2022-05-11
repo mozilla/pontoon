@@ -111,7 +111,7 @@ export function updateStatus(
   locale: LocaleType,
   { pluralForm, setPluralForm }: PluralFormType,
   translation: number,
-  nextEntity: Entity | null | undefined,
+  nextEntity: Entity | null,
   location: LocationType,
   ignoreWarnings: boolean,
 ) {
@@ -134,11 +134,11 @@ export function updateStatus(
       const notif = _getOperationNotif(change, !!results.translation);
       dispatch(addNotification(notif));
 
-      if (results.translation && change === 'approve' && nextEntity) {
+      if (results.translation && change === 'approve') {
         // The change did work, we want to move on to the next Entity or pluralForm.
         if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
           setPluralForm(pluralForm + 1);
-        } else if (nextEntity.pk !== entity.pk) {
+        } else if (nextEntity && nextEntity.pk !== entity.pk) {
           location.push({ entity: nextEntity.pk });
         }
         dispatch(resetEditor());
