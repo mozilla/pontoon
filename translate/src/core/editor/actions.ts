@@ -6,7 +6,7 @@ import { SourceType } from '~/api/machinery';
 import { createTranslation, FailedChecks } from '~/api/translation';
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
-import { PluralFormType } from '~/context/pluralForm';
+import { PluralForm } from '~/context/pluralForm';
 import type { UnsavedChanges } from '~/context/unsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
@@ -256,7 +256,7 @@ export function sendTranslation_(
   entity: Entity,
   translation: string,
   locale: LocaleType,
-  { pluralForm, setPluralForm }: PluralFormType,
+  { pluralForm, setPluralForm }: PluralForm,
   forceSuggestions: boolean,
   nextEntity: Entity | null,
   location: LocationType,

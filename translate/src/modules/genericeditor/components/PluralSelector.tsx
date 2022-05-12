@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
-import { PluralFormType, usePluralForm } from '~/context/pluralForm';
+import { PluralForm, usePluralForm } from '~/context/pluralForm';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 interface InternalProps extends Props {
-  pluralForm: PluralFormType;
+  pluralForm: PluralForm;
 }
 
 /**

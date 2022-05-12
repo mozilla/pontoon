@@ -20,7 +20,7 @@ import { AddonPromotion } from './modules/addonpromotion/components/AddonPromoti
 import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
-import { EntityDetails } from './modules/entitydetails';
+import { Entity } from './modules/entitydetails/components/Entity';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
@@ -95,11 +95,7 @@ export function App() {
             <EntitiesList />
           </section>
           <section className='panel-content'>
-            {batchactions.entities.length === 0 ? (
-              <EntityDetails />
-            ) : (
-              <BatchActions />
-            )}
+            {batchactions.entities.length === 0 ? <Entity /> : <BatchActions />}
           </section>
         </section>
         <InteractiveTour />
