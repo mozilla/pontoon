@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks the narrow no-break space character (Unicode U+202F).
  */
-const narrowNonBreakingSpace = {
+export const narrowNonBreakingSpace = {
   rule: /([\u202F])/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -19,5 +19,3 @@ const narrowNonBreakingSpace = {
     );
   },
 };
-
-export default narrowNonBreakingSpace;

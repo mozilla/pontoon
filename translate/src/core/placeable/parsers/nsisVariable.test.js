@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import nsisVariable from './nsisVariable';
+import { nsisVariable } from './nsisVariable';
 
 describe('nsisVariable', () => {
   each([

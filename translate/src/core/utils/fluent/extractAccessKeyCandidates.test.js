@@ -1,6 +1,6 @@
-import extractAccessKeyCandidates from './extractAccessKeyCandidates';
-import flattenMessage from './flattenMessage';
-import parser from './parser';
+import { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
+import { flattenMessage } from './flattenMessage';
+import { parser } from './parser';
 
 describe('extractAccessKeyCandidates', () => {
   it('returns null if the message has no attributes', () => {

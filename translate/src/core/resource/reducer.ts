@@ -7,7 +7,7 @@ import {
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME = 'resource';
+export const RESOURCE = 'resource';
 
 type ResourcesState = {
   readonly resources: Resource[];

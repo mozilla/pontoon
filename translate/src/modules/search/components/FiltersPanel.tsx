@@ -223,7 +223,7 @@ const FilterToolbar = ({
   </div>
 );
 
-export function FiltersPanel({
+export function FiltersPanelDialog({
   authorsData,
   filters: { authors, extras, statuses, tags },
   project,
@@ -335,7 +335,7 @@ export function FiltersPanel({
  *
  * Changes to the filters will be reflected in the URL.
  */
-export default function FiltersPanelBase({
+export function FiltersPanel({
   filters,
   tagsData,
   timeRangeData,
@@ -425,7 +425,7 @@ export default function FiltersPanelBase({
         <span className='status fa'></span>
       </div>
       {visible ? (
-        <FiltersPanel
+        <FiltersPanelDialog
           authorsData={authorsData}
           filters={filters}
           project={parameters.project}

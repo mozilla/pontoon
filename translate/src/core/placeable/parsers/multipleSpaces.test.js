@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import multipleSpaces from './multipleSpaces';
+import { multipleSpaces } from './multipleSpaces';
 
 describe('multipleSpaces', () => {
   it('marks the right parts of a string', () => {

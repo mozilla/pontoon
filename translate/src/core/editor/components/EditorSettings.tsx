@@ -17,7 +17,7 @@ type EditorSettingsProps = {
   onDiscard: () => void;
 };
 
-export function EditorSettings({
+export function EditorSettingsDialog({
   settings,
   toggleSetting,
   onDiscard,
@@ -72,7 +72,7 @@ export function EditorSettings({
 /*
  * Renders settings to be used to customize interactions with the Editor.
  */
-export default function EditorSettingsBase({
+export function EditorSettings({
   settings,
   updateSetting,
 }: Props): React.ReactElement<'div'> {
@@ -97,7 +97,7 @@ export default function EditorSettingsBase({
       />
 
       {visible && (
-        <EditorSettings
+        <EditorSettingsDialog
           settings={settings}
           toggleSetting={toggleSetting}
           onDiscard={handleDiscard}

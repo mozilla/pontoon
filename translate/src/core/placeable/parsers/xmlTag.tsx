@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -13,7 +13,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L301
  */
-const xmlTag = {
+export const xmlTag = {
   rule: /(<[\w.:]+(\s([\w.:-]+=((".*?")|('.*?')))?)*\/?>|<\/[\w.]+>)/ as RegExp,
   matchIndex: 0,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -26,5 +26,3 @@ const xmlTag = {
     );
   },
 };
-
-export default xmlTag;

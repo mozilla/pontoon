@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import TranslationMemory from './TranslationMemory';
+import { TranslationMemory } from './TranslationMemory';
 
 describe('<TranslationMemory>', () => {
   it('renders the component without number of occurrences properly', () => {

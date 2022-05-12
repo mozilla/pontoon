@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import shortCapitalNumberString from './shortCapitalNumberString';
+import { shortCapitalNumberString } from './shortCapitalNumberString';
 
 describe('shortCapitalNumberString', () => {
   each([

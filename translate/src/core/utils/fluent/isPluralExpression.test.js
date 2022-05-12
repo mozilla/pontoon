@@ -1,5 +1,5 @@
-import isPluralExpression from './isPluralExpression';
-import parser from './parser';
+import { isPluralExpression } from './isPluralExpression';
+import { parser } from './parser';
 
 describe('isPluralExpression', () => {
   it('returns false for elements that are not select expressions', () => {

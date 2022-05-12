@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks escaped newline characters.
  */
-const newlineEscape = {
+export const newlineEscape = {
   rule: '\\n',
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -16,5 +16,3 @@ const newlineEscape = {
     );
   },
 };
-
-export default newlineEscape;

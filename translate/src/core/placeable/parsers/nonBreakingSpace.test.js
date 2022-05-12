@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import nonBreakingSpace from './nonBreakingSpace';
+import { nonBreakingSpace } from './nonBreakingSpace';
 
 describe('nonBreakingSpace', () => {
   it('marks the right parts of a string', () => {

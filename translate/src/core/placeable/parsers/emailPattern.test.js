@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import emailPattern from './emailPattern';
+import { emailPattern } from './emailPattern';
 
 describe('emailPattern', () => {
   each([

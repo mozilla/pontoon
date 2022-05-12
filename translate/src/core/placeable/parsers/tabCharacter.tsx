@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks the tab character "\t".
  */
-const tabCharacter = {
+export const tabCharacter = {
   rule: '\t',
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -22,5 +22,3 @@ const tabCharacter = {
     );
   },
 };
-
-export default tabCharacter;

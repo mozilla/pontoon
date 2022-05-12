@@ -35,7 +35,7 @@ function getTextElementsRecursively(
  * @param {Entry} message A (flat) Fluent message to extract access key candidates from.
  * @returns {?Array<string>} A list of access key candidates.
  */
-export default function extractAccessKeyCandidates(
+export function extractAccessKeyCandidates(
   message: Entry,
 ): Array<string> | null {
   // Safeguard against non-message Fluent entries

@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import leadingSpace from './leadingSpace';
+import { leadingSpace } from './leadingSpace';
 
 describe('leadingSpace', () => {
   each([[' ', ' hello world']]).it('marks `%s` in `%s`', (mark, content) => {

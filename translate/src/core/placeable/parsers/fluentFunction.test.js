@@ -3,7 +3,7 @@ import createMarker from 'react-content-marker';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import fluentFunction from './fluentFunction';
+import { fluentFunction } from './fluentFunction';
 
 describe('fluentFunction', () => {
   each([

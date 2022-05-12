@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks the escape character "\".
  */
-const escapeSequence = {
+export const escapeSequence = {
   rule: '\\',
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -16,5 +16,3 @@ const escapeSequence = {
     );
   },
 };
-
-export default escapeSequence;

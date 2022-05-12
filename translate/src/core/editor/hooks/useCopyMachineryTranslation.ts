@@ -1,29 +1,27 @@
 import { useCallback } from 'react';
 
 import type { MachineryTranslation, SourceType } from '~/api/machinery';
-import { NAME as EDITOR } from '~/core/editor';
+import { EDITOR } from '../reducer';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import actions from '../actions';
-import useAddTextToTranslation from './useAddTextToTranslation';
-import useUpdateTranslation from './useUpdateTranslation';
+import { updateMachinerySources } from '../actions';
+import { useAddTextToTranslation } from './useAddTextToTranslation';
+import { useUpdateTranslation } from './useUpdateTranslation';
 
 /**
  * Return a function to copy the original translation into the editor.
  */
-export default function useCopyMachineryTranslation(
+export function useCopyMachineryTranslation(
   entity?: number | null,
 ): (translation: MachineryTranslation) => void {
   const dispatch = useAppDispatch();
 
   const addTextToTranslation = useAddTextToTranslation();
   const updateTranslation = useUpdateTranslation();
-  const updateMachinerySources = useCallback(
+  const updateMachinerySources_ = useCallback(
     (machinerySources: Array<SourceType>, machineryTranslation: string) => {
-      dispatch(
-        actions.updateMachinerySources(machinerySources, machineryTranslation),
-      );
+      dispatch(updateMachinerySources(machinerySources, machineryTranslation));
     },
     [dispatch],
   );
@@ -57,7 +55,7 @@ export default function useCopyMachineryTranslation(
       else {
         updateTranslation(translation.translation, 'machinery');
       }
-      updateMachinerySources(translation.sources, translation.translation);
+      updateMachinerySources_(translation.sources, translation.translation);
     },
     [
       isFluentTranslationMessage,
@@ -65,7 +63,7 @@ export default function useCopyMachineryTranslation(
       entity,
       addTextToTranslation,
       updateTranslation,
-      updateMachinerySources,
+      updateMachinerySources_,
     ],
   );
 }

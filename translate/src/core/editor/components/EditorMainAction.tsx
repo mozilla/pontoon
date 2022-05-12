@@ -5,7 +5,7 @@ import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import { useExistingTranslation } from '../hooks/useExistingTranslation';
-import { useUpdateTranslationStatus } from '../index';
+import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
 
 type Props = {
   sendTranslation: (ignoreWarnings?: boolean) => void;
@@ -22,7 +22,7 @@ type Props = {
  * Otherwise, if the "force suggestion" user setting is on, it renders "Suggest".
  * Otherwise, it renders "Save".
  */
-export default function EditorMainAction({
+export function EditorMainAction({
   sendTranslation,
 }: Props): React.ReactElement<React.ElementType> {
   const isRunningRequest = useAppSelector(

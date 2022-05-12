@@ -1,11 +1,7 @@
 import type { MachineryTranslation } from '~/api/machinery';
 
 import {
-  ConcordanceSearchAction,
-  AddTranslationsAction,
-  RequestAction,
-  ResetSearchAction,
-  SetEntityAction,
+  Action,
   ADD_TRANSLATIONS,
   CONCORDANCE_SEARCH,
   REQUEST,
@@ -13,12 +9,9 @@ import {
   SET_ENTITY,
 } from './actions';
 
-type Action =
-  | ConcordanceSearchAction
-  | AddTranslationsAction
-  | RequestAction
-  | ResetSearchAction
-  | SetEntityAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const MACHINERY = 'machinery';
 
 type Translations = Array<MachineryTranslation>;
 
@@ -91,7 +84,7 @@ const initial: MachineryState = {
   hasMore: false,
 };
 
-export default function reducer(
+export function reducer(
   state: MachineryState = initial,
   action: Action,
 ): MachineryState {

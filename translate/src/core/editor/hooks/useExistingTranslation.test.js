@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as PluralForm from '~/context/pluralForm';
-import fluentParser from '~/core/utils/fluent/parser';
-import flattenMessage from '~/core/utils/fluent/flattenMessage';
+import { parser as fluentParser } from '~/core/utils/fluent/parser';
+import { flattenMessage } from '~/core/utils/fluent/flattenMessage';
 import * as Hooks from '~/hooks';
 import * as SelectedEntity from '~/core/entities/hooks';
 

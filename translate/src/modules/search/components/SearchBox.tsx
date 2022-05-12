@@ -10,18 +10,18 @@ import React, {
 import { Location, LocationType } from '~/context/location';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
-import { reset as resetEditor } from '~/core/editor/actions';
+import { resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
-import { NAME as SEARCH } from '~/modules/search';
+import { SEARCH } from '~/modules/search';
 import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData, setFocus } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
-import FiltersPanel from './FiltersPanel';
+import { FiltersPanel } from './FiltersPanel';
 import './SearchBox.css';
 
 export type TimeRangeType = {
@@ -282,7 +282,7 @@ export function SearchBoxBase({
   );
 }
 
-export default function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
+export function SearchBox(): React.ReactElement<typeof SearchBoxBase> {
   const state = {
     searchAndFilters: useAppSelector((state) => state[SEARCH]),
     parameters: useContext(Location),

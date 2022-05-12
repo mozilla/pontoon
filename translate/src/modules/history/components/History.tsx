@@ -6,7 +6,7 @@ import type { UserState } from '~/core/user';
 
 import type { ChangeOperation, HistoryState } from '../index';
 import './History.css';
-import Translation from './Translation';
+import { Translation } from './Translation';
 
 type Props = {
   entity: Entity;

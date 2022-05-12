@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import escapeRegExp from 'lodash.escaperegexp';
 import createMarker from 'react-content-marker';
 
@@ -12,10 +12,7 @@ import type { TermState } from '~/core/term';
 
 let keyCounter = 0;
 
-export default function getMarker(
-  terms: TermState,
-  forFluent: boolean = false,
-): any {
+export function getMarker(terms: TermState, forFluent: boolean = false): any {
   let placeableRules = getRulesWithoutLeadingSpace(rules);
 
   if (forFluent) {

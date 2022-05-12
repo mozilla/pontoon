@@ -10,8 +10,8 @@ import {
 import type { LocaleType } from '~/context/locale';
 
 import { CLDR_PLURALS } from '../constants';
-import flattenMessage from './flattenMessage';
-import isPluralExpression from './isPluralExpression';
+import { flattenMessage } from './flattenMessage';
+import { isPluralExpression } from './isPluralExpression';
 
 /**
  * Gather custom (numeric) plural variants
@@ -78,7 +78,7 @@ function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
  * @param {Entry} source A Fluent AST to empty.
  * @returns {Entry} An emptied copy of the source.
  */
-export default function getEmptyMessage(
+export function getEmptyMessage(
   source: Entry,
   { cldrPlurals }: LocaleType,
 ): Entry {

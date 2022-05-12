@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -23,7 +23,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L80
  */
-const qtFormatting = {
+export const qtFormatting = {
   rule: /(%L?[1-9]\d{0,1}(?=([^\d]|$)))/ as RegExp,
   matchIndex: 0,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -40,5 +40,3 @@ const qtFormatting = {
     );
   },
 };
-
-export default qtFormatting;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -8,7 +8,7 @@ import { Localized } from '@fluent/react';
  *
  *   " Hello, world"
  */
-const leadingSpace = {
+export const leadingSpace = {
   rule: /(^ +)/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -20,5 +20,3 @@ const leadingSpace = {
     );
   },
 };
-
-export default leadingSpace;

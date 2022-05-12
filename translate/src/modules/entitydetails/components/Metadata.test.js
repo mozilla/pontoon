@@ -6,7 +6,7 @@ import { Locale } from '~/context/locale';
 import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import Metadata from './Metadata';
+import { Metadata } from './Metadata';
 
 const ENTITY = {
   pk: 42,

@@ -6,20 +6,20 @@ import { useTranslationForEntity } from '~/context/pluralForm';
 import { Translation, useUpdateTranslation } from '~/core/editor';
 import {
   setInitialTranslation,
-  update as updateEditor,
+  updateTranslation,
 } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
-import { fluent } from '~/core/utils';
+import { notificationMessages } from '~/core/notification/messages';
+import * as fluent from '~/core/utils/fluent';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './FluentEditor.css';
-import RichEditor from './rich/RichEditor';
-import SimpleEditor from './simple/SimpleEditor';
-import SourceEditor from './source/SourceEditor';
+import { RichEditor } from './rich/RichEditor';
+import { SimpleEditor } from './simple/SimpleEditor';
+import { SourceEditor } from './source/SourceEditor';
 
 /**
  * Function to analyze a translation and determine what its appropriate syntax is.
@@ -156,7 +156,7 @@ function useForceSource(): [boolean, () => void] {
       locale,
     );
     dispatch(setInitialTranslation(initialContent));
-    dispatch(updateEditor(translationContent));
+    dispatch(updateTranslation(translationContent));
     setForceSource(!forceSource);
   }
 
@@ -168,7 +168,7 @@ function useForceSource(): [boolean, () => void] {
  *
  * Renders the most appropriate type of editor for the current translation.
  */
-export default function FluentEditor(): null | React.ReactElement<React.ElementType> {
+export function FluentEditor(): null | React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
 
   const translation = useAppSelector((state) => state.editor.translation);

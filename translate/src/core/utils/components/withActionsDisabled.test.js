@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import withActionsDisabled from './withActionsDisabled';
+import { withActionsDisabled } from './withActionsDisabled';
 
 describe('withActionsDisabled', () => {
   class FakeComp extends React.Component {}

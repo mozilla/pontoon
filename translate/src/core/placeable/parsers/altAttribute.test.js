@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import altAttribute from './altAttribute';
+import { altAttribute } from './altAttribute';
 
 describe('altAttribute', () => {
   it('marks the right parts of a string', () => {

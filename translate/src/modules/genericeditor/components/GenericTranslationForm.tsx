@@ -19,7 +19,7 @@ type Props = {
 /**
  * Shows a generic translation form, a simple textarea.
  */
-export default function GenericTranslationForm({
+export function GenericTranslationForm({
   sendTranslation,
   updateTranslation,
 }: Props): React.ReactElement<'textarea'> | null {

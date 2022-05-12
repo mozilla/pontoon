@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import WithPlaceables from './WithPlaceables';
+import { WithPlaceables } from './WithPlaceables';
 
 describe('Test parser order', () => {
   it('matches JSON placeholder', () => {

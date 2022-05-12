@@ -32,7 +32,7 @@ type Props = {
  * On image click, shows the image in a fullscreen lightbox with a grey background.
  * Click or press a key to close.
  */
-export default function Screenshots({ locale, source }: Props) {
+export function Screenshots({ locale, source }: Props) {
   const [openImage, setOpenImage] = useState<string | null>(null);
 
   useEffect(() => {

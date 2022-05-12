@@ -4,8 +4,8 @@ import type { Parser } from 'react-content-marker';
 import './WithPlaceables.css';
 
 import { rules } from './WithPlaceables';
-import leadingSpace from '../parsers/leadingSpace';
-import unusualSpace from '../parsers/unusualSpace';
+import { leadingSpace } from '../parsers/leadingSpace';
+import { unusualSpace } from '../parsers/unusualSpace';
 
 export function getRulesWithoutLeadingSpace(
   rules: Array<Parser>,
@@ -27,8 +27,6 @@ export function getRulesWithoutLeadingSpace(
  * have a special Placeables component without that parser, for use in
  * combination with other parsing tools (like diff).
  */
-const WithPlaceablesNoLeadingSpace: any = createMarker(
+export const WithPlaceablesNoLeadingSpace: any = createMarker(
   getRulesWithoutLeadingSpace(rules),
 );
-
-export default WithPlaceablesNoLeadingSpace;

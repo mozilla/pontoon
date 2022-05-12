@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import MicrosoftTranslation from './MicrosoftTranslation';
+import { MicrosoftTranslation } from './MicrosoftTranslation';
 
 describe('<MicrosoftTranslation>', () => {
   it('renders the MicrosoftTranslation component properly', () => {

@@ -1,5 +1,5 @@
-import isSimpleMessage from './isSimpleMessage';
-import parser from './parser';
+import { isSimpleMessage } from './isSimpleMessage';
+import { parser } from './parser';
 
 describe('isSimpleMessage', () => {
   it('returns true for a string with simple text', () => {

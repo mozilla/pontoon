@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-import ReplaceAll from './ReplaceAll';
+import { ReplaceAll } from './ReplaceAll';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks multiple consecutive spaces and replaces them with a middle dot.
  */
-const multipleSpaces = {
+export const multipleSpaces = {
   rule: /(  +)/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -22,5 +22,3 @@ const multipleSpaces = {
     );
   },
 };
-
-export default multipleSpaces;

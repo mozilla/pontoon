@@ -13,7 +13,7 @@ import { startUpdateTranslation, endUpdateTranslation } from '../actions';
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.
  */
-export default function useUpdateTranslationStatus(): (
+export function useUpdateTranslationStatus(): (
   translationId: number,
   change: ChangeOperation,
   ignoreWarnings: boolean,

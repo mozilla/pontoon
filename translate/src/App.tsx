@@ -7,11 +7,11 @@ import { initLocale, Locale, updateLocale } from './context/locale';
 import { Location } from './context/location';
 
 import { WaveLoader } from './core/loaders';
-import { NAME as NOTIFICATION, NotificationPanel } from './core/notification';
+import { NOTIFICATION, NotificationPanel } from './core/notification';
 import { addRawNotification } from './core/notification/actions';
 import { getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
-import { UserControls } from './core/user';
+import { UserControls } from './core/user/components/UserControls';
 import { getUsersList } from './core/user/actions';
 
 import { useAppDispatch, useAppSelector } from './hooks';
@@ -25,7 +25,7 @@ import { InteractiveTour } from './modules/interactivetour/components/Interactiv
 import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
-import { SearchBox } from './modules/search';
+import { SearchBox } from './modules/search/components/SearchBox';
 
 /**
  * Main entry point to the application. Will render the structure of the page.

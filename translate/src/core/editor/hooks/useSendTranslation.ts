@@ -12,7 +12,7 @@ import { sendTranslation_ } from '../actions';
 /**
  * Return a function to send a translation to the server.
  */
-export default function useSendTranslation(): (
+export function useSendTranslation(): (
   ignoreWarnings?: boolean,
   content?: string,
 ) => void {

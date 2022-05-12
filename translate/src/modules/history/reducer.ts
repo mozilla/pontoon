@@ -1,15 +1,10 @@
 import { HistoryTranslation } from '~/api/translation';
 
-import {
-  ReceiveAction,
-  RequestAction,
-  UpdateAction,
-  RECEIVE,
-  REQUEST,
-  UPDATE,
-} from './actions';
+import { Action, RECEIVE, REQUEST, UPDATE } from './actions';
 
-type Action = ReceiveAction | RequestAction | UpdateAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const HISTORY = 'history';
 
 export type HistoryState = {
   readonly fetching: boolean;
@@ -37,7 +32,7 @@ const initialState: HistoryState = {
   translations: [],
 };
 
-export default function reducer(
+export function reducer(
   state: HistoryState = initialState,
   action: Action,
 ): HistoryState {

@@ -20,7 +20,7 @@ type Props = {
  * Based on the plural form, show either the singular or plural version of the
  * string, and also display which form is being rendered.
  */
-export default function GenericOriginalString({
+export function GenericOriginalString({
   entity,
   handleClickOnPlaceable,
   pluralForm,

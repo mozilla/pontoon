@@ -10,7 +10,7 @@ import { PluralFormType } from '~/context/pluralForm';
 import type { UnsavedChanges } from '~/context/unsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
+import { notificationMessages } from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { AppThunk } from '~/store';
@@ -42,6 +42,21 @@ export const UPDATE_MACHINERY_SOURCES: 'editor/UPDATE_MACHINERY_SOURCES' =
 
 export type Translation = string | Entry;
 
+export type Action =
+  | EndUpdateTranslationAction
+  | InitialTranslationAction
+  | ResetEditorAction
+  | ResetHelperElementIndexAction
+  | ResetFailedChecksAction
+  | ResetSelectionAction
+  | SelectHelperElementIndexAction
+  | SelectHelperTabIndexAction
+  | StartUpdateTranslationAction
+  | UpdateAction
+  | UpdateFailedChecksAction
+  | UpdateSelectionAction
+  | UpdateMachinerySourcesAction;
+
 /**
  * Update the current translation of the selected entity.
  */
@@ -50,7 +65,7 @@ export type UpdateAction = {
   readonly translation: Translation;
   readonly changeSource: string;
 };
-export function update(
+export function updateTranslation(
   translation: Translation,
   changeSource?: string,
 ): UpdateAction {
@@ -135,7 +150,9 @@ export type SelectHelperTabIndexAction = {
   readonly type: typeof SELECT_HELPER_TAB_INDEX;
   readonly index: number;
 };
-function selectHelperTabIndex(index: number): SelectHelperTabIndexAction {
+export function selectHelperTabIndex(
+  index: number,
+): SelectHelperTabIndexAction {
   return {
     type: SELECT_HELPER_TAB_INDEX,
     index,
@@ -196,7 +213,7 @@ export function resetSelection(): ResetSelectionAction {
 export type ResetEditorAction = {
   readonly type: typeof RESET_EDITOR;
 };
-export function reset(): ResetEditorAction {
+export function resetEditor(): ResetEditorAction {
   return {
     type: RESET_EDITOR,
   };
@@ -293,7 +310,7 @@ export function sendTranslation_(
         } else if (nextEntity.pk !== entity.pk) {
           location.push({ entity: nextEntity.pk });
         }
-        dispatch(reset());
+        dispatch(resetEditor());
       }
     } else if (content.failedChecks) {
       dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
@@ -307,19 +324,3 @@ export function sendTranslation_(
     NProgress.done();
   };
 }
-
-export default {
-  endUpdateTranslation,
-  reset,
-  resetFailedChecks,
-  resetHelperElementIndex,
-  resetSelection,
-  selectHelperElementIndex,
-  selectHelperTabIndex,
-  setInitialTranslation,
-  startUpdateTranslation,
-  update,
-  updateFailedChecks,
-  updateSelection,
-  updateMachinerySources,
-};

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
 import type { LocationType } from '~/context/location';
-import { NAME as EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
+import { EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
 import { selectHelperElementIndex } from '~/core/editor/actions';
 import { TranslationProxy } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';

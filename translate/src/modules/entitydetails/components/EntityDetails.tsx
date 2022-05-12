@@ -18,10 +18,10 @@ import {
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import { addComment_ } from '~/core/comments/actions';
 import {
-  reset as resetEditor,
+  resetEditor,
   resetFailedChecks,
   resetHelperElementIndex,
-  update as updateEditor,
+  updateTranslation,
   updateFailedChecks,
   updateSelection,
 } from '~/core/editor/actions';
@@ -31,10 +31,10 @@ import {
   useSelectedEntity,
 } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
-import { NAME as TERMS, TermState } from '~/core/term';
+import { notificationMessages } from '~/core/notification/messages';
+import { TERM, TermState } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
-import { NAME as USER, UserState } from '~/core/user';
+import { USER, UserState } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { AppStore, useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -42,7 +42,7 @@ import {
   ChangeOperation,
   History,
   HistoryState,
-  NAME as HISTORY,
+  HISTORY,
 } from '~/modules/history';
 import {
   deleteTranslation_,
@@ -50,19 +50,16 @@ import {
   request as requestHistory,
   updateStatus,
 } from '~/modules/history/actions';
-import { MachineryState, NAME as MACHINERY } from '~/modules/machinery';
+import { MachineryState, MACHINERY } from '~/modules/machinery';
 import {
   get as getMachinery,
   getConcordanceSearchResults,
   resetSearch,
   setEntity,
 } from '~/modules/machinery/actions';
-import { LocalesState, NAME as OTHERLOCALES } from '~/modules/otherlocales';
+import { LocalesState, OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
-import {
-  NAME as TEAM_COMMENTS,
-  TeamCommentState,
-} from '~/modules/teamcomments';
+import { TEAM_COMMENTS, TeamCommentState } from '~/modules/teamcomments';
 import {
   get as getTeamComments,
   request as requestTeamComments,
@@ -70,11 +67,11 @@ import {
 } from '~/modules/teamcomments/actions';
 import type { AppDispatch } from '~/store';
 
-import EditorSelector from './EditorSelector';
+import { EditorSelector } from './EditorSelector';
 import './EntityDetails.css';
 import { EntityNavigation } from './EntityNavigation';
-import Helpers from './Helpers';
-import Metadata from './Metadata';
+import { Helpers } from './Helpers';
+import { Metadata } from './Metadata';
 
 type Props = {
   activeTranslationString: string;
@@ -291,7 +288,7 @@ export function EntityDetailsBase({
 
   const updateEditorTranslation = useCallback(
     (translation: string, changeSource: string) =>
-      dispatch(updateEditor(translation, changeSource)),
+      dispatch(updateTranslation(translation, changeSource)),
     [dispatch],
   );
 
@@ -424,9 +421,7 @@ export function EntityDetailsBase({
   );
 }
 
-export default function EntityDetails(): React.ReactElement<
-  typeof EntityDetailsBase
-> {
+export function EntityDetails(): React.ReactElement<typeof EntityDetailsBase> {
   const entity = useSelectedEntity();
   const state = {
     activeTranslationString: useTranslationForEntity(entity)?.string ?? '',
@@ -437,7 +432,7 @@ export default function EntityDetails(): React.ReactElement<
     previousEntity: usePreviousEntity(),
     otherlocales: useAppSelector((state) => state[OTHERLOCALES]),
     teamComments: useAppSelector((state) => state[TEAM_COMMENTS]),
-    terms: useAppSelector((state) => state[TERMS]),
+    terms: useAppSelector((state) => state[TERM]),
     parameters: useContext(Location),
     pluralForm: usePluralForm(entity),
     selectedEntity: entity,

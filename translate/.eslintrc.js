@@ -3,7 +3,7 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'import'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   env: {
     browser: true,
@@ -20,5 +20,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/prefer-as-const': 0,
+    'import/no-default-export': 'error',
   },
 };

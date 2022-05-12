@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import * as editor from '~/core/editor';
+import { resetSelection } from '../actions';
 
-export default function useReplaceSelectionContent(
+export function useReplaceSelectionContent(
   updateTranslationSelectionWith: (content: string, source: string) => void,
 ) {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ export default function useReplaceSelectionContent(
     // must use this hook and pass it a function specific to its needs.
     if (selectionReplacementContent) {
       updateTranslationSelectionWith(selectionReplacementContent, changeSource);
-      dispatch(editor.actions.resetSelection());
+      dispatch(resetSelection());
     }
   }, [
     changeSource,

@@ -9,6 +9,8 @@ export const RECEIVE = 'comments/RECEIVE';
 export const REQUEST = 'comments/REQUEST';
 export const TOGGLE_PINNED = 'comments/TOGGLE_PINNED';
 
+export type Action = ReceiveAction | RequestAction | TogglePinnedAction;
+
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly comments: Array<TeamComment>;
@@ -57,9 +59,3 @@ export function togglePinnedStatus(pinned: boolean, commentId: number) {
     dispatch(togglePinned(pinned, commentId));
   };
 }
-
-export default {
-  get,
-  request,
-  togglePinnedStatus,
-};

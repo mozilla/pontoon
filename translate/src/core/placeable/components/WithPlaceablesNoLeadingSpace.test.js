@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import WithPlaceablesNoLeadingSpace from './WithPlaceablesNoLeadingSpace';
+import { WithPlaceablesNoLeadingSpace } from './WithPlaceablesNoLeadingSpace';
 
 describe('<WithPlaceablesNoLeadingSpace>', () => {
   it('matches newlines in a string', () => {

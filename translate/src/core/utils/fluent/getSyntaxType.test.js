@@ -1,5 +1,5 @@
-import getSyntaxType from './getSyntaxType';
-import parser from './parser';
+import { getSyntaxType } from './getSyntaxType';
+import { parser } from './parser';
 
 describe('getSyntaxType', () => {
   it('returns "simple" for a string with simple value', () => {

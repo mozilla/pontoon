@@ -1,5 +1,5 @@
-import flattenMessage from './flattenMessage';
-import parser from './parser';
+import { flattenMessage } from './flattenMessage';
+import { parser } from './parser';
 
 describe('flattenMessage', () => {
   it('does not modify value with single element', () => {

@@ -1,1 +1,1 @@
-export { default as FluentEditor } from './components/FluentEditor';
+export { FluentEditor } from './components/FluentEditor';

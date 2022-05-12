@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import jsonPlaceholder from './jsonPlaceholder';
+import { jsonPlaceholder } from './jsonPlaceholder';
 
 describe('jsonPlaceholder', () => {
   each([

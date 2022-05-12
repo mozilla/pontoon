@@ -1,2 +1,2 @@
-export { default as GenericEditor } from './components/GenericEditor';
-export { default as GenericTranslationForm } from './components/GenericTranslationForm';
+export { GenericEditor } from './components/GenericEditor';
+export { GenericTranslationForm } from './components/GenericTranslationForm';

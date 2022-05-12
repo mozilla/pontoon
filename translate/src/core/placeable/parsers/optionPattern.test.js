@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import optionPattern from './optionPattern';
+import { optionPattern } from './optionPattern';
 
 describe('optionPattern', () => {
   each([

@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
-import { actions } from '..';
-
 import type { Translation } from '~/core/editor';
 import { useAppDispatch } from '~/hooks';
+
+import { updateTranslation } from '../actions';
 
 /**
  * Return a function to update the content of the editor.
  */
-export default function useUpdateTranslation(): (
+export function useUpdateTranslation(): (
   translation: Translation,
   changeSource?: string,
 ) => void {
@@ -16,7 +16,7 @@ export default function useUpdateTranslation(): (
 
   return useCallback(
     (translation: Translation, changeSource?: string) => {
-      dispatch(actions.update(translation, changeSource));
+      dispatch(updateTranslation(translation, changeSource));
     },
     [dispatch],
   );

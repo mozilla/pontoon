@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import newlineEscape from './newlineEscape';
+import { newlineEscape } from './newlineEscape';
 
 describe('newlineEscape', () => {
   it('marks the right parts of a string', () => {

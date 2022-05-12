@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React from 'react';
 
 import type { LocationType } from '~/context/location';
-import { CommentsList } from '~/core/comments';
+import { CommentsList } from '~/core/comments/components/CommentsList';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
@@ -18,7 +18,7 @@ type Props = {
   resetContactPerson: () => void;
 };
 
-export default function TeamComments(
+export function TeamComments(
   props: Props,
 ): null | React.ReactElement<'section'> {
   const {

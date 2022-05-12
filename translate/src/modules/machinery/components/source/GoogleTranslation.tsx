@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Show the translation source from Google Translate.
  */
-export default function GoogleTranslation(): React.ReactElement<'li'> {
+export function GoogleTranslation(): React.ReactElement<'li'> {
   return (
     <li>
       <Localized

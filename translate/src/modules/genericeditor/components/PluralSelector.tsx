@@ -61,7 +61,7 @@ export function PluralSelectorBase({
   );
 }
 
-export default function PluralSelector(
+export function PluralSelector(
   props: Props,
 ): React.ReactElement<typeof PluralSelectorBase> {
   return (

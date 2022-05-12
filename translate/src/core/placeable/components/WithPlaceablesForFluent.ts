@@ -4,11 +4,11 @@ import type { Parser } from 'react-content-marker';
 import './WithPlaceables.css';
 
 import { rules } from './WithPlaceables';
-import fluentFunction from '../parsers/fluentFunction';
-import fluentParametrizedTerm from '../parsers/fluentParametrizedTerm';
-import fluentString from '../parsers/fluentString';
-import fluentTerm from '../parsers/fluentTerm';
-import multipleSpaces from '../parsers/multipleSpaces';
+import { fluentFunction } from '../parsers/fluentFunction';
+import { fluentParametrizedTerm } from '../parsers/fluentParametrizedTerm';
+import { fluentString } from '../parsers/fluentString';
+import { fluentTerm } from '../parsers/fluentTerm';
+import { multipleSpaces } from '../parsers/multipleSpaces';
 
 export function getRulesWithFluent(rules: Array<Parser>): Array<Parser> {
   const newRules = [...rules];
@@ -30,6 +30,6 @@ export function getRulesWithFluent(rules: Array<Parser>): Array<Parser> {
  * The Fluent rules must come right after the space rules, otherwise it
  * generates a lot of false positives.
  */
-const WithPlaceablesForFluent: any = createMarker(getRulesWithFluent(rules));
-
-export default WithPlaceablesForFluent;
+export const WithPlaceablesForFluent: any = createMarker(
+  getRulesWithFluent(rules),
+);

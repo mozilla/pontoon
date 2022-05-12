@@ -56,7 +56,7 @@ declare module 'slate' {
   }
 }
 
-export default function AddComment(props: Props): React.ReactElement<'div'> {
+export function AddComment(props: Props): React.ReactElement<'div'> {
   const {
     parameters,
     translation,

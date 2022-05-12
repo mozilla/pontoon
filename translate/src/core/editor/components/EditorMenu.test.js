@@ -10,10 +10,10 @@ import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import EditorMenu from './EditorMenu';
-import EditorSettings from './EditorSettings';
-import KeyboardShortcuts from './KeyboardShortcuts';
-import TranslationLength from './TranslationLength';
+import { EditorMenu } from './EditorMenu';
+import { EditorSettings } from './EditorSettings';
+import { KeyboardShortcuts } from './KeyboardShortcuts';
+import { TranslationLength } from './TranslationLength';
 
 const SELECTED_ENTITY = {
   pk: 1,

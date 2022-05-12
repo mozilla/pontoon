@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { useProject } from '~/core/project';
-import { NAME as USER } from '~/core/user';
+import { USER } from '~/core/user';
 import { useAppSelector } from '~/hooks';
 
 /**

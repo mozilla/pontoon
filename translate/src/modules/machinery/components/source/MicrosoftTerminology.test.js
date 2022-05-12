@@ -5,7 +5,7 @@ import { Locale } from '~/context/locale';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-import MicrosoftTerminology from './MicrosoftTerminology';
+import { MicrosoftTerminology } from './MicrosoftTerminology';
 
 const LOCALE = { msTerminologyCode: 'en-US' };
 const PROPS = {

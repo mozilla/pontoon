@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import { getMarker, TermState } from '~/core/term';
@@ -14,7 +14,7 @@ type Props = {
 /**
  * Show the source string of a Fluent entity.
  */
-export default function SourceString(props: Props): React.ReactElement<'p'> {
+export function SourceString(props: Props): React.ReactElement<'p'> {
   const TermsAndPlaceablesMarker = getMarker(props.terms, true);
 
   return (

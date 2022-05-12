@@ -3,7 +3,7 @@ import { createLogger } from 'redux-logger';
 
 import { reducer } from './rootReducer';
 
-const store = configureStore({
+export const store = configureStore({
   // @ts-expect-error Here be dragons
   reducer,
 
@@ -31,5 +31,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
-
-export default store;

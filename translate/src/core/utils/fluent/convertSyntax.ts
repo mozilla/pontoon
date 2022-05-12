@@ -1,9 +1,9 @@
-import flattenMessage from './flattenMessage';
-import getEmptyMessage from './getEmptyMessage';
-import getReconstructedMessage from './getReconstructedMessage';
-import getSimplePreview from './getSimplePreview';
-import parser from './parser';
-import serializer from './serializer';
+import { flattenMessage } from './flattenMessage';
+import { getEmptyMessage } from './getEmptyMessage';
+import { getReconstructedMessage } from './getReconstructedMessage';
+import { getSimplePreview } from './getSimplePreview';
+import { parser } from './parser';
+import { serializer } from './serializer';
 
 import type { Entry } from '@fluent/syntax';
 import type { LocaleType } from '~/context/locale';
@@ -118,7 +118,7 @@ export function getComplexFromRich(
  *
  * @returns {[ string | Entry, string ]} The converted current translation and initial translation.
  */
-export default function convertSyntax(
+export function convertSyntax(
   fromSyntax: SyntaxType,
   toSyntax: SyntaxType,
   current: string | Entry,

@@ -17,7 +17,7 @@ type Props = {
 /**
  * Shows a popup with a list of all terms belonging to the highlighted one.
  */
-export default function TermsPopup(props: Props): React.ReactElement<'div'> {
+export function TermsPopup(props: Props): React.ReactElement<'div'> {
   const ref = useRef(null);
   useOnDiscard(ref, props.hide);
 

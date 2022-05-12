@@ -4,16 +4,16 @@ import sinon from 'sinon';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import FiltersPanelBase, { FiltersPanel } from './FiltersPanel';
+import { FiltersPanel, FiltersPanelDialog } from './FiltersPanel';
 import { FILTERS_STATUS, FILTERS_EXTRA } from '../constants';
 
-describe('<FiltersPanel>', () => {
+describe('<FiltersPanelDialog>', () => {
   it('correctly sets filter as selected', () => {
     const statuses = ['warnings', 'missing'];
     const extras = ['rejected'];
 
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras, statuses, tags: [] },
       authorsData: [],
       tagsData: [],
@@ -38,7 +38,7 @@ describe('<FiltersPanel>', () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = sinon.spy();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [], statuses: [slug], tags: [] },
           onApplyFilter,
           authorsData: [],
@@ -54,7 +54,7 @@ describe('<FiltersPanel>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const onToggleFilter = sinon.spy();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [], statuses: [slug], tags: [] },
           onToggleFilter,
           parameters: {},
@@ -75,7 +75,7 @@ describe('<FiltersPanel>', () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = sinon.spy();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [slug], statuses: [], tags: [] },
           onApplyFilter,
           authorsData: [],
@@ -91,7 +91,7 @@ describe('<FiltersPanel>', () => {
       it('toggles a filter on click on a filter status icon', () => {
         const onToggleFilter = sinon.spy();
         const store = createReduxStore();
-        const wrapper = mountComponentWithStore(FiltersPanel, store, {
+        const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
           filters: { authors: [], extras: [slug], statuses: [], tags: [] },
           onToggleFilter,
           parameters: {},
@@ -109,7 +109,7 @@ describe('<FiltersPanel>', () => {
 
   it('shows the toolbar when some filters are selected', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
       selectedFiltersCount: 1,
       authorsData: [],
@@ -122,7 +122,7 @@ describe('<FiltersPanel>', () => {
 
   it('hides the toolbar when no filters are selected', () => {
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
       selectedFiltersCount: 0,
       authorsData: [],
@@ -136,7 +136,7 @@ describe('<FiltersPanel>', () => {
   it('resets selected filters on click on the Clear button', () => {
     const onResetFilters = sinon.spy();
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
       onResetFilters,
       selectedFiltersCount: 1,
@@ -153,7 +153,7 @@ describe('<FiltersPanel>', () => {
   it('applies selected filters on click on the Apply button', () => {
     const onApplyFilters = sinon.spy();
     const store = createReduxStore();
-    const wrapper = mountComponentWithStore(FiltersPanel, store, {
+    const wrapper = mountComponentWithStore(FiltersPanelDialog, store, {
       filters: { authors: [], extras: [], statuses: [], tags: [] },
       onApplyFilters,
       selectedFiltersCount: 1,
@@ -168,10 +168,10 @@ describe('<FiltersPanel>', () => {
   });
 });
 
-describe('<FiltersPanelBase>', () => {
+describe('<FiltersPanel>', () => {
   it('shows a panel with filters on click', () => {
     const wrapper = shallow(
-      <FiltersPanelBase
+      <FiltersPanel
         filters={{ authors: [], extras: [], statuses: [], tags: [] }}
         authorsData={[]}
         tagsData={[]}
@@ -182,15 +182,15 @@ describe('<FiltersPanelBase>', () => {
       />,
     );
 
-    expect(wrapper.find('FiltersPanel')).toHaveLength(0);
+    expect(wrapper.find('FiltersPanelDialog')).toHaveLength(0);
     wrapper.find('.visibility-switch').simulate('click');
-    expect(wrapper.find('FiltersPanel')).toHaveLength(1);
+    expect(wrapper.find('FiltersPanelDialog')).toHaveLength(1);
   });
 
   it('has the correct icon based on parameters', () => {
     for (let { slug } of FILTERS_STATUS) {
       const wrapper = shallow(
-        <FiltersPanelBase
+        <FiltersPanel
           filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
           authorsData={[]}
           tagsData={[]}
@@ -205,7 +205,7 @@ describe('<FiltersPanelBase>', () => {
 
     for (let { slug } of FILTERS_EXTRA) {
       const wrapper = shallow(
-        <FiltersPanelBase
+        <FiltersPanel
           filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}
           authorsData={[]}
           tagsData={[]}

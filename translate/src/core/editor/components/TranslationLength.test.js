@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import TranslationLength from './TranslationLength';
+import { TranslationLength } from './TranslationLength';
 
 describe('<TranslationLength>', () => {
   const LENGTH_ENTITY = {

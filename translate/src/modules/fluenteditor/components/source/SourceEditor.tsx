@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import * as editor from '~/core/editor';
 
@@ -14,7 +14,7 @@ type Props = {
  * Displayed when the Rich Editor cannot handle the translation, or if a user
  * forces showing the Fluent source.
  */
-export default function SourceEditor(props: Props): React.ReactElement<any> {
+export function SourceEditor(props: Props): React.ReactElement<any> {
   const clearEditor = editor.useClearEditor();
   const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
   const sendTranslation = editor.useSendTranslation();

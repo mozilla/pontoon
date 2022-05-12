@@ -1,9 +1,10 @@
-import isSimpleMessage from './isSimpleMessage';
-import isSimpleSingleAttributeMessage from './isSimpleSingleAttributeMessage';
-import isSupportedMessage from './isSupportedMessage';
+import type { Entry } from '@fluent/syntax';
+
+import { isSimpleMessage } from './isSimpleMessage';
+import { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
+import { isSupportedMessage } from './isSupportedMessage';
 
 import type { SyntaxType } from './types';
-import type { Entry } from '@fluent/syntax';
 
 /**
  * Return the syntax type of a given Fluent message.
@@ -15,7 +16,7 @@ import type { Entry } from '@fluent/syntax';
  *      - "rich": can be shown in a rich editor;
  *      - "complex": can only be shown in a source editor.
  */
-export default function getSyntaxType(message: Entry): SyntaxType {
+export function getSyntaxType(message: Entry): SyntaxType {
   if (!isSupportedMessage(message)) {
     return 'complex';
   }
