@@ -202,7 +202,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
     return JsonResponse(
         {
             "entities": Entity.map_entities(
-                locale, preferred_source_locale, entities_to_map, []
+                locale, preferred_source_locale, entities_to_map
             ),
             "has_next": has_next,
             "stats": TranslatedResource.objects.stats(
@@ -372,15 +372,13 @@ def get_sibling_entities(request):
                 locale,
                 preferred_source_locale,
                 succeeding_entities,
-                [],
-                True,
+                is_sibling=True,
             ),
             "preceding": Entity.map_entities(
                 locale,
                 preferred_source_locale,
                 preceding_entities,
-                [],
-                True,
+                is_sibling=True,
             ),
         },
         safe=False,

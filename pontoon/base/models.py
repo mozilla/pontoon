@@ -2917,15 +2917,17 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by search parameters
         if search:
-            # Split search string on spaces except if between non-escaped quotes.
             search_list = utils.get_search_phrases(search)
-            search_query_list = [(s, locale.db_collation) for s in search_list]
 
             translation_filters = (
-                Q(translation__string__icontains_collate=search_query)
+                Q(translation__string__icontains_collate=(search, locale.db_collation))
                 & Q(translation__locale=locale)
-                for search_query in search_query_list
+                for search in search_list
             )
+            translation_matches = entities.filter(*translation_filters).values_list(
+                "id", flat=True
+            )
+
             entity_filters = (
                 Q(string__icontains=search)
                 | Q(string_plural__icontains=search)
@@ -2935,17 +2937,10 @@ class Entity(DirtyFieldsMixin, models.Model):
                 | Q(key__icontains=search)
                 for search in search_list
             )
-
-            # Combine all generated filters with an AND operator.
-            # `operator.and_` is the '&' Python operator, which turns into a logical AND
-            # when used between django ORM query objects.
-            translation_query = reduce(operator.and_, translation_filters)
-            entity_query = reduce(operator.and_, entity_filters)
-
-            translation_matches = entities.filter(translation_query).values_list(
+            entity_matches = entities.filter(*entity_filters).values_list(
                 "id", flat=True
             )
-            entity_matches = entities.filter(entity_query).values_list("id", flat=True)
+
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
@@ -2965,11 +2960,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         locale,
         preferred_source_locale,
         entities,
-        visible_entities=None,
         is_sibling=False,
     ):
         entities_array = []
-        visible_entities = visible_entities or []
 
         # Prefetch related Translations, Resources, Projects and ProjectLocales
         entities = entities.prefetch_active_translations(locale).prefetch_related(
@@ -3021,11 +3014,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "obsolete": entity.obsolete,
                     "translation": translation_array,
                     "readonly": entity.resource.project.projectlocale[0].readonly,
-                    "visible": (
-                        False
-                        if entity.pk not in visible_entities or not visible_entities
-                        else True
-                    ),
                     "is_sibling": is_sibling,
                 }
             )
