@@ -1,7 +1,12 @@
 import React from 'react';
 
-import * as editor from '~/core/editor';
-
+import {
+  EditorMenu,
+  useClearEditor,
+  useCopyOriginalIntoEditor,
+  useSendTranslation,
+  useUpdateTranslation,
+} from '~/core/editor';
 import { GenericTranslationForm } from '~/modules/genericeditor';
 
 type Props = {
@@ -14,11 +19,11 @@ type Props = {
  * Displayed when the Rich Editor cannot handle the translation, or if a user
  * forces showing the Fluent source.
  */
-export function SourceEditor(props: Props): React.ReactElement<any> {
-  const clearEditor = editor.useClearEditor();
-  const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
-  const sendTranslation = editor.useSendTranslation();
-  const updateTranslation = editor.useUpdateTranslation();
+export function SourceEditor({ ftlSwitch }: Props): React.ReactElement<any> {
+  const clearEditor = useClearEditor();
+  const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
+  const sendTranslation = useSendTranslation();
+  const updateTranslation = useUpdateTranslation();
 
   return (
     <>
@@ -26,8 +31,8 @@ export function SourceEditor(props: Props): React.ReactElement<any> {
         sendTranslation={sendTranslation}
         updateTranslation={updateTranslation}
       />
-      <editor.EditorMenu
-        firstItemHook={props.ftlSwitch}
+      <EditorMenu
+        firstItemHook={ftlSwitch}
         clearEditor={clearEditor}
         copyOriginalIntoEditor={copyOriginalIntoEditor}
         sendTranslation={sendTranslation}

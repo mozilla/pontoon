@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 
-import * as editor from '~/core/editor';
+import {
+  EDITOR,
+  EditorMenu,
+  TranslationLength,
+  useClearEditor,
+  useCopyOriginalIntoEditor,
+  useSendTranslation,
+  useUpdateTranslation,
+} from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import * as fluent from '~/core/utils/fluent';
+import {
+  getReconstructedMessage,
+  getSimplePreview,
+  isSimpleMessage,
+  isSimpleSingleAttributeMessage,
+  parser,
+  serializer,
+} from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { GenericTranslationForm } from '~/modules/genericeditor';
 
@@ -16,72 +31,66 @@ type Props = {
  * Handles transforming the editor's content back to a valid Fluent message on save.
  * Makes sure the content is correctly formatted when updated.
  */
-export function SimpleEditor(props: Props): null | React.ReactElement<any> {
-  const updateTranslation = editor.useUpdateTranslation();
-  const clearEditor = editor.useClearEditor();
-  const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
-  const sendTranslation = editor.useSendTranslation();
+export function SimpleEditor({ ftlSwitch }: Props): React.ReactElement | null {
+  const updateTranslation = useUpdateTranslation();
+  const clearEditor = useClearEditor();
+  const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
+  const sendTranslation = useSendTranslation();
 
-  const translation = useAppSelector((state) => state.editor.translation);
-  const changeSource = useAppSelector((state) => state.editor.changeSource);
+  const translation = useAppSelector((state) => state[EDITOR].translation);
+  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
   const entity = useSelectedEntity();
 
   // Transform the translation into a simple preview whenever it changes from
   // an external source.
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (changeSource === 'internal' || typeof translation !== 'string') {
       return;
     }
 
-    const message = fluent.parser.parseEntry(translation);
-    if (
-      fluent.isSimpleMessage(message) ||
-      fluent.isSimpleSingleAttributeMessage(message)
-    ) {
-      updateTranslation(fluent.getSimplePreview(translation), changeSource);
+    const message = parser.parseEntry(translation);
+    if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
+      updateTranslation(getSimplePreview(translation), changeSource);
     }
   }, [translation, changeSource, updateTranslation]);
 
   // Reconstruct the translation into a valid Fluent message before sending it.
-  function sendFluentTranslation(ignoreWarnings?: boolean) {
-    if (!entity) {
-      return;
-    }
+  const sendFluentTranslation = useCallback(
+    (ignoreWarnings?: boolean) => {
+      if (entity) {
+        if (typeof translation !== 'string') {
+          // This should never happen. If it does, the developers have made a
+          // mistake in the code. We need this check for TypeScript's sake though.
+          throw new Error(
+            'Unexpected data type for translation: ' + typeof translation,
+          );
+        }
 
-    if (typeof translation !== 'string') {
-      // This should never happen. If it does, the developers have made a
-      // mistake in the code. We need this check for TypeScript's sake though.
-      throw new Error(
-        'Unexpected data type for translation: ' + typeof translation,
-      );
-    }
-
-    // The content was simple, reformat it to be an actual Fluent message.
-    const content = fluent.serializer.serializeEntry(
-      fluent.getReconstructedMessage(entity.original, translation),
-    );
-    sendTranslation(ignoreWarnings, content);
-  }
+        // The content was simple, reformat it to be an actual Fluent message.
+        const content = serializer.serializeEntry(
+          getReconstructedMessage(entity.original, translation),
+        );
+        sendTranslation(ignoreWarnings, content);
+      }
+    },
+    [entity, translation],
+  );
 
   // If the translation is not a string, wait until the FluentEditor component fixes that.
-  if (!entity || typeof translation !== 'string') {
-    return null;
-  }
-
-  return (
+  return entity && typeof translation === 'string' ? (
     <>
       <GenericTranslationForm
         sendTranslation={sendFluentTranslation}
         updateTranslation={updateTranslation}
       />
-      <editor.EditorMenu
-        firstItemHook={props.ftlSwitch}
+      <EditorMenu
+        firstItemHook={ftlSwitch}
         translationLengthHook={
-          <editor.TranslationLength
+          <TranslationLength
             comment={entity.comment}
             format={entity.format}
-            original={fluent.getSimplePreview(entity.original)}
-            translation={fluent.getSimplePreview(translation)}
+            original={getSimplePreview(entity.original)}
+            translation={getSimplePreview(translation)}
           />
         }
         clearEditor={clearEditor}
@@ -89,5 +98,5 @@ export function SimpleEditor(props: Props): null | React.ReactElement<any> {
         sendTranslation={sendFluentTranslation}
       />
     </>
-  );
+  ) : null;
 }
