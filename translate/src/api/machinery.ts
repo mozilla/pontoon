@@ -43,6 +43,8 @@ function GET_(url: string, params: Record<string, string>) {
 
 /**
  * Return results from Concordance search.
+ *
+ * Note! Not under common machinery abort controller
  */
 export async function fetchConcordanceResults(
   source: string,
@@ -50,13 +52,15 @@ export async function fetchConcordanceResults(
   page?: number,
 ): Promise<ConcordanceTranslations> {
   const url = '/concordance-search/';
-  const params = {
+  const params = new URLSearchParams({
     text: source,
     locale: locale.code,
     page: String(page || 1),
-  };
+  });
 
-  const { results, has_next } = (await GET_(url, params)) as {
+  const { results, has_next } = (await GET(url, params, {
+    singleton: true,
+  })) as {
     results: Array<{
       source: string;
       target: string;

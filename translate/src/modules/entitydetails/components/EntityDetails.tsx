@@ -32,13 +32,6 @@ import {
   request as requestHistory,
   updateStatus,
 } from '~/modules/history/actions';
-import { MACHINERY } from '~/modules/machinery';
-import {
-  get as getMachinery,
-  getConcordanceSearchResults,
-  resetSearch,
-  setEntity,
-} from '~/modules/machinery/actions';
 import { OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
 import { TEAM_COMMENTS } from '~/modules/teamcomments';
@@ -63,7 +56,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const history = useAppSelector((state) => state[HISTORY]);
   const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
-  const machinery = useAppSelector((state) => state[MACHINERY]);
   const nextEntity = useNextEntity();
   const otherlocales = useAppSelector((state) => state[OTHERLOCALES]);
   const teamComments = useAppSelector((state) => state[TEAM_COMMENTS]);
@@ -125,12 +117,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       dispatch(getTerms(source, lc));
     }
 
-    if (pk !== machinery.entity) {
-      dispatch(resetSearch(''));
-      dispatch(setEntity(pk, source));
-      dispatch(getMachinery(source, locale, user.isAuthenticated, pk));
-    }
-
     if (pk !== otherlocales.entity) {
       dispatch(getOtherLocales(entity, lc));
     }
@@ -140,38 +126,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       dispatch(getTeamComments(entity, lc));
     }
   }, [activeTranslation]);
-
-  const searchMachinery = useCallback(
-    (query: string, page?: number) => {
-      if (query) {
-        if (page) {
-          dispatch(getConcordanceSearchResults(query, locale, page));
-        } else {
-          dispatch(resetSearch(query));
-          dispatch(getConcordanceSearchResults(query, locale));
-          dispatch(getMachinery(query, locale, user.isAuthenticated, null));
-        }
-      } else {
-        dispatch(resetSearch(''));
-        if (selectedEntity) {
-          // On empty query, use source string as input
-          const source = getOptimizedContent(
-            selectedEntity.machinery_original,
-            selectedEntity.format,
-          );
-          dispatch(
-            getMachinery(
-              source,
-              locale,
-              user.isAuthenticated,
-              selectedEntity.pk,
-            ),
-          );
-        }
-      }
-    },
-    [dispatch, locale, selectedEntity, user.isAuthenticated],
-  );
 
   const navigateToPath = useCallback(
     (path: string) => checkUnsavedChanges(() => location.push(path)),
@@ -272,14 +226,12 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
         <Helpers
           entity={selectedEntity}
           isReadOnlyEditor={isReadOnlyEditor}
-          machinery={machinery}
           otherlocales={otherlocales}
           teamComments={teamComments}
           terms={terms}
           togglePinnedStatus={togglePinnedStatus}
           parameters={location}
           user={user}
-          searchMachinery={searchMachinery}
           addTextToEditorTranslation={addTextToEditorTranslation}
           navigateToPath={navigateToPath}
           commentTabRef={commentTabRef}

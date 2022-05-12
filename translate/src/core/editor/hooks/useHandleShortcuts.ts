@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 
 import { UnsavedChanges } from '~/context/unsavedChanges';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -40,12 +42,10 @@ export function useHandleShortcuts(): (
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
 
-  const machineryTranslations = useAppSelector(
-    (state) => state.machinery.translations,
+  const { translations: machineryTranslations } = useContext(
+    MachineryTranslations,
   );
-  const concordanceSearchResults = useAppSelector(
-    (state) => state.machinery.searchResults,
-  );
+  const { results: concordanceSearchResults } = useContext(SearchData);
   const otherLocaleTranslations = useAppSelector(
     (state) => state.otherlocales.translations,
   );
