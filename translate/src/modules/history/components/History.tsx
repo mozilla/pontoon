@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
 
-import type { Entity } from '~/core/api';
+import type { Entity } from '~/api/entity';
 import type { UserState } from '~/core/user';
 
 import type { ChangeOperation, HistoryState } from '../index';

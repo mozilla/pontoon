@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
 
+import type { Entity } from '~/api/entity';
 import type { LocationType } from '~/context/location';
-import type { Entity } from '~/core/api';
 
 import type { LocalesState } from '../index';
 import './OtherLocales.css';

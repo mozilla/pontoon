@@ -5,7 +5,10 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import type { Entity, EntityTranslation } from '~/core/api';
+
+import type { Entity } from '~/api/entity';
+import type { EntityTranslation } from '~/api/translation';
+
 import { Location } from './location';
 
 export type PluralFormType = {

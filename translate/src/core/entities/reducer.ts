@@ -1,4 +1,5 @@
-import type { Entities, EntityTranslation, EntitySiblings } from '~/core/api';
+import type { Entity, EntitySiblings } from '~/api/entity';
+import type { EntityTranslation } from '~/api/translation';
 
 import {
   Action,
@@ -14,7 +15,7 @@ import {
 export const NAME = 'entities';
 
 type EntitiesState = {
-  readonly entities: Entities;
+  readonly entities: Entity[];
   readonly fetching: boolean;
   readonly fetchCount: number;
   readonly hasMore: boolean;
@@ -25,7 +26,7 @@ function updateEntityTranslation(
   entity: number,
   pluralForm: number,
   translation: EntityTranslation,
-): Entities {
+): Entity[] {
   return state.entities.map((item) => {
     if (item.pk !== entity) {
       return item;
@@ -46,10 +47,10 @@ function updateEntityTranslation(
 }
 
 function injectSiblingEntities(
-  entities: Entities,
+  entities: Entity[],
   siblings: EntitySiblings,
   entity: number,
-): Entities {
+): Entity[] {
   const index = entities.findIndex((item) => item.pk === entity);
   let parentEntity = entities[index];
   const currentPKs = entities.map((e) => e.pk);

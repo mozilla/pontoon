@@ -1,9 +1,15 @@
 import NProgress from 'nprogress';
 
+import { Entity, fetchEntityHistory } from '~/api/entity';
+import {
+  ChangeOperation,
+  deleteTranslation,
+  HistoryTranslation,
+  setTranslationStatus,
+} from '~/api/translation';
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 import type { PluralFormType } from '~/context/pluralForm';
-import api, { Entity, TranslationComment } from '~/core/api';
 import { actions as editorActions } from '~/core/editor';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
@@ -12,28 +18,9 @@ import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
-export const RECEIVE: 'history/RECEIVE' = 'history/RECEIVE';
-export const REQUEST: 'history/REQUEST' = 'history/REQUEST';
-export const UPDATE: 'history/UPDATE' = 'history/UPDATE';
-
-export type HistoryTranslation = {
-  readonly approved: boolean;
-  readonly approvedUser: string;
-  readonly pretranslated: boolean;
-  readonly date: string;
-  readonly dateIso: string;
-  readonly fuzzy: boolean;
-  readonly pk: number;
-  readonly rejected: boolean;
-  readonly string: string;
-  readonly uid: number | null | undefined;
-  readonly unapprovedUser: string;
-  readonly machinerySources: string;
-  readonly user: string;
-  readonly username: string;
-  readonly userGravatarUrlSmall: string;
-  readonly comments: Array<TranslationComment>;
-};
+export const RECEIVE = 'history/RECEIVE';
+export const REQUEST = 'history/REQUEST';
+export const UPDATE = 'history/UPDATE';
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
@@ -77,35 +64,9 @@ export function get(entity: number, locale: string, pluralForm: number) {
     // request() must be called separately to prevent
     // re-rendering of the component on addComment()
 
-    // Abort all previously running requests.
-    await api.entity.abort();
-
-    const content = await api.entity.getHistory(entity, locale, pluralForm);
-
-    dispatch(receive(content as HistoryTranslation[]));
+    const translations = await fetchEntityHistory(entity, locale, pluralForm);
+    dispatch({ type: RECEIVE, translations });
   };
-}
-
-export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
-
-function updateStatusOnServer(
-  change: ChangeOperation,
-  translation: number,
-  resource: string,
-  ignoreWarnings: boolean | null | undefined,
-): Promise<Record<string, any>> {
-  switch (change) {
-    case 'approve':
-      return api.translation.approve(translation, resource, ignoreWarnings);
-    case 'unapprove':
-      return api.translation.unapprove(translation, resource);
-    case 'reject':
-      return api.translation.reject(translation, resource);
-    case 'unreject':
-      return api.translation.unreject(translation, resource);
-    default:
-      throw new Error('Unexpected translation status change: ' + change);
-  }
 }
 
 function _getOperationNotif(change: ChangeOperation, success: boolean) {
@@ -146,12 +107,12 @@ export function updateStatus(
   translation: number,
   nextEntity: Entity | null | undefined,
   location: LocationType,
-  ignoreWarnings?: boolean | null | undefined,
+  ignoreWarnings: boolean,
 ) {
   return async (dispatch: AppDispatch) => {
     NProgress.start();
 
-    const results = await updateStatusOnServer(
+    const results = await setTranslationStatus(
       change,
       translation,
       location.resource,
@@ -180,24 +141,22 @@ export function updateStatus(
       } else {
         dispatch(get(entity.pk, locale.code, pluralForm));
       }
-    }
 
-    if (results.stats) {
-      // Update stats in the progress chart and the filter panel.
-      dispatch(updateStats(results.stats));
+      if (results.stats) {
+        // Update stats in the progress chart and the filter panel.
+        dispatch(updateStats(results.stats));
 
-      // Update stats in the resource menu.
-      dispatch(
-        updateResource(
-          entity.path,
-          results.stats.approved,
-          results.stats.warnings,
-        ),
-      );
-    }
+        // Update stats in the resource menu.
+        dispatch(
+          updateResource(
+            entity.path,
+            results.stats.approved,
+            results.stats.warnings,
+          ),
+        );
+      }
 
-    // Update entity translation data now that it has changed on the server.
-    if (results.translation) {
+      // Update entity translation data now that it has changed on the server.
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, results.translation),
       );
@@ -207,7 +166,7 @@ export function updateStatus(
   };
 }
 
-export function deleteTranslation(
+export function deleteTranslation_(
   entity: number,
   locale: string,
   pluralForm: number,
@@ -216,9 +175,9 @@ export function deleteTranslation(
   return async (dispatch: AppDispatch) => {
     NProgress.start();
 
-    const results = await api.translation.delete(translation);
+    const { status } = await deleteTranslation(translation);
 
-    if (results.status) {
+    if (status) {
       dispatch(addNotification(notificationMessages.TRANSLATION_DELETED));
       dispatch(get(entity, locale, pluralForm));
     } else {
@@ -236,5 +195,4 @@ export default {
   receive,
   request,
   updateStatus,
-  deleteTranslation,
 };

@@ -1,10 +1,12 @@
-import { RECEIVE, REQUEST, UPDATE } from './actions';
+import { HistoryTranslation } from '~/api/translation';
 
-import type {
+import {
   ReceiveAction,
   RequestAction,
   UpdateAction,
-  HistoryTranslation,
+  RECEIVE,
+  REQUEST,
+  UPDATE,
 } from './actions';
 
 type Action = ReceiveAction | RequestAction | UpdateAction;

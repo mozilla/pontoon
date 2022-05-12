@@ -2,9 +2,10 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 
+import type { Entity as EntityType } from '~/api/entity';
+import type { EntityTranslation } from '~/api/translation';
 import { Locale } from '~/context/locale';
 import type { LocationType } from '~/context/location';
-import type { Entity as EntityType, EntityTranslation } from '~/core/api';
 import { TranslationProxy } from '~/core/translation';
 import { useTranslator } from '~/hooks/useTranslator';
 

@@ -1,11 +1,11 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
 
+import type { TranslationComment } from '~/api/comment';
+import type { HistoryTranslation } from '~/api/translation';
 import type { LocationType } from '~/context/location';
-import type { TranslationComment } from '~/core/api';
 import { AddComment, Comment } from '~/core/comments';
 import type { UserState } from '~/core/user';
-import type { HistoryTranslation } from '~/modules/history';
 
 import './CommentsList.css';
 

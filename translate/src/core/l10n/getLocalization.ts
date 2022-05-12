@@ -2,7 +2,7 @@ import { FluentBundle, FluentResource, TextTransform } from '@fluent/bundle';
 import { negotiateLanguages } from '@fluent/langneg';
 import { ReactLocalization } from '@fluent/react';
 
-import api from '~/core/api';
+import { fetchL10n } from '~/api/l10n';
 
 import { accented, bidi } from './pseudolocalization';
 
@@ -46,7 +46,7 @@ export async function getLocalization(locales: readonly string[]) {
 
   const bundles = await Promise.all(
     languages.map((locale) =>
-      api.l10n.get(locale).then((content) => {
+      fetchL10n(locale).then((content) => {
         const bundle = new FluentBundle(locale, bundleOptions);
         const resource = new FluentResource(content);
         bundle.addResource(resource);

@@ -1,13 +1,6 @@
-export const UPDATE_STATS = 'stats/UPDATE';
+import type { APIStats } from '~/api/translation';
 
-type APIStats = {
-  approved: number;
-  pretranslated: number;
-  warnings: number;
-  errors: number;
-  unreviewed: number;
-  total: number;
-};
+export const UPDATE_STATS = 'stats/UPDATE';
 
 export type Stats = APIStats & {
   missing: number;

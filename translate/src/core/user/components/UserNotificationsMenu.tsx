@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import api from '~/core/api';
+import { logUXAction } from '~/api/uxaction';
 import { useOnDiscard } from '~/core/utils';
 
 import type { Notification, UserState } from '../index';
@@ -75,11 +75,9 @@ export default function UserNotificationsMenuBase({
 
   useEffect(() => {
     if (user.isAuthenticated && unread) {
-      api.uxaction.log(
-        'Render: Unread notifications icon',
-        'Notifications 1.0',
-        { pathname: window.location.pathname },
-      );
+      logUXAction('Render: Unread notifications icon', 'Notifications 1.0', {
+        pathname: window.location.pathname,
+      });
     }
   }, []);
 
@@ -88,7 +86,7 @@ export default function UserNotificationsMenuBase({
       setVisible(false);
     } else {
       setVisible(true);
-      api.uxaction.log('Click: Notifications icon', 'Notifications 1.0', {
+      logUXAction('Click: Notifications icon', 'Notifications 1.0', {
         pathname: window.location.pathname,
         unread,
       });

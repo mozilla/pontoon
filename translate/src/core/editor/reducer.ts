@@ -1,4 +1,5 @@
-import type { SourceType } from '~/core/api';
+import type { SourceType } from '~/api/machinery';
+import type { FailedChecks } from '~/api/translation';
 
 import {
   END_UPDATE_TRANSLATION,
@@ -17,7 +18,6 @@ import {
 } from './actions';
 
 import type {
-  FailedChecks,
   EndUpdateTranslationAction,
   InitialTranslationAction,
   ResetEditorAction,

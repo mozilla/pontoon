@@ -1,5 +1,3 @@
-import { shallow } from 'enzyme';
-import React from 'react';
 import Tour from 'reactour';
 import sinon from 'sinon';
 

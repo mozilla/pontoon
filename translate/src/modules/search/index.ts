@@ -4,7 +4,6 @@ export { default as reducer } from './reducer';
 export { default as SearchBox } from './components/SearchBox';
 export { SearchTerms } from './components/SearchTerms';
 
-export type { Author } from './actions';
 export type { SearchAndFilters } from './reducer';
 export type { TimeRangeType } from './components/SearchBox';
 

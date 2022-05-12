@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 
+import type { Entity } from '~/api/entity';
 import { Location } from '~/context/location';
-import type { Entity } from '~/core/api';
 import { useAppSelector } from '~/hooks';
+
 import { NAME as ENTITIES } from './reducer';
 
 export const useEntities = () => useAppSelector((state) => state[ENTITIES]);

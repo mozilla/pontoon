@@ -1,11 +1,13 @@
 import type { Entry } from '@fluent/syntax';
 import NProgress from 'nprogress';
 
+import type { Entity } from '~/api/entity';
+import { SourceType } from '~/api/machinery';
+import { createTranslation, FailedChecks } from '~/api/translation';
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 import { PluralFormType } from '~/context/pluralForm';
 import type { UnsavedChanges } from '~/context/unsavedChanges';
-import api, { Entity, SourceType } from '~/core/api';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
 import notificationMessages from '~/core/notification/messages';
@@ -160,13 +162,6 @@ export function setInitialTranslation(
 /**
  * Update failed checks in the active editor.
  */
-export type FailedChecks = {
-  readonly clErrors: Array<string>;
-  readonly pErrors: Array<string>;
-  readonly clWarnings: Array<string>;
-  readonly pndbWarnings: Array<string>;
-  readonly ttWarnings: Array<string>;
-};
 export type UpdateFailedChecksAction = {
   readonly type: typeof UPDATE_FAILED_CHECKS;
   readonly failedChecks: FailedChecks;
@@ -256,7 +251,7 @@ export function sendTranslation_(
     NProgress.start();
     dispatch(startUpdateTranslation());
 
-    const content = await api.translation.create(
+    const content = await createTranslation(
       entity.pk,
       translation,
       locale.code,
@@ -268,13 +263,7 @@ export function sendTranslation_(
       machinerySources,
     );
 
-    if (content.failedChecks) {
-      dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
-    } else if (content.same) {
-      // The translation that was provided is the same as an existing
-      // translation for that entity.
-      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
-    } else if (content.status) {
+    if (content.status) {
       // Notify the user of the change that happened.
       dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
 
@@ -306,6 +295,12 @@ export function sendTranslation_(
         }
         dispatch(reset());
       }
+    } else if (content.failedChecks) {
+      dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
+    } else if (content.same) {
+      // The translation that was provided is the same as an existing
+      // translation for that entity.
+      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
     }
 
     dispatch(endUpdateTranslation());
