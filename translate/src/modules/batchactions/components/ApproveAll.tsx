@@ -12,7 +12,7 @@ type Props = {
 /**
  * Renders Approve All batch action button.
  */
-export default function ApproveAll({
+export function ApproveAll({
   approveAll,
   batchactions: { response, requestInProgress },
 }: Props): React.ReactElement<'button'> {

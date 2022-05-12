@@ -14,7 +14,7 @@ import {
  * TextElement (merging serialized values of neighbour simple elements) and
  * Placeable (representing select expressions).
  */
-export default function flattenPatternElements(
+export function flattenPatternElements(
   elements: Array<PatternElement>,
 ): Array<PatternElement> {
   const flatElements: PatternElement[] = [];

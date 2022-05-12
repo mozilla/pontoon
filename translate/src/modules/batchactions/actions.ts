@@ -8,7 +8,10 @@ import type { LocationType } from '~/context/location';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
-import { actions as historyActions } from '~/modules/history';
+import {
+  get as getHistory,
+  request as requestHistory,
+} from '~/modules/history/actions';
 import type { AppDispatch } from '~/store';
 
 export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
@@ -114,8 +117,8 @@ const updateUI =
         dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
 
         if (entity.pk === selectedEntity) {
-          dispatch(historyActions.request(entity.pk, pluralForm));
-          dispatch(historyActions.get(entity.pk, location.locale, pluralForm));
+          dispatch(requestHistory(entity.pk, pluralForm));
+          dispatch(getHistory(entity.pk, location.locale, pluralForm));
         }
       });
     }

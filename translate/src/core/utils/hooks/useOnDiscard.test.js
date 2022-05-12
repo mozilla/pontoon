@@ -3,7 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
-import useOnDiscard from './useOnDiscard';
+import { useOnDiscard } from './useOnDiscard';
 
 function TestComponent({ onDiscard }) {
   const ref = React.useRef(null);

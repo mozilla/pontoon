@@ -1,4 +1,4 @@
 import { useAppSelector } from '~/hooks';
-import { NAME } from './reducer';
+import { RESOURCE } from './reducer';
 
-export const useResource = () => useAppSelector((state) => state[NAME]);
+export const useResource = () => useAppSelector((state) => state[RESOURCE]);

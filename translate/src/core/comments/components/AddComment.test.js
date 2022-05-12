@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import AddComment from './AddComment';
+import { AddComment } from './AddComment';
 
 const USER = {
   user: {

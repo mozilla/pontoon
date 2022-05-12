@@ -17,7 +17,7 @@ type Props = {
 /**
  * Shows all translations of an entity in locales other than the current one.
  */
-export default function OtherLocales({
+export function OtherLocales({
   entity,
   otherlocales: { fetching, translations },
   parameters,

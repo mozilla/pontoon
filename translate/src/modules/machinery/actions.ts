@@ -18,6 +18,13 @@ export const REQUEST = 'machinery/REQUEST';
 export const RESET_SEARCH = 'machinery/RESET_SEARCH';
 export const SET_ENTITY = 'machinery/SET_ENTITY';
 
+export type Action =
+  | ConcordanceSearchAction
+  | AddTranslationsAction
+  | RequestAction
+  | ResetSearchAction
+  | SetEntityAction;
+
 /**
  * Indicate that entities are currently being fetched.
  */
@@ -158,10 +165,3 @@ export const get =
       dispatch(addTranslations(results));
     }
   };
-
-export default {
-  addTranslations,
-  get,
-  resetSearch,
-  setEntity,
-};

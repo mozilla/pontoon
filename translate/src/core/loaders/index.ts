@@ -1,2 +1,2 @@
-export { default as WaveLoader } from './components/WaveLoader';
-export { default as SkeletonLoader } from './components/SkeletonLoader';
+export { WaveLoader } from './components/WaveLoader';
+export { SkeletonLoader } from './components/SkeletonLoader';

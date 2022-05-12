@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import createMarker from 'react-content-marker';
 
-import tabCharacter from './tabCharacter';
+import { tabCharacter } from './tabCharacter';
 
 describe('tabCharacter', () => {
   it('marks the right parts of a string', () => {

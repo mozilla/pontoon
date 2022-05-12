@@ -11,10 +11,18 @@ import React, { useContext } from 'react';
 
 import { Locale } from '~/context/locale';
 import { UnsavedChanges } from '~/context/unsavedChanges';
-import type { Translation } from '~/core/editor';
-import * as editor from '~/core/editor';
+import {
+  Translation,
+  useHandleShortcuts,
+  useReplaceSelectionContent,
+  useUpdateUnsavedChanges,
+} from '~/core/editor';
+import { resetFailedChecks } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { fluent } from '~/core/utils';
+import {
+  extractAccessKeyCandidates,
+  isPluralExpression,
+} from '~/core/utils/fluent';
 import { CLDR_PLURALS } from '~/core/utils/constants';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
@@ -66,7 +74,7 @@ type Props = {
 /**
  * Render a Rich editor for Fluent string editing.
  */
-export default function RichTranslationForm(
+export function RichTranslationForm(
   props: Props,
 ): null | React.ReactElement<'div'> {
   const {
@@ -94,7 +102,7 @@ export default function RichTranslationForm(
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);
 
-  const handleShortcutsFn = editor.useHandleShortcuts();
+  const handleShortcutsFn = useHandleShortcuts();
 
   const updateRichTranslation = React.useCallback(
     (value: string, path: MessagePath) => {
@@ -121,7 +129,7 @@ export default function RichTranslationForm(
 
   // Replace selected content on external actions (for example, when a user clicks
   // on a placeable).
-  editor.useReplaceSelectionContent((content: string, source: string) => {
+  useReplaceSelectionContent((content: string, source: string) => {
     // If there is no explicitely focused element, find the first input.
     const target = getFocusedElement() || getFirstInput();
 
@@ -158,12 +166,12 @@ export default function RichTranslationForm(
   // Reset checks when content of the editor changes and some changes have been made.
   React.useEffect(() => {
     if (unsavedChanges.exist) {
-      dispatch(editor.actions.resetFailedChecks());
+      dispatch(resetFailedChecks());
     }
   }, [message, dispatch, unsavedChanges.exist]);
 
   // When content of the translation changes, update unsaved changes.
-  editor.useUpdateUnsavedChanges(false);
+  useUpdateUnsavedChanges(false);
 
   // Put focus on input.
   React.useEffect(() => {
@@ -298,7 +306,7 @@ export default function RichTranslationForm(
   function renderInput(value: string, path: MessagePath, label: string) {
     let candidates = null;
     if (typeof message !== 'string' && label === 'accesskey') {
-      candidates = fluent.extractAccessKeyCandidates(message);
+      candidates = extractAccessKeyCandidates(message);
     }
 
     // Access Key UI
@@ -413,7 +421,7 @@ export default function RichTranslationForm(
             indent,
             eIndex,
             vIndex,
-            fluent.isPluralExpression(expression) ? pluralExamples : null,
+            isPluralExpression(expression) ? pluralExamples : null,
             attributeName,
           );
         });

@@ -1,12 +1,20 @@
-import * as React from 'react';
+import React from 'react';
 
-import * as editor from '~/core/editor';
+import {
+  EditorMenu,
+  TranslationLength,
+  useClearEditor,
+  useCopyOriginalIntoEditor,
+  useSendTranslation,
+  useUpdateTranslation,
+} from '~/core/editor';
+import { resetEditor, setInitialTranslation } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import GenericTranslationForm from './GenericTranslationForm';
-import PluralSelector from './PluralSelector';
+import { GenericTranslationForm } from './GenericTranslationForm';
+import { PluralSelector } from './PluralSelector';
 
 /**
  * Hook to update the editor content whenever the entity changes.
@@ -14,7 +22,7 @@ import PluralSelector from './PluralSelector';
 function useLoadTranslation() {
   const dispatch = useAppDispatch();
 
-  const updateTranslation = editor.useUpdateTranslation();
+  const updateTranslation = useUpdateTranslation();
 
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const entity = useSelectedEntity();
@@ -24,7 +32,7 @@ function useLoadTranslation() {
   React.useLayoutEffect(() => {
     // We want to run this only when the editor state has been reset.
     if (changeSource === 'reset') {
-      dispatch(editor.actions.setInitialTranslation(activeTranslationString));
+      dispatch(setInitialTranslation(activeTranslationString));
       updateTranslation(activeTranslationString, 'initial');
     }
   }, [
@@ -44,14 +52,14 @@ function useLoadTranslation() {
  *
  * Shows a plural selector, a translation form and a menu.
  */
-export default function GenericEditor(): null | React.ReactElement<any> {
+export function GenericEditor(): null | React.ReactElement<any> {
   const dispatch = useAppDispatch();
 
   useLoadTranslation();
-  const updateTranslation = editor.useUpdateTranslation();
-  const clearEditor = editor.useClearEditor();
-  const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();
-  const sendTranslation = editor.useSendTranslation();
+  const updateTranslation = useUpdateTranslation();
+  const clearEditor = useClearEditor();
+  const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
+  const sendTranslation = useSendTranslation();
 
   const translation = useAppSelector((state) => state.editor.translation);
   const entity = useSelectedEntity();
@@ -61,22 +69,18 @@ export default function GenericEditor(): null | React.ReactElement<any> {
     return null;
   }
 
-  function resetEditor() {
-    dispatch(editor.actions.reset());
-  }
-
   const original = pluralForm <= 0 ? entity.original : entity.original_plural;
 
   return (
     <>
-      <PluralSelector resetEditor={resetEditor} />
+      <PluralSelector resetEditor={() => dispatch(resetEditor())} />
       <GenericTranslationForm
         sendTranslation={sendTranslation}
         updateTranslation={updateTranslation}
       />
-      <editor.EditorMenu
+      <EditorMenu
         translationLengthHook={
-          <editor.TranslationLength
+          <TranslationLength
             comment={entity.comment}
             format={entity.format}
             original={original}

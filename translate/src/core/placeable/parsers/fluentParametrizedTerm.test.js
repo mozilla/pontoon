@@ -3,7 +3,7 @@ import createMarker from 'react-content-marker';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import fluentParametrizedTerm from './fluentParametrizedTerm';
+import { fluentParametrizedTerm } from './fluentParametrizedTerm';
 
 describe('fluentParametrizedTerm', () => {
   each([

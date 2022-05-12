@@ -10,7 +10,7 @@ export type TranslationProps = {
   search?: string | null | undefined;
 };
 
-export default function GenericTranslation({
+export function GenericTranslation({
   content,
   diffTarget,
   search,

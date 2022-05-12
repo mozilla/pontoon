@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export default function useOnDiscard(
+export function useOnDiscard(
   ref: React.RefObject<unknown>,
   onDiscard: () => void,
 ) {

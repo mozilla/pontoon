@@ -10,10 +10,14 @@ import {
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
 import type { PluralFormType } from '~/context/pluralForm';
-import { actions as editorActions } from '~/core/editor';
+import {
+  resetEditor,
+  updateFailedChecks,
+  updateTranslation,
+} from '~/core/editor/actions';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
+import { notificationMessages } from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
@@ -21,6 +25,8 @@ import type { AppDispatch } from '~/store';
 export const RECEIVE = 'history/RECEIVE';
 export const REQUEST = 'history/REQUEST';
 export const UPDATE = 'history/UPDATE';
+
+export type Action = ReceiveAction | RequestAction | UpdateAction;
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
@@ -121,10 +127,8 @@ export function updateStatus(
 
     // Update the UI based on the response.
     if (results.failedChecks) {
-      dispatch(editorActions.update(results.string, 'external'));
-      dispatch(
-        editorActions.updateFailedChecks(results.failedChecks, translation),
-      );
+      dispatch(updateTranslation(results.string, 'external'));
+      dispatch(updateFailedChecks(results.failedChecks, translation));
     } else {
       // Show a notification to explain what happened.
       const notif = _getOperationNotif(change, !!results.translation);
@@ -137,7 +141,7 @@ export function updateStatus(
         } else if (nextEntity.pk !== entity.pk) {
           location.push({ entity: nextEntity.pk });
         }
-        dispatch(editorActions.reset());
+        dispatch(resetEditor());
       } else {
         dispatch(get(entity.pk, locale.code, pluralForm));
       }
@@ -189,10 +193,3 @@ export function deleteTranslation_(
     NProgress.done();
   };
 }
-
-export default {
-  get,
-  receive,
-  request,
-  updateStatus,
-};

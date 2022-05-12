@@ -5,13 +5,13 @@ import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
 import { LocationProvider } from '~/context/location';
-import * as editor from '~/core/editor';
+import { resetEditor, updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import FluentEditor from './FluentEditor';
+import { FluentEditor } from './FluentEditor';
 
 const NESTED_SELECTORS_STRING = `my-message =
     { $thing ->
@@ -85,7 +85,7 @@ function createComponent(entityPk = 1) {
     entities: ENTITIES,
     hasMore: false,
   });
-  store.dispatch(editor.actions.reset());
+  store.dispatch(resetEditor());
   act(() => history.push(`?string=${entityPk}`));
   wrapper.update();
 
@@ -146,7 +146,7 @@ describe('<FluentEditor>', () => {
     expect(wrapper.find('SimpleEditor').exists()).toBeTruthy();
 
     // Change translation to a rich string.
-    store.dispatch(editor.actions.update(RICH_MESSAGE_STRING, 'external'));
+    store.dispatch(updateTranslation(RICH_MESSAGE_STRING, 'external'));
     wrapper.update();
 
     expect(wrapper.find('RichEditor').exists()).toBeTruthy();

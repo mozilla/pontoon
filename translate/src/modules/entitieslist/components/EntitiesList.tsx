@@ -4,7 +4,7 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import type { Entity as EntityType } from '~/api/entity';
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
-import { reset as resetEditor } from '~/core/editor/actions';
+import { resetEditor } from '~/core/editor/actions';
 import {
   getEntities,
   getSiblingEntities,
@@ -13,7 +13,7 @@ import {
 import { useEntities } from '~/core/entities/hooks';
 import { SkeletonLoader } from '~/core/loaders';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
+import { notificationMessages } from '~/core/notification/messages';
 import { useAppDispatch, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';

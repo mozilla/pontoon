@@ -9,7 +9,7 @@ import { ProjectMenu, ProjectMenuDialog } from './ProjectMenu';
 beforeAll(() => sinon.stub(React, 'useContext'));
 afterAll(() => React.useContext.restore());
 
-function createShallowProjectMenu({
+function createShallowProjectMenuDialog({
   project = {
     slug: 'project',
     name: 'Project',
@@ -24,7 +24,7 @@ function createShallowProjectMenu({
 
 describe('<ProjectMenu>', () => {
   it('renders properly', () => {
-    const wrapper = createShallowProjectMenu();
+    const wrapper = createShallowProjectMenuDialog();
 
     expect(wrapper.find('.menu .search-wrapper')).toHaveLength(1);
     expect(wrapper.find('.menu > ul')).toHaveLength(1);
@@ -33,7 +33,7 @@ describe('<ProjectMenu>', () => {
 
   it('returns no results for non-matching searches', () => {
     const SEARCH_NO_MATCH = 'bc';
-    const wrapper = createShallowProjectMenu({
+    const wrapper = createShallowProjectMenuDialog({
       project: ALL_PROJECTS,
     });
 
@@ -49,7 +49,7 @@ describe('<ProjectMenu>', () => {
 
   it('searches project items correctly', () => {
     const SEARCH_MATCH = 'roj';
-    const wrapper = createShallowProjectMenu({
+    const wrapper = createShallowProjectMenuDialog({
       project: ALL_PROJECTS,
     });
 
@@ -64,7 +64,7 @@ describe('<ProjectMenu>', () => {
   });
 });
 
-function createShallowProjectMenuBase({
+function createShallowProjectMenu({
   project = {
     slug: 'project',
     name: 'Project',
@@ -94,14 +94,14 @@ const ALL_PROJECTS = {
 
 describe('<ProjectMenuBase>', () => {
   it('shows a link to localization dashboard in regular view', () => {
-    const wrapper = createShallowProjectMenuBase();
+    const wrapper = createShallowProjectMenu();
 
     expect(wrapper.text()).toContain('Project');
     expect(wrapper.find('a').prop('href')).toEqual('/locale/project/');
   });
 
   it('shows project selector in all projects view', () => {
-    const wrapper = createShallowProjectMenuBase({ project: ALL_PROJECTS });
+    const wrapper = createShallowProjectMenu({ project: ALL_PROJECTS });
 
     expect(wrapper.find('.project-menu .selector')).toHaveLength(1);
     expect(wrapper.find('#project-ProjectMenu--all-projects')).toHaveLength(1);
@@ -109,7 +109,7 @@ describe('<ProjectMenuBase>', () => {
   });
 
   it('renders the project menu upon clicking on all projects', () => {
-    const wrapper = createShallowProjectMenuBase({ project: ALL_PROJECTS });
+    const wrapper = createShallowProjectMenu({ project: ALL_PROJECTS });
     wrapper.find('.selector').simulate('click');
 
     expect(wrapper.find('ProjectMenuDialog')).toHaveLength(1);

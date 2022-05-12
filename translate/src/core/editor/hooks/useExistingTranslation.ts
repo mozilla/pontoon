@@ -1,12 +1,12 @@
 import { useTranslationForEntity } from '~/context/pluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import getReconstructedMessage from '~/core/utils/fluent/getReconstructedMessage';
-import fluentParser from '~/core/utils/fluent/parser';
-import fluentSerializer from '~/core/utils/fluent/serializer';
+import { getReconstructedMessage } from '~/core/utils/fluent/getReconstructedMessage';
+import { parser as fluentParser } from '~/core/utils/fluent/parser';
+import { serializer as fluentSerializer } from '~/core/utils/fluent/serializer';
 import { useAppSelector } from '~/hooks';
-import { NAME as HISTORY } from '~/modules/history';
+import { HISTORY } from '~/modules/history';
 
-import { NAME as EDITOR } from '../index';
+import { EDITOR } from '../reducer';
 
 /**
  * Return a Translation identical to the one currently in the Editor.

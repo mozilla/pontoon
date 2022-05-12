@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
   imageUrl: string;
 };
 
-export default function UserAvatar(props: Props): React.ReactElement<'div'> {
+export function UserAvatar(props: Props): React.ReactElement<'div'> {
   const { username, title, imageUrl } = props;
 
   return (

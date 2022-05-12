@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Marks the newline character "\n".
  */
-const newlineCharacter = {
+export const newlineCharacter = {
   rule: '\n',
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -22,5 +22,3 @@ const newlineCharacter = {
     );
   },
 };
-
-export default newlineCharacter;

@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-import ApproveAll from './ApproveAll';
+import { ApproveAll } from './ApproveAll';
 
 const DEFAULT_BATCH_ACTIONS = {
   entities: [],

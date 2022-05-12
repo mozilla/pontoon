@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -9,7 +9,7 @@ import { Localized } from '@fluent/react';
  *   $Brand
  *   $BrandShortName
  */
-const nsisVariable = {
+export const nsisVariable = {
   rule: /(^|\s)(\$[a-zA-Z][\w]*)/ as RegExp,
   matchIndex: 2,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -22,5 +22,3 @@ const nsisVariable = {
     );
   },
 };
-
-export default nsisVariable;

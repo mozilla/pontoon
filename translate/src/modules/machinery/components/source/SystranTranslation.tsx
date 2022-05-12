@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
  * Show the translation source from Systran.
  */
-export default function SystranTranslation(): React.ReactElement<'li'> {
+export function SystranTranslation(): React.ReactElement<'li'> {
   return (
     <li>
       <Localized

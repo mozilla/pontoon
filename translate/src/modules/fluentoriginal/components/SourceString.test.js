@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import SourceString from './SourceString';
+import { SourceString } from './SourceString';
 
 const ORIGINAL = 'title = Hello From The Other Side';
 

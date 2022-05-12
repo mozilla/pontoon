@@ -6,7 +6,8 @@ import type { UserState } from '~/core/user';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import { actions, useUpdateTranslationStatus } from '..';
+import { resetFailedChecks } from '../actions';
+import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
 
 import './FailedChecks.css';
 
@@ -18,7 +19,7 @@ type FailedChecksProps = {
  * Shows a list of failed checks (errors and warnings) and a button to ignore
  * those checks and proceed anyway.
  */
-export default function FailedChecks(
+export function FailedChecks(
   props: FailedChecksProps,
 ): null | React.ReactElement<'div'> {
   const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ export default function FailedChecks(
   }
 
   function resetChecks() {
-    dispatch(actions.resetFailedChecks());
+    dispatch(resetFailedChecks());
   }
 
   function approveAnyway() {

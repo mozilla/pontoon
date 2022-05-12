@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import RichString from './RichString';
+import { RichString } from './RichString';
 
 const ORIGINAL = `
 song-title = Hello

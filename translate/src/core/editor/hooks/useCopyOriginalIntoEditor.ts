@@ -1,12 +1,12 @@
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { usePluralForm } from '~/context/pluralForm';
 
-import useUpdateTranslation from './useUpdateTranslation';
+import { useUpdateTranslation } from './useUpdateTranslation';
 
 /**
  * Return a function to copy the original translation into the editor.
  */
-export default function useCopyOriginalIntoEditor(): () => void {
+export function useCopyOriginalIntoEditor(): () => void {
   const updateTranslation = useUpdateTranslation();
 
   const entity = useSelectedEntity();

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -9,7 +9,7 @@ import { Localized } from '@fluent/react';
  *   %(name)s
  *   %(number)D
  */
-const pythonFormatNamedString = {
+export const pythonFormatNamedString = {
   rule: /(%\([[\w\d!.,[\]%:$<>+\-= ]*\)[+|-|0\d+|#]?[.\d+]?[s|d|e|f|g|o|x|c|%])/i as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -24,5 +24,3 @@ const pythonFormatNamedString = {
     );
   },
 };
-
-export default pythonFormatNamedString;

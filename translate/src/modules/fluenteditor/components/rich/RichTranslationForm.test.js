@@ -2,13 +2,17 @@ import sinon from 'sinon';
 import React from 'react';
 
 import { Locale } from '~/context/locale';
-import * as editor from '~/core/editor';
-import { fluent } from '~/core/utils';
+import {
+  setInitialTranslation,
+  updateSelection,
+  updateTranslation,
+} from '~/core/editor/actions';
+import { parser } from '~/core/utils/fluent';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import RichTranslationForm from './RichTranslationForm';
+import { RichTranslationForm } from './RichTranslationForm';
 
 const DEFAULT_LOCALE = {
   direction: 'ltr',
@@ -17,21 +21,21 @@ const DEFAULT_LOCALE = {
   cldrPlurals: [1, 5],
 };
 
-function createComponent(entityString, updateTranslation) {
-  if (!updateTranslation) {
-    updateTranslation = sinon.fake();
+function createComponent(entityString, updateTranslation_) {
+  if (!updateTranslation_) {
+    updateTranslation_ = sinon.fake();
   }
 
   const store = createReduxStore();
-  const message = fluent.parser.parseEntry(entityString);
-  store.dispatch(editor.actions.update(message));
-  store.dispatch(editor.actions.setInitialTranslation(message));
+  const message = parser.parseEntry(entityString);
+  store.dispatch(updateTranslation(message));
+  store.dispatch(setInitialTranslation(message));
 
   const wrapper = mountComponentWithStore(
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
-          <RichTranslationForm updateTranslation={updateTranslation} />
+          <RichTranslationForm updateTranslation={updateTranslation_} />
         </MockLocalizationProvider>
       </Locale.Provider>
     ),
@@ -210,13 +214,13 @@ describe('<RichTranslationForm>', () => {
       updateMock,
     );
 
-    await store.dispatch(editor.actions.updateSelection('Add'));
+    await store.dispatch(updateSelection('Add'));
 
     // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
     wrapper.setProps({});
 
     expect(updateMock.called).toBeTruthy();
-    const replaceContent = fluent.parser.parseEntry(
+    const replaceContent = parser.parseEntry(
       `title = AddValue
     .label = Something
 `,

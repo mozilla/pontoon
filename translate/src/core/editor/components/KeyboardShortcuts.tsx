@@ -9,7 +9,7 @@ type KeyboardShortcutsProps = {
   onDiscard: () => void;
 };
 
-function KeyboardShortcuts({ onDiscard }: KeyboardShortcutsProps) {
+function KeyboardShortcutsDialog({ onDiscard }: KeyboardShortcutsProps) {
   const ref = React.useRef(null);
   useOnDiscard(ref, onDiscard);
   return (
@@ -200,7 +200,7 @@ function KeyboardShortcuts({ onDiscard }: KeyboardShortcutsProps) {
 /*
  * Shows a list of keyboard shortcuts.
  */
-export default function KeyboardShortcutsBase(): React.ReactElement<'div'> {
+export function KeyboardShortcuts(): React.ReactElement<'div'> {
   const [visible, setVisible] = useState(false);
   const toggleVisible = useCallback(() => setVisible((prev) => !prev), []);
   const handleDiscard = useCallback(() => setVisible(false), []);
@@ -215,7 +215,7 @@ export default function KeyboardShortcutsBase(): React.ReactElement<'div'> {
         />
       </Localized>
 
-      {visible && <KeyboardShortcuts onDiscard={handleDiscard} />}
+      {visible && <KeyboardShortcutsDialog onDiscard={handleDiscard} />}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import getMarker from './getMarker';
+import { getMarker } from './getMarker';
 
 describe('markTerms', () => {
   it('marks terms properly', () => {

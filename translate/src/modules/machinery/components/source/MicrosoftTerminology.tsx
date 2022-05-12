@@ -10,7 +10,7 @@ type Props = {
 /**
  * Show the translation source from Microsoft Terminology.
  */
-export default function MicrosoftTerminology({
+export function MicrosoftTerminology({
   original,
 }: Props): React.ReactElement<'li'> {
   const { msTerminologyCode } = useContext(Locale);

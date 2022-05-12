@@ -2,35 +2,35 @@ import createMarker from 'react-content-marker';
 
 import './WithPlaceables.css';
 
-import altAttribute from '../parsers/altAttribute';
-import camelCaseString from '../parsers/camelCaseString';
-import emailPattern from '../parsers/emailPattern';
-import escapeSequence from '../parsers/escapeSequence';
-import filePattern from '../parsers/filePattern';
-import javaFormattingVariable from '../parsers/javaFormattingVariable';
-import jsonPlaceholder from '../parsers/jsonPlaceholder';
-import leadingSpace from '../parsers/leadingSpace';
-import multipleSpaces from '../parsers/multipleSpaces';
-import narrowNonBreakingSpace from '../parsers/narrowNonBreakingSpace';
-import newlineCharacter from '../parsers/newlineCharacter';
-import newlineEscape from '../parsers/newlineEscape';
-import nonBreakingSpace from '../parsers/nonBreakingSpace';
-import nsisVariable from '../parsers/nsisVariable';
-import numberString from '../parsers/numberString';
-import optionPattern from '../parsers/optionPattern';
-import punctuation from '../parsers/punctuation';
-import pythonFormatNamedString from '../parsers/pythonFormatNamedString';
-import pythonFormatString from '../parsers/pythonFormatString';
-import pythonFormattingVariable from '../parsers/pythonFormattingVariable';
-import qtFormatting from '../parsers/qtFormatting';
-import shortCapitalNumberString from '../parsers/shortCapitalNumberString';
-import stringFormattingVariable from '../parsers/stringFormattingVariable';
-import tabCharacter from '../parsers/tabCharacter';
-import thinSpace from '../parsers/thinSpace';
-import unusualSpace from '../parsers/unusualSpace';
-import uriPattern from '../parsers/uriPattern';
-import xmlEntity from '../parsers/xmlEntity';
-import xmlTag from '../parsers/xmlTag';
+import { altAttribute } from '../parsers/altAttribute';
+import { camelCaseString } from '../parsers/camelCaseString';
+import { emailPattern } from '../parsers/emailPattern';
+import { escapeSequence } from '../parsers/escapeSequence';
+import { filePattern } from '../parsers/filePattern';
+import { javaFormattingVariable } from '../parsers/javaFormattingVariable';
+import { jsonPlaceholder } from '../parsers/jsonPlaceholder';
+import { leadingSpace } from '../parsers/leadingSpace';
+import { multipleSpaces } from '../parsers/multipleSpaces';
+import { narrowNonBreakingSpace } from '../parsers/narrowNonBreakingSpace';
+import { newlineCharacter } from '../parsers/newlineCharacter';
+import { newlineEscape } from '../parsers/newlineEscape';
+import { nonBreakingSpace } from '../parsers/nonBreakingSpace';
+import { nsisVariable } from '../parsers/nsisVariable';
+import { numberString } from '../parsers/numberString';
+import { optionPattern } from '../parsers/optionPattern';
+import { punctuation } from '../parsers/punctuation';
+import { pythonFormatNamedString } from '../parsers/pythonFormatNamedString';
+import { pythonFormatString } from '../parsers/pythonFormatString';
+import { pythonFormattingVariable } from '../parsers/pythonFormattingVariable';
+import { qtFormatting } from '../parsers/qtFormatting';
+import { shortCapitalNumberString } from '../parsers/shortCapitalNumberString';
+import { stringFormattingVariable } from '../parsers/stringFormattingVariable';
+import { tabCharacter } from '../parsers/tabCharacter';
+import { thinSpace } from '../parsers/thinSpace';
+import { unusualSpace } from '../parsers/unusualSpace';
+import { uriPattern } from '../parsers/uriPattern';
+import { xmlEntity } from '../parsers/xmlEntity';
+import { xmlTag } from '../parsers/xmlTag';
 
 // Note: the order of these MATTERS!
 export const rules = [
@@ -82,6 +82,4 @@ export const rules = [
 /**
  * Component that marks placeables in a string.
  */
-const WithPlaceables: any = createMarker(rules);
-
-export default WithPlaceables;
+export const WithPlaceables: any = createMarker(rules);

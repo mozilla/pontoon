@@ -1,8 +1,10 @@
 import type { TermType } from '~/api/terminology';
 
-import { ReceiveAction, RequestAction, RECEIVE, REQUEST } from './actions';
+import { Action, RECEIVE, REQUEST } from './actions';
 
-type Action = ReceiveAction | RequestAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const TERM = 'term';
 
 export type TermState = {
   readonly fetching: boolean;
@@ -16,7 +18,7 @@ const initialState: TermState = {
   terms: [],
 };
 
-export default function reducer(
+export function reducer(
   state: TermState = initialState,
   action: Action,
 ): TermState {

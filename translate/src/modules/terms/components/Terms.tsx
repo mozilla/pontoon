@@ -17,9 +17,7 @@ type Props = {
 /**
  * Shows all terms found in the source string.
  */
-export default function Terms(
-  props: Props,
-): null | React.ReactElement<'section'> {
+export function Terms(props: Props): null | React.ReactElement<'section'> {
   const { terms } = props;
 
   if (terms.fetching || !terms.terms) {

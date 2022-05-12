@@ -1,12 +1,12 @@
-import parser from './parser';
-
 import type { Entry } from '@fluent/syntax';
+
+import { parser } from './parser';
 
 /**
  * Return a reconstructed Fluent message from the original message and some
  * translated content.
  */
-export default function getReconstructedMessage(
+export function getReconstructedMessage(
   original: string,
   translation: string,
 ): Entry {

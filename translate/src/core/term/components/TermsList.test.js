@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Term from './Term';
-import TermsList from './TermsList';
+import { Term } from './Term';
+import { TermsList } from './TermsList';
 
 describe('<TermsList>', () => {
   const TERMS = [

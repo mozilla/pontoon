@@ -7,13 +7,14 @@ import sinon from 'sinon';
 
 import { LocationProvider } from '~/context/location';
 import * as editorActions from '~/core/editor/actions';
+import { updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
-import { fluent } from '~/core/utils';
+import { parser } from '~/core/utils/fluent';
 
 import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import SimpleEditor from './SimpleEditor';
+import { SimpleEditor } from './SimpleEditor';
 
 const ENTITIES = [
   {
@@ -61,7 +62,7 @@ describe('<SimpleEditor>', () => {
     const [wrapper, store] = createSimpleEditor();
 
     // Update the content with a non-formatted Fluent string.
-    store.dispatch(editorActions.update('my-message = Coucou', 'external'));
+    store.dispatch(updateTranslation('my-message = Coucou', 'external'));
 
     // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
     wrapper.setProps({});
@@ -74,9 +75,7 @@ describe('<SimpleEditor>', () => {
     const [wrapper, store] = createSimpleEditor();
 
     // Update the content with a non-formatted Fluent string.
-    store.dispatch(
-      editorActions.update(fluent.parser.parseEntry('hello = World')),
-    );
+    store.dispatch(updateTranslation(parser.parseEntry('hello = World')));
     wrapper.update();
 
     expect(wrapper.isEmptyRender()).toBeTruthy();
@@ -90,7 +89,7 @@ describe('<SimpleEditor>', () => {
     try {
       const [wrapper, store] = createSimpleEditor();
 
-      store.dispatch(editorActions.update('Coucou'));
+      store.dispatch(updateTranslation('Coucou'));
       wrapper.update();
 
       // Intercept the sendTranslation prop and call it directly.

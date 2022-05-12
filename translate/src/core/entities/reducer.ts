@@ -12,7 +12,7 @@ import {
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME = 'entities';
+export const ENTITIES = 'entities';
 
 type EntitiesState = {
   readonly entities: Entity[];

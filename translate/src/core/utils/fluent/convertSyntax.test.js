@@ -5,8 +5,8 @@ import {
   getSimpleFromComplex,
 } from './convertSyntax';
 
-import getEmptyMessage from './getEmptyMessage';
-import parser from './parser';
+import { getEmptyMessage } from './getEmptyMessage';
+import { parser } from './parser';
 
 describe('getComplexFromRich', () => {
   it('converts rich translation to complex', () => {

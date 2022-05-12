@@ -16,7 +16,7 @@ type Props = {
   togglePinnedStatus?: (status: boolean, id: number) => void;
 };
 
-export default function Comment(props: Props): null | React.ReactElement<'li'> {
+export function Comment(props: Props): null | React.ReactElement<'li'> {
   const { comment, canPin, togglePinnedStatus } = props;
 
   if (!comment) {

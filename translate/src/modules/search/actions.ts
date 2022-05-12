@@ -29,8 +29,3 @@ export function setFocus(searchInputFocused: boolean): SetFocusAction {
     searchInputFocused,
   };
 }
-
-export default {
-  getAuthorsAndTimeRangeData,
-  setFocus,
-};

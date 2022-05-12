@@ -1,7 +1,7 @@
 // @ts-nocheck
 // https://github.com/mozilla/pontoon/issues/2292
 import { $Diff } from 'utility-types';
-import * as React from 'react';
+import React from 'react';
 
 type Props = {
   isActionDisabled: boolean | void;
@@ -12,7 +12,7 @@ type State = {
   isActionDisabled: boolean;
 };
 
-export default function withActionsDisabled<Config extends {}>(
+export function withActionsDisabled<Config extends {}>(
   WrappedComponent: React.ComponentType<Config>,
 ): React.ComponentType<$Diff<Config, Props>> {
   class WithActionsDisabled extends React.Component<

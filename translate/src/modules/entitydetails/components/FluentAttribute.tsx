@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import { fluent } from '~/core/utils';
+import { isSimpleSingleAttributeMessage, parser } from '~/core/utils/fluent';
 
-import Property from './Property';
+import { Property } from './Property';
 
 type Props = {
   readonly entity: Entity;
@@ -13,21 +13,16 @@ type Props = {
 /**
  * Get attribute of a simple single-attribute Fluent message.
  */
-export default function FluentAttribute(
-  props: Props,
-): null | React.ReactElement<any> {
+export function FluentAttribute(props: Props): null | React.ReactElement<any> {
   const { entity } = props;
 
   if (entity.format !== 'ftl') {
     return null;
   }
 
-  const message = fluent.parser.parseEntry(entity.original);
+  const message = parser.parseEntry(entity.original);
 
-  if (
-    message.type !== 'Message' ||
-    !fluent.isSimpleSingleAttributeMessage(message)
-  ) {
+  if (message.type !== 'Message' || !isSimpleSingleAttributeMessage(message)) {
     return null;
   }
 

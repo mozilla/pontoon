@@ -1,17 +1,17 @@
 import sinon from 'sinon';
 
-import { update as updateEditor, updateSelection } from '~/core/editor/actions';
+import { updateSelection, updateTranslation } from '~/core/editor/actions';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
-import GenericTranslationForm from './GenericTranslationForm';
+import { GenericTranslationForm } from './GenericTranslationForm';
 
-function createComponent(updateTranslation) {
+function createComponent(updateTranslation_) {
   const store = createReduxStore();
-  store.dispatch(updateEditor('Hello'));
+  store.dispatch(updateTranslation('Hello'));
 
   const wrapper = mountComponentWithStore(GenericTranslationForm, store, {
-    updateTranslation,
+    updateTranslation: updateTranslation_,
   });
 
   return [wrapper, store];

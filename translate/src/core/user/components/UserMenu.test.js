@@ -10,9 +10,9 @@ import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
 import { SignOut } from './SignOut';
-import UserMenuBase, { UserMenu } from './UserMenu';
+import { UserMenu, UserMenuDialog } from './UserMenu';
 
-describe('<UserMenu>', () => {
+describe('<UserMenuDialog>', () => {
   beforeAll(() => {
     sinon.stub(Hooks, 'useAppSelector');
     sinon.stub(Translator, 'useTranslator');
@@ -45,7 +45,7 @@ describe('<UserMenu>', () => {
     return mount(
       <Location.Provider value={location}>
         <MockLocalizationProvider>
-          <UserMenu user={{ isAuthenticated, isAdmin }} />
+          <UserMenuDialog user={{ isAuthenticated, isAdmin }} />
         </MockLocalizationProvider>
       </Location.Provider>,
     );
@@ -118,9 +118,9 @@ describe('<UserMenu>', () => {
   });
 });
 
-describe('<UserMenuBase>', () => {
+describe('<UserMenu>', () => {
   function createShallowUserMenuBase({ isAuthenticated = true } = {}) {
-    return shallow(<UserMenuBase user={{ isAuthenticated }} />);
+    return shallow(<UserMenu user={{ isAuthenticated }} />);
   }
 
   it('shows the user avatar when the user is logged in', () => {
@@ -139,12 +139,12 @@ describe('<UserMenuBase>', () => {
 
   it('toggles the user menu when clicking the user avatar', () => {
     const wrapper = createShallowUserMenuBase();
-    expect(wrapper.find('UserMenu')).toHaveLength(0);
+    expect(wrapper.find('UserMenuDialog')).toHaveLength(0);
 
     wrapper.find('.selector').simulate('click');
-    expect(wrapper.find('UserMenu')).toHaveLength(1);
+    expect(wrapper.find('UserMenuDialog')).toHaveLength(1);
 
     wrapper.find('.selector').simulate('click');
-    expect(wrapper.find('UserMenu')).toHaveLength(0);
+    expect(wrapper.find('UserMenuDialog')).toHaveLength(0);
   });
 });

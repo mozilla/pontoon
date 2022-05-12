@@ -12,7 +12,7 @@ import {
 
 // Name of this module.
 // Used as the key to store this module's reducer.
-export const NAME = 'batchactions';
+export const BATCHACTIONS = 'batchactions';
 
 export type BatchActionsState = {
   readonly entities: Array<number>;

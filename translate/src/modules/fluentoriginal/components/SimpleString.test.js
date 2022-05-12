@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import SimpleString from './SimpleString';
+import { SimpleString } from './SimpleString';
 
 const ORIGINAL = `header = 
             .page-title = Hello

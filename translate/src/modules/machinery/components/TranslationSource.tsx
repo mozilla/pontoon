@@ -2,12 +2,12 @@ import React from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
 
-import GoogleTranslation from './source/GoogleTranslation';
-import MicrosoftTranslation from './source/MicrosoftTranslation';
-import SystranTranslation from './source/SystranTranslation';
-import MicrosoftTerminology from './source/MicrosoftTerminology';
-import CaighdeanTranslation from './source/CaighdeanTranslation';
-import TranslationMemory from './source/TranslationMemory';
+import { GoogleTranslation } from './source/GoogleTranslation';
+import { MicrosoftTranslation } from './source/MicrosoftTranslation';
+import { SystranTranslation } from './source/SystranTranslation';
+import { MicrosoftTerminology } from './source/MicrosoftTerminology';
+import { CaighdeanTranslation } from './source/CaighdeanTranslation';
+import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;

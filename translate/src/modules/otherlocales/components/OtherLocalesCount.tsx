@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { LocalesState } from '..';
 
@@ -6,7 +6,9 @@ type Props = {
   otherlocales: LocalesState;
 };
 
-export default function Count(props: Props): null | React.ReactElement<'span'> {
+export function OtherLocalesCount(
+  props: Props,
+): null | React.ReactElement<'span'> {
   const { otherlocales } = props;
 
   if (otherlocales.fetching || !otherlocales.translations) {

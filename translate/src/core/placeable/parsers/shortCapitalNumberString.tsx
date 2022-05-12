@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -10,7 +10,7 @@ import { Localized } from '@fluent/react';
  *   3D
  *   A4
  */
-const shortCapitalNumberString = {
+export const shortCapitalNumberString = {
   rule: /(\b([A-Z][0-9])|([0-9][A-Z])\b)/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -29,5 +29,3 @@ const shortCapitalNumberString = {
     );
   },
 };
-
-export default shortCapitalNumberString;

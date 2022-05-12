@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import filePattern from './filePattern';
+import { filePattern } from './filePattern';
 
 describe('filePattern', () => {
   each([

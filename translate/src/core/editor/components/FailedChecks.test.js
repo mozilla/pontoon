@@ -2,7 +2,7 @@ import React from 'react';
 import sinon from 'sinon';
 
 import { Locale } from '~/context/locale';
-import * as editor from '~/core/editor';
+import { updateFailedChecks } from '~/core/editor/actions';
 
 import {
   createDefaultUser,
@@ -10,7 +10,7 @@ import {
   mountComponentWithStore,
 } from '~/test/store';
 
-import FailedChecks from './FailedChecks';
+import { FailedChecks } from './FailedChecks';
 
 function createFailedChecks(user) {
   const store = createReduxStore({ project: { slug: 'firefox', tags: [] } });
@@ -37,7 +37,7 @@ describe('<FailedChecks>', () => {
     const [wrapper, store] = createFailedChecks();
 
     store.dispatch(
-      editor.actions.updateFailedChecks(
+      updateFailedChecks(
         {
           clErrors: ['one error'],
           pndbWarnings: ['a warning', 'two warnings'],
@@ -60,10 +60,7 @@ describe('<FailedChecks>', () => {
     });
 
     store.dispatch(
-      editor.actions.updateFailedChecks(
-        { pndbWarnings: ['a warning'] },
-        'submitted',
-      ),
+      updateFailedChecks({ pndbWarnings: ['a warning'] }, 'submitted'),
     );
     wrapper.update();
 
@@ -76,10 +73,7 @@ describe('<FailedChecks>', () => {
     });
 
     store.dispatch(
-      editor.actions.updateFailedChecks(
-        { pndbWarnings: ['a warning'] },
-        'submitted',
-      ),
+      updateFailedChecks({ pndbWarnings: ['a warning'] }, 'submitted'),
     );
     wrapper.update();
 
@@ -90,10 +84,7 @@ describe('<FailedChecks>', () => {
     const [wrapper, store] = createFailedChecks({ manager_for_locales: [] });
 
     store.dispatch(
-      editor.actions.updateFailedChecks(
-        { pndbWarnings: ['a warning'] },
-        'submitted',
-      ),
+      updateFailedChecks({ pndbWarnings: ['a warning'] }, 'submitted'),
     );
     wrapper.update();
 
@@ -103,9 +94,7 @@ describe('<FailedChecks>', () => {
   it('renders approve anyway button if translation with warnings approved', () => {
     const [wrapper, store] = createFailedChecks();
 
-    store.dispatch(
-      editor.actions.updateFailedChecks({ pndbWarnings: ['a warning'] }, ''),
-    );
+    store.dispatch(updateFailedChecks({ pndbWarnings: ['a warning'] }, ''));
     wrapper.update();
 
     expect(wrapper.find('.approve.anyway')).toHaveLength(1);

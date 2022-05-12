@@ -1,15 +1,10 @@
 import type { TeamComment } from '~/api/comment';
 
-import {
-  ReceiveAction,
-  RequestAction,
-  TogglePinnedAction,
-  RECEIVE,
-  REQUEST,
-  TOGGLE_PINNED,
-} from './actions';
+import { Action, RECEIVE, REQUEST, TOGGLE_PINNED } from './actions';
 
-type Action = ReceiveAction | RequestAction | TogglePinnedAction;
+// Name of this module.
+// Used as the key to store this module's reducer.
+export const TEAM_COMMENTS = 'teamcomments';
 
 export type TeamCommentState = {
   readonly fetching: boolean;
@@ -40,7 +35,7 @@ const initialState: TeamCommentState = {
   comments: [],
 };
 
-export default function reducer(
+export function reducer(
   state: TeamCommentState = initialState,
   action: Action,
 ): TeamCommentState {

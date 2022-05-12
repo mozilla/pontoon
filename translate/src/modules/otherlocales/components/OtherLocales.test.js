@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import OtherLocales from './OtherLocales';
+import { OtherLocales } from './OtherLocales';
 
 describe('<OtherLocales>', () => {
   it('shows the correct number of translations', () => {

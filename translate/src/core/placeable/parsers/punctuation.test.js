@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import punctuation from './punctuation';
+import { punctuation } from './punctuation';
 
 describe('punctuation', () => {
   each([

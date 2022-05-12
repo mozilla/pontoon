@@ -4,7 +4,7 @@ import each from 'jest-each';
 
 import createMarker from 'react-content-marker';
 
-import unusualSpace from './unusualSpace';
+import { unusualSpace } from './unusualSpace';
 
 describe('unusualSpace', () => {
   each([

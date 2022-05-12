@@ -6,7 +6,7 @@ import ReactTimeAgo from 'react-time-ago';
 import type { Entity } from '~/api/entity';
 import { HistoryTranslation } from '~/api/translation';
 import { Locale } from '~/context/locale';
-import { CommentsList } from '~/core/comments';
+import { CommentsList } from '~/core/comments/components/CommentsList';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/core/utils';
@@ -434,4 +434,4 @@ export function TranslationBase({
   );
 }
 
-export default withActionsDisabled(TranslationBase);
+export const Translation = withActionsDisabled(TranslationBase);

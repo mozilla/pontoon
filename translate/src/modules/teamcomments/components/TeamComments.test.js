@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import TeamComments from './TeamComments';
+import { TeamComments } from './TeamComments';
 
 describe('<TeamComments>', () => {
   const DEFAULT_USER = 'AndyDwyer';

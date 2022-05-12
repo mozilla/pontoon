@@ -8,12 +8,14 @@ import {
   UsersList,
 } from '~/api/user';
 import { addNotification } from '~/core/notification/actions';
-import notificationMessages from '~/core/notification/messages';
+import { notificationMessages } from '~/core/notification/messages';
 import type { AppThunk } from '~/store';
 
 export const RECEIVE_USERS = 'users/RECEIVE_USERS';
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';
+
+export type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE_USERS;

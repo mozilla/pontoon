@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -12,7 +12,7 @@ import { Localized } from '@fluent/react';
  *   { DATETIME($date) }
  *   { NUMBER($ratio, minimumFractionDigits: 2) }
  */
-const fluentFunction = {
+export const fluentFunction = {
   rule: /({ ?[A-W0-9\-_]+[^}]* ?})/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -24,5 +24,3 @@ const fluentFunction = {
     );
   },
 };
-
-export default fluentFunction;

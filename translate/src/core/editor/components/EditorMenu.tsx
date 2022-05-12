@@ -1,5 +1,5 @@
 import { Localized } from '@fluent/react';
-import * as React from 'react';
+import React from 'react';
 
 import { useSelectedEntity } from '~/core/entities/hooks';
 import * as user from '~/core/user';
@@ -7,11 +7,11 @@ import { saveSetting } from '~/core/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
 
-import EditorMainAction from './EditorMainAction';
+import { EditorMainAction } from './EditorMainAction';
 import './EditorMenu.css';
-import EditorSettings from './EditorSettings';
-import FailedChecks from './FailedChecks';
-import KeyboardShortcuts from './KeyboardShortcuts';
+import { EditorSettings } from './EditorSettings';
+import { FailedChecks } from './FailedChecks';
+import { KeyboardShortcuts } from './KeyboardShortcuts';
 
 type Props = {
   firstItemHook?: React.ReactNode;
@@ -28,7 +28,7 @@ type Props = {
  * If the entity is read-only, shows a read-only notification.
  * Otherise, shows the various tools to control the editor.
  */
-export default function EditorMenu(props: Props): React.ReactElement<'menu'> {
+export function EditorMenu(props: Props): React.ReactElement<'menu'> {
   return (
     <menu className='editor-menu'>
       {props.firstItemHook}

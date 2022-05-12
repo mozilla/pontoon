@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -13,7 +13,7 @@ import { Localized } from '@fluent/react';
  *   "hello\t world"
  *   "hello  world"
  */
-const unusualSpace = {
+export const unusualSpace = {
   rule: /( +$|[\r\n\t]( +)| {2,})/ as RegExp,
   tag: (x: string): React.ReactElement<React.ElementType> => {
     return (
@@ -25,5 +25,3 @@ const unusualSpace = {
     );
   },
 };
-
-export default unusualSpace;

@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
-import SearchBox, { SearchBoxBase } from './SearchBox';
+import { SearchBox, SearchBoxBase } from './SearchBox';
 
 const PROJECT = {
   tags: [],
@@ -84,19 +84,14 @@ describe('<SearchBoxBase>', () => {
       />,
     );
 
-    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual(
-      [],
-    );
+    expect(wrapper.find('FiltersPanel').prop('filters').statuses).toEqual([]);
 
     act(() => {
-      wrapper.find('FiltersPanelBase').prop('toggleFilter')(
-        'missing',
-        'statuses',
-      );
+      wrapper.find('FiltersPanel').prop('toggleFilter')('missing', 'statuses');
     });
     wrapper.update();
 
-    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual([
+    expect(wrapper.find('FiltersPanel').prop('filters').statuses).toEqual([
       'missing',
     ]);
   });
@@ -114,14 +109,14 @@ describe('<SearchBoxBase>', () => {
 
     act(() => {
       const { toggleFilter, applySingleFilter } = wrapper
-        .find('FiltersPanelBase')
+        .find('FiltersPanel')
         .props();
       toggleFilter('missing', 'statuses');
       applySingleFilter('warnings', 'statuses');
     });
     wrapper.update();
 
-    expect(wrapper.find('FiltersPanelBase').prop('filters').statuses).toEqual([
+    expect(wrapper.find('FiltersPanel').prop('filters').statuses).toEqual([
       'warnings',
     ]);
   });
@@ -136,29 +131,29 @@ describe('<SearchBoxBase>', () => {
     );
 
     act(() => {
-      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      const toggle = wrapper.find('FiltersPanel').prop('toggleFilter');
       toggle('warnings', 'statuses');
       toggle('rejected', 'extras');
     });
     wrapper.update();
 
     act(() => {
-      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      const toggle = wrapper.find('FiltersPanel').prop('toggleFilter');
       toggle('errors', 'statuses');
     });
     wrapper.update();
 
-    expect(wrapper.find('FiltersPanelBase').prop('filters')).toMatchObject({
+    expect(wrapper.find('FiltersPanel').prop('filters')).toMatchObject({
       extras: ['rejected'],
       statuses: ['warnings', 'errors'],
     });
 
     act(() => {
-      wrapper.find('FiltersPanelBase').prop('resetFilters')();
+      wrapper.find('FiltersPanel').prop('resetFilters')();
     });
     wrapper.update();
 
-    expect(wrapper.find('FiltersPanelBase').prop('filters')).toMatchObject({
+    expect(wrapper.find('FiltersPanel').prop('filters')).toMatchObject({
       extras: [],
       statuses: [],
     });
@@ -177,7 +172,7 @@ describe('<SearchBoxBase>', () => {
     );
 
     act(() => {
-      const apply = wrapper.find('FiltersPanelBase').prop('applySingleFilter');
+      const apply = wrapper.find('FiltersPanel').prop('applySingleFilter');
       apply('all', 'statuses');
     });
     wrapper.update();
@@ -209,7 +204,7 @@ describe('<SearchBoxBase>', () => {
     );
 
     act(() => {
-      const panel = wrapper.find('FiltersPanelBase');
+      const panel = wrapper.find('FiltersPanel');
       const toggle = panel.prop('toggleFilter');
       const setTimeRange = panel.prop('setTimeRange');
       toggle('missing', 'statuses');
@@ -221,12 +216,12 @@ describe('<SearchBoxBase>', () => {
     wrapper.update();
 
     act(() => {
-      const toggle = wrapper.find('FiltersPanelBase').prop('toggleFilter');
+      const toggle = wrapper.find('FiltersPanel').prop('toggleFilter');
       toggle('warnings', 'statuses');
     });
     wrapper.update();
 
-    const apply = wrapper.find('FiltersPanelBase').prop('applyFilters');
+    const apply = wrapper.find('FiltersPanel').prop('applyFilters');
     apply();
 
     expect(

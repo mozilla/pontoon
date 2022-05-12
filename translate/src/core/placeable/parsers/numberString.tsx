@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Localized } from '@fluent/react';
 
 /**
@@ -14,7 +14,7 @@ import { Localized } from '@fluent/react';
  * Source:
  * https://github.com/translate/translate/blob/2.3.1/translate/storage/placeables/general.py#L72
  */
-const numberString = {
+export const numberString = {
   rule: /([-+]?[0-9]+([\u00A0.,][0-9]+)*)\b/u as RegExp,
   matchIndex: 0,
   tag: (x: string): React.ReactElement<React.ElementType> => {
@@ -27,5 +27,3 @@ const numberString = {
     );
   },
 };
-
-export default numberString;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import './WaveLoader.css';
 
@@ -19,5 +19,3 @@ export const WaveLoader = (): React.ReactElement<any> => (
     </div>
   </div>
 );
-
-export default WaveLoader;

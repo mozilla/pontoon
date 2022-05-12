@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import { getMarker, TermState } from '~/core/term';
-import { fluent } from '~/core/utils';
+import { getSimplePreview } from '~/core/utils/fluent';
 
 type Props = {
   readonly entity: Entity;
@@ -15,8 +15,8 @@ type Props = {
 /**
  * Show the original string of a Fluent entity as a simple preview.
  */
-export default function SimpleString(props: Props): React.ReactElement<'p'> {
-  const original = fluent.getSimplePreview(props.entity.original);
+export function SimpleString(props: Props): React.ReactElement<'p'> {
+  const original = getSimplePreview(props.entity.original);
   const TermsAndPlaceablesMarker = getMarker(props.terms, true);
   return (
     <p className='original' onClick={props.handleClickOnPlaceable}>

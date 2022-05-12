@@ -4,7 +4,7 @@ import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/locale';
 import { GenericTranslation } from '~/core/translation';
 
-import TranslationMemory from './source/TranslationMemory';
+import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   sourceString: string;

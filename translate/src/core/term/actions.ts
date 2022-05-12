@@ -4,6 +4,8 @@ import type { AppDispatch } from '~/store';
 export const RECEIVE = 'terms/RECEIVE';
 export const REQUEST = 'terms/REQUEST';
 
+export type Action = ReceiveAction | RequestAction;
+
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly terms: Array<TermType>;
@@ -27,8 +29,3 @@ export function get(sourceString: string, locale: string) {
     dispatch({ type: RECEIVE, terms });
   };
 }
-
-export default {
-  get,
-  request,
-};

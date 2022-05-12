@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 
 import * as editor from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { fluent } from '~/core/utils';
+import * as fluent from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { GenericTranslationForm } from '~/modules/genericeditor';
 
@@ -16,9 +16,7 @@ type Props = {
  * Handles transforming the editor's content back to a valid Fluent message on save.
  * Makes sure the content is correctly formatted when updated.
  */
-export default function SimpleEditor(
-  props: Props,
-): null | React.ReactElement<any> {
+export function SimpleEditor(props: Props): null | React.ReactElement<any> {
   const updateTranslation = editor.useUpdateTranslation();
   const clearEditor = editor.useClearEditor();
   const copyOriginalIntoEditor = editor.useCopyOriginalIntoEditor();

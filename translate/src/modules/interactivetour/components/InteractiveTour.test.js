@@ -10,7 +10,7 @@ beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
 beforeEach(() => hookModule.useTranslator.returns(false));
 afterAll(() => hookModule.useTranslator.restore());
 
-describe('<InteractiveTourBase>', () => {
+describe('<InteractiveTour>', () => {
   it('renders correctly on the tutorial page for unauthenticated user', () => {
     const store = createReduxStore({
       project: { slug: 'tutorial' },

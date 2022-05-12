@@ -5,15 +5,16 @@ import sinon from 'sinon';
 import * as api from '~/api/uxaction';
 
 import { UserNotification } from './UserNotification';
-import UserNotificationsMenuBase, {
+import {
   UserNotificationsMenu,
+  UserNotificationsMenuDialog,
 } from './UserNotificationsMenu';
 
-describe('<UserNotificationsMenu>', () => {
+describe('<UserNotificationsMenuDialog>', () => {
   it('shows empty notifications menu if user has no notifications', () => {
     const notifications = [];
     const wrapper = shallow(
-      <UserNotificationsMenu notifications={notifications} />,
+      <UserNotificationsMenuDialog notifications={notifications} />,
     );
 
     expect(wrapper.find('.notification-list .user-notification')).toHaveLength(
@@ -44,7 +45,7 @@ describe('<UserNotificationsMenu>', () => {
     ];
 
     const wrapper = shallow(
-      <UserNotificationsMenu notifications={notifications} />,
+      <UserNotificationsMenuDialog notifications={notifications} />,
     );
 
     expect(wrapper.find('.notification-list .no')).toHaveLength(0);
@@ -52,7 +53,7 @@ describe('<UserNotificationsMenu>', () => {
   });
 });
 
-describe('<UserNotificationsMenuBase>', () => {
+describe('<UserNotificationsMenu>', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(() => sandbox.spy(api, 'logUXAction'));
   afterEach(() => sandbox.restore());
@@ -64,7 +65,7 @@ describe('<UserNotificationsMenuBase>', () => {
         has_unread: false,
       },
     };
-    const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
+    const wrapper = shallow(<UserNotificationsMenu user={user} />);
 
     expect(wrapper.find('.user-notifications-menu')).toHaveLength(0);
   });
@@ -76,7 +77,7 @@ describe('<UserNotificationsMenuBase>', () => {
         notifications: [],
       },
     };
-    const wrapper = shallow(<UserNotificationsMenuBase user={user} />);
+    const wrapper = shallow(<UserNotificationsMenu user={user} />);
 
     expect(wrapper.find('.user-notifications-menu')).toHaveLength(1);
   });
@@ -90,7 +91,7 @@ describe('<UserNotificationsMenuBase>', () => {
         unread_count: '5',
       },
     };
-    const wrapper = mount(<UserNotificationsMenuBase user={user} />);
+    const wrapper = mount(<UserNotificationsMenu user={user} />);
 
     expect(wrapper.find('.user-notifications-menu .badge').text()).toEqual('5');
     expect(api.logUXAction.called).toEqual(true);
@@ -106,7 +107,7 @@ describe('<UserNotificationsMenuBase>', () => {
       },
     };
     const wrapper = shallow(
-      <UserNotificationsMenuBase
+      <UserNotificationsMenu
         markAllNotificationsAsRead={markAllNotificationsAsRead}
         user={user}
       />,

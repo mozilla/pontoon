@@ -6,7 +6,7 @@ import type { PatternElement } from '@fluent/syntax';
  * - Placeable with expression type StringLiteral, NumberLiteral,
  *   VariableReference, MessageReference, TermReference, FunctionReference
  */
-export default function isSimpleElement(element: PatternElement): boolean {
+export function isSimpleElement(element: PatternElement): boolean {
   if (element.type === 'TextElement') {
     return true;
   }

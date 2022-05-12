@@ -10,7 +10,7 @@ import {
 
 import * as editorActions from '../actions';
 import * as ExistingTranslation from '../hooks/useExistingTranslation';
-import EditorMainAction from './EditorMainAction';
+import { EditorMainAction } from './EditorMainAction';
 
 beforeAll(() => {
   sinon.stub(Translator, 'useTranslator');

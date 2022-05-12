@@ -7,10 +7,10 @@ import {
   useUpdateTranslation,
 } from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { fluent } from '~/core/utils';
+import * as fluent from '~/core/utils/fluent';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import RichTranslationForm from './RichTranslationForm';
+import { RichTranslationForm } from './RichTranslationForm';
 
 type Props = {
   ftlSwitch: React.ReactNode;
@@ -24,7 +24,7 @@ type Props = {
  * are made directly to that AST. That is why lots of Editor methods are
  * overwritten, to handle the conversion from AST to string and back.
  */
-export default function RichEditor(props: Props): React.ReactElement<any> {
+export function RichEditor(props: Props): React.ReactElement<any> {
   const dispatch = useAppDispatch();
 
   const sendTranslation = useSendTranslation();

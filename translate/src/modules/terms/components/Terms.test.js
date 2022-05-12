@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Terms from './Terms';
+import { Terms } from './Terms';
 import { TermsList } from '~/core/term';
 
 describe('<Terms>', () => {
