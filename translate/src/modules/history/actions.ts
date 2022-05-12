@@ -9,7 +9,7 @@ import {
 } from '~/api/translation';
 import type { LocaleType } from '~/context/locale';
 import type { LocationType } from '~/context/location';
-import type { PluralFormType } from '~/context/pluralForm';
+import type { PluralForm } from '~/context/pluralForm';
 import {
   resetEditor,
   updateFailedChecks,
@@ -109,7 +109,7 @@ export function updateStatus(
   change: ChangeOperation,
   entity: Entity,
   locale: LocaleType,
-  { pluralForm, setPluralForm }: PluralFormType,
+  { pluralForm, setPluralForm }: PluralForm,
   translation: number,
   nextEntity: Entity | null,
   location: LocationType,

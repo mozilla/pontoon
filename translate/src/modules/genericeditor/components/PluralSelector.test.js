@@ -1,9 +1,9 @@
 import { shallow } from 'enzyme';
-import React, { useContext } from 'react';
+import React from 'react';
 import sinon from 'sinon';
 
 import { Locale } from '~/context/locale';
-import { PluralForm, PluralFormProvider } from '~/context/pluralForm';
+import { PluralFormProvider, usePluralForm } from '~/context/pluralForm';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { PluralSelector, PluralSelectorBase } from './PluralSelector';
@@ -80,7 +80,7 @@ describe('<PluralSelector>', () => {
 
     const pfLog = [];
     const Spy = () => {
-      pfLog.push(useContext(PluralForm).pluralForm);
+      pfLog.push(usePluralForm().pluralForm);
       return null;
     };
     const Component = () => (
