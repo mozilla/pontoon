@@ -49,6 +49,8 @@
 
 ### Where code goes
 
+`src/api/` provides methods wrapping Pontoon's REST API. Responses are typed, but are not completely validated.
+
 `src/context/` contains components and hooks for React Context -based commonly accessible features/modules/data stores.
 
 `src/core/` contains features that are shared in the application, in the form of modules. There should be as little code as possible in this folder.

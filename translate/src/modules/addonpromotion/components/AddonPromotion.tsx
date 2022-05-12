@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useEffect, useState } from 'react';
 import { NAME as USER } from '~/core/user';
-import { dismissAddonPromotion } from '~/core/user/actions';
+import { dismissAddonPromotion_ } from '~/core/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import './AddonPromotion.css';
 
@@ -80,7 +80,7 @@ export function AddonPromotion(): React.ReactElement<'div'> | null {
           <button
             className='dismiss'
             aria-label='Dismiss'
-            onClick={() => dispatch(dismissAddonPromotion())}
+            onClick={() => dispatch(dismissAddonPromotion_())}
           >
             ×
           </button>

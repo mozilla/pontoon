@@ -12,7 +12,7 @@ import { addRawNotification } from './core/notification/actions';
 import { getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user';
-import { getUsers } from './core/user/actions';
+import { getUsersList } from './core/user/actions';
 
 import { useAppDispatch, useAppSelector } from './hooks';
 
@@ -44,7 +44,7 @@ export function App() {
 
   useEffect(() => {
     updateLocale(locale, location.locale);
-    dispatch(getUsers());
+    dispatch(getUsersList());
   }, []);
 
   useEffect(() => {

@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { serializeVariantKey } from '@fluent/syntax';
+import {
+  Attribute,
+  PatternElement,
+  Pattern,
+  serializeVariantKey,
+} from '@fluent/syntax';
 
-import './RichString.css';
-
-import { getMarker } from '~/core/term';
+import type { Entity } from '~/api/entity';
+import { getMarker, TermState } from '~/core/term';
 import { fluent } from '~/core/utils';
 
-import type { Entity } from '~/core/api';
-import type { TermState } from '~/core/term';
-import type { Attribute, PatternElement, Pattern } from '@fluent/syntax';
+import './RichString.css';
 
 type Props = {
   readonly entity: Entity;

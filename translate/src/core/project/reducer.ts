@@ -1,6 +1,6 @@
-import { RECEIVE, REQUEST } from './actions';
+import type { Tag } from '~/api/project';
 
-import type { Action, Tag } from './actions';
+import { Action, RECEIVE, REQUEST } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -11,7 +11,7 @@ export type ProjectState = {
   readonly slug: string;
   readonly name: string;
   readonly info: string;
-  readonly tags: Array<Tag>;
+  readonly tags: Tag[];
 };
 
 const initial: ProjectState = {

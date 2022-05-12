@@ -1,51 +1,28 @@
-import api from '~/core/api';
-
+import { FilterData, fetchFilterData } from '~/api/filter';
 import type { AppDispatch } from '~/store';
 
-export const UPDATE: 'search/UPDATE' = 'search/UPDATE';
-export const SET_FOCUS: 'search/SET_FOCUS' = 'search/SET_FOCUS';
+export const UPDATE = 'search/UPDATE';
+export const SET_FOCUS = 'search/SET_FOCUS';
 
-export type Author = {
-  email: string;
-  display_name: string;
-  id: number;
-  gravatar_url: string;
-  translation_count: number;
-  role: string;
-};
+export type Action = UpdateAction | SetFocusAction;
 
-export type ResponseType = {
-  authors: Array<Author>;
-  counts_per_minute: Array<Array<number>>;
-};
-
-export type UpdateAction = {
+type UpdateAction = {
   type: typeof UPDATE;
-  response: ResponseType;
+  response: FilterData;
 };
-export function update(response: ResponseType): UpdateAction {
-  return {
-    type: UPDATE,
-    response,
-  };
-}
 
-export function getAuthorsAndTimeRangeData(
-  locale: string,
-  project: string,
-  resource: string,
-) {
-  return async (dispatch: AppDispatch) => {
-    const response = await api.filter.get(locale, project, resource);
-
-    dispatch(update(response));
-  };
-}
-
-export type SetFocusAction = {
+type SetFocusAction = {
   type: typeof SET_FOCUS;
   searchInputFocused: boolean;
 };
+
+export const getAuthorsAndTimeRangeData =
+  (locale: string, project: string, resource: string) =>
+  async (dispatch: AppDispatch) => {
+    const response = await fetchFilterData(locale, project, resource);
+    dispatch({ type: UPDATE, response });
+  };
+
 export function setFocus(searchInputFocused: boolean): SetFocusAction {
   return {
     type: SET_FOCUS,

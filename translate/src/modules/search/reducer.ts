@@ -1,12 +1,10 @@
-import { UPDATE, SET_FOCUS } from './actions';
+import type { Author } from '~/api/filter';
 
-import type { Author, UpdateAction, SetFocusAction } from './actions';
-
-type Action = UpdateAction | SetFocusAction;
+import { Action, UPDATE, SET_FOCUS } from './actions';
 
 export type SearchAndFilters = {
-  readonly authors: Array<Author>;
-  readonly countsPerMinute: Array<Array<number>>;
+  readonly authors: Author[];
+  readonly countsPerMinute: number[][];
   readonly searchInputFocused: boolean;
 };
 

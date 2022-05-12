@@ -1,11 +1,13 @@
-import { RECEIVE_USERS, UPDATE, UPDATE_SETTINGS } from './actions';
+import type { UsersList } from '~/api/user';
 
-import type {
+import {
   ReceiveAction,
   UpdateAction,
   UpdateSettingsAction,
+  RECEIVE_USERS,
+  UPDATE,
+  UPDATE_SETTINGS,
 } from './actions';
-import type { UsersList } from '~/core/api';
 
 type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
 

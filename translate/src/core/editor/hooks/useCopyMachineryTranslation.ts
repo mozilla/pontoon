@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import type { MachineryTranslation, SourceType } from '~/core/api';
+import type { MachineryTranslation, SourceType } from '~/api/machinery';
 import { NAME as EDITOR } from '~/core/editor';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';

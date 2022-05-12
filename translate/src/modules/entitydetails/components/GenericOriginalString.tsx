@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
+import type { Entity } from '~/api/entity';
 import { Locale } from '~/context/locale';
-import type { Entity } from '~/core/api';
 import { getMarker, TermState } from '~/core/term';
 
 type Props = {

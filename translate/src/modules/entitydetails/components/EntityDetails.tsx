@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react';
 
+import type { Entity } from '~/api/entity';
+import { FailedChecks } from '~/api/translation';
 import { Locale } from '~/context/locale';
 import { Location, LocationType } from '~/context/location';
 import {
@@ -14,10 +16,8 @@ import {
   useTranslationForEntity,
 } from '~/context/pluralForm';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
-import type { Entity } from '~/core/api';
-import { addComment } from '~/core/comments/actions';
+import { addComment_ } from '~/core/comments/actions';
 import {
-  FailedChecks,
   reset as resetEditor,
   resetFailedChecks,
   resetHelperElementIndex,
@@ -45,7 +45,7 @@ import {
   NAME as HISTORY,
 } from '~/modules/history';
 import {
-  deleteTranslation,
+  deleteTranslation_,
   get as getHistory,
   request as requestHistory,
   updateStatus,
@@ -301,15 +301,15 @@ export function EntityDetailsBase({
     [dispatch],
   );
 
-  const deleteTranslation_ = useCallback(
+  const deleteTranslation__ = useCallback(
     (translationId: number) =>
-      dispatch(deleteTranslation(entity, lc, pluralForm, translationId)),
+      dispatch(deleteTranslation_(entity, lc, pluralForm, translationId)),
     [dispatch, entity, lc, pluralForm],
   );
 
-  const addComment_ = useCallback(
+  const addComment__ = useCallback(
     (comment: string, translation: number | null | undefined) =>
-      dispatch(addComment(entity, lc, pluralForm, translation, comment)),
+      dispatch(addComment_(entity, lc, pluralForm, translation, comment)),
     [dispatch, entity, lc, pluralForm],
   );
 
@@ -342,6 +342,7 @@ export function EntityDetailsBase({
             translationId,
             nextEntity,
             parameters,
+            false,
           ),
         ),
       );
@@ -391,8 +392,8 @@ export function EntityDetailsBase({
           history={history}
           isReadOnlyEditor={isReadOnlyEditor}
           user={user}
-          deleteTranslation={deleteTranslation_}
-          addComment={addComment_}
+          deleteTranslation={deleteTranslation__}
+          addComment={addComment__}
           updateTranslationStatus={updateTranslationStatus}
           updateEditorTranslation={updateEditorTranslation}
         />
@@ -405,7 +406,7 @@ export function EntityDetailsBase({
           otherlocales={otherlocales}
           teamComments={teamComments}
           terms={terms}
-          addComment={addComment_}
+          addComment={addComment__}
           togglePinnedStatus={togglePinnedStatus}
           parameters={parameters}
           user={user}

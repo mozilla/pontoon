@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import type { TermType } from '~/core/api';
+import type { TermType } from '~/api/terminology';
 import { TermsList } from '~/core/term';
 import { useOnDiscard } from '~/core/utils';
 

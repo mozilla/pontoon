@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Localized } from '@fluent/react';
 
-import './Term.css';
+import type { TermType } from '~/api/terminology';
 
-import type { TermType } from '~/core/api';
+import './Term.css';
 
 type Props = {
   isReadOnlyEditor: boolean;

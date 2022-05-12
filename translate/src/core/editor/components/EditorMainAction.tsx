@@ -38,7 +38,7 @@ export default function EditorMainAction({
 
   function approveTranslation() {
     if (existingTranslation) {
-      updateTranslationStatus(existingTranslation.pk, 'approve');
+      updateTranslationStatus(existingTranslation.pk, 'approve', false);
     }
   }
 

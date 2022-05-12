@@ -21,8 +21,8 @@ import {
   withReact,
 } from 'slate-react';
 
+import type { UsersList } from '~/api/user';
 import type { LocationType } from '~/context/location';
-import type { UsersList } from '~/core/api';
 import type { UserState } from '~/core/user';
 import { UserAvatar } from '~/core/user';
 

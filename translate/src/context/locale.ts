@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import APIBase from '~/core/api/base';
+import { GET } from '~/api/utils/base';
 
 export type Localization = Readonly<{
   project: Readonly<{ slug: string; name: string }>;
@@ -71,11 +71,8 @@ export async function updateLocale(locale: LocaleType, code: string) {
     }
   }`;
 
-  const payload = new URLSearchParams();
-  payload.append('query', query);
-  const headers = new Headers();
-  headers.append('X-Requested-With', 'XMLHttpRequest');
-  const res = await new APIBase().fetch('/graphql', 'GET', payload, headers);
+  const search = new URLSearchParams({ query });
+  const res = await GET('/graphql', search);
 
   const next = res.data.locale as Omit<LocaleType, 'cldrPlurals'> & {
     cldrPlurals: string;

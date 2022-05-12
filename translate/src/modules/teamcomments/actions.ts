@@ -1,24 +1,18 @@
-import isEmpty from 'lodash.isempty';
-
-import api from '~/core/api';
-
+import {
+  fetchTeamComments,
+  setCommentPinned,
+  TeamComment,
+} from '~/api/comment';
 import type { AppDispatch } from '~/store';
-import type { TeamComment } from '~/core/api';
 
-export const RECEIVE: 'comments/RECEIVE' = 'comments/RECEIVE';
-export const REQUEST: 'comments/REQUEST' = 'comments/REQUEST';
-export const TOGGLE_PINNED: 'comments/TOGGLE_PINNED' = 'comments/TOGGLE_PINNED';
+export const RECEIVE = 'comments/RECEIVE';
+export const REQUEST = 'comments/REQUEST';
+export const TOGGLE_PINNED = 'comments/TOGGLE_PINNED';
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly comments: Array<TeamComment>;
 };
-export function receive(comments: Array<TeamComment>): ReceiveAction {
-  return {
-    type: RECEIVE,
-    comments,
-  };
-}
 
 export type RequestAction = {
   readonly type: typeof REQUEST;
@@ -52,36 +46,20 @@ export function get(entity: number, locale: string) {
     // request() must be called separately to prevent
     // re-rendering of the component on addComment()
 
-    // Abort all previously running requests.
-    await api.entity.abort();
-
-    let content = await api.entity.getTeamComments(entity, locale);
-
-    // The default return value of aborted requests is {},
-    // which is incompatible with reducer
-    if (isEmpty(content)) {
-      content = [];
-    }
-
-    dispatch(receive(content));
+    const comments = await fetchTeamComments(entity, locale);
+    dispatch({ type: RECEIVE, comments });
   };
 }
 
 export function togglePinnedStatus(pinned: boolean, commentId: number) {
   return async (dispatch: AppDispatch) => {
-    if (pinned) {
-      await api.comment.pinComment(commentId);
-    } else {
-      await api.comment.unpinComment(commentId);
-    }
-
+    await setCommentPinned(commentId, pinned);
     dispatch(togglePinned(pinned, commentId));
   };
 }
 
 export default {
   get,
-  receive,
   request,
   togglePinnedStatus,
 };

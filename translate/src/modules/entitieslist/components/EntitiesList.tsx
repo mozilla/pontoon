@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
+import type { Entity as EntityType } from '~/api/entity';
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
-import type { Entity as EntityType } from '~/core/api';
 import { reset as resetEditor } from '~/core/editor/actions';
 import {
-  fetchEntities,
-  fetchSiblingEntities,
+  getEntities,
+  getSiblingEntities,
   resetEntities,
 } from '~/core/entities/actions';
 import { useEntities } from '~/core/entities/hooks';
@@ -156,8 +156,8 @@ export function EntitiesList(): React.ReactElement<'div'> {
   useEffect(scrollToSelected, [location.entity]);
 
   const { code } = useContext(Locale);
-  const getSiblingEntities = useCallback(
-    (entity: number) => dispatch(fetchSiblingEntities(entity, code)),
+  const getSiblingEntities_ = useCallback(
+    (entity: number) => dispatch(getSiblingEntities(entity, code)),
     [dispatch, code],
   );
 
@@ -193,7 +193,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const getMoreEntities = useCallback(() => {
     if (!fetching) {
       // Currently shown entities should be excluded from the next results.
-      dispatch(fetchEntities(location, entities));
+      dispatch(getEntities(location, entities));
     }
   }, [dispatch, entities, fetching, location]);
 
@@ -240,7 +240,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
               !batchactions.entities.length && entity.pk === location.entity
             }
             selectEntity={selectEntity}
-            getSiblingEntities={getSiblingEntities}
+            getSiblingEntities={getSiblingEntities_}
             parameters={location}
           />
         ))}

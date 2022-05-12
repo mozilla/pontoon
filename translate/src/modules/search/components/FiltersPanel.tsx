@@ -2,13 +2,13 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { Author } from '~/api/filter';
+import type { Tag } from '~/api/project';
 import type { LocationType } from '~/context/location';
-import type { Tag } from '~/core/project';
 import { Stats, useStats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
-import type { Author } from '../index';
 import './FiltersPanel.css';
 import type { FilterState, FilterType, TimeRangeType } from './SearchBox';
 import { TimeRangeFilter } from './TimeRangeFilter';

@@ -1,9 +1,7 @@
 import * as React from 'react';
 
-import { getMarker } from '~/core/term';
-
-import type { Entity } from '~/core/api';
-import type { TermState } from '~/core/term';
+import type { Entity } from '~/api/entity';
+import { getMarker, TermState } from '~/core/term';
 
 type Props = {
   readonly entity: Entity;

@@ -1,7 +1,6 @@
-import { RECEIVE, REQUEST } from './actions';
+import type { TermType } from '~/api/terminology';
 
-import type { TermType } from '~/core/api';
-import type { ReceiveAction, RequestAction } from './actions';
+import { ReceiveAction, RequestAction, RECEIVE, REQUEST } from './actions';
 
 type Action = ReceiveAction | RequestAction;
 

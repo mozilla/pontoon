@@ -1,14 +1,13 @@
-import { RECEIVE, REQUEST } from './actions';
+import type { OtherLocaleTranslation } from '~/api/other-locales';
 
-import type { OtherLocaleTranslations } from '~/core/api';
-import type { ReceiveAction, RequestAction } from './actions';
+import { ReceiveAction, RequestAction, RECEIVE, REQUEST } from './actions';
 
 type Action = ReceiveAction | RequestAction;
 
 export type LocalesState = {
   readonly fetching: boolean;
   readonly entity: number | null | undefined;
-  readonly translations: OtherLocaleTranslations;
+  readonly translations: OtherLocaleTranslation[];
 };
 
 const initialState: LocalesState = {

@@ -2,16 +2,17 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
-import { Locale } from '~/context/locale';
 
-import type { Entity } from '~/core/api';
+import type { Entity } from '~/api/entity';
+import { HistoryTranslation } from '~/api/translation';
+import { Locale } from '~/context/locale';
 import { CommentsList } from '~/core/comments';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/core/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import type { ChangeOperation, HistoryTranslation } from '../index';
+import type { ChangeOperation } from '../index';
 
 import './Translation.css';
 

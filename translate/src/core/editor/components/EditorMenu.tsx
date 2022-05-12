@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { useSelectedEntity } from '~/core/entities/hooks';
 import * as user from '~/core/user';
+import { saveSetting } from '~/core/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
 
@@ -63,7 +64,7 @@ function MenuContent(props: Props) {
   }
 
   function updateSetting(setting: keyof user.Settings, value: boolean) {
-    dispatch(user.actions.saveSetting(setting, value, userState.username));
+    dispatch(saveSetting(setting, value, userState.username));
   }
 
   return (

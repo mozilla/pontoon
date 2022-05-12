@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 
+import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/locale';
-import type { MachineryTranslation } from '~/core/api';
 import { GenericTranslation } from '~/core/translation';
+
 import TranslationMemory from './source/TranslationMemory';
 
 type Props = {

@@ -1,5 +1,4 @@
-import api from '~/core/api';
-
+import { fetchAllResources } from '~/api/resource';
 import type { AppDispatch } from '~/store';
 
 export const RECEIVE_RESOURCES = 'resource/RECEIVE';
@@ -29,7 +28,7 @@ export type Action = ReceiveAction | UpdateAction;
 
 export const getResource =
   (locale: string, project: string) => async (dispatch: AppDispatch) => {
-    const results = await api.resource.getAll(locale, project);
+    const results = await fetchAllResources(locale, project);
 
     const resources = results.map((resource) => ({
       path: resource.title,
