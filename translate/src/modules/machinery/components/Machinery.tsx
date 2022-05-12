@@ -1,4 +1,4 @@
-import { Localized } from '@fluent/react';
+import { useLocalization } from '@fluent/react';
 import React, { useContext } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { Entity } from '~/api/entity';
@@ -22,6 +22,7 @@ type Props = {
  * third-party Machine Translation.
  */
 export function Machinery({ entity }: Props): React.ReactElement<'section'> {
+  const { l10n } = useLocalization();
   const { source, translations } = useContext(MachineryTranslations);
   const { fetching, hasMore, input, query, results, setInput, getResults } =
     useContext(SearchData);
@@ -33,11 +34,21 @@ export function Machinery({ entity }: Props): React.ReactElement<'section'> {
     rootMargin: '0px 0px 400px 0px',
   });
 
+  const placeholder =
+    query ||
+    l10n.getString(
+      'machinery-Machinery--search-placeholder',
+      null,
+      'Concordance Search',
+    );
+
   return (
     <section className='machinery'>
       <div className='search-wrapper clearfix'>
         <label htmlFor='machinery-search'>
-          {query ? (
+          {input && input !== query ? (
+            <button className='fa fa-search' onClick={getResults}></button>
+          ) : query ? (
             <button
               className='fa fa-times'
               onClick={() => {
@@ -55,19 +66,14 @@ export function Machinery({ entity }: Props): React.ReactElement<'section'> {
             getResults();
           }}
         >
-          <Localized
-            id='machinery-Machinery--search-placeholder'
-            attrs={{ placeholder: true }}
-          >
-            <input
-              autoComplete='off'
-              id='machinery-search'
-              onChange={(ev) => setInput(ev.target.value)}
-              placeholder='Concordance Search'
-              type='search'
-              value={input}
-            />
-          </Localized>
+          <input
+            autoComplete='off'
+            id='machinery-search'
+            onChange={(ev) => setInput(ev.target.value)}
+            placeholder={placeholder}
+            type='search'
+            value={input}
+          />
         </form>
       </div>
       <div className='list-wrapper' ref={rootRef}>
