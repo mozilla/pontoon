@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 import type { Entity } from '~/api/entity';
-import { FailedChecks } from '~/api/translation';
+import type { FailedChecks } from '~/api/translation';
 import { Locale } from '~/context/locale';
 import { Location, LocationType } from '~/context/location';
 import {
@@ -16,7 +16,6 @@ import {
   useTranslationForEntity,
 } from '~/context/pluralForm';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
-import { addComment_ } from '~/core/comments/actions';
 import {
   resetEditor,
   resetFailedChecks,
@@ -304,12 +303,6 @@ export function EntityDetailsBase({
     [dispatch, entity, lc, pluralForm],
   );
 
-  const addComment__ = useCallback(
-    (comment: string, translation: number | null | undefined) =>
-      dispatch(addComment_(entity, lc, pluralForm, translation, comment)),
-    [dispatch, entity, lc, pluralForm],
-  );
-
   const togglePinnedStatus = useCallback(
     (pinned: boolean, commentId: number) =>
       dispatch(togglePinnedTeamCommentStatus(pinned, commentId)),
@@ -390,7 +383,6 @@ export function EntityDetailsBase({
           isReadOnlyEditor={isReadOnlyEditor}
           user={user}
           deleteTranslation={deleteTranslation__}
-          addComment={addComment__}
           updateTranslationStatus={updateTranslationStatus}
           updateEditorTranslation={updateEditorTranslation}
         />
@@ -403,7 +395,6 @@ export function EntityDetailsBase({
           otherlocales={otherlocales}
           teamComments={teamComments}
           terms={terms}
-          addComment={addComment__}
           togglePinnedStatus={togglePinnedStatus}
           parameters={parameters}
           user={user}
