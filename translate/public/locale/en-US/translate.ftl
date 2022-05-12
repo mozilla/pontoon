@@ -440,8 +440,7 @@ interactivetour-InteractiveTour--end-footer =
 
 ## Machinery
 ## Shows a list of translations from machines.
-machinery-Machinery--search-placeholder =
-    .placeholder = Concordance Search
+machinery-Machinery--search-placeholder = Concordance Search
 
 machinery-Machinery--load-more = LOAD MORE
 

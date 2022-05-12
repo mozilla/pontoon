@@ -37,6 +37,10 @@
   background-color: transparent;
   border: none;
   color: #aaaaaa;
+  padding: 0;
+}
+
+.machinery > .search-wrapper > label > button.fa-times {
   padding: 0 4px;
 }
 
