@@ -197,6 +197,7 @@ export function SearchBoxBase({
           tag: tags.join(','),
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
+          list: null,
         });
       }),
     [dispatch, parameters, search, filters],

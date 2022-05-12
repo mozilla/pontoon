@@ -1,6 +1,5 @@
 from collections import defaultdict
 from datetime import timedelta
-from urllib.parse import urlencode
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -13,7 +12,7 @@ from pontoon.base.models import Translation
 class Command(BaseCommand):
     help = "Notify translators about their newly reviewed suggestions"
 
-    def get_description(self, author, notifyData):
+    def get_description(self, notifyData):
         desc = "Your suggestions have been reviewed:\n<ul>"
 
         for (locale, project), (approved, rejected) in notifyData.items():
@@ -25,11 +24,8 @@ class Command(BaseCommand):
                     "resource": "all-resources",
                 },
             )
-            url += "?" + urlencode({"author": author.email})
-            if len(approved) == 1 and len(rejected) == 0:
-                url += "&" + urlencode({"string": approved[0]})
-            elif len(approved) == 0 and len(rejected) == 1:
-                url += "&" + urlencode({"string": rejected[0]})
+            list = map(str, approved + rejected)
+            url += "?list=" + ",".join(list)
 
             # Filter out rejections where the author's own suggestion replaced the previous
             rejected = [x for x in rejected if x not in approved]
@@ -73,7 +69,7 @@ class Command(BaseCommand):
                 data[author][(locale, project)][1].append(suggestion.entity.pk)
 
         for author, notifyData in data.items():
-            desc = self.get_description(author, notifyData)
+            desc = self.get_description(notifyData)
             notify.send(
                 sender=author,
                 recipient=author,

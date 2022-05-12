@@ -412,9 +412,9 @@ export function FiltersPanel({
       selectedCount += 1;
       filterIcon ??= 'time-range';
     }
-    filterIcon ??= 'all';
+    filterIcon ??= parameters.list ? 'list' : 'all';
     return { filterIcon, selectedCount };
-  }, [filters, tagsData, authorsData]);
+  }, [filters, parameters.list, tagsData, authorsData]);
 
   return (
     <div className='filters-panel'>

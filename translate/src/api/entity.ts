@@ -68,7 +68,7 @@ export async function batchEditEntities(
 }
 
 type EntitiesResponse =
-  | { entities: Entity[]; has_next: boolean; stats: APIStats }
+  | { entities: Entity[]; has_next?: boolean; stats: APIStats }
   | { entities?: never; has_next: false; stats: {} };
 
 /**
@@ -79,22 +79,20 @@ type EntitiesResponse =
  * the query. Use this to query for the next set of entities.
  */
 export async function fetchEntities(
+  location: LocationType & { list: number[] },
+): Promise<{ entities: Entity[]; stats: APIStats }>;
+export async function fetchEntities(
   location: LocationType,
   exclude: Entity[],
+): Promise<EntitiesResponse>;
+export async function fetchEntities(
+  location: LocationType,
+  exclude?: Entity[],
 ): Promise<EntitiesResponse> {
   const payload = buildFetchPayload(location);
-  if (exclude.length > 0) {
+  if (exclude?.length) {
     payload.append('exclude_entities', exclude.map((ent) => ent.pk).join(','));
   }
-  return await POST('/get-entities/', payload);
-}
-
-export async function fetchEntitiesById(
-  { locale, project, resource }: LocationType,
-  entityIds: number[],
-): Promise<{ entities: Entity[]; stats: APIStats }> {
-  const payload = buildFetchPayload({ locale, project, resource });
-  payload.append('entity_ids', entityIds.join(','));
   return await POST('/get-entities/', payload);
 }
 
@@ -111,7 +109,7 @@ function buildFetchPayload(
   location: Pick<LocationType, 'locale' | 'project' | 'resource'> &
     Partial<LocationType>,
 ): FormData {
-  const { locale, project, resource, entity } = location;
+  const { locale, project, resource, entity, list } = location;
 
   const payload = new FormData();
   payload.append('locale', locale);
@@ -119,21 +117,25 @@ function buildFetchPayload(
   if (resource !== 'all-resources') {
     payload.append('paths[]', resource);
   }
-  if (entity) {
-    payload.append('entity', String(entity));
-  }
 
-  for (const key of [
-    'search',
-    'status',
-    'extra',
-    'tag',
-    'author',
-    'time',
-  ] as const) {
-    const value = location[key];
-    if (value) {
-      payload.append(key, value);
+  if (list) {
+    payload.append('entity_ids', list.join(','));
+  } else {
+    if (entity) {
+      payload.append('entity', String(entity));
+    }
+    for (const key of [
+      'search',
+      'status',
+      'extra',
+      'tag',
+      'author',
+      'time',
+    ] as const) {
+      const value = location[key];
+      if (value) {
+        payload.append(key, value);
+      }
     }
   }
 
