@@ -1,4 +1,4 @@
-import { GET } from './_base';
+import { GET } from './utils/base';
 
 /*
  * Translation of an entity in a locale other than the currently selected locale.

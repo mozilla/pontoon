@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { GET } from '~/api/_base';
+import { GET } from '~/api/utils/base';
 
 export type Localization = Readonly<{
   project: Readonly<{ slug: string; name: string }>;

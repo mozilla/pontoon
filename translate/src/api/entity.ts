@@ -1,8 +1,8 @@
 import { LocationType } from '~/context/location';
 
-import { GET, POST } from './_base';
-import { getCSRFToken } from './_csrfToken';
-import { keysToCamelCase } from './_keysToCamelCase';
+import { GET, POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
+import { keysToCamelCase } from './utils/keysToCamelCase';
 import type {
   APIStats,
   EntityTranslation,

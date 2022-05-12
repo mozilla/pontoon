@@ -1,5 +1,5 @@
-import { POST } from './_base';
-import { getCSRFToken } from './_csrfToken';
+import { POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
 import type { TranslationComment } from './comment';
 import type { SourceType } from './machinery';
 

@@ -1,5 +1,5 @@
-import { GET } from './_base';
-import { keysToCamelCase } from './_keysToCamelCase';
+import { GET } from './utils/base';
+import { keysToCamelCase } from './utils/keysToCamelCase';
 
 /**
  * Term entry with translation.

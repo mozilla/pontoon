@@ -1,4 +1,4 @@
-import { GET } from './_base';
+import { GET } from './utils/base';
 
 type APIResource = {
   readonly title: string;

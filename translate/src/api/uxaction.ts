@@ -1,5 +1,5 @@
-import { POST } from './_base';
-import { getCSRFToken } from './_csrfToken';
+import { POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
 
 export async function logUXAction(
   action_type: string,

@@ -1,6 +1,6 @@
 import type { LocaleType } from '~/context/locale';
 
-import { GET } from './_base';
+import { GET } from './utils/base';
 
 /*
  * Translation that comes from a machine (Machine Translation,

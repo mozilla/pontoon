@@ -1,5 +1,5 @@
-import { GET, POST } from './_base';
-import { getCSRFToken } from './_csrfToken';
+import { GET, POST } from './utils/base';
+import { getCSRFToken } from './utils/csrfToken';
 
 export type Notification = {
   id: number;

@@ -1,4 +1,4 @@
-import { GET } from './_base';
+import { GET } from './utils/base';
 
 export type Tag = {
   readonly slug: string;
