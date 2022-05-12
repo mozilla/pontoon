@@ -233,6 +233,7 @@ describe('<SearchBoxBase>', () => {
         tag: 'browser',
         time: '111111111111-111111111111',
         entity: 0,
+        list: null,
       }),
     ).toBeTruthy();
   });

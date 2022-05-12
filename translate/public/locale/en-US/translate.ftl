@@ -633,6 +633,7 @@ search-FiltersPanel--extra-name-unchanged = Unchanged
 search-FiltersPanel--extra-name-empty = Empty
 search-FiltersPanel--extra-name-fuzzy = Fuzzy
 search-FiltersPanel--extra-name-rejected = Rejected
+search-FiltersPanel--extra-name-missing-without-unreviewed = Missing without Unreviewed
 
 search-FiltersPanel--clear-selection = <glyph></glyph>CLEAR
     .title = Uncheck selected filters

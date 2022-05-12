@@ -93,6 +93,10 @@
   font-size: 16px;
 }
 
+.search-box .list .status:before {
+  content: '\f022';
+}
+
 .search-box .unchanged .status:before {
   content: '';
 }
