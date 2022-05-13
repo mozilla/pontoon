@@ -23,9 +23,13 @@ type Props = {
   activeTranslation: HistoryTranslation;
   user: UserState;
   index: number;
-  deleteTranslation: (id: number) => void;
-  updateEditorTranslation: (arg0: string, arg1: string) => void;
-  updateTranslationStatus: (id: number, operation: ChangeOperation) => void;
+  deleteTranslation: (translationId: number) => void;
+  updateEditorTranslation: (translation: string, changeSource: string) => void;
+  updateTranslationStatus: (
+    translationId: number,
+    change: ChangeOperation,
+    ignoreWarnings: boolean,
+  ) => void;
 };
 
 type InternalProps = Props & {
@@ -166,7 +170,7 @@ export function TranslationBase({
       disableAction();
       event.stopPropagation();
       const action = event.currentTarget.name as ChangeOperation;
-      updateTranslationStatus(translation.pk, action);
+      updateTranslationStatus(translation.pk, action, false);
     },
     [disableAction, isActionDisabled, translation.pk, updateTranslationStatus],
   );
@@ -200,7 +204,7 @@ export function TranslationBase({
       ? `Unapproved by ${translation.unapprovedUser}`
       : 'Not reviewed yet';
 
-  const commentCount = translation.comments.length;
+  const commentCount = translation.comments?.length ?? 0;
 
   // Does the currently logged in user own this translation?
   const ownTranslation =

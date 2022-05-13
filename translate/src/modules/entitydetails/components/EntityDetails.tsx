@@ -8,29 +8,25 @@ import React, {
 
 import type { FailedChecks } from '~/api/translation';
 import { HelperSelectionProvider } from '~/context/HelperSelection';
-import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
 import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 import {
   resetFailedChecks,
-  updateTranslation,
   updateFailedChecks,
   updateSelection,
 } from '~/core/editor/actions';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
+import { useSelectedEntity } from '~/core/entities/hooks';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { ChangeOperation, History, HISTORY } from '~/modules/history';
+import { History } from '~/modules/history';
 import {
-  deleteTranslation_,
   get as getHistory,
   request as requestHistory,
-  updateStatus,
 } from '~/modules/history/actions';
 import { OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
@@ -53,10 +49,8 @@ import { Metadata } from './Metadata';
  * Shows the metadata of the entity and an editor for translations.
  */
 export function EntityDetails(): React.ReactElement<'section'> | null {
-  const history = useAppSelector((state) => state[HISTORY]);
   const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
-  const nextEntity = useNextEntity();
   const otherlocales = useAppSelector((state) => state[OTHERLOCALES]);
   const teamComments = useAppSelector((state) => state[TEAM_COMMENTS]);
   const terms = useAppSelector((state) => state[TERM]);
@@ -66,7 +60,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   const selectedEntity = useSelectedEntity();
   const activeTranslation = useTranslationForEntity(selectedEntity);
-  const { pluralForm, setPluralForm } = usePluralForm(selectedEntity);
+  const { pluralForm } = usePluralForm(selectedEntity);
 
   const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
     null,
@@ -74,7 +68,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const [commentTabIndex, setCommentTabIndex] = useState(0);
   const [contactPerson, setContactPerson] = useState('');
   const resetContactPerson = useCallback(() => setContactPerson(''), []);
-  const locale = useContext(Locale);
   const checkUnsavedChanges = useCheckUnsavedChanges();
 
   const { entity, locale: lc, project } = location;
@@ -131,59 +124,16 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     [dispatch, location, store],
   );
 
-  const updateEditorTranslation = useCallback(
-    (translation: string, changeSource: string) =>
-      dispatch(updateTranslation(translation, changeSource)),
-    [dispatch],
-  );
-
   const addTextToEditorTranslation = useCallback(
     (content: string, changeSource?: string) =>
       dispatch(updateSelection(content, changeSource)),
     [dispatch],
   );
 
-  const deleteTranslation__ = useCallback(
-    (translationId: number) =>
-      dispatch(deleteTranslation_(entity, lc, pluralForm, translationId)),
-    [dispatch, entity, lc, pluralForm],
-  );
-
   const togglePinnedStatus = useCallback(
     (pinned: boolean, commentId: number) =>
       dispatch(togglePinnedTeamCommentStatus(pinned, commentId)),
     [dispatch],
-  );
-
-  /*
-   * This is a copy of EditorBase.updateTranslationStatus().
-   * When changing this function, you probably want to change both.
-   * We might want to refactor to keep the logic in one place only.
-   */
-  const updateTranslationStatus = useCallback(
-    (translationId: number, change: ChangeOperation) => {
-      if (!selectedEntity) {
-        return;
-      }
-
-      // No need to check for unsaved changes in `EditorBase.updateTranslationStatus()`,
-      // because it cannot be triggered for the use case of bug 1508474.
-      checkUnsavedChanges(() =>
-        dispatch(
-          updateStatus(
-            change,
-            selectedEntity,
-            locale,
-            { pluralForm, setPluralForm },
-            translationId,
-            nextEntity,
-            location,
-            false,
-          ),
-        ),
-      );
-    },
-    [dispatch, locale, nextEntity, location, pluralForm, selectedEntity, store],
   );
 
   if (!selectedEntity) {
@@ -212,15 +162,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
             fileFormat={selectedEntity.format}
             key={selectedEntity.pk}
           />
-          <History
-            entity={selectedEntity}
-            history={history}
-            isReadOnlyEditor={isReadOnlyEditor}
-            user={user}
-            deleteTranslation={deleteTranslation__}
-            updateTranslationStatus={updateTranslationStatus}
-            updateEditorTranslation={updateEditorTranslation}
-          />
+          <History />
         </section>
         <section className='third-column'>
           <Helpers
