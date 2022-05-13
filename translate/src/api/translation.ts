@@ -67,20 +67,20 @@ type CreateTranslationResponse =
  * Otherwise, create it.
  */
 export function createTranslation(
-  entity: number,
+  entityId: number,
   translation: string,
-  locale: string,
+  localeCode: string,
   pluralForm: number,
   original: string,
   forceSuggestions: boolean,
   resource: string,
-  ignoreWarnings: boolean | null | undefined,
-  machinerySources: Array<SourceType>,
+  ignoreWarnings: boolean,
+  machinerySources: SourceType[],
 ): Promise<CreateTranslationResponse> {
   const payload = new URLSearchParams({
-    entity: String(entity),
+    entity: String(entityId),
     translation,
-    locale,
+    locale: localeCode,
     plural_form: String(pluralForm),
     original,
     force_suggestions: String(forceSuggestions),
