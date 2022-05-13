@@ -4,7 +4,7 @@ import { getReconstructedMessage } from '~/core/utils/fluent/getReconstructedMes
 import { parser as fluentParser } from '~/core/utils/fluent/parser';
 import { serializer as fluentSerializer } from '~/core/utils/fluent/serializer';
 import { useAppSelector } from '~/hooks';
-import { HISTORY } from '~/modules/history';
+import { HISTORY } from '~/modules/history/reducer';
 
 import { EDITOR } from '../reducer';
 

@@ -5,7 +5,6 @@ import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
 import * as editorActions from '~/core/editor/actions';
-import * as historyActions from '~/modules/history/actions';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityDetails } from './EntityDetails';
@@ -76,7 +75,6 @@ describe('<EntityDetails>', () => {
     sinon
       .stub(editorActions, 'resetFailedChecks')
       .returns({ type: 'whatever' });
-    sinon.stub(historyActions, 'updateStatus').returns({ type: 'whatever' });
   });
 
   afterEach(() => {
@@ -90,7 +88,6 @@ describe('<EntityDetails>', () => {
     delete global.fetch;
     editorActions.updateFailedChecks.restore();
     editorActions.resetFailedChecks.restore();
-    historyActions.updateStatus.restore();
   });
 
   it('shows an empty section when no entity is selected', () => {
@@ -131,16 +128,5 @@ describe('<EntityDetails>', () => {
 
     expect(editorActions.updateFailedChecks.calledOnce).toBeFalsy();
     expect(editorActions.resetFailedChecks.calledTwice).toBeTruthy();
-  });
-
-  it('dispatches the updateStatus action when updateTranslationStatus is called', () => {
-    const { wrapper } = mockEntityDetails(42);
-
-    const updateTranslationStatus = wrapper
-      .find('History')
-      .prop('updateTranslationStatus');
-    act(() => updateTranslationStatus(42, 'fake translation'));
-
-    expect(historyActions.updateStatus.calledOnce).toBeTruthy();
   });
 });

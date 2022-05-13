@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 
+import * as UpdateTranslationStatus from '~/core/editor/hooks/useUpdateTranslationStatus';
 import * as Translator from '~/hooks/useTranslator';
-import * as historyActions from '~/modules/history/actions';
 import {
   createDefaultUser,
   createReduxStore,
@@ -38,7 +38,10 @@ function createComponent(sendTranslationMock) {
 
 describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
-    sinon.stub(historyActions, 'updateStatus').returns(sinon.spy());
+    const spy = sinon.spy();
+    sinon
+      .stub(UpdateTranslationStatus, 'useUpdateTranslationStatus')
+      .returns(spy);
     ExistingTranslation.useExistingTranslation.returns({ pk: 1 });
 
     try {
@@ -49,9 +52,9 @@ describe('<EditorMainAction>', () => {
       expect(wrapper.find('.action-save')).toHaveLength(0);
 
       wrapper.find('.action-approve').simulate('click');
-      expect(historyActions.updateStatus.calledOnce).toBeTruthy();
+      expect(spy.calledOnce).toBeTruthy();
     } finally {
-      historyActions.updateStatus.restore();
+      UpdateTranslationStatus.useUpdateTranslationStatus.restore();
     }
   });
 
