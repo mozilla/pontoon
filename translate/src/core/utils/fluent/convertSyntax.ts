@@ -6,7 +6,7 @@ import { parser } from './parser';
 import { serializer } from './serializer';
 
 import type { Entry } from '@fluent/syntax';
-import type { LocaleType } from '~/context/locale';
+import type { Locale } from '~/context/Locale';
 
 type SyntaxType = 'simple' | 'rich' | 'complex' | '';
 
@@ -33,7 +33,7 @@ export function getComplexFromSimple(
   current: string,
   original: string,
   initial: string,
-  locale: LocaleType,
+  locale: Locale,
 ): [string, string] {
   let initialContent = initial;
 
@@ -57,7 +57,7 @@ export function getRichFromComplex(
   current: string,
   original: string,
   initial: string,
-  locale: LocaleType,
+  locale: Locale,
 ): [Entry, Entry] {
   let translationContent = flattenMessage(parser.parseEntry(current));
 
@@ -85,7 +85,7 @@ export function getComplexFromRich(
   current: Entry,
   original: string,
   initial: string,
-  locale: LocaleType,
+  locale: Locale,
 ): [string, string] {
   const translationContent = serializer.serializeEntry(current);
 
@@ -124,7 +124,7 @@ export function convertSyntax(
   current: string | Entry,
   original: string,
   initial: string,
-  locale: LocaleType,
+  locale: Locale,
 ): [Entry, Entry] | [string, string] {
   if (
     fromSyntax === 'complex' &&

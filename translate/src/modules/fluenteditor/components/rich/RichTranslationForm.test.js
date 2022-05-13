@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import React from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import {
   setInitialTranslation,
   updateSelection,

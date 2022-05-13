@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 
 import { MockLocalizationProvider } from '~/test/utils';
 

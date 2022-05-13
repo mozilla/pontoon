@@ -7,7 +7,7 @@ import {
   Variant,
 } from '@fluent/syntax';
 
-import type { LocaleType } from '~/context/locale';
+import type { Locale } from '~/context/Locale';
 
 import { CLDR_PLURALS } from '../constants';
 import { flattenMessage } from './flattenMessage';
@@ -78,10 +78,7 @@ function withDefaultVariant(variants: Array<Variant>): Array<Variant> {
  * @param {Entry} source A Fluent AST to empty.
  * @returns {Entry} An emptied copy of the source.
  */
-export function getEmptyMessage(
-  source: Entry,
-  { cldrPlurals }: LocaleType,
-): Entry {
+export function getEmptyMessage(source: Entry, { cldrPlurals }: Locale): Entry {
   class EmptyTransformer extends Transformer {
     // Empty Text Elements
     visitTextElement(node: TextElement): TextElement {

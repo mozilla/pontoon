@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
 import { HelperSelection } from '~/context/HelperSelection';
-import type { LocationType } from '~/context/location';
+import type { Location } from '~/context/Location';
 import { EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
 import { TranslationProxy } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -16,7 +16,7 @@ import './Translation.css';
 type Props = {
   entity: Entity;
   translation: OtherLocaleTranslation;
-  parameters: LocationType;
+  parameters: Location;
   index: number;
 };
 

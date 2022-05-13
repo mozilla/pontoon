@@ -5,7 +5,7 @@ import {
   fetchSiblingEntities,
 } from '~/api/entity';
 import { EntityTranslation } from '~/api/translation';
-import { LocationType } from '~/context/location';
+import { Location } from '~/context/Location';
 import { updateStats } from '~/core/stats/actions';
 import type { AppDispatch } from '~/store';
 
@@ -63,8 +63,7 @@ export const updateEntityTranslation = (
 
 /** Fetch entities and their translation.  */
 export const getEntities =
-  (location: LocationType, exclude: Entity[]) =>
-  async (dispatch: AppDispatch) => {
+  (location: Location, exclude: Entity[]) => async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_ENTITIES });
 
     const content = await fetchEntities(location, exclude);

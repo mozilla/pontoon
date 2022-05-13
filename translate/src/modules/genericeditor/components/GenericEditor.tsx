@@ -10,7 +10,7 @@ import {
 } from '~/core/editor';
 import { resetEditor, setInitialTranslation } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
+import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { GenericTranslationForm } from './GenericTranslationForm';

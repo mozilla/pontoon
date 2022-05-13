@@ -4,9 +4,9 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
-import { Locale } from '~/context/locale';
-import { LocationProvider } from '~/context/location';
-import { PluralFormProvider } from '~/context/pluralForm';
+import { Locale } from '~/context/Locale';
+import { LocationProvider } from '~/context/Location';
+import { PluralFormProvider } from '~/context/PluralForm';
 import { resetEditor, updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 

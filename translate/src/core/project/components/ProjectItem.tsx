@@ -1,12 +1,12 @@
 import React from 'react';
 
-import type { Localization } from '~/context/locale';
-import type { LocationType } from '~/context/location';
+import type { Localization } from '~/context/Locale';
+import type { Location } from '~/context/Location';
 
 import './ProjectItem.css';
 
 type Props = {
-  location: LocationType;
+  location: Location;
   localization: Localization;
   navigateToPath: (arg0: React.MouseEvent<HTMLAnchorElement>) => void;
 };

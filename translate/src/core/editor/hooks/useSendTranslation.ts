@@ -2,10 +2,10 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { createTranslation } from '~/api/translation';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { usePluralForm } from '~/context/pluralForm';
-import { useSetUnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { usePluralForm } from '~/context/PluralForm';
+import { useSetUnsavedChanges } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';

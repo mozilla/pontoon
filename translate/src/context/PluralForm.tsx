@@ -9,7 +9,7 @@ import React, {
 import type { Entity } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
 
-import { Location } from './location';
+import { Location } from './Location';
 
 export type PluralForm = {
   pluralForm: number;

@@ -4,7 +4,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 import type { Entity } from '~/api/entity';
 import { HelperSelection } from '~/context/HelperSelection';
-import type { LocationType } from '~/context/location';
+import type { Location } from '~/context/Location';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import { Machinery, MachineryCount } from '~/modules/machinery';
@@ -22,7 +22,7 @@ type Props = {
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
-  parameters: LocationType;
+  parameters: Location;
   user: UserState;
   commentTabRef: any; // Used to access <Tab> _reactInternalFiber
   commentTabIndex: number;

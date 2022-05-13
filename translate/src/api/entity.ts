@@ -1,4 +1,4 @@
-import { LocationType } from '~/context/location';
+import { Location } from '~/context/Location';
 
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
@@ -79,14 +79,14 @@ type EntitiesResponse =
  * the query. Use this to query for the next set of entities.
  */
 export async function fetchEntities(
-  location: LocationType & { list: number[] },
+  location: Location & { list: number[] },
 ): Promise<{ entities: Entity[]; stats: APIStats }>;
 export async function fetchEntities(
-  location: LocationType,
+  location: Location,
   exclude: Entity[],
 ): Promise<EntitiesResponse>;
 export async function fetchEntities(
-  location: LocationType,
+  location: Location,
   exclude?: Entity[],
 ): Promise<EntitiesResponse> {
   const payload = buildFetchPayload(location);
@@ -96,9 +96,7 @@ export async function fetchEntities(
   return await POST('/get-entities/', payload);
 }
 
-export async function fetchEntityIds(
-  location: LocationType,
-): Promise<number[]> {
+export async function fetchEntityIds(location: Location): Promise<number[]> {
   const payload = buildFetchPayload(location);
   payload.append('pk_only', 'true');
   const { entity_pks } = await POST('/get-entities/', payload);
@@ -106,8 +104,8 @@ export async function fetchEntityIds(
 }
 
 function buildFetchPayload(
-  location: Pick<LocationType, 'locale' | 'project' | 'resource'> &
-    Partial<LocationType>,
+  location: Pick<Location, 'locale' | 'project' | 'resource'> &
+    Partial<Location>,
 ): FormData {
   const { locale, project, resource, entity, list } = location;
 

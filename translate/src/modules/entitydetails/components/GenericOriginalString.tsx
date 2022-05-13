@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { getMarker, TermState } from '~/core/term';
 
 type Props = {

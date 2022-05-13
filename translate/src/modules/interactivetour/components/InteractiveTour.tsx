@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import Tour, { ReactourStep } from 'reactour';
 
 import { updateTourStatus } from '~/api/user';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { useProject } from '~/core/project';
 import { USER } from '~/core/user';
 import { useAppSelector } from '~/hooks';

@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
-import { Location } from '~/context/location';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { Location } from '~/context/Location';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 import { resetEditor } from '~/core/editor/actions';
 import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';

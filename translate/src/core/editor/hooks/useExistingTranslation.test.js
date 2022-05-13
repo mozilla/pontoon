@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import * as PluralForm from '~/context/pluralForm';
+import * as PluralForm from '~/context/PluralForm';
 import { parser as fluentParser } from '~/core/utils/fluent/parser';
 import { flattenMessage } from '~/core/utils/fluent/flattenMessage';
 import * as Hooks from '~/hooks';

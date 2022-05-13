@@ -2,8 +2,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import { Locale } from '~/context/locale';
-import { PluralFormProvider, usePluralForm } from '~/context/pluralForm';
+import { Locale } from '~/context/Locale';
+import { PluralFormProvider, usePluralForm } from '~/context/PluralForm';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { PluralSelector, PluralSelectorBase } from './PluralSelector';

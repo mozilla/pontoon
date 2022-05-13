@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { UnsavedChanges } from '~/context/unsavedChanges';
+import { UnsavedChanges } from '~/context/UnsavedChanges';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { UnsavedChangesPopup } from './UnsavedChangesPopup';

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/core/translation';
 
 import { TranslationMemory } from './source/TranslationMemory';

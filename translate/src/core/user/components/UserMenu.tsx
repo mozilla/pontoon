@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useContext, useRef, useState } from 'react';
 
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { useOnDiscard } from '~/core/utils';
 import { useTranslator } from '~/hooks/useTranslator';

@@ -7,9 +7,9 @@ import {
   HistoryTranslation,
   setTranslationStatus,
 } from '~/api/translation';
-import type { LocaleType } from '~/context/locale';
-import type { LocationType } from '~/context/location';
-import type { PluralForm } from '~/context/pluralForm';
+import type { Locale } from '~/context/Locale';
+import type { Location } from '~/context/Location';
+import type { PluralForm } from '~/context/PluralForm';
 import {
   resetEditor,
   updateFailedChecks,
@@ -108,11 +108,11 @@ function _getOperationNotif(change: ChangeOperation, success: boolean) {
 export function updateStatus(
   change: ChangeOperation,
   entity: Entity,
-  locale: LocaleType,
+  locale: Locale,
   { pluralForm, setPluralForm }: PluralForm,
   translation: number,
   nextEntity: Entity | null,
-  location: LocationType,
+  location: Location,
   ignoreWarnings: boolean,
 ) {
   return async (dispatch: AppDispatch) => {

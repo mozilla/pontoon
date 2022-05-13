@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { EDITOR, useCopyMachineryTranslation } from '~/core/editor';
 import { GenericTranslation } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';

@@ -5,7 +5,7 @@ import ReactTimeAgo from 'react-time-ago';
 
 import type { Entity } from '~/api/entity';
 import type { HistoryTranslation } from '~/api/translation';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';

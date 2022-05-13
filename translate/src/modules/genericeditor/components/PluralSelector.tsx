@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 
-import { Locale } from '~/context/locale';
-import { PluralForm, usePluralForm } from '~/context/pluralForm';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { PluralForm, usePluralForm } from '~/context/PluralForm';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
 import { usePluralExamples } from '~/hooks/usePluralExamples';

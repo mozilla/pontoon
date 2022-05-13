@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import type { Entity } from '~/api/entity';
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import { useAppSelector } from '~/hooks';
 
 import { ENTITIES } from './reducer';

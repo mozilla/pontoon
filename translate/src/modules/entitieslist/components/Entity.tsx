@@ -4,8 +4,8 @@ import React, { useCallback, useContext, useState } from 'react';
 
 import type { Entity as EntityType } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
-import { Locale } from '~/context/locale';
-import type { LocationType } from '~/context/location';
+import { Locale } from '~/context/Locale';
+import type { Location } from '~/context/Location';
 import { TranslationProxy } from '~/core/translation';
 import { useTranslator } from '~/hooks/useTranslator';
 
@@ -19,7 +19,7 @@ type Props = {
   selected: boolean;
   selectEntity: (entity: EntityType) => void;
   getSiblingEntities: (entityPK: number) => void;
-  parameters: LocationType;
+  parameters: Location;
 };
 
 /**

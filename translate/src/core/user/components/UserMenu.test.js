@@ -2,7 +2,7 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
 

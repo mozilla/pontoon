@@ -1,4 +1,4 @@
-import { useTranslationForEntity } from '~/context/pluralForm';
+import { useTranslationForEntity } from '~/context/PluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { getReconstructedMessage } from '~/core/utils/fluent/getReconstructedMessage';
 import { parser as fluentParser } from '~/core/utils/fluent/parser';
