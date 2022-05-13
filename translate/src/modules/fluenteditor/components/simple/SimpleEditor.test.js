@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 import React from 'react';
@@ -6,7 +8,7 @@ import { Provider } from 'react-redux';
 import sinon from 'sinon';
 
 import { LocationProvider } from '~/context/location';
-import * as editorActions from '~/core/editor/actions';
+import * as SendTranslation from '~/core/editor/hooks/useSendTranslation';
 import { updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 import { parser } from '~/core/utils/fluent';
@@ -82,9 +84,10 @@ describe('<SimpleEditor>', () => {
   });
 
   it('passes a reconstructed translation to sendTranslation', () => {
-    const sendTranslationMock = sinon
-      .stub(editorActions, 'sendTranslation_')
-      .returns({ type: 'whatever' });
+    const sendTranslationMock = sinon.stub().returns({ type: 'whatever' });
+    sinon
+      .stub(SendTranslation, 'useSendTranslation')
+      .returns(sendTranslationMock);
 
     try {
       const [wrapper, store] = createSimpleEditor();
@@ -95,12 +98,11 @@ describe('<SimpleEditor>', () => {
       // Intercept the sendTranslation prop and call it directly.
       wrapper.find('GenericTranslationForm').prop('sendTranslation')();
 
-      expect(sendTranslationMock.calledOnce).toBeTruthy();
-      expect(sendTranslationMock.lastCall.args[1]).toEqual(
-        'my-message = Coucou\n',
-      );
+      expect(sendTranslationMock.getCalls()).toMatchObject([
+        { args: [undefined, 'my-message = Coucou\n'] },
+      ]);
     } finally {
-      sendTranslationMock.restore();
+      SendTranslation.useSendTranslation.restore();
     }
   });
 });

@@ -1,44 +1,21 @@
 import type { Entry } from '@fluent/syntax';
-import NProgress from 'nprogress';
 
-import type { Entity } from '~/api/entity';
 import { SourceType } from '~/api/machinery';
-import { createTranslation, FailedChecks } from '~/api/translation';
-import type { LocaleType } from '~/context/locale';
-import type { LocationType } from '~/context/location';
-import { PluralForm } from '~/context/pluralForm';
-import type { UnsavedChanges } from '~/context/unsavedChanges';
-import { updateEntityTranslation } from '~/core/entities/actions';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
-import { updateResource } from '~/core/resource/actions';
-import { updateStats } from '~/core/stats/actions';
-import { AppThunk } from '~/store';
+import { FailedChecks } from '~/api/translation';
 
-export const END_UPDATE_TRANSLATION: 'editor/END_UPDATE_TRANSLATION' =
-  'editor/END_UPDATE_TRANSLATION';
-export const RESET_EDITOR: 'editor/RESET_EDITOR' = 'editor/RESET_EDITOR';
-export const RESET_FAILED_CHECKS: 'editor/RESET_FAILED_CHECKS' =
-  'editor/RESET_FAILED_CHECKS';
-export const RESET_HELPER_ELEMENT_INDEX: 'editor/RESET_HELPER_ELEMENT_INDEX' =
-  'editor/RESET_HELPER_ELEMENT_INDEX';
-export const RESET_SELECTION: 'editor/RESET_SELECTION' =
-  'editor/RESET_SELECTION';
-export const SELECT_HELPER_ELEMENT_INDEX: 'editor/SELECT_HELPER_ELEMENT_INDEX' =
-  'editor/SELECT_HELPER_ELEMENT_INDEX';
-export const SELECT_HELPER_TAB_INDEX: 'editor/SELECT_HELPER_TAB_INDEX' =
-  'editor/SELECT_HELPER_TAB_INDEX';
-export const SET_INITIAL_TRANSLATION: 'editor/SET_INITIAL_TRANSLATION' =
-  'editor/SET_INITIAL_TRANSLATION';
-export const START_UPDATE_TRANSLATION: 'editor/START_UPDATE_TRANSLATION' =
-  'editor/START_UPDATE_TRANSLATION';
-export const UPDATE: 'editor/UPDATE' = 'editor/UPDATE';
-export const UPDATE_FAILED_CHECKS: 'editor/UPDATE_FAILED_CHECKS' =
-  'editor/UPDATE_FAILED_CHECKS';
-export const UPDATE_SELECTION: 'editor/UPDATE_SELECTION' =
-  'editor/UPDATE_SELECTION';
-export const UPDATE_MACHINERY_SOURCES: 'editor/UPDATE_MACHINERY_SOURCES' =
-  'editor/UPDATE_MACHINERY_SOURCES';
+export const END_UPDATE_TRANSLATION = 'editor/END_UPDATE_TRANSLATION';
+export const RESET_EDITOR = 'editor/RESET_EDITOR';
+export const RESET_FAILED_CHECKS = 'editor/RESET_FAILED_CHECKS';
+export const RESET_HELPER_ELEMENT_INDEX = 'editor/RESET_HELPER_ELEMENT_INDEX';
+export const RESET_SELECTION = 'editor/RESET_SELECTION';
+export const SELECT_HELPER_ELEMENT_INDEX = 'editor/SELECT_HELPER_ELEMENT_INDEX';
+export const SELECT_HELPER_TAB_INDEX = 'editor/SELECT_HELPER_TAB_INDEX';
+export const SET_INITIAL_TRANSLATION = 'editor/SET_INITIAL_TRANSLATION';
+export const START_UPDATE_TRANSLATION = 'editor/START_UPDATE_TRANSLATION';
+export const UPDATE = 'editor/UPDATE';
+export const UPDATE_FAILED_CHECKS = 'editor/UPDATE_FAILED_CHECKS';
+export const UPDATE_SELECTION = 'editor/UPDATE_SELECTION';
+export const UPDATE_MACHINERY_SOURCES = 'editor/UPDATE_MACHINERY_SOURCES';
 
 export type Translation = string | Entry;
 
@@ -99,7 +76,7 @@ export function updateSelection(
 /**
  * Update machinerySources and machineryTranslation when copied from machinery tab.
  */
-export type UpdateMachinerySourcesAction = {
+type UpdateMachinerySourcesAction = {
   readonly type: typeof UPDATE_MACHINERY_SOURCES;
   readonly machinerySources: Array<SourceType>;
   readonly machineryTranslation: string;
@@ -118,7 +95,7 @@ export function updateMachinerySources(
 /**
  * Reset selected helper element index to its initial value.
  */
-export type ResetHelperElementIndexAction = {
+type ResetHelperElementIndexAction = {
   readonly type: typeof RESET_HELPER_ELEMENT_INDEX;
 };
 export function resetHelperElementIndex(): ResetHelperElementIndexAction {
@@ -130,7 +107,7 @@ export function resetHelperElementIndex(): ResetHelperElementIndexAction {
 /**
  * Set selected helper element index to a specific value.
  */
-export type SelectHelperElementIndexAction = {
+type SelectHelperElementIndexAction = {
   readonly type: typeof SELECT_HELPER_ELEMENT_INDEX;
   readonly index: number;
 };
@@ -146,7 +123,7 @@ export function selectHelperElementIndex(
 /**
  * Set selected helper tab index to a specific value.
  */
-export type SelectHelperTabIndexAction = {
+type SelectHelperTabIndexAction = {
   readonly type: typeof SELECT_HELPER_TAB_INDEX;
   readonly index: number;
 };
@@ -163,7 +140,7 @@ export function selectHelperTabIndex(
  * Update the content that should replace the currently selected text in the
  * active editor.
  */
-export type InitialTranslationAction = {
+type InitialTranslationAction = {
   readonly type: typeof SET_INITIAL_TRANSLATION;
   readonly translation: Translation;
 };
@@ -179,7 +156,7 @@ export function setInitialTranslation(
 /**
  * Update failed checks in the active editor.
  */
-export type UpdateFailedChecksAction = {
+type UpdateFailedChecksAction = {
   readonly type: typeof UPDATE_FAILED_CHECKS;
   readonly failedChecks: FailedChecks;
   readonly source: '' | 'stored' | 'submitted' | number;
@@ -198,7 +175,7 @@ export function updateFailedChecks(
 /**
  * Reset selected content to default value.
  */
-export type ResetSelectionAction = {
+type ResetSelectionAction = {
   readonly type: typeof RESET_SELECTION;
 };
 export function resetSelection(): ResetSelectionAction {
@@ -210,7 +187,7 @@ export function resetSelection(): ResetSelectionAction {
 /**
  * Reset the whole editor's data to its initial value.
  */
-export type ResetEditorAction = {
+type ResetEditorAction = {
   readonly type: typeof RESET_EDITOR;
 };
 export function resetEditor(): ResetEditorAction {
@@ -222,7 +199,7 @@ export function resetEditor(): ResetEditorAction {
 /**
  * Reset failed checks to default value.
  */
-export type ResetFailedChecksAction = {
+type ResetFailedChecksAction = {
   readonly type: typeof RESET_FAILED_CHECKS;
 };
 export function resetFailedChecks(): ResetFailedChecksAction {
@@ -230,95 +207,21 @@ export function resetFailedChecks(): ResetFailedChecksAction {
     type: RESET_FAILED_CHECKS,
   };
 }
-export type StartUpdateTranslationAction = {
+
+type StartUpdateTranslationAction = {
   readonly type: typeof START_UPDATE_TRANSLATION;
 };
-
 export function startUpdateTranslation(): StartUpdateTranslationAction {
   return {
     type: START_UPDATE_TRANSLATION,
   };
 }
 
-export type EndUpdateTranslationAction = {
+type EndUpdateTranslationAction = {
   readonly type: typeof END_UPDATE_TRANSLATION;
 };
 export function endUpdateTranslation(): EndUpdateTranslationAction {
   return {
     type: END_UPDATE_TRANSLATION,
-  };
-}
-
-/**
- * Save the current translation.
- */
-export function sendTranslation_(
-  entity: Entity,
-  translation: string,
-  locale: LocaleType,
-  { pluralForm, setPluralForm }: PluralForm,
-  forceSuggestions: boolean,
-  nextEntity: Entity | null,
-  location: LocationType,
-  ignoreWarnings: boolean | null | undefined,
-  machinerySources: Array<SourceType>,
-  setUnsavedChanges: (next: Partial<UnsavedChanges> | null) => void,
-): AppThunk {
-  return async (dispatch) => {
-    NProgress.start();
-    dispatch(startUpdateTranslation());
-
-    const content = await createTranslation(
-      entity.pk,
-      translation,
-      locale.code,
-      pluralForm,
-      entity.original,
-      forceSuggestions,
-      location.resource,
-      ignoreWarnings,
-      machinerySources,
-    );
-
-    if (content.status) {
-      // Notify the user of the change that happened.
-      dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
-
-      // Ignore existing unsavedchanges because they are saved now.
-      setUnsavedChanges({ ignore: true });
-
-      dispatch(
-        updateEntityTranslation(entity.pk, pluralForm, content.translation),
-      );
-
-      // Update stats in the filter panel and resource menu if possible.
-      if (content.stats) {
-        dispatch(updateStats(content.stats));
-        dispatch(
-          updateResource(
-            entity.path,
-            content.stats.approved,
-            content.stats.warnings,
-          ),
-        );
-      }
-
-      // The change did work, we want to move on to the next Entity or pluralForm.
-      if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-        setPluralForm(pluralForm + 1);
-      } else if (nextEntity && nextEntity.pk !== entity.pk) {
-        location.push({ entity: nextEntity.pk });
-      }
-      dispatch(resetEditor());
-    } else if (content.failedChecks) {
-      dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
-    } else if (content.same) {
-      // The translation that was provided is the same as an existing
-      // translation for that entity.
-      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
-    }
-
-    dispatch(endUpdateTranslation());
-    NProgress.done();
   };
 }
