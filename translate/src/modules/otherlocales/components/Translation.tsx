@@ -1,12 +1,12 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
+import { HelperSelection } from '~/context/HelperSelection';
 import type { LocationType } from '~/context/location';
 import { EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
-import { selectHelperElementIndex } from '~/core/editor/actions';
 import { TranslationProxy } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -33,37 +33,33 @@ export function Translation({
   index,
 }: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
+  const { element, setElement } = useContext(HelperSelection);
+  const isSelected = element === index;
 
-  const selectedHelperElementIndex = useAppSelector(
-    (state) => state[EDITOR].selectedHelperElementIndex,
-  );
+  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const copyTranslationIntoEditor = useCallback(() => {
+    setElement(index);
+    copyOtherLocaleTranslation(translation);
+  }, [dispatch, index, translation, copyOtherLocaleTranslation]);
+
   const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
-  const isSelected =
-    changeSource === 'otherlocales' && selectedHelperElementIndex === index;
 
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && 'selected',
+    isSelected && changeSource === 'otherlocales' && 'selected',
   );
-
-  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
-  const copyTranslationIntoEditor = useCallback(() => {
-    dispatch(selectHelperElementIndex(index));
-    copyOtherLocaleTranslation(translation);
-  }, [dispatch, index, translation, copyOtherLocaleTranslation]);
 
   const translationRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
-    if (selectedHelperElementIndex === index) {
+    if (isSelected) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const behavior = mediaQuery.matches ? 'auto' : 'smooth';
-      translationRef.current?.scrollIntoView?.({
-        behavior: behavior,
+      translationRef.current?.scrollIntoView({
+        behavior: mediaQuery.matches ? 'auto' : 'smooth',
         block: 'nearest',
       });
     }
-  }, [selectedHelperElementIndex, index]);
+  }, [isSelected]);
 
   return (
     <Localized id='otherlocales-Translation--copy' attrs={{ title: true }}>

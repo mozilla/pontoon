@@ -6,10 +6,7 @@ import { FailedChecks } from '~/api/translation';
 export const END_UPDATE_TRANSLATION = 'editor/END_UPDATE_TRANSLATION';
 export const RESET_EDITOR = 'editor/RESET_EDITOR';
 export const RESET_FAILED_CHECKS = 'editor/RESET_FAILED_CHECKS';
-export const RESET_HELPER_ELEMENT_INDEX = 'editor/RESET_HELPER_ELEMENT_INDEX';
 export const RESET_SELECTION = 'editor/RESET_SELECTION';
-export const SELECT_HELPER_ELEMENT_INDEX = 'editor/SELECT_HELPER_ELEMENT_INDEX';
-export const SELECT_HELPER_TAB_INDEX = 'editor/SELECT_HELPER_TAB_INDEX';
 export const SET_INITIAL_TRANSLATION = 'editor/SET_INITIAL_TRANSLATION';
 export const START_UPDATE_TRANSLATION = 'editor/START_UPDATE_TRANSLATION';
 export const UPDATE = 'editor/UPDATE';
@@ -23,11 +20,8 @@ export type Action =
   | EndUpdateTranslationAction
   | InitialTranslationAction
   | ResetEditorAction
-  | ResetHelperElementIndexAction
   | ResetFailedChecksAction
   | ResetSelectionAction
-  | SelectHelperElementIndexAction
-  | SelectHelperTabIndexAction
   | StartUpdateTranslationAction
   | UpdateAction
   | UpdateFailedChecksAction
@@ -89,50 +83,6 @@ export function updateMachinerySources(
     type: UPDATE_MACHINERY_SOURCES,
     machinerySources,
     machineryTranslation,
-  };
-}
-
-/**
- * Reset selected helper element index to its initial value.
- */
-type ResetHelperElementIndexAction = {
-  readonly type: typeof RESET_HELPER_ELEMENT_INDEX;
-};
-export function resetHelperElementIndex(): ResetHelperElementIndexAction {
-  return {
-    type: RESET_HELPER_ELEMENT_INDEX,
-  };
-}
-
-/**
- * Set selected helper element index to a specific value.
- */
-type SelectHelperElementIndexAction = {
-  readonly type: typeof SELECT_HELPER_ELEMENT_INDEX;
-  readonly index: number;
-};
-export function selectHelperElementIndex(
-  index: number,
-): SelectHelperElementIndexAction {
-  return {
-    type: SELECT_HELPER_ELEMENT_INDEX,
-    index,
-  };
-}
-
-/**
- * Set selected helper tab index to a specific value.
- */
-type SelectHelperTabIndexAction = {
-  readonly type: typeof SELECT_HELPER_TAB_INDEX;
-  readonly index: number;
-};
-export function selectHelperTabIndex(
-  index: number,
-): SelectHelperTabIndexAction {
-  return {
-    type: SELECT_HELPER_TAB_INDEX,
-    index,
   };
 }
 

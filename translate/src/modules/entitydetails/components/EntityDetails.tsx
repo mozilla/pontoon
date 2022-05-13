@@ -7,13 +7,13 @@ import React, {
 } from 'react';
 
 import type { FailedChecks } from '~/api/translation';
+import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Locale } from '~/context/locale';
 import { Location } from '~/context/location';
 import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
 import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 import {
   resetFailedChecks,
-  resetHelperElementIndex,
   updateTranslation,
   updateFailedChecks,
   updateSelection,
@@ -106,7 +106,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       dispatch(resetFailedChecks());
     }
 
-    dispatch(resetHelperElementIndex());
     dispatch(requestHistory(entity, pluralForm));
     dispatch(getHistory(entity, lc, pluralForm));
 
@@ -192,55 +191,57 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   }
 
   return (
-    <section className='entity-details'>
-      <section className='main-column'>
-        <EntityNavigation />
-        <Metadata
-          entity={selectedEntity}
-          isReadOnlyEditor={isReadOnlyEditor}
-          pluralForm={pluralForm}
-          terms={terms}
-          addTextToEditorTranslation={addTextToEditorTranslation}
-          navigateToPath={navigateToPath}
-          teamComments={teamComments}
-          user={user}
-          commentTabRef={commentTabRef}
-          setCommentTabIndex={setCommentTabIndex}
-          setContactPerson={setContactPerson}
-        />
-        <EditorSelector
-          fileFormat={selectedEntity.format}
-          key={selectedEntity.pk}
-        />
-        <History
-          entity={selectedEntity}
-          history={history}
-          isReadOnlyEditor={isReadOnlyEditor}
-          user={user}
-          deleteTranslation={deleteTranslation__}
-          updateTranslationStatus={updateTranslationStatus}
-          updateEditorTranslation={updateEditorTranslation}
-        />
+    <HelperSelectionProvider translation={activeTranslation}>
+      <section className='entity-details'>
+        <section className='main-column'>
+          <EntityNavigation />
+          <Metadata
+            entity={selectedEntity}
+            isReadOnlyEditor={isReadOnlyEditor}
+            pluralForm={pluralForm}
+            terms={terms}
+            addTextToEditorTranslation={addTextToEditorTranslation}
+            navigateToPath={navigateToPath}
+            teamComments={teamComments}
+            user={user}
+            commentTabRef={commentTabRef}
+            setCommentTabIndex={setCommentTabIndex}
+            setContactPerson={setContactPerson}
+          />
+          <EditorSelector
+            fileFormat={selectedEntity.format}
+            key={selectedEntity.pk}
+          />
+          <History
+            entity={selectedEntity}
+            history={history}
+            isReadOnlyEditor={isReadOnlyEditor}
+            user={user}
+            deleteTranslation={deleteTranslation__}
+            updateTranslationStatus={updateTranslationStatus}
+            updateEditorTranslation={updateEditorTranslation}
+          />
+        </section>
+        <section className='third-column'>
+          <Helpers
+            entity={selectedEntity}
+            isReadOnlyEditor={isReadOnlyEditor}
+            otherlocales={otherlocales}
+            teamComments={teamComments}
+            terms={terms}
+            togglePinnedStatus={togglePinnedStatus}
+            parameters={location}
+            user={user}
+            addTextToEditorTranslation={addTextToEditorTranslation}
+            navigateToPath={navigateToPath}
+            commentTabRef={commentTabRef}
+            commentTabIndex={commentTabIndex}
+            setCommentTabIndex={setCommentTabIndex}
+            contactPerson={contactPerson}
+            resetContactPerson={resetContactPerson}
+          />
+        </section>
       </section>
-      <section className='third-column'>
-        <Helpers
-          entity={selectedEntity}
-          isReadOnlyEditor={isReadOnlyEditor}
-          otherlocales={otherlocales}
-          teamComments={teamComments}
-          terms={terms}
-          togglePinnedStatus={togglePinnedStatus}
-          parameters={location}
-          user={user}
-          addTextToEditorTranslation={addTextToEditorTranslation}
-          navigateToPath={navigateToPath}
-          commentTabRef={commentTabRef}
-          commentTabIndex={commentTabIndex}
-          setCommentTabIndex={setCommentTabIndex}
-          contactPerson={contactPerson}
-          resetContactPerson={resetContactPerson}
-        />
-      </section>
-    </section>
+    </HelperSelectionProvider>
   );
 }
