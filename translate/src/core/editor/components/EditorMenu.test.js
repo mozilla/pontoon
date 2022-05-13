@@ -4,7 +4,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
-import { LocationProvider } from '~/context/location';
+import { LocationProvider } from '~/context/Location';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';

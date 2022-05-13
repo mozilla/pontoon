@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import type { Entity as EntityType } from '~/api/entity';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
 import { resetEditor } from '~/core/editor/actions';
 import {
   getEntities,
@@ -25,7 +25,7 @@ import {
   uncheckSelection,
 } from '~/modules/batchactions/actions';
 import { useBatchactions } from '~/modules/batchactions/hooks';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';

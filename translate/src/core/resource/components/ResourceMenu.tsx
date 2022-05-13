@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/core/utils';
 
 import type { Resource } from '../actions';

@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 
 type Props = {
   original: string;

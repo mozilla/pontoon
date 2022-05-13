@@ -1,6 +1,6 @@
 import React, { useContext, useLayoutEffect } from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import {
   EditorMenu,
   useSendTranslation,

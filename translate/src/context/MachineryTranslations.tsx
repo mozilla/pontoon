@@ -14,7 +14,7 @@ import { useSelectedEntity } from '~/core/entities/hooks';
 import { USER } from '~/core/user';
 import { getSimplePreview } from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
-import { Locale } from './locale';
+import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
 export type MachineryTranslations = {

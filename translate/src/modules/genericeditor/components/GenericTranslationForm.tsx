@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 
-import { Locale } from '~/context/locale';
-import { UnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { UnsavedChanges } from '~/context/UnsavedChanges';
 import {
   useHandleShortcuts,
   useReplaceSelectionContent,

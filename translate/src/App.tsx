@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
-import { initLocale, Locale, updateLocale } from './context/locale';
-import { Location } from './context/location';
+import { initLocale, Locale, updateLocale } from './context/Locale';
+import { Location } from './context/Location';
 
 import { WaveLoader } from './core/loaders';
 import { NOTIFICATION, NotificationPanel } from './core/notification';

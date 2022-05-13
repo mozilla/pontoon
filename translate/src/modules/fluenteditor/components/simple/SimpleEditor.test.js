@@ -7,7 +7,7 @@ import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import sinon from 'sinon';
 
-import { LocationProvider } from '~/context/location';
+import { LocationProvider } from '~/context/Location';
 import * as SendTranslation from '~/core/editor/hooks/useSendTranslation';
 import { updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';

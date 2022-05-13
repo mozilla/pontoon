@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { fetchConcordanceResults, MachineryTranslation } from '~/api/machinery';
 import { useSelectedEntity } from '~/core/entities/hooks';
 
-import { Locale } from './locale';
+import { Locale } from './Locale';
 
 export type SearchData = {
   /** The value in the search field */

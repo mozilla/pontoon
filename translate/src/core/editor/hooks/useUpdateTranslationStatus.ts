@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { usePluralForm } from '~/context/pluralForm';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { usePluralForm } from '~/context/PluralForm';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { useAppDispatch } from '~/hooks';
 import type { ChangeOperation } from '~/modules/history';

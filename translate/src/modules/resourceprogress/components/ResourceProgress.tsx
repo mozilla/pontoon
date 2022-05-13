@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useState } from 'react';
-import { Link } from '~/context/location';
+import { Link } from '~/context/Location';
 import { Stats, useStats } from '~/core/stats';
 import { asLocaleString, useOnDiscard } from '~/core/utils';
 import { ProgressChart } from './ProgressChart';

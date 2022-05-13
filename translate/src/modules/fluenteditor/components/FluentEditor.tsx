@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { useTranslationForEntity } from '~/context/pluralForm';
+import { useTranslationForEntity } from '~/context/PluralForm';
 import { EDITOR } from '~/core/editor';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';

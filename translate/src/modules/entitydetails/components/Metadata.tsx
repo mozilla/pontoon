@@ -13,7 +13,7 @@ import Linkify from 'react-linkify';
 
 import type { Entity } from '~/api/entity';
 import type { TermType } from '~/api/terminology';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
 import type { TeamCommentState } from '~/modules/teamcomments';

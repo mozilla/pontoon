@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { TermType } from '~/api/terminology';
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 
 import { Term } from './Term';
 import './TermsList.css';

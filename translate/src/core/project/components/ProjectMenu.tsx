@@ -2,8 +2,8 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
-import { Locale, Localization } from '~/context/locale';
-import type { LocationType } from '~/context/location';
+import { Locale, Localization } from '~/context/Locale';
+import type { Location } from '~/context/Location';
 import type { ProjectState } from '~/core/project';
 import { useOnDiscard } from '~/core/utils';
 
@@ -12,13 +12,13 @@ import { ProjectItem } from './ProjectItem';
 import './ProjectMenu.css';
 
 type Props = {
-  parameters: LocationType;
+  parameters: Location;
   project: ProjectState;
   navigateToPath: (arg0: string) => void;
 };
 
 type ProjectMenuProps = {
-  parameters: LocationType;
+  parameters: Location;
   onDiscard: () => void;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };

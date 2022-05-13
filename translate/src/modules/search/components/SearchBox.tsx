@@ -7,9 +7,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Location, LocationType } from '~/context/location';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
+import { Location } from '~/context/Location';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 import { resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
@@ -31,7 +31,7 @@ export type TimeRangeType = {
 
 type Props = {
   searchAndFilters: SearchAndFilters;
-  parameters: LocationType;
+  parameters: Location;
   project: ProjectState;
 };
 

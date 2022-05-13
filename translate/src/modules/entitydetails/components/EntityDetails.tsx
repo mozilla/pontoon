@@ -8,10 +8,10 @@ import React, {
 
 import type { FailedChecks } from '~/api/translation';
 import { HelperSelectionProvider } from '~/context/HelperSelection';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { usePluralForm, useTranslationForEntity } from '~/context/pluralForm';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 import {
   resetFailedChecks,
   updateTranslation,

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
-import { UnsavedChanges } from '~/context/unsavedChanges';
+import { UnsavedChanges } from '~/context/UnsavedChanges';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 

@@ -1,8 +1,8 @@
 import { Entry } from '@fluent/syntax';
 import { useContext, useLayoutEffect } from 'react';
 
-import { Locale } from '~/context/locale';
-import { useTranslationForEntity } from '~/context/pluralForm';
+import { Locale } from '~/context/Locale';
+import { useTranslationForEntity } from '~/context/PluralForm';
 import { EDITOR } from '~/core/editor';
 import {
   setInitialTranslation,

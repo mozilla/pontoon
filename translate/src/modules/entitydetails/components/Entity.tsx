@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { MachineryProvider } from '~/context/MachineryTranslations';
-import { PluralFormProvider } from '~/context/pluralForm';
+import { PluralFormProvider } from '~/context/PluralForm';
 import { SearchProvider } from '~/context/SearchData';
 import { EntityDetails } from './EntityDetails';
 

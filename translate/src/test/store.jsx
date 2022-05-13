@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 
-import { LocationProvider } from '~/context/location';
+import { LocationProvider } from '~/context/Location';
 import { UPDATE } from '~/core/user/actions';
 import { reducer } from '~/rootReducer';
 

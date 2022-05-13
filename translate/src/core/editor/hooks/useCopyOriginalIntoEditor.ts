@@ -1,5 +1,5 @@
 import { useSelectedEntity } from '~/core/entities/hooks';
-import { usePluralForm } from '~/context/pluralForm';
+import { usePluralForm } from '~/context/PluralForm';
 
 import { useUpdateTranslation } from './useUpdateTranslation';
 

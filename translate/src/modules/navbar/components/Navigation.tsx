@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
 
 import { useProject } from '~/core/project';
 import { ProjectMenu } from '~/core/project/components/ProjectMenu';

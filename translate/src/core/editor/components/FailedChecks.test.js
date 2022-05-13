@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { updateFailedChecks } from '~/core/editor/actions';
 
 import {

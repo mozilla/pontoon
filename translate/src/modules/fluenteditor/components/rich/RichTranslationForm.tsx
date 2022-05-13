@@ -9,8 +9,8 @@ import {
 } from '@fluent/syntax';
 import React, { useContext } from 'react';
 
-import { Locale } from '~/context/locale';
-import { UnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { UnsavedChanges } from '~/context/UnsavedChanges';
 import {
   Translation,
   useHandleShortcuts,
