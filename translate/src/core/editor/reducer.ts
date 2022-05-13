@@ -8,9 +8,6 @@ import {
   RESET_FAILED_CHECKS,
   RESET_SELECTION,
   RESET_EDITOR,
-  RESET_HELPER_ELEMENT_INDEX,
-  SELECT_HELPER_ELEMENT_INDEX,
-  SELECT_HELPER_TAB_INDEX,
   SET_INITIAL_TRANSLATION,
   START_UPDATE_TRANSLATION,
   UPDATE,
@@ -58,13 +55,6 @@ export type EditorState = {
   // otherwise. Used to prevent duplicate actions from users spamming their
   // keyboard or mouse.
   readonly isRunningRequest: boolean;
-
-  // Index of selected item in the helpers box
-  readonly selectedHelperElementIndex: number;
-  // Index of selected tab in the helpers box. Assumes the following:
-  //  0 -> Machinery
-  //  1 -> Other Locales
-  readonly selectedHelperTabIndex: number;
 };
 
 /**
@@ -98,8 +88,6 @@ const initial: EditorState = {
   warnings: [],
   source: '',
   isRunningRequest: false,
-  selectedHelperElementIndex: -1,
-  selectedHelperTabIndex: 0,
 };
 
 export function reducer(
@@ -160,28 +148,12 @@ export function reducer(
       return {
         ...initial,
         isRunningRequest: state.isRunningRequest,
-        selectedHelperTabIndex: state.selectedHelperTabIndex,
       };
     case UPDATE_MACHINERY_SOURCES:
       return {
         ...state,
         machineryTranslation: action.machineryTranslation,
         machinerySources: action.machinerySources,
-      };
-    case RESET_HELPER_ELEMENT_INDEX:
-      return {
-        ...state,
-        selectedHelperElementIndex: -1,
-      };
-    case SELECT_HELPER_ELEMENT_INDEX:
-      return {
-        ...state,
-        selectedHelperElementIndex: action.index,
-      };
-    case SELECT_HELPER_TAB_INDEX:
-      return {
-        ...state,
-        selectedHelperTabIndex: action.index,
       };
     default:
       return state;

@@ -1,16 +1,12 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 import type { Entity } from '~/api/entity';
+import { HelperSelection } from '~/context/HelperSelection';
 import type { LocationType } from '~/context/location';
-import {
-  resetHelperElementIndex,
-  selectHelperTabIndex,
-} from '~/core/editor/actions';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
-import { useAppDispatch } from '~/hooks';
 import { Machinery, MachineryCount } from '~/modules/machinery';
 import type { LocalesState } from '~/modules/otherlocales';
 import { OtherLocales, OtherLocalesCount } from '~/modules/otherlocales';
@@ -60,7 +56,7 @@ export function Helpers({
   setCommentTabIndex,
   resetContactPerson,
 }: Props): React.ReactElement<any> {
-  const dispatch = useAppDispatch();
+  const { setTab } = useContext(HelperSelection);
 
   const isTerminologyProject = parameters.project === 'terminology';
 
@@ -114,9 +110,9 @@ export function Helpers({
           onSelect={(index, lastIndex) => {
             if (index === lastIndex) {
               return false;
+            } else {
+              setTab(index);
             }
-            dispatch(selectHelperTabIndex(index));
-            dispatch(resetHelperElementIndex());
           }}
         >
           <TabList>

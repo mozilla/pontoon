@@ -1,12 +1,13 @@
 import { useContext } from 'react';
+
+import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
-
 import { UnsavedChanges } from '~/context/unsavedChanges';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { resetFailedChecks, selectHelperElementIndex } from '../actions';
+import { resetFailedChecks } from '../actions';
 import { useClearEditor } from './useClearEditor';
 import { useCopyMachineryTranslation } from './useCopyMachineryTranslation';
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
@@ -31,16 +32,11 @@ export function useHandleShortcuts(): (
   const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
 
-  const {
-    errors,
-    selectedHelperElementIndex,
-    selectedHelperTabIndex,
-    source,
-    warnings,
-  } = useAppSelector((state) => state.editor);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
+  const { errors, source, warnings } = useAppSelector((state) => state.editor);
+  const helperSelection = useContext(HelperSelection);
 
   const { translations: machineryTranslations } = useContext(
     MachineryTranslations,
@@ -123,7 +119,8 @@ export function useHandleShortcuts(): (
       case 'ArrowDown':
       case 'ArrowUp':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
-          const isMachinery = selectedHelperTabIndex === 0;
+          const { tab, element, setElement } = helperSelection;
+          const isMachinery = tab === 0;
           const numTranslations = isMachinery
             ? machineryTranslations.length + concordanceSearchResults.length
             : otherLocaleTranslations.length;
@@ -136,11 +133,9 @@ export function useHandleShortcuts(): (
 
           const nextIdx =
             ev.key === 'ArrowDown'
-              ? (selectedHelperElementIndex + 1) % numTranslations
-              : (selectedHelperElementIndex - 1 + numTranslations) %
-                numTranslations;
-
-          dispatch(selectHelperElementIndex(nextIdx));
+              ? (element + 1) % numTranslations
+              : (element - 1 + numTranslations) % numTranslations;
+          setElement(nextIdx);
 
           if (isMachinery) {
             const len = machineryTranslations.length;

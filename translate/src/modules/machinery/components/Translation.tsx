@@ -5,7 +5,6 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/locale';
 import { EDITOR, useCopyMachineryTranslation } from '~/core/editor';
-import { selectHelperElementIndex } from '~/core/editor/actions';
 import { GenericTranslation } from '~/core/translation';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
@@ -15,6 +14,7 @@ import { TranslationSource } from './TranslationSource';
 import './ConcordanceSearch.css';
 import './Translation.css';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { HelperSelection } from '~/context/HelperSelection';
 
 type Props = {
   sourceString: string;
@@ -37,35 +37,33 @@ export function Translation({
   entity,
 }: Props): React.ReactElement<React.ElementType> {
   const dispatch = useAppDispatch();
+  const { element, setElement } = useContext(HelperSelection);
+  const isSelected = element === index;
 
   const copyMachineryTranslation = useCopyMachineryTranslation(entity);
   const copyTranslationIntoEditor = useCallback(() => {
-    dispatch(selectHelperElementIndex(index));
+    setElement(index);
     copyMachineryTranslation(translation);
   }, [dispatch, index, translation, copyMachineryTranslation]);
 
-  const selIdx = useAppSelector(
-    (state) => state[EDITOR].selectedHelperElementIndex,
-  );
   const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
-  const isSelected = changeSource === 'machinery' && selIdx === index;
 
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && 'selected', // Highlight Machinery entries upon selection
+    isSelected && changeSource === 'machinery' && 'selected',
   );
 
   const translationRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
-    if (selIdx === index) {
+    if (isSelected) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       translationRef.current?.scrollIntoView({
         behavior: mediaQuery.matches ? 'auto' : 'smooth',
         block: 'nearest',
       });
     }
-  }, [selIdx, index]);
+  }, [isSelected]);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>
