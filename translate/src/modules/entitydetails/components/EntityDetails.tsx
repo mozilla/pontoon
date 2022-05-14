@@ -11,6 +11,7 @@ import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Location } from '~/context/Location';
 import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
 import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { Editor } from '~/core/editor/components/Editor';
 import {
   resetFailedChecks,
   updateFailedChecks,
@@ -37,7 +38,6 @@ import {
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
 
-import { EditorSelector } from './EditorSelector';
 import './EntityDetails.css';
 import { EntityNavigation } from './EntityNavigation';
 import { Helpers } from './Helpers';
@@ -158,10 +158,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
             setCommentTabIndex={setCommentTabIndex}
             setContactPerson={setContactPerson}
           />
-          <EditorSelector
-            fileFormat={selectedEntity.format}
-            key={selectedEntity.pk}
-          />
+          <Editor fileFormat={selectedEntity.format} key={selectedEntity.pk} />
           <History />
         </section>
         <section className='third-column'>

@@ -2,11 +2,7 @@ import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 
 import { Locale } from '~/context/Locale';
 import { UnsavedChanges } from '~/context/UnsavedChanges';
-import {
-  useHandleShortcuts,
-  useReplaceSelectionContent,
-  useUpdateUnsavedChanges,
-} from '~/core/editor';
+import { useHandleShortcuts, useReplaceSelectionContent } from '~/core/editor';
 import { resetFailedChecks } from '~/core/editor/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -55,9 +51,6 @@ export function GenericTranslationForm({
       dispatch(resetFailedChecks());
     }
   }, [dispatch, translation, unsavedChanges.exist]);
-
-  // When the translation or the initial translation changes, check for unsaved changes.
-  useUpdateUnsavedChanges(false);
 
   // Replace selected content on external actions (for example, when a user clicks
   // on a placeable).
