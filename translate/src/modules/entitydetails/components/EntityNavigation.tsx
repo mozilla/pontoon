@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
 import { Location } from '~/context/Location';
-import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { resetEditor } from '~/core/editor/actions';
 import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
@@ -21,7 +21,7 @@ export function EntityNavigation(): React.ReactElement {
   const location = useContext(Location);
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   const copyLinkToClipboard = useCallback(async () => {
     const { locale, project, resource, entity } = location;

@@ -8,6 +8,8 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { PluralSelector, PluralSelectorBase } from './PluralSelector';
 
+const checkUnsavedChanges = (callback) => callback();
+
 const createShallowPluralSelector = (pluralForm) =>
   shallow(
     <PluralSelectorBase
@@ -23,26 +25,38 @@ describe('<PluralSelectorBase>', () => {
   afterAll(() => React.useContext.restore());
 
   it('returns null when the locale is missing', () => {
-    React.useContext.returns({ cldrPlurals: [] });
+    React.useContext.returns({
+      cldrPlurals: [],
+      current: { checkUnsavedChanges },
+    });
     const wrapper = createShallowPluralSelector(0);
     expect(wrapper.type()).toBeNull();
   });
 
   it('returns null when the locale has only one plural form', () => {
-    React.useContext.returns({ cldrPlurals: [5] });
+    React.useContext.returns({
+      cldrPlurals: [5],
+      current: { checkUnsavedChanges },
+    });
     const wrapper = createShallowPluralSelector(0);
     expect(wrapper.type()).toBeNull();
   });
 
   it('returns null when the selected plural form is -1', () => {
-    React.useContext.returns({ cldrPlurals: [1, 5] });
+    React.useContext.returns({
+      cldrPlurals: [1, 5],
+      current: { checkUnsavedChanges },
+    });
     // If pluralForm is -1, it means the entity has no plural string.
     const wrapper = createShallowPluralSelector(-1);
     expect(wrapper.type()).toBeNull();
   });
 
   it('shows the correct list of plural choices for locale with 2 forms', () => {
-    React.useContext.returns({ cldrPlurals: [1, 5] });
+    React.useContext.returns({
+      cldrPlurals: [1, 5],
+      current: { checkUnsavedChanges },
+    });
     const wrapper = createShallowPluralSelector(0);
 
     expect(wrapper.find('li')).toHaveLength(2);
@@ -55,6 +69,7 @@ describe('<PluralSelectorBase>', () => {
       cldrPlurals: [0, 1, 2, 3, 4, 5],
       pluralRule:
         '(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)',
+      current: { checkUnsavedChanges },
     });
     const wrapper = createShallowPluralSelector(0);
 
@@ -65,7 +80,10 @@ describe('<PluralSelectorBase>', () => {
   });
 
   it('marks the right choice as active', () => {
-    React.useContext.returns({ cldrPlurals: [1, 5] });
+    React.useContext.returns({
+      cldrPlurals: [1, 5],
+      current: { checkUnsavedChanges },
+    });
     const wrapper = createShallowPluralSelector(1);
 
     expect(wrapper.find('li.active').text()).toEqual('other2');

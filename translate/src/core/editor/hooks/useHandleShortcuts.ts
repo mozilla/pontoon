@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
-import { UnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -32,6 +32,7 @@ export function useHandleShortcuts(): (
   const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
 
+  const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
@@ -68,9 +69,9 @@ export function useHandleShortcuts(): (
 
           const ignoreWarnings = errors.length + warnings.length > 0;
 
-          if (unsavedChanges.show) {
+          if (unsavedChanges.onIgnore) {
             // There are unsaved changes, proceed.
-            unsavedChanges.set({ ignore: true });
+            resetUnsavedChanges(true);
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
@@ -89,9 +90,9 @@ export function useHandleShortcuts(): (
       // On Esc, close unsaved changes and failed checks popups if open.
       case 'Escape':
         ev.preventDefault();
-        if (unsavedChanges.show) {
+        if (unsavedChanges.onIgnore) {
           // Close unsaved changes popup
-          unsavedChanges.set(null);
+          resetUnsavedChanges(false);
         } else if (errors.length || warnings.length) {
           // Close failed checks popup
           dispatch(resetFailedChecks());

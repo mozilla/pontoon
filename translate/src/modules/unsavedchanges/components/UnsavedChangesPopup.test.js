@@ -1,23 +1,25 @@
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { UnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { UnsavedChangesPopup } from './UnsavedChangesPopup';
 
-const mountPopup = (value) =>
+const mountPopup = (onIgnore, resetUnsavedChanges) =>
   mount(
     <MockLocalizationProvider>
-      <UnsavedChanges.Provider value={value}>
-        <UnsavedChangesPopup />
+      <UnsavedChanges.Provider value={{ onIgnore }}>
+        <UnsavedActions.Provider value={{ resetUnsavedChanges }}>
+          <UnsavedChangesPopup />
+        </UnsavedActions.Provider>
       </UnsavedChanges.Provider>
     </MockLocalizationProvider>,
   );
 
 describe('<UnsavedChangesPopup>', () => {
   it('renders correctly if shown', () => {
-    const wrapper = mountPopup({ show: true });
+    const wrapper = mountPopup(() => {});
 
     expect(wrapper.find('.unsaved-changes')).toHaveLength(1);
     expect(wrapper.find('.close')).toHaveLength(1);
@@ -27,24 +29,24 @@ describe('<UnsavedChangesPopup>', () => {
   });
 
   it('does not render if not shown', () => {
-    const wrapper = mountPopup({ show: false });
+    const wrapper = mountPopup(null);
 
     expect(wrapper.find('.unsaved-changes')).toHaveLength(0);
   });
 
   it('closes the unsaved changes popup when the Close button is clicked', () => {
-    const set = jest.fn();
-    const wrapper = mountPopup({ set, show: true });
+    const resetUnsavedChanges = jest.fn();
+    const wrapper = mountPopup(() => {}, resetUnsavedChanges);
 
     wrapper.find('.close').simulate('click');
-    expect(set).toHaveBeenCalledWith(null);
+    expect(resetUnsavedChanges).toHaveBeenCalledWith(false);
   });
 
   it('ignores the unsaved changes popup when the Proceed button is clicked', () => {
-    const set = jest.fn();
-    const wrapper = mountPopup({ set, show: true });
+    const resetUnsavedChanges = jest.fn();
+    const wrapper = mountPopup(() => {}, resetUnsavedChanges);
 
     wrapper.find('.proceed.anyway').simulate('click');
-    expect(set).toHaveBeenCalledWith({ ignore: true });
+    expect(resetUnsavedChanges).toHaveBeenCalledWith(true);
   });
 });

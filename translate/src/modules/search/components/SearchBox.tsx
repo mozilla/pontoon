@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 
 import { Location } from '~/context/Location';
-import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
@@ -69,7 +69,7 @@ export function SearchBoxBase({
   project,
   searchAndFilters,
 }: InternalProps): React.ReactElement<'div'> {
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
   const applyOnChange = useRef(false);
   const searchInput = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
