@@ -10,20 +10,18 @@ import {
 import React, { useContext } from 'react';
 
 import { Locale } from '~/context/Locale';
-import { UnsavedChanges } from '~/context/UnsavedChanges';
 import {
   Translation,
   useHandleShortcuts,
   useReplaceSelectionContent,
 } from '~/core/editor';
-import { resetFailedChecks } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import {
   extractAccessKeyCandidates,
   isPluralExpression,
 } from '~/core/utils/fluent';
 import { CLDR_PLURALS } from '~/core/utils/constants';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -86,8 +84,6 @@ export function RichTranslationForm(
   const accessKeyElementId = React.useRef('');
   const focusedElementId = React.useRef('');
 
-  const dispatch = useAppDispatch();
-
   const message = useAppSelector((state) => state.editor.translation);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const locale = useContext(Locale);
@@ -96,7 +92,6 @@ export function RichTranslationForm(
     (state) => state.search.searchInputFocused,
   );
   const entity = useSelectedEntity();
-  const unsavedChanges = useContext(UnsavedChanges);
   const pluralExamples = usePluralExamples(locale);
 
   const tableBody = React.useRef<HTMLTableSectionElement>(null);
@@ -161,13 +156,6 @@ export function RichTranslationForm(
     }
     focusedElementId.current = '';
   }, [entity, changeSource]);
-
-  // Reset checks when content of the editor changes and some changes have been made.
-  React.useEffect(() => {
-    if (unsavedChanges.exist) {
-      dispatch(resetFailedChecks());
-    }
-  }, [message, dispatch, unsavedChanges.exist]);
 
   // Put focus on input.
   React.useEffect(() => {

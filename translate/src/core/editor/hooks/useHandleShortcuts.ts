@@ -1,13 +1,13 @@
 import { useContext } from 'react';
+import { FailedChecksData } from '~/context/FailedChecksData';
 
 import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { resetFailedChecks } from '../actions';
 import { useClearEditor } from './useClearEditor';
 import { useCopyMachineryTranslation } from './useCopyMachineryTranslation';
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
@@ -24,8 +24,6 @@ export function useHandleShortcuts(): (
   clearEditorCustom?: () => void,
   copyOriginalIntoEditorCustom?: () => void,
 ) => void {
-  const dispatch = useAppDispatch();
-
   const clearEditor = useClearEditor();
   const copyMachineryTranslation = useCopyMachineryTranslation();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
@@ -36,7 +34,8 @@ export function useHandleShortcuts(): (
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
   const existingTranslation = useExistingTranslation();
-  const { errors, source, warnings } = useAppSelector((state) => state.editor);
+  const { errors, source, warnings, resetFailedChecks } =
+    useContext(FailedChecksData);
   const helperSelection = useContext(HelperSelection);
 
   const { translations: machineryTranslations } = useContext(
@@ -95,7 +94,7 @@ export function useHandleShortcuts(): (
           resetUnsavedChanges(false);
         } else if (errors.length || warnings.length) {
           // Close failed checks popup
-          dispatch(resetFailedChecks());
+          resetFailedChecks();
         }
         break;
 

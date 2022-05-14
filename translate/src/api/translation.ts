@@ -5,7 +5,7 @@ import type { SourceType } from './machinery';
 
 export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
 
-export type FailedChecks = {
+export type ApiFailedChecks = {
   readonly clErrors: string[];
   readonly pErrors: string[];
   readonly clWarnings: string[];
@@ -57,7 +57,7 @@ export type APIStats = {
 
 type CreateTranslationResponse =
   | { status: false; same: true; failedChecks?: never }
-  | { status: false; failedChecks: FailedChecks; same?: never }
+  | { status: false; failedChecks: ApiFailedChecks; same?: never }
   | { status: true; translation: EntityTranslation; stats: APIStats };
 
 /**
@@ -107,7 +107,7 @@ export function createTranslation(
 }
 
 type SetTranslationResponse =
-  | { failedChecks: FailedChecks; string: string } // indicates failed approve
+  | { failedChecks: ApiFailedChecks; string: string } // indicates failed approve
   | { translation: EntityTranslation; stats: APIStats; failedChecks?: never };
 
 export function setTranslationStatus(

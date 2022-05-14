@@ -2,14 +2,11 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { ChangeOperation, setTranslationStatus } from '~/api/translation';
+import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { usePluralForm } from '~/context/PluralForm';
-import {
-  resetEditor,
-  updateFailedChecks,
-  updateTranslation,
-} from '~/core/editor/actions';
+import { resetEditor, updateTranslation } from '~/core/editor/actions';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
@@ -40,6 +37,7 @@ export function useUpdateTranslationStatus(
   const { push, resource } = useContext(Location);
   const { pluralForm, setPluralForm } = usePluralForm(entity);
   const nextEntity = useNextEntity();
+  const { setFailedChecks } = useContext(FailedChecksData);
 
   return async (
     translationId: number,
@@ -65,7 +63,7 @@ export function useUpdateTranslationStatus(
     // Update the UI based on the response.
     if (results.failedChecks) {
       dispatch(updateTranslation(results.string, 'external'));
-      dispatch(updateFailedChecks(results.failedChecks, translationId));
+      setFailedChecks(results.failedChecks, translationId);
     } else {
       // Show a notification to explain what happened.
       const notif = _getOperationNotif(change, !!results.translation);

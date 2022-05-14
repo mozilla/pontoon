@@ -1,11 +1,11 @@
 /* eslint-env node */
 
 import { createMemoryHistory } from 'history';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
-import * as EditorActions from '~/core/editor/actions';
+import { FailedChecksData } from '~/context/FailedChecksData';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
@@ -28,7 +28,7 @@ function Wrapper({ id, change }) {
   return null;
 }
 
-function mountWrapper(props) {
+function mountWrapper({ setFailedChecks, ...props }) {
   const history = createMemoryHistory({
     initialEntries: ['/kg/pro/all/?string=42'],
   });
@@ -39,7 +39,16 @@ function mountWrapper(props) {
     user: { settings: {}, username: 'Franck' },
   };
   const store = createReduxStore(initialState);
-  const wrapper = mountComponentWithStore(Wrapper, store, props, history);
+  const wrapper = mountComponentWithStore(
+    () => (
+      <FailedChecksData.Provider value={{ setFailedChecks }}>
+        <Wrapper {...props} />
+      </FailedChecksData.Provider>
+    ),
+    store,
+    {},
+    history,
+  );
   return { history, store, wrapper };
 }
 
@@ -47,18 +56,15 @@ describe('useUpdateTranslationStatus', () => {
   beforeAll(() => {
     global.fetch = () => Promise.resolve({ json: () => Promise.resolve({}) });
     sinon.stub(TranslationAPI, 'setTranslationStatus');
-    sinon.stub(EditorActions, 'updateFailedChecks');
   });
 
   afterEach(() => {
     TranslationAPI.setTranslationStatus.reset();
-    EditorActions.updateFailedChecks.reset();
   });
 
   afterAll(() => {
     delete global.fetch;
     TranslationAPI.setTranslationStatus.restore();
-    EditorActions.updateFailedChecks.restore();
   });
 
   it('updates failed checks from response', async () => {
@@ -66,9 +72,9 @@ describe('useUpdateTranslationStatus', () => {
       string: 'string',
       failedChecks: 'FC',
     });
-    EditorActions.updateFailedChecks.returns({ type: 'whatever' });
 
-    mountWrapper({ id: 42, change: 'approve' });
+    const setFailedChecks = sinon.stub();
+    mountWrapper({ id: 42, change: 'approve', setFailedChecks });
 
     // Let the async code in useUpdateTranslationStatus run
     await 1;
@@ -76,8 +82,6 @@ describe('useUpdateTranslationStatus', () => {
     expect(TranslationAPI.setTranslationStatus.getCalls()).toMatchObject([
       { args: ['approve', 42, 'all', undefined] },
     ]);
-    expect(EditorActions.updateFailedChecks.getCalls()).toMatchObject([
-      { args: ['FC', 42] },
-    ]);
+    expect(setFailedChecks.getCalls()).toMatchObject([{ args: ['FC', 42] }]);
   });
 });

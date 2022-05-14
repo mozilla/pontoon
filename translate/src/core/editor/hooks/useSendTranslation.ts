@@ -2,6 +2,7 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { createTranslation } from '~/api/translation';
+import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { usePluralForm } from '~/context/PluralForm';
@@ -15,10 +16,9 @@ import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import {
-  startUpdateTranslation,
-  resetEditor,
-  updateFailedChecks,
   endUpdateTranslation,
+  resetEditor,
+  startUpdateTranslation,
 } from '../actions';
 
 /**
@@ -45,6 +45,7 @@ export function useSendTranslation(): (
   const nextEntity = useNextEntity();
   const location = useContext(Location);
   const { resetUnsavedChanges } = useContext(UnsavedActions);
+  const { setFailedChecks } = useContext(FailedChecksData);
 
   return async (ignoreWarnings = false, contentArg?: string) => {
     if (isRunningRequest || !entity) {
@@ -106,7 +107,7 @@ export function useSendTranslation(): (
       }
       dispatch(resetEditor());
     } else if (content.failedChecks) {
-      dispatch(updateFailedChecks(content.failedChecks, 'submitted'));
+      setFailedChecks(content.failedChecks, 'submitted');
     } else if (content.same) {
       // The translation that was provided is the same as an existing
       // translation for that entity.
