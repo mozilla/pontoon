@@ -7,16 +7,22 @@ import React, {
   useState,
 } from 'react';
 
-export interface UnsavedChanges {
+export type UnsavedChanges = Readonly<{
   /** Call with `null` to reset all fields */
-  readonly set: (next: Partial<UnsavedChanges> | null) => void;
-  readonly callback: (() => void) | null;
-  readonly exist: boolean;
-  readonly ignore: boolean;
-  readonly show: boolean;
-}
+  set: (
+    next:
+      | { exist: boolean; ignore: false }
+      | { callback: () => void; show: true }
+      | { ignore: true }
+      | null,
+  ) => void;
+  callback: (() => void) | null;
+  exist: boolean;
+  ignore: boolean;
+  show: boolean;
+}>;
 
-const emptyUnsavedChanges: UnsavedChanges = {
+const initUnsavedChanges: UnsavedChanges = {
   callback: null,
   exist: false,
   ignore: false,
@@ -24,10 +30,10 @@ const emptyUnsavedChanges: UnsavedChanges = {
   set: () => {},
 };
 
-export const UnsavedChanges = createContext(emptyUnsavedChanges);
+export const UnsavedChanges = createContext(initUnsavedChanges);
 
 const UnsavedChangesRef = createContext<React.MutableRefObject<UnsavedChanges>>(
-  { current: emptyUnsavedChanges },
+  { current: initUnsavedChanges },
 );
 
 /**
@@ -39,14 +45,19 @@ export function UnsavedChangesProvider({
 }: {
   children: React.ReactElement;
 }) {
-  const ref = useRef<UnsavedChanges>(emptyUnsavedChanges);
+  const ref = useRef<UnsavedChanges>(initUnsavedChanges);
   const [state, setState] = useState<UnsavedChanges>(() => ({
-    ...emptyUnsavedChanges,
+    ...initUnsavedChanges,
     set: (next) =>
       setState((prev) => {
-        const update = next
-          ? { ...prev, ...next }
-          : { ...emptyUnsavedChanges, set: prev.set };
+        let update: UnsavedChanges;
+        if (next) {
+          update = { ...prev, ...next };
+        } else if (prev.callback || prev.exist || prev.ignore || prev.show) {
+          update = { ...initUnsavedChanges, set: prev.set };
+        } else {
+          return prev;
+        }
         ref.current = update;
         return update;
       }),

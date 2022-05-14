@@ -15,7 +15,6 @@ import {
   Translation,
   useHandleShortcuts,
   useReplaceSelectionContent,
-  useUpdateUnsavedChanges,
 } from '~/core/editor';
 import { resetFailedChecks } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
@@ -169,9 +168,6 @@ export function RichTranslationForm(
       dispatch(resetFailedChecks());
     }
   }, [message, dispatch, unsavedChanges.exist]);
-
-  // When content of the translation changes, update unsaved changes.
-  useUpdateUnsavedChanges(false);
 
   // Put focus on input.
   React.useEffect(() => {
