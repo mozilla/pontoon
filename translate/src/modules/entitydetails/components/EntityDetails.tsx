@@ -6,17 +6,13 @@ import React, {
   useState,
 } from 'react';
 
-import type { FailedChecks } from '~/api/translation';
+import { FailedChecksProvider } from '~/context/FailedChecksData';
 import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Location } from '~/context/Location';
 import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { Editor } from '~/core/editor/components/Editor';
-import {
-  resetFailedChecks,
-  updateFailedChecks,
-  updateSelection,
-} from '~/core/editor/actions';
+import { updateSelection } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
@@ -77,28 +73,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       return;
     }
 
-    // Only show failed checks for active translations that are approved,
-    // pretranslated or fuzzy, i.e. when their status icon is colored as
-    // error/warning in the string list
-    if (
-      activeTranslation &&
-      (activeTranslation.errors.length || activeTranslation.warnings.length) &&
-      (activeTranslation.approved ||
-        activeTranslation.pretranslated ||
-        activeTranslation.fuzzy)
-    ) {
-      const failedChecks: FailedChecks = {
-        clErrors: activeTranslation.errors,
-        clWarnings: activeTranslation.warnings,
-        pErrors: [],
-        pndbWarnings: [],
-        ttWarnings: [],
-      };
-      dispatch(updateFailedChecks(failedChecks, 'stored'));
-    } else {
-      dispatch(resetFailedChecks());
-    }
-
     dispatch(requestHistory(entity, pluralForm));
     dispatch(getHistory(entity, lc, pluralForm));
 
@@ -141,46 +115,51 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   }
 
   return (
-    <HelperSelectionProvider translation={activeTranslation}>
-      <section className='entity-details'>
-        <section className='main-column'>
-          <EntityNavigation />
-          <Metadata
-            entity={selectedEntity}
-            isReadOnlyEditor={isReadOnlyEditor}
-            pluralForm={pluralForm}
-            terms={terms}
-            addTextToEditorTranslation={addTextToEditorTranslation}
-            navigateToPath={navigateToPath}
-            teamComments={teamComments}
-            user={user}
-            commentTabRef={commentTabRef}
-            setCommentTabIndex={setCommentTabIndex}
-            setContactPerson={setContactPerson}
-          />
-          <Editor fileFormat={selectedEntity.format} key={selectedEntity.pk} />
-          <History />
+    <FailedChecksProvider translation={activeTranslation}>
+      <HelperSelectionProvider translation={activeTranslation}>
+        <section className='entity-details'>
+          <section className='main-column'>
+            <EntityNavigation />
+            <Metadata
+              entity={selectedEntity}
+              isReadOnlyEditor={isReadOnlyEditor}
+              pluralForm={pluralForm}
+              terms={terms}
+              addTextToEditorTranslation={addTextToEditorTranslation}
+              navigateToPath={navigateToPath}
+              teamComments={teamComments}
+              user={user}
+              commentTabRef={commentTabRef}
+              setCommentTabIndex={setCommentTabIndex}
+              setContactPerson={setContactPerson}
+            />
+            <Editor
+              fileFormat={selectedEntity.format}
+              key={selectedEntity.pk}
+            />
+            <History />
+          </section>
+          <section className='third-column'>
+            <Helpers
+              entity={selectedEntity}
+              isReadOnlyEditor={isReadOnlyEditor}
+              otherlocales={otherlocales}
+              teamComments={teamComments}
+              terms={terms}
+              togglePinnedStatus={togglePinnedStatus}
+              parameters={location}
+              user={user}
+              addTextToEditorTranslation={addTextToEditorTranslation}
+              navigateToPath={navigateToPath}
+              commentTabRef={commentTabRef}
+              commentTabIndex={commentTabIndex}
+              setCommentTabIndex={setCommentTabIndex}
+              contactPerson={contactPerson}
+              resetContactPerson={resetContactPerson}
+            />
+          </section>
         </section>
-        <section className='third-column'>
-          <Helpers
-            entity={selectedEntity}
-            isReadOnlyEditor={isReadOnlyEditor}
-            otherlocales={otherlocales}
-            teamComments={teamComments}
-            terms={terms}
-            togglePinnedStatus={togglePinnedStatus}
-            parameters={location}
-            user={user}
-            addTextToEditorTranslation={addTextToEditorTranslation}
-            navigateToPath={navigateToPath}
-            commentTabRef={commentTabRef}
-            commentTabIndex={commentTabIndex}
-            setCommentTabIndex={setCommentTabIndex}
-            contactPerson={contactPerson}
-            resetContactPerson={resetContactPerson}
-          />
-        </section>
-      </section>
-    </HelperSelectionProvider>
+      </HelperSelectionProvider>
+    </FailedChecksProvider>
   );
 }

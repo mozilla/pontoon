@@ -5,7 +5,8 @@ import './Editor.css';
 import { FluentEditor } from '~/modules/fluenteditor';
 import { GenericEditor } from '~/modules/genericeditor';
 import { useAppSelector } from '~/hooks';
-import { UnsavedActions } from '~/context/UnsavedChanges';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { FailedChecksData } from '~/context/FailedChecksData';
 
 type Props = {
   fileFormat: string;
@@ -16,6 +17,8 @@ export function Editor({ fileFormat }: Props): React.ReactElement<'div'> {
     (state) => state.editor,
   );
   const { setUnsavedChanges } = useContext(UnsavedActions);
+  const { exist } = useContext(UnsavedChanges);
+  const { resetFailedChecks } = useContext(FailedChecksData);
 
   // Changes in `translation` need to be reflected in `UnsavedChanges`,
   // but the latter needs to be defined at a higher level to make it
@@ -31,6 +34,12 @@ export function Editor({ fileFormat }: Props): React.ReactElement<'div'> {
     }
     setUnsavedChanges(next);
   }, [translation, initialTranslation]);
+
+  useEffect(() => {
+    if (exist) {
+      resetFailedChecks();
+    }
+  }, [translation]);
 
   return (
     <div className='editor'>

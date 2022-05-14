@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useContext, useLayoutEffect, useRef } from 'react';
 
 import { Locale } from '~/context/Locale';
-import { UnsavedChanges } from '~/context/UnsavedChanges';
 import { useHandleShortcuts, useReplaceSelectionContent } from '~/core/editor';
-import { resetFailedChecks } from '~/core/editor/actions';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 type Props = {
@@ -19,8 +17,6 @@ export function GenericTranslationForm({
   sendTranslation,
   updateTranslation,
 }: Props): React.ReactElement<'textarea'> | null {
-  const dispatch = useAppDispatch();
-
   const translation = useAppSelector((state) => state.editor.translation);
   const changeSource = useAppSelector((state) => state.editor.changeSource);
   const searchInputFocused = useAppSelector(
@@ -28,7 +24,6 @@ export function GenericTranslationForm({
   );
   const { code, direction, script } = useContext(Locale);
   const readonly = useReadonlyEditor();
-  const unsavedChanges = useContext(UnsavedChanges);
 
   const handleShortcutsFn = useHandleShortcuts();
 
@@ -44,13 +39,6 @@ export function GenericTranslationForm({
       }
     }
   }, [translation, changeSource, searchInputFocused]);
-
-  // Reset checks when content of the editor changes and some changes have been made.
-  useEffect(() => {
-    if (unsavedChanges.exist) {
-      dispatch(resetFailedChecks());
-    }
-  }, [dispatch, translation, unsavedChanges.exist]);
 
   // Replace selected content on external actions (for example, when a user clicks
   // on a placeable).

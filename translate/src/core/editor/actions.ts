@@ -1,16 +1,13 @@
 import type { Entry } from '@fluent/syntax';
 
 import { SourceType } from '~/api/machinery';
-import { FailedChecks } from '~/api/translation';
 
 export const END_UPDATE_TRANSLATION = 'editor/END_UPDATE_TRANSLATION';
 export const RESET_EDITOR = 'editor/RESET_EDITOR';
-export const RESET_FAILED_CHECKS = 'editor/RESET_FAILED_CHECKS';
 export const RESET_SELECTION = 'editor/RESET_SELECTION';
 export const SET_INITIAL_TRANSLATION = 'editor/SET_INITIAL_TRANSLATION';
 export const START_UPDATE_TRANSLATION = 'editor/START_UPDATE_TRANSLATION';
 export const UPDATE = 'editor/UPDATE';
-export const UPDATE_FAILED_CHECKS = 'editor/UPDATE_FAILED_CHECKS';
 export const UPDATE_SELECTION = 'editor/UPDATE_SELECTION';
 export const UPDATE_MACHINERY_SOURCES = 'editor/UPDATE_MACHINERY_SOURCES';
 
@@ -20,11 +17,9 @@ export type Action =
   | EndUpdateTranslationAction
   | InitialTranslationAction
   | ResetEditorAction
-  | ResetFailedChecksAction
   | ResetSelectionAction
   | StartUpdateTranslationAction
   | UpdateAction
-  | UpdateFailedChecksAction
   | UpdateSelectionAction
   | UpdateMachinerySourcesAction;
 
@@ -104,25 +99,6 @@ export function setInitialTranslation(
 }
 
 /**
- * Update failed checks in the active editor.
- */
-type UpdateFailedChecksAction = {
-  readonly type: typeof UPDATE_FAILED_CHECKS;
-  readonly failedChecks: FailedChecks;
-  readonly source: '' | 'stored' | 'submitted' | number;
-};
-export function updateFailedChecks(
-  failedChecks: FailedChecks,
-  source: '' | 'stored' | 'submitted' | number,
-): UpdateFailedChecksAction {
-  return {
-    type: UPDATE_FAILED_CHECKS,
-    failedChecks,
-    source,
-  };
-}
-
-/**
  * Reset selected content to default value.
  */
 type ResetSelectionAction = {
@@ -143,18 +119,6 @@ type ResetEditorAction = {
 export function resetEditor(): ResetEditorAction {
   return {
     type: RESET_EDITOR,
-  };
-}
-
-/**
- * Reset failed checks to default value.
- */
-type ResetFailedChecksAction = {
-  readonly type: typeof RESET_FAILED_CHECKS;
-};
-export function resetFailedChecks(): ResetFailedChecksAction {
-  return {
-    type: RESET_FAILED_CHECKS,
   };
 }
 
