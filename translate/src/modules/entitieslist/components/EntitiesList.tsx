@@ -25,7 +25,7 @@ import {
   uncheckSelection,
 } from '~/modules/batchactions/actions';
 import { useBatchactions } from '~/modules/batchactions/hooks';
-import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
@@ -45,7 +45,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);

@@ -10,7 +10,7 @@ import type { FailedChecks } from '~/api/translation';
 import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Location } from '~/context/Location';
 import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
-import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { Editor } from '~/core/editor/components/Editor';
 import {
   resetFailedChecks,
@@ -68,7 +68,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const [commentTabIndex, setCommentTabIndex] = useState(0);
   const [contactPerson, setContactPerson] = useState('');
   const resetContactPerson = useCallback(() => setContactPerson(''), []);
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   const { entity, locale: lc, project } = location;
 

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { Locale } from '~/context/Locale';
 import { PluralForm, usePluralForm } from '~/context/PluralForm';
-import { useCheckUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
@@ -30,7 +30,7 @@ export function PluralSelectorBase({
   const locale = useContext(Locale);
   const { cldrPlurals } = locale;
   const examples = usePluralExamples(locale);
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   function selectPluralForm(nextPluralForm: number) {
     if (pluralForm !== nextPluralForm) {

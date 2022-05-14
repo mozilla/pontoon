@@ -5,7 +5,7 @@ import { createTranslation } from '~/api/translation';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { usePluralForm } from '~/context/PluralForm';
-import { useSetUnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
@@ -44,7 +44,7 @@ export function useSendTranslation(): (
   const { pluralForm, setPluralForm } = usePluralForm(entity);
   const nextEntity = useNextEntity();
   const location = useContext(Location);
-  const setUnsavedChanges = useSetUnsavedChanges();
+  const { resetUnsavedChanges } = useContext(UnsavedActions);
 
   return async (ignoreWarnings = false, contentArg?: string) => {
     if (isRunningRequest || !entity) {
@@ -80,7 +80,7 @@ export function useSendTranslation(): (
       dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
 
       // Ignore existing unsavedchanges because they are saved now.
-      setUnsavedChanges({ ignore: true });
+      resetUnsavedChanges(true);
 
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, content.translation),

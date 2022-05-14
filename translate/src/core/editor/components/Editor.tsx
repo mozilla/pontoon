@@ -5,7 +5,7 @@ import './Editor.css';
 import { FluentEditor } from '~/modules/fluenteditor';
 import { GenericEditor } from '~/modules/genericeditor';
 import { useAppSelector } from '~/hooks';
-import { UnsavedChanges } from '~/context/UnsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 
 type Props = {
   fileFormat: string;
@@ -15,7 +15,7 @@ export function Editor({ fileFormat }: Props): React.ReactElement<'div'> {
   const { initialTranslation, translation } = useAppSelector(
     (state) => state.editor,
   );
-  const { exist, show, set } = useContext(UnsavedChanges);
+  const { setUnsavedChanges } = useContext(UnsavedActions);
 
   // Changes in `translation` need to be reflected in `UnsavedChanges`,
   // but the latter needs to be defined at a higher level to make it
@@ -29,16 +29,8 @@ export function Editor({ fileFormat }: Props): React.ReactElement<'div'> {
     } else {
       next = !translation.equals(initialTranslation);
     }
-
-    if (next !== exist) {
-      set({ exist: next, ignore: false });
-    }
-  }, [translation, initialTranslation, exist]);
-  useEffect(() => {
-    if (show) {
-      set(null);
-    }
-  }, [translation]);
+    setUnsavedChanges(next);
+  }, [translation, initialTranslation]);
 
   return (
     <div className='editor'>
