@@ -10,7 +10,6 @@ import React, {
 
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { resetEditor } from '~/core/editor/actions';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -188,7 +187,6 @@ export function SearchBoxBase({
         }
 
         dispatch(resetEntities());
-        dispatch(resetEditor());
         parameters.push({
           author: authors.join(','),
           extra: extras.join(','),

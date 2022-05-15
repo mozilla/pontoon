@@ -100,11 +100,4 @@ describe('<EditorMenu>', () => {
       wrapper.find('#editor-EditorMenu--read-only-localization'),
     ).toHaveLength(1);
   });
-
-  it('accepts a firstItemHook and shows it as its first child', () => {
-    const firstItemHook = <p>Hello</p>;
-    const wrapper = createEditorMenu({ firstItemHook });
-
-    expect(wrapper.find('menu').children().first().text()).toEqual('Hello');
-  });
 });

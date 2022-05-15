@@ -1,24 +1,22 @@
-import { useSelectedEntity } from '~/core/entities/hooks';
-import { usePluralForm } from '~/context/PluralForm';
+import { useCallback, useContext } from 'react';
 
-import { useUpdateTranslation } from './useUpdateTranslation';
+import { EditorActions } from '~/context/Editor';
+import { usePluralForm } from '~/context/PluralForm';
+import { useSelectedEntity } from '~/core/entities/hooks';
 
 /**
  * Return a function to copy the original translation into the editor.
  */
 export function useCopyOriginalIntoEditor(): () => void {
-  const updateTranslation = useUpdateTranslation();
-
+  const { setEditorFromHistory } = useContext(EditorActions);
   const entity = useSelectedEntity();
   const { pluralForm } = usePluralForm(entity);
 
-  return () => {
+  return useCallback(() => {
     if (entity) {
-      if (pluralForm === -1 || pluralForm === 0) {
-        updateTranslation(entity.original, 'original');
-      } else {
-        updateTranslation(entity.original_plural, 'original');
-      }
+      setEditorFromHistory(
+        pluralForm > 0 ? entity.original_plural : entity.original,
+      );
     }
-  };
+  }, [entity, pluralForm]);
 }

@@ -2,6 +2,11 @@ import NProgress from 'nprogress';
 import { useContext } from 'react';
 
 import { createTranslation } from '~/api/translation';
+import {
+  EditorActions,
+  EditorData,
+  getEditedTranslation,
+} from '~/context/Editor';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
@@ -15,65 +20,49 @@ import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
-import {
-  endUpdateTranslation,
-  resetEditor,
-  startUpdateTranslation,
-} from '../actions';
-
 /**
  * Return a function to send a translation to the server.
  */
-export function useSendTranslation(): (
-  ignoreWarnings?: boolean,
-  content?: string,
-) => void {
+export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const dispatch = useAppDispatch();
 
-  const {
-    isRunningRequest,
-    machinerySources,
-    machineryTranslation,
-    translation,
-  } = useAppSelector((state) => state.editor);
-  const entity = useSelectedEntity();
+  const location = useContext(Location);
   const locale = useContext(Locale);
+  const entity = useSelectedEntity();
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
   const { pluralForm, setPluralForm } = usePluralForm(entity);
   const nextEntity = useNextEntity();
-  const location = useContext(Location);
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
+  const { setEditorBusy } = useContext(EditorActions);
+  const editor = useContext(EditorData);
+  const translation = getEditedTranslation(editor);
+  const { busy, machinery } = editor;
 
-  return async (ignoreWarnings = false, contentArg?: string) => {
-    if (isRunningRequest || !entity) {
+  return async (ignoreWarnings = false) => {
+    if (busy || !entity) {
       return;
     }
 
-    const translationContent = contentArg || translation;
-
-    if (typeof translationContent !== 'string') {
-      throw new Error(
-        'Trying to save an unsupported non-string translation: ' +
-          typeof translationContent,
-      );
-    }
-
     NProgress.start();
-    dispatch(startUpdateTranslation());
+    setEditorBusy(true);
 
+    const sources =
+      machinery && machinery.translation === translation
+        ? machinery.sources
+        : [];
     const content = await createTranslation(
       entity.pk,
-      translationContent,
+      translation,
       locale.code,
       pluralForm,
       entity.original,
       forceSuggestions,
       location.resource,
       ignoreWarnings,
-      machineryTranslation === translation ? machinerySources : [],
+      sources,
     );
 
     if (content.status) {
@@ -105,7 +94,6 @@ export function useSendTranslation(): (
       } else if (nextEntity && nextEntity.pk !== entity.pk) {
         location.push({ entity: nextEntity.pk });
       }
-      dispatch(resetEditor());
     } else if (content.failedChecks) {
       setFailedChecks(content.failedChecks, 'submitted');
     } else if (content.same) {
@@ -114,7 +102,7 @@ export function useSendTranslation(): (
       dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
     }
 
-    dispatch(endUpdateTranslation());
+    setEditorBusy(false);
     NProgress.done();
   };
 }

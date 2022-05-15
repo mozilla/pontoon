@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { EditorActions, useClearEditor } from '~/context/Editor';
 import { FailedChecksData } from '~/context/FailedChecksData';
 
 import { HelperSelection } from '~/context/HelperSelection';
@@ -8,11 +9,9 @@ import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { useClearEditor } from './useClearEditor';
-import { useCopyMachineryTranslation } from './useCopyMachineryTranslation';
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
-import { useCopyOtherLocaleTranslation } from './useCopyOtherLocaleTranslation';
 import { useExistingTranslation } from './useExistingTranslation';
+import { useSendTranslation } from './useSendTranslation';
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
 /**
@@ -20,19 +19,16 @@ import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
  */
 export function useHandleShortcuts(): (
   event: React.KeyboardEvent<HTMLTextAreaElement>,
-  sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
-  clearEditorCustom?: () => void,
-  copyOriginalIntoEditorCustom?: () => void,
 ) => void {
   const clearEditor = useClearEditor();
-  const copyMachineryTranslation = useCopyMachineryTranslation();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
-  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
 
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
+  const { setEditorFromMachinery } = useContext(EditorActions);
   const existingTranslation = useExistingTranslation();
   const { errors, source, warnings, resetFailedChecks } =
     useContext(FailedChecksData);
@@ -51,12 +47,7 @@ export function useHandleShortcuts(): (
     return () => {};
   }
 
-  return (
-    ev: React.KeyboardEvent<HTMLTextAreaElement>,
-    sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
-    clearEditorCustom?: () => void,
-    copyOriginalIntoEditorCustom?: () => void,
-  ) => {
+  return (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (ev.key) {
       // On Enter:
       //   - If unsaved changes popup is shown, proceed.
@@ -102,7 +93,7 @@ export function useHandleShortcuts(): (
       case 'C':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
           ev.preventDefault();
-          (copyOriginalIntoEditorCustom || copyOriginalIntoEditor)();
+          copyOriginalIntoEditor();
         }
         break;
 
@@ -110,7 +101,7 @@ export function useHandleShortcuts(): (
       case 'Backspace':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
           ev.preventDefault();
-          (clearEditorCustom || clearEditor)();
+          clearEditor();
         }
         break;
 
@@ -139,13 +130,14 @@ export function useHandleShortcuts(): (
 
           if (isMachinery) {
             const len = machineryTranslations.length;
-            const newTranslation =
+            const { translation, sources } =
               nextIdx < len
                 ? machineryTranslations[nextIdx]
                 : concordanceSearchResults[nextIdx - len];
-            copyMachineryTranslation(newTranslation);
+            setEditorFromMachinery(translation, sources);
           } else {
-            copyOtherLocaleTranslation(otherLocaleTranslations[nextIdx]);
+            const { translation } = otherLocaleTranslations[nextIdx];
+            setEditorFromMachinery(translation, []);
           }
         }
         break;

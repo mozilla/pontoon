@@ -4,7 +4,6 @@ import React, { useCallback, useContext } from 'react';
 import { Locale } from '~/context/Locale';
 import { usePluralForm } from '~/context/PluralForm';
 import { useUpdateTranslationStatus } from '~/core/editor';
-import { updateTranslation } from '~/core/editor/actions';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { USER } from '~/core/user';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -34,11 +33,6 @@ export function History(): React.ReactElement<'section'> | null {
       dispatch(deleteTranslation_(entity?.pk, code, pluralForm, translationId)),
     [entity, code, pluralForm],
   );
-  const updateEditorTranslation = useCallback(
-    (translation: string, changeSource: string) =>
-      dispatch(updateTranslation(translation, changeSource)),
-    [],
-  );
   const updateTranslationStatus = useUpdateTranslationStatus(false);
 
   if (!entity || !translations.length) {
@@ -62,7 +56,6 @@ export function History(): React.ReactElement<'section'> | null {
             isReadOnlyEditor={isReadOnlyEditor}
             user={user}
             deleteTranslation={deleteTranslation}
-            updateEditorTranslation={updateEditorTranslation}
             updateTranslationStatus={updateTranslationStatus}
             key={index}
             index={index}

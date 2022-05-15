@@ -1,26 +1,30 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
+import { EditorActions } from '~/context/Editor';
+import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
-import { EDITOR, useCopyMachineryTranslation } from '~/core/editor';
 import { GenericTranslation } from '~/core/translation';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { TranslationSource } from './TranslationSource';
 
 import './ConcordanceSearch.css';
 import './Translation.css';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { HelperSelection } from '~/context/HelperSelection';
 
 type Props = {
   sourceString: string;
   translation: MachineryTranslation;
   index: number;
-  entity: number | null;
 };
 
 /**
@@ -34,24 +38,24 @@ export function Translation({
   index,
   sourceString,
   translation,
-  entity,
 }: Props): React.ReactElement<React.ElementType> {
-  const dispatch = useAppDispatch();
+  const { setEditorFromMachinery } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
+  const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
 
-  const copyMachineryTranslation = useCopyMachineryTranslation(entity);
   const copyTranslationIntoEditor = useCallback(() => {
-    setElement(index);
-    copyMachineryTranslation(translation);
-  }, [dispatch, index, translation, copyMachineryTranslation]);
-
-  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setCopied(true);
+      setEditorFromMachinery(translation.translation, translation.sources);
+    }
+  }, [index, translation]);
 
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && changeSource === 'machinery' && 'selected',
+    isSelected && isCopied && 'selected',
   );
 
   const translationRef = useRef<HTMLLIElement>(null);

@@ -1,25 +1,21 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
+import { useClearEditor } from '~/context/Editor';
 
 import { useSelectedEntity } from '~/core/entities/hooks';
 import * as user from '~/core/user';
 import { saveSetting } from '~/core/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
+import { TranslationLength } from './TranslationLength';
+import { useCopyOriginalIntoEditor } from '../hooks/useCopyOriginalIntoEditor';
 
 import { EditorMainAction } from './EditorMainAction';
 import './EditorMenu.css';
 import { EditorSettings } from './EditorSettings';
 import { FailedChecks } from './FailedChecks';
+import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
-
-type Props = {
-  firstItemHook?: React.ReactNode;
-  translationLengthHook?: React.ReactNode;
-  clearEditor: () => void;
-  copyOriginalIntoEditor: () => void;
-  sendTranslation: (ignoreWarnings?: boolean) => void;
-};
 
 /**
  * Shows a menu bar used to control the Editor.
@@ -28,18 +24,20 @@ type Props = {
  * If the entity is read-only, shows a read-only notification.
  * Otherise, shows the various tools to control the editor.
  */
-export function EditorMenu(props: Props): React.ReactElement<'menu'> {
+export function EditorMenu(): React.ReactElement<'menu'> {
   return (
     <menu className='editor-menu'>
-      {props.firstItemHook}
-      <FailedChecks sendTranslation={props.sendTranslation} />
+      <FtlSwitch />
+      <FailedChecks />
       <UnsavedChangesPopup />
-      <MenuContent {...props} />
+      <MenuContent />
     </menu>
   );
 }
 
-function MenuContent(props: Props) {
+function MenuContent() {
+  const clearEditor = useClearEditor();
+  const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const dispatch = useAppDispatch();
   const entity = useSelectedEntity();
   const userState = useAppSelector((state) => state.user);
@@ -74,12 +72,12 @@ function MenuContent(props: Props) {
         updateSetting={updateSetting}
       />
       <KeyboardShortcuts />
-      {props.translationLengthHook}
+      <TranslationLength />
       <div className='actions'>
         <Localized id='editor-EditorMenu--button-copy' attrs={{ title: true }}>
           <button
             className='action-copy'
-            onClick={props.copyOriginalIntoEditor}
+            onClick={copyOriginalIntoEditor}
             title='Copy From Source (Ctrl + Shift + C)'
           >
             COPY
@@ -88,13 +86,13 @@ function MenuContent(props: Props) {
         <Localized id='editor-EditorMenu--button-clear' attrs={{ title: true }}>
           <button
             className='action-clear'
-            onClick={props.clearEditor}
+            onClick={clearEditor}
             title='Clear Translation (Ctrl + Shift + Backspace)'
           >
             CLEAR
           </button>
         </Localized>
-        <EditorMainAction sendTranslation={props.sendTranslation} />
+        <EditorMainAction />
       </div>
     </>
   );

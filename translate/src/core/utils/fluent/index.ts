@@ -1,5 +1,4 @@
 export { areSupportedElements } from './areSupportedElements';
-export { convertSyntax } from './convertSyntax';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { flattenPatternElements } from './flattenPatternElements';
 export { flattenMessage } from './flattenMessage';

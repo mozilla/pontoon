@@ -1,4 +1,3 @@
-import * as editor from '~/core/editor/reducer';
 import * as entities from '~/core/entities/reducer';
 import * as notification from '~/core/notification/reducer';
 import * as project from '~/core/project/reducer';
@@ -15,7 +14,6 @@ import * as teamcomments from '~/modules/teamcomments/reducer';
 // Combine reducers from all modules, using their NAME constant as key.
 export const reducer = {
   // Core modules
-  [editor.EDITOR]: editor.reducer,
   [entities.ENTITIES]: entities.reducer,
   [notification.NOTIFICATION]: notification.reducer,
   [project.PROJECT]: project.reducer,

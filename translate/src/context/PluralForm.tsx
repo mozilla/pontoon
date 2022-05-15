@@ -16,7 +16,7 @@ export type PluralForm = {
   setPluralForm(pluralForm: number): void;
 };
 
-const PluralForm = createContext<PluralForm>({
+export const PluralForm = createContext<PluralForm>({
   pluralForm: -1,
   setPluralForm: () => {},
 });

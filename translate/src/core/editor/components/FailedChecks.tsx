@@ -4,22 +4,18 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 
 import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
+import { useSendTranslation } from '../hooks/useSendTranslation';
 
 import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
 
 import './FailedChecks.css';
 
-type FailedChecksProps = {
-  sendTranslation: (ignoreWarnings?: boolean) => void;
-};
-
 /**
  * Shows a list of failed checks (errors and warnings) and a button to ignore
  * those checks and proceed anyway.
  */
-export function FailedChecks({
-  sendTranslation,
-}: FailedChecksProps): null | React.ReactElement<'div'> {
+export function FailedChecks(): null | React.ReactElement<'div'> {
+  const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
   const { errors, warnings, source, resetFailedChecks } =
     useContext(FailedChecksData);

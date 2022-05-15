@@ -26,6 +26,7 @@ import { Screenshots } from './Screenshots';
 import { TermsPopup } from './TermsPopup';
 
 import './Metadata.css';
+import { EditorActions } from '~/context/Editor';
 
 type Props = {
   entity: Entity;
@@ -35,7 +36,6 @@ type Props = {
   teamComments: TeamCommentState;
   user: UserState;
   commentTabRef: React.RefObject<{ _reactInternalFiber: { index: number } }>;
-  addTextToEditorTranslation: (text: string) => void;
   navigateToPath: (path: string) => void;
   setCommentTabIndex: (id: number) => void;
   setContactPerson: (contact: string) => void;
@@ -187,7 +187,6 @@ function SourceObject({
  *  - a link to the project
  */
 export function Metadata({
-  addTextToEditorTranslation,
   commentTabRef,
   entity,
   isReadOnlyEditor,
@@ -202,6 +201,7 @@ export function Metadata({
   const [popupTerms, setPopupTerms] = useState<TermType[]>([]);
   const hidePopupTerms = useCallback(() => setPopupTerms([]), []);
   const { code } = useContext(Locale);
+  const { setEditorSelection } = useContext(EditorActions);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -220,9 +220,9 @@ export function Metadata({
             return;
           }
           if (target.dataset['match']) {
-            addTextToEditorTranslation(target.dataset['match']);
+            setEditorSelection(target.dataset['match']);
           } else if (target.firstChild instanceof Text) {
-            addTextToEditorTranslation(target.firstChild.data);
+            setEditorSelection(target.firstChild.data);
           }
         }
 
@@ -233,7 +233,7 @@ export function Metadata({
         }
       }
     },
-    [addTextToEditorTranslation, isReadOnlyEditor, terms],
+    [isReadOnlyEditor, terms],
   );
 
   const navigateToPath_ = useCallback(
@@ -270,7 +270,6 @@ export function Metadata({
         <TermsPopup
           isReadOnlyEditor={isReadOnlyEditor}
           terms={popupTerms}
-          addTextToEditorTranslation={addTextToEditorTranslation}
           hide={hidePopupTerms}
           navigateToPath={navigateToPath}
         />
