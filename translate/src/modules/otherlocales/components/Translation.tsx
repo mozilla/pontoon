@@ -1,14 +1,19 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { OtherLocaleTranslation } from '~/api/other-locales';
+import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { EDITOR, useCopyOtherLocaleTranslation } from '~/core/editor';
 import { TranslationProxy } from '~/core/translation';
-import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Translation.css';
@@ -32,22 +37,23 @@ export function Translation({
   parameters: { project, resource, entity },
   index,
 }: Props): React.ReactElement<React.ElementType> {
-  const dispatch = useAppDispatch();
+  const { setEditorFromMachinery } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
+  const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
 
-  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
   const copyTranslationIntoEditor = useCallback(() => {
-    setElement(index);
-    copyOtherLocaleTranslation(translation);
-  }, [dispatch, index, translation, copyOtherLocaleTranslation]);
-
-  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setCopied(true);
+      setEditorFromMachinery(translation.translation, []);
+    }
+  }, [index, translation]);
 
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && changeSource === 'otherlocales' && 'selected',
+    isSelected && isCopied && 'selected',
   );
 
   const translationRef = useRef<HTMLLIElement>(null);

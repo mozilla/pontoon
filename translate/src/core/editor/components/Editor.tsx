@@ -1,49 +1,20 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
+
+import { EditorData } from '~/context/Editor';
+import { RichTranslationForm } from '~/modules/fluenteditor/components/RichTranslationForm';
+import { GenericTranslationForm } from '~/modules/genericeditor';
+import { PluralSelector } from '~/modules/genericeditor/components/PluralSelector';
 
 import './Editor.css';
+import { EditorMenu } from './EditorMenu';
 
-import { FluentEditor } from '~/modules/fluenteditor';
-import { GenericEditor } from '~/modules/genericeditor';
-import { useAppSelector } from '~/hooks';
-import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
-import { FailedChecksData } from '~/context/FailedChecksData';
-
-type Props = {
-  fileFormat: string;
-};
-
-export function Editor({ fileFormat }: Props): React.ReactElement<'div'> {
-  const { initialTranslation, translation } = useAppSelector(
-    (state) => state.editor,
-  );
-  const { setUnsavedChanges } = useContext(UnsavedActions);
-  const { exist } = useContext(UnsavedChanges);
-  const { resetFailedChecks } = useContext(FailedChecksData);
-
-  // Changes in `translation` need to be reflected in `UnsavedChanges`,
-  // but the latter needs to be defined at a higher level to make it
-  // available in `EntitiesList`. Therefore, that state is managed here.
-  useEffect(() => {
-    let next: boolean;
-    if (typeof translation === 'string') {
-      next = translation !== initialTranslation;
-    } else if (typeof initialTranslation === 'string') {
-      next = false;
-    } else {
-      next = !translation.equals(initialTranslation);
-    }
-    setUnsavedChanges(next);
-  }, [translation, initialTranslation]);
-
-  useEffect(() => {
-    if (exist) {
-      resetFailedChecks();
-    }
-  }, [translation]);
-
+export function Editor(): React.ReactElement<'div'> {
+  const { view } = useContext(EditorData);
   return (
     <div className='editor'>
-      {fileFormat === 'ftl' ? <FluentEditor /> : <GenericEditor />}
+      <PluralSelector />
+      {view === 'rich' ? <RichTranslationForm /> : <GenericTranslationForm />}
+      <EditorMenu />
     </div>
   );
 }

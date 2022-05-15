@@ -1,15 +1,13 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useContext } from 'react';
+import { EditorData } from '~/context/Editor';
 
 import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import { useExistingTranslation } from '../hooks/useExistingTranslation';
+import { useSendTranslation } from '../hooks/useSendTranslation';
 import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
-
-type Props = {
-  sendTranslation: (ignoreWarnings?: boolean) => void;
-};
 
 /**
  * Render the main action button of the Editor.
@@ -22,97 +20,75 @@ type Props = {
  * Otherwise, if the "force suggestion" user setting is on, it renders "Suggest".
  * Otherwise, it renders "Save".
  */
-export function EditorMainAction({
-  sendTranslation,
-}: Props): React.ReactElement<React.ElementType> {
-  const isRunningRequest = useAppSelector(
-    (state) => state.editor.isRunningRequest,
-  );
+export function EditorMainAction(): React.ReactElement<React.ElementType> {
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
   const isTranslator = useTranslator();
   const existingTranslation = useExistingTranslation();
-
+  const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
+  const { busy } = useContext(EditorData);
 
-  function approveTranslation() {
-    if (existingTranslation) {
-      updateTranslationStatus(existingTranslation.pk, 'approve', false);
-    }
-  }
-
-  let btn: {
-    id: string;
-    className: string;
-    action: (event: React.SyntheticEvent) => void;
-    title: string;
-    label: string;
-    glyph: React.ReactElement<'i'> | null | undefined;
-  };
+  let action:
+    | 'approve'
+    | 'approving'
+    | 'suggest'
+    | 'suggesting'
+    | 'save'
+    | 'saving';
+  let onClick: (event: React.SyntheticEvent) => void;
+  let title: string;
 
   if (isTranslator && existingTranslation && !existingTranslation.approved) {
-    // Approve button, will approve the translation.
-    btn = {
-      id: 'editor-EditorMenu--button-approve',
-      className: 'action-approve',
-      action: approveTranslation,
-      title: 'Approve Translation (Enter)',
-      label: 'APPROVE',
-      glyph: null,
-    };
-
-    if (isRunningRequest) {
-      btn.id = 'editor-EditorMenu--button-approving';
-      btn.label = 'APPROVING';
-      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-    }
+    // Button to approve the translation
+    action = 'approve';
+    onClick = () =>
+      updateTranslationStatus(existingTranslation.pk, 'approve', false);
+    title = 'Approve Translation (Enter)';
   } else if (forceSuggestions || !isTranslator) {
-    // Suggest button, will send an unreviewed translation.
-    btn = {
-      id: 'editor-EditorMenu--button-suggest',
-      className: 'action-suggest',
-      action: () => sendTranslation(),
-      title: 'Suggest Translation (Enter)',
-      label: 'SUGGEST',
-      glyph: null,
-    };
-
-    if (isRunningRequest) {
-      btn.id = 'editor-EditorMenu--button-suggesting';
-      btn.label = 'SUGGESTING';
-      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-    }
+    // Button to send an unreviewed translation
+    action = 'suggest';
+    onClick = () => sendTranslation();
+    title = 'Suggest Translation (Enter)';
   } else {
-    // Save button, will send an approved translation.
-    btn = {
-      id: 'editor-EditorMenu--button-save',
-      className: 'action-save',
-      action: () => sendTranslation(),
-      title: 'Save Translation (Enter)',
-      label: 'SAVE',
-      glyph: null,
-    };
-
-    if (isRunningRequest) {
-      btn.id = 'editor-EditorMenu--button-saving';
-      btn.label = 'SAVING';
-      btn.glyph = <i className='fa fa-circle-notch fa-spin' />;
-    }
+    // Button to send an approved translation
+    action = 'save';
+    onClick = () => sendTranslation();
+    title = 'Save Translation (Enter)';
   }
 
-  const elems = btn.glyph ? { glyph: btn.glyph } : undefined;
-  return (
-    <Localized id={btn.id} attrs={{ title: true }} elems={elems}>
-      <button
-        className={btn.className}
-        onClick={btn.action}
-        title={btn.title}
-        disabled={isRunningRequest}
-      >
-        {btn.glyph}
-        {btn.label}
-      </button>
-    </Localized>
-  );
+  const className = `action-${action}`;
+
+  if (busy) {
+    if (action === 'approve') {
+      action = 'approving';
+    } else if (action === 'save') {
+      action = 'saving';
+    } else {
+      action = 'suggesting';
+    }
+  }
+  const id = `editor-EditorMenu--button-${action}`;
+  const label = action.toUpperCase();
+
+  if (busy) {
+    const glyph = <i className='fa fa-circle-notch fa-spin' />;
+    return (
+      <Localized id={id} attrs={{ title: true }} elems={{ glyph }}>
+        <button className={className} disabled title={title}>
+          {glyph}
+          {label}
+        </button>
+      </Localized>
+    );
+  } else {
+    return (
+      <Localized id={id} attrs={{ title: true }}>
+        <button className={className} onClick={onClick} title={title}>
+          {label}
+        </button>
+      </Localized>
+    );
+  }
 }

@@ -5,6 +5,7 @@ import ReactTimeAgo from 'react-time-ago';
 
 import type { Entity } from '~/api/entity';
 import type { HistoryTranslation } from '~/api/translation';
+import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
 import { TranslationProxy } from '~/core/translation';
@@ -24,7 +25,6 @@ type Props = {
   user: UserState;
   index: number;
   deleteTranslation: (translationId: number) => void;
-  updateEditorTranslation: (translation: string, changeSource: string) => void;
   updateTranslationStatus: (
     translationId: number,
     change: ChangeOperation,
@@ -152,7 +152,6 @@ export function TranslationBase({
   isActionDisabled,
   isReadOnlyEditor,
   translation,
-  updateEditorTranslation,
   updateTranslationStatus,
   user,
 }: InternalProps): React.ReactElement<'li'> {
@@ -160,6 +159,7 @@ export function TranslationBase({
   const [areCommentsVisible, setCommentsVisible] = useState(false);
   const isTranslator = useTranslator();
   const { code, direction, script } = useContext(Locale);
+  const { setEditorFromHistory } = useContext(EditorActions);
 
   const handleStatusChange = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -193,8 +193,8 @@ export function TranslationBase({
     if (isReadOnlyEditor || window.getSelection()?.toString()) {
       return;
     }
-    updateEditorTranslation(translation.string, 'history');
-  }, [isReadOnlyEditor, translation.string, updateEditorTranslation]);
+    setEditorFromHistory(translation.string);
+  }, [isReadOnlyEditor, translation.string]);
 
   // TODO: To Localize.
   const approvalTitle =

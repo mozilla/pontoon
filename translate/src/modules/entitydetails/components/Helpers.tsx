@@ -28,7 +28,6 @@ type Props = {
   commentTabIndex: number;
   contactPerson: string;
   togglePinnedStatus: (status: boolean, id: number) => void;
-  addTextToEditorTranslation: (text: string) => void;
   navigateToPath: (path: string) => void;
   setCommentTabIndex: (index: number) => void;
   resetContactPerson: () => void;
@@ -51,7 +50,6 @@ export function Helpers({
   commentTabIndex,
   contactPerson,
   togglePinnedStatus,
-  addTextToEditorTranslation,
   navigateToPath,
   setCommentTabIndex,
   resetContactPerson,
@@ -88,7 +86,6 @@ export function Helpers({
               <Terms
                 isReadOnlyEditor={isReadOnlyEditor}
                 terms={terms}
-                addTextToEditorTranslation={addTextToEditorTranslation}
                 navigateToPath={navigateToPath}
               />
             </TabPanel>
@@ -130,7 +127,7 @@ export function Helpers({
             </Tab>
           </TabList>
           <TabPanel>
-            <Machinery entity={entity} />
+            <Machinery />
           </TabPanel>
           <TabPanel>
             <OtherLocales

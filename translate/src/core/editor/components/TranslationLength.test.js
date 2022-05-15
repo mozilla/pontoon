@@ -1,30 +1,38 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
+import { EditorData } from '~/context/Editor';
+import { PluralForm } from '~/context/PluralForm';
+import * as SelectedEntity from '~/core/entities/hooks';
+
 import { TranslationLength } from './TranslationLength';
+import sinon from 'sinon';
 
 describe('<TranslationLength>', () => {
-  const LENGTH_ENTITY = {
-    comment: '',
-    original: '12345',
-    original_plural: '123456',
-  };
+  beforeAll(() => {
+    sinon.stub(React, 'useContext'); //.callsFake(({ children }) => children);
+    sinon.stub(SelectedEntity, 'useSelectedEntity');
+  });
 
-  const COUNTDOWN_ENTITY = {
-    comment: 'MAX_LENGTH: 5\nThis is an actual comment.',
-    format: 'lang',
-    original: '12345',
-  };
+  afterAll(() => {
+    React.useContext.restore();
+    SelectedEntity.useSelectedEntity.restore();
+  });
+
+  function mountTranslationLength(format, original, value, comment) {
+    const context = new Map([
+      [EditorData, { value, view: 'simple' }],
+      [PluralForm, { pluralForm: -1 }],
+    ]);
+    React.useContext.callsFake((key) => context.get(key));
+
+    SelectedEntity.useSelectedEntity.returns({ comment, format, original });
+
+    return shallow(<TranslationLength />);
+  }
 
   it('shows translation length and original string length', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={LENGTH_ENTITY.comment}
-        format={LENGTH_ENTITY.format}
-        original={LENGTH_ENTITY.original}
-        translation='1234567'
-      />,
-    );
+    const wrapper = mountTranslationLength('', '12345', '1234567', '');
 
     expect(wrapper.find('.countdown')).toHaveLength(0);
     expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(
@@ -39,14 +47,7 @@ describe('<TranslationLength>', () => {
   });
 
   it('shows translation length and plural original string length', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={LENGTH_ENTITY.comment}
-        format={LENGTH_ENTITY.format}
-        original={LENGTH_ENTITY.original_plural}
-        translation='1234567'
-      />,
-    );
+    const wrapper = mountTranslationLength('', '123456', '1234567', '');
 
     expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
       '6',
@@ -54,13 +55,11 @@ describe('<TranslationLength>', () => {
   });
 
   it('shows countdown if MAX_LENGTH provided in LANG entity comment', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={COUNTDOWN_ENTITY.comment}
-        format={COUNTDOWN_ENTITY.format}
-        original={COUNTDOWN_ENTITY.original}
-        translation='123'
-      />,
+    const wrapper = mountTranslationLength(
+      'lang',
+      '12345',
+      '123',
+      'MAX_LENGTH: 5\nThis is an actual comment.',
     );
 
     expect(wrapper.find('.translation-vs-original')).toHaveLength(0);
@@ -69,39 +68,33 @@ describe('<TranslationLength>', () => {
   });
 
   it('marks countdown overflow', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={COUNTDOWN_ENTITY.comment}
-        format={COUNTDOWN_ENTITY.format}
-        original={COUNTDOWN_ENTITY.original}
-        translation='123456'
-      />,
+    const wrapper = mountTranslationLength(
+      'lang',
+      '12345',
+      '123456',
+      'MAX_LENGTH: 5\nThis is an actual comment.',
     );
 
     expect(wrapper.find('.countdown span.overflow')).toHaveLength(1);
   });
 
   it('strips html from translation when calculating countdown', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={COUNTDOWN_ENTITY.comment}
-        format={COUNTDOWN_ENTITY.format}
-        original={COUNTDOWN_ENTITY.original}
-        translation='12<span>34</span>56'
-      />,
+    const wrapper = mountTranslationLength(
+      'lang',
+      '12345',
+      '12<span>34</span>56',
+      'MAX_LENGTH: 5\nThis is an actual comment.',
     );
 
     expect(wrapper.find('.countdown span').text()).toEqual('-1');
   });
 
   it('does not strips html from translation when calculating length', () => {
-    const wrapper = shallow(
-      <TranslationLength
-        comment={LENGTH_ENTITY.comment}
-        format={LENGTH_ENTITY.format}
-        original={LENGTH_ENTITY.original}
-        translation='12<span>34</span>56'
-      />,
+    const wrapper = mountTranslationLength(
+      '',
+      '12345',
+      '12<span>34</span>56',
+      '',
     );
 
     expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(

@@ -1,6 +1,7 @@
-import { Pattern, serializeExpression } from '@fluent/syntax';
+import { Entry, Pattern, serializeExpression } from '@fluent/syntax';
 
 import { parseEntry } from './parser';
+import { serializeEntry } from './serializer';
 
 function serialize({ elements }: Pattern): string {
   let result = '';
@@ -48,13 +49,17 @@ function serialize({ elements }: Pattern): string {
  * @returns {string} A simplified version of the Fluent message, or the original
  * content if it isn't a valid Fluent message.
  */
-export function getSimplePreview(content: string | null | undefined): string {
+export function getSimplePreview(
+  content: string | Entry | null | undefined,
+): string {
   if (!content) {
     return '';
   }
 
-  const message = parseEntry(content);
+  const message = typeof content === 'string' ? parseEntry(content) : content;
   return message.type === 'Message' || message.type === 'Term'
     ? serialize(message.value || message.attributes[0].value)
-    : content;
+    : typeof content === 'string'
+    ? content
+    : serializeEntry(content);
 }

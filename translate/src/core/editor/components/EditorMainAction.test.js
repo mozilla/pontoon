@@ -1,126 +1,110 @@
+import * as Fluent from '@fluent/react';
+import { mount } from 'enzyme';
+import React from 'react';
 import sinon from 'sinon';
 
-import * as UpdateTranslationStatus from '~/core/editor/hooks/useUpdateTranslationStatus';
+import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
-import {
-  createDefaultUser,
-  createReduxStore,
-  mountComponentWithStore,
-} from '~/test/store';
 
-import * as editorActions from '../actions';
 import * as ExistingTranslation from '../hooks/useExistingTranslation';
+import * as SendTranslation from '../hooks/useSendTranslation';
+import * as UpdateTranslationStatus from '../hooks/useUpdateTranslationStatus';
+
 import { EditorMainAction } from './EditorMainAction';
 
 beforeAll(() => {
+  sinon.stub(Fluent, 'Localized').callsFake(({ children }) => children);
+  sinon.stub(React, 'useContext');
+  sinon.stub(Hooks, 'useAppSelector');
   sinon.stub(Translator, 'useTranslator');
   sinon.stub(ExistingTranslation, 'useExistingTranslation');
+  sinon.stub(SendTranslation, 'useSendTranslation');
+  sinon.stub(UpdateTranslationStatus, 'useUpdateTranslationStatus');
 });
 beforeEach(() => {
+  Fluent.Localized.returns;
+  React.useContext.returns({ busy: false }); // EditorData.busy
+  Hooks.useAppSelector.returns(false); // user.settings.forceSuggestions
   Translator.useTranslator.returns(true);
   ExistingTranslation.useExistingTranslation.returns(undefined);
+  SendTranslation.useSendTranslation.returns(() => {});
+  UpdateTranslationStatus.useUpdateTranslationStatus.returns(() => {});
 });
 afterAll(() => {
+  Fluent.Localized.restore();
+  React.useContext.restore();
+  Hooks.useAppSelector.restore();
   Translator.useTranslator.restore();
   ExistingTranslation.useExistingTranslation.restore();
+  SendTranslation.useSendTranslation.restore();
+  UpdateTranslationStatus.useUpdateTranslationStatus.restore();
 });
-
-function createComponent(sendTranslationMock) {
-  const store = createReduxStore();
-  createDefaultUser(store);
-
-  const comp = mountComponentWithStore(EditorMainAction, store, {
-    sendTranslation: sendTranslationMock,
-  });
-
-  return [comp, store];
-}
 
 describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
     const spy = sinon.spy();
-    sinon
-      .stub(UpdateTranslationStatus, 'useUpdateTranslationStatus')
-      .returns(spy);
+    UpdateTranslationStatus.useUpdateTranslationStatus.returns(spy);
     ExistingTranslation.useExistingTranslation.returns({ pk: 1 });
 
-    try {
-      const [wrapper] = createComponent();
+    const wrapper = mount(<EditorMainAction />);
 
-      expect(wrapper.find('.action-approve')).toHaveLength(1);
-      expect(wrapper.find('.action-suggest')).toHaveLength(0);
-      expect(wrapper.find('.action-save')).toHaveLength(0);
-
-      wrapper.find('.action-approve').simulate('click');
-      expect(spy.calledOnce).toBeTruthy();
-    } finally {
-      UpdateTranslationStatus.useUpdateTranslationStatus.restore();
-    }
+    wrapper.find('.action-approve').simulate('click');
+    expect(spy.getCalls()).toMatchObject([{ args: [1, 'approve', false] }]);
   });
 
   it('renders the Suggest button when force suggestion is on', () => {
-    const sendTranslationMock = sinon.spy();
-    const [wrapper, store] = createComponent(sendTranslationMock);
+    const spy = sinon.spy();
+    SendTranslation.useSendTranslation.returns(spy);
+    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
 
-    createDefaultUser(store, { settings: { force_suggestions: true } });
-    wrapper.update();
-
-    expect(wrapper.find('.action-suggest')).toHaveLength(1);
-    expect(wrapper.find('.action-approve')).toHaveLength(0);
-    expect(wrapper.find('.action-save')).toHaveLength(0);
+    const wrapper = mount(<EditorMainAction />);
 
     wrapper.find('.action-suggest').simulate('click');
-    expect(sendTranslationMock.calledOnce).toBeTruthy();
+    expect(spy.getCalls()).toMatchObject([{ args: [] }]);
   });
 
   it('renders the Suggest button when user does not have permission', () => {
-    Translator.useTranslator.returns(false);
+    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
 
-    const [wrapper] = createComponent();
+    const wrapper = mount(<EditorMainAction />);
 
     expect(wrapper.find('.action-suggest')).toHaveLength(1);
-    expect(wrapper.find('.action-save')).toHaveLength(0);
-    expect(wrapper.find('.action-approve')).toHaveLength(0);
   });
 
   it('shows a spinner and a disabled Suggesting button when running request', () => {
-    const sendTranslationMock = sinon.spy();
-    const [wrapper, store] = createComponent(sendTranslationMock);
+    const spy = sinon.spy();
+    SendTranslation.useSendTranslation.returns(spy);
+    Hooks.useAppSelector.returns(true); // user.settings.forceSuggestions
+    React.useContext.returns({ busy: true }); // EditorData.busy
 
-    createDefaultUser(store, { settings: { force_suggestions: true } });
-    store.dispatch(editorActions.startUpdateTranslation());
-    wrapper.update();
+    const wrapper = mount(<EditorMainAction />);
 
-    expect(wrapper.find('.action-suggest')).toHaveLength(1);
     expect(wrapper.find('.action-suggest .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-suggest').simulate('click');
-    expect(sendTranslationMock.calledOnce).toBeFalsy();
+    expect(spy.getCalls()).toMatchObject([]);
   });
 
   it('renders the Save button when force suggestion is off and translation is not the same', () => {
-    const sendTranslationMock = sinon.spy();
-    const [wrapper] = createComponent(sendTranslationMock);
+    const spy = sinon.spy();
+    SendTranslation.useSendTranslation.returns(spy);
 
-    expect(wrapper.find('.action-save')).toHaveLength(1);
-    expect(wrapper.find('.action-suggest')).toHaveLength(0);
-    expect(wrapper.find('.action-approve')).toHaveLength(0);
+    const wrapper = mount(<EditorMainAction />);
 
     wrapper.find('.action-save').simulate('click');
-    expect(sendTranslationMock.calledOnce).toBeTruthy();
+    expect(spy.getCalls()).toMatchObject([{ args: [] }]);
   });
 
   it('shows a spinner and a disabled Saving button when running request', () => {
-    const sendTranslationMock = sinon.spy();
-    const [wrapper, store] = createComponent(sendTranslationMock);
+    const spy = sinon.spy();
+    SendTranslation.useSendTranslation.returns(spy);
+    React.useContext.returns({ busy: true }); // EditorData.busy
 
-    store.dispatch(editorActions.startUpdateTranslation());
-    wrapper.update();
+    const wrapper = mount(<EditorMainAction />);
 
-    expect(wrapper.find('.action-save')).toHaveLength(1);
     expect(wrapper.find('.action-save .fa-spin')).toHaveLength(1);
 
     wrapper.find('.action-save').simulate('click');
-    expect(sendTranslationMock.calledOnce).toBeFalsy();
+    expect(spy.getCalls()).toMatchObject([]);
   });
 });

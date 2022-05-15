@@ -1,7 +1,6 @@
 import { useLocalization } from '@fluent/react';
 import React, { useContext } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { Entity } from '~/api/entity';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 
@@ -10,10 +9,6 @@ import { SkeletonLoader } from '~/core/loaders';
 import './Machinery.css';
 import { Translation } from './Translation';
 
-type Props = {
-  entity: Entity;
-};
-
 /**
  * Show translations from machines.
  *
@@ -21,7 +16,7 @@ type Props = {
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export function Machinery({ entity }: Props): React.ReactElement<'section'> {
+export function Machinery(): React.ReactElement<'section'> {
   const { l10n } = useLocalization();
   const { source, translations } = useContext(MachineryTranslations);
   const { fetching, hasMore, input, query, results, setInput, getResults } =
@@ -81,7 +76,6 @@ export function Machinery({ entity }: Props): React.ReactElement<'section'> {
           {translations.map((translation, index) => (
             <Translation
               index={index}
-              entity={entity.pk}
               sourceString={source}
               translation={translation}
               key={index}
@@ -92,7 +86,6 @@ export function Machinery({ entity }: Props): React.ReactElement<'section'> {
           {results.map((result, index) => (
             <Translation
               index={index + translations.length}
-              entity={entity.pk}
               sourceString={query}
               translation={result}
               key={index + translations.length}

@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useEffect } from 'react';
 
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { resetEditor } from '~/core/editor/actions';
 import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
@@ -41,7 +40,6 @@ export function EntityNavigation(): React.ReactElement {
       if (entity) {
         checkUnsavedChanges(() => {
           location.push({ entity });
-          dispatch(resetEditor());
         });
       }
     },
