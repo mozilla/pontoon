@@ -6,12 +6,12 @@ import {
 } from './convertSyntax';
 
 import { getEmptyMessage } from './getEmptyMessage';
-import { parser } from './parser';
+import { parseEntry } from './parser';
 
 describe('getComplexFromRich', () => {
   it('converts rich translation to complex', () => {
     // Input is a Fluent AST.
-    const current = parser.parseEntry('title = Mon titre');
+    const current = parseEntry('title = Mon titre');
     const original = 'title = My title';
     const initial = 'title = Mien titre';
     const locale = { cldrPlurals: [] };
@@ -22,7 +22,7 @@ describe('getComplexFromRich', () => {
   });
 
   it('returns the correct initial translation when one is provided', () => {
-    const current = parser.parseEntry('title = Mon titre');
+    const current = parseEntry('title = Mon titre');
     const original = 'title = My title';
     const initial = 'title = Mien titre';
     const locale = { cldrPlurals: [] };
@@ -33,7 +33,7 @@ describe('getComplexFromRich', () => {
   });
 
   it('returns the correct initial translation when none exist', () => {
-    const current = parser.parseEntry('title = Mon titre');
+    const current = parseEntry('title = Mon titre');
     const original = 'title = My title';
     // Initial is empty, there's no active translation.
     const initial = '';
@@ -41,7 +41,7 @@ describe('getComplexFromRich', () => {
 
     const res = getComplexFromRich(current, original, initial, locale);
 
-    expect(res[1]).toEqual('title = \n');
+    expect(res[1]).toEqual('title = { "" }\n');
   });
 });
 
@@ -77,7 +77,7 @@ describe('getComplexFromSimple', () => {
 
     const res = getComplexFromSimple(current, original, initial, locale);
 
-    expect(res[1]).toEqual('title = \n');
+    expect(res[1]).toEqual('title = { "" }\n');
   });
 });
 
@@ -90,7 +90,7 @@ describe('getRichFromComplex', () => {
 
     const res = getRichFromComplex(current, original, initial, locale);
 
-    expect(res[0]).toEqual(parser.parseEntry('title = Mon titre\n'));
+    expect(res[0]).toEqual(parseEntry('title = Mon titre\n'));
   });
 
   it('returns the correct initial translation when one is provided', () => {
@@ -101,7 +101,7 @@ describe('getRichFromComplex', () => {
 
     const res = getRichFromComplex(current, original, initial, locale);
 
-    expect(res[1]).toEqual(parser.parseEntry('title = Mien titre'));
+    expect(res[1]).toEqual(parseEntry('title = Mien titre'));
   });
 
   it('returns the correct initial translation when none exist', () => {
@@ -113,9 +113,7 @@ describe('getRichFromComplex', () => {
 
     const res = getRichFromComplex(current, original, initial, locale);
 
-    expect(res[1]).toEqual(
-      getEmptyMessage(parser.parseEntry('title = a'), locale),
-    );
+    expect(res[1]).toEqual(getEmptyMessage(parseEntry('title = a'), locale));
   });
 });
 

@@ -40,7 +40,7 @@ export function RichEditor(props: Props): React.ReactElement<any> {
    */
   useLayoutEffect(() => {
     if (typeof translation === 'string') {
-      const message = fluent.parser.parseEntry(translation);
+      const message = fluent.parseEntry(translation);
       // We need to check the syntax, because it can happen that a
       // translation changes syntax, for example if loading a new one
       // from history. In such cases, this RichEditor will render with
@@ -57,23 +57,23 @@ export function RichEditor(props: Props): React.ReactElement<any> {
   function clearEditor() {
     if (entity) {
       updateTranslation(
-        fluent.getEmptyMessage(
-          fluent.parser.parseEntry(entity.original),
-          locale,
-        ),
+        fluent.getEmptyMessage(fluent.parseEntry(entity.original), locale),
       );
     }
   }
 
   function copyOriginalIntoEditor() {
     if (entity) {
-      const origMsg = fluent.parser.parseEntry(entity.original);
+      const origMsg = fluent.parseEntry(entity.original);
       updateTranslation(fluent.flattenMessage(origMsg));
     }
   }
 
   function sendFluentTranslation(ignoreWarnings?: boolean) {
-    const fluentString = fluent.serializer.serializeEntry(translation);
+    const fluentString =
+      typeof translation === 'string'
+        ? translation
+        : fluent.serializeEntry(translation);
     sendTranslation(ignoreWarnings, fluentString);
   }
 

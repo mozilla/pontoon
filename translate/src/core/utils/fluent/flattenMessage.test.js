@@ -1,9 +1,9 @@
 import { flattenMessage } from './flattenMessage';
-import { parser } from './parser';
+import { parseEntry } from './parser';
 
 describe('flattenMessage', () => {
   it('does not modify value with single element', () => {
-    const message = parser.parseEntry('title = My Title');
+    const message = parseEntry('title = My Title');
     const res = flattenMessage(message);
 
     expect(res.value.elements).toHaveLength(1);
@@ -11,7 +11,7 @@ describe('flattenMessage', () => {
   });
 
   it('does not modify attributes with single element', () => {
-    const message = parser.parseEntry('title =\n    .foo = Bar');
+    const message = parseEntry('title =\n    .foo = Bar');
     const res = flattenMessage(message);
 
     expect(res.attributes).toHaveLength(1);
@@ -26,7 +26,7 @@ describe('flattenMessage', () => {
       '\n        [variant] Hello!' +
       '\n       *[another-variant] World!' +
       '\n    }';
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const res = flattenMessage(message);
 
     expect(res.value.elements).toHaveLength(1);
@@ -39,7 +39,7 @@ describe('flattenMessage', () => {
   });
 
   it('flattens a value with several elements', () => {
-    const message = parser.parseEntry('title = My { $awesome } Title');
+    const message = parseEntry('title = My { $awesome } Title');
 
     expect(message.value.elements).toHaveLength(3);
 
@@ -50,7 +50,7 @@ describe('flattenMessage', () => {
   });
 
   it('flattens an attribute with several elements', () => {
-    const message = parser.parseEntry('title =\n    .foo = Bar { -foo } Baz');
+    const message = parseEntry('title =\n    .foo = Bar { -foo } Baz');
 
     expect(message.attributes[0].value.elements).toHaveLength(3);
 
@@ -68,7 +68,7 @@ describe('flattenMessage', () => {
       'batman = The { $dark } Knight' +
       '\n    .weapon = Brain and { -wayne-enterprise }' +
       '\n    .history = Lost { 2 } parents, has { 1 } "$alfred"';
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
 
     expect(message.value.elements).toHaveLength(3);
     expect(message.attributes[0].value.elements).toHaveLength(2);
@@ -102,7 +102,7 @@ describe('flattenMessage', () => {
       '\n       *[masculine] him' +
       '\n        [feminine] her' +
       '\n    }';
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const res = flattenMessage(message);
 
     expect(res.value.elements).toHaveLength(3);

@@ -138,7 +138,7 @@ describe('<FluentEditor>', () => {
     wrapper.find('button.ftl').simulate('click');
 
     expect(wrapper.find('SourceEditor').exists()).toBeTruthy();
-    expect(wrapper.find('textarea').text()).toEqual('my-message = ');
+    expect(wrapper.find('textarea').text()).toEqual('my-message = { "" }\n');
   });
 
   it('changes editor implementation when changing translation syntax', () => {

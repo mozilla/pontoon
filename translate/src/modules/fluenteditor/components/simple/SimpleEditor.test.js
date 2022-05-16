@@ -11,7 +11,7 @@ import { LocationProvider } from '~/context/Location';
 import * as SendTranslation from '~/core/editor/hooks/useSendTranslation';
 import { updateTranslation } from '~/core/editor/actions';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
-import { parser } from '~/core/utils/fluent';
+import { parseEntry } from '~/core/utils/fluent';
 
 import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -77,7 +77,7 @@ describe('<SimpleEditor>', () => {
     const [wrapper, store] = createSimpleEditor();
 
     // Update the content with a non-formatted Fluent string.
-    store.dispatch(updateTranslation(parser.parseEntry('hello = World')));
+    store.dispatch(updateTranslation(parseEntry('hello = World')));
     wrapper.update();
 
     expect(wrapper.isEmptyRender()).toBeTruthy();
