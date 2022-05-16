@@ -2,7 +2,10 @@ import React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import { isSimpleSingleAttributeMessage, parser } from '~/core/utils/fluent';
+import {
+  isSimpleSingleAttributeMessage,
+  parseEntry,
+} from '~/core/utils/fluent';
 
 import { Property } from './Property';
 
@@ -20,7 +23,7 @@ export function FluentAttribute(props: Props): null | React.ReactElement<any> {
     return null;
   }
 
-  const message = parser.parseEntry(entity.original);
+  const message = parseEntry(entity.original);
 
   if (message.type !== 'Message' || !isSimpleSingleAttributeMessage(message)) {
     return null;

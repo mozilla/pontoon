@@ -15,8 +15,8 @@ import {
   getSimplePreview,
   isSimpleMessage,
   isSimpleSingleAttributeMessage,
-  parser,
-  serializer,
+  parseEntry,
+  serializeEntry,
 } from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { GenericTranslationForm } from '~/modules/genericeditor';
@@ -48,7 +48,7 @@ export function SimpleEditor({ ftlSwitch }: Props): React.ReactElement | null {
       return;
     }
 
-    const message = parser.parseEntry(translation);
+    const message = parseEntry(translation);
     if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
       updateTranslation(getSimplePreview(translation), changeSource);
     }
@@ -67,7 +67,7 @@ export function SimpleEditor({ ftlSwitch }: Props): React.ReactElement | null {
         }
 
         // The content was simple, reformat it to be an actual Fluent message.
-        const content = serializer.serializeEntry(
+        const content = serializeEntry(
           getReconstructedMessage(entity.original, translation),
         );
         sendTranslation(ignoreWarnings, content);

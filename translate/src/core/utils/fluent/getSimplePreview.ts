@@ -1,6 +1,6 @@
 import { Pattern, serializeExpression } from '@fluent/syntax';
 
-import { parser } from './parser';
+import { parseEntry } from './parser';
 
 function serialize({ elements }: Pattern): string {
   let result = '';
@@ -53,7 +53,7 @@ export function getSimplePreview(content: string | null | undefined): string {
     return '';
   }
 
-  const message = parser.parseEntry(content);
+  const message = parseEntry(content);
   return message.type === 'Message' || message.type === 'Term'
     ? serialize(message.value || message.attributes[0].value)
     : content;

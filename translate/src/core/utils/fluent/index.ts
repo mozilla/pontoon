@@ -12,5 +12,5 @@ export { isSimpleElement } from './isSimpleElement';
 export { isSimpleMessage } from './isSimpleMessage';
 export { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
 export { isSupportedMessage } from './isSupportedMessage';
-export { parser } from './parser';
-export { serializer } from './serializer';
+export { parseEntry } from './parser';
+export { serializeEntry } from './serializer';

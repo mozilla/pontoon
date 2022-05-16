@@ -1,10 +1,10 @@
 import { isPluralExpression } from './isPluralExpression';
-import { parser } from './parser';
+import { parseEntry } from './parser';
 
 describe('isPluralExpression', () => {
   it('returns false for elements that are not select expressions', () => {
     const input = 'my-entry = Hello!';
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeFalsy();
@@ -17,7 +17,7 @@ my-entry =
         [one] Hello!
        *[two] World!
     }`;
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeTruthy();
@@ -30,7 +30,7 @@ my-entry =
         [1] Hello!
        *[2] World!
     }`;
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeTruthy();
@@ -43,7 +43,7 @@ my-entry =
         [one] Hello!
        *[1] World!
     }`;
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeTruthy();
@@ -56,7 +56,7 @@ my-entry =
         [one] Hello!
        *[variant] World!
     }`;
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeFalsy();
@@ -69,7 +69,7 @@ my-entry =
         [variant] Hello!
        *[another-variant] World!
     }`;
-    const message = parser.parseEntry(input);
+    const message = parseEntry(input);
     const element = message.value.elements[0];
 
     expect(isPluralExpression(element.expression)).toBeFalsy();

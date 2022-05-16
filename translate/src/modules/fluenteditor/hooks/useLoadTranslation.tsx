@@ -13,7 +13,7 @@ import {
   flattenMessage,
   getEmptyMessage,
   getSimplePreview,
-  parser,
+  parseEntry,
 } from '~/core/utils/fluent';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
@@ -55,8 +55,8 @@ export function useLoadTranslation() {
       case 'rich':
         // Use a Fluent Message object.
         translationContent = activeTranslationString
-          ? flattenMessage(parser.parseEntry(activeTranslationString))
-          : getEmptyMessage(parser.parseEntry(entity.original), locale);
+          ? flattenMessage(parseEntry(activeTranslationString))
+          : getEmptyMessage(parseEntry(entity.original), locale);
         break;
     }
 

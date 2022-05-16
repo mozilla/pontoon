@@ -2,8 +2,8 @@ import { flattenMessage } from './flattenMessage';
 import { getEmptyMessage } from './getEmptyMessage';
 import { getReconstructedMessage } from './getReconstructedMessage';
 import { getSimplePreview } from './getSimplePreview';
-import { parser } from './parser';
-import { serializer } from './serializer';
+import { parseEntry } from './parser';
+import { serializeEntry } from './serializer';
 
 import type { Entry } from '@fluent/syntax';
 import type { Locale } from '~/context/Locale';
@@ -37,7 +37,7 @@ export function getComplexFromSimple(
 ): [string, string] {
   let initialContent = initial;
 
-  const translationContent = serializer.serializeEntry(
+  const translationContent = serializeEntry(
     getReconstructedMessage(original, current),
   );
 
@@ -45,8 +45,8 @@ export function getComplexFromSimple(
   // we make the initial translation an empty fluent message to avoid
   // showing unchanged content warnings.
   if (!initialContent) {
-    initialContent = serializer.serializeEntry(
-      getEmptyMessage(parser.parseEntry(original), locale),
+    initialContent = serializeEntry(
+      getEmptyMessage(parseEntry(original), locale),
     );
   }
 
@@ -59,21 +59,21 @@ export function getRichFromComplex(
   initial: string,
   locale: Locale,
 ): [Entry, Entry] {
-  let translationContent = flattenMessage(parser.parseEntry(current));
+  let translationContent = flattenMessage(parseEntry(current));
 
   // If the parsed content is invalid, create an empty message instead.
   // Note that this should be replaced with a check that prevents
   // turning back to the Rich editor, in order to avoid losing data.
   if (translationContent.type === 'Junk') {
-    translationContent = getEmptyMessage(parser.parseEntry(original), locale);
+    translationContent = getEmptyMessage(parseEntry(original), locale);
   }
 
-  let initialContent = parser.parseEntry(initial);
+  let initialContent = parseEntry(initial);
 
   // If there is no active translation for this entity, create an
   // empty message to serve as the reference for unsaved changes.
   if (initialContent.type === 'Junk') {
-    initialContent = getEmptyMessage(parser.parseEntry(original), locale);
+    initialContent = getEmptyMessage(parseEntry(original), locale);
   } else {
     initialContent = flattenMessage(initialContent);
   }
@@ -87,7 +87,7 @@ export function getComplexFromRich(
   initial: string,
   locale: Locale,
 ): [string, string] {
-  const translationContent = serializer.serializeEntry(current);
+  const translationContent = serializeEntry(current);
 
   let initialEntry: Entry;
 
@@ -95,12 +95,12 @@ export function getComplexFromRich(
   // we make the initial translation an empty fluent message to avoid
   // showing unchanged content warnings.
   if (!initial) {
-    initialEntry = getEmptyMessage(parser.parseEntry(original), locale);
+    initialEntry = getEmptyMessage(parseEntry(original), locale);
   } else {
-    initialEntry = flattenMessage(parser.parseEntry(initial));
+    initialEntry = flattenMessage(parseEntry(initial));
   }
 
-  const initialContent = serializer.serializeEntry(initialEntry);
+  const initialContent = serializeEntry(initialEntry);
 
   return [translationContent, initialContent];
 }

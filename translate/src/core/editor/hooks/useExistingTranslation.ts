@@ -1,8 +1,8 @@
 import { useTranslationForEntity } from '~/context/PluralForm';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import { getReconstructedMessage } from '~/core/utils/fluent/getReconstructedMessage';
-import { parser as fluentParser } from '~/core/utils/fluent/parser';
-import { serializer as fluentSerializer } from '~/core/utils/fluent/serializer';
+import { parseEntry } from '~/core/utils/fluent/parser';
+import { serializeEntry } from '~/core/utils/fluent/serializer';
 import { useAppSelector } from '~/hooks';
 import { HISTORY } from '~/modules/history/reducer';
 
@@ -52,10 +52,8 @@ export function useExistingTranslation() {
     // re-serialize it and re-parse it to make sure the translation
     // object is a "clean" one, as produced by Fluent. Otherwise
     // we encounter bugs when comparing it with the history items.
-    const entry = fluentParser.parseEntry(
-      fluentSerializer.serializeEntry(translation),
-    );
-    test = (t) => entry.equals(fluentParser.parseEntry(t.string));
+    const entry = parseEntry(serializeEntry(translation));
+    test = (t) => entry.equals(parseEntry(t.string));
   } else if (entity?.format === 'ftl') {
     // If translation is a string, from the generic editor.
     // Except it might actually be a Fluent message from the Simple or Source
@@ -66,7 +64,7 @@ export function useExistingTranslation() {
     // we want to turn the string into a Fluent message, as that's simpler
     // to handle and less prone to errors. We do the same for each history
     // entry.
-    let entry = fluentParser.parseEntry(translation);
+    let entry = parseEntry(translation);
     if (entry.type === 'Junk') {
       // If the message was junk, it means we are likely in the Simple
       // editor, and we thus want to reconstruct the Fluent message.
@@ -75,7 +73,7 @@ export function useExistingTranslation() {
       // it doesn't matter as there shouldn't be anything matching anyway.
       entry = getReconstructedMessage(entity.original, translation);
     }
-    test = (t) => entry.equals(fluentParser.parseEntry(t.string));
+    test = (t) => entry.equals(parseEntry(t.string));
   } else {
     test = (t) => t.string === translation;
   }

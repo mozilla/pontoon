@@ -7,7 +7,7 @@ import {
   updateSelection,
   updateTranslation,
 } from '~/core/editor/actions';
-import { parser } from '~/core/utils/fluent';
+import { parseEntry } from '~/core/utils/fluent';
 
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -27,7 +27,7 @@ function createComponent(entityString, updateTranslation_) {
   }
 
   const store = createReduxStore();
-  const message = parser.parseEntry(entityString);
+  const message = parseEntry(entityString);
   store.dispatch(updateTranslation(message));
   store.dispatch(setInitialTranslation(message));
 
@@ -220,7 +220,7 @@ describe('<RichTranslationForm>', () => {
     wrapper.setProps({});
 
     expect(updateMock.called).toBeTruthy();
-    const replaceContent = parser.parseEntry(
+    const replaceContent = parseEntry(
       `title = AddValue
     .label = Something
 `,

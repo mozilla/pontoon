@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as PluralForm from '~/context/PluralForm';
-import { parser as fluentParser } from '~/core/utils/fluent/parser';
+import { parseEntry } from '~/core/utils/fluent/parser';
 import { flattenMessage } from '~/core/utils/fluent/flattenMessage';
 import * as Hooks from '~/hooks';
 import * as SelectedEntity from '~/core/entities/hooks';
@@ -37,10 +37,7 @@ const stringSelector =
     });
 
 const fluentSelector =
-  ({
-    initialTranslation = fluentParser.parseEntry('msg = something'),
-    translation,
-  }) =>
+  ({ initialTranslation = parseEntry('msg = something'), translation }) =>
   (cb) =>
     cb({
       editor: { initialTranslation, translation },
@@ -76,9 +73,7 @@ describe('useExistingTranslation', () => {
   it('finds identical Fluent initial/active translation', () => {
     SelectedEntity.useSelectedEntity.returns(ENTITY_FLUENT);
     Hooks.useAppSelector.callsFake(
-      fluentSelector({
-        translation: fluentParser.parseEntry('msg = something'),
-      }),
+      fluentSelector({ translation: parseEntry('msg = something') }),
     );
     expect(useExistingTranslation()).toBe(ACTIVE_TRANSLATION);
   });
@@ -110,7 +105,7 @@ describe('useExistingTranslation', () => {
     const prev0 = HISTORY_FLUENT.translations[0];
     Hooks.useAppSelector.callsFake(
       fluentSelector({
-        translation: flattenMessage(fluentParser.parseEntry(prev0.string)),
+        translation: flattenMessage(parseEntry(prev0.string)),
       }),
     );
     expect(useExistingTranslation()).toBe(prev0);
@@ -118,7 +113,7 @@ describe('useExistingTranslation', () => {
     const prev1 = HISTORY_FLUENT.translations[1];
     Hooks.useAppSelector.callsFake(
       fluentSelector({
-        translation: flattenMessage(fluentParser.parseEntry(prev1.string)),
+        translation: flattenMessage(parseEntry(prev1.string)),
       }),
     );
     expect(useExistingTranslation()).toBe(prev1);

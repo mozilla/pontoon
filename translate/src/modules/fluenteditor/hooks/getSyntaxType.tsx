@@ -1,7 +1,7 @@
 import type { Translation } from '~/core/editor';
 import {
   getSyntaxType as getFluentSyntaxType,
-  parser,
+  parseEntry,
 } from '~/core/utils/fluent';
 import type { SyntaxType } from '~/core/utils/fluent/types';
 
@@ -19,6 +19,6 @@ export function getSyntaxType(source: string | Translation): SyntaxType {
     return getFluentSyntaxType(source);
   }
 
-  const message = parser.parseEntry(source);
+  const message = parseEntry(source);
   return message.type === 'Junk' ? 'simple' : getFluentSyntaxType(message);
 }
