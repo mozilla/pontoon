@@ -10,7 +10,6 @@ import {
 import type { Locale } from '~/context/Locale';
 
 import { CLDR_PLURALS } from '../constants';
-import { flattenMessage } from './flattenMessage';
 import { isPluralExpression } from './isPluralExpression';
 
 /**
@@ -74,6 +73,5 @@ export function getEmptyMessage(source: Entry, { cldrPlurals }: Locale): Entry {
   }
 
   const transformer = new EmptyTransformer();
-  const flatMessage = flattenMessage(source);
-  return transformer.visit(flatMessage) as any as Entry;
+  return transformer.visit(source.clone()) as any as Entry;
 }

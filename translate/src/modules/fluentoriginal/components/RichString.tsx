@@ -8,7 +8,7 @@ import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import { getMarker, TermState } from '~/core/term';
-import { flattenMessage, parseEntry } from '~/core/utils/fluent';
+import { parseEntry } from '~/core/utils/fluent';
 
 import './RichString.css';
 
@@ -124,7 +124,7 @@ function renderAttributes(
  * Show the original string of a Fluent entity in a rich interface.
  */
 export function RichString(props: Props): React.ReactElement<'table'> {
-  const message = flattenMessage(parseEntry(props.entity.original));
+  const message = parseEntry(props.entity.original);
   // Safeguard against non-translatable entries
   if (message.type !== 'Message' && message.type !== 'Term') {
     throw new Error(`Unexpected type '${message.type}' in RichString`);

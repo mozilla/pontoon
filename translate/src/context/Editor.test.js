@@ -1,5 +1,5 @@
 import { createMemoryHistory } from 'history';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
 import { parseEntry } from '~/core/utils/fluent';
@@ -167,18 +167,16 @@ describe('<EditorProvider>', () => {
 describe('useClearEditor', () => {
   it('clears a rich Fluent value', () => {
     let editor;
+    let clearEditor;
     const Spy = () => {
-      const clearEditor = useClearEditor();
       editor = useContext(EditorData);
-      useEffect(() => {
-        if (editor.view === 'rich') {
-          clearEditor();
-        }
-      }, [editor.view]);
+      clearEditor = useClearEditor();
       return null;
     };
     const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }';
-    mountSpy(Spy, 'ftl', initial);
+    const wrapper = mountSpy(Spy, 'ftl', initial);
+    act(() => clearEditor());
+    wrapper.update();
 
     const value = parseEntry(
       'key = { $var ->\n [one] {""}\n [two] {""}\n *[other] {""}\n }',
