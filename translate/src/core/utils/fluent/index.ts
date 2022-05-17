@@ -1,7 +1,5 @@
 export { areSupportedElements } from './areSupportedElements';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
-export { flattenPatternElements } from './flattenPatternElements';
-export { flattenMessage } from './flattenMessage';
 export { getEmptyMessage } from './getEmptyMessage';
 export { getReconstructedMessage } from './getReconstructedMessage';
 export { getSimplePreview } from './getSimplePreview';

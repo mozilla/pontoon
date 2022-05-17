@@ -1,18 +1,20 @@
-import { flattenMessage } from './flattenMessage';
+import ftl from '@fluent/dedent';
+
 import { parseEntry } from './parser';
 
-describe('flattenMessage', () => {
+describe('parser', () => {
   it('does not modify value with single element', () => {
-    const message = parseEntry('title = My Title');
-    const res = flattenMessage(message);
+    const res = parseEntry('title = My Title');
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('My Title');
   });
 
   it('does not modify attributes with single element', () => {
-    const message = parseEntry('title =\n    .foo = Bar');
-    const res = flattenMessage(message);
+    const res = parseEntry(ftl`
+      title =
+          .foo = Bar
+      `);
 
     expect(res.attributes).toHaveLength(1);
     expect(res.attributes[0].value.elements).toHaveLength(1);
@@ -20,14 +22,14 @@ describe('flattenMessage', () => {
   });
 
   it('does not modify value with a single select expression', () => {
-    const input =
-      'my-entry =' +
-      '\n    { PLATFORM() ->' +
-      '\n        [variant] Hello!' +
-      '\n       *[another-variant] World!' +
-      '\n    }';
-    const message = parseEntry(input);
-    const res = flattenMessage(message);
+    const input = ftl`
+      my-entry =
+          { PLATFORM() ->
+              [variant] Hello!
+             *[another-variant] World!
+          }
+      `;
+    const res = parseEntry(input);
 
     expect(res.value.elements).toHaveLength(1);
     expect(
@@ -39,22 +41,17 @@ describe('flattenMessage', () => {
   });
 
   it('flattens a value with several elements', () => {
-    const message = parseEntry('title = My { $awesome } Title');
-
-    expect(message.value.elements).toHaveLength(3);
-
-    const res = flattenMessage(message);
+    const res = parseEntry('title = My { $awesome } Title');
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('My { $awesome } Title');
   });
 
   it('flattens an attribute with several elements', () => {
-    const message = parseEntry('title =\n    .foo = Bar { -foo } Baz');
-
-    expect(message.attributes[0].value.elements).toHaveLength(3);
-
-    const res = flattenMessage(message);
+    const res = parseEntry(ftl`
+      title =
+          .foo = Bar { -foo } Baz
+      `);
 
     expect(res.attributes).toHaveLength(1);
     expect(res.attributes[0].value.elements).toHaveLength(1);
@@ -64,17 +61,12 @@ describe('flattenMessage', () => {
   });
 
   it('flattens value and attributes', () => {
-    const input =
-      'batman = The { $dark } Knight' +
-      '\n    .weapon = Brain and { -wayne-enterprise }' +
-      '\n    .history = Lost { 2 } parents, has { 1 } "$alfred"';
-    const message = parseEntry(input);
-
-    expect(message.value.elements).toHaveLength(3);
-    expect(message.attributes[0].value.elements).toHaveLength(2);
-    expect(message.attributes[1].value.elements).toHaveLength(5);
-
-    const res = flattenMessage(message);
+    const input = ftl`
+      batman = The { $dark } Knight
+          .weapon = Brain and { -wayne-enterprise }
+          .history = Lost { 2 } parents, has { 1 } "$alfred"
+      `;
+    const res = parseEntry(input);
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('The { $dark } Knight');
@@ -93,17 +85,17 @@ describe('flattenMessage', () => {
   });
 
   it('flattens values surrounding a select expression and select expression variants', () => {
-    const input =
-      'my-entry =' +
-      '\n    There { $num ->' +
-      '\n        [one] is one email' +
-      '\n       *[other] are { $num } emails' +
-      '\n    } for { $awesome } { $gender ->' +
-      '\n       *[masculine] him' +
-      '\n        [feminine] her' +
-      '\n    }';
-    const message = parseEntry(input);
-    const res = flattenMessage(message);
+    const input = ftl`
+      my-entry =
+          There { $num ->
+              [one] is one email
+             *[other] are { $num } emails
+          } for { $awesome } { $gender ->
+             *[masculine] him
+              [feminine] her
+          }
+      `;
+    const res = parseEntry(input);
 
     expect(res.value.elements).toHaveLength(3);
 

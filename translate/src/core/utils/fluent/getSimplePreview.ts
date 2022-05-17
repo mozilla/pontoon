@@ -61,5 +61,5 @@ export function getSimplePreview(
     ? serialize(message.value || message.attributes[0].value)
     : typeof content === 'string'
     ? content
-    : serializeEntry(content);
+    : serializeEntry(content.clone());
 }

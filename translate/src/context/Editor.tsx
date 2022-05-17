@@ -11,7 +11,6 @@ import React, {
 import type { SourceType } from '~/api/machinery';
 import { useSelectedEntity } from '~/core/entities/hooks';
 import {
-  flattenMessage,
   getEmptyMessage,
   getReconstructedMessage,
   getSimplePreview,
@@ -296,11 +295,11 @@ export function getEditedTranslation(data: EditorData): string {
 /** Will return a `Junk` entry for non-Fluent message data */
 export function getFluentEntry({ initial, value, view }: EditorData): Entry {
   if (typeof value !== 'string') {
-    return value;
+    return value.clone();
   } else if (view === 'simple') {
     return getReconstructedMessage(initial, value);
   } else {
-    return flattenMessage(parseEntry(value));
+    return parseEntry(value);
   }
 }
 
@@ -312,7 +311,7 @@ function getFtlViewAndValue(
     case 'simple':
       return { value: getSimplePreview(entry), view: 'simple' };
     case 'rich':
-      return { value: flattenMessage(entry), view: 'rich' };
+      return { value: entry, view: 'rich' };
     default:
       return { value: source, view: 'source' };
   }
