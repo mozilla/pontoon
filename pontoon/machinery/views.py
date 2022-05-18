@@ -277,11 +277,6 @@ def caighdean(request):
 
 def microsoft_terminology(request):
     """Get translations from Microsoft Terminology Service."""
-    return JsonResponse(
-        {"status": False, "message": "Service Unavailable"},
-        status=503,
-    )
-
     try:
         text = request.GET["text"]
         locale_code = request.GET["locale"]
