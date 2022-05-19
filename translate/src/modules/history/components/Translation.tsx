@@ -195,7 +195,7 @@ export function TranslationBase({
       return;
     }
     setEditorFromHistory(translation.string);
-  }, [isReadOnlyEditor, translation.string]);
+  }, [isReadOnlyEditor, setEditorFromHistory, translation.string]);
 
   let approvalTitle: string;
   if (translation.approved && translation.approvedUser) {

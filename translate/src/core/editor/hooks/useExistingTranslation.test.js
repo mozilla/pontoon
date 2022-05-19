@@ -1,9 +1,8 @@
 import React from 'react';
 import sinon from 'sinon';
-import * as PluralForm from '~/context/PluralForm';
+import * as Entity from '~/context/EntityView';
 import { parseEntry } from '~/core/utils/fluent/parser';
 import * as Hooks from '~/hooks';
-import * as SelectedEntity from '~/core/entities/hooks';
 
 import { useExistingTranslation } from './useExistingTranslation';
 
@@ -25,25 +24,19 @@ const HISTORY_FLUENT = {
   ],
 };
 
-const ENTITY_STRING = { format: 'po' };
-const ENTITY_FLUENT = { format: 'ftl', original: 'msg = Allez Morty !' };
-
 beforeAll(() => {
   sinon.stub(React, 'useContext');
   sinon.stub(Hooks, 'useAppSelector');
-  sinon.stub(SelectedEntity, 'useSelectedEntity');
-  sinon.stub(PluralForm, 'useTranslationForEntity');
+  sinon.stub(Entity, 'useActiveTranslation');
 });
 beforeEach(() => {
   Hooks.useAppSelector.callsFake((cb) => cb({ history: HISTORY_STRING }));
-  SelectedEntity.useSelectedEntity.returns(ENTITY_STRING);
-  PluralForm.useTranslationForEntity.returns(ACTIVE_TRANSLATION);
+  Entity.useActiveTranslation.returns(ACTIVE_TRANSLATION);
 });
 afterAll(() => {
   React.useContext.restore();
   Hooks.useAppSelector.restore();
-  SelectedEntity.useSelectedEntity.restore();
-  PluralForm.useTranslationForEntity.restore();
+  Entity.useActiveTranslation.restore();
 });
 
 describe('useExistingTranslation', () => {
@@ -58,7 +51,6 @@ describe('useExistingTranslation', () => {
   });
 
   it('finds identical Fluent initial/active translation', () => {
-    SelectedEntity.useSelectedEntity.returns(ENTITY_FLUENT);
     React.useContext.returns({
       format: 'ftl',
       initial: 'msg = something',
@@ -96,7 +88,6 @@ describe('useExistingTranslation', () => {
 
   it('finds identical Fluent translation in history', () => {
     Hooks.useAppSelector.callsFake((cb) => cb({ history: HISTORY_FLUENT }));
-    SelectedEntity.useSelectedEntity.returns(ENTITY_FLUENT);
 
     const prev0 = HISTORY_FLUENT.translations[0];
     React.useContext.returns({
@@ -125,7 +116,6 @@ describe('useExistingTranslation', () => {
 
   it('finds a Fluent translation in history from a simplified Fluent string', () => {
     Hooks.useAppSelector.callsFake((cb) => cb({ history: HISTORY_FLUENT }));
-    SelectedEntity.useSelectedEntity.returns(ENTITY_FLUENT);
     React.useContext.returns({
       format: 'ftl',
       initial: 'msg = something',

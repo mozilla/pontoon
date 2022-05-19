@@ -3,12 +3,12 @@ import { useContext } from 'react';
 
 import { ChangeOperation, setTranslationStatus } from '~/api/translation';
 import { EditorActions } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
-import { usePluralForm } from '~/context/PluralForm';
 import { updateEntityTranslation } from '~/core/entities/actions';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
+import { usePushNextTranslatable } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
@@ -30,11 +30,10 @@ export function useUpdateTranslationStatus(
 ) => void {
   const dispatch = useAppDispatch();
 
-  const entity = useSelectedEntity();
+  const { resource } = useContext(Location);
   const locale = useContext(Locale);
-  const { push, resource } = useContext(Location);
-  const { pluralForm, setPluralForm } = usePluralForm(entity);
-  const nextEntity = useNextEntity();
+  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
+  const pushNextTranslatable = usePushNextTranslatable();
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy, setEditorFromHistory } = useContext(EditorActions);
 
@@ -43,7 +42,7 @@ export function useUpdateTranslationStatus(
     change: ChangeOperation,
     ignoreWarnings: boolean,
   ) => {
-    if (!entity) {
+    if (entity.pk === 0) {
       return;
     }
 
@@ -70,13 +69,10 @@ export function useUpdateTranslationStatus(
 
       if (results.translation && change === 'approve') {
         // The change did work, we want to move on to the next Entity or pluralForm.
-        if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-          setPluralForm(pluralForm + 1);
-        } else if (nextEntity && nextEntity.pk !== entity.pk) {
-          push({ entity: nextEntity.pk });
-        }
+        pushNextTranslatable();
       } else {
-        dispatch(getHistory(entity.pk, locale.code, pluralForm));
+        const pf = hasPluralForms ? pluralForm : -1;
+        dispatch(getHistory(entity.pk, locale.code, pf));
       }
 
       if (results.stats) {
@@ -94,9 +90,8 @@ export function useUpdateTranslationStatus(
       }
 
       // Update entity translation data now that it has changed on the server.
-      dispatch(
-        updateEntityTranslation(entity.pk, pluralForm, results.translation),
-      );
+      const pf = hasPluralForms ? pluralForm : -1;
+      dispatch(updateEntityTranslation(entity.pk, pf, results.translation));
     }
 
     NProgress.done();

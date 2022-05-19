@@ -46,7 +46,7 @@ export function FtlSwitch() {
         addNotification(notificationMessages.FTL_NOT_SUPPORTED_RICH_EDITOR),
       );
     }
-  }, [canToggle]);
+  }, [canToggle, toggleFtlView]);
 
   if (format !== 'ftl' || !isAuthenticated || readonly) {
     return null;

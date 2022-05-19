@@ -31,7 +31,7 @@ export function HelperSelectionProvider({
   translation,
 }: {
   children: React.ReactElement;
-  translation: EntityTranslation | undefined;
+  translation: EntityTranslation | null;
 }) {
   const [state, setState] = useState<HelperSelection>(() => ({
     ...initHelpers,

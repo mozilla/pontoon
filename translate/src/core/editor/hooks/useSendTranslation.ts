@@ -7,13 +7,13 @@ import {
   EditorData,
   getEditedTranslation,
 } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
-import { usePluralForm } from '~/context/PluralForm';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
+import { usePushNextTranslatable } from '~/core/entities/hooks';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
@@ -28,12 +28,11 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
   const location = useContext(Location);
   const locale = useContext(Locale);
-  const entity = useSelectedEntity();
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const { pluralForm, setPluralForm } = usePluralForm(entity);
-  const nextEntity = useNextEntity();
+  const { entity, pluralForm } = useContext(EntityView);
+  const pushNextTranslatable = usePushNextTranslatable();
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy } = useContext(EditorActions);
@@ -42,7 +41,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const { busy, machinery } = editor;
 
   return async (ignoreWarnings = false) => {
-    if (busy || !entity) {
+    if (busy || entity.pk === 0) {
       return;
     }
 
@@ -89,11 +88,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       }
 
       // The change did work, we want to move on to the next Entity or pluralForm.
-      if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-        setPluralForm(pluralForm + 1);
-      } else if (nextEntity && nextEntity.pk !== entity.pk) {
-        location.push({ entity: nextEntity.pk });
-      }
+      pushNextTranslatable();
     } else if (content.failedChecks) {
       setFailedChecks(content.failedChecks, 'submitted');
     } else if (content.same) {

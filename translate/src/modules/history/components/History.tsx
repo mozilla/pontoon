@@ -1,10 +1,9 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext } from 'react';
 
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import { usePluralForm } from '~/context/PluralForm';
 import { useUpdateTranslationStatus } from '~/core/editor';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { USER } from '~/core/user';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -24,18 +23,18 @@ export function History(): React.ReactElement<'section'> | null {
   const { code } = useContext(Locale);
   const user = useAppSelector((state) => state[USER]);
   const isReadOnlyEditor = useReadonlyEditor();
-  const entity = useSelectedEntity();
-  const { pluralForm } = usePluralForm(entity);
+  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
   const { fetching, translations } = useAppSelector((state) => state[HISTORY]);
 
+  const pf = hasPluralForms ? pluralForm : -1;
   const deleteTranslation = useCallback(
     (translationId: number) =>
-      dispatch(deleteTranslation_(entity?.pk, code, pluralForm, translationId)),
-    [entity, code, pluralForm],
+      dispatch(deleteTranslation_(entity.pk, code, pf, translationId)),
+    [entity, code, pf],
   );
   const updateTranslationStatus = useUpdateTranslationStatus(false);
 
-  if (!entity || !translations.length) {
+  if (!translations.length) {
     return fetching ? null : (
       <section className='history'>
         <Localized id='history-History--no-translations'>

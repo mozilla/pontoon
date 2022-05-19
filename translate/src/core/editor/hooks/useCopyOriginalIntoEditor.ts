@@ -1,22 +1,16 @@
 import { useCallback, useContext } from 'react';
 
 import { EditorActions } from '~/context/Editor';
-import { usePluralForm } from '~/context/PluralForm';
-import { useSelectedEntity } from '~/core/entities/hooks';
+import { useEntitySource } from '~/context/EntityView';
 
 /**
  * Return a function to copy the original translation into the editor.
  */
 export function useCopyOriginalIntoEditor(): () => void {
   const { setEditorFromHistory } = useContext(EditorActions);
-  const entity = useSelectedEntity();
-  const { pluralForm } = usePluralForm(entity);
-
-  return useCallback(() => {
-    if (entity) {
-      setEditorFromHistory(
-        pluralForm > 0 ? entity.original_plural : entity.original,
-      );
-    }
-  }, [entity, pluralForm]);
+  const source = useEntitySource();
+  return useCallback(
+    () => setEditorFromHistory(source),
+    [setEditorFromHistory, source],
+  );
 }

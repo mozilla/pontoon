@@ -37,7 +37,7 @@ export function FailedChecksProvider({
   translation,
 }: {
   children: React.ReactElement;
-  translation: EntityTranslation | undefined;
+  translation: EntityTranslation | null;
 }) {
   const [state, setState] = useState<FailedChecksData>(() => ({
     ...initFailedChecks,

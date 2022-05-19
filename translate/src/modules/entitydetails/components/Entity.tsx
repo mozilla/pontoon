@@ -1,16 +1,16 @@
 import React from 'react';
 
 import { MachineryProvider } from '~/context/MachineryTranslations';
-import { PluralFormProvider } from '~/context/PluralForm';
+import { EntityViewProvider } from '~/context/EntityView';
 import { SearchProvider } from '~/context/SearchData';
 import { EntityDetails } from './EntityDetails';
 
 export const Entity = () => (
-  <SearchProvider>
-    <MachineryProvider>
-      <PluralFormProvider>
+  <EntityViewProvider>
+    <SearchProvider>
+      <MachineryProvider>
         <EntityDetails />
-      </PluralFormProvider>
-    </MachineryProvider>
-  </SearchProvider>
+      </MachineryProvider>
+    </SearchProvider>
+  </EntityViewProvider>
 );

@@ -7,13 +7,12 @@ import React, {
 } from 'react';
 
 import { EditorProvider } from '~/context/Editor';
+import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { FailedChecksProvider } from '~/context/FailedChecksData';
 import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Location } from '~/context/Location';
-import { usePluralForm, useTranslationForEntity } from '~/context/PluralForm';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { Editor } from '~/core/editor/components/Editor';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
@@ -54,9 +53,12 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const dispatch = useAppDispatch();
   const store = useAppStore();
 
-  const selectedEntity = useSelectedEntity();
-  const activeTranslation = useTranslationForEntity(selectedEntity);
-  const { pluralForm } = usePluralForm(selectedEntity);
+  const activeTranslation = useActiveTranslation();
+  const {
+    entity: selectedEntity,
+    hasPluralForms,
+    pluralForm,
+  } = useContext(EntityView);
 
   const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
     null,
@@ -73,8 +75,9 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       return;
     }
 
-    dispatch(requestHistory(entity, pluralForm));
-    dispatch(getHistory(entity, lc, pluralForm));
+    const pf = hasPluralForms ? pluralForm : -1;
+    dispatch(requestHistory(entity, pf));
+    dispatch(getHistory(entity, lc, pf));
 
     const { format, machinery_original, pk } = selectedEntity;
     const source = getOptimizedContent(machinery_original, format);
@@ -104,10 +107,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     [dispatch],
   );
 
-  if (!selectedEntity) {
-    return <section className='entity-details'></section>;
-  }
-
   return (
     <FailedChecksProvider translation={activeTranslation}>
       <EditorProvider>
@@ -118,7 +117,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
               <Metadata
                 entity={selectedEntity}
                 isReadOnlyEditor={isReadOnlyEditor}
-                pluralForm={pluralForm}
                 terms={terms}
                 navigateToPath={navigateToPath}
                 teamComments={teamComments}

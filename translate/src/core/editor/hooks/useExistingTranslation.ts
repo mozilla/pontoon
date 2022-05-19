@@ -1,8 +1,7 @@
 import { useContext } from 'react';
 
 import { EditorData, getFluentEntry } from '~/context/Editor';
-import { useTranslationForEntity } from '~/context/PluralForm';
-import { useSelectedEntity } from '~/core/entities/hooks';
+import { useActiveTranslation } from '~/context/EntityView';
 import { parseEntry } from '~/core/utils/fluent/parser';
 import { useAppSelector } from '~/hooks';
 import { HISTORY } from '~/modules/history/reducer';
@@ -15,8 +14,7 @@ import { HISTORY } from '~/modules/history/reducer';
  * Othewise, it returns undefined.
  */
 export function useExistingTranslation() {
-  const entity = useSelectedEntity();
-  const activeTranslation = useTranslationForEntity(entity);
+  const activeTranslation = useActiveTranslation();
   const historyTranslations = useAppSelector(
     (state) => state[HISTORY].translations,
   );
