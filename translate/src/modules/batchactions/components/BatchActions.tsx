@@ -25,12 +25,9 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
 
-  const { entity, locale, project, resource } = location;
-
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
-      // On Esc, quit batch actions
-      if (ev.keyCode === 27) {
+      if (ev.key === 'Escape') {
         quitBatchActions();
       }
     };
@@ -41,24 +38,20 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const selectAllEntities = useCallback(
     () => dispatch(selectAll(location)),
-    [dispatch, location],
+    [location],
   );
 
   const approveAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
-      dispatch(
-        performAction(location, 'approve', entity, batchactions.entities),
-      );
+      dispatch(performAction(location, 'approve', batchactions.entities));
     }
-  }, [dispatch, entity, locale, project, resource, batchactions]);
+  }, [location, batchactions]);
 
   const rejectAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
-      dispatch(
-        performAction(location, 'reject', entity, batchactions.entities),
-      );
+      dispatch(performAction(location, 'reject', batchactions.entities));
     }
-  }, [dispatch, entity, locale, project, resource, batchactions]);
+  }, [location, batchactions]);
 
   const replaceAll = useCallback(() => {
     if (find.current && replace.current && !batchactions.requestInProgress) {
@@ -73,7 +66,6 @@ export function BatchActions(): React.ReactElement<'div'> {
           performAction(
             location,
             'replace',
-            entity,
             batchactions.entities,
             encodeURIComponent(fv),
             encodeURIComponent(rv),
@@ -81,7 +73,7 @@ export function BatchActions(): React.ReactElement<'div'> {
         );
       }
     }
-  }, [dispatch, entity, locale, project, resource, batchactions]);
+  }, [location, batchactions]);
 
   const submitReplaceForm = useCallback(
     (ev: React.SyntheticEvent<HTMLFormElement>) => {

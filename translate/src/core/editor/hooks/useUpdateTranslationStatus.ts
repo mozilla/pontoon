@@ -13,10 +13,7 @@ import { addNotification } from '~/core/notification/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch } from '~/hooks';
-import {
-  get as getHistory,
-  _getOperationNotif,
-} from '~/modules/history/actions';
+import { getHistory, _getOperationNotif } from '~/modules/history/actions';
 
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.

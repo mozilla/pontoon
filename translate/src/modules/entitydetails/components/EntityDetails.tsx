@@ -20,10 +20,7 @@ import { getOptimizedContent } from '~/core/utils';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { History } from '~/modules/history';
-import {
-  get as getHistory,
-  request as requestHistory,
-} from '~/modules/history/actions';
+import { getHistory, requestHistory } from '~/modules/history/actions';
 import { OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
 import { TEAM_COMMENTS } from '~/modules/teamcomments';
@@ -76,7 +73,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     }
 
     const pf = hasPluralForms ? pluralForm : -1;
-    dispatch(requestHistory(entity, pf));
+    dispatch(requestHistory());
     dispatch(getHistory(entity, lc, pf));
 
     const { format, machinery_original, pk } = selectedEntity;

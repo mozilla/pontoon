@@ -12,48 +12,20 @@ import type { AppDispatch } from '~/store';
 
 export const RECEIVE = 'history/RECEIVE';
 export const REQUEST = 'history/REQUEST';
-export const UPDATE = 'history/UPDATE';
 
-export type Action = ReceiveAction | RequestAction | UpdateAction;
+export type Action = ReceiveAction | RequestAction;
 
-export type ReceiveAction = {
+type ReceiveAction = {
   readonly type: typeof RECEIVE;
   readonly translations: Array<HistoryTranslation>;
 };
-export function receive(
-  translations: Array<HistoryTranslation>,
-): ReceiveAction {
-  return {
-    type: RECEIVE,
-    translations,
-  };
+
+type RequestAction = { readonly type: typeof REQUEST };
+export function requestHistory(): RequestAction {
+  return { type: REQUEST };
 }
 
-export type UpdateAction = {
-  readonly type: typeof UPDATE;
-  readonly translation: HistoryTranslation;
-};
-export function update(translation: HistoryTranslation): UpdateAction {
-  return {
-    type: UPDATE,
-    translation,
-  };
-}
-
-export type RequestAction = {
-  readonly type: typeof REQUEST;
-  readonly entity: number;
-  readonly pluralForm: number;
-};
-export function request(entity: number, pluralForm: number): RequestAction {
-  return {
-    type: REQUEST,
-    entity,
-    pluralForm,
-  };
-}
-
-export function get(entity: number, locale: string, pluralForm: number) {
+export function getHistory(entity: number, locale: string, pluralForm: number) {
   return async (dispatch: AppDispatch) => {
     // request() must be called separately to prevent
     // re-rendering of the component on addComment()
@@ -106,7 +78,7 @@ export function deleteTranslation_(
 
     if (entity && status) {
       dispatch(addNotification(notificationMessages.TRANSLATION_DELETED));
-      dispatch(get(entity, locale, pluralForm));
+      dispatch(getHistory(entity, locale, pluralForm));
     } else {
       dispatch(
         addNotification(notificationMessages.UNABLE_TO_DELETE_TRANSLATION),

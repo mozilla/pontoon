@@ -8,7 +8,7 @@ import { Location } from '~/context/Location';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
 import { useAppDispatch } from '~/hooks';
-import { get as getHistory } from '~/modules/history/actions';
+import { getHistory } from '~/modules/history/actions';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 
 export function useAddCommentAndRefresh(
