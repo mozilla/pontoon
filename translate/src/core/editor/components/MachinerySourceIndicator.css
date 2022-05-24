@@ -1,0 +1,7 @@
+.tm-source {
+  color: #aaa;
+  height: 0;
+  margin: 0 auto -4px;
+  padding-top: 4px;
+  pointer-events: none;
+}

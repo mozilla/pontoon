@@ -206,6 +206,12 @@ editor-KeyboardShortcuts--copy-from-next-helper = Copy From Next Helper
 editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Down</accel>
 
 
+## Editor machinery source indicator
+## Shown when a perfect match is provided automatically from translation memory
+
+editor-MachinerySourceIndicator--text = Perfect match from translation memory
+
+
 ## Editor New Contributor Tooltip
 ## Renders the guidelines for new contributors
 
