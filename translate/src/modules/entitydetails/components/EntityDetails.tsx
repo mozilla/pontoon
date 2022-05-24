@@ -6,10 +6,7 @@ import React, {
   useState,
 } from 'react';
 
-import { EditorProvider } from '~/context/Editor';
 import { EntityView, useActiveTranslation } from '~/context/EntityView';
-import { FailedChecksProvider } from '~/context/FailedChecksData';
-import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { Editor } from '~/core/editor/components/Editor';
@@ -96,47 +93,41 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   );
 
   return (
-    <FailedChecksProvider translation={activeTranslation}>
-      <EditorProvider>
-        <HelperSelectionProvider translation={activeTranslation}>
-          <section className='entity-details'>
-            <section className='main-column'>
-              <EntityNavigation />
-              <Metadata
-                entity={selectedEntity}
-                isReadOnlyEditor={isReadOnlyEditor}
-                terms={terms}
-                navigateToPath={navigateToPath}
-                teamComments={teamComments}
-                user={user}
-                commentTabRef={commentTabRef}
-                setCommentTabIndex={setCommentTabIndex}
-                setContactPerson={setContactPerson}
-              />
-              <Editor />
-              <History />
-            </section>
-            <section className='third-column'>
-              <Helpers
-                entity={selectedEntity}
-                isReadOnlyEditor={isReadOnlyEditor}
-                otherlocales={otherlocales}
-                teamComments={teamComments}
-                terms={terms}
-                togglePinnedStatus={togglePinnedStatus}
-                parameters={location}
-                user={user}
-                navigateToPath={navigateToPath}
-                commentTabRef={commentTabRef}
-                commentTabIndex={commentTabIndex}
-                setCommentTabIndex={setCommentTabIndex}
-                contactPerson={contactPerson}
-                resetContactPerson={resetContactPerson}
-              />
-            </section>
-          </section>
-        </HelperSelectionProvider>
-      </EditorProvider>
-    </FailedChecksProvider>
+    <section className='entity-details'>
+      <section className='main-column'>
+        <EntityNavigation />
+        <Metadata
+          entity={selectedEntity}
+          isReadOnlyEditor={isReadOnlyEditor}
+          terms={terms}
+          navigateToPath={navigateToPath}
+          teamComments={teamComments}
+          user={user}
+          commentTabRef={commentTabRef}
+          setCommentTabIndex={setCommentTabIndex}
+          setContactPerson={setContactPerson}
+        />
+        <Editor />
+        <History />
+      </section>
+      <section className='third-column'>
+        <Helpers
+          entity={selectedEntity}
+          isReadOnlyEditor={isReadOnlyEditor}
+          otherlocales={otherlocales}
+          teamComments={teamComments}
+          terms={terms}
+          togglePinnedStatus={togglePinnedStatus}
+          parameters={location}
+          user={user}
+          navigateToPath={navigateToPath}
+          commentTabRef={commentTabRef}
+          commentTabIndex={commentTabIndex}
+          setCommentTabIndex={setCommentTabIndex}
+          contactPerson={contactPerson}
+          resetContactPerson={resetContactPerson}
+        />
+      </section>
+    </section>
   );
 }
