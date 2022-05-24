@@ -19,8 +19,7 @@ import { USER } from '~/core/user';
 import { getOptimizedContent } from '~/core/utils';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { History } from '~/modules/history';
-import { getHistory, requestHistory } from '~/modules/history/actions';
+import { History } from '~/modules/history/components/History';
 import { OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
 import { TEAM_COMMENTS } from '~/modules/teamcomments';
@@ -51,11 +50,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const store = useAppStore();
 
   const activeTranslation = useActiveTranslation();
-  const {
-    entity: selectedEntity,
-    hasPluralForms,
-    pluralForm,
-  } = useContext(EntityView);
+  const { entity: selectedEntity } = useContext(EntityView);
 
   const commentTabRef = useRef<{ _reactInternalFiber: { index: number } }>(
     null,
@@ -71,10 +66,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     if (!selectedEntity) {
       return;
     }
-
-    const pf = hasPluralForms ? pluralForm : -1;
-    dispatch(requestHistory());
-    dispatch(getHistory(entity, lc, pf));
 
     const { format, machinery_original, pk } = selectedEntity;
     const source = getOptimizedContent(machinery_original, format);

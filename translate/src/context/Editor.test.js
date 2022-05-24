@@ -40,7 +40,6 @@ function mountSpy(Spy, format, translation) {
         },
       ],
     },
-    history: { translations: [] },
     otherlocales: { translations: [] },
     user: {
       isAuthenticated: true,

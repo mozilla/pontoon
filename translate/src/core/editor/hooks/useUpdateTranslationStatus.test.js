@@ -32,7 +32,6 @@ function mountWrapper({ setFailedChecks, ...props }) {
     initialEntries: ['/kg/pro/all/?string=42'],
   });
   const initialState = {
-    history: { translations: [] },
     otherlocales: { translations: [] },
     user: { settings: {}, username: 'Franck' },
   };

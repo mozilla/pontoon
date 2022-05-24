@@ -22,7 +22,6 @@ function mockEntityDetails(pk) {
   });
 
   const initialState = {
-    history: { translations: [] },
     otherlocales: { translations: [] },
     user: { settings: { forceSuggestions: true }, username: 'Franck' },
   };

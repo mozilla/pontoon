@@ -6,7 +6,6 @@ import * as stats from '~/core/stats/reducer';
 import * as term from '~/core/term/reducer';
 import * as user from '~/core/user/reducer';
 import * as batchactions from '~/modules/batchactions/reducer';
-import * as history from '~/modules/history/reducer';
 import * as otherlocales from '~/modules/otherlocales/reducer';
 import * as search from '~/modules/search/reducer';
 import * as teamcomments from '~/modules/teamcomments/reducer';
@@ -22,7 +21,6 @@ export const reducer = {
   [user.USER]: user.reducer,
   // Application modules
   [batchactions.BATCHACTIONS]: batchactions.reducer,
-  [history.HISTORY]: history.reducer,
   [otherlocales.OTHERLOCALES]: otherlocales.reducer,
   [search.SEARCH]: search.reducer,
   [teamcomments.TEAM_COMMENTS]: teamcomments.reducer,

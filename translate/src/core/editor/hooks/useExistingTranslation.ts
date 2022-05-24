@@ -2,9 +2,8 @@ import { useContext } from 'react';
 
 import { EditorData, getFluentEntry } from '~/context/Editor';
 import { useActiveTranslation } from '~/context/EntityView';
+import { HistoryData } from '~/context/HistoryData';
 import { parseEntry } from '~/core/utils/fluent/parser';
-import { useAppSelector } from '~/hooks';
-import { HISTORY } from '~/modules/history/reducer';
 
 /**
  * Return a Translation identical to the one currently in the Editor.
@@ -15,9 +14,7 @@ import { HISTORY } from '~/modules/history/reducer';
  */
 export function useExistingTranslation() {
   const activeTranslation = useActiveTranslation();
-  const historyTranslations = useAppSelector(
-    (state) => state[HISTORY].translations,
-  );
+  const { translations } = useContext(HistoryData);
   const editor = useContext(EditorData);
   const { format, initial, value } = editor;
 
@@ -31,11 +28,11 @@ export function useExistingTranslation() {
     return activeTranslation;
   }
 
-  if (historyTranslations.length === 0) {
+  if (translations.length === 0) {
     return undefined;
   }
 
-  let test: (value: typeof historyTranslations[number]) => boolean;
+  let test: (value: typeof translations[number]) => boolean;
   if (format === 'ftl') {
     const entry = getFluentEntry(editor);
     test = (t) => entry.equals(parseEntry(t.string));
@@ -43,5 +40,5 @@ export function useExistingTranslation() {
     test = (t) => t.string === value;
   }
 
-  return historyTranslations.find(test);
+  return translations.find(test);
 }

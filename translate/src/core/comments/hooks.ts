@@ -3,12 +3,11 @@ import { useCallback, useContext } from 'react';
 
 import { addComment } from '~/api/comment';
 import type { HistoryTranslation } from '~/api/translation';
-import { EntityView } from '~/context/EntityView';
+import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
 import { useAppDispatch } from '~/hooks';
-import { getHistory } from '~/modules/history/actions';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 
 export function useAddCommentAndRefresh(
@@ -16,9 +15,8 @@ export function useAddCommentAndRefresh(
 ) {
   const dispatch = useAppDispatch();
   const { entity, locale } = useContext(Location);
-  const { hasPluralForms, pluralForm } = useContext(EntityView);
+  const { updateHistory } = useContext(HistoryData);
 
-  const pf = hasPluralForms ? pluralForm : -1;
   return useCallback(
     async (comment: string) => {
       NProgress.start();
@@ -27,13 +25,13 @@ export function useAddCommentAndRefresh(
 
       dispatch(addNotification(notificationMessages.COMMENT_ADDED));
       if (translation) {
-        dispatch(getHistory(entity, locale, pf));
+        updateHistory();
       } else {
         dispatch(getTeamComments(entity, locale));
       }
 
       NProgress.done();
     },
-    [entity, locale, pf, translation],
+    [entity, locale, translation, updateHistory],
   );
 }

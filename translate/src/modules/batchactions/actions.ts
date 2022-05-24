@@ -4,7 +4,6 @@ import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
-import { getHistory, requestHistory } from '~/modules/history/actions';
 import type { AppDispatch } from '~/store';
 
 export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
@@ -108,11 +107,6 @@ const updateUI =
         pluralForm: number,
       ) {
         dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
-
-        if (entity.pk === location.entity) {
-          dispatch(requestHistory());
-          dispatch(getHistory(entity.pk, location.locale, pluralForm));
-        }
       });
     }
   };
