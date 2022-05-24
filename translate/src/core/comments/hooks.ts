@@ -5,8 +5,8 @@ import { addComment } from '~/api/comment';
 import type { HistoryTranslation } from '~/api/translation';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import { ShowNotification } from '~/context/Notification';
+import { COMMENT_ADDED } from '~/core/notification/messages';
 import { useAppDispatch } from '~/hooks';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 
@@ -15,6 +15,7 @@ export function useAddCommentAndRefresh(
 ) {
   const dispatch = useAppDispatch();
   const { entity, locale } = useContext(Location);
+  const showNotification = useContext(ShowNotification);
   const { updateHistory } = useContext(HistoryData);
 
   return useCallback(
@@ -23,7 +24,7 @@ export function useAddCommentAndRefresh(
 
       await addComment(entity, locale, comment, translation);
 
-      dispatch(addNotification(notificationMessages.COMMENT_ADDED));
+      showNotification(COMMENT_ADDED);
       if (translation) {
         updateHistory();
       } else {

@@ -11,11 +11,14 @@ import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
+import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { usePushNextTranslatable } from '~/core/entities/hooks';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import {
+  SAME_TRANSLATION,
+  TRANSLATION_SAVED,
+} from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -28,6 +31,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
   const location = useContext(Location);
   const locale = useContext(Locale);
+  const showNotification = useContext(ShowNotification);
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
@@ -66,7 +70,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
     if (content.status) {
       // Notify the user of the change that happened.
-      dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
+      showNotification(TRANSLATION_SAVED);
 
       // Ignore existing unsavedchanges because they are saved now.
       resetUnsavedChanges(true);
@@ -94,7 +98,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
     } else if (content.same) {
       // The translation that was provided is the same as an existing
       // translation for that entity.
-      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
+      showNotification(SAME_TRANSLATION);
     }
 
     setEditorBusy(false);

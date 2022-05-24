@@ -10,12 +10,14 @@ import React, {
 
 import { fetchEntityHistory } from '~/api/entity';
 import { deleteTranslation, HistoryTranslation } from '~/api/translation';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
-import { useAppDispatch } from '~/hooks';
+import {
+  TRANSLATION_DELETED,
+  UNABLE_TO_DELETE_TRANSLATION,
+} from '~/core/notification/messages';
 
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';
+import { ShowNotification } from './Notification';
 
 export type HistoryData = {
   readonly fetching: boolean;
@@ -75,7 +77,7 @@ export function HistoryProvider({
 }
 
 export function useDeleteTranslation() {
-  const dispatch = useAppDispatch();
+  const showNotification = useContext(ShowNotification);
   const { updateHistory } = useContext(HistoryData);
 
   return useCallback(
@@ -84,12 +86,10 @@ export function useDeleteTranslation() {
 
       const { status } = await deleteTranslation(translationId);
       if (status) {
-        dispatch(addNotification(notificationMessages.TRANSLATION_DELETED));
+        showNotification(TRANSLATION_DELETED);
         updateHistory();
       } else {
-        dispatch(
-          addNotification(notificationMessages.UNABLE_TO_DELETE_TRANSLATION),
-        );
+        showNotification(UNABLE_TO_DELETE_TRANSLATION);
       }
 
       NProgress.done();

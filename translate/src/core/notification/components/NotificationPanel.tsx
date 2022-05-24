@@ -1,13 +1,9 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import type { NotificationState } from '../reducer';
+import { NotificationMessage, ShowNotification } from '~/context/Notification';
 
 import './NotificationPanel.css';
-
-type Props = {
-  notification: NotificationState;
-};
 
 /**
  * Show a status notification for a short period of time.
@@ -16,30 +12,24 @@ type Props = {
  * once at a time. The notification will hide after a 2s timeout, or when
  * clicked.
  */
-export function NotificationPanel({
-  notification: { message },
-}: Props): React.ReactElement<'div'> {
-  const [visible, setVisible] = useState(false);
+export function NotificationPanel(): React.ReactElement<'div'> {
+  const message = useContext(NotificationMessage);
+  const showNotification = useContext(ShowNotification);
+
   const timeout = useRef(0);
   const hide = useCallback(() => {
-    clearTimeout(timeout.current);
-    setVisible(false);
+    window.clearTimeout(timeout.current);
+    showNotification(null);
   }, []);
 
   useEffect(() => {
-    clearTimeout(timeout.current);
+    window.clearTimeout(timeout.current);
     if (message) {
-      setVisible(true);
       timeout.current = window.setTimeout(hide, 2000);
-    } else {
-      setVisible(false);
     }
   }, [message]);
 
-  const className = classNames(
-    'notification-panel',
-    message && visible && 'showing',
-  );
+  const className = classNames('notification-panel', message && 'showing');
 
   return (
     <div className={className} onClick={hide}>
