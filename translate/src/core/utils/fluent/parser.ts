@@ -22,9 +22,7 @@ class FlatParseTransformer extends Transformer {
   }
 
   visitTextElement(node: TextElement) {
-    if (node.value === '{ "" }') {
-      node.value = '';
-    }
+    node.value = node.value.replace(/{ "" }/g, '');
     return node;
   }
 }
