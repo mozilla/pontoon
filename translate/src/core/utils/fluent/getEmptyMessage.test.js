@@ -169,4 +169,33 @@ my-entry =
 
       `);
   });
+
+  it('handles messages with multiple selectors correctly', () => {
+    const input = ftl`
+      selector-multi =
+        There { $num ->
+            [one] is one email
+           *[other] are many emails
+        } for { $gender ->
+           *[masculine] him
+            [feminine] her
+        }
+      `;
+    const source = parseEntry(input);
+    const message = getEmptyMessage(source, LOCALE);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      selector-multi =
+          { $num ->
+              [one] { "" }
+              [two] { "" }
+              [few] { "" }
+             *[other] { "" }
+          } { $gender ->
+             *[masculine] { "" }
+              [feminine] { "" }
+          }
+
+      `);
+  });
 });

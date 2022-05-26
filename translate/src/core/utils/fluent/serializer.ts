@@ -9,9 +9,7 @@ import {
 
 class SerializeTransformer extends Transformer {
   visitTextElement(node: TextElement) {
-    return /^\s*$/.test(node.value)
-      ? new Placeable(new StringLiteral(''))
-      : node;
+    return node.value === '' ? new Placeable(new StringLiteral('')) : node;
   }
 }
 

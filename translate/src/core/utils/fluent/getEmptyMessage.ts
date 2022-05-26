@@ -67,7 +67,9 @@ export function getEmptyMessage(source: Entry, { cldrPlurals }: Locale): Entry {
 
     /** Empty Text Elements */
     visitTextElement(node: TextElement): TextElement {
-      node.value = '';
+      if (node.value !== ' ') {
+        node.value = '';
+      }
       return node;
     }
   }
