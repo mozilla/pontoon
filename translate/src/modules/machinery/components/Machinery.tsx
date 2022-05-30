@@ -1,4 +1,4 @@
-import { useLocalization } from '@fluent/react';
+import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
@@ -17,7 +17,6 @@ import { Translation } from './Translation';
  * third-party Machine Translation.
  */
 export function Machinery(): React.ReactElement<'section'> {
-  const { l10n } = useLocalization();
   const { source, translations } = useContext(MachineryTranslations);
   const { fetching, hasMore, input, query, results, setInput, getResults } =
     useContext(SearchData);
@@ -28,14 +27,6 @@ export function Machinery(): React.ReactElement<'section'> {
     onLoadMore: getResults,
     rootMargin: '0px 0px 400px 0px',
   });
-
-  const placeholder =
-    query ||
-    l10n.getString(
-      'machinery-Machinery--search-placeholder',
-      null,
-      'Concordance Search',
-    );
 
   return (
     <section className='machinery'>
@@ -61,14 +52,19 @@ export function Machinery(): React.ReactElement<'section'> {
             getResults();
           }}
         >
-          <input
-            autoComplete='off'
-            id='machinery-search'
-            onChange={(ev) => setInput(ev.target.value)}
-            placeholder={placeholder}
-            type='search'
-            value={input}
-          />
+          <Localized
+            id='machinery-Machinery--search-placeholder'
+            attrs={{ placeholder: true }}
+          >
+            <input
+              autoComplete='off'
+              id='machinery-search'
+              onChange={(ev) => setInput(ev.target.value)}
+              placeholder='Concordance Search'
+              type='search'
+              value={input}
+            />
+          </Localized>
         </form>
       </div>
       <div className='list-wrapper' ref={rootRef}>
