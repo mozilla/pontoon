@@ -1,4 +1,4 @@
-import { Localized } from '@fluent/react';
+import { Localized, useLocalization } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
@@ -155,6 +155,7 @@ export function TranslationBase({
   updateTranslationStatus,
   user,
 }: InternalProps): React.ReactElement<'li'> {
+  const { l10n } = useLocalization();
   const [isDiffVisible, setDiffVisible] = useState(false);
   const [areCommentsVisible, setCommentsVisible] = useState(false);
   const isTranslator = useTranslator();
@@ -196,13 +197,28 @@ export function TranslationBase({
     setEditorFromHistory(translation.string);
   }, [isReadOnlyEditor, translation.string]);
 
-  // TODO: To Localize.
-  const approvalTitle =
-    translation.approved && translation.approvedUser
-      ? `Approved by ${translation.approvedUser}`
-      : translation.unapprovedUser
-      ? `Unapproved by ${translation.unapprovedUser}`
-      : 'Not reviewed yet';
+  let approvalTitle: string;
+  if (translation.approved && translation.approvedUser) {
+    const user = translation.approvedUser;
+    approvalTitle = l10n.getString(
+      'history-translation--approved',
+      { user },
+      `Approved by ${user}`,
+    );
+  } else if (translation.unapprovedUser) {
+    const user = translation.unapprovedUser;
+    approvalTitle = l10n.getString(
+      'history-translation--unapproved',
+      { user },
+      `Unapproved by ${user}`,
+    );
+  } else {
+    approvalTitle = l10n.getString(
+      'history-translation--unreviewed',
+      null,
+      'Not reviewed yet',
+    );
+  }
 
   const commentCount = translation.comments?.length ?? 0;
 
