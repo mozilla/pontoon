@@ -1,5 +1,7 @@
+import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo } from 'react';
+
 import { EditorActions, EditorData } from '~/context/Editor';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
@@ -17,8 +19,6 @@ import './FtlSwitch.css';
  * and it becomes impossible to switch to a different editor type.
  * Thus we show a notification to the user if they try to use the
  * "FTL" switch button.
- *
- * TODO: To Localize
  */
 export function FtlSwitch() {
   const dispatch = useAppDispatch();
@@ -53,12 +53,14 @@ export function FtlSwitch() {
   }
 
   const cn = classNames('ftl', view === 'source' && 'active');
-  const title = canToggle
-    ? 'Toggle between simple and advanced FTL mode'
-    : 'Advanced FTL mode enabled';
+  const id = canToggle
+    ? 'editor-FtlSwitch--toggle'
+    : 'editor-FtlSwitch--active';
   return (
-    <button className={cn} title={title} onClick={handleClick}>
-      FTL
-    </button>
+    <Localized id={id} attrs={{ title: true }}>
+      <button className={cn} onClick={handleClick}>
+        FTL
+      </button>
+    </Localized>
   );
 }
