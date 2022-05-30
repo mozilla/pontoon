@@ -345,6 +345,11 @@ history-Translation--button-comments = { $commentCount ->
 history-Translation--span-copied =
     .title = Copied ({ $machinerySources })
 
+history-translation--approved = Approved by { $user }
+history-translation--unapproved = Unapproved by { $user }
+history-translation--unreviewed = Not reviewed yet
+
+
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,
 ## introducing the translate page of Pontoon.
