@@ -7,10 +7,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Location, LocationType } from '~/context/location';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
 
-import { resetEditor } from '~/core/editor/actions';
+import { Location } from '~/context/Location';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 import { resetEntities } from '~/core/entities/actions';
 import { ProjectState, useProject } from '~/core/project';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -31,7 +30,7 @@ export type TimeRangeType = {
 
 type Props = {
   searchAndFilters: SearchAndFilters;
-  parameters: LocationType;
+  parameters: Location;
   project: ProjectState;
 };
 
@@ -69,7 +68,7 @@ export function SearchBoxBase({
   project,
   searchAndFilters,
 }: InternalProps): React.ReactElement<'div'> {
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
   const applyOnChange = useRef(false);
   const searchInput = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
@@ -188,7 +187,6 @@ export function SearchBoxBase({
         }
 
         dispatch(resetEntities());
-        dispatch(resetEditor());
         parameters.push({
           author: authors.join(','),
           extra: extras.join(','),

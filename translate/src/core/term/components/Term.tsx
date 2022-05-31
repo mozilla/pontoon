@@ -1,66 +1,64 @@
-import React from 'react';
 import { Localized } from '@fluent/react';
+import classNames from 'classnames';
+import React, { useContext } from 'react';
 
 import type { TermType } from '~/api/terminology';
+import { EditorActions } from '~/context/Editor';
+import { Locale } from '~/context/Locale';
 
 import './Term.css';
 
 type Props = {
   isReadOnlyEditor: boolean;
-  locale: string;
-  term: TermType;
-  addTextToEditorTranslation: (arg0: string) => void;
   navigateToPath: (arg0: string) => void;
+  term: TermType;
 };
 
 /**
  * Shows term entry with its metadata.
  */
-export function Term(props: Props): React.ReactElement<React.ElementType> {
-  const { isReadOnlyEditor, locale, term } = props;
+export function Term({
+  isReadOnlyEditor,
+  navigateToPath,
+  term,
+}: Props): React.ReactElement {
+  const { code } = useContext(Locale);
+  const { setEditorSelection } = useContext(EditorActions);
 
-  const copyTermIntoEditor = (translation: string) => {
-    if (isReadOnlyEditor) {
-      return;
+  const copyTermIntoEditor = () => {
+    if (
+      !isReadOnlyEditor &&
+      term.translation &&
+      window.getSelection()?.isCollapsed !== false
+    ) {
+      setEditorSelection(term.translation);
     }
-
-    // Ignore if term not translated
-    if (!translation) {
-      return;
-    }
-
-    // Ignore if selecting text
-    if (window.getSelection()?.toString()) {
-      return;
-    }
-
-    props.addTextToEditorTranslation(translation);
   };
 
-  const navigateToPath = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const path = event.currentTarget.pathname;
-    props.navigateToPath(path);
+  const handleLinkClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    navigateToPath(ev.currentTarget.pathname);
   };
 
-  // Copying into the editor is not allowed
-  const cannotCopy = isReadOnlyEditor || !term.translation ? 'cannot-copy' : '';
+  const cn = classNames(
+    'term',
+    isReadOnlyEditor || !term.translation ? 'cannot-copy' : null,
+  );
 
   return (
     <Localized id='term-Term--copy' attrs={{ title: true }}>
       <li
-        className={`term ${cannotCopy}`}
+        className={cn}
         title='Copy Into Translation'
-        onClick={() => copyTermIntoEditor(term.translation)}
+        onClick={copyTermIntoEditor}
       >
         <header>
           <span className='text'>{term.text}</span>
           <span className='part-of-speech'>{term.partOfSpeech}</span>
           <a
-            href={`/${locale}/terminology/common/?string=${term.entityId}`}
-            onClick={navigateToPath}
+            href={`/${code}/terminology/common/?string=${term.entityId}`}
+            onClick={handleLinkClick}
             className='translate'
           >
             Translate

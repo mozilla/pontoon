@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { TermState } from '~/core/term';
-import { getSyntaxType, parser } from '~/core/utils/fluent';
+import { getSyntaxType, parseEntry } from '~/core/utils/fluent';
 
 import { RichString } from './RichString';
 import { SimpleString } from './SimpleString';
@@ -23,7 +23,7 @@ type Props = {
  * as a rich UI or as the original, untouched string.
  */
 export function FluentOriginalString(props: Props): React.ReactElement<any> {
-  const message = parser.parseEntry(props.entity.original);
+  const message = parseEntry(props.entity.original);
   const syntax = getSyntaxType(message);
 
   if (syntax === 'simple') {

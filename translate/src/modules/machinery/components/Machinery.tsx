@@ -1,19 +1,13 @@
-import React from 'react';
 import { Localized } from '@fluent/react';
+import React, { useContext } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
+
+import { SkeletonLoader } from '~/core/loaders';
 
 import './Machinery.css';
-
 import { Translation } from './Translation';
-import { SkeletonLoader } from '~/core/loaders';
-import { usePrevious } from '~/hooks/usePrevious';
-
-import type { MachineryState } from '..';
-
-interface Props {
-  machinery: MachineryState;
-  searchMachinery: (query: string, page?: number) => void;
-}
 
 /**
  * Show translations from machines.
@@ -22,123 +16,82 @@ interface Props {
  * strings, coming from various sources like Translation Memory or
  * third-party Machine Translation.
  */
-export const Machinery = ({
-  machinery,
-  searchMachinery,
-}: Props): null | React.ReactElement<'section'> => {
-  const [page, setPage] = React.useState(1);
-  const searchInput = React.useRef<HTMLInputElement>(null);
-  const prevEntity = usePrevious(machinery.entity);
-  const prevPage = usePrevious(page);
-
-  React.useEffect(() => {
-    // Restore custom input in search field,
-    // e.g. when switching from Locales tab back to Machinery
-    if (searchInput.current && machinery.searchString) {
-      searchInput.current.value = machinery.searchString;
-    }
-  }, []);
-
-  React.useEffect(() => {
-    // Clear search field after switching to a different entity
-    if (
-      searchInput.current &&
-      !machinery.searchString &&
-      machinery.entity !== prevEntity
-    ) {
-      searchInput.current.value = '';
-      setPage(1);
-    }
-  }, [machinery.entity]);
-
-  React.useEffect(() => {
-    // Fetch next page of search results
-    if (searchInput.current && prevPage && page !== prevPage) {
-      searchMachinery(searchInput.current.value, page);
-    }
-  }, [page, searchMachinery]);
+export function Machinery(): React.ReactElement<'section'> {
+  const { source, translations } = useContext(MachineryTranslations);
+  const { fetching, hasMore, input, query, results, setInput, getResults } =
+    useContext(SearchData);
 
   const [sentryRef, { rootRef }] = useInfiniteScroll({
-    loading: machinery.fetching,
-    hasNextPage: machinery.hasMore ?? false,
-    onLoadMore: () => setPage((page) => page + 1),
+    loading: fetching,
+    hasNextPage: hasMore,
+    onLoadMore: getResults,
     rootMargin: '0px 0px 400px 0px',
   });
-
-  const resetSearch = () => {
-    searchMachinery('');
-    if (searchInput.current) {
-      searchInput.current.value = '';
-    }
-    setPage(1);
-  };
-
-  const submitForm = (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setPage(1);
-    if (searchInput.current) {
-      searchMachinery(searchInput.current.value);
-    }
-  };
-
-  const entity = machinery.searchString ? null : machinery.entity;
-  const sourceString = machinery.searchString || machinery.sourceString;
 
   return (
     <section className='machinery'>
       <div className='search-wrapper clearfix'>
         <label htmlFor='machinery-search'>
-          {machinery.searchString ? (
-            <button className='fa fa-times' onClick={resetSearch}></button>
+          {input && input !== query ? (
+            <button className='fa fa-search' onClick={getResults}></button>
+          ) : query ? (
+            <button
+              className='fa fa-times'
+              onClick={() => {
+                setInput('');
+                getResults();
+              }}
+            ></button>
           ) : (
             <div className='fa fa-search'></div>
           )}
         </label>
-        <form onSubmit={submitForm}>
+        <form
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            getResults();
+          }}
+        >
           <Localized
             id='machinery-Machinery--search-placeholder'
             attrs={{ placeholder: true }}
           >
             <input
-              id='machinery-search'
-              type='search'
               autoComplete='off'
+              id='machinery-search'
+              onChange={(ev) => setInput(ev.target.value)}
               placeholder='Concordance Search'
-              ref={searchInput}
+              type='search'
+              value={input}
             />
           </Localized>
         </form>
       </div>
       <div className='list-wrapper' ref={rootRef}>
         <ul>
-          {machinery.translations.map((translation, index) => (
+          {translations.map((translation, index) => (
             <Translation
               index={index}
-              entity={entity}
-              sourceString={sourceString}
+              sourceString={source}
               translation={translation}
               key={index}
             />
           ))}
         </ul>
         <ul>
-          {machinery.searchResults.map((result, index) => (
+          {results.map((result, index) => (
             <Translation
-              index={index + machinery.translations.length}
-              entity={entity}
-              sourceString={sourceString}
+              index={index + translations.length}
+              sourceString={query}
               translation={result}
-              key={index + machinery.translations.length}
+              key={index + translations.length}
             />
           ))}
         </ul>
-        {(machinery.fetching || machinery.hasMore) && (
-          <SkeletonLoader
-            items={machinery.searchResults}
-            sentryRef={sentryRef}
-          />
+        {(fetching || hasMore) && (
+          <SkeletonLoader items={results} sentryRef={sentryRef} />
         )}
       </div>
     </section>
   );
-};
+}

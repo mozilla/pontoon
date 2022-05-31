@@ -1,34 +1,37 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import type { MachineryState } from '~/modules/machinery';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 
-type Props = {
-  machinery: MachineryState;
-};
+export function MachineryCount(): React.ReactElement<'span'> | null {
+  const { translations } = useContext(MachineryTranslations);
+  const { results } = useContext(SearchData);
 
-export function MachineryCount({
-  machinery: { searchResults, translations },
-}: Props): null | React.ReactElement<'span'> {
-  const machinery = translations.length + searchResults.length;
+  let preferred = 0;
+  for (const { sources } of translations) {
+    if (sources.includes('translation-memory')) {
+      preferred += 1;
+    }
+  }
 
+  const machinery = translations.length + results.length;
   if (!machinery) {
     return null;
   }
 
-  const preferred = translations.reduce((count, item) => {
-    if (item.sources.find((source) => source === 'translation-memory')) {
-      return count + 1;
-    }
-    return count;
-  }, 0);
-
-  const remaining = machinery - preferred;
-
-  return (
+  return preferred === 0 ? (
     <span className='count'>
-      {preferred > 0 && <span className='preferred'>{preferred}</span>}
-      {preferred > 0 && remaining > 0 && <span>+</span>}
-      {remaining > 0 && <span>{remaining}</span>}
+      <span>{machinery}</span>
+    </span>
+  ) : (
+    <span className='count'>
+      <span className='preferred'>{preferred}</span>
+      {preferred === machinery ? null : (
+        <>
+          <span>+</span>
+          <span>{machinery - preferred}</span>
+        </>
+      )}
     </span>
   );
 }

@@ -1,4 +1,4 @@
-import type { LocaleType } from '~/context/locale';
+import type { Locale } from '~/context/Locale';
 
 import { GET } from './utils/base';
 
@@ -43,20 +43,24 @@ function GET_(url: string, params: Record<string, string>) {
 
 /**
  * Return results from Concordance search.
+ *
+ * Note! Not under common machinery abort controller
  */
 export async function fetchConcordanceResults(
   source: string,
-  locale: LocaleType,
+  locale: Locale,
   page?: number,
 ): Promise<ConcordanceTranslations> {
   const url = '/concordance-search/';
-  const params = {
+  const params = new URLSearchParams({
     text: source,
     locale: locale.code,
     page: String(page || 1),
-  };
+  });
 
-  const { results, has_next } = (await GET_(url, params)) as {
+  const { results, has_next } = (await GET(url, params, {
+    singleton: true,
+  })) as {
     results: Array<{
       source: string;
       target: string;
@@ -83,7 +87,7 @@ export async function fetchConcordanceResults(
  */
 export async function fetchTranslationMemory(
   source: string,
-  locale: LocaleType,
+  locale: Locale,
   pk: number | null | undefined,
 ): Promise<MachineryTranslation[]> {
   const url = '/translation-memory/';
@@ -119,7 +123,7 @@ export async function fetchTranslationMemory(
  */
 export async function fetchGoogleTranslation(
   original: string,
-  locale: LocaleType,
+  locale: Locale,
 ): Promise<MachineryTranslation[]> {
   const url = '/google-translate/';
   const params = {
@@ -141,7 +145,7 @@ export async function fetchGoogleTranslation(
  */
 export async function fetchMicrosoftTranslation(
   original: string,
-  locale: LocaleType,
+  locale: Locale,
 ): Promise<MachineryTranslation[]> {
   const url = '/microsoft-translator/';
   const params = {
@@ -163,7 +167,7 @@ export async function fetchMicrosoftTranslation(
  */
 export async function fetchSystranTranslation(
   original: string,
-  locale: LocaleType,
+  locale: Locale,
 ): Promise<MachineryTranslation[]> {
   const url = '/systran-translate/';
   const params = {
@@ -185,7 +189,7 @@ export async function fetchSystranTranslation(
  */
 export async function fetchMicrosoftTerminology(
   source: string,
-  locale: LocaleType,
+  locale: Locale,
 ): Promise<MachineryTranslation[]> {
   const url = '/microsoft-terminology/';
   const params = {

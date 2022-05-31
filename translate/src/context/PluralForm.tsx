@@ -9,14 +9,14 @@ import React, {
 import type { Entity } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
 
-import { Location } from './location';
+import { Location } from './Location';
 
-export type PluralFormType = {
+export type PluralForm = {
   pluralForm: number;
   setPluralForm(pluralForm: number): void;
 };
 
-export const PluralForm = createContext<PluralFormType>({
+export const PluralForm = createContext<PluralForm>({
   pluralForm: -1,
   setPluralForm: () => {},
 });
@@ -41,7 +41,7 @@ export function PluralFormProvider({
  * this will correctly return 0 instead of -1. In all other cases, return
  * the plural form as stored in the state.
  */
-export function usePluralForm(entity: Entity | undefined): PluralFormType {
+export function usePluralForm(entity: Entity | undefined): PluralForm {
   let { pluralForm, setPluralForm } = useContext(PluralForm);
   if (pluralForm === -1 && entity?.original_plural) {
     pluralForm = 0;

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { useProject } from '~/core/project';
 import { USER } from '~/core/user';
 import { useAppSelector } from '~/hooks';

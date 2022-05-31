@@ -1,7 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import { usePluralForm, useTranslationForEntity } from './pluralForm';
+import { usePluralForm, useTranslationForEntity } from './PluralForm';
 
 beforeAll(() => sinon.stub(React, 'useContext'));
 afterAll(() => React.useContext.restore());

@@ -1,18 +1,40 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 
 import { MachineryCount } from './MachineryCount';
 
-describe('<Count>', () => {
+const mountMachineryCount = (translations, results) =>
+  mount(
+    <MachineryTranslations.Provider value={{ source: 'source', translations }}>
+      <SearchData.Provider
+        value={{
+          input: '',
+          query: '',
+          page: 1,
+          fetching: false,
+          results,
+          hasMore: false,
+          setInput: () => {},
+          getResults: () => {},
+        }}
+      >
+        <MachineryCount />
+      </SearchData.Provider>
+    </MachineryTranslations.Provider>,
+  );
+
+describe('<MachineryCount>', () => {
   it('shows the correct number of preferred translations', () => {
-    const machinery = {
-      translations: [
+    const wrapper = mountMachineryCount(
+      [
         { sources: ['translation-memory'] },
         { sources: ['translation-memory'] },
       ],
-      searchResults: [],
-    };
-    const wrapper = shallow(<MachineryCount machinery={machinery} />);
+      [],
+    );
 
     // There are only preferred results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -24,18 +46,17 @@ describe('<Count>', () => {
   });
 
   it('shows the correct number of remaining translations', () => {
-    const machinery = {
-      translations: [
+    const wrapper = mountMachineryCount(
+      [
         { sources: ['microsoft'] },
         { sources: ['google'] },
         { sources: ['google'] },
       ],
-      searchResults: [
+      [
         { sources: ['concordance-search'] },
         { sources: ['concordance-search'] },
       ],
-    };
-    const wrapper = shallow(<MachineryCount machinery={machinery} />);
+    );
 
     // There are only remaining results.
     expect(wrapper.find('.count > span')).toHaveLength(1);
@@ -48,20 +69,19 @@ describe('<Count>', () => {
   });
 
   it('shows the correct numbers of preferred and remaining translations', () => {
-    const machinery = {
-      translations: [
+    const wrapper = mountMachineryCount(
+      [
         { sources: ['translation-memory'] },
         { sources: ['translation-memory'] },
         { sources: ['microsoft'] },
         { sources: ['google'] },
         { sources: ['google'] },
       ],
-      searchResults: [
+      [
         { sources: ['concordance-search'] },
         { sources: ['concordance-search'] },
       ],
-    };
-    const wrapper = shallow(<MachineryCount machinery={machinery} />);
+    );
 
     // There are both preferred and remaining, and the '+' sign.
     expect(wrapper.find('.count > span')).toHaveLength(3);

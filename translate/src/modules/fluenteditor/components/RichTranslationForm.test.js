@@ -1,15 +1,15 @@
-import sinon from 'sinon';
-import React from 'react';
+import ftl from '@fluent/dedent';
+import React, { useContext } from 'react';
+import { act } from 'react-dom/test-utils';
 
-import { Locale } from '~/context/locale';
+import { EditorActions, EditorProvider } from '~/context/Editor';
+import { Locale } from '~/context/Locale';
+
 import {
-  setInitialTranslation,
-  updateSelection,
-  updateTranslation,
-} from '~/core/editor/actions';
-import { parser } from '~/core/utils/fluent';
-
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
+  createDefaultUser,
+  createReduxStore,
+  mountComponentWithStore,
+} from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { RichTranslationForm } from './RichTranslationForm';
@@ -21,39 +21,51 @@ const DEFAULT_LOCALE = {
   cldrPlurals: [1, 5],
 };
 
-function createComponent(entityString, updateTranslation_) {
-  if (!updateTranslation_) {
-    updateTranslation_ = sinon.fake();
-  }
+function mountForm(string) {
+  const store = createReduxStore({
+    entities: {
+      entities: [
+        {
+          pk: 0,
+          format: 'ftl',
+          original: 'my-message = Hello',
+          translation: [{ string }],
+        },
+      ],
+    },
+  });
+  createDefaultUser(store);
 
-  const store = createReduxStore();
-  const message = parser.parseEntry(entityString);
-  store.dispatch(updateTranslation(message));
-  store.dispatch(setInitialTranslation(message));
+  let actions;
+  const Spy = () => {
+    actions = useContext(EditorActions);
+    return null;
+  };
 
   const wrapper = mountComponentWithStore(
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
-          <RichTranslationForm updateTranslation={updateTranslation_} />
+          <EditorProvider>
+            <Spy />
+            <RichTranslationForm />
+          </EditorProvider>
         </MockLocalizationProvider>
       </Locale.Provider>
     ),
     store,
   );
-  wrapper.update();
 
-  return [wrapper, store];
+  return [wrapper, actions];
 }
 
 describe('<RichTranslationForm>', () => {
   it('renders textarea for a value and each attribute', () => {
-    const [wrapper] = createComponent(
-      `message = Value
-    .attr-1 = And
-    .attr-2 = Attributes
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      message = Value
+        .attr-1 = And
+        .attr-2 = Attributes
+      `);
 
     expect(wrapper.find('textarea')).toHaveLength(3);
     expect(wrapper.find('textarea').at(0).html()).toContain('Value');
@@ -62,14 +74,13 @@ describe('<RichTranslationForm>', () => {
   });
 
   it('renders select expression properly', () => {
-    const [wrapper] = createComponent(
-      `my-entry =
-    { PLATFORM() ->
-        [variant] Hello!
-       *[another-variant] World!
-    }
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      my-entry =
+        { PLATFORM() ->
+            [variant] Hello!
+           *[another-variant] World!
+        }
+      `);
 
     expect(wrapper.find('textarea')).toHaveLength(2);
 
@@ -81,20 +92,19 @@ describe('<RichTranslationForm>', () => {
   });
 
   it('renders select expression in attributes properly', () => {
-    const [wrapper] = createComponent(
-      `my-entry =
-    .label =
-        { PLATFORM() ->
-            [macosx] Preferences
-           *[other] Options
-        }
-    .accesskey =
-        { PLATFORM() ->
-            [macosx] e
-           *[other] s
-        }
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      my-entry =
+        .label =
+            { PLATFORM() ->
+                [macosx] Preferences
+               *[other] Options
+            }
+        .accesskey =
+            { PLATFORM() ->
+                [macosx] e
+               *[other] s
+            }
+      `);
 
     expect(wrapper.find('textarea')).toHaveLength(4);
 
@@ -124,43 +134,41 @@ describe('<RichTranslationForm>', () => {
   });
 
   it('renders plural string properly', () => {
-    const [wrapper] = createComponent(
-      `my-entry =
-    { $num ->
-        [one] Hello!
-       *[other] World!
-    }
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      my-entry =
+        { $num ->
+            [one] Hello!
+           *[other] World!
+        }
+      `);
 
     expect(wrapper.find('textarea')).toHaveLength(2);
 
     expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
 
-    const varsSingular = wrapper
-      .find('#fluenteditor-RichTranslationForm--plural-example')
-      .at(0)
-      .prop('vars');
-    expect(varsSingular.plural).toEqual('one');
-    expect(varsSingular.example).toEqual(1);
+    expect(
+      wrapper
+        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .at(0)
+        .prop('vars'),
+    ).toEqual({ plural: 'one', example: 1 });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
-    const varsPlural = wrapper
-      .find('#fluenteditor-RichTranslationForm--plural-example')
-      .at(1)
-      .prop('vars');
-    expect(varsPlural.plural).toEqual('other');
-    expect(varsPlural.example).toEqual(2);
+    expect(
+      wrapper
+        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .at(1)
+        .prop('vars'),
+    ).toEqual({ plural: 'other', example: 2 });
   });
 
   it('renders access keys properly', () => {
-    const [wrapper] = createComponent(
-      `title = Title
-    .label = Candidates
-    .accesskey = C
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      title = Title
+        .label = Candidates
+        .accesskey = C
+      `);
 
     expect(wrapper.find('textarea')).toHaveLength(3);
 
@@ -184,47 +192,34 @@ describe('<RichTranslationForm>', () => {
   });
 
   it('does not render the access key UI if no candidates can be generated', () => {
-    const [wrapper] = createComponent(
-      `title =
-    .label = { reference }
-    .accesskey = C
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      title =
+        .label = { reference }
+        .accesskey = C
+      `);
 
     expect(wrapper.find('.accesskeys')).toHaveLength(0);
   });
 
   it('does not render the access key UI if access key is longer than 1 character', () => {
-    const [wrapper] = createComponent(
-      `title =
-    .label = Candidates
-    .accesskey = { reference }
-`,
-    );
+    const [wrapper] = mountForm(ftl`
+      title =
+        .label = Candidates
+        .accesskey = { reference }
+      `);
 
     expect(wrapper.find('.accesskeys')).toHaveLength(0);
   });
 
-  it('updates the translation when selectionReplacementContent is passed', async () => {
-    const updateMock = sinon.spy();
-    const [wrapper, store] = createComponent(
-      `title = Value
-    .label = Something
-`,
-      updateMock,
-    );
+  it('updates the translation when setEditorSelection is passed', async () => {
+    const [wrapper, actions] = mountForm(ftl`
+      title = Value
+        .label = Something
+      `);
+    act(() => actions.setEditorSelection('Add'));
+    wrapper.update();
 
-    await store.dispatch(updateSelection('Add'));
-
-    // Force a re-render -- see https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html
-    wrapper.setProps({});
-
-    expect(updateMock.called).toBeTruthy();
-    const replaceContent = parser.parseEntry(
-      `title = AddValue
-    .label = Something
-`,
-    );
-    expect(updateMock.calledWith(replaceContent)).toBeTruthy();
+    expect(wrapper.find('textarea').at(0).prop('value')).toEqual('AddValue');
+    expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Something');
   });
 });

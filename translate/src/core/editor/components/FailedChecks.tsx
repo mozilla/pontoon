@@ -1,42 +1,29 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useContext } from 'react';
+import { FailedChecksData } from '~/context/FailedChecksData';
 
-import type { EditorState } from '~/core/editor';
-import type { UserState } from '~/core/user';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
+import { useSendTranslation } from '../hooks/useSendTranslation';
 
-import { resetFailedChecks } from '../actions';
 import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
 
 import './FailedChecks.css';
-
-type FailedChecksProps = {
-  sendTranslation: (ignoreWarnings?: boolean) => void;
-};
 
 /**
  * Shows a list of failed checks (errors and warnings) and a button to ignore
  * those checks and proceed anyway.
  */
-export function FailedChecks(
-  props: FailedChecksProps,
-): null | React.ReactElement<'div'> {
-  const dispatch = useAppDispatch();
-
-  const errors = useAppSelector((state) => state.editor.errors);
-  const warnings = useAppSelector((state) => state.editor.warnings);
-  const source = useAppSelector((state) => state.editor.source);
-  const userState = useAppSelector((state) => state.user);
-
+export function FailedChecks(): null | React.ReactElement<'div'> {
+  const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
+  const { errors, warnings, source, resetFailedChecks } =
+    useContext(FailedChecksData);
+  const { settings } = useAppSelector((state) => state.user);
+  const isTranslator = useTranslator();
 
   if (!errors.length && !warnings.length) {
     return null;
-  }
-
-  function resetChecks() {
-    dispatch(resetFailedChecks());
   }
 
   function approveAnyway() {
@@ -46,7 +33,7 @@ export function FailedChecks(
   }
 
   function submitAnyway() {
-    props.sendTranslation(true);
+    sendTranslation(true);
   }
 
   return (
@@ -55,7 +42,7 @@ export function FailedChecks(
         <button
           aria-label='Close failed checks popup'
           className='close'
-          onClick={resetChecks}
+          onClick={resetFailedChecks}
         >
           ×
         </button>
@@ -76,9 +63,8 @@ export function FailedChecks(
         ))}
       </ul>
       <MainAction
-        source={source}
-        user={userState}
-        errors={errors}
+        source={errors.length ? null : source}
+        suggesting={settings.forceSuggestions || !isTranslator}
         approveAnyway={approveAnyway}
         submitAnyway={submitAnyway}
       />
@@ -86,9 +72,8 @@ export function FailedChecks(
   );
 }
 type MainActionProps = {
-  source: EditorState['source'];
-  user: UserState;
-  errors: Array<string>;
+  source: FailedChecksData['source'];
+  suggesting: boolean;
   approveAnyway: () => void;
   submitAnyway: () => void;
 };
@@ -98,18 +83,25 @@ type MainActionProps = {
  */
 function MainAction({
   source,
-  user,
-  errors,
+  suggesting,
   approveAnyway,
   submitAnyway,
 }: MainActionProps) {
-  const isTranslator = useTranslator();
-
-  if (source === 'stored' || errors.length) {
-    return null;
-  }
-
-  if (source !== 'submitted') {
+  if (source === 'submitted') {
+    return suggesting ? (
+      <Localized id='editor-FailedChecks--suggest-anyway'>
+        <button className='suggest anyway' onClick={submitAnyway}>
+          SUGGEST ANYWAY
+        </button>
+      </Localized>
+    ) : (
+      <Localized id='editor-FailedChecks--save-anyway'>
+        <button className='save anyway' onClick={submitAnyway}>
+          SAVE ANYWAY
+        </button>
+      </Localized>
+    );
+  } else if (typeof source === 'number') {
     return (
       <Localized id='editor-FailedChecks--approve-anyway'>
         <button className='approve anyway' onClick={approveAnyway}>
@@ -117,23 +109,7 @@ function MainAction({
         </button>
       </Localized>
     );
+  } else {
+    return null;
   }
-
-  if (user.settings.forceSuggestions || !isTranslator) {
-    return (
-      <Localized id='editor-FailedChecks--suggest-anyway'>
-        <button className='suggest anyway' onClick={submitAnyway}>
-          SUGGEST ANYWAY
-        </button>
-      </Localized>
-    );
-  }
-
-  return (
-    <Localized id='editor-FailedChecks--save-anyway'>
-      <button className='save anyway' onClick={submitAnyway}>
-        SAVE ANYWAY
-      </button>
-    </Localized>
-  );
 }

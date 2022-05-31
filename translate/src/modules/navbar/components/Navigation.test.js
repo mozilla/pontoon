@@ -1,7 +1,7 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { Navigation } from './Navigation';

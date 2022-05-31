@@ -1,45 +1,71 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
 import { MockLocalizationProvider } from '~/test/utils';
 
 import { Machinery } from './Machinery';
 
+jest.mock('~/core/entities/hooks', () => ({ useSelectedEntity: () => null }));
+jest.mock('~/hooks', () => ({
+  useAppDispatch: () => () => {},
+  useAppSelector: () => {},
+}));
+
+const mountMachinery = (translations, search) =>
+  mount(
+    <MockLocalizationProvider>
+      <MachineryTranslations.Provider
+        value={{ source: 'source', translations }}
+      >
+        <SearchData.Provider
+          value={{
+            input: '',
+            query: '',
+            page: 1,
+            fetching: false,
+            results: [],
+            hasMore: false,
+            setInput: () => {},
+            getResults: () => {},
+            ...search,
+          }}
+        >
+          <Machinery entity={{ pk: 42 }} />
+        </SearchData.Provider>
+      </MachineryTranslations.Provider>
+    </MockLocalizationProvider>,
+  );
+
 describe('<Machinery>', () => {
   it('shows a search form', () => {
-    const machinery = {
-      translations: [],
-      searchResults: [],
-    };
-    const wrapper = shallow(<Machinery machinery={machinery} />);
+    const wrapper = mountMachinery([], {});
 
     expect(wrapper.find('.search-wrapper')).toHaveLength(1);
-    expect(
-      wrapper.find('#machinery-Machinery--search-placeholder'),
-    ).toHaveLength(1);
+    expect(wrapper.find('#machinery-search')).toHaveLength(1);
   });
 
   it('shows the correct number of translations', () => {
-    const machinery = {
-      translations: [{ original: '1' }, { original: '2' }, { original: '3' }],
-      searchResults: [{ original: '4' }, { original: '5' }],
-    };
-    const wrapper = shallow(<Machinery machinery={machinery} />);
+    const wrapper = mountMachinery(
+      [
+        { original: '1', sources: [] },
+        { original: '2', sources: [] },
+        { original: '3', sources: [] },
+      ],
+      {
+        results: [
+          { original: '4', sources: [] },
+          { original: '5', sources: [] },
+        ],
+      },
+    );
 
     expect(wrapper.find('Translation')).toHaveLength(5);
   });
 
-  it('renders a reset button if a source string is present', () => {
-    const machinery = {
-      translations: [],
-      searchResults: [],
-      searchString: 'test',
-    };
-    const wrapper = mount(
-      <MockLocalizationProvider>
-        <Machinery machinery={machinery} />
-      </MockLocalizationProvider>,
-    );
+  it('renders a reset button if a search query is present', () => {
+    const wrapper = mountMachinery([], { input: 'test', query: 'test' });
 
     expect(wrapper.find('button')).toHaveLength(1);
   });

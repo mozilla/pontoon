@@ -4,7 +4,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
-import { LocationProvider } from '~/context/location';
+import { LocationProvider } from '~/context/Location';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
@@ -99,12 +99,5 @@ describe('<EditorMenu>', () => {
     expect(
       wrapper.find('#editor-EditorMenu--read-only-localization'),
     ).toHaveLength(1);
-  });
-
-  it('accepts a firstItemHook and shows it as its first child', () => {
-    const firstItemHook = <p>Hello</p>;
-    const wrapper = createEditorMenu({ firstItemHook });
-
-    expect(wrapper.find('menu').children().first().text()).toEqual('Hello');
   });
 });

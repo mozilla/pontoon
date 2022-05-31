@@ -2,7 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import { Locale } from '~/context/locale';
+import { Locale } from '~/context/Locale';
 import { createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 

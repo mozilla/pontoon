@@ -3,8 +3,8 @@ import { useCallback, useContext } from 'react';
 
 import { addComment } from '~/api/comment';
 import type { HistoryTranslation } from '~/api/translation';
-import { Location } from '~/context/location';
-import { usePluralForm } from '~/context/pluralForm';
+import { Location } from '~/context/Location';
+import { usePluralForm } from '~/context/PluralForm';
 import { addNotification } from '~/core/notification/actions';
 import { notificationMessages } from '~/core/notification/messages';
 import { useAppDispatch } from '~/hooks';

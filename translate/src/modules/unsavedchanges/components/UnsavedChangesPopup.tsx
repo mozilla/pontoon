@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
-import { UnsavedChanges } from '~/context/unsavedChanges';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 
 import './UnsavedChangesPopup.css';
 
@@ -9,15 +9,16 @@ import './UnsavedChangesPopup.css';
  * Renders the unsaved changes popup.
  */
 export function UnsavedChangesPopup(): React.ReactElement<'div'> | null {
-  const { show, set } = useContext(UnsavedChanges);
+  const { resetUnsavedChanges } = useContext(UnsavedActions);
+  const { onIgnore } = useContext(UnsavedChanges);
 
-  return show ? (
+  return onIgnore ? (
     <div className='unsaved-changes'>
       <Localized id='editor-UnsavedChanges--close' attrs={{ ariaLabel: true }}>
         <button
           aria-label='Close unsaved changes popup'
           className='close'
-          onClick={() => set(null)}
+          onClick={() => resetUnsavedChanges(false)}
         >
           ×
         </button>
@@ -34,7 +35,7 @@ export function UnsavedChangesPopup(): React.ReactElement<'div'> | null {
       <Localized id='editor-UnsavedChanges--proceed'>
         <button
           className='proceed anyway'
-          onClick={() => set({ ignore: true })}
+          onClick={() => resetUnsavedChanges(true)}
         >
           PROCEED
         </button>

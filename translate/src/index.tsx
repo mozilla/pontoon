@@ -5,9 +5,8 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { App } from './App';
-import { LocationProvider } from './context/location';
-import { PluralFormProvider } from './context/pluralForm';
-import { UnsavedChangesProvider } from './context/unsavedChanges';
+import { LocationProvider } from './context/Location';
+import { UnsavedChangesProvider } from './context/UnsavedChanges';
 import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';
 import { history } from './historyInstance';
 import './index.css';
@@ -21,13 +20,11 @@ TimeAgo.addLocale(en);
 render(
   <Provider store={store}>
     <LocationProvider history={history}>
-      <PluralFormProvider>
-        <AppLocalizationProvider>
-          <UnsavedChangesProvider>
-            <App />
-          </UnsavedChangesProvider>
-        </AppLocalizationProvider>
-      </PluralFormProvider>
+      <AppLocalizationProvider>
+        <UnsavedChangesProvider>
+          <App />
+        </UnsavedChangesProvider>
+      </AppLocalizationProvider>
     </LocationProvider>
   </Provider>,
   document.getElementById('root'),

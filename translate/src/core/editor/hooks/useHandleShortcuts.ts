@@ -1,15 +1,17 @@
 import { useContext } from 'react';
+import { EditorActions, useClearEditor } from '~/context/Editor';
+import { FailedChecksData } from '~/context/FailedChecksData';
 
-import { UnsavedChanges } from '~/context/unsavedChanges';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { HelperSelection } from '~/context/HelperSelection';
+import { MachineryTranslations } from '~/context/MachineryTranslations';
+import { SearchData } from '~/context/SearchData';
+import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { resetFailedChecks, selectHelperElementIndex } from '../actions';
-import { useClearEditor } from './useClearEditor';
-import { useCopyMachineryTranslation } from './useCopyMachineryTranslation';
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
-import { useCopyOtherLocaleTranslation } from './useCopyOtherLocaleTranslation';
 import { useExistingTranslation } from './useExistingTranslation';
+import { useSendTranslation } from './useSendTranslation';
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
 /**
@@ -17,35 +19,25 @@ import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
  */
 export function useHandleShortcuts(): (
   event: React.KeyboardEvent<HTMLTextAreaElement>,
-  sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
-  clearEditorCustom?: () => void,
-  copyOriginalIntoEditorCustom?: () => void,
 ) => void {
-  const dispatch = useAppDispatch();
-
   const clearEditor = useClearEditor();
-  const copyMachineryTranslation = useCopyMachineryTranslation();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
-  const copyOtherLocaleTranslation = useCopyOtherLocaleTranslation();
+  const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
 
-  const {
-    errors,
-    selectedHelperElementIndex,
-    selectedHelperTabIndex,
-    source,
-    warnings,
-  } = useAppSelector((state) => state.editor);
+  const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
+  const { setEditorFromMachinery } = useContext(EditorActions);
   const existingTranslation = useExistingTranslation();
+  const { errors, source, warnings, resetFailedChecks } =
+    useContext(FailedChecksData);
+  const helperSelection = useContext(HelperSelection);
 
-  const machineryTranslations = useAppSelector(
-    (state) => state.machinery.translations,
+  const { translations: machineryTranslations } = useContext(
+    MachineryTranslations,
   );
-  const concordanceSearchResults = useAppSelector(
-    (state) => state.machinery.searchResults,
-  );
+  const { results: concordanceSearchResults } = useContext(SearchData);
   const otherLocaleTranslations = useAppSelector(
     (state) => state.otherlocales.translations,
   );
@@ -55,12 +47,7 @@ export function useHandleShortcuts(): (
     return () => {};
   }
 
-  return (
-    ev: React.KeyboardEvent<HTMLTextAreaElement>,
-    sendTranslation: (ignoreWarnings?: boolean, translation?: string) => void,
-    clearEditorCustom?: () => void,
-    copyOriginalIntoEditorCustom?: () => void,
-  ) => {
+  return (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
     switch (ev.key) {
       // On Enter:
       //   - If unsaved changes popup is shown, proceed.
@@ -72,9 +59,9 @@ export function useHandleShortcuts(): (
 
           const ignoreWarnings = errors.length + warnings.length > 0;
 
-          if (unsavedChanges.show) {
+          if (unsavedChanges.onIgnore) {
             // There are unsaved changes, proceed.
-            unsavedChanges.set({ ignore: true });
+            resetUnsavedChanges(true);
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
@@ -93,12 +80,12 @@ export function useHandleShortcuts(): (
       // On Esc, close unsaved changes and failed checks popups if open.
       case 'Escape':
         ev.preventDefault();
-        if (unsavedChanges.show) {
+        if (unsavedChanges.onIgnore) {
           // Close unsaved changes popup
-          unsavedChanges.set(null);
+          resetUnsavedChanges(false);
         } else if (errors.length || warnings.length) {
           // Close failed checks popup
-          dispatch(resetFailedChecks());
+          resetFailedChecks();
         }
         break;
 
@@ -106,7 +93,7 @@ export function useHandleShortcuts(): (
       case 'C':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
           ev.preventDefault();
-          (copyOriginalIntoEditorCustom || copyOriginalIntoEditor)();
+          copyOriginalIntoEditor();
         }
         break;
 
@@ -114,7 +101,7 @@ export function useHandleShortcuts(): (
       case 'Backspace':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
           ev.preventDefault();
-          (clearEditorCustom || clearEditor)();
+          clearEditor();
         }
         break;
 
@@ -123,7 +110,8 @@ export function useHandleShortcuts(): (
       case 'ArrowDown':
       case 'ArrowUp':
         if (ev.ctrlKey && ev.shiftKey && !ev.altKey) {
-          const isMachinery = selectedHelperTabIndex === 0;
+          const { tab, element, setElement } = helperSelection;
+          const isMachinery = tab === 0;
           const numTranslations = isMachinery
             ? machineryTranslations.length + concordanceSearchResults.length
             : otherLocaleTranslations.length;
@@ -136,21 +124,20 @@ export function useHandleShortcuts(): (
 
           const nextIdx =
             ev.key === 'ArrowDown'
-              ? (selectedHelperElementIndex + 1) % numTranslations
-              : (selectedHelperElementIndex - 1 + numTranslations) %
-                numTranslations;
-
-          dispatch(selectHelperElementIndex(nextIdx));
+              ? (element + 1) % numTranslations
+              : (element - 1 + numTranslations) % numTranslations;
+          setElement(nextIdx);
 
           if (isMachinery) {
             const len = machineryTranslations.length;
-            const newTranslation =
+            const { translation, sources } =
               nextIdx < len
                 ? machineryTranslations[nextIdx]
                 : concordanceSearchResults[nextIdx - len];
-            copyMachineryTranslation(newTranslation);
+            setEditorFromMachinery(translation, sources);
           } else {
-            copyOtherLocaleTranslation(otherLocaleTranslations[nextIdx]);
+            const { translation } = otherLocaleTranslations[nextIdx];
+            setEditorFromMachinery(translation, []);
           }
         }
         break;
