@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 
 import { useProject } from '~/core/project';
 import { ProjectMenu } from '~/core/project/components/ProjectMenu';
@@ -18,7 +18,7 @@ export function Navigation(): React.ReactElement<'nav'> {
   const location = useContext(Location);
   const { code, name } = useContext(Locale);
   const projectState = useProject();
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   useEffect(() => {
     if (name && projectState?.name) {

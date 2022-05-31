@@ -1,26 +1,30 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
-import { Locale } from '~/context/locale';
-import { EDITOR, useCopyMachineryTranslation } from '~/core/editor';
-import { selectHelperElementIndex } from '~/core/editor/actions';
+import { EditorActions } from '~/context/Editor';
+import { HelperSelection } from '~/context/HelperSelection';
+import { Locale } from '~/context/Locale';
 import { GenericTranslation } from '~/core/translation';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { TranslationSource } from './TranslationSource';
 
 import './ConcordanceSearch.css';
 import './Translation.css';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 type Props = {
   sourceString: string;
   translation: MachineryTranslation;
   index: number;
-  entity: number | null;
 };
 
 /**
@@ -34,38 +38,36 @@ export function Translation({
   index,
   sourceString,
   translation,
-  entity,
 }: Props): React.ReactElement<React.ElementType> {
-  const dispatch = useAppDispatch();
+  const { setEditorFromMachinery } = useContext(EditorActions);
+  const { element, setElement } = useContext(HelperSelection);
+  const [isCopied, setCopied] = useState(false);
+  const isSelected = element === index;
 
-  const copyMachineryTranslation = useCopyMachineryTranslation(entity);
   const copyTranslationIntoEditor = useCallback(() => {
-    dispatch(selectHelperElementIndex(index));
-    copyMachineryTranslation(translation);
-  }, [dispatch, index, translation, copyMachineryTranslation]);
-
-  const selIdx = useAppSelector(
-    (state) => state[EDITOR].selectedHelperElementIndex,
-  );
-  const changeSource = useAppSelector((state) => state[EDITOR].changeSource);
-  const isSelected = changeSource === 'machinery' && selIdx === index;
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setCopied(true);
+      setEditorFromMachinery(translation.translation, translation.sources);
+    }
+  }, [index, translation]);
 
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && 'selected', // Highlight Machinery entries upon selection
+    isSelected && isCopied && 'selected',
   );
 
   const translationRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
-    if (selIdx === index) {
+    if (isSelected) {
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       translationRef.current?.scrollIntoView({
         behavior: mediaQuery.matches ? 'auto' : 'smooth',
         block: 'nearest',
       });
     }
-  }, [selIdx, index]);
+  }, [isSelected]);
 
   return (
     <Localized id='machinery-Translation--copy' attrs={{ title: true }}>

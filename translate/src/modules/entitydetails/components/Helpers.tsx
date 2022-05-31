@@ -1,17 +1,12 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 import type { Entity } from '~/api/entity';
-import type { LocationType } from '~/context/location';
-import {
-  resetHelperElementIndex,
-  selectHelperTabIndex,
-} from '~/core/editor/actions';
+import { HelperSelection } from '~/context/HelperSelection';
+import type { Location } from '~/context/Location';
 import type { TermState } from '~/core/term';
 import type { UserState } from '~/core/user';
-import { useAppDispatch } from '~/hooks';
-import type { MachineryState } from '~/modules/machinery';
 import { Machinery, MachineryCount } from '~/modules/machinery';
 import type { LocalesState } from '~/modules/otherlocales';
 import { OtherLocales, OtherLocalesCount } from '~/modules/otherlocales';
@@ -24,18 +19,15 @@ import './Helpers.css';
 type Props = {
   entity: Entity;
   isReadOnlyEditor: boolean;
-  machinery: MachineryState;
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
-  parameters: LocationType;
+  parameters: Location;
   user: UserState;
   commentTabRef: any; // Used to access <Tab> _reactInternalFiber
   commentTabIndex: number;
   contactPerson: string;
-  searchMachinery: (source: string) => void;
   togglePinnedStatus: (status: boolean, id: number) => void;
-  addTextToEditorTranslation: (text: string) => void;
   navigateToPath: (path: string) => void;
   setCommentTabIndex: (index: number) => void;
   resetContactPerson: () => void;
@@ -49,7 +41,6 @@ type Props = {
 export function Helpers({
   entity,
   isReadOnlyEditor,
-  machinery,
   otherlocales,
   teamComments,
   terms,
@@ -58,14 +49,12 @@ export function Helpers({
   commentTabRef,
   commentTabIndex,
   contactPerson,
-  searchMachinery,
   togglePinnedStatus,
-  addTextToEditorTranslation,
   navigateToPath,
   setCommentTabIndex,
   resetContactPerson,
 }: Props): React.ReactElement<any> {
-  const dispatch = useAppDispatch();
+  const { setTab } = useContext(HelperSelection);
 
   const isTerminologyProject = parameters.project === 'terminology';
 
@@ -97,7 +86,6 @@ export function Helpers({
               <Terms
                 isReadOnlyEditor={isReadOnlyEditor}
                 terms={terms}
-                addTextToEditorTranslation={addTextToEditorTranslation}
                 navigateToPath={navigateToPath}
               />
             </TabPanel>
@@ -119,9 +107,9 @@ export function Helpers({
           onSelect={(index, lastIndex) => {
             if (index === lastIndex) {
               return false;
+            } else {
+              setTab(index);
             }
-            dispatch(selectHelperTabIndex(index));
-            dispatch(resetHelperElementIndex());
           }}
         >
           <TabList>
@@ -129,7 +117,7 @@ export function Helpers({
               <Localized id='entitydetails-Helpers--machinery'>
                 {'MACHINERY'}
               </Localized>
-              <MachineryCount machinery={machinery} />
+              <MachineryCount />
             </Tab>
             <Tab>
               <Localized id='entitydetails-Helpers--locales'>
@@ -139,10 +127,7 @@ export function Helpers({
             </Tab>
           </TabList>
           <TabPanel>
-            <Machinery
-              machinery={machinery}
-              searchMachinery={searchMachinery}
-            />
+            <Machinery />
           </TabPanel>
           <TabPanel>
             <OtherLocales

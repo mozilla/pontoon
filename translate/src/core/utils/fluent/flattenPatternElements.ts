@@ -1,4 +1,5 @@
 import {
+  Pattern,
   PatternElement,
   SelectExpression,
   serializeExpression,
@@ -6,22 +7,17 @@ import {
 } from '@fluent/syntax';
 
 /**
- * Return a flattened list of Pattern elements.
+ * Flattens the given Pattern, uplifting selectors to the highest possible level
+ * and duplicating shared parts in the variants.
  *
- * @param {Array<PatternElement>} elements A list of Pattern elements to flatten.
- *
- * @returns {Array<PatternElement>} An array containing elements of type
- * TextElement (merging serialized values of neighbour simple elements) and
- * Placeable (representing select expressions).
+ * Should only be called externally with the value of a Message or an Attribute.
  */
-export function flattenPatternElements(
-  elements: Array<PatternElement>,
-): Array<PatternElement> {
+export function flattenPatternElements(pattern: Pattern) {
   const flatElements: PatternElement[] = [];
   let textFragment = '';
   let prevSelect: SelectExpression | null = null;
 
-  for (const element of elements) {
+  for (const element of pattern.elements) {
     if (
       element.type === 'Placeable' &&
       element.expression &&
@@ -36,7 +32,7 @@ export function flattenPatternElements(
 
       // Flatten SelectExpression variant elements
       for (const variant of element.expression.variants) {
-        variant.value.elements = flattenPatternElements(variant.value.elements);
+        flattenPatternElements(variant.value);
 
         // If there is preceding text, include that for all variants
         if (textFragment) {
@@ -95,5 +91,5 @@ export function flattenPatternElements(
     flatElements.push(new TextElement(textFragment));
   }
 
-  return flatElements;
+  pattern.elements = flatElements;
 }

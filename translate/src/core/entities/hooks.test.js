@@ -34,9 +34,9 @@ describe('hooks', () => {
       expect(useNextEntity()).toMatchObject({ pk: 1 });
     });
 
-    it('returns undefined when the current entity does not exist', () => {
+    it('returns null when the current entity does not exist', () => {
       React.useContext.returns({ entity: 5 });
-      expect(useNextEntity()).toBeUndefined();
+      expect(useNextEntity()).toBeNull();
     });
   });
 
@@ -51,9 +51,9 @@ describe('hooks', () => {
       expect(usePreviousEntity()).toMatchObject({ pk: 3 });
     });
 
-    it('returns undefined when the current entity does not exist', () => {
+    it('returns null when the current entity does not exist', () => {
       React.useContext.returns({ entity: 5 });
-      expect(usePreviousEntity()).toBeUndefined();
+      expect(usePreviousEntity()).toBeNull();
     });
   });
 

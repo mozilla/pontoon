@@ -2,9 +2,8 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import type { Entity as EntityType } from '~/api/entity';
-import { Locale } from '~/context/locale';
-import { Location } from '~/context/location';
-import { resetEditor } from '~/core/editor/actions';
+import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
 import {
   getEntities,
   getSiblingEntities,
@@ -25,7 +24,7 @@ import {
   uncheckSelection,
 } from '~/modules/batchactions/actions';
 import { useBatchactions } from '~/modules/batchactions/hooks';
-import { useCheckUnsavedChanges } from '~/context/unsavedChanges';
+import { UnsavedActions } from '~/context/UnsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
@@ -45,7 +44,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const { entities, fetchCount, fetching, hasMore } = useEntities();
   const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
-  const checkUnsavedChanges = useCheckUnsavedChanges();
+  const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);
@@ -68,7 +67,6 @@ export function EntitiesList(): React.ReactElement<'div'> {
       if (entity.pk !== location.entity) {
         checkUnsavedChanges(() => {
           dispatch(resetSelection());
-          dispatch(resetEditor());
           const nextLocation = { entity: entity.pk };
           if (replaceHistory) {
             location.replace(nextLocation);

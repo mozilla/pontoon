@@ -8,7 +8,7 @@ export type Localization = Readonly<{
   stringsWithWarnings: number;
 }>;
 
-export type LocaleType = Readonly<{
+export type Locale = Readonly<{
   code: string;
   name: string;
   cldrPlurals: readonly number[];
@@ -22,10 +22,10 @@ export type LocaleType = Readonly<{
   localizations: readonly Localization[];
 
   fetching: boolean;
-  set: (locale: LocaleType) => void;
+  set: (locale: Locale) => void;
 }>;
 
-export const initLocale = (set: (locale: LocaleType) => void): LocaleType => ({
+export const initLocale = (set: (locale: Locale) => void): Locale => ({
   code: '',
   name: '',
   cldrPlurals: [],
@@ -43,7 +43,7 @@ export const initLocale = (set: (locale: LocaleType) => void): LocaleType => ({
 
 export const Locale = createContext(initLocale(() => {}));
 
-export async function updateLocale(locale: LocaleType, code: string) {
+export async function updateLocale(locale: Locale, code: string) {
   const { set } = locale;
   set({ ...locale, fetching: true });
 
@@ -74,7 +74,7 @@ export async function updateLocale(locale: LocaleType, code: string) {
   const search = new URLSearchParams({ query });
   const res = await GET('/graphql', search);
 
-  const next = res.data.locale as Omit<LocaleType, 'cldrPlurals'> & {
+  const next = res.data.locale as Omit<Locale, 'cldrPlurals'> & {
     cldrPlurals: string;
   };
   const cldrPlurals = next.cldrPlurals

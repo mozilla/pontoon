@@ -1,13 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { EditorData } from '~/context/Editor';
+import { PluralForm } from '~/context/PluralForm';
+import { useSelectedEntity } from '~/core/entities/hooks';
+import { getSimplePreview } from '~/core/utils/fluent';
 
 import './TranslationLength.css';
-
-type Props = {
-  comment: string;
-  format: string;
-  original: string;
-  translation: string;
-};
 
 /**
  * Shows translation length vs. original string length, or countdown.
@@ -16,36 +13,41 @@ type Props = {
  * syntax in the comment to define maximum translation length. MAX_LENGTH
  * is provided for strings without HTML tags, so they need to be stripped.
  */
-export function TranslationLength({
-  comment,
-  format,
-  original,
-  translation,
-}: Props): React.ReactElement<'div'> {
-  const match = format === 'lang' && comment.match(/^MAX_LENGTH: (\S+)/);
-  if (match) {
-    const limit = parseInt(match[1], 10);
+export function TranslationLength(): React.ReactElement<'div'> | null {
+  const entity = useSelectedEntity();
+  const { pluralForm } = useContext(PluralForm);
+  const { value, view } = useContext(EditorData);
+
+  if (!entity || view !== 'simple') {
+    return null;
+  }
+
+  const text = typeof value === 'string' ? value : getSimplePreview(value);
+
+  const maxLength =
+    entity.format === 'lang' && entity.comment.match(/^MAX_LENGTH: (\d+)/);
+  if (maxLength) {
+    const limit = parseInt(maxLength[1]);
 
     // Source: https://stackoverflow.com/a/47140708
-    const doc = new DOMParser().parseFromString(translation, 'text/html');
-    const translationLength = doc.body?.textContent?.length ?? 0;
-    const countdown = limit - translationLength;
-
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    const length = doc.body?.textContent?.length ?? 0;
     return (
       <div className='translation-length'>
         <div className='countdown'>
-          <span className={countdown < 0 ? 'overflow' : undefined}>
-            {countdown}
+          <span className={length > limit ? 'overflow' : undefined}>
+            {limit - length}
           </span>
         </div>
       </div>
     );
   }
 
+  const original = pluralForm > 0 ? entity.original_plural : entity.original;
   return (
     <div className='translation-length'>
       <div className='translation-vs-original'>
-        <span>{translation.length}</span>|<span>{original.length}</span>
+        <span>{text.length}</span>|<span>{original.length}</span>
       </div>
     </div>
   );

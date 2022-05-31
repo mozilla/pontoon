@@ -1,13 +1,13 @@
 import React from 'react';
 
-import type { LocationType } from '~/context/location';
+import type { Location } from '~/context/Location';
 
 import type { Resource } from '../actions';
 import './ResourceItem.css';
 import { ResourcePercent } from './ResourcePercent';
 
 type Props = {
-  location: LocationType;
+  location: Location;
   resource: Resource;
   navigateToPath: (arg0: React.MouseEvent<HTMLAnchorElement>) => void;
 };

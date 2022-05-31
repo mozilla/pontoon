@@ -1,14 +1,27 @@
+import ftl from '@fluent/dedent';
 import { getEmptyMessage } from './getEmptyMessage';
-import { parser } from './parser';
+import { parseEntry } from './parser';
+import { serializeEntry } from './serializer';
 
 const LOCALE = {
   code: 'sl',
   cldrPlurals: [1, 2, 3, 5],
 };
 
+const emptyValue = {
+  type: 'Pattern',
+  elements: [{ type: 'TextElement', value: '' }],
+};
+const emptyVariant = (name) => ({
+  type: 'Variant',
+  key: { type: 'Identifier', name },
+  value: emptyValue,
+  default: false,
+});
+
 describe('getEmptyMessage', () => {
   it('empties a simple value', () => {
-    const source = parser.parseEntry('my-message = Some value');
+    const source = parseEntry('my-message = Some value');
     const message = getEmptyMessage(source, LOCALE);
 
     expect(message.value.elements[0].value).toEqual('');
@@ -16,7 +29,7 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties a value with multiple elements', () => {
-    const source = parser.parseEntry('my-message = Hello { $small } World');
+    const source = parseEntry('my-message = Hello { $small } World');
     const message = getEmptyMessage(source, LOCALE);
 
     expect(message.value.elements[0].value).toEqual('');
@@ -24,7 +37,7 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties a single simple attribute', () => {
-    const source = parser.parseEntry('my-message =\n    .my-attr = Hello');
+    const source = parseEntry('my-message =\n    .my-attr = Hello');
     const message = getEmptyMessage(source, LOCALE);
 
     expect(message.attributes[0].id.name).toEqual('my-attr');
@@ -34,32 +47,63 @@ describe('getEmptyMessage', () => {
   });
 
   it('empties both value and attributes', () => {
-    const source = parser.parseEntry(
-      'my-message = Some value\n    .my-attr = Hello',
-    );
+    const source = parseEntry('my-message = Some value\n    .my-attr = Hello');
     const message = getEmptyMessage(source, LOCALE);
 
-    expect(message.value.elements[0].value).toEqual('');
-    expect(message.value.elements).toHaveLength(1);
+    expect(message).toEqual({
+      type: 'Message',
+      id: { type: 'Identifier', name: 'my-message' },
+      value: {
+        type: 'Pattern',
+        elements: [{ type: 'TextElement', value: '' }],
+      },
+      attributes: [
+        {
+          type: 'Attribute',
+          id: { type: 'Identifier', name: 'my-attr' },
+          value: {
+            type: 'Pattern',
+            elements: [{ type: 'TextElement', value: '' }],
+          },
+        },
+      ],
+      comment: null,
+    });
 
-    expect(message.attributes[0].id.name).toEqual('my-attr');
-    expect(message.attributes[0].value.elements[0].value).toEqual('');
-    expect(message.attributes[0].value.elements).toHaveLength(1);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      my-message = { "" }
+          .my-attr = { "" }
+
+      `);
   });
 
-  it('empties several attributes', () => {
-    const source = parser.parseEntry(
+  it('empties message with no value and several attributes', () => {
+    const source = parseEntry(
       'my-message =\n    .my-attr = Hello\n    .title = Title',
     );
     const message = getEmptyMessage(source, LOCALE);
 
-    expect(message.attributes[0].id.name).toEqual('my-attr');
-    expect(message.attributes[0].value.elements[0].value).toEqual('');
-    expect(message.attributes[0].value.elements).toHaveLength(1);
+    expect(message.attributes).toEqual([
+      {
+        type: 'Attribute',
+        id: { type: 'Identifier', name: 'my-attr' },
+        value: emptyValue,
+      },
+      {
+        type: 'Attribute',
+        id: { type: 'Identifier', name: 'title' },
+        value: emptyValue,
+      },
+    ]);
 
-    expect(message.attributes[1].id.name).toEqual('title');
-    expect(message.attributes[1].value.elements[0].value).toEqual('');
-    expect(message.attributes[1].value.elements).toHaveLength(1);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      my-message =
+          .my-attr = { "" }
+          .title = { "" }
+
+      `);
   });
 
   it('empties a select expression', () => {
@@ -69,22 +113,23 @@ my-entry =
         [variant] Hello!
        *[another-variant] { reference } World!
     }`;
-    const source = parser.parseEntry(input);
+    const source = parseEntry(input);
     const message = getEmptyMessage(source, LOCALE);
 
-    expect(
-      message.value.elements[0].expression.variants[0].value.elements[0].value,
-    ).toEqual('');
-    expect(
-      message.value.elements[0].expression.variants[0].value.elements,
-    ).toHaveLength(1);
+    expect(message.value.elements[0].expression.variants).toEqual([
+      emptyVariant('variant'),
+      { ...emptyVariant('another-variant'), default: true },
+    ]);
 
-    expect(
-      message.value.elements[0].expression.variants[1].value.elements[0].value,
-    ).toEqual('');
-    expect(
-      message.value.elements[0].expression.variants[1].value.elements,
-    ).toHaveLength(1);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      my-entry =
+          { PLATFORM() ->
+              [variant] { "" }
+             *[another-variant] { "" }
+          }
+
+      `);
   });
 
   it('empties custom plural variants and creates empty default locale plural variants', () => {
@@ -95,59 +140,62 @@ my-entry =
         [one] Hello!
        *[other] { reference } World!
     }`;
-    const source = parser.parseEntry(input);
+    const source = parseEntry(input);
     const message = getEmptyMessage(source, LOCALE);
 
-    expect(message.value.elements[0].expression.variants).toHaveLength(5);
+    expect(message.value.elements[0].expression.variants).toEqual([
+      {
+        type: 'Variant',
+        key: { type: 'NumberLiteral', value: '0' },
+        value: emptyValue,
+        default: false,
+      },
+      emptyVariant('one'),
+      emptyVariant('two'),
+      emptyVariant('few'),
+      { ...emptyVariant('other'), default: true },
+    ]);
 
-    expect(
-      message.value.elements[0].expression.variants[0].value.elements[0].value,
-    ).toEqual('');
-    expect(message.value.elements[0].expression.variants[0].key.value).toEqual(
-      '0',
-    );
-    expect(
-      message.value.elements[0].expression.variants[0].value.elements,
-    ).toHaveLength(1);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      my-entry =
+          { $num ->
+              [0] { "" }
+              [one] { "" }
+              [two] { "" }
+              [few] { "" }
+             *[other] { "" }
+          }
 
-    expect(
-      message.value.elements[0].expression.variants[1].value.elements[0].value,
-    ).toEqual('');
-    expect(message.value.elements[0].expression.variants[1].key.name).toEqual(
-      'one',
-    );
-    expect(
-      message.value.elements[0].expression.variants[1].value.elements,
-    ).toHaveLength(1);
+      `);
+  });
 
-    expect(
-      message.value.elements[0].expression.variants[2].value.elements[0].value,
-    ).toEqual('');
-    expect(message.value.elements[0].expression.variants[2].key.name).toEqual(
-      'two',
-    );
-    expect(
-      message.value.elements[0].expression.variants[2].value.elements,
-    ).toHaveLength(1);
+  it('handles messages with multiple selectors correctly', () => {
+    const input = ftl`
+      selector-multi =
+        There { $num ->
+            [one] is one email
+           *[other] are many emails
+        } for { $gender ->
+           *[masculine] him
+            [feminine] her
+        }
+      `;
+    const source = parseEntry(input);
+    const message = getEmptyMessage(source, LOCALE);
+    const str = serializeEntry(message);
+    expect(str).toBe(ftl`
+      selector-multi =
+          { $num ->
+              [one] { "" }
+              [two] { "" }
+              [few] { "" }
+             *[other] { "" }
+          } { $gender ->
+             *[masculine] { "" }
+              [feminine] { "" }
+          }
 
-    expect(
-      message.value.elements[0].expression.variants[3].value.elements[0].value,
-    ).toEqual('');
-    expect(message.value.elements[0].expression.variants[3].key.name).toEqual(
-      'few',
-    );
-    expect(
-      message.value.elements[0].expression.variants[3].value.elements,
-    ).toHaveLength(1);
-
-    expect(
-      message.value.elements[0].expression.variants[4].value.elements[0].value,
-    ).toEqual('');
-    expect(message.value.elements[0].expression.variants[4].key.name).toEqual(
-      'other',
-    );
-    expect(
-      message.value.elements[0].expression.variants[4].value.elements,
-    ).toBeTruthy();
+      `);
   });
 });

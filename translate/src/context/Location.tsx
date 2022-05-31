@@ -6,9 +6,9 @@ import React, {
   useState,
 } from 'react';
 
-export type LocationType = {
-  push(location: string | Partial<LocationType>): void;
-  replace(location: string | Partial<LocationType>): void;
+export type Location = {
+  push(location: string | Partial<Location>): void;
+  replace(location: string | Partial<Location>): void;
   locale: string;
   project: string;
   resource: string;
@@ -35,7 +35,7 @@ const emptyParams = {
   time: null,
 };
 
-export const Location = createContext<LocationType>({
+export const Location = createContext<Location>({
   push: () => {},
   replace: () => {},
   locale: '',
@@ -65,13 +65,13 @@ export function LocationProvider({
 function parse(
   history: History.History,
   { pathname, search }: History.Location,
-): LocationType {
+): Location {
   const [locale, project, ...resource] = pathname.split('/').filter(Boolean);
   const params = new URLSearchParams(search);
   const common = {
-    push: (next: string | Partial<LocationType>) =>
+    push: (next: string | Partial<Location>) =>
       history.push(stringify(location, next)),
-    replace: (next: string | Partial<LocationType>) =>
+    replace: (next: string | Partial<Location>) =>
       history.replace(stringify(location, next)),
     locale: locale ?? '',
     project: project ?? '',
@@ -79,7 +79,7 @@ function parse(
     entity: Number(params.get('string')),
   };
   const list = params.get('list');
-  const location: LocationType = list
+  const location: Location = list
     ? { ...common, ...emptyParams, list: list.split(',').map(Number) }
     : {
         ...common,
@@ -94,7 +94,7 @@ function parse(
   return location;
 }
 
-function stringify(prev: LocationType, next: string | Partial<LocationType>) {
+function stringify(prev: Location, next: string | Partial<Location>) {
   if (typeof next === 'string') {
     return next;
   }
@@ -140,7 +140,7 @@ type LinkProps = Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
   'href' | 'onClick'
 > & {
-  to: Partial<LocationType>;
+  to: Partial<Location>;
 };
 
 export function Link({
@@ -149,7 +149,7 @@ export function Link({
 }: LinkProps): React.ReactElement<HTMLAnchorElement> {
   const location = useContext(Location);
   const { push, locale, project, resource } = location;
-  const next: Partial<LocationType> = {
+  const next: Partial<Location> = {
     locale,
     project,
     resource,

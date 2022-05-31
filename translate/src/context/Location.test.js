@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
-import { LocationProvider } from './location';
+import { LocationProvider } from './Location';
 
 describe('LocationProvider', () => {
   it('correctly parses the pathname', () => {

@@ -1,6 +1,6 @@
 import { batchEditEntities, fetchEntities, fetchEntityIds } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
-import type { LocationType } from '~/context/location';
+import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
@@ -79,7 +79,7 @@ export const checkSelection = (
 });
 
 const updateUI =
-  (location: LocationType, selectedEntity: number, entityIds: number[]) =>
+  (location: Location, selectedEntity: number, entityIds: number[]) =>
   async (dispatch: AppDispatch) => {
     const entitiesData = await fetchEntities({ ...location, list: entityIds });
 
@@ -122,7 +122,7 @@ const updateUI =
 
 export const performAction =
   (
-    location: LocationType,
+    location: Location,
     action: string,
     selectedEntity: number,
     entityIds: number[],
@@ -168,7 +168,7 @@ export const performAction =
 export const resetSelection = (): ResetAction => ({ type: RESET_BATCHACTIONS });
 
 export const selectAll =
-  (location: LocationType) => async (dispatch: AppDispatch) => {
+  (location: Location) => async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_BATCHACTIONS, source: 'select-all' });
 
     const entityIds = await fetchEntityIds(location);

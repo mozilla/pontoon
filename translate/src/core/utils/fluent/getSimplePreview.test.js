@@ -145,7 +145,7 @@ describe('getSimplePreview', () => {
   it('works with string literals', () => {
     const message = 'the-end = { "" }'; // #nospoil
     const res = getSimplePreview(message);
-    expect(res).toEqual('{ "" }');
+    expect(res).toEqual('');
   });
 
   it('works with number literals', () => {

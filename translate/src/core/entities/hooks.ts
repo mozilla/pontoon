@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import type { Entity } from '~/api/entity';
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import { useAppSelector } from '~/hooks';
 
 import { ENTITIES } from './reducer';
@@ -16,23 +16,25 @@ export function useSelectedEntity(): Entity | undefined {
   );
 }
 
-export function useNextEntity(): Entity | undefined {
+/** Next entity, or `null` if no next entity is available */
+export function useNextEntity(): Entity | null {
   const pk = useContext(Location).entity;
   const entities = useAppSelector((state) => state[ENTITIES].entities);
   const curr = entities.findIndex((entity) => entity.pk === pk);
-  if (curr === -1) {
-    return undefined;
+  if (curr === -1 || entities.length < 2) {
+    return null;
   }
   const next = (curr + 1) % entities.length;
   return entities[next];
 }
 
-export function usePreviousEntity(): Entity | undefined {
+/** Previous entity, or `null` if no previous entity is available */
+export function usePreviousEntity(): Entity | null {
   const pk = useContext(Location).entity;
   const entities = useAppSelector((state) => state[ENTITIES].entities);
   const curr = entities.findIndex((entity) => entity.pk === pk);
-  if (curr === -1) {
-    return undefined;
+  if (curr === -1 || entities.length < 2) {
+    return null;
   }
   const prev = (curr - 1 + entities.length) % entities.length;
   return entities[prev];

@@ -143,6 +143,16 @@ editor-EditorSettings--force-suggestions = <glyph></glyph>Make Suggestions
 editor-EditorSettings--change-all = Change All Settings
 
 
+## Editor FTL Source Editor Switch
+## A button that allows switching the editor to/from FTL source mode.
+
+editor-FtlSwitch--toggle =
+    .title = Toggle between simple and advanced FTL mode
+
+editor-FtlSwitch--active =
+    .title = Advanced FTL mode enabled
+
+
 ## Editor Failed Checks
 ## Renders the failed checks popup
 
@@ -334,6 +344,11 @@ history-Translation--button-comments = { $commentCount ->
 
 history-Translation--span-copied =
     .title = Copied ({ $machinerySources })
+
+history-translation--approved = Approved by { $user }
+history-translation--unapproved = Unapproved by { $user }
+history-translation--unreviewed = Not reviewed yet
+
 
 ## Interactive Tour
 ## Shows an interactive Tour on the "Tutorial" project,

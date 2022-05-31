@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { LocaleType } from '~/context/locale';
+import type { Locale } from '~/context/Locale';
 
 /**
  * A map of examples for the current locale's cldrPlurals.
@@ -14,7 +14,7 @@ import type { LocaleType } from '~/context/locale';
  *
  * @returns A map of locale's cldrPlurals and their plural examples.
  */
-export function usePluralExamples(locale: LocaleType): Record<number, number> {
+export function usePluralExamples(locale: Locale): Record<number, number> {
   return useMemo(() => {
     const { cldrPlurals, pluralRule } = locale;
     if (cldrPlurals.length === 2) {

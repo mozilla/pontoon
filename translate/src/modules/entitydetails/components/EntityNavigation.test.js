@@ -1,48 +1,60 @@
-import React from 'react';
-import { mount } from 'enzyme';
+import { createMemoryHistory } from 'history';
 import sinon from 'sinon';
 
-import { MockLocalizationProvider } from '~/test/utils';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityNavigation } from './EntityNavigation';
 
-describe('<EntityNavigation>', () => {
-  function getEntityNav() {
-    const copyMock = sinon.stub();
-    const nextMock = sinon.stub();
-    const prevMock = sinon.stub();
-    const wrapper = mount(
-      <MockLocalizationProvider>
-        <EntityNavigation
-          copyLinkToClipboard={copyMock}
-          goToNextEntity={nextMock}
-          goToPreviousEntity={prevMock}
-        />
-      </MockLocalizationProvider>,
-    );
+function mountEntityNav() {
+  const store = createReduxStore({
+    entities: {
+      entities: [
+        { pk: 1, translation: [{ string: '', errors: [], warnings: [] }] },
+        { pk: 2, translation: [{ string: '', errors: [], warnings: [] }] },
+        { pk: 3, translation: [{ string: '', errors: [], warnings: [] }] },
+      ],
+    },
+  });
+  const history = createMemoryHistory({
+    initialEntries: ['/kg/firefox/all-resources/?string=2'],
+  });
+  sinon.stub(history, 'push');
+  const wrapper = mountComponentWithStore(EntityNavigation, store, {}, history);
+  return { history, wrapper };
+}
 
-    return {
-      wrapper,
-      copyMock,
-      nextMock,
-      prevMock,
-    };
-  }
+describe('<EntityNavigation>', () => {
+  beforeAll(() => {
+    navigator.clipboard = { writeText: sinon.stub() };
+  });
+
+  afterAll(() => {
+    delete navigator.clipboard;
+  });
+
+  it('does not trigger actions on mount', () => {
+    const { history } = mountEntityNav();
+
+    expect(history.push.called).toBeFalsy();
+    expect(navigator.clipboard.writeText.called).toBeFalsy();
+  });
 
   it('puts a copy of string link on clipboard', () => {
-    const { wrapper, copyMock } = getEntityNav();
+    const { wrapper } = mountEntityNav();
 
-    expect(copyMock.calledOnce).toBeFalsy();
     wrapper.find('button.link').simulate('click');
-    expect(copyMock.calledOnce).toBeTruthy();
+    expect(navigator.clipboard.writeText.getCalls()).toMatchObject([
+      { args: ['http://localhost/kg/firefox/all-resources/?string=2'] },
+    ]);
   });
 
   it('goes to the next entity on click on the Next button', () => {
-    const { wrapper, nextMock } = getEntityNav();
+    const { history, wrapper } = mountEntityNav();
 
-    expect(nextMock.calledOnce).toBeFalsy();
     wrapper.find('button.next').simulate('click');
-    expect(nextMock.calledOnce).toBeTruthy();
+    expect(history.push.getCalls()).toMatchObject([
+      { args: ['/kg/firefox/all-resources/?string=3'] },
+    ]);
   });
 
   it('goes to the next entity on Alt + Down', () => {
@@ -53,9 +65,8 @@ describe('<EntityNavigation>', () => {
       eventsMap[event] = cb;
     });
 
-    const { nextMock } = getEntityNav();
+    const { history } = mountEntityNav();
 
-    expect(nextMock.calledOnce).toBeFalsy();
     const event = {
       preventDefault: sinon.spy(),
       key: 'ArrowDown',
@@ -64,15 +75,18 @@ describe('<EntityNavigation>', () => {
       shiftKey: false,
     };
     eventsMap.keydown(event);
-    expect(nextMock.calledOnce).toBeTruthy();
+    expect(history.push.getCalls()).toMatchObject([
+      { args: ['/kg/firefox/all-resources/?string=3'] },
+    ]);
   });
 
   it('goes to the previous entity on click on the Previous button', () => {
-    const { wrapper, prevMock } = getEntityNav();
+    const { history, wrapper } = mountEntityNav();
 
-    expect(prevMock.calledOnce).toBeFalsy();
     wrapper.find('button.previous').simulate('click');
-    expect(prevMock.calledOnce).toBeTruthy();
+    expect(history.push.getCalls()).toMatchObject([
+      { args: ['/kg/firefox/all-resources/?string=1'] },
+    ]);
   });
 
   it('goes to the previous entity on Alt + Up', () => {
@@ -83,9 +97,8 @@ describe('<EntityNavigation>', () => {
       eventsMap[event] = cb;
     });
 
-    const { prevMock } = getEntityNav();
+    const { history } = mountEntityNav();
 
-    expect(prevMock.calledOnce).toBeFalsy();
     const event = {
       preventDefault: sinon.spy(),
       key: 'ArrowUp',
@@ -94,6 +107,8 @@ describe('<EntityNavigation>', () => {
       shiftKey: false,
     };
     eventsMap.keydown(event);
-    expect(prevMock.calledOnce).toBeTruthy();
+    expect(history.push.getCalls()).toMatchObject([
+      { args: ['/kg/firefox/all-resources/?string=1'] },
+    ]);
   });
 });

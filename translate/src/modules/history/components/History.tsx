@@ -1,38 +1,41 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import type { Entity } from '~/api/entity';
-import type { UserState } from '~/core/user';
+import { Locale } from '~/context/Locale';
+import { usePluralForm } from '~/context/PluralForm';
+import { useUpdateTranslationStatus } from '~/core/editor';
+import { useSelectedEntity } from '~/core/entities/hooks';
+import { USER } from '~/core/user';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import type { ChangeOperation, HistoryState } from '../index';
+import { deleteTranslation_ } from '../actions';
+import { HISTORY } from '../reducer';
 import './History.css';
 import { Translation } from './Translation';
-
-type Props = {
-  entity: Entity;
-  history: HistoryState;
-  isReadOnlyEditor: boolean;
-  user: UserState;
-  deleteTranslation: (arg0: number) => void;
-  updateEditorTranslation: (arg0: string, arg1: string) => void;
-  updateTranslationStatus: (id: number, operation: ChangeOperation) => void;
-};
 
 /**
  * Shows all existing translations of an entity.
  *
  * For each translation, show its author, date and status (approved, rejected).
  */
-export function History({
-  entity,
-  history: { fetching, translations },
-  isReadOnlyEditor,
-  user,
-  deleteTranslation,
-  updateEditorTranslation,
-  updateTranslationStatus,
-}: Props): React.ReactElement<'section'> | null {
-  if (!translations.length) {
+export function History(): React.ReactElement<'section'> | null {
+  const dispatch = useAppDispatch();
+  const { code } = useContext(Locale);
+  const user = useAppSelector((state) => state[USER]);
+  const isReadOnlyEditor = useReadonlyEditor();
+  const entity = useSelectedEntity();
+  const { pluralForm } = usePluralForm(entity);
+  const { fetching, translations } = useAppSelector((state) => state[HISTORY]);
+
+  const deleteTranslation = useCallback(
+    (translationId: number) =>
+      dispatch(deleteTranslation_(entity?.pk, code, pluralForm, translationId)),
+    [entity, code, pluralForm],
+  );
+  const updateTranslationStatus = useUpdateTranslationStatus(false);
+
+  if (!entity || !translations.length) {
     return fetching ? null : (
       <section className='history'>
         <Localized id='history-History--no-translations'>
@@ -53,7 +56,6 @@ export function History({
             isReadOnlyEditor={isReadOnlyEditor}
             user={user}
             deleteTranslation={deleteTranslation}
-            updateEditorTranslation={updateEditorTranslation}
             updateTranslationStatus={updateTranslationStatus}
             key={index}
             index={index}

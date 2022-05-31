@@ -1,43 +1,35 @@
-import React from 'react';
 import { Localized } from '@fluent/react';
+import React from 'react';
+
+import { TermsList, TermState } from '~/core/term';
 
 import './Terms.css';
-
-import { TermsList } from '~/core/term';
-
-import type { TermState } from '~/core/term';
 
 type Props = {
   isReadOnlyEditor: boolean;
   terms: TermState;
-  addTextToEditorTranslation: (arg0: string) => void;
   navigateToPath: (arg0: string) => void;
 };
 
 /**
  * Shows all terms found in the source string.
  */
-export function Terms(props: Props): null | React.ReactElement<'section'> {
-  const { terms } = props;
-
-  if (terms.fetching || !terms.terms) {
-    return null;
-  }
-
-  const termlist = terms.terms;
-
-  return (
+export function Terms({
+  isReadOnlyEditor,
+  navigateToPath,
+  terms: { fetching, terms },
+}: Props): null | React.ReactElement<'section'> {
+  return fetching || !terms ? null : (
     <section className='terms'>
-      {!termlist.length ? (
+      {!terms.length ? (
         <Localized id='entitydetails-Helpers--no-terms'>
           <p className='no-terms'>No terms available.</p>
         </Localized>
       ) : (
         <TermsList
-          isReadOnlyEditor={props.isReadOnlyEditor}
-          terms={termlist}
-          addTextToEditorTranslation={props.addTextToEditorTranslation}
-          navigateToPath={props.navigateToPath}
+          isReadOnlyEditor={isReadOnlyEditor}
+          navigateToPath={navigateToPath}
+          terms={terms}
         />
       )}
     </section>

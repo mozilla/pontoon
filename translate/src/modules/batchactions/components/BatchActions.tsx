@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import { Location } from '~/context/location';
+import { Location } from '~/context/Location';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { performAction, resetSelection, selectAll } from '../actions';

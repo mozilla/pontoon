@@ -1,3 +1,4 @@
+import * as Fluent from '@fluent/react';
 import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -5,9 +6,16 @@ import sinon from 'sinon';
 import * as hookModule from '~/hooks/useTranslator';
 import { TranslationBase } from './Translation';
 
-beforeAll(() => sinon.stub(hookModule, 'useTranslator'));
+beforeAll(() => {
+  sinon
+    .stub(Fluent, 'useLocalization')
+    .returns({ l10n: { getString: (_id, _args, fallback) => fallback } });
+  sinon.stub(hookModule, 'useTranslator');
+});
 beforeEach(() => hookModule.useTranslator.returns(false));
-afterAll(() => hookModule.useTranslator.restore());
+afterAll(() => {
+  hookModule.useTranslator.restore();
+});
 
 describe('<TranslationBase>', () => {
   const DEFAULT_TRANSLATION = {
