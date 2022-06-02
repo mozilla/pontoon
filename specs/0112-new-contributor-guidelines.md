@@ -18,7 +18,7 @@ On top of that, new users don't get connected with their team, and team managers
 
 ## Translate view tooltip
 
-Before users submits their first suggestion to any team, a tooltip appears near the text editor, with the following content:
+Before users submit their first suggestion to a particular team, a tooltip appears near the text editor, with the following content:
 
 It looks like you haven't contributed to this locale yet. Be sure to:
 - review the <a href="https://mozilla-l10n.github.io/styleguides/locale-code/">style guide</a>
@@ -27,7 +27,7 @@ It looks like you haven't contributed to this locale yet. Be sure to:
 
 ## Notification for team managers
 
-After the user successfully makes their first suggestion to a particular locale, an in-app notification is sent to team managers, informing them about the new user. Example text:
+After users submit their first suggestion to a particular team, an in-app notification is sent to team managers, informing them about the new user. Example text:
 
 John Smith has made their first contribution to Locale X (locale-code). Please welcome them to the team!
 
