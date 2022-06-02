@@ -1,25 +1,36 @@
-- Feature Name: Guidelines for new contributors
+- Feature Name: Team guidelines for new contributors
 - Created: 2022-05-31
 - Associated Issue: #2305
 
 # Summary
 
-Provide new contributors with guidelines when making their first contribution.
+Provide new contributors with guidelines before making their first contribution to a team.
 
 # Motivation
 
 It has been suggested on various occasions and from various sources, including at the localizer workshops, that the onboarding experience for new contributors needs improvements.
 
-Pontoon homepage and tour lead users towards making their first contribution, but they don't get much guidance since that point nor are they connected with their team. Locale Managers also don't get any direct information when new contributors join their teams.
+Pontoon homepage and tour lead users towards making their first contribution, but don't provide any team-specific information.
+
+On top of that, new users don't get connected with their team, and team managers don't get any explicit information about new contributors joining their teams.
 
 # Feature explanation
 
-After the user makes her first suggestion in Pontoon, we send an in-app notification with the following goal:
+## Translate view tooltip
 
-- Welcome user to Pontoon.
-- Clarify what will happen with the suggestion.
-- Link to Pontoon docs.
-- Explain how to get in touch with locale managers.
-- If set, include links to team Info tab and locale style guide.
+Before users submits their first suggestion to any team, a tooltip appears near the text editor, with the following content:
 
-After the user makes her first suggestion in a particular locale, we send an in-app notification with just the locale-specific bits of the above defined message. We also send an in-app notification to locale managers, informing them about the new user.
+It looks like you haven't contributed to this locale yet. Be sure to:
+- review the <a href="https://mozilla-l10n.github.io/styleguides/locale-code/">style guide</a>
+- check out <a href="/locale-code/info">team information</a>
+- contact <a href="/locale-code/contributors">team managers</a>
+
+## Notification for team managers
+
+After the user successfully makes their first suggestion to a particular locale, an in-app notification is sent to team managers, informing them about the new user. Example text:
+
+John Smith has made their first contribution to Locale X (locale-code). Please welcome them to the team!
+
+# Mockup
+
+![](0112/mockup.png)
