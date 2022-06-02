@@ -20,10 +20,11 @@ On top of that, new users don't get connected with their team, and team managers
 
 Before users submit their first suggestion to a particular team, a tooltip appears near the text editor, with the following content:
 
-It looks like you haven't contributed to this locale yet. Be sure to:
-- review the <a href="https://mozilla-l10n.github.io/styleguides/locale-code/">style guide</a>
-- check out <a href="/locale-code/info">team information</a>
-- contact <a href="/locale-code/contributors">team managers</a>
+It looks like you haven't contributed to this locale yet.
+
+Make sure to check the <a href="/locale-code/info">team information</a> page before starting, as it might contain important information and language resources.
+
+If you want to contact the team managers, check out the <a href="/locale-code/contributors">team contributors</a> page.
 
 ## Notification for team managers
 
@@ -31,6 +32,14 @@ After users submit their first suggestion to a particular team, an in-app notifi
 
 John Smith has made their first contribution to Locale X (locale-code). Please welcome them to the team!
 
+# Prerequisites
+
+1. Before launch, we give locale managers a heads-up of how the Team Info tab content will be used in the new feature and offer them an opportunity for any updates.
+
+2. Group contributors by role in the Team Contributors page (#2157).
+
 # Mockup
+
+Please note that the text in the bubble might be out of date. The canonical version is specified above.
 
 ![](0112/mockup.png)
