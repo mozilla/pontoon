@@ -24,7 +24,7 @@ It looks like you haven't contributed to this locale yet.
 
 Make sure to check the <a href="/locale-code/info">team information</a> page before starting, as it might contain important information and language resources.
 
-If you want to contact the team managers, check out the <a href="/locale-code/contributors">team contributors</a> page.
+Reach out to your <a href="/locale-code/contributors">team managers</a> if you have questions or want to learn more about contributing.
 
 ## Notification for team managers
 
