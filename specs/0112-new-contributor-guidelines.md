@@ -30,7 +30,7 @@ If you want to contact the team managers, check out the <a href="/locale-code/co
 
 After users submit their first suggestion to a particular team, an in-app notification is sent to team managers, informing them about the new user. Example text:
 
-John Smith has made their first contribution to Locale X (locale-code). Please welcome them to the team!
+John Smith has made their first contribution to Locale X (locale-code). Please welcome them to the team, and make sure to review their suggestions.
 
 # Prerequisites
 
