@@ -34,7 +34,7 @@ John Smith has made their first contribution to Locale X (locale-code). Please w
 
 # Prerequisites
 
-1. Before launch, we give locale managers a heads-up of how the Team Info tab content will be used in the new feature and offer them an opportunity for any updates.
+1. Before launch, we give locale managers a heads-up of how the Team Info tab content will be used in the new feature and offer them an opportunity to update it.
 
 2. [Group contributors by role](https://github.com/mozilla/pontoon/issues/2157) in the Team Contributors page.
 
