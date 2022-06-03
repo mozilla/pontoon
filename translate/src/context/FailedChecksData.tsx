@@ -51,11 +51,15 @@ export function FailedChecksProvider({
     },
 
     setFailedChecks(data, source) {
-      const errors = data.clErrors.concat(data.pErrors);
-      const warnings = data.clWarnings.concat(
-        data.pndbWarnings,
-        data.ttWarnings,
-      );
+      let errors: string[] = [];
+      let warnings: string[] = [];
+      for (const [key, value] of Object.entries(data)) {
+        if (key.includes('Errors')) {
+          errors = errors.concat(value);
+        } else if (key.includes('Warnings')) {
+          warnings = warnings.concat(value);
+        }
+      }
       setState((prev) => ({ ...prev, errors, warnings, source }));
     },
   }));
