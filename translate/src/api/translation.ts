@@ -6,11 +6,11 @@ import type { SourceType } from './machinery';
 export type ChangeOperation = 'approve' | 'unapprove' | 'reject' | 'unreject';
 
 export type ApiFailedChecks = {
-  readonly clErrors: string[];
-  readonly pErrors: string[];
-  readonly clWarnings: string[];
-  readonly pndbWarnings: string[];
-  readonly ttWarnings: string[];
+  readonly clErrors?: string[];
+  readonly pErrors?: string[];
+  readonly clWarnings?: string[];
+  readonly pndbWarnings?: string[];
+  readonly ttWarnings?: string[];
 };
 
 /**
