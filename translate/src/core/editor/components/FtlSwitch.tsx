@@ -3,11 +3,11 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { EditorActions, EditorData } from '~/context/Editor';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import { ShowNotification } from '~/context/Notification';
+import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/core/notification/messages';
 import { USER } from '~/core/user';
 import { getSyntaxType, parseEntry } from '~/core/utils/fluent';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './FtlSwitch.css';
@@ -21,7 +21,7 @@ import './FtlSwitch.css';
  * "FTL" switch button.
  */
 export function FtlSwitch() {
-  const dispatch = useAppDispatch();
+  const showNotification = useContext(ShowNotification);
   const readonly = useReadonlyEditor();
   const isAuthenticated = useAppSelector(
     (state) => state[USER].isAuthenticated,
@@ -42,11 +42,9 @@ export function FtlSwitch() {
     if (canToggle) {
       toggleFtlView();
     } else {
-      dispatch(
-        addNotification(notificationMessages.FTL_NOT_SUPPORTED_RICH_EDITOR),
-      );
+      showNotification(FTL_NOT_SUPPORTED_RICH_EDITOR);
     }
-  }, [canToggle]);
+  }, [canToggle, toggleFtlView]);
 
   if (format !== 'ftl' || !isAuthenticated || readonly) {
     return null;

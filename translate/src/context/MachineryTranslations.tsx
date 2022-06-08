@@ -10,10 +10,10 @@ import {
   fetchTranslationMemory,
   MachineryTranslation,
 } from '~/api/machinery';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { USER } from '~/core/user';
 import { getSimplePreview } from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
+import { EntityView } from './EntityView';
 import { Locale } from './Locale';
 import { SearchData } from './SearchData';
 
@@ -42,13 +42,13 @@ export function MachineryProvider({
 }) {
   const locale = useContext(Locale);
   const { isAuthenticated } = useAppSelector((state) => state[USER]);
-  const entity = useSelectedEntity();
+  const { entity } = useContext(EntityView);
   const { query } = useContext(SearchData);
 
   let source: string;
   let pk: number | null;
   let format: string | null;
-  if (query || !entity) {
+  if (query) {
     source = query;
     pk = null;
     format = null;

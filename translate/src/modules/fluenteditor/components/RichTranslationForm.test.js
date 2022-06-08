@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
 import { EditorActions, EditorProvider } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 
 import {
@@ -22,19 +23,15 @@ const DEFAULT_LOCALE = {
 };
 
 function mountForm(string) {
-  const store = createReduxStore({
-    entities: {
-      entities: [
-        {
-          pk: 0,
-          format: 'ftl',
-          original: 'my-message = Hello',
-          translation: [{ string }],
-        },
-      ],
-    },
-  });
+  const store = createReduxStore();
   createDefaultUser(store);
+
+  const entity = {
+    pk: 0,
+    format: 'ftl',
+    original: 'my-message = Hello',
+    translation: [{ string }],
+  };
 
   let actions;
   const Spy = () => {
@@ -46,10 +43,12 @@ function mountForm(string) {
     () => (
       <Locale.Provider value={DEFAULT_LOCALE}>
         <MockLocalizationProvider>
-          <EditorProvider>
-            <Spy />
-            <RichTranslationForm />
-          </EditorProvider>
+          <EntityView.Provider value={{ entity, pluralForm: 0 }}>
+            <EditorProvider>
+              <Spy />
+              <RichTranslationForm />
+            </EditorProvider>
+          </EntityView.Provider>
         </MockLocalizationProvider>
       </Locale.Provider>
     ),

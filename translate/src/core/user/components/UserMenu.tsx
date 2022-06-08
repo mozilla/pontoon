@@ -1,8 +1,8 @@
 import { Localized } from '@fluent/react';
 import React, { useContext, useRef, useState } from 'react';
 
+import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { useOnDiscard } from '~/core/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
@@ -27,8 +27,7 @@ export function UserMenuDialog({
   user,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
-  const entity = useSelectedEntity();
-  const readonly = entity?.readonly ?? true;
+  const { entity } = useContext(EntityView);
 
   const location = useContext(Location);
   const { locale, project, resource } = location;
@@ -37,7 +36,7 @@ export function UserMenuDialog({
     project !== 'all-projects' && resource !== 'all-resources';
 
   /* TODO: Also disable for subpages (in-context l10n) when supported */
-  const canUpload = canDownload && isTranslator && !readonly;
+  const canUpload = canDownload && isTranslator && !entity.readonly;
 
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);

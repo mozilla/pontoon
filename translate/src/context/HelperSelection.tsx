@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 
-import { EntityTranslation } from '~/api/translation';
+import { useActiveTranslation } from './EntityView';
 
 export type HelperSelection = Readonly<{
   /**
@@ -28,11 +28,10 @@ export const HelperSelection = createContext(initHelpers);
 
 export function HelperSelectionProvider({
   children,
-  translation,
 }: {
   children: React.ReactElement;
-  translation: EntityTranslation | undefined;
 }) {
+  const translation = useActiveTranslation();
   const [state, setState] = useState<HelperSelection>(() => ({
     ...initHelpers,
     setElement: (element) => setState((prev) => ({ ...prev, element })),

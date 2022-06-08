@@ -9,9 +9,9 @@ import {
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 
 import { EditorActions, EditorData } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { useHandleShortcuts } from '~/core/editor';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { CLDR_PLURALS } from '~/core/utils/constants';
 import {
   extractAccessKeyCandidates,
@@ -38,7 +38,7 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
   const searchInputFocused = useAppSelector(
     (state) => state.search.searchInputFocused,
   );
-  const entity = useSelectedEntity();
+  const { entity } = useContext(EntityView);
   const pluralExamples = usePluralExamples(locale);
   const { setEditorFromInput } = useContext(EditorActions);
   const { activeInput, value: message } = useContext(EditorData);

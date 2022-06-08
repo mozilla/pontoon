@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { fetchConcordanceResults, MachineryTranslation } from '~/api/machinery';
-import { useSelectedEntity } from '~/core/entities/hooks';
+import { EntityView } from './EntityView';
 
 import { Locale } from './Locale';
 
@@ -48,7 +48,7 @@ export const SearchData = createContext<SearchData>(initSearch);
 
 export function SearchProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
-  const entity = useSelectedEntity();
+  const { entity } = useContext(EntityView);
 
   const [search, setSearch] = useState<SearchData>(() => ({
     ...initSearch,

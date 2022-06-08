@@ -1,21 +1,22 @@
 import { Localized } from '@fluent/react';
-import React from 'react';
-import { useClearEditor } from '~/context/Editor';
+import React, { useContext } from 'react';
 
-import { useSelectedEntity } from '~/core/entities/hooks';
+import { useClearEditor } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { ShowNotification } from '~/context/Notification';
 import * as user from '~/core/user';
 import { saveSetting } from '~/core/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { UnsavedChangesPopup } from '~/modules/unsavedchanges/components/UnsavedChangesPopup';
-import { TranslationLength } from './TranslationLength';
-import { useCopyOriginalIntoEditor } from '../hooks/useCopyOriginalIntoEditor';
 
+import { useCopyOriginalIntoEditor } from '../hooks/useCopyOriginalIntoEditor';
 import { EditorMainAction } from './EditorMainAction';
 import './EditorMenu.css';
 import { EditorSettings } from './EditorSettings';
 import { FailedChecks } from './FailedChecks';
 import { FtlSwitch } from './FtlSwitch';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
+import { TranslationLength } from './TranslationLength';
 
 /**
  * Shows a menu bar used to control the Editor.
@@ -36,10 +37,11 @@ export function EditorMenu(): React.ReactElement<'menu'> {
 }
 
 function MenuContent() {
+  const showNotification = useContext(ShowNotification);
   const clearEditor = useClearEditor();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const dispatch = useAppDispatch();
-  const entity = useSelectedEntity();
+  const { entity } = useContext(EntityView);
   const userState = useAppSelector((state) => state.user);
 
   if (!userState.isAuthenticated) {
@@ -53,7 +55,7 @@ function MenuContent() {
     );
   }
 
-  if (entity?.readonly) {
+  if (entity.readonly) {
     return (
       <Localized id='editor-EditorMenu--read-only-localization'>
         <p className='banner'>This is a read-only localization.</p>
@@ -62,7 +64,7 @@ function MenuContent() {
   }
 
   function updateSetting(setting: keyof user.Settings, value: boolean) {
-    dispatch(saveSetting(setting, value, userState.username));
+    dispatch(saveSetting(setting, value, userState.username, showNotification));
   }
 
   return (

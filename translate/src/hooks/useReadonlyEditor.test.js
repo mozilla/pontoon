@@ -12,13 +12,10 @@ afterAll(() => {
   Hooks.useAppSelector.restore();
 });
 
-const fakeSelector = (readonly, isAuthenticated) => (cb) =>
-  cb({
-    entities: {
-      entities: [{ pk: 42, original: 'hello', readonly }],
-    },
-    user: { isAuthenticated },
-  });
+function fakeSelector(readonly, isAuthenticated) {
+  React.useContext.returns({ entity: { pk: 42, original: 'hello', readonly } });
+  return (cb) => cb({ user: { isAuthenticated } });
+}
 
 describe('useReadonlyEditor', () => {
   it('returns true if user not authenticated', () => {

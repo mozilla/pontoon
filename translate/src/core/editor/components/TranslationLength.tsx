@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { EditorData } from '~/context/Editor';
-import { PluralForm } from '~/context/PluralForm';
-import { useSelectedEntity } from '~/core/entities/hooks';
+import { EntityView, useEntitySource } from '~/context/EntityView';
 import { getSimplePreview } from '~/core/utils/fluent';
 
 import './TranslationLength.css';
@@ -14,11 +13,11 @@ import './TranslationLength.css';
  * is provided for strings without HTML tags, so they need to be stripped.
  */
 export function TranslationLength(): React.ReactElement<'div'> | null {
-  const entity = useSelectedEntity();
-  const { pluralForm } = useContext(PluralForm);
+  const { entity } = useContext(EntityView);
+  const source = useEntitySource();
   const { value, view } = useContext(EditorData);
 
-  if (!entity || view !== 'simple') {
+  if (view !== 'simple') {
     return null;
   }
 
@@ -43,11 +42,10 @@ export function TranslationLength(): React.ReactElement<'div'> | null {
     );
   }
 
-  const original = pluralForm > 0 ? entity.original_plural : entity.original;
   return (
     <div className='translation-length'>
       <div className='translation-vs-original'>
-        <span>{text.length}</span>|<span>{original.length}</span>
+        <span>{text.length}</span>|<span>{source.length}</span>
       </div>
     </div>
   );

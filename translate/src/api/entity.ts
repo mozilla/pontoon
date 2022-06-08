@@ -45,7 +45,7 @@ type BatchEditResponse =
   | { error: true };
 
 export async function batchEditEntities(
-  action: string,
+  action: 'approve' | 'reject' | 'replace',
   locale: string,
   entityIds: number[],
   find: string | undefined,

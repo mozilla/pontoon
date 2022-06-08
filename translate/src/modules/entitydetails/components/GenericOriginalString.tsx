@@ -4,10 +4,10 @@ import { Localized } from '@fluent/react';
 import type { Entity } from '~/api/entity';
 import { Locale } from '~/context/Locale';
 import { getMarker, TermState } from '~/core/term';
+import { EntityView } from '~/context/EntityView';
 
 type Props = {
   entity: Entity;
-  pluralForm: number;
   terms: TermState;
   handleClickOnPlaceable: (
     event: React.MouseEvent<HTMLParagraphElement>,
@@ -23,13 +23,14 @@ type Props = {
 export function GenericOriginalString({
   entity,
   handleClickOnPlaceable,
-  pluralForm,
   terms,
 }: Props): React.ReactElement {
   const { cldrPlurals } = useContext(Locale);
+  const { hasPluralForms, pluralForm } = useContext(EntityView);
+
   let title: React.ReactElement | null;
   let original: string;
-  if (pluralForm === -1) {
+  if (!hasPluralForms) {
     title = null;
     original = entity.original;
   } else if (cldrPlurals[pluralForm] === 1) {

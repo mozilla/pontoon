@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
-import type { ApiFailedChecks, EntityTranslation } from '~/api/translation';
+import type { ApiFailedChecks } from '~/api/translation';
+import { useActiveTranslation } from './EntityView';
 
 // Not using Readonly<{ ... }> due to https://github.com/microsoft/TypeScript/issues/48636
 export type FailedChecksData = {
@@ -34,11 +35,10 @@ export const FailedChecksData = createContext(initFailedChecks);
 
 export function FailedChecksProvider({
   children,
-  translation,
 }: {
   children: React.ReactElement;
-  translation: EntityTranslation | undefined;
 }) {
+  const translation = useActiveTranslation();
   const [state, setState] = useState<FailedChecksData>(() => ({
     ...initFailedChecks,
 
