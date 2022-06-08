@@ -623,7 +623,6 @@ class VCSConfiguration:
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        
         if self.vcs_project.db_project.source_repository.permalink_prefix:
             """If we have a permalink we download the configuration file"""
             return DownloadTOMLParser(
@@ -632,11 +631,12 @@ class VCSConfiguration:
                 self.configuration_file,
             ).parse(env={"l10n_base": self.l10n_base})
         else:
-            """If we don't have a permalink we use the configuration file from the checkout path""" 
+            """If we don't have a permalink we use the configuration file from the checkout path"""
             return TOMLParser(
                 os.path.join(
                     self.vcs_project.db_project.source_repository.checkout_path,
-                    self.configuration_file)
+                    self.configuration_file,
+                )
             ).parse(env={"l10n_base": self.l10n_base})
 
     def add_locale(self, locale_code):
