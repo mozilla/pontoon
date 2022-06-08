@@ -632,12 +632,14 @@ class VCSConfiguration:
             ).parse(env={"l10n_base": self.l10n_base})
         else:
             """If we don't have a permalink we use the configuration file from the checkout path"""
-            return TOMLParser(
+            return TOMLParser().parse(
                 os.path.join(
                     self.vcs_project.db_project.source_repository.checkout_path,
                     self.configuration_file,
-                )
-            ).parse(env={"l10n_base": self.l10n_base})
+                ),
+                env={"l10n_base": self.l10n_base},
+                ignore_missing_includes=True,
+            )
 
     def add_locale(self, locale_code):
         """
