@@ -26,7 +26,6 @@ from pontoon.sync.tests import (
     VCSTranslationFactory,
 )
 from pontoon.sync.vcs.models import (
-    MissingRepositoryPermalink,
     VCSConfiguration,
     VCSResource,
     VCSProject,
@@ -121,19 +120,6 @@ class VCSProjectTests(VCSTestCase):
         )
 
         assert files == {"path/to/localizable_file.ftl": ["XY"]}
-
-    def test_missing_permalink_prefix(self):
-        """
-        Fail when the source repository of a project with the project
-        config doesn't have the permalink defined.
-        """
-        with self.assertRaises(MissingRepositoryPermalink):
-            self.project.configuration_file = "l10n.toml"
-            self.project.source_repository.permalink_prefix = ""
-            self.project.source_repository.save()
-            VCSProject(
-                self.project,
-            )
 
     def test_relative_resource_paths(self):
         with patch.object(
