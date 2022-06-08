@@ -8,6 +8,7 @@ import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
+import { EntityViewProvider } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
 import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
@@ -90,10 +91,12 @@ function mountEditor(entityPk = 1) {
     <Provider store={store}>
       <LocationProvider history={history}>
         <MockLocalizationProvider>
-          <EditorProvider>
-            <Spy />
-            <Editor />
-          </EditorProvider>
+          <EntityViewProvider>
+            <EditorProvider>
+              <Spy />
+              <Editor />
+            </EditorProvider>
+          </EntityViewProvider>
         </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,

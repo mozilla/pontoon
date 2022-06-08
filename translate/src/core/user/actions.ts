@@ -7,8 +7,13 @@ import {
   updateUserSetting,
   UsersList,
 } from '~/api/user';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import { NotificationMessage } from '~/context/Notification';
+import {
+  CHECKS_DISABLED,
+  CHECKS_ENABLED,
+  SUGGESTIONS_DISABLED,
+  SUGGESTIONS_ENABLED,
+} from '~/core/notification/messages';
 import type { AppThunk } from '~/store';
 
 export const RECEIVE_USERS = 'users/RECEIVE_USERS';
@@ -53,13 +58,7 @@ export const signOut_ =
     dispatch(getUserData());
   };
 
-function _getOperationNotif(setting: keyof Settings, value: boolean) {
-  const {
-    CHECKS_ENABLED,
-    CHECKS_DISABLED,
-    SUGGESTIONS_ENABLED,
-    SUGGESTIONS_DISABLED,
-  } = notificationMessages;
+function getNotification(setting: keyof Settings, value: boolean) {
   switch (setting) {
     case 'runQualityChecks':
       return value ? CHECKS_ENABLED : CHECKS_DISABLED;
@@ -74,13 +73,14 @@ export function saveSetting(
   setting: keyof Settings,
   value: boolean,
   username: string,
+  showNotification: (message: NotificationMessage) => void,
 ): AppThunk {
   return async (dispatch) => {
     dispatch({ type: UPDATE_SETTINGS, settings: { [setting]: value } });
     await updateUserSetting(username, setting, value);
 
-    const notif = _getOperationNotif(setting, value);
-    dispatch(addNotification(notif));
+    const notif = getNotification(setting, value);
+    showNotification(notif);
   };
 }
 

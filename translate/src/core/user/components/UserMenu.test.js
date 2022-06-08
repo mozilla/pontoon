@@ -2,8 +2,8 @@ import { mount, shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
+import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
-import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
 
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
@@ -14,11 +14,9 @@ import { UserMenu, UserMenuDialog } from './UserMenu';
 
 describe('<UserMenuDialog>', () => {
   beforeAll(() => {
-    sinon.stub(Hooks, 'useAppSelector');
     sinon.stub(Translator, 'useTranslator');
   });
   afterAll(() => {
-    Hooks.useAppSelector.restore();
     Translator.useTranslator.restore();
   });
 
@@ -36,16 +34,15 @@ describe('<UserMenuDialog>', () => {
     isAuthenticated = true,
     location = LOCATION,
   } = {}) {
-    Hooks.useAppSelector.callsFake((sel) =>
-      sel({
-        entities: { entities: [{ pk: 42, readonly: isReadOnly }] },
-      }),
-    );
     Translator.useTranslator.returns(isTranslator);
     return mount(
       <Location.Provider value={location}>
         <MockLocalizationProvider>
-          <UserMenuDialog user={{ isAuthenticated, isAdmin }} />
+          <EntityView.Provider
+            value={{ entity: { pk: 42, readonly: isReadOnly } }}
+          >
+            <UserMenuDialog user={{ isAuthenticated, isAdmin }} />
+          </EntityView.Provider>
         </MockLocalizationProvider>
       </Location.Provider>,
     );

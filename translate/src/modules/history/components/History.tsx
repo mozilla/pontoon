@@ -1,16 +1,13 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useContext } from 'react';
+import React, { useContext } from 'react';
 
-import { Locale } from '~/context/Locale';
-import { usePluralForm } from '~/context/PluralForm';
+import { EntityView } from '~/context/EntityView';
+import { HistoryData, useDeleteTranslation } from '~/context/HistoryData';
 import { useUpdateTranslationStatus } from '~/core/editor';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import { USER } from '~/core/user';
-import { useAppDispatch, useAppSelector } from '~/hooks';
+import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
-import { deleteTranslation_ } from '../actions';
-import { HISTORY } from '../reducer';
 import './History.css';
 import { Translation } from './Translation';
 
@@ -20,22 +17,14 @@ import { Translation } from './Translation';
  * For each translation, show its author, date and status (approved, rejected).
  */
 export function History(): React.ReactElement<'section'> | null {
-  const dispatch = useAppDispatch();
-  const { code } = useContext(Locale);
   const user = useAppSelector((state) => state[USER]);
   const isReadOnlyEditor = useReadonlyEditor();
-  const entity = useSelectedEntity();
-  const { pluralForm } = usePluralForm(entity);
-  const { fetching, translations } = useAppSelector((state) => state[HISTORY]);
-
-  const deleteTranslation = useCallback(
-    (translationId: number) =>
-      dispatch(deleteTranslation_(entity?.pk, code, pluralForm, translationId)),
-    [entity, code, pluralForm],
-  );
+  const { entity } = useContext(EntityView);
+  const { fetching, translations } = useContext(HistoryData);
+  const deleteTranslation = useDeleteTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus(false);
 
-  if (!entity || !translations.length) {
+  if (!translations.length) {
     return fetching ? null : (
       <section className='history'>
         <Localized id='history-History--no-translations'>

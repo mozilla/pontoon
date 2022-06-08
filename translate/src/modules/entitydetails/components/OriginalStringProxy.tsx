@@ -8,7 +8,6 @@ import { GenericOriginalString } from './GenericOriginalString';
 
 type Props = {
   entity: Entity;
-  pluralForm: number;
   terms: TermState;
   handleClickOnPlaceable: (
     event: React.MouseEvent<HTMLParagraphElement>,
@@ -23,7 +22,6 @@ type Props = {
  */
 export const OriginalStringProxy = ({
   entity,
-  pluralForm,
   terms,
   handleClickOnPlaceable,
 }: Props): React.ReactElement<any> =>
@@ -36,7 +34,6 @@ export const OriginalStringProxy = ({
   ) : (
     <GenericOriginalString
       entity={entity}
-      pluralForm={pluralForm}
       terms={terms}
       handleClickOnPlaceable={handleClickOnPlaceable}
     />

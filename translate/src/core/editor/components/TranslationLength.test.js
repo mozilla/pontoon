@@ -2,31 +2,26 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { EditorData } from '~/context/Editor';
-import { PluralForm } from '~/context/PluralForm';
-import * as SelectedEntity from '~/core/entities/hooks';
+import { EntityView } from '~/context/EntityView';
 
 import { TranslationLength } from './TranslationLength';
 import sinon from 'sinon';
 
 describe('<TranslationLength>', () => {
   beforeAll(() => {
-    sinon.stub(React, 'useContext'); //.callsFake(({ children }) => children);
-    sinon.stub(SelectedEntity, 'useSelectedEntity');
+    sinon.stub(React, 'useContext');
   });
 
   afterAll(() => {
     React.useContext.restore();
-    SelectedEntity.useSelectedEntity.restore();
   });
 
   function mountTranslationLength(format, original, value, comment) {
     const context = new Map([
       [EditorData, { value, view: 'simple' }],
-      [PluralForm, { pluralForm: -1 }],
+      [EntityView, { entity: { comment, format, original }, pluralForm: 0 }],
     ]);
     React.useContext.callsFake((key) => context.get(key));
-
-    SelectedEntity.useSelectedEntity.returns({ comment, format, original });
 
     return shallow(<TranslationLength />);
   }

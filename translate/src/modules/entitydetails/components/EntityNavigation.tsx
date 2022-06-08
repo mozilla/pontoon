@@ -2,11 +2,10 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
 import { Location } from '~/context/Location';
+import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
-import { useAppDispatch } from '~/hooks';
+import { STRING_LINK_COPIED } from '~/core/notification/messages';
 
 import './EntityNavigation.css';
 
@@ -16,8 +15,8 @@ import './EntityNavigation.css';
  * Shows copy link and next/previous buttons.
  */
 export function EntityNavigation(): React.ReactElement {
-  const dispatch = useAppDispatch();
   const location = useContext(Location);
+  const showNotification = useContext(ShowNotification);
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
   const { checkUnsavedChanges } = useContext(UnsavedActions);
@@ -32,7 +31,7 @@ export function EntityNavigation(): React.ReactElement {
     url.searchParams.append('string', String(entity));
     await navigator.clipboard.writeText(String(url));
 
-    dispatch(addNotification(notificationMessages.STRING_LINK_COPIED));
+    showNotification(STRING_LINK_COPIED);
   }, [location]);
 
   const goToEntity = useCallback(

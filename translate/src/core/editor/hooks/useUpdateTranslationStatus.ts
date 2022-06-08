@@ -3,20 +3,26 @@ import { useContext } from 'react';
 
 import { ChangeOperation, setTranslationStatus } from '~/api/translation';
 import { EditorActions } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
-import { Locale } from '~/context/Locale';
+import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
-import { usePluralForm } from '~/context/PluralForm';
+import { ShowNotification } from '~/context/Notification';
 import { updateEntityTranslation } from '~/core/entities/actions';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
-import { addNotification } from '~/core/notification/actions';
+import { usePushNextTranslatable } from '~/core/entities/hooks';
+import {
+  TRANSLATION_APPROVED,
+  TRANSLATION_REJECTED,
+  TRANSLATION_UNAPPROVED,
+  TRANSLATION_UNREJECTED,
+  UNABLE_TO_APPROVE_TRANSLATION,
+  UNABLE_TO_REJECT_TRANSLATION,
+  UNABLE_TO_UNAPPROVE_TRANSLATION,
+  UNABLE_TO_UNREJECT_TRANSLATION,
+} from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch } from '~/hooks';
-import {
-  get as getHistory,
-  _getOperationNotif,
-} from '~/modules/history/actions';
 
 /**
  * Return a function to update the status (approved, rejected... ) of a translation.
@@ -30,11 +36,11 @@ export function useUpdateTranslationStatus(
 ) => void {
   const dispatch = useAppDispatch();
 
-  const entity = useSelectedEntity();
-  const locale = useContext(Locale);
-  const { push, resource } = useContext(Location);
-  const { pluralForm, setPluralForm } = usePluralForm(entity);
-  const nextEntity = useNextEntity();
+  const { resource } = useContext(Location);
+  const showNotification = useContext(ShowNotification);
+  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
+  const pushNextTranslatable = usePushNextTranslatable();
+  const { updateHistory } = useContext(HistoryData);
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy, setEditorFromHistory } = useContext(EditorActions);
 
@@ -43,7 +49,7 @@ export function useUpdateTranslationStatus(
     change: ChangeOperation,
     ignoreWarnings: boolean,
   ) => {
-    if (!entity) {
+    if (entity.pk === 0) {
       return;
     }
 
@@ -65,18 +71,14 @@ export function useUpdateTranslationStatus(
       setFailedChecks(results.failedChecks, translationId);
     } else {
       // Show a notification to explain what happened.
-      const notif = _getOperationNotif(change, !!results.translation);
-      dispatch(addNotification(notif));
+      const notif = getNotification(change, !!results.translation);
+      showNotification(notif);
 
       if (results.translation && change === 'approve') {
         // The change did work, we want to move on to the next Entity or pluralForm.
-        if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-          setPluralForm(pluralForm + 1);
-        } else if (nextEntity && nextEntity.pk !== entity.pk) {
-          push({ entity: nextEntity.pk });
-        }
+        pushNextTranslatable();
       } else {
-        dispatch(getHistory(entity.pk, locale.code, pluralForm));
+        updateHistory();
       }
 
       if (results.stats) {
@@ -94,12 +96,41 @@ export function useUpdateTranslationStatus(
       }
 
       // Update entity translation data now that it has changed on the server.
-      dispatch(
-        updateEntityTranslation(entity.pk, pluralForm, results.translation),
-      );
+      const pf = hasPluralForms ? pluralForm : -1;
+      dispatch(updateEntityTranslation(entity.pk, pf, results.translation));
     }
 
     NProgress.done();
     setEditorBusy(false);
   };
+}
+
+function getNotification(change: ChangeOperation, success: boolean) {
+  if (success) {
+    switch (change) {
+      case 'approve':
+        return TRANSLATION_APPROVED;
+      case 'unapprove':
+        return TRANSLATION_UNAPPROVED;
+      case 'reject':
+        return TRANSLATION_REJECTED;
+      case 'unreject':
+        return TRANSLATION_UNREJECTED;
+      default:
+        throw new Error('Unexpected translation status change: ' + change);
+    }
+  } else {
+    switch (change) {
+      case 'approve':
+        return UNABLE_TO_APPROVE_TRANSLATION;
+      case 'unapprove':
+        return UNABLE_TO_UNAPPROVE_TRANSLATION;
+      case 'reject':
+        return UNABLE_TO_REJECT_TRANSLATION;
+      case 'unreject':
+        return UNABLE_TO_UNREJECT_TRANSLATION;
+      default:
+        throw new Error('Unexpected translation status change: ' + change);
+    }
+  }
 }
