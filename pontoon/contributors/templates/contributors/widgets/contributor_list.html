@@ -12,11 +12,11 @@
 {% endmacro %}
 
 {# Widget to display list of contributors. #}
-{% macro list_contributors(contributors) %}
+{% macro list_contributors(contributors, title="Contributors") %}
   <table class="striped">
     <thead>
       <tr>
-        <th>Contributor</th>
+        <th>{{ title }}</th>
         <th>Translations</th>
       </tr>
     </thead>
@@ -28,7 +28,7 @@
             <img class="rounded" src="{{ contributor.gravatar_url(88) }}" width="44" height="44">
             <p class="name">{{ contributor.name_or_email }}</p>
           </a>
-          <p class="role">{{ contributor.user_role }}</p>
+          <p class="role">{{ contributor.user_locale_role or contributor.user_role }}</p>
         </td>
         <td class="stats">
           <div class="details">

@@ -297,6 +297,20 @@ class LocaleContributorsView(ContributorsMixin, DetailView):
     slug_field = "code"
     slug_url_kwarg = "locale"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(locale=self.object, **kwargs)
+        contributors = context["contributors"]
+        context["managers"] = [
+            c for c in contributors if c.user_locale_role == "manager"
+        ]
+        context["translators"] = [
+            c for c in contributors if c.user_locale_role == "translator"
+        ]
+        context["regular_contributors"] = [
+            c for c in contributors if c.user_locale_role == "contributor"
+        ]
+        return context
+
     def get_context_object_name(self, obj):
         return "locale"
 
