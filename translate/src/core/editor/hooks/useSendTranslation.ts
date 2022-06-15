@@ -35,7 +35,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const { entity, pluralForm } = useContext(EntityView);
+  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
   const pushNextTranslatable = usePushNextTranslatable();
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
@@ -60,7 +60,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       entity.pk,
       translation,
       locale.code,
-      pluralForm,
+      hasPluralForms ? pluralForm : -1,
       entity.original,
       forceSuggestions,
       location.resource,
