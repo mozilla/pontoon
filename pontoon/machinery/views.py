@@ -128,6 +128,7 @@ def microsoft_translator(request):
     }
     body = [{"Text": text}]
 
+    r = None
     try:
         r = requests.post(url, params=payload, headers=headers, json=body)
         r.raise_for_status()
@@ -146,7 +147,7 @@ def microsoft_translator(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"status": False, "message": f"{e}"},
-            status=r.status_code,
+            status=r.status_code if r is not None else 500,
         )
 
 
@@ -207,6 +208,7 @@ def systran_translate(request):
         "format": "text",
     }
 
+    r = None
     try:
         r = requests.post(url, params=payload)
         r.raise_for_status()
@@ -225,7 +227,7 @@ def systran_translate(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"status": False, "message": f"{e}"},
-            status=r.status_code,
+            status=r.status_code if r is not None else 500,
         )
 
 
@@ -256,6 +258,7 @@ def caighdean(request):
         "foinse": "gd",
     }
 
+    r = None
     try:
         r = requests.post(url, data=data)
         r.raise_for_status()
@@ -271,7 +274,7 @@ def caighdean(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"status": False, "message": f"{e}"},
-            status=r.status_code,
+            status=r.status_code if r is not None else 500,
         )
 
 
@@ -307,6 +310,7 @@ def microsoft_terminology(request):
 
     payload = template.render(payload)
 
+    r = None
     try:
         r = requests.post(url, data=payload, headers=headers)
         r.raise_for_status()
@@ -335,5 +339,5 @@ def microsoft_terminology(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse(
             {"status": False, "message": f"{e}"},
-            status=r.status_code,
+            status=r.status_code if r is not None else 500,
         )
