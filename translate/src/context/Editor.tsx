@@ -120,7 +120,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromInput: (value) =>
         setState((prev) => {
           if (prev.view === 'rich' && typeof value === 'string') {
-            const next = updateRichValue(prev, value, false);
+            const next = updateRichValue(prev, value, false, false);
             if (next) {
               return { ...prev, value: next };
             }
@@ -136,7 +136,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               value = translation;
               break;
             case 'rich': {
-              value = updateRichValue(prev, translation, false) ?? translation;
+              value =
+                updateRichValue(prev, translation, false, true) ?? translation;
               break;
             }
             case 'source': {
@@ -157,7 +158,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               return { ...prev, value: input.value };
             }
           } else {
-            const next = updateRichValue(prev, content, true);
+            const next = updateRichValue(prev, content, true, true);
             if (next) {
               return { ...prev, value: next };
             }
@@ -318,6 +319,7 @@ function updateRichValue(
   { activeInput, value }: EditorData,
   content: string,
   selectionOnly: boolean,
+  fixFocus: boolean,
 ): Entry | null {
   if (
     typeof value !== 'string' &&
@@ -350,10 +352,12 @@ function updateRichValue(
     }
 
     // Need to let react-dom "fix" the select position before setting it right
-    setTimeout(() => {
-      const end = start + content.length;
-      input.setSelectionRange(end, end);
-    });
+    if (fixFocus) {
+      setTimeout(() => {
+        const end = start + content.length;
+        input.setSelectionRange(end, end);
+      });
+    }
 
     return next;
   } else {
