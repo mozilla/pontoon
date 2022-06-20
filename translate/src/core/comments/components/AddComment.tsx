@@ -254,10 +254,11 @@ export function AddComment({
           </Localized>
           {mentionTarget && suggestedUsers.length > 0 && (
             <MentionList
+              editor={editor}
               index={mentionIndex}
               onSelect={handleSelectMention}
-              range={ReactEditor.toDOMRange(editor, mentionTarget)}
               suggestedUsers={suggestedUsers}
+              target={mentionTarget}
             />
           )}
         </Slate>
