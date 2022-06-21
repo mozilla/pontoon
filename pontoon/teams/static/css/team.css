@@ -1,3 +1,7 @@
+.contributors ~ table {
+  margin-bottom: 30px;
+}
+
 .buglist {
   display: none;
   table-layout: fixed;
