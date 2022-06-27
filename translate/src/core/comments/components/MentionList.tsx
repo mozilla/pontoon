@@ -1,31 +1,43 @@
 import { Localized } from '@fluent/react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import type { Range } from 'slate';
+import { ReactEditor } from 'slate-react';
 
 import type { UsersList } from '~/api/user';
 
 type Props = {
+  editor: ReactEditor;
   index: number;
   onSelect(user: UsersList): void;
-  range: globalThis.Range;
   suggestedUsers: UsersList[];
+  target: Range;
 };
 
 export function MentionList({
+  editor,
   index,
   onSelect,
-  range,
   suggestedUsers,
+  target,
 }: Props): React.ReactPortal | null {
   const ref = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
 
   // Set position of mentions suggestions
   useLayoutEffect(() => {
-    if (ref.current) {
-      setMentionListStyle(ref.current, range);
+    try {
+      if (ref.current) {
+        const range = ReactEditor.toDOMRange(editor, target);
+        setMentionListStyle(ref.current, range);
+      }
+    } catch (error) {
+      // https://github.com/mozilla/pontoon/issues/2298
+      // toDOMRange may fail on e.g. paste events, as the onChange may be
+      // triggered before the DOM is updated. In that case, ignore the error
+      // and let the next render fix things if necessary.
     }
-  }, [suggestedUsers.length, range, scrollPosition]);
+  }, [editor, suggestedUsers.length, target, scrollPosition]);
 
   // Set scroll position values for Translation and Team Comment containers ~
   // This allows for the mention suggestions to stay properly positioned
