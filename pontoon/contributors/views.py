@@ -118,6 +118,7 @@ def toggle_user_profile_attribute(request, username):
         "comment_notifications",
         "unreviewed_suggestion_notifications",
         "review_notifications",
+        "new_contributor_notifications",
     ]:
         return JsonResponse(
             {"status": False, "message": "Forbidden: Attribute not allowed"},
