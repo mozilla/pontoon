@@ -69,12 +69,12 @@
     <section>
         <h3>Notification subscriptions</h3>
         <ul class="info check-list">
-            {{ Checkbox.checkbox('New string notifications', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
-            {{ Checkbox.checkbox('Project target date notifications', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project target date approaches') }}
-            {{ Checkbox.checkbox('Comment notifications', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
-            {{ Checkbox.checkbox('Unreviewed suggestion notifications', class='unreviewed-suggestion-notifications', attribute='unreviewed_suggestion_notifications', is_enabled=user.profile.unreviewed_suggestion_notifications, title='Get notified when new suggestions are ready for review') }}
-            {{ Checkbox.checkbox('Review notifications', class='review-notifications', attribute='review_notifications', is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are approved or rejected') }}
-            {{ Checkbox.checkbox('New contributor notifications', class='new-contributor-notifications', attribute='new_contributor_notifications', is_enabled=user.profile.new_contributor_notifications, title='Get notified when new contributors make their first contributions to the team') }}
+            {{ Checkbox.checkbox('New strings', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
+            {{ Checkbox.checkbox('Project target dates', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project target date approaches') }}
+            {{ Checkbox.checkbox('Comments', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
+            {{ Checkbox.checkbox('New suggestions ready for review', class='unreviewed-suggestion-notifications', attribute='unreviewed_suggestion_notifications', is_enabled=user.profile.unreviewed_suggestion_notifications, title='Get notified when new suggestions are ready for review') }}
+            {{ Checkbox.checkbox('Review actions on own suggestions', class='review-notifications', attribute='review_notifications', is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are approved or rejected') }}
+            {{ Checkbox.checkbox('New team contributors', class='new-contributor-notifications', attribute='new_contributor_notifications', is_enabled=user.profile.new_contributor_notifications, title='Get notified when new contributors make their first contributions to the team') }}
         </ul>
     </section>
 
