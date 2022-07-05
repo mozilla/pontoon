@@ -1,6 +1,8 @@
 import { createMemoryHistory } from 'history';
+import React from 'react';
 import sinon from 'sinon';
 
+import { EntityViewProvider } from '~/context/EntityView';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityNavigation } from './EntityNavigation';
@@ -19,7 +21,16 @@ function mountEntityNav() {
     initialEntries: ['/kg/firefox/all-resources/?string=2'],
   });
   sinon.stub(history, 'push');
-  const wrapper = mountComponentWithStore(EntityNavigation, store, {}, history);
+  const wrapper = mountComponentWithStore(
+    () => (
+      <EntityViewProvider>
+        <EntityNavigation />
+      </EntityViewProvider>
+    ),
+    store,
+    {},
+    history,
+  );
   return { history, wrapper };
 }
 

@@ -3,8 +3,18 @@
 <menu class="controls contributors">
   {{ Contributors.select_period(period, url('pontoon.teams.contributors', locale.code)) }}
 </menu>
-{% if contributors %}
-  {{ Contributors.list_contributors(contributors) }}
-{% else %}
+{% if managers %}
+  {{ Contributors.list_contributors(managers, title="Managers") }}
+{% endif %}
+
+{% if translators %}
+  {{ Contributors.list_contributors(translators, title="Translators") }}
+{% endif %}
+
+{% if regular_contributors %}
+  {{ Contributors.list_contributors(regular_contributors) }}
+{% endif %}
+
+{% if not contributors %}
   {{ Contributors.no_contributors() }}
 {% endif %}

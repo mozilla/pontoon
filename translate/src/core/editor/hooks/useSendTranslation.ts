@@ -7,15 +7,18 @@ import {
   EditorData,
   getEditedTranslation,
 } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
-import { usePluralForm } from '~/context/PluralForm';
+import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/core/entities/actions';
-import { useNextEntity, useSelectedEntity } from '~/core/entities/hooks';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
+import { usePushNextTranslatable } from '~/core/entities/hooks';
+import {
+  SAME_TRANSLATION,
+  TRANSLATION_SAVED,
+} from '~/core/notification/messages';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -28,12 +31,12 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
   const location = useContext(Location);
   const locale = useContext(Locale);
-  const entity = useSelectedEntity();
+  const showNotification = useContext(ShowNotification);
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
-  const { pluralForm, setPluralForm } = usePluralForm(entity);
-  const nextEntity = useNextEntity();
+  const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
+  const pushNextTranslatable = usePushNextTranslatable();
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy } = useContext(EditorActions);
@@ -42,7 +45,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const { busy, machinery } = editor;
 
   return async (ignoreWarnings = false) => {
-    if (busy || !entity) {
+    if (busy || entity.pk === 0) {
       return;
     }
 
@@ -57,7 +60,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       entity.pk,
       translation,
       locale.code,
-      pluralForm,
+      hasPluralForms ? pluralForm : -1,
       entity.original,
       forceSuggestions,
       location.resource,
@@ -67,7 +70,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
 
     if (content.status) {
       // Notify the user of the change that happened.
-      dispatch(addNotification(notificationMessages.TRANSLATION_SAVED));
+      showNotification(TRANSLATION_SAVED);
 
       // Ignore existing unsavedchanges because they are saved now.
       resetUnsavedChanges(true);
@@ -89,17 +92,13 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       }
 
       // The change did work, we want to move on to the next Entity or pluralForm.
-      if (pluralForm !== -1 && pluralForm < locale.cldrPlurals.length - 1) {
-        setPluralForm(pluralForm + 1);
-      } else if (nextEntity && nextEntity.pk !== entity.pk) {
-        location.push({ entity: nextEntity.pk });
-      }
+      pushNextTranslatable();
     } else if (content.failedChecks) {
       setFailedChecks(content.failedChecks, 'submitted');
     } else if (content.same) {
       // The translation that was provided is the same as an existing
       // translation for that entity.
-      dispatch(addNotification(notificationMessages.SAME_TRANSLATION));
+      showNotification(SAME_TRANSLATION);
     }
 
     setEditorBusy(false);

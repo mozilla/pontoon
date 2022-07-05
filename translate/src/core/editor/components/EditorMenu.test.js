@@ -4,8 +4,8 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 
+import { EntityView } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
-import { RECEIVE_ENTITIES } from '~/core/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -23,23 +23,13 @@ const SELECTED_ENTITY = {
 };
 
 function createEditorMenu({
-  forceSuggestions = true,
   isAuthenticated = true,
   entity = SELECTED_ENTITY,
-  firstItemHook = null,
 } = {}) {
   const store = createReduxStore();
   createDefaultUser(store, {
     is_authenticated: isAuthenticated,
-    settings: {
-      force_suggestions: forceSuggestions,
-    },
-  });
-
-  store.dispatch({
-    type: RECEIVE_ENTITIES,
-    entities: [entity],
-    hasMore: false,
+    settings: { force_suggestions: true },
   });
 
   const history = createMemoryHistory({
@@ -50,7 +40,9 @@ function createEditorMenu({
     <Provider store={store}>
       <LocationProvider history={history}>
         <MockLocalizationProvider>
-          <EditorMenu firstItemHook={firstItemHook} />
+          <EntityView.Provider value={{ entity }}>
+            <EditorMenu />
+          </EntityView.Provider>
         </MockLocalizationProvider>
       </LocationProvider>
     </Provider>,

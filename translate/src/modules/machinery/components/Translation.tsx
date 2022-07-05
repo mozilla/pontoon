@@ -50,7 +50,7 @@ export function Translation({
       setCopied(true);
       setEditorFromMachinery(translation.translation, translation.sources);
     }
-  }, [index, translation]);
+  }, [index, setEditorFromMachinery, translation]);
 
   const className = classNames(
     'translation',

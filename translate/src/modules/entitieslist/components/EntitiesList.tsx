@@ -11,11 +11,9 @@ import {
 } from '~/core/entities/actions';
 import { useEntities } from '~/core/entities/hooks';
 import { SkeletonLoader } from '~/core/loaders';
-import { addNotification } from '~/core/notification/actions';
-import { notificationMessages } from '~/core/notification/messages';
-import { useAppDispatch, useAppStore } from '~/hooks';
+import { ENTITY_NOT_FOUND } from '~/core/notification/messages';
+import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   checkSelection,
   resetSelection,
@@ -28,6 +26,8 @@ import { UnsavedActions } from '~/context/UnsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
+import { USER } from '~/core/user';
+import { ShowNotification } from '~/context/Notification';
 
 /**
  * Displays a list of entities and their current translation.
@@ -40,10 +40,11 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const dispatch = useAppDispatch();
   const store = useAppStore();
 
+  const showNotification = useContext(ShowNotification);
   const batchactions = useBatchactions();
   const { entities, fetchCount, fetching, hasMore } = useEntities();
-  const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
+  const isAuthUser = useAppSelector((state) => state[USER].isAuthenticated);
   const { checkUnsavedChanges } = useContext(UnsavedActions);
 
   const mounted = useRef(false);
@@ -94,7 +95,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
       // Only do this the very first time entities are loaded.
       if (fetchCount === 1 && selectedEntity && !isValid) {
-        dispatch(addNotification(notificationMessages.ENTITY_NOT_FOUND));
+        showNotification(ENTITY_NOT_FOUND);
       }
     }
   });
@@ -233,7 +234,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
             checkedForBatchEditing={batchactions.entities.includes(entity.pk)}
             toggleForBatchEditing={toggleForBatchEditing}
             entity={entity}
-            isReadOnlyEditor={isReadOnlyEditor}
+            isReadOnlyEditor={entity.readonly || !isAuthUser}
             selected={
               !batchactions.entities.length && entity.pk === location.entity
             }

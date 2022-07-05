@@ -4,10 +4,6 @@ import type { Location } from '~/context/Location';
 import { updateEntityTranslation } from '~/core/entities/actions';
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
-import {
-  get as getHistory,
-  request as requestHistory,
-} from '~/modules/history/actions';
 import type { AppDispatch } from '~/store';
 
 export const CHECK_BATCHACTIONS = 'batchactions/CHECK';
@@ -79,7 +75,7 @@ export const checkSelection = (
 });
 
 const updateUI =
-  (location: Location, selectedEntity: number, entityIds: number[]) =>
+  (location: Location, entityIds: number[]) =>
   async (dispatch: AppDispatch) => {
     const entitiesData = await fetchEntities({ ...location, list: entityIds });
 
@@ -111,11 +107,6 @@ const updateUI =
         pluralForm: number,
       ) {
         dispatch(updateEntityTranslation(entity.pk, pluralForm, translation));
-
-        if (entity.pk === selectedEntity) {
-          dispatch(requestHistory(entity.pk, pluralForm));
-          dispatch(getHistory(entity.pk, location.locale, pluralForm));
-        }
       });
     }
   };
@@ -123,8 +114,7 @@ const updateUI =
 export const performAction =
   (
     location: Location,
-    action: string,
-    selectedEntity: number,
+    action: 'approve' | 'reject' | 'replace',
     entityIds: number[],
     find?: string,
     replace?: string,
@@ -152,7 +142,7 @@ export const performAction =
       response.invalidCount = data.invalid_translation_count;
 
       if (data.count > 0) {
-        dispatch(updateUI(location, selectedEntity, entityIds));
+        dispatch(updateUI(location, entityIds));
       }
     } else {
       response.error = true;

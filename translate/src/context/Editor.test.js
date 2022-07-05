@@ -6,9 +6,9 @@ import { parseEntry } from '~/core/utils/fluent';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EditorData, EditorProvider, useClearEditor } from './Editor';
+import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
-import { PluralFormProvider, usePluralForm } from './PluralForm';
 
 function mountSpy(Spy, format, translation) {
   const history = createMemoryHistory({
@@ -40,7 +40,6 @@ function mountSpy(Spy, format, translation) {
         },
       ],
     },
-    history: { translations: [] },
     otherlocales: { translations: [] },
     user: {
       isAuthenticated: true,
@@ -53,11 +52,11 @@ function mountSpy(Spy, format, translation) {
   const Wrapper = () => (
     <LocationProvider history={history}>
       <Locale.Provider value={{ code: 'kg', cldrPlurals: [1, 2, 5] }}>
-        <PluralFormProvider>
+        <EntityViewProvider>
           <EditorProvider>
             <Spy />
           </EditorProvider>
-        </PluralFormProvider>
+        </EntityViewProvider>
       </Locale.Provider>
     </LocationProvider>
   );
@@ -133,11 +132,11 @@ describe('<EditorProvider>', () => {
   it('updates state on entity and plural form changes', () => {
     let editor;
     let location;
-    let pluralForm;
+    let entity;
     const Spy = () => {
       editor = useContext(EditorData);
       location = useContext(Location);
-      pluralForm = usePluralForm();
+      entity = useContext(EntityView);
       return null;
     };
     const wrapper = mountSpy(Spy, 'simple', 'translated');
@@ -152,7 +151,7 @@ describe('<EditorProvider>', () => {
       view: 'simple',
     });
 
-    act(() => pluralForm.setPluralForm(1));
+    act(() => entity.setPluralForm(1));
     wrapper.update();
 
     expect(editor).toMatchObject({

@@ -31,7 +31,6 @@ import { EditorActions } from '~/context/Editor';
 type Props = {
   entity: Entity;
   isReadOnlyEditor: boolean;
-  pluralForm: number;
   terms: TermState;
   teamComments: TeamCommentState;
   user: UserState;
@@ -191,7 +190,6 @@ export function Metadata({
   entity,
   isReadOnlyEditor,
   navigateToPath,
-  pluralForm,
   setCommentTabIndex,
   setContactPerson,
   terms,
@@ -233,7 +231,7 @@ export function Metadata({
         }
       }
     },
-    [isReadOnlyEditor, terms],
+    [isReadOnlyEditor, setEditorSelection, terms],
   );
 
   const navigateToPath_ = useCallback(
@@ -262,7 +260,6 @@ export function Metadata({
       <Screenshots source={entity.comment} locale={code} />
       <OriginalStringProxy
         entity={entity}
-        pluralForm={pluralForm}
         terms={terms}
         handleClickOnPlaceable={handleClickOnPlaceable}
       />

@@ -5,20 +5,19 @@ import React, { useEffect } from 'react';
 import sinon from 'sinon';
 
 import * as TranslationAPI from '~/api/translation';
+import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
-const ENTITIES = [
-  {
-    pk: 42,
-    original: 'le test',
-    translation: [{ string: 'test', errors: [], warnings: [] }],
-    project: { contact: '' },
-    comment: '',
-  },
-];
+const ENTITY = {
+  pk: 42,
+  original: 'le test',
+  translation: [{ string: 'test', errors: [], warnings: [] }],
+  project: { contact: '' },
+  comment: '',
+};
 
 function Wrapper({ id, change }) {
   const update = useUpdateTranslationStatus();
@@ -33,17 +32,24 @@ function mountWrapper({ setFailedChecks, ...props }) {
     initialEntries: ['/kg/pro/all/?string=42'],
   });
   const initialState = {
-    entities: { entities: ENTITIES },
-    history: { translations: [] },
     otherlocales: { translations: [] },
     user: { settings: {}, username: 'Franck' },
   };
   const store = createReduxStore(initialState);
   const wrapper = mountComponentWithStore(
     () => (
-      <FailedChecksData.Provider value={{ setFailedChecks }}>
-        <Wrapper {...props} />
-      </FailedChecksData.Provider>
+      <EntityView.Provider
+        value={{
+          entity: ENTITY,
+          hasPluralForms: false,
+          pluralForm: 0,
+          setPluralForm: () => {},
+        }}
+      >
+        <FailedChecksData.Provider value={{ setFailedChecks }}>
+          <Wrapper {...props} />
+        </FailedChecksData.Provider>
+      </EntityView.Provider>
     ),
     store,
     {},

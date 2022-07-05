@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 
 import type { SourceType } from '~/api/machinery';
-import { useSelectedEntity } from '~/core/entities/hooks';
 import {
   getEmptyMessage,
   getReconstructedMessage,
@@ -19,9 +18,10 @@ import {
   serializeEntry,
 } from '~/core/utils/fluent';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+
+import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
-import { PluralForm } from './PluralForm';
 import { UnsavedActions, UnsavedChanges } from './UnsavedChanges';
 
 export type EditorData = Readonly<{
@@ -90,8 +90,8 @@ export const EditorActions = createContext(initEditorActions);
 
 export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
-  const entity = useSelectedEntity();
-  const { pluralForm } = useContext(PluralForm);
+  const { entity } = useContext(EntityView);
+  const activeTranslation = useActiveTranslation();
   const readonly = useReadonlyEditor();
   const { setUnsavedChanges } = useContext(UnsavedActions);
   const { exist } = useContext(UnsavedChanges);
@@ -120,7 +120,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorFromInput: (value) =>
         setState((prev) => {
           if (prev.view === 'rich' && typeof value === 'string') {
-            const next = updateRichValue(prev, value, false);
+            const next = updateRichValue(prev, value, false, false);
             if (next) {
               return { ...prev, value: next };
             }
@@ -136,7 +136,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               value = translation;
               break;
             case 'rich': {
-              value = updateRichValue(prev, translation, false) ?? translation;
+              value =
+                updateRichValue(prev, translation, false, true) ?? translation;
               break;
             }
             case 'source': {
@@ -157,7 +158,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               return { ...prev, value: input.value };
             }
           } else {
-            const next = updateRichValue(prev, content, true);
+            const next = updateRichValue(prev, content, true, true);
             if (next) {
               return { ...prev, value: next };
             }
@@ -199,22 +200,19 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     let initial = '';
     let value: string | Entry = '';
     let view: 'simple' | 'rich' | 'source' = 'simple';
-    if (entity) {
-      const pf = pluralForm === -1 ? 0 : pluralForm;
-      const prev = entity.translation[pf];
-      initial = (prev && !prev.rejected && prev.string) || '';
-      if (entity.format === 'ftl') {
-        format = 'ftl';
-        if (!initial) {
-          const entry = parseEntry(entity.original);
-          initial = serializeEntry(getEmptyMessage(entry, locale));
-        }
-        const next = getFtlViewAndValue(initial);
-        value = next.value;
-        view = next.view;
-      } else {
-        value = initial;
+
+    initial = activeTranslation?.string || '';
+    if (entity.format === 'ftl') {
+      format = 'ftl';
+      if (!initial) {
+        const entry = parseEntry(entity.original);
+        initial = serializeEntry(getEmptyMessage(entry, locale));
       }
+      const next = getFtlViewAndValue(initial);
+      value = next.value;
+      view = next.view;
+    } else {
+      value = initial;
     }
 
     setState((prev) => ({
@@ -226,7 +224,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       value,
       view,
     }));
-  }, [locale, entity, pluralForm]);
+  }, [locale, entity, activeTranslation]);
 
   useEffect(() => {
     // Error recovery, if `view` and `value` type do not match
@@ -321,6 +319,7 @@ function updateRichValue(
   { activeInput, value }: EditorData,
   content: string,
   selectionOnly: boolean,
+  fixFocus: boolean,
 ): Entry | null {
   if (
     typeof value !== 'string' &&
@@ -353,10 +352,12 @@ function updateRichValue(
     }
 
     // Need to let react-dom "fix" the select position before setting it right
-    setTimeout(() => {
-      const end = start + content.length;
-      input.setSelectionRange(end, end);
-    });
+    if (fixFocus) {
+      setTimeout(() => {
+        const end = start + content.length;
+        input.setSelectionRange(end, end);
+      });
+    }
 
     return next;
   } else {

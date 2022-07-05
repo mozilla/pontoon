@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 
 import type { Entity } from '~/api/entity';
-import type { HistoryTranslation } from '~/api/translation';
+import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
@@ -12,8 +12,6 @@ import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/core/utils';
 import { useTranslator } from '~/hooks/useTranslator';
-
-import type { ChangeOperation } from '../index';
 
 import './Translation.css';
 
@@ -195,7 +193,7 @@ export function TranslationBase({
       return;
     }
     setEditorFromHistory(translation.string);
-  }, [isReadOnlyEditor, translation.string]);
+  }, [isReadOnlyEditor, setEditorFromHistory, translation.string]);
 
   let approvalTitle: string;
   if (translation.approved && translation.approvedUser) {

@@ -38,7 +38,9 @@ def map_translations_to_events(days, translations):
     return timeline
 
 
-def users_with_translations_counts(start_date=None, query_filters=None, limit=100):
+def users_with_translations_counts(
+    start_date=None, query_filters=None, locale=None, limit=100
+):
     """
     Returns contributors list, sorted by count of their translations. Every user instance has
     the following properties:
@@ -51,6 +53,7 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
     All counts will be returned from start_date to now().
     :param date start_date: start date for translations.
     :param django.db.models.Q query_filters: filters contributors by given query_filters.
+    :param pontoon.base.models.Locale locale: used to determine user locale role.
     :param int limit: limit results to this number.
     """
     # Collect data for faster user stats calculation.
@@ -100,11 +103,11 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
         Prefetch("translators_group__user_set", to_attr="fetched_translators"),
     )
 
-    for locale in locales:
-        for user in locale.managers_group.fetched_managers:
-            managers[user].add(locale.code)
-        for user in locale.translators_group.fetched_translators:
-            translators[user].add(locale.code)
+    for l in locales:
+        for user in l.managers_group.fetched_managers:
+            managers[user].add(l.code)
+        for user in l.translators_group.fetched_translators:
+            translators[user].add(l.code)
 
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
@@ -129,6 +132,9 @@ def users_with_translations_counts(start_date=None, query_filters=None, limit=10
             contributor.user_role = "System User"
         else:
             contributor.user_role = contributor.role(managers, translators)
+
+        if locale:
+            contributor.user_locale_role = contributor.locale_role(locale)
 
     contributors_list = sorted(contributors, key=lambda x: -x.translations_count)
     if limit:

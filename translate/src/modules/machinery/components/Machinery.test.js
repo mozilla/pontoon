@@ -7,7 +7,6 @@ import { MockLocalizationProvider } from '~/test/utils';
 
 import { Machinery } from './Machinery';
 
-jest.mock('~/core/entities/hooks', () => ({ useSelectedEntity: () => null }));
 jest.mock('~/hooks', () => ({
   useAppDispatch: () => () => {},
   useAppSelector: () => {},
