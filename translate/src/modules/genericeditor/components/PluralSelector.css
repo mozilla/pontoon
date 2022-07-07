@@ -8,6 +8,7 @@
 .plural-selector ul li {
   background: #4d5967;
   border: 1px solid #5e6475;
+  border-bottom: none;
   border-left: none;
   display: table-cell;
   text-align: center;
