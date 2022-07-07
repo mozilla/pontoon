@@ -29,7 +29,7 @@ export function NewContributorTooltip(): React.ReactElement<'div'> | null {
       <p className='title'>👋</p>
 
       <Localized id='editor-NewContributorTooltip--intro'>
-        <p>It looks like you haven't contributed to this locale yet.</p>
+        <p>It looks like you haven’t contributed to this locale yet.</p>
       </Localized>
 
       {locale.teamDescription && (
