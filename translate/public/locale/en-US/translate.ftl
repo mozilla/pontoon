@@ -209,7 +209,7 @@ editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <
 ## Editor New Contributor Tooltip
 ## Renders the guidelines for new contributors
 
-editor-NewContributorTooltip--intro = It looks like you haven't contributed to this locale yet.
+editor-NewContributorTooltip--intro = It looks like you haven’t contributed to this locale yet.
 editor-NewContributorTooltip--team-info = Check the <a>team information</a> before starting, as it might contain important information and language resources.
 editor-NewContributorTooltip--team-managers = Reach out to <a>team managers</a> if you have questions or want to learn more about contributing.
 
