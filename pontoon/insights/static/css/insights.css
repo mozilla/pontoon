@@ -60,8 +60,7 @@
   box-sizing: border-box;
 }
 
-#insights .active-users-chart,
-#insights #unreviewed-suggestions-lifespan-chart {
+#insights .active-users-chart {
   height: 160px;
 }
 
