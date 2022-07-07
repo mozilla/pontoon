@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 
 import type { Entity as EntityType } from '~/api/entity';
-import type { EntityTranslation } from '~/api/translation';
 import { Locale } from '~/context/Locale';
 import type { Location } from '~/context/Location';
+import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
 import { TranslationProxy } from '~/core/translation';
 import { useTranslator } from '~/hooks/useTranslator';
 
@@ -100,9 +100,10 @@ export function Entity({
 
   const { code, direction, script } = useContext(Locale);
 
+  const status = useTranslationStatus(entity);
   const cn = classNames(
     'entity',
-    translationStatus(entity.translation),
+    status,
     selected && 'selected',
     isTranslator && !isReadOnlyEditor && 'batch-editable',
     checkedForBatchEditing && 'checked',
@@ -148,42 +149,4 @@ export function Entity({
       </div>
     </li>
   );
-}
-
-function translationStatus(translations: EntityTranslation[]): string {
-  let errors = false;
-  let warnings = false;
-  let approved = 0;
-  let pretranslated = 0;
-
-  for (const tx of translations) {
-    if (tx.approved || tx.pretranslated || tx.fuzzy) {
-      if (tx.errors.length) {
-        errors = true;
-      } else if (tx.warnings.length) {
-        warnings = true;
-      } else if (tx.approved) {
-        approved += 1;
-      } else if (tx.pretranslated) {
-        pretranslated += 1;
-      }
-    }
-  }
-
-  if (errors) {
-    return 'errors';
-  }
-  if (warnings) {
-    return 'warnings';
-  }
-  if (approved === translations.length) {
-    return 'approved';
-  }
-  if (pretranslated === translations.length) {
-    return 'pretranslated';
-  }
-  if (approved > 0 || pretranslated > 0) {
-    return 'partial';
-  }
-  return 'missing';
 }

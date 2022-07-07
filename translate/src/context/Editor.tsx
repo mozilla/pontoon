@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 
 import type { SourceType } from '~/api/machinery';
+import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
 import {
   getEmptyMessage,
   getReconstructedMessage,
@@ -22,6 +23,7 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
+import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions, UnsavedChanges } from './UnsavedChanges';
 
 export type EditorData = Readonly<{
@@ -36,6 +38,7 @@ export type EditorData = Readonly<{
   initial: string;
 
   machinery: {
+    manual: boolean;
     sources: SourceType[];
     translation: string;
   } | null;
@@ -59,7 +62,12 @@ export type EditorActions = {
   /** For `view: 'rich'`, if `value` is a string, sets the value of the active input */
   setEditorFromInput(value: string | Entry): void;
 
-  setEditorFromMachinery(value: string, sources: SourceType[]): void;
+  /** @param manual Set `true` when value set due to direct user action */
+  setEditorFromMachinery(
+    value: string,
+    sources: SourceType[],
+    manual: boolean,
+  ): void;
 
   setEditorSelection(content: string): void;
 
@@ -93,6 +101,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const { entity } = useContext(EntityView);
   const activeTranslation = useActiveTranslation();
   const readonly = useReadonlyEditor();
+  const machinery = useContext(MachineryTranslations);
   const { setUnsavedChanges } = useContext(UnsavedActions);
   const { exist } = useContext(UnsavedChanges);
   const { resetFailedChecks } = useContext(FailedChecksData);
@@ -128,7 +137,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           return { ...prev, value };
         }),
 
-      setEditorFromMachinery: (translation, sources) =>
+      setEditorFromMachinery: (translation, sources, manual) =>
         setState((prev) => {
           let value: string | Entry;
           switch (prev.view) {
@@ -146,7 +155,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               break;
             }
           }
-          return { ...prev, machinery: { translation, sources }, value };
+          const machinery = { manual, translation, sources };
+          return { ...prev, machinery, value };
         }),
 
       setEditorSelection: (content) =>
@@ -225,6 +235,27 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       view,
     }));
   }, [locale, entity, activeTranslation]);
+
+  // For missing entries, fill editor initially with a perfect match from
+  // translation memory, if available.
+  const status = useTranslationStatus(entity);
+  useEffect(() => {
+    if (
+      status === 'missing' &&
+      state.view === 'simple' &&
+      state.value === '' &&
+      state.machinery === null
+    ) {
+      const perfect = machinery.translations.find((tx) => tx.quality === 100);
+      if (perfect) {
+        actions.setEditorFromMachinery(
+          perfect.translation,
+          perfect.sources,
+          false,
+        );
+      }
+    }
+  }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
     // Error recovery, if `view` and `value` type do not match

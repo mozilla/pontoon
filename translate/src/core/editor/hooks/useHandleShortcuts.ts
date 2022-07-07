@@ -134,10 +134,10 @@ export function useHandleShortcuts(): (
               nextIdx < len
                 ? machineryTranslations[nextIdx]
                 : concordanceSearchResults[nextIdx - len];
-            setEditorFromMachinery(translation, sources);
+            setEditorFromMachinery(translation, sources, true);
           } else {
             const { translation } = otherLocaleTranslations[nextIdx];
-            setEditorFromMachinery(translation, []);
+            setEditorFromMachinery(translation, [], true);
           }
         }
         break;

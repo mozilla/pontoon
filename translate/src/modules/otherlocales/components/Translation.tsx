@@ -46,7 +46,7 @@ export function Translation({
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       setCopied(true);
-      setEditorFromMachinery(translation.translation, []);
+      setEditorFromMachinery(translation.translation, [], true);
     }
   }, [index, setEditorFromMachinery, translation]);
 
