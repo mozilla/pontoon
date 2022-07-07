@@ -22,7 +22,7 @@ export function NewContributorTooltip(): React.ReactElement<'div'> | null {
     visible &&
     !entity.readonly &&
     user.isAuthenticated &&
-    user.isNewContributor;
+    !user.contributorForLocales.includes(locale.code);
 
   return show ? (
     <div ref={ref} className='new-contributor-tooltip'>

@@ -865,6 +865,9 @@ def user_data(request):
             "display_name": user.display_name,
             "name_or_email": user.name_or_email,
             "username": user.username,
+            "contributor_for_locales": list(
+                user.translation_set.values_list("locale__code", flat=True).distinct()
+            ),
             "manager_for_locales": list(
                 user.managed_locales.values_list("code", flat=True)
             ),

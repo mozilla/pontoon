@@ -185,19 +185,6 @@ def dismiss_addon_promotion(request):
 
 
 @login_required(redirect_field_name="", login_url="/403")
-@require_AJAX
-def is_new_contributor(request, locale):
-    try:
-        locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist:
-        return JsonResponse(
-            {"status": False, "message": "Bad Request: Invalid locale"}, status=400
-        )
-
-    return JsonResponse({"is_new_contributor": request.user.is_new_contributor(locale)})
-
-
-@login_required(redirect_field_name="", login_url="/403")
 def settings(request):
     """View and edit user settings."""
     if request.method == "POST":
