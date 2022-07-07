@@ -1,6 +1,5 @@
 import { GET, POST } from './utils/base';
 import { getCSRFToken } from './utils/csrfToken';
-import { keysToCamelCase } from './utils/keysToCamelCase';
 
 export type Notification = {
   id: number;
@@ -68,7 +67,7 @@ export const fetchUsersList = (): Promise<UsersList[]> => GET('get-users');
 /** Check if the user is a new locale contributor. */
 export async function fetchIsNewContributor(locale: string): Promise<boolean> {
   const results = await GET(`/is-new-contributor/${locale}/`);
-  return keysToCamelCase(results).isNewContributor;
+  return results.is_new_contributor;
 }
 
 /** Mark all notifications of the current user as read. */
