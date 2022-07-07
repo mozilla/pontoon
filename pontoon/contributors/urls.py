@@ -86,4 +86,10 @@ urlpatterns = [
         views.dismiss_addon_promotion,
         name="pontoon.contributors.dismiss_addon_promotion",
     ),
+    # AJAX: Checks if the current user is a new contributor of the given locale
+    path(
+        "is-new-contributor/<locale:locale>/",
+        views.is_new_contributor,
+        name="pontoon.contributors.is_new_contributor",
+    ),
 ]

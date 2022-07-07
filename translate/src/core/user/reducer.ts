@@ -1,6 +1,12 @@
 import type { UsersList } from '~/api/user';
 
-import { Action, RECEIVE_USERS, UPDATE, UPDATE_SETTINGS } from './actions';
+import {
+  Action,
+  RECEIVE_USERS,
+  UPDATE,
+  UPDATE_SETTINGS,
+  UPDATE_IS_NEW_CONTRIBUTOR,
+} from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -69,6 +75,7 @@ export type Notifications = {
 export type UserState = {
   readonly isAuthenticated: boolean;
   readonly isAdmin: boolean;
+  readonly isNewContributor: boolean;
   readonly id: string;
   readonly displayName: string;
   readonly nameOrEmail: string;
@@ -91,6 +98,7 @@ export type UserState = {
 const initial: UserState = {
   isAuthenticated: false,
   isAdmin: false,
+  isNewContributor: false,
   id: '',
   displayName: '',
   nameOrEmail: '',
@@ -123,6 +131,7 @@ export function reducer(state: UserState = initial, action: Action): UserState {
       };
     case UPDATE:
       return {
+        ...state,
         isAuthenticated: action.data.is_authenticated ?? false,
         isAdmin: action.data.is_admin ?? false,
         id: action.data.id ?? '',
@@ -152,6 +161,11 @@ export function reducer(state: UserState = initial, action: Action): UserState {
       return {
         ...state,
         settings: settings(state.settings, action),
+      };
+    case UPDATE_IS_NEW_CONTRIBUTOR:
+      return {
+        ...state,
+        isNewContributor: action.isNewContributor,
       };
     default:
       return state;

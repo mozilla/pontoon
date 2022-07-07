@@ -15,6 +15,7 @@ export type Locale = Readonly<{
   pluralRule: string;
   direction: string;
   script: string;
+  teamDescription: string;
   googleTranslateCode: string;
   msTranslatorCode: string;
   systranTranslateCode: string;
@@ -32,6 +33,7 @@ export const initLocale = (set: (locale: Locale) => void): Locale => ({
   pluralRule: '',
   direction: '',
   script: '',
+  teamDescription: '',
   googleTranslateCode: '',
   msTranslatorCode: '',
   systranTranslateCode: '',
@@ -55,6 +57,7 @@ export async function updateLocale(locale: Locale, code: string) {
       pluralRule
       direction
       script
+      teamDescription
       googleTranslateCode
       msTranslatorCode
       systranTranslateCode

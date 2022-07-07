@@ -89,6 +89,7 @@ class Locale(DjangoObjectType, Stats):
             "plural_rule",
             "script",
             "population",
+            "team_description",
             "total_strings",
             "approved_strings",
             "pretranslated_strings",

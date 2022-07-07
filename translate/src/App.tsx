@@ -11,7 +11,7 @@ import { NotificationPanel } from './core/notification/components/NotificationPa
 import { getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user/components/UserControls';
-import { getUsersList } from './core/user/actions';
+import { updateIsNewContributor, getUsersList } from './core/user/actions';
 
 import { useAppDispatch } from './hooks';
 
@@ -44,6 +44,7 @@ export function App() {
   useEffect(() => {
     updateLocale(locale, location.locale);
     dispatch(getUsersList());
+    dispatch(updateIsNewContributor(location.locale));
   }, []);
 
   useEffect(() => {

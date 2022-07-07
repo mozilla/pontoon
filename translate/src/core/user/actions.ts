@@ -1,5 +1,6 @@
 import {
   dismissAddonPromotion,
+  fetchIsNewContributor,
   fetchUserData,
   fetchUsersList,
   markAllNotificationsAsRead,
@@ -19,12 +20,25 @@ import type { AppThunk } from '~/store';
 export const RECEIVE_USERS = 'users/RECEIVE_USERS';
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';
+export const UPDATE_IS_NEW_CONTRIBUTOR = 'user/UPDATE_IS_NEW_CONTRIBUTOR';
 
-export type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
+export type Action =
+  | ReceiveAction
+  | UpdateAction
+  | UpdateSettingsAction
+  | UpdateIsNewContributorAction;
 
 export type ReceiveAction = {
   readonly type: typeof RECEIVE_USERS;
   readonly users: Array<UsersList>;
+};
+
+/**
+ * Update the user data.
+ */
+export type UpdateAction = {
+  readonly type: typeof UPDATE;
+  readonly data: Record<string, any>;
 };
 
 export type Settings = {
@@ -41,11 +55,11 @@ export type UpdateSettingsAction = {
 };
 
 /**
- * Update the user data.
+ * Update the isNewContributor status.
  */
-export type UpdateAction = {
-  readonly type: typeof UPDATE;
-  readonly data: Record<string, any>;
+export type UpdateIsNewContributorAction = {
+  readonly type: typeof UPDATE_IS_NEW_CONTRIBUTOR;
+  readonly isNewContributor: boolean;
 };
 
 /**
@@ -92,6 +106,15 @@ export const markAllNotificationsAsRead_ = (): AppThunk => async (dispatch) => {
 export const getUsersList = (): AppThunk => async (dispatch) => {
   dispatch({ type: RECEIVE_USERS, users: await fetchUsersList() });
 };
+
+export const updateIsNewContributor =
+  (locale: string): AppThunk =>
+  async (dispatch) => {
+    dispatch({
+      type: UPDATE_IS_NEW_CONTRIBUTOR,
+      isNewContributor: await fetchIsNewContributor(locale),
+    });
+  };
 
 /**
  * Get data about the current user from the server.
