@@ -248,6 +248,11 @@ def can_translate(self, locale, project):
     return self.has_perm("base.can_translate_locale", locale)
 
 
+def is_new_contributor(self, locale):
+    """Return True if the user hasn't made contributions to the locale yet."""
+    return not self.translation_set.filter(locale=locale).exists()
+
+
 @property
 def menu_notifications(self):
     """A list of notifications to display in the notifications menu."""
@@ -397,6 +402,7 @@ User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
+User.add_to_class("is_new_contributor", is_new_contributor)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
@@ -1605,6 +1611,7 @@ class UserProfile(models.Model):
     comment_notifications = models.BooleanField(default=True)
     unreviewed_suggestion_notifications = models.BooleanField(default=True)
     review_notifications = models.BooleanField(default=True)
+    new_contributor_notifications = models.BooleanField(default=True)
 
     @property
     def preferred_locales(self):
