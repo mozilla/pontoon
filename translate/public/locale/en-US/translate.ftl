@@ -95,8 +95,8 @@ resourceprogress-ResourceProgress--missing = MISSING
 
 comments-AddComment--input =
     .placeholder = Write a comment…
-comments-AddComment--mention-avatar-alt = 
-    .alt = User Avatar 
+comments-AddComment--mention-avatar-alt =
+    .alt = User Avatar
 comments-AddComment--submit-button = <glyph></glyph>
     .title = Submit comment
 comments-Comment--pin-button = PIN
@@ -204,6 +204,14 @@ editor-KeyboardShortcuts--copy-from-previous-helper-shortcut = <mod1>Ctrl</mod1>
 
 editor-KeyboardShortcuts--copy-from-next-helper = Copy From Next Helper
 editor-KeyboardShortcuts--copy-from-next-helper-shortcut = <mod1>Ctrl</mod1> + <mod2>Shift</mod2> + <accel>Down</accel>
+
+
+## Editor New Contributor Tooltip
+## Renders the guidelines for new contributors
+
+editor-NewContributorTooltip--intro = It looks like you haven’t contributed to this locale yet.
+editor-NewContributorTooltip--team-info = Check the <a>team information</a> before starting, as it might contain important information and language resources.
+editor-NewContributorTooltip--team-managers = Reach out to <a>team managers</a> if you have questions or want to learn more about contributing.
 
 
 ## Editor Unsaved Changes
