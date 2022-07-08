@@ -10,24 +10,15 @@ import { Translation } from './Translation';
 
 const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
 const DEFAULT_TRANSLATION = {
-  sources: [
-    {
-      type: 'translation-memory',
-    },
-  ],
+  sources: [{ type: 'translation-memory' }],
   original: ORIGINAL,
   translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
 };
 
-function createTranslation(translation, entity) {
+function createTranslation(translation) {
   const store = createReduxStore();
-  const wrapper = mountComponentWithStore(Translation, store, {
-    translation,
-    entity,
-  });
-
+  const wrapper = mountComponentWithStore(Translation, store, { translation });
   createDefaultUser(store);
-
   return wrapper;
 }
 
