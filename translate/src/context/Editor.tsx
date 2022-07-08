@@ -63,7 +63,7 @@ export type EditorActions = {
   setEditorFromInput(value: string | Entry): void;
 
   /** @param manual Set `true` when value set due to direct user action */
-  setEditorFromMachinery(
+  setEditorFromHelpers(
     value: string,
     sources: SourceType[],
     manual: boolean,
@@ -86,9 +86,9 @@ const initEditorData: EditorData = {
 
 const initEditorActions: EditorActions = {
   setEditorBusy: () => {},
+  setEditorFromHelpers: () => {},
   setEditorFromHistory: () => {},
   setEditorFromInput: () => {},
-  setEditorFromMachinery: () => {},
   setEditorSelection: () => {},
   toggleFtlView: () => {},
 };
@@ -116,28 +116,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
-      setEditorFromHistory: (value) =>
-        setState((prev) => {
-          if (prev.format === 'ftl' && prev.view !== 'source') {
-            const next = getFtlViewAndValue(value);
-            return { ...prev, value: next.value, view: next.view };
-          } else {
-            return { ...prev, value };
-          }
-        }),
-
-      setEditorFromInput: (value) =>
-        setState((prev) => {
-          if (prev.view === 'rich' && typeof value === 'string') {
-            const next = updateRichValue(prev, value, false, false);
-            if (next) {
-              return { ...prev, value: next };
-            }
-          }
-          return { ...prev, value };
-        }),
-
-      setEditorFromMachinery: (translation, sources, manual) =>
+      setEditorFromHelpers: (translation, sources, manual) =>
         setState((prev) => {
           let value: string | Entry;
           switch (prev.view) {
@@ -157,6 +136,27 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           }
           const machinery = { manual, translation, sources };
           return { ...prev, machinery, value };
+        }),
+
+      setEditorFromHistory: (value) =>
+        setState((prev) => {
+          if (prev.format === 'ftl' && prev.view !== 'source') {
+            const next = getFtlViewAndValue(value);
+            return { ...prev, value: next.value, view: next.view };
+          } else {
+            return { ...prev, value };
+          }
+        }),
+
+      setEditorFromInput: (value) =>
+        setState((prev) => {
+          if (prev.view === 'rich' && typeof value === 'string') {
+            const next = updateRichValue(prev, value, false, false);
+            if (next) {
+              return { ...prev, value: next };
+            }
+          }
+          return { ...prev, value };
         }),
 
       setEditorSelection: (content) =>
@@ -248,7 +248,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     ) {
       const perfect = machinery.translations.find((tx) => tx.quality === 100);
       if (perfect) {
-        actions.setEditorFromMachinery(
+        actions.setEditorFromHelpers(
           perfect.translation,
           perfect.sources,
           false,

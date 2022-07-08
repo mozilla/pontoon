@@ -85,7 +85,7 @@ export function findLocalizedById(wrapper, id) {
 export function mockMatchMedia() {
   return Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation((query) => ({
+    value: (query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -94,7 +94,7 @@ export function mockMatchMedia() {
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
-    })),
+    }),
   });
 }
 
