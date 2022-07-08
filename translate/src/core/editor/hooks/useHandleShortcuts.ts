@@ -28,7 +28,7 @@ export function useHandleShortcuts(): (
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
-  const { setEditorFromMachinery } = useContext(EditorActions);
+  const { setEditorFromHelpers } = useContext(EditorActions);
   const existingTranslation = useExistingTranslation();
   const { errors, source, warnings, resetFailedChecks } =
     useContext(FailedChecksData);
@@ -134,10 +134,10 @@ export function useHandleShortcuts(): (
               nextIdx < len
                 ? machineryTranslations[nextIdx]
                 : concordanceSearchResults[nextIdx - len];
-            setEditorFromMachinery(translation, sources, true);
+            setEditorFromHelpers(translation, sources, true);
           } else {
             const { translation } = otherLocaleTranslations[nextIdx];
-            setEditorFromMachinery(translation, [], true);
+            setEditorFromHelpers(translation, [], true);
           }
         }
         break;

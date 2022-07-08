@@ -38,7 +38,7 @@ export function Translation({
   parameters: { project, resource, entity },
   index,
 }: Props): React.ReactElement<React.ElementType> {
-  const { setEditorFromMachinery } = useContext(EditorActions);
+  const { setEditorFromHelpers } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
@@ -51,9 +51,9 @@ export function Translation({
         format === 'ftl'
           ? getSimplePreview(translation.translation)
           : translation.translation;
-      setEditorFromMachinery(value, [], true);
+      setEditorFromHelpers(value, [], true);
     }
-  }, [format, index, setEditorFromMachinery, translation]);
+  }, [format, index, setEditorFromHelpers, translation]);
 
   const className = classNames(
     'translation',
