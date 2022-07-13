@@ -27,6 +27,14 @@ export type ReceiveAction = {
   readonly users: Array<UsersList>;
 };
 
+/**
+ * Update the user data.
+ */
+export type UpdateAction = {
+  readonly type: typeof UPDATE;
+  readonly data: Record<string, any>;
+};
+
 export type Settings = {
   runQualityChecks?: boolean;
   forceSuggestions?: boolean;
@@ -38,14 +46,6 @@ export type Settings = {
 export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
   readonly settings: Settings;
-};
-
-/**
- * Update the user data.
- */
-export type UpdateAction = {
-  readonly type: typeof UPDATE;
-  readonly data: Record<string, any>;
 };
 
 /**

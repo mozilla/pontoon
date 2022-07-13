@@ -39,7 +39,7 @@ export function Translation({
   sourceString,
   translation,
 }: Props): React.ReactElement<React.ElementType> {
-  const { setEditorFromMachinery } = useContext(EditorActions);
+  const { setEditorFromHelpers } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
@@ -48,9 +48,9 @@ export function Translation({
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       setCopied(true);
-      setEditorFromMachinery(translation.translation, translation.sources);
+      setEditorFromHelpers(translation.translation, translation.sources, true);
     }
-  }, [index, setEditorFromMachinery, translation]);
+  }, [index, setEditorFromHelpers, translation]);
 
   const className = classNames(
     'translation',

@@ -42,10 +42,12 @@ export function TranslationLength(): React.ReactElement<'div'> | null {
     );
   }
 
+  const srcText = entity.format === 'ftl' ? getSimplePreview(source) : source;
+
   return (
     <div className='translation-length'>
       <div className='translation-vs-original'>
-        <span>{text.length}</span>|<span>{source.length}</span>
+        <span>{text.length}</span>|<span>{srcText.length}</span>
       </div>
     </div>
   );

@@ -7,13 +7,18 @@ import { PluralSelector } from '~/modules/genericeditor/components/PluralSelecto
 
 import './Editor.css';
 import { EditorMenu } from './EditorMenu';
+import { NewContributorTooltip } from './NewContributorTooltip';
+import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 
 export function Editor(): React.ReactElement<'div'> {
   const { view } = useContext(EditorData);
+
   return (
     <div className='editor'>
       <PluralSelector />
+      <NewContributorTooltip />
       {view === 'rich' ? <RichTranslationForm /> : <GenericTranslationForm />}
+      <MachinerySourceIndicator />
       <EditorMenu />
     </div>
   );

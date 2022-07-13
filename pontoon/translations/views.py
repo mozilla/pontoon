@@ -2,9 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
+
+from notifications.signals import notify
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
@@ -77,6 +80,7 @@ def create_translation(request):
     # Checks are disabled for the tutorial.
     use_checks = project.slug != "tutorial"
     user = request.user
+    first_contribution = user.is_new_contributor(locale)
 
     failed_checks = None
     if use_checks:
@@ -120,6 +124,50 @@ def create_translation(request):
             locale=locale,
             plural_form=plural_form,
         )
+
+    # When user makes their first contribution to the team, notify team managers
+    if first_contribution:
+        desc = """
+        <a href="{user_href}">{user}</a> has made their first contribution to
+        <a href="{locale_href}">{locale} ({locale_code})</a>.
+        Please welcome them to the team, and make sure to
+        <a href="{review_href}">review their suggestions</a>.
+        """.format(
+            user=user.name_or_email,
+            user_href=reverse(
+                "pontoon.contributors.contributor.username",
+                kwargs={
+                    "username": user.username,
+                },
+            ),
+            locale=locale.name,
+            locale_code=locale.code,
+            locale_href=reverse(
+                "pontoon.teams.team",
+                kwargs={
+                    "locale": locale.code,
+                },
+            ),
+            review_href=reverse(
+                "pontoon.translate",
+                kwargs={
+                    "locale": locale.code,
+                    "project": project.slug,
+                    "resource": entity.resource.path,
+                },
+            )
+            + f"?string={entity.pk}",
+        )
+
+        for manager in locale.managers_group.user_set.filter(
+            profile__new_contributor_notifications=True
+        ):
+            notify.send(
+                sender=manager,
+                recipient=manager,
+                verb="has reviewed suggestions",  # Triggers render of description only
+                description=desc,
+            )
 
     return JsonResponse(
         {

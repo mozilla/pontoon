@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 
 import { EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
+import { parseEntry } from '~/core/utils/fluent';
 
 import { TranslationLength } from './TranslationLength';
 import sinon from 'sinon';
@@ -44,6 +45,22 @@ describe('<TranslationLength>', () => {
   it('shows translation length and plural original string length', () => {
     const wrapper = mountTranslationLength('', '123456', '1234567', '');
 
+    expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
+      '6',
+    );
+  });
+
+  it('shows translation length and FTL original string length', () => {
+    const wrapper = mountTranslationLength(
+      'ftl',
+      'key = 123456',
+      parseEntry('key = 1234567'),
+      '',
+    );
+
+    expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(
+      '7',
+    );
     expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
       '6',
     );

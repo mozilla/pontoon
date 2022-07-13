@@ -14,6 +14,7 @@ import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
 import { TranslationProxy } from '~/core/translation';
+import { getSimplePreview } from '~/core/utils/fluent';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Translation.css';
@@ -37,7 +38,7 @@ export function Translation({
   parameters: { project, resource, entity },
   index,
 }: Props): React.ReactElement<React.ElementType> {
-  const { setEditorFromMachinery } = useContext(EditorActions);
+  const { setEditorFromHelpers } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
@@ -46,9 +47,13 @@ export function Translation({
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       setCopied(true);
-      setEditorFromMachinery(translation.translation, []);
+      const value =
+        format === 'ftl'
+          ? getSimplePreview(translation.translation)
+          : translation.translation;
+      setEditorFromHelpers(value, [], true);
     }
-  }, [index, setEditorFromMachinery, translation]);
+  }, [format, index, setEditorFromHelpers, translation]);
 
   const className = classNames(
     'translation',
