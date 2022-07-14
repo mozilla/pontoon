@@ -43,10 +43,10 @@ USER pontoon
 # Install the server's Node.js requirements
 ENV YUGLIFY_BINARY /app/node_modules/.bin/yuglify
 ENV TERSER_BINARY /app/node_modules/.bin/terser
-COPY pontoon/package.json .
+COPY --chown=pontoon:pontoon pontoon/package.json .
 RUN npm install
 
-COPY ./docker/config/server.env .env
+COPY --chown=pontoon:pontoon ./docker/config/server.env .env
 COPY --chown=pontoon:pontoon . /app/
 
 RUN python manage.py collectstatic
