@@ -247,7 +247,6 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
         root.current?.querySelector('textarea:first-of-type') ?? null;
       if (activeInput.current && !searchInputFocused) {
         activeInput.current.focus();
-        activeInput.current.setSelectionRange(0, 0);
       }
     }
   }, [entity, message]);

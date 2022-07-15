@@ -164,7 +164,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (typeof prev.value === 'string') {
             const input = prev.activeInput.current;
             if (input) {
-              input.setRangeText(content);
+              input.setRangeText(
+                content,
+                input.selectionStart,
+                input.selectionEnd,
+                'end',
+              );
               return { ...prev, value: input.value };
             }
           } else {

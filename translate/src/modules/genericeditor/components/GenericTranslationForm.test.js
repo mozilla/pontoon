@@ -74,9 +74,9 @@ describe('<GenericTranslationForm>', () => {
 
   it('updates the translation when setEditorSelection is passed', async () => {
     const [wrapper, actions] = mountForm('Hello');
-    act(() => actions.setEditorSelection('World, '));
+    act(() => actions.setEditorSelection(', World'));
     wrapper.update();
 
-    expect(wrapper.find('textarea').prop('value')).toBe('World, Hello');
+    expect(wrapper.find('textarea').prop('value')).toBe('Hello, World');
   });
 });
