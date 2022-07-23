@@ -2,7 +2,7 @@
   "name": "server",
   "private": true,
   "devDependencies": {
-    "terser": "^5.10.0",
+    "terser": "^5.14.2",
     "yuglify": "^2.0.0"
   }
 }

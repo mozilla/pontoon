@@ -1,4 +1,4 @@
-import React, { useContext, useLayoutEffect, useRef } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 import { EditorActions, EditorData } from '~/context/Editor';
 
 import { Locale } from '~/context/Locale';
@@ -17,7 +17,6 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
   const searchInputFocused = useAppSelector(
     (state) => state.search.searchInputFocused,
   );
-  const userInput = useRef(false);
 
   const handleShortcuts = useHandleShortcuts();
 
@@ -26,11 +25,6 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
     const input = activeInput.current;
     if (input && !searchInputFocused) {
       input.focus();
-      if (userInput.current) {
-        userInput.current = false;
-      } else {
-        input.setSelectionRange(0, 0);
-      }
     }
   }, [value, searchInputFocused]);
 
@@ -42,10 +36,7 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
       readOnly={readonly}
       ref={activeInput}
       value={value}
-      onKeyDown={(ev) => {
-        userInput.current = true;
-        handleShortcuts(ev);
-      }}
+      onKeyDown={handleShortcuts}
       onChange={(ev) => setEditorFromInput(ev.currentTarget.value)}
       dir={direction}
       lang={code}
