@@ -11,9 +11,9 @@ import {
   extractAccessKeyCandidates,
   isPluralExpression,
 } from '~/core/utils/fluent';
-import { useAppSelector } from '~/hooks';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
 
 import './RichTranslationForm.css';
 
@@ -228,11 +228,8 @@ function RichPattern({
  * are made directly to that AST.
  */
 export function RichTranslationForm(): null | React.ReactElement<'div'> {
-  const searchInputFocused = useAppSelector(
-    (state) => state.search.searchInputFocused,
-  );
   const { entity } = useContext(EntityView);
-  const { activeInput, value: message } = useContext(EditorData);
+  const { activeInput, machinery, value: message } = useContext(EditorData);
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
@@ -245,11 +242,11 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
     } else {
       activeInput.current ??=
         root.current?.querySelector('textarea:first-of-type') ?? null;
-      if (activeInput.current && !searchInputFocused) {
-        activeInput.current.focus();
+      if (!searchBoxHasFocus()) {
+        activeInput.current?.focus();
       }
     }
-  }, [entity, message]);
+  }, [entity, machinery, message]);
 
   // message should always be a Message or a Term
   return message instanceof Message || message instanceof Term ? (

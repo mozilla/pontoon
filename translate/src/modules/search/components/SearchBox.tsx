@@ -17,7 +17,7 @@ import type { SearchAndFilters } from '~/modules/search';
 import { SEARCH } from '~/modules/search';
 import type { AppDispatch } from '~/store';
 
-import { getAuthorsAndTimeRangeData, setFocus } from '../actions';
+import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
@@ -56,6 +56,9 @@ export type FilterAction = {
   filter: FilterType;
   value: string | string[] | null | undefined;
 };
+
+/** If SearchBox has focus, translation form updates should not grab focus for themselves.  */
+export const searchBoxHasFocus = () => document.activeElement?.id === 'search';
 
 /**
  * Shows and controls a search box, used to filter the list of entities.
@@ -253,9 +256,7 @@ export function SearchBoxBase({
         title='Search Strings (Ctrl + Shift + F)'
         type='search'
         value={search}
-        onBlur={() => dispatch(setFocus(false))}
         onChange={(ev) => setSearch(ev.currentTarget.value)}
-        onFocus={() => dispatch(setFocus(true))}
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
             applyFilters();
