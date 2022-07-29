@@ -13,7 +13,7 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
   const { code, direction, script } = useContext(Locale);
   const readonly = useReadonlyEditor();
   const { setEditorFromInput } = useContext(EditorActions);
-  const { activeInput, value } = useContext(EditorData);
+  const { activeInput, machinery, value } = useContext(EditorData);
 
   const handleShortcuts = useHandleShortcuts();
 
@@ -22,7 +22,7 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
     if (!searchBoxHasFocus()) {
       activeInput.current?.focus();
     }
-  }, [value]);
+  }, [machinery, value]);
 
   return typeof value !== 'string' ? null : (
     <textarea

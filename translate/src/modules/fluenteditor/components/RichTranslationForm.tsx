@@ -229,7 +229,7 @@ function RichPattern({
  */
 export function RichTranslationForm(): null | React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeInput, value: message } = useContext(EditorData);
+  const { activeInput, machinery, value: message } = useContext(EditorData);
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
@@ -246,7 +246,7 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
         activeInput.current?.focus();
       }
     }
-  }, [entity, message]);
+  }, [entity, machinery, message]);
 
   // message should always be a Message or a Term
   return message instanceof Message || message instanceof Term ? (
