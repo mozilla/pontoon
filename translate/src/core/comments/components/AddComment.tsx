@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import escapeHtml from 'escape-html';
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -26,7 +27,8 @@ import {
   withReact,
 } from 'slate-react';
 
-import type { UsersList } from '~/api/user';
+import type { MentionUser } from '~/api/user';
+import { MentionUsers } from '~/context/MentionUsers';
 import type { UserState } from '~/core/user';
 import { UserAvatar } from '~/core/user';
 
@@ -65,12 +67,13 @@ export function AddComment({
   initFocus,
   onAddComment,
   resetContactPerson,
-  user: { gravatarURLSmall, username, users },
+  user: { gravatarURLSmall, username },
 }: Props): React.ReactElement<'div'> {
   const [mentionTarget, setMentionTarget] = useState<Range | null>(null);
   const [mentionIndex, setMentionIndex] = useState(0);
   const [mentionSearch, setMentionSearch] = useState('');
 
+  const { initMentions, mentionUsers } = useContext(MentionUsers);
   const [slateKey, resetValue] = useReducer((key) => key + 1, 0);
   const initialValue = useMemo<Paragraph[]>(
     () => [{ type: 'paragraph', children: [{ text: '' }] }],
@@ -82,7 +85,7 @@ export function AddComment({
     ReactEditor.focus(editor);
     Transforms.select(editor, Editor.end(editor, []));
   }, []);
-  const insertMention = useCallback(({ name, url }: UsersList) => {
+  const insertMention = useCallback(({ name, url }: MentionUser) => {
     const mention: Mention = {
       type: 'mention',
       character: name,
@@ -93,6 +96,8 @@ export function AddComment({
     Transforms.move(editor);
     Transforms.insertText(editor, ' ');
   }, []);
+
+  useEffect(initMentions, []);
 
   // Insert project manager as mention when 'Request context / Report issue' button used
   // and then clear the value from state
@@ -108,18 +113,22 @@ export function AddComment({
 
     if (contactPerson) {
       if (!isMentioned) {
-        const contactUser = users.find((user) => user.name === contactPerson);
+        const contactUser = mentionUsers.find(
+          (user) => user.name === contactPerson,
+        );
         if (contactUser) {
           insertMention(contactUser);
+        } else {
+          // If mentionable users are still loading,
+          // do not reset the contact person
+          return;
         }
       }
 
-      if (resetContactPerson) {
-        resetContactPerson();
-        placeFocus();
-      }
+      resetContactPerson?.();
+      placeFocus();
     }
-  }, [contactPerson, users, resetContactPerson]);
+  }, [contactPerson, mentionUsers, resetContactPerson]);
 
   // Set focus on Editor
   useEffect(() => {
@@ -128,7 +137,7 @@ export function AddComment({
     }
   }, [initFocus]);
 
-  const suggestedUsers = users
+  const suggestedUsers = mentionUsers
     .filter((user) =>
       user.name.toLowerCase().includes(mentionSearch.toLowerCase()),
     )
@@ -180,7 +189,7 @@ export function AddComment({
     }
   };
 
-  const handleSelectMention = (user: UsersList) => {
+  const handleSelectMention = (user: MentionUser) => {
     if (mentionTarget) {
       Transforms.select(editor, mentionTarget);
       insertMention(user);

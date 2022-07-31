@@ -1,6 +1,4 @@
-import type { UsersList } from '~/api/user';
-
-import { Action, RECEIVE_USERS, UPDATE, UPDATE_SETTINGS } from './actions';
+import { Action, UPDATE, UPDATE_SETTINGS } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -86,7 +84,6 @@ export type UserState = {
   readonly gravatarURLSmall: string;
   readonly gravatarURLBig: string;
   readonly notifications: Notifications;
-  readonly users: Array<UsersList>;
 };
 
 const initial: UserState = {
@@ -113,16 +110,10 @@ const initial: UserState = {
     notifications: [],
     unread_count: '0',
   },
-  users: [],
 };
 
 export function reducer(state: UserState = initial, action: Action): UserState {
   switch (action.type) {
-    case RECEIVE_USERS:
-      return {
-        ...state,
-        users: action.users,
-      };
     case UPDATE:
       return {
         isAuthenticated: action.data.is_authenticated ?? false,
@@ -149,7 +140,6 @@ export function reducer(state: UserState = initial, action: Action): UserState {
           notifications: [],
           unread_count: '0',
         },
-        users: state.users,
       };
     case UPDATE_SETTINGS:
       return {

@@ -4,13 +4,13 @@ import { createPortal } from 'react-dom';
 import type { Range } from 'slate';
 import { ReactEditor } from 'slate-react';
 
-import type { UsersList } from '~/api/user';
+import type { MentionUser } from '~/api/user';
 
 type Props = {
   editor: ReactEditor;
   index: number;
-  onSelect(user: UsersList): void;
-  suggestedUsers: UsersList[];
+  onSelect(user: MentionUser): void;
+  suggestedUsers: MentionUser[];
   target: Range;
 };
 
