@@ -67,7 +67,7 @@ export type Notifications = {
 };
 
 export type UserState = {
-  readonly isAuthenticated: boolean;
+  readonly isAuthenticated: boolean | null; // null while loading
   readonly isAdmin: boolean;
   readonly id: string;
   readonly displayName: string;
@@ -90,7 +90,7 @@ export type UserState = {
 };
 
 const initial: UserState = {
-  isAuthenticated: false,
+  isAuthenticated: null,
   isAdmin: false,
   id: '',
   displayName: '',
@@ -125,7 +125,7 @@ export function reducer(state: UserState = initial, action: Action): UserState {
       };
     case UPDATE:
       return {
-        isAuthenticated: action.data.is_authenticated ?? false,
+        isAuthenticated: action.data.is_authenticated ?? null,
         isAdmin: action.data.is_admin ?? false,
         id: action.data.id ?? '',
         displayName: action.data.display_name ?? '',
