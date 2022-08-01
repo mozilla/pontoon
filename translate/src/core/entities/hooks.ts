@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import type { Entity } from '~/api/entity';
 import { EntityView } from '~/context/EntityView';
+import { HistoryData } from '~/context/HistoryData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { useAppSelector } from '~/hooks';
@@ -41,6 +42,7 @@ export function usePreviousEntity(): Entity | null {
 export function usePushNextTranslatable() {
   const { push } = useContext(Location);
   const { cldrPlurals } = useContext(Locale);
+  const { updateHistory } = useContext(HistoryData);
   const nextEntity = useNextEntity();
   const { entity, hasPluralForms, pluralForm, setPluralForm } =
     useContext(EntityView);
@@ -50,6 +52,9 @@ export function usePushNextTranslatable() {
       setPluralForm(pluralForm + 1);
     } else if (nextEntity && nextEntity.pk !== entity.pk) {
       push({ entity: nextEntity.pk });
+    } else {
+      // No next string, so staying with current one -> history needs a refresh
+      updateHistory();
     }
   };
 }

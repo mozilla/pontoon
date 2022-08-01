@@ -58,10 +58,18 @@ export function EntityViewProvider({
   const pluralCount = useContext(Locale).cldrPlurals.length;
   const entities = useAppSelector((state) => state[ENTITIES].entities);
 
-  const [state, setState] = useState(initEntityView);
+  const entity = entities.find((entity) => entity.pk === pk) ?? emptyEntity;
+
+  const [state, setState] = useState<EntityView>({
+    entity,
+    hasPluralForms: false,
+    pluralForm: 0,
+    setPluralForm: () => {},
+  });
+
+  useEffect(() => setState((prev) => ({ ...prev, entity })), [entity]);
 
   useEffect(() => {
-    const entity = entities.find((entity) => entity.pk === pk) ?? emptyEntity;
     const hasPluralForms =
       pluralCount > 1 && !!entity.original_plural && entity.format !== 'ftl';
 
@@ -73,8 +81,13 @@ export function EntityViewProvider({
         }
       : () => {};
 
-    setState({ entity, hasPluralForms, pluralForm: 0, setPluralForm });
-  }, [pk, pluralCount, entities]);
+    setState((prev) => ({
+      entity: prev.entity,
+      hasPluralForms,
+      pluralForm: 0,
+      setPluralForm,
+    }));
+  }, [pk, entity.original_plural, entity.format, pluralCount]);
 
   return <EntityView.Provider value={state}>{children}</EntityView.Provider>;
 }

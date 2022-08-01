@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
+import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';
@@ -60,30 +61,32 @@ export function App() {
     <Locale.Provider value={locale}>
       <NotificationProvider>
         <MentionUsersProvider>
-          <div id='app'>
-            <AddonPromotion />
-            <header>
-              <Navigation />
-              <ResourceProgress />
-              {allProjects ? null : <ProjectInfo />}
-              <NotificationPanel />
-              <UserControls />
-            </header>
-            <section className='main-content'>
-              <section className='panel-list'>
-                <SearchBox />
-                <EntitiesList />
+          <EntityViewProvider>
+            <div id='app'>
+              <AddonPromotion />
+              <header>
+                <Navigation />
+                <ResourceProgress />
+                {allProjects ? null : <ProjectInfo />}
+                <NotificationPanel />
+                <UserControls />
+              </header>
+              <section className='main-content'>
+                <section className='panel-list'>
+                  <SearchBox />
+                  <EntitiesList />
+                </section>
+                <section className='panel-content'>
+                  {batchactions.entities.length === 0 ? (
+                    <Entity />
+                  ) : (
+                    <BatchActions />
+                  )}
+                </section>
               </section>
-              <section className='panel-content'>
-                {batchactions.entities.length === 0 ? (
-                  <Entity />
-                ) : (
-                  <BatchActions />
-                )}
-              </section>
-            </section>
-            <InteractiveTour />
-          </div>
+              <InteractiveTour />
+            </div>
+          </EntityViewProvider>
         </MentionUsersProvider>
       </NotificationProvider>
     </Locale.Provider>

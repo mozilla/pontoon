@@ -63,6 +63,11 @@ function expectHiddenSettingsAndActions(wrapper) {
 }
 
 describe('<EditorMenu>', () => {
+  it('does not render while loading', () => {
+    const wrapper = createEditorMenu({ isAuthenticated: null });
+    expect(wrapper.find('EditorMenu').isEmptyRender()).toBeTruthy();
+  });
+
   it('renders correctly', () => {
     const wrapper = createEditorMenu();
 
