@@ -1,12 +1,6 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
 import { EditorActions } from '~/context/Editor';
@@ -41,13 +35,11 @@ export function Translation({
 }: Props): React.ReactElement<React.ElementType> {
   const { setEditorFromHelpers } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
-  const [isCopied, setCopied] = useState(false);
   const isSelected = element === index;
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setCopied(true);
       setEditorFromHelpers(translation.translation, translation.sources, true);
     }
   }, [index, setEditorFromHelpers, translation]);
@@ -55,7 +47,7 @@ export function Translation({
   const className = classNames(
     'translation',
     useReadonlyEditor() && 'cannot-copy',
-    isSelected && isCopied && 'selected',
+    isSelected && 'selected',
   );
 
   const translationRef = useRef<HTMLLIElement>(null);

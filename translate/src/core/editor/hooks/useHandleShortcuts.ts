@@ -6,6 +6,7 @@ import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { getSimplePreview } from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
@@ -137,7 +138,7 @@ export function useHandleShortcuts(): (
             setEditorFromHelpers(translation, sources, true);
           } else {
             const { translation } = otherLocaleTranslations[nextIdx];
-            setEditorFromHelpers(translation, [], true);
+            setEditorFromHelpers(getSimplePreview(translation), [], true);
           }
         }
         break;

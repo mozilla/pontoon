@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 
 import { useActiveTranslation } from './EntityView';
 
-export type HelperSelection = Readonly<{
+type HelperSelection = Readonly<{
   /**
    * Index of selected tab in the helpers box. Assumes the following:
    * - `0`: Machinery
