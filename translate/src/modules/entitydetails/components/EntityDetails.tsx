@@ -60,10 +60,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
   const { entity, locale: lc, project } = location;
 
   useEffect(() => {
-    if (!selectedEntity) {
-      return;
-    }
-
     const { format, machinery_original, pk } = selectedEntity;
     const source = getOptimizedContent(machinery_original, format);
 
@@ -92,7 +88,8 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     [dispatch],
   );
 
-  return (
+  // No content while loading entity data
+  return selectedEntity.pk === 0 ? null : (
     <section className='entity-details'>
       <section className='main-column'>
         <EntityNavigation />
