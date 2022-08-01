@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
 
+/**
+ * Calls `onDiscard` when clicking anywhere outside the `ref` element
+ *
+ * @param ref - Must be the top-level element rendered by a component,
+ *   or this hook will misbehave.
+ */
 export function useOnDiscard(
   ref: React.RefObject<unknown>,
   onDiscard: () => void,
