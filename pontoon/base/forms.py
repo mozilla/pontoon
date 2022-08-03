@@ -207,6 +207,20 @@ class UserProfileForm(forms.ModelForm):
         fields = ("first_name",)
 
 
+class UserExternalAccountsForm(forms.ModelForm):
+    """
+    Form is responsible for saving user's external accounts.
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            "bugzilla",
+            "matrix",
+            "github",
+        )
+
+
 class UserCustomHomepageForm(forms.ModelForm):
     """
     Form is responsible for saving custom home page.
