@@ -52,13 +52,32 @@
     {% csrf_token %}
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
-    <section id="profile-form">
-      <h3>Personal information</h3>
-      <div class="field">
-          {{ profile_form.first_name.label_tag(label_suffix='') }}
-          {{ profile_form.first_name }}
-          {{ profile_form.first_name.errors }}
-      </div>
+    <section>
+        <h3>Personal information</h3>
+        <div class="field">
+            {{ profile_form.first_name.label_tag(label_suffix='') }}
+            {{ profile_form.first_name }}
+            {{ profile_form.first_name.errors }}
+        </div>
+      </section>
+
+    <section>
+        <h3>External accounts</h3>
+        <div class="field">
+            {{ external_accounts_form.bugzilla.label_tag(label_suffix='') }}
+            {{ external_accounts_form.bugzilla }}
+            {{ external_accounts_form.bugzilla.errors }}
+        </div>
+        <div class="field">
+            {{ external_accounts_form.github.label_tag(label_suffix='') }}
+            {{ external_accounts_form.github }}
+            {{ external_accounts_form.github.errors }}
+        </div>
+        <div class="field">
+            {{ external_accounts_form.matrix.label_tag(label_suffix='') }}
+            {{ external_accounts_form.matrix }}
+            {{ external_accounts_form.matrix.errors }}
+        </div>
     </section>
 
     <section>

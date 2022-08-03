@@ -196,14 +196,26 @@ def settings(request):
             request.POST,
             instance=request.user,
         )
+        external_accounts_form = forms.UserExternalAccountsForm(
+            request.POST,
+            instance=request.user.profile,
+        )
 
-        if locales_form.is_valid() and profile_form.is_valid():
+        if (
+            locales_form.is_valid()
+            and profile_form.is_valid()
+            and external_accounts_form.is_valid()
+        ):
             locales_form.save()
             profile_form.save()
+            external_accounts_form.save()
 
             messages.success(request, "Settings saved.")
     else:
         profile_form = forms.UserProfileForm(instance=request.user)
+        external_accounts_form = forms.UserExternalAccountsForm(
+            instance=request.user.profile
+        )
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
@@ -245,6 +257,7 @@ def settings(request):
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
             "profile_form": profile_form,
+            "external_accounts_form": external_accounts_form,
         },
     )
 
