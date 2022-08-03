@@ -1591,6 +1591,10 @@ class UserProfile(models.Model):
     # Used to display strings from preferred source locale.
     preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
 
+    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
+    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
+    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
+
     # Used to keep track of start/step no. of user tour.
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)

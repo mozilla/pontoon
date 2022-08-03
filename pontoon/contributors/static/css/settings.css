@@ -63,22 +63,15 @@
   margin: 9px;
 }
 
-#profile-form {
-  display: block;
-  position: relative;
-  text-align: left;
-  width: 620px;
-}
-
-#profile-form .field {
+#main .field {
   text-align: left;
 }
 
-#profile-form .field:not(:last-child) {
+#main .field:not(:last-child) {
   margin-bottom: 20px;
 }
 
-#profile-form .field input {
+#main .field input {
   color: #ffffff;
   background: #333941;
   border: 1px solid #4d5967;
@@ -86,19 +79,7 @@
   float: none;
   width: 290px;
   padding: 4px;
-
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-
-#profile-form button {
-  margin-top: 10px;
-}
-
-#profile-form .help {
-  color: #888888;
-  font-style: italic;
-  margin-top: 5px;
 }
 
 .errorlist {
