@@ -24,25 +24,6 @@
 
   <h2 id="display-name">{{ user.first_name }}</h2>
 
-  <ul id="editor-settings" class="info check-list">
-    {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
-
-    {% if user.translated_locales %}
-      {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
-    {% endif %}
-  </ul>
-
-  <div id="locale-settings" class="clearfix">
-    <div id="homepage">
-      <span class="label">Select your homepage</span>
-      <span>{{ team_selector.locale(locales, locale) }}</span>
-    </div>
-    <div id="preferred-locale">
-      <span class="label">Select preferred source locale</span>
-      <span>{{ team_selector.locale(preferred_locales, preferred_locale) }}</span>
-    </div>
-  </div>
-
 </section>
 {% endblock %}
 
@@ -93,11 +74,6 @@
     </section>
 
     <section>
-        <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
-        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
-    </section>
-
-    <section>
         <h3>Notification subscriptions</h3>
         <ul class="info check-list">
             {{ Checkbox.checkbox('New strings', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
@@ -107,6 +83,36 @@
             {{ Checkbox.checkbox('Review actions on own suggestions', class='review-notifications', attribute='review_notifications', is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are approved or rejected') }}
             {{ Checkbox.checkbox('New team contributors', class='new-contributor-notifications', attribute='new_contributor_notifications', is_enabled=user.profile.new_contributor_notifications, title='Get notified when new contributors make their first contributions to the team') }}
         </ul>
+    </section>
+
+    <section>
+        <h3>Editor Settings</h3>
+        <ul class="info check-list">
+            {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
+
+            {% if user.translated_locales %}
+                {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+            {% endif %}
+        </ul>
+    </section>
+
+    <section>
+        <h3>Locale Settings</h3>
+        <div id="locale-settings" class="clearfix">
+            <div id="homepage">
+                <span class="label">Homepage locale</span>
+                {{ team_selector.locale(locales, locale) }}
+            </div>
+            <div id="preferred-locale">
+                <span class="label">Preferred source locale</span>
+                {{ team_selector.locale(preferred_locales, preferred_locale) }}
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3><span class="small stress">Preferred locales to get suggestions from</span></h3>
+        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
     </section>
 
     <div class="controls">

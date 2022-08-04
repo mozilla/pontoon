@@ -1586,9 +1586,10 @@ class UserProfile(models.Model):
     username = models.SlugField(unique=True, blank=True, null=True)
     bio = models.TextField(max_length=160, blank=True, null=True)
 
-    # Translation settings
-    quality_checks = models.BooleanField(default=True)
-    force_suggestions = models.BooleanField(default=False)
+    # External accounts
+    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
+    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
+    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
 
     # Notification subscriptions
     new_string_notifications = models.BooleanField(default=True)
@@ -1597,6 +1598,10 @@ class UserProfile(models.Model):
     unreviewed_suggestion_notifications = models.BooleanField(default=True)
     review_notifications = models.BooleanField(default=True)
     new_contributor_notifications = models.BooleanField(default=True)
+
+    # Translation settings
+    quality_checks = models.BooleanField(default=True)
+    force_suggestions = models.BooleanField(default=False)
 
     # Used to redirect a user to a custom team page.
     custom_homepage = models.CharField(max_length=20, blank=True, null=True)
@@ -1610,11 +1615,6 @@ class UserProfile(models.Model):
         default=list,
         blank=True,
     )
-
-    # External accounts
-    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
-    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
-    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
 
     # Used to dismiss promotional banner for the Pontoon Add-On.
     has_dismissed_addon_promotion = models.BooleanField(default=False)

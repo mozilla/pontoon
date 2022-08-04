@@ -35,7 +35,7 @@ a.avatar:hover .desc ~ img {
   color: #ebebeb;
   font-size: 48px;
   letter-spacing: normal;
-  padding: 8px 0 20px;
+  padding: 10px 0 0;
   text-transform: none;
 }
 
