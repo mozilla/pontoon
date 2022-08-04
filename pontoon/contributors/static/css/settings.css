@@ -64,22 +64,28 @@
 }
 
 #main .field {
+  margin-bottom: 20px;
   text-align: left;
 }
 
-#main .field:not(:last-child) {
-  margin-bottom: 20px;
-}
-
-#main .field input {
+#main .field input,
+#main .field textarea {
   color: #ffffff;
   background: #333941;
   border: 1px solid #4d5967;
   border-radius: 3px;
   float: none;
-  width: 290px;
   padding: 4px;
   box-sizing: border-box;
+}
+
+#main .field input {
+  width: 290px;
+}
+
+#main .field textarea {
+  height: 82px;
+  width: 620px;
 }
 
 .errorlist {

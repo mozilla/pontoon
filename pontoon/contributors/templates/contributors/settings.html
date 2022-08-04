@@ -65,6 +65,11 @@
             {{ user_profile_form.username.errors }}
             <p class="help">{{ user_profile_form.username.help_text }}</p>
         </div>
+        <div class="field">
+            {{ user_profile_form.bio.label_tag(label_suffix='') }}
+            {{ user_profile_form.bio }}
+            {{ user_profile_form.bio.errors }}
+        </div>
       </section>
 
     <section>
