@@ -216,6 +216,7 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = (
             "username",
+            "bio",
             "bugzilla",
             "matrix",
             "github",

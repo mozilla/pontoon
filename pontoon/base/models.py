@@ -1584,6 +1584,7 @@ class UserProfile(models.Model):
 
     # Personal information
     username = models.SlugField(unique=True, blank=True, null=True)
+    bio = models.TextField(max_length=160, blank=True, null=True)
 
     # Translation settings
     quality_checks = models.BooleanField(default=True)

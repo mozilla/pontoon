@@ -61,7 +61,7 @@ When selecting a specific time range, the data displayed below the graph is upda
 
 The sidebar displays contact information for the contributor:
 * Name.
-* Description.
+* Bio.
 * Email address.
 * External accounts.
 * Last login.
