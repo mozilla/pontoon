@@ -14,7 +14,7 @@ from django.http import (
     HttpResponseBadRequest,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -44,6 +44,11 @@ def contributor_email(request, email):
 def contributor_username(request, username):
     try:
         user = User.objects.get(username=username)
+        if user.profile.username:
+            return redirect(
+                "pontoon.contributors.contributor.username",
+                username=user.profile.username,
+            )
     except User.DoesNotExist:
         user = get_object_or_404(UserProfile, username=username).user
 
