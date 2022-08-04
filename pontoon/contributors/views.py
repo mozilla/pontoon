@@ -14,14 +14,14 @@ from django.http import (
     HttpResponseBadRequest,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.utils.html import escape
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.utils import (
     map_translations_to_events,
@@ -42,7 +42,16 @@ def contributor_email(request, email):
 
 
 def contributor_username(request, username):
-    user = get_object_or_404(User, username=username)
+    try:
+        user = User.objects.get(username=username)
+        if user.profile.username:
+            return redirect(
+                "pontoon.contributors.contributor.username",
+                username=user.profile.username,
+            )
+    except User.DoesNotExist:
+        user = get_object_or_404(UserProfile, username=username).user
+
     return contributor(request, user)
 
 
@@ -192,30 +201,28 @@ def settings(request):
             request.POST,
             instance=request.user.profile,
         )
-        profile_form = forms.UserProfileForm(
+        user_form = forms.UserForm(
             request.POST,
             instance=request.user,
         )
-        external_accounts_form = forms.UserExternalAccountsForm(
+        user_profile_form = forms.UserProfileForm(
             request.POST,
             instance=request.user.profile,
         )
 
         if (
             locales_form.is_valid()
-            and profile_form.is_valid()
-            and external_accounts_form.is_valid()
+            and user_form.is_valid()
+            and user_profile_form.is_valid()
         ):
             locales_form.save()
-            profile_form.save()
-            external_accounts_form.save()
+            user_form.save()
+            user_profile_form.save()
 
             messages.success(request, "Settings saved.")
     else:
-        profile_form = forms.UserProfileForm(instance=request.user)
-        external_accounts_form = forms.UserExternalAccountsForm(
-            instance=request.user.profile
-        )
+        user_form = forms.UserForm(instance=request.user)
+        user_profile_form = forms.UserProfileForm(instance=request.user.profile)
 
     selected_locales = list(request.user.profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
@@ -256,8 +263,8 @@ def settings(request):
             "locale": custom_homepage_locale,
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
-            "profile_form": profile_form,
-            "external_accounts_form": external_accounts_form,
+            "user_form": user_form,
+            "user_profile_form": user_profile_form,
         },
     )
 
