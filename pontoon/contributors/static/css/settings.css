@@ -88,6 +88,12 @@
   width: 620px;
 }
 
+#main .field .help {
+  color: #888888;
+  font-style: italic;
+  margin-top: 5px;
+}
+
 .errorlist {
   color: #f36;
   list-style: none;
