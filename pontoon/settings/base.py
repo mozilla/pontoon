@@ -30,12 +30,6 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "False") != "False"
 
 HEROKU_DEMO = os.environ.get("HEROKU_DEMO", "False") != "False"
 
-# Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
-# and password 'AUTO_LOGIN_PASSWORD'
-AUTO_LOGIN = os.environ.get("AUTO_LOGIN", "False") != "False"
-AUTO_LOGIN_USERNAME = os.environ.get("AUTO_LOGIN_USERNAME", None)
-AUTO_LOGIN_PASSWORD = os.environ.get("AUTO_LOGIN_PASSWORD", None)
-
 LOGOUT_REDIRECT_URL = "/"
 
 ADMINS = MANAGERS = (
@@ -189,7 +183,6 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "pontoon.base.middleware.AutomaticLoginUserMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
