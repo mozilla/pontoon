@@ -59,6 +59,12 @@
             {{ user_form.first_name }}
             {{ user_form.first_name.errors }}
         </div>
+        <div class="field">
+            {{ user_profile_form.username.label_tag(label_suffix='') }}
+            {{ user_profile_form.username }}
+            {{ user_profile_form.username.errors }}
+            <p class="help">{{ user_profile_form.username.help_text }}</p>
+        </div>
       </section>
 
     <section>

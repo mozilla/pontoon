@@ -1582,6 +1582,9 @@ class UserProfile(models.Model):
         User, models.CASCADE, related_name="profile", primary_key=True
     )
 
+    # Personal information
+    username = models.SlugField(unique=True, blank=True, null=True)
+
     # Translation settings
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
