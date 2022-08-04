@@ -22,7 +22,7 @@
     <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
   </a>
 
-  <h2 id="username">{{ user.first_name }}</h2>
+  <h2 id="display-name">{{ user.first_name }}</h2>
 
   <ul id="editor-settings" class="info check-list">
     {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
