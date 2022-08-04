@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from django.utils.html import escape
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.utils import (
     map_translations_to_events,
@@ -42,7 +42,11 @@ def contributor_email(request, email):
 
 
 def contributor_username(request, username):
-    user = get_object_or_404(User, username=username)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = get_object_or_404(UserProfile, username=username).user
+
     return contributor(request, user)
 
 
