@@ -190,13 +190,13 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserProfileForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
     """
-    Form is responsible for saving user's name.
+    Form is responsible for saving user data.
     """
 
     first_name = forms.RegexField(
-        label="Name",
+        label="Display Name",
         regex="^[^<>\"'&]+$",
         max_length=30,
         strip=True,
@@ -207,14 +207,15 @@ class UserProfileForm(forms.ModelForm):
         fields = ("first_name",)
 
 
-class UserExternalAccountsForm(forms.ModelForm):
+class UserProfileForm(forms.ModelForm):
     """
-    Form is responsible for saving user's external accounts.
+    Form is responsible for saving user profile data.
     """
 
     class Meta:
         model = UserProfile
         fields = (
+            "username",
             "bugzilla",
             "matrix",
             "github",
