@@ -55,28 +55,28 @@
     <section>
         <h3>Personal information</h3>
         <div class="field">
-            {{ profile_form.first_name.label_tag(label_suffix='') }}
-            {{ profile_form.first_name }}
-            {{ profile_form.first_name.errors }}
+            {{ user_form.first_name.label_tag(label_suffix='') }}
+            {{ user_form.first_name }}
+            {{ user_form.first_name.errors }}
         </div>
       </section>
 
     <section>
         <h3>External accounts</h3>
         <div class="field">
-            {{ external_accounts_form.bugzilla.label_tag(label_suffix='') }}
-            {{ external_accounts_form.bugzilla }}
-            {{ external_accounts_form.bugzilla.errors }}
+            {{ user_profile_form.bugzilla.label_tag(label_suffix='') }}
+            {{ user_profile_form.bugzilla }}
+            {{ user_profile_form.bugzilla.errors }}
         </div>
         <div class="field">
-            {{ external_accounts_form.github.label_tag(label_suffix='') }}
-            {{ external_accounts_form.github }}
-            {{ external_accounts_form.github.errors }}
+            {{ user_profile_form.github.label_tag(label_suffix='') }}
+            {{ user_profile_form.github }}
+            {{ user_profile_form.github.errors }}
         </div>
         <div class="field">
-            {{ external_accounts_form.matrix.label_tag(label_suffix='') }}
-            {{ external_accounts_form.matrix }}
-            {{ external_accounts_form.matrix.errors }}
+            {{ user_profile_form.matrix.label_tag(label_suffix='') }}
+            {{ user_profile_form.matrix }}
+            {{ user_profile_form.matrix.errors }}
         </div>
     </section>
 

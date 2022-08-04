@@ -1581,33 +1581,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         User, models.CASCADE, related_name="profile", primary_key=True
     )
-    # Other fields here.
+
+    # Translation settings
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
-
-    # Used to redirect a user to a custom team page.
-    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
-
-    # Used to display strings from preferred source locale.
-    preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
-
-    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
-    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
-    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
-
-    # Used to keep track of start/step no. of user tour.
-    # Not started:0, Completed: -1, Finished Step No. otherwise
-    tour_status = models.IntegerField(default=0)
-
-    # Defines the order of locales displayed in locale tab.
-    locales_order = ArrayField(
-        models.PositiveIntegerField(),
-        default=list,
-        blank=True,
-    )
-
-    # Used to dismiss promotional banner for the Pontoon Add-On.
-    has_dismissed_addon_promotion = models.BooleanField(default=False)
 
     # Notification subscriptions
     new_string_notifications = models.BooleanField(default=True)
@@ -1616,6 +1593,31 @@ class UserProfile(models.Model):
     unreviewed_suggestion_notifications = models.BooleanField(default=True)
     review_notifications = models.BooleanField(default=True)
     new_contributor_notifications = models.BooleanField(default=True)
+
+    # Used to redirect a user to a custom team page.
+    custom_homepage = models.CharField(max_length=20, blank=True, null=True)
+
+    # Used to display strings from preferred source locale.
+    preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
+
+    # Defines the order of locales displayed in locale tab.
+    locales_order = ArrayField(
+        models.PositiveIntegerField(),
+        default=list,
+        blank=True,
+    )
+
+    # External accounts
+    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
+    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
+    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
+
+    # Used to dismiss promotional banner for the Pontoon Add-On.
+    has_dismissed_addon_promotion = models.BooleanField(default=False)
+
+    # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
+    tour_status = models.IntegerField(default=0)
 
     @property
     def preferred_locales(self):
