@@ -196,7 +196,7 @@ class UserForm(forms.ModelForm):
     """
 
     first_name = forms.RegexField(
-        label="Name",
+        label="Display Name",
         regex="^[^<>\"'&]+$",
         max_length=30,
         strip=True,
