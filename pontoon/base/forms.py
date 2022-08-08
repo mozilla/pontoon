@@ -220,6 +220,17 @@ class UserProfileForm(forms.ModelForm):
             "bugzilla",
             "matrix",
             "github",
+        )
+
+
+class UserProfileVisibilityForm(forms.ModelForm):
+    """
+    Form is responsible for controlling user profile visibility.
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = (
             "visibility_email",
             "visibility_external_accounts",
             "visibility_self_approval",

@@ -272,6 +272,9 @@ def settings(request):
             "preferred_locale": preferred_source_locale,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
+            "user_profile_visibility_form": forms.UserProfileVisibilityForm(
+                instance=request.user.profile
+            ),
         },
     )
 
