@@ -29,7 +29,11 @@
     <li>
       <span class="fa fa-fw fa-envelope"></span>
       {% if user.is_authenticated %}
-      <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
+        {% if contributor.profile.visibility_email == "Logged in users" or user.translated_locales %}
+          <a href="mailto:{{ contributor.email|nospam }}">{{ contributor.email|nospam }}</a>
+        {% else %}
+          <span>Email address visible to users with translator rights</span>
+        {% endif %}
       {% else %}
       {% if settings.AUTHENTICATION_METHOD == 'django' %}
         {% set login_url = url('standalone_login') %}
