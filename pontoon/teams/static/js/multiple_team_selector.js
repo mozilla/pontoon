@@ -52,7 +52,7 @@ $(function () {
     });
   }
 
-  $('body').on('submit', '.form.user-locales-settings', function () {
+  $('body').on('submit', 'form.user-locales-settings', function () {
     updateSelectedLocales();
   });
 });
