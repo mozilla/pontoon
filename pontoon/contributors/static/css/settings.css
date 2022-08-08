@@ -132,7 +132,6 @@
   font-style: italic;
   margin-left: 325px;
   margin-top: 5px;
-  width: 295px;
   font-size: 14px;
 }
 
@@ -149,10 +148,10 @@
 
 .errorlist {
   color: #f36;
+  font-size: 14px;
+  font-style: italic;
   list-style: none;
-  margin: 0;
-  margin-top: 5px;
-  text-align: left;
+  margin: 5px 0 0 325px;
 }
 
 .check-list {
