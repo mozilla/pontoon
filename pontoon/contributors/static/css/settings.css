@@ -87,6 +87,42 @@
   width: 295px;
 }
 
+#main .field .toggle-button {
+  font-size: 0;
+}
+
+#main .field button {
+  background: #272a2f;
+  border: 1px solid #666;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #777777;
+  float: none;
+  font-size: 16px;
+  font-weight: 100;
+  padding: 4px;
+  width: 147.5px;
+}
+
+#main .field button:first-child {
+  border-right-color: #4d5967;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#main .field button:nth-child(2) {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+#main .field button.active {
+  background: #333941;
+  border-color: #4d5967;
+  color: #aaa;
+  font-weight: 400;
+}
+
 #main .field textarea {
   height: 142px;
 }
@@ -94,9 +130,9 @@
 #main .field .help {
   color: #888888;
   font-style: italic;
+  margin-left: 325px;
   margin-top: 5px;
   width: 295px;
-  float: right;
   font-size: 14px;
 }
 

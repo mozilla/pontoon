@@ -128,6 +128,10 @@ def toggle_user_profile_attribute(request, username):
         "unreviewed_suggestion_notifications",
         "review_notifications",
         "new_contributor_notifications",
+        "visibility_email",
+        "visibility_external_accounts",
+        "visibility_self_approval",
+        "visibility_approval",
     ]:
         return JsonResponse(
             {"status": False, "message": "Forbidden: Attribute not allowed"},
@@ -141,7 +145,10 @@ def toggle_user_profile_attribute(request, username):
         )
 
     profile = user.profile
-    setattr(profile, attribute, json.loads(value))
+    try:
+        setattr(profile, attribute, json.loads(value))
+    except json.decoder.JSONDecodeError:
+        setattr(profile, attribute, value)
     profile.save()
 
     return JsonResponse({"status": True})

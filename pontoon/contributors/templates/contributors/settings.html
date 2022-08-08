@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% import "widgets/checkbox.html" as Checkbox %}
+{% import "widgets/toggle.html" as Toggle %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
@@ -44,7 +45,6 @@
             {{ user_profile_form.username.label_tag(label_suffix='') }}
             {{ user_profile_form.username }}
             {{ user_profile_form.username.errors }}
-            <p class="help">{{ user_profile_form.username.help_text }}</p>
         </div>
         <div class="field">
             {{ user_profile_form.bio.label_tag(label_suffix='') }}
@@ -70,6 +70,27 @@
             {{ user_profile_form.matrix.label_tag(label_suffix='') }}
             {{ user_profile_form.matrix }}
             {{ user_profile_form.matrix.errors }}
+        </div>
+    </section>
+
+    <section>
+        <h3>Visibility of data on the Profile page</h3>
+        <div class="field">
+            {{ user_profile_form.visibility_email.label_tag(label_suffix='') }}
+            {{ Toggle.button(field=user_profile_form.visibility_email) }}
+            <p class="help">Email addresses of team and project managers are visible to all logged in users</p>
+        </div>
+        <div class="field">
+            {{ user_profile_form.visibility_external_accounts.label_tag(label_suffix='') }}
+            {{ Toggle.button(field=user_profile_form.visibility_external_accounts) }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.visibility_self_approval.label_tag(label_suffix='') }}
+            {{ Toggle.button(field=user_profile_form.visibility_self_approval) }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.visibility_approval.label_tag(label_suffix='') }}
+            {{ Toggle.button(field=user_profile_form.visibility_approval) }}
         </div>
     </section>
 

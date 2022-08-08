@@ -1591,6 +1591,43 @@ class UserProfile(models.Model):
     matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
     github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
 
+    # Visibility
+    class Visibility(models.TextChoices):
+        ALL = "All users", "All users"
+        TRANSLATORS = "Translators", "Users with translator rights"
+
+    class VisibilityLoggedIn(models.TextChoices):
+        LOGGED_IN = "Logged in users", "Logged in users"
+        TRANSLATORS = "Translators", "Users with translator rights"
+
+    visibility_email = models.CharField(
+        "Email address",
+        max_length=20,
+        default=VisibilityLoggedIn.TRANSLATORS,
+        choices=VisibilityLoggedIn.choices,
+    )
+
+    visibility_external_accounts = models.CharField(
+        "External accounts",
+        max_length=20,
+        default=Visibility.TRANSLATORS,
+        choices=Visibility.choices,
+    )
+
+    visibility_self_approval = models.CharField(
+        "Self-approval ratio",
+        max_length=20,
+        default=Visibility.ALL,
+        choices=Visibility.choices,
+    )
+
+    visibility_approval = models.CharField(
+        "Approval ratio",
+        max_length=20,
+        default=Visibility.ALL,
+        choices=Visibility.choices,
+    )
+
     # Notification subscriptions
     new_string_notifications = models.BooleanField(default=True)
     project_deadline_notifications = models.BooleanField(default=True)

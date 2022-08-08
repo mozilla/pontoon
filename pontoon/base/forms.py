@@ -220,6 +220,10 @@ class UserProfileForm(forms.ModelForm):
             "bugzilla",
             "matrix",
             "github",
+            "visibility_email",
+            "visibility_external_accounts",
+            "visibility_self_approval",
+            "visibility_approval",
         )
 
 
