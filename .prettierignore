@@ -7,6 +7,10 @@ docs/venv/
 package-lock.json
 specs/
 
+/.github/
+/media/
+/static/
+
 # Jinja templates
 pontoon/base/templates/js/pontoon.js
 translate/public/translate.html
