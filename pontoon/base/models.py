@@ -1593,7 +1593,7 @@ class UserProfile(models.Model):
 
     # Visibility
     class Visibility(models.TextChoices):
-        ALL = "All users", "All users"
+        ALL = "Public", "Public"
         TRANSLATORS = "Translators", "Users with translator rights"
 
     class VisibilityLoggedIn(models.TextChoices):

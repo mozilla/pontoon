@@ -15,10 +15,10 @@ class Migration(migrations.Migration):
             name="visibility_approval",
             field=models.CharField(
                 choices=[
-                    ("All users", "All users"),
+                    ("Public", "Public"),
                     ("Translators", "Users with translator rights"),
                 ],
-                default="All users",
+                default="Public",
                 max_length=20,
                 verbose_name="Approval ratio",
             ),
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             name="visibility_external_accounts",
             field=models.CharField(
                 choices=[
-                    ("All users", "All users"),
+                    ("Public", "Public"),
                     ("Translators", "Users with translator rights"),
                 ],
                 default="Translators",
@@ -54,10 +54,10 @@ class Migration(migrations.Migration):
             name="visibility_self_approval",
             field=models.CharField(
                 choices=[
-                    ("All users", "All users"),
+                    ("Public", "Public"),
                     ("Translators", "Users with translator rights"),
                 ],
-                default="All users",
+                default="Public",
                 max_length=20,
                 verbose_name="Self-approval ratio",
             ),
