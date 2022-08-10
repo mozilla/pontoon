@@ -135,7 +135,7 @@ function buildFetchPayload(
     ] as const) {
       const value = location[key];
       if (value) {
-        payload.append(key, value);
+        payload.append(key, String(value));
       }
     }
   }

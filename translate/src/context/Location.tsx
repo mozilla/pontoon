@@ -25,7 +25,7 @@ export type Location = {
   time: string | null;
   reviewer: string | null;
   review_time: string | null;
-  exclude_self_reviewed: string | null;
+  exclude_self_reviewed: boolean;
 };
 
 const emptyParams = {
@@ -38,7 +38,7 @@ const emptyParams = {
   time: null,
   reviewer: null,
   review_time: null,
-  exclude_self_reviewed: null,
+  exclude_self_reviewed: false,
 };
 
 export const Location = createContext<Location>({
@@ -97,9 +97,7 @@ function parse(
         time: params.get('time'),
         reviewer: params.get('reviewer'),
         review_time: params.get('review_time'),
-        exclude_self_reviewed: params.has('exclude_self_reviewed')
-          ? 'true'
-          : null,
+        exclude_self_reviewed: params.has('exclude_self_reviewed'),
         list: null,
       };
   return location;
@@ -133,7 +131,7 @@ function stringify(prev: Location, next: string | Partial<Location>) {
     ] as const) {
       const value = key in next ? next[key] : prev[key];
       if (value) {
-        params.set(key, value);
+        params.set(key, String(value));
         keepList &&= false;
       }
     }
