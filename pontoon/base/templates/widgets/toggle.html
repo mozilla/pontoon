@@ -1,0 +1,7 @@
+{% macro button(field) %}
+<span class="toggle-button">
+    {% for choice in field.field.choices %}
+    <button type="button" class="{% if field.value() == choice[0] %}active{% endif %}" data-attribute="{{ field.name }}" title="{{ choice[1] }}">{{ choice[0] }}</button>
+    {% endfor %}
+</span>
+{% endmacro %}

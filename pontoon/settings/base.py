@@ -359,6 +359,7 @@ PIPELINE_CSS = {
             "css/multiple_team_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
+            "css/toggle.css",
             "css/settings.css",
         ),
         "output_filename": "css/settings.min.css",
