@@ -256,6 +256,9 @@ def entities(request):
         "extra",
         "time",
         "author",
+        "review_time",
+        "reviewer",
+        "exclude_self_reviewed",
         "tag",
     )
     form_data = {
