@@ -210,10 +210,11 @@ def dismiss_addon_promotion(request):
 @login_required(redirect_field_name="", login_url="/403")
 def settings(request):
     """View and edit user settings."""
+    profile = request.user.profile
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
             request.POST,
-            instance=request.user.profile,
+            instance=profile,
         )
         user_form = forms.UserForm(
             request.POST,
@@ -221,7 +222,7 @@ def settings(request):
         )
         user_profile_form = forms.UserProfileForm(
             request.POST,
-            instance=request.user.profile,
+            instance=profile,
         )
 
         if (
@@ -234,15 +235,15 @@ def settings(request):
             user_profile_form.save()
 
             if "contact_email" in user_profile_form.changed_data:
-                request.user.profile.contact_email_verified = False
-                request.user.profile.save(update_fields=["contact_email_verified"])
+                profile.contact_email_verified = False
+                profile.save(update_fields=["contact_email_verified"])
 
             messages.success(request, "Settings saved.")
     else:
         user_form = forms.UserForm(instance=request.user)
-        user_profile_form = forms.UserProfileForm(instance=request.user.profile)
+        user_profile_form = forms.UserProfileForm(instance=profile)
 
-    selected_locales = list(request.user.profile.sorted_locales)
+    selected_locales = list(profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
 
     default_homepage_locale = Locale(name="Default homepage", code="")
@@ -250,7 +251,7 @@ def settings(request):
     all_locales.insert(0, default_homepage_locale)
 
     # Set custom homepage selector value
-    custom_homepage_locale = request.user.profile.custom_homepage
+    custom_homepage_locale = profile.custom_homepage
     if custom_homepage_locale:
         custom_homepage_locale = Locale.objects.filter(
             code=custom_homepage_locale
@@ -263,7 +264,7 @@ def settings(request):
     preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale
-    preferred_source_locale = request.user.profile.preferred_source_locale
+    preferred_source_locale = profile.preferred_source_locale
     if preferred_source_locale:
         preferred_source_locale = Locale.objects.filter(
             code=preferred_source_locale
@@ -284,7 +285,7 @@ def settings(request):
             "user_form": user_form,
             "user_profile_form": user_profile_form,
             "user_profile_visibility_form": forms.UserProfileVisibilityForm(
-                instance=request.user.profile
+                instance=profile
             ),
         },
     )
