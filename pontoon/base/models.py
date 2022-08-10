@@ -20,7 +20,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.postgres.fields import ArrayField
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator, validate_email
+from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import (
     Count,
@@ -2537,17 +2537,8 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def authored_by(self, locale, emails):
-        def is_email(email):
-            """
-            Validate if user passed a real email.
-            """
-            try:
-                validate_email(email)
-                return True
-            except ValidationError:
-                return False
-
-        sanitized_emails = filter(is_email, emails)
+        # Validate if user passed a real email
+        sanitized_emails = filter(utils.is_email, emails)
         query = Q()
 
         if sanitized_emails:
@@ -2561,8 +2552,29 @@ class EntityQuerySet(models.QuerySet):
 
         return Q()
 
+    def reviewed_by(self, locale, emails):
+        # Validate if user passed a real email
+        sanitized_emails = filter(utils.is_email, emails)
+
+        if sanitized_emails:
+            return Q(translation__locale=locale) & (
+                Q(translation__approved_user__email__in=sanitized_emails)
+                | Q(translation__rejected_user__email__in=sanitized_emails)
+            )
+
+        return Q()
+
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
+
+    def between_review_time_interval(self, locale, start, end):
+        return Q(
+            Q(translation__locale=locale)
+            & (
+                Q(translation__approved_date__range=(start, end))
+                | Q(translation__rejected_date__range=(start, end))
+            )
+        )
 
     def prefetch_active_translations(self, locale):
         """
@@ -2883,6 +2895,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         extra=None,
         time=None,
         author=None,
+        review_time=None,
+        reviewer=None,
+        exclude_self_reviewed=None,
     ):
         """Get project entities with locale translations."""
 
@@ -2899,8 +2914,26 @@ class Entity(DirtyFieldsMixin, models.Model):
                     Entity.objects.between_time_interval(locale, start, end)
                 )
 
+        if review_time:
+            if re.match("^[0-9]{12}-[0-9]{12}$", review_time):
+                start, end = utils.parse_time_interval(review_time)
+                pre_filters.append(
+                    Entity.objects.between_review_time_interval(locale, start, end)
+                )
+
         if author:
             pre_filters.append(Entity.objects.authored_by(locale, author.split(",")))
+
+        if reviewer:
+            pre_filters.append(Entity.objects.reviewed_by(locale, reviewer.split(",")))
+
+        if exclude_self_reviewed:
+            pre_filters.append(
+                ~Q(
+                    Q(translation__approved_user=F("translation__user"))
+                    | Q(translation__rejected_user=F("translation__user"))
+                )
+            )
 
         if pre_filters:
             entities = Entity.objects.filter(

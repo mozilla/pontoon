@@ -129,6 +129,9 @@ function buildFetchPayload(
       'tag',
       'author',
       'time',
+      'reviewer',
+      'review_time',
+      'exclude_self_reviewed',
     ] as const) {
       const value = location[key];
       if (value) {
