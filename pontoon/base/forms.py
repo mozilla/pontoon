@@ -223,6 +223,21 @@ class UserProfileForm(forms.ModelForm):
         )
 
 
+class UserProfileVisibilityForm(forms.ModelForm):
+    """
+    Form is responsible for controlling user profile visibility.
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            "visibility_email",
+            "visibility_external_accounts",
+            "visibility_self_approval",
+            "visibility_approval",
+        )
+
+
 class UserCustomHomepageForm(forms.ModelForm):
     """
     Form is responsible for saving custom home page.

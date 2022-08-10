@@ -119,7 +119,8 @@ def toggle_user_profile_attribute(request, username):
         )
 
     attribute = request.POST.get("attribute", None)
-    if attribute not in [
+
+    boolean_attributes = [
         "quality_checks",
         "force_suggestions",
         "new_string_notifications",
@@ -128,7 +129,16 @@ def toggle_user_profile_attribute(request, username):
         "unreviewed_suggestion_notifications",
         "review_notifications",
         "new_contributor_notifications",
-    ]:
+    ]
+
+    visibility_attributes = [
+        "visibility_email",
+        "visibility_external_accounts",
+        "visibility_self_approval",
+        "visibility_approval",
+    ]
+
+    if attribute not in (boolean_attributes + visibility_attributes):
         return JsonResponse(
             {"status": False, "message": "Forbidden: Attribute not allowed"},
             status=403,
@@ -141,7 +151,11 @@ def toggle_user_profile_attribute(request, username):
         )
 
     profile = user.profile
-    setattr(profile, attribute, json.loads(value))
+    if attribute in boolean_attributes:
+        # Convert JS Boolean to Python
+        setattr(profile, attribute, json.loads(value))
+    elif attribute in visibility_attributes:
+        setattr(profile, attribute, value)
     profile.save()
 
     return JsonResponse({"status": True})
@@ -265,6 +279,9 @@ def settings(request):
             "preferred_locale": preferred_source_locale,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
+            "user_profile_visibility_form": forms.UserProfileVisibilityForm(
+                instance=request.user.profile
+            ),
         },
     )
 

@@ -1,5 +1,5 @@
 #locale-settings {
-  margin-top: 30px;
+  font-size: 0;
 }
 
 #preferred-locale {
@@ -8,12 +8,12 @@
 
 #locale-settings .label {
   color: #aaa;
-  display: inline-block;
+  float: left;
   font-size: 16px;
   font-weight: 300;
   margin: 6px 10px 0 0;
   text-align: right;
-  width: 280px;
+  width: 295px;
   vertical-align: top;
 }
 
@@ -22,28 +22,24 @@
 }
 
 #locale-settings .locale-selector .locale.select {
-  width: 280px;
+  width: 295px;
 }
 
 #locale-settings .locale-selector .locale.select .button {
-  background: #272a2f;
   color: #aaaaaa;
   font-size: 16px;
   font-weight: 400;
   height: 36px;
-  margin: 0;
   padding: 8px 12px;
   width: 100%;
 }
 
 #locale-settings .locale-selector .locale.select .menu {
-  background: #272a2f;
   border: 1px solid #333941;
-  border-top: none;
-  top: 36px;
-  left: -1px;
-  width: 282px;
+  top: 34px;
+  width: 295px;
   z-index: 30;
+  padding: 10px 12px;
 }
 
 #main form {
@@ -64,42 +60,61 @@
 }
 
 #main .field {
+  color: #aaaaaa;
+  font-size: 16px;
   margin-bottom: 20px;
   text-align: left;
 }
 
+#main .field label {
+  display: inline-block;
+  margin-right: 25px;
+  padding-top: 5px;
+  text-align: right;
+  vertical-align: top;
+  width: 295px;
+}
+
 #main .field input,
 #main .field textarea {
-  color: #ffffff;
+  color: #aaaaaa;
   background: #333941;
   border: 1px solid #4d5967;
   border-radius: 3px;
   float: none;
   padding: 4px;
   box-sizing: border-box;
-}
-
-#main .field input {
-  width: 290px;
+  width: 295px;
 }
 
 #main .field textarea {
-  height: 82px;
-  width: 620px;
+  height: 142px;
 }
 
 #main .field .help {
   color: #888888;
+  font-size: 14px;
   font-style: italic;
-  margin-top: 5px;
+  margin: 5px 0 0 325px;
+}
+
+#main .info li {
+  padding: 8px 0;
+  text-align: right;
+  width: 342px;
+}
+
+#main .info .fa {
+  margin-left: 27px;
+  margin-right: 0;
 }
 
 .errorlist {
   color: #f36;
+  font-size: 14px;
+  font-style: italic;
   list-style: none;
-  margin: 0;
-  margin-top: 5px;
-  text-align: left;
+  margin: 5px 0 0 325px;
 }
 
 .check-list {
