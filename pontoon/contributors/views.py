@@ -233,6 +233,10 @@ def settings(request):
             user_form.save()
             user_profile_form.save()
 
+            if "contact_email" in user_profile_form.changed_data:
+                request.user.profile.contact_email_verified = False
+                request.user.profile.save(update_fields=["contact_email_verified"])
+
             messages.success(request, "Settings saved.")
     else:
         user_form = forms.UserForm(instance=request.user)
