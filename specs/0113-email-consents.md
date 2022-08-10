@@ -56,6 +56,16 @@ After user successfully creates their Pontoon account, display a popup on the re
 - Opt-in check box:
 - Opt-in check box label (consent text): "I’m okay with Mozilla handling my info as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>."
 
+## Additional card for tour
+
+As part of new user onboarding, point new users to user preferences and call out the ability to enable emain communication preferences.
+
+(Section: content)
+- Header: Stay up to date
+- Body: "Occasionally we may send updates by email regarding localizaiton projects and the Pontoon platform. If you'd like to stay up to date you can enable these emails via your user preferences here."
+- Link: Link to user preferences
+
+
 # Prerequisites
 
 1. Copy to be reviewed by legal before launch.
@@ -72,3 +82,6 @@ Please note that the text in the bubble might be out of date. The canonical vers
 
 ## New account creation email opt-in
 ![](0113/new_account.png)
+
+## Additional card for tour
+![](0113/tour.png)
