@@ -16,6 +16,8 @@ from guardian.decorators import permission_required as guardian_permission_requi
 from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
 
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db.models import Prefetch
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
@@ -621,3 +623,11 @@ def get_search_phrases(search):
         search_list = ['"']
 
     return search_list
+
+
+def is_email(email):
+    try:
+        validate_email(email)
+        return True
+    except ValidationError:
+        return False
