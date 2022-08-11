@@ -8,9 +8,12 @@ type Props = {
 };
 
 /*
- * Render a link to the Sign In process.
+ * Render a form for the Sign In and Sign Out process.
  */
-export function SignInForm({ children, url }: Props): React.ReactElement<'a'> {
+export function SignInOutForm({
+  children,
+  url,
+}: Props): React.ReactElement<'form'> {
   const { origin, pathname, search } = window.location;
 
   const parsedUrl = new URL(url, origin);

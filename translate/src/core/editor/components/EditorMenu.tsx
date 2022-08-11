@@ -55,7 +55,7 @@ function MenuContent() {
     return (
       <Localized
         id='editor-EditorMenu--sign-in-to-translate'
-        elems={{ form: <user.SignInForm url={signInURL} /> }}
+        elems={{ form: <user.SignInOutForm url={signInURL} /> }}
       >
         <div className='banner'>{'<form>Sign in</form> to translate.'}</div>
       </Localized>

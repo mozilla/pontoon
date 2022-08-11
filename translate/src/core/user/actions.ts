@@ -2,7 +2,6 @@ import {
   dismissAddonPromotion,
   fetchUserData,
   markAllNotificationsAsRead,
-  signOut,
   updateUserSetting,
 } from '~/api/user';
 import { NotificationMessage } from '~/context/Notification';
@@ -39,16 +38,6 @@ export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
   readonly settings: Settings;
 };
-
-/**
- * Sign out the current user.
- */
-export const signOut_ =
-  (url: string): AppThunk =>
-  async (dispatch) => {
-    await signOut(url);
-    dispatch(getUserData());
-  };
 
 function getNotification(setting: keyof Settings, value: boolean) {
   switch (setting) {

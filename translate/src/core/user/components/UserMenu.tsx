@@ -8,12 +8,11 @@ import { useTranslator } from '~/hooks/useTranslator';
 
 import type { UserState } from '../index';
 import { FileUpload } from './FileUpload';
-import { SignOut } from './SignOut';
+import { SignInOutForm } from './SignInOutForm';
 
 import './UserMenu.css';
 
 type Props = {
-  signOut: () => void;
   user: UserState;
 };
 
@@ -23,7 +22,6 @@ type UserMenuProps = Props & {
 
 export function UserMenuDialog({
   onDiscard,
-  signOut,
   user,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
@@ -193,7 +191,14 @@ export function UserMenuDialog({
             </Localized>
           </li>
           <li>
-            <SignOut signOut={signOut} />
+            <Localized
+              id='user-SignOut--sign-out'
+              elems={{ glyph: <i className='fa fa-sign-out-alt fa-fw' /> }}
+            >
+              <SignInOutForm url={user.signOutURL}>
+                {'<glyph></glyph>Sign out'}
+              </SignInOutForm>
+            </Localized>
           </li>
         </>
       )}

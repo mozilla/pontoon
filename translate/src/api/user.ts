@@ -68,14 +68,6 @@ export const fetchUsersList = (): Promise<MentionUser[]> => GET('/get-users/');
 export const markAllNotificationsAsRead = (): Promise<void> =>
   GET('/notifications/mark-all-as-read/');
 
-/** Sign out the current user. */
-export function signOut(url: string): Promise<void> {
-  const payload = new URLSearchParams({
-    csrfmiddlewaretoken: getCSRFToken(),
-  });
-  return POST(url, payload);
-}
-
 export function updateUserSetting(
   username: string,
   setting: 'forceSuggestions' | 'runQualityChecks',
