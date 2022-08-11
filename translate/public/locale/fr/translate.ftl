@@ -9,7 +9,7 @@
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
-editor-EditorMenu--sign-in-to-translate = <a>Connectez-vous</a> pour traduire.
+editor-EditorMenu--sign-in-to-translate = <form>Connectez-vous</form> pour traduire.
 editor-EditorMenu--read-only-localization = Cette traduction est en lecture seule.
 editor-EditorMenu--button-copy = COPIER
 editor-EditorMenu--button-clear = EFFACER

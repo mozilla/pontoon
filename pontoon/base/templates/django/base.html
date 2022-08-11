@@ -84,13 +84,19 @@
                     {% if user.is_authenticated %}
                       <li id="standalone-sign-out"><a href="{% url 'standalone_logout' %}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}
-                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
+                      <li id="standalone-signin"><a href="{% url 'standalone_login' %}?next={{ request.get_full_path|urlencode }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
                     {% endif %}
                   {% else %}
                     {% if user.is_authenticated %}
                       <li id="sign-out"><a href="{% url 'account_logout' %}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                     {% else %}
-                      <li id="sign-in"><a id="fxa-sign-in" href="{{ provider_login_url }}"><i class="fa fa-sign-in-alt fa-fw"></i>Sign in</a></li>
+                      <li id="sign-in">
+                        <form action="{{ provider_login_url }}?next={{ request.get_full_path|urlencode }}" method="post">
+                          {% csrf_token %}
+                          <i class="fa fa-sign-in-alt fa-fw"></i>
+                          <button type="submit">Sign in</button>
+                        </form>
+                      </li>
                     {% endif %}
                   {% endif %}
                 </ul>

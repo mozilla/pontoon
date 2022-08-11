@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% import "widgets/signin.html" as SignIn with context %}
+
 {% block title %}{{ contributor.name_or_email }}{% endblock %}
 
 {% block class %}user{% endblock %}
@@ -35,12 +37,7 @@
           <span>Email address visible to users with translator rights</span>
         {% endif %}
       {% else %}
-      {% if settings.AUTHENTICATION_METHOD == 'django' %}
-        {% set login_url = url('standalone_login') %}
-      {% else %}
-        {% set login_url = provider_login_url(request) %}
-      {% endif %}
-      <a id="sidebar-signin" href="{{ login_url }}">Sign in to see email address</a>
+        {{ SignIn.button(title="Sign in to see email address") }}
       {% endif %}
     </li>
     <li>

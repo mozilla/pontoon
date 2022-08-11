@@ -1,16 +1,20 @@
-.user-signin a {
+.user-signin {
+  display: inline-block;
+}
+
+.user-signin button {
+  background: transparent;
   border: 1.5px solid #7bc176;
   border-radius: 2px;
   color: white;
-  display: inline-block;
   font-size: 14px;
-  height: 17px;
-  line-height: 16px;
+  font-weight: 300;
+  height: 40px;
+  line-height: 17px;
   padding: 10px 25px;
-  text-align: center;
   margin: 10px 5px 0 0;
 }
 
-.user-signin a:hover {
+.user-signin button:hover {
   background-color: #7bc176;
 }

@@ -111,7 +111,7 @@ comments-CommentsList--all-comments = ALL COMMENTS
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
 
-editor-EditorMenu--sign-in-to-translate = <a>Sign in</a> to translate.
+editor-EditorMenu--sign-in-to-translate = <form>Sign in</form> to translate.
 editor-EditorMenu--read-only-localization = This is a read-only localization.
 editor-EditorMenu--button-copy = COPY
     .title = Copy From Source (Ctrl + Shift + C)

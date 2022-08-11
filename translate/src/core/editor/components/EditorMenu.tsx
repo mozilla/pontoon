@@ -55,9 +55,9 @@ function MenuContent() {
     return (
       <Localized
         id='editor-EditorMenu--sign-in-to-translate'
-        elems={{ a: <user.SignInLink url={signInURL} /> }}
+        elems={{ form: <user.SignInForm url={signInURL} /> }}
       >
-        <p className='banner'>{'<a>Sign in</a> to translate.'}</p>
+        <div className='banner'>{'<form>Sign in</form> to translate.'}</div>
       </Localized>
     );
   }
@@ -65,7 +65,7 @@ function MenuContent() {
   if (entity.readonly) {
     return (
       <Localized id='editor-EditorMenu--read-only-localization'>
-        <p className='banner'>This is a read-only localization.</p>
+        <div className='banner'>This is a read-only localization.</div>
       </Localized>
     );
   }

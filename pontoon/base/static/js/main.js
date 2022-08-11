@@ -277,17 +277,6 @@ $(function () {
     return window.location.pathname + window.location.search;
   }
 
-  // Sign in button action
-  $('#fxa-sign-in, #standalone-signin a, #sidebar-signin').on(
-    'click',
-    function () {
-      var $this = $(this);
-      var loginUrl = $this.prop('href'),
-        startSign = loginUrl.match(/\?/) ? '&' : '?';
-      $this.prop('href', loginUrl + startSign + 'next=' + getRedirectUrl());
-    },
-  );
-
   // Sign out button action
   $('.sign-out a, #sign-out a').on('click', function (ev) {
     var $this = $(this),
