@@ -51,6 +51,14 @@
   line-height: 40px;
 }
 
-.editor-menu .banner a {
+.editor-menu .banner form {
+  display: inline-block;
+}
+
+.editor-menu .banner button {
+  background: none;
+  border: none;
   color: #7bc876;
+  font-style: inherit;
+  padding: 0;
 }

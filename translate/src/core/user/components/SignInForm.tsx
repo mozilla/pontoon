@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { CSRFToken } from '~/core/utils';
+
 type Props = {
   children?: React.ReactNode;
   url: string;
@@ -8,9 +10,16 @@ type Props = {
 /*
  * Render a link to the Sign In process.
  */
-export function SignInLink({ children, url }: Props): React.ReactElement<'a'> {
+export function SignInForm({ children, url }: Props): React.ReactElement<'a'> {
   const { origin, pathname, search } = window.location;
+
   const parsedUrl = new URL(url, origin);
   parsedUrl.searchParams.set('next', pathname + search);
-  return <a href={parsedUrl.toString()}>{children}</a>;
+
+  return (
+    <form action={parsedUrl.toString()} method='post'>
+      <CSRFToken />
+      <button type='submit'>{children}</button>
+    </form>
+  );
 }

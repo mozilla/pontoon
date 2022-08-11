@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useRef } from 'react';
 
 import type { Location } from '~/context/Location';
+import { CSRFToken } from '~/core/utils';
 
 import './FileUpload.css';
 
@@ -19,10 +20,6 @@ export function FileUpload({ parameters }: Props): React.ReactElement<'form'> {
     uploadForm.current?.submit();
   }, []);
 
-  /* TODO: Refactor core.api.base and reuse getCSRFToken() here */
-  const rootElt = document.getElementById('root');
-  const csrfToken = rootElt?.dataset.csrfToken ?? '';
-
   return (
     <form
       action='/upload/'
@@ -31,7 +28,7 @@ export function FileUpload({ parameters }: Props): React.ReactElement<'form'> {
       method='POST'
       ref={uploadForm}
     >
-      <input name='csrfmiddlewaretoken' type='hidden' value={csrfToken} />
+      <CSRFToken />
       <input name='code' type='hidden' value={parameters.locale} />
       <input name='slug' type='hidden' value={parameters.project} />
       <input name='part' type='hidden' value={parameters.resource} />
