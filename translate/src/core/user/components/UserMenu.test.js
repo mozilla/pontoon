@@ -9,7 +9,7 @@ import * as Translator from '~/hooks/useTranslator';
 import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
-import { SignOut } from './SignOut';
+import { SignInOutForm } from './SignInOutForm';
 import { UserMenu, UserMenuDialog } from './UserMenu';
 
 describe('<UserMenuDialog>', () => {
@@ -53,7 +53,7 @@ describe('<UserMenuDialog>', () => {
 
     expect(wrapper.find('.details')).toHaveLength(1);
     expect(wrapper.find('a[href="/settings/"]')).toHaveLength(1);
-    expect(wrapper.find(SignOut)).toHaveLength(1);
+    expect(wrapper.find(SignInOutForm)).toHaveLength(1);
   });
 
   it('hides the right menu items when the user is logged out', () => {
@@ -61,7 +61,7 @@ describe('<UserMenuDialog>', () => {
 
     expect(wrapper.find('.details')).toHaveLength(0);
     expect(wrapper.find('a[href="/settings/"]')).toHaveLength(0);
-    expect(wrapper.find(SignOut)).toHaveLength(0);
+    expect(wrapper.find(SignInOutForm)).toHaveLength(0);
   });
 
   it('shows upload & download menu items', () => {
