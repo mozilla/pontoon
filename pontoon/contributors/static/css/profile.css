@@ -2,6 +2,19 @@
   padding-top: 20px;
 }
 
+#heading .info form {
+  display: inline-block;
+}
+
+#heading .info form button {
+  background: transparent;
+  border: none;
+  color: #7bc876;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 100;
+}
+
 #middle .container {
   padding: 1em 0;
 }
@@ -108,9 +121,6 @@
   content: '';
   display: table;
   clear: both;
-}
-
-#main .content h4 {
 }
 
 #main .content h4 > div {
