@@ -1,0 +1,11 @@
+{% macro button(title="Sign in") %}
+{% if settings.AUTHENTICATION_METHOD == 'django' %}
+    {% set login_url = url('standalone_login') %}
+{% else %}
+    {% set login_url = provider_login_url(request) %}
+{% endif %}
+<form action="{{ login_url }}?next={{ request.get_full_path()|urlencode }}" method="post">
+    {% csrf_token %}
+    <button type="submit">{{ title }}</button>
+</form>
+{% endmacro %}

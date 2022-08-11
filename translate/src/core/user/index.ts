@@ -1,4 +1,4 @@
-export { SignInLink } from './components/SignInLink';
+export { SignInForm } from './components/SignInForm';
 export { UserAvatar } from './components/UserAvatar';
 
 export { USER } from './reducer';
