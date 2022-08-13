@@ -1,4 +1,5 @@
 import json
+import jwt
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings as django_settings
@@ -15,6 +16,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -238,6 +240,20 @@ def settings(request):
                 profile.contact_email_verified = False
                 profile.save(update_fields=["contact_email_verified"])
 
+                payload = {
+                    "user": profile.user.pk,
+                    "email": profile.contact_email,
+                    "exp": timezone.now() + relativedelta(hours=1),
+                }
+                token = jwt.encode(
+                    payload, django_settings.SECRET_KEY, algorithm="HS256"
+                )
+                print(
+                    request.build_absolute_uri(
+                        reverse("pontoon.contributors.verify.email", args=(token,))
+                    )
+                )
+
             messages.success(request, "Settings saved.")
     else:
         user_form = forms.UserForm(instance=request.user)
@@ -287,6 +303,44 @@ def settings(request):
             "user_profile_visibility_form": forms.UserProfileVisibilityForm(
                 instance=profile
             ),
+        },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+def verify_email_address(request, token):
+    profile = request.user.profile
+    title = "Oops!"
+    message = "Email verification failed"
+
+    try:
+        payload = jwt.decode(token, django_settings.SECRET_KEY, algorithms="HS256")
+
+        if (
+            payload["user"] == request.user.pk
+            and payload["email"] == profile.contact_email
+        ):
+            profile.contact_email_verified = True
+            profile.save(update_fields=["contact_email_verified"])
+
+            title = "Success!"
+            message = "Your email address has been verified"
+
+        else:
+            raise jwt.exceptions.InvalidTokenError
+
+    except jwt.exceptions.ExpiredSignatureError:
+        message = "Verification token has expired"
+
+    except jwt.exceptions.InvalidTokenError:
+        message = "Invalid verification token"
+
+    return render(
+        request,
+        "contributors/verify_email.html",
+        {
+            "title": title,
+            "message": message,
         },
     )
 

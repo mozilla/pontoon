@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Email Verification{% endblock %}
+
+{% block middle %}
+<section id="error">
+  <div class="inner">
+    <h1 id="title"><a href="/">{{ title }}</a></h1>
+    <h2 id="subtitle">{% block description %}{{ message }}{% endblock %}</h2>
+  </div>
+</section>
+{% endblock %}
