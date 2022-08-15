@@ -39,6 +39,8 @@ ADMINS = MANAGERS = (
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Pontoon <noreply@localhost>")
+
 # Email from which new locale requests are sent.
 LOCALE_REQUEST_FROM_EMAIL = os.environ.get(
     "LOCALE_REQUEST_FROM_EMAIL", "pontoon@example.com"

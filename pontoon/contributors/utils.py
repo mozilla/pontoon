@@ -1,9 +1,17 @@
-from collections import defaultdict
+import jwt
 
+from collections import defaultdict
+from dateutil.relativedelta import relativedelta
+
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.db.models import (
     Count,
     Prefetch,
 )
+from django.template.loader import get_template
+from django.urls import reverse
+from django.utils import timezone
 
 from pontoon.base.models import (
     Locale,
@@ -141,3 +149,60 @@ def users_with_translations_counts(
         contributors_list = contributors_list[:limit]
 
     return contributors_list
+
+
+def generate_verification_token(user):
+    payload = {
+        "user": user.pk,
+        "email": user.profile.contact_email,
+        "exp": timezone.now() + relativedelta(hours=1),
+    }
+
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+
+
+def send_verification_email(request, token):
+    template = get_template("contributors/verification_email.jinja")
+    mail_subject = "Verify Email Address for Pontoon"
+
+    link = request.build_absolute_uri(
+        reverse("pontoon.contributors.verify.email", args=(token,))
+    )
+    mail_body = template.render(
+        {
+            "display_name": request.user.display_name,
+            "link": link,
+        }
+    )
+
+    EmailMessage(
+        subject=mail_subject,
+        body=mail_body,
+        to=[request.user.profile.contact_email],
+    ).send()
+
+
+def check_verification_token(user, token):
+    profile = user.profile
+    title = "Oops!"
+
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms="HS256")
+
+        if payload["user"] == user.pk and payload["email"] == profile.contact_email:
+            profile.contact_email_verified = True
+            profile.save(update_fields=["contact_email_verified"])
+
+            title = "Success!"
+            message = "Your email address has been verified"
+
+        else:
+            raise jwt.exceptions.InvalidTokenError
+
+    except jwt.exceptions.ExpiredSignatureError:
+        message = "Verification token has expired"
+
+    except jwt.exceptions.InvalidTokenError:
+        message = "Invalid verification token"
+
+    return title, message

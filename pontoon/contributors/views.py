@@ -1,5 +1,4 @@
 import json
-import jwt
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings as django_settings
@@ -16,7 +15,6 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
@@ -26,7 +24,10 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX
 from pontoon.contributors.utils import (
+    check_verification_token,
+    generate_verification_token,
     map_translations_to_events,
+    send_verification_email,
     users_with_translations_counts,
 )
 from pontoon.uxactionlog.utils import log_ux_action
@@ -240,19 +241,8 @@ def settings(request):
                 profile.contact_email_verified = False
                 profile.save(update_fields=["contact_email_verified"])
 
-                payload = {
-                    "user": profile.user.pk,
-                    "email": profile.contact_email,
-                    "exp": timezone.now() + relativedelta(hours=1),
-                }
-                token = jwt.encode(
-                    payload, django_settings.SECRET_KEY, algorithm="HS256"
-                )
-                print(
-                    request.build_absolute_uri(
-                        reverse("pontoon.contributors.verify.email", args=(token,))
-                    )
-                )
+                token = generate_verification_token(request.user)
+                send_verification_email(request, token)
 
             messages.success(request, "Settings saved.")
     else:
@@ -309,31 +299,7 @@ def settings(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 def verify_email_address(request, token):
-    profile = request.user.profile
-    title = "Oops!"
-    message = "Email verification failed"
-
-    try:
-        payload = jwt.decode(token, django_settings.SECRET_KEY, algorithms="HS256")
-
-        if (
-            payload["user"] == request.user.pk
-            and payload["email"] == profile.contact_email
-        ):
-            profile.contact_email_verified = True
-            profile.save(update_fields=["contact_email_verified"])
-
-            title = "Success!"
-            message = "Your email address has been verified"
-
-        else:
-            raise jwt.exceptions.InvalidTokenError
-
-    except jwt.exceptions.ExpiredSignatureError:
-        message = "Verification token has expired"
-
-    except jwt.exceptions.InvalidTokenError:
-        message = "Invalid verification token"
+    title, message = check_verification_token(request.user, token)
 
     return render(
         request,
