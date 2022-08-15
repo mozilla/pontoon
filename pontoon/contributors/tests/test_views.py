@@ -109,6 +109,26 @@ def test_profileform_user_locales_order(member, settings_url):
     ]
 
 
+@pytest.mark.django_db
+def test_profileform_contact_email_verified(member):
+    """When contact_email changes, contact_email_verified gets set to False."""
+    profile = User.objects.get(pk=member.user.pk).profile
+    profile.contact_email_verified = True
+    profile.save()
+    assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is True
+
+    response = member.client.post(
+        "/settings/",
+        {
+            "first_name": "contributor",
+            "email": member.user.email,
+            "contact_email": "contact@example.com",
+        },
+    )
+    assert response.status_code == 200
+    assert User.objects.get(pk=member.user.pk).profile.contact_email_verified is False
+
+
 @pytest.fixture
 def mock_profile_render():
     with patch(
