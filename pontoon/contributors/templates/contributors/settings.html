@@ -51,7 +51,7 @@
             {{ user_profile_form.contact_email }}
             {{ user_profile_form.contact_email.errors }}
             {% if user.profile.contact_email and not user.profile.contact_email_verified %}
-                <p class="verify">Check your inbox to verify email address</a></p>
+                <p class="verify">Check your inbox to verify your email address</a></p>
             {% else %}
                 <p class="help">If provided, used instead of login email address on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a></p>
             {% endif %}
