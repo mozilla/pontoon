@@ -83,7 +83,7 @@ you create:
 
 ``DEFAULT_FROM_EMAIL``
    Optional. Default email address to send emails from. Default value:
-   ``Pontoon <noreplay@hostname>``.
+   ``Pontoon <noreply@hostname>``.
 
 ``DISABLE_COLLECTSTATIC``
    Disables running ``./manage.py collectstatic`` during the build. Should be
