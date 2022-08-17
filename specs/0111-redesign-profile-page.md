@@ -30,7 +30,7 @@ The graph displays both the specific month’s ratio and the average for the pre
 
 ## Self-approval ratio
 
-Displayed in a graph, it’s the ratio between the number of translations submitted directly — or self-approved after submitting them as suggestions — over the total number of translations submitted. This data point is meaningful only for users with translator rights (translators, locale managers), as it will always be 0 for contributors.
+Displayed in a graph, it’s the ratio between the number of translations submitted directly — or self-approved after submitting them as suggestions — over the total number of translations approved. This data point is meaningful only for users with translator rights (translators, locale managers), as it will always be 0 for contributors.
 
 Example: if a person has 100 approved translations, but 60 are self-approved, the self-approval ratio will be 60%.
 
