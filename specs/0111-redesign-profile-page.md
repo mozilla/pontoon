@@ -20,7 +20,7 @@ See the [mockup](#mockup) for the overall view. Each of the following sections p
 
 ## Approval ratio
 
-Displayed in a graph, it’s the ratio between the number of translations approved over the total number of translations reviewed, excluding self-approved translations (either submitted directly as translations, or provided as suggestions and later approved by the translator).
+Displayed in a graph, it’s the ratio between the number of translations approved over the total number of translations reviewed, excluding self-approved (either submitted directly as translations, or provided as suggestions and later approved by the translator) and self-rejected translations.
 
 Examples:
 * If a person submits 100 translations, of which 10 are rejected and 10 unreviewed, the approval ratio will be 80%.
