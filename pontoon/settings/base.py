@@ -49,7 +49,7 @@ def _get_site_url_netloc():
 
 def _default_from_email():
     return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <noreplay@{_get_site_url_netloc()}>"
+        "DEFAULT_FROM_EMAIL", f"Pontoon <noreply@{_get_site_url_netloc()}>"
     )
 
 
