@@ -66,6 +66,11 @@
   text-align: left;
 }
 
+#main .field a {
+  float: none;
+  text-transform: none;
+}
+
 #main .field label {
   display: inline-block;
   margin-right: 25px;
@@ -91,11 +96,21 @@
   height: 142px;
 }
 
+#main .field .help,
+#main .field .verify,
+.errorlist {
+  font-size: 14px;
+  margin: 5px 0 0 325px;
+}
+
 #main .field .help {
   color: #888888;
-  font-size: 14px;
   font-style: italic;
-  margin: 5px 0 0 325px;
+}
+
+#main .field .verify {
+  color: #7bc876;
+  font-style: italic;
 }
 
 #main .info li {
@@ -111,10 +126,8 @@
 
 .errorlist {
   color: #f36;
-  font-size: 14px;
   font-style: italic;
   list-style: none;
-  margin: 5px 0 0 325px;
 }
 
 .check-list {

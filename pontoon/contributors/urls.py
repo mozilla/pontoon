@@ -46,6 +46,12 @@ urlpatterns = [
         views.contributor_username,
         name="pontoon.contributors.contributor.username",
     ),
+    # Verify email address
+    path(
+        "verify-email-address/<str:token>/",
+        views.verify_email_address,
+        name="pontoon.contributors.verify.email",
+    ),
     # Current user's profile
     path("profile/", views.profile, name="pontoon.contributors.profile"),
     # Current user's settings
