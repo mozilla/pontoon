@@ -81,6 +81,10 @@ you create:
    Maximum number of tasks a Celery worker process can execute before it’s
    replaced with a new one. Defaults to 20 tasks.
 
+``DEFAULT_FROM_EMAIL``
+   Optional. Default email address to send emails from. Default value:
+   ``Pontoon <noreply@hostname>``.
+
 ``DISABLE_COLLECTSTATIC``
    Disables running ``./manage.py collectstatic`` during the build. Should be
    set to ``1``.

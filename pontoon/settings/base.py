@@ -39,6 +39,22 @@ ADMINS = MANAGERS = (
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
+
+def _get_site_url_netloc():
+    from urllib.parse import urlparse
+    from django.conf import settings
+
+    return urlparse(settings.SITE_URL).netloc
+
+
+def _default_from_email():
+    return os.environ.get(
+        "DEFAULT_FROM_EMAIL", f"Pontoon <noreply@{_get_site_url_netloc()}>"
+    )
+
+
+DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
+
 # Email from which new locale requests are sent.
 LOCALE_REQUEST_FROM_EMAIL = os.environ.get(
     "LOCALE_REQUEST_FROM_EMAIL", "pontoon@example.com"
@@ -582,10 +598,7 @@ STATICFILES_DIRS = [
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
 def _allowed_hosts():
-    from urllib.parse import urlparse
-    from django.conf import settings
-
-    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
+    host = _get_site_url_netloc()  # Remove protocol and path
     result = [host]
     # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
     # have a version of the host that contains the port. This only applies
