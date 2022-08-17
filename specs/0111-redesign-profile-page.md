@@ -20,17 +20,17 @@ See the [mockup](#mockup) for the overall view. Each of the following sections p
 
 ## Approval ratio
 
-Displayed in a graph, it’s the ratio between the number of translations approved over the total number of translations submitted, excluding self-approved translations (either submitted directly as translations, or provided as suggestions and later approved by the translator).
+Displayed in a graph, it’s the ratio between the number of translations approved over the total number of translations reviewed, excluding self-approved (either submitted directly as translations, or provided as suggestions and later approved by the translator) and self-rejected translations.
 
 Examples:
-* If a person submits 100 translations, but 20 are rejected, the approval ratio will be 80%.
+* If a person submits 110 translations, of which 20 are rejected and 10 unreviewed, the approval ratio will be 80%.
 * If a person submits 100 translations, 20 are rejected, 20 are self-approved, the approval ratio will be 75% (60 over 80).
 
 The graph displays both the specific month’s ratio and the average for the previous 12 months.
 
 ## Self-approval ratio
 
-Displayed in a graph, it’s the ratio between the number of translations submitted directly — or self-approved after submitting them as suggestions — over the total number of translations submitted. This data point is meaningful only for users with translator rights (translators, locale managers), as it will always be 0 for contributors.
+Displayed in a graph, it’s the ratio between the number of translations submitted directly — or self-approved after submitting them as suggestions — over the total number of translations approved. This data point is meaningful only for users with translator rights (translators, locale managers), as it will always be 0 for contributors.
 
 Example: if a person has 100 approved translations, but 60 are self-approved, the self-approval ratio will be 60%.
 
