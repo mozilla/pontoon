@@ -1,3 +1,7 @@
+#heading {
+  text-align: center;
+}
+
 #locale-settings {
   font-size: 0;
 }
@@ -29,7 +33,7 @@
   color: #aaaaaa;
   font-size: 16px;
   font-weight: 400;
-  height: 36px;
+  height: 32px;
   padding: 8px 12px;
   width: 100%;
 }
@@ -40,6 +44,14 @@
   width: 295px;
   z-index: 30;
   padding: 10px 12px;
+}
+
+#display-name {
+  color: #ebebeb;
+  font-size: 48px;
+  letter-spacing: normal;
+  padding: 10px 0 0;
+  text-transform: none;
 }
 
 #main form {
@@ -113,13 +125,28 @@
   font-style: italic;
 }
 
-#main .info li {
+#main .check-list {
+  cursor: pointer;
+  list-style: none;
+  margin: 0;
+  display: inline-block;
+  text-align: left;
+}
+
+#main .check-list li {
+  color: #aaaaaa;
+  display: table;
+  font-size: 16px;
+  font-weight: 300;
+  overflow: hidden;
   padding: 8px 0;
   text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   width: 342px;
 }
 
-#main .info .fa {
+#main .check-list .fa {
   margin-left: 27px;
   margin-right: 0;
 }
@@ -128,8 +155,4 @@
   color: #f36;
   font-style: italic;
   list-style: none;
-}
-
-.check-list {
-  cursor: pointer;
 }

@@ -95,18 +95,18 @@
             {{ Toggle.button(field=user_profile_visibility_form.visibility_external_accounts) }}
         </div>
         <div class="field">
-            {{ user_profile_visibility_form.visibility_self_approval.label_tag(label_suffix='') }}
-            {{ Toggle.button(field=user_profile_visibility_form.visibility_self_approval) }}
-        </div>
-        <div class="field">
             {{ user_profile_visibility_form.visibility_approval.label_tag(label_suffix='') }}
             {{ Toggle.button(field=user_profile_visibility_form.visibility_approval) }}
+        </div>
+        <div class="field">
+            {{ user_profile_visibility_form.visibility_self_approval.label_tag(label_suffix='') }}
+            {{ Toggle.button(field=user_profile_visibility_form.visibility_self_approval) }}
         </div>
     </section>
 
     <section>
         <h3>Notification subscriptions</h3>
-        <ul class="info check-list">
+        <ul class="check-list">
             {{ Checkbox.checkbox('New strings', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
             {{ Checkbox.checkbox('Project target dates', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project target date approaches') }}
             {{ Checkbox.checkbox('Comments', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
@@ -118,7 +118,7 @@
 
     <section>
         <h3>Editor Settings</h3>
-        <ul class="info check-list">
+        <ul class="check-list">
             {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
 
             {% if user.translated_locales %}
