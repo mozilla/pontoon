@@ -1,89 +1,140 @@
-#heading .info {
-  padding-top: 20px;
+#main .container > div {
+  float: left;
 }
 
-#heading .info form {
-  display: inline-block;
+#main .container .left-column {
+  color: #ccc;
+  margin-right: 30px;
+  width: 260px;
 }
 
-#heading .info form button {
-  background: transparent;
-  border: none;
-  color: #7bc876;
+#main .container .right-column {
+  width: 690px;
+}
+
+#main .container .left-column .block {
+  padding: 8px 0;
+}
+
+#main .container .left-column hr {
+  border-color: #4d5967;
+  margin: 8px 0;
+}
+
+.display-name {
+  color: #ebebeb;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: normal;
+  line-height: 1.4em;
   padding: 0;
+  text-transform: none;
+}
+
+.username {
+  color: #7bc876;
+  line-height: 1.4em;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.bio {
   font-size: 16px;
+  line-height: 1.4em;
+}
+
+.item-with-icon {
+  color: #888;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.8em;
+}
+
+.item-with-icon .icon {
+  font-size: 16px;
+  padding-right: 5px;
+}
+
+.permissions .item-with-icon .icon {
+  font-size: 24px;
+  vertical-align: bottom;
+}
+
+.item-with-icon a {
+  color: #888;
+  font-weight: normal;
+}
+
+.item-with-icon a:hover {
+  color: #7bc876;
+}
+
+.item-with-icon .stress {
+  color: #7bc876;
+}
+
+.personal-information .button {
+  background: #333941;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: normal;
+  height: 32px;
+  padding: 8px 12px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+h4.superuser {
+  border: 1px solid #f36;
+  border-radius: 4px;
+  line-height: 30px;
+  text-align: center;
+  color: #f36;
+  text-transform: uppercase;
   font-weight: 100;
 }
 
-#middle .container {
-  padding: 1em 0;
+#stats .details {
+  text-align: center;
 }
 
-#middle .container div {
-  width: 326px;
+#stats .details div {
+  width: 227px;
   border-top: 5px solid;
   color: #aaaaaa;
   display: inline-block;
   margin-right: 1px;
 }
 
-#middle .container div:last-child {
+#stats .details div:last-child {
   margin-right: 0;
 }
 
-#middle .container div.translated {
+#stats .details div.translated {
   border-color: #7bc876;
 }
 
-#middle .container div.unreviewed {
+#stats .details div.unreviewed {
   border-color: #4fc4f6;
 }
 
-#middle .container div span {
+#stats .details div span {
   font-size: 10px;
   text-transform: uppercase;
 }
 
-#middle .container div p {
+#stats .details div p {
   color: #ffffff;
   font-size: 28px;
   line-height: 18px;
   padding: 10px 0;
   position: relative;
-}
-
-#main {
-  padding: 5em 0;
-}
-
-#main .container {
-  margin: 0 auto;
-  position: relative;
-  text-align: left;
-}
-
-#main .container:before {
-  background: #aaaaaa;
-  content: '';
-  height: calc(100% - 8em);
-  left: 50%;
-  margin-left: -1px;
-  position: absolute;
-  top: 0;
-  width: 2px;
-}
-
-#main .container > div {
-  position: relative;
-  margin: 8em 0 0;
-}
-
-#main .container > div:first-child {
-  margin: 0;
-}
-
-#main .container > div:nth-last-child(2) {
-  padding-bottom: 8em;
 }
 
 #main .tick {
@@ -240,6 +291,18 @@
  * Inspired by:
  * http://codyhouse.co/gem/vertical-timeline/
  */
+
+#timeline-loader {
+  display: none;
+  margin: 0 auto;
+  height: 50px;
+  width: 50px;
+}
+
+#timeline-loader div {
+  color: #7bc876;
+  font-size: 48px;
+}
 
 #main .tick.bounce-in {
   visibility: visible;
