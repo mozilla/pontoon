@@ -1589,9 +1589,9 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=160, blank=True, null=True)
 
     # External accounts
+    chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
+    github = models.CharField("GitHub username", max_length=255, blank=True, null=True)
     bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
-    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
-    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
 
     # Visibility
     class Visibility(models.TextChoices):

@@ -218,9 +218,9 @@ class UserProfileForm(forms.ModelForm):
             "username",
             "contact_email",
             "bio",
-            "bugzilla",
-            "matrix",
+            "chat",
             "github",
+            "bugzilla",
         )
 
 
