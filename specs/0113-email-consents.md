@@ -10,23 +10,21 @@ Implement user consent for email communication and Pontoon messaging to encourag
 
 There does not exist currently an email communication consent opt-in for users who register with Pontoon. This restricts the ability to reach users outside of the platform, for example users who have not logged-in for some time, and reduces our effectiveness in keeping localizers informed and engaged.
 
-In addition, this will allow us to reach out within legal compliance to the wider audience of registered users for things such as surveys, etc. Future major platform enhancements will be able to build off this work, and starting this early will provide enough time to ensure interested and active contributers are opted-in ahead of time.  
+In addition, this will allow us to reach out within legal compliance to the wider audience of registered users for things such as surveys, etc. Future major platform enhancements will be able to build off this work, and starting this early will provide enough time to ensure interested and active contributors are opted-in ahead of time.
 
-Value for users / problems solved
+Value for users / problems solved  
 - Users can select their preference for email communication
 - Engagement/reach expanded beyond logged-in active Pontoon users
 
 # Feature explanation
 
-## Email communication user setting
+## Email communications user setting
 Within the user settings, a new "Email communications" section is added, with the following content:
 
 (Section: content)
-- Header: "Email communication"
-- Sub-header: "Subscribe to Pontoon mailing list"
-- Body: "Receive emails related to Pontoon and the localization of projects within the platform. Such as challenges and goal reminders, user surveys, progress and activity updates, l10n newsletters and more."
+- Header: "Email communications"
 - Opt-in check box: (displays users saved preference, users are opted-out by default)
-- Opt-in check box label (consent text): "I’m okay with Mozilla handling my info as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>."
+- Opt-in check box label: "Receive email updates related to the localization of projects on Pontoon and updates on the Pontoon platform. I’m okay with Mozilla handling my personal information as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>."
 
 User email communication preference is stored and referenced to determine if emails should be sent to user.
 
@@ -34,27 +32,28 @@ User email communication preference is stored and referenced to determine if ema
 
 We need to make existing users aware of the new email communication preference. 
 
-A banner should be displayed to existing users logging in for the first time after the feature is enabled/
+A banner should be displayed to existing users logging in for the first time after the feature is enabled.
 
 (Section: content)
 - Button (dismiss banner): "x"
-- Text: "Stay up to date with localization project and Pontoon platform updates!"
-- Button: "Enable email updates in user preferences"
+- Text: "Stay up to date on your localization projects and Pontoon!"
+- Button: "Enable email updates"
+- Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this Privacy Notice. This can be changed at any time in your settings."
 
 ## New account creation email opt-in
 
 Ideally, we would like users to set up their email communication preferences right away upon successful account creation.
 
-After user successfully creates their Pontoon account, display a popup on the redirected page (Pontoon main page) that informs user of successful account creation and request for updating email communication preferences.
+After a user successfully creates their Pontoon account, display a standalone page which redirects to the homepage after the user enables or rejects email updates. This page informs the user of successful account creation and request for updating email communication preferences.
 
 (Section: content)
 - Header: "Welcome to Pontoon!"
 - Sub-header: "You have successfully created your Pontoon account."
-- Body: "Would you like to stay up to date with your localization projects' status and receive Pontoon updates by email? Enable email communication via the buttons below. This setting can be changed any time from your user preferences."
-- Button: "Enable"
-- Button: "Dismiss"
+- Body: "Would you like to stay up to date on the localization of your projects and receive Pontoon updates by email? This can be changed at any time in your settings."
+- Button: "Enable email updates”
+- Button: "No, thank you"
 - Opt-in check box:
-- Opt-in check box label (consent text): "I’m okay with Mozilla handling my info as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>."
+- Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>. This can be changed at any time in your settings."
 
 ## Additional card for tour
 
@@ -62,8 +61,11 @@ As part of new user onboarding, point new users to user preferences and call out
 
 (Section: content)
 - Header: Stay up to date
-- Body: "Occasionally we may send updates by email regarding localizaiton projects and the Pontoon platform. If you'd like to stay up to date you can enable these emails via your user preferences here."
-- Link: Link to user preferences
+- Body: "Occasionally we may send updates by email regarding localization projects and Pontoon. If you'd like to stay up to date, you can enable these emails in your settings."
+
+*Display if user logged in*
+- Button: "Enable email updates"
+- Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this Privacy Notice. This can be changed at any time in your settings."
 
 
 # Prerequisites
@@ -72,7 +74,7 @@ As part of new user onboarding, point new users to user preferences and call out
 
 # Mockups
 
-Please note that the text in the bubble might be out of date. The canonical version is specified above.
+Mockups below are out of date. The canonical version is specified above.
 
 ## Email communication user setting
 ![](0113/user_setting.png)
