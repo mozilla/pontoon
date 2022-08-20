@@ -23,13 +23,7 @@ from django.utils.html import escape
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX
-from pontoon.contributors.utils import (
-    check_verification_token,
-    generate_verification_token,
-    map_translations_to_events,
-    send_verification_email,
-    users_with_translations_counts,
-)
+from pontoon.contributors import utils
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -80,7 +74,7 @@ def contributor_timeline(request, username):
             counts_by_day, django_settings.CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE
         )
 
-        timeline_events = map_translations_to_events(
+        timeline_events = utils.map_translations_to_events(
             events_paginator.page(page).object_list, contributor_translations
         )
 
@@ -99,11 +93,19 @@ def contributor_timeline(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
+    context = utils.get_approval_ratios(user)
+
+    context.update(
+        {
+            "contributor": user,
+            "translations": user.contributed_translations,
+        }
+    )
 
     return render(
         request,
         "contributors/profile.html",
-        {"contributor": user, "translations": user.contributed_translations},
+        context,
     )
 
 
@@ -241,8 +243,8 @@ def settings(request):
                 profile.contact_email_verified = False
                 profile.save(update_fields=["contact_email_verified"])
 
-                token = generate_verification_token(request.user)
-                send_verification_email(request, token)
+                token = utils.generate_verification_token(request.user)
+                utils.send_verification_email(request, token)
 
             messages.success(request, "Settings saved.")
     else:
@@ -299,7 +301,7 @@ def settings(request):
 
 @login_required(redirect_field_name="", login_url="/403")
 def verify_email_address(request, token):
-    title, message = check_verification_token(request.user, token)
+    title, message = utils.check_verification_token(request.user, token)
 
     return render(
         request,
@@ -394,7 +396,7 @@ class ContributorsMixin:
             period = None
             start_date = None
 
-        context["contributors"] = users_with_translations_counts(
+        context["contributors"] = utils.users_with_translations_counts(
             start_date,
             self.contributors_filter(**kwargs) & Q(user__isnull=False),
             kwargs.get("locale"),

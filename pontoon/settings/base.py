@@ -369,6 +369,7 @@ PIPELINE_CSS = {
     "profile": {
         "source_filenames": (
             "css/contributor.css",
+            "css/insights_charts.css",
             "css/profile.css",
         ),
         "output_filename": "css/profile.min.css",
@@ -509,7 +510,11 @@ PIPELINE_JS = {
         "output_filename": "js/teams.min.js",
     },
     "profile": {
-        "source_filenames": ("js/contributor.js",),
+        "source_filenames": (
+            "js/lib/Chart.bundle.js",
+            "js/insights_charts.js",
+            "js/contributor.js",
+        ),
         "output_filename": "js/profile.min.js",
     },
     "settings": {

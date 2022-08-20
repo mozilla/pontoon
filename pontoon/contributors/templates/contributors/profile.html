@@ -1,3 +1,5 @@
+{% import "insights/widgets/tooltip.html" as Tooltip %}
+
 {% extends "base.html" %}
 
 {% block title %}{{ contributor.name_or_email }}{% endblock %}
@@ -150,6 +152,70 @@
         </div>
 
         <div class="right-column">
+
+            <section id="insights" class="half" data-dates="{{ dates }}">
+                <div class="block clearfix">
+                    <div class="chart-group">
+                        <div class="chart-item approval-ratio">
+                            <h3 class="controls">
+                                Approval ratio
+                                {{ Tooltip.display(
+                                    items=[{
+                                        'class': 'current-month',
+                                        'name': 'Current month',
+                                        'definition': 'Ratio of translations approved within all translations reviewed during each month.',
+                                    }, {
+                                        'class': 'twelve-month-average',
+                                        'name': '12-month average',
+                                        'definition': 'Ratio of translations approved within all translations reviewed in the 12 months before the specific month.',
+                                    }]
+                                ) }}
+                            </h3>
+                            <canvas
+                                id="approval-ratio-chart"
+                                data-approval-ratios="{{ approval_ratios }}"
+                                data-approval-ratios-12-month-avg="{{ approval_ratios_12_month_avg }}"
+                                width="360"
+                                height="145">
+                            </canvas>
+                        </div>
+                        <div class="chart-item self-approval-ratio">
+                            <h3 class="controls">
+                                Self-approval ratio
+                                {{ Tooltip.display(
+                                    items=[{
+                                        'class': 'current-month',
+                                        'name': 'Current month',
+                                        'definition': 'Ratio of self-approved translations within all approved translations during each month.',
+                                    }, {
+                                        'class': 'twelve-month-average',
+                                        'name': '12-month average',
+                                        'definition': 'Ratio of self-approved translations within all approved translations in the 12 months before the specific month.',
+                                    }]
+                                ) }}
+                            </h3>
+                            <canvas
+                                id="self-approval-ratio-chart"
+                                data-self-approval-ratios="{{ self_approval_ratios }}"
+                                data-self-approval-ratios-12-month-avg="{{ self_approval_ratios_12_month_avg }}"
+                                width="360"
+                                height="145">
+                            </canvas>
+                        </div>
+                    </div>
+                    <nav class="chart-group-navigation">
+                        <ul class="unselectable">
+                            <li class="active" title="Approval ratio">
+                                <i class="icon"></i><span class="label">Approval ratio</span>
+                            </li>
+                            </li>
+                            <li title="Self-approval ratio">
+                                <i class="icon"></i><span class="label">Self-approval ratio</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
 
             <section id="stats">
                 <div class="details">

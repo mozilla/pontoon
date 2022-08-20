@@ -280,7 +280,7 @@ def mock_contributors_render():
 
 @pytest.fixture
 def mock_users_translations_counts():
-    with patch("pontoon.contributors.views.users_with_translations_counts") as mock:
+    with patch("pontoon.contributors.utils.users_with_translations_counts") as mock:
         yield mock
 
 

@@ -12,6 +12,8 @@
   width: 690px;
 }
 
+/* Sidebar */
+
 #main .container .left-column .block {
   padding: 8px 0;
 }
@@ -99,6 +101,43 @@ h4.superuser {
   text-transform: uppercase;
   font-weight: 100;
 }
+
+#main .container .right-column > section {
+  padding-bottom: 30px;
+}
+
+/* Approval Ratio */
+
+#insights.half {
+  width: 400px;
+}
+
+#insights .block {
+  padding: 20px;
+}
+
+#insights h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+#insights .chart-group {
+  height: 185px;
+}
+
+#insights .chart-group-navigation ul li.active .icon {
+  background-color: #7bc876;
+}
+
+#insights h3 .tooltip li.current-month::marker {
+  color: #41554c;
+}
+
+#insights h3 .tooltip li.twelve-month-average::marker {
+  color: #7bc876;
+}
+
+/* Stats */
 
 #stats .details {
   text-align: center;
@@ -228,7 +267,6 @@ h4.superuser {
 
 #main .label {
   padding: 0.5em 0;
-  position: absolute;
   width: 100%;
   left: 122%;
   top: 0;

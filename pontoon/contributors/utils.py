@@ -1,23 +1,30 @@
+import datetime
 import jwt
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
+from statistics import mean
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.db.models import (
     Count,
+    F,
     Prefetch,
+    Q,
 )
+from django.db.models.functions import TruncMonth
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Locale,
     Translation,
-    User,
 )
+from pontoon.base.utils import convert_to_unix_time
 
 
 def map_translations_to_events(days, translations):
@@ -206,3 +213,83 @@ def check_verification_token(user, token):
         message = "Invalid verification token"
 
     return title, message
+
+
+def get_approval_ratios(user):
+    """
+    Get data required to render Approval ratio charts on the Profile page
+    """
+
+    def _get_monthly_action_counts(qs):
+        values = [0] * 23
+
+        for item in (
+            qs.annotate(created_month=TruncMonth("created_at"))
+            .values("created_month")
+            .annotate(count=Count("id"))
+            .values("created_month", "count")
+        ):
+            date = convert_to_unix_time(item["created_month"])
+            index = dates.index(date)
+            values[index] = item["count"]
+
+        return values
+
+    def _get_monthly_ratios(value1, value2):
+        return [
+            0 if sum(pair) == 0 else (pair[0] / sum(pair) * 100)
+            for pair in zip(value1, value2)
+        ]
+
+    def _get_12_month_average(monthly_ratios):
+        return [mean(monthly_ratios[x : x + 12]) for x in range(0, len(monthly_ratios))]
+
+    today = timezone.now().date()
+
+    dates = sorted(
+        [
+            convert_to_unix_time(
+                datetime.date(today.year, today.month, 1) - relativedelta(months=n)
+            )
+            for n in range(23)
+        ]
+    )
+
+    actions = ActionLog.objects.filter(
+        created_at__gte=timezone.now() - relativedelta(months=22),
+        translation__user=user,
+    )
+
+    peer_actions = actions.exclude(performed_by=user)
+    peer_approvals = _get_monthly_action_counts(
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
+    )
+    peer_rejections = _get_monthly_action_counts(
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_REJECTED)
+    )
+
+    self_actions = actions.filter(performed_by=user)
+    self_approvals = _get_monthly_action_counts(
+        self_actions.filter(
+            # Self-approved after submitting suggestions
+            Q(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
+            # Submitted directly as translations
+            | Q(
+                action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+                translation__date=F("translation__approved_date"),
+            )
+        )
+    )
+
+    approval_ratios = _get_monthly_ratios(peer_approvals, peer_rejections)
+    approval_ratios_12_month_avg = _get_12_month_average(approval_ratios)
+    self_approval_ratios = _get_monthly_ratios(peer_approvals, self_approvals)
+    self_approval_ratios_12_month_avg = _get_12_month_average(self_approval_ratios)
+
+    return {
+        "dates": dates[-12:],
+        "approval_ratios": approval_ratios[-12:],
+        "approval_ratios_12_month_avg": approval_ratios_12_month_avg,
+        "self_approval_ratios": self_approval_ratios[-12:],
+        "self_approval_ratios_12_month_avg": self_approval_ratios_12_month_avg,
+    }
