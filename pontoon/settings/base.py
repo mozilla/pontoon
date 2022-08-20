@@ -513,7 +513,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/Chart.bundle.js",
             "js/insights_charts.js",
-            "js/contributor.js",
+            "js/profile.js",
         ),
         "output_filename": "js/profile.min.js",
     },
