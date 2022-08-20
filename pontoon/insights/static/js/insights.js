@@ -1,46 +1,7 @@
 var Pontoon = (function (my) {
-  const nf = new Intl.NumberFormat('en');
   return $.extend(true, my, {
     insights: {
-      initialize: function () {
-        // Show/hide info tooltips on click on the icon
-        $('#insights h3 .fa-info').on('click', function (e) {
-          e.stopPropagation();
-          $(this).next('.tooltip').toggle();
-          $(this).toggleClass('active');
-        });
-
-        // Hide info tooltips on click outside
-        $(window).click(function () {
-          $('#insights .tooltip').hide();
-          $('#insights h3 .fa-info').removeClass('active');
-        });
-
-        // Select active users period
-        $('#insights h3 .period-selector .selector').on('click', function () {
-          $('#insights h3 .period-selector .selector').removeClass('active');
-          $(this).addClass('active');
-          Pontoon.insights.renderActiveUsers();
-        });
-
-        // Set up canvas to be HiDPI display ready
-        $('#insights canvas.chart').each(function () {
-          var canvas = this;
-
-          var dpr = window.devicePixelRatio || 1;
-          canvas.style.width = canvas.width + 'px';
-          canvas.style.height = canvas.height + 'px';
-          canvas.width = canvas.width * dpr;
-          canvas.height = canvas.height * dpr;
-        });
-
-        // Set up default Chart.js configuration
-        Chart.defaults.global.defaultFontColor = '#AAA';
-        Chart.defaults.global.defaultFontFamily = 'Open Sans';
-        Chart.defaults.global.defaultFontStyle = '100';
-        Chart.defaults.global.datasets.bar.barPercentage = 0.7;
-        Chart.defaults.global.datasets.bar.categoryPercentage = 0.7;
-
+      renderCharts: function () {
         Pontoon.insights.renderActiveUsers();
         Pontoon.insights.renderUnreviewedSuggestionsLifespan();
         Pontoon.insights.renderTimeToReviewSuggestions();
@@ -663,7 +624,6 @@ var Pontoon = (function (my) {
           '#review-activity-chart-legend .label',
         );
       },
-
       getPercent: function (value, total) {
         const pf = new Intl.NumberFormat('en', {
           style: 'percent',
@@ -672,7 +632,6 @@ var Pontoon = (function (my) {
         const n = value / total;
         return pf.format(isFinite(n) ? n : 0);
       },
-
       // Legend configuration doesn't allow for enough flexibility,
       // so we build our own legend
       // eslint-disable-next-line no-unused-vars
@@ -723,12 +682,4 @@ var Pontoon = (function (my) {
 })(Pontoon || {});
 
 /* Main code */
-$('body').on('click', '#insights .suggestions-age nav li', function () {
-  var items = $('.suggestions-age nav li').removeClass('active');
-  $(this).addClass('active');
-  var index = items.index(this);
-  var itemWidth = $('.suggestions-age-item').first().outerWidth();
-
-  // Show the selected graph view
-  $('.suggestions-age-items').css('marginLeft', -index * itemWidth);
-});
+const nf = new Intl.NumberFormat('en');

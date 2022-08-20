@@ -8,21 +8,7 @@
 }
 
 #insights .block {
-  border-radius: 6px;
-  background: #333941;
   margin-bottom: 40px;
-  overflow: hidden;
-  padding: 30px;
-}
-
-#insights h3 {
-  color: #ebebeb;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: bold;
-  height: 25px;
-  letter-spacing: normal;
-  margin-bottom: 30px;
 }
 
 #insights .controls .period-selector {
@@ -47,18 +33,7 @@
   color: #272a2f;
 }
 
-#insights .controls .selector {
-  background: #3f4752;
-  color: #aaa;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  text-align: center;
-  border-radius: 3px;
-  margin-left: 5px;
-  padding-top: 5px;
-  box-sizing: border-box;
-}
+/* Active users */
 
 #insights .active-users-chart {
   height: 160px;
@@ -106,100 +81,13 @@
   position: absolute;
 }
 
-#insights figure {
-  margin-bottom: 40px;
-}
-
-#insights .suggestions-age .block {
-  position: relative;
-}
-
-#insights .suggestions-age-items {
-  width: 940px;
-  height: 180px;
-  display: inline-block;
-  overflow: hidden;
-  transition: margin 0.4s ease-in-out;
-}
-
-#insights .suggestions-age-items .suggestions-age-item {
-  float: left;
-  padding-right: 60px;
-}
-
-#insights .suggestions-age nav {
-  text-align: center;
-}
-
-#insights .suggestions-age nav ul li {
-  cursor: pointer;
-  display: inline-block;
-  margin: 15px 15px 0;
-}
-
-#insights .suggestions-age nav ul li .icon {
-  background-color: #272a2f;
-}
-
-#insights .suggestions-age nav ul li .label {
-  color: #4d5967;
-}
-
-#insights .suggestions-age nav ul li.active .icon {
-  background-color: #4fc4f6;
-}
-
-#insights .suggestions-age nav ul li.active .label {
-  color: #ffffff;
-}
-
-/* Info tooltip */
-
-#insights h3 .fa {
-  float: right;
-  font-size: 14px;
-}
-
-#insights h3 .fa.active,
-#insights h3 .fa:hover {
-  background: #272a2f;
-}
-
-#insights h3 .tooltip {
-  background: #000000dd;
-  position: absolute;
-  display: none;
-  margin-top: 10px;
-  padding: 10px;
-  z-index: 1;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.5em;
-  border-radius: 3px;
-  right: 0;
-  max-width: 570px;
-}
-
-#insights h3 .tooltip ul {
-  margin-top: 15px;
-  margin-left: 15px;
-}
-
-#insights h3 .tooltip li {
-  list-style-type: disc;
-}
-
-#insights h3 .tooltip li:not(:last-child) {
-  padding-bottom: 5px;
-}
-
 /* Active users info tooltip */
 
 #insights h3 .tooltip li::marker {
   color: #7bc876;
 }
 
-/* Active users info tooltip */
+/* Time to review suggestions and Age of unreviewed info tooltip */
 
 #insights h3 .tooltip li.current-month::marker {
   color: #4fc4f6;
@@ -262,8 +150,7 @@
   margin-bottom: 5px;
 }
 
-#insights .legend li .icon,
-#insights nav li .icon {
+#insights .legend li .icon {
   display: inline-block;
   border-radius: 50%;
   margin-right: 8px;
@@ -271,8 +158,7 @@
   width: 12px;
 }
 
-#insights .legend li .label,
-#insights nav li .label {
+#insights .legend li .label {
   cursor: pointer;
   font-weight: bold;
   vertical-align: text-top;

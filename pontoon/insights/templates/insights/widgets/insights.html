@@ -47,10 +47,10 @@
         </section>
         {% endif %}
         {% if unreviewed_lifespans %}
-        <section class="half suggestions-age">
+        <section class="half">
             <div class="block clearfix">
-                <div class="suggestions-age-items">
-                    <div class="suggestions-age-item time-to-review-suggestions">
+                <div class="chart-group">
+                    <div class="chart-item time-to-review-suggestions">
                         <h3 class="controls">
                             Time to review suggestions
                             {{ Tooltip.display(
@@ -74,7 +74,7 @@
                             height="130">
                         </canvas>
                     </div>
-                    <div class="suggestions-age-item age-of-unreviewed-suggestions">
+                    <div class="chart-item age-of-unreviewed-suggestions">
                         <h3 class="controls">
                             Age of unreviewed suggestions
                             {{ Tooltip.display(
@@ -89,7 +89,7 @@
                         </canvas>
                     </div>
                 </div>
-                <nav>
+                <nav class="chart-group-navigation">
                     <ul class="unselectable">
                         <li class="active" title="Time to review suggestions">
                             <i class="icon"></i><span class="label">Time to review</span>
