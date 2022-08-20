@@ -917,7 +917,4 @@ NOTIFICATIONS_MAX_COUNT = 7
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
 
-# Number of events displayed on the Contributor's timeline per page.
-CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

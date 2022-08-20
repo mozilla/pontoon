@@ -1,11 +1,9 @@
+import pytest
+
 from collections import OrderedDict
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime, timedelta
 from unittest.mock import patch
 
-import pytest
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.timezone import now, make_aware
@@ -14,7 +12,6 @@ from pontoon.base.models import User
 from pontoon.base.tests import (
     LocaleFactory,
     TranslationFactory,
-    UserFactory,
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors import views
@@ -192,57 +189,6 @@ def contributor_translations(settings, user_a, project_a):
         )
     settings.CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 2
     yield translations
-
-
-@pytest.mark.django_db
-def test_timeline(
-    contributor_translations, client, project_a, mock_profile_render, user_a
-):
-    """Backend should return events filtered by page number requested by user."""
-    client.get(f"/contributors/{user_a.username}/timeline/?page=2")
-    assert mock_profile_render.call_args[0][2]["events"] == [
-        {
-            "date": dt,
-            "type": "translation",
-            "count": count,
-            "project": project_a,
-            "translation": translations[0][0],
-        }
-        for (dt, count), translations in list(contributor_translations.items())[2:4]
-    ]
-
-
-@pytest.mark.django_db
-def test_timeline_invalid_page(contributor_translations, client, user_a):
-    """Backend should return 404 error when user requests an invalid/empty page."""
-    response = client.get(f"/contributors/{user_a.username}/timeline/?page=45")
-    assert response.status_code == 404
-
-    response = client.get(f"/contributors/{user_a.username}/timeline/?page=-aa45")
-    assert response.status_code == 404
-
-
-@pytest.mark.django_db
-def test_timeline_non_active_contributor(
-    contributor_translations, client, mock_profile_render
-):
-    """Test if backend is able return events for a user without contributions."""
-    nonactive_contributor = UserFactory.create()
-    client.get(f"/contributors/{nonactive_contributor.username}/timeline/")
-    assert mock_profile_render.call_args[0][2]["events"] == [
-        {"date": nonactive_contributor.date_joined, "type": "join"}
-    ]
-
-
-@pytest.mark.django_db
-def test_timeline_join(client, contributor_translations, mock_profile_render, user_a):
-    """Last page of results should include information about when user joined Pontoon."""
-    client.get(f"/contributors/{user_a.username}/timeline/?page=3")
-
-    assert mock_profile_render.call_args[0][2]["events"][-1] == {
-        "date": user_a.date_joined,
-        "type": "join",
-    }
 
 
 @pytest.mark.django_db

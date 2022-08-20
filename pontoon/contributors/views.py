@@ -1,15 +1,12 @@
 import json
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import (
-    Http404,
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
@@ -50,45 +47,6 @@ def contributor_username(request, username):
         user = get_object_or_404(UserProfile, username=username).user
 
     return contributor(request, user)
-
-
-def contributor_timeline(request, username):
-    """Contributor events in the timeline."""
-    user = get_object_or_404(User, username=username)
-    try:
-        page = int(request.GET.get("page", 1))
-    except ValueError:
-        raise Http404("Invalid page number.")
-
-    # Exclude obsolete translations
-    contributor_translations = (
-        user.contributed_translations.exclude(entity__obsolete=True)
-        .extra({"day": "date(date)"})
-        .order_by("-day")
-    )
-
-    counts_by_day = contributor_translations.values("day").annotate(count=Count("id"))
-
-    try:
-        events_paginator = Paginator(
-            counts_by_day, django_settings.CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE
-        )
-
-        timeline_events = utils.map_translations_to_events(
-            events_paginator.page(page).object_list, contributor_translations
-        )
-
-        # Join is the last event in this reversed order.
-        if page == events_paginator.num_pages:
-            timeline_events.append({"date": user.date_joined, "type": "join"})
-
-    except EmptyPage:
-        # Return the join event if user reaches the last page.
-        raise Http404("No events.")
-
-    return render(
-        request, "contributors/includes/timeline.html", {"events": timeline_events}
-    )
 
 
 def contributor(request, user):

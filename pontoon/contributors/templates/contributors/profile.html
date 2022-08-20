@@ -7,9 +7,7 @@
 {% block class %}user{% endblock %}
 
 {% block bottom %}
-<section id="main" class="clearfix"
-    data-url="{{ url('pontoon.contributors.contributor.timeline', username=contributor.username) }}" data-page="0"
-    data-finalized="0">
+<section id="main" class="clearfix">
     <div class="container clearfix">
         <div class="left-column">
 
@@ -235,10 +233,6 @@
             </section>
 
         </div>
-    </div>
-
-    <div id="timeline-loader">
-        <div class="fa fa-sync fa-spin"></div>
     </div>
 </section>
 {% endblock %}
