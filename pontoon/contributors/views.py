@@ -57,6 +57,9 @@ def contributor(request, user):
         {
             "contributor": user,
             "translations": user.contributed_translations,
+            "contact_for": user.contact_for.filter(
+                disabled=False, system_project=False, visibility="public"
+            ).order_by("-priority"),
         }
     )
 

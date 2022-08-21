@@ -140,9 +140,15 @@
                 </div>
                 {% endif %}
 
-                {% if contributor.is_superuser %}
+                {% if contact_for.exists() %}
                 <div class="block">
-                    <h4 class="subtitle superuser">Project manager</h4>
+                    <h4 class="subtitle">Project manager</h4>
+                    {% for project in contact_for %}
+                    <div class="item-with-icon">
+                        <span class="icon fa fa-language"></span>
+                        <a href="{{ url('pontoon.projects.project', project.slug) }}">{{ project.name }}</a>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
             </div>

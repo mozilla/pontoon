@@ -50,6 +50,9 @@
   font-size: 14px;
   font-weight: normal;
   line-height: 1.8em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .item-with-icon .icon {
@@ -90,16 +93,6 @@
 
 h4 {
   font-size: 14px;
-}
-
-h4.superuser {
-  border: 1px solid #f36;
-  border-radius: 4px;
-  line-height: 30px;
-  text-align: center;
-  color: #f36;
-  text-transform: uppercase;
-  font-weight: 100;
 }
 
 #main .container .right-column > section {
