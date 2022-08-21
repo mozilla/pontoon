@@ -5,11 +5,11 @@
 #main .container .left-column {
   color: #ccc;
   margin-right: 30px;
-  width: 260px;
+  width: 276px;
 }
 
 #main .container .right-column {
-  width: 690px;
+  width: 674px;
 }
 
 /* Sidebar */
@@ -95,14 +95,14 @@ h4 {
   font-size: 14px;
 }
 
-#main .container .right-column > section {
-  padding-bottom: 30px;
-}
-
 /* Approval Ratio */
 
+#insights {
+  float: left;
+}
+
 #insights.half {
-  width: 400px;
+  width: 460px;
 }
 
 #insights .block {
@@ -115,7 +115,7 @@ h4 {
 }
 
 #insights .chart-group {
-  height: 185px;
+  height: 201px;
 }
 
 #insights .chart-group-navigation ul li.active .icon {
@@ -132,39 +132,39 @@ h4 {
 
 /* Stats */
 
-#stats .details {
-  text-align: center;
+#stats {
+  border-radius: 6px;
+  background: #333941;
+  box-sizing: border-box;
+  float: right;
+  padding: 20px;
+  text-align: right;
+  width: 184px;
 }
 
-#stats .details div {
-  width: 227px;
-  border-top: 5px solid;
+#stats > div {
   color: #aaaaaa;
-  display: inline-block;
-  margin-right: 1px;
+  margin-bottom: 46px;
 }
 
-#stats .details div:last-child {
-  margin-right: 0;
+#stats > div:last-child {
+  margin-bottom: 0;
 }
 
-#stats .details div.translated {
-  border-color: #7bc876;
-}
-
-#stats .details div.unreviewed {
-  border-color: #4fc4f6;
-}
-
-#stats .details div span {
-  font-size: 10px;
+#stats > div span {
+  font-size: 14px;
   text-transform: uppercase;
 }
 
-#stats .details div p {
+#stats > div.translated span {
+  color: #7bc876;
+}
+
+#stats > div.unreviewed span {
+  color: #4fc4f6;
+}
+
+#stats > div p {
   color: #ffffff;
-  font-size: 28px;
-  line-height: 18px;
-  padding: 10px 0;
-  position: relative;
+  font-size: 25px;
 }

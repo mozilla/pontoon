@@ -124,7 +124,6 @@ var Pontoon = (function (my) {
                     callback: function (value) {
                       return value + '%';
                     },
-                    display: false,
                   },
                 },
               ],

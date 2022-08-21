@@ -17,7 +17,7 @@
                 {% if my_profile %}
                 <div class="desc">Change your profile picture</div>
                 {% endif %}
-                <img class="rounded" src="{{ contributor.gravatar_url(512) }}" width="256" height="256">
+                <img class="rounded" src="{{ contributor.gravatar_url(544) }}" width="272" height="272">
             </a>
 
             <div class="personal-information">
@@ -179,8 +179,8 @@
                                 id="approval-ratio-chart"
                                 data-approval-ratios="{{ approval_ratios }}"
                                 data-approval-ratios-12-month-avg="{{ approval_ratios_12_month_avg }}"
-                                width="360"
-                                height="145">
+                                width="420"
+                                height="160">
                             </canvas>
                         </div>
                         <div class="chart-item self-approval-ratio">
@@ -202,8 +202,8 @@
                                 id="self-approval-ratio-chart"
                                 data-self-approval-ratios="{{ self_approval_ratios }}"
                                 data-self-approval-ratios-12-month-avg="{{ self_approval_ratios_12_month_avg }}"
-                                width="360"
-                                height="145">
+                                width="420"
+                                height="160">
                             </canvas>
                         </div>
                     </div>
@@ -222,19 +222,17 @@
             </section>
 
             <section id="stats">
-                <div class="details">
-                    <div class="total">
-                        <span>All strings</span>
-                        <p>{{ translations.count()|intcomma }}</p>
-                    </div>
-                    <div class="translated">
-                        <span>Translated</span>
-                        <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
-                    </div>
-                    <div class="unreviewed">
-                        <span>Unreviewed</span>
-                        <p>{{ translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}</p>
-                    </div>
+                <div class="total">
+                    <span>All translations</span>
+                    <p>{{ translations.count()|intcomma }}</p>
+                </div>
+                <div class="translated">
+                    <span>Approved</span>
+                    <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
+                </div>
+                <div class="unreviewed">
+                    <span>Unreviewed</span>
+                    <p>{{ translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}</p>
                 </div>
             </section>
 
