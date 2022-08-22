@@ -177,7 +177,7 @@
         <div class="right-column">
 
             {% set approval_ratio_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
-            {% set self_approval_ratio_visibile = profile.visibility_self_approval == "Public" or user.translated_locales %}
+            {% set self_approval_ratio_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
             {% if approval_ratio_visibile or self_approval_ratio_visibile %}
             <section id="insights" class="half" data-dates="{{ dates }}">
                 <div class="block clearfix">
