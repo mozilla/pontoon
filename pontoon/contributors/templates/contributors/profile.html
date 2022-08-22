@@ -40,7 +40,7 @@
                 </div>
                 {% endif %}
 
-                {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged in users" or user.translated_locales) %}
+                {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged in users" or user.translated_locales or contributor.manager_for_locales or contact_for.exists() or contributor.is_superuser) %}
                 {% set are_external_accounts_visible = (profile.visibility_external_accounts == "Public" or user.translated_locales) and (profile.chat or profile.github or profile.bugzilla) %}
 
                 {% if is_email_visible or are_external_accounts_visible %}
