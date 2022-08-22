@@ -12,6 +12,7 @@
         <div class="left-column">
 
             {% set my_profile = (user.is_authenticated and user.email == contributor.email) %}
+            {% set profile = contributor.profile %}
 
             <a class="avatar" href="{% if my_profile %}https://gravatar.com/{% endif %}">
                 {% if my_profile %}
@@ -23,21 +24,21 @@
             <div class="personal-information">
                 <div class="block">
                     <h2 class="display-name">{{ contributor.first_name }}</h2>
-                    {% if contributor.profile.username %}
-                    <div class="username">{{ contributor.profile.username }}</div>
+                    {% if profile.username %}
+                    <div class="username">{{ profile.username }}</div>
                     {% endif %}
                 </div>
 
-                {% if contributor.profile.bio %}
+                {% if profile.bio %}
                 <div class="block">
-                    <div class="bio">{{ contributor.profile.bio }}</div>
+                    <div class="bio">{{ profile.bio }}</div>
                 </div>
                 {% endif %}
 
                 <div class="block">
                     {% if user.is_authenticated %}
-                    {% if contributor.profile.visibility_email == "Logged in users" or user.translated_locales %}
-                    {% set email = contributor.profile.contact_email or contributor.email %}
+                    {% if profile.visibility_email == "Logged in users" or user.translated_locales %}
+                    {% set email = profile.contact_email or contributor.email %}
                     <div class="item-with-icon">
                         <span class="icon fa fa-envelope"></span>
                         <a href="mailto:{{ email|nospam }}">{{ email|nospam }}</a>
@@ -45,26 +46,26 @@
                     {% endif %}
                     {% endif %}
 
-                    {% if contributor.profile.visibility_external_accounts == "Public" or user.translated_locales %}
+                    {% if profile.visibility_external_accounts == "Public" or user.translated_locales %}
 
-                    {% if contributor.profile.chat %}
+                    {% if profile.chat %}
                     <div class="item-with-icon" title="Chat Account">
                         <span class="icon fa fa-comment-dots"></span>
-                        <span>{{ contributor.profile.chat }}</span>
+                        <span>{{ profile.chat }}</span>
                     </div>
                     {% endif %}
 
-                    {% if contributor.profile.github %}
+                    {% if profile.github %}
                     <div class="item-with-icon" title="GitHub Account">
                         <span class="icon fab fa-github"></span>
-                        <a href="https://github.com/{{ contributor.profile.github }}">{{ contributor.profile.github }}</a>
+                        <a href="https://github.com/{{ profile.github }}">{{ profile.github }}</a>
                     </div>
                     {% endif %}
 
-                    {% if contributor.profile.bugzilla %}
+                    {% if profile.bugzilla %}
                     <div class="item-with-icon" title="Bugzilla Account">
                         <span class="icon fa fa-bug"></span>
-                        <a href="mailto:{{ contributor.profile.bugzilla|nospam }}">{{ contributor.profile.bugzilla|nospam }}</a>
+                        <a href="mailto:{{ profile.bugzilla|nospam }}">{{ profile.bugzilla|nospam }}</a>
                     </div>
                     {% endif %}
 
@@ -157,8 +158,8 @@
 
         <div class="right-column">
 
-            {% set approval_ratio_visibile = contributor.profile.visibility_approval == "Public" or user.translated_locales %}
-            {% set self_approval_ratio_visibile = contributor.profile.visibility_self_approval == "Public" or user.translated_locales %}
+            {% set approval_ratio_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
+            {% set self_approval_ratio_visibile = profile.visibility_self_approval == "Public" or user.translated_locales %}
             {% if approval_ratio_visibile or self_approval_ratio_visibile %}
             <section id="insights" class="half" data-dates="{{ dates }}">
                 <div class="block clearfix">
