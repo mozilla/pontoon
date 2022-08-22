@@ -75,13 +75,6 @@ var Pontoon = (function (my) {
               caretPadding: 5,
               xPadding: 10,
               yPadding: 10,
-              itemSort: function (a, b) {
-                // Dataset order (needed for z-index) also affects tooltip,
-                // so we need to manually sort tooltip items.
-                if (a.datasetIndex === 1 && b.datasetIndex === 0) {
-                  return 1;
-                }
-              },
               callbacks: {
                 label: function (items, chart) {
                   const label = chart.datasets[items.datasetIndex].label;
