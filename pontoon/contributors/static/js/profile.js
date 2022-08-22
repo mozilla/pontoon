@@ -133,3 +133,54 @@ var Pontoon = (function (my) {
 /* Main code */
 Pontoon.insights.initialize();
 Pontoon.insights.renderCharts();
+
+
+
+
+
+
+
+
+
+//Generate random number between min and max
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function getRandomTimeStamps(min, max, fromDate, isObject) {
+    var return_list = [];
+
+    var entries = randomInt(min, max);
+    for (var i = 0; i < entries; i++) {
+        var day = fromDate ? new Date(fromDate.getTime()) : new Date();
+
+        //Genrate random
+        var previous_date = randomInt(0, 365);
+        if (!fromDate) {
+            previous_date = -previous_date;
+        }
+        day.setDate(day.getDate() + previous_date);
+
+        if (isObject) {
+            var count = randomInt(1, 20);
+            return_list.push({
+                timestamp: day.getTime(),
+                count: count,
+            });
+        } else {
+            return_list.push(day.getTime());
+        }
+    }
+
+    return return_list;
+}
+
+$('#contribution-graph').github_graph( {
+    // Default is null will display date before 365 days from now
+    // start_date: new Date(2022,0,1),
+    //Default is empty list
+    data: getRandomTimeStamps(50,500, null,false),
+    // single text and plural text
+    texts: ['contribution', 'contributions'],
+    colors: ['#2d333b', '#0e4429', '#006d32', '#26a641', '#39d353'],
+  });
