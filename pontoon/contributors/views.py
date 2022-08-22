@@ -52,6 +52,7 @@ def contributor_username(request, username):
 def contributor(request, user):
     """Contributor profile."""
     context = utils.get_approval_rates(user)
+    contributions = utils.get_contributions(user)
 
     context.update(
         {
@@ -60,6 +61,7 @@ def contributor(request, user):
             "contact_for": user.contact_for.filter(
                 disabled=False, system_project=False, visibility="public"
             ).order_by("-priority"),
+            "contributions": json.dumps(contributions),
         }
     )
 

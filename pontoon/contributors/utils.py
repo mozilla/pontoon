@@ -14,7 +14,7 @@ from django.db.models import (
     Prefetch,
     Q,
 )
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncDay, TruncMonth
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -287,3 +287,51 @@ def get_approval_rates(user):
         "self_approval_rates": self_approval_rates[-12:],
         "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
     }
+
+
+def get_contributions(user):
+    """
+    Get data required to render the Contribution graph on the Profile page
+    """
+
+    def _get_daily_action_counts(qs):
+        values = []
+
+        for item in (
+            qs.annotate(timestamp=TruncDay("created_at"))
+            .values("timestamp")
+            .annotate(count=Count("id"))
+            .values("timestamp", "count")
+        ):
+            values.append(
+                {
+                    "timestamp": convert_to_unix_time(item["timestamp"]),
+                    "count": item["count"],
+                }
+            )
+
+        return values
+
+    actions = ActionLog.objects.filter(
+        created_at__gte=timezone.now() - relativedelta(days=365),
+    )
+
+    review_action_types = [
+        ActionLog.ActionType.TRANSLATION_APPROVED,
+        ActionLog.ActionType.TRANSLATION_REJECTED,
+    ]
+
+    submissions = actions.filter(
+        performed_by=user, action_type=ActionLog.ActionType.TRANSLATION_CREATED
+    )
+    reviews_performed = actions.filter(
+        performed_by=user, action_type__in=review_action_types
+    )
+    reviews_received = actions.filter(
+        translation__user=user, action_type__in=review_action_types
+    )
+
+    user_actions = submissions | reviews_performed
+    all_actions = user_actions | reviews_received
+
+    return _get_daily_action_counts(user_actions)

@@ -176,10 +176,12 @@
 
         <div class="right-column">
 
+            <div class="clearfix">
+
             {% set approval_rate_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
             {% set self_approval_rate_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
             {% if approval_rate_visibile or self_approval_rate_visibile %}
-            <section id="insights" class="half" data-dates="{{ dates }}">
+            <section id="insights" data-dates="{{ dates }}">
                 <div class="block clearfix">
                     <div class="chart-group">
                         {% if approval_rate_visibile %}
@@ -264,7 +266,11 @@
                 </div>
             </section>
 
-            <section id="contribution-graph"></section>
+            </div>
+
+            <section id="contributions">
+                <div id="contribution-graph" data-contributions="{{ contributions }}"></div>
+            </section>
         </div>
     </div>
 </section>
