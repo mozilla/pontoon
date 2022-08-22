@@ -189,9 +189,9 @@ def check_verification_token(user, token):
     return title, message
 
 
-def get_approval_ratios(user):
+def get_approval_rates(user):
     """
-    Get data required to render Approval ratio charts on the Profile page
+    Get data required to render Approval rate charts on the Profile page
     """
 
     def _get_monthly_action_counts(qs):
@@ -209,14 +209,14 @@ def get_approval_ratios(user):
 
         return values
 
-    def _get_monthly_ratios(value1, value2):
+    def _get_monthly_rates(value1, value2):
         return [
             0 if sum(pair) == 0 else (pair[0] / sum(pair) * 100)
             for pair in zip(value1, value2)
         ]
 
-    def _get_12_month_average(monthly_ratios):
-        return [mean(monthly_ratios[x : x + 12]) for x in range(0, len(monthly_ratios))]
+    def _get_12_month_average(monthly_rates):
+        return [mean(monthly_rates[x : x + 12]) for x in range(0, len(monthly_rates))]
 
     today = timezone.now().date()
 
@@ -255,15 +255,15 @@ def get_approval_ratios(user):
         )
     )
 
-    approval_ratios = _get_monthly_ratios(peer_approvals, peer_rejections)
-    approval_ratios_12_month_avg = _get_12_month_average(approval_ratios)
-    self_approval_ratios = _get_monthly_ratios(peer_approvals, self_approvals)
-    self_approval_ratios_12_month_avg = _get_12_month_average(self_approval_ratios)
+    approval_rates = _get_monthly_rates(peer_approvals, peer_rejections)
+    approval_rates_12_month_avg = _get_12_month_average(approval_rates)
+    self_approval_rates = _get_monthly_rates(peer_approvals, self_approvals)
+    self_approval_rates_12_month_avg = _get_12_month_average(self_approval_rates)
 
     return {
         "dates": dates[-12:],
-        "approval_ratios": approval_ratios[-12:],
-        "approval_ratios_12_month_avg": approval_ratios_12_month_avg,
-        "self_approval_ratios": self_approval_ratios[-12:],
-        "self_approval_ratios_12_month_avg": self_approval_ratios_12_month_avg,
+        "approval_rates": approval_rates[-12:],
+        "approval_rates_12_month_avg": approval_rates_12_month_avg,
+        "self_approval_rates": self_approval_rates[-12:],
+        "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
     }

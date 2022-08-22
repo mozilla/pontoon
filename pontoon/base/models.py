@@ -1670,14 +1670,14 @@ class UserProfile(models.Model):
     )
 
     visibility_self_approval = models.CharField(
-        "Self-approval ratio",
+        "Self-approval rate",
         max_length=20,
         default=Visibility.ALL,
         choices=Visibility.choices,
     )
 
     visibility_approval = models.CharField(
-        "Approval ratio",
+        "Approval rate",
         max_length=20,
         default=Visibility.ALL,
         choices=Visibility.choices,

@@ -51,7 +51,7 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    context = utils.get_approval_ratios(user)
+    context = utils.get_approval_rates(user)
 
     context.update(
         {

@@ -2,22 +2,22 @@ var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
-        var approvalRatioChart = $('#approval-ratio-chart');
-        Pontoon.insights.renderRatioChart(
-          approvalRatioChart,
-          approvalRatioChart.data('approval-ratios'),
-          approvalRatioChart.data('approval-ratios-12-month-avg'),
+        var approvalRateChart = $('#approval-rate-chart');
+        Pontoon.insights.renderRateChart(
+          approvalRateChart,
+          approvalRateChart.data('approval-rates'),
+          approvalRateChart.data('approval-rates-12-month-avg'),
         );
 
-        var selfApprovalRatioChart = $('#self-approval-ratio-chart');
-        Pontoon.insights.renderRatioChart(
-          selfApprovalRatioChart,
-          selfApprovalRatioChart.data('self-approval-ratios'),
-          selfApprovalRatioChart.data('self-approval-ratios-12-month-avg'),
+        var selfApprovalRateChart = $('#self-approval-rate-chart');
+        Pontoon.insights.renderRateChart(
+          selfApprovalRateChart,
+          selfApprovalRateChart.data('self-approval-rates'),
+          selfApprovalRateChart.data('self-approval-rates-12-month-avg'),
         );
       },
 
-      renderRatioChart: function (chart, data1, data2) {
+      renderRateChart: function (chart, data1, data2) {
         if (chart.length === 0) {
           return;
         }

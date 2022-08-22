@@ -176,71 +176,71 @@
 
         <div class="right-column">
 
-            {% set approval_ratio_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
-            {% set self_approval_ratio_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
-            {% if approval_ratio_visibile or self_approval_ratio_visibile %}
+            {% set approval_rate_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
+            {% set self_approval_rate_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
+            {% if approval_rate_visibile or self_approval_rate_visibile %}
             <section id="insights" class="half" data-dates="{{ dates }}">
                 <div class="block clearfix">
                     <div class="chart-group">
-                        {% if approval_ratio_visibile %}
-                        <div class="chart-item approval-ratio">
+                        {% if approval_rate_visibile %}
+                        <div class="chart-item approval-rate">
                             <h3 class="controls">
-                                Approval ratio
+                                Approval rate
                                 {{ Tooltip.display(
                                     items=[{
                                         'class': 'current-month',
                                         'name': 'Current month',
-                                        'definition': 'Ratio of translations approved within all translations reviewed during each month.',
+                                        'definition': 'Rate of translations approved within all translations reviewed during each month.',
                                     }, {
                                         'class': 'twelve-month-average',
                                         'name': '12-month average',
-                                        'definition': 'Ratio of translations approved within all translations reviewed in the 12 months before the specific month.',
+                                        'definition': 'Rate of translations approved within all translations reviewed in the 12 months before the specific month.',
                                     }]
                                 ) }}
                             </h3>
                             <canvas
-                                id="approval-ratio-chart"
-                                data-approval-ratios="{{ approval_ratios }}"
-                                data-approval-ratios-12-month-avg="{{ approval_ratios_12_month_avg }}"
+                                id="approval-rate-chart"
+                                data-approval-rates="{{ approval_rates }}"
+                                data-approval-rates-12-month-avg="{{ approval_rates_12_month_avg }}"
                                 width="420"
-                                height="{% if self_approval_ratio_visibile %}159{% else %}191{% endif %}">
+                                height="{% if self_approval_rate_visibile %}159{% else %}191{% endif %}">
                             </canvas>
                         </div>
                         {% endif %}
-                        {% if self_approval_ratio_visibile %}
-                        <div class="chart-item self-approval-ratio">
+                        {% if self_approval_rate_visibile %}
+                        <div class="chart-item self-approval-rate">
                             <h3 class="controls">
-                                Self-approval ratio
+                                Self-approval rate
                                 {{ Tooltip.display(
                                     items=[{
                                         'class': 'current-month',
                                         'name': 'Current month',
-                                        'definition': 'Ratio of self-approved translations within all approved translations during each month.',
+                                        'definition': 'Rate of self-approved translations within all approved translations during each month.',
                                     }, {
                                         'class': 'twelve-month-average',
                                         'name': '12-month average',
-                                        'definition': 'Ratio of self-approved translations within all approved translations in the 12 months before the specific month.',
+                                        'definition': 'Rate of self-approved translations within all approved translations in the 12 months before the specific month.',
                                     }]
                                 ) }}
                             </h3>
                             <canvas
-                                id="self-approval-ratio-chart"
-                                data-self-approval-ratios="{{ self_approval_ratios }}"
-                                data-self-approval-ratios-12-month-avg="{{ self_approval_ratios_12_month_avg }}"
+                                id="self-approval-rate-chart"
+                                data-self-approval-rates="{{ self_approval_rates }}"
+                                data-self-approval-rates-12-month-avg="{{ self_approval_rates_12_month_avg }}"
                                 width="420"
-                                height="{% if approval_ratio_visibile %}159{% else %}191{% endif %}">
+                                height="{% if approval_rate_visibile %}159{% else %}191{% endif %}">
                             </canvas>
                         </div>
                         {% endif %}
                     </div>
-                    {% if approval_ratio_visibile and self_approval_ratio_visibile %}
+                    {% if approval_rate_visibile and self_approval_rate_visibile %}
                     <nav class="chart-group-navigation">
                         <ul class="unselectable">
-                            <li class="active" title="Approval ratio">
-                                <i class="icon"></i><span class="label">Approval ratio</span>
+                            <li class="active" title="Approval rate">
+                                <i class="icon"></i><span class="label">Approval rate</span>
                             </li>
-                            <li title="Self-approval ratio">
-                                <i class="icon"></i><span class="label">Self-approval ratio</span>
+                            <li title="Self-approval rate">
+                                <i class="icon"></i><span class="label">Self-approval rate</span>
                             </li>
                         </ul>
                     </nav>
