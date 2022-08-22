@@ -114,10 +114,6 @@ h4 {
   margin-bottom: 20px;
 }
 
-#insights .chart-group {
-  height: 201px;
-}
-
 #insights .chart-group-navigation ul li.active .icon {
   background-color: #7bc876;
 }

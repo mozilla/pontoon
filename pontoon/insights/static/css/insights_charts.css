@@ -9,8 +9,6 @@
 
 #insights .chart-group {
   width: 1000px;
-  height: 180px;
-  display: inline-block;
   overflow: hidden;
   transition: margin 0.4s ease-in-out;
 }
