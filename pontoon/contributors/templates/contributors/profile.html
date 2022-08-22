@@ -157,9 +157,13 @@
 
         <div class="right-column">
 
+            {% set approval_ratio_visibile = contributor.profile.visibility_approval == "Public" or user.translated_locales %}
+            {% set self_approval_ratio_visibile = contributor.profile.visibility_self_approval == "Public" or user.translated_locales %}
+            {% if approval_ratio_visibile or self_approval_ratio_visibile %}
             <section id="insights" class="half" data-dates="{{ dates }}">
                 <div class="block clearfix">
                     <div class="chart-group">
+                        {% if approval_ratio_visibile %}
                         <div class="chart-item approval-ratio">
                             <h3 class="controls">
                                 Approval ratio
@@ -180,9 +184,11 @@
                                 data-approval-ratios="{{ approval_ratios }}"
                                 data-approval-ratios-12-month-avg="{{ approval_ratios_12_month_avg }}"
                                 width="420"
-                                height="159">
+                                height="{% if self_approval_ratio_visibile %}159{% else %}191{% endif %}">
                             </canvas>
                         </div>
+                        {% endif %}
+                        {% if self_approval_ratio_visibile %}
                         <div class="chart-item self-approval-ratio">
                             <h3 class="controls">
                                 Self-approval ratio
@@ -203,10 +209,12 @@
                                 data-self-approval-ratios="{{ self_approval_ratios }}"
                                 data-self-approval-ratios-12-month-avg="{{ self_approval_ratios_12_month_avg }}"
                                 width="420"
-                                height="159">
+                                height="{% if approval_ratio_visibile %}159{% else %}191{% endif %}">
                             </canvas>
                         </div>
+                        {% endif %}
                     </div>
+                    {% if approval_ratio_visibile and self_approval_ratio_visibile %}
                     <nav class="chart-group-navigation">
                         <ul class="unselectable">
                             <li class="active" title="Approval ratio">
@@ -217,8 +225,10 @@
                             </li>
                         </ul>
                     </nav>
+                    {% endif %}
                 </div>
             </section>
+            {% endif %}
 
             <section id="stats">
                 <div class="total">

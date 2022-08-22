@@ -139,7 +139,6 @@ h4 {
 }
 
 #stats > div {
-  color: #aaaaaa;
   margin-bottom: 46px;
 }
 
@@ -148,6 +147,7 @@ h4 {
 }
 
 #stats > div span {
+  color: #aaaaaa;
   font-size: 14px;
   text-transform: uppercase;
 }
@@ -163,4 +163,27 @@ h4 {
 #stats > div p {
   color: #ffffff;
   font-size: 25px;
+}
+
+/* Stats when Approval ratios not visible */
+
+#stats:first-child {
+  text-align: center;
+  width: 674px;
+}
+
+#stats:first-child div {
+  margin: 0;
+  display: inline-block;
+  text-align: center;
+}
+
+#stats:first-child div:first-child {
+  float: left;
+  text-align: left;
+}
+
+#stats:first-child div:last-child {
+  float: right;
+  text-align: right;
 }
