@@ -124,7 +124,7 @@
                 </div>
             </div>
 
-            {% if contributor.translator_for_locales or contributor.manager_for_locales or contact_for.exists() %}
+            {% if contributor.translator_for_locales or contributor.manager_for_locales or contact_for.exists() or contributor.is_superuser %}
             <hr>
             {% endif %}
 
@@ -162,6 +162,12 @@
                         <a href="{{ url('pontoon.projects.project', project.slug) }}">{{ project.name }}</a>
                     </div>
                     {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if contributor.is_superuser %}
+                <div class="block">
+                    <h4 class="subtitle superuser">Administrator</h4>
                 </div>
                 {% endif %}
             </div>
