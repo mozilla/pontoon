@@ -78,9 +78,9 @@ var Pontoon = (function (my) {
               callbacks: {
                 label: function (items, chart) {
                   const label = chart.datasets[items.datasetIndex].label;
-                  const value = items.yLabel;
+                  const value = nf.format(items.yLabel/100);
 
-                  return label + ': ' + nf.format(value) + '%';
+                  return `${label}: ${value}`;
                 },
               },
             },
