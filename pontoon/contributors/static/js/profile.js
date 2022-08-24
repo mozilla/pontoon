@@ -128,7 +128,7 @@ var Pontoon = (function (my) {
 
 /* Main code */
 const nf = new Intl.NumberFormat('en', {
-  maximumFractionDigits: 2,
+  style: 'percent',
 });
 
 Pontoon.insights.initialize();
