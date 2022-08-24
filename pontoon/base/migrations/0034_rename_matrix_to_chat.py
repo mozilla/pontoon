@@ -17,6 +17,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="userprofile",
+            name="chat",
+            field=models.CharField(
+                blank=True, max_length=255, null=True, verbose_name="Chat username"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="userprofile",
             name="github",
             field=models.CharField(
                 blank=True, max_length=255, null=True, verbose_name="GitHub username"
