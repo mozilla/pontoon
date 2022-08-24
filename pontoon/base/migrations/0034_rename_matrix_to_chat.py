@@ -10,16 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name="userprofile",
-            name="matrix",
-        ),
-        migrations.AddField(
-            model_name="userprofile",
-            name="chat",
-            field=models.CharField(
-                blank=True, max_length=255, null=True, verbose_name="Chat username"
-            ),
+            old_name="matrix",
+            new_name="chat",
         ),
         migrations.AlterField(
             model_name="userprofile",
