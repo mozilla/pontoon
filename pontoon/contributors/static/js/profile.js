@@ -114,9 +114,7 @@ var Pontoon = (function (my) {
                     maxTicksLimit: 3,
                     max: 100,
                     precision: 0,
-                    callback: function (value) {
-                      return value + '%';
-                    },
+                    callback: (value) => nf.format(value/100),
                   },
                 },
               ],
