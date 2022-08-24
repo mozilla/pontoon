@@ -78,7 +78,7 @@ var Pontoon = (function (my) {
               callbacks: {
                 label: function (items, chart) {
                   const label = chart.datasets[items.datasetIndex].label;
-                  const value = nf.format(items.yLabel/100);
+                  const value = nf.format(items.yLabel / 100);
 
                   return `${label}: ${value}`;
                 },
@@ -114,7 +114,7 @@ var Pontoon = (function (my) {
                     maxTicksLimit: 3,
                     max: 100,
                     precision: 0,
-                    callback: (value) => nf.format(value/100),
+                    callback: (value) => nf.format(value / 100),
                   },
                 },
               ],
