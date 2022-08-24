@@ -1,4 +1,8 @@
 var Pontoon = (function (my) {
+  const nf = new Intl.NumberFormat('en', {
+    style: 'percent',
+  });
+
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -127,9 +131,5 @@ var Pontoon = (function (my) {
 })(Pontoon || {});
 
 /* Main code */
-const nf = new Intl.NumberFormat('en', {
-  style: 'percent',
-});
-
 Pontoon.insights.initialize();
 Pontoon.insights.renderCharts();

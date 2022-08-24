@@ -1,4 +1,6 @@
 var Pontoon = (function (my) {
+  const nf = new Intl.NumberFormat('en');
+
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -682,6 +684,3 @@ var Pontoon = (function (my) {
     },
   });
 })(Pontoon || {});
-
-/* Main code */
-const nf = new Intl.NumberFormat('en');
