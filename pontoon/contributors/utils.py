@@ -189,45 +189,62 @@ def check_verification_token(user, token):
     return title, message
 
 
+def get_n_months_before(start, n):
+    """
+    Get a list of first days of the last n months before the given time
+    """
+    return sorted(
+        [
+            convert_to_unix_time(
+                datetime.date(start.year, start.month, 1) - relativedelta(months=i)
+            )
+            for i in range(n)
+        ]
+    )
+
+
+def get_monthly_action_counts(months, actions_qs):
+    """
+    Get a list of counts of given actions within each month given by the list of months.
+    """
+    values = [0] * len(months)
+
+    for item in (
+        actions_qs.annotate(created_month=TruncMonth("created_at"))
+        .values("created_month")
+        .annotate(count=Count("id"))
+        .values("created_month", "count")
+    ):
+        date = convert_to_unix_time(item["created_month"])
+        index = months.index(date)
+        values[index] = item["count"]
+
+    return values
+
+
+def get_shares_of_totals(list1, list2):
+    """
+    Get a list of shares of items from the first list in the sum of items from
+    both lists at the same position.
+    """
+    return [
+        0 if sum(pair) == 0 else (pair[0] / sum(pair) * 100)
+        for pair in zip(list1, list2)
+    ]
+
+
+def get_sublist_averages(main_list, sublist_len):
+    """
+    Get a list of average values for each sublist with a given length
+    """
+    return [mean(main_list[x : x + sublist_len]) for x in range(sublist_len)]
+
+
 def get_approval_rates(user):
     """
     Get data required to render Approval rate charts on the Profile page
     """
-
-    def _get_monthly_action_counts(qs):
-        values = [0] * 23
-
-        for item in (
-            qs.annotate(created_month=TruncMonth("created_at"))
-            .values("created_month")
-            .annotate(count=Count("id"))
-            .values("created_month", "count")
-        ):
-            date = convert_to_unix_time(item["created_month"])
-            index = dates.index(date)
-            values[index] = item["count"]
-
-        return values
-
-    def _get_monthly_rates(value1, value2):
-        return [
-            0 if sum(pair) == 0 else (pair[0] / sum(pair) * 100)
-            for pair in zip(value1, value2)
-        ]
-
-    def _get_12_month_average(monthly_rates):
-        return [mean(monthly_rates[x : x + 12]) for x in range(0, len(monthly_rates))]
-
-    today = timezone.now().date()
-
-    dates = sorted(
-        [
-            convert_to_unix_time(
-                datetime.date(today.year, today.month, 1) - relativedelta(months=n)
-            )
-            for n in range(23)
-        ]
-    )
+    months = get_n_months_before(timezone.now(), 23)
 
     actions = ActionLog.objects.filter(
         created_at__gte=timezone.now() - relativedelta(months=22),
@@ -235,15 +252,18 @@ def get_approval_rates(user):
     )
 
     peer_actions = actions.exclude(performed_by=user)
-    peer_approvals = _get_monthly_action_counts(
-        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
+    peer_approvals = get_monthly_action_counts(
+        months,
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_APPROVED),
     )
-    peer_rejections = _get_monthly_action_counts(
-        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_REJECTED)
+    peer_rejections = get_monthly_action_counts(
+        months,
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_REJECTED),
     )
 
     self_actions = actions.filter(performed_by=user)
-    self_approvals = _get_monthly_action_counts(
+    self_approvals = get_monthly_action_counts(
+        months,
         self_actions.filter(
             # Self-approved after submitting suggestions
             Q(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
@@ -252,16 +272,16 @@ def get_approval_rates(user):
                 action_type=ActionLog.ActionType.TRANSLATION_CREATED,
                 translation__date=F("translation__approved_date"),
             )
-        )
+        ),
     )
 
-    approval_rates = _get_monthly_rates(peer_approvals, peer_rejections)
-    approval_rates_12_month_avg = _get_12_month_average(approval_rates)
-    self_approval_rates = _get_monthly_rates(peer_approvals, self_approvals)
-    self_approval_rates_12_month_avg = _get_12_month_average(self_approval_rates)
+    approval_rates = get_shares_of_totals(peer_approvals, peer_rejections)
+    approval_rates_12_month_avg = get_sublist_averages(approval_rates, 12)
+    self_approval_rates = get_shares_of_totals(self_approvals, peer_approvals)
+    self_approval_rates_12_month_avg = get_sublist_averages(self_approval_rates, 12)
 
     return {
-        "dates": dates[-12:],
+        "dates": months[-12:],
         "approval_rates": approval_rates[-12:],
         "approval_rates_12_month_avg": approval_rates_12_month_avg,
         "self_approval_rates": self_approval_rates[-12:],
