@@ -295,7 +295,7 @@ def get_contributions(user):
     """
 
     def _get_daily_action_counts(qs):
-        values = []
+        values = {}
 
         for item in (
             qs.annotate(timestamp=TruncDay("created_at"))
@@ -303,12 +303,7 @@ def get_contributions(user):
             .annotate(count=Count("id"))
             .values("timestamp", "count")
         ):
-            values.append(
-                {
-                    "timestamp": convert_to_unix_time(item["timestamp"]),
-                    "count": item["count"],
-                }
-            )
+            values[convert_to_unix_time(item["timestamp"])] = item["count"]
 
         return values
 

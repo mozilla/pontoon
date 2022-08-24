@@ -199,12 +199,18 @@ h4.superuser {
   margin-top: 30px;
 }
 
+#contribution-graph rect.day:hover {
+  stroke-width: 1;
+  stroke: #fff;
+}
+
 svg.js-calendar-graph-svg {
   fill: #aaa;
   font-weight: 100;
 }
 
 .svg-tip {
+  display: none;
   padding: 10px;
   background: rgba(0, 0, 0, 0.8);
   color: #bbb;
