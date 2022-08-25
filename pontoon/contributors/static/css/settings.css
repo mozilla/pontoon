@@ -10,15 +10,16 @@
   margin-top: 10px;
 }
 
-#locale-settings .label {
+#locale-settings .label,
+.toggle-label {
   color: #aaa;
   float: left;
   font-size: 16px;
   font-weight: 300;
   margin: 6px 10px 0 0;
+  padding-right: 20px;
   text-align: right;
   width: 295px;
-  vertical-align: top;
 }
 
 #locale-settings .locale-selector {
@@ -36,6 +37,10 @@
   height: 32px;
   padding: 8px 12px;
   width: 100%;
+}
+
+#locale-settings .locale-selector .locale.select .button:hover {
+  color: #ebebeb;
 }
 
 #locale-settings .locale-selector .locale.select .menu {
@@ -92,6 +97,10 @@
   width: 295px;
 }
 
+#main .field label:hover {
+  color: #ebebeb;
+}
+
 #main .field input,
 #main .field textarea {
   color: #aaaaaa;
@@ -144,6 +153,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 342px;
+}
+
+#main .check-list li:hover {
+  color: #ebebeb;
 }
 
 #main .check-list .fa {

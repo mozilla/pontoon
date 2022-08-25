@@ -86,20 +86,20 @@
     <section>
         <h3>Visibility of data on the Profile page</h3>
         <div class="field">
-            {{ user_profile_visibility_form.visibility_email.label_tag(label_suffix='') }}
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_email.label }}</span>
             {{ Toggle.button(field=user_profile_visibility_form.visibility_email) }}
             <p class="help">Email addresses of team and project managers are visible to all logged in users</p>
         </div>
         <div class="field">
-            {{ user_profile_visibility_form.visibility_external_accounts.label_tag(label_suffix='') }}
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_external_accounts.label }}</span>
             {{ Toggle.button(field=user_profile_visibility_form.visibility_external_accounts) }}
         </div>
         <div class="field">
-            {{ user_profile_visibility_form.visibility_approval.label_tag(label_suffix='') }}
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_approval.label }}</span>
             {{ Toggle.button(field=user_profile_visibility_form.visibility_approval) }}
         </div>
         <div class="field">
-            {{ user_profile_visibility_form.visibility_self_approval.label_tag(label_suffix='') }}
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_self_approval.label }}</span>
             {{ Toggle.button(field=user_profile_visibility_form.visibility_self_approval) }}
         </div>
     </section>
