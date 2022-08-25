@@ -52,7 +52,8 @@ def contributor_username(request, username):
 def contributor(request, user):
     """Contributor profile."""
     context = utils.get_approval_rates(user)
-    contributions = utils.get_contributions(user)
+
+    context.update(utils.get_contributions(user))
 
     context.update(
         {
@@ -61,7 +62,6 @@ def contributor(request, user):
             "contact_for": user.contact_for.filter(
                 disabled=False, system_project=False, visibility="public"
             ).order_by("-priority"),
-            "contributions": json.dumps(contributions),
         }
     )
 
@@ -70,6 +70,20 @@ def contributor(request, user):
         "contributors/profile.html",
         context,
     )
+
+
+def update_contribution_graph(request):
+    """Contributor profile."""
+    try:
+        user = User.objects.get(pk=request.GET["user"])
+        contribution_type = request.GET["contribution_type"]
+    except User.DoesNotExist as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    return JsonResponse(utils.get_contributions(user, contribution_type))
 
 
 @login_required(redirect_field_name="", login_url="/403")

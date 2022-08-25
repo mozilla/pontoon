@@ -23,14 +23,19 @@
   margin: 8px 0;
 }
 
-.display-name {
+h2 {
   color: #ebebeb;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   letter-spacing: normal;
   line-height: 1.4em;
-  padding: 0;
+  padding-bottom: 10px;
   text-transform: none;
+}
+
+.display-name {
+  font-size: 24px;
+  padding-bottom: 0;
 }
 
 .username {
@@ -197,6 +202,42 @@ h4.superuser {
 
 #contributions {
   margin-top: 30px;
+}
+
+#contributions .type-selector {
+  float: left;
+  padding-left: 0;
+  width: 250px;
+}
+
+#contributions .type-selector .selector {
+  font-size: 16px;
+  padding: 8px 12px;
+  width: 100%;
+  text-align: left;
+}
+
+#contributions .type-selector .selector .icon {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+}
+
+#contributions .type-selector .menu {
+  background: #333941;
+  bottom: auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#contributions .type-selector .menu li span {
+  color: #ccc;
+  width: 100%;
+}
+
+#contributions h2 {
+  float: right;
+  line-height: 32px;
 }
 
 #contribution-graph rect.day:hover {

@@ -1,4 +1,5 @@
 import datetime
+import json
 import jwt
 
 from collections import defaultdict
@@ -15,6 +16,7 @@ from django.db.models import (
     Q,
 )
 from django.db.models.functions import TruncDay, TruncMonth
+from django.template.defaultfilters import pluralize
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -24,6 +26,7 @@ from pontoon.base.models import (
     Locale,
     Translation,
 )
+from pontoon.base.templatetags.helpers import intcomma
 from pontoon.base.utils import convert_to_unix_time
 
 
@@ -289,23 +292,21 @@ def get_approval_rates(user):
     }
 
 
-def get_contributions(user):
+def get_contributions(user, contribution_type=None):
     """
     Get data required to render the Contribution graph on the Profile page
     """
 
     def _get_daily_action_counts(qs):
-        values = {}
-
-        for item in (
-            qs.annotate(timestamp=TruncDay("created_at"))
-            .values("timestamp")
-            .annotate(count=Count("id"))
-            .values("timestamp", "count")
-        ):
-            values[convert_to_unix_time(item["timestamp"])] = item["count"]
-
-        return values
+        return {
+            convert_to_unix_time(item["timestamp"]): item["count"]
+            for item in (
+                qs.annotate(timestamp=TruncDay("created_at"))
+                .values("timestamp")
+                .annotate(count=Count("id"))
+                .values("timestamp", "count")
+            )
+        }
 
     actions = ActionLog.objects.filter(
         created_at__gte=timezone.now() - relativedelta(days=365),
@@ -316,17 +317,34 @@ def get_contributions(user):
         ActionLog.ActionType.TRANSLATION_REJECTED,
     ]
 
-    submissions = actions.filter(
+    user_translations = actions.filter(
         performed_by=user, action_type=ActionLog.ActionType.TRANSLATION_CREATED
     )
-    reviews_performed = actions.filter(
+    user_reviews = actions.filter(
         performed_by=user, action_type__in=review_action_types
     )
-    reviews_received = actions.filter(
+    peer_reviews = actions.filter(
         translation__user=user, action_type__in=review_action_types
     )
 
-    user_actions = submissions | reviews_performed
-    all_actions = user_actions | reviews_received
+    all_user_contributions = user_translations | user_reviews
+    all_contributions = all_user_contributions | peer_reviews
 
-    return _get_daily_action_counts(user_actions)
+    action_map = {
+        "user_translations": user_translations,
+        "user_reviews": user_reviews,
+        "peer_reviews": peer_reviews,
+        "all_user_contributions": all_user_contributions,
+        "all_contributions": all_contributions,
+    }
+
+    if contribution_type not in action_map.keys():
+        contribution_type = "all_user_contributions"
+
+    contributions = _get_daily_action_counts(action_map[contribution_type])
+    total = sum(contributions.values())
+
+    return {
+        "contributions": json.dumps(contributions),
+        "title": f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+    }

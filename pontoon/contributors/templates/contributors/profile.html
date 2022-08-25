@@ -4,6 +4,14 @@
 
 {% block title %}{{ contributor.name_or_email }}{% endblock %}
 
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     data-user="{{ contributor.pk }}"
+     >
+</div>
+{% endblock %}
+
 {% block class %}user{% endblock %}
 
 {% block bottom %}
@@ -269,6 +277,36 @@
             </div>
 
             <section id="contributions">
+                <div class="header clearfix">
+                    <h2 class="title">{{ title }}</h2>
+                    <div class="type-selector controls select">
+                        <div class="button selector">
+                            <div class="value">
+                                <span data-type="all_user_contributions" title="User translations and reviews">All user contributions</span>
+                            </div>
+                            <span class="icon fa fa-caret-down"></span>
+                        </div>
+                        <div class="menu" style="display: none;">
+                            <ul>
+                                <li class="clearfix">
+                                    <span data-type="user_translations" title="Translations submitted by the user">User translations</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="user_reviews" title="Reviews of peer translations performed by the user">User reviews</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="peer_reviews" title="Reviews of user translations performed by the peers">Peer reviews</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="all_user_contributions" title="User translations and reviews">All user contributions</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="all_contributions" title="User contributions and peer reviews">All contributions</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <div id="contribution-graph" data-contributions="{{ contributions }}"></div>
                 <div class="svg-tip"></div>
             </section>

@@ -240,9 +240,9 @@ var Pontoon = (function (my) {
         graph.html(`
             <svg width="690" height="110" viewBox="0 0 702 110" class="js-calendar-graph-svg">
               <g transform="translate(0, 20)">${graphHTML}</g>
-            </svg>`
-        );
+            </svg>`);
 
+        // Handle tooltip
         $(graph)
           .find('.day')
           .hover(
@@ -266,6 +266,34 @@ var Pontoon = (function (my) {
             },
           );
       },
+      handleContributionTypeSelector: function () {
+        $('#contributions .type-selector .menu li').click(function () {
+          $(this)
+            .parents('.type-selector')
+            .find('.selector .value')
+            .html($(this).html());
+
+          var type = $('#contributions .type-selector span').data('type');
+          var user = $('#server').data('user');
+
+          $.ajax({
+            url: '/update-contribution-graph/',
+            data: {
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              var contributions = JSON.parse(data.contributions);
+              $('#contribution-graph').data('contributions', contributions);
+              $('#contributions .title').html(data.title);
+              Pontoon.profile.renderContributionGraph();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
     },
   });
 })(Pontoon || {});
@@ -275,3 +303,4 @@ Pontoon.insights.initialize();
 Pontoon.insights.renderCharts();
 
 Pontoon.profile.renderContributionGraph();
+Pontoon.profile.handleContributionTypeSelector();
