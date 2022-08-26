@@ -292,22 +292,22 @@ def get_approval_rates(user):
     }
 
 
+def get_daily_action_counts(qs):
+    return {
+        convert_to_unix_time(item["timestamp"]): item["count"]
+        for item in (
+            qs.annotate(timestamp=TruncDay("created_at"))
+            .values("timestamp")
+            .annotate(count=Count("id"))
+            .values("timestamp", "count")
+        )
+    }
+
+
 def get_contributions(user, contribution_type=None):
     """
     Get data required to render the Contribution graph on the Profile page
     """
-
-    def _get_daily_action_counts(qs):
-        return {
-            convert_to_unix_time(item["timestamp"]): item["count"]
-            for item in (
-                qs.annotate(timestamp=TruncDay("created_at"))
-                .values("timestamp")
-                .annotate(count=Count("id"))
-                .values("timestamp", "count")
-            )
-        }
-
     actions = ActionLog.objects.filter(
         created_at__gte=timezone.now() - relativedelta(days=365),
     )
@@ -348,7 +348,7 @@ def get_contributions(user, contribution_type=None):
     if contribution_type not in action_map.keys():
         contribution_type = "all_user_contributions"
 
-    contributions = _get_daily_action_counts(action_map[contribution_type])
+    contributions = get_daily_action_counts(action_map[contribution_type])
     total = sum(contributions.values())
 
     return {

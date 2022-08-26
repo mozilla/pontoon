@@ -11,6 +11,72 @@ from pontoon.base.utils import convert_to_unix_time
 from pontoon.contributors import utils
 
 
+@pytest.fixture
+def months_a():
+    return [
+        convert_to_unix_time(datetime(2020, 1, 1)),
+        convert_to_unix_time(datetime(2020, 2, 1)),
+        convert_to_unix_time(datetime(2020, 3, 1)),
+    ]
+
+
+@pytest.fixture
+def action_a(translation_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation_a,
+    )
+    action.created_at = datetime(2020, 1, 1)
+    action.save()
+    return action
+
+
+@pytest.fixture
+def action_b(translation_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation_a,
+    )
+    action.created_at = datetime(2020, 1, 1)
+    action.save()
+    return action
+
+
+@pytest.fixture
+def action_c(translation_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        translation=translation_a,
+    )
+    action.created_at = datetime(2020, 2, 1)
+    action.save()
+    return action
+
+
+@pytest.fixture
+def action_user_a(translation_a, user_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action.created_at = datetime.now() - relativedelta(months=1)
+    action.save()
+    return action
+
+
+@pytest.fixture
+def action_user_b(translation_a, user_b):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_b,
+        translation=translation_a,
+    )
+    action.created_at = datetime.now()
+    action.save()
+    return action
+
+
 @pytest.mark.django_db
 def test_generate_verification_token(member):
     with patch("jwt.encode") as mock_encode:
@@ -72,41 +138,17 @@ def test_get_n_months_before():
 
 
 @pytest.mark.django_db
-def test_get_monthly_action_counts(translation_a):
-    months = [
-        convert_to_unix_time(datetime(2020, 1, 1)),
-        convert_to_unix_time(datetime(2020, 2, 1)),
-        convert_to_unix_time(datetime(2020, 3, 1)),
-    ]
-
-    # No actions
+def test_get_monthly_action_counts_without_actions(months_a):
     actions_qs = ActionLog.objects.filter()
-    assert utils.get_monthly_action_counts(months, actions_qs) == [0, 0, 0]
+    assert utils.get_monthly_action_counts(months_a, actions_qs) == [0, 0, 0]
 
-    # Some actions
-    action1 = ActionLog.objects.create(
-        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-        translation=translation_a,
+
+@pytest.mark.django_db
+def test_get_monthly_action_counts_with_actions(months_a, action_a, action_b, action_c):
+    actions_qs = ActionLog.objects.filter(
+        pk__in=[action_a.pk, action_b.pk, action_c.pk]
     )
-    action1.created_at = datetime(2020, 1, 1)
-    action1.save()
-
-    action2 = ActionLog.objects.create(
-        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-        translation=translation_a,
-    )
-    action2.created_at = datetime(2020, 1, 1)
-    action2.save()
-
-    action3 = ActionLog.objects.create(
-        action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-        translation=translation_a,
-    )
-    action3.created_at = datetime(2020, 2, 1)
-    action3.save()
-
-    actions_qs = ActionLog.objects.filter(pk__in=[action1.pk, action2.pk, action3.pk])
-    assert utils.get_monthly_action_counts(months, actions_qs) == [2, 1, 0]
+    assert utils.get_monthly_action_counts(months_a, actions_qs) == [2, 1, 0]
 
 
 def test_get_shares_of_totals():
@@ -120,8 +162,7 @@ def test_get_sublist_averages():
 
 
 @pytest.mark.django_db
-def test_get_approval_rates(user_a, user_b, translation_a):
-    # User without any contributions
+def test_get_approval_rates_without_actions(user_a):
     data = utils.get_approval_rates(user_a)
 
     assert data["approval_rates"] == [0] * 12
@@ -129,23 +170,9 @@ def test_get_approval_rates(user_a, user_b, translation_a):
     assert data["self_approval_rates"] == [0] * 12
     assert data["self_approval_rates_12_month_avg"] == [0] * 12
 
-    # User with some contributions
-    action1 = ActionLog.objects.create(
-        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-        performed_by=user_b,
-        translation=translation_a,
-    )
-    action1.created_at = datetime.now()
-    action1.save()
 
-    action2 = ActionLog.objects.create(
-        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-        performed_by=user_a,
-        translation=translation_a,
-    )
-    action2.created_at = datetime.now() - relativedelta(months=1)
-    action2.save()
-
+@pytest.mark.django_db
+def test_get_approval_rates_with_actions(user_a, action_user_a, action_user_b):
     data = utils.get_approval_rates(user_a)
 
     assert data["approval_rates"] == [0] * 11 + [100]
@@ -154,3 +181,34 @@ def test_get_approval_rates(user_a, user_b, translation_a):
     assert (
         data["self_approval_rates_12_month_avg"] == [0] * 10 + [8.333333333333334] * 2
     )
+
+
+@pytest.mark.django_db
+def test_get_daily_action_counts_without_actions():
+    actions_qs = ActionLog.objects.filter()
+    assert utils.get_daily_action_counts(actions_qs) == {}
+
+
+@pytest.mark.django_db
+def test_get_daily_action_counts_with_actions(action_a, action_b, action_c):
+    actions_qs = ActionLog.objects.filter(
+        pk__in=[action_a.pk, action_b.pk, action_c.pk]
+    )
+    assert utils.get_daily_action_counts(actions_qs) == {
+        convert_to_unix_time(datetime(2020, 1, 1)): 2,
+        convert_to_unix_time(datetime(2020, 2, 1)): 1,
+    }
+
+
+@pytest.mark.django_db
+def test_get_contributions_without_actions(user_a):
+    assert utils.get_contributions(user_a) == {
+        "contributions": "{}",
+        "title": "0 contributions in the last year",
+    }
+
+
+@pytest.mark.django_db
+def test_get_contributions_with_actions(user_a, action_user_a, action_user_b):
+    data = utils.get_contributions(user_a)
+    assert data["title"] == "1 contribution in the last year"
