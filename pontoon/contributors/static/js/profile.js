@@ -157,8 +157,7 @@ var Pontoon = (function (my) {
         var graphHTML = '';
         var step = 13;
 
-        var monthPosition = [];
-        monthPosition.push({ monthIndex: startDate.getMonth(), x: 0 });
+        const monthPosition = [{ monthIndex: startDate.getMonth(), x: 0 }];
         var usingMonth = startDate.getMonth();
 
         var week = 0;
