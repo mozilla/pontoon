@@ -157,26 +157,27 @@ var Pontoon = (function (my) {
         let graphHTML = '';
         const step = 13;
 
-        let monthPosition = [{ monthIndex: startDate.getMonth(), x: 0 }];
-        let usingMonth = startDate.getMonth();
+        let currentDate = startDate;
+        let currentMonth = currentDate.getMonth();
+        let monthPosition = [{ monthIndex: currentMonth, x: 0 }];
 
         let week = 0;
         let gx = week * step;
         let weekHTML = `<g transform="translate(${gx.toString()}, 0)">`;
 
-        while (startDate.getTime() <= endDate.getTime()) {
-          if (startDate.getDay() == 0) {
+        while (currentDate.getTime() <= endDate.getTime()) {
+          if (currentDate.getDay() == 0) {
             weekHTML = `<g transform="translate(${gx.toString()}, 0)">`;
           }
 
-          const monthInDay = startDate.getMonth();
+          const monthOfTheDay = currentDate.getMonth();
 
-          if (startDate.getDay() == 0 && monthInDay != usingMonth) {
-            usingMonth = monthInDay;
-            monthPosition.push({ monthIndex: usingMonth, x: gx });
+          if (currentDate.getDay() == 0 && monthOfTheDay != currentMonth) {
+            currentMonth = monthOfTheDay;
+            monthPosition.push({ monthIndex: currentMonth, x: gx });
           }
 
-          const count = contributions[startDate.getTime()] || 0;
+          const count = contributions[currentDate.getTime()] || 0;
 
           // Pick color based on count range
           let color;
@@ -197,11 +198,11 @@ var Pontoon = (function (my) {
               color = '#7bc876';
           }
 
-          const y = startDate.getDay() * step;
-          const date = startDate.getTime();
+          const y = currentDate.getDay() * step;
+          const date = currentDate.getTime();
           weekHTML += `<rect class="day" width="10" height="10" y="${y}" fill="${color}" data-count="${count}" data-date="${date}" rx="2" ry="2"/>`;
 
-          if (startDate.getDay() == 6) {
+          if (currentDate.getDay() == 6) {
             weekHTML += '</g>';
             graphHTML += weekHTML;
             weekHTML = null;
@@ -209,7 +210,7 @@ var Pontoon = (function (my) {
             gx = week * step;
           }
 
-          startDate.setUTCDate(startDate.getUTCDate() + 1);
+          currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
 
         // Add week items
