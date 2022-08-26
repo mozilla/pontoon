@@ -180,20 +180,22 @@ var Pontoon = (function (my) {
           var count = contributions[startDate.getTime()] || 0;
 
           // Pick color based on count range
-          var colors = ['#333941', '#41554c', '#4f7256', '#64906D', '#7bc876'];
-          var color = colors[4];
+          let color;
           switch (true) {
             case count === 0:
-              color = colors[0];
+              color = '#333941';
               break;
             case count < 10:
-              color = colors[1];
+              color = '#41554c';
               break;
             case count < 25:
-              color = colors[2];
+              color = '#4f7256';
               break;
             case count < 50:
-              color = colors[3];
+              color = '#64906D';
+              break;
+            default:
+              color = '#7bc876';
           }
 
           var y = startDate.getDay() * step;
