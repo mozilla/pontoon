@@ -315,6 +315,7 @@ PIPELINE_CSS = {
             "css/sidebar_menu.css",
             "css/multiple_team_selector.css",
             "css/manual_notifications.css",
+            "css/insights_charts.css",
             "css/insights.css",
         ),
         "output_filename": "css/project.min.css",
@@ -326,6 +327,7 @@ PIPELINE_CSS = {
             "css/heading_info.css",
             "css/info.css",
             "css/download_selector.css",
+            "css/insights_charts.css",
             "css/insights.css",
         ),
         "output_filename": "css/localization.min.css",
@@ -346,6 +348,7 @@ PIPELINE_CSS = {
             "css/heading_info.css",
             "css/team.css",
             "css/request.css",
+            "css/insights_charts.css",
             "css/insights.css",
             "css/info.css",
         ),
@@ -366,6 +369,7 @@ PIPELINE_CSS = {
     "profile": {
         "source_filenames": (
             "css/contributor.css",
+            "css/insights_charts.css",
             "css/profile.css",
         ),
         "output_filename": "css/profile.min.css",
@@ -453,6 +457,7 @@ PIPELINE_JS = {
             "js/table.js",
             "js/progress-chart.js",
             "js/tabs.js",
+            "js/insights_charts.js",
             "js/insights.js",
             "js/info.js",
         ),
@@ -468,6 +473,7 @@ PIPELINE_JS = {
             "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
             "js/manual_notifications.js",
+            "js/insights_charts.js",
             "js/insights.js",
         ),
         "output_filename": "js/project.min.js",
@@ -489,6 +495,7 @@ PIPELINE_JS = {
             "js/tabs.js",
             "js/request.js",
             "js/permissions.js",
+            "js/insights_charts.js",
             "js/insights.js",
             "js/info.js",
         ),
@@ -503,7 +510,11 @@ PIPELINE_JS = {
         "output_filename": "js/teams.min.js",
     },
     "profile": {
-        "source_filenames": ("js/contributor.js",),
+        "source_filenames": (
+            "js/lib/Chart.bundle.js",
+            "js/insights_charts.js",
+            "js/profile.js",
+        ),
         "output_filename": "js/profile.min.js",
     },
     "settings": {
@@ -905,8 +916,5 @@ NOTIFICATIONS_MAX_COUNT = 7
 # Integer representing a day of the week on which the `send_suggestion_notifications`
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
-
-# Number of events displayed on the Contributor's timeline per page.
-CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

@@ -1,8 +1,10 @@
 {# Widget to display tooltip with more information about the section. #}
-{% macro display(intro, items=[]) %}
+{% macro display(intro='', items=[]) %}
 <div class="fa fa-info selector"></div>
 <div class="tooltip">
+    {% if intro != '' %}
     <p>{{ intro }}</p>
+    {% endif %}
     {% if items %}
     <ul>
         {% for item in items %}

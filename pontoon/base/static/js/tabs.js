@@ -85,6 +85,7 @@ $(function () {
 
           if (url.startsWith('/insights/')) {
             Pontoon.insights.initialize();
+            Pontoon.insights.renderCharts();
           }
 
           if (url === '/') {

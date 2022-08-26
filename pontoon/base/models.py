@@ -137,12 +137,57 @@ def user_display_name_or_blank(cls, user):
 
 
 @property
+def user_translator_for_locales(self):
+    """A list of locales, in which the user is assigned Translator permissions.
+
+    Only includes explicitly assigned locales for superusers.
+    """
+    locales = []
+
+    for group in self.groups.all():
+        locale = group.translated_locales.first()
+        if locale:
+            locales.append(locale)
+
+    return locales
+
+
+@property
+def user_manager_for_locales(self):
+    """A list of locales, in which the user is assigned Manager permissions.
+
+    Only includes explicitly assigned locales for superusers.
+    """
+    locales = []
+
+    for group in self.groups.all():
+        locale = group.managed_locales.first()
+        if locale:
+            locales.append(locale)
+
+    return locales
+
+
+@property
 def user_translated_locales(self):
-    locales = get_objects_for_user(
+    """A list of locale codes the user has permission to translate.
+
+    Includes all locales for superusers.
+    """
+    return get_objects_for_user(
         self, "base.can_translate_locale", accept_global_perms=False
     )
 
-    return locales.values_list("code", flat=True)
+
+@property
+def user_managed_locales(self):
+    """A list of locale codes the user has permission to manage.
+
+    Includes all locales for superusers.
+    """
+    return get_objects_for_user(
+        self, "base.can_manage_locale", accept_global_perms=False
+    )
 
 
 @property
@@ -166,15 +211,6 @@ def user_translated_projects(self):
         for pk, locale, project in project_locales
     }
     return permission_map
-
-
-@property
-def user_managed_locales(self):
-    locales = get_objects_for_user(
-        self, "base.can_manage_locale", accept_global_perms=False
-    )
-
-    return locales.values_list("code", flat=True)
 
 
 def user_role(self, managers=None, translators=None):
@@ -387,6 +423,20 @@ def user_serialize(self):
     }
 
 
+@property
+def latest_action(self):
+    """
+    Return the date of the latest user activity (translation submission or review).
+    """
+    try:
+        return ActionLog.objects.filter(
+            performed_by=self,
+            action_type__startswith="translation:",
+        ).latest("created_at")
+    except ActionLog.DoesNotExist:
+        return None
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -394,9 +444,11 @@ User.add_to_class("name_or_email", user_name_or_email)
 User.add_to_class("display_name", user_display_name)
 User.add_to_class("display_name_and_email", user_display_name_and_email)
 User.add_to_class("display_name_or_blank", user_display_name_or_blank)
+User.add_to_class("translator_for_locales", user_translator_for_locales)
+User.add_to_class("manager_for_locales", user_manager_for_locales)
 User.add_to_class("translated_locales", user_translated_locales)
-User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("managed_locales", user_managed_locales)
+User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("contributed_translations", contributed_translations)
@@ -407,6 +459,7 @@ User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
 User.add_to_class("serialize", user_serialize)
+User.add_to_class("latest_action", latest_action)
 
 
 class PermissionChangelog(models.Model):
@@ -1589,9 +1642,9 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=160, blank=True, null=True)
 
     # External accounts
+    chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
+    github = models.CharField("GitHub username", max_length=255, blank=True, null=True)
     bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
-    matrix = models.CharField("GitHub username", max_length=255, blank=True, null=True)
-    github = models.CharField("Matrix username", max_length=255, blank=True, null=True)
 
     # Visibility
     class Visibility(models.TextChoices):
@@ -1617,14 +1670,14 @@ class UserProfile(models.Model):
     )
 
     visibility_self_approval = models.CharField(
-        "Self-approval ratio",
+        "Self-approval rate",
         max_length=20,
         default=Visibility.ALL,
         choices=Visibility.choices,
     )
 
     visibility_approval = models.CharField(
-        "Approval ratio",
+        "Approval rate",
         max_length=20,
         default=Visibility.ALL,
         choices=Visibility.choices,

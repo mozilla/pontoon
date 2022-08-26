@@ -34,12 +34,6 @@ urlpatterns = [
         views.contributor_email,
         name="pontoon.contributors.contributor.email",
     ),
-    # Contributor timeline
-    path(
-        "contributors/<username:username>/timeline/",
-        views.contributor_timeline,
-        name="pontoon.contributors.contributor.timeline",
-    ),
     # Contributor profile by username
     path(
         "contributors/<username:username>/",
