@@ -148,35 +148,35 @@ var Pontoon = (function (my) {
         const contributions = graph.data('contributions');
 
         // Set start date to 365 days before now
-        var startDate = new Date();
+        let startDate = new Date();
         startDate.setMonth(startDate.getMonth() - 12);
         startDate.setUTCDate(startDate.getUTCDate() + 1);
         startDate.setUTCHours(0, 0, 0, 0);
-        var endDate = new Date();
+        const endDate = new Date();
 
-        var graphHTML = '';
-        var step = 13;
+        let graphHTML = '';
+        const step = 13;
 
-        const monthPosition = [{ monthIndex: startDate.getMonth(), x: 0 }];
-        var usingMonth = startDate.getMonth();
+        let monthPosition = [{ monthIndex: startDate.getMonth(), x: 0 }];
+        let usingMonth = startDate.getMonth();
 
-        var week = 0;
-        var gx = week * step;
-        var weekHTML = `<g transform="translate(${gx.toString()}, 0)">`;
+        let week = 0;
+        let gx = week * step;
+        let weekHTML = `<g transform="translate(${gx.toString()}, 0)">`;
 
         while (startDate.getTime() <= endDate.getTime()) {
           if (startDate.getDay() == 0) {
             weekHTML = `<g transform="translate(${gx.toString()}, 0)">`;
           }
 
-          var monthInDay = startDate.getMonth();
+          const monthInDay = startDate.getMonth();
 
           if (startDate.getDay() == 0 && monthInDay != usingMonth) {
             usingMonth = monthInDay;
             monthPosition.push({ monthIndex: usingMonth, x: gx });
           }
 
-          var count = contributions[startDate.getTime()] || 0;
+          const count = contributions[startDate.getTime()] || 0;
 
           // Pick color based on count range
           let color;
@@ -197,8 +197,8 @@ var Pontoon = (function (my) {
               color = '#7bc876';
           }
 
-          var y = startDate.getDay() * step;
-          var date = startDate.getTime();
+          const y = startDate.getDay() * step;
+          const date = startDate.getTime();
           weekHTML += `<rect class="day" width="10" height="10" y="${y}" fill="${color}" data-count="${count}" data-date="${date}" rx="2" ry="2"/>`;
 
           if (startDate.getDay() == 6) {
@@ -224,9 +224,9 @@ var Pontoon = (function (my) {
         }
 
         // Add month labels
-        for (var x = 0; x < monthPosition.length; x++) {
-          var item = monthPosition[x];
-          var monthName = monthNameFormat.format(
+        for (let x = 0; x < monthPosition.length; x++) {
+          const item = monthPosition[x];
+          const monthName = monthNameFormat.format(
             new Date(2022, item.monthIndex),
           );
           graphHTML += `<text x="${item.x}" y="-5" class="month">${monthName}</text>`;
@@ -248,17 +248,19 @@ var Pontoon = (function (my) {
           .find('.day')
           .hover(
             function (e) {
-              var count = $(e.target).attr('data-count');
-              var date = shortDateFormat.format($(e.target).attr('data-date'));
-              var action = count == 1 ? 'contribution' : 'contributions';
-              var text = `${count} ${action} on ${date}`;
+              const count = $(e.target).attr('data-count');
+              const date = shortDateFormat.format(
+                $(e.target).attr('data-date'),
+              );
+              const action = count == 1 ? 'contribution' : 'contributions';
+              const text = `${count} ${action} on ${date}`;
 
-              var tooltip = $('.svg-tip').show();
+              const tooltip = $('.svg-tip').show();
               tooltip.html(text);
 
-              var offset = $(e.target).offset();
-              var width = Math.round(tooltip.width() / 2 + 5);
-              var height = tooltip.height() * 2 + 10;
+              const offset = $(e.target).offset();
+              const width = Math.round(tooltip.width() / 2 + 5);
+              const height = tooltip.height() * 2 + 10;
               tooltip.css({ top: offset.top - height - 5 });
               tooltip.css({ left: offset.left - width });
             },
@@ -274,8 +276,8 @@ var Pontoon = (function (my) {
             .find('.selector .value')
             .html($(this).html());
 
-          var type = $('#contributions .type-selector span').data('type');
-          var user = $('#server').data('user');
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
 
           $.ajax({
             url: '/update-contribution-graph/',
@@ -284,7 +286,7 @@ var Pontoon = (function (my) {
               user: user,
             },
             success: function (data) {
-              var contributions = JSON.parse(data.contributions);
+              const contributions = JSON.parse(data.contributions);
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(data.title);
               Pontoon.profile.renderContributionGraph();
