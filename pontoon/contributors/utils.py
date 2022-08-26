@@ -328,7 +328,14 @@ def get_contributions(user, contribution_type=None):
     )
 
     all_user_contributions = user_translations | user_reviews
-    all_contributions = all_user_contributions | peer_reviews
+
+    # Using the union of all_user_contributions and peer_reviews QuerySets results in poorer performance
+    all_contributions = ActionLog.objects.filter(
+        pk__in=(
+            list(all_user_contributions.values_list("pk", flat=True))
+            + list(peer_reviews.values_list("pk", flat=True))
+        )
+    )
 
     action_map = {
         "user_translations": user_translations,
