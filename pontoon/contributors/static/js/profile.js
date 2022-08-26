@@ -235,9 +235,9 @@ var Pontoon = (function (my) {
 
         // Add day labels
         graphHTML += `
-            <text text-anchor="middle" class="wday" dx="695" dy="22">M</text>
-            <text text-anchor="middle" class="wday" dx="695" dy="48">W</text>
-            <text text-anchor="middle" class="wday" dx="695" dy="74">F</text>`;
+            <text text-anchor="middle" class="wday" dx="695" dy="22">M<title>Monday</title></text>
+            <text text-anchor="middle" class="wday" dx="695" dy="48">W<title>Wednesday</title></text>
+            <text text-anchor="middle" class="wday" dx="695" dy="74">F<title>Friday</title></text>`;
 
         graph.html(`
             <svg width="690" height="110" viewBox="0 0 702 110" class="js-calendar-graph-svg">
