@@ -352,6 +352,7 @@ def get_contributions(user, contribution_type=None):
     total = sum(contributions.values())
 
     return {
+        # Encode contributions dict to make it usable in the data- attribute
         "contributions": json.dumps(contributions),
         "title": f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
     }
