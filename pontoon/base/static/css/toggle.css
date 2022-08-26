@@ -27,6 +27,10 @@
   border-bottom-left-radius: 0;
 }
 
+.toggle-button button:hover {
+  color: #ccc;
+}
+
 .toggle-button button.active {
   background: #333941;
   border-color: #4d5967;

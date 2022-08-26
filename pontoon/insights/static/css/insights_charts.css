@@ -1,0 +1,119 @@
+#insights .block {
+  border-radius: 6px;
+  background: #333941;
+  overflow: hidden;
+  padding: 30px;
+}
+
+/* Chart group */
+
+#insights .chart-group {
+  width: 1000px;
+  overflow: hidden;
+  transition: margin 0.4s ease-in-out;
+}
+
+#insights .chart-group .chart-item {
+  float: left;
+  padding-right: 60px;
+}
+
+#insights .chart-group-navigation {
+  text-align: center;
+}
+
+#insights .chart-group-navigation ul li {
+  cursor: pointer;
+  display: inline-block;
+  margin: 15px 15px 0;
+}
+
+#insights .chart-group-navigation ul li .icon {
+  background-color: #272a2f;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+#insights .chart-group-navigation ul li .label {
+  color: #4d5967;
+  cursor: pointer;
+  font-weight: bold;
+  vertical-align: text-top;
+}
+
+#insights .chart-group-navigation ul li.active .icon {
+  background-color: #4fc4f6;
+}
+
+#insights .chart-group-navigation ul li.active .label {
+  color: #ffffff;
+}
+
+#insights h3 {
+  color: #ebebeb;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: bold;
+  height: 25px;
+  letter-spacing: normal;
+  margin-bottom: 30px;
+}
+
+/* Tooltip */
+
+#insights .controls .selector {
+  background: #3f4752;
+  color: #aaa;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  border-radius: 3px;
+  margin-left: 5px;
+  padding-top: 5px;
+  box-sizing: border-box;
+}
+
+#insights h3 .fa {
+  float: right;
+  font-size: 14px;
+}
+
+#insights h3 .fa.active,
+#insights h3 .fa:hover {
+  background: #272a2f;
+}
+
+#insights h3 .tooltip {
+  background: #000000dd;
+  position: absolute;
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.5em;
+  border-radius: 3px;
+  right: 0;
+  max-width: 570px;
+}
+
+#insights h3 .tooltip p {
+  margin-bottom: 15px;
+}
+
+#insights h3 .tooltip ul {
+  margin-left: 15px;
+}
+
+#insights h3 .tooltip li {
+  list-style-type: disc;
+}
+
+#insights h3 .tooltip li:not(:last-child) {
+  padding-bottom: 5px;
+}

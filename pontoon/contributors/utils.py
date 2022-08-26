@@ -1,49 +1,30 @@
+import datetime
 import jwt
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
+from statistics import mean
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.db.models import (
     Count,
+    F,
     Prefetch,
+    Q,
 )
+from django.db.models.functions import TruncMonth
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Locale,
     Translation,
-    User,
 )
-
-
-def map_translations_to_events(days, translations):
-    """
-    Map translations into events (jsonable dictionaries) to display them on the user timeline.
-    :param QuerySet[Translation] events: a QuerySet with translastions.
-    :rtype: list[dict]
-    :return: A list of dicts with mapped fields.
-    """
-    timeline = []
-    for day in days:
-        daily = translations.filter(date__startswith=day["day"])
-        daily.prefetch_related("entity__resource__project")
-        example = daily.order_by("-pk").first()
-
-        timeline.append(
-            {
-                "date": example.date,
-                "type": "translation",
-                "count": day["count"],
-                "project": example.entity.resource.project,
-                "translation": example,
-            }
-        )
-
-    return timeline
+from pontoon.base.utils import convert_to_unix_time
 
 
 def users_with_translations_counts(
@@ -206,3 +187,103 @@ def check_verification_token(user, token):
         message = "Invalid verification token"
 
     return title, message
+
+
+def get_n_months_before(start, n):
+    """
+    Get a list of first days of the last n months before the given time
+    """
+    return sorted(
+        [
+            convert_to_unix_time(
+                datetime.date(start.year, start.month, 1) - relativedelta(months=i)
+            )
+            for i in range(n)
+        ]
+    )
+
+
+def get_monthly_action_counts(months, actions_qs):
+    """
+    Get a list of counts of given actions within each month given by the list of months.
+    """
+    values = [0] * len(months)
+
+    for item in (
+        actions_qs.annotate(created_month=TruncMonth("created_at"))
+        .values("created_month")
+        .annotate(count=Count("id"))
+        .values("created_month", "count")
+    ):
+        date = convert_to_unix_time(item["created_month"])
+        index = months.index(date)
+        values[index] = item["count"]
+
+    return values
+
+
+def get_shares_of_totals(list1, list2):
+    """
+    Get a list of shares of items from the first list in the sum of items from
+    both lists at the same position.
+    """
+    return [
+        0 if sum(pair) == 0 else (pair[0] / sum(pair) * 100)
+        for pair in zip(list1, list2)
+    ]
+
+
+def get_sublist_averages(main_list, sublist_len):
+    """
+    Get a list of average values for each sublist with a given length
+    """
+    return [mean(main_list[x : x + sublist_len]) for x in range(sublist_len)]
+
+
+def get_approval_rates(user):
+    """
+    Get data required to render Approval rate charts on the Profile page
+    """
+    months = get_n_months_before(timezone.now(), 23)
+
+    actions = ActionLog.objects.filter(
+        created_at__gte=timezone.now() - relativedelta(months=22),
+        translation__user=user,
+    )
+
+    peer_actions = actions.exclude(performed_by=user)
+    peer_approvals = get_monthly_action_counts(
+        months,
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_APPROVED),
+    )
+    peer_rejections = get_monthly_action_counts(
+        months,
+        peer_actions.filter(action_type=ActionLog.ActionType.TRANSLATION_REJECTED),
+    )
+
+    self_actions = actions.filter(performed_by=user)
+    self_approvals = get_monthly_action_counts(
+        months,
+        self_actions.filter(
+            # Self-approved after submitting suggestions
+            Q(action_type=ActionLog.ActionType.TRANSLATION_APPROVED)
+            # Submitted directly as translations
+            | Q(
+                action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+                translation__date=F("translation__approved_date"),
+            )
+        ),
+    )
+
+    approval_rates = get_shares_of_totals(peer_approvals, peer_rejections)
+    approval_rates_12_month_avg = get_sublist_averages(approval_rates, 12)
+    self_approval_rates = get_shares_of_totals(self_approvals, peer_approvals)
+    self_approval_rates_12_month_avg = get_sublist_averages(self_approval_rates, 12)
+
+    return {
+        "dates": months[-12:],
+        "approval_rates": approval_rates[-12:],
+        "approval_rates_12_month_avg": approval_rates_12_month_avg,
+        "self_approval_rates": self_approval_rates[-12:],
+        "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
+    }
