@@ -14,7 +14,8 @@ from django.db.models import (
     Prefetch,
     Q,
 )
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncDay, TruncMonth
+from django.template.defaultfilters import pluralize
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -24,6 +25,7 @@ from pontoon.base.models import (
     Locale,
     Translation,
 )
+from pontoon.base.templatetags.helpers import intcomma
 from pontoon.base.utils import convert_to_unix_time
 
 
@@ -287,3 +289,68 @@ def get_approval_rates(user):
         "self_approval_rates": self_approval_rates[-12:],
         "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
     }
+
+
+def get_daily_action_counts(qs):
+    return {
+        convert_to_unix_time(item["timestamp"]): item["count"]
+        for item in (
+            qs.annotate(timestamp=TruncDay("created_at"))
+            .values("timestamp")
+            .annotate(count=Count("id"))
+            .values("timestamp", "count")
+        )
+    }
+
+
+def get_contributions(user, contribution_type=None):
+    """
+    Get data required to render the Contribution graph on the Profile page
+    """
+    actions = ActionLog.objects.filter(
+        created_at__gte=timezone.now() - relativedelta(days=365),
+    )
+
+    review_action_types = [
+        ActionLog.ActionType.TRANSLATION_APPROVED,
+        ActionLog.ActionType.TRANSLATION_REJECTED,
+    ]
+
+    user_translations = actions.filter(
+        performed_by=user, action_type=ActionLog.ActionType.TRANSLATION_CREATED
+    )
+    user_reviews = actions.filter(
+        performed_by=user, action_type__in=review_action_types
+    )
+    peer_reviews = actions.filter(
+        translation__user=user, action_type__in=review_action_types
+    )
+
+    all_user_contributions = user_translations | user_reviews
+
+    # Using the union of all_user_contributions and peer_reviews QuerySets results in poorer performance
+    all_contributions = ActionLog.objects.filter(
+        pk__in=(
+            list(all_user_contributions.values_list("pk", flat=True))
+            + list(peer_reviews.values_list("pk", flat=True))
+        )
+    )
+
+    action_map = {
+        "user_translations": user_translations,
+        "user_reviews": user_reviews,
+        "peer_reviews": peer_reviews,
+        "all_user_contributions": all_user_contributions,
+        "all_contributions": all_contributions,
+    }
+
+    if contribution_type not in action_map.keys():
+        contribution_type = "all_user_contributions"
+
+    contributions = get_daily_action_counts(action_map[contribution_type])
+    total = sum(contributions.values())
+
+    return (
+        contributions,
+        f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+    )

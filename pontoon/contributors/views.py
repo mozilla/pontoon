@@ -51,15 +51,18 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    context = utils.get_approval_rates(user)
+    contributions, title = utils.get_contributions(user)
 
+    context = utils.get_approval_rates(user)
     context.update(
         {
+            "title": title,
             "contributor": user,
             "translations": user.contributed_translations,
             "contact_for": user.contact_for.filter(
                 disabled=False, system_project=False, visibility="public"
             ).order_by("-priority"),
+            "contributions": json.dumps(contributions),
         }
     )
 
@@ -68,6 +71,21 @@ def contributor(request, user):
         "contributors/profile.html",
         context,
     )
+
+
+def update_contribution_graph(request):
+    """Contributor profile."""
+    try:
+        user = User.objects.get(pk=request.GET["user"])
+        contribution_type = request.GET["contribution_type"]
+    except User.DoesNotExist as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    contributions, title = utils.get_contributions(user, contribution_type)
+    return JsonResponse({"contributions": contributions, "title": title})
 
 
 @login_required(redirect_field_name="", login_url="/403")

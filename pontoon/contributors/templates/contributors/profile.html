@@ -4,6 +4,14 @@
 
 {% block title %}{{ contributor.name_or_email }}{% endblock %}
 
+{% block before %}
+<!-- Server data -->
+<div id="server" class="hidden"
+     data-user="{{ contributor.pk }}"
+     >
+</div>
+{% endblock %}
+
 {% block class %}user{% endblock %}
 
 {% block bottom %}
@@ -176,10 +184,12 @@
 
         <div class="right-column">
 
+            <div class="clearfix">
+
             {% set approval_rate_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
             {% set self_approval_rate_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
             {% if approval_rate_visibile or self_approval_rate_visibile %}
-            <section id="insights" class="half" data-dates="{{ dates }}">
+            <section id="insights" data-dates="{{ dates }}">
                 <div class="block clearfix">
                     <div class="chart-group">
                         {% if approval_rate_visibile %}
@@ -264,6 +274,42 @@
                 </div>
             </section>
 
+            </div>
+
+            <section id="contributions">
+                <div class="header clearfix">
+                    <h2 class="title">{{ title }}</h2>
+                    <div class="type-selector controls select">
+                        <div class="button selector">
+                            <div class="value">
+                                <span data-type="all_user_contributions" title="Submissions and reviews performed">Submissions and reviews</span>
+                            </div>
+                            <span class="icon fa fa-caret-down"></span>
+                        </div>
+                        <div class="menu" style="display: none;">
+                            <ul>
+                                <li class="clearfix">
+                                    <span data-type="user_translations" title="Translations submitted, including both suggestions and direct translations">Submissions</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="user_reviews" title="Reviews performed">Reviews performed</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="peer_reviews" title="Reviews received from another translator">Reviews received</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="all_user_contributions" title="Submissions and reviews performed">Submissions and reviews</span>
+                                </li>
+                                <li class="clearfix">
+                                    <span data-type="all_contributions" title="Submissions, reviews performed and reviews received">All contributions</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="contribution-graph" data-contributions="{{ contributions }}"></div>
+                <div class="svg-tip"></div>
+            </section>
         </div>
     </div>
 </section>

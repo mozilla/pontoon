@@ -23,14 +23,19 @@
   margin: 8px 0;
 }
 
-.display-name {
+h2 {
   color: #ebebeb;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   letter-spacing: normal;
   line-height: 1.4em;
-  padding: 0;
+  padding-bottom: 10px;
   text-transform: none;
+}
+
+.display-name {
+  font-size: 24px;
+  padding-bottom: 0;
 }
 
 .username {
@@ -107,9 +112,6 @@ h4.superuser {
 
 #insights {
   float: left;
-}
-
-#insights.half {
   width: 460px;
 }
 
@@ -194,4 +196,82 @@ h4.superuser {
 #stats:first-child div:last-child {
   float: right;
   text-align: right;
+}
+
+/* Contribution Graph */
+
+#contributions {
+  margin-top: 30px;
+}
+
+#contributions .type-selector {
+  float: left;
+  padding-left: 0;
+  width: 260px;
+}
+
+#contributions .type-selector .selector {
+  font-size: 16px;
+  padding: 8px 12px;
+  width: 100%;
+  text-align: left;
+}
+
+#contributions .type-selector .selector .icon {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+}
+
+#contributions .type-selector .menu {
+  background: #333941;
+  bottom: auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#contributions .type-selector .menu li span {
+  color: #ccc;
+  width: 100%;
+}
+
+#contributions h2 {
+  float: right;
+  line-height: 32px;
+}
+
+#contribution-graph rect.day:hover {
+  stroke-width: 1;
+  stroke: #fff;
+}
+
+svg.js-calendar-graph-svg {
+  fill: #aaa;
+  font-weight: 100;
+}
+
+.svg-tip {
+  display: none;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #bbb;
+  font-size: 12px;
+  position: absolute;
+  z-index: 99999;
+  text-align: center;
+  border-radius: 3px;
+}
+
+.svg-tip:after {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  height: 5px;
+  width: 5px;
+  bottom: -10px;
+  margin: 0 0 0 -5px;
+  content: ' ';
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
 }
