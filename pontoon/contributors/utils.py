@@ -1,5 +1,4 @@
 import datetime
-import json
 import jwt
 
 from collections import defaultdict
@@ -351,8 +350,7 @@ def get_contributions(user, contribution_type=None):
     contributions = get_daily_action_counts(action_map[contribution_type])
     total = sum(contributions.values())
 
-    return {
-        # Encode contributions dict to make it usable in the data- attribute
-        "contributions": json.dumps(contributions),
-        "title": f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
-    }
+    return (
+        contributions,
+        f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+    )

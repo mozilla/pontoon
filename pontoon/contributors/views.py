@@ -51,17 +51,18 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
+    contributions, title = utils.get_contributions(user)
+
     context = utils.get_approval_rates(user)
-
-    context.update(utils.get_contributions(user))
-
     context.update(
         {
+            "title": title,
             "contributor": user,
             "translations": user.contributed_translations,
             "contact_for": user.contact_for.filter(
                 disabled=False, system_project=False, visibility="public"
             ).order_by("-priority"),
+            "contributions": json.dumps(contributions),
         }
     )
 
@@ -83,7 +84,8 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    return JsonResponse(utils.get_contributions(user, contribution_type))
+    contributions, title = utils.get_contributions(user, contribution_type)
+    return JsonResponse({"contributions": contributions, "title": title})
 
 
 @login_required(redirect_field_name="", login_url="/403")

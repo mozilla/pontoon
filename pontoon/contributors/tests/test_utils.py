@@ -202,13 +202,13 @@ def test_get_daily_action_counts_with_actions(action_a, action_b, action_c):
 
 @pytest.mark.django_db
 def test_get_contributions_without_actions(user_a):
-    assert utils.get_contributions(user_a) == {
-        "contributions": "{}",
-        "title": "0 contributions in the last year",
-    }
+    assert utils.get_contributions(user_a) == (
+        {},
+        "0 contributions in the last year",
+    )
 
 
 @pytest.mark.django_db
 def test_get_contributions_with_actions(user_a, action_user_a, action_user_b):
-    data = utils.get_contributions(user_a)
-    assert data["title"] == "1 contribution in the last year"
+    _, title = utils.get_contributions(user_a)
+    assert title == "1 contribution in the last year"

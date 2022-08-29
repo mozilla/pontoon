@@ -286,10 +286,9 @@ var Pontoon = (function (my) {
               contribution_type: type,
               user: user,
             },
-            success: function (data) {
-              const contributions = JSON.parse(data.contributions);
+            success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
-              $('#contributions .title').html(data.title);
+              $('#contributions .title').html(title);
               Pontoon.profile.renderContributionGraph();
             },
             error: function () {
