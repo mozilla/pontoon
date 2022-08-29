@@ -86,4 +86,10 @@ urlpatterns = [
         views.dismiss_addon_promotion,
         name="pontoon.contributors.dismiss_addon_promotion",
     ),
+    # AJAX: Update contribution graph
+    path(
+        "update-contribution-graph/",
+        views.update_contribution_graph,
+        name="pontoon.contributors.update_contribution_graph",
+    ),
 ]
