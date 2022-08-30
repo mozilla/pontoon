@@ -51,20 +51,22 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    contributions, title = utils.get_contributions(user)
+    contributions, title = utils.get_contributor_graph_data(user)
 
-    context = utils.get_approval_rates(user)
-    context.update(
-        {
-            "title": title,
-            "contributor": user,
+    context = {
+        "contributor": user,
+        "contact_for": user.contact_for.filter(
+            disabled=False, system_project=False, visibility="public"
+        ).order_by("-priority"),
+        "all_time_stats": {
             "translations": user.contributed_translations,
-            "contact_for": user.contact_for.filter(
-                disabled=False, system_project=False, visibility="public"
-            ).order_by("-priority"),
+        },
+        "approvals_charts": utils.get_approvals_charts_data(user),
+        "contributor_graph": {
             "contributions": json.dumps(contributions),
-        }
-    )
+            "title": title,
+        },
+    }
 
     return render(
         request,
@@ -84,7 +86,7 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    contributions, title = utils.get_contributions(user, contribution_type)
+    contributions, title = utils.get_contributor_graph_data(user, contribution_type)
     return JsonResponse({"contributions": contributions, "title": title})
 
 

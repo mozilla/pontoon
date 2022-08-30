@@ -162,8 +162,8 @@ def test_get_sublist_averages():
 
 
 @pytest.mark.django_db
-def test_get_approval_rates_without_actions(user_a):
-    data = utils.get_approval_rates(user_a)
+def test_get_approvals_charts_data_without_actions(user_a):
+    data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 12
     assert data["approval_rates_12_month_avg"] == [0] * 12
@@ -172,8 +172,8 @@ def test_get_approval_rates_without_actions(user_a):
 
 
 @pytest.mark.django_db
-def test_get_approval_rates_with_actions(user_a, action_user_a, action_user_b):
-    data = utils.get_approval_rates(user_a)
+def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_user_b):
+    data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 11 + [100]
     assert data["approval_rates_12_month_avg"] == [0] * 11 + [8.333333333333334]
@@ -201,14 +201,14 @@ def test_get_daily_action_counts_with_actions(action_a, action_b, action_c):
 
 
 @pytest.mark.django_db
-def test_get_contributions_without_actions(user_a):
-    assert utils.get_contributions(user_a) == (
+def test_get_contributor_graph_data_without_actions(user_a):
+    assert utils.get_contributor_graph_data(user_a) == (
         {},
         "0 contributions in the last year",
     )
 
 
 @pytest.mark.django_db
-def test_get_contributions_with_actions(user_a, action_user_a, action_user_b):
-    _, title = utils.get_contributions(user_a)
+def test_get_contributor_graph_data_with_actions(user_a, action_user_a, action_user_b):
+    _, title = utils.get_contributor_graph_data(user_a)
     assert title == "1 contribution in the last year"

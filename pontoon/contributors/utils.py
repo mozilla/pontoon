@@ -242,7 +242,7 @@ def get_sublist_averages(main_list, sublist_len):
     return [mean(main_list[x : x + sublist_len]) for x in range(sublist_len)]
 
 
-def get_approval_rates(user):
+def get_approvals_charts_data(user):
     """
     Get data required to render Approval rate charts on the Profile page
     """
@@ -303,7 +303,7 @@ def get_daily_action_counts(qs):
     }
 
 
-def get_contributions(user, contribution_type=None):
+def get_contributor_graph_data(user, contribution_type=None):
     """
     Get data required to render the Contribution graph on the Profile page
     """

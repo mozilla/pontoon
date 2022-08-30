@@ -189,7 +189,7 @@
             {% set approval_rate_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
             {% set self_approval_rate_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
             {% if approval_rate_visibile or self_approval_rate_visibile %}
-            <section id="insights" data-dates="{{ dates }}">
+            <section id="insights" data-dates="{{ approvals_charts.dates }}">
                 <div class="block clearfix">
                     <div class="chart-group">
                         {% if approval_rate_visibile %}
@@ -210,8 +210,8 @@
                             </h3>
                             <canvas
                                 id="approval-rate-chart"
-                                data-approval-rates="{{ approval_rates }}"
-                                data-approval-rates-12-month-avg="{{ approval_rates_12_month_avg }}"
+                                data-approval-rates="{{ approvals_charts.approval_rates }}"
+                                data-approval-rates-12-month-avg="{{ approvals_charts.approval_rates_12_month_avg }}"
                                 width="420"
                                 height="{% if self_approval_rate_visibile %}159{% else %}191{% endif %}">
                             </canvas>
@@ -235,8 +235,8 @@
                             </h3>
                             <canvas
                                 id="self-approval-rate-chart"
-                                data-self-approval-rates="{{ self_approval_rates }}"
-                                data-self-approval-rates-12-month-avg="{{ self_approval_rates_12_month_avg }}"
+                                data-self-approval-rates="{{ approvals_charts.self_approval_rates }}"
+                                data-self-approval-rates-12-month-avg="{{ approvals_charts.self_approval_rates_12_month_avg }}"
                                 width="420"
                                 height="{% if approval_rate_visibile %}159{% else %}191{% endif %}">
                             </canvas>
@@ -262,15 +262,15 @@
             <section id="stats">
                 <div class="total">
                     <span>All translations</span>
-                    <p>{{ translations.count()|intcomma }}</p>
+                    <p>{{ all_time_stats.translations.count()|intcomma }}</p>
                 </div>
                 <div class="translated">
                     <span>Approved</span>
-                    <p>{{ translations.filter(approved=True).count()|intcomma }}</p>
+                    <p>{{ all_time_stats.translations.filter(approved=True).count()|intcomma }}</p>
                 </div>
                 <div class="unreviewed">
                     <span>Unreviewed</span>
-                    <p>{{ translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}</p>
+                    <p>{{ all_time_stats.translations.exclude(approved=True).exclude(rejected=True).count()|intcomma }}</p>
                 </div>
             </section>
 
@@ -278,7 +278,7 @@
 
             <section id="contributions">
                 <div class="header clearfix">
-                    <h2 class="title">{{ title }}</h2>
+                    <h2 class="title">{{ contributor_graph.title }}</h2>
                     <div class="type-selector controls select">
                         <div class="button selector">
                             <div class="value">
@@ -307,7 +307,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="contribution-graph" data-contributions="{{ contributions }}"></div>
+                <div id="contribution-graph" data-contributions="{{ contributor_graph.contributions }}"></div>
                 <div class="svg-tip"></div>
             </section>
         </div>
