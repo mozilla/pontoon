@@ -18,9 +18,9 @@ bleach==3.3.0
 celery==5.2.6
 compare-locales==8.2.0
 dj-database-url==0.3.0
-Django==3.2.13
+Django==3.2.15
 django-ace==1.0.5
-django-allauth==0.44.0
+django-allauth==0.51.0
 django-bmemcached==0.2.3
 django-cors-headers==3.5.0
 django-csp==3.7
@@ -33,13 +33,14 @@ graphene-django==2.13.0
 gunicorn==19.9.0
 jsonfield==3.1.0
 jsonschema==2.6.0
-lxml==4.6.5
+lxml==4.9.1
 markupsafe==2.0.1
 mercurial==5.2.2
 newrelic==6.2.0.156
 parsimonious==0.8.1
 polib==1.0.6
 psycopg2==2.8.5
+PyJWT==2.4.0
 python-dateutil==2.8.1
 python-dotenv==0.17.0
 python-levenshtein==0.12.2

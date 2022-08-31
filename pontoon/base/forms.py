@@ -190,13 +190,13 @@ ProjectLocalePermsFormsSet = forms.modelformset_factory(
 )
 
 
-class UserProfileForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
     """
-    Form is responsible for saving user's name.
+    Form is responsible for saving user data.
     """
 
     first_name = forms.RegexField(
-        label="Name",
+        label="Display Name",
         regex="^[^<>\"'&]+$",
         max_length=30,
         strip=True,
@@ -205,6 +205,38 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("first_name",)
+
+
+class UserProfileForm(forms.ModelForm):
+    """
+    Form is responsible for saving user profile data.
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            "username",
+            "contact_email",
+            "bio",
+            "chat",
+            "github",
+            "bugzilla",
+        )
+
+
+class UserProfileVisibilityForm(forms.ModelForm):
+    """
+    Form is responsible for controlling user profile visibility.
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            "visibility_email",
+            "visibility_external_accounts",
+            "visibility_self_approval",
+            "visibility_approval",
+        )
 
 
 class UserCustomHomepageForm(forms.ModelForm):
@@ -267,6 +299,9 @@ class GetEntitiesForm(forms.Form):
     tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
     author = forms.CharField(required=False)
+    review_time = forms.CharField(required=False)
+    reviewer = forms.CharField(required=False)
+    exclude_self_reviewed = forms.BooleanField(required=False)
     search = forms.CharField(required=False)
     exclude_entities = forms.CharField(required=False)
     entity_ids = forms.CharField(required=False)

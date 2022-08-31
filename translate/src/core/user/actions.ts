@@ -1,11 +1,8 @@
 import {
   dismissAddonPromotion,
   fetchUserData,
-  fetchUsersList,
   markAllNotificationsAsRead,
-  signOut,
   updateUserSetting,
-  UsersList,
 } from '~/api/user';
 import { NotificationMessage } from '~/context/Notification';
 import {
@@ -16,16 +13,10 @@ import {
 } from '~/core/notification/messages';
 import type { AppThunk } from '~/store';
 
-export const RECEIVE_USERS = 'users/RECEIVE_USERS';
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';
 
-export type Action = ReceiveAction | UpdateAction | UpdateSettingsAction;
-
-export type ReceiveAction = {
-  readonly type: typeof RECEIVE_USERS;
-  readonly users: Array<UsersList>;
-};
+export type Action = UpdateAction | UpdateSettingsAction;
 
 /**
  * Update the user data.
@@ -47,16 +38,6 @@ export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
   readonly settings: Settings;
 };
-
-/**
- * Sign out the current user.
- */
-export const signOut_ =
-  (url: string): AppThunk =>
-  async (dispatch) => {
-    await signOut(url);
-    dispatch(getUserData());
-  };
 
 function getNotification(setting: keyof Settings, value: boolean) {
   switch (setting) {
@@ -87,10 +68,6 @@ export function saveSetting(
 export const markAllNotificationsAsRead_ = (): AppThunk => async (dispatch) => {
   await markAllNotificationsAsRead();
   dispatch(getUserData());
-};
-
-export const getUsersList = (): AppThunk => async (dispatch) => {
-  dispatch({ type: RECEIVE_USERS, users: await fetchUsersList() });
 };
 
 /**

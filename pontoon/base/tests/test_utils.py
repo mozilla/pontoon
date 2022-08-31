@@ -10,6 +10,7 @@ from pontoon.base.utils import (
     get_object_or_none,
     latest_datetime,
     get_search_phrases,
+    is_email,
 )
 
 
@@ -127,3 +128,8 @@ def test_util_base_latest_datetime():
 )
 def test_get_search_phrases(search_query, expected_results):
     assert get_search_phrases(search_query) == expected_results
+
+
+def test_is_email():
+    assert is_email("jane@doe.com") is True
+    assert is_email("john@doe") is False

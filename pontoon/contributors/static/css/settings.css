@@ -1,20 +1,25 @@
+#heading {
+  text-align: center;
+}
+
 #locale-settings {
-  margin-top: 30px;
+  font-size: 0;
 }
 
 #preferred-locale {
   margin-top: 10px;
 }
 
-#locale-settings .label {
+#locale-settings .label,
+.toggle-label {
   color: #aaa;
-  display: inline-block;
+  float: left;
   font-size: 16px;
   font-weight: 300;
   margin: 6px 10px 0 0;
+  padding-right: 20px;
   text-align: right;
-  width: 280px;
-  vertical-align: top;
+  width: 295px;
 }
 
 #locale-settings .locale-selector {
@@ -22,28 +27,36 @@
 }
 
 #locale-settings .locale-selector .locale.select {
-  width: 280px;
+  width: 295px;
 }
 
 #locale-settings .locale-selector .locale.select .button {
-  background: #272a2f;
   color: #aaaaaa;
   font-size: 16px;
   font-weight: 400;
-  height: 36px;
-  margin: 0;
+  height: 32px;
   padding: 8px 12px;
   width: 100%;
 }
 
+#locale-settings .locale-selector .locale.select .button:hover {
+  color: #ebebeb;
+}
+
 #locale-settings .locale-selector .locale.select .menu {
-  background: #272a2f;
   border: 1px solid #333941;
-  border-top: none;
-  top: 36px;
-  left: -1px;
-  width: 282px;
+  top: 30px;
+  width: 295px;
   z-index: 30;
+  padding: 10px 12px;
+}
+
+#display-name {
+  color: #ebebeb;
+  font-size: 48px;
+  letter-spacing: normal;
+  padding: 10px 0 0;
+  text-transform: none;
 }
 
 #main form {
@@ -63,52 +76,96 @@
   margin: 9px;
 }
 
-#profile-form {
-  display: block;
-  position: relative;
-  text-align: left;
-  width: 620px;
-}
-
-#profile-form .field {
-  text-align: left;
-}
-
-#profile-form .field:not(:last-child) {
+#main .field {
+  color: #aaaaaa;
+  font-size: 16px;
   margin-bottom: 20px;
+  text-align: left;
 }
 
-#profile-form .field input {
-  color: #ffffff;
+#main .field a {
+  float: none;
+  text-transform: none;
+}
+
+#main .field label {
+  display: inline-block;
+  margin-right: 25px;
+  padding-top: 5px;
+  text-align: right;
+  vertical-align: top;
+  width: 295px;
+}
+
+#main .field label:hover {
+  color: #ebebeb;
+}
+
+#main .field input,
+#main .field textarea {
+  color: #aaaaaa;
   background: #333941;
   border: 1px solid #4d5967;
   border-radius: 3px;
   float: none;
-  width: 290px;
   padding: 4px;
-
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
+  width: 295px;
 }
 
-#profile-form button {
-  margin-top: 10px;
+#main .field textarea {
+  height: 142px;
 }
 
-#profile-form .help {
+#main .field .help,
+#main .field .verify,
+.errorlist {
+  font-size: 14px;
+  margin: 5px 0 0 325px;
+}
+
+#main .field .help {
   color: #888888;
   font-style: italic;
-  margin-top: 5px;
+}
+
+#main .field .verify {
+  color: #7bc876;
+  font-style: italic;
+}
+
+#main .check-list {
+  cursor: pointer;
+  list-style: none;
+  margin: 0;
+  display: inline-block;
+  text-align: left;
+}
+
+#main .check-list li {
+  color: #aaaaaa;
+  display: table;
+  font-size: 16px;
+  font-weight: 300;
+  overflow: hidden;
+  padding: 8px 0;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 342px;
+}
+
+#main .check-list li:hover {
+  color: #ebebeb;
+}
+
+#main .check-list .fa {
+  margin-left: 27px;
+  margin-right: 0;
 }
 
 .errorlist {
   color: #f36;
+  font-style: italic;
   list-style: none;
-  margin: 0;
-  margin-top: 5px;
-  text-align: left;
-}
-
-.check-list {
-  cursor: pointer;
 }

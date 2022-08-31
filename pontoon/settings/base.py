@@ -30,12 +30,6 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "False") != "False"
 
 HEROKU_DEMO = os.environ.get("HEROKU_DEMO", "False") != "False"
 
-# Automatically log in the user with username 'AUTO_LOGIN_USERNAME'
-# and password 'AUTO_LOGIN_PASSWORD'
-AUTO_LOGIN = os.environ.get("AUTO_LOGIN", "False") != "False"
-AUTO_LOGIN_USERNAME = os.environ.get("AUTO_LOGIN_USERNAME", None)
-AUTO_LOGIN_PASSWORD = os.environ.get("AUTO_LOGIN_PASSWORD", None)
-
 LOGOUT_REDIRECT_URL = "/"
 
 ADMINS = MANAGERS = (
@@ -44,6 +38,22 @@ ADMINS = MANAGERS = (
 
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
+
+
+def _get_site_url_netloc():
+    from urllib.parse import urlparse
+    from django.conf import settings
+
+    return urlparse(settings.SITE_URL).netloc
+
+
+def _default_from_email():
+    return os.environ.get(
+        "DEFAULT_FROM_EMAIL", f"Pontoon <noreply@{_get_site_url_netloc()}>"
+    )
+
+
+DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
 
 # Email from which new locale requests are sent.
 LOCALE_REQUEST_FROM_EMAIL = os.environ.get(
@@ -189,7 +199,6 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "pontoon.base.middleware.AutomaticLoginUserMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
@@ -306,6 +315,7 @@ PIPELINE_CSS = {
             "css/sidebar_menu.css",
             "css/multiple_team_selector.css",
             "css/manual_notifications.css",
+            "css/insights_charts.css",
             "css/insights.css",
         ),
         "output_filename": "css/project.min.css",
@@ -317,6 +327,7 @@ PIPELINE_CSS = {
             "css/heading_info.css",
             "css/info.css",
             "css/download_selector.css",
+            "css/insights_charts.css",
             "css/insights.css",
         ),
         "output_filename": "css/localization.min.css",
@@ -337,6 +348,7 @@ PIPELINE_CSS = {
             "css/heading_info.css",
             "css/team.css",
             "css/request.css",
+            "css/insights_charts.css",
             "css/insights.css",
             "css/info.css",
         ),
@@ -357,6 +369,7 @@ PIPELINE_CSS = {
     "profile": {
         "source_filenames": (
             "css/contributor.css",
+            "css/insights_charts.css",
             "css/profile.css",
         ),
         "output_filename": "css/profile.min.css",
@@ -366,6 +379,7 @@ PIPELINE_CSS = {
             "css/multiple_team_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
+            "css/toggle.css",
             "css/settings.css",
         ),
         "output_filename": "css/settings.min.css",
@@ -443,6 +457,7 @@ PIPELINE_JS = {
             "js/table.js",
             "js/progress-chart.js",
             "js/tabs.js",
+            "js/insights_charts.js",
             "js/insights.js",
             "js/info.js",
         ),
@@ -458,6 +473,7 @@ PIPELINE_JS = {
             "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
             "js/manual_notifications.js",
+            "js/insights_charts.js",
             "js/insights.js",
         ),
         "output_filename": "js/project.min.js",
@@ -479,6 +495,7 @@ PIPELINE_JS = {
             "js/tabs.js",
             "js/request.js",
             "js/permissions.js",
+            "js/insights_charts.js",
             "js/insights.js",
             "js/info.js",
         ),
@@ -493,7 +510,11 @@ PIPELINE_JS = {
         "output_filename": "js/teams.min.js",
     },
     "profile": {
-        "source_filenames": ("js/contributor.js",),
+        "source_filenames": (
+            "js/lib/Chart.bundle.js",
+            "js/insights_charts.js",
+            "js/profile.js",
+        ),
         "output_filename": "js/profile.min.js",
     },
     "settings": {
@@ -588,10 +609,7 @@ STATICFILES_DIRS = [
 
 # Set ALLOWED_HOSTS based on SITE_URL setting.
 def _allowed_hosts():
-    from urllib.parse import urlparse
-    from django.conf import settings
-
-    host = urlparse(settings.SITE_URL).netloc  # Remove protocol and path
+    host = _get_site_url_netloc()  # Remove protocol and path
     result = [host]
     # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
     # have a version of the host that contains the port. This only applies
@@ -898,8 +916,5 @@ NOTIFICATIONS_MAX_COUNT = 7
 # Integer representing a day of the week on which the `send_suggestion_notifications`
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
-
-# Number of events displayed on the Contributor's timeline per page.
-CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE = 10
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

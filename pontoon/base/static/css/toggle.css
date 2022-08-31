@@ -1,0 +1,39 @@
+.toggle-button {
+  font-size: 0;
+}
+
+.toggle-button button {
+  background: #272a2f;
+  border: 1px solid #666;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #777777;
+  float: none;
+  font-size: 16px;
+  font-weight: 100;
+  padding: 4px;
+  width: 147.5px;
+}
+
+.toggle-button button:first-child {
+  border-right-color: #4d5967;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.toggle-button button:nth-child(2) {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.toggle-button button:hover {
+  color: #ccc;
+}
+
+.toggle-button button.active {
+  background: #333941;
+  border-color: #4d5967;
+  color: #aaa;
+  font-weight: 400;
+}

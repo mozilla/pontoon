@@ -728,16 +728,21 @@ header nav .right .sign-in-header {
   float: left;
 }
 
-header nav .right .sign-in-header .button {
+header nav .right .sign-in-header button {
+  background: transparent;
   border: 1.5px solid #7bc176;
-  color: white;
   border-radius: 2px;
+  color: white;
+  font-size: 14px;
+  font-weight: 300;
+  height: 40px;
+  line-height: 17px;
   padding: 10px 25px;
   text-align: center;
   margin: 10px 5px 0 0;
 }
 
-header nav .right .sign-in-header .button:hover {
+header nav .right .sign-in-header button:hover {
   background-color: #7bc176;
 }
 

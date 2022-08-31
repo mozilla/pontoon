@@ -34,17 +34,17 @@ urlpatterns = [
         views.contributor_email,
         name="pontoon.contributors.contributor.email",
     ),
-    # Contributor timeline
-    path(
-        "contributors/<username:username>/timeline/",
-        views.contributor_timeline,
-        name="pontoon.contributors.contributor.timeline",
-    ),
     # Contributor profile by username
     path(
         "contributors/<username:username>/",
         views.contributor_username,
         name="pontoon.contributors.contributor.username",
+    ),
+    # Verify email address
+    path(
+        "verify-email-address/<str:token>/",
+        views.verify_email_address,
+        name="pontoon.contributors.verify.email",
     ),
     # Current user's profile
     path("profile/", views.profile, name="pontoon.contributors.profile"),
@@ -85,5 +85,11 @@ urlpatterns = [
         "dismiss-addon-promotion/",
         views.dismiss_addon_promotion,
         name="pontoon.contributors.dismiss_addon_promotion",
+    ),
+    # AJAX: Update contribution graph
+    path(
+        "update-contribution-graph/",
+        views.update_contribution_graph,
+        name="pontoon.contributors.update_contribution_graph",
     ),
 ]

@@ -5,5 +5,11 @@
 {% block content %}
 <h1 id="title">Sign In Failure</h1>
 <h2 id="subtitle">An error occurred while attempting to sign in.</h2>
-<p id="action"><a href="{{ provider_login_url }}">Try again</a></p>
+<div id="action">
+    <form action="{{ provider_login_url }}?next={{ request.get_full_path|urlencode }}" method="post">
+        {% csrf_token %}
+        <i class="fa fa-sign-in-alt fa-fw"></i>
+        <button type="submit">Try again</button>
+      </form>
+</div>
 {% endblock %}

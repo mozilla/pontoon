@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import auth
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
@@ -31,20 +30,3 @@ class BlockedIpMiddleware(MiddlewareMixin):
             return HttpResponseForbidden("<h1>Forbidden</h1>")
 
         return None
-
-
-class AutomaticLoginUserMiddleware(MiddlewareMixin):
-    """
-    This middleware automatically logs in the user specified for AUTO_LOGIN.
-    """
-
-    def process_request(self, request):
-        if settings.AUTO_LOGIN and not request.user.is_authenticated:
-            user = auth.authenticate(
-                username=settings.AUTO_LOGIN_USERNAME,
-                password=settings.AUTO_LOGIN_PASSWORD,
-            )
-
-            if user:
-                request.user = user
-                auth.login(request, user)

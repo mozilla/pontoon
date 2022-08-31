@@ -42,15 +42,22 @@ function MenuContent() {
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const dispatch = useAppDispatch();
   const { entity } = useContext(EntityView);
-  const userState = useAppSelector((state) => state.user);
+  const { isAuthenticated, settings, signInURL, username } = useAppSelector(
+    (state) => state.user,
+  );
 
-  if (!userState.isAuthenticated) {
+  if (isAuthenticated === null) {
+    // No content while loading user data
+    return null;
+  }
+
+  if (!isAuthenticated) {
     return (
       <Localized
         id='editor-EditorMenu--sign-in-to-translate'
-        elems={{ a: <user.SignInLink url={userState.signInURL} /> }}
+        elems={{ form: <user.SignInOutForm url={signInURL} /> }}
       >
-        <p className='banner'>{'<a>Sign in</a> to translate.'}</p>
+        <div className='banner'>{'<form>Sign in</form> to translate.'}</div>
       </Localized>
     );
   }
@@ -58,21 +65,18 @@ function MenuContent() {
   if (entity.readonly) {
     return (
       <Localized id='editor-EditorMenu--read-only-localization'>
-        <p className='banner'>This is a read-only localization.</p>
+        <div className='banner'>This is a read-only localization.</div>
       </Localized>
     );
   }
 
   function updateSetting(setting: keyof user.Settings, value: boolean) {
-    dispatch(saveSetting(setting, value, userState.username, showNotification));
+    dispatch(saveSetting(setting, value, username, showNotification));
   }
 
   return (
     <>
-      <EditorSettings
-        settings={userState.settings}
-        updateSetting={updateSetting}
-      />
+      <EditorSettings settings={settings} updateSetting={updateSetting} />
       <KeyboardShortcuts />
       <TranslationLength />
       <div className='actions'>

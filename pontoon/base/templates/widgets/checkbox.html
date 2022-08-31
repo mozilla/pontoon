@@ -1,3 +1,3 @@
 {% macro checkbox(label, class, attribute, is_enabled=False, title=False) %}
-<li class="check-box {{ class }}{% if is_enabled %} enabled{% endif %}" data-attribute="{{ attribute }}"{% if title %} title="{{title}}"{% endif %}><i class="fa fa-fw"></i>{{ label }}</li>
+<li class="check-box {{ class }}{% if is_enabled %} enabled{% endif %}" data-attribute="{{ attribute }}"{% if title %} title="{{title}}"{% endif %}>{{ label }}<i class="fa fa-fw"></i></li>
 {% endmacro %}

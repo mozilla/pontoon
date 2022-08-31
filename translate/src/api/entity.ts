@@ -129,10 +129,13 @@ function buildFetchPayload(
       'tag',
       'author',
       'time',
+      'reviewer',
+      'review_time',
+      'exclude_self_reviewed',
     ] as const) {
       const value = location[key];
       if (value) {
-        payload.append(key, value);
+        payload.append(key, String(value));
       }
     }
   }

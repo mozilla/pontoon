@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% import "widgets/checkbox.html" as Checkbox %}
+{% import "widgets/toggle.html" as Toggle %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
@@ -22,26 +23,7 @@
     <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
   </a>
 
-  <h2 id="username">{{ user.first_name }}</h2>
-
-  <ul id="editor-settings" class="info check-list">
-    {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
-
-    {% if user.translated_locales %}
-      {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
-    {% endif %}
-  </ul>
-
-  <div id="locale-settings" class="clearfix">
-    <div id="homepage">
-      <span class="label">Select your homepage</span>
-      <span>{{ team_selector.locale(locales, locale) }}</span>
-    </div>
-    <div id="preferred-locale">
-      <span class="label">Select preferred source locale</span>
-      <span>{{ team_selector.locale(preferred_locales, preferred_locale) }}</span>
-    </div>
-  </div>
+  <h2 id="display-name">{{ user.first_name }}</h2>
 
 </section>
 {% endblock %}
@@ -52,23 +34,79 @@
     {% csrf_token %}
     <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
-    <section id="profile-form">
-      <h3>Personal information</h3>
-      <div class="field">
-          {{ profile_form.first_name.label_tag(label_suffix='') }}
-          {{ profile_form.first_name }}
-          {{ profile_form.first_name.errors }}
-      </div>
+    <section>
+        <h3>Personal information</h3>
+        <div class="field">
+            {{ user_form.first_name.label_tag(label_suffix='') }}
+            {{ user_form.first_name }}
+            {{ user_form.first_name.errors }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.username.label_tag(label_suffix='') }}
+            {{ user_profile_form.username }}
+            {{ user_profile_form.username.errors }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
+            {{ user_profile_form.contact_email }}
+            {{ user_profile_form.contact_email.errors }}
+            {% if user.profile.contact_email and not user.profile.contact_email_verified %}
+                <p class="verify">Check your inbox to verify your email address</a></p>
+            {% else %}
+                <p class="help">If provided, used instead of login email address on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a></p>
+            {% endif %}
+        </div>
+        <div class="field">
+            {{ user_profile_form.bio.label_tag(label_suffix='') }}
+            {{ user_profile_form.bio }}
+            {{ user_profile_form.bio.errors }}
+            <p class="help">Displayed on the public profile page</p>
+        </div>
+      </section>
+
+    <section>
+        <h3>External accounts</h3>
+        <div class="field">
+            {{ user_profile_form.chat.label_tag(label_suffix='') }}
+            {{ user_profile_form.chat }}
+            {{ user_profile_form.chat.errors }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.github.label_tag(label_suffix='') }}
+            {{ user_profile_form.github }}
+            {{ user_profile_form.github.errors }}
+        </div>
+        <div class="field">
+            {{ user_profile_form.bugzilla.label_tag(label_suffix='') }}
+            {{ user_profile_form.bugzilla }}
+            {{ user_profile_form.bugzilla.errors }}
+        </div>
     </section>
 
     <section>
-        <h3>Preferred locales <span class="small stress">(to get suggestions from)</span></h3>
-        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
+        <h3>Visibility of data on the Profile page</h3>
+        <div class="field">
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_email.label }}</span>
+            {{ Toggle.button(field=user_profile_visibility_form.visibility_email) }}
+            <p class="help">Email addresses of team and project managers are visible to all logged in users</p>
+        </div>
+        <div class="field">
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_external_accounts.label }}</span>
+            {{ Toggle.button(field=user_profile_visibility_form.visibility_external_accounts) }}
+        </div>
+        <div class="field">
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_approval.label }}</span>
+            {{ Toggle.button(field=user_profile_visibility_form.visibility_approval) }}
+        </div>
+        <div class="field">
+            <span class="toggle-label">{{ user_profile_visibility_form.visibility_self_approval.label }}</span>
+            {{ Toggle.button(field=user_profile_visibility_form.visibility_self_approval) }}
+        </div>
     </section>
 
     <section>
         <h3>Notification subscriptions</h3>
-        <ul class="info check-list">
+        <ul class="check-list">
             {{ Checkbox.checkbox('New strings', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
             {{ Checkbox.checkbox('Project target dates', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project target date approaches') }}
             {{ Checkbox.checkbox('Comments', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
@@ -76,6 +114,36 @@
             {{ Checkbox.checkbox('Review actions on own suggestions', class='review-notifications', attribute='review_notifications', is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are approved or rejected') }}
             {{ Checkbox.checkbox('New team contributors', class='new-contributor-notifications', attribute='new_contributor_notifications', is_enabled=user.profile.new_contributor_notifications, title='Get notified when new contributors make their first contributions to the team') }}
         </ul>
+    </section>
+
+    <section>
+        <h3>Editor Settings</h3>
+        <ul class="check-list">
+            {{ Checkbox.checkbox('Translate Toolkit Checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
+
+            {% if user.translated_locales %}
+                {{ Checkbox.checkbox('Make Suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+            {% endif %}
+        </ul>
+    </section>
+
+    <section>
+        <h3>Locale Settings</h3>
+        <div id="locale-settings" class="clearfix">
+            <div id="homepage">
+                <span class="label">Homepage locale</span>
+                {{ team_selector.locale(locales, locale) }}
+            </div>
+            <div id="preferred-locale">
+                <span class="label">Preferred source locale</span>
+                {{ team_selector.locale(preferred_locales, preferred_locale) }}
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3><span class="small stress">Preferred locales to get suggestions from</span></h3>
+        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
     </section>
 
     <div class="controls">

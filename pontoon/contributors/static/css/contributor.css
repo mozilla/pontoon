@@ -1,10 +1,6 @@
-#heading,
-#middle {
-  text-align: center;
-}
-
 a.avatar {
   display: block;
+  margin-bottom: 5px;
   position: relative;
 }
 
@@ -20,6 +16,7 @@ a.avatar .desc {
   margin: auto;
   position: absolute;
   right: 0;
+  text-align: center;
   top: 0;
 }
 
@@ -29,51 +26,4 @@ a.avatar:hover .desc {
 
 a.avatar:hover .desc ~ img {
   opacity: 0.3;
-}
-
-#username {
-  color: #ebebeb;
-  font-size: 48px;
-  letter-spacing: normal;
-  padding: 8px 0 20px;
-  text-transform: none;
-}
-
-.info {
-  list-style: none;
-  margin: 0;
-  display: inline-block;
-  text-align: left;
-}
-
-.info li {
-  color: #aaaaaa;
-  display: table;
-  font-size: 16px;
-  font-weight: 300;
-  overflow: hidden;
-  padding: 4px 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 980px;
-}
-
-.info a {
-  color: #7bc876;
-}
-
-.info .fa {
-  margin-right: 6px;
-}
-
-#timeline-loader {
-  display: none;
-  margin: 0 auto;
-  height: 50px;
-  width: 50px;
-}
-
-#timeline-loader div {
-  color: #7bc876;
-  font-size: 48px;
 }

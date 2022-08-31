@@ -20,7 +20,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.postgres.fields import ArrayField
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator, validate_email
+from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import (
     Count,
@@ -137,12 +137,57 @@ def user_display_name_or_blank(cls, user):
 
 
 @property
+def user_translator_for_locales(self):
+    """A list of locales, in which the user is assigned Translator permissions.
+
+    Only includes explicitly assigned locales for superusers.
+    """
+    locales = []
+
+    for group in self.groups.all():
+        locale = group.translated_locales.first()
+        if locale:
+            locales.append(locale)
+
+    return locales
+
+
+@property
+def user_manager_for_locales(self):
+    """A list of locales, in which the user is assigned Manager permissions.
+
+    Only includes explicitly assigned locales for superusers.
+    """
+    locales = []
+
+    for group in self.groups.all():
+        locale = group.managed_locales.first()
+        if locale:
+            locales.append(locale)
+
+    return locales
+
+
+@property
 def user_translated_locales(self):
-    locales = get_objects_for_user(
+    """A list of locale codes the user has permission to translate.
+
+    Includes all locales for superusers.
+    """
+    return get_objects_for_user(
         self, "base.can_translate_locale", accept_global_perms=False
     )
 
-    return locales.values_list("code", flat=True)
+
+@property
+def user_managed_locales(self):
+    """A list of locale codes the user has permission to manage.
+
+    Includes all locales for superusers.
+    """
+    return get_objects_for_user(
+        self, "base.can_manage_locale", accept_global_perms=False
+    )
 
 
 @property
@@ -166,15 +211,6 @@ def user_translated_projects(self):
         for pk, locale, project in project_locales
     }
     return permission_map
-
-
-@property
-def user_managed_locales(self):
-    locales = get_objects_for_user(
-        self, "base.can_manage_locale", accept_global_perms=False
-    )
-
-    return locales.values_list("code", flat=True)
 
 
 def user_role(self, managers=None, translators=None):
@@ -387,6 +423,20 @@ def user_serialize(self):
     }
 
 
+@property
+def latest_action(self):
+    """
+    Return the date of the latest user activity (translation submission or review).
+    """
+    try:
+        return ActionLog.objects.filter(
+            performed_by=self,
+            action_type__startswith="translation:",
+        ).latest("created_at")
+    except ActionLog.DoesNotExist:
+        return None
+
+
 User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
@@ -394,9 +444,11 @@ User.add_to_class("name_or_email", user_name_or_email)
 User.add_to_class("display_name", user_display_name)
 User.add_to_class("display_name_and_email", user_display_name_and_email)
 User.add_to_class("display_name_or_blank", user_display_name_or_blank)
+User.add_to_class("translator_for_locales", user_translator_for_locales)
+User.add_to_class("manager_for_locales", user_manager_for_locales)
 User.add_to_class("translated_locales", user_translated_locales)
-User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("managed_locales", user_managed_locales)
+User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("contributed_translations", contributed_translations)
@@ -407,6 +459,7 @@ User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
 User.add_to_class("serialize", user_serialize)
+User.add_to_class("latest_action", latest_action)
 
 
 class PermissionChangelog(models.Model):
@@ -1581,7 +1634,64 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         User, models.CASCADE, related_name="profile", primary_key=True
     )
-    # Other fields here.
+
+    # Personal information
+    username = models.SlugField(unique=True, blank=True, null=True)
+    contact_email = models.EmailField("Contact email address", blank=True, null=True)
+    contact_email_verified = models.BooleanField(default=False)
+    bio = models.TextField(max_length=160, blank=True, null=True)
+
+    # External accounts
+    chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
+    github = models.CharField("GitHub username", max_length=255, blank=True, null=True)
+    bugzilla = models.EmailField("Bugzilla email address", blank=True, null=True)
+
+    # Visibility
+    class Visibility(models.TextChoices):
+        ALL = "Public", "Public"
+        TRANSLATORS = "Translators", "Users with translator rights"
+
+    class VisibilityLoggedIn(models.TextChoices):
+        LOGGED_IN = "Logged in users", "Logged in users"
+        TRANSLATORS = "Translators", "Users with translator rights"
+
+    visibility_email = models.CharField(
+        "Email address",
+        max_length=20,
+        default=VisibilityLoggedIn.TRANSLATORS,
+        choices=VisibilityLoggedIn.choices,
+    )
+
+    visibility_external_accounts = models.CharField(
+        "External accounts",
+        max_length=20,
+        default=Visibility.TRANSLATORS,
+        choices=Visibility.choices,
+    )
+
+    visibility_self_approval = models.CharField(
+        "Self-approval rate",
+        max_length=20,
+        default=Visibility.ALL,
+        choices=Visibility.choices,
+    )
+
+    visibility_approval = models.CharField(
+        "Approval rate",
+        max_length=20,
+        default=Visibility.ALL,
+        choices=Visibility.choices,
+    )
+
+    # Notification subscriptions
+    new_string_notifications = models.BooleanField(default=True)
+    project_deadline_notifications = models.BooleanField(default=True)
+    comment_notifications = models.BooleanField(default=True)
+    unreviewed_suggestion_notifications = models.BooleanField(default=True)
+    review_notifications = models.BooleanField(default=True)
+    new_contributor_notifications = models.BooleanField(default=True)
+
+    # Translation settings
     quality_checks = models.BooleanField(default=True)
     force_suggestions = models.BooleanField(default=False)
 
@@ -1590,10 +1700,6 @@ class UserProfile(models.Model):
 
     # Used to display strings from preferred source locale.
     preferred_source_locale = models.CharField(max_length=20, blank=True, null=True)
-
-    # Used to keep track of start/step no. of user tour.
-    # Not started:0, Completed: -1, Finished Step No. otherwise
-    tour_status = models.IntegerField(default=0)
 
     # Defines the order of locales displayed in locale tab.
     locales_order = ArrayField(
@@ -1605,13 +1711,9 @@ class UserProfile(models.Model):
     # Used to dismiss promotional banner for the Pontoon Add-On.
     has_dismissed_addon_promotion = models.BooleanField(default=False)
 
-    # Notification subscriptions
-    new_string_notifications = models.BooleanField(default=True)
-    project_deadline_notifications = models.BooleanField(default=True)
-    comment_notifications = models.BooleanField(default=True)
-    unreviewed_suggestion_notifications = models.BooleanField(default=True)
-    review_notifications = models.BooleanField(default=True)
-    new_contributor_notifications = models.BooleanField(default=True)
+    # Used to keep track of start/step no. of user tour.
+    # Not started:0, Completed: -1, Finished Step No. otherwise
+    tour_status = models.IntegerField(default=0)
 
     @property
     def preferred_locales(self):
@@ -2490,17 +2592,8 @@ class EntityQuerySet(models.QuerySet):
         )
 
     def authored_by(self, locale, emails):
-        def is_email(email):
-            """
-            Validate if user passed a real email.
-            """
-            try:
-                validate_email(email)
-                return True
-            except ValidationError:
-                return False
-
-        sanitized_emails = filter(is_email, emails)
+        # Validate if user passed a real email
+        sanitized_emails = filter(utils.is_email, emails)
         query = Q()
 
         if sanitized_emails:
@@ -2514,8 +2607,29 @@ class EntityQuerySet(models.QuerySet):
 
         return Q()
 
+    def reviewed_by(self, locale, emails):
+        # Validate if user passed a real email
+        sanitized_emails = filter(utils.is_email, emails)
+
+        if sanitized_emails:
+            return Q(translation__locale=locale) & (
+                Q(translation__approved_user__email__in=sanitized_emails)
+                | Q(translation__rejected_user__email__in=sanitized_emails)
+            )
+
+        return Q()
+
     def between_time_interval(self, locale, start, end):
         return Q(translation__locale=locale, translation__date__range=(start, end))
+
+    def between_review_time_interval(self, locale, start, end):
+        return Q(
+            Q(translation__locale=locale)
+            & (
+                Q(translation__approved_date__range=(start, end))
+                | Q(translation__rejected_date__range=(start, end))
+            )
+        )
 
     def prefetch_active_translations(self, locale):
         """
@@ -2836,6 +2950,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         extra=None,
         time=None,
         author=None,
+        review_time=None,
+        reviewer=None,
+        exclude_self_reviewed=None,
     ):
         """Get project entities with locale translations."""
 
@@ -2852,8 +2969,26 @@ class Entity(DirtyFieldsMixin, models.Model):
                     Entity.objects.between_time_interval(locale, start, end)
                 )
 
+        if review_time:
+            if re.match("^[0-9]{12}-[0-9]{12}$", review_time):
+                start, end = utils.parse_time_interval(review_time)
+                pre_filters.append(
+                    Entity.objects.between_review_time_interval(locale, start, end)
+                )
+
         if author:
             pre_filters.append(Entity.objects.authored_by(locale, author.split(",")))
+
+        if reviewer:
+            pre_filters.append(Entity.objects.reviewed_by(locale, reviewer.split(",")))
+
+        if exclude_self_reviewed:
+            pre_filters.append(
+                ~Q(
+                    Q(translation__approved_user=F("translation__user"))
+                    | Q(translation__rejected_user=F("translation__user"))
+                )
+            )
 
         if pre_filters:
             entities = Entity.objects.filter(

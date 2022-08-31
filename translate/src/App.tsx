@@ -3,15 +3,17 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
+import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
+import { MentionUsersProvider } from './context/MentionUsers';
+import { NotificationProvider } from './context/Notification';
 
 import { WaveLoader } from './core/loaders';
 import { NotificationPanel } from './core/notification/components/NotificationPanel';
 import { getProject } from './core/project/actions';
 import { getResource } from './core/resource/actions';
 import { UserControls } from './core/user/components/UserControls';
-import { getUsersList } from './core/user/actions';
 
 import { useAppDispatch } from './hooks';
 
@@ -25,7 +27,6 @@ import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search/components/SearchBox';
-import { NotificationProvider } from './context/Notification';
 
 /**
  * Main entry point to the application. Will render the structure of the page.
@@ -43,7 +44,6 @@ export function App() {
 
   useEffect(() => {
     updateLocale(locale, location.locale);
-    dispatch(getUsersList());
   }, []);
 
   useEffect(() => {
@@ -60,30 +60,34 @@ export function App() {
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>
-        <div id='app'>
-          <AddonPromotion />
-          <header>
-            <Navigation />
-            <ResourceProgress />
-            {allProjects ? null : <ProjectInfo />}
-            <NotificationPanel />
-            <UserControls />
-          </header>
-          <section className='main-content'>
-            <section className='panel-list'>
-              <SearchBox />
-              <EntitiesList />
-            </section>
-            <section className='panel-content'>
-              {batchactions.entities.length === 0 ? (
-                <Entity />
-              ) : (
-                <BatchActions />
-              )}
-            </section>
-          </section>
-          <InteractiveTour />
-        </div>
+        <MentionUsersProvider>
+          <EntityViewProvider>
+            <div id='app'>
+              <AddonPromotion />
+              <header>
+                <Navigation />
+                <ResourceProgress />
+                {allProjects ? null : <ProjectInfo />}
+                <NotificationPanel />
+                <UserControls />
+              </header>
+              <section className='main-content'>
+                <section className='panel-list'>
+                  <SearchBox />
+                  <EntitiesList />
+                </section>
+                <section className='panel-content'>
+                  {batchactions.entities.length === 0 ? (
+                    <Entity />
+                  ) : (
+                    <BatchActions />
+                  )}
+                </section>
+              </section>
+              <InteractiveTour />
+            </div>
+          </EntityViewProvider>
+        </MentionUsersProvider>
       </NotificationProvider>
     </Locale.Provider>
   );

@@ -1,32 +1,26 @@
 import json
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import (
-    Http404,
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 from django.utils.html import escape
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX
-from pontoon.contributors.utils import (
-    map_translations_to_events,
-    users_with_translations_counts,
-)
+from pontoon.contributors import utils
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -42,57 +36,56 @@ def contributor_email(request, email):
 
 
 def contributor_username(request, username):
-    user = get_object_or_404(User, username=username)
+    try:
+        user = User.objects.get(username=username)
+        if user.profile.username:
+            return redirect(
+                "pontoon.contributors.contributor.username",
+                username=user.profile.username,
+            )
+    except User.DoesNotExist:
+        user = get_object_or_404(UserProfile, username=username).user
+
     return contributor(request, user)
-
-
-def contributor_timeline(request, username):
-    """Contributor events in the timeline."""
-    user = get_object_or_404(User, username=username)
-    try:
-        page = int(request.GET.get("page", 1))
-    except ValueError:
-        raise Http404("Invalid page number.")
-
-    # Exclude obsolete translations
-    contributor_translations = (
-        user.contributed_translations.exclude(entity__obsolete=True)
-        .extra({"day": "date(date)"})
-        .order_by("-day")
-    )
-
-    counts_by_day = contributor_translations.values("day").annotate(count=Count("id"))
-
-    try:
-        events_paginator = Paginator(
-            counts_by_day, django_settings.CONTRIBUTORS_TIMELINE_EVENTS_PER_PAGE
-        )
-
-        timeline_events = map_translations_to_events(
-            events_paginator.page(page).object_list, contributor_translations
-        )
-
-        # Join is the last event in this reversed order.
-        if page == events_paginator.num_pages:
-            timeline_events.append({"date": user.date_joined, "type": "join"})
-
-    except EmptyPage:
-        # Return the join event if user reaches the last page.
-        raise Http404("No events.")
-
-    return render(
-        request, "contributors/includes/timeline.html", {"events": timeline_events}
-    )
 
 
 def contributor(request, user):
     """Contributor profile."""
+    contributions, title = utils.get_contributions(user)
+
+    context = utils.get_approval_rates(user)
+    context.update(
+        {
+            "title": title,
+            "contributor": user,
+            "translations": user.contributed_translations,
+            "contact_for": user.contact_for.filter(
+                disabled=False, system_project=False, visibility="public"
+            ).order_by("-priority"),
+            "contributions": json.dumps(contributions),
+        }
+    )
 
     return render(
         request,
         "contributors/profile.html",
-        {"contributor": user, "translations": user.contributed_translations},
+        context,
     )
+
+
+def update_contribution_graph(request):
+    """Contributor profile."""
+    try:
+        user = User.objects.get(pk=request.GET["user"])
+        contribution_type = request.GET["contribution_type"]
+    except User.DoesNotExist as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    contributions, title = utils.get_contributions(user, contribution_type)
+    return JsonResponse({"contributions": contributions, "title": title})
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -110,7 +103,8 @@ def toggle_user_profile_attribute(request, username):
         )
 
     attribute = request.POST.get("attribute", None)
-    if attribute not in [
+
+    boolean_attributes = [
         "quality_checks",
         "force_suggestions",
         "new_string_notifications",
@@ -119,7 +113,16 @@ def toggle_user_profile_attribute(request, username):
         "unreviewed_suggestion_notifications",
         "review_notifications",
         "new_contributor_notifications",
-    ]:
+    ]
+
+    visibility_attributes = [
+        "visibility_email",
+        "visibility_external_accounts",
+        "visibility_self_approval",
+        "visibility_approval",
+    ]
+
+    if attribute not in (boolean_attributes + visibility_attributes):
         return JsonResponse(
             {"status": False, "message": "Forbidden: Attribute not allowed"},
             status=403,
@@ -132,7 +135,11 @@ def toggle_user_profile_attribute(request, username):
         )
 
     profile = user.profile
-    setattr(profile, attribute, json.loads(value))
+    if attribute in boolean_attributes:
+        # Convert JS Boolean to Python
+        setattr(profile, attribute, json.loads(value))
+    elif attribute in visibility_attributes:
+        setattr(profile, attribute, value)
     profile.save()
 
     return JsonResponse({"status": True})
@@ -187,25 +194,43 @@ def dismiss_addon_promotion(request):
 @login_required(redirect_field_name="", login_url="/403")
 def settings(request):
     """View and edit user settings."""
+    profile = request.user.profile
     if request.method == "POST":
         locales_form = forms.UserLocalesOrderForm(
             request.POST,
-            instance=request.user.profile,
+            instance=profile,
         )
-        profile_form = forms.UserProfileForm(
+        user_form = forms.UserForm(
             request.POST,
             instance=request.user,
         )
+        user_profile_form = forms.UserProfileForm(
+            request.POST,
+            instance=profile,
+        )
 
-        if locales_form.is_valid() and profile_form.is_valid():
+        if (
+            locales_form.is_valid()
+            and user_form.is_valid()
+            and user_profile_form.is_valid()
+        ):
             locales_form.save()
-            profile_form.save()
+            user_form.save()
+            user_profile_form.save()
+
+            if "contact_email" in user_profile_form.changed_data:
+                profile.contact_email_verified = False
+                profile.save(update_fields=["contact_email_verified"])
+
+                token = utils.generate_verification_token(request.user)
+                utils.send_verification_email(request, token)
 
             messages.success(request, "Settings saved.")
     else:
-        profile_form = forms.UserProfileForm(instance=request.user)
+        user_form = forms.UserForm(instance=request.user)
+        user_profile_form = forms.UserProfileForm(instance=profile)
 
-    selected_locales = list(request.user.profile.sorted_locales)
+    selected_locales = list(profile.sorted_locales)
     available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
 
     default_homepage_locale = Locale(name="Default homepage", code="")
@@ -213,7 +238,7 @@ def settings(request):
     all_locales.insert(0, default_homepage_locale)
 
     # Set custom homepage selector value
-    custom_homepage_locale = request.user.profile.custom_homepage
+    custom_homepage_locale = profile.custom_homepage
     if custom_homepage_locale:
         custom_homepage_locale = Locale.objects.filter(
             code=custom_homepage_locale
@@ -226,7 +251,7 @@ def settings(request):
     preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale
-    preferred_source_locale = request.user.profile.preferred_source_locale
+    preferred_source_locale = profile.preferred_source_locale
     if preferred_source_locale:
         preferred_source_locale = Locale.objects.filter(
             code=preferred_source_locale
@@ -244,7 +269,25 @@ def settings(request):
             "locale": custom_homepage_locale,
             "preferred_locales": preferred_locales,
             "preferred_locale": preferred_source_locale,
-            "profile_form": profile_form,
+            "user_form": user_form,
+            "user_profile_form": user_profile_form,
+            "user_profile_visibility_form": forms.UserProfileVisibilityForm(
+                instance=profile
+            ),
+        },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+def verify_email_address(request, token):
+    title, message = utils.check_verification_token(request.user, token)
+
+    return render(
+        request,
+        "contributors/verify_email.html",
+        {
+            "title": title,
+            "message": message,
         },
     )
 
@@ -332,7 +375,7 @@ class ContributorsMixin:
             period = None
             start_date = None
 
-        context["contributors"] = users_with_translations_counts(
+        context["contributors"] = utils.users_with_translations_counts(
             start_date,
             self.contributors_filter(**kwargs) & Q(user__isnull=False),
             kwargs.get("locale"),

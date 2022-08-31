@@ -1,4 +1,42 @@
 $(function () {
+  // Toggle visibility
+  $('.toggle-button button').click(function (e) {
+    e.preventDefault();
+
+    var self = $(this);
+
+    if (self.is('.active')) {
+      return;
+    }
+
+    var attribute = self.data('attribute');
+    var value = self.text();
+
+    $.ajax({
+      url: '/api/v1/user/' + $('#server').data('username') + '/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        attribute: attribute,
+        value: value,
+      },
+      success: function () {
+        self.addClass('active');
+        self.siblings().removeClass('active');
+
+        var label = self.parents('.field').find('label').text();
+        Pontoon.endLoader(`${label} visibility set to ${value}.`);
+      },
+      error: function (request) {
+        if (request.responseText === 'error') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        } else {
+          Pontoon.endLoader(request.responseText, 'error');
+        }
+      },
+    });
+  });
+
   // Toggle user profile attribute
   $('.check-box').click(function () {
     var self = $(this);

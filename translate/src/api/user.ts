@@ -48,7 +48,7 @@ export type ApiUserData = {
 };
 
 /** All users for use in mentions suggestions within comments */
-export type UsersList = {
+export type MentionUser = {
   gravatar: string;
   name: string;
   url: string;
@@ -62,19 +62,11 @@ export const dismissAddonPromotion = (): Promise<void> =>
 export const fetchUserData = (): Promise<ApiUserData> => GET('/user-data/');
 
 /** Get all users from server. */
-export const fetchUsersList = (): Promise<UsersList[]> => GET('get-users');
+export const fetchUsersList = (): Promise<MentionUser[]> => GET('/get-users/');
 
 /** Mark all notifications of the current user as read. */
 export const markAllNotificationsAsRead = (): Promise<void> =>
   GET('/notifications/mark-all-as-read/');
-
-/** Sign out the current user. */
-export function signOut(url: string): Promise<void> {
-  const payload = new URLSearchParams({
-    csrfmiddlewaretoken: getCSRFToken(),
-  });
-  return POST(url, payload);
-}
 
 export function updateUserSetting(
   username: string,
