@@ -230,14 +230,14 @@ var Pontoon = (function (my) {
           const monthName = monthNameFormat.format(
             new Date(2022, item.monthIndex),
           );
-          graphHTML += `<text x="${item.x}" y="-5" class="month">${monthName}</text>`;
+          graphHTML += `<text x="${item.x}" y="-7" class="month">${monthName}</text>`;
         }
 
         // Add day labels
         graphHTML += `
-            <text text-anchor="middle" class="wday" dx="695" dy="22">M<title>Monday</title></text>
-            <text text-anchor="middle" class="wday" dx="695" dy="48">W<title>Wednesday</title></text>
-            <text text-anchor="middle" class="wday" dx="695" dy="74">F<title>Friday</title></text>`;
+            <text text-anchor="middle" class="wday" dx="696" dy="23">M<title>Monday</title></text>
+            <text text-anchor="middle" class="wday" dx="696" dy="49">W<title>Wednesday</title></text>
+            <text text-anchor="middle" class="wday" dx="696" dy="75">F<title>Friday</title></text>`;
 
         graph.html(`
             <svg width="690" height="110" viewBox="0 0 702 110" class="js-calendar-graph-svg">

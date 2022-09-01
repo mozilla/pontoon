@@ -149,6 +149,7 @@ h4.superuser {
 }
 
 #stats > div {
+  font-weight: 300;
   margin-bottom: 46px;
 }
 
