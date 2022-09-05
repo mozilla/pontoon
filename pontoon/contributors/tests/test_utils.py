@@ -216,16 +216,16 @@ def test_get_contributions_map_with_actions(user_a, action_user_a):
 
 
 @pytest.mark.django_db
-def test_get_contributor_graph_data_without_actions(user_a):
-    assert utils.get_contributor_graph_data(user_a) == (
+def test_get_contribution_graph_data_without_actions(user_a):
+    assert utils.get_contribution_graph_data(user_a) == (
         {},
         "0 contributions in the last year",
     )
 
 
 @pytest.mark.django_db
-def test_get_contributor_graph_data_with_actions(user_a, action_user_a, action_user_b):
-    data, title = utils.get_contributor_graph_data(user_a)
+def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_user_b):
+    data, title = utils.get_contribution_graph_data(user_a)
 
     # Truncate time
     date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)

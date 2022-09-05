@@ -310,6 +310,27 @@
                 <div id="contribution-graph" data-contributions="{{ contributor_graph.contributions }}"></div>
                 <div class="svg-tip"></div>
             </section>
+
+            <section id="timeline">
+                <h2>{{ contributor_timeline.title }}</h2>
+
+                {% for title, localizations in contributor_timeline.contributions.items() %}
+                <div class="contribution-group">
+                    <p class="heading">{{ title }}</p>
+                    <ul class="localizations">
+                        {% for _, localization in localizations.items() %}
+                        <li>
+                            <a href="{{ localization.url }}">
+                                <span class="stress">{{localization.project.name }}</span> &middot; {{
+                                localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
+                                <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </section>
         </div>
     </div>
 </section>

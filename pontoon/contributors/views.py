@@ -51,7 +51,8 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    contributions, title = utils.get_contributor_graph_data(user)
+    graph_data, graph_title = utils.get_contribution_graph_data(user)
+    timeline_data, timeline_title = utils.get_contribution_timeline_data(user)
 
     context = {
         "contributor": user,
@@ -63,8 +64,12 @@ def contributor(request, user):
         },
         "approvals_charts": utils.get_approvals_charts_data(user),
         "contributor_graph": {
-            "contributions": json.dumps(contributions),
-            "title": title,
+            "contributions": json.dumps(graph_data),
+            "title": graph_title,
+        },
+        "contributor_timeline": {
+            "contributions": timeline_data,
+            "title": timeline_title,
         },
     }
 
