@@ -291,25 +291,16 @@ def get_approvals_charts_data(user):
     }
 
 
-def get_daily_action_counts(qs):
-    return {
-        convert_to_unix_time(item["timestamp"]): item["count"]
-        for item in (
-            qs.annotate(timestamp=TruncDay("created_at"))
-            .values("timestamp")
-            .annotate(count=Count("id"))
-            .values("timestamp", "count")
-        )
-    }
-
-
-def get_contributor_graph_data(user, contribution_type=None):
+def get_contributions_map(user, contribution_period=None):
     """
-    Get data required to render the Contribution graph on the Profile page
+    Return a map of contribution types and corresponding QuerySets of contributions.
+
+    :param django.db.models.Q contribution_period: ActionLog time interval.
     """
-    actions = ActionLog.objects.filter(
-        created_at__gte=timezone.now() - relativedelta(days=365),
-    )
+    actions = ActionLog.objects.all()
+
+    if contribution_period is not None:
+        actions = actions.filter(contribution_period)
 
     review_action_types = [
         ActionLog.ActionType.TRANSLATION_APPROVED,
@@ -336,7 +327,7 @@ def get_contributor_graph_data(user, contribution_type=None):
         )
     )
 
-    action_map = {
+    return {
         "user_translations": user_translations,
         "user_reviews": user_reviews,
         "peer_reviews": peer_reviews,
@@ -344,13 +335,31 @@ def get_contributor_graph_data(user, contribution_type=None):
         "all_contributions": all_contributions,
     }
 
-    if contribution_type not in action_map.keys():
+
+def get_contributor_graph_data(user, contribution_type=None):
+    """
+    Get data required to render the Contribution graph on the Profile page
+    """
+    contribution_period = Q(created_at__gte=timezone.now() - relativedelta(days=365))
+    contributions_map = get_contributions_map(user, contribution_period)
+
+    if contribution_type not in contributions_map.keys():
         contribution_type = "all_user_contributions"
 
-    contributions = get_daily_action_counts(action_map[contribution_type])
-    total = sum(contributions.values())
+    contributions_qs = contributions_map[contribution_type]
+    contributions_data = {
+        convert_to_unix_time(item["timestamp"]): item["count"]
+        for item in (
+            contributions_qs.annotate(timestamp=TruncDay("created_at"))
+            .values("timestamp")
+            .annotate(count=Count("id"))
+            .values("timestamp", "count")
+        )
+    }
+
+    total = sum(contributions_data.values())
 
     return (
-        contributions,
+        contributions_data,
         f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
     )

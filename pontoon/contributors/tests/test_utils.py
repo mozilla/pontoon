@@ -184,20 +184,35 @@ def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_us
 
 
 @pytest.mark.django_db
-def test_get_daily_action_counts_without_actions():
-    actions_qs = ActionLog.objects.filter()
-    assert utils.get_daily_action_counts(actions_qs) == {}
+def test_get_contributions_map_keys(user_a):
+    map = utils.get_contributions_map(user_a)
+
+    assert list(map.keys()) == [
+        "user_translations",
+        "user_reviews",
+        "peer_reviews",
+        "all_user_contributions",
+        "all_contributions",
+    ]
 
 
 @pytest.mark.django_db
-def test_get_daily_action_counts_with_actions(action_a, action_b, action_c):
-    actions_qs = ActionLog.objects.filter(
-        pk__in=[action_a.pk, action_b.pk, action_c.pk]
-    )
-    assert utils.get_daily_action_counts(actions_qs) == {
-        convert_to_unix_time(datetime(2020, 1, 1)): 2,
-        convert_to_unix_time(datetime(2020, 2, 1)): 1,
-    }
+def test_get_contributions_map_without_actions(user_a):
+    map = utils.get_contributions_map(user_a)
+
+    for key, value in map.items():
+        assert not value.exists()
+
+
+@pytest.mark.django_db
+def test_get_contributions_map_with_actions(user_a, action_user_a):
+    map = utils.get_contributions_map(user_a)
+
+    for key, value in map.items():
+        if key == "user_translations":
+            assert not value.exists()
+        else:
+            assert value.exists()
 
 
 @pytest.mark.django_db
@@ -210,5 +225,12 @@ def test_get_contributor_graph_data_without_actions(user_a):
 
 @pytest.mark.django_db
 def test_get_contributor_graph_data_with_actions(user_a, action_user_a, action_user_b):
-    _, title = utils.get_contributor_graph_data(user_a)
+    data, title = utils.get_contributor_graph_data(user_a)
+
+    # Truncate time
+    date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    assert data == {
+        convert_to_unix_time(date): 1,
+    }
     assert title == "1 contribution in the last year"
