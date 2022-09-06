@@ -26,7 +26,7 @@ from pontoon.base.models import (
     Locale,
     Translation,
 )
-from pontoon.base.templatetags.helpers import intcomma
+from pontoon.base.templatetags.helpers import format_datetime, intcomma
 from pontoon.base.utils import convert_to_unix_time
 
 
@@ -423,10 +423,13 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
     """
     end = timezone.now()
     start = end - relativedelta(months=1)
+    timeline_title = "Contribution activity in the last month"
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
         end = start + relativedelta(days=1)
+        date = format_datetime(start, format="date")
+        timeline_title = f"Contribution activity on { date }"
 
     contribution_period = Q(created_at__gte=start, created_at__lte=end)
     contributions_map = get_contributions_map(user, contribution_period)
@@ -490,5 +493,5 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
 
     return (
         contributions,
-        "Contribution activity in the last month",
+        timeline_title,
     )

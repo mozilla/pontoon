@@ -320,6 +320,10 @@ var Pontoon = (function (my) {
       },
       handleContributionGraphClick: function () {
         $('body').on('click', '#contribution-graph .day', function () {
+          // .addClass() and .removeClass() jQuery methods don't work on SVG elements
+          $('#contribution-graph .day').attr('class', 'day');
+          $(this).attr('class', 'day selected');
+
           const day = $(this).data('date');
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');

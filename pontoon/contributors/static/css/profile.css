@@ -245,7 +245,8 @@ h4.superuser {
   line-height: 32px;
 }
 
-#contribution-graph rect.day:hover {
+#contribution-graph rect.day:hover,
+#contribution-graph rect.day.selected {
   stroke-width: 1;
   stroke: #fff;
 }
