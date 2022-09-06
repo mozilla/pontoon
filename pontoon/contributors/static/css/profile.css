@@ -33,6 +33,10 @@ h2 {
   text-transform: none;
 }
 
+.avatar img.rounded {
+  border-color: #333941;
+}
+
 .display-name {
   font-size: 24px;
   padding-bottom: 0;
@@ -264,7 +268,6 @@ svg.js-calendar-graph-svg {
 }
 
 .svg-tip:after {
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: absolute;
   left: 50%;
@@ -285,36 +288,81 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline h2 {
-  padding-bottom: 20px;
-}
-
-#timeline .contribution-group {
-  border-left: 2px solid #4d5967;
-  margin-left: 20px;
-  padding: 20px 0 20px 20px;
-}
-
-#timeline .heading {
-  font-size: 16px;
-
   padding-bottom: 5px;
 }
 
+#timeline .contribution-group {
+  border-left: 2px solid #333941;
+  margin-left: 20px;
+  padding: 20px 0 20px 30px;
+}
+
+#timeline .heading {
+  background: #333941;
+  border-radius: 6px 6px 0 0;
+  padding: 20px 20px 0;
+  position: relative;
+}
+
+#timeline .heading:after {
+  position: absolute;
+  left: -14px;
+  bottom: 2px;
+  content: ' ';
+  border: 7px solid transparent;
+  border-right-color: #333941;
+}
+
+#timeline .heading .icon {
+  background: #333941;
+  border: 2px solid #272a2f;
+  box-sizing: border-box;
+  display: block;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  padding: 8px;
+  position: absolute;
+  top: 10px;
+  left: -49px;
+}
+
+#timeline .heading .icon:before {
+  color: #888;
+  font-size: 16px;
+}
+
+#timeline .heading .icon.user-translations:before {
+  content: '\f044';
+}
+
+#timeline .heading .icon.user-reviews:before {
+  content: '\f058';
+}
+
+#timeline .heading .icon.peer-reviews:before {
+  content: '\f2b6';
+}
+
 #timeline .localizations {
+  background: #333941;
+  border-radius: 0 0 6px 6px;
   list-style: none;
   margin: 0;
+  padding: 20px 10px;
 }
 
 #timeline .localizations li {
-  line-height: 2em;
+  line-height: 1.8em;
+  padding: 0 10px;
 }
 
 #timeline .localizations li:hover {
-  background: #333941;
+  background: #272a2f;
 }
 
 #timeline .localizations li a {
-  color: #ccc;
+  color: #aaa;
   display: block;
 }
 

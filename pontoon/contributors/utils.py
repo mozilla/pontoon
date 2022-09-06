@@ -472,7 +472,14 @@ def get_contribution_timeline_data(user, contribution_type=None):
         elif contribution_type == "peer_reviews":
             title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
 
-        contributions.update({title: contribution_data})
+        contributions.update(
+            {
+                title: {
+                    "data": contribution_data,
+                    "type": contribution_type.replace("_", "-"),
+                }
+            }
+        )
 
     return (
         contributions,
