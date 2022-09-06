@@ -138,9 +138,9 @@ def format_datetime(value, format="full", default="---"):
         if format == "full":
             format = "%A, %B %d, %Y at %H:%M %Z"
         elif format == "date":
-            format = "%B %d, %Y"
+            format = "%B %-d, %Y"
         elif format == "short_date":
-            format = "%b %d, %Y"
+            format = "%b %-d, %Y"
         elif format == "time":
             format = "%H:%M %Z"
         return value.strftime(format)
