@@ -63,11 +63,11 @@ def contributor(request, user):
             "translations": user.contributed_translations,
         },
         "approvals_charts": utils.get_approvals_charts_data(user),
-        "contributor_graph": {
+        "contribution_graph": {
             "contributions": json.dumps(graph_data),
             "title": graph_title,
         },
-        "contributor_timeline": {
+        "contribution_timeline": {
             "contributions": timeline_data,
             "title": timeline_title,
         },
@@ -91,7 +91,7 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    contributions, title = utils.get_contributor_graph_data(user, contribution_type)
+    contributions, title = utils.get_contribution_graph_data(user, contribution_type)
     return JsonResponse({"contributions": contributions, "title": title})
 
 

@@ -278,7 +278,7 @@
 
             <section id="contributions">
                 <div class="header clearfix">
-                    <h2 class="title">{{ contributor_graph.title }}</h2>
+                    <h2 class="title">{{ contribution_graph.title }}</h2>
                     <div class="type-selector controls select">
                         <div class="button selector">
                             <div class="value">
@@ -307,14 +307,14 @@
                         </div>
                     </div>
                 </div>
-                <div id="contribution-graph" data-contributions="{{ contributor_graph.contributions }}"></div>
+                <div id="contribution-graph" data-contributions="{{ contribution_graph.contributions }}"></div>
                 <div class="svg-tip"></div>
             </section>
 
             <section id="timeline">
-                <h2>{{ contributor_timeline.title }}</h2>
+                <h2>{{ contribution_timeline.title }}</h2>
 
-                {% for title, localizations in contributor_timeline.contributions.items() %}
+                {% for title, localizations in contribution_timeline.contributions.items() %}
                 <div class="contribution-group">
                     <p class="heading">{{ title }}</p>
                     <ul class="localizations">
