@@ -26,7 +26,7 @@
                 {% if is_my_profile %}
                 <div class="desc">Change your profile picture</div>
                 {% endif %}
-                <img class="rounded" src="{{ contributor.gravatar_url(544) }}" width="272" height="272">
+                <img class="rounded" src="{{ contributor.gravatar_url(512) }}" width="256" height="256">
             </a>
 
             <div class="personal-information">
@@ -212,8 +212,8 @@
                                 id="approval-rate-chart"
                                 data-approval-rates="{{ approvals_charts.approval_rates }}"
                                 data-approval-rates-12-month-avg="{{ approvals_charts.approval_rates_12_month_avg }}"
-                                width="420"
-                                height="{% if self_approval_rate_visibile %}159{% else %}191{% endif %}">
+                                width="436"
+                                height="{% if self_approval_rate_visibile %}143{% else %}175{% endif %}">
                             </canvas>
                         </div>
                         {% endif %}
@@ -237,8 +237,8 @@
                                 id="self-approval-rate-chart"
                                 data-self-approval-rates="{{ approvals_charts.self_approval_rates }}"
                                 data-self-approval-rates-12-month-avg="{{ approvals_charts.self_approval_rates_12_month_avg }}"
-                                width="420"
-                                height="{% if approval_rate_visibile %}159{% else %}191{% endif %}">
+                                width="436"
+                                height="{% if approval_rate_visibile %}143{% else %}175{% endif %}">
                             </canvas>
                         </div>
                         {% endif %}

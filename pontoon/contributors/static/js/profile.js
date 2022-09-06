@@ -221,7 +221,12 @@ var Pontoon = (function (my) {
 
         // Remove the first incomplete month label
         if (monthPosition[1].x - monthPosition[0].x < 40) {
-          monthPosition.shift(0);
+          monthPosition.shift();
+        }
+
+        // Remove the last incomplete month label
+        if (monthPosition.at(-1).x > 660) {
+          monthPosition.pop();
         }
 
         // Add month labels
@@ -235,13 +240,13 @@ var Pontoon = (function (my) {
 
         // Add day labels
         graphHTML += `
-            <text text-anchor="middle" class="wday" dx="696" dy="23">M<title>Monday</title></text>
-            <text text-anchor="middle" class="wday" dx="696" dy="49">W<title>Wednesday</title></text>
-            <text text-anchor="middle" class="wday" dx="696" dy="75">F<title>Friday</title></text>`;
+            <text text-anchor="middle" class="wday" dx="-10" dy="23">M<title>Monday</title></text>
+            <text text-anchor="middle" class="wday" dx="-10" dy="49">W<title>Wednesday</title></text>
+            <text text-anchor="middle" class="wday" dx="-10" dy="75">F<title>Friday</title></text>`;
 
         graph.html(`
             <svg width="690" height="110" viewBox="0 0 702 110" class="js-calendar-graph-svg">
-              <g transform="translate(0, 20)">${graphHTML}</g>
+              <g transform="translate(16, 20)">${graphHTML}</g>
             </svg>`);
 
         // Handle tooltip

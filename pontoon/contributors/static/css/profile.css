@@ -5,11 +5,11 @@
 #main .container .left-column {
   color: #ccc;
   margin-right: 30px;
-  width: 276px;
+  width: 260px;
 }
 
 #main .container .right-column {
-  width: 674px;
+  width: 690px;
 }
 
 /* Sidebar */
@@ -116,7 +116,7 @@ h4.superuser {
 
 #insights {
   float: left;
-  width: 460px;
+  width: 476px;
 }
 
 #insights .block {
@@ -154,7 +154,7 @@ h4.superuser {
 
 #stats > div {
   font-weight: 300;
-  margin-bottom: 46px;
+  margin-bottom: 38px;
 }
 
 #stats > div:last-child {
@@ -184,7 +184,7 @@ h4.superuser {
 
 #stats:first-child {
   text-align: center;
-  width: 674px;
+  width: 100%;
 }
 
 #stats:first-child div {
