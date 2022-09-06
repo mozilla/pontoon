@@ -283,7 +283,7 @@ svg.js-calendar-graph-svg {
 /* Contribution Timeline */
 
 #timeline {
-  color: #ccc;
+  color: #888;
   margin-top: 40px;
 }
 
@@ -300,6 +300,7 @@ svg.js-calendar-graph-svg {
 #timeline .heading {
   background: #333941;
   border-radius: 6px 6px 0 0;
+  color: #ccc;
   padding: 20px 20px 0;
   position: relative;
 }

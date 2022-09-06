@@ -333,6 +333,10 @@
                     </ul>
                 </div>
                 {% endfor %}
+
+                {% if contribution_timeline.contributions == {} %}
+                <p>No activity in this period.</p>
+                {% endif %}
             </section>
         </div>
     </div>

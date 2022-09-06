@@ -452,6 +452,12 @@ def get_contribution_timeline_data(user, contribution_type=None):
         contributions_qs = contributions_map[contribution_type]
         contribution_data = get_project_locale_contribution_counts(contributions_qs)
 
+        c_count = sum([value["count"] for _, value in contribution_data.items()])
+        p_count = len(contribution_data)
+
+        if c_count == 0:
+            continue
+
         # Generate localizaton URL and add it to the data dict
         querystring = querystrings[contribution_type]
         for key, val in contribution_data.items():
@@ -460,9 +466,6 @@ def get_contribution_timeline_data(user, contribution_type=None):
                 args=[val["locale"]["code"], val["project"]["slug"], "all-resources"],
             )
             contribution_data[key]["url"] = f"{url}?{querystring}"
-
-        c_count = sum([value["count"] for _, value in contribution_data.items()])
-        p_count = len(contribution_data)
 
         # Generate title for the localizations belonging to the same contribution type
         if contribution_type == "user_translations":
