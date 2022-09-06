@@ -417,12 +417,16 @@ def get_project_locale_contribution_counts(contributions_qs):
     return counts
 
 
-def get_contribution_timeline_data(user, contribution_type=None):
+def get_contribution_timeline_data(user, contribution_type=None, day=None):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
     start = end - relativedelta(months=1)
+
+    if day is not None:
+        start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
+        end = start + relativedelta(days=1)
 
     contribution_period = Q(created_at__gte=start, created_at__lte=end)
     contributions_map = get_contributions_map(user, contribution_period)

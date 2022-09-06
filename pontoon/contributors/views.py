@@ -102,13 +102,17 @@ def update_contribution_timeline(request):
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
-    except User.DoesNotExist as e:
+        day = request.GET.get("day", None)
+        day = int(day) / 1000 if day else None
+    except (User.DoesNotExist, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
-    contributions, title = utils.get_contribution_timeline_data(user, contribution_type)
+    contributions, title = utils.get_contribution_timeline_data(
+        user, contribution_type, day
+    )
 
     return render(
         request,

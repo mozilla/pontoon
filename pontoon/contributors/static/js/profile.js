@@ -318,6 +318,29 @@ var Pontoon = (function (my) {
           });
         });
       },
+      handleContributionGraphClick: function () {
+        $('body').on('click', '#contribution-graph .day', function () {
+          const day = $(this).data('date');
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              day: day,
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
     },
   });
 })(Pontoon || {});
@@ -328,3 +351,4 @@ Pontoon.insights.renderCharts();
 
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
+Pontoon.profile.handleContributionGraphClick();
