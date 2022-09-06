@@ -80,8 +80,9 @@ def contributor(request, user):
     )
 
 
+@require_AJAX
+@transaction.atomic
 def update_contribution_graph(request):
-    """Contributor profile."""
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
@@ -93,6 +94,32 @@ def update_contribution_graph(request):
 
     contributions, title = utils.get_contribution_graph_data(user, contribution_type)
     return JsonResponse({"contributions": contributions, "title": title})
+
+
+@require_AJAX
+@transaction.atomic
+def update_contribution_timeline(request):
+    try:
+        user = User.objects.get(pk=request.GET["user"])
+        contribution_type = request.GET["contribution_type"]
+    except User.DoesNotExist as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    contributions, title = utils.get_contribution_timeline_data(user, contribution_type)
+
+    return render(
+        request,
+        "contributors/includes/timeline.html",
+        {
+            "contribution_timeline": {
+                "contributions": contributions,
+                "title": title,
+            },
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

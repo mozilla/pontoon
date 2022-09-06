@@ -285,6 +285,7 @@ var Pontoon = (function (my) {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
 
+          // Update contribution graph
           $.ajax({
             url: '/update-contribution-graph/',
             data: {
@@ -295,6 +296,21 @@ var Pontoon = (function (my) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
               Pontoon.profile.renderContributionGraph();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
