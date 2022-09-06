@@ -22,6 +22,9 @@
 
             {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
             {% set profile = contributor.profile %}
+            {% set translator_for_locales = contributor.translator_for_locales %}
+            {% set manager_for_locales = contributor.manager_for_locales %}
+            {% set user_is_translator = user.translated_locales %}
 
             <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
                 {% if is_my_profile %}
@@ -49,8 +52,8 @@
                 </div>
                 {% endif %}
 
-                {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged in users" or user.translated_locales or contributor.manager_for_locales or contact_for.exists() or contributor.is_superuser) %}
-                {% set are_external_accounts_visible = (profile.visibility_external_accounts == "Public" or user.translated_locales) and (profile.chat or profile.github or profile.bugzilla) %}
+                {% set is_email_visible = user.is_authenticated and (profile.visibility_email == "Logged in users" or user_is_translator or manager_for_locales or contact_for.exists() or contributor.is_superuser) %}
+                {% set are_external_accounts_visible = (profile.visibility_external_accounts == "Public" or user_is_translator) and (profile.chat or profile.github or profile.bugzilla) %}
 
                 {% if is_email_visible or are_external_accounts_visible %}
                 <div class="block">
@@ -133,15 +136,15 @@
                 </div>
             </div>
 
-            {% if contributor.translator_for_locales or contributor.manager_for_locales or contact_for.exists() or contributor.is_superuser %}
+            {% if translator_for_locales or manager_for_locales or contact_for.exists() or contributor.is_superuser %}
             <hr>
             {% endif %}
 
             <div class="permissions">
-                {% if contributor.translator_for_locales %}
+                {% if translator_for_locales %}
                 <div class="block">
                     <h4 class="subtitle">Translator</h4>
-                    {% for locale in contributor.translator_for_locales %}
+                    {% for locale in translator_for_locales %}
                     <div class="item-with-icon">
                         <span class="icon fa fa-language"></span>
                         <span>{{ locale.name }} <span class="stress">{{ locale.code }}</span></span>
@@ -150,10 +153,10 @@
                 </div>
                 {% endif %}
 
-                {% if contributor.manager_for_locales %}
+                {% if manager_for_locales %}
                 <div class="block">
                     <h4 class="subtitle">Team manager</h4>
-                    {% for locale in contributor.manager_for_locales %}
+                    {% for locale in manager_for_locales %}
                     <div class="item-with-icon">
                         <span class="icon fa fa-language"></span>
                         <a href="{{ url('pontoon.teams.team', locale.code) }}">{{ locale.name }} <span class="stress">{{ locale.code }}</span></a>
@@ -185,10 +188,12 @@
 
         <div class="right-column">
 
+            {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
+            {% set contributor_is_translator = contributor.translated_locales %}
+            {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
+
             <div class="clearfix">
 
-            {% set approval_rate_visibile = profile.visibility_approval == "Public" or user.translated_locales %}
-            {% set self_approval_rate_visibile = profile.user.translated_locales and (profile.visibility_self_approval == "Public" or user.translated_locales) %}
             {% if approval_rate_visibile or self_approval_rate_visibile %}
             <section id="insights" data-dates="{{ approvals_charts.dates }}">
                 <div class="block clearfix">
