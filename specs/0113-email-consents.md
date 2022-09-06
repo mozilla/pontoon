@@ -36,7 +36,7 @@ A banner should be displayed to existing users logging in for the first time aft
 
 (Section: content)
 - Button (dismiss banner): "x"
-- Text: "Stay up to date on your localization projects and Pontoon!"
+- Text: "Stay up to date with your localization projects and Pontoon!"
 - Button: "Enable email updates"
 - Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this Privacy Notice. This can be changed at any time in your settings."
 
@@ -52,8 +52,7 @@ After a user successfully creates their Pontoon account, display a standalone pa
 - Body: "Would you like to stay up to date on the localization of your projects and receive Pontoon updates by email? This can be changed at any time in your settings."
 - Button: "Enable email updates”
 - Button: "No, thank you"
-- Opt-in check box:
-- Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>. This can be changed at any time in your settings."
+- Consent: “By enabling email updates, I’m okay with Mozilla handling my personal information as explained in <a href="https://www.mozilla.org/en-US/privacy/websites/">this Privacy Notice</a>."
 
 ## Additional card for tour
 
@@ -77,13 +76,13 @@ As part of new user onboarding, point new users to user preferences and call out
 Mockups below are out of date. The canonical version is specified above.
 
 ## Email communication user setting
-![](0113/user_setting.png)
+![](0113/user_setting_v2.png)
 
 ## Banner notification to existing users
-![](0113/banner.png)
+![](0113/banner_v2.png)
 
 ## New account creation email opt-in
-![](0113/new_account.png)
+![](0113/new_account_v2.png)
 
 ## Additional card for tour
-![](0113/tour.png)
+![](0113/tour_v2.png)
