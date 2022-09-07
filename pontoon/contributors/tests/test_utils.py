@@ -1,10 +1,11 @@
-import pytest
-
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from django.test.client import RequestFactory
 from unittest.mock import patch
+from urllib.parse import quote
 
+import pytest
+from dateutil.relativedelta import relativedelta
+from django.test.client import RequestFactory
+from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
 from pontoon.base.utils import convert_to_unix_time
@@ -73,6 +74,18 @@ def action_user_b(translation_a, user_b):
         translation=translation_a,
     )
     action.created_at = datetime.now()
+    action.save()
+    return action
+
+
+@pytest.fixture
+def yesterdays_action_user_a(translation_a, user_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action.created_at = datetime.now() - relativedelta(days=1)
     action.save()
     return action
 
@@ -225,12 +238,55 @@ def test_get_contribution_graph_data_without_actions(user_a):
 
 @pytest.mark.django_db
 def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_user_b):
-    data, title = utils.get_contribution_graph_data(user_a)
-
     # Truncate time
     date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    assert data == {
-        convert_to_unix_time(date): 1,
-    }
-    assert title == "1 contribution in the last year"
+    assert utils.get_contribution_graph_data(user_a) == (
+        {
+            convert_to_unix_time(date): 1,
+        },
+        "1 contribution in the last year",
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_without_actions(user_a):
+    assert utils.get_contribution_timeline_data(user_a) == (
+        {},
+        "Contribution activity in the last month",
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_with_actions(
+    user_a, yesterdays_action_user_a, action_user_b
+):
+    reviewer = quote(user_a.email)
+    end = timezone.now()
+    start = end - relativedelta(months=1)
+    start_ = start.strftime("%Y%m%d%H%M")
+    end_ = end.strftime("%Y%m%d%H%M")
+
+    assert utils.get_contribution_timeline_data(user_a) == (
+        {
+            "Reviewed 1 suggestion in 1 project": {
+                "data": {
+                    ("project_a", "kg"): {
+                        "project": {
+                            "name": "Project A",
+                            "slug": "project_a",
+                        },
+                        "locale": {
+                            "name": "Klingon",
+                            "code": "kg",
+                        },
+                        "actions": ["1 approved"],
+                        "count": 1,
+                        "url": f"/kg/project_a/all-resources/?reviewer={reviewer}&review_time={start_}-{end_}",
+                    },
+                },
+                "type": "user-reviews",
+            }
+        },
+        "Contribution activity in the last month",
+    )
