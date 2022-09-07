@@ -27,9 +27,7 @@ h2 {
   color: #ebebeb;
   font-size: 18px;
   font-weight: bold;
-  letter-spacing: normal;
   line-height: 1.4em;
-  padding-bottom: 10px;
   text-transform: none;
 }
 
@@ -210,7 +208,7 @@ h4.superuser {
 }
 
 #contributions .type-selector {
-  float: left;
+  float: right;
   padding-left: 0;
   width: 260px;
 }
@@ -240,9 +238,18 @@ h4.superuser {
   width: 100%;
 }
 
-#contributions h2 {
-  float: right;
+#contributions h3 {
+  float: left;
   line-height: 32px;
+}
+
+#contributions h3,
+#timeline h3 {
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
 }
 
 #contribution-graph rect.day:hover,
@@ -288,7 +295,7 @@ svg.js-calendar-graph-svg {
   margin-top: 40px;
 }
 
-#timeline h2 {
+#timeline h3 {
   padding-bottom: 5px;
 }
 
