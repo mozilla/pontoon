@@ -92,4 +92,10 @@ urlpatterns = [
         views.update_contribution_graph,
         name="pontoon.contributors.update_contribution_graph",
     ),
+    # AJAX: Update contribution timeline
+    path(
+        "update-contribution-timeline/",
+        views.update_contribution_timeline,
+        name="pontoon.contributors.update_contribution_timeline",
+    ),
 ]

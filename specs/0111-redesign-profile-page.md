@@ -47,7 +47,7 @@ The contribution graph displays data over time about the following actions:
 
 Only one data point is displayed at a time, and it can be selected using the dropdown list above the graph. The default view is `Submissions and reviews`, since it provides a good picture of the user’s direct activity in Pontoon.
 
-Each square in the graph represents a day, with color changing depending on the amount of contributions. It’s possible to click on a column to select a specific week, or change the year currently displayed using the links in the rightmost column.
+Each square in the graph represents a day, with color changing depending on the amount of contributions. It’s possible to click on a square to select a specific day, or change the year currently displayed using the links in the rightmost column.
 
 When selecting a specific time range, the data displayed below the graph is updated accordingly. This doesn’t affect the approval and self-approval graphs.
 
