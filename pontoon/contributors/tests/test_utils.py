@@ -1,10 +1,11 @@
-import pytest
-
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from django.test.client import RequestFactory
 from unittest.mock import patch
+from urllib.parse import urlencode
 
+import pytest
+from dateutil.relativedelta import relativedelta
+from django.test.client import RequestFactory
+from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
 from pontoon.base.utils import convert_to_unix_time
@@ -73,6 +74,18 @@ def action_user_b(translation_a, user_b):
         translation=translation_a,
     )
     action.created_at = datetime.now()
+    action.save()
+    return action
+
+
+@pytest.fixture
+def yesterdays_action_user_a(translation_a, user_a):
+    action = ActionLog.objects.create(
+        action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+        performed_by=user_a,
+        translation=translation_a,
+    )
+    action.created_at = datetime.now() - relativedelta(days=1)
     action.save()
     return action
 
@@ -162,8 +175,8 @@ def test_get_sublist_averages():
 
 
 @pytest.mark.django_db
-def test_get_approval_rates_without_actions(user_a):
-    data = utils.get_approval_rates(user_a)
+def test_get_approvals_charts_data_without_actions(user_a):
+    data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 12
     assert data["approval_rates_12_month_avg"] == [0] * 12
@@ -172,8 +185,8 @@ def test_get_approval_rates_without_actions(user_a):
 
 
 @pytest.mark.django_db
-def test_get_approval_rates_with_actions(user_a, action_user_a, action_user_b):
-    data = utils.get_approval_rates(user_a)
+def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_user_b):
+    data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 11 + [100]
     assert data["approval_rates_12_month_avg"] == [0] * 11 + [8.333333333333334]
@@ -184,31 +197,98 @@ def test_get_approval_rates_with_actions(user_a, action_user_a, action_user_b):
 
 
 @pytest.mark.django_db
-def test_get_daily_action_counts_without_actions():
-    actions_qs = ActionLog.objects.filter()
-    assert utils.get_daily_action_counts(actions_qs) == {}
+def test_get_contributions_map_keys(user_a):
+    map = utils.get_contributions_map(user_a)
+
+    assert list(map.keys()) == [
+        "user_translations",
+        "user_reviews",
+        "peer_reviews",
+        "all_user_contributions",
+        "all_contributions",
+    ]
 
 
 @pytest.mark.django_db
-def test_get_daily_action_counts_with_actions(action_a, action_b, action_c):
-    actions_qs = ActionLog.objects.filter(
-        pk__in=[action_a.pk, action_b.pk, action_c.pk]
-    )
-    assert utils.get_daily_action_counts(actions_qs) == {
-        convert_to_unix_time(datetime(2020, 1, 1)): 2,
-        convert_to_unix_time(datetime(2020, 2, 1)): 1,
-    }
+def test_get_contributions_map_without_actions(user_a):
+    map = utils.get_contributions_map(user_a)
+
+    for key, value in map.items():
+        assert not value.exists()
 
 
 @pytest.mark.django_db
-def test_get_contributions_without_actions(user_a):
-    assert utils.get_contributions(user_a) == (
+def test_get_contributions_map_with_actions(user_a, action_user_a):
+    map = utils.get_contributions_map(user_a)
+
+    for key, value in map.items():
+        if key == "user_translations":
+            assert not value.exists()
+        else:
+            assert value.exists()
+
+
+@pytest.mark.django_db
+def test_get_contribution_graph_data_without_actions(user_a):
+    assert utils.get_contribution_graph_data(user_a) == (
         {},
         "0 contributions in the last year",
     )
 
 
 @pytest.mark.django_db
-def test_get_contributions_with_actions(user_a, action_user_a, action_user_b):
-    _, title = utils.get_contributions(user_a)
-    assert title == "1 contribution in the last year"
+def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_user_b):
+    # Truncate time
+    date = action_user_a.created_at.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    assert utils.get_contribution_graph_data(user_a) == (
+        {
+            convert_to_unix_time(date): 1,
+        },
+        "1 contribution in the last year",
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_without_actions(user_a):
+    assert utils.get_contribution_timeline_data(user_a) == (
+        {},
+        "Contribution activity in the last month",
+    )
+
+
+@pytest.mark.django_db
+def test_get_contribution_timeline_data_with_actions(
+    user_a, yesterdays_action_user_a, action_user_b
+):
+    end = timezone.now()
+    start = end - relativedelta(months=1)
+
+    params = {
+        "reviewer": user_a.email,
+        "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
+    }
+
+    assert utils.get_contribution_timeline_data(user_a) == (
+        {
+            "Reviewed 1 suggestion in 1 project": {
+                "data": {
+                    ("project_a", "kg"): {
+                        "project": {
+                            "name": "Project A",
+                            "slug": "project_a",
+                        },
+                        "locale": {
+                            "name": "Klingon",
+                            "code": "kg",
+                        },
+                        "actions": ["1 approved"],
+                        "count": 1,
+                        "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
+                    },
+                },
+                "type": "user-reviews",
+            }
+        },
+        "Contribution activity in the last month",
+    )
