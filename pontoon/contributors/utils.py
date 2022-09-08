@@ -4,7 +4,7 @@ import jwt
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 from statistics import mean
-from urllib.parse import quote
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -445,13 +445,22 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
     else:
         contribution_types = [contribution_type]
 
-    email = quote(user.email)
     start_ = start.strftime("%Y%m%d%H%M")
     end_ = end.strftime("%Y%m%d%H%M")
-    querystrings = {
-        "user_translations": f"author={ email }&time={ start_ }-{ end_ }",
-        "user_reviews": f"reviewer={ email }&review_time={ start_ }-{ end_ }",
-        "peer_reviews": f"author={ email }&review_time={ start_ }-{ end_ }&exclude_self_reviewed",
+    params_map = {
+        "user_translations": {
+            "author": user.email,
+            "time": f"{ start_ }-{ end_ }",
+        },
+        "user_reviews": {
+            "reviewer": user.email,
+            "review_time": f"{ start_ }-{ end_ }",
+        },
+        "peer_reviews": {
+            "author": user.email,
+            "review_time": f"{ start_ }-{ end_ }",
+            "exclude_self_reviewed": "",
+        },
     }
 
     contributions = {}
@@ -466,13 +475,13 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
             continue
 
         # Generate localizaton URL and add it to the data dict
-        querystring = querystrings[contribution_type]
+        params = params_map[contribution_type]
         for key, val in contribution_data.items():
             url = reverse(
                 "pontoon.translate",
                 args=[val["locale"]["code"], val["project"]["slug"], "all-resources"],
             )
-            contribution_data[key]["url"] = f"{url}?{querystring}"
+            contribution_data[key]["url"] = f"{url}?{urlencode(params)}"
 
         # Generate title for the localizations belonging to the same contribution type
         if contribution_type == "user_translations":

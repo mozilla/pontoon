@@ -1,6 +1,6 @@
 from datetime import datetime
 from unittest.mock import patch
-from urllib.parse import quote
+from urllib.parse import urlencode
 
 import pytest
 from dateutil.relativedelta import relativedelta
@@ -261,11 +261,13 @@ def test_get_contribution_timeline_data_without_actions(user_a):
 def test_get_contribution_timeline_data_with_actions(
     user_a, yesterdays_action_user_a, action_user_b
 ):
-    reviewer = quote(user_a.email)
     end = timezone.now()
     start = end - relativedelta(months=1)
-    start_ = start.strftime("%Y%m%d%H%M")
-    end_ = end.strftime("%Y%m%d%H%M")
+
+    params = {
+        "reviewer": user_a.email,
+        "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
+    }
 
     assert utils.get_contribution_timeline_data(user_a) == (
         {
@@ -282,7 +284,7 @@ def test_get_contribution_timeline_data_with_actions(
                         },
                         "actions": ["1 approved"],
                         "count": 1,
-                        "url": f"/kg/project_a/all-resources/?reviewer={reviewer}&review_time={start_}-{end_}",
+                        "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },
                 "type": "user-reviews",
