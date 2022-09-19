@@ -80,7 +80,6 @@ class Term(models.Model):
     )
 
     case_sensitive = models.BooleanField(default=False)
-    exact_match = models.BooleanField(default=False)
     do_not_translate = models.BooleanField(default=False)
     forbidden = models.BooleanField(default=False)
 

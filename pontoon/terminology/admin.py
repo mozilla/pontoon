@@ -19,7 +19,6 @@ class TermAdmin(admin.ModelAdmin):
         "usage",
         "notes",
         "case_sensitive",
-        "exact_match",
         "do_not_translate",
         "forbidden",
     )
@@ -27,7 +26,6 @@ class TermAdmin(admin.ModelAdmin):
         "status",
         "part_of_speech",
         "case_sensitive",
-        "exact_match",
         "do_not_translate",
         "forbidden",
     )
