@@ -31,6 +31,16 @@ class TermAdmin(admin.ModelAdmin):
     )
     raw_id_fields = ("entity",)
 
+    def save_model(self, request, obj, form, change):
+        obj.created_by = request.user
+        obj.save()
+
+    def get_fields(self, request, obj=None):
+        fields = super().get_fields(request, obj)
+        if obj is None:
+            fields.remove("created_by")
+        return fields
+
 
 class TermTranslationAdmin(admin.ModelAdmin):
     search_fields = [
