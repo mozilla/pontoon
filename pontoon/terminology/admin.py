@@ -39,6 +39,7 @@ class TermAdmin(admin.ModelAdmin):
         fields = super().get_fields(request, obj)
         if obj is None:
             fields.remove("created_by")
+            fields.remove("entity")
         return fields
 
 
