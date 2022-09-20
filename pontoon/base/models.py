@@ -226,14 +226,18 @@ def user_role(self, managers=None, translators=None):
             return "Manager for " + ", ".join(managers[self])
     else:
         if self.managed_locales:
-            return "Manager for " + ", ".join(self.managed_locales)
+            return "Manager for " + ", ".join(
+                self.managed_locales.values_list("code", flat=True)
+            )
 
     if translators is not None:
         if self in translators:
             return "Translator for " + ", ".join(translators[self])
     else:
         if self.translated_locales:
-            return "Translator for " + ", ".join(self.translated_locales)
+            return "Translator for " + ", ".join(
+                self.translated_locales.values_list("code", flat=True)
+            )
 
     return "Contributor"
 
@@ -274,7 +278,7 @@ def can_translate(self, locale, project):
     """Check if user has suitable permissions to translate in given locale or project/locale."""
 
     # Locale managers can translate all projects
-    if locale.code in self.managed_locales:
+    if locale in self.managed_locales:
         return True
 
     project_locale = ProjectLocale.objects.get(project=project, locale=locale)
