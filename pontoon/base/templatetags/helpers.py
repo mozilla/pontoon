@@ -103,20 +103,6 @@ def comma_or_prefix(source):
 
 
 @library.filter
-def display_permissions(self):
-    output = "Can make suggestions"
-
-    if self.translated_locales:
-        if self.is_superuser:
-            locales = "all locales"
-        else:
-            locales = ", ".join(self.translated_locales)
-        output = "Can submit and approve translations for " + locales
-
-    return output
-
-
-@library.filter
 def date_status(value, complete):
     """Get date status relative to today."""
     if isinstance(value, datetime.date):
