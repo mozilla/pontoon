@@ -211,23 +211,29 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [readonly]);
 
   useEffect(() => {
-    let format: 'ftl' | 'simple' = 'simple';
-    let initial = '';
-    let value: string | Entry = '';
-    let view: 'simple' | 'rich' | 'source' = 'simple';
+    let initial = activeTranslation?.string || '';
 
-    initial = activeTranslation?.string || '';
+    let format: 'ftl' | 'simple';
+    let value: string | Entry;
+    let view: 'simple' | 'rich' | 'source';
     if (entity.format === 'ftl') {
       format = 'ftl';
       if (!initial) {
         const entry = parseEntry(entity.original);
         initial = serializeEntry(getEmptyMessage(entry, locale));
+      } else if (!initial.endsWith('\n')) {
+        // Some Fluent translations may be stored without a terminal newline.
+        // If the data is cleaned up, this conditional may be removed.
+        // https://github.com/mozilla/pontoon/issues/2216
+        initial += '\n';
       }
       const next = getFtlViewAndValue(initial);
       value = next.value;
       view = next.view;
     } else {
+      format = 'simple';
       value = initial;
+      view = 'simple';
     }
 
     setState((prev) => ({

@@ -26,6 +26,7 @@ const NESTED_SELECTORS_STRING = ftl`
           }
           [select] WOW
       }
+
   `;
 
 const RICH_MESSAGE_STRING = ftl`
