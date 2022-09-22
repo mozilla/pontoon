@@ -88,7 +88,7 @@ describe('<EditorProvider>', () => {
     mountSpy(Spy, 'ftl', 'key = message');
     expect(editor).toMatchObject({
       format: 'ftl',
-      initial: 'key = message',
+      initial: 'key = message\n',
       value: 'message',
       view: 'simple',
     });
@@ -100,7 +100,7 @@ describe('<EditorProvider>', () => {
       editor = useContext(EditorData);
       return null;
     };
-    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }';
+    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }\n';
     mountSpy(Spy, 'ftl', initial);
 
     const value = parseEntry(initial);
@@ -118,7 +118,7 @@ describe('<EditorProvider>', () => {
       editor = useContext(EditorData);
       return null;
     };
-    const value = '## comment';
+    const value = '## comment\n';
     mountSpy(Spy, 'ftl', value);
 
     expect(editor).toMatchObject({
@@ -172,7 +172,7 @@ describe('useClearEditor', () => {
       clearEditor = useClearEditor();
       return null;
     };
-    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }';
+    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }\n';
     const wrapper = mountSpy(Spy, 'ftl', initial);
     act(() => clearEditor());
     wrapper.update();
