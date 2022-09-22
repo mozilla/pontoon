@@ -52,12 +52,10 @@ function RichItem({
     }
   };
 
-  const candidates =
-    typeof message !== 'string' && label === 'accesskey'
-      ? extractAccessKeyCandidates(message)
-      : null;
-
-  const isAccessKey = candidates?.length && value.length < 2;
+  const isAccessKey = label.endsWith('accesskey') && value.length < 2;
+  const candidates = isAccessKey
+    ? extractAccessKeyCandidates(message, label)
+    : [];
 
   const handleAccessKeyClick = readonly
     ? undefined
@@ -105,7 +103,7 @@ function RichItem({
           lang={locale.code}
           data-script={locale.script}
         />
-        {isAccessKey && (
+        {isAccessKey && candidates.length > 1 && (
           <div className='accesskeys'>
             {candidates.map((key) => (
               <button
