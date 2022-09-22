@@ -224,7 +224,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       } else if (!initial.endsWith('\n')) {
         // Some Fluent translations may be stored without a terminal newline.
         // If the data is cleaned up, this conditional may be removed.
-        // https://github.com/mozilla/pontoon/issues/2607
+        // https://github.com/mozilla/pontoon/issues/2216
         initial += '\n';
       }
       const next = getFtlViewAndValue(initial);
