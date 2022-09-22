@@ -51,20 +51,27 @@ def contributor_username(request, username):
 
 def contributor(request, user):
     """Contributor profile."""
-    contributions, title = utils.get_contributions(user)
+    graph_data, graph_title = utils.get_contribution_graph_data(user)
+    timeline_data, timeline_title = utils.get_contribution_timeline_data(user)
 
-    context = utils.get_approval_rates(user)
-    context.update(
-        {
-            "title": title,
-            "contributor": user,
+    context = {
+        "contributor": user,
+        "contact_for": user.contact_for.filter(
+            disabled=False, system_project=False, visibility="public"
+        ).order_by("-priority"),
+        "all_time_stats": {
             "translations": user.contributed_translations,
-            "contact_for": user.contact_for.filter(
-                disabled=False, system_project=False, visibility="public"
-            ).order_by("-priority"),
-            "contributions": json.dumps(contributions),
-        }
-    )
+        },
+        "approvals_charts": utils.get_approvals_charts_data(user),
+        "contribution_graph": {
+            "contributions": json.dumps(graph_data),
+            "title": graph_title,
+        },
+        "contribution_timeline": {
+            "contributions": timeline_data,
+            "title": timeline_title,
+        },
+    }
 
     return render(
         request,
@@ -73,8 +80,9 @@ def contributor(request, user):
     )
 
 
+@require_AJAX
+@transaction.atomic
 def update_contribution_graph(request):
-    """Contributor profile."""
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
@@ -84,8 +92,38 @@ def update_contribution_graph(request):
             status=400,
         )
 
-    contributions, title = utils.get_contributions(user, contribution_type)
+    contributions, title = utils.get_contribution_graph_data(user, contribution_type)
     return JsonResponse({"contributions": contributions, "title": title})
+
+
+@require_AJAX
+@transaction.atomic
+def update_contribution_timeline(request):
+    try:
+        user = User.objects.get(pk=request.GET["user"])
+        contribution_type = request.GET["contribution_type"]
+        day = request.GET.get("day", None)
+        day = int(day) / 1000 if day else None
+    except (User.DoesNotExist, ValueError) as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    contributions, title = utils.get_contribution_timeline_data(
+        user, contribution_type, day
+    )
+
+    return render(
+        request,
+        "contributors/includes/timeline.html",
+        {
+            "contribution_timeline": {
+                "contributions": contributions,
+                "title": title,
+            },
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

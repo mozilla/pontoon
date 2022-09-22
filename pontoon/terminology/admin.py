@@ -19,7 +19,6 @@ class TermAdmin(admin.ModelAdmin):
         "usage",
         "notes",
         "case_sensitive",
-        "exact_match",
         "do_not_translate",
         "forbidden",
     )
@@ -27,11 +26,21 @@ class TermAdmin(admin.ModelAdmin):
         "status",
         "part_of_speech",
         "case_sensitive",
-        "exact_match",
         "do_not_translate",
         "forbidden",
     )
     raw_id_fields = ("entity",)
+
+    def save_model(self, request, obj, form, change):
+        obj.created_by = request.user
+        obj.save()
+
+    def get_fields(self, request, obj=None):
+        fields = super().get_fields(request, obj)
+        if obj is None:
+            fields.remove("created_by")
+            fields.remove("entity")
+        return fields
 
 
 class TermTranslationAdmin(admin.ModelAdmin):

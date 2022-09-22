@@ -4,6 +4,7 @@ import jwt
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 from statistics import mean
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -25,7 +26,7 @@ from pontoon.base.models import (
     Locale,
     Translation,
 )
-from pontoon.base.templatetags.helpers import intcomma
+from pontoon.base.templatetags.helpers import format_datetime, intcomma
 from pontoon.base.utils import convert_to_unix_time
 
 
@@ -242,7 +243,7 @@ def get_sublist_averages(main_list, sublist_len):
     return [mean(main_list[x : x + sublist_len]) for x in range(sublist_len)]
 
 
-def get_approval_rates(user):
+def get_approvals_charts_data(user):
     """
     Get data required to render Approval rate charts on the Profile page
     """
@@ -291,25 +292,16 @@ def get_approval_rates(user):
     }
 
 
-def get_daily_action_counts(qs):
-    return {
-        convert_to_unix_time(item["timestamp"]): item["count"]
-        for item in (
-            qs.annotate(timestamp=TruncDay("created_at"))
-            .values("timestamp")
-            .annotate(count=Count("id"))
-            .values("timestamp", "count")
-        )
-    }
-
-
-def get_contributions(user, contribution_type=None):
+def get_contributions_map(user, contribution_period=None):
     """
-    Get data required to render the Contribution graph on the Profile page
+    Return a map of contribution types and corresponding QuerySets of contributions.
+
+    :param django.db.models.Q contribution_period: ActionLog time interval.
     """
-    actions = ActionLog.objects.filter(
-        created_at__gte=timezone.now() - relativedelta(days=365),
-    )
+    actions = ActionLog.objects.all()
+
+    if contribution_period is not None:
+        actions = actions.filter(contribution_period)
 
     review_action_types = [
         ActionLog.ActionType.TRANSLATION_APPROVED,
@@ -336,7 +328,7 @@ def get_contributions(user, contribution_type=None):
         )
     )
 
-    action_map = {
+    return {
         "user_translations": user_translations,
         "user_reviews": user_reviews,
         "peer_reviews": peer_reviews,
@@ -344,13 +336,171 @@ def get_contributions(user, contribution_type=None):
         "all_contributions": all_contributions,
     }
 
-    if contribution_type not in action_map.keys():
+
+def get_contribution_graph_data(user, contribution_type=None):
+    """
+    Get data required to render the Contribution graph on the Profile page
+    """
+    contribution_period = Q(created_at__gte=timezone.now() - relativedelta(days=365))
+    contributions_map = get_contributions_map(user, contribution_period)
+
+    if contribution_type not in contributions_map.keys():
         contribution_type = "all_user_contributions"
 
-    contributions = get_daily_action_counts(action_map[contribution_type])
-    total = sum(contributions.values())
+    contributions_qs = contributions_map[contribution_type]
+    contributions_data = {
+        convert_to_unix_time(item["timestamp"]): item["count"]
+        for item in (
+            contributions_qs.annotate(timestamp=TruncDay("created_at"))
+            .values("timestamp")
+            .annotate(count=Count("id"))
+            .values("timestamp", "count")
+        )
+    }
+
+    total = sum(contributions_data.values())
+
+    return (
+        contributions_data,
+        f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+    )
+
+
+def get_project_locale_contribution_counts(contributions_qs):
+    counts = {}
+
+    for item in (
+        contributions_qs.annotate(
+            project_name=F("translation__entity__resource__project__name"),
+            project_slug=F("translation__entity__resource__project__slug"),
+            locale_name=F("translation__locale__name"),
+            locale_code=F("translation__locale__code"),
+        )
+        .values("project_name", "project_slug", "locale_name", "locale_code")
+        .annotate(count=Count("id"))
+        .values(
+            "project_name",
+            "project_slug",
+            "locale_name",
+            "locale_code",
+            "action_type",
+            "count",
+        )
+    ):
+        key = (item["project_slug"], item["locale_code"])
+        count = item["count"]
+
+        if item["action_type"] == "translation:created":
+            action = f"{ intcomma(count) } translation{ pluralize(count) }"
+        elif item["action_type"] == "translation:approved":
+            action = f"{ intcomma(count) } approved"
+        elif item["action_type"] == "translation:rejected":
+            action = f"{ intcomma(count) } rejected"
+
+        if key in counts.keys():
+            counts[key]["actions"].append(action)
+            counts[key]["count"] += count
+        else:
+            counts[key] = {
+                "project": {
+                    "name": item["project_name"],
+                    "slug": item["project_slug"],
+                },
+                "locale": {
+                    "name": item["locale_name"],
+                    "code": item["locale_code"],
+                },
+                "actions": [action],
+                "count": count,
+            }
+
+    return counts
+
+
+def get_contribution_timeline_data(user, contribution_type=None, day=None):
+    """
+    Get data required to render the Contribution timeline on the Profile page
+    """
+    end = timezone.now()
+    start = end - relativedelta(months=1)
+    timeline_title = "Contribution activity in the last month"
+
+    if day is not None:
+        start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
+        end = start + relativedelta(days=1)
+        date = format_datetime(start, format="date")
+        timeline_title = f"Contribution activity on { date }"
+
+    contribution_period = Q(created_at__gte=start, created_at__lte=end)
+    contributions_map = get_contributions_map(user, contribution_period)
+
+    # Get a list of explicit contribution types
+    default_contribution_types = ["user_translations", "user_reviews"]
+    if contribution_type not in contributions_map.keys():
+        contribution_types = default_contribution_types
+    elif contribution_type == "all_user_contributions":
+        contribution_types = default_contribution_types
+    elif contribution_type == "all_contributions":
+        contribution_types = default_contribution_types + ["peer_reviews"]
+    else:
+        contribution_types = [contribution_type]
+
+    start_ = start.strftime("%Y%m%d%H%M")
+    end_ = end.strftime("%Y%m%d%H%M")
+    params_map = {
+        "user_translations": {
+            "author": user.email,
+            "time": f"{ start_ }-{ end_ }",
+        },
+        "user_reviews": {
+            "reviewer": user.email,
+            "review_time": f"{ start_ }-{ end_ }",
+        },
+        "peer_reviews": {
+            "author": user.email,
+            "review_time": f"{ start_ }-{ end_ }",
+            "exclude_self_reviewed": "",
+        },
+    }
+
+    contributions = {}
+    for contribution_type in contribution_types:
+        contributions_qs = contributions_map[contribution_type]
+        contribution_data = get_project_locale_contribution_counts(contributions_qs)
+
+        c_count = sum([value["count"] for _, value in contribution_data.items()])
+        p_count = len(contribution_data)
+
+        if c_count == 0:
+            continue
+
+        # Generate localizaton URL and add it to the data dict
+        params = params_map[contribution_type]
+        for key, val in contribution_data.items():
+            url = reverse(
+                "pontoon.translate",
+                args=[val["locale"]["code"], val["project"]["slug"], "all-resources"],
+            )
+            contribution_data[key]["url"] = f"{url}?{urlencode(params)}"
+
+        # Generate title for the localizations belonging to the same contribution type
+        if contribution_type == "user_translations":
+            title = f"Submitted { intcomma(c_count) } translation{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+        elif contribution_type == "user_reviews":
+            title = f"Reviewed { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+        elif contribution_type == "peer_reviews":
+            title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+
+        contributions.update(
+            {
+                title: {
+                    "data": contribution_data,
+                    "type": contribution_type.replace("_", "-"),
+                }
+            }
+        )
 
     return (
         contributions,
-        f"{ intcomma(total) } contribution{ pluralize(total) } in the last year",
+        timeline_title,
     )

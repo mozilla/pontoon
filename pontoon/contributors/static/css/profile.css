@@ -5,11 +5,11 @@
 #main .container .left-column {
   color: #ccc;
   margin-right: 30px;
-  width: 276px;
+  width: 260px;
 }
 
 #main .container .right-column {
-  width: 674px;
+  width: 690px;
 }
 
 /* Sidebar */
@@ -27,10 +27,12 @@ h2 {
   color: #ebebeb;
   font-size: 18px;
   font-weight: bold;
-  letter-spacing: normal;
   line-height: 1.4em;
-  padding-bottom: 10px;
   text-transform: none;
+}
+
+.avatar img.rounded {
+  border-color: #333941;
 }
 
 .display-name {
@@ -112,7 +114,7 @@ h4.superuser {
 
 #insights {
   float: left;
-  width: 460px;
+  width: 476px;
 }
 
 #insights .block {
@@ -149,7 +151,8 @@ h4.superuser {
 }
 
 #stats > div {
-  margin-bottom: 46px;
+  font-weight: 300;
+  margin-bottom: 38px;
 }
 
 #stats > div:last-child {
@@ -179,7 +182,7 @@ h4.superuser {
 
 #stats:first-child {
   text-align: center;
-  width: 674px;
+  width: 100%;
 }
 
 #stats:first-child div {
@@ -201,11 +204,11 @@ h4.superuser {
 /* Contribution Graph */
 
 #contributions {
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 #contributions .type-selector {
-  float: left;
+  float: right;
   padding-left: 0;
   width: 260px;
 }
@@ -235,12 +238,22 @@ h4.superuser {
   width: 100%;
 }
 
-#contributions h2 {
-  float: right;
+#contributions h3 {
+  float: left;
   line-height: 32px;
 }
 
-#contribution-graph rect.day:hover {
+#contributions h3,
+#timeline h3 {
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+#contribution-graph rect.day:hover,
+#contribution-graph rect.day.selected {
   stroke-width: 1;
   stroke: #fff;
 }
@@ -263,7 +276,6 @@ svg.js-calendar-graph-svg {
 }
 
 .svg-tip:after {
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: absolute;
   left: 50%;
@@ -274,4 +286,100 @@ svg.js-calendar-graph-svg {
   content: ' ';
   border: 5px solid transparent;
   border-top-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Contribution Timeline */
+
+#timeline {
+  color: #888;
+  margin-top: 40px;
+}
+
+#timeline h3 {
+  padding-bottom: 5px;
+}
+
+#timeline .contribution-group {
+  border-left: 2px solid #333941;
+  margin-left: 20px;
+  padding: 20px 0 20px 30px;
+}
+
+#timeline .heading {
+  background: #333941;
+  border-radius: 6px 6px 0 0;
+  color: #ccc;
+  padding: 20px 20px 0;
+  position: relative;
+}
+
+#timeline .heading:after {
+  position: absolute;
+  left: -14px;
+  bottom: 2px;
+  content: ' ';
+  border: 7px solid transparent;
+  border-right-color: #333941;
+}
+
+#timeline .heading .icon {
+  background: #333941;
+  border: 2px solid #272a2f;
+  box-sizing: border-box;
+  display: block;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  padding: 8px;
+  position: absolute;
+  top: 10px;
+  left: -49px;
+}
+
+#timeline .heading .icon:before {
+  color: #888;
+  font-size: 16px;
+}
+
+#timeline .heading .icon.user-translations:before {
+  content: '\f044';
+}
+
+#timeline .heading .icon.user-reviews:before {
+  content: '\f058';
+}
+
+#timeline .heading .icon.peer-reviews:before {
+  content: '\f2b6';
+}
+
+#timeline .localizations {
+  background: #333941;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  margin: 0;
+  padding: 20px 10px;
+}
+
+#timeline .localizations li {
+  line-height: 1.8em;
+  padding: 0 10px;
+}
+
+#timeline .localizations li:hover {
+  background: #272a2f;
+}
+
+#timeline .localizations li a {
+  color: #aaa;
+  display: block;
+}
+
+#timeline .localizations li a .stress {
+  color: #7bc876;
+}
+
+#timeline .localizations li a .contribution-count {
+  color: #888;
+  float: right;
 }

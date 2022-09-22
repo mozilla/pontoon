@@ -221,7 +221,12 @@ var Pontoon = (function (my) {
 
         // Remove the first incomplete month label
         if (monthPosition[1].x - monthPosition[0].x < 40) {
-          monthPosition.shift(0);
+          monthPosition.shift();
+        }
+
+        // Remove the last incomplete month label
+        if (monthPosition.at(-1).x > 660) {
+          monthPosition.pop();
         }
 
         // Add month labels
@@ -230,18 +235,18 @@ var Pontoon = (function (my) {
           const monthName = monthNameFormat.format(
             new Date(2022, item.monthIndex),
           );
-          graphHTML += `<text x="${item.x}" y="-5" class="month">${monthName}</text>`;
+          graphHTML += `<text x="${item.x}" y="-7" class="month">${monthName}</text>`;
         }
 
         // Add day labels
         graphHTML += `
-            <text text-anchor="middle" class="wday" dx="695" dy="22">M<title>Monday</title></text>
-            <text text-anchor="middle" class="wday" dx="695" dy="48">W<title>Wednesday</title></text>
-            <text text-anchor="middle" class="wday" dx="695" dy="74">F<title>Friday</title></text>`;
+            <text text-anchor="middle" class="wday" dx="-10" dy="23">M<title>Monday</title></text>
+            <text text-anchor="middle" class="wday" dx="-10" dy="49">W<title>Wednesday</title></text>
+            <text text-anchor="middle" class="wday" dx="-10" dy="75">F<title>Friday</title></text>`;
 
         graph.html(`
             <svg width="690" height="110" viewBox="0 0 702 110" class="js-calendar-graph-svg">
-              <g transform="translate(0, 20)">${graphHTML}</g>
+              <g transform="translate(16, 20)">${graphHTML}</g>
             </svg>`);
 
         // Handle tooltip
@@ -280,6 +285,7 @@ var Pontoon = (function (my) {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
 
+          // Update contribution graph
           $.ajax({
             url: '/update-contribution-graph/',
             data: {
@@ -290,6 +296,48 @@ var Pontoon = (function (my) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
               Pontoon.profile.renderContributionGraph();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
+      handleContributionGraphClick: function () {
+        $('body').on('click', '#contribution-graph .day', function () {
+          // .addClass() and .removeClass() jQuery methods don't work on SVG elements
+          $('#contribution-graph .day').attr('class', 'day');
+          $(this).attr('class', 'day selected');
+
+          const day = $(this).data('date');
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              day: day,
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -307,3 +355,4 @@ Pontoon.insights.renderCharts();
 
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
+Pontoon.profile.handleContributionGraphClick();
