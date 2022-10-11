@@ -103,7 +103,7 @@ function RichItem({
           lang={locale.code}
           data-script={locale.script}
         />
-        {isAccessKey && candidates.length > 1 && (
+        {isAccessKey ? (
           <div className='accesskeys'>
             {candidates.map((key) => (
               <button
@@ -115,7 +115,7 @@ function RichItem({
               </button>
             ))}
           </div>
-        )}
+        ) : null}
       </td>
     </tr>
   );

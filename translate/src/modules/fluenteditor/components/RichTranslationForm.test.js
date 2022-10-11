@@ -190,14 +190,14 @@ describe('<RichTranslationForm>', () => {
     expect(wrapper.find('.accesskeys button').at(7).text()).toEqual('s');
   });
 
-  it('does not render the access key UI if no candidates can be generated', () => {
+  it('does not render accesskey buttons if no candidates can be generated', () => {
     const [wrapper] = mountForm(ftl`
       title =
         .label = { reference }
         .accesskey = C
       `);
 
-    expect(wrapper.find('.accesskeys')).toHaveLength(0);
+    expect(wrapper.find('.accesskeys button')).toHaveLength(0);
   });
 
   it('does not render the access key UI if access key is longer than 1 character', () => {
