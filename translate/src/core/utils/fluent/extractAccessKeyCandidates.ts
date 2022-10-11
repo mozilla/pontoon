@@ -1,91 +1,66 @@
-import type { Entry, Pattern, TextElement } from '@fluent/syntax';
+import type { Message, Pattern, Term } from '@fluent/syntax';
 
-/**
- * Returns a flat list of Text Elements, either standalone or from SelectExpression variants
- */
-function getTextElementsRecursively(
-  { elements }: Pattern,
-  result: TextElement[] = [],
-): TextElement[] {
+function getTextRecursively({ elements }: Pattern): string {
+  let result = '';
   for (const element of elements) {
     switch (element.type) {
       case 'TextElement':
-        result.push(element);
+        result += element.value;
         break;
       case 'Placeable':
         if (element.expression.type === 'SelectExpression') {
           for (const variant of element.expression.variants) {
-            getTextElementsRecursively(variant.value, result);
+            result += getTextRecursively(variant.value);
           }
         }
         break;
     }
   }
-
   return result;
 }
 
 /**
- * Return a list of potential access key candidates.
+ * Return a set of potential access key candidates from either the attribute
+ * with an ID `label` or the message value.
  *
- * The method first checks if the message contains an attribute with an ID 'accesskey',
- * and then generates a list of unique characters from either the attribute with an ID
- * 'label' or the message value.
- *
- * @param {Entry} message A (flat) Fluent message to extract access key candidates from.
- * @returns {?Array<string>} A list of access key candidates.
+ * @param message A (flat) Fluent message to extract access key candidates from.
+ * @param label The label of the current key; expected to end with `accesskey`
+ * @returns A set of access key candidates.
  */
 export function extractAccessKeyCandidates(
-  message: Entry,
-): Array<string> | null {
-  // Safeguard against non-message Fluent entries
-  if (message.type !== 'Message') {
-    return null;
+  message: Message | Term,
+  label: string,
+): string[] {
+  const getAttr = (name: string) =>
+    message.attributes.find((attr) => attr.id.name === name)?.value;
+
+  let source: Pattern | undefined;
+
+  const prefixEnd = label.indexOf('accesskey');
+  const prefix = label.substring(0, prefixEnd);
+
+  if (!prefix) {
+    // Generate access key candidates from the 'label' attribute or the message value
+    source =
+      getAttr('label') ??
+      message.value ??
+      getAttr('value') ??
+      getAttr('aria-label');
+  } else {
+    source = getAttr(`${prefix}label`);
   }
-  // If message has no attributes, return null
-  if (!message.attributes) {
-    return null;
+  if (source) {
+    const text = getTextRecursively(source);
+
+    const keys = text
+      // Exclude placeables (message is flat). See bug 1447103 for details.
+      .replace(/{[^}]*}/g, '')
+      .replace(/[^\p{Letter}\p{Number}]/gu, '')
+      .split('');
+
+    // Extract unique candidates
+    return Array.from(new Set(keys));
+  } else {
+    return [];
   }
-
-  const attributeIDs = message.attributes.map((attribute) => attribute.id.name);
-
-  // If message has no accesskey attribute, return null
-  if (attributeIDs.indexOf('accesskey') === -1) {
-    return null;
-  }
-
-  // Generate access key candidates from the 'label' attribute or the message value
-  let source = null;
-  if (message.attributes && attributeIDs.indexOf('label') !== -1) {
-    source = message.attributes.find(
-      (attribute) => attribute.id.name === 'label',
-    );
-  } else if (message.value) {
-    source = message;
-  }
-
-  if (!source || !source.value) {
-    return null;
-  }
-
-  const textElements = getTextElementsRecursively(source.value);
-
-  // Collect values of TextElements
-  const values = textElements.map((element) => {
-    let value = '';
-    if (element && typeof element.value === 'string') {
-      value = element.value
-        // Exclude placeables (message is flat). See bug 1447103 for details.
-        .replace(/{[^}]*}/g, '')
-        // Exclude whitespace
-        .replace(/\s/g, '');
-    }
-    return value;
-  });
-
-  // Create a list of single-character keys
-  const keys = values.join('').split('');
-
-  // Extract unique candidates
-  return keys.filter((key, i, array) => array.indexOf(key) === i);
 }
