@@ -1,11 +1,13 @@
 import json
+import Levenshtein
 import logging
 import operator
+import requests
+
 from collections import defaultdict
 from functools import reduce
+from google.cloud import translate
 
-import Levenshtein
-import requests
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
@@ -17,6 +19,15 @@ MAX_RESULTS = 5
 
 
 def get_google_translate_data(text, locale_code):
+    locale = base.models.Locale.objects.get(google_translate_code=locale_code)
+
+    if locale.google_automl_model:
+        return get_google_automl_translation(text, locale)
+
+    return get_google_generic_translation(text, locale_code)
+
+
+def get_google_generic_translation(text, locale_code):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -58,6 +69,38 @@ def get_google_translate_data(text, locale_code):
         return {
             "status": False,
             "message": f"{e}",
+        }
+
+
+def get_google_automl_translation(text, locale):
+    client = translate.TranslationServiceClient()
+
+    project_id = "85591518533"
+    model_id = locale.google_automl_model
+    location = "us-central1"
+    parent = f"projects/{project_id}/locations/{location}"
+    model_path = f"{parent}/models/{model_id}"
+
+    response = client.translate_text(
+        request={
+            "contents": [text],
+            "target_language_code": locale.google_translate_code,
+            "model": model_path,
+            "source_language_code": "en",
+            "parent": parent,
+            "mime_type": "text/plain",
+        }
+    )
+
+    if len(response.translations) == 0:
+        return {
+            "status": False,
+            "message": "No translations found.",
+        }
+    else:
+        return {
+            "status": True,
+            "translation": response.translations[0].translated_text,
         }
 
 

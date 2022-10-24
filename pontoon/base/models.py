@@ -696,6 +696,15 @@ class Locale(AggregatedStats):
         """,
     )
 
+    google_automl_model = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text="""
+        ID of a custom model, trained using locale translation memory. If the value is set,
+        Pontoon will use the Google AutoML Translation instead of the generic Translation API.
+        """,
+    )
+
     # Codes used by optional Microsoft services
     ms_translator_code = models.CharField(
         max_length=20,
