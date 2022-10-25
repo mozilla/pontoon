@@ -481,7 +481,7 @@ pyparsing==3.0.6 \
     --hash=sha256:d9bdec0013ef1eb5a84ab39a3b3868911598afa494f5faa038647101504e2b81
     # via packaging
 python-binary-memcached==0.30.1 \
-    --hash=sha256:f91c3d79d022121c22ef733e9beee86e0598e29ffec67401c68cece1ba7f036a
+    --hash=sha256:b333ab371dd3f535ba8846742de2f8417880d18864071d1e143a313a6d248fff
     # via django-bmemcached
 python-dateutil==2.8.1 \
     --hash=sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c \
