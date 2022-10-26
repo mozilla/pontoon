@@ -363,6 +363,8 @@ def sync_translations(
 
         db_project.aggregate_stats()
 
+    synced_locales = sorted(synced_locales)
+
     if synced_locales:
         log.info(
             "Synced translations for project {} in locales {}.".format(
