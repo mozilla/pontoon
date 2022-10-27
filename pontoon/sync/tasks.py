@@ -187,7 +187,7 @@ def sync_translations(
         project_sync_log=project_sync_log, repository=repo, start_time=timezone.now()
     )
 
-    locales = db_project.locales.all()
+    locales = db_project.locales.order_by("code")
 
     if not locales:
         log.info(
@@ -362,6 +362,8 @@ def sync_translations(
             )
 
         db_project.aggregate_stats()
+
+    synced_locales = sorted(synced_locales)
 
     if synced_locales:
         log.info(
