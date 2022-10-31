@@ -254,8 +254,7 @@ $(function () {
         text: original,
         locale: self.locale.code,
       },
-    })
-      .success(function (data) {
+      success: function (data) {
         if (data) {
           $.each(data, function () {
             append({
@@ -269,9 +268,10 @@ $(function () {
             });
           });
         }
-      })
-      .error(error)
-      .complete(complete);
+      },
+      error: error,
+      complete: complete,
+    });
 
     // Google Translate
     if (
@@ -290,8 +290,7 @@ $(function () {
           text: original,
           locale: self.locale.google_translate_code,
         },
-      })
-        .success(function (data) {
+        success: function (data) {
           if (data.translation) {
             append({
               url: 'https://translate.google.com/',
@@ -301,9 +300,10 @@ $(function () {
               translation: data.translation,
             });
           }
-        })
-        .error(error)
-        .complete(complete);
+        },
+        error: error,
+        complete: complete,
+      });
     }
 
     // Microsoft Translator
@@ -323,8 +323,7 @@ $(function () {
           text: original,
           locale: self.locale.ms_translator_code,
         },
-      })
-        .success(function (data) {
+        success: function (data) {
           if (data.translation) {
             append({
               url: 'https://www.bing.com/translator',
@@ -334,9 +333,10 @@ $(function () {
               translation: data.translation,
             });
           }
-        })
-        .error(error)
-        .complete(complete);
+        },
+        error: error,
+        complete: complete,
+      });
     }
 
     // Systran Translate
@@ -356,8 +356,7 @@ $(function () {
           text: original,
           locale: self.locale.systran_translate_code,
         },
-      })
-        .success(function (data) {
+        success: function (data) {
           if (data.translation) {
             append({
               url: 'https://translate.systran.net/translationTools',
@@ -367,9 +366,10 @@ $(function () {
               translation: data.translation,
             });
           }
-        })
-        .error(error)
-        .complete(complete);
+        },
+        error: error,
+        complete: complete,
+      });
     }
 
     // Microsoft Terminology
@@ -386,8 +386,7 @@ $(function () {
           text: original,
           locale: self.locale.ms_terminology_code,
         },
-      })
-        .success(function (data) {
+        success: function (data) {
           if (data.translations) {
             $.each(data.translations, function () {
               append({
@@ -406,9 +405,10 @@ $(function () {
               });
             });
           }
-        })
-        .error(error)
-        .complete(complete);
+        },
+        error: error,
+        complete: complete,
+      });
     }
 
     self.NProgressBind();
