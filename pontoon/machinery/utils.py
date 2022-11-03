@@ -19,7 +19,13 @@ MAX_RESULTS = 5
 
 
 def get_google_translate_data(text, locale_code):
-    locale = base.models.Locale.objects.get(google_translate_code=locale_code)
+    try:
+        locale = base.models.Locale.objects.get(google_translate_code=locale_code)
+    except base.models.Locale.DoesNotExist as e:
+        return {
+            "status": False,
+            "message": f"{e}",
+        }
 
     if locale.google_automl_model:
         return get_google_automl_translation(text, locale)
