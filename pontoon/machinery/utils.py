@@ -6,6 +6,7 @@ import requests
 
 from collections import defaultdict
 from functools import reduce
+from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 
 from django.conf import settings
@@ -79,7 +80,14 @@ def get_google_generic_translation(text, locale_code):
 
 
 def get_google_automl_translation(text, locale):
-    client = translate.TranslationServiceClient()
+    try:
+        client = translate.TranslationServiceClient()
+    except DefaultCredentialsError as e:
+        log.error("Google AutoML Translation error: {e}")
+        return {
+            "status": False,
+            "message": f"{e}",
+        }
 
     project_id = "85591518533"
     model_id = locale.google_automl_model
