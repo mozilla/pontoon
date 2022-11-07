@@ -89,7 +89,15 @@ def get_google_automl_translation(text, locale):
             "message": f"{e}",
         }
 
-    project_id = "85591518533"
+    project_id = settings.GOOGLE_AUTOML_PROJECT_ID
+
+    if not project_id:
+        log.error("GOOGLE_AUTOML_PROJECT_ID not set")
+        return {
+            "status": False,
+            "message": "Bad Request: Missing Project ID.",
+        }
+
     model_id = locale.google_automl_model
     location = "us-central1"
     parent = f"projects/{project_id}/locations/{location}"
