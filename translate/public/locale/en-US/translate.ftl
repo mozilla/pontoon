@@ -654,6 +654,7 @@ search-FiltersPanel--heading-extra = EXTRA FILTERS
 search-FiltersPanel--heading-authors = TRANSLATION AUTHORS
 search-FiltersPanel--status-name-all = All
 search-FiltersPanel--status-name-translated = Translated
+search-FiltersPanel--status-name-pretranslated = Pretranslated
 search-FiltersPanel--status-name-warnings = Warnings
 search-FiltersPanel--status-name-errors = Errors
 search-FiltersPanel--status-name-missing = Missing
