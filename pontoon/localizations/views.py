@@ -131,7 +131,11 @@ def ajax_resources(request, code, slug):
             ),
             "completion_percent": int(
                 math.floor(
-                    (part["approved_strings"] + part["strings_with_warnings"])
+                    (
+                        part["approved_strings"]
+                        + part["pretranslated_strings"]
+                        + part["strings_with_warnings"]
+                    )
                     / part["resource__total_strings"]
                     * 100
                 )

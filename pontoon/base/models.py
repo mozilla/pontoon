@@ -583,7 +583,11 @@ class AggregatedStats(models.Model):
 
     @property
     def completed_strings(self):
-        return self.approved_strings + self.strings_with_warnings
+        return (
+            self.approved_strings
+            + self.pretranslated_strings
+            + self.strings_with_warnings
+        )
 
     @property
     def complete(self):
