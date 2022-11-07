@@ -90,6 +90,7 @@ export function useUpdateTranslationStatus(
           updateResource(
             entity.path,
             results.stats.approved,
+            results.stats.pretranslated,
             results.stats.warnings,
           ),
         );

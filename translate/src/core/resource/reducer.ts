@@ -55,6 +55,7 @@ const initial: ResourcesState = {
   allResources: {
     path: 'all-resources',
     approvedStrings: 0,
+    pretranslatedStrings: 0,
     stringsWithWarnings: 0,
     totalStrings: 0,
   },
