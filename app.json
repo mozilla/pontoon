@@ -43,6 +43,11 @@
       "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
       "required": true
     },
+    "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION": {
+      "value": "python",
+      "description": "Needed for Google AutoML Translation.",
+      "required": true
+    },
     "ADMIN_EMAIL": {
       "value": "pontoon@example.com",
       "description": "Email address for the ``ADMINS`` setting."

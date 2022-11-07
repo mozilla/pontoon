@@ -168,6 +168,10 @@ you create:
 ``PROJECT_MANAGERS``
    Optional. A list of project manager email addresses to send project requests to
 
+``PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION``
+   Required. Must be set to ``python``. Needed for Google AutoML Translation.
+   Learn more on `Protocol Buffers Homepage`_.
+
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
 
@@ -252,6 +256,7 @@ you create:
 .. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/
 .. _Google Cloud Translation API key: https://cloud.google.com/translate/
+.. _Protocol Buffers Homepage: https://developers.google.com/protocol-buffers/docs/news/2022-05-06#python-updates
 
 Add-ons
 -------
