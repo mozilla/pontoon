@@ -13,7 +13,15 @@ type Props = {
 };
 
 function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
-  const { approved, pretranslated, warnings, errors, missing, unreviewed, total } = stats;
+  const {
+    approved,
+    pretranslated,
+    warnings,
+    errors,
+    missing,
+    unreviewed,
+    total,
+  } = stats;
 
   const ref = React.useRef<HTMLElement>(null);
   useOnDiscard(ref, onDiscard);
