@@ -325,11 +325,11 @@ table.table.project-list.hidden {
   display: inline-block;
   padding: 0;
   text-align: center;
-  width: 60px;
+  width: 51px;
 }
 
 .table .progress .legend li:last-child {
-  width: 60px;
+  width: 54px;
 }
 
 .table .progress .legend li a {
