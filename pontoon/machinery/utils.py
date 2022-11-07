@@ -19,19 +19,11 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale_code):
-    try:
-        locale = base.models.Locale.objects.get(google_translate_code=locale_code)
-    except base.models.Locale.DoesNotExist as e:
-        return {
-            "status": False,
-            "message": f"{e}",
-        }
-
+def get_google_translate_data(text, locale):
     if locale.google_automl_model:
         return get_google_automl_translation(text, locale)
 
-    return get_google_generic_translation(text, locale_code)
+    return get_google_generic_translation(text, locale.google_translate_code)
 
 
 def get_google_generic_translation(text, locale_code):
