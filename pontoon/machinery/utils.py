@@ -99,7 +99,10 @@ def get_google_automl_translation(text, locale):
         }
 
     model_id = locale.google_automl_model
+
+    # Google AutoML Translation requires location "us-central1"
     location = "us-central1"
+
     parent = f"projects/{project_id}/locations/{location}"
     model_path = f"{parent}/models/{model_id}"
 
