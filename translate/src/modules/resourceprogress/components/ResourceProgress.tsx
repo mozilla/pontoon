@@ -13,7 +13,7 @@ type Props = {
 };
 
 function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
-  const { approved, warnings, errors, missing, unreviewed, total } = stats;
+  const { approved, pretranslated, warnings, errors, missing, unreviewed, total } = stats;
 
   const ref = React.useRef<HTMLElement>(null);
   useOnDiscard(ref, onDiscard);
@@ -51,8 +51,6 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Link>
           </p>
         </div>
-        {/* Pretranslation feature is not ready yet, so we're disabling the
-            Pretranslated filter, which wouldn't catch anything.
         <div className='pretranslated'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--pretranslated'>
@@ -65,7 +63,6 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Link>
           </p>
         </div>
-        */}
         <div className='warnings'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--warnings'>

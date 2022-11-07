@@ -87,15 +87,12 @@
     value=obj.approved_strings,
     link=(link + '?status=translated') if link else None)
   }}
-  <!-- Pretranslation feature is not ready yet, so we're disabling the Pretranslated status
-       in dashboards to avoid showing unnecessary zeros.
   {{ legend_item(
     title='Pretranslated',
     class='pretranslated',
     value=obj.pretranslated_strings,
     link=(link + '?status=pretranslated') if link else None)
   }}
-  -->
   {{ legend_item(
     title='Warnings',
     class='warnings',
