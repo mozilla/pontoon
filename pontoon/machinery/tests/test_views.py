@@ -98,7 +98,7 @@ def test_view_google_translate(
     assert urllib.parse.parse_qs(req.query) == {
         "q": ["text"],
         "source": ["en"],
-        "target": ["bg"],
+        "target": ["google-translate"],
         "format": ["text"],
         "key": ["2fffff"],
     }

@@ -43,6 +43,11 @@
       "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
       "required": true
     },
+    "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION": {
+      "value": "python",
+      "description": "Needed for Google AutoML Translation.",
+      "required": true
+    },
     "ADMIN_EMAIL": {
       "value": "pontoon@example.com",
       "description": "Email address for the ``ADMINS`` setting."
@@ -124,7 +129,7 @@
   },
   "buildpacks": [
     {
-      "url": "https://github.com/dmathieu/heroku-buildpack-submodules#0caf30af7737bf1bc32b7aafc009f19af3e603c1"
+      "url": "https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack.git"
     },
     {
       "url": "https://github.com/Osmose/heroku-buildpack-ssh"

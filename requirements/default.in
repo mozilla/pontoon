@@ -29,6 +29,7 @@ django-guardian==2.3.0
 django-jinja==2.7.0
 django-notifications-hq==1.6.0
 django-pipeline==2.0.6
+google-cloud-translate==3.8.4
 graphene-django==2.13.0
 gunicorn==19.9.0
 jsonfield==3.1.0
