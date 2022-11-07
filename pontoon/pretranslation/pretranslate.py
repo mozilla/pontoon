@@ -48,7 +48,7 @@ def get_translations(entity, locale):
     elif locale.google_translate_code:
         gt_response = get_google_translate_data(
             text=entity.string,
-            locale_code=locale.google_translate_code,
+            locale=locale,
         )
 
         if gt_response["status"]:
