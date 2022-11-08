@@ -6,7 +6,8 @@ import { ResourcePercent } from './ResourcePercent';
 describe('<ResourcePercent>', () => {
   const RESOURCE = {
     approvedStrings: 2,
-    stringsWithWarnings: 3,
+    pretranslatedStrings: 1,
+    stringsWithWarnings: 2,
     totalStrings: 10,
   };
 

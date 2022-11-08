@@ -94,6 +94,7 @@ const updateUI =
           updateResource(
             location.resource,
             entitiesData.stats.approved,
+            entitiesData.stats.pretranslated,
             entitiesData.stats.warnings,
           ),
         );

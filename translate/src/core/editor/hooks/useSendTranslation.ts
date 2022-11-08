@@ -86,6 +86,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
           updateResource(
             entity.path,
             content.stats.approved,
+            content.stats.pretranslated,
             content.stats.warnings,
           ),
         );
