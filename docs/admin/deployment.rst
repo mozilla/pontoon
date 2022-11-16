@@ -397,6 +397,17 @@ is designed to run in the beginning of the day, every day.
 
    ./manage.py collect_insights
 
+Warm up Insights
+~~~~~~~~~~~~~~~~
+The Google AutoML Translation has latency of ~15s caused by the loading time of
+a custom model into the chip. To keep latency low, we need to make regular
+dummy warm-up requests. It's recommended to run this job at least once every 10
+minutes.
+
+.. code-block:: bash
+
+   ./manage.py warm_up_automl_models
+
 Sync Log Retention
 ~~~~~~~~~~~~~~~~~~
 You may also optionally run the ``clear_old_sync_logs`` management command on a
