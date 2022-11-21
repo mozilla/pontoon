@@ -3,7 +3,7 @@ import logging
 from collections import defaultdict
 from django.contrib.auth.models import User
 from django.db import connection
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.template.defaultfilters import pluralize
 from notifications.signals import notify
 
@@ -167,8 +167,8 @@ class ChangeSet:
             changed_resources.add(resources[db_entity.resource.path])
             vcs_translation = vcs_entity.translations[locale_code]
             db_translations = db_entity.translation_set.filter(
-                approved=True, locale__code=locale_code
-            )
+                Q(approved=True) | Q(pretranslated=True)
+            ).filter(locale__code=locale_code)
             vcs_translation.update_from_db(db_translations)
 
             # Track which translators were involved.
