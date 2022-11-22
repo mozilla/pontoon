@@ -443,7 +443,6 @@ PIPELINE_JS = {
     },
     "admin_project": {
         "source_filenames": (
-            "js/lib/jquery-ui.js",
             "js/double_list_selector.js",
             "js/multiple_team_selector.js",
             "js/admin_project.js",
