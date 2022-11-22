@@ -18,7 +18,7 @@ from xml.sax.saxutils import escape, quoteattr
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -291,8 +291,8 @@ def get_download_content(slug, code, part):
 
         for e in entities_qs:
             entities_dict[e.key] = e.translation_set.filter(
-                approved=True, locale=locale
-            )
+                Q(approved=True) | Q(pretranslated=True)
+            ).filter(locale=locale)
 
         for vcs_translation in resource_file.translations:
             key = vcs_translation.key
