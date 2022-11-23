@@ -426,7 +426,7 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     "base": {
         "source_filenames": (
-            "js/lib/jquery-3.6.1.min.js",
+            "js/lib/jquery-3.6.1.js",
             "js/lib/jquery.timeago.js",
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
