@@ -376,7 +376,7 @@ PIPELINE_CSS = {
     },
     "settings": {
         "source_filenames": (
-            "js/lib/jquery-ui-1.13.2/jquery-ui.min.css",
+            "css/jquery-ui-1.13.2.css",
             "css/multiple_team_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
@@ -519,7 +519,7 @@ PIPELINE_JS = {
     },
     "settings": {
         "source_filenames": (
-            "js/lib/jquery-ui-1.13.2/jquery-ui.min.js",
+            "js/lib/jquery-ui-1.13.2.js",
             "js/multiple_team_selector.js",
             "js/team_selector.js",
             "js/settings.js",
