@@ -376,7 +376,6 @@ PIPELINE_CSS = {
     },
     "settings": {
         "source_filenames": (
-            "css/jquery-ui-1.13.2.css",
             "css/multiple_team_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
