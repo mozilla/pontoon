@@ -80,18 +80,18 @@ $(function () {
 
     $.ajax({
       url: '/admin/projects/' + $('#id_slug').val() + '/sync/',
-    })
-      .success(function () {
+      success: function () {
         button.html('Started');
-      })
-      .error(function () {
+      },
+      error: function () {
         button.html('Whoops!');
-      })
-      .complete(function () {
+      },
+      complete: function () {
         setTimeout(function () {
           button.removeClass('in-progress').html(title);
         }, 2000);
-      });
+      },
+    });
   });
 
   // Manually Pretranslate project
@@ -109,18 +109,18 @@ $(function () {
 
     $.ajax({
       url: '/admin/projects/' + $('#id_slug').val() + '/pretranslate/',
-    })
-      .success(function () {
+      success: function () {
         button.html('Started');
-      })
-      .error(function () {
+      },
+      error: function () {
         button.html('Whoops!');
-      })
-      .complete(function () {
+      },
+      complete: function () {
         setTimeout(function () {
           button.removeClass('in-progress').html(title);
         }, 2000);
-      });
+      },
+    });
   });
 
   // Suggest slugified name for new projects
