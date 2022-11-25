@@ -428,7 +428,7 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     "base": {
         "source_filenames": (
-            "js/lib/jquery-1.11.1.min.js",
+            "js/lib/jquery-3.6.1.js",
             "js/lib/jquery.timeago.js",
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
@@ -446,7 +446,6 @@ PIPELINE_JS = {
     },
     "admin_project": {
         "source_filenames": (
-            "js/lib/jquery-ui.js",
             "js/double_list_selector.js",
             "js/multiple_team_selector.js",
             "js/admin_project.js",
@@ -522,7 +521,7 @@ PIPELINE_JS = {
     },
     "settings": {
         "source_filenames": (
-            "js/lib/jquery-ui.js",
+            "js/lib/jquery-ui-1.13.2.js",
             "js/multiple_team_selector.js",
             "js/team_selector.js",
             "js/settings.js",
