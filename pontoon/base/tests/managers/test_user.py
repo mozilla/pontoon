@@ -326,6 +326,7 @@ def test_mgr_user_query_args_filtering(
     assert top_contribs[0].translations_rejected_count == 0
     assert top_contribs[0].translations_unapproved_count == 3
 
+
 @pytest.mark.django_db
 def test_mgr_system_user_contributors_excluded(
     resource_a,
@@ -336,6 +337,6 @@ def test_mgr_system_user_contributors_excluded(
     """
     contributor = User.objects.filter(email="pontoon-sync@mozilla.com").first()
     entity = EntityFactory.create(resource=resource_a)
-    translation = TranslationFactory.create(locale=locale_a, user=contributor, entity=entity)
+    TranslationFactory.create(locale=locale_a, user=contributor, entity=entity)
 
     assert len(users_with_translations_counts()) == 0
