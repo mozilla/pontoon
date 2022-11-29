@@ -104,6 +104,10 @@ def users_with_translations_counts(
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
 
+    # Exclude system users
+    system_users_emails = ["pontoon-sync@mozilla.com", "pontoon-gt@mozilla.com", "pontoon-tm@mozilla.com"]
+    contributors = contributors.exclude(email__in=system_users_emails)
+
     # Exclude deleted users.
     contributors = contributors.filter(is_active=True)
 
