@@ -14,6 +14,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pontoon.settings")
 # Needed for standalone Django usage
 django.setup()
 
+from django.conf import settings  # noqa
 from pontoon.machinery.tasks import warm_up_automl_models  # noqa
 
 # Configure Celery using the Django settings
@@ -24,7 +25,6 @@ app.config_from_object("django.conf:settings")
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
-        # Run every 5 minutes (300 seconds)
-        300.0,
+        settings.GOOGLE_AUTOML_WARMUP_INTERVAL,
         warm_up_automl_models.delay(),
     )
