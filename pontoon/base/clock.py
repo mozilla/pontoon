@@ -1,3 +1,15 @@
+"""
+Custom clock process is essentially a cron tool replacement for horizontally scalable
+environments such as Heroku. It acts as a job scheduler and supports more specific
+execution intervals than the Scheduler add-on.
+
+More information:
+https://devcenter.heroku.com/articles/scheduled-jobs-custom-clock-processes#custom-clock-processes
+
+This file is used by Procfile and defines a clock process. Add scheduled jobs in the
+setup_periodic_tasks() function.
+"""
+
 import django
 import dotenv
 import os
