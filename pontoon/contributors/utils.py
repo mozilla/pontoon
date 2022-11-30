@@ -25,6 +25,7 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Locale,
     Translation,
+    UserProfile,
 )
 from pontoon.base.templatetags.helpers import format_datetime, intcomma
 from pontoon.base.utils import convert_to_unix_time
@@ -105,12 +106,10 @@ def users_with_translations_counts(
     contributors = User.objects.filter(pk__in=user_stats.keys())
 
     # Exclude system users
-    system_users_emails = [
-        "pontoon-sync@mozilla.com",
-        "pontoon-gt@mozilla.com",
-        "pontoon-tm@mozilla.com",
-    ]
-    contributors = contributors.exclude(email__in=system_users_emails)
+    system_user_ids = UserProfile.objects.filter(system_user=True).values_list(
+        "user_id", flat=True
+    )
+    contributors = contributors.exclude(id__in=system_user_ids)
 
     # Exclude deleted users.
     contributors = contributors.filter(is_active=True)
