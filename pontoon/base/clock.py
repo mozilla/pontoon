@@ -26,5 +26,5 @@ app.config_from_object("django.conf:settings")
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         settings.GOOGLE_AUTOML_WARMUP_INTERVAL,
-        warm_up_automl_models.delay(),
+        warm_up_automl_models.s(),
     )
