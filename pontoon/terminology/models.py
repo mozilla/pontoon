@@ -52,6 +52,16 @@ class TermQuerySet(models.QuerySet):
 
         return terms
 
+    def delete(self, *args, **kwargs):
+        """
+        Before deleting Terms, obsolete their Entities
+        """
+        for term in self:
+            term.obsolete_entity()
+        update_terminology_project_stats()
+
+        super().delete(*args, **kwargs)
+
 
 class Term(models.Model):
     text = models.CharField(max_length=255)
