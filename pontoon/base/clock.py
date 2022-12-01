@@ -6,8 +6,9 @@ execution intervals than the Scheduler add-on.
 More information:
 https://devcenter.heroku.com/articles/scheduled-jobs-custom-clock-processes#custom-clock-processes
 
-This file is used by Procfile and defines a clock process. Add scheduled jobs in the
-setup_periodic_tasks() function.
+This file defines a clock process. It's used by Procfile.
+
+Add scheduled jobs in the setup_periodic_tasks() function.
 """
 
 import django
@@ -17,7 +18,7 @@ import os
 from celery import Celery
 
 
-# Read dotenv file and inject it's values into the environment
+# Read dotenv file and inject its values into the environment
 dotenv.load_dotenv(dotenv_path=os.environ.get("DOTENV_PATH"))
 
 # Set the default Django settings module
