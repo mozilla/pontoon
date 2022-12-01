@@ -105,6 +105,14 @@ GOOGLE_TRANSLATE_API_KEY = os.environ.get("GOOGLE_TRANSLATE_API_KEY", "")
 # Google Cloud AutoML Translation Project ID
 GOOGLE_AUTOML_PROJECT_ID = os.environ.get("GOOGLE_AUTOML_PROJECT_ID", "")
 
+# Google Cloud AutoML Translation has latency of ~15s, caused by the loading time of a
+# custom model into the chip. To keep latency low, we need to make regular dummy warm-up
+# requests. It is recommended to make these requests every minute, although in our
+# experience every 5 minutes (300 seconds) is sufficient.
+GOOGLE_AUTOML_WARMUP_INTERVAL = float(
+    os.environ.get("GOOGLE_AUTOML_WARMUP_INTERVAL", "300")
+)
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get("MICROSOFT_TRANSLATOR_API_KEY", "")
 
