@@ -34,14 +34,15 @@ from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
 from pontoon.base import utils
 from pontoon.base.models import (
+    Comment,
     Entity,
     Locale,
     Project,
     ProjectLocale,
-    TranslationMemoryEntry,
     TranslatedResource,
     Translation,
-    Comment,
+    TranslationMemoryEntry,
+    UserProfile,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -679,10 +680,14 @@ def unpin_comment(request):
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):
     """Get all users."""
+    system_users = UserProfile.objects.filter(system_user=True).values_list(
+        "user_id", flat=True
+    )
+
     users = (
         User.objects
         # Exclude system users
-        .exclude(email__regex=r"^pontoon-(\w+)@example.com$")
+        .exclude(user__pk__in=system_users)
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
     )
