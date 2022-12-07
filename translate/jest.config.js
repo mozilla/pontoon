@@ -13,14 +13,9 @@ module.exports = {
   ],
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-    },
-  },
   transform: {
     '\\.jsx?$': ['babel-jest', { configFile: '../babel.config.json' }],
-    '\\.tsx?$': 'ts-jest',
+    '\\.tsx?$': ['ts-jest', { isolatedModules: true }],
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
