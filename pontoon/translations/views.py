@@ -80,7 +80,7 @@ def create_translation(request):
     # Checks are disabled for the tutorial.
     use_checks = project.slug != "tutorial"
     user = request.user
-    first_contribution = user.is_new_contributor(locale)
+    first_contribution = use_checks and user.is_new_contributor(locale)
 
     failed_checks = None
     if use_checks:

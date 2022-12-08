@@ -290,7 +290,11 @@ def can_translate(self, locale, project):
 
 def is_new_contributor(self, locale):
     """Return True if the user hasn't made contributions to the locale yet."""
-    return not self.translation_set.filter(locale=locale).exists()
+    return (
+        not self.translation_set.filter(locale=locale)
+        .exclude(entity__resource__project__slug="tutorial")
+        .exists()
+    )
 
 
 @property
