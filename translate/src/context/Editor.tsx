@@ -292,7 +292,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     if (exist) {
       resetFailedChecks();
     }
-  }, [state.value]);
+  }, [state.value, state.initial]);
 
   return (
     <EditorData.Provider value={state}>
