@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import { Localized } from '@fluent/react';
 
 import { useAppSelector } from '~/hooks';
-import { useOnDiscard } from '~/core/utils';
+import { useOnDiscard } from '~/utils';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 

@@ -17,7 +17,7 @@ import {
   getSyntaxType,
   parseEntry,
   serializeEntry,
-} from '~/core/utils/fluent';
+} from '~/utils/fluent';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { EntityView, useActiveTranslation } from './EntityView';

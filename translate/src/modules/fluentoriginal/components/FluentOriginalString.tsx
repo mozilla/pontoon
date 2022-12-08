@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import type { TermState } from '~/core/term';
-import { getSyntaxType, parseEntry } from '~/core/utils/fluent';
+import { getSyntaxType, parseEntry } from '~/utils/fluent';
 
 import { RichString } from './RichString';
 import { SimpleString } from './SimpleString';

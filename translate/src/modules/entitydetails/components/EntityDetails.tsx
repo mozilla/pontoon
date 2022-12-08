@@ -13,7 +13,7 @@ import { Editor } from '~/core/editor/components/Editor';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
-import { getOptimizedContent } from '~/core/utils';
+import { getOptimizedContent } from '~/utils';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { History } from '~/modules/history/components/History';

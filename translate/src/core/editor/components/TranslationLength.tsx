@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { EditorData } from '~/context/Editor';
 import { EntityView, useEntitySource } from '~/context/EntityView';
-import { getSimplePreview } from '~/core/utils/fluent';
+import { getSimplePreview } from '~/utils/fluent';
 
 import './TranslationLength.css';
 

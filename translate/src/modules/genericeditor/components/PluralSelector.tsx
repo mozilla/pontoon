@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { CLDR_PLURALS } from '~/core/utils/constants';
+import { CLDR_PLURALS } from '~/utils/constants';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 
 import './PluralSelector.css';

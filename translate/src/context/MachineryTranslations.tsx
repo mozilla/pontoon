@@ -11,7 +11,7 @@ import {
   MachineryTranslation,
 } from '~/api/machinery';
 import { USER } from '~/core/user';
-import { getSimplePreview } from '~/core/utils/fluent';
+import { getSimplePreview } from '~/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';

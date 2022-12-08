@@ -2,7 +2,7 @@ import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
-import { parseEntry } from '~/core/utils/fluent';
+import { parseEntry } from '~/utils/fluent';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EditorData, EditorProvider, useClearEditor } from './Editor';
