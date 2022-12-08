@@ -8,7 +8,7 @@ import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import { getMarker, TermState } from '~/core/term';
-import { parseEntry } from '~/core/utils/fluent';
+import { parseEntry } from '~/utils/fluent';
 
 import './RichString.css';
 

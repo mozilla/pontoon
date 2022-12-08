@@ -8,7 +8,7 @@ import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
 import { TranslationProxy } from '~/core/translation';
-import { getSimplePreview } from '~/core/utils/fluent';
+import { getSimplePreview } from '~/utils/fluent';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Translation.css';

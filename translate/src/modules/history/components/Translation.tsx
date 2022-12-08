@@ -10,7 +10,7 @@ import { Locale } from '~/context/Locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
 import { TranslationProxy } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
-import { withActionsDisabled } from '~/core/utils';
+import { withActionsDisabled } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './Translation.css';

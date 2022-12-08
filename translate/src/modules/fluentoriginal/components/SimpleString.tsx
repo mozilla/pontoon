@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { Entity } from '~/api/entity';
 import { getMarker, TermState } from '~/core/term';
-import { getSimplePreview } from '~/core/utils/fluent';
+import { getSimplePreview } from '~/utils/fluent';
 
 type Props = {
   readonly entity: Entity;

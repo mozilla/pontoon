@@ -2,10 +2,7 @@ import React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import {
-  isSimpleSingleAttributeMessage,
-  parseEntry,
-} from '~/core/utils/fluent';
+import { isSimpleSingleAttributeMessage, parseEntry } from '~/utils/fluent';
 
 import { Property } from './Property';
 

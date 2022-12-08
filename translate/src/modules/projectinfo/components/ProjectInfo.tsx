@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { useProject } from '~/core/project';
-import { useOnDiscard } from '~/core/utils';
+import { useOnDiscard } from '~/utils';
 
 import './ProjectInfo.css';
 

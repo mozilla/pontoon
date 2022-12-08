@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { EditorData } from '~/context/Editor';
 import * as Entity from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { parseEntry } from '~/core/utils/fluent/parser';
+import { parseEntry } from '~/utils/fluent/parser';
 
 import { useExistingTranslation } from './useExistingTranslation';
 

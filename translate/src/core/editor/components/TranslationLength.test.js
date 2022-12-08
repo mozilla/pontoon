@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import { EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
-import { parseEntry } from '~/core/utils/fluent';
+import { parseEntry } from '~/utils/fluent';
 
 import { TranslationLength } from './TranslationLength';
 import sinon from 'sinon';

@@ -3,7 +3,7 @@ import React, { useContext, useRef, useState } from 'react';
 
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
-import { useOnDiscard } from '~/core/utils';
+import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import type { UserState } from '../index';

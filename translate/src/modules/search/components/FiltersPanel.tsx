@@ -6,7 +6,7 @@ import type { Author } from '~/api/filter';
 import type { Tag } from '~/api/project';
 import type { Location } from '~/context/Location';
 import { Stats, useStats } from '~/core/stats';
-import { asLocaleString, useOnDiscard } from '~/core/utils';
+import { asLocaleString, useOnDiscard } from '~/utils';
 
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 import './FiltersPanel.css';

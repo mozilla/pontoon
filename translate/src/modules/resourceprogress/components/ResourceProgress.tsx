@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useState } from 'react';
 import { Link } from '~/context/Location';
 import { Stats, useStats } from '~/core/stats';
-import { asLocaleString, useOnDiscard } from '~/core/utils';
+import { asLocaleString, useOnDiscard } from '~/utils';
 import { ProgressChart } from './ProgressChart';
 import './ResourceProgress.css';
 
