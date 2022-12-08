@@ -12,6 +12,10 @@ aniso8601==7.0.0 \
     --hash=sha256:513d2b6637b7853806ae79ffaca6f3e8754bdd547048f5ccc1420aec4b714f1e \
     --hash=sha256:d10a4bf949f619f719b227ef5386e31f49a2b6d453004b21f02661ccc8670c7b
     # via graphene
+apscheduler==3.9.1.post1 \
+    --hash=sha256:b2bea0309569da53a7261bfa0ce19c67ddbfe151bda776a6a907579fdbd3eb2a \
+    --hash=sha256:c8c618241dbb2785ed5a687504b14cb1851d6f7b5a4edf3a51e39cc6a069967a
+    # via -r requirements/default.in
 asgiref==3.4.1 \
     --hash=sha256:4ef1ab46b484e3c706329cedeff284a5d40824200638503f5768edb6de7d58e9 \
     --hash=sha256:ffc141aa908e6f175673e7b1b3b7af4fdb0ecb738fc5c8b88f69f055c2415214
@@ -665,10 +669,15 @@ pytz==2022.1 \
     --hash=sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c
     # via
     #   -r requirements/default.in
+    #   apscheduler
     #   celery
     #   django
     #   django-dirtyfields
     #   django-notifications-hq
+pytz-deprecation-shim==0.1.0.post0 \
+    --hash=sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6 \
+    --hash=sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d
+    # via tzlocal
 raygun4py==4.3.0 \
     --hash=sha256:9a675da0215df310a929ef8fe4f9f6c7882b3ee44a925d73e5c191fd962d7c4d
     # via -r requirements/default.in
@@ -763,6 +772,7 @@ six==1.16.0 \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
     # via
+    #   apscheduler
     #   bleach
     #   click-repl
     #   compare-locales
@@ -797,6 +807,14 @@ tqdm==4.62.3 \
 translate-toolkit==3.3.2 \
     --hash=sha256:0795bd3c8668213199550ae4ed8938874083139ec1f8c473dcca1524a206b108
     # via -r requirements/default.in
+tzdata==2022.7 \
+    --hash=sha256:2b88858b0e3120792a3c0635c23daf36a7d7eeeca657c323da299d2094402a0d \
+    --hash=sha256:fe5f866eddd8b96e9fcba978f8e503c909b19ea7efda11e52e39494bad3a7bfa
+    # via pytz-deprecation-shim
+tzlocal==4.2 \
+    --hash=sha256:89885494684c929d9191c57aa27502afc87a579be5cdd3225c77c463ea043745 \
+    --hash=sha256:ee5842fa3a795f023514ac2d801c4a81d1743bbe642e3940143326b3a00addd7
+    # via apscheduler
 uhashring==2.1 \
     --hash=sha256:b21340d0d32497a67f34f5177a64908115fdc23264ed87fa7d1eca79ef9641fa
     # via python-binary-memcached
