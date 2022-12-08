@@ -292,7 +292,7 @@ def is_new_contributor(self, locale):
     """Return True if the user hasn't made contributions to the locale yet."""
     return (
         not self.translation_set.filter(locale=locale)
-        .exclude(entity__resource__project__slug="tutorial")
+        .exclude(entity__resource__project__system_project=True)
         .exists()
     )
 
