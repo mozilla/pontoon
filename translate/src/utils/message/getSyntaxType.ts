@@ -1,23 +1,18 @@
-import type { Entry } from '@fluent/syntax';
+import type { Entry, PatternElement } from '@fluent/syntax';
 
-import { isSimpleMessage } from './isSimpleMessage';
+import { isSimpleElement } from './isSimpleElement';
 import { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
-import { isSupportedMessage } from './isSupportedMessage';
-
-import type { SyntaxType } from './types';
 
 /**
  * Return the syntax type of a given Fluent message.
  *
- * @param {Entry} message A Fluent message (AST) to analyze.
- *
- * @returns {string} The syntax type of the Fluent message. Can be one of:
- *      - "simple": can be shown as a simple string in generic editor;
- *      - "rich": can be shown in a rich editor;
- *      - "complex": can only be shown in a source editor.
+ * @returns One of:
+ *   - `'simple'`: can be shown as a simple string using the generic editor
+ *   - `'rich'`: can be shown in a rich editor
+ *   - `'complex'`: can only be shown in a source editor
  */
-export function getSyntaxType(message: Entry): SyntaxType {
-  if (!isSupportedMessage(message)) {
+export function getSyntaxType(message: Entry): 'simple' | 'rich' | 'complex' {
+  if (!message || !isSupportedMessage(message)) {
     return 'complex';
   }
 
@@ -27,3 +22,59 @@ export function getSyntaxType(message: Entry): SyntaxType {
 
   return 'rich';
 }
+
+/**
+ * Return true when message represents a message, supported in rich FTL editor.
+ *
+ * Message is supported if it's valid and all value elements
+ * and all attribute elements are supported.
+ */
+function isSupportedMessage({ attributes, type, value }: Entry): boolean {
+  if (
+    // Parse error
+    type === 'Junk' ||
+    // Comments
+    type === 'Comment' ||
+    type === 'GroupComment' ||
+    type === 'ResourceComment'
+  ) {
+    return false;
+  }
+
+  if (value && !areSupportedElements(value.elements)) {
+    return false;
+  }
+
+  return attributes.every(
+    ({ value }) => value && areSupportedElements(value.elements),
+  );
+}
+
+/**
+ * Return true when all elements are supported in rich FTL editor.
+ *
+ * Elements are supported if they are:
+ * - simple elements or
+ * - select expressions, whose variants are simple elements
+ */
+const areSupportedElements = (elements: PatternElement[]) =>
+  elements.every(
+    (element) =>
+      isSimpleElement(element) ||
+      (element.type === 'Placeable' &&
+        element.expression.type === 'SelectExpression' &&
+        element.expression.variants.every((variant) =>
+          variant.value.elements.every((element) => isSimpleElement(element)),
+        )),
+  );
+
+/**
+ * Return true when message represents a simple message.
+ *
+ * A simple message has no attributes and all value
+ * elements are simple.
+ */
+const isSimpleMessage = ({ attributes, type, value }: Entry) =>
+  (type === 'Message' || type === 'Term') &&
+  !attributes?.length &&
+  !!value?.elements.every(isSimpleElement);
