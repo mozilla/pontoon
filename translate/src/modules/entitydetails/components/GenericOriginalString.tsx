@@ -2,9 +2,10 @@ import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import { Locale } from '~/context/Locale';
-import { getMarker, TermState } from '~/core/term';
 import { EntityView } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
+import type { TermState } from '~/core/term';
+import { Marked } from '~/core/placeable/components/Marked';
 
 type Props = {
   entity: Entity;
@@ -49,12 +50,11 @@ export function GenericOriginalString({
     original = entity.original_plural;
   }
 
-  const TermsAndPlaceablesMarker = getMarker(terms);
   return (
     <>
       {title}
       <p className='original' onClick={handleClickOnPlaceable}>
-        <TermsAndPlaceablesMarker>{original}</TermsAndPlaceablesMarker>
+        <Marked terms={terms}>{original}</Marked>
       </p>
     </>
   );

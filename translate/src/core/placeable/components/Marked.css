@@ -11,8 +11,3 @@ mark.placeable {
 mark.placeable [aria-hidden='true'] {
   user-select: none;
 }
-
-mark.placeable .hidden-source {
-  display: inline-block;
-  width: 0;
-}

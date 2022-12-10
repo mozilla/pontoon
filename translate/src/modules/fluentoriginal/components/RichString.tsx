@@ -7,7 +7,8 @@ import {
 import React from 'react';
 
 import type { Entity } from '~/api/entity';
-import { getMarker, TermState } from '~/core/term';
+import { Marked } from '~/core/placeable/components/Marked';
+import type { TermState } from '~/core/term';
 import { parseEntry } from '~/utils/message';
 
 import './RichString.css';
@@ -28,8 +29,6 @@ function renderItem(
   className?: string,
   attributeName?: string,
 ): React.ReactNode {
-  const TermsAndPlaceablesMarker = getMarker(terms, true);
-
   return (
     <tr key={key} className={className}>
       <td>
@@ -45,7 +44,9 @@ function renderItem(
       </td>
       <td>
         <span>
-          <TermsAndPlaceablesMarker>{value}</TermsAndPlaceablesMarker>
+          <Marked fluent terms={terms}>
+            {value}
+          </Marked>
         </span>
       </td>
     </tr>

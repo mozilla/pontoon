@@ -14,8 +14,7 @@ describe('<SourceString>', () => {
   it('renders the original source input', () => {
     const wrapper = shallow(<SourceString entity={ENTITY} terms={{}} />);
 
-    expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
-    expect(wrapper.find('.original ContentMarker').children().text()).toEqual(
+    expect(wrapper.find('.original').children().children().text()).toEqual(
       'title = Hello From The Other Side',
     );
   });

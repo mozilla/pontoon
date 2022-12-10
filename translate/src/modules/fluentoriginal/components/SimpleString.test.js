@@ -19,8 +19,7 @@ describe('<SimpleString>', () => {
   it('renders original input as simple string', () => {
     const wrapper = shallow(<SimpleString entity={ENTITY} terms={{}} />);
 
-    expect(wrapper.find('.original ContentMarker').children()).toHaveLength(1);
-    expect(wrapper.find('.original ContentMarker').children().text()).toEqual(
+    expect(wrapper.find('.original').children().children().text()).toEqual(
       'Hello\nSimple\nString',
     );
   });

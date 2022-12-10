@@ -40,7 +40,7 @@ describe('<GenericOriginalString>', () => {
   it('renders correctly', () => {
     const wrapper = createGenericOriginalString();
 
-    const originalContent = wrapper.find('ContentMarker').props().children;
+    const originalContent = wrapper.find('.original > *').props().children;
     expect(originalContent).toContain(ENTITY.original);
   });
 
@@ -51,7 +51,7 @@ describe('<GenericOriginalString>', () => {
       wrapper.find('#entitydetails-GenericOriginalString--plural'),
     ).toHaveLength(1);
 
-    const originalContent = wrapper.find('ContentMarker').props().children;
+    const originalContent = wrapper.find('.original > *').props().children;
     expect(originalContent).toContain(ENTITY.original_plural);
   });
 
@@ -62,7 +62,7 @@ describe('<GenericOriginalString>', () => {
       wrapper.find('#entitydetails-GenericOriginalString--singular'),
     ).toHaveLength(1);
 
-    const originalContent = wrapper.find('ContentMarker').props().children;
+    const originalContent = wrapper.find('.original > *').props().children;
     expect(originalContent).toContain(ENTITY.original);
   });
 });

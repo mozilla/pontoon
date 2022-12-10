@@ -1,7 +1,8 @@
 import React from 'react';
 
 import type { Entity } from '~/api/entity';
-import { getMarker, TermState } from '~/core/term';
+import { Marked } from '~/core/placeable/components/Marked';
+import type { TermState } from '~/core/term';
 
 type Props = {
   readonly entity: Entity;
@@ -14,14 +15,16 @@ type Props = {
 /**
  * Show the source string of a Fluent entity.
  */
-export function SourceString(props: Props): React.ReactElement<'p'> {
-  const TermsAndPlaceablesMarker = getMarker(props.terms, true);
-
+export function SourceString({
+  entity,
+  handleClickOnPlaceable,
+  terms,
+}: Props): React.ReactElement<'p'> {
   return (
-    <p className='original' onClick={props.handleClickOnPlaceable}>
-      <TermsAndPlaceablesMarker>
-        {props.entity.original}
-      </TermsAndPlaceablesMarker>
+    <p className='original' onClick={handleClickOnPlaceable}>
+      <Marked fluent terms={terms}>
+        {entity.original}
+      </Marked>
     </p>
   );
 }

@@ -11,7 +11,7 @@ import { Translation } from '~/core/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage } from '~/utils/message';
 
-import './Translation.css';
+import './OtherLocaleTranslation.css';
 
 type Props = {
   entity: Entity;

@@ -1,26 +1,33 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import { MockLocalizationProvider } from '~/test/utils';
+import { Marked } from './Marked';
 
-import { getMarker } from './getMarker';
+const mountMarker = (content, terms = []) =>
+  mount(
+    <MockLocalizationProvider>
+      <Marked terms={terms}>{content}</Marked>
+    </MockLocalizationProvider>,
+  );
 
-describe('markTerms', () => {
+describe('Test parser order', () => {
+  it('matches JSON placeholder', () => {
+    const content = 'You have created $COUNT$ aliases';
+    const wrapper = mountMarker(content);
+
+    expect(wrapper.find('mark')).toHaveLength(1);
+    expect(wrapper.find('mark').text()).toContain('$COUNT$');
+  });
+});
+
+describe('mark terms', () => {
   it('marks terms properly', () => {
     const string = 'foo bar baz';
     const terms = {
-      terms: [
-        {
-          text: 'bar',
-        },
-        {
-          text: 'baz',
-        },
-      ],
+      terms: [{ text: 'bar' }, { text: 'baz' }],
     };
 
-    const TermsAndPlaceablesMarker = getMarker(terms);
-    const wrapper = shallow(
-      <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
-    );
+    const wrapper = mountMarker(string, terms);
 
     expect(wrapper.find('mark')).toHaveLength(2);
     expect(wrapper.find('mark').at(0).text()).toEqual('bar');
@@ -30,17 +37,10 @@ describe('markTerms', () => {
   it('marks entire words on partial match', () => {
     const string = 'Download Add-Ons from the web.';
     const terms = {
-      terms: [
-        {
-          text: 'add-on',
-        },
-      ],
+      terms: [{ text: 'add-on' }],
     };
 
-    const TermsAndPlaceablesMarker = getMarker(terms);
-    const wrapper = shallow(
-      <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
-    );
+    const wrapper = mountMarker(string, terms);
 
     expect(wrapper.find('mark')).toHaveLength(1);
     expect(wrapper.find('mark').text()).toEqual('Add-Ons');
@@ -49,17 +49,10 @@ describe('markTerms', () => {
   it('only marks terms at the beginning of the word', () => {
     const string = 'Consider using one of the alternatives.';
     const terms = {
-      terms: [
-        {
-          text: 'native',
-        },
-      ],
+      terms: [{ text: 'native' }],
     };
 
-    const TermsAndPlaceablesMarker = getMarker(terms);
-    const wrapper = shallow(
-      <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
-    );
+    const wrapper = mountMarker(string, terms);
 
     expect(wrapper.find('mark')).toHaveLength(0);
   });
@@ -67,20 +60,10 @@ describe('markTerms', () => {
   it('marks longer terms first', () => {
     const string = 'This is a translation tool.';
     const terms = {
-      terms: [
-        {
-          text: 'translation',
-        },
-        {
-          text: 'translation tool',
-        },
-      ],
+      terms: [{ text: 'translation' }, { text: 'translation tool' }],
     };
 
-    const TermsAndPlaceablesMarker = getMarker(terms);
-    const wrapper = shallow(
-      <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
-    );
+    const wrapper = mountMarker(string, terms);
 
     expect(wrapper.find('mark')).toHaveLength(1);
     expect(wrapper.find('mark').text()).toEqual('translation tool');
@@ -90,20 +73,10 @@ describe('markTerms', () => {
     const string =
       'This browser { $version } does not support { $bits }-bit systems.';
     const terms = {
-      terms: [
-        {
-          text: 'browser',
-        },
-        {
-          text: 'version',
-        },
-      ],
+      terms: [{ text: 'browser' }, { text: 'version' }],
     };
 
-    const TermsAndPlaceablesMarker = getMarker(terms);
-    const wrapper = shallow(
-      <TermsAndPlaceablesMarker>{string}</TermsAndPlaceablesMarker>,
-    );
+    const wrapper = mountMarker(string, terms);
 
     expect(wrapper.find('mark')).toHaveLength(3);
     expect(wrapper.find('mark').at(0).text()).toEqual('browser');

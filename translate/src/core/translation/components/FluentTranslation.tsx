@@ -1,10 +1,7 @@
 import React from 'react';
 
 import { TranslationDiff } from '~/core/diff';
-import {
-  WithPlaceablesForFluent,
-  WithPlaceablesForFluentNoLeadingSpace,
-} from '~/core/placeable';
+import { Marked } from '~/core/placeable/components/Marked';
 import { getSimplePreview } from '~/utils/message';
 import { SearchTerms } from '~/modules/search';
 
@@ -20,19 +17,23 @@ export function FluentTranslation({
   if (diffTarget) {
     const fluentTarget = getSimplePreview(diffTarget);
     return (
-      <WithPlaceablesForFluentNoLeadingSpace>
+      <Marked fluent>
         <TranslationDiff base={fluentTarget} target={preview} />
-      </WithPlaceablesForFluentNoLeadingSpace>
+      </Marked>
     );
   }
 
   if (search) {
     return (
-      <WithPlaceablesForFluentNoLeadingSpace>
+      <Marked fluent>
         <SearchTerms search={search}>{preview}</SearchTerms>
-      </WithPlaceablesForFluentNoLeadingSpace>
+      </Marked>
     );
   }
 
-  return <WithPlaceablesForFluent>{preview}</WithPlaceablesForFluent>;
+  return (
+    <Marked fluent leadingSpaces>
+      {preview}
+    </Marked>
+  );
 }
