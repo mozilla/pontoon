@@ -13,7 +13,6 @@ import { Editor } from '~/core/editor/components/Editor';
 import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
-import { getOptimizedContent } from '~/utils';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { History } from '~/modules/history/components/History';
@@ -25,6 +24,7 @@ import {
   request as requestTeamComments,
   togglePinnedStatus as togglePinnedTeamCommentStatus,
 } from '~/modules/teamcomments/actions';
+import { getPlainMessage } from '~/utils/message';
 
 import './EntityDetails.css';
 import { EntityNavigation } from './EntityNavigation';
@@ -61,7 +61,7 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   useEffect(() => {
     const { format, machinery_original, pk } = selectedEntity;
-    const source = getOptimizedContent(machinery_original, format);
+    const source = getPlainMessage(machinery_original, format);
 
     if (source !== terms.sourceString && project !== 'terminology') {
       dispatch(getTerms(source, lc));

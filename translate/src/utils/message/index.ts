@@ -1,6 +1,6 @@
-export { areSupportedElements } from './areSupportedElements';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessage } from './getEmptyMessage';
+export { getPlainMessage } from './getPlainMessage';
 export { getReconstructedMessage } from './getReconstructedMessage';
 export { getSimplePreview } from './getSimplePreview';
 export { getSyntaxType } from './getSyntaxType';

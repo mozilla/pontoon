@@ -1,16 +1,18 @@
+import ftl from '@fluent/dedent';
 import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
 import { SimpleString } from './SimpleString';
 
-const ORIGINAL = `header = 
-            .page-title = Hello
-            Simple
-            String`;
-
 const ENTITY = {
-  original: ORIGINAL,
+  format: 'ftl',
+  original: ftl`
+    header =
+        .page-title = Hello
+        Simple
+        String
+    `,
 };
 
 describe('<SimpleString>', () => {

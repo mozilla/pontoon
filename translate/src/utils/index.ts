@@ -1,5 +1,4 @@
 // Functions
-export { getOptimizedContent } from './getOptimizedContent';
 export { asLocaleString } from './asLocaleString';
 
 // Components, HOC, and Hooks

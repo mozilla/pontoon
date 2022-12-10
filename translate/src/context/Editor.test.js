@@ -2,8 +2,8 @@ import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
-import { parseEntry } from '~/utils/fluent';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
+import { parseEntry } from '~/utils/message';
 
 import { EditorData, EditorProvider, useClearEditor } from './Editor';
 import { EntityView, EntityViewProvider } from './EntityView';

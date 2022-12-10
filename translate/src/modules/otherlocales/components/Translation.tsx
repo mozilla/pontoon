@@ -8,8 +8,8 @@ import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
 import { TranslationProxy } from '~/core/translation';
-import { getSimplePreview } from '~/utils/fluent';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { getPlainMessage } from '~/utils/message';
 
 import './Translation.css';
 
@@ -39,10 +39,7 @@ export function Translation({
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      const value =
-        format === 'ftl'
-          ? getSimplePreview(translation.translation)
-          : translation.translation;
+      const value = getPlainMessage(translation.translation, format);
       setEditorFromHelpers(value, [], true);
     }
   }, [format, index, setEditorFromHelpers, translation]);

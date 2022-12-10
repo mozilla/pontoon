@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { EditorData } from '~/context/Editor';
 import { EntityView, useEntitySource } from '~/context/EntityView';
-import { getSimplePreview } from '~/utils/fluent';
+import { getPlainMessage } from '~/utils/message';
 
 import './TranslationLength.css';
 
@@ -21,7 +21,7 @@ export function TranslationLength(): React.ReactElement<'div'> | null {
     return null;
   }
 
-  const text = typeof value === 'string' ? value : getSimplePreview(value);
+  const text = getPlainMessage(value, entity.format);
 
   const maxLength =
     entity.format === 'lang' && entity.comment.match(/^MAX_LENGTH: (\d+)/);
@@ -42,7 +42,7 @@ export function TranslationLength(): React.ReactElement<'div'> | null {
     );
   }
 
-  const srcText = entity.format === 'ftl' ? getSimplePreview(source) : source;
+  const srcText = getPlainMessage(source, entity.format);
 
   return (
     <div className='translation-length'>

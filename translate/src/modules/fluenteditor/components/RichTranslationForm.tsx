@@ -7,7 +7,10 @@ import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { useHandleShortcuts } from '~/core/editor';
 import { CLDR_PLURALS } from '~/utils/constants';
-import { extractAccessKeyCandidates, isPluralExpression } from '~/utils/fluent';
+import {
+  extractAccessKeyCandidates,
+  isPluralExpression,
+} from '~/utils/message';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
