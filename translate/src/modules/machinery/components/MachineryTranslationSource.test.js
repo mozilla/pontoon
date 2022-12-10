@@ -2,13 +2,13 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import each from 'jest-each';
 
-import { TranslationSource } from './TranslationSource';
+import { MachineryTranslationSource } from './MachineryTranslationSource';
 
 const DEFAULT_TRANSLATION = {
   sources: ['translation-memory'],
 };
 
-describe('<TranslationSource>', () => {
+describe('<MachineryTranslationSource>', () => {
   each([
     ['translation-memory', 'TranslationMemory'],
     ['google-translate', 'GoogleTranslation'],
@@ -19,7 +19,9 @@ describe('<TranslationSource>', () => {
     const translation = {
       sources: [type],
     };
-    const wrapper = shallow(<TranslationSource translation={translation} />);
+    const wrapper = shallow(
+      <MachineryTranslationSource translation={translation} />,
+    );
 
     expect(wrapper.find(component)).toHaveLength(1);
   });
@@ -28,7 +30,9 @@ describe('<TranslationSource>', () => {
     const translation = {
       sources: [...DEFAULT_TRANSLATION.sources, 'microsoft-terminology'],
     };
-    const wrapper = shallow(<TranslationSource translation={translation} />);
+    const wrapper = shallow(
+      <MachineryTranslationSource translation={translation} />,
+    );
 
     expect(wrapper.find('TranslationMemory')).toHaveLength(1);
     expect(wrapper.find('MicrosoftTerminology')).toHaveLength(1);

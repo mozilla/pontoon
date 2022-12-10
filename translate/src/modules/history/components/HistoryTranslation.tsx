@@ -8,12 +8,12 @@ import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
 import { CommentsList } from '~/core/comments/components/CommentsList';
-import { TranslationProxy } from '~/core/translation';
+import { Translation } from '~/core/translation';
 import { UserAvatar, UserState } from '~/core/user';
 import { withActionsDisabled } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import './Translation.css';
+import './HistoryTranslation.css';
 
 type Props = {
   entity: Entity;
@@ -141,7 +141,7 @@ const User = ({
  * The status can be interact with if the user has sufficient permissions to
  * change said status.
  */
-export function TranslationBase({
+export function HistoryTranslationBase({
   activeTranslation,
   deleteTranslation,
   disableAction,
@@ -428,9 +428,11 @@ export function TranslationBase({
               lang={code}
               data-script={script}
             >
-              <TranslationProxy
+              <Translation
                 content={translation.string}
-                diffTarget={isDiffVisible ? activeTranslation.string : null}
+                diffTarget={
+                  isDiffVisible ? activeTranslation.string : undefined
+                }
                 format={entity.format}
               />
             </p>
@@ -444,4 +446,6 @@ export function TranslationBase({
   );
 }
 
-export const Translation = withActionsDisabled(TranslationBase);
+export const HistoryTranslationComponent = withActionsDisabled(
+  HistoryTranslationBase,
+);

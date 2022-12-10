@@ -16,7 +16,7 @@ type Props = {
 /**
  * Shows a list of translation sources.
  */
-export function TranslationSource({
+export function MachineryTranslationSource({
   translation,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];

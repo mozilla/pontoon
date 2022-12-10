@@ -9,7 +9,7 @@ import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './History.css';
-import { Translation } from './Translation';
+import { HistoryTranslationComponent } from './HistoryTranslation';
 
 /**
  * Shows all existing translations of an entity.
@@ -38,7 +38,7 @@ export function History(): React.ReactElement<'section'> | null {
     <section className='history'>
       <ul id='history-list'>
         {translations.map((translation, index) => (
-          <Translation
+          <HistoryTranslationComponent
             translation={translation}
             activeTranslation={translations[0]}
             entity={entity}

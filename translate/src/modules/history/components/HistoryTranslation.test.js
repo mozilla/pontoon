@@ -4,7 +4,7 @@ import React from 'react';
 import sinon from 'sinon';
 
 import * as hookModule from '~/hooks/useTranslator';
-import { TranslationBase } from './Translation';
+import { HistoryTranslationBase } from './HistoryTranslation';
 
 beforeAll(() => {
   sinon
@@ -17,7 +17,7 @@ afterAll(() => {
   hookModule.useTranslator.restore();
 });
 
-describe('<TranslationBase>', () => {
+describe('<HistoryTranslationComponent>', () => {
   const DEFAULT_TRANSLATION = {
     approved: false,
     approvedUser: '',
@@ -50,7 +50,7 @@ describe('<TranslationBase>', () => {
         ...{ approved: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -66,7 +66,7 @@ describe('<TranslationBase>', () => {
         ...{ rejected: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -82,7 +82,7 @@ describe('<TranslationBase>', () => {
         ...{ pretranslated: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -98,7 +98,7 @@ describe('<TranslationBase>', () => {
         ...{ fuzzy: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -110,7 +110,7 @@ describe('<TranslationBase>', () => {
 
     it('returns the correct status for unreviewed translations', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -128,7 +128,7 @@ describe('<TranslationBase>', () => {
         ...{ approved: true, approvedUser: 'Cespenar' },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -144,7 +144,7 @@ describe('<TranslationBase>', () => {
         ...{ unapprovedUser: 'Bhaal' },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -156,7 +156,7 @@ describe('<TranslationBase>', () => {
 
     it('returns the correct approver title when neither approved or unapproved', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -174,7 +174,7 @@ describe('<TranslationBase>', () => {
         ...{ uid: 1, username: 'id_Sarevok', user: 'Sarevok' },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -190,7 +190,7 @@ describe('<TranslationBase>', () => {
 
     it('returns no link when the author is not known', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -209,7 +209,7 @@ describe('<TranslationBase>', () => {
         ...{ approved: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -228,7 +228,7 @@ describe('<TranslationBase>', () => {
         ...{ rejected: true },
       };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -243,7 +243,7 @@ describe('<TranslationBase>', () => {
 
     it('shows the correct status for unreviewed translations', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -260,7 +260,7 @@ describe('<TranslationBase>', () => {
   describe('permissions', () => {
     it('allows the user to reject their own unapproved translation', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -274,7 +274,7 @@ describe('<TranslationBase>', () => {
     it('forbids the user to reject their own approved translation', () => {
       const translation = { ...DEFAULT_TRANSLATION, approved: true };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -288,7 +288,7 @@ describe('<TranslationBase>', () => {
     it('allows translators to review the translation', () => {
       hookModule.useTranslator.returns(true);
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -303,7 +303,7 @@ describe('<TranslationBase>', () => {
       hookModule.useTranslator.returns(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: true };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -317,7 +317,7 @@ describe('<TranslationBase>', () => {
       hookModule.useTranslator.returns(true);
       const translation = { ...DEFAULT_TRANSLATION, rejected: false };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -330,7 +330,7 @@ describe('<TranslationBase>', () => {
     it('allows the user to delete their own rejected translation', () => {
       const translation = { ...DEFAULT_TRANSLATION, rejected: true };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={DEFAULT_USER}
@@ -343,7 +343,7 @@ describe('<TranslationBase>', () => {
     it('forbids the user to delete rejected translation of another user', () => {
       const translation = { ...DEFAULT_TRANSLATION, rejected: true };
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={translation}
           entity={DEFAULT_ENTITY}
           user={{ username: 'Andy_Dwyer' }}
@@ -357,7 +357,7 @@ describe('<TranslationBase>', () => {
   describe('DiffToggle', () => {
     it('shows default translation and no Show/Hide diff button for the first translation', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}
@@ -376,7 +376,7 @@ describe('<TranslationBase>', () => {
 
     it('shows default translation and the Show diff button for a non-first translation', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}
@@ -395,7 +395,7 @@ describe('<TranslationBase>', () => {
 
     it('shows translation diff and the Hide diff button for a non-first translation if diff visible', () => {
       const wrapper = shallow(
-        <TranslationBase
+        <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}
           entity={DEFAULT_ENTITY}
           activeTranslation={DEFAULT_TRANSLATION}

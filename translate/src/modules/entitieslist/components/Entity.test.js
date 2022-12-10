@@ -90,7 +90,7 @@ describe('<Entity>', () => {
   it('renders the source string and the first translation', () => {
     const wrapper = shallow(<Entity entity={ENTITY_A} parameters={{}} />);
 
-    const contents = wrapper.find('TranslationProxy');
+    const contents = wrapper.find('Translation');
     expect(contents.first().props().content).toContain(ENTITY_A.original);
     expect(contents.last().props().content).toContain(
       ENTITY_A.translation[0].string,

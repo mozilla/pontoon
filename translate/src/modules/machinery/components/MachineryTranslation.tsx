@@ -10,10 +10,10 @@ import { GenericTranslation } from '~/core/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
-import { TranslationSource } from './TranslationSource';
+import { MachineryTranslationSource } from './MachineryTranslationSource';
 
 import './ConcordanceSearch.css';
-import './Translation.css';
+import './MachineryTranslation.css';
 
 type Props = {
   sourceString: string;
@@ -28,7 +28,7 @@ type Props = {
  * Similar translations (same original and translation) are shown only once
  * and their sources are merged.
  */
-export function Translation({
+export function MachineryTranslationComponent({
   index,
   sourceString,
   translation,
@@ -75,7 +75,7 @@ export function Translation({
             translation={translation}
           />
         ) : (
-          <TranslationSuggestion
+          <MachineryTranslationSuggestion
             sourceString={sourceString}
             translation={translation}
           />
@@ -85,7 +85,7 @@ export function Translation({
   );
 }
 
-function TranslationSuggestion({
+function MachineryTranslationSuggestion({
   sourceString,
   translation,
 }: {
@@ -99,7 +99,7 @@ function TranslationSuggestion({
         {translation.quality && (
           <span className='quality'>{translation.quality + '%'}</span>
         )}
-        <TranslationSource translation={translation} />
+        <MachineryTranslationSource translation={translation} />
       </header>
       <p className='original'>
         <GenericTranslation
@@ -107,7 +107,7 @@ function TranslationSuggestion({
           diffTarget={
             // Caighdean takes `gd` translations as input, so we shouldn't
             // diff it against the `en-US` source string.
-            translation.sources.includes('caighdean') ? null : sourceString
+            translation.sources.includes('caighdean') ? undefined : sourceString
           }
         />
       </p>

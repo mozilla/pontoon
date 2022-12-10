@@ -6,7 +6,7 @@ import type { Location } from '~/context/Location';
 
 import type { LocalesState } from '../index';
 import './OtherLocales.css';
-import { Translation } from './Translation';
+import { OtherLocaleTranslationComponent } from './OtherLocaleTranslation';
 
 type Props = {
   entity: Entity;
@@ -41,7 +41,7 @@ export function OtherLocales({
       <ul className='preferred-list'>
         {translations.map((translation, index) =>
           translation.is_preferred ? (
-            <Translation
+            <OtherLocaleTranslationComponent
               entity={entity}
               index={index}
               key={index}
@@ -55,7 +55,7 @@ export function OtherLocales({
       <ul>
         {translations.map((translation, index) =>
           translation.is_preferred ? null : (
-            <Translation
+            <OtherLocaleTranslationComponent
               entity={entity}
               index={index}
               key={index}

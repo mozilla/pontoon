@@ -7,7 +7,7 @@ import type { OtherLocaleTranslation } from '~/api/other-locales';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { TranslationProxy } from '~/core/translation';
+import { Translation } from '~/core/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage } from '~/utils/message';
 
@@ -26,7 +26,7 @@ type Props = {
  * Show the translation of a given entity in a different locale, as well as the
  * locale and its code.
  */
-export function Translation({
+export function OtherLocaleTranslationComponent({
   entity: { format },
   translation,
   parameters: { project, resource, entity },
@@ -102,7 +102,7 @@ export function Translation({
           dir={translation.locale.direction}
           data-script={translation.locale.script}
         >
-          <TranslationProxy content={translation.translation} format={format} />
+          <Translation content={translation.translation} format={format} />
         </p>
       </li>
     </Localized>

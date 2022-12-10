@@ -4,13 +4,13 @@ import { FluentTranslation } from './FluentTranslation';
 import { GenericTranslation } from './GenericTranslation';
 
 type Props = {
-  content: string | null | undefined;
-  diffTarget?: string | null | undefined;
+  content: string;
   format: string;
-  search?: string | null | undefined;
+  diffTarget?: string;
+  search?: string | null;
 };
 
-export function TranslationProxy({
+export function Translation({
   format,
   ...props
 }: Props): null | React.ReactElement<React.ElementType> {

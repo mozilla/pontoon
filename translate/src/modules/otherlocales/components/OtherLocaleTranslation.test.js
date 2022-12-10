@@ -10,7 +10,7 @@ import {
 } from '~/test/store';
 import { mockMatchMedia } from '~/test/utils';
 
-import { Translation } from './Translation';
+import { OtherLocaleTranslationComponent } from './OtherLocaleTranslation';
 
 const LOCALE = { code: 'fr-FR', name: 'French', direction: 'ltr', script: '' };
 const PLAIN_TRANSLATION = {
@@ -27,7 +27,7 @@ function createTranslation(format, translation, setEditorFromHelpers) {
   const Wrapper = (props) => (
     <EditorActions.Provider value={{ setEditorFromHelpers }}>
       <HelperSelection.Provider value={{ element: -1, setElement() {} }}>
-        <Translation {...props} />
+        <OtherLocaleTranslationComponent {...props} />
       </HelperSelection.Provider>
     </EditorActions.Provider>
   );
@@ -40,7 +40,7 @@ function createTranslation(format, translation, setEditorFromHelpers) {
   return wrapper;
 }
 
-describe('<Translation>', () => {
+describe('<OtherLocaleTranslationComponent>', () => {
   let getSelectionBackup;
 
   beforeAll(() => {

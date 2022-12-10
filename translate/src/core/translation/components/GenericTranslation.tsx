@@ -5,9 +5,9 @@ import { WithPlaceables, WithPlaceablesNoLeadingSpace } from '~/core/placeable';
 import { SearchTerms } from '~/modules/search';
 
 export type TranslationProps = {
-  content: string | null | undefined;
-  diffTarget?: string | null | undefined;
-  search?: string | null | undefined;
+  content: string;
+  diffTarget?: string;
+  search?: string | null;
 };
 
 export function GenericTranslation({
@@ -18,7 +18,7 @@ export function GenericTranslation({
   if (diffTarget) {
     return (
       <WithPlaceablesNoLeadingSpace>
-        <TranslationDiff base={diffTarget} target={content ?? ''} />
+        <TranslationDiff base={diffTarget} target={content} />
       </WithPlaceablesNoLeadingSpace>
     );
   }
@@ -26,7 +26,7 @@ export function GenericTranslation({
   if (search) {
     return (
       <WithPlaceablesNoLeadingSpace>
-        <SearchTerms search={search}>{content ?? ''}</SearchTerms>
+        <SearchTerms search={search}>{content}</SearchTerms>
       </WithPlaceablesNoLeadingSpace>
     );
   }

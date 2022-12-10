@@ -6,7 +6,7 @@ import {
 
 import { mockMatchMedia } from '~/test/utils';
 
-import { Translation } from './Translation';
+import { MachineryTranslationComponent } from './MachineryTranslation';
 
 const ORIGINAL = 'A horse, a horse! My kingdom for a horse!';
 const DEFAULT_TRANSLATION = {
@@ -15,14 +15,18 @@ const DEFAULT_TRANSLATION = {
   translation: 'Un cheval, un cheval ! Mon royaume pour un cheval !',
 };
 
-function createTranslation(translation) {
+function createMachineryTranslation(translation) {
   const store = createReduxStore();
-  const wrapper = mountComponentWithStore(Translation, store, { translation });
+  const wrapper = mountComponentWithStore(
+    MachineryTranslationComponent,
+    store,
+    { translation },
+  );
   createDefaultUser(store);
   return wrapper;
 }
 
-describe('<Translation>', () => {
+describe('<MachineryTranslationComponent>', () => {
   let getSelectionBackup;
 
   beforeAll(() => {
@@ -40,7 +44,7 @@ describe('<Translation>', () => {
   });
 
   it('renders a translation correctly', () => {
-    const wrapper = createTranslation(DEFAULT_TRANSLATION);
+    const wrapper = createMachineryTranslation(DEFAULT_TRANSLATION);
 
     expect(wrapper.find('.original').find('GenericTranslation')).toHaveLength(
       1,
@@ -58,7 +62,7 @@ describe('<Translation>', () => {
       ...DEFAULT_TRANSLATION,
       quality: 100,
     };
-    const wrapper = createTranslation(translation);
+    const wrapper = createMachineryTranslation(translation);
 
     expect(wrapper.find('.quality')).toHaveLength(1);
     expect(wrapper.find('.quality').text()).toEqual('100%');
