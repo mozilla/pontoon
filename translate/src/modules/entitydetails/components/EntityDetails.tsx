@@ -14,7 +14,6 @@ import { TERM } from '~/core/term';
 import { get as getTerms } from '~/core/term/actions';
 import { USER } from '~/core/user';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { History } from '~/modules/history/components/History';
 import { OTHERLOCALES } from '~/modules/otherlocales';
 import { get as getOtherLocales } from '~/modules/otherlocales/actions';
@@ -37,7 +36,6 @@ import { Metadata } from './Metadata';
  * Shows the metadata of the entity and an editor for translations.
  */
 export function EntityDetails(): React.ReactElement<'section'> | null {
-  const isReadOnlyEditor = useReadonlyEditor();
   const location = useContext(Location);
   const otherlocales = useAppSelector((state) => state[OTHERLOCALES]);
   const teamComments = useAppSelector((state) => state[TEAM_COMMENTS]);
@@ -95,7 +93,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
         <EntityNavigation />
         <Metadata
           entity={selectedEntity}
-          isReadOnlyEditor={isReadOnlyEditor}
           terms={terms}
           navigateToPath={navigateToPath}
           teamComments={teamComments}
@@ -110,7 +107,6 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       <section className='third-column'>
         <Helpers
           entity={selectedEntity}
-          isReadOnlyEditor={isReadOnlyEditor}
           otherlocales={otherlocales}
           teamComments={teamComments}
           terms={terms}

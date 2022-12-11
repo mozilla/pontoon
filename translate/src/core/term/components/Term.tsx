@@ -5,11 +5,11 @@ import React, { useContext } from 'react';
 import type { TermType } from '~/api/terminology';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './Term.css';
 
 type Props = {
-  isReadOnlyEditor: boolean;
   navigateToPath: (arg0: string) => void;
   term: TermType;
 };
@@ -17,12 +17,9 @@ type Props = {
 /**
  * Shows term entry with its metadata.
  */
-export function Term({
-  isReadOnlyEditor,
-  navigateToPath,
-  term,
-}: Props): React.ReactElement {
+export function Term({ navigateToPath, term }: Props): React.ReactElement {
   const { code } = useContext(Locale);
+  const isReadOnlyEditor = useReadonlyEditor();
   const { setEditorSelection } = useContext(EditorActions);
 
   const copyTermIntoEditor = () => {

@@ -1,20 +1,27 @@
 import * as Fluent from '@fluent/react';
-import { mount } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
 import { EditorActions } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
+import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { Term } from './Term';
 
-function mountTerm(props, setEditorSelection) {
-  return mount(
-    <Locale.Provider value={{ code: 'kg' }}>
-      <EditorActions.Provider value={{ setEditorSelection }}>
-        <Term {...props} />
-      </EditorActions.Provider>
-    </Locale.Provider>,
+function mountTerm(term, setEditorSelection, isAuthenticated) {
+  const store = createReduxStore({ user: { isAuthenticated } });
+  return mountComponentWithStore(
+    () => (
+      <Locale.Provider value={{ code: 'kg' }}>
+        <EntityView.Provider value={{ entity: {} }}>
+          <EditorActions.Provider value={{ setEditorSelection }}>
+            <Term term={term} />
+          </EditorActions.Provider>
+        </EntityView.Provider>
+      </Locale.Provider>
+    ),
+    store,
   );
 }
 
@@ -40,7 +47,7 @@ describe('<Term>', () => {
     Fluent.Localized.restore();
   });
   it('renders term correctly', () => {
-    const wrapper = mountTerm({ term: TERM }, sinon.spy());
+    const wrapper = mountTerm(TERM, sinon.spy(), true);
 
     expect(wrapper.find('li')).toHaveLength(1);
     expect(wrapper.find('.text').text()).toEqual('text');
@@ -52,7 +59,7 @@ describe('<Term>', () => {
 
   it('calls the addTextToEditorTranslation function on click', () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm({ term: TERM }, spy);
+    const wrapper = mountTerm(TERM, spy, true);
 
     wrapper.find('li').simulate('click');
     expect(spy.called).toEqual(true);
@@ -60,7 +67,7 @@ describe('<Term>', () => {
 
   it('does not call the addTextToEditorTranslation function if term not translated', () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm({ term: { ...TERM, translation: '' } }, spy);
+    const wrapper = mountTerm({ ...TERM, translation: '' }, spy, true);
 
     wrapper.find('li').simulate('click');
     expect(spy.called).toEqual(false);
@@ -68,7 +75,7 @@ describe('<Term>', () => {
 
   it('does not call the addTextToEditorTranslation function if read-only editor', () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm({ isReadOnlyEditor: true, term: TERM }, spy);
+    const wrapper = mountTerm(TERM, spy, false);
 
     wrapper.find('li').simulate('click');
     expect(spy.called).toEqual(false);

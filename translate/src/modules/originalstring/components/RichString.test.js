@@ -1,21 +1,21 @@
+import ftl from '@fluent/dedent';
 import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
+import { parseEntry } from '~/utils/message';
 import { RichString } from './RichString';
 
-const ORIGINAL = `
-song-title = Hello
-    .genre = Pop
-    .album = Hello and Good Bye`;
-
-const ENTITY = {
-  original: ORIGINAL,
-};
+const ORIGINAL = ftl`
+  song-title = Hello
+      .genre = Pop
+      .album = Hello and Good Bye
+  `;
 
 describe('<RichString>', () => {
   it('renders value and each attribute correctly', () => {
-    const wrapper = shallow(<RichString entity={ENTITY} terms={{}} />);
+    const message = parseEntry(ORIGINAL);
+    const wrapper = shallow(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('span')).toHaveLength(3);
 
@@ -30,18 +30,16 @@ describe('<RichString>', () => {
   });
 
   it('renders select expression correctly', () => {
-    const input = `
-user-entry =
-    { PLATFORM() ->
-        [variant-1] Hello!
-       *[variant-2] Good Bye!
-    }`;
+    const input = ftl`
+      user-entry =
+          { PLATFORM() ->
+              [variant-1] Hello!
+             *[variant-2] Good Bye!
+          }
+      `;
 
-    const entity = {
-      original: input,
-    };
-
-    const wrapper = shallow(<RichString entity={entity} terms={{}} />);
+    const message = parseEntry(input);
+    const wrapper = shallow(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('span')).toHaveLength(2);
 
@@ -53,24 +51,22 @@ user-entry =
   });
 
   it('renders select expression in attributes properly', () => {
-    const input = `
-my-entry =
-    .label =
-        { PLATFORM() ->
-            [macosx] Preferences
-           *[other] Options
-        }
-    .accesskey =
-        { PLATFORM() ->
-            [macosx] e
-           *[other] s
-        }`;
+    const input = ftl`
+      my-entry =
+          .label =
+              { PLATFORM() ->
+                  [macosx] Preferences
+                 *[other] Options
+              }
+          .accesskey =
+              { PLATFORM() ->
+                  [macosx] e
+                 *[other] s
+              }
+      `;
 
-    const entity = {
-      original: input,
-    };
-
-    const wrapper = shallow(<RichString entity={entity} terms={{}} />);
+    const message = parseEntry(input);
+    const wrapper = shallow(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('td > span')).toHaveLength(4);
 
@@ -99,17 +95,14 @@ my-entry =
     expect(wrapper.find('td > span').at(3).html()).toContain('s');
   });
 
-  it('calls the handleClickOnPlaceable function on click on .original', () => {
-    const handleClickOnPlaceable = sinon.spy();
+  it('calls the onClick function on click on .original', () => {
+    const message = parseEntry(ORIGINAL);
+    const spy = sinon.spy();
     const wrapper = shallow(
-      <RichString
-        entity={ENTITY}
-        terms={{}}
-        handleClickOnPlaceable={handleClickOnPlaceable}
-      />,
+      <RichString message={message} onClick={spy} terms={{}} />,
     );
 
     wrapper.find('.original').simulate('click');
-    expect(handleClickOnPlaceable.called).toEqual(true);
+    expect(spy.called).toEqual(true);
   });
 });

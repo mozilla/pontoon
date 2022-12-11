@@ -6,7 +6,7 @@ import { Locale } from '~/context/Locale';
 
 import { MockLocalizationProvider } from '~/test/utils';
 
-import { GenericOriginalString } from './GenericOriginalString';
+import { PluralString } from './PluralString';
 
 const ENTITY = {
   pk: 42,
@@ -19,48 +19,35 @@ const LOCALE = {
   cldrPlurals: [1, 3, 5],
 };
 
-const createGenericOriginalString = (pluralForm = -1) =>
+const mountPluralString = (pluralForm) =>
   mount(
     <Locale.Provider value={LOCALE}>
       <MockLocalizationProvider>
         <EntityView.Provider
-          value={
-            pluralForm === -1
-              ? { hasPluralForms: false, pluralForm: 0 }
-              : { hasPluralForms: true, pluralForm }
-          }
+          value={{ entity: ENTITY, hasPluralForms: true, pluralForm }}
         >
-          <GenericOriginalString entity={ENTITY} terms={{}} />
+          <PluralString terms={{}} />
         </EntityView.Provider>
       </MockLocalizationProvider>
     </Locale.Provider>,
   );
 
-describe('<GenericOriginalString>', () => {
-  it('renders correctly', () => {
-    const wrapper = createGenericOriginalString();
-
-    const originalContent = wrapper.find('.original > *').props().children;
-    expect(originalContent).toContain(ENTITY.original);
-  });
-
+describe('<PluralString>', () => {
   it('renders the selected plural form as original string', () => {
-    const wrapper = createGenericOriginalString(2);
+    const wrapper = mountPluralString(2);
 
-    expect(
-      wrapper.find('#entitydetails-GenericOriginalString--plural'),
-    ).toHaveLength(1);
+    expect(wrapper.find('#entitydetails-PluralString--plural')).toHaveLength(1);
 
     const originalContent = wrapper.find('.original > *').props().children;
     expect(originalContent).toContain(ENTITY.original_plural);
   });
 
   it('renders the selected singular form as original string', () => {
-    const wrapper = createGenericOriginalString(0);
+    const wrapper = mountPluralString(0);
 
-    expect(
-      wrapper.find('#entitydetails-GenericOriginalString--singular'),
-    ).toHaveLength(1);
+    expect(wrapper.find('#entitydetails-PluralString--singular')).toHaveLength(
+      1,
+    );
 
     const originalContent = wrapper.find('.original > *').props().children;
     expect(originalContent).toContain(ENTITY.original);

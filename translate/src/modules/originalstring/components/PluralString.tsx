@@ -1,49 +1,38 @@
 import React, { useContext } from 'react';
 import { Localized } from '@fluent/react';
 
-import type { Entity } from '~/api/entity';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import type { TermState } from '~/core/term';
 import { Marked } from '~/core/placeable/components/Marked';
+import type { TermState } from '~/core/term';
 
 type Props = {
-  entity: Entity;
+  onClick: (event: React.MouseEvent<HTMLElement>) => void;
   terms: TermState;
-  handleClickOnPlaceable: (
-    event: React.MouseEvent<HTMLParagraphElement>,
-  ) => void;
 };
 
 /**
- * Show the original string of an entity.
+ * Show the original string of an entity with plural forms.
  *
  * Based on the plural form, show either the singular or plural version of the
  * string, and also display which form is being rendered.
  */
-export function GenericOriginalString({
-  entity,
-  handleClickOnPlaceable,
-  terms,
-}: Props): React.ReactElement {
+export function PluralString({ onClick, terms }: Props): React.ReactElement {
   const { cldrPlurals } = useContext(Locale);
-  const { hasPluralForms, pluralForm } = useContext(EntityView);
+  const { entity, pluralForm } = useContext(EntityView);
 
-  let title: React.ReactElement | null;
+  let title: React.ReactElement;
   let original: string;
-  if (!hasPluralForms) {
-    title = null;
-    original = entity.original;
-  } else if (cldrPlurals[pluralForm] === 1) {
+  if (cldrPlurals[pluralForm] === 1) {
     title = (
-      <Localized id='entitydetails-GenericOriginalString--singular'>
+      <Localized id='entitydetails-PluralString--singular'>
         <h2>SINGULAR</h2>
       </Localized>
     );
     original = entity.original;
   } else {
     title = (
-      <Localized id='entitydetails-GenericOriginalString--plural'>
+      <Localized id='entitydetails-PluralString--plural'>
         <h2>PLURAL</h2>
       </Localized>
     );
@@ -53,7 +42,7 @@ export function GenericOriginalString({
   return (
     <>
       {title}
-      <p className='original' onClick={handleClickOnPlaceable}>
+      <p className='original' onClick={onClick}>
         <Marked terms={terms}>{original}</Marked>
       </p>
     </>

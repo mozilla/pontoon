@@ -3,23 +3,14 @@ import {
   PatternElement,
   Pattern,
   serializeVariantKey,
+  Entry,
 } from '@fluent/syntax';
 import React from 'react';
 
-import type { Entity } from '~/api/entity';
 import { Marked } from '~/core/placeable/components/Marked';
 import type { TermState } from '~/core/term';
-import { parseEntry } from '~/utils/message';
 
 import './RichString.css';
-
-type Props = {
-  readonly entity: Entity;
-  readonly terms: TermState;
-  readonly handleClickOnPlaceable: (
-    event: React.MouseEvent<HTMLParagraphElement>,
-  ) => void;
-};
 
 function renderItem(
   value: string,
@@ -121,24 +112,30 @@ function renderAttributes(
   });
 }
 
+type Props = {
+  message: Entry;
+  onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  terms: TermState;
+};
+
 /**
  * Show the original string of a Fluent entity in a rich interface.
  */
-export function RichString(props: Props): React.ReactElement<'table'> {
-  const message = parseEntry(props.entity.original);
+export function RichString({
+  message,
+  onClick,
+  terms,
+}: Props): React.ReactElement<'table'> {
   // Safeguard against non-translatable entries
   if (message.type !== 'Message' && message.type !== 'Term') {
     throw new Error(`Unexpected type '${message.type}' in RichString`);
   }
 
   return (
-    <table
-      className='original fluent-rich-string'
-      onClick={props.handleClickOnPlaceable}
-    >
+    <table className='original fluent-rich-string' onClick={onClick}>
       <tbody>
-        {renderValue(message.value, props.terms)}
-        {renderAttributes(message.attributes, props.terms)}
+        {renderValue(message.value, terms)}
+        {renderAttributes(message.attributes, terms)}
       </tbody>
     </table>
   );

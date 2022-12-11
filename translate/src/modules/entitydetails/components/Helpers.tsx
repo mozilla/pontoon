@@ -18,7 +18,6 @@ import './Helpers.css';
 
 type Props = {
   entity: Entity;
-  isReadOnlyEditor: boolean;
   otherlocales: LocalesState;
   teamComments: TeamCommentState;
   terms: TermState;
@@ -40,7 +39,6 @@ type Props = {
  */
 export function Helpers({
   entity,
-  isReadOnlyEditor,
   otherlocales,
   teamComments,
   terms,
@@ -83,11 +81,7 @@ export function Helpers({
           </TabList>
           {isTerminologyProject ? null : (
             <TabPanel>
-              <Terms
-                isReadOnlyEditor={isReadOnlyEditor}
-                terms={terms}
-                navigateToPath={navigateToPath}
-              />
+              <Terms terms={terms} navigateToPath={navigateToPath} />
             </TabPanel>
           )}
           <TabPanel>

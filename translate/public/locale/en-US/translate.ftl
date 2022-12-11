@@ -285,11 +285,11 @@ entitydetails-Metadata--resource =
 
 entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPORT ISSUE
 
-## Entity Details GenericOriginalString
-## Shows the original string of an entity
+## Entity Details PluralString
+## Shows the original string of an entity with plural forms
 
-entitydetails-GenericOriginalString--plural = PLURAL
-entitydetails-GenericOriginalString--singular = SINGULAR
+entitydetails-PluralString--plural = PLURAL
+entitydetails-PluralString--singular = SINGULAR
 
 
 ## Entities List Entity

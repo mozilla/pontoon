@@ -7,24 +7,24 @@ import { useOnDiscard } from '~/utils';
 import './TermsPopup.css';
 
 type Props = {
-  readonly isReadOnlyEditor: boolean;
-  readonly terms: Array<TermType>;
-  readonly hide: () => void;
-  readonly navigateToPath: (path: string) => void;
+  navigateToPath: (path: string) => void;
+  onClick: () => void;
+  terms: Array<TermType>;
 };
 
 /**
  * Shows a popup with a list of all terms belonging to the highlighted one.
  */
 export function TermsPopup({
-  hide,
-  ...props
+  navigateToPath,
+  onClick,
+  terms,
 }: Props): React.ReactElement<'div'> {
   const ref = useRef(null);
-  useOnDiscard(ref, hide);
+  useOnDiscard(ref, onClick);
   return (
-    <div ref={ref} className='terms-popup' onClick={hide}>
-      <TermsList {...props} />
+    <div ref={ref} className='terms-popup' onClick={onClick}>
+      <TermsList navigateToPath={navigateToPath} terms={terms} />
     </div>
   );
 }
