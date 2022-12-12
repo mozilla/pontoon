@@ -80,7 +80,6 @@ def create_translation(request):
     # Checks are disabled for the tutorial.
     use_checks = project.slug != "tutorial"
     user = request.user
-    first_contribution = user.is_new_contributor(locale)
 
     failed_checks = None
     if use_checks:
@@ -126,6 +125,7 @@ def create_translation(request):
         )
 
     # When user makes their first contribution to the team, notify team managers
+    first_contribution = not project.system_project and user.is_new_contributor(locale)
     if first_contribution:
         desc = """
         <a href="{user_href}">{user}</a> has made their first contribution to
