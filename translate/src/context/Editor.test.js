@@ -1,3 +1,4 @@
+import ftl from '@fluent/dedent';
 import { createMemoryHistory } from 'history';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
@@ -12,7 +13,7 @@ import { Location, LocationProvider } from './Location';
 
 function mountSpy(Spy, format, translation) {
   const history = createMemoryHistory({
-    initialEntries: [`/kg/pro/all/?string=42`],
+    initialEntries: [`/sl/pro/all/?string=42`],
   });
 
   const initialState = {
@@ -51,7 +52,7 @@ function mountSpy(Spy, format, translation) {
 
   const Wrapper = () => (
     <LocationProvider history={history}>
-      <Locale.Provider value={{ code: 'kg', cldrPlurals: [1, 2, 5] }}>
+      <Locale.Provider value={{ code: 'sl', cldrPlurals: [1, 2, 3, 5] }}>
         <EntityViewProvider>
           <EditorProvider>
             <Spy />
@@ -172,18 +173,35 @@ describe('useClearEditor', () => {
       clearEditor = useClearEditor();
       return null;
     };
-    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }\n';
+    const initial = ftl`
+      key =
+        { $var ->
+           [one] ONE
+          *[other] OTHER
+        }
+
+      `;
     const wrapper = mountSpy(Spy, 'ftl', initial);
     act(() => clearEditor());
     wrapper.update();
 
-    const value = parseEntry(
-      'key = { $var ->\n [one] {""}\n [two] {""}\n *[other] {""}\n }',
-    );
     expect(editor).toMatchObject({
       format: 'ftl',
       initial,
-      value,
+      value: {
+        id: 'key',
+        value: {
+          type: 'select',
+          declarations: [],
+          selectors: [{ type: 'variable', name: 'var' }],
+          variants: [
+            { keys: [{ type: 'nmtoken', value: 'one' }], value: { body: [] } },
+            { keys: [{ type: 'nmtoken', value: 'two' }], value: { body: [] } },
+            { keys: [{ type: 'nmtoken', value: 'few' }], value: { body: [] } },
+            { keys: [{ type: '*' }], value: { body: [] } },
+          ],
+        },
+      },
       view: 'rich',
     });
   });

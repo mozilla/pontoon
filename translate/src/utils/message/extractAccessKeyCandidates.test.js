@@ -1,6 +1,6 @@
 import ftl from '@fluent/dedent';
 import { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
-import { parseEntry } from './parser';
+import { parseEntry } from './parseEntry';
 
 describe('extractAccessKeyCandidates', () => {
   it('returns an empty list if the message has no label attribute or value', () => {

@@ -29,10 +29,6 @@
   padding: 0 3px;
 }
 
-.fluent-rich-string tr.indented > td > label {
-  margin-left: 10px;
-}
-
 .fluent-rich-string tr > td > span {
   box-sizing: border-box;
   line-height: 28px;

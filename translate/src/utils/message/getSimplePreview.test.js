@@ -1,5 +1,5 @@
 import { getSimplePreview } from './getSimplePreview';
-import { parseEntry } from './parser';
+import { parseEntry } from './parseEntry';
 import { serializeEntry } from './serializer';
 
 describe('getSimplePreview', () => {

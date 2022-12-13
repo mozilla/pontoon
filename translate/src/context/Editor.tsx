@@ -1,4 +1,4 @@
-import type { Entry } from '@fluent/syntax';
+import type { Message, Pattern } from 'messageformat';
 import React, {
   createContext,
   useCallback,
@@ -10,15 +10,17 @@ import React, {
 
 import type { SourceType } from '~/api/machinery';
 import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
+import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
-  getEmptyMessage,
+  getEmptyMessageEntry,
   getReconstructedMessage,
   getSimplePreview,
   getSyntaxType,
+  MessageEntry,
   parseEntry,
   serializeEntry,
 } from '~/utils/message';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { pojoCopy } from '~/utils/pojo';
 
 import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
@@ -48,7 +50,7 @@ export type EditorData = Readonly<{
    * the `string` currently displayed in the editor. For `view: 'rich'`,
    * the Fluent `Entry` value that is displayed in multiple text inputs.
    */
-  value: string | Entry;
+  value: string | MessageEntry;
 
   view: 'simple' | 'rich' | 'source';
 }>;
@@ -60,7 +62,7 @@ export type EditorActions = {
   setEditorFromHistory(value: string): void;
 
   /** For `view: 'rich'`, if `value` is a string, sets the value of the active input */
-  setEditorFromInput(value: string | Entry): void;
+  setEditorFromInput(value: string | MessageEntry): void;
 
   /** @param manual Set `true` when value set due to direct user action */
   setEditorFromHelpers(
@@ -118,7 +120,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHelpers: (translation, sources, manual) =>
         setState((prev) => {
-          let value: string | Entry;
+          let value: string | MessageEntry;
           switch (prev.view) {
             case 'simple':
               value = translation;
@@ -214,13 +216,16 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     let initial = activeTranslation?.string || '';
 
     let format: 'ftl' | 'simple';
-    let value: string | Entry;
+    let value: string | MessageEntry;
     let view: 'simple' | 'rich' | 'source';
     if (entity.format === 'ftl') {
       format = 'ftl';
       if (!initial) {
         const entry = parseEntry(entity.original);
-        initial = serializeEntry(getEmptyMessage(entry, locale));
+        if (entry) {
+          const empty = getEmptyMessageEntry(entry, locale);
+          initial = serializeEntry(empty);
+        }
       } else if (!initial.endsWith('\n')) {
         // Some Fluent translations may be stored without a terminal newline.
         // If the data is cleaned up, this conditional may be removed.
@@ -312,12 +317,17 @@ export function useClearEditor() {
     if (view === 'simple') {
       setEditorFromInput('');
     } else {
-      const empty = getEmptyMessage(parseEntry(initial), locale);
-      if (typeof value === 'string') {
-        const str = serializeEntry(empty);
-        setEditorFromInput(str);
+      const entry = parseEntry(initial);
+      if (!entry) {
+        setEditorFromInput('');
       } else {
-        setEditorFromInput(empty);
+        const empty = getEmptyMessageEntry(entry, locale);
+        if (typeof value === 'string') {
+          const str = serializeEntry(empty);
+          setEditorFromInput(str);
+        } else {
+          setEditorFromInput(empty);
+        }
       }
     }
   }, [locale, initial, typeof value, view]);
@@ -332,10 +342,14 @@ export function getEditedTranslation(data: EditorData): string {
   }
 }
 
-/** Will return a `Junk` entry for non-Fluent message data */
-export function getFluentEntry({ initial, value, view }: EditorData): Entry {
+/** Will return `null` for non-Fluent message data */
+export function getFluentEntry({
+  initial,
+  value,
+  view,
+}: EditorData): MessageEntry | null {
   if (typeof value !== 'string') {
-    return value.clone();
+    return pojoCopy(value);
   } else if (view === 'simple') {
     return getReconstructedMessage(initial, value);
   } else {
@@ -347,14 +361,15 @@ function getFtlViewAndValue(
   source: string,
 ): Pick<EditorData, 'value' | 'view'> {
   const entry = parseEntry(source);
-  switch (getSyntaxType(entry)) {
-    case 'simple':
-      return { value: getSimplePreview(entry), view: 'simple' };
-    case 'rich':
-      return { value: entry, view: 'rich' };
-    default:
-      return { value: source, view: 'source' };
+  if (entry) {
+    switch (getSyntaxType(entry)) {
+      case 'simple':
+        return { value: getSimplePreview(entry), view: 'simple' };
+      case 'rich':
+        return { value: entry, view: 'rich' };
+    }
   }
+  return { value: source, view: 'source' };
 }
 
 function updateRichValue(
@@ -362,35 +377,53 @@ function updateRichValue(
   content: string,
   selectionOnly: boolean,
   fixFocus: boolean,
-): Entry | null {
-  if (
-    typeof value !== 'string' &&
-    (value.type === 'Message' || value.type === 'Term') &&
-    activeInput.current?.id
-  ) {
+): MessageEntry | null {
+  if (typeof value !== 'string' && activeInput.current?.id) {
     const input = activeInput.current;
-    const next = value.clone();
+    const next = pojoCopy(value);
 
-    const path = input.id.split('-');
-    const last = path.pop();
-    let node: any = next;
-    for (const part of path) {
-      if (node) {
-        node = node[part];
+    const [kind, ...path] = input.id.split('|');
+    let msg: Message | null | undefined;
+    let pattern: Pattern | undefined;
+    if (kind === 'value') {
+      msg = next.value;
+    } else if (kind === 'attributes') {
+      const name = path.shift();
+      if (name) {
+        msg = next.attributes?.get(name);
       }
     }
-    if (!last || !node || typeof node[last] !== 'string') {
-      throw new Error(`Invalid rich editor path: ${path}`);
+    switch (msg?.type) {
+      case 'message':
+        pattern = msg.pattern;
+        break;
+      case 'select': {
+        const index = Number(path.shift());
+        pattern = msg.variants[index]?.value;
+        break;
+      }
+    }
+    if (!pattern || path.length > 0) {
+      throw new Error(
+        `Invalid rich editor path ${input.id} for entry ${next.id}`,
+      );
     }
 
     let start: number;
+    let res: string;
     if (selectionOnly) {
       start = input.selectionStart;
       input.setRangeText(content);
-      node[last] = input.value;
+      res = input.value;
     } else {
       start = 0;
-      node[last] = content;
+      res = content;
+    }
+    const te = pattern.body[0];
+    if (pattern.body.length === 1 && te.type === 'text') {
+      te.value = res;
+    } else {
+      pattern.body = [{ type: 'text', value: res }];
     }
 
     // Need to let react-dom "fix" the select position before setting it right

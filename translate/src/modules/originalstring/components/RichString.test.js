@@ -1,6 +1,6 @@
 import ftl from '@fluent/dedent';
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 
 import { parseEntry } from '~/utils/message';
@@ -14,8 +14,8 @@ const ORIGINAL = ftl`
 
 describe('<RichString>', () => {
   it('renders value and each attribute correctly', () => {
-    const message = parseEntry(ORIGINAL);
-    const wrapper = shallow(<RichString message={message} terms={{}} />);
+    const entry = parseEntry(ORIGINAL);
+    const wrapper = mount(<RichString entry={entry} terms={{}} />);
 
     expect(wrapper.find('span')).toHaveLength(3);
 
@@ -38,8 +38,8 @@ describe('<RichString>', () => {
           }
       `;
 
-    const message = parseEntry(input);
-    const wrapper = shallow(<RichString message={message} terms={{}} />);
+    const entry = parseEntry(input);
+    const wrapper = mount(<RichString entry={entry} terms={{}} />);
 
     expect(wrapper.find('span')).toHaveLength(2);
 
@@ -65,41 +65,30 @@ describe('<RichString>', () => {
               }
       `;
 
-    const message = parseEntry(input);
-    const wrapper = shallow(<RichString message={message} terms={{}} />);
+    const entry = parseEntry(input);
+    const wrapper = mount(<RichString entry={entry} terms={{}} />);
 
+    expect(wrapper.find('label')).toHaveLength(4);
     expect(wrapper.find('td > span')).toHaveLength(4);
 
-    expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
-      'label',
-    );
-    expect(wrapper.find('label').at(0).html()).toContain('macosx');
+    expect(wrapper.find('label').at(0).html()).toMatch(/label.*macosx/);
     expect(wrapper.find('td > span').at(0).html()).toContain('Preferences');
 
-    expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
-      'label',
-    );
-    expect(wrapper.find('label').at(1).html()).toContain('other');
+    expect(wrapper.find('label').at(1).html()).toMatch(/label.*other/);
     expect(wrapper.find('td > span').at(1).html()).toContain('Options');
 
-    expect(wrapper.find('label .attribute-label').at(2).html()).toContain(
-      'accesskey',
-    );
-    expect(wrapper.find('label').at(2).html()).toContain('macosx');
+    expect(wrapper.find('label').at(2).html()).toMatch(/accesskey.*macosx/);
     expect(wrapper.find('td > span').at(2).html()).toContain('e');
 
-    expect(wrapper.find('label .attribute-label').at(3).html()).toContain(
-      'accesskey',
-    );
-    expect(wrapper.find('label').at(3).html()).toContain('other');
+    expect(wrapper.find('label').at(3).html()).toMatch(/accesskey.*other/);
     expect(wrapper.find('td > span').at(3).html()).toContain('s');
   });
 
   it('calls the onClick function on click on .original', () => {
-    const message = parseEntry(ORIGINAL);
+    const entry = parseEntry(ORIGINAL);
     const spy = sinon.spy();
-    const wrapper = shallow(
-      <RichString message={message} onClick={spy} terms={{}} />,
+    const wrapper = mount(
+      <RichString entry={entry} onClick={spy} terms={{}} />,
     );
 
     wrapper.find('.original').simulate('click');

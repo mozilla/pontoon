@@ -35,6 +35,8 @@ const RICH_MESSAGE_STRING = ftl`
     .reason = Because
   `;
 
+const BROKEN_STRING = `my-message = Why so {} serious?\n`;
+
 const ENTITIES = [
   {
     pk: 1,
@@ -57,8 +59,8 @@ const ENTITIES = [
   {
     pk: 3,
     format: 'ftl',
-    original: NESTED_SELECTORS_STRING,
-    translation: [{ string: NESTED_SELECTORS_STRING }],
+    original: RICH_MESSAGE_STRING,
+    translation: [],
   },
   {
     pk: 4,
@@ -69,8 +71,14 @@ const ENTITIES = [
   {
     pk: 5,
     format: 'ftl',
-    original: RICH_MESSAGE_STRING,
-    translation: [],
+    original: NESTED_SELECTORS_STRING,
+    translation: [{ string: NESTED_SELECTORS_STRING }],
+  },
+  {
+    pk: 6,
+    format: 'ftl',
+    original: BROKEN_STRING,
+    translation: [{ string: BROKEN_STRING }],
   },
 ];
 
@@ -132,17 +140,23 @@ describe('<Editor>', () => {
   });
 
   it('renders the rich form when passing a supported rich message', () => {
-    const [wrapper] = mountEditor(5);
+    const [wrapper] = mountEditor(3);
 
     expect(wrapper.find('RichTranslationForm textarea')).toHaveLength(2);
   });
 
-  it('renders the source form when passing a complex string', () => {
-    const [wrapper] = mountEditor(3);
+  it('renders the rich form when passing a message with nested selector', () => {
+    const [wrapper] = mountEditor(5);
+
+    expect(wrapper.find('RichTranslationForm textarea')).toHaveLength(4);
+  });
+
+  it('renders the source form when passing a broken string', () => {
+    const [wrapper] = mountEditor(6);
 
     const input = wrapper.find('GenericTranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe(NESTED_SELECTORS_STRING);
+    expect(input.prop('value')).toBe(BROKEN_STRING);
   });
 
   it('converts translation when switching source mode', () => {

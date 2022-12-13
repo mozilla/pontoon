@@ -150,7 +150,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--plural-example')
         .at(0)
         .prop('vars'),
-    ).toEqual({ plural: 'one', example: 1 });
+    ).toEqual({ plural: 'one', example: '1' });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
@@ -159,7 +159,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--plural-example')
         .at(1)
         .prop('vars'),
-    ).toEqual({ plural: 'other', example: 2 });
+    ).toEqual({ plural: 'other', example: '2' });
   });
 
   it('renders access keys properly', () => {

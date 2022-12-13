@@ -4,6 +4,7 @@ import { EditorData, getFluentEntry } from '~/context/Editor';
 import { useActiveTranslation } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
 import { parseEntry } from '~/utils/message';
+import { pojoEquals } from '~/utils/pojo';
 
 /**
  * Return a Translation identical to the one currently in the Editor.
@@ -23,7 +24,7 @@ export function useExistingTranslation() {
     // If translation is a string, from the generic editor.
     (value === initial ||
       // If translation is a FluentMessage, from the fluent editor.
-      (typeof value !== 'string' && value.equals(parseEntry(initial))))
+      (typeof value !== 'string' && pojoEquals(value, parseEntry(initial))))
   ) {
     return activeTranslation;
   }
@@ -35,7 +36,7 @@ export function useExistingTranslation() {
   let test: (value: typeof translations[number]) => boolean;
   if (format === 'ftl') {
     const entry = getFluentEntry(editor);
-    test = (t) => entry.equals(parseEntry(t.string));
+    test = (t) => pojoEquals(entry, parseEntry(t.string));
   } else {
     test = (t) => t.string === value;
   }

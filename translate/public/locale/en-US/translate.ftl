@@ -279,6 +279,8 @@ entitydetails-Metadata--placeholder =
 entitydetails-Metadata--resource =
     .title = RESOURCE
 
+entitydetails-Metadata--attribute =
+    .title = FLUENT ATTRIBUTE
 
 ## Entity Details ContextIssueButton
 ## Shows the request context or report issue button

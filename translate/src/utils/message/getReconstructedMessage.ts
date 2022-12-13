@@ -1,6 +1,6 @@
-import type { Entry } from '@fluent/syntax';
+import type { MessageEntry } from '.';
 
-import { parseEntry } from './parser';
+import { parseEntry } from './parseEntry';
 
 /**
  * Return a reconstructed Fluent message from the original message and some
@@ -9,26 +9,18 @@ import { parseEntry } from './parser';
 export function getReconstructedMessage(
   original: string,
   translation: string,
-): Entry {
+): MessageEntry {
   const message = parseEntry(original);
-  if (message.type !== 'Message' && message.type !== 'Term') {
-    throw new Error(
-      `Unexpected type '${message.type}' in getReconstructedMessage`,
-    );
+  if (!message) {
+    throw new Error(`Error parsing '${original}' in getReconstructedMessage`);
   }
-  let key = message.id.name;
-
-  // For Terms, the leading dash is removed in the identifier. We need to add
-  // it back manually.
-  if (message.type === 'Term') {
-    key = '-' + key;
-  }
+  let key = message.id;
 
   let content = `${key} =`;
   let indent = ' '.repeat(4);
 
-  if (message.attributes && message.attributes.length === 1) {
-    const attribute = message.attributes[0].id.name;
+  if (message.attributes?.size === 1) {
+    const [attribute] = message.attributes.keys();
     content += `\n${indent}.${attribute} =`;
     indent = indent + indent;
   }
@@ -41,5 +33,9 @@ export function getReconstructedMessage(
     content += ' { "" }';
   }
 
-  return parseEntry(content);
+  const res = parseEntry(content);
+  if (!res) {
+    throw new Error(`Error parsing '${content}' in getReconstructedMessage`);
+  }
+  return res;
 }

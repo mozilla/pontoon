@@ -99,15 +99,17 @@ function InnerOriginalString({
   const isFluent = format === 'ftl';
 
   if (isFluent) {
-    const message = parseEntry(original);
-    const syntax = getSyntaxType(message);
-    switch (syntax) {
-      case 'rich':
-        return <RichString message={message} onClick={onClick} terms={terms} />;
+    const entry = parseEntry(original);
+    const syntax = getSyntaxType(entry);
+    if (entry) {
+      switch (syntax) {
+        case 'rich':
+          return <RichString entry={entry} onClick={onClick} terms={terms} />;
 
-      case 'simple':
-        original = getPlainMessage(message, format);
-        break;
+        case 'simple':
+          original = getPlainMessage(entry, format);
+          break;
+      }
     }
   } else if (hasPluralForms) {
     return <PluralString onClick={onClick} terms={terms} />;

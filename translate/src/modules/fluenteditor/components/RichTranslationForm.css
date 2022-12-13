@@ -28,10 +28,6 @@
   padding: 0 4px;
 }
 
-.fluent-rich-translation-form table tr.indented > td > label {
-  margin-left: 10px;
-}
-
 .fluent-rich-translation-form table tr > td > label .divider {
   color: #7bc876;
   padding: 0 3px;
