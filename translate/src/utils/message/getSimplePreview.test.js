@@ -1,4 +1,6 @@
 import { getSimplePreview } from './getSimplePreview';
+import { parseEntry } from './parser';
+import { serializeEntry } from './serializer';
 
 describe('getSimplePreview', () => {
   it('works for an empty string', () => {
@@ -36,8 +38,9 @@ describe('getSimplePreview', () => {
   });
 
   it('returns an empty string for an empty literal value', () => {
-    const message = 'empty = { "" }';
-    const res = getSimplePreview(message);
+    const entry = parseEntry('empty = { "" }\n')
+    serializeEntry(entry)
+    const res = getSimplePreview(entry);
     expect(res).toEqual('');
   });
 

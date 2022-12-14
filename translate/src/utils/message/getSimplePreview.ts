@@ -19,6 +19,7 @@ function serialize({ elements }: Pattern): string {
         } else {
           const expression = serializeExpression(elt.expression);
           // Empty string literals are best represented by their absence.
+          // These may leak in from serializeEntry().
           if (expression !== '""') {
             result += `{ ${expression} }`;
           }
