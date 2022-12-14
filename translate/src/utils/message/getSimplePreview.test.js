@@ -38,8 +38,8 @@ describe('getSimplePreview', () => {
   });
 
   it('returns an empty string for an empty literal value', () => {
-    const entry = parseEntry('empty = { "" }\n')
-    serializeEntry(entry)
+    const entry = parseEntry('empty = { "" }\n');
+    serializeEntry(entry);
     const res = getSimplePreview(entry);
     expect(res).toEqual('');
   });
