@@ -1,4 +1,6 @@
 import { getSimplePreview } from './getSimplePreview';
+import { parseEntry } from './parser';
+import { serializeEntry } from './serializer';
 
 describe('getSimplePreview', () => {
   it('works for an empty string', () => {
@@ -33,6 +35,13 @@ describe('getSimplePreview', () => {
     const message = '-team-name = Avengers';
     const res = getSimplePreview(message);
     expect(res).toEqual('Avengers');
+  });
+
+  it('returns an empty string for an empty literal value', () => {
+    const entry = parseEntry('empty = { "" }\n');
+    serializeEntry(entry);
+    const res = getSimplePreview(entry);
+    expect(res).toEqual('');
   });
 
   it('returns the attribute when there are no values and an attribute', () => {
