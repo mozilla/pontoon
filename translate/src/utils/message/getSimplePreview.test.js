@@ -35,6 +35,12 @@ describe('getSimplePreview', () => {
     expect(res).toEqual('Avengers');
   });
 
+  it('returns an empty string for an empty literal value', () => {
+    const message = 'empty = { "" }';
+    const res = getSimplePreview(message);
+    expect(res).toEqual('');
+  });
+
   it('returns the attribute when there are no values and an attribute', () => {
     const message = `hawkeye =
             .real-name = Clint Barton
