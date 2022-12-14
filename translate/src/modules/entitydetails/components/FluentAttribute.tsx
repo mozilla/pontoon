@@ -2,7 +2,7 @@ import React from 'react';
 import { Localized } from '@fluent/react';
 
 import type { Entity } from '~/api/entity';
-import { isSimpleSingleAttributeMessage, parseEntry } from '~/utils/fluent';
+import { isSimpleSingleAttributeMessage, parseEntry } from '~/utils/message';
 
 import { Property } from './Property';
 
@@ -13,24 +13,20 @@ type Props = {
 /**
  * Get attribute of a simple single-attribute Fluent message.
  */
-export function FluentAttribute(props: Props): null | React.ReactElement<any> {
-  const { entity } = props;
-
-  if (entity.format !== 'ftl') {
+export function FluentAttribute({
+  entity: { format, original },
+}: Props): null | React.ReactElement<any> {
+  if (format !== 'ftl') {
     return null;
   }
 
-  const message = parseEntry(entity.original);
+  const message = parseEntry(original);
 
-  if (message.type !== 'Message' || !isSimpleSingleAttributeMessage(message)) {
-    return null;
-  }
-
-  return (
+  return isSimpleSingleAttributeMessage(message) ? (
     <Localized id='entitydetails-Metadata--attribute' attrs={{ title: true }}>
       <Property title='Attribute' className='attribute'>
         {message.attributes[0].id.name}
       </Property>
     </Localized>
-  );
+  ) : null;
 }

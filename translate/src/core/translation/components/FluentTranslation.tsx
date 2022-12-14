@@ -5,7 +5,7 @@ import {
   WithPlaceablesForFluent,
   WithPlaceablesForFluentNoLeadingSpace,
 } from '~/core/placeable';
-import { getSimplePreview } from '~/utils/fluent';
+import { getSimplePreview } from '~/utils/message';
 import { SearchTerms } from '~/modules/search';
 
 import type { TranslationProps } from './GenericTranslation';

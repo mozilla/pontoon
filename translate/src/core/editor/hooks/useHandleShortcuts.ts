@@ -1,14 +1,15 @@
 import { useContext } from 'react';
-import { EditorActions, useClearEditor } from '~/context/Editor';
-import { FailedChecksData } from '~/context/FailedChecksData';
 
+import { EditorActions, useClearEditor } from '~/context/Editor';
+import { EntityView } from '~/context/EntityView';
+import { FailedChecksData } from '~/context/FailedChecksData';
 import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
-import { getSimplePreview } from '~/utils/fluent';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { getPlainMessage } from '~/utils/message';
 
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
 import { useExistingTranslation } from './useExistingTranslation';
@@ -26,6 +27,7 @@ export function useHandleShortcuts(): (
   const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
 
+  const { entity } = useContext(EntityView);
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
@@ -138,7 +140,11 @@ export function useHandleShortcuts(): (
             setEditorFromHelpers(translation, sources, true);
           } else {
             const { translation } = otherLocaleTranslations[nextIdx];
-            setEditorFromHelpers(getSimplePreview(translation), [], true);
+            setEditorFromHelpers(
+              getPlainMessage(translation, entity.format),
+              [],
+              true,
+            );
           }
         }
         break;

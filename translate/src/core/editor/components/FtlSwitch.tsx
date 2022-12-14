@@ -6,7 +6,7 @@ import { EditorActions, EditorData } from '~/context/Editor';
 import { ShowNotification } from '~/context/Notification';
 import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/core/notification/messages';
 import { USER } from '~/core/user';
-import { getSyntaxType, parseEntry } from '~/utils/fluent';
+import { getSyntaxType, parseEntry } from '~/utils/message';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 

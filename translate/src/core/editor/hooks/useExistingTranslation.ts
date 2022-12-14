@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { EditorData, getFluentEntry } from '~/context/Editor';
 import { useActiveTranslation } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { parseEntry } from '~/utils/fluent/parser';
+import { parseEntry } from '~/utils/message';
 
 /**
  * Return a Translation identical to the one currently in the Editor.

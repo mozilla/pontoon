@@ -10,14 +10,12 @@ import { CLDR_PLURALS } from '../constants';
 export function isPluralExpression(
   expression: Readonly<SelectExpression>,
 ): boolean {
-  if (!expression || expression.type !== 'SelectExpression') {
-    return false;
-  }
-
-  return expression.variants.every((variant) => {
-    return (
-      variant.key.type === 'NumberLiteral' ||
-      (variant.key.name && CLDR_PLURALS.indexOf(variant.key.name) !== -1)
-    );
-  });
+  return (
+    expression?.type === 'SelectExpression' &&
+    expression.variants.every(
+      ({ key }) =>
+        key.type === 'NumberLiteral' ||
+        (key.name && CLDR_PLURALS.includes(key.name)),
+    )
+  );
 }
