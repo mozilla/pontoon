@@ -132,6 +132,25 @@ def test_empty_translations(get_entity_mock):
         "pErrors": ["Empty translations are not allowed"]
     }
 
+    assert run_checks(
+        get_entity_mock("ftl", string="key = value"), "", 'key = { "" }'
+    ) == {"pndbWarnings": ["Empty translation"]}
+
+    assert (
+        run_checks(
+            get_entity_mock("ftl", string="key =\n  .attr = value"),
+            "",
+            """key =
+              { $var ->
+                  [a] { "" }
+                 *[b] { "" }
+              }
+              .attr = { "" }
+            """,
+        )
+        == {"pndbWarnings": ["Empty translation"]}
+    )
+
 
 def test_lang_newlines(get_entity_mock):
     """Newlines aren't allowed in lang files"""
