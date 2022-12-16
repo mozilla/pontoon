@@ -1,12 +1,12 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { MockLocalizationProvider } from '~/test/utils';
-import { Marked } from './Marked';
+import { Highlight } from './Highlight';
 
 const mountMarker = (content, terms = []) =>
   mount(
     <MockLocalizationProvider>
-      <Marked terms={terms}>{content}</Marked>
+      <Highlight terms={terms}>{content}</Highlight>
     </MockLocalizationProvider>,
   );
 

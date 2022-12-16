@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { TranslationDiff } from '~/core/diff';
-import { Marked } from '~/core/placeable/components/Marked';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import { getSimplePreview } from '~/utils/message';
 import { SearchTerms } from '~/modules/search';
 
@@ -17,23 +17,23 @@ export function FluentTranslation({
   if (diffTarget) {
     const fluentTarget = getSimplePreview(diffTarget);
     return (
-      <Marked fluent>
+      <Highlight fluent>
         <TranslationDiff base={fluentTarget} target={preview} />
-      </Marked>
+      </Highlight>
     );
   }
 
   if (search) {
     return (
-      <Marked fluent>
+      <Highlight fluent>
         <SearchTerms search={search}>{preview}</SearchTerms>
-      </Marked>
+      </Highlight>
     );
   }
 
   return (
-    <Marked fluent leadingSpaces>
+    <Highlight fluent leadingSpaces>
       {preview}
-    </Marked>
+    </Highlight>
   );
 }

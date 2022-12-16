@@ -3,7 +3,7 @@ import { Localized } from '@fluent/react';
 
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import { Marked } from '~/core/placeable/components/Marked';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import type { TermState } from '~/core/term';
 
 type Props = {
@@ -43,7 +43,7 @@ export function PluralString({ onClick, terms }: Props): React.ReactElement {
     <>
       {title}
       <p className='original' onClick={onClick}>
-        <Marked terms={terms}>{original}</Marked>
+        <Highlight terms={terms}>{original}</Highlight>
       </p>
     </>
   );

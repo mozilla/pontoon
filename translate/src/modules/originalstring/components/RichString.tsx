@@ -7,7 +7,7 @@ import {
 } from '@fluent/syntax';
 import React from 'react';
 
-import { Marked } from '~/core/placeable/components/Marked';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import type { TermState } from '~/core/term';
 
 import './RichString.css';
@@ -35,9 +35,9 @@ function renderItem(
       </td>
       <td>
         <span>
-          <Marked fluent terms={terms}>
+          <Highlight fluent terms={terms}>
             {value}
-          </Marked>
+          </Highlight>
         </span>
       </td>
     </tr>

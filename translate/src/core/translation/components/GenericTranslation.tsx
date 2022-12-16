@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { TranslationDiff } from '~/core/diff';
-import { Marked } from '~/core/placeable/components/Marked';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import { SearchTerms } from '~/modules/search';
 
 export type TranslationProps = {
@@ -17,19 +17,19 @@ export function GenericTranslation({
 }: TranslationProps): React.ReactElement<React.ElementType> {
   if (diffTarget) {
     return (
-      <Marked>
+      <Highlight>
         <TranslationDiff base={diffTarget} target={content} />
-      </Marked>
+      </Highlight>
     );
   }
 
   if (search) {
     return (
-      <Marked>
+      <Highlight>
         <SearchTerms search={search}>{content}</SearchTerms>
-      </Marked>
+      </Highlight>
     );
   }
 
-  return <Marked leadingSpaces>{content}</Marked>;
+  return <Highlight leadingSpaces>{content}</Highlight>;
 }

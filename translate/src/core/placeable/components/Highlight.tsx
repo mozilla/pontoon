@@ -4,7 +4,7 @@ import { cloneElement, ReactNode } from 'react';
 import createMarker, { getRules, Parser } from 'react-content-marker';
 import { TermState } from '~/core/term';
 
-import './Marked.css';
+import './Highlight.css';
 
 let keyCounter = 0;
 const MarkerCache = new Map<string, ReturnType<typeof createMarker>>();
@@ -12,7 +12,7 @@ const MarkerCache = new Map<string, ReturnType<typeof createMarker>>();
 /**
  * Component that marks placeables in a string.
  */
-export function Marked({
+export function Highlight({
   children,
   fluent = false,
   leadingSpaces = false,

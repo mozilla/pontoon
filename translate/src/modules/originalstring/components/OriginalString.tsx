@@ -9,7 +9,7 @@ import { TermType } from '~/api/terminology';
 import { EditorActions } from '~/context/Editor';
 
 import { EntityView } from '~/context/EntityView';
-import { Marked } from '~/core/placeable/components/Marked';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import type { TermState } from '~/core/term';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage, getSyntaxType, parseEntry } from '~/utils/message';
@@ -115,9 +115,9 @@ function InnerOriginalString({
 
   return (
     <p className='original' onClick={onClick}>
-      <Marked fluent={isFluent} terms={terms}>
+      <Highlight fluent={isFluent} terms={terms}>
         {original}
-      </Marked>
+      </Highlight>
     </p>
   );
 }
