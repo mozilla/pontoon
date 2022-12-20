@@ -10,7 +10,7 @@ let keyCounter = 0;
 const MarkerCache = new Map<string, ReturnType<typeof createMarker>>();
 
 /**
- * Component that marks placeables in a string.
+ * Component that marks placeables and terms in a string.
  */
 export function Highlight({
   children,
