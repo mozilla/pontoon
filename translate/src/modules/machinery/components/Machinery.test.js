@@ -60,7 +60,7 @@ describe('<Machinery>', () => {
       },
     );
 
-    expect(wrapper.find('Translation')).toHaveLength(5);
+    expect(wrapper.find('MachineryTranslationComponent')).toHaveLength(5);
   });
 
   it('renders a reset button if a search query is present', () => {

@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { TranslationDiff } from '~/core/diff';
-import { WithPlaceables, WithPlaceablesNoLeadingSpace } from '~/core/placeable';
+import { Highlight } from '~/core/placeable/components/Highlight';
 import { SearchTerms } from '~/modules/search';
 
 export type TranslationProps = {
-  content: string | null | undefined;
-  diffTarget?: string | null | undefined;
-  search?: string | null | undefined;
+  content: string;
+  diffTarget?: string;
+  search?: string | null;
 };
 
 export function GenericTranslation({
@@ -17,19 +17,19 @@ export function GenericTranslation({
 }: TranslationProps): React.ReactElement<React.ElementType> {
   if (diffTarget) {
     return (
-      <WithPlaceablesNoLeadingSpace>
-        <TranslationDiff base={diffTarget} target={content ?? ''} />
-      </WithPlaceablesNoLeadingSpace>
+      <Highlight>
+        <TranslationDiff base={diffTarget} target={content} />
+      </Highlight>
     );
   }
 
   if (search) {
     return (
-      <WithPlaceablesNoLeadingSpace>
-        <SearchTerms search={search}>{content ?? ''}</SearchTerms>
-      </WithPlaceablesNoLeadingSpace>
+      <Highlight>
+        <SearchTerms search={search}>{content}</SearchTerms>
+      </Highlight>
     );
   }
 
-  return <WithPlaceables>{content}</WithPlaceables>;
+  return <Highlight leadingSpaces>{content}</Highlight>;
 }

@@ -53,9 +53,7 @@ function serialize({ elements }: Pattern): string {
  * @returns {string} A simplified version of the Fluent message, or the original
  * content if it isn't a valid Fluent message.
  */
-export function getSimplePreview(
-  content: string | Entry | null | undefined,
-): string {
+export function getSimplePreview(content: string | Entry): string {
   if (!content) {
     return '';
   }

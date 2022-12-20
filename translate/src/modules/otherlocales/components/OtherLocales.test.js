@@ -37,7 +37,7 @@ describe('<OtherLocales>', () => {
       />,
     );
 
-    expect(wrapper.find('Translation')).toHaveLength(3);
+    expect(wrapper.find('OtherLocaleTranslationComponent')).toHaveLength(3);
   });
 
   it('returns null while otherlocales are loading', () => {
