@@ -19,6 +19,22 @@ import './RichTranslationForm.css';
 
 type MessagePath = Array<string | number>;
 
+function RichLabel({ label, example }: { label: string; example?: number }) {
+  return typeof example === 'number' ? (
+    <Localized
+      id='fluenteditor-RichTranslationForm--plural-example'
+      vars={{ example, plural: label }}
+      elems={{ stress: <span className='stress' /> }}
+    >
+      <span className='example'>
+        {'{ $plural } (e.g. <stress>{ $example }</stress>)'}
+      </span>
+    </Localized>
+  ) : (
+    <span className='label'>{label}</span>
+  );
+}
+
 function RichItem({
   activeInput,
   attributeName,
@@ -68,24 +84,14 @@ function RichItem({
     <tr className={className}>
       <td>
         <label htmlFor={id}>
-          {typeof example === 'number' ? (
-            <Localized
-              id='fluenteditor-RichTranslationForm--plural-example'
-              vars={{ example, plural: label }}
-              elems={{ stress: <span className='stress' /> }}
-            >
-              <span className='example'>
-                {'{ $plural } (e.g. <stress>{ $example }</stress>)'}
-              </span>
-            </Localized>
-          ) : attributeName ? (
+          {attributeName ? (
             <span>
               <span className='attribute-label'>{attributeName}</span>
               <span className='divider'>&middot;</span>
-              <span className='label'>{label}</span>
+              <RichLabel label={label} example={example} />
             </span>
           ) : (
-            <span>{label}</span>
+            <RichLabel label={label} example={example} />
           )}
         </label>
       </td>
