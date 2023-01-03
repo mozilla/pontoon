@@ -235,6 +235,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       const next = getFtlViewAndValue(initial);
       value = next.value;
       view = next.view;
+      if (typeof value !== 'string') {
+        // Ensure that we use the same serialization for unsaved-changes comparisons,
+        // allowing for differences in e.g. whitespace style and variant order.
+        initial = serializeEntry(value);
+      }
     } else {
       format = 'simple';
       value = initial;

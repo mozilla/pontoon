@@ -101,7 +101,14 @@ describe('<EditorProvider>', () => {
       editor = useContext(EditorData);
       return null;
     };
-    const initial = 'key = { $var ->\n [one] ONE\n *[other] OTHER\n }\n';
+    const initial = ftl`
+      key =
+          { $var ->
+              [one] ONE
+             *[other] OTHER
+          }
+
+      `;
     mountSpy(Spy, 'ftl', initial);
 
     const value = parseEntry(initial);
@@ -175,10 +182,10 @@ describe('useClearEditor', () => {
     };
     const initial = ftl`
       key =
-        { $var ->
-           [one] ONE
-          *[other] OTHER
-        }
+          { $var ->
+              [one] ONE
+             *[other] OTHER
+          }
 
       `;
     const wrapper = mountSpy(Spy, 'ftl', initial);
