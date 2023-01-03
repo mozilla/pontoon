@@ -17,16 +17,18 @@ describe('<RichString>', () => {
     const entry = parseEntry(ORIGINAL);
     const wrapper = mount(<RichString entry={entry} terms={{}} />);
 
-    expect(wrapper.find('span')).toHaveLength(3);
+    expect(wrapper.find('Highlight')).toHaveLength(3);
 
     expect(wrapper.find('label').at(0).html()).toContain('Value');
-    expect(wrapper.find('span').at(0).html()).toContain('Hello');
+    expect(wrapper.find('Highlight').at(0).html()).toContain('Hello');
 
     expect(wrapper.find('label').at(1).html()).toContain('genre');
-    expect(wrapper.find('span').at(1).html()).toContain('Pop');
+    expect(wrapper.find('Highlight').at(1).html()).toContain('Pop');
 
     expect(wrapper.find('label').at(2).html()).toContain('album');
-    expect(wrapper.find('span').at(2).html()).toContain('Hello and Good Bye');
+    expect(wrapper.find('Highlight').at(2).html()).toContain(
+      'Hello and Good Bye',
+    );
   });
 
   it('renders select expression correctly', () => {
@@ -41,13 +43,13 @@ describe('<RichString>', () => {
     const entry = parseEntry(input);
     const wrapper = mount(<RichString entry={entry} terms={{}} />);
 
-    expect(wrapper.find('span')).toHaveLength(2);
+    expect(wrapper.find('Highlight')).toHaveLength(2);
 
     expect(wrapper.find('label').at(0).html()).toContain('variant-1');
-    expect(wrapper.find('span').at(0).html()).toContain('Hello!');
+    expect(wrapper.find('Highlight').at(0).html()).toContain('Hello!');
 
     expect(wrapper.find('label').at(1).html()).toContain('variant-2');
-    expect(wrapper.find('span').at(1).html()).toContain('Good Bye!');
+    expect(wrapper.find('Highlight').at(1).html()).toContain('Good Bye!');
   });
 
   it('renders select expression in attributes properly', () => {

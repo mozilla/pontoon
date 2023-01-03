@@ -107,28 +107,24 @@ describe('<RichTranslationForm>', () => {
 
     expect(wrapper.find('textarea')).toHaveLength(4);
 
-    expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
-      'label',
-    );
-    expect(wrapper.find('label .label').at(0).html()).toContain('macosx');
+    const l0 = wrapper.find('label').at(0);
+    expect(l0.find('span').at(0).html()).toContain('label');
+    expect(l0.find('span').at(1).html()).toContain('macosx');
     expect(wrapper.find('textarea').at(0).html()).toContain('Preferences');
 
-    expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
-      'label',
-    );
-    expect(wrapper.find('label').at(1).html()).toContain('other');
+    const l1 = wrapper.find('label').at(1);
+    expect(l1.find('span').at(0).html()).toContain('label');
+    expect(l1.find('span').at(1).html()).toContain('other');
     expect(wrapper.find('textarea').at(1).html()).toContain('Options');
 
-    expect(wrapper.find('label .attribute-label').at(2).html()).toContain(
-      'accesskey',
-    );
-    expect(wrapper.find('label').at(2).html()).toContain('macosx');
+    const l2 = wrapper.find('label').at(2);
+    expect(l2.find('span').at(0).html()).toContain('accesskey');
+    expect(l2.find('span').at(1).html()).toContain('macosx');
     expect(wrapper.find('textarea').at(2).html()).toContain('e');
 
-    expect(wrapper.find('label .attribute-label').at(3).html()).toContain(
-      'accesskey',
-    );
-    expect(wrapper.find('label').at(3).html()).toContain('other');
+    const l3 = wrapper.find('label').at(3);
+    expect(l3.find('span').at(0).html()).toContain('accesskey');
+    expect(l3.find('span').at(1).html()).toContain('other');
     expect(wrapper.find('textarea').at(3).html()).toContain('s');
   });
 
@@ -147,19 +143,19 @@ describe('<RichTranslationForm>', () => {
 
     expect(
       wrapper
-        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(0)
         .prop('vars'),
-    ).toEqual({ plural: 'one', example: '1' });
+    ).toEqual({ label: 'one', example: '1' });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
     expect(
       wrapper
-        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(1)
         .prop('vars'),
-    ).toEqual({ plural: 'other', example: '2' });
+    ).toEqual({ label: 'other', example: '2' });
   });
 
   it('renders plural string in attributes properly', () => {
@@ -176,29 +172,29 @@ describe('<RichTranslationForm>', () => {
 
     expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
 
-    expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
+    expect(wrapper.find('label').at(0).find('span').at(0).html()).toContain(
       'label',
     );
 
     expect(
       wrapper
-        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(0)
         .prop('vars'),
-    ).toEqual({ plural: 'one', example: '1' });
+    ).toEqual({ label: 'one', example: '1' });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
-    expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
+    expect(wrapper.find('label').at(1).find('span').at(0).html()).toContain(
       'label',
     );
 
     expect(
       wrapper
-        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(1)
         .prop('vars'),
-    ).toEqual({ plural: 'other', example: '2' });
+    ).toEqual({ label: 'other', example: '2' });
   });
 
   it('renders access keys properly', () => {

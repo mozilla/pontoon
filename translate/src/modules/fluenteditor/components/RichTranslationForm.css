@@ -9,15 +9,15 @@
   width: 100%;
 }
 
-.fluent-rich-translation-form table tr > td:first {
+.fluent-rich-translation-form td:first {
   width: calc(25% - 5px);
 }
 
-.fluent-rich-translation-form table tr > td:last-child {
+.fluent-rich-translation-form td:last-child {
   width: 75%;
 }
 
-.fluent-rich-translation-form table tr > td > label {
+.fluent-rich-translation-form label {
   background: transparent;
   border: 1px solid #5e6475;
   box-sizing: border-box;
@@ -28,12 +28,13 @@
   padding: 0 4px;
 }
 
-.fluent-rich-translation-form table tr > td > label .divider {
+.fluent-rich-translation-form label > :not(:last-child)::after {
+  content: '·';
   color: #7bc876;
   padding: 0 3px;
 }
 
-.fluent-rich-translation-form table tr > td > label .stress {
+.fluent-rich-translation-form label .stress {
   color: #7bc876;
 }
 
@@ -52,13 +53,13 @@
   width: 24px;
 }
 
-.fluent-rich-translation-form table tr > td > .accesskeys {
+.fluent-rich-translation-form .accesskeys {
   float: right;
   margin: 2px 0;
   width: calc(100% - 27px);
 }
 
-.fluent-rich-translation-form table tr > td > .accesskeys .key {
+.fluent-rich-translation-form .accesskeys .key {
   border: 1px solid #5e6475;
   background: #4d5967;
   color: #ebebeb;
@@ -72,7 +73,7 @@
   width: 24px;
 }
 
-.fluent-rich-translation-form table tr > td > .accesskeys .key.active,
-.fluent-rich-translation-form table tr > td > .accesskeys .key:hover {
+.fluent-rich-translation-form .accesskeys .key.active,
+.fluent-rich-translation-form .accesskeys .key:hover {
   border-color: #7bc876;
 }

@@ -19,40 +19,50 @@ import { CLDR_PLURALS } from '~/utils/constants';
 
 import './RichTranslationForm.css';
 
+type LabelData = Array<{ label: string; example?: string }>;
 type MessagePath = Array<string | number>;
 
-function RichLabel({ label, example }: { label: string; example?: string }) {
-  return example ? (
-    <Localized
-      id='fluenteditor-RichTranslationForm--plural-example'
-      vars={{ example, plural: label }}
-      elems={{ stress: <span className='stress' /> }}
-    >
-      <span className='example'>
-        {'{ $plural } (e.g. <stress>{ $example }</stress>)'}
-      </span>
-    </Localized>
-  ) : (
-    <span className='label'>{label}</span>
-  );
-}
+const RichLabel = ({
+  htmlFor,
+  labels,
+}: {
+  htmlFor: string;
+  labels: LabelData;
+}) => (
+  <label htmlFor={htmlFor}>
+    {labels.map(({ label, example }) =>
+      example ? (
+        <Localized
+          id='fluenteditor-RichTranslationForm--label-with-example'
+          key={label}
+          vars={{ example, label }}
+          elems={{ stress: <span className='stress' /> }}
+        >
+          <span>
+            {label} (e.g. <span className='stress'>{example}</span>)
+          </span>
+        </Localized>
+      ) : (
+        <span key={label}>{label}</span>
+      ),
+    )}
+  </label>
+);
 
 function RichPattern({
   activeInput,
   attributeName,
-  example,
-  path,
-  label,
   entry,
-  userInput,
+  labels,
+  path,
   pattern,
+  userInput,
 }: {
   activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
   attributeName?: string;
   entry: MessageEntry;
-  example?: string;
+  labels: LabelData;
   path: MessagePath;
-  label: string;
   pattern: Pattern;
   userInput: React.MutableRefObject<boolean>;
 }) {
@@ -70,9 +80,10 @@ function RichPattern({
 
   const id = path.join('|');
   const value = serializePattern(pattern);
-  const isAccessKey = label.endsWith('accesskey') && value.length < 2;
+  const isAccessKey = attributeName?.endsWith('accesskey') && value.length < 2;
   const candidates = isAccessKey
-    ? extractAccessKeyCandidates(entry, label)
+    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      extractAccessKeyCandidates(entry, attributeName!)
     : [];
 
   const handleAccessKeyClick = readonly
@@ -85,17 +96,7 @@ function RichPattern({
   return (
     <tr>
       <td>
-        <label htmlFor={id}>
-          {attributeName ? (
-            <span>
-              <span className='attribute-label'>{attributeName}</span>
-              <span className='divider'>&middot;</span>
-              <RichLabel label={label} example={example} />
-            </span>
-          ) : (
-            <RichLabel label={label} example={example} />
-          )}
-        </label>
+        <RichLabel htmlFor={id} labels={labels} />
       </td>
       <td>
         <textarea
@@ -153,13 +154,23 @@ function RichMessage({
       : undefined;
   };
 
+  let nameLabel: LabelData;
+  if (attributeName) {
+    nameLabel = [{ label: attributeName }];
+  } else if (entry.attributes?.size) {
+    nameLabel = [{ label: 'Value' }];
+  } else {
+    nameLabel = [];
+  }
+
   switch (message.type) {
     case 'message':
       return (
         <RichPattern
           activeInput={activeInput}
+          attributeName={attributeName}
           entry={entry}
-          label={attributeName || 'Value'}
+          labels={nameLabel}
           path={path}
           pattern={message.pattern}
           userInput={userInput}
@@ -169,27 +180,22 @@ function RichMessage({
     case 'select': {
       const plurals = findPluralSelectors(message);
       const items = message.variants.map(({ keys, value }, index) => {
-        const keyNames = keys.map((key) =>
-          'value' in key ? key.value : 'other',
+        const labels = nameLabel.concat(
+          keys.map((key, i) => {
+            const label = 'value' in key ? key.value : 'other';
+            const ex = plurals.includes(i) && getExample(label);
+            return typeof ex === 'number'
+              ? { label, example: String(ex) }
+              : { label };
+          }),
         );
-        const examples: number[] = [];
-        for (let i = 0; i < keyNames.length; ++i) {
-          if (plurals.includes(i)) {
-            const ex = getExample(keyNames[i]);
-            if (typeof ex === 'number') {
-              examples.push(ex);
-            }
-          }
-        }
-        const label = keyNames.join(' / ');
         return (
           <RichPattern
             activeInput={activeInput}
             attributeName={attributeName}
             entry={entry}
-            example={examples.join(' / ')}
-            key={label}
-            label={label}
+            key={labels.map((kl) => kl.label).join()}
+            labels={labels}
             path={path.concat(index)}
             pattern={value}
             userInput={userInput}

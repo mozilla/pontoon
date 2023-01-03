@@ -1,4 +1,4 @@
-import type { Message, Pattern, Variant } from 'messageformat';
+import type { Message, Pattern } from 'messageformat';
 import React from 'react';
 
 import { Highlight } from '~/core/placeable/components/Highlight';
@@ -8,29 +8,23 @@ import { MessageEntry, serializePattern } from '~/utils/message';
 import './RichString.css';
 
 function RichPattern({
-  label,
+  labels,
   pattern,
   terms,
-  variant,
 }: {
-  label?: string;
+  labels: string[];
   pattern: Pattern;
   terms: TermState;
-  variant?: string;
 }) {
   const value = serializePattern(pattern);
   return (
     <tr>
       <td>
-        {label && variant ? (
-          <label>
-            <span>{label}</span>
-            <span className='divider'>&middot;</span>
-            <span>{variant}</span>
-          </label>
-        ) : (
-          <label>{label || variant}</label>
-        )}
+        <label>
+          {labels.map((label) => (
+            <span key={label}>{label}</span>
+          ))}
+        </label>
       </td>
       <td>
         <span>
@@ -44,33 +38,32 @@ function RichPattern({
 }
 
 function RichMessage({
-  label,
+  labels,
   message,
   terms,
 }: {
-  label?: string;
+  labels: string[];
   message: Message | null;
   terms: TermState;
 }) {
   switch (message?.type) {
     case 'message':
       return (
-        <RichPattern label={label} pattern={message.pattern} terms={terms} />
+        <RichPattern labels={labels} pattern={message.pattern} terms={terms} />
       );
     case 'select':
       return (
         <>
           {message.variants.map(({ keys, value }) => {
-            const variant = keys
-              .map((key) => ('value' in key ? key.value : 'other'))
-              .join(' / ');
+            const variant = keys.map((key) =>
+              'value' in key ? key.value : 'other',
+            );
             return (
               <RichPattern
-                key={variant}
-                label={label}
+                key={variant.join()}
+                labels={labels.concat(variant)}
                 pattern={value}
                 terms={terms}
-                variant={variant}
               />
             );
           })}
@@ -95,7 +88,7 @@ export function RichString({
   const rows = [
     <RichMessage
       key='-'
-      label={attributes ? 'Value' : undefined}
+      labels={attributes ? ['Value'] : []}
       message={value}
       terms={terms}
     />,
@@ -103,7 +96,7 @@ export function RichString({
   if (attributes) {
     for (const [name, attr] of attributes) {
       rows.push(
-        <RichMessage key={name} label={name} message={attr} terms={terms} />,
+        <RichMessage key={name} labels={[name]} message={attr} terms={terms} />,
       );
     }
   }

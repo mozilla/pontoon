@@ -304,7 +304,7 @@ entitieslist-Entity--sibling-strings-title =
 ## Rich editor
 ## Renders a Rich editor for Fluent string editing
 
-fluenteditor-RichTranslationForm--plural-example = { $plural } (e.g. <stress>{ $example }</stress>)
+fluenteditor-RichTranslationForm--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)
 
 
 ## History
