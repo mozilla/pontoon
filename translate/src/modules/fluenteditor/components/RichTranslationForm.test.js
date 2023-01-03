@@ -162,6 +162,45 @@ describe('<RichTranslationForm>', () => {
     ).toEqual({ plural: 'other', example: '2' });
   });
 
+  it('renders plural string in attributes properly', () => {
+    const [wrapper] = mountForm(ftl`
+      my-entry =
+        .label =
+            { $num ->
+                [one] Hello!
+               *[other] World!
+            }
+      `);
+
+    expect(wrapper.find('textarea')).toHaveLength(2);
+
+    expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
+
+    expect(wrapper.find('label .attribute-label').at(0).html()).toContain(
+      'label',
+    );
+
+    expect(
+      wrapper
+        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .at(0)
+        .prop('vars'),
+    ).toEqual({ plural: 'one', example: '1' });
+
+    expect(wrapper.find('textarea').at(1).html()).toContain('World!');
+
+    expect(wrapper.find('label .attribute-label').at(1).html()).toContain(
+      'label',
+    );
+
+    expect(
+      wrapper
+        .find('#fluenteditor-RichTranslationForm--plural-example')
+        .at(1)
+        .prop('vars'),
+    ).toEqual({ plural: 'other', example: '2' });
+  });
+
   it('renders access keys properly', () => {
     const [wrapper] = mountForm(ftl`
       title = Title
