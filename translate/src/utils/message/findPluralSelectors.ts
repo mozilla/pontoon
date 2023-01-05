@@ -15,7 +15,7 @@ export function findPluralSelectors(message: Message): number[] {
         variants.every((v) => {
           const key = v.keys[i];
           return (
-            key.type === '*' ||
+            !('value' in key) ||
             CLDR_PLURALS.includes(key.value) ||
             /^[0-9]+$/.test(key.value)
           );
