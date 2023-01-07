@@ -20,4 +20,4 @@ export { getSimplePreview } from './getSimplePreview';
 export { getSyntaxType } from './getSyntaxType';
 export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';
-export { serializeEntry, serializePattern } from './serializer';
+export { serializeEntry, serializePattern } from './serialize';

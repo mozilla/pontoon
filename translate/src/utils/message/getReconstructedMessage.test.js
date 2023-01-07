@@ -1,6 +1,6 @@
 import { getReconstructedMessage } from './getReconstructedMessage';
 import { parseEntry } from './parseEntry';
-import { serializeEntry } from './serializer';
+import { serializeEntry } from './serialize';
 
 describe('getReconstructedMessage', () => {
   it('returns the correct value for a simple message', () => {

@@ -1,7 +1,7 @@
 import ftl from '@fluent/dedent';
 import { getEmptyMessageEntry } from './getEmptyMessage';
 import { parseEntry } from './parseEntry';
-import { serializeEntry } from './serializer';
+import { serializeEntry } from './serialize';
 
 const LOCALE = { code: 'sl' };
 
