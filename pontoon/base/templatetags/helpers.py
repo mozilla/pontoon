@@ -1,6 +1,7 @@
 import html
 import datetime
 import json
+import re
 
 import markupsafe
 from allauth.socialaccount import providers
@@ -264,6 +265,45 @@ def as_simple_translation(source):
         tree = translation_ast.attributes[0]
 
     return _serialize_value(tree.value)
+
+
+def is_single_input_ftl_string(source):
+    """Check if fluent string is single input"""
+    translation_ast = parser.parse_entry(source)
+
+    # Non-FTL string or string with an error
+    if isinstance(translation_ast, ast.Junk):
+        return True
+
+    if translation_ast.value:
+        return len(translation_ast.attributes) == 0
+
+    # Attributes (must be present in valid AST if value isn't):
+    # return true if attribute count is one
+    else:
+        return len(translation_ast.attributes) == 1
+
+
+def get_reconstructed_message(original, translation):
+    """Return a reconstructed Fluent message from the original message and some translated content."""
+    message = parser.parse_entry(original)
+
+    content = f"{message.id.name} ="
+    indent = " " * 4
+
+    if message.attributes and len(message.attributes) == 1:
+        attribute = message.attributes[0].id.name
+        content += f"\n{indent}.{attribute} ="
+        indent = indent + indent
+
+    if "\n" in translation:
+        content += "\n" + translation.replace("^", indent, flags=re.MULTILINE)
+    elif translation:
+        content += " " + translation
+    else:
+        content += ' { "" }'
+
+    return content
 
 
 @library.filter
