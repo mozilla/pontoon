@@ -1,80 +1,70 @@
-import type { Entry, PatternElement } from '@fluent/syntax';
-
-import { isSimpleElement } from './isSimpleElement';
-import { isSimpleSingleAttributeMessage } from './isSimpleSingleAttributeMessage';
+import type { Message, PatternElement } from 'messageformat';
+import type { MessageEntry } from '.';
 
 /**
- * Return the syntax type of a given Fluent message.
+ * Return the syntax type of a given MessageEntry.
  *
  * @returns One of:
  *   - `'simple'`: can be shown as a simple string using the generic editor
  *   - `'rich'`: can be shown in a rich editor
  *   - `'complex'`: can only be shown in a source editor
  */
-export function getSyntaxType(message: Entry): 'simple' | 'rich' | 'complex' {
-  if (!message || !isSupportedMessage(message)) {
+export function getSyntaxType(
+  entry: MessageEntry | null,
+): 'simple' | 'rich' | 'complex' {
+  if (!entry || !entry.id || messageContainsJunk(entry.value)) {
     return 'complex';
   }
 
-  if (isSimpleMessage(message) || isSimpleSingleAttributeMessage(message)) {
-    return 'simple';
+  if (entry.attributes) {
+    let hasSelect = false;
+    for (const attr of entry.attributes.values()) {
+      if (messageContainsJunk(attr)) {
+        return 'complex';
+      }
+      hasSelect ||= attr.type === 'select';
+    }
+    const count = entry.attributes.size + (entry.value ? 1 : 0);
+    if (hasSelect || count > 1) {
+      return 'rich';
+    }
   }
 
-  return 'rich';
+  return entry.value?.type === 'select' ? 'rich' : 'simple';
 }
 
-/**
- * Return true when message represents a message, supported in rich FTL editor.
- *
- * Message is supported if it's valid and all value elements
- * and all attribute elements are supported.
- */
-function isSupportedMessage({ attributes, type, value }: Entry): boolean {
-  if (
-    // Parse error
-    type === 'Junk' ||
-    // Comments
-    type === 'Comment' ||
-    type === 'GroupComment' ||
-    type === 'ResourceComment'
-  ) {
+function messageContainsJunk(message: Message | null): boolean {
+  if (!message) {
     return false;
   }
 
-  if (value && !areSupportedElements(value.elements)) {
-    return false;
+  if (message.type === 'junk') {
+    return true;
   }
 
-  return attributes.every(
-    ({ value }) => value && areSupportedElements(value.elements),
-  );
+  for (const { target, value } of message.declarations) {
+    if (partContainsJunk(target) || partContainsJunk(value)) {
+      return true;
+    }
+  }
+
+  if (message.type === 'message') {
+    return message.pattern.body.some(partContainsJunk);
+  } else {
+    return (
+      message.selectors.some(partContainsJunk) ||
+      message.variants.some(({ value }) => value.body.some(partContainsJunk))
+    );
+  }
 }
 
-/**
- * Return true when all elements are supported in rich FTL editor.
- *
- * Elements are supported if they are:
- * - simple elements or
- * - select expressions, whose variants are simple elements
- */
-const areSupportedElements = (elements: PatternElement[]) =>
-  elements.every(
-    (element) =>
-      isSimpleElement(element) ||
-      (element.type === 'Placeable' &&
-        element.expression.type === 'SelectExpression' &&
-        element.expression.variants.every((variant) =>
-          variant.value.elements.every((element) => isSimpleElement(element)),
-        )),
-  );
-
-/**
- * Return true when message represents a simple message.
- *
- * A simple message has no attributes and all value
- * elements are simple.
- */
-const isSimpleMessage = ({ attributes, type, value }: Entry) =>
-  (type === 'Message' || type === 'Term') &&
-  !attributes?.length &&
-  !!value?.elements.every(isSimpleElement);
+function partContainsJunk(part: PatternElement): boolean {
+  switch (part.type) {
+    case 'junk':
+      return true;
+    case 'placeholder':
+      return partContainsJunk(part.body);
+    default:
+      return false;
+  }
+}

@@ -1,6 +1,6 @@
 import { getReconstructedMessage } from './getReconstructedMessage';
-import { parseEntry } from './parser';
-import { serializeEntry } from './serializer';
+import { parseEntry } from './parseEntry';
+import { serializeEntry } from './serialize';
 
 describe('getReconstructedMessage', () => {
   it('returns the correct value for a simple message', () => {
@@ -52,9 +52,8 @@ describe('getReconstructedMessage', () => {
       'stark = Tony Stark\n    .hero = IronMan\n    .hair = black';
     const translation = 'Anthony Stark';
     const res = getReconstructedMessage(original, translation);
-
-    expect(res.value.elements[0].value).toEqual('Anthony Stark');
-    expect(res.attributes).toHaveLength(0);
+    const expected = parseEntry('stark = Anthony Stark');
+    expect(res).toEqual(expected);
   });
 
   it('does not duplicate terms in content', () => {
@@ -70,7 +69,6 @@ describe('getReconstructedMessage', () => {
     const translation = '';
     const res = getReconstructedMessage(original, translation);
 
-    expect(res.type).toBe('Message');
     expect(serializeEntry(res)).toEqual('key = { "" }\n');
   });
 });

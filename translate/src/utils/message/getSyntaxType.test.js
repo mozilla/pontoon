@@ -1,7 +1,14 @@
 import { getSyntaxType } from './getSyntaxType';
-import { parseEntry } from './parser';
+import { parseEntry } from './parseEntry';
 
 describe('getSyntaxType', () => {
+  it('returns "complex" for a string with no value', () => {
+    const input = 'my-entry =';
+    const message = parseEntry(input);
+
+    expect(getSyntaxType(message)).toEqual('complex');
+  });
+
   it('returns "simple" for a string with simple value', () => {
     const input = 'my-entry = Hello!';
     const message = parseEntry(input);
@@ -139,23 +146,23 @@ my-entry =
     expect(getSyntaxType(message)).toEqual('rich');
   });
 
-  it('returns "complex" for a string with nested select expressions', () => {
+  it('returns "rich" for a string with nested select expressions', () => {
     const input = `
 my-entry =
     { $gender ->
        *[masculine]
             { $num ->
-                [one] There is one email for her
-               *[other] There are many emails for her
+                [one] There is one email for him
+               *[other] There are many emails for him
             }
         [feminine]
             { $num ->
-                [one] There is one email for him
-               *[other] There are many emails for him
+                [one] There is one email for her
+               *[other] There are many emails for her
             }
     }`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('complex');
+    expect(getSyntaxType(message)).toEqual('rich');
   });
 });

@@ -1,4 +1,4 @@
-import { Entry } from '@fluent/syntax';
+import type { MessageEntry } from '.';
 import { getSimplePreview } from './getSimplePreview';
 
 /**
@@ -9,7 +9,7 @@ import { getSimplePreview } from './getSimplePreview';
  *   version of the translation. Otherwise, return the original translation.
  */
 export function getPlainMessage(
-  message: string | Entry,
+  message: string | MessageEntry,
   format: string,
 ): string {
   if (format === 'ftl' || typeof message !== 'string') {

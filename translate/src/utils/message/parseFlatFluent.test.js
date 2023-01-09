@@ -1,17 +1,17 @@
 import ftl from '@fluent/dedent';
 
-import { parseEntry } from './parser';
+import { parseFlatFluent } from './parseFlatFluent';
 
-describe('parser', () => {
+describe('parseFlatFluent', () => {
   it('does not modify value with single element', () => {
-    const res = parseEntry('title = My Title');
+    const res = parseFlatFluent('title = My Title');
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('My Title');
   });
 
   it('does not modify attributes with single element', () => {
-    const res = parseEntry(ftl`
+    const res = parseFlatFluent(ftl`
       title =
           .foo = Bar
       `);
@@ -29,7 +29,7 @@ describe('parser', () => {
              *[another-variant] World!
           }
       `;
-    const res = parseEntry(input);
+    const res = parseFlatFluent(input);
 
     expect(res.value.elements).toHaveLength(1);
     expect(
@@ -41,14 +41,14 @@ describe('parser', () => {
   });
 
   it('flattens a value with several elements', () => {
-    const res = parseEntry('title = My { $awesome } Title');
+    const res = parseFlatFluent('title = My { $awesome } Title');
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('My { $awesome } Title');
   });
 
   it('flattens an attribute with several elements', () => {
-    const res = parseEntry(ftl`
+    const res = parseFlatFluent(ftl`
       title =
           .foo = Bar { -foo } Baz
       `);
@@ -66,7 +66,7 @@ describe('parser', () => {
           .weapon = Brain and { -wayne-enterprise }
           .history = Lost { 2 } parents, has { 1 } "$alfred"
       `;
-    const res = parseEntry(input);
+    const res = parseFlatFluent(input);
 
     expect(res.value.elements).toHaveLength(1);
     expect(res.value.elements[0].value).toEqual('The { $dark } Knight');
@@ -82,35 +82,5 @@ describe('parser', () => {
     expect(res.attributes[1].value.elements[0].value).toEqual(
       'Lost { 2 } parents, has { 1 } "$alfred"',
     );
-  });
-
-  it('flattens values surrounding a select expression and select expression variants', () => {
-    const input = ftl`
-      my-entry =
-          There { $num ->
-              [one] is one email
-             *[other] are { $num } emails
-          } for { $awesome } { $gender ->
-             *[masculine] him
-              [feminine] her
-          }
-      `;
-    const res = parseEntry(input);
-
-    expect(res.value.elements).toHaveLength(3);
-
-    const selEmail = res.value.elements[0].expression;
-    expect(selEmail.variants[0].value.elements[0].value).toEqual(
-      'There is one email for { $awesome }',
-    );
-    expect(selEmail.variants[1].value.elements[0].value).toEqual(
-      'There are { $num } emails for { $awesome }',
-    );
-
-    expect(res.value.elements[1].value).toEqual(' ');
-
-    const selGender = res.value.elements[2].expression;
-    expect(selGender.variants[0].value.elements[0].value).toEqual('him');
-    expect(selGender.variants[1].value.elements[0].value).toEqual('her');
   });
 });

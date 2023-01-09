@@ -1,6 +1,6 @@
 import { getSimplePreview } from './getSimplePreview';
-import { parseEntry } from './parser';
-import { serializeEntry } from './serializer';
+import { parseEntry } from './parseEntry';
+import { serializeEntry } from './serialize';
 
 describe('getSimplePreview', () => {
   it('works for an empty string', () => {

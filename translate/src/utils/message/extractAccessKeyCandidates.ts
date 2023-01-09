@@ -1,22 +1,29 @@
-import type { Message, Pattern, Term } from '@fluent/syntax';
+import type { Message, Pattern } from 'messageformat';
+import type { MessageEntry } from '.';
 
-function getTextRecursively({ elements }: Pattern): string {
-  let result = '';
-  for (const element of elements) {
-    switch (element.type) {
-      case 'TextElement':
-        result += element.value;
-        break;
-      case 'Placeable':
-        if (element.expression.type === 'SelectExpression') {
-          for (const variant of element.expression.variants) {
-            result += getTextRecursively(variant.value);
-          }
-        }
-        break;
+function getPatternText({ body }: Pattern): string {
+  let res = '';
+  for (const el of body) {
+    if (el.type === 'text') {
+      res += el.value;
     }
   }
-  return result;
+  return res;
+}
+
+function getMessageText(message: Message): string {
+  switch (message.type) {
+    case 'message':
+      return getPatternText(message.pattern);
+    case 'select': {
+      let res = '';
+      for (const { value } of message.variants) {
+        res += getPatternText(value);
+      }
+      return res;
+    }
+  }
+  return '';
 }
 
 /**
@@ -28,13 +35,10 @@ function getTextRecursively({ elements }: Pattern): string {
  * @returns A set of access key candidates.
  */
 export function extractAccessKeyCandidates(
-  message: Message | Term,
+  message: MessageEntry,
   label: string,
 ): string[] {
-  const getAttr = (name: string) =>
-    message.attributes.find((attr) => attr.id.name === name)?.value;
-
-  let source: Pattern | undefined;
+  let source: Message | undefined;
 
   const prefixEnd = label.indexOf('accesskey');
   const prefix = label.substring(0, prefixEnd);
@@ -42,17 +46,15 @@ export function extractAccessKeyCandidates(
   if (!prefix) {
     // Generate access key candidates from the 'label' attribute or the message value
     source =
-      getAttr('label') ??
+      message.attributes?.get('label') ??
       message.value ??
-      getAttr('value') ??
-      getAttr('aria-label');
+      message.attributes?.get('value') ??
+      message.attributes?.get('aria-label');
   } else {
-    source = getAttr(`${prefix}label`);
+    source = message.attributes?.get(`${prefix}label`);
   }
   if (source) {
-    const text = getTextRecursively(source);
-
-    const keys = text
+    const keys = getMessageText(source)
       // Exclude placeables (message is flat). See bug 1447103 for details.
       .replace(/{[^}]*}/g, '')
       .replace(/[^\p{Letter}\p{Number}]/gu, '')

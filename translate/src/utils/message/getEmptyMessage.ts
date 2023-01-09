@@ -1,79 +1,118 @@
-import {
-  BaseNode,
-  Entry,
-  SelectExpression,
-  TextElement,
-  Transformer,
+import type {
+  Message,
+  PatternElement,
+  PatternMessage,
+  SelectMessage,
   Variant,
-} from '@fluent/syntax';
+} from 'messageformat';
 
 import type { Locale } from '~/context/Locale';
-
 import { CLDR_PLURALS } from '../constants';
-import { isPluralExpression } from './isPluralExpression';
+import { pojoCopy } from '../pojo';
+import type { MessageEntry } from '.';
+import { findPluralSelectors } from './findPluralSelectors';
 
 /**
- * Return a copy of a given Fluent AST with all its simple elements empty and
- * plural variant keys set to given locale's CLDR plural categories. Such
- * messages are used to render the Rich Editor for untranslated strings.
+ * Return a copy of a given MessageEntry with all its patterns empty.
  *
- * The algorithm makes a copy of the given Fluent message, flattens it, and
- * then walks it to make the required changes. The default variants are not
- * preserved.
+ * Declarations are preserved from the original Messages,
+ * along with expression and variable selectors.
+ * Plural categories are adjusted to match the given locale.
+ * Select messages which would result in only one (default) variant
+ * are returned as simple pattern messages instead.
  *
- * @param {Entry} source A Fluent AST to empty.
- * @returns {Entry} An emptied copy of the source.
+ * @param source An entry to use as template.
+ * @param locale The target locale.
+ * @returns An emptied copy of the source.
  */
-export function getEmptyMessage(source: Entry, { cldrPlurals }: Locale): Entry {
-  class EmptyTransformer extends Transformer {
-    /** Create empty locale plural variants */
-    visitSelectExpression(node: SelectExpression): BaseNode {
-      if (isPluralExpression(node)) {
-        const variants = node.variants;
+export function getEmptyMessageEntry(
+  source: MessageEntry,
+  locale: Locale,
+): MessageEntry {
+  if (source.attributes) {
+    const value = source.value ? getEmptyMessage(source.value, locale) : null;
+    const attributes = new Map<string, Message>();
+    for (const [key, message] of source.attributes) {
+      attributes.set(key, getEmptyMessage(message, locale));
+    }
+    return { id: source.id, value, attributes };
+  }
+  return { id: source.id, value: getEmptyMessage(source.value, locale) };
+}
 
-        const res: Variant[] = [];
-        let cldrTemplate: Variant | null = null;
-        let hasDefault = false;
-        for (const variant of variants) {
-          const { key } = variant;
-          if (key.type === 'NumberLiteral') {
-            res.push(variant);
-            hasDefault ||= variant.default;
-          } else if (
-            (!cldrTemplate || variant.default) &&
-            key.type === 'Identifier' &&
-            CLDR_PLURALS.indexOf(key.name) !== -1
-          ) {
-            cldrTemplate = variant;
-          }
-        }
+function getEmptyMessage(
+  source: Message,
+  { code }: Locale,
+): PatternMessage | SelectMessage {
+  const declarations = pojoCopy(source.declarations);
 
-        if (cldrTemplate) {
-          cldrTemplate.default = false;
-          for (const i of cldrPlurals) {
-            const variant = cldrTemplate.clone();
-            variant.key.name = CLDR_PLURALS[i];
-            res.push(variant);
-          }
-        }
-        if (!hasDefault && res.length > 0) {
-          res[res.length - 1].default = true;
-        }
-        node.variants = res;
-      }
+  if (source.type === 'message' || source.type === 'junk') {
+    return { type: 'message', declarations, pattern: { body: [] } };
+  }
 
-      return this.genericVisit(node);
+  const plurals = findPluralSelectors(source);
+  const selectors: PatternElement[] = [];
+  let variantKeys: Array<Variant['keys']> = [];
+  for (let i = 0; i < source.selectors.length; ++i) {
+    let sel = source.selectors[i];
+    while (sel.type === 'placeholder') {
+      sel = sel.body;
+    }
+    if (sel.type !== 'expression' && sel.type !== 'variable') {
+      continue;
     }
 
-    /** Empty Text Elements */
-    visitTextElement(node: TextElement): TextElement {
-      if (node.value !== ' ') {
-        node.value = '';
+    let keys: Variant['keys'] = [];
+    if (plurals.includes(i)) {
+      const pr = new Intl.PluralRules(code);
+      const pc = pr.resolvedOptions().pluralCategories;
+      pc.sort((a, b) =>
+        CLDR_PLURALS.indexOf(a) < CLDR_PLURALS.indexOf(b) ? -1 : 1,
+      );
+
+      const exactKeys = new Set<string>();
+      for (const v of source.variants) {
+        const k = v.keys[i];
+        if (k.type !== '*' && /^[0-9]+$/.test(k.value)) {
+          exactKeys.add(k.value);
+        }
       }
-      return node;
+
+      keys = Array.from(exactKeys)
+        .concat(pc.filter((cat) => cat !== 'other'))
+        .map((value) => ({ type: 'nmtoken', value }));
+    } else {
+      const keyValues = new Set<string>();
+      for (const v of source.variants) {
+        const k = v.keys[i];
+        if (k.type !== '*' && !keyValues.has(k.value)) {
+          keyValues.add(k.value);
+          keys.push({ ...k });
+        }
+      }
+    }
+
+    if (keys.length > 0) {
+      selectors.push(pojoCopy(sel));
+      keys.push({ type: '*' });
+      if (variantKeys.length === 0) {
+        variantKeys = keys.map((key) => [key]);
+      } else {
+        const next: Array<Variant['keys']> = [];
+        for (const vk of variantKeys) {
+          for (const k of keys) {
+            next.push([...vk, k]);
+          }
+        }
+        variantKeys = next;
+      }
     }
   }
 
-  const transformer = new EmptyTransformer();
-  return transformer.visit(source.clone()) as any as Entry;
+  if (selectors.length === 0) {
+    return { type: 'message', declarations, pattern: { body: [] } };
+  }
+
+  const variants = variantKeys.map((keys) => ({ keys, value: { body: [] } }));
+  return { type: 'select', declarations, selectors, variants };
 }

@@ -1,34 +1,8 @@
-import { Entry, Pattern, serializeExpression } from '@fluent/syntax';
-
-import { parseEntry } from './parser';
-import { serializeEntry } from './serializer';
-
-function serialize({ elements }: Pattern): string {
-  let result = '';
-  for (const elt of elements) {
-    switch (elt.type) {
-      case 'TextElement':
-        result += elt.value;
-        break;
-
-      case 'Placeable':
-        if (elt.expression.type === 'SelectExpression') {
-          const { variants } = elt.expression;
-          const dv = variants.find((v) => v.default) || variants[0];
-          result += serialize(dv.value);
-        } else {
-          const expression = serializeExpression(elt.expression);
-          // Empty string literals are best represented by their absence.
-          // These may leak in from serializeEntry().
-          if (expression !== '""') {
-            result += `{ ${expression} }`;
-          }
-        }
-        break;
-    }
-  }
-  return result;
-}
+import { serializeExpression } from '@fluent/syntax';
+import { defaultFunctionMap, messageToFluent } from '@messageformat/fluent';
+import type { Message } from 'messageformat';
+import type { MessageEntry } from '.';
+import { parseEntry } from './parseEntry';
 
 /**
  * Turn a Fluent message into a simple string, without any syntax sigils.
@@ -48,20 +22,67 @@ function serialize({ elements }: Pattern): string {
  *   >     }
  *   "I like them"
  *
- * @param {string} content A Fluent string to parse and simplify.
- *
- * @returns {string} A simplified version of the Fluent message, or the original
- * content if it isn't a valid Fluent message.
+ * @returns A simplified version of the `content`, or the original
+ * if it isn't a valid Fluent message.
  */
-export function getSimplePreview(content: string | Entry): string {
+export function getSimplePreview(content: string | MessageEntry): string {
   if (!content) {
     return '';
   }
 
-  const message = typeof content === 'string' ? parseEntry(content) : content;
-  return message.type === 'Message' || message.type === 'Term'
-    ? serialize(message.value || message.attributes[0].value)
-    : typeof content === 'string'
-    ? content
-    : serializeEntry(content.clone());
+  let entry: MessageEntry | null;
+  if (typeof content === 'string') {
+    entry = parseEntry(content);
+    if (!entry) {
+      return content;
+    }
+  } else {
+    entry = content;
+  }
+
+  if (entry.value) {
+    return previewMessage(entry.value);
+  }
+
+  if (entry.attributes) {
+    for (const attr of entry.attributes.values()) {
+      const preview = previewMessage(attr);
+      if (preview) {
+        return preview;
+      }
+    }
+  }
+
+  return '';
+}
+
+function previewMessage(message: Message): string {
+  // Presumes that the last variant is the most appropriate
+  // to use as a generic representation of the message.
+  if (message.type === 'select') {
+    const vc = message.variants.length;
+    if (vc) {
+      const { value } = message.variants[vc - 1];
+      message = {
+        type: 'message',
+        declarations: message.declarations,
+        pattern: value,
+      };
+    }
+  }
+
+  // TODO Should not be hard-coded
+  const fnMap = { ...defaultFunctionMap, PLATFORM: 'PLATFORM' };
+  const { elements } = messageToFluent(message, 'other', fnMap);
+
+  let res = '';
+  for (const elt of elements) {
+    if (elt.type === 'TextElement') {
+      res += elt.value;
+    } else {
+      const expression = serializeExpression(elt.expression);
+      res += `{ ${expression} }`;
+    }
+  }
+  return res;
 }
