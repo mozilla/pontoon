@@ -80,7 +80,7 @@ def get_translations(entity, locale):
                 if single_input_ftl_string:
                     translation = get_reconstructed_message(entity.string, translation)
 
-                strings = [(translation, None, tm_user)]
+                strings = [(translation, None, gt_user)]
             else:
                 for plural_form in plural_forms:
                     strings.append((gt_response["translation"], plural_form, gt_user))
