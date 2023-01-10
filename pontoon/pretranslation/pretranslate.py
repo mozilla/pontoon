@@ -4,7 +4,7 @@ import operator
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 
-from pontoon.base.models import User, TranslatedResource, Resource
+from pontoon.base.models import User, TranslatedResource
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
