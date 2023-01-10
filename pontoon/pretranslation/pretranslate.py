@@ -35,14 +35,9 @@ def get_translations(entity, locale):
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
 
-    single_input_ftl_string = (
-        entity.resource.format == Resource.Format.FTL
-        and is_single_input_ftl_string(entity.string)
-    )
-
     entity_string = (
         as_simple_translation(entity.string)
-        if single_input_ftl_string
+        if is_single_input_ftl_string(entity.string)
         else entity.string
     )
 
@@ -58,7 +53,7 @@ def get_translations(entity, locale):
         if entity.string_plural == "":
             translation = tm_response[0]["target"]
 
-            if single_input_ftl_string:
+            if entity.string != entity_string:
                 translation = get_reconstructed_message(entity.string, translation)
 
             strings = [(translation, None, tm_user)]
@@ -69,18 +64,13 @@ def get_translations(entity, locale):
     # Else fetch from google translate
     elif locale.google_translate_code:
         gt_response = get_google_translate_data(
-            text=entity_string,
+            text=entity.string,
             locale=locale,
         )
 
         if gt_response["status"]:
             if entity.string_plural == "":
-                translation = gt_response["translation"]
-
-                if single_input_ftl_string:
-                    translation = get_reconstructed_message(entity.string, translation)
-
-                strings = [(translation, None, gt_user)]
+                strings = [(gt_response["translation"], None, gt_user)]
             else:
                 for plural_form in plural_forms:
                     strings.append((gt_response["translation"], plural_form, gt_user))
