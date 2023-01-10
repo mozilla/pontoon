@@ -10,6 +10,12 @@ from pontoon.machinery.utils import (
     get_translation_memory_data,
 )
 
+from pontoon.base.templatetags.helpers import (
+    as_simple_translation,
+    is_single_input_ftl_string,
+    get_reconstructed_message,
+)
+
 
 def get_translations(entity, locale):
     """
@@ -29,9 +35,15 @@ def get_translations(entity, locale):
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
 
+    entity_string = (
+        as_simple_translation(entity.string)
+        if is_single_input_ftl_string(entity.string)
+        else entity.string
+    )
+
     # Try to get matches from translation_memory
     tm_response = get_translation_memory_data(
-        text=entity.string,
+        text=entity_string,
         locale=locale,
     )
 
@@ -39,7 +51,12 @@ def get_translations(entity, locale):
 
     if tm_response:
         if entity.string_plural == "":
-            strings = [(tm_response[0]["target"], None, tm_user)]
+            translation = tm_response[0]["target"]
+
+            if entity.string != entity_string:
+                translation = get_reconstructed_message(entity.string, translation)
+
+            strings = [(translation, None, tm_user)]
         else:
             for plural_form in plural_forms:
                 strings.append((tm_response[0]["target"], plural_form, tm_user))
