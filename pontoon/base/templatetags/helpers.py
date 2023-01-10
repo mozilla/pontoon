@@ -307,7 +307,7 @@ def is_supported_message(entry):
     )
 
 
-def are_supported_elements(elements) -> bool:
+def are_supported_elements(elements):
     return all(
         is_simple_element(element)
         or (
@@ -325,7 +325,7 @@ def are_supported_elements(elements) -> bool:
     )
 
 
-def is_simple_message(entry) -> bool:
+def is_simple_message(entry):
     value = entry.value
     return (
         isinstance(entry, (ast.Message, ast.Term))
