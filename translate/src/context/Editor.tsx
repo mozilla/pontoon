@@ -409,9 +409,10 @@ function updateRichValue(
       }
     }
     if (!pattern || path.length > 0) {
-      throw new Error(
-        `Invalid rich editor path ${input.id} for entry ${next.id}`,
+      console.error(
+        new Error(`Invalid rich editor path ${input.id} for entry ${next.id}`),
       );
+      return null;
     }
 
     let start: number;
