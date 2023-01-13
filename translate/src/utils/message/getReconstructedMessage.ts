@@ -3,16 +3,21 @@ import type { MessageEntry } from '.';
 import { parseEntry } from './parseEntry';
 
 /**
- * Return a reconstructed Fluent message from the original message and some
- * translated content.
+ * Return a reconstructed Fluent message from the `original` message and some
+ * `translation` content.
+ *
+ * @returns `null` if either the original or reconstructed message is not valid
  */
 export function getReconstructedMessage(
   original: string,
   translation: string,
-): MessageEntry {
+): MessageEntry | null {
   const message = parseEntry(original);
   if (!message) {
-    throw new Error(`Error parsing '${original}' in getReconstructedMessage`);
+    console.error(
+      new Error(`Error parsing '${original}' in getReconstructedMessage`),
+    );
+    return null;
   }
   let key = message.id;
 
@@ -33,9 +38,5 @@ export function getReconstructedMessage(
     content += ' { "" }';
   }
 
-  const res = parseEntry(content);
-  if (!res) {
-    throw new Error(`Error parsing '${content}' in getReconstructedMessage`);
-  }
-  return res;
+  return parseEntry(content);
 }
