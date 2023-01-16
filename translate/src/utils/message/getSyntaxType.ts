@@ -1,6 +1,8 @@
 import type { Message, PatternElement } from 'messageformat';
 import type { MessageEntry } from '.';
 
+const MAX_RICH_VARIANTS = 15;
+
 /**
  * Return the syntax type of a given MessageEntry.
  *
@@ -12,32 +14,36 @@ import type { MessageEntry } from '.';
 export function getSyntaxType(
   entry: MessageEntry | null,
 ): 'simple' | 'rich' | 'complex' {
-  if (!entry || !entry.id || messageContainsJunk(entry.value)) {
+  if (!entry || !entry.id) {
     return 'complex';
   }
+  const { attributes, value } = entry;
 
-  if (entry.attributes) {
-    let hasSelect = false;
-    for (const attr of entry.attributes.values()) {
+  let fieldCount = 0;
+  if (value) {
+    if (messageContainsJunk(value)) {
+      return 'complex';
+    }
+    fieldCount = value.type === 'select' ? value.variants.length : 1;
+  }
+
+  if (attributes) {
+    for (const attr of attributes.values()) {
       if (messageContainsJunk(attr)) {
         return 'complex';
       }
-      hasSelect ||= attr.type === 'select';
-    }
-    const count = entry.attributes.size + (entry.value ? 1 : 0);
-    if (hasSelect || count > 1) {
-      return 'rich';
+      fieldCount += attr.type === 'select' ? attr.variants.length : 1;
     }
   }
 
-  return entry.value?.type === 'select' ? 'rich' : 'simple';
+  return fieldCount > MAX_RICH_VARIANTS
+    ? 'complex'
+    : fieldCount > 1
+    ? 'rich'
+    : 'simple';
 }
 
-function messageContainsJunk(message: Message | null): boolean {
-  if (!message) {
-    return false;
-  }
-
+function messageContainsJunk(message: Message): boolean {
   if (message.type === 'junk') {
     return true;
   }
