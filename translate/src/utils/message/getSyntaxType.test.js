@@ -165,4 +165,26 @@ my-entry =
 
     expect(getSyntaxType(message)).toEqual('rich');
   });
+
+  it('returns "complex" for a string with excessive select expressions', () => {
+    const input = `
+my-entry =
+    { NUMBER($totalHours) ->
+        [one] { $totalHours } hour
+       *[other] { $totalHours } hours
+    } is achievable in just over { NUMBER($periodMonths) ->
+        [one] { $periodMonths } month
+       *[other] { $periodMonths } months
+    } if { NUMBER($people) ->
+        [one] { $people } person
+       *[other] { $people } people
+    } record { NUMBER($clipsPerDay) ->
+        [one] { $clipsPerDay } clip
+       *[other] { $clipsPerDay } clips
+    } a day.
+`;
+    const message = parseEntry(input);
+
+    expect(getSyntaxType(message)).toEqual('complex');
+  });
 });
