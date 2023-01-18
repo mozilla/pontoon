@@ -16,10 +16,12 @@ from pontoon.base.templatetags.helpers import (
     get_reconstructed_message,
 )
 
-from fluent.syntax import FluentParser
+from fluent.syntax import FluentParser, FluentSerializer
+
 from pontoon.base.utils import aware_datetime
 
 parser = FluentParser()
+serializer = FluentSerializer()
 
 MULTILINE_SOURCE = """key =
     Simple String
@@ -188,7 +190,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "title = Marvel Cinematic Universe",
                 "translation": "Univers cinématographique Marvel",
-                "expected": "title = Univers cinématographique Marvel",
+                "expected": "title = Univers cinématographique Marvel\n",
             },
         ),
         (
@@ -196,7 +198,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "spoilers =\n    .who-dies = Who dies?",
                 "translation": "Qui meurt ?",
-                "expected": "spoilers =\n    .who-dies = Qui meurt ?",
+                "expected": "spoilers =\n    .who-dies = Qui meurt ?\n",
             },
         ),
         (
@@ -204,7 +206,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "time-travel = They discovered Time Travel",
                 "translation": "Ils ont inventé le\nvoyage temporel",
-                "expected": "time-travel =\n    Ils ont inventé le\n    voyage temporel",
+                "expected": "time-travel =\n    Ils ont inventé le\n    voyage temporel\n",
             },
         ),
         (
@@ -212,7 +214,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "slow-walks =\n    .title = They walk in slow motion",
                 "translation": "Ils se déplacent\nen mouvement lents",
-                "expected": "slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents",
+                "expected": "slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents\n",
             },
         ),
         (
@@ -220,7 +222,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "-my-term = MyTerm",
                 "translation": "Mon Terme",
-                "expected": "-my-term = Mon Terme",
+                "expected": "-my-term = Mon Terme\n",
             },
         ),
         (
@@ -228,7 +230,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "stark = Tony Stark\n    .hero = IronMan\n    .hair = black",
                 "translation": "Anthony Stark",
-                "expected": "stark = Anthony Stark",
+                "expected": "stark = Anthony Stark\n",
             },
         ),
         (
@@ -236,7 +238,7 @@ GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
             {
                 "original": "with-term = I am { -term }",
                 "translation": "Je suis { -term }",
-                "expected": "with-term = Je suis { -term }",
+                "expected": "with-term = Je suis { -term }\n",
             },
         ),
     ]
@@ -334,4 +336,7 @@ def test_get_reconstructed_message(k):
         GET_RECONSTRUCTED_MESSAGE_TESTS[k]["original"],
         GET_RECONSTRUCTED_MESSAGE_TESTS[k]["translation"],
     )
-    assert result == GET_RECONSTRUCTED_MESSAGE_TESTS[k]["expected"]
+    assert (
+        serializer.serialize_entry(result)
+        == GET_RECONSTRUCTED_MESSAGE_TESTS[k]["expected"]
+    )

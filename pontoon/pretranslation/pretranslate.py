@@ -1,5 +1,7 @@
-from functools import reduce
 import operator
+
+from fluent.syntax import FluentSerializer
+from functools import reduce
 
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
@@ -15,6 +17,9 @@ from pontoon.base.templatetags.helpers import (
     is_single_input_ftl_string,
     get_reconstructed_message,
 )
+
+
+serializer = FluentSerializer()
 
 
 def get_translations(entity, locale):
@@ -54,7 +59,9 @@ def get_translations(entity, locale):
             translation = tm_response[0]["target"]
 
             if entity.string != entity_string:
-                translation = get_reconstructed_message(entity.string, translation)
+                translation = serializer.serialize_entry(
+                    get_reconstructed_message(entity.string, translation)
+                )
 
             strings = [(translation, None, tm_user)]
         else:

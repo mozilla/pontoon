@@ -8,7 +8,7 @@ from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
 from django_jinja import library
-from fluent.syntax import FluentParser, FluentSerializer, ast
+from fluent.syntax import FluentParser, ast
 from fluent.syntax.serializer import serialize_expression
 
 from django import template
@@ -22,7 +22,6 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 register = template.Library()
 parser = FluentParser()
-serializer = FluentSerializer()
 
 
 @library.global_function
@@ -396,7 +395,7 @@ def get_reconstructed_message(original, translation):
     else:
         content += ' { "" }'
 
-    return content
+    return parser.parse_entry(content)
 
 
 @library.filter
