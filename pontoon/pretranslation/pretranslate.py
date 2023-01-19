@@ -6,7 +6,7 @@ from functools import reduce
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 
-from pontoon.base.models import User, TranslatedResource, Resource
+from pontoon.base.models import User, TranslatedResource
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
@@ -37,9 +37,6 @@ def get_translations(entity, locale):
     """
     tm_user = User.objects.get(email="pontoon-tm@example.com")
     gt_user = User.objects.get(email="pontoon-gt@example.com")
-
-    if entity.resource.format != Resource.Format.FTL:
-        return
 
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
@@ -74,19 +71,19 @@ def get_translations(entity, locale):
 
     # Else fetch from google translate
     elif locale.google_translate_code:
-        entity_string = (
+        key_substituted_string = (
             entity.string.replace(entity.key, UNTRANSLATABLE_KEY, 1)
-            if entity.resource.format == Resource.Format.FTL
+            if entity.resource.format == "ftl"
             else entity.string
         )
 
         gt_response = get_google_translate_data(
-            text=entity_string,
+            text=key_substituted_string,
             locale=locale,
         )
 
         if gt_response["status"]:
-            if entity.string != entity_string:
+            if entity.string != key_substituted_string:
                 gt_response["translation"] = gt_response["translation"].replace(
                     UNTRANSLATABLE_KEY, entity.key
                 )
