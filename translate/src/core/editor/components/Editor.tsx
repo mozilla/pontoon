@@ -11,13 +11,17 @@ import { NewContributorTooltip } from './NewContributorTooltip';
 import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 
 export function Editor(): React.ReactElement<'div'> {
-  const { view } = useContext(EditorData);
+  const { value } = useContext(EditorData);
 
   return (
     <div className='editor'>
       <PluralSelector />
       <NewContributorTooltip />
-      {view === 'rich' ? <RichTranslationForm /> : <GenericTranslationForm />}
+      {value.length === 1 ? (
+        <GenericTranslationForm />
+      ) : (
+        <RichTranslationForm />
+      )}
       <MachinerySourceIndicator />
       <EditorMenu />
     </div>

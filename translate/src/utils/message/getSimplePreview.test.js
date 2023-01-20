@@ -1,6 +1,6 @@
 import { getSimplePreview } from './getSimplePreview';
 import { parseEntry } from './parseEntry';
-import { serializeEntry } from './serialize';
+import { serializeEntry } from './serializeEntry';
 
 describe('getSimplePreview', () => {
   it('works for an empty string', () => {
@@ -39,7 +39,7 @@ describe('getSimplePreview', () => {
 
   it('returns an empty string for an empty literal value', () => {
     const entry = parseEntry('empty = { "" }\n');
-    serializeEntry(entry);
+    serializeEntry('ftl', entry);
     const res = getSimplePreview(entry);
     expect(res).toEqual('');
   });

@@ -3,26 +3,18 @@ import type { MessageEntry } from '.';
 
 const MAX_RICH_VARIANTS = 15;
 
-/**
- * Return the syntax type of a given MessageEntry.
- *
- * @returns One of:
- *   - `'simple'`: can be shown as a simple string using the generic editor
- *   - `'rich'`: can be shown in a rich editor
- *   - `'complex'`: can only be shown in a source editor
- */
-export function getSyntaxType(
-  entry: MessageEntry | null,
-): 'simple' | 'rich' | 'complex' {
+/** If `true`, the message can only be shown in a source editor.  */
+export function requiresSourceView(entry: MessageEntry | null): boolean {
   if (!entry || !entry.id) {
-    return 'complex';
+    return true;
   }
+
   const { attributes, value } = entry;
 
   let fieldCount = 0;
   if (value) {
     if (messageContainsJunk(value)) {
-      return 'complex';
+      return true;
     }
     fieldCount = value.type === 'select' ? value.variants.length : 1;
   }
@@ -30,20 +22,20 @@ export function getSyntaxType(
   if (attributes) {
     for (const attr of attributes.values()) {
       if (messageContainsJunk(attr)) {
-        return 'complex';
+        return true;
       }
       fieldCount += attr.type === 'select' ? attr.variants.length : 1;
     }
   }
 
-  return fieldCount > MAX_RICH_VARIANTS
-    ? 'complex'
-    : fieldCount > 1
-    ? 'rich'
-    : 'simple';
+  return fieldCount === 0 || fieldCount > MAX_RICH_VARIANTS;
 }
 
-function messageContainsJunk(message: Message): boolean {
+function messageContainsJunk(message: Message | null): boolean {
+  if (!message) {
+    return false;
+  }
+
   if (message.type === 'junk') {
     return true;
   }

@@ -12,12 +12,13 @@ export type MessageEntry =
       attributes: Map<string, Message>;
     };
 
+export { buildMessageEntry } from './buildMessageEntry';
 export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
-export { getReconstructedMessage } from './getReconstructedMessage';
 export { getSimplePreview } from './getSimplePreview';
-export { getSyntaxType } from './getSyntaxType';
+export { editMessageEntry } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';
-export { serializeEntry, serializePattern } from './serialize';
+export { requiresSourceView } from './requiresSourceView';
+export { serializeEntry } from './serializeEntry';

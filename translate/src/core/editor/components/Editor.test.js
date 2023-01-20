@@ -41,16 +41,14 @@ const ENTITIES = [
   {
     pk: 1,
     format: 'ftl',
+    key: 'my-message',
     original: 'my-message = Hello',
-    translation: [
-      {
-        string: 'my-message = Salut',
-      },
-    ],
+    translation: [{ string: 'my-message = Salut' }],
   },
   {
     pk: 2,
     format: 'ftl',
+    key: 'my-message',
     original: 'my-message =\n    .my-attr = Something guud',
     translation: [
       { string: 'my-message =\n    .my-attr = Quelque chose de bien' },
@@ -59,24 +57,28 @@ const ENTITIES = [
   {
     pk: 3,
     format: 'ftl',
+    key: 'my-message',
     original: RICH_MESSAGE_STRING,
     translation: [],
   },
   {
     pk: 4,
     format: 'ftl',
+    key: 'my-message',
     original: 'my-message = Hello',
     translation: [{ string: '' }],
   },
   {
     pk: 5,
     format: 'ftl',
+    key: 'my-message',
     original: NESTED_SELECTORS_STRING,
     translation: [{ string: NESTED_SELECTORS_STRING }],
   },
   {
     pk: 6,
     format: 'ftl',
+    key: 'my-message',
     original: BROKEN_STRING,
     translation: [{ string: BROKEN_STRING }],
   },
@@ -156,7 +158,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('GenericTranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe(BROKEN_STRING);
+    expect(input.prop('value')).toBe(BROKEN_STRING.trim());
   });
 
   it('converts translation when switching source mode', () => {
@@ -167,7 +169,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('GenericTranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('my-message = Salut\n');
+    expect(input.prop('value')).toBe('my-message = Salut');
   });
 
   it('sets empty initial translation in source mode when untranslated', () => {
@@ -178,7 +180,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('GenericTranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('my-message = { "" }\n');
+    expect(input.prop('value')).toBe('my-message = { "" }');
   });
 
   it('changes editor implementation when changing translation syntax', () => {

@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-
-import { EditorData, getFluentEntry } from '~/context/Editor';
-import { useActiveTranslation } from '~/context/EntityView';
+import type { HistoryTranslation } from '~/api/translation';
+import { EditorData, useEditorMessageEntry } from '~/context/Editor';
+import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
-import { parseEntry } from '~/utils/message';
+import { parseEntry, serializeEntry } from '~/utils/message';
 import { pojoEquals } from '~/utils/pojo';
 
 /**
@@ -11,34 +11,29 @@ import { pojoEquals } from '~/utils/pojo';
  *
  * If the content of the Editor is identical to a translation that already
  * exists in the history of the entity, this selector returns that Translation.
- * Othewise, it returns undefined.
+ * Otherwise, it returns undefined.
  */
 export function useExistingTranslation() {
   const activeTranslation = useActiveTranslation();
   const { translations } = useContext(HistoryData);
-  const editor = useContext(EditorData);
-  const { format, initial, value } = editor;
+  const { entity } = useContext(EntityView);
+  const { initial, value } = useContext(EditorData);
+  const entry = useEditorMessageEntry();
 
-  if (
-    activeTranslation?.pk &&
-    // If translation is a string, from the generic editor.
-    (value === initial ||
-      // If translation is a FluentMessage, from the fluent editor.
-      (typeof value !== 'string' && pojoEquals(value, parseEntry(initial))))
-  ) {
+  if (activeTranslation?.pk && pojoEquals(initial, value)) {
     return activeTranslation;
   }
 
-  if (translations.length === 0) {
+  if (!entry || translations.length === 0) {
     return undefined;
   }
 
-  let test: (value: typeof translations[number]) => boolean;
-  if (format === 'ftl') {
-    const entry = getFluentEntry(editor);
+  let test: (value: HistoryTranslation) => boolean;
+  if (entity.format === 'ftl') {
     test = (t) => pojoEquals(entry, parseEntry(t.string));
   } else {
-    test = (t) => t.string === value;
+    const str = serializeEntry(entity.format, entry);
+    test = (t) => t.string === str;
   }
 
   return translations.find(test);

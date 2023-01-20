@@ -15,13 +15,13 @@ import './TranslationLength.css';
 export function TranslationLength(): React.ReactElement<'div'> | null {
   const { entity } = useContext(EntityView);
   const source = useEntitySource();
-  const { value, view } = useContext(EditorData);
+  const { sourceView, value } = useContext(EditorData);
 
-  if (view !== 'simple') {
+  if (sourceView || value.length !== 1) {
     return null;
   }
 
-  const text = getPlainMessage(value, entity.format);
+  const text = value[0].value;
 
   const maxLength =
     entity.format === 'lang' && entity.comment.match(/^MAX_LENGTH: (\d+)/);

@@ -6,11 +6,12 @@ import { EditorActions, EditorData } from '~/context/Editor';
 import { ShowNotification } from '~/context/Notification';
 import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/core/notification/messages';
 import { USER } from '~/core/user';
-import { getSyntaxType, parseEntry } from '~/utils/message';
+import { requiresSourceView, parseEntry } from '~/utils/message';
 import { useAppSelector } from '~/hooks';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import './FtlSwitch.css';
+import { EntityView } from '~/context/EntityView';
 
 /**
  * Show a button to allow switching to the source editor,
@@ -26,34 +27,35 @@ export function FtlSwitch() {
   const isAuthenticated = useAppSelector(
     (state) => state[USER].isAuthenticated,
   );
-  const { toggleFtlView } = useContext(EditorActions);
-  const { format, value, view } = useContext(EditorData);
+  const { toggleSourceView } = useContext(EditorActions);
+  const { sourceView, value } = useContext(EditorData);
+  const { entity } = useContext(EntityView);
 
-  const canToggle = useMemo(() => {
-    if (view === 'source' && typeof value === 'string') {
-      const entry = parseEntry(value);
-      return getSyntaxType(entry) !== 'complex';
+  const hasError = useMemo(() => {
+    if (sourceView) {
+      const source = value[0].value;
+      return !source || requiresSourceView(parseEntry(source));
     } else {
-      return true;
+      return false;
     }
-  }, [value, view]);
+  }, [sourceView, value]);
 
   const handleClick = useCallback(() => {
-    if (canToggle) {
-      toggleFtlView();
-    } else {
+    if (hasError) {
       showNotification(FTL_NOT_SUPPORTED_RICH_EDITOR);
+    } else {
+      toggleSourceView();
     }
-  }, [canToggle, toggleFtlView]);
+  }, [hasError, toggleSourceView]);
 
-  if (format !== 'ftl' || !isAuthenticated || readonly) {
+  if (entity.format !== 'ftl' || !isAuthenticated || readonly) {
     return null;
   }
 
-  const cn = classNames('ftl', view === 'source' && 'active');
-  const id = canToggle
-    ? 'editor-FtlSwitch--toggle'
-    : 'editor-FtlSwitch--active';
+  const cn = classNames('ftl', sourceView && 'active', hasError && 'error');
+  const id = sourceView
+    ? 'editor-FtlSwitch--active'
+    : 'editor-FtlSwitch--toggle';
   return (
     <Localized id={id} attrs={{ title: true }}>
       <button className={cn} onClick={handleClick}>

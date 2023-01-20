@@ -27,6 +27,7 @@ function mountForm(string) {
 
   const entity = {
     pk: 0,
+    key: 'key',
     original: 'Hello',
     translation: [{ string }],
   };

@@ -24,14 +24,14 @@ export function GenericTranslationForm(): React.ReactElement<'textarea'> | null 
     }
   }, [machinery, value]);
 
-  return typeof value !== 'string' ? null : (
+  return (
     <textarea
       placeholder={
         readonly ? undefined : 'Type translation and press Enter to save'
       }
       readOnly={readonly}
       ref={activeInput}
-      value={value}
+      value={value[0]?.value}
       onKeyDown={handleShortcuts}
       onChange={(ev) => setEditorFromInput(ev.currentTarget.value)}
       dir={direction}

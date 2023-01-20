@@ -1,22 +1,36 @@
-import { getSyntaxType } from './getSyntaxType';
+import { requiresSourceView } from './requiresSourceView';
 import { parseEntry } from './parseEntry';
 
-describe('getSyntaxType', () => {
-  it('returns "complex" for a string with no value', () => {
+describe('requiresSourceEditor', () => {
+  it('returns true for a string with no value', () => {
     const input = 'my-entry =';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('complex');
+    expect(requiresSourceView(message)).toEqual(true);
   });
 
-  it('returns "simple" for a string with simple value', () => {
+  it('returns true for a missing brace', () => {
+    const input = 'my-entry = { $foo';
+    const message = parseEntry(input);
+
+    expect(requiresSourceView(message)).toEqual(true);
+  });
+
+  it('returns true for a missing brace in an attribute', () => {
+    const input = 'my-entry = foo\n  .attr = { $bar';
+    const message = parseEntry(input);
+
+    expect(requiresSourceView(message)).toEqual(true);
+  });
+
+  it('returns false for a string with simple value', () => {
     const input = 'my-entry = Hello!';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with multiline value', () => {
+  it('returns false for a string with multiline value', () => {
     const input = `
 my-entry =
     Multi
@@ -24,84 +38,84 @@ my-entry =
     value.`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a reference to a built-in function', () => {
+  it('returns false for a string with a reference to a built-in function', () => {
     const input =
       'my-entry = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a Term', () => {
+  it('returns false for a string with a Term', () => {
     const input = '-my-entry = Hello!';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a TermReference', () => {
+  it('returns false for a string with a TermReference', () => {
     const input = 'my-entry = Term { -term } Reference';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a MessageReference', () => {
+  it('returns false for a string with a MessageReference', () => {
     const input = 'my-entry = { my_id }';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a MessageReference with attribute', () => {
+  it('returns false for a string with a MessageReference with attribute', () => {
     const input = 'my-entry = { my_id.title }';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a StringExpression', () => {
+  it('returns false for a string with a StringExpression', () => {
     const input = 'my-entry = { "" }';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a NumberExpression', () => {
+  it('returns false for a string with a NumberExpression', () => {
     const input = 'my-entry = { 5 }';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "simple" for a string with a single simple attribute', () => {
+  it('returns false for a string with a single simple attribute', () => {
     const input = 'my-entry = \n    .an-atribute = Hello!';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('simple');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with value and attributes', () => {
+  it('returns false for a string with value and attributes', () => {
     const input = 'my-entry = World\n    .an-atribute = Hello!';
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with no value and two attributes', () => {
+  it('returns false for a string with no value and two attributes', () => {
     const input = `
 my-entry =
     .an-atribute = Hello!
     .another-atribute = World!`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with a select expression', () => {
+  it('returns false for a string with a select expression', () => {
     const input = `
 my-entry =
     { PLATFORM() ->
@@ -110,10 +124,10 @@ my-entry =
     }`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with a double select expression in attribute', () => {
+  it('returns false for a string with a double select expression in attribute', () => {
     const input = `
 my-entry =
     .label =
@@ -128,10 +142,10 @@ my-entry =
         }`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with multiple select expressions and surrounding text', () => {
+  it('returns false for a string with multiple select expressions and surrounding text', () => {
     const input = `
 my-entry =
     There { $num ->
@@ -143,10 +157,10 @@ my-entry =
     }`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "rich" for a string with nested select expressions', () => {
+  it('returns false for a string with nested select expressions', () => {
     const input = `
 my-entry =
     { $gender ->
@@ -163,10 +177,10 @@ my-entry =
     }`;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('rich');
+    expect(requiresSourceView(message)).toEqual(false);
   });
 
-  it('returns "complex" for a string with excessive select expressions', () => {
+  it('returns true for a string with excessive select expressions', () => {
     const input = `
 my-entry =
     { NUMBER($totalHours) ->
@@ -185,6 +199,6 @@ my-entry =
 `;
     const message = parseEntry(input);
 
-    expect(getSyntaxType(message)).toEqual('complex');
+    expect(requiresSourceView(message)).toEqual(true);
   });
 });

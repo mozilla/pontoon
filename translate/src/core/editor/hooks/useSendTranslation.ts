@@ -5,7 +5,7 @@ import { createTranslation } from '~/api/translation';
 import {
   EditorActions,
   EditorData,
-  getEditedTranslation,
+  useEditorMessageEntry,
 } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
@@ -22,6 +22,7 @@ import {
 import { updateResource } from '~/core/resource/actions';
 import { updateStats } from '~/core/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
+import { serializeEntry } from '~/utils/message';
 
 /**
  * Return a function to send a translation to the server.
@@ -40,9 +41,8 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const { setFailedChecks } = useContext(FailedChecksData);
   const { setEditorBusy } = useContext(EditorActions);
-  const editor = useContext(EditorData);
-  const translation = getEditedTranslation(editor);
-  const { busy, machinery } = editor;
+  const { busy, machinery } = useContext(EditorData);
+  const entry = useEditorMessageEntry();
 
   return async (ignoreWarnings = false) => {
     if (busy || entity.pk === 0) {
@@ -52,6 +52,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
     NProgress.start();
     setEditorBusy(true);
 
+    const translation = serializeEntry(entity.format, entry);
     const sources =
       machinery && machinery.translation === translation
         ? machinery.sources

@@ -1,17 +1,11 @@
 import { Localized } from '@fluent/react';
-import { Message, Pattern } from 'messageformat';
-import React, { useContext, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useContext, useLayoutEffect, useRef } from 'react';
 
 import { EditorActions, EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { useHandleShortcuts } from '~/core/editor';
-import {
-  extractAccessKeyCandidates,
-  findPluralSelectors,
-  MessageEntry,
-  serializePattern,
-} from '~/utils/message';
+import { extractAccessKeyCandidates } from '~/utils/message';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
@@ -19,52 +13,76 @@ import { CLDR_PLURALS } from '~/utils/constants';
 
 import './RichTranslationForm.css';
 
-type LabelData = Array<{ label: string; example?: string }>;
-type MessagePath = Array<string | number>;
-
 const RichLabel = ({
+  getExample,
   htmlFor,
   labels,
 }: {
+  getExample: (label: string) => number | undefined;
   htmlFor: string;
-  labels: LabelData;
+  labels: Array<{ label: string; plural: boolean }>;
 }) => (
   <label htmlFor={htmlFor}>
-    {labels.map(({ label, example }) =>
-      example ? (
-        <Localized
-          id='fluenteditor-RichTranslationForm--label-with-example'
-          key={label}
-          vars={{ example, label }}
-          elems={{ stress: <span className='stress' /> }}
-        >
-          <span>
-            {label} (e.g. <span className='stress'>{example}</span>)
-          </span>
-        </Localized>
-      ) : (
-        <span key={label}>{label}</span>
-      ),
-    )}
+    {labels.map(({ label, plural }) => {
+      const example = plural && getExample(label);
+      if (typeof example === 'number') {
+        return (
+          <Localized
+            id='fluenteditor-RichTranslationForm--label-with-example'
+            key={label}
+            vars={{ example, label }}
+            elems={{ stress: <span className='stress' /> }}
+          >
+            <span>
+              {label} (e.g. <span className='stress'>{example}</span>)
+            </span>
+          </Localized>
+        );
+      } else {
+        return <span key={label}>{label}</span>;
+      }
+    })}
   </label>
 );
 
+function RichAccessKeyCandidates({
+  active,
+  name,
+  onClick,
+}: {
+  active: string;
+  name: string;
+  onClick: (ev: React.MouseEvent) => void;
+}) {
+  const { value } = useContext(EditorData);
+  const candidates = extractAccessKeyCandidates(value, name);
+  return (
+    <div className='accesskeys'>
+      {candidates.map((key) => (
+        <button
+          className={`key ${key === active ? 'active' : ''}`}
+          key={key}
+          onClick={onClick}
+        >
+          {key}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function RichPattern({
   activeInput,
-  attributeName,
-  entry,
-  labels,
-  path,
-  pattern,
+  id,
+  name,
   userInput,
+  value,
 }: {
   activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
-  attributeName?: string;
-  entry: MessageEntry;
-  labels: LabelData;
-  path: MessagePath;
-  pattern: Pattern;
+  id: string;
+  name: string;
   userInput: React.MutableRefObject<boolean>;
+  value: string;
 }) {
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
@@ -78,136 +96,39 @@ function RichPattern({
     }
   };
 
-  const id = path.join('|');
-  const value = serializePattern(pattern);
-  const isAccessKey = attributeName?.endsWith('accesskey') && value.length < 2;
-  const candidates = isAccessKey
-    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      extractAccessKeyCandidates(entry, attributeName!)
-    : [];
+  const isAccessKey = name.endsWith('accesskey') && value.length < 2;
 
-  const handleAccessKeyClick = readonly
-    ? undefined
-    : (ev: React.MouseEvent<HTMLButtonElement>) => {
-        activeInput.current = accessKeyElement.current;
-        handleUpdate(ev.currentTarget.textContent);
-      };
-
-  return (
-    <tr>
-      <td>
-        <RichLabel htmlFor={id} labels={labels} />
-      </td>
-      <td>
-        <textarea
-          id={id}
-          ref={isAccessKey ? accessKeyElement : undefined}
-          readOnly={readonly}
-          value={value}
-          maxLength={isAccessKey ? 1 : undefined}
-          onChange={(ev) => handleUpdate(ev.currentTarget.value)}
-          onFocus={(ev) => (activeInput.current = ev.currentTarget)}
-          onKeyDown={(ev) => handleShortcuts(ev)}
-          dir={locale.direction}
-          lang={locale.code}
-          data-script={locale.script}
-        />
-        {isAccessKey ? (
-          <div className='accesskeys'>
-            {candidates.map((key) => (
-              <button
-                className={`key ${key === value ? 'active' : ''}`}
-                key={key}
-                onClick={handleAccessKeyClick}
-              >
-                {key}
-              </button>
-            ))}
-          </div>
-        ) : null}
-      </td>
-    </tr>
-  );
-}
-
-function RichMessage({
-  activeInput,
-  attributeName,
-  entry,
-  path,
-  message,
-  userInput,
-}: {
-  activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
-  attributeName?: string;
-  entry: MessageEntry;
-  path: MessagePath;
-  message: Message;
-  userInput: React.MutableRefObject<boolean>;
-}) {
-  const locale = useContext(Locale);
-  const pluralExamples = usePluralExamples(locale);
-  const getExample = (label: string) => {
-    const pluralForm = CLDR_PLURALS.indexOf(label);
-    return pluralExamples && pluralForm >= 0
-      ? pluralExamples[pluralForm]
-      : undefined;
+  const handleAccessKeyClick = (ev: React.MouseEvent) => {
+    if (!readonly) {
+      activeInput.current = accessKeyElement.current;
+      handleUpdate(ev.currentTarget.textContent);
+    }
   };
 
-  let nameLabel: LabelData;
-  if (attributeName) {
-    nameLabel = [{ label: attributeName }];
-  } else if (entry.attributes?.size) {
-    nameLabel = [{ label: 'Value' }];
-  } else {
-    nameLabel = [];
-  }
-
-  switch (message.type) {
-    case 'message':
-      return (
-        <RichPattern
-          activeInput={activeInput}
-          attributeName={attributeName}
-          entry={entry}
-          labels={nameLabel}
-          path={path}
-          pattern={message.pattern}
-          userInput={userInput}
+  return (
+    <>
+      <textarea
+        id={id}
+        ref={isAccessKey ? accessKeyElement : undefined}
+        readOnly={readonly}
+        value={value}
+        maxLength={isAccessKey ? 1 : undefined}
+        onChange={(ev) => handleUpdate(ev.currentTarget.value)}
+        onFocus={(ev) => (activeInput.current = ev.currentTarget)}
+        onKeyDown={(ev) => handleShortcuts(ev)}
+        dir={locale.direction}
+        lang={locale.code}
+        data-script={locale.script}
+      />
+      {isAccessKey ? (
+        <RichAccessKeyCandidates
+          active={value}
+          name={name}
+          onClick={handleAccessKeyClick}
         />
-      );
-
-    case 'select': {
-      const plurals = findPluralSelectors(message);
-      const items = message.variants.map(({ keys, value }, index) => {
-        const labels = nameLabel.concat(
-          keys.map((key, i) => {
-            const label = 'value' in key ? key.value : 'other';
-            const ex = plurals.includes(i) && getExample(label);
-            return typeof ex === 'number'
-              ? { label, example: String(ex) }
-              : { label };
-          }),
-        );
-        return (
-          <RichPattern
-            activeInput={activeInput}
-            attributeName={attributeName}
-            entry={entry}
-            key={labels.map((kl) => kl.label).join()}
-            labels={labels}
-            path={path.concat(index)}
-            pattern={value}
-            userInput={userInput}
-          />
-        );
-      });
-      return <>{items}</>;
-    }
-
-    default:
-      return null;
-  }
+      ) : null}
+    </>
+  );
 }
 
 /**
@@ -219,10 +140,22 @@ function RichMessage({
  */
 export function RichTranslationForm(): null | React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeInput, machinery, value: entry } = useContext(EditorData);
+  const { activeInput, machinery, value } = useContext(EditorData);
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
+
+  const locale = useContext(Locale);
+  const pluralExamples = usePluralExamples(locale);
+  const getExample = useCallback(
+    (label: string) => {
+      const pluralForm = CLDR_PLURALS.indexOf(label);
+      return pluralExamples && pluralForm >= 0
+        ? pluralExamples[pluralForm]
+        : undefined;
+    },
+    [pluralExamples],
+  );
 
   // Reset the currently focused element when the entity changes or when
   // the translation changes from an external source.
@@ -236,39 +169,34 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
         activeInput.current?.focus();
       }
     }
-  }, [entity, machinery, entry]);
+  }, [entity, machinery, value]);
 
-  // message should always be a Message or a Term
-  return typeof entry !== 'string' && entry ? (
+  return (
     <div className='fluent-rich-translation-form'>
       <table>
         <tbody ref={root}>
-          {entry.value ? (
-            <RichMessage
-              activeInput={activeInput}
-              entry={entry}
-              message={entry.value}
-              path={['value']}
-              userInput={userInput}
-            />
-          ) : null}
-          {entry.attributes
-            ? Array.from(entry.attributes).map(([name, value]) =>
-                value ? (
-                  <RichMessage
-                    activeInput={activeInput}
-                    attributeName={name}
-                    key={name}
-                    entry={entry}
-                    message={value}
-                    path={['attributes', name]}
-                    userInput={userInput}
-                  />
-                ) : null,
-              )
-            : null}
+          {value.map(({ id, labels, name, value }) => (
+            <tr key={id}>
+              <td>
+                <RichLabel
+                  getExample={getExample}
+                  htmlFor={id}
+                  labels={labels}
+                />
+              </td>
+              <td>
+                <RichPattern
+                  activeInput={activeInput}
+                  id={id}
+                  name={name}
+                  userInput={userInput}
+                  value={value}
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
-  ) : null;
+  );
 }

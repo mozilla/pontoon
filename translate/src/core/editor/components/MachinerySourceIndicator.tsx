@@ -6,13 +6,14 @@ import { EditorData } from '~/context/Editor';
 import './MachinerySourceIndicator.css';
 
 export function MachinerySourceIndicator() {
-  const { machinery, value, view } = useContext(EditorData);
+  const { machinery, sourceView, value } = useContext(EditorData);
 
   if (
     !machinery ||
     machinery.manual ||
-    machinery.translation !== value ||
-    view !== 'simple'
+    sourceView ||
+    value.length !== 1 ||
+    machinery.translation !== value[0].value
   ) {
     return null;
   }

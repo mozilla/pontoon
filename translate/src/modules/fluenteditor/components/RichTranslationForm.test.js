@@ -146,7 +146,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(0)
         .prop('vars'),
-    ).toEqual({ label: 'one', example: '1' });
+    ).toEqual({ label: 'one', example: 1 });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
@@ -155,7 +155,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(1)
         .prop('vars'),
-    ).toEqual({ label: 'other', example: '2' });
+    ).toEqual({ label: 'other', example: 2 });
   });
 
   it('renders plural string in attributes properly', () => {
@@ -166,9 +166,10 @@ describe('<RichTranslationForm>', () => {
                 [one] Hello!
                *[other] World!
             }
+        .attr = Foo
       `);
 
-    expect(wrapper.find('textarea')).toHaveLength(2);
+    expect(wrapper.find('textarea')).toHaveLength(3);
 
     expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
 
@@ -181,7 +182,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(0)
         .prop('vars'),
-    ).toEqual({ label: 'one', example: '1' });
+    ).toEqual({ label: 'one', example: 1 });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
@@ -194,7 +195,7 @@ describe('<RichTranslationForm>', () => {
         .find('#fluenteditor-RichTranslationForm--label-with-example')
         .at(1)
         .prop('vars'),
-    ).toEqual({ label: 'other', example: '2' });
+    ).toEqual({ label: 'other', example: 2 });
   });
 
   it('renders access keys properly', () => {
