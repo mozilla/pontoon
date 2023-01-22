@@ -18,6 +18,7 @@ from pontoon.base.templatetags.helpers import (
     get_reconstructed_message,
 )
 
+UNTRANSLATABLE_KEY = "AIzaSyDX3R5Y1kxh_8lJ4OAO"
 
 serializer = FluentSerializer()
 
@@ -40,7 +41,7 @@ def get_translations(entity, locale):
     strings = []
     plural_forms = range(0, locale.nplurals or 1)
 
-    entity_string = (
+    tm_input = (
         as_simple_translation(entity.string)
         if is_single_input_ftl_string(entity.string)
         else entity.string
@@ -48,7 +49,7 @@ def get_translations(entity, locale):
 
     # Try to get matches from translation_memory
     tm_response = get_translation_memory_data(
-        text=entity_string,
+        text=tm_input,
         locale=locale,
     )
 
@@ -58,7 +59,7 @@ def get_translations(entity, locale):
         if entity.string_plural == "":
             translation = tm_response[0]["target"]
 
-            if entity.string != entity_string:
+            if entity.string != tm_input:
                 translation = serializer.serialize_entry(
                     get_reconstructed_message(entity.string, translation)
                 )
@@ -70,12 +71,23 @@ def get_translations(entity, locale):
 
     # Else fetch from google translate
     elif locale.google_translate_code:
+        gt_input = (
+            entity.string.replace(entity.key, UNTRANSLATABLE_KEY, 1)
+            if entity.resource.format == "ftl"
+            else entity.string
+        )
+
         gt_response = get_google_translate_data(
-            text=entity.string,
+            text=gt_input,
             locale=locale,
         )
 
         if gt_response["status"]:
+            if entity.string != gt_input:
+                gt_response["translation"] = gt_response["translation"].replace(
+                    UNTRANSLATABLE_KEY, entity.key
+                )
+
             if entity.string_plural == "":
                 strings = [(gt_response["translation"], None, gt_user)]
             else:
