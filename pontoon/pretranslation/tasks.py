@@ -46,12 +46,10 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     else:
         locales = project.locales
 
-    locales = (
-        locales.filter(
-            project_locale__readonly=False, project_locale__pretranslation_enabled=True
-        )
-        .distinct()
-        .prefetch_project_locale(project)
+    locales = locales.filter(
+        project_locale__project=project,
+        project_locale__pretranslation_enabled=True,
+        project_locale__readonly=False,
     )
 
     if not locales:
