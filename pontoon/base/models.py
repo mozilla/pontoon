@@ -349,7 +349,7 @@ def serialized_notifications(self):
                             "part": "all-resources",
                         },
                     )
-                    + "?status=missing",
+                    + "?status=missing,pretranslated",
                 }
             else:
                 actor = {
