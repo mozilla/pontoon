@@ -2,46 +2,37 @@
 
 from django.db import migrations
 
-from pontoon.actionlog.models import ActionLog
-
 
 def create_action_logs_for_pretranslations(apps, schema_editor):
     Translation = apps.get_model("base", "Translation")
-    ActionLogModel = apps.get_model("actionlog", "ActionLog")
+    ActionLog = apps.get_model("actionlog", "ActionLog")
 
     translations = Translation.objects.filter(
         user__email__in=["pontoon-sync@example.com", "pontoon-tm@example.com"]
     )
 
-    existing_pretranslation_actions = ActionLog.objects.filter(
-        translation__user__email__in=[
-            "pontoon-sync@example.com",
-            "pontoon-tm@example.com",
-        ]
-    ).values_list("translation_id", flat=True)
-
     actions_to_log = [
-        ActionLogModel(
-            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+        ActionLog(
+            action_type="translation:created",
             performed_by=t.user,
             translation=t,
             created_at=t.date,
         )
         for t in translations
-        if t.id not in existing_pretranslation_actions
     ]
 
     ActionLog.objects.bulk_create(actions_to_log)
 
 
 def delete_action_logs_for_pretranslations(apps, schema_editor):
-    ActionLogModel = apps.get_model("actionlog", "ActionLog")
+    ActionLog = apps.get_model("actionlog", "ActionLog")
 
-    ActionLogModel.objects.filter(
+    ActionLog.objects.filter(
         translation__user__email__in=[
             "pontoon-sync@example.com",
             "pontoon-tm@example.com",
-        ]
+        ],
+        action_type="translation:created",
     ).delete()
 
 
