@@ -1,23 +1,23 @@
-.fluent-rich-translation-form {
+.translationform {
   height: 100%;
   line-height: 22px;
   padding: 10px;
   overflow: auto;
 }
 
-.fluent-rich-translation-form table {
+.translationform table {
   width: 100%;
 }
 
-.fluent-rich-translation-form td:first {
+.translationform td:first {
   width: calc(25% - 5px);
 }
 
-.fluent-rich-translation-form td:last-child {
+.translationform td:last-child {
   width: 75%;
 }
 
-.fluent-rich-translation-form label {
+.translationform label {
   background: transparent;
   border: 1px solid #5e6475;
   box-sizing: border-box;
@@ -28,38 +28,45 @@
   padding: 0 4px;
 }
 
-.fluent-rich-translation-form label > :not(:last-child)::after {
+.translationform label > :not(:last-child)::after {
   content: '·';
   color: #7bc876;
   padding: 0 3px;
 }
 
-.fluent-rich-translation-form label .stress {
+.translationform label .stress {
   color: #7bc876;
 }
 
-.fluent-rich-translation-form table tr > td > textarea {
+.translationform table tr > td > textarea {
   min-height: 0;
   height: 24px;
   margin: 2px 0;
   padding: 0 4px;
 }
 
-.fluent-rich-translation-form table tr > td > textarea[maxlength='1'] {
+.translationform .accesskey-input {
+  border: none;
+  box-sizing: border-box;
   float: left;
-  margin-right: 3px;
-  resize: none;
+  font-size: 14px;
+  height: 24px;
+  margin: 2px 3px 2px 0;
   text-align: center;
   width: 24px;
 }
 
-.fluent-rich-translation-form .accesskeys {
+.translationform .accesskey-input:focus {
+  outline: none;
+}
+
+.translationform .accesskeys {
   float: right;
   margin: 2px 0;
   width: calc(100% - 27px);
 }
 
-.fluent-rich-translation-form .accesskeys .key {
+.translationform .accesskeys .key {
   border: 1px solid #5e6475;
   background: #4d5967;
   color: #ebebeb;
@@ -73,7 +80,7 @@
   width: 24px;
 }
 
-.fluent-rich-translation-form .accesskeys .key.active,
-.fluent-rich-translation-form .accesskeys .key:hover {
+.translationform .accesskeys .key.active,
+.translationform .accesskeys .key:hover {
   border-color: #7bc876;
 }

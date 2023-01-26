@@ -301,10 +301,10 @@ entitieslist-Entity--sibling-strings-title =
     .title = Click to reveal sibling strings
 
 
-## Rich editor
-## Renders a Rich editor for Fluent string editing
+## Translation Form
 
-fluenteditor-RichTranslationForm--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)
+translationform--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)
+translationform--single-field-placeholder = Type translation and press Enter to save
 
 
 ## History

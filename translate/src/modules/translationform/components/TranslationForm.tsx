@@ -1,17 +1,16 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useLayoutEffect, useRef } from 'react';
 
-import { EditorActions, EditorData } from '~/context/Editor';
+import { EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import { useHandleShortcuts } from '~/core/editor';
-import { extractAccessKeyCandidates } from '~/utils/message';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
-import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
 import { CLDR_PLURALS } from '~/utils/constants';
 
-import './RichTranslationForm.css';
+import { EditAccesskey } from './EditAccesskey';
+import { EditField, EditFieldProps } from './EditField';
+import './TranslationForm.css';
 
 const RichLabel = ({
   getExample,
@@ -28,7 +27,7 @@ const RichLabel = ({
       if (typeof example === 'number') {
         return (
           <Localized
-            id='fluenteditor-RichTranslationForm--label-with-example'
+            id='translationform--label-with-example'
             key={label}
             vars={{ example, label }}
             elems={{ stress: <span className='stress' /> }}
@@ -45,91 +44,12 @@ const RichLabel = ({
   </label>
 );
 
-function RichAccessKeyCandidates({
-  active,
-  name,
-  onClick,
-}: {
-  active: string;
-  name: string;
-  onClick: (ev: React.MouseEvent) => void;
-}) {
-  const { value } = useContext(EditorData);
-  const candidates = extractAccessKeyCandidates(value, name);
-  return (
-    <div className='accesskeys'>
-      {candidates.map((key) => (
-        <button
-          className={`key ${key === active ? 'active' : ''}`}
-          key={key}
-          onClick={onClick}
-        >
-          {key}
-        </button>
-      ))}
-    </div>
+const RichPattern = (props: EditFieldProps & { name: string }) =>
+  props.name.endsWith('accesskey') && props.value.length <= 1 ? (
+    <EditAccesskey {...props} />
+  ) : (
+    <EditField {...props} />
   );
-}
-
-function RichPattern({
-  activeInput,
-  id,
-  name,
-  userInput,
-  value,
-}: {
-  activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
-  id: string;
-  name: string;
-  userInput: React.MutableRefObject<boolean>;
-  value: string;
-}) {
-  const locale = useContext(Locale);
-  const { setEditorFromInput } = useContext(EditorActions);
-  const readonly = useReadonlyEditor();
-  const accessKeyElement = useRef<HTMLTextAreaElement>(null);
-  const handleShortcuts = useHandleShortcuts();
-  const handleUpdate = (value: string | null) => {
-    if (typeof value === 'string') {
-      userInput.current = true;
-      setEditorFromInput(value);
-    }
-  };
-
-  const isAccessKey = name.endsWith('accesskey') && value.length < 2;
-
-  const handleAccessKeyClick = (ev: React.MouseEvent) => {
-    if (!readonly) {
-      activeInput.current = accessKeyElement.current;
-      handleUpdate(ev.currentTarget.textContent);
-    }
-  };
-
-  return (
-    <>
-      <textarea
-        id={id}
-        ref={isAccessKey ? accessKeyElement : undefined}
-        readOnly={readonly}
-        value={value}
-        maxLength={isAccessKey ? 1 : undefined}
-        onChange={(ev) => handleUpdate(ev.currentTarget.value)}
-        onFocus={(ev) => (activeInput.current = ev.currentTarget)}
-        onKeyDown={(ev) => handleShortcuts(ev)}
-        dir={locale.direction}
-        lang={locale.code}
-        data-script={locale.script}
-      />
-      {isAccessKey ? (
-        <RichAccessKeyCandidates
-          active={value}
-          name={name}
-          onClick={handleAccessKeyClick}
-        />
-      ) : null}
-    </>
-  );
-}
 
 /**
  * Rich Editor for supported Fluent strings.
@@ -138,7 +58,7 @@ function RichPattern({
  * interface to the user. The translation is stored as an AST, and changes
  * are made directly to that AST.
  */
-export function RichTranslationForm(): null | React.ReactElement<'div'> {
+export function TranslationForm(): React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
   const { activeInput, machinery, value } = useContext(EditorData);
 
@@ -163,16 +83,22 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
     if (userInput.current) {
       userInput.current = false;
     } else {
-      activeInput.current ??=
-        root.current?.querySelector('textarea:first-of-type') ?? null;
+      activeInput.current ??= root.current?.querySelector('textarea') ?? null;
       if (!searchBoxHasFocus()) {
         activeInput.current?.focus();
       }
     }
   }, [entity, machinery, value]);
 
-  return (
-    <div className='fluent-rich-translation-form'>
+  return value.length === 1 ? (
+    <EditField
+      activeInput={activeInput}
+      placeholderId='translationform--single-field-placeholder'
+      userInput={userInput}
+      value={value[0]?.value}
+    />
+  ) : (
+    <div className='translationform'>
       <table>
         <tbody ref={root}>
           {value.map(({ id, labels, name, value }) => (

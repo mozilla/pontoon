@@ -13,7 +13,7 @@ import {
 } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import { RichTranslationForm } from './RichTranslationForm';
+import { TranslationForm } from './TranslationForm';
 
 const DEFAULT_LOCALE = {
   direction: 'ltr',
@@ -46,7 +46,7 @@ function mountForm(string) {
           <EntityView.Provider value={{ entity, pluralForm: 0 }}>
             <EditorProvider>
               <Spy />
-              <RichTranslationForm />
+              <TranslationForm />
             </EditorProvider>
           </EntityView.Provider>
         </MockLocalizationProvider>
@@ -58,7 +58,7 @@ function mountForm(string) {
   return [wrapper, actions];
 }
 
-describe('<RichTranslationForm>', () => {
+describe('<TranslationForm> with multiple fields', () => {
   it('renders textarea for a value and each attribute', () => {
     const [wrapper] = mountForm(ftl`
       message = Value
@@ -105,7 +105,8 @@ describe('<RichTranslationForm>', () => {
             }
       `);
 
-    expect(wrapper.find('textarea')).toHaveLength(4);
+    expect(wrapper.find('textarea')).toHaveLength(2);
+    expect(wrapper.find('input')).toHaveLength(2);
 
     const l0 = wrapper.find('label').at(0);
     expect(l0.find('span').at(0).html()).toContain('label');
@@ -120,12 +121,12 @@ describe('<RichTranslationForm>', () => {
     const l2 = wrapper.find('label').at(2);
     expect(l2.find('span').at(0).html()).toContain('accesskey');
     expect(l2.find('span').at(1).html()).toContain('macosx');
-    expect(wrapper.find('textarea').at(2).html()).toContain('e');
+    expect(wrapper.find('input').at(0).html()).toContain('e');
 
     const l3 = wrapper.find('label').at(3);
     expect(l3.find('span').at(0).html()).toContain('accesskey');
     expect(l3.find('span').at(1).html()).toContain('other');
-    expect(wrapper.find('textarea').at(3).html()).toContain('s');
+    expect(wrapper.find('input').at(1).html()).toContain('s');
   });
 
   it('renders plural string properly', () => {
@@ -142,19 +143,13 @@ describe('<RichTranslationForm>', () => {
     expect(wrapper.find('textarea').at(0).html()).toContain('Hello!');
 
     expect(
-      wrapper
-        .find('#fluenteditor-RichTranslationForm--label-with-example')
-        .at(0)
-        .prop('vars'),
+      wrapper.find('#translationform--label-with-example').at(0).prop('vars'),
     ).toEqual({ label: 'one', example: 1 });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
 
     expect(
-      wrapper
-        .find('#fluenteditor-RichTranslationForm--label-with-example')
-        .at(1)
-        .prop('vars'),
+      wrapper.find('#translationform--label-with-example').at(1).prop('vars'),
     ).toEqual({ label: 'other', example: 2 });
   });
 
@@ -178,10 +173,7 @@ describe('<RichTranslationForm>', () => {
     );
 
     expect(
-      wrapper
-        .find('#fluenteditor-RichTranslationForm--label-with-example')
-        .at(0)
-        .prop('vars'),
+      wrapper.find('#translationform--label-with-example').at(0).prop('vars'),
     ).toEqual({ label: 'one', example: 1 });
 
     expect(wrapper.find('textarea').at(1).html()).toContain('World!');
@@ -191,10 +183,7 @@ describe('<RichTranslationForm>', () => {
     );
 
     expect(
-      wrapper
-        .find('#fluenteditor-RichTranslationForm--label-with-example')
-        .at(1)
-        .prop('vars'),
+      wrapper.find('#translationform--label-with-example').at(1).prop('vars'),
     ).toEqual({ label: 'other', example: 2 });
   });
 
@@ -205,14 +194,15 @@ describe('<RichTranslationForm>', () => {
         .accesskey = C
       `);
 
-    expect(wrapper.find('textarea')).toHaveLength(3);
+    expect(wrapper.find('textarea')).toHaveLength(2);
+    expect(wrapper.find('input')).toHaveLength(1);
 
     expect(wrapper.find('label').at(1).html()).toContain('label');
     expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Candidates');
 
     expect(wrapper.find('label').at(2).html()).toContain('accesskey');
-    expect(wrapper.find('textarea').at(2).prop('value')).toEqual('C');
-    expect(wrapper.find('textarea').at(2).prop('maxLength')).toEqual(1);
+    expect(wrapper.find('input').prop('value')).toEqual('C');
+    expect(wrapper.find('input').prop('maxLength')).toEqual(1);
 
     expect(wrapper.find('.accesskeys')).toHaveLength(1);
     expect(wrapper.find('.accesskeys button')).toHaveLength(8);

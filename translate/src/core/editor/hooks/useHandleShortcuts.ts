@@ -19,9 +19,7 @@ import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 /**
  * Return a function to handle shortcuts in a translation form.
  */
-export function useHandleShortcuts(): (
-  event: React.KeyboardEvent<HTMLTextAreaElement>,
-) => void {
+export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
   const clearEditor = useClearEditor();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const sendTranslation = useSendTranslation();
@@ -50,7 +48,7 @@ export function useHandleShortcuts(): (
     return () => {};
   }
 
-  return (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  return (ev: React.KeyboardEvent) => {
     switch (ev.key) {
       // On Enter:
       //   - If unsaved changes popup is shown, proceed.

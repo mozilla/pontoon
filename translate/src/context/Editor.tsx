@@ -95,7 +95,9 @@ const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
 });
 
 export type EditorData = Readonly<{
-  activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
+  activeInput: React.MutableRefObject<
+    HTMLInputElement | HTMLTextAreaElement | null
+  >;
 
   /** Is a request to send a new translation running? */
   busy: boolean;
@@ -237,11 +239,13 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           if (input) {
             input.setRangeText(
               content,
-              input.selectionStart,
-              input.selectionEnd,
+              input.selectionStart ?? 0, // never actually null for <input type="text"> or <textarea>
+              input.selectionEnd ?? 0,
               'end',
             );
             next = setEditorMessage(value, input.id, input.value);
+          } else if (value.length === 1) {
+            next = setEditorMessage(value, null, value[0].value + content);
           } else {
             next = setEditorMessage(value, null, content);
           }
