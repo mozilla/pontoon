@@ -2,49 +2,25 @@
 from django.db import migrations
 
 
+system_user_emails = [
+    "pontoon-sync@example.com",
+    "pontoon-gt@example.com",
+    "pontoon-tm@example.com",
+]
+
+
 def mark_system_users(apps, schema_editor):
-    User = apps.get_model("auth", "User")
     UserProfile = apps.get_model("base", "UserProfile")
-
-    user = User.objects.filter(email="pontoon-sync@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = True
-        user_profile.save
-
-    user = User.objects.filter(email="pontoon-gt@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = True
-        user_profile.save
-
-    user = User.objects.filter(email="pontoon-tm@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = True
-        user_profile.save
+    UserProfile.objects.filter(user__email__in=system_user_emails).update(
+        system_user=True
+    )
 
 
 def revert_mark_system_users(apps, schema_editor):
-    User = apps.get_model("auth", "User")
-
-    user = User.objects.filter(email="pontoon-sync@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = None
-        user_profile.save
-
-    user = User.objects.filter(email="pontoon-gt@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = None
-        user_profile.save
-
-    user = User.objects.filter(email="pontoon-tm@example.com").first()
-    user_profile = UserProfile.objects.filter(user=user).first()
-    if user and user_profile:
-        user_profile.system_user = None
-        user_profile.save
+    UserProfile = apps.get_model("base", "UserProfile")
+    UserProfile.objects.filter(user__email__in=system_user_emails).update(
+        system_user=None
+    )
 
 
 class Migration(migrations.Migration):

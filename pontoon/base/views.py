@@ -42,7 +42,6 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
-    UserProfile,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -680,14 +679,10 @@ def unpin_comment(request):
 @login_required(redirect_field_name="", login_url="/403")
 def get_users(request):
     """Get all users."""
-    system_users = UserProfile.objects.filter(system_user=True).values_list(
-        "user_id", flat=True
-    )
-
     users = (
         User.objects
         # Exclude system users
-        .exclude(user__pk__in=system_users)
+        .exclude(profile__system_user=True)
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
     )
