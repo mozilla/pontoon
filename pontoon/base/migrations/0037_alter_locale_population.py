@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0036_locale_google_automl_model'),
+        ("base", "0036_locale_google_automl_model"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='locale',
-            name='population',
-            field=models.PositiveIntegerField(default=0, help_text='\n        Number of native speakers. Find locale code in\n        <a href="https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>\n        and multiply its "_populationPercent" with the territory "_population".\n        Repeat if multiple occurrences of locale code exist and sum products.\n        '),
+            model_name="locale",
+            name="population",
+            field=models.PositiveIntegerField(
+                default=0,
+                help_text='\n        Number of native speakers. Find locale code in\n        <a href="https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>\n        and multiply its "_populationPercent" with the territory "_population".\n        Repeat if multiple occurrences of locale code exist and sum products.\n        ',
+            ),
         ),
     ]
