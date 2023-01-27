@@ -65,7 +65,7 @@ describe('getEmptyMessage', () => {
       my-entry =
           { PLATFORM() ->
               [variant] { "" }
-             *[other] { "" }
+             *[another-variant] { "" }
           }
 
       `);
@@ -113,22 +113,22 @@ describe('getEmptyMessage', () => {
               [one]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
               [two]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
               [few]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
              *[other]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
           }
 

@@ -12,7 +12,7 @@ import { EditAccesskey } from './EditAccesskey';
 import { EditField, EditFieldProps } from './EditField';
 import './TranslationForm.css';
 
-const RichLabel = ({
+const Label = ({
   getExample,
   htmlFor,
   labels,
@@ -22,13 +22,14 @@ const RichLabel = ({
   labels: Array<{ label: string; plural: boolean }>;
 }) => (
   <label htmlFor={htmlFor}>
-    {labels.map(({ label, plural }) => {
+    {labels.map(({ label, plural }, index) => {
       const example = plural && getExample(label);
+      const key = label + index;
       if (typeof example === 'number') {
         return (
           <Localized
             id='translationform--label-with-example'
-            key={label}
+            key={key}
             vars={{ example, label }}
             elems={{ stress: <span className='stress' /> }}
           >
@@ -38,13 +39,13 @@ const RichLabel = ({
           </Localized>
         );
       } else {
-        return <span key={label}>{label}</span>;
+        return <span key={key}>{label}</span>;
       }
     })}
   </label>
 );
 
-const RichPattern = (props: EditFieldProps & { name: string }) =>
+const EditPattern = (props: EditFieldProps & { name: string }) =>
   props.name.endsWith('accesskey') && props.value.length <= 1 ? (
     <EditAccesskey {...props} />
   ) : (
@@ -104,14 +105,10 @@ export function TranslationForm(): React.ReactElement<'div'> {
           {value.map(({ id, labels, name, value }) => (
             <tr key={id}>
               <td>
-                <RichLabel
-                  getExample={getExample}
-                  htmlFor={id}
-                  labels={labels}
-                />
+                <Label getExample={getExample} htmlFor={id} labels={labels} />
               </td>
               <td>
-                <RichPattern
+                <EditPattern
                   activeInput={activeInput}
                   id={id}
                   name={name}
