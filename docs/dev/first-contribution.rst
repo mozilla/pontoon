@@ -73,11 +73,7 @@ instance:
     1.  Name: Pontoon Test
     2.  Slug (auto-filled): pontoon-test
     3.  Locales: select Slovenian (sl), then add any locales you want
-    4.  Repositories
-
-        1. URL: https://github.com/mathjazz/pontoon-test
-        2. Download prefix: https://raw.githubusercontent.com/mathjazz/pontoon-test/master/{locale\_code}
-        3. Public Repository Website: https://github.com/mathjazz/pontoon-test
+    4.  Repositories - URL: https://github.com/mozilla-l10n/pontoon-test
 
 5.  Leave the rest as it is, then scroll to the bottom of the page, and click the "Save Project" button.
 6. Once the project is saved, scroll to the bottom of the page again, and click the "Sync" button. This will pull the data from the repository, and create entries for each of the locales you have enabled.
