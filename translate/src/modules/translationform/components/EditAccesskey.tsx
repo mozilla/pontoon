@@ -9,7 +9,6 @@ import { extractAccessKeyCandidates } from '~/utils/message';
 import type { EditFieldProps } from './EditField';
 
 export function EditAccesskey({
-  activeInput,
   id,
   name,
   userInput,
@@ -27,10 +26,6 @@ export function EditAccesskey({
     }
   };
   const handleKeyDown = useHandleShortcuts();
-  const handleClick = (ev: React.MouseEvent) => {
-    activeInput.current = accessKeyElement.current;
-    handleUpdate(ev.currentTarget.textContent);
-  };
 
   const props = {
     className: 'accesskey-input',
@@ -52,7 +47,6 @@ export function EditAccesskey({
         ref={accessKeyElement}
         maxLength={1}
         onChange={(ev) => handleUpdate(ev.currentTarget.value)}
-        onFocus={(ev) => (activeInput.current = ev.currentTarget)}
         onKeyDown={handleKeyDown}
         {...props}
       />
@@ -61,7 +55,7 @@ export function EditAccesskey({
           <button
             className={`key ${key === value ? 'active' : ''}`}
             key={key}
-            onClick={handleClick}
+            onClick={(ev) => handleUpdate(ev.currentTarget.textContent)}
           >
             {key}
           </button>

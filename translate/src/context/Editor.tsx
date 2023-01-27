@@ -95,9 +95,7 @@ const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
 });
 
 export type EditorData = Readonly<{
-  activeInput: React.MutableRefObject<
-    HTMLInputElement | HTMLTextAreaElement | null
-  >;
+  activeField: React.MutableRefObject<HTMLTextAreaElement | null>;
 
   /** Is a request to send a new translation running? */
   busy: boolean;
@@ -142,7 +140,7 @@ export type EditorActions = {
 };
 
 const initEditorData: EditorData = {
-  activeInput: { current: null },
+  activeField: { current: null },
   busy: false,
   entry: { id: '', value: null, attributes: new Map() },
   initial: [],
@@ -185,8 +183,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          const { activeInput, value } = prev;
-          const input = activeInput.current;
+          const { activeField, value } = prev;
+          const input = activeField.current;
           const next = setEditorMessage(value, input?.id, str);
           if (value.length > 1 && input) {
             // Need to let react-dom "fix" the select position before setting it right
@@ -223,19 +221,19 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromInput: (input) =>
         setState((prev) => {
-          const { activeInput, value } = prev;
+          const { activeField, value } = prev;
           const next =
             typeof input !== 'string'
               ? input
-              : setEditorMessage(value, activeInput.current?.id, input);
+              : setEditorMessage(value, activeField.current?.id, input);
           return { ...prev, value: next };
         }),
 
       setEditorSelection: (content) =>
         setState((prev) => {
-          const { activeInput, value } = prev;
+          const { activeField, value } = prev;
           let next: EditorMessage;
-          const input = activeInput.current;
+          const input = activeField.current;
           if (input) {
             input.setRangeText(
               content,
@@ -314,7 +312,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       : editMessageEntry(entry);
 
     setState((prev) => ({
-      activeInput: prev.activeInput,
+      activeField: prev.activeField,
       busy: false,
       entry,
       initial: value,

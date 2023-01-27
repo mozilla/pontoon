@@ -61,7 +61,7 @@ const EditPattern = (props: EditFieldProps & { name: string }) =>
  */
 export function TranslationForm(): React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeInput, machinery, value } = useContext(EditorData);
+  const { activeField, machinery, value } = useContext(EditorData);
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
@@ -84,17 +84,21 @@ export function TranslationForm(): React.ReactElement<'div'> {
     if (userInput.current) {
       userInput.current = false;
     } else {
-      activeInput.current ??= root.current?.querySelector('textarea') ?? null;
-      if (!searchBoxHasFocus()) {
-        activeInput.current?.focus();
+      if (!activeField.current?.parentElement) {
+        activeField.current ??= root.current?.querySelector('textarea') ?? null;
+      }
+      const input = activeField.current;
+      if (input && !searchBoxHasFocus()) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
       }
     }
   }, [entity, machinery, value]);
 
   return value.length === 1 ? (
     <EditField
-      activeInput={activeInput}
-      placeholderId='translationform--single-field-placeholder'
+      activeField={activeField}
+      singleField
       userInput={userInput}
       value={value[0]?.value}
     />
@@ -109,7 +113,7 @@ export function TranslationForm(): React.ReactElement<'div'> {
               </td>
               <td>
                 <EditPattern
-                  activeInput={activeInput}
+                  activeField={activeField}
                   id={id}
                   name={name}
                   userInput={userInput}

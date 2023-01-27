@@ -244,7 +244,7 @@ describe('<TranslationForm> with multiple fields', () => {
     act(() => actions.setEditorSelection('Add'));
     wrapper.update();
 
-    expect(wrapper.find('textarea').at(0).prop('value')).toEqual('AddValue');
+    expect(wrapper.find('textarea').at(0).prop('value')).toEqual('ValueAdd');
     expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Something');
   });
 });
