@@ -858,7 +858,7 @@ class Locale(AggregatedStats):
         default=0,
         help_text="""
         Number of native speakers. Find locale code in CLDR territoryInfo.json:
-        https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json
+        https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/territoryInfo.json 
         and multiply its "_populationPercent" with the territory "_population".
         Repeat if multiple occurrences of locale code exist and sum products.
         """,
