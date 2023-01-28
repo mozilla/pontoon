@@ -116,7 +116,10 @@ you create:
    SMTP port (default: ``587``)
 
 ``EMAIL_USE_TLS``
-   Use TLS for the SMTP connection (default: ``True``)
+   Use explicit TLS for the SMTP connection (default: ``True``)
+
+``EMAIL_USE_SSL``
+   Use implicit TLS for the SMTP connection (default: ``False``)
 
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
