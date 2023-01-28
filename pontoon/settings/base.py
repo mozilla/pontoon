@@ -134,6 +134,7 @@ EMAIL_HOST_USER = os.environ.get(
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.sendgrid.net")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") != "False"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False") != "False"
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
 )
