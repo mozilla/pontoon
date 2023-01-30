@@ -349,7 +349,7 @@ def serialized_notifications(self):
                             "part": "all-resources",
                         },
                     )
-                    + "?status=missing",
+                    + "?status=missing,pretranslated",
                 }
             else:
                 actor = {
@@ -857,8 +857,8 @@ class Locale(AggregatedStats):
     population = models.PositiveIntegerField(
         default=0,
         help_text="""
-        Number of native speakers. Find locale code in CLDR territoryInfo.json:
-        https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json
+        Number of native speakers. Find locale code in
+        <a href="https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
         and multiply its "_populationPercent" with the territory "_population".
         Repeat if multiple occurrences of locale code exist and sum products.
         """,

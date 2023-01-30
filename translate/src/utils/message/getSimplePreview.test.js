@@ -37,9 +37,16 @@ describe('getSimplePreview', () => {
     expect(res).toEqual('Avengers');
   });
 
-  it('returns an empty string for an empty literal value', () => {
+  it('returns an empty string for an empty literal value in a message', () => {
     const entry = parseEntry('empty = { "" }\n');
     serializeEntry('ftl', entry);
+    const res = getSimplePreview(entry);
+    expect(res).toEqual('');
+  });
+
+  it('returns an empty string for an empty literal value in a term', () => {
+    const entry = parseEntry('-empty = { "" }\n');
+    serializeEntry(entry);
     const res = getSimplePreview(entry);
     expect(res).toEqual('');
   });

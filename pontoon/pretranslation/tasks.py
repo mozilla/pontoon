@@ -10,6 +10,7 @@ from pontoon.base.models import (
     Translation,
     ChangedEntityLocale,
 )
+from pontoon.actionlog.models import ActionLog
 from pontoon.pretranslation.pretranslate import (
     get_translations,
     update_changed_instances,
@@ -46,12 +47,10 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     else:
         locales = project.locales
 
-    locales = (
-        locales.filter(
-            project_locale__readonly=False, project_locale__pretranslation_enabled=True
-        )
-        .distinct()
-        .prefetch_project_locale(project)
+    locales = locales.filter(
+        project_locale__project=project,
+        project_locale__pretranslation_enabled=True,
+        project_locale__readonly=False,
     )
 
     if not locales:
@@ -153,6 +152,18 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         return
 
     translations = Translation.objects.bulk_create(translations)
+
+    # Log creating actions
+    actions_to_log = [
+        ActionLog(
+            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+            performed_by=t.user,
+            translation=t,
+        )
+        for t in translations
+    ]
+
+    ActionLog.objects.bulk_create(actions_to_log)
 
     # Run checks on all translations
     translation_pks = {translation.pk for translation in translations}
