@@ -15,7 +15,11 @@ class TagChart:
     def completion_percent(self):
         return int(
             math.floor(
-                (self.approved_strings + self.strings_with_warnings)
+                (
+                    self.approved_strings
+                    + self.pretranslated_strings
+                    + self.strings_with_warnings
+                )
                 / float(self.total_strings)
                 * 100
             )

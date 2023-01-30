@@ -11,8 +11,9 @@ import {
   MachineryTranslation,
 } from '~/api/machinery';
 import { USER } from '~/core/user';
-import { getSimplePreview } from '~/core/utils/fluent';
 import { useAppSelector } from '~/hooks';
+import { getPlainMessage } from '~/utils/message';
+
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';
 import { SearchData } from './SearchData';
@@ -47,11 +48,11 @@ export function MachineryProvider({
 
   let source: string;
   let pk: number | null;
-  let format: string | null;
+  let format: string;
   if (query) {
     source = query;
     pk = null;
-    format = null;
+    format = '';
   } else {
     source = entity.machinery_original;
     pk = entity.pk;
@@ -87,35 +88,33 @@ export function MachineryProvider({
       }
     };
 
-    if (format === 'ftl') {
-      source = getSimplePreview(source);
-    }
+    const plain = getPlainMessage(source, format);
 
     abortMachineryRequests();
-    setTranslations({ source, translations: [] });
+    setTranslations({ source: plain, translations: [] });
 
-    if (source) {
+    if (plain) {
       if (pk) {
-        fetchTranslationMemory(source, locale, pk).then(addResults);
+        fetchTranslationMemory(plain, locale, pk).then(addResults);
       }
 
       // Only make requests to paid services if user is authenticated
       if (isAuthenticated) {
         if (locale.googleTranslateCode) {
-          fetchGoogleTranslation(source, locale).then(addResults);
+          fetchGoogleTranslation(plain, locale).then(addResults);
         }
 
         if (locale.msTranslatorCode) {
-          fetchMicrosoftTranslation(source, locale).then(addResults);
+          fetchMicrosoftTranslation(plain, locale).then(addResults);
         }
 
         if (locale.systranTranslateCode) {
-          fetchSystranTranslation(source, locale).then(addResults);
+          fetchSystranTranslation(plain, locale).then(addResults);
         }
       }
 
       if (locale.msTerminologyCode) {
-        fetchMicrosoftTerminology(source, locale).then(addResults);
+        fetchMicrosoftTerminology(plain, locale).then(addResults);
       }
 
       if (locale.code === 'ga-IE' && pk) {

@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useRef } from 'react';
 
 import type { Location } from '~/context/Location';
-import { CSRFToken } from '~/core/utils';
+import { CSRFToken } from '~/utils';
 
 import './FileUpload.css';
 

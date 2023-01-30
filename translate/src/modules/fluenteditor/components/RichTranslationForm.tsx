@@ -1,44 +1,70 @@
 import { Localized } from '@fluent/react';
-import { Message, Pattern, serializeVariantKey, Term } from '@fluent/syntax';
+import { Message, Pattern } from 'messageformat';
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 
 import { EditorActions, EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { useHandleShortcuts } from '~/core/editor';
-import { CLDR_PLURALS } from '~/core/utils/constants';
 import {
   extractAccessKeyCandidates,
-  isPluralExpression,
-} from '~/core/utils/fluent';
+  findPluralSelectors,
+  MessageEntry,
+  serializePattern,
+} from '~/utils/message';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
+import { CLDR_PLURALS } from '~/utils/constants';
 
 import './RichTranslationForm.css';
 
+type LabelData = Array<{ label: string; example?: string }>;
 type MessagePath = Array<string | number>;
 
-function RichItem({
+const RichLabel = ({
+  htmlFor,
+  labels,
+}: {
+  htmlFor: string;
+  labels: LabelData;
+}) => (
+  <label htmlFor={htmlFor}>
+    {labels.map(({ label, example }) =>
+      example ? (
+        <Localized
+          id='fluenteditor-RichTranslationForm--label-with-example'
+          key={label}
+          vars={{ example, label }}
+          elems={{ stress: <span className='stress' /> }}
+        >
+          <span>
+            {label} (e.g. <span className='stress'>{example}</span>)
+          </span>
+        </Localized>
+      ) : (
+        <span key={label}>{label}</span>
+      ),
+    )}
+  </label>
+);
+
+function RichPattern({
   activeInput,
   attributeName,
-  className,
-  example,
-  id,
-  label,
-  message,
+  entry,
+  labels,
+  path,
+  pattern,
   userInput,
-  value,
 }: {
   activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
   attributeName?: string;
-  className?: string;
-  example?: number;
-  id: string;
-  label: string;
-  message: Message | Term;
+  entry: MessageEntry;
+  labels: LabelData;
+  path: MessagePath;
+  pattern: Pattern;
   userInput: React.MutableRefObject<boolean>;
-  value: string;
 }) {
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
@@ -52,9 +78,12 @@ function RichItem({
     }
   };
 
-  const isAccessKey = label.endsWith('accesskey') && value.length < 2;
+  const id = path.join('|');
+  const value = serializePattern(pattern);
+  const isAccessKey = attributeName?.endsWith('accesskey') && value.length < 2;
   const candidates = isAccessKey
-    ? extractAccessKeyCandidates(message, label)
+    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      extractAccessKeyCandidates(entry, attributeName!)
     : [];
 
   const handleAccessKeyClick = readonly
@@ -65,29 +94,9 @@ function RichItem({
       };
 
   return (
-    <tr className={className}>
+    <tr>
       <td>
-        <label htmlFor={id}>
-          {typeof example === 'number' ? (
-            <Localized
-              id='fluenteditor-RichTranslationForm--plural-example'
-              vars={{ example, plural: label }}
-              elems={{ stress: <span className='stress' /> }}
-            >
-              <span className='example'>
-                {'{ $plural } (e.g. <stress>{ $example }</stress>)'}
-              </span>
-            </Localized>
-          ) : attributeName ? (
-            <span>
-              <span className='attribute-label'>{attributeName}</span>
-              <span className='divider'>&middot;</span>
-              <span className='label'>{label}</span>
-            </span>
-          ) : (
-            <span>{label}</span>
-          )}
-        </label>
+        <RichLabel htmlFor={id} labels={labels} />
       </td>
       <td>
         <textarea
@@ -121,101 +130,84 @@ function RichItem({
   );
 }
 
-function RichPattern({
+function RichMessage({
   activeInput,
   attributeName,
-  message,
+  entry,
   path,
-  pattern,
+  message,
   userInput,
 }: {
   activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
   attributeName?: string;
-  message: Message | Term;
+  entry: MessageEntry;
   path: MessagePath;
-  pattern: Pattern;
+  message: Message;
   userInput: React.MutableRefObject<boolean>;
 }) {
   const locale = useContext(Locale);
   const pluralExamples = usePluralExamples(locale);
-  const getExample = (isPlural: boolean, label: string) => {
+  const getExample = (label: string) => {
     const pluralForm = CLDR_PLURALS.indexOf(label);
-    return isPlural && pluralExamples && pluralForm >= 0
+    return pluralExamples && pluralForm >= 0
       ? pluralExamples[pluralForm]
       : undefined;
   };
 
-  let indent = false;
-  const items = pattern.elements.map((element, eIndex) => {
-    if (
-      element.type === 'Placeable' &&
-      element.expression.type === 'SelectExpression'
-    ) {
-      const { expression } = element;
-      const isPlural = isPluralExpression(expression);
-      const rendered_variants = expression.variants.map((variant, vIndex) => {
-        let value: string;
-        const element = variant.value.elements[0];
-        if (element && element.value && typeof element.value === 'string') {
-          value = element.value;
-        } else {
-          value = '';
-        }
+  let nameLabel: LabelData;
+  if (attributeName) {
+    nameLabel = [{ label: attributeName }];
+  } else if (entry.attributes?.size) {
+    nameLabel = [{ label: 'Value' }];
+  } else {
+    nameLabel = [];
+  }
 
-        const label = serializeVariantKey(variant.key);
-        const example = getExample(isPlural, label);
-        const id = path
-          .concat([
-            eIndex,
-            'expression',
-            'variants',
-            vIndex,
-            'value',
-            'elements',
-            0,
-            'value',
-          ])
-          .join('-');
+  switch (message.type) {
+    case 'message':
+      return (
+        <RichPattern
+          activeInput={activeInput}
+          attributeName={attributeName}
+          entry={entry}
+          labels={nameLabel}
+          path={path}
+          pattern={message.pattern}
+          userInput={userInput}
+        />
+      );
 
+    case 'select': {
+      const plurals = findPluralSelectors(message);
+      const items = message.variants.map(({ keys, value }, index) => {
+        const labels = nameLabel.concat(
+          keys.map((key, i) => {
+            const label = 'value' in key ? key.value : 'other';
+            const ex = plurals.includes(i) && getExample(label);
+            return typeof ex === 'number'
+              ? { label, example: String(ex) }
+              : { label };
+          }),
+        );
         return (
-          <RichItem
+          <RichPattern
             activeInput={activeInput}
             attributeName={attributeName}
-            className={indent ? 'indented' : undefined}
-            example={example}
-            id={id}
-            key={id}
-            label={label}
-            message={message}
+            entry={entry}
+            key={labels.map((kl) => kl.label).join()}
+            labels={labels}
+            path={path.concat(index)}
+            pattern={value}
             userInput={userInput}
-            value={value}
           />
         );
       });
-
-      indent = false;
-      return rendered_variants;
-    } else {
-      indent = true;
-      if (typeof element.value !== 'string') {
-        return null;
-      }
-
-      const id = path.concat(eIndex, 'value').join('-');
-      return (
-        <RichItem
-          activeInput={activeInput}
-          id={id}
-          key={id}
-          label={attributeName || 'Value'}
-          message={message}
-          userInput={userInput}
-          value={element.value}
-        />
-      );
+      return <>{items}</>;
     }
-  });
-  return <>{items}</>;
+
+    default:
+      return null;
+  }
 }
 
 /**
@@ -227,7 +219,7 @@ function RichPattern({
  */
 export function RichTranslationForm(): null | React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeInput, machinery, value: message } = useContext(EditorData);
+  const { activeInput, machinery, value: entry } = useContext(EditorData);
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
@@ -244,35 +236,37 @@ export function RichTranslationForm(): null | React.ReactElement<'div'> {
         activeInput.current?.focus();
       }
     }
-  }, [entity, machinery, message]);
+  }, [entity, machinery, entry]);
 
   // message should always be a Message or a Term
-  return message instanceof Message || message instanceof Term ? (
+  return typeof entry !== 'string' && entry ? (
     <div className='fluent-rich-translation-form'>
       <table>
         <tbody ref={root}>
-          {message.value ? (
-            <RichPattern
+          {entry.value ? (
+            <RichMessage
               activeInput={activeInput}
-              message={message}
-              pattern={message.value}
-              path={['value', 'elements']}
+              entry={entry}
+              message={entry.value}
+              path={['value']}
               userInput={userInput}
             />
           ) : null}
-          {message.attributes?.map(({ id, value }, index) =>
-            value ? (
-              <RichPattern
-                activeInput={activeInput}
-                attributeName={id.name}
-                key={id.name}
-                message={message}
-                pattern={value}
-                path={['attributes', index, 'value', 'elements']}
-                userInput={userInput}
-              />
-            ) : null,
-          )}
+          {entry.attributes
+            ? Array.from(entry.attributes).map(([name, value]) =>
+                value ? (
+                  <RichMessage
+                    activeInput={activeInput}
+                    attributeName={name}
+                    key={name}
+                    entry={entry}
+                    message={value}
+                    path={['attributes', name]}
+                    userInput={userInput}
+                  />
+                ) : null,
+              )
+            : null}
         </tbody>
       </table>
     </div>

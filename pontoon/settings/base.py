@@ -102,6 +102,17 @@ BROKER_URL = os.environ.get("RABBITMQ_URL", None)
 # Google Cloud Translation API key
 GOOGLE_TRANSLATE_API_KEY = os.environ.get("GOOGLE_TRANSLATE_API_KEY", "")
 
+# Google Cloud AutoML Translation Project ID
+GOOGLE_AUTOML_PROJECT_ID = os.environ.get("GOOGLE_AUTOML_PROJECT_ID", "")
+
+# Google Cloud AutoML Translation has latency of ~15s, caused by the loading time of a
+# custom model into the chip. To keep latency low, we need to make regular dummy warm-up
+# requests. It is recommended to make these requests every minute, although in our
+# experience every 5 minutes (300 seconds) is sufficient.
+GOOGLE_AUTOML_WARMUP_INTERVAL = float(
+    os.environ.get("GOOGLE_AUTOML_WARMUP_INTERVAL", "300")
+)
+
 # Microsoft Translator API Key
 MICROSOFT_TRANSLATOR_API_KEY = os.environ.get("MICROSOFT_TRANSLATOR_API_KEY", "")
 
@@ -123,6 +134,7 @@ EMAIL_HOST_USER = os.environ.get(
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.sendgrid.net")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") != "False"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False") != "False"
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
 )
@@ -425,7 +437,7 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     "base": {
         "source_filenames": (
-            "js/lib/jquery-1.11.1.min.js",
+            "js/lib/jquery-3.6.1.js",
             "js/lib/jquery.timeago.js",
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
@@ -443,7 +455,6 @@ PIPELINE_JS = {
     },
     "admin_project": {
         "source_filenames": (
-            "js/lib/jquery-ui.js",
             "js/double_list_selector.js",
             "js/multiple_team_selector.js",
             "js/admin_project.js",
@@ -519,7 +530,7 @@ PIPELINE_JS = {
     },
     "settings": {
         "source_filenames": (
-            "js/lib/jquery-ui.js",
+            "js/lib/jquery-ui-1.13.2.js",
             "js/multiple_team_selector.js",
             "js/team_selector.js",
             "js/settings.js",

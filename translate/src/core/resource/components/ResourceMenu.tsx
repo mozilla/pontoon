@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { Location } from '~/context/Location';
-import { useOnDiscard } from '~/core/utils';
+import { useOnDiscard } from '~/utils';
 
 import type { Resource } from '../actions';
 import { useResource } from '../hooks';
@@ -51,7 +51,8 @@ function ResourceMenuDialog({
   };
 
   const getProgress = (res: Resource) => {
-    const completeStrings = res.approvedStrings + res.stringsWithWarnings;
+    const completeStrings =
+      res.approvedStrings + res.pretranslatedStrings + res.stringsWithWarnings;
     const percent = Math.floor((completeStrings / res.totalStrings) * 100);
     return percent;
   };

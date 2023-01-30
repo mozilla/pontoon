@@ -32,7 +32,7 @@ describe('<History>', () => {
   it('returns null while history is loading', () => {
     const wrapper = mountHistory(true, []);
 
-    expect(wrapper.find('History > *')).toHaveLength(0);
+    expect(wrapper.find('HistoryTranslationComponent > *')).toHaveLength(0);
   });
 
   it('renders a no results message if history is empty', () => {

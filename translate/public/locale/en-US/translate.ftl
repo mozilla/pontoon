@@ -279,17 +279,19 @@ entitydetails-Metadata--placeholder =
 entitydetails-Metadata--resource =
     .title = RESOURCE
 
+entitydetails-Metadata--attribute =
+    .title = FLUENT ATTRIBUTE
 
 ## Entity Details ContextIssueButton
 ## Shows the request context or report issue button
 
 entitydetails-ContextIssueButton--context-issue-button = REQUEST CONTEXT or REPORT ISSUE
 
-## Entity Details GenericOriginalString
-## Shows the original string of an entity
+## Entity Details PluralString
+## Shows the original string of an entity with plural forms
 
-entitydetails-GenericOriginalString--plural = PLURAL
-entitydetails-GenericOriginalString--singular = SINGULAR
+entitydetails-PluralString--plural = PLURAL
+entitydetails-PluralString--singular = SINGULAR
 
 
 ## Entities List Entity
@@ -302,7 +304,7 @@ entitieslist-Entity--sibling-strings-title =
 ## Rich editor
 ## Renders a Rich editor for Fluent string editing
 
-fluenteditor-RichTranslationForm--plural-example = { $plural } (e.g. <stress>{ $example }</stress>)
+fluenteditor-RichTranslationForm--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)
 
 
 ## History
@@ -573,12 +575,20 @@ placeable-parser-escapeSequence =
     .title = Escape sequence
 placeable-parser-filePattern =
     .title = File location
+placeable-parser-fluentFunction =
+    .title = Fluent function
+placeable-parser-fluentParametrizedTerm =
+    .title = Fluent parametrized term
+placeable-parser-fluentString =
+    .title = Fluent string
 placeable-parser-fluentTerm =
     .title = Fluent term
 placeable-parser-javaFormattingVariable =
     .title = Java Message formatting variable
 placeable-parser-jsonPlaceholder =
     .title = JSON placeholder
+placeable-parser-leadingSpace =
+    .title = Leading space
 placeable-parser-multipleSpaces =
     .title = Multiple spaces
 placeable-parser-narrowNonBreakingSpace =
@@ -595,8 +605,6 @@ placeable-parser-numberString =
     .title = Number
 placeable-parser-optionPattern =
     .title = Command line option
-placeable-parser-fluentParametrizedTerm =
-    .title = Fluent parametrized term
 placeable-parser-punctuation =
     .title = Punctuation
 placeable-parser-pythonFormatNamedString =
@@ -607,10 +615,10 @@ placeable-parser-pythonFormattingVariable =
     .title = Python string formatting variable
 placeable-parser-qtFormatting =
     .title = Qt string formatting variable
-placeable-parser-stringFormattingVariable =
-    .title = String formatting variable
 placeable-parser-shortCapitalNumberString =
     .title = Short capital letter and number string
+placeable-parser-stringFormattingVariable =
+    .title = String formatting variable
 placeable-parser-tabCharacter =
     .title = Tab character
 placeable-parser-thinSpace =
@@ -654,6 +662,7 @@ search-FiltersPanel--heading-extra = EXTRA FILTERS
 search-FiltersPanel--heading-authors = TRANSLATION AUTHORS
 search-FiltersPanel--status-name-all = All
 search-FiltersPanel--status-name-translated = Translated
+search-FiltersPanel--status-name-pretranslated = Pretranslated
 search-FiltersPanel--status-name-warnings = Warnings
 search-FiltersPanel--status-name-errors = Errors
 search-FiltersPanel--status-name-missing = Missing

@@ -113,7 +113,7 @@ export async function fetchTranslationMemory(
         itemCount: item.count,
         original: item.source,
         translation: item.target,
-        quality: Math.round(item.quality),
+        quality: Math.floor(item.quality),
       }))
     : [];
 }

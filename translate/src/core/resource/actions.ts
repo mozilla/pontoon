@@ -7,6 +7,7 @@ export const UPDATE_RESOURCE = 'resource/UPDATE';
 export type Resource = {
   readonly path: string;
   readonly approvedStrings: number;
+  readonly pretranslatedStrings: number;
   readonly stringsWithWarnings: number;
   readonly totalStrings: number;
 };
@@ -15,6 +16,7 @@ type UpdateAction = {
   type: typeof UPDATE_RESOURCE;
   resourcePath: string;
   approvedStrings: number;
+  pretranslatedStrings: number;
   stringsWithWarnings: number;
 };
 
@@ -33,6 +35,7 @@ export const getResource =
     const resources = results.map((resource) => ({
       path: resource.title,
       approvedStrings: resource.approved_strings,
+      pretranslatedStrings: resource.pretranslated_strings,
       stringsWithWarnings: resource.strings_with_warnings,
       totalStrings: resource.resource__total_strings,
     }));
@@ -44,10 +47,12 @@ export const getResource =
 export const updateResource = (
   resourcePath: string,
   approvedStrings: number,
+  pretranslatedStrings: number,
   stringsWithWarnings: number,
 ): UpdateAction => ({
   type: UPDATE_RESOURCE,
   resourcePath,
   approvedStrings,
+  pretranslatedStrings,
   stringsWithWarnings,
 });

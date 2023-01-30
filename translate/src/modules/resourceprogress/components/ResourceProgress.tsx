@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useState } from 'react';
 import { Link } from '~/context/Location';
 import { Stats, useStats } from '~/core/stats';
-import { asLocaleString, useOnDiscard } from '~/core/utils';
+import { asLocaleString, useOnDiscard } from '~/utils';
 import { ProgressChart } from './ProgressChart';
 import './ResourceProgress.css';
 
@@ -13,7 +13,15 @@ type Props = {
 };
 
 function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
-  const { approved, warnings, errors, missing, unreviewed, total } = stats;
+  const {
+    approved,
+    pretranslated,
+    warnings,
+    errors,
+    missing,
+    unreviewed,
+    total,
+  } = stats;
 
   const ref = React.useRef<HTMLElement>(null);
   useOnDiscard(ref, onDiscard);
@@ -51,8 +59,6 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Link>
           </p>
         </div>
-        {/* Pretranslation feature is not ready yet, so we're disabling the
-            Pretranslated filter, which wouldn't catch anything.
         <div className='pretranslated'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--pretranslated'>
@@ -65,7 +71,6 @@ function ResourceProgressDialog({ percent, stats, onDiscard }: Props) {
             </Link>
           </p>
         </div>
-        */}
         <div className='warnings'>
           <span className='title'>
             <Localized id='resourceprogress-ResourceProgress--warnings'>
@@ -115,7 +120,7 @@ export function ResourceProgress(): React.ReactElement<'div'> | null {
     return null;
   }
 
-  const complete = stats.approved + stats.warnings;
+  const complete = stats.approved + stats.pretranslated + stats.warnings;
   const percent = Math.floor((complete / stats.total) * 100);
 
   return (

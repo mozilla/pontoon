@@ -116,7 +116,10 @@ you create:
    SMTP port (default: ``587``)
 
 ``EMAIL_USE_TLS``
-   Use TLS for the SMTP connection (default: ``True``)
+   Use explicit TLS for the SMTP connection (default: ``True``)
+
+``EMAIL_USE_SSL``
+   Use implicit TLS for the SMTP connection (default: ``False``)
 
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
@@ -136,8 +139,12 @@ you create:
    Optional. Set your `Google Analytics key`_ to use Google Analytics.
 
 ``GOOGLE_TRANSLATE_API_KEY``
-   Optional. Set your `Google Cloud Translation API key`_ to use machine translation
-   by Google.
+   Optional. Set your `Google Cloud Translation API`_ key to use generic machine
+   translation engine by Google.
+
+``GOOGLE_AUTOML_PROJECT_ID``
+   Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
+   translation engine by Google.
 
 ``LOCALE_REQUEST_FROM_EMAIL``
    Optional. Requests for new project locales are sent from this email.
@@ -154,7 +161,7 @@ you create:
    cloned into (it is located next to the "pontoon" Python module by default).
 
 ``MICROSOFT_TRANSLATOR_API_KEY``
-   Optional. Set your `Microsoft Translator API key`_ to use machine translation
+   Optional. Set your `Microsoft Translator API`_ key to use machine translation
    by Microsoft.
 
 ``NEW_RELIC_API_KEY``
@@ -167,6 +174,10 @@ you create:
 
 ``PROJECT_MANAGERS``
    Optional. A list of project manager email addresses to send project requests to
+
+``PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION``
+   Required. Must be set to ``python``. Needed for Google AutoML Translation.
+   Learn more on `Protocol Buffers Homepage`_.
 
 ``SECRET_KEY``
    Required. Secret key used for sessions, cryptographic signing, etc.
@@ -249,9 +260,11 @@ you create:
 .. _the spec: https://github.com/mozilla/pontoon/blob/master/specs/0108-community-health-dashboard.md
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 .. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
-.. _Microsoft Translator API key: http://msdn.microsoft.com/en-us/library/hh454950
+.. _Microsoft Translator API: http://msdn.microsoft.com/en-us/library/hh454950
 .. _Google Analytics key: https://www.google.com/analytics/
-.. _Google Cloud Translation API key: https://cloud.google.com/translate/
+.. _Google Cloud Translation API: https://cloud.google.com/translate/
+.. _Google Cloud AutoML Translation: https://cloud.google.com/translate/
+.. _Protocol Buffers Homepage: https://developers.google.com/protocol-buffers/docs/news/2022-05-06#python-updates
 
 Add-ons
 -------

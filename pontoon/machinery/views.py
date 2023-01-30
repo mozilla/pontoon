@@ -161,13 +161,17 @@ def google_translate(request):
         if not locale_code:
             raise ValueError("Locale code is empty")
 
+        locale = Locale.objects.filter(google_translate_code=locale_code).first()
+        if not locale:
+            raise ValueError("Locale code not supported")
+
     except (MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,
         )
 
-    data = get_google_translate_data(text, locale_code)
+    data = get_google_translate_data(text, locale)
 
     if not data["status"]:
         return JsonResponse(data, status=400)

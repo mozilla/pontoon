@@ -195,4 +195,4 @@ def test_util_tag_chart():
     assert chart.approved_share == 18.0
     assert chart.pretranslated_share == 10.0
     assert chart.unreviewed_share == 32.0
-    assert chart.completion_percent == 17
+    assert chart.completion_percent == 27

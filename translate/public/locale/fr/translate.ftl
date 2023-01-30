@@ -115,11 +115,11 @@ entitydetails-Metadata--resource =
     .title = RESSOURCE
 
 
-## Entity Details GenericOriginalString
-## Shows the original string of an entity
+## Entity Details PluralString
+## Shows the original string of an entity with plural forms
 
-entitydetails-GenericOriginalString--plural = PLURIEL
-entitydetails-GenericOriginalString--singular = SINGULIER
+entitydetails-PluralString--plural = PLURIEL
+entitydetails-PluralString--singular = SINGULIER
 
 
 ## History

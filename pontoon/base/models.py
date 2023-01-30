@@ -290,7 +290,11 @@ def can_translate(self, locale, project):
 
 def is_new_contributor(self, locale):
     """Return True if the user hasn't made contributions to the locale yet."""
-    return not self.translation_set.filter(locale=locale).exists()
+    return (
+        not self.translation_set.filter(locale=locale)
+        .exclude(entity__resource__project__system_project=True)
+        .exists()
+    )
 
 
 @property
@@ -345,7 +349,7 @@ def serialized_notifications(self):
                             "part": "all-resources",
                         },
                     )
-                    + "?status=missing",
+                    + "?status=missing,pretranslated",
                 }
             else:
                 actor = {
@@ -583,7 +587,11 @@ class AggregatedStats(models.Model):
 
     @property
     def completed_strings(self):
-        return self.approved_strings + self.strings_with_warnings
+        return (
+            self.approved_strings
+            + self.pretranslated_strings
+            + self.strings_with_warnings
+        )
 
     @property
     def complete(self):
@@ -693,6 +701,15 @@ class Locale(AggregatedStats):
         <a href="https://translate.google.com/intl/en/about/languages/">
         supported locales</a>. Choose a matching locale from the list or leave blank to disable
         support for Google Cloud Translation machine translation service.
+        """,
+    )
+
+    google_automl_model = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text="""
+        ID of a custom model, trained using locale translation memory. If the value is set,
+        Pontoon will use the Google AutoML Translation instead of the generic Translation API.
         """,
     )
 
@@ -840,8 +857,8 @@ class Locale(AggregatedStats):
     population = models.PositiveIntegerField(
         default=0,
         help_text="""
-        Number of native speakers. Find locale code in CLDR territoryInfo.json:
-        https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/territoryInfo.json
+        Number of native speakers. Find locale code in
+        <a href="https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/territoryInfo.json">CLDR territoryInfo.json</a>
         and multiply its "_populationPercent" with the territory "_population".
         Repeat if multiple occurrences of locale code exist and sum products.
         """,

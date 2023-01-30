@@ -1,11 +1,14 @@
 import json
+import Levenshtein
 import logging
 import operator
+import requests
+
 from collections import defaultdict
 from functools import reduce
+from google.auth.exceptions import DefaultCredentialsError
+from google.cloud import translate
 
-import Levenshtein
-import requests
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
@@ -16,7 +19,14 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale_code):
+def get_google_translate_data(text, locale):
+    if locale.google_automl_model:
+        return get_google_automl_translation(text, locale)
+
+    return get_google_generic_translation(text, locale.google_translate_code)
+
+
+def get_google_generic_translation(text, locale_code):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -58,6 +68,56 @@ def get_google_translate_data(text, locale_code):
         return {
             "status": False,
             "message": f"{e}",
+        }
+
+
+def get_google_automl_translation(text, locale):
+    try:
+        client = translate.TranslationServiceClient()
+    except DefaultCredentialsError as e:
+        log.error("Google AutoML Translation error: {e}")
+        return {
+            "status": False,
+            "message": f"{e}",
+        }
+
+    project_id = settings.GOOGLE_AUTOML_PROJECT_ID
+
+    if not project_id:
+        log.error("GOOGLE_AUTOML_PROJECT_ID not set")
+        return {
+            "status": False,
+            "message": "Bad Request: Missing Project ID.",
+        }
+
+    model_id = locale.google_automl_model
+
+    # Google AutoML Translation requires location "us-central1"
+    location = "us-central1"
+
+    parent = f"projects/{project_id}/locations/{location}"
+    model_path = f"{parent}/models/{model_id}"
+
+    response = client.translate_text(
+        request={
+            "contents": [text],
+            "target_language_code": locale.google_translate_code,
+            "model": model_path,
+            "source_language_code": "en",
+            "parent": parent,
+            "mime_type": "text/plain",
+        }
+    )
+
+    if len(response.translations) == 0:
+        return {
+            "status": False,
+            "message": "No translations found.",
+        }
+    else:
+        return {
+            "status": True,
+            "translation": response.translations[0].translated_text,
         }
 
 

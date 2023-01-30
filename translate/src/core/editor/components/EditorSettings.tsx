@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import type { Settings } from '~/core/user';
-import { useOnDiscard } from '~/core/utils';
+import { useOnDiscard } from '~/utils';
 
 import './EditorSettings.css';
 

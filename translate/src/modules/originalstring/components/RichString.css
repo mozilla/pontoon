@@ -1,0 +1,37 @@
+.fluent-rich-string {
+  line-height: 22px;
+  padding: 10px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.fluent-rich-string td:first {
+  width: calc(25% - 5px);
+}
+
+.fluent-rich-string td:last-child {
+  width: 75%;
+}
+
+.fluent-rich-string label {
+  background: transparent;
+  border: 1px solid #5e6475;
+  box-sizing: border-box;
+  color: #aaaaaa;
+  display: block;
+  font-weight: normal;
+  margin: 2px 5px 2px 0;
+  padding: 0 4px;
+}
+
+.fluent-rich-string label > :not(:last-child)::after {
+  content: '·';
+  color: #7bc876;
+  padding: 0 3px;
+}
+
+.fluent-rich-string td > span {
+  box-sizing: border-box;
+  line-height: 28px;
+  margin: 2px 0;
+}
