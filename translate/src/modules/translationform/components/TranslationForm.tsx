@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useLayoutEffect, useRef } from 'react';
 
-import { EditorData } from '~/context/Editor';
+import { EditorData, useEditorValue } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
@@ -61,7 +61,8 @@ const EditPattern = (props: EditFieldProps & { name: string }) =>
  */
 export function TranslationForm(): React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeField, machinery, value } = useContext(EditorData);
+  const { activeField, machinery } = useContext(EditorData);
+  const value = useEditorValue();
 
   const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);

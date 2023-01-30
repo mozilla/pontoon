@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { EditorData } from '~/context/Editor';
+import { EditorData, useEditorValue } from '~/context/Editor';
 import { EntityView, useEntitySource } from '~/context/EntityView';
 import { getPlainMessage } from '~/utils/message';
 
@@ -15,7 +15,8 @@ import './TranslationLength.css';
 export function TranslationLength(): React.ReactElement<'div'> | null {
   const { entity } = useContext(EntityView);
   const source = useEntitySource();
-  const { sourceView, value } = useContext(EditorData);
+  const { sourceView } = useContext(EditorData);
+  const value = useEditorValue();
 
   if (sourceView || value.length !== 1) {
     return null;

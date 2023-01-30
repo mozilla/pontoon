@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react';
 
-import { EditorActions, EditorData } from '~/context/Editor';
+import { EditorActions, useEditorValue } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
 import { useHandleShortcuts } from '~/core/editor';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
@@ -16,7 +16,7 @@ export function EditAccesskey({
 }: EditFieldProps & { name: string }) {
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
-  const { value: message } = useContext(EditorData);
+  const message = useEditorValue();
   const accessKeyElement = useRef<HTMLInputElement>(null);
 
   const handleUpdate = (value: string | null) => {

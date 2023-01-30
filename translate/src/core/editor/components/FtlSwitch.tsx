@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useMemo } from 'react';
 
-import { EditorActions, EditorData } from '~/context/Editor';
+import { EditorActions, EditorData, useEditorValue } from '~/context/Editor';
 import { ShowNotification } from '~/context/Notification';
 import { FTL_NOT_SUPPORTED_RICH_EDITOR } from '~/core/notification/messages';
 import { USER } from '~/core/user';
@@ -28,7 +28,8 @@ export function FtlSwitch() {
     (state) => state[USER].isAuthenticated,
   );
   const { toggleSourceView } = useContext(EditorActions);
-  const { sourceView, value } = useContext(EditorData);
+  const { sourceView } = useContext(EditorData);
+  const value = useEditorValue();
   const { entity } = useContext(EntityView);
 
   const hasError = useMemo(() => {

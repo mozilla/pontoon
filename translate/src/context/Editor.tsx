@@ -364,10 +364,15 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   );
 }
 
+export function useEditorValue(): EditorMessage {
+  const { value } = useContext(EditorData);
+  return value;
+}
+
 export function useClearEditor() {
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
-  const { value } = useContext(EditorData);
+  const value = useEditorValue();
 
   return useCallback(() => {
     const empty = value.map((field) => ({ ...field, value: '' }));
@@ -376,7 +381,8 @@ export function useClearEditor() {
 }
 
 export function useEditorMessageEntry() {
-  const { entry, sourceView, value } = useContext(EditorData);
+  const { entry, sourceView } = useContext(EditorData);
+  const value = useEditorValue();
   return sourceView
     ? parseEntryFromFluentSource(entry, value[0].value)
     : buildMessageEntry(entry, value);
