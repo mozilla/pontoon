@@ -81,7 +81,9 @@ function previewMessage(message: Message): string {
       res += elt.value;
     } else {
       const expression = serializeExpression(elt.expression);
-      res += `{ ${expression} }`;
+      if (expression !== '""') {
+        res += `{ ${expression} }`;
+      }
     }
   }
   return res;
