@@ -187,4 +187,16 @@ my-entry =
 
     expect(getSyntaxType(message)).toEqual('complex');
   });
+
+  it('returns "complex" for a string with an unsupported selector', () => {
+    const input = `
+my-entry =
+    { FOO() ->
+        [foo] FOO
+       *[other] BAR
+    }`;
+    const message = parseEntry(input);
+
+    expect(getSyntaxType(message)).toEqual('complex');
+  });
 });
