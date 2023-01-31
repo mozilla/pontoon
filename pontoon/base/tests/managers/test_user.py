@@ -7,8 +7,6 @@ from pontoon.contributors.utils import users_with_translations_counts
 
 from django.contrib.auth.models import User
 
-from pontoon.base.models import UserProfile
-
 from pontoon.test.factories import (
     EntityFactory,
     TranslationFactory,
@@ -338,7 +336,7 @@ def test_mgr_system_user_contributors_excluded(
     Exclude system users contributors
     """
     contributor = User.objects.filter(email="pontoon-gt@example.com").first()
-    user_profile = UserProfile.objects.filter(user=contributor).first()
+    user_profile = contributor.profile
     user_profile.system_user = True
     user_profile.save()
 

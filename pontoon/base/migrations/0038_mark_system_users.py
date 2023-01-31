@@ -19,7 +19,7 @@ def mark_system_users(apps, schema_editor):
 def revert_mark_system_users(apps, schema_editor):
     UserProfile = apps.get_model("base", "UserProfile")
     UserProfile.objects.filter(user__email__in=system_user_emails).update(
-        system_user=None
+        system_user=False
     )
 
 

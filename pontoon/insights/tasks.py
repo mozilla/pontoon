@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Entity, Locale, ProjectLocale, Translation, UserProfile
+from pontoon.base.models import Entity, Locale, ProjectLocale, Translation
 from pontoon.base.utils import group_dict_by
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
@@ -120,9 +120,7 @@ def get_contributors():
 
     Note that excluding system user emails in the Translation QuerySet directly is slow.
     """
-    system_users = UserProfile.objects.filter(system_user=True).values_list(
-        "user_id", flat=True
-    )
+    system_users = User.objects.filter(profile__system_user=True).values("pk")
 
     contributors = (
         Translation.objects.filter(user__isnull=False)
