@@ -547,6 +547,7 @@ notification--tt-checks-enabled = Translate Toolkit Checks enabled
 notification--tt-checks-disabled = Translate Toolkit Checks disabled
 notification--make-suggestions-enabled = Make Suggestions enabled
 notification--make-suggestions-disabled = Make Suggestions disabled
+notification--ftl-not-supported-rich-editor = Translation not supported in rich editor
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
