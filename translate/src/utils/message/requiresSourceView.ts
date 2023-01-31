@@ -3,6 +3,13 @@ import type { MessageEntry } from '.';
 
 const MAX_RICH_VARIANTS = 15;
 
+const VALID_FUNCTIONS = [
+  'DATETIME', // built-in DATETIME()
+  'MESSAGE', // message & term references
+  'NUMBER', // built-in NUMBER()
+  'PLATFORM', // mozilla-central custom PLATFORM() selector
+];
+
 /** If `true`, the message can only be shown in a source editor.  */
 export function requiresSourceView(entry: MessageEntry | null): boolean {
   if (!entry || !entry.id) {
@@ -62,6 +69,8 @@ function partContainsJunk(part: PatternElement): boolean {
       return true;
     case 'placeholder':
       return partContainsJunk(part.body);
+    case 'expression':
+      return !VALID_FUNCTIONS.includes(part.name);
     default:
       return false;
   }

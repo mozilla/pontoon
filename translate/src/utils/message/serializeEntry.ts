@@ -59,18 +59,40 @@ export function serializeEntry(
   }
 
   const data = new Map<string, Message>();
+  const fnMap: typeof defaultFunctionMap = {};
   if (entry.value) {
     data.set('', entry.value);
+    addSelectorExpressions(fnMap, entry.value);
   }
   if (entry.attributes) {
     for (const [name, attr] of entry.attributes) {
       data.set(name, attr);
+      addSelectorExpressions(fnMap, attr);
     }
   }
   const resource = new Map([[entry.id, data]]);
-  const fnMap = { ...defaultFunctionMap, PLATFORM: 'PLATFORM' };
-  const fr = resourceToFluent(resource, undefined, fnMap);
+  Object.assign(fnMap, defaultFunctionMap);
+  try {
+    const fr = resourceToFluent(resource, undefined, fnMap);
+    transformer.visit(fr);
+    return serializer.serialize(fr);
+  } catch {
+    return '';
+  }
+}
 
-  transformer.visit(fr);
-  return serializer.serialize(fr);
+function addSelectorExpressions(
+  fnMap: typeof defaultFunctionMap,
+  msg: Message,
+) {
+  if (msg.type === 'select') {
+    for (let sel of msg.selectors) {
+      if (sel.type === 'placeholder') {
+        sel = sel.body;
+      }
+      if (sel.type === 'expression') {
+        fnMap[sel.name] = sel.name;
+      }
+    }
+  }
 }
