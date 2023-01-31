@@ -127,7 +127,11 @@ def user_display_name(self):
 @property
 def user_display_name_and_email(self):
     name = self.display_name
-    return f"{name} <{self.profile.contact_email or self.email}>"
+    if self.profile.contact_email and self.profile.contact_email_verified:
+        email = self.profile.contact_email_verified
+    else:
+        email = self.email
+    return f"{name} <{email}>"
 
 
 @classmethod
