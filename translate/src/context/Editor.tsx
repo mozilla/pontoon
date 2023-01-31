@@ -95,13 +95,20 @@ const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
 });
 
 export type EditorData = Readonly<{
-  activeField: React.MutableRefObject<HTMLTextAreaElement | null>;
-
   /** Is a request to send a new translation running? */
   busy: boolean;
 
   /** Used to reconstruct edited messages */
   entry: MessageEntry;
+
+  /** Editor input components */
+  fields: Array<React.MutableRefObject<HTMLTextAreaElement | null>>;
+
+  /**
+   * Index in `fields` of the current or most recent field with focus;
+   * used as the target of machinery replacements.
+   */
+  focusField: React.MutableRefObject<number>;
 
   /** Used for detecting unsaved changes */
   initial: EditorMessage;
@@ -140,9 +147,10 @@ export type EditorActions = {
 };
 
 const initEditorData: EditorData = {
-  activeField: { current: null },
   busy: false,
   entry: { id: '', value: null, attributes: new Map() },
+  fields: [],
+  focusField: { current: 0 },
   initial: [],
   machinery: null,
   sourceView: false,
@@ -183,15 +191,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          const { activeField, value } = prev;
-          const input = activeField.current;
+          const { fields, focusField, value } = prev;
+          const input = fields[focusField.current]?.current;
           const next = setEditorMessage(value, input?.id, str);
-          if (value.length > 1 && input) {
-            // Need to let react-dom "fix" the select position before setting it right
-            setTimeout(() => {
-              input.setSelectionRange(str.length, str.length);
-            });
-          }
           return {
             ...prev,
             machinery: { manual, translation: str, sources },
@@ -221,19 +223,21 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromInput: (input) =>
         setState((prev) => {
-          const { activeField, value } = prev;
-          const next =
-            typeof input !== 'string'
-              ? input
-              : setEditorMessage(value, activeField.current?.id, input);
-          return { ...prev, value: next };
+          if (typeof input === 'string') {
+            const { fields, focusField, value } = prev;
+            const field = fields[focusField.current]?.current;
+            const next = setEditorMessage(value, field?.id, input);
+            return { ...prev, value: next };
+          } else {
+            return { ...prev, value: input };
+          }
         }),
 
       setEditorSelection: (content) =>
         setState((prev) => {
-          const { activeField, value } = prev;
+          const { fields, focusField, value } = prev;
           let next: EditorMessage;
-          const input = activeField.current;
+          const input = fields[focusField.current]?.current;
           if (input) {
             input.setRangeText(
               content,
@@ -311,10 +315,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       ? editSource(source)
       : editMessageEntry(entry);
 
-    setState((prev) => ({
-      activeField: prev.activeField,
+    setState(() => ({
       busy: false,
       entry,
+      fields: value.map(() => ({ current: null })),
+      focusField: { current: 0 },
       initial: value,
       machinery: null,
       sourceView,

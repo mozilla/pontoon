@@ -6,16 +6,18 @@ import { useHandleShortcuts } from '~/core/editor';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 export type EditFieldProps = {
-  activeField: React.MutableRefObject<HTMLTextAreaElement | null>;
   id?: string;
+  inputRef: React.MutableRefObject<HTMLTextAreaElement | null>;
+  onFocus?: React.FocusEventHandler<HTMLTextAreaElement>;
   singleField?: boolean;
   userInput: React.MutableRefObject<boolean>;
   value: string;
 };
 
 export function EditField({
-  activeField,
   id,
+  inputRef,
+  onFocus,
   singleField,
   userInput,
   value,
@@ -31,10 +33,6 @@ export function EditField({
       },
       [userInput, setEditorFromInput],
     );
-  const handleFocus: React.FocusEventHandler<HTMLTextAreaElement> = useCallback(
-    (ev) => (activeField.current = ev.currentTarget),
-    [activeField],
-  );
   const handleKeyDown = useHandleShortcuts();
 
   const props = {
@@ -54,9 +52,9 @@ export function EditField({
         <textarea
           id={id}
           onChange={handleChange}
-          onFocus={handleFocus}
+          onFocus={onFocus}
           onKeyDown={handleKeyDown}
-          ref={activeField}
+          ref={inputRef}
           {...props}
         />
       </Localized>
@@ -67,8 +65,9 @@ export function EditField({
     <textarea
       id={id}
       onChange={handleChange}
-      onFocus={handleFocus}
+      onFocus={onFocus}
       onKeyDown={handleKeyDown}
+      ref={inputRef}
       {...props}
     />
   );

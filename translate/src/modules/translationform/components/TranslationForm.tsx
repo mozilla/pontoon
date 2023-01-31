@@ -61,7 +61,7 @@ const EditPattern = (props: EditFieldProps & { name: string }) =>
  */
 export function TranslationForm(): React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { activeField, machinery } = useContext(EditorData);
+  const { fields, focusField, machinery } = useContext(EditorData);
   const value = useEditorValue();
 
   const root = useRef<HTMLTableSectionElement>(null);
@@ -85,10 +85,11 @@ export function TranslationForm(): React.ReactElement<'div'> {
     if (userInput.current) {
       userInput.current = false;
     } else {
-      if (!activeField.current?.parentElement) {
-        activeField.current ??= root.current?.querySelector('textarea') ?? null;
+      let input = fields[focusField.current]?.current;
+      if (!input) {
+        focusField.current = 0;
+        input = fields[0]?.current;
       }
-      const input = activeField.current;
       if (input && !searchBoxHasFocus()) {
         input.focus();
         input.setSelectionRange(input.value.length, input.value.length);
@@ -96,9 +97,22 @@ export function TranslationForm(): React.ReactElement<'div'> {
     }
   }, [entity, machinery, value]);
 
+  const handleFocus: React.FocusEventHandler<HTMLTextAreaElement> = useCallback(
+    (ev) => {
+      for (let i = 0; i < fields.length; ++i) {
+        if (fields[i].current === ev.currentTarget) {
+          focusField.current = i;
+          return;
+        }
+      }
+      focusField.current = 0;
+    },
+    [focusField, fields],
+  );
+
   return value.length === 1 ? (
     <EditField
-      activeField={activeField}
+      inputRef={fields[0]}
       singleField
       userInput={userInput}
       value={value[0]?.value}
@@ -107,16 +121,17 @@ export function TranslationForm(): React.ReactElement<'div'> {
     <div className='translationform'>
       <table>
         <tbody ref={root}>
-          {value.map(({ id, labels, name, value }) => (
+          {value.map(({ id, labels, name, value }, i) => (
             <tr key={id}>
               <td>
                 <Label getExample={getExample} htmlFor={id} labels={labels} />
               </td>
               <td>
                 <EditPattern
-                  activeField={activeField}
                   id={id}
+                  inputRef={fields[i]}
                   name={name}
+                  onFocus={handleFocus}
                   userInput={userInput}
                   value={value}
                 />
