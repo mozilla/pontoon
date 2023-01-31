@@ -127,7 +127,7 @@ def user_display_name(self):
 @property
 def user_display_name_and_email(self):
     name = self.display_name
-    return f"{name} <{self.email}>"
+    return f"{name} <{self.profile.contact_email or self.email}>"
 
 
 @classmethod
