@@ -12,7 +12,7 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage } from '~/utils/message';
 
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
-import { useExistingTranslation } from './useExistingTranslation';
+import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 import { useSendTranslation } from './useSendTranslation';
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
@@ -29,7 +29,7 @@ export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
   const { clearEditor, setEditorFromHelpers } = useContext(EditorActions);
-  const existingTranslation = useExistingTranslation();
+  const getExistingTranslation = useExistingTranslationGetter();
   const { errors, source, warnings, resetFailedChecks } =
     useContext(FailedChecksData);
   const helperSelection = useContext(HelperSelection);
@@ -65,14 +65,17 @@ export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
-          } else if (existingTranslation && !existingTranslation.approved) {
-            updateTranslationStatus(
-              existingTranslation.pk,
-              'approve',
-              ignoreWarnings,
-            );
           } else {
-            sendTranslation(ignoreWarnings);
+            const existingTranslation = getExistingTranslation();
+            if (existingTranslation && !existingTranslation.approved) {
+              updateTranslationStatus(
+                existingTranslation.pk,
+                'approve',
+                ignoreWarnings,
+              );
+            } else {
+              sendTranslation(ignoreWarnings);
+            }
           }
         }
         break;

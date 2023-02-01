@@ -17,7 +17,7 @@ import { pojoEquals } from '~/utils/pojo';
  * exists in the history of the entity, this selector returns that Translation.
  * Otherwise, it returns undefined.
  */
-export function useExistingTranslation() {
+export function useExistingTranslationGetter() {
   const activeTranslation = useActiveTranslation();
   const { translations } = useContext(HistoryData);
   const { entity } = useContext(EntityView);
@@ -25,21 +25,27 @@ export function useExistingTranslation() {
   const value = useEditorValue();
   const entry = useEditorMessageEntry();
 
-  if (activeTranslation?.pk && pojoEquals(initial, value)) {
-    return activeTranslation;
-  }
+  return () => {
+    if (activeTranslation?.pk && pojoEquals(initial, value)) {
+      return activeTranslation;
+    }
 
-  if (!entry || translations.length === 0) {
-    return undefined;
-  }
+    if (!entry || translations.length === 0) {
+      return undefined;
+    }
 
-  let test: (value: HistoryTranslation) => boolean;
-  if (entity.format === 'ftl') {
-    test = (t) => pojoEquals(entry, parseEntry(t.string));
-  } else {
-    const str = serializeEntry(entity.format, entry);
-    test = (t) => t.string === str;
-  }
+    let test: (value: HistoryTranslation) => boolean;
+    if (entity.format === 'ftl') {
+      test = (t) => pojoEquals(entry, parseEntry(t.string));
+    } else {
+      try {
+        const str = serializeEntry(entity.format, entry);
+        test = (t) => t.string === str;
+      } catch {
+        return undefined;
+      }
+    }
 
-  return translations.find(test);
+    return translations.find(test);
+  };
 }

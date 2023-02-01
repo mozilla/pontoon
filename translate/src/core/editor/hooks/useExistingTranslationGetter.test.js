@@ -7,7 +7,7 @@ import * as Entity from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
 import { editMessageEntry, parseEntry } from '~/utils/message';
 
-import { useExistingTranslation } from './useExistingTranslation';
+import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 
 const ACTIVE_TRANSLATION = { pk: 1 };
 
@@ -30,7 +30,7 @@ const HISTORY_FLUENT = {
 function mountSpy(format, history, editor) {
   let res;
   const Spy = () => {
-    res = useExistingTranslation();
+    res = useExistingTranslationGetter()();
     return null;
   };
 
