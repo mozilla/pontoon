@@ -304,8 +304,7 @@ entitieslist-Entity--sibling-strings-title =
 ## Translation Form
 
 translationform--label-with-example = { $label } (e.g. <stress>{ $example }</stress>)
-translationform--single-field =
-    .placeholder = Type translation and press Enter to save
+translationform--single-field-placeholder = Type translation and press Enter to save
 
 
 ## History

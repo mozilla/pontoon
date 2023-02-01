@@ -1,4 +1,4 @@
-import { Localized } from '@fluent/react';
+import { useLocalization } from '@fluent/react';
 import React, { useCallback, useContext } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
@@ -22,6 +22,7 @@ export function EditField({
   userInput,
   value,
 }: EditFieldProps) {
+  const { l10n } = useLocalization();
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
 
@@ -34,32 +35,11 @@ export function EditField({
       [userInput, setEditorFromInput],
     );
   const handleKeyDown = useHandleShortcuts();
-
-  const props = {
-    value,
-    dir: locale.direction,
-    lang: locale.code,
-    'data-script': locale.script,
-  };
-
-  if (useReadonlyEditor()) {
-    return <textarea readOnly {...props} />;
-  }
-
-  if (singleField) {
-    return (
-      <Localized id='translationform--single-field'>
-        <textarea
-          id={id}
-          onChange={handleChange}
-          onFocus={onFocus}
-          onKeyDown={handleKeyDown}
-          ref={inputRef}
-          {...props}
-        />
-      </Localized>
-    );
-  }
+  const readOnly = useReadonlyEditor();
+  const placeholder =
+    singleField && !readOnly
+      ? l10n.getString('translationform--single-field-placeholder')
+      : undefined;
 
   return (
     <textarea
@@ -67,8 +47,13 @@ export function EditField({
       onChange={handleChange}
       onFocus={onFocus}
       onKeyDown={handleKeyDown}
+      placeholder={placeholder}
+      readOnly={readOnly}
       ref={inputRef}
-      {...props}
+      value={value}
+      dir={locale.direction}
+      lang={locale.code}
+      data-script={locale.script}
     />
   );
 }

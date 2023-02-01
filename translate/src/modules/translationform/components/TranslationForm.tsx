@@ -64,7 +64,6 @@ export function TranslationForm(): React.ReactElement<'div'> {
   const { fields, focusField, machinery } = useContext(EditorData);
   const value = useEditorValue();
 
-  const root = useRef<HTMLTableSectionElement>(null);
   const userInput = useRef(false);
 
   const locale = useContext(Locale);
@@ -113,14 +112,15 @@ export function TranslationForm(): React.ReactElement<'div'> {
   return value.length === 1 ? (
     <EditField
       inputRef={fields[0]}
+      key={entity.pk}
       singleField
       userInput={userInput}
       value={value[0]?.value}
     />
   ) : (
-    <div className='translationform'>
+    <div className='translationform' key={entity.pk}>
       <table>
-        <tbody ref={root}>
+        <tbody>
           {value.map(({ id, labels, name, value }, i) => (
             <tr key={id}>
               <td>
