@@ -6,7 +6,7 @@ import { act } from 'react-dom/test-utils';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { editMessageEntry, parseEntry } from '~/utils/message';
 
-import { EditorData, EditorProvider, useClearEditor } from './Editor';
+import { EditorActions, EditorData, EditorProvider } from './Editor';
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
@@ -163,15 +163,13 @@ describe('<EditorProvider>', () => {
       value: [{ id: '', keys: [], labels: [], name: '', value: 'other' }],
     });
   });
-});
 
-describe('useClearEditor', () => {
   it('clears a rich Fluent value', () => {
     let editor;
-    let clearEditor;
+    let actions;
     const Spy = () => {
       editor = useContext(EditorData);
-      clearEditor = useClearEditor();
+      actions = useContext(EditorActions);
       return null;
     };
     const source = ftl`
@@ -183,7 +181,7 @@ describe('useClearEditor', () => {
 
       `;
     const wrapper = mountSpy(Spy, 'ftl', source);
-    act(() => clearEditor());
+    act(() => actions.clearEditor());
     wrapper.update();
 
     expect(editor).toMatchObject({

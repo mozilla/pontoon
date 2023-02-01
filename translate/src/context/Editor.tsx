@@ -1,7 +1,6 @@
 import type { Variant } from 'messageformat';
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -126,6 +125,8 @@ export type EditorData = Readonly<{
 }>;
 
 export type EditorActions = {
+  clearEditor(): void;
+
   setEditorBusy(busy: boolean): void;
 
   /** If `format: 'ftl'`, must be called with the source of a full entry */
@@ -158,6 +159,7 @@ const initEditorData: EditorData = {
 };
 
 const initEditorActions: EditorActions = {
+  clearEditor: () => {},
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
   setEditorFromHistory: () => {},
@@ -186,6 +188,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       return initEditorActions;
     }
     return {
+      clearEditor: () =>
+        setState((prev) => {
+          const empty = prev.value.map((field) => ({ ...field, value: '' }));
+          return { ...prev, value: empty };
+        }),
+
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
@@ -372,17 +380,6 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 export function useEditorValue(): EditorMessage {
   const { value } = useContext(EditorData);
   return value;
-}
-
-export function useClearEditor() {
-  const locale = useContext(Locale);
-  const { setEditorFromInput } = useContext(EditorActions);
-  const value = useEditorValue();
-
-  return useCallback(() => {
-    const empty = value.map((field) => ({ ...field, value: '' }));
-    setEditorFromInput(empty);
-  }, [locale, value]);
 }
 
 export function useEditorMessageEntry() {

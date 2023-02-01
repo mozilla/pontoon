@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditorActions, useClearEditor } from '~/context/Editor';
+import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { HelperSelection } from '~/context/HelperSelection';
@@ -20,7 +20,6 @@ import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
  * Return a function to handle shortcuts in a translation form.
  */
 export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
-  const clearEditor = useClearEditor();
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
@@ -29,7 +28,7 @@ export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
-  const { setEditorFromHelpers } = useContext(EditorActions);
+  const { clearEditor, setEditorFromHelpers } = useContext(EditorActions);
   const existingTranslation = useExistingTranslation();
   const { errors, source, warnings, resetFailedChecks } =
     useContext(FailedChecksData);
