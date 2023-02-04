@@ -128,7 +128,7 @@ def user_display_name(self):
 def user_display_name_and_email(self):
     name = self.display_name
     if self.profile.contact_email and self.profile.contact_email_verified:
-        email = self.profile.contact_email_verified
+        email = self.profile.contact_email
     else:
         email = self.email
     return f"{name} <{email}>"
