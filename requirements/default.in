@@ -47,6 +47,7 @@ python-dotenv==0.17.0
 python-levenshtein==0.12.2
 pytz==2022.1
 raygun4py==4.3.0
+sacrebleu==2.3.1
 sacremoses==0.0.43
 translate-toolkit==3.3.2
 whitenoise==5.2.0
