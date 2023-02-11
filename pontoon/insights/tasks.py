@@ -120,9 +120,7 @@ def get_contributors():
 
     Note that excluding system user emails in the Translation QuerySet directly is slow.
     """
-    system_users = User.objects.filter(
-        email__regex=r"^pontoon-(\w+)@example.com$",
-    ).values("pk")
+    system_users = User.objects.filter(profile__system_user=True).values("pk")
 
     contributors = (
         Translation.objects.filter(user__isnull=False)

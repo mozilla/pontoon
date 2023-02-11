@@ -1736,6 +1736,9 @@ class UserProfile(models.Model):
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)
 
+    # Used to mark users as system users.
+    system_user = models.BooleanField(default=False)
+
     @property
     def preferred_locales(self):
         return Locale.objects.filter(pk__in=self.locales_order)

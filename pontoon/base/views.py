@@ -34,14 +34,14 @@ from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
 from pontoon.base import utils
 from pontoon.base.models import (
+    Comment,
     Entity,
     Locale,
     Project,
     ProjectLocale,
-    TranslationMemoryEntry,
     TranslatedResource,
     Translation,
-    Comment,
+    TranslationMemoryEntry,
 )
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
@@ -682,7 +682,7 @@ def get_users(request):
     users = (
         User.objects
         # Exclude system users
-        .exclude(email__regex=r"^pontoon-(\w+)@example.com$")
+        .exclude(profile__system_user=True)
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
     )
