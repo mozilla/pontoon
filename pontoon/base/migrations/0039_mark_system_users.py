@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("base", "0037_userprofile_system_user"),
+        ("base", "0038_userprofile_system_user"),
     ]
 
     operations = [
