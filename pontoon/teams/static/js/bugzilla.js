@@ -92,7 +92,8 @@ var Pontoon = (function (my) {
                   '</thead>',
               }).append(tbody);
 
-              container.append(table.show());
+              container.append(table);
+              table.show();
 
               var count = data.bugs.length;
               countCallback(tab, count);
