@@ -84,13 +84,6 @@ class DownloadTOMLParser(TOMLParser):
         )
 
 
-class MissingRepositoryPermalink(Exception):
-    """
-    Raised when a project uses project config files and
-    its source repository doesn't have the permalink.
-    """
-
-
 class MissingSourceRepository(Exception):
     """
     Raised when project can't find the repository
@@ -168,10 +161,6 @@ class VCSProject:
 
         self.configuration = None
         if db_project.configuration_file:
-            # Permalink is required to download project config files.
-            if not db_project.source_repository.permalink_prefix:
-                raise MissingRepositoryPermalink()
-
             self.configuration = VCSConfiguration(self)
 
     @cached_property
@@ -634,11 +623,23 @@ class VCSConfiguration:
     @cached_property
     def parsed_configuration(self):
         """Return parsed project configuration file."""
-        return DownloadTOMLParser(
-            self.vcs_project.db_project.source_repository.checkout_path,
-            self.vcs_project.db_project.source_repository.permalink_prefix,
-            self.configuration_file,
-        ).parse(env={"l10n_base": self.l10n_base})
+        if self.vcs_project.db_project.source_repository.permalink_prefix:
+            """If we have a permalink we download the configuration file"""
+            return DownloadTOMLParser(
+                self.vcs_project.db_project.source_repository.checkout_path,
+                self.vcs_project.db_project.source_repository.permalink_prefix,
+                self.configuration_file,
+            ).parse(env={"l10n_base": self.l10n_base})
+        else:
+            """If we don't have a permalink we use the configuration file from the checkout path"""
+            return TOMLParser().parse(
+                os.path.join(
+                    self.vcs_project.db_project.source_repository.checkout_path,
+                    self.configuration_file,
+                ),
+                env={"l10n_base": self.l10n_base},
+                ignore_missing_includes=True,
+            )
 
     def add_locale(self, locale_code):
         """
