@@ -9,22 +9,18 @@ $.expr[':'].containsi = function (a, i, m) {
 };
 
 /* Latest activity tooltip */
-var time_formatter = new Intl.DateTimeFormat('en-GB', {
+var date_formatter = new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
+  time_formatter = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
   }),
   timer = null,
-  delay = 500,
-  format_date = (date) => {
-    var date_formatter = new Intl.DateTimeFormat('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }),
-      date_parts = date_formatter.formatToParts(date);
-    return `${date_parts[2].value} ${date_parts[0].value}, ${date_parts[4].value}`;
-  };
+  delay = 500;
 
 $('body')
   .on('mouseenter', '.latest-activity .latest time', function () {
@@ -36,7 +32,7 @@ $('body')
         action = $element.data('action'),
         name = $element.data('user-name'),
         link = $element.data('user-link'),
-        date = format_date(new Date($element.attr('datetime'))),
+        date = date_formatter.format(new Date($element.attr('datetime'))),
         time = time_formatter.format(new Date($element.attr('datetime')));
 
       $element.after(
