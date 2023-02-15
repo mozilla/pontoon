@@ -61,7 +61,7 @@ const StatusFilter = ({
   onToggle: () => void;
   selected: boolean;
   stats: Stats;
-  status: typeof FILTERS_STATUS[number];
+  status: (typeof FILTERS_STATUS)[number];
 }) => (
   <li
     className={classNames(
@@ -118,7 +118,7 @@ const ExtraFilter = ({
   onToggle,
   selected,
 }: {
-  extra: typeof FILTERS_EXTRA[number];
+  extra: (typeof FILTERS_EXTRA)[number];
   onSelect: () => void;
   onToggle: () => void;
   selected: boolean;
