@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { useClearEditor } from '~/context/Editor';
+import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { ShowNotification } from '~/context/Notification';
 import * as user from '~/core/user';
@@ -38,7 +38,7 @@ export function EditorMenu(): React.ReactElement<'menu'> {
 
 function MenuContent() {
   const showNotification = useContext(ShowNotification);
-  const clearEditor = useClearEditor();
+  const { clearEditor } = useContext(EditorActions);
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const dispatch = useAppDispatch();
   const { entity } = useContext(EntityView);

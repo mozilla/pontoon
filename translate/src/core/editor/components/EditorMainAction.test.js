@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import * as Hooks from '~/hooks';
 import * as Translator from '~/hooks/useTranslator';
 
-import * as ExistingTranslation from '../hooks/useExistingTranslation';
+import * as ExistingTranslation from '../hooks/useExistingTranslationGetter';
 import * as SendTranslation from '../hooks/useSendTranslation';
 import * as UpdateTranslationStatus from '../hooks/useUpdateTranslationStatus';
 
@@ -17,7 +17,7 @@ beforeAll(() => {
   sinon.stub(React, 'useContext');
   sinon.stub(Hooks, 'useAppSelector');
   sinon.stub(Translator, 'useTranslator');
-  sinon.stub(ExistingTranslation, 'useExistingTranslation');
+  sinon.stub(ExistingTranslation, 'useExistingTranslationGetter');
   sinon.stub(SendTranslation, 'useSendTranslation');
   sinon.stub(UpdateTranslationStatus, 'useUpdateTranslationStatus');
 });
@@ -26,7 +26,7 @@ beforeEach(() => {
   React.useContext.returns({ busy: false }); // EditorData.busy
   Hooks.useAppSelector.returns(false); // user.settings.forceSuggestions
   Translator.useTranslator.returns(true);
-  ExistingTranslation.useExistingTranslation.returns(undefined);
+  ExistingTranslation.useExistingTranslationGetter.returns(() => undefined);
   SendTranslation.useSendTranslation.returns(() => {});
   UpdateTranslationStatus.useUpdateTranslationStatus.returns(() => {});
 });
@@ -35,7 +35,7 @@ afterAll(() => {
   React.useContext.restore();
   Hooks.useAppSelector.restore();
   Translator.useTranslator.restore();
-  ExistingTranslation.useExistingTranslation.restore();
+  ExistingTranslation.useExistingTranslationGetter.restore();
   SendTranslation.useSendTranslation.restore();
   UpdateTranslationStatus.useUpdateTranslationStatus.restore();
 });
@@ -44,7 +44,7 @@ describe('<EditorMainAction>', () => {
   it('renders the Approve button when an identical translation exists', () => {
     const spy = sinon.spy();
     UpdateTranslationStatus.useUpdateTranslationStatus.returns(spy);
-    ExistingTranslation.useExistingTranslation.returns({ pk: 1 });
+    ExistingTranslation.useExistingTranslationGetter.returns(() => ({ pk: 1 }));
 
     const wrapper = mount(<EditorMainAction />);
 

@@ -1,7 +1,7 @@
 import ftl from '@fluent/dedent';
 import { getEmptyMessageEntry } from './getEmptyMessage';
 import { parseEntry } from './parseEntry';
-import { serializeEntry } from './serialize';
+import { serializeEntry } from './serializeEntry';
 
 const LOCALE = { code: 'sl' };
 
@@ -9,19 +9,19 @@ describe('getEmptyMessage', () => {
   it('empties a simple value', () => {
     const source = parseEntry('my-message = Some value');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry('ftl', entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a value with multiple elements', () => {
     const source = parseEntry('my-message = Hello { $small } World');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toEqual('my-message = { "" }\n');
+    expect(serializeEntry('ftl', entry)).toEqual('my-message = { "" }\n');
   });
 
   it('empties a single simple attribute', () => {
     const source = parseEntry('my-message =\n    .my-attr = Hello');
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toEqual(
+    expect(serializeEntry('ftl', entry)).toEqual(
       'my-message =\n    .my-attr = { "" }\n',
     );
   });
@@ -30,7 +30,7 @@ describe('getEmptyMessage', () => {
     const source = parseEntry('my-message = Some value\n    .my-attr = Hello');
     const entry = getEmptyMessageEntry(source, LOCALE);
 
-    expect(serializeEntry(entry)).toBe(ftl`
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
       my-message = { "" }
           .my-attr = { "" }
 
@@ -44,7 +44,7 @@ describe('getEmptyMessage', () => {
           .title = Title
       `);
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toBe(ftl`
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
       my-message =
           .my-attr = { "" }
           .title = { "" }
@@ -61,11 +61,11 @@ describe('getEmptyMessage', () => {
           }
       `);
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toBe(ftl`
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
       my-entry =
           { PLATFORM() ->
               [variant] { "" }
-             *[other] { "" }
+             *[another-variant] { "" }
           }
 
       `);
@@ -82,7 +82,7 @@ describe('getEmptyMessage', () => {
 
       `);
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toBe(ftl`
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
       my-entry =
           { $num ->
               [0] { "" }
@@ -107,28 +107,28 @@ describe('getEmptyMessage', () => {
         }
       `);
     const entry = getEmptyMessageEntry(source, LOCALE);
-    expect(serializeEntry(entry)).toBe(ftl`
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
               [two]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
               [few]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
              *[other]
                   { $gender ->
                       [feminine] { "" }
-                     *[other] { "" }
+                     *[masculine] { "" }
                   }
           }
 

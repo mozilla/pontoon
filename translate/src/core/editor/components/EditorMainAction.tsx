@@ -5,7 +5,7 @@ import { EditorData } from '~/context/Editor';
 import { useAppSelector } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
-import { useExistingTranslation } from '../hooks/useExistingTranslation';
+import { useExistingTranslationGetter } from '../hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../hooks/useSendTranslation';
 import { useUpdateTranslationStatus } from '../hooks/useUpdateTranslationStatus';
 
@@ -25,7 +25,7 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
     (state) => state.user.settings.forceSuggestions,
   );
   const isTranslator = useTranslator();
-  const existingTranslation = useExistingTranslation();
+  const existingTranslation = useExistingTranslationGetter()();
   const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
   const { busy } = useContext(EditorData);

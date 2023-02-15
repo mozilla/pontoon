@@ -1,7 +1,6 @@
-import type { Message, Pattern } from 'messageformat';
+import type { Variant } from 'messageformat';
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -12,15 +11,15 @@ import type { SourceType } from '~/api/machinery';
 import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
+  buildMessageEntry,
+  editMessageEntry,
+  requiresSourceView,
   getEmptyMessageEntry,
-  getReconstructedMessage,
-  getSimplePreview,
-  getSyntaxType,
   MessageEntry,
   parseEntry,
   serializeEntry,
 } from '~/utils/message';
-import { pojoCopy } from '~/utils/pojo';
+import { pojoEquals } from '~/utils/pojo';
 
 import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
@@ -28,16 +27,90 @@ import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
 import { UnsavedActions, UnsavedChanges } from './UnsavedChanges';
 
-export type EditorData = Readonly<{
-  activeInput: React.MutableRefObject<HTMLTextAreaElement | null>;
+export type EditorMessage = Array<{
+  /** An identifier for this field */
+  id: string;
 
+  /** Attribute name, or empty for the value */
+  name: string;
+
+  /** Selector keys, or empty array for single-pattern messages */
+  keys: Variant['keys'];
+
+  labels: Array<{ label: string; plural: boolean }>;
+
+  /**
+   * A flattened representation of a single message pattern,
+   * which may contain syntactic representations of placeholders.
+   */
+  value: string;
+}>;
+
+const editSource = (source: string) => [
+  { id: '', name: '', keys: [], labels: [], value: source.trim() },
+];
+
+/**
+ * Creates a copy of `base` with an entry matching `id` updated to `value`.
+ *
+ * @param id If empty, matches first entry of `base`.
+ *           If set, a path split by `|` characters.
+ */
+function setEditorMessage(
+  base: EditorMessage,
+  id: string | null | undefined,
+  value: string,
+) {
+  let set = false;
+  return base.map((field) => {
+    if (!set && (!id || field.id === id)) {
+      set = true;
+      return { ...field, value };
+    } else {
+      return field;
+    }
+  });
+}
+
+function parseEntryFromFluentSource(base: MessageEntry, source: string) {
+  const entry = parseEntry(source);
+  if (entry) {
+    entry.id = base.id;
+  }
+  return entry;
+}
+
+/**
+ * Create a new MessageEntry with a simple string pattern `value`,
+ * using `id` as its identifier.
+ */
+const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
+  id,
+  value: {
+    type: 'message',
+    declarations: [],
+    pattern: { body: [{ type: 'text', value }] },
+  },
+});
+
+export type EditorData = Readonly<{
   /** Is a request to send a new translation running? */
   busy: boolean;
 
-  format: 'simple' | 'ftl';
+  /** Used to reconstruct edited messages */
+  entry: MessageEntry;
 
-  /** Used for detecting unsaved changes and reconstructing FTL messages */
-  initial: string;
+  /** Editor input components */
+  fields: Array<React.MutableRefObject<HTMLTextAreaElement | null>>;
+
+  /**
+   * Index in `fields` of the current or most recent field with focus;
+   * used as the target of machinery replacements.
+   */
+  focusField: React.MutableRefObject<number>;
+
+  /** Used for detecting unsaved changes */
+  initial: EditorMessage;
 
   machinery: {
     manual: boolean;
@@ -45,24 +118,22 @@ export type EditorData = Readonly<{
     translation: string;
   } | null;
 
-  /**
-   * The current value being edited. For `view: 'simple'` and `view: 'source'`,
-   * the `string` currently displayed in the editor. For `view: 'rich'`,
-   * the Fluent `Entry` value that is displayed in multiple text inputs.
-   */
-  value: string | MessageEntry;
+  sourceView: boolean;
 
-  view: 'simple' | 'rich' | 'source';
+  /** The current value being edited */
+  value: EditorMessage;
 }>;
 
 export type EditorActions = {
+  clearEditor(): void;
+
   setEditorBusy(busy: boolean): void;
 
   /** If `format: 'ftl'`, must be called with the source of a full entry */
   setEditorFromHistory(value: string): void;
 
   /** For `view: 'rich'`, if `value` is a string, sets the value of the active input */
-  setEditorFromInput(value: string | MessageEntry): void;
+  setEditorFromInput(value: string | EditorMessage): void;
 
   /** @param manual Set `true` when value set due to direct user action */
   setEditorFromHelpers(
@@ -73,26 +144,28 @@ export type EditorActions = {
 
   setEditorSelection(content: string): void;
 
-  toggleFtlView(): void;
+  toggleSourceView(): void;
 };
 
 const initEditorData: EditorData = {
-  activeInput: { current: null },
   busy: false,
-  format: 'simple',
-  initial: '',
+  entry: { id: '', value: null, attributes: new Map() },
+  fields: [],
+  focusField: { current: 0 },
+  initial: [],
   machinery: null,
-  value: '',
-  view: 'simple',
+  sourceView: false,
+  value: [],
 };
 
 const initEditorActions: EditorActions = {
+  clearEditor: () => {},
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
   setEditorFromHistory: () => {},
   setEditorFromInput: () => {},
   setEditorSelection: () => {},
-  toggleFtlView: () => {},
+  toggleSourceView: () => {},
 };
 
 export const EditorData = createContext(initEditorData);
@@ -115,145 +188,150 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       return initEditorActions;
     }
     return {
+      clearEditor: () =>
+        setState((prev) => {
+          const empty = prev.value.map((field) => ({ ...field, value: '' }));
+          return { ...prev, value: empty };
+        }),
+
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
-      setEditorFromHelpers: (translation, sources, manual) =>
+      setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          let value: string | MessageEntry;
-          switch (prev.view) {
-            case 'simple':
-              value = translation;
-              break;
-            case 'rich': {
-              value =
-                updateRichValue(prev, translation, false, true) ?? translation;
-              break;
-            }
-            case 'source': {
-              const entry = getReconstructedMessage(prev.initial, translation);
-              value = serializeEntry(entry);
-              break;
-            }
-          }
-          const machinery = { manual, translation, sources };
-          return { ...prev, machinery, value };
+          const { fields, focusField, value } = prev;
+          const input = fields[focusField.current]?.current;
+          const next = setEditorMessage(value, input?.id, str);
+          return {
+            ...prev,
+            machinery: { manual, translation: str, sources },
+            value: next,
+          };
         }),
 
-      setEditorFromHistory: (value) =>
+      setEditorFromHistory: (str) =>
         setState((prev) => {
-          if (prev.format === 'ftl' && prev.view !== 'source') {
-            const next = getFtlViewAndValue(value);
-            return { ...prev, value: next.value, view: next.view };
+          const next = { ...prev };
+          if (entity.format === 'ftl') {
+            const entry = parseEntry(str);
+            if (entry) {
+              next.entry = entry;
+            }
+            if (entry && !requiresSourceView(entry)) {
+              next.value = editMessageEntry(entry);
+            } else {
+              next.value = editSource(str);
+              next.sourceView = true;
+            }
           } else {
-            return { ...prev, value };
+            next.value = setEditorMessage(prev.initial, null, str);
           }
+          return next;
         }),
 
-      setEditorFromInput: (value) =>
+      setEditorFromInput: (input) =>
         setState((prev) => {
-          if (prev.view === 'rich' && typeof value === 'string') {
-            const next = updateRichValue(prev, value, false, false);
-            if (next) {
-              return { ...prev, value: next };
-            }
+          if (typeof input === 'string') {
+            const { fields, focusField, value } = prev;
+            const field = fields[focusField.current]?.current;
+            const next = setEditorMessage(value, field?.id, input);
+            return { ...prev, value: next };
+          } else {
+            return { ...prev, value: input };
           }
-          return { ...prev, value };
         }),
 
       setEditorSelection: (content) =>
         setState((prev) => {
-          if (typeof prev.value === 'string') {
-            const input = prev.activeInput.current;
-            if (input) {
-              input.setRangeText(
-                content,
-                input.selectionStart,
-                input.selectionEnd,
-                'end',
-              );
-              return { ...prev, value: input.value };
-            }
+          const { fields, focusField, value } = prev;
+          let next: EditorMessage;
+          const input = fields[focusField.current]?.current;
+          if (input) {
+            input.setRangeText(
+              content,
+              input.selectionStart ?? 0, // never actually null for <input type="text"> or <textarea>
+              input.selectionEnd ?? 0,
+              'end',
+            );
+            next = setEditorMessage(value, input.id, input.value);
+          } else if (value.length === 1) {
+            next = setEditorMessage(value, null, value[0].value + content);
           } else {
-            const next = updateRichValue(prev, content, true, true);
-            if (next) {
-              return { ...prev, value: next };
-            }
+            next = setEditorMessage(value, null, content);
           }
-          return { ...prev, value: content };
+          return { ...prev, value: next };
         }),
 
-      toggleFtlView: () =>
+      toggleSourceView: () =>
         setState((prev) => {
-          switch (prev.view) {
-            case 'simple': {
-              if (prev.format !== 'ftl' || typeof prev.value !== 'string') {
-                return prev;
-              }
-              const entry = getReconstructedMessage(prev.initial, prev.value);
-              const value = serializeEntry(entry);
-              return { ...prev, value, view: 'source' };
+          if (prev.sourceView) {
+            const source = prev.value[0].value;
+            const entry = parseEntryFromFluentSource(prev.entry, source);
+            if (entry && !requiresSourceView(entry)) {
+              const value = editMessageEntry(entry);
+              return { ...prev, entry, sourceView: false, value };
             }
-
-            case 'rich': {
-              if (typeof prev.value === 'string') {
-                return prev;
-              }
-              const value = serializeEntry(prev.value);
-              return { ...prev, value, view: 'source' };
-            }
-
-            case 'source': {
-              const { value, view } = getFtlViewAndValue(prev.value as string);
-              return view === 'source' ? prev : { ...prev, value, view };
-            }
+          } else if (entity.format === 'ftl') {
+            const entry = buildMessageEntry(prev.entry, prev.value);
+            const source = serializeEntry('ftl', entry);
+            return {
+              ...prev,
+              sourceView: true,
+              value: editSource(source),
+            };
           }
+          return prev;
         }),
     };
-  }, [readonly]);
+  }, [entity.format, readonly]);
 
   useEffect(() => {
-    let initial = activeTranslation?.string || '';
-
-    let format: 'ftl' | 'simple';
-    let value: string | MessageEntry;
-    let view: 'simple' | 'rich' | 'source';
+    let entry: MessageEntry;
+    let source = activeTranslation?.string || '';
+    let sourceView = false;
     if (entity.format === 'ftl') {
-      format = 'ftl';
-      if (!initial) {
-        const entry = parseEntry(entity.original);
-        if (entry) {
-          const empty = getEmptyMessageEntry(entry, locale);
-          initial = serializeEntry(empty);
+      if (!source) {
+        const orig = parseEntry(entity.original);
+        entry = orig
+          ? getEmptyMessageEntry(orig, locale)
+          : createSimpleMessageEntry(entity.key, '');
+        if (requiresSourceView(entry)) {
+          source = serializeEntry('ftl', entry);
+          sourceView = true;
         }
-      } else if (!initial.endsWith('\n')) {
-        // Some Fluent translations may be stored without a terminal newline.
-        // If the data is cleaned up, this conditional may be removed.
-        // https://github.com/mozilla/pontoon/issues/2216
-        initial += '\n';
-      }
-      const next = getFtlViewAndValue(initial);
-      value = next.value;
-      view = next.view;
-      if (typeof value !== 'string') {
-        // Ensure that we use the same serialization for unsaved-changes comparisons,
-        // allowing for differences in e.g. whitespace style and variant order.
-        initial = serializeEntry(value);
+      } else {
+        if (!source.endsWith('\n')) {
+          // Some Fluent translations may be stored without a terminal newline.
+          // If the data is cleaned up, this conditional may be removed.
+          // https://github.com/mozilla/pontoon/issues/2216
+          source += '\n';
+        }
+        const entry_ = parseEntry(source);
+        if (entry_) {
+          entry = entry_;
+          sourceView = requiresSourceView(entry);
+        } else {
+          entry = createSimpleMessageEntry(entity.key, source);
+          sourceView = true;
+        }
       }
     } else {
-      format = 'simple';
-      value = initial;
-      view = 'simple';
+      entry = createSimpleMessageEntry(entity.key, source);
     }
 
-    setState((prev) => ({
-      activeInput: prev.activeInput,
+    const value: EditorMessage = sourceView
+      ? editSource(source)
+      : editMessageEntry(entry);
+
+    setState(() => ({
       busy: false,
-      format,
-      initial,
+      entry,
+      fields: value.map(() => ({ current: null })),
+      focusField: { current: 0 },
+      initial: value,
       machinery: null,
+      sourceView,
       value,
-      view,
     }));
   }, [locale, entity, activeTranslation]);
 
@@ -263,9 +341,10 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   useEffect(() => {
     if (
       status === 'missing' &&
-      state.view === 'simple' &&
-      state.value === '' &&
-      state.machinery === null
+      state.machinery === null &&
+      !state.sourceView &&
+      state.value.length === 1 &&
+      state.value[0].value === ''
     ) {
       const perfect = machinery.translations.find((tx) => tx.quality === 100);
       if (perfect) {
@@ -279,25 +358,10 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
-    // Error recovery, if `view` and `value` type do not match
-    if (state.view === 'rich') {
-      if (typeof state.value === 'string') {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Editor state mismatch!', state);
-        }
-        actions.toggleFtlView();
-      }
-    } else if (typeof state.value !== 'string') {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Editor state mismatch!', state);
-      }
-      actions.setEditorFromHistory(serializeEntry(state.value));
-    }
-
     // Changes in `value` need to be reflected in `UnsavedChanges`,
     // but the latter needs to be defined at a higher level to make it
     // available in `EntitiesList`. Therefore, that state is managed here.
-    setUnsavedChanges(getEditedTranslation(state) !== state.initial);
+    setUnsavedChanges(!pojoEquals(state.initial, state.value));
 
     if (exist) {
       resetFailedChecks();
@@ -313,135 +377,15 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   );
 }
 
-export function useClearEditor() {
-  const locale = useContext(Locale);
-  const { setEditorFromInput } = useContext(EditorActions);
-  const { initial, value, view } = useContext(EditorData);
-
-  return useCallback(() => {
-    if (view === 'simple') {
-      setEditorFromInput('');
-    } else {
-      const entry = parseEntry(initial);
-      if (!entry) {
-        setEditorFromInput('');
-      } else {
-        const empty = getEmptyMessageEntry(entry, locale);
-        if (typeof value === 'string') {
-          const str = serializeEntry(empty);
-          setEditorFromInput(str);
-        } else {
-          setEditorFromInput(empty);
-        }
-      }
-    }
-  }, [locale, initial, typeof value, view]);
+export function useEditorValue(): EditorMessage {
+  const { value } = useContext(EditorData);
+  return value;
 }
 
-export function getEditedTranslation(data: EditorData): string {
-  const { format, value } = data;
-  if (format === 'ftl' || typeof value !== 'string') {
-    return serializeEntry(getFluentEntry(data));
-  } else {
-    return value;
-  }
-}
-
-/** Will return `null` for non-Fluent message data */
-export function getFluentEntry({
-  initial,
-  value,
-  view,
-}: EditorData): MessageEntry | null {
-  if (typeof value !== 'string') {
-    return pojoCopy(value);
-  } else if (view === 'simple') {
-    return getReconstructedMessage(initial, value);
-  } else {
-    return parseEntry(value);
-  }
-}
-
-function getFtlViewAndValue(
-  source: string,
-): Pick<EditorData, 'value' | 'view'> {
-  const entry = parseEntry(source);
-  if (entry) {
-    switch (getSyntaxType(entry)) {
-      case 'simple':
-        return { value: getSimplePreview(entry), view: 'simple' };
-      case 'rich':
-        return { value: entry, view: 'rich' };
-    }
-  }
-  return { value: source, view: 'source' };
-}
-
-function updateRichValue(
-  { activeInput, value }: EditorData,
-  content: string,
-  selectionOnly: boolean,
-  fixFocus: boolean,
-): MessageEntry | null {
-  if (typeof value !== 'string' && activeInput.current?.id) {
-    const input = activeInput.current;
-    const next = pojoCopy(value);
-
-    const [kind, ...path] = input.id.split('|');
-    let msg: Message | null | undefined;
-    let pattern: Pattern | undefined;
-    if (kind === 'value') {
-      msg = next.value;
-    } else if (kind === 'attributes') {
-      const name = path.shift();
-      if (name) {
-        msg = next.attributes?.get(name);
-      }
-    }
-    switch (msg?.type) {
-      case 'message':
-        pattern = msg.pattern;
-        break;
-      case 'select': {
-        const index = Number(path.shift());
-        pattern = msg.variants[index]?.value;
-        break;
-      }
-    }
-    if (!pattern || path.length > 0) {
-      console.error(
-        new Error(`Invalid rich editor path ${input.id} for entry ${next.id}`),
-      );
-      return null;
-    }
-
-    let start: number;
-    let res: string;
-    if (selectionOnly) {
-      start = input.selectionStart;
-      input.setRangeText(content);
-      res = input.value;
-    } else {
-      start = 0;
-      res = content;
-    }
-    const te = pattern.body[0];
-    if (pattern.body.length === 1 && te.type === 'text') {
-      te.value = res;
-    } else {
-      pattern.body = [{ type: 'text', value: res }];
-    }
-
-    // Need to let react-dom "fix" the select position before setting it right
-    if (fixFocus) {
-      setTimeout(() => {
-        const end = start + content.length;
-        input.setSelectionRange(end, end);
-      });
-    }
-
-    return next;
-  } else {
-    return null;
-  }
+export function useEditorMessageEntry() {
+  const { entry, sourceView } = useContext(EditorData);
+  const value = useEditorValue();
+  return sourceView
+    ? parseEntryFromFluentSource(entry, value[0].value)
+    : buildMessageEntry(entry, value);
 }

@@ -12,7 +12,7 @@ import {
 } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
 
-import { GenericTranslationForm } from './GenericTranslationForm';
+import { TranslationForm } from './TranslationForm';
 
 const DEFAULT_LOCALE = {
   direction: 'ltr',
@@ -27,6 +27,7 @@ function mountForm(string) {
 
   const entity = {
     pk: 0,
+    key: 'key',
     original: 'Hello',
     translation: [{ string }],
   };
@@ -44,7 +45,7 @@ function mountForm(string) {
           <EntityView.Provider value={{ entity, pluralForm: 0 }}>
             <EditorProvider>
               <Spy />
-              <GenericTranslationForm />
+              <TranslationForm />
             </EditorProvider>
           </EntityView.Provider>
         </MockLocalizationProvider>
@@ -56,7 +57,7 @@ function mountForm(string) {
   return [wrapper, actions];
 }
 
-describe('<GenericTranslationForm>', () => {
+describe('<TranslationForm> with one field', () => {
   it('renders a textarea with some content', () => {
     const [wrapper] = mountForm('Salut');
 
@@ -72,9 +73,22 @@ describe('<GenericTranslationForm>', () => {
     expect(wrapper.find('textarea').prop('value')).toBe('good bye');
   });
 
-  it('updates the translation when setEditorSelection is passed', async () => {
+  it('updates the translation when setEditorSelection is passed without focus', async () => {
+    const [wrapper, actions] = mountForm('Foo');
+    act(() => actions.setEditorSelection(', Bar'));
+    wrapper.update();
+
+    expect(wrapper.find('textarea').prop('value')).toBe('Foo, Bar');
+  });
+
+  it('updates the translation when setEditorSelection is passed with focus', async () => {
     const [wrapper, actions] = mountForm('Hello');
-    act(() => actions.setEditorSelection(', World'));
+    act(() => {
+      const ta = wrapper.find('textarea');
+      ta.simulate('focus');
+      ta.getDOMNode().setSelectionRange(5, 5);
+      actions.setEditorSelection(', World');
+    });
     wrapper.update();
 
     expect(wrapper.find('textarea').prop('value')).toBe('Hello, World');

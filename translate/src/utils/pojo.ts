@@ -41,12 +41,12 @@ export function pojoCopy<T>(node: T): T {
  * Functions are compared by identity.
  */
 export function pojoEquals<T>(a: T, b: T): boolean {
-  if (typeof a !== typeof b) {
-    return false;
+  if (a === b) {
+    return true;
   }
 
-  if (typeof a !== 'object' || !a || !b) {
-    return a === b;
+  if (typeof a !== 'object' || typeof b !== 'object' || !a || !b) {
+    return false;
   }
 
   if (Array.isArray(a)) {

@@ -1,25 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import { EditorData } from '~/context/Editor';
-import { RichTranslationForm } from '~/modules/fluenteditor/components/RichTranslationForm';
-import { GenericTranslationForm } from '~/modules/genericeditor';
-import { PluralSelector } from '~/modules/genericeditor/components/PluralSelector';
+import { PluralSelector, TranslationForm } from '~/modules/translationform';
 
 import './Editor.css';
 import { EditorMenu } from './EditorMenu';
 import { NewContributorTooltip } from './NewContributorTooltip';
 import { MachinerySourceIndicator } from './MachinerySourceIndicator';
 
-export function Editor(): React.ReactElement<'div'> {
-  const { view } = useContext(EditorData);
-
-  return (
-    <div className='editor'>
-      <PluralSelector />
-      <NewContributorTooltip />
-      {view === 'rich' ? <RichTranslationForm /> : <GenericTranslationForm />}
-      <MachinerySourceIndicator />
-      <EditorMenu />
-    </div>
-  );
-}
+export const Editor = () => (
+  <div className='editor'>
+    <PluralSelector />
+    <NewContributorTooltip />
+    <TranslationForm />
+    <MachinerySourceIndicator />
+    <EditorMenu />
+  </div>
+);

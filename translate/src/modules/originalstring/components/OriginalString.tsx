@@ -12,7 +12,8 @@ import { EntityView } from '~/context/EntityView';
 import { Highlight } from '~/core/placeable/components/Highlight';
 import type { TermState } from '~/core/term';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
-import { getPlainMessage, getSyntaxType, parseEntry } from '~/utils/message';
+import { parseEntry, requiresSourceView } from '~/utils/message';
+import { editMessageEntry } from '~/utils/message/editMessageEntry';
 
 import { PluralString } from './PluralString';
 import { RichString } from './RichString';
@@ -94,21 +95,18 @@ function InnerOriginalString({
   terms: TermState;
 }): React.ReactElement {
   const { entity, hasPluralForms } = useContext(EntityView);
-
-  let { format, original } = entity;
-  const isFluent = format === 'ftl';
+  const isFluent = entity.format === 'ftl';
+  let source = entity.original;
 
   if (isFluent) {
-    const entry = parseEntry(original);
-    const syntax = getSyntaxType(entry);
-    if (entry) {
-      switch (syntax) {
-        case 'rich':
-          return <RichString entry={entry} onClick={onClick} terms={terms} />;
-
-        case 'simple':
-          original = getPlainMessage(entry, format);
-          break;
+    const entry = parseEntry(source);
+    if (entry && !requiresSourceView(entry)) {
+      const msg = editMessageEntry(entry);
+      if (msg.length === 1) {
+        source = msg[0].value;
+        // fallthrough
+      } else {
+        return <RichString message={msg} onClick={onClick} terms={terms} />;
       }
     }
   } else if (hasPluralForms) {
@@ -118,7 +116,7 @@ function InnerOriginalString({
   return (
     <p className='original' onClick={onClick}>
       <Highlight fluent={isFluent} terms={terms}>
-        {original}
+        {source}
       </Highlight>
     </p>
   );

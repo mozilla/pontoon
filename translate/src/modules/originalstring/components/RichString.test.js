@@ -3,7 +3,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import { parseEntry } from '~/utils/message';
+import { editMessageEntry, parseEntry } from '~/utils/message';
 import { RichString } from './RichString';
 
 const ORIGINAL = ftl`
@@ -14,8 +14,8 @@ const ORIGINAL = ftl`
 
 describe('<RichString>', () => {
   it('renders value and each attribute correctly', () => {
-    const entry = parseEntry(ORIGINAL);
-    const wrapper = mount(<RichString entry={entry} terms={{}} />);
+    const message = editMessageEntry(parseEntry(ORIGINAL));
+    const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('Highlight')).toHaveLength(3);
 
@@ -40,8 +40,8 @@ describe('<RichString>', () => {
           }
       `;
 
-    const entry = parseEntry(input);
-    const wrapper = mount(<RichString entry={entry} terms={{}} />);
+    const message = editMessageEntry(parseEntry(input));
+    const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('Highlight')).toHaveLength(2);
 
@@ -67,8 +67,8 @@ describe('<RichString>', () => {
               }
       `;
 
-    const entry = parseEntry(input);
-    const wrapper = mount(<RichString entry={entry} terms={{}} />);
+    const message = editMessageEntry(parseEntry(input));
+    const wrapper = mount(<RichString message={message} terms={{}} />);
 
     expect(wrapper.find('label')).toHaveLength(4);
     expect(wrapper.find('td > span')).toHaveLength(4);
@@ -87,10 +87,10 @@ describe('<RichString>', () => {
   });
 
   it('calls the onClick function on click on .original', () => {
-    const entry = parseEntry(ORIGINAL);
+    const message = editMessageEntry(parseEntry(ORIGINAL));
     const spy = sinon.spy();
     const wrapper = mount(
-      <RichString entry={entry} onClick={spy} terms={{}} />,
+      <RichString message={message} onClick={spy} terms={{}} />,
     );
 
     wrapper.find('.original').simulate('click');

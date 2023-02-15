@@ -1,4 +1,5 @@
 import type {
+  CatchallKey,
   Message,
   PatternElement,
   PatternMessage,
@@ -63,6 +64,7 @@ function getEmptyMessage(
     }
 
     let keys: Variant['keys'] = [];
+    let catchall: CatchallKey | null = null;
     if (plurals.includes(i)) {
       const pr = new Intl.PluralRules(code);
       const pc = pr.resolvedOptions().pluralCategories;
@@ -73,7 +75,9 @@ function getEmptyMessage(
       const exactKeys = new Set<string>();
       for (const v of source.variants) {
         const k = v.keys[i];
-        if (k.type !== '*' && /^[0-9]+$/.test(k.value)) {
+        if (k.type === '*') {
+          catchall = { ...k };
+        } else if (/^[0-9]+$/.test(k.value)) {
           exactKeys.add(k.value);
         }
       }
@@ -85,7 +89,9 @@ function getEmptyMessage(
       const keyValues = new Set<string>();
       for (const v of source.variants) {
         const k = v.keys[i];
-        if (k.type !== '*' && !keyValues.has(k.value)) {
+        if (k.type === '*') {
+          catchall = { ...k };
+        } else if (!keyValues.has(k.value)) {
           keyValues.add(k.value);
           keys.push({ ...k });
         }
@@ -94,7 +100,7 @@ function getEmptyMessage(
 
     if (keys.length > 0) {
       selectors.push(pojoCopy(sel));
-      keys.push({ type: '*' });
+      keys.push(catchall ?? { type: '*' });
       if (variantKeys.length === 0) {
         variantKeys = keys.map((key) => [key]);
       } else {

@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import { EditorData } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
-import { parseEntry } from '~/utils/message';
 
 import { TranslationLength } from './TranslationLength';
 import sinon from 'sinon';
@@ -19,7 +18,7 @@ describe('<TranslationLength>', () => {
 
   function mountTranslationLength(format, original, value, comment) {
     const context = new Map([
-      [EditorData, { value, view: 'simple' }],
+      [EditorData, { sourceView: false, value: [{ value }] }],
       [EntityView, { entity: { comment, format, original }, pluralForm: 0 }],
     ]);
     React.useContext.callsFake((key) => context.get(key));
@@ -31,39 +30,30 @@ describe('<TranslationLength>', () => {
     const wrapper = mountTranslationLength('', '12345', '1234567', '');
 
     expect(wrapper.find('.countdown')).toHaveLength(0);
-    expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(
-      '7',
-    );
-    expect(wrapper.find('.translation-vs-original').childAt(1).text()).toEqual(
-      '|',
-    );
-    expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
-      '5',
-    );
+    const div = wrapper.find('.translation-vs-original');
+    expect(div.childAt(0).text()).toEqual('7');
+    expect(div.childAt(1).text()).toEqual('|');
+    expect(div.childAt(2).text()).toEqual('5');
   });
 
   it('shows translation length and plural original string length', () => {
     const wrapper = mountTranslationLength('', '123456', '1234567', '');
 
-    expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
-      '6',
-    );
+    const div = wrapper.find('.translation-vs-original');
+    expect(div.childAt(2).text()).toEqual('6');
   });
 
   it('shows translation length and FTL original string length', () => {
     const wrapper = mountTranslationLength(
       'ftl',
       'key = 123456',
-      parseEntry('key = 1234567'),
+      '1234567',
       '',
     );
 
-    expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(
-      '7',
-    );
-    expect(wrapper.find('.translation-vs-original').childAt(2).text()).toEqual(
-      '6',
-    );
+    const div = wrapper.find('.translation-vs-original');
+    expect(div.childAt(0).text()).toEqual('7');
+    expect(div.childAt(2).text()).toEqual('6');
   });
 
   it('shows countdown if MAX_LENGTH provided in LANG entity comment', () => {
@@ -109,8 +99,7 @@ describe('<TranslationLength>', () => {
       '',
     );
 
-    expect(wrapper.find('.translation-vs-original').childAt(0).text()).toEqual(
-      '19',
-    );
+    const div = wrapper.find('.translation-vs-original');
+    expect(div.childAt(0).text()).toEqual('19');
   });
 });

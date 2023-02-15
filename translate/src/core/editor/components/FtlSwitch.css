@@ -15,3 +15,7 @@
 .editor .ftl:hover {
   color: #7bc876;
 }
+
+.editor .ftl.error {
+  color: #f36;
+}

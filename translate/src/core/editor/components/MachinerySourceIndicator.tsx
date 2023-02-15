@@ -1,18 +1,20 @@
 import { Localized } from '@fluent/react';
 import React, { useContext } from 'react';
 
-import { EditorData } from '~/context/Editor';
+import { EditorData, useEditorValue } from '~/context/Editor';
 
 import './MachinerySourceIndicator.css';
 
 export function MachinerySourceIndicator() {
-  const { machinery, value, view } = useContext(EditorData);
+  const { machinery, sourceView } = useContext(EditorData);
+  const value = useEditorValue();
 
   if (
     !machinery ||
     machinery.manual ||
-    machinery.translation !== value ||
-    view !== 'simple'
+    sourceView ||
+    value.length !== 1 ||
+    machinery.translation !== value[0].value
   ) {
     return null;
   }

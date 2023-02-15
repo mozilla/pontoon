@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditorActions, useClearEditor } from '~/context/Editor';
+import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { HelperSelection } from '~/context/HelperSelection';
@@ -12,17 +12,14 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage } from '~/utils/message';
 
 import { useCopyOriginalIntoEditor } from './useCopyOriginalIntoEditor';
-import { useExistingTranslation } from './useExistingTranslation';
+import { useExistingTranslationGetter } from './useExistingTranslationGetter';
 import { useSendTranslation } from './useSendTranslation';
 import { useUpdateTranslationStatus } from './useUpdateTranslationStatus';
 
 /**
  * Return a function to handle shortcuts in a translation form.
  */
-export function useHandleShortcuts(): (
-  event: React.KeyboardEvent<HTMLTextAreaElement>,
-) => void {
-  const clearEditor = useClearEditor();
+export function useHandleShortcuts(): (event: React.KeyboardEvent) => void {
   const copyOriginalIntoEditor = useCopyOriginalIntoEditor();
   const sendTranslation = useSendTranslation();
   const updateTranslationStatus = useUpdateTranslationStatus();
@@ -31,8 +28,8 @@ export function useHandleShortcuts(): (
   const { resetUnsavedChanges } = useContext(UnsavedActions);
   const unsavedChanges = useContext(UnsavedChanges);
   const readonly = useReadonlyEditor();
-  const { setEditorFromHelpers } = useContext(EditorActions);
-  const existingTranslation = useExistingTranslation();
+  const { clearEditor, setEditorFromHelpers } = useContext(EditorActions);
+  const getExistingTranslation = useExistingTranslationGetter();
   const { errors, source, warnings, resetFailedChecks } =
     useContext(FailedChecksData);
   const helperSelection = useContext(HelperSelection);
@@ -50,7 +47,7 @@ export function useHandleShortcuts(): (
     return () => {};
   }
 
-  return (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  return (ev: React.KeyboardEvent) => {
     switch (ev.key) {
       // On Enter:
       //   - If unsaved changes popup is shown, proceed.
@@ -68,14 +65,17 @@ export function useHandleShortcuts(): (
           } else if (typeof source === 'number') {
             // Approve anyway.
             updateTranslationStatus(source, 'approve', ignoreWarnings);
-          } else if (existingTranslation && !existingTranslation.approved) {
-            updateTranslationStatus(
-              existingTranslation.pk,
-              'approve',
-              ignoreWarnings,
-            );
           } else {
-            sendTranslation(ignoreWarnings);
+            const existingTranslation = getExistingTranslation();
+            if (existingTranslation && !existingTranslation.approved) {
+              updateTranslationStatus(
+                existingTranslation.pk,
+                'approve',
+                ignoreWarnings,
+              );
+            } else {
+              sendTranslation(ignoreWarnings);
+            }
           }
         }
         break;
