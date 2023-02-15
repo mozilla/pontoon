@@ -9,12 +9,12 @@ $.expr[':'].containsi = function (a, i, m) {
 };
 
 /* Latest activity tooltip */
-var date_formatter = new Intl.DateTimeFormat('en-GB', {
+var date_formatter = new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }),
-  time_formatter = new Intl.DateTimeFormat('en-GB', {
+  time_formatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',

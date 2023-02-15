@@ -8,7 +8,7 @@ const monthNameFormat = new Intl.DateTimeFormat('en-US', {
 
 const shortDateFormat = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
-  month: 'short',
+  month: 'long',
   year: 'numeric',
 });
 

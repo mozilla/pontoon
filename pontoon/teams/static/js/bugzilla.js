@@ -36,7 +36,7 @@ var Pontoon = (function (my) {
               });
 
               var tbody = $('<tbody>'),
-                formatter = new Intl.DateTimeFormat('en-GB', {
+                formatter = new Intl.DateTimeFormat('en-US', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
