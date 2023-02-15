@@ -14,7 +14,7 @@ var date_formatter = new Intl.DateTimeFormat('en-US', {
     month: 'long',
     year: 'numeric',
   }),
-  time_formatter = new Intl.DateTimeFormat('en-GB', {
+  time_formatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
