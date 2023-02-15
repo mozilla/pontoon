@@ -1,9 +1,9 @@
 /* eslint-env node */
 
-import path from 'path';
-import babel from '@rollup/plugin-babel';
+import { resolve } from 'path';
+import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import css from 'rollup-plugin-css-only';
 
@@ -21,10 +21,10 @@ const config = {
         process.env.BUILD ?? 'development',
       ),
     }),
-    resolve(),
+    nodeResolve(),
     babel({
       babelHelpers: 'runtime',
-      configFile: path.resolve('../babel.config.json'),
+      configFile: resolve('../babel.config.json'),
     }),
     commonjs(),
     css({ output: 'tag_admin.css' }),
