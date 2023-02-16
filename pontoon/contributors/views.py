@@ -415,7 +415,9 @@ class ContributorsMixin:
 
         context["contributors"] = utils.users_with_translations_counts(
             start_date,
-            self.contributors_filter(**kwargs) & Q(user__isnull=False),
+            self.contributors_filter(**kwargs)
+            & Q(user__isnull=False)
+            & Q(user__profile__system_user=False),
             kwargs.get("locale"),
         )
         context["period"] = period
