@@ -12,7 +12,7 @@ import os
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
-# Read dotenv file and inject it's values into the environment
+# Read dotenv file and inject its values into the environment
 dotenv.load_dotenv(dotenv_path=os.environ.get("DOTENV_PATH"))
 
 # Set the default Django settings module
