@@ -101,7 +101,9 @@ export type EditorData = Readonly<{
   entry: MessageEntry;
 
   /** Editor input components */
-  fields: Array<React.MutableRefObject<HTMLTextAreaElement | null>>;
+  fields: Array<
+    React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>
+  >;
 
   /**
    * Index in `fields` of the current or most recent field with focus;

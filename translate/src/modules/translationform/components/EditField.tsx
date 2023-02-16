@@ -7,8 +7,12 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 export type EditFieldProps = {
   id?: string;
-  inputRef: React.MutableRefObject<HTMLTextAreaElement | null>;
-  onFocus?: React.FocusEventHandler<HTMLTextAreaElement>;
+  inputRef: React.MutableRefObject<
+    HTMLInputElement | HTMLTextAreaElement | null
+  >;
+  onFocus?: (ev: {
+    currentTarget: HTMLInputElement | HTMLTextAreaElement | null;
+  }) => void;
   singleField?: boolean;
   userInput: React.MutableRefObject<boolean>;
   value: string;
@@ -49,7 +53,7 @@ export function EditField({
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
       readOnly={readOnly}
-      ref={inputRef}
+      ref={inputRef as React.MutableRefObject<HTMLTextAreaElement>}
       value={value}
       dir={locale.direction}
       lang={locale.code}

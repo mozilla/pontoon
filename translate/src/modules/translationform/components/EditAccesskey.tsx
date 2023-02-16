@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 
 import { EditorActions, useEditorValue } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
@@ -10,17 +10,19 @@ import type { EditFieldProps } from './EditField';
 
 export function EditAccesskey({
   id,
+  inputRef,
   name,
+  onFocus,
   userInput,
   value,
 }: EditFieldProps & { name: string }) {
   const locale = useContext(Locale);
   const { setEditorFromInput } = useContext(EditorActions);
   const message = useEditorValue();
-  const accessKeyElement = useRef<HTMLInputElement>(null);
 
   const handleUpdate = (value: string | null) => {
-    if (typeof value === 'string') {
+    if (onFocus && typeof value === 'string') {
+      onFocus({ currentTarget: inputRef.current });
       userInput.current = true;
       setEditorFromInput(value);
     }
@@ -44,7 +46,7 @@ export function EditAccesskey({
     <>
       <input
         id={id}
-        ref={accessKeyElement}
+        ref={inputRef as React.MutableRefObject<HTMLInputElement>}
         maxLength={1}
         onChange={(ev) => handleUpdate(ev.currentTarget.value)}
         onKeyDown={handleKeyDown}
