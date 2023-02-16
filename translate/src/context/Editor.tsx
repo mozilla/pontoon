@@ -46,9 +46,11 @@ export type EditorMessage = Array<{
   value: string;
 }>;
 
-const editSource = (source: string) => [
-  { id: '', name: '', keys: [], labels: [], value: source.trim() },
-];
+function editSource(source: string | MessageEntry) {
+  const value =
+    typeof source === 'string' ? source : serializeEntry('ftl', source);
+  return [{ id: '', name: '', keys: [], labels: [], value: value.trim() }];
+}
 
 /**
  * Creates a copy of `base` with an entry matching `id` updated to `value`.
@@ -60,7 +62,7 @@ function setEditorMessage(
   base: EditorMessage,
   id: string | null | undefined,
   value: string,
-) {
+): EditorMessage {
   let set = false;
   return base.map((field) => {
     if (!set && (!id || field.id === id)) {
@@ -201,9 +203,12 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          const { fields, focusField, value } = prev;
+          const { fields, focusField, sourceView, value } = prev;
           const input = fields[focusField.current]?.current;
-          const next = setEditorMessage(value, input?.id, str);
+          let next = setEditorMessage(value, input?.id, str);
+          if (sourceView) {
+            next = editSource(buildMessageEntry(prev.entry, next));
+          }
           return {
             ...prev,
             machinery: { manual, translation: str, sources },
@@ -220,7 +225,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               next.entry = entry;
             }
             if (entry && !requiresSourceView(entry)) {
-              next.value = editMessageEntry(entry);
+              next.value = prev.sourceView
+                ? editSource(entry)
+                : editMessageEntry(entry);
             } else {
               next.value = editSource(str);
               next.sourceView = true;
@@ -245,7 +252,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
 
       setEditorSelection: (content) =>
         setState((prev) => {
-          const { fields, focusField, value } = prev;
+          const { fields, focusField, sourceView, value } = prev;
           let next: EditorMessage;
           const input = fields[focusField.current]?.current;
           if (input) {
@@ -258,6 +265,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             next = setEditorMessage(value, input.id, input.value);
           } else if (value.length === 1) {
             next = setEditorMessage(value, null, value[0].value + content);
+            if (sourceView) {
+              next = editSource(buildMessageEntry(prev.entry, next));
+            }
           } else {
             next = setEditorMessage(value, null, content);
           }
