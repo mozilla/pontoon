@@ -120,10 +120,7 @@ def users_with_translations_counts(
         contributor.translations_rejected_count = user["rejected"]
         contributor.translations_unapproved_count = user["unreviewed"]
 
-        if contributor.pk is None:
-            contributor.user_role = "System User"
-        else:
-            contributor.user_role = contributor.role(managers, translators)
+        contributor.user_role = contributor.role(managers, translators)
 
         if locale:
             contributor.user_locale_role = contributor.locale_role(locale)

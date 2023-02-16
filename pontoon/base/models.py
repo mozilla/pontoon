@@ -221,6 +221,9 @@ def user_role(self, managers=None, translators=None):
     if self.is_superuser:
         return "Admin"
 
+    if self.pk is None or self.profile.system_user:
+        return "System User"
+
     if managers is not None:
         if self in managers:
             return "Manager for " + ", ".join(managers[self])
