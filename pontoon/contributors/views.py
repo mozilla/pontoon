@@ -52,7 +52,9 @@ def contributor_username(request, username):
 def contributor(request, user):
     """Contributor profile."""
     graph_data, graph_title = utils.get_contribution_graph_data(user)
-    timeline_data, timeline_title = utils.get_contribution_timeline_data(user)
+    timeline_data, timeline_title = utils.get_contribution_timeline_data(
+        user, "all_contributions"
+    )
 
     context = {
         "contributor": user,
