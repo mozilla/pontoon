@@ -305,13 +305,15 @@ class LocaleContributorsView(ContributorsMixin, DetailView):
         context = super().get_context_data(locale=self.object, **kwargs)
         contributors = context["contributors"]
         context["managers"] = [
-            c for c in contributors if c.user_locale_role == "manager"
+            c for c in contributors if c.user_locale_role == "Manager"
         ]
         context["translators"] = [
-            c for c in contributors if c.user_locale_role == "translator"
+            c for c in contributors if c.user_locale_role == "Translator"
         ]
         context["regular_contributors"] = [
-            c for c in contributors if c.user_locale_role == "contributor"
+            c
+            for c in contributors
+            if c not in context["managers"] and c not in context["translators"]
         ]
         return context
 

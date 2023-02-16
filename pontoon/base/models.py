@@ -243,12 +243,16 @@ def user_role(self, managers=None, translators=None):
 
 
 def user_locale_role(self, locale):
+    if self.is_superuser:
+        return "Admin"
+    if self.pk is None or self.profile.system_user:
+        return "System User"
     if self in locale.managers_group.user_set.all():
-        return "manager"
+        return "Manager"
     if self in locale.translators_group.user_set.all():
-        return "translator"
+        return "Translator"
     else:
-        return "contributor"
+        return "Contributor"
 
 
 @property
