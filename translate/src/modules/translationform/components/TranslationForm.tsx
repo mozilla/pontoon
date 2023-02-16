@@ -96,8 +96,8 @@ export function TranslationForm(): React.ReactElement<'div'> {
     }
   }, [entity, machinery, value]);
 
-  const handleFocus: React.FocusEventHandler<HTMLTextAreaElement> = useCallback(
-    (ev) => {
+  const handleFocus = useCallback(
+    (ev: { currentTarget: HTMLInputElement | HTMLTextAreaElement | null }) => {
       for (let i = 0; i < fields.length; ++i) {
         if (fields[i].current === ev.currentTarget) {
           focusField.current = i;
