@@ -1,6 +1,6 @@
 """
 Google Cloud AutoML Translation has latency of ~15s, caused by the loading time of a
-custom model into the chip. To keep latency low, we need to make regular dummy warm-up
+custom model into the chip. To keep latency low, we need to make regular dummy warmup
 requests, which is what this script does.
 """
 
