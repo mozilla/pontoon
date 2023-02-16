@@ -181,7 +181,11 @@ def ajax_permissions(request, locale):
     contributors_emails = {
         contributor.email
         for contributor in users_with_translations_counts(
-            None, Q(locale=locale) & Q(user__isnull=False), None
+            None,
+            Q(locale=locale)
+            & Q(user__isnull=False)
+            & Q(user__profile__system_user=False),
+            None,
         )
     }
 
