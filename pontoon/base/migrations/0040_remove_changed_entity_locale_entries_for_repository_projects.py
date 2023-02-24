@@ -4,10 +4,9 @@ from pontoon.base.models import Project, Resource, Entity, ChangedEntityLocale
 
 
 def remove_changed_entity_locale_entries_for_repository_projects(apps, schema_editor):
-    projects = Project.objects.filter(data_source=Project.DataSource.DATABASE)
-    resources = Resource.objects.filter(project__in=projects)
-    entities = Entity.objects.filter(resource__in=resources)
-    ChangedEntityLocale.objects.filter(entity__in=entities).delete()
+    ChangedEntityLocale.objects.filter(
+        entity__resource__project__data_source=Project.DataSource.DATABASE
+    ).delete()
 
 
 class Migration(migrations.Migration):
