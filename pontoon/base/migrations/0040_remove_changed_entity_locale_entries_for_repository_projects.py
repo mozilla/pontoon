@@ -20,5 +20,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             code=remove_changed_entity_locale_entries_for_repository_projects,
+            reverse_code=migrations.RunPython.noop,
         ),
     ]
