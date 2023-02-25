@@ -221,7 +221,7 @@ def request_item(request, locale=None):
         # Validate projects
         project_list = (
             Project.objects.visible()
-            .visible_for(request.user)
+            .visible_for(user)
             .filter(slug__in=slug_list, can_be_requested=True)
         )
         if not project_list:
@@ -276,9 +276,12 @@ def request_item(request, locale=None):
             body=mail_body,
             from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list(
-                "email", flat=True
+            cc=list(
+                locale.managers_group.user_set.exclude(pk=user.pk).values_list(
+                    "email", flat=True
+                )
             )
+            + [user.email]
             if locale
             else "",
             reply_to=[user.email],
