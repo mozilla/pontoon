@@ -271,19 +271,16 @@ def request_item(request, locale=None):
         template = get_template("teams/email_request_item.jinja")
         mail_body = template.render(payload)
 
+        cc = list(locale.managers_group.user_set.values_list("email", flat=True))
+        if user.profile.contact_email:
+            cc = set(cc + [user.profile.contact_email])
+
         EmailMessage(
             subject=mail_subject,
             body=mail_body,
             from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
-            cc=list(
-                locale.managers_group.user_set.exclude(pk=user.pk).values_list(
-                    "email", flat=True
-                )
-            )
-            + [user.email]
-            if locale
-            else "",
+            cc=cc,
             reply_to=[user.email],
         ).send()
     else:
