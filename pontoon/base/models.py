@@ -2903,6 +2903,9 @@ class Entity(DirtyFieldsMixin, models.Model):
         Mark the given locale as having changed translations since the
         last sync.
         """
+        if self.resource.project.data_source == Project.DataSource.DATABASE:
+            return
+
         ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
 
     def get_active_translation(self, plural_form=None):

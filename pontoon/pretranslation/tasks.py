@@ -65,7 +65,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         entities = Entity.objects.filter(
             resource__project=project,
             obsolete=False,
-        ).prefetch_related("resource")
+        ).prefetch_related("resource__project")
 
     # get available TranslatedResource pairs
     tr_pairs = (
@@ -173,6 +173,9 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     changed_entities = {}
     existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
     for t in translations:
+        if t.entity.resource.project.data_source == Project.DataSource.DATABASE:
+            continue
+
         key = (t.entity.pk, t.locale.pk)
         # Remove duplicate changes to prevent unique constraint violation
         if key not in existing:

@@ -31,6 +31,9 @@ def mark_changed_translation(changed_entities, locale):
     changed_entities_array = []
     existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
     for changed_entity in changed_entities:
+        if changed_entity.resource.project.data_source == Project.DataSource.DATABASE:
+            continue
+
         key = (changed_entity.pk, locale.pk)
 
         # Remove duplicate changes to prevent unique constraint violation.
