@@ -120,6 +120,11 @@ def user_name_or_email(self):
 
 
 @property
+def user_contact_email(self):
+    return self.profile.contact_email or self.email
+
+
+@property
 def user_display_name(self):
     return self.first_name or self.email.split("@")[0]
 
@@ -456,6 +461,7 @@ User.add_to_class("profile_url", user_profile_url)
 User.add_to_class("gravatar_url", user_gravatar_url)
 User.add_to_class("gravatar_url_small", user_gravatar_url_small)
 User.add_to_class("name_or_email", user_name_or_email)
+User.add_to_class("contact_email", user_contact_email)
 User.add_to_class("display_name", user_display_name)
 User.add_to_class("display_name_and_email", user_display_name_and_email)
 User.add_to_class("display_name_or_blank", user_display_name_or_blank)
