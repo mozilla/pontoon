@@ -65,7 +65,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         entities = Entity.objects.filter(
             resource__project=project,
             obsolete=False,
-        ).prefetch_related("resource")
+        ).prefetch_related("resource__project")
 
     # get available TranslatedResource pairs
     tr_pairs = (
