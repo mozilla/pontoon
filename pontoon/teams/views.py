@@ -280,7 +280,7 @@ def request_item(request, locale=None):
             body=mail_body,
             from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
-            cc=cc,
+            cc=cc if locale else "",
             reply_to=[user.contact_email()],
         ).send()
     else:
