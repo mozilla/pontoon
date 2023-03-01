@@ -58,7 +58,7 @@
                 {% if is_email_visible or are_external_accounts_visible %}
                 <div class="block">
                     {% if is_email_visible %}
-                    {% set email = profile.contact_email or contributor.email %}
+                    {% set email = user.contact_email %}
                     <div class="item-with-icon">
                         <span class="icon fa fa-envelope"></span>
                         <a href="mailto:{{ email|nospam }}">{{ email|nospam }}</a>

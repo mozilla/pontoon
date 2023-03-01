@@ -221,7 +221,7 @@ def request_item(request, locale=None):
         # Validate projects
         project_list = (
             Project.objects.visible()
-            .visible_for(request.user)
+            .visible_for(user)
             .filter(slug__in=slug_list, can_be_requested=True)
         )
         if not project_list:
@@ -270,18 +270,19 @@ def request_item(request, locale=None):
     if settings.PROJECT_MANAGERS[0] != "":
         template = get_template("teams/email_request_item.jinja")
         mail_body = template.render(payload)
+        cc = {user.contact_email}
+        if locale:
+            cc.update(
+                set(locale.managers_group.user_set.values_list("email", flat=True))
+            )
 
         EmailMessage(
             subject=mail_subject,
             body=mail_body,
             from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
-            cc=locale.managers_group.user_set.exclude(pk=user.pk).values_list(
-                "email", flat=True
-            )
-            if locale
-            else "",
-            reply_to=[user.email],
+            cc=cc,
+            reply_to=[user.contact_email],
         ).send()
     else:
         raise ImproperlyConfigured(
