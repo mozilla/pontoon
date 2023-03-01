@@ -270,17 +270,18 @@ def request_item(request, locale=None):
     if settings.PROJECT_MANAGERS[0] != "":
         template = get_template("teams/email_request_item.jinja")
         mail_body = template.render(payload)
-        cc = set(
-            list(locale.managers_group.user_set.values_list("email", flat=True))
-            + [user.contact_email()]
-        )
+        cc = {user.contact_email()}
+        if locale:
+            cc.update(
+                set(locale.managers_group.user_set.values_list("email", flat=True))
+            )
 
         EmailMessage(
             subject=mail_subject,
             body=mail_body,
             from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
-            cc=cc if locale else "",
+            cc=cc,
             reply_to=[user.contact_email()],
         ).send()
     else:
