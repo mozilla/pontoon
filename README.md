@@ -37,9 +37,9 @@ database, run tests, and send your contribution.
 
 If you want to go further, you can:
 
-- Check out development roadmap on the [wiki](https://wiki.mozilla.org/Pontoon)
+- Check out [development roadmap](https://github.com/orgs/mozilla/projects/220)
 - Report an [issue](https://github.com/mozilla/pontoon/issues/new)
-- Check [existing issues](https://github.com/mozilla/pontoon/issues)
+- Check [existing issues](https://github.com/mozilla/pontoon/issues), including [good first issues](https://github.com/mozilla/pontoon/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
 - See Mozilla's Pontoon servers:
   - [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
   - [Production](https://pontoon.mozilla.org/)
