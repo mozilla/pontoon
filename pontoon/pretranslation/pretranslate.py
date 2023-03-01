@@ -23,7 +23,7 @@ UNTRANSLATABLE_KEY = "AIzaSyDX3R5Y1kxh_8lJ4OAO"
 serializer = FluentSerializer()
 
 
-def get_translations(entity, locale):
+def get_pretranslations(entity, locale):
     """
     Get pretranslations for the entity-locale pair
 
