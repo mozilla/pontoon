@@ -26,25 +26,6 @@ from pontoon.batch.actions import ACTIONS_FN_MAP
 log = logging.getLogger(__name__)
 
 
-def mark_changed_translation(changed_entities, locale):
-    """Mark entities as changed, for later sync."""
-    changed_entities_array = []
-    existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
-    for changed_entity in changed_entities:
-        if changed_entity.resource.project.data_source == Project.DataSource.DATABASE:
-            continue
-
-        key = (changed_entity.pk, locale.pk)
-
-        # Remove duplicate changes to prevent unique constraint violation.
-        if key not in existing:
-            changed_entities_array.append(
-                ChangedEntityLocale(entity=changed_entity, locale=locale)
-            )
-
-    ChangedEntityLocale.objects.bulk_create(changed_entities_array)
-
-
 def update_translation_memory(changed_translation_pks, project, locale):
     """Update translation memory for a list of translations."""
     memory_entries = [
@@ -140,7 +121,8 @@ def batch_edit_translations(request):
     tr_pks = [tr.pk for tr in action_status["translated_resources"]]
     TranslatedResource.objects.filter(pk__in=tr_pks).update_stats()
 
-    mark_changed_translation(action_status["changed_entities"], locale)
+    # Mark translations as changed
+    ChangedEntityLocale.objects.bulk_mark_changed(active_translations, locale)
 
     # Reset term translations for entities belonging to the Terminology project
     changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]
