@@ -48,6 +48,10 @@ def get_pretranslations(entity, locale):
         else entity.string
     )
 
+    # Return empty translation if source text empty
+    if tm_input == "":
+        return [("", None, tm_user)]
+
     # Try to get matches from translation_memory
     tm_response = get_translation_memory_data(
         text=tm_input,
