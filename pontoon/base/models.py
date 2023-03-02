@@ -3246,7 +3246,7 @@ class TranslationQuerySet(models.QuerySet):
                 "translation_count": user.translations_count,
                 "role": user.user_role,
             }
-            for user in users_with_translations_counts(None, Q(id__in=self), limit=100)
+            for user in users_with_translations_counts(None, Q(id__in=self))
         ]
 
     def counts_per_minute(self):
