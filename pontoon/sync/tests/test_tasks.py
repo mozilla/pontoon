@@ -284,7 +284,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             [],
             [],
             [],
-            ["new_entity"],
+            [self.main_db_entity],
         )
 
         # Pretranslation is not enabled
@@ -324,11 +324,14 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
                 [],
                 [],
                 [],
-                ["new_entity"],
+                [self.main_db_entity],
             )
 
         assert self.mock_pretranslate.called
-        assert self.mock_pretranslate.call_args[1]["entities"] == ["new_entity"]
+        assert (
+            self.mock_pretranslate.call_args[1]["entities"][0].pk
+            == self.main_db_entity.pk
+        )
         assert list(self.mock_pretranslate.call_args[1]["locales"]) == all_locales
 
     def test_new_translated_resource_pretranslation(self):
@@ -350,7 +353,7 @@ class SyncTranslationsTests(FakeCheckoutTestCase):
             [],
             [],
             [],
-            ["new_entity"],
+            [self.main_db_entity],
         )
 
         assert self.mock_pretranslate.called

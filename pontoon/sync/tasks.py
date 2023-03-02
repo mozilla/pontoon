@@ -6,8 +6,9 @@ from django.utils import timezone
 
 from pontoon.base.models import (
     ChangedEntityLocale,
-    Project,
+    Entity,
     Locale,
+    Project,
 )
 
 from pontoon.base.tasks import PontoonTask
@@ -403,5 +404,5 @@ def sync_translations(
 
         # Pretranslate newly added entities for all locales
         if new_entities and locales:
-            new_entities = list(set(new_entities))
-            pretranslate(db_project.pk, locales=locales, entities=new_entities)
+            entities = Entity.objects.filter(pk__in=[e.pk for e in set(new_entities)])
+            pretranslate(db_project.pk, locales=locales, entities=entities)
