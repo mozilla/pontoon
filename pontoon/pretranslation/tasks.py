@@ -117,12 +117,12 @@ def pretranslate(self, project_pk, locales=None, entities=None):
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
-            strings = get_pretranslations(entity, locale)
+            pretranslations = get_pretranslations(entity, locale)
 
-            if not strings:
+            if not pretranslations:
                 continue
 
-            for string, plural_form, user in strings:
+            for string, plural_form, user in pretranslations:
                 t = Translation(
                     entity=entity,
                     locale=locale,
