@@ -75,7 +75,7 @@ def get_google_automl_translation(text, locale):
     try:
         client = translate.TranslationServiceClient()
     except DefaultCredentialsError as e:
-        log.error("Google AutoML Translation error: {e}")
+        log.error(f"Google AutoML Translation error: {e}")
         return {
             "status": False,
             "message": f"{e}",
