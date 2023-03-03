@@ -3207,9 +3207,7 @@ class ChangedEntityLocaleManager(models.Manager):
     def bulk_mark_changed(self, translations, locale=None):
         """Mark entities as changed, for later sync."""
         changed_entities = {}
-        existing = ChangedEntityLocale.objects.values_list(
-            "entity", "locale"
-        ).distinct()
+        existing = self.values_list("entity", "locale").distinct()
 
         for translation in translations:
             if (
@@ -3226,7 +3224,7 @@ class ChangedEntityLocaleManager(models.Manager):
                     entity=translation.entity, locale=used_locale
                 )
 
-        ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+        self.bulk_create(changed_entities.values())
 
 
 class ChangedEntityLocale(models.Model):
