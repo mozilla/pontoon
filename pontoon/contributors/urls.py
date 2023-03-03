@@ -28,12 +28,6 @@ urlpatterns = [
         views.ContributorsView.as_view(),
         name="pontoon.contributors",
     ),
-    # Contributor profile by email
-    path(
-        "contributors/<email:email>/",
-        views.contributor_email,
-        name="pontoon.contributors.contributor.email",
-    ),
     # Contributor profile by username
     path(
         "contributors/<username:username>/",

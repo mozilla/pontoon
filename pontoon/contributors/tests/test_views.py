@@ -143,14 +143,6 @@ def test_profile_view_contributor_profile_by_username(member, mock_profile_rende
 
 
 @pytest.mark.django_db
-def test_profile_view_contributor_profile_by_email(member, mock_profile_render):
-    """Check if we can access contributor profile by its email."""
-    member.client.get(f"/contributors/{member.user.email}/")
-
-    assert mock_profile_render.call_args[0][2]["contributor"] == member.user
-
-
-@pytest.mark.django_db
 def test_profile_view_logged_user_profile(member, mock_profile_render):
     """Logged users should be able view their profiles"""
     member.client.get("/profile/")
