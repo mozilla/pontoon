@@ -69,7 +69,7 @@ def test_mgr_user_contributors_limit(
             user=contrib,
             entity=entities[i],
         )
-    top_contributors = users_with_translations_counts()
+    top_contributors = users_with_translations_counts(limit=100)
     assert len(top_contributors) == 100
 
 

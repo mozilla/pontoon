@@ -31,7 +31,7 @@ from pontoon.base.utils import convert_to_unix_time
 
 
 def users_with_translations_counts(
-    start_date=None, query_filters=None, locale=None, limit=100
+    start_date=None, query_filters=None, locale=None, limit=None
 ):
     """
     Returns contributors list, sorted by count of their translations. Every user instance has

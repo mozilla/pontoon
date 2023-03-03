@@ -423,6 +423,7 @@ class ContributorsMixin:
             & Q(user__isnull=False)
             & Q(user__profile__system_user=False),
             kwargs.get("locale"),
+            100,
         )
         context["period"] = period
         return context
