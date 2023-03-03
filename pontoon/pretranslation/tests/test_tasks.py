@@ -12,7 +12,7 @@ from pontoon.test.factories import (
 )
 
 
-@patch("pontoon.pretranslation.tasks.get_translations")
+@patch("pontoon.pretranslation.tasks.get_pretranslations")
 @pytest.mark.django_db
 def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     project_a.pretranslation_enabled = True

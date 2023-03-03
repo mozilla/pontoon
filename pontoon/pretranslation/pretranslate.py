@@ -23,17 +23,18 @@ UNTRANSLATABLE_KEY = "AIzaSyDX3R5Y1kxh_8lJ4OAO"
 serializer = FluentSerializer()
 
 
-def get_translations(entity, locale):
+def get_pretranslations(entity, locale):
     """
-    Get pretranslations for the entity-locale pair
+    Get pretranslations for the entity-locale pair using internal translation memory and
+    Google's machine translation.
 
     :arg Entity entity: the Entity object
     :arg Locale locale: the Locale object
 
-    :returns: a list of tuple with:
+    :returns: a list of tuples, consisting of:
         - a pretranslation of the entity
-        - plural form
-        - user - tm_user/gt_user
+        - a plural form
+        - a user (representing TM or GT)
     """
     tm_user = User.objects.get(email="pontoon-tm@example.com")
     gt_user = User.objects.get(email="pontoon-gt@example.com")
@@ -46,6 +47,10 @@ def get_translations(entity, locale):
         if is_single_input_ftl_string(entity.string)
         else entity.string
     )
+
+    # Return empty translation if source text empty
+    if tm_input == "":
+        return [("", None, tm_user)]
 
     # Try to get matches from translation_memory
     tm_response = get_translation_memory_data(

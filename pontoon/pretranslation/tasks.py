@@ -12,7 +12,7 @@ from pontoon.base.models import (
 )
 from pontoon.actionlog.models import ActionLog
 from pontoon.pretranslation.pretranslate import (
-    get_translations,
+    get_pretranslations,
     update_changed_instances,
 )
 from pontoon.base.tasks import PontoonTask
@@ -65,7 +65,9 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         entities = Entity.objects.filter(
             resource__project=project,
             obsolete=False,
-        ).prefetch_related("resource__project")
+        )
+
+    entities = entities.prefetch_related("resource__project")
 
     # get available TranslatedResource pairs
     tr_pairs = (
@@ -115,12 +117,12 @@ def pretranslate(self, project_pk, locales=None, entities=None):
             if locale_entity in translated_entities or locale_resource not in tr_pairs:
                 continue
 
-            strings = get_translations(entity, locale)
+            pretranslations = get_pretranslations(entity, locale)
 
-            if not strings:
+            if not pretranslations:
                 continue
 
-            for string, plural_form, user in strings:
+            for string, plural_form, user in pretranslations:
                 t = Translation(
                     entity=entity,
                     locale=locale,
