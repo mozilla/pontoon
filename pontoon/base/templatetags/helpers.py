@@ -8,7 +8,7 @@ from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
 from django_jinja import library
-from fluent.syntax import FluentParser, ast
+from fluent.syntax import FluentParser, ast, visitor
 from fluent.syntax.serializer import serialize_expression
 
 from django import template
@@ -22,6 +22,105 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 register = template.Library()
 parser = FluentParser()
+
+
+class FlatTransformer(visitor.Transformer):
+    """
+    - Select expressions are lifted up to the highest possible level,
+    duplicating shared contents as necessary.
+    - All other Placeables are serialised as TextElements
+    - Empty String Literals `{ "" }` are parsed as empty TextElements
+    """
+
+    def visit_Attribute(self, node):
+        flatten_pattern_elements(node.value)
+        return self.generic_visit(node)
+
+    def visit_Message(self, node):
+        if node.value:
+            flatten_pattern_elements(node.value)
+        return self.generic_visit(node)
+
+    def visit_TextElement(self, node):
+        node.value = re.sub(r'{ "" }', "", node.value)
+        return node
+
+
+def flatten_pattern_elements(pattern):
+    """
+    Flattens the given Pattern, uplifting selectors to the highest possible level and
+    duplicating shared parts in the variants. All other Placeables are serialised as
+    TextElements.
+
+    Should only be called externally with the value of a Message or an Attribute.
+    """
+    flat_elements = []
+    text_fragment = ""
+    prev_select = None
+
+    for element in pattern.elements:
+        if isinstance(element, ast.Placeable) and isinstance(
+            element.expression, ast.SelectExpression
+        ):
+            # In a message with multiple SelectExpressions separated by some
+            # whitespace, keep that whitespace out of select variants.
+            if re.search("^\\s+$", text_fragment):
+                flat_elements.append(ast.TextElement(text_fragment))
+                text_fragment = ""
+
+            # Flatten SelectExpression variant elements
+            for variant in element.expression.variants:
+                flatten_pattern_elements(variant.value)
+
+                # If there is preceding text, include that for all variants
+                if text_fragment:
+                    elements = variant.value.elements
+                    if elements and isinstance(elements[0], ast.TextElement):
+                        first = elements[0]
+                        first.value = text_fragment + first.value
+                    else:
+                        elements.insert(0, ast.TextElement(text_fragment))
+
+            if text_fragment:
+                text_fragment = ""
+
+            flat_elements.append(element)
+            prev_select = element.expression
+
+        else:
+            str_value = (
+                element.value
+                if isinstance(element, ast.TextElement)
+                else serialize_expression(element)
+            )
+            if text_fragment:
+                str_value = text_fragment + str_value
+                text_fragment = ""
+
+            if prev_select:
+                # Keep trailing whitespace out of variant values
+                ws_end = re.match("\\s+$", str_value)
+                if ws_end:
+                    str_value = str_value[0 : ws_end.index]
+                    text_fragment = ws_end[0]
+
+                # If there is a preceding SelectExpression, append to each of its variants
+                for variant in prev_select.variants:
+                    elements = variant.value.elements
+                    if elements and isinstance(elements[-1], ast.TextElement):
+                        last = elements[-1]
+                        last.value += str_value
+                    else:
+                        elements.append(ast.TextElement(str_value))
+            else:
+                # ... otherwise, append to a temporary string
+                text_fragment += str_value
+
+    # Merge any remaining collected text into a TextElement
+    if text_fragment or len(flat_elements) == 0:
+        flat_elements.append(ast.TextElement(text_fragment))
+
+    pattern.elements = flat_elements
 
 
 @library.global_function
