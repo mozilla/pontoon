@@ -8,7 +8,7 @@ from fluent.syntax import FluentParser, FluentSerializer
 from functools import reduce
 
 from pontoon.base.models import User, TranslatedResource
-from pontoon.base.templatetags.helpers import FlatTransformer
+from pontoon.base.fluent import FlatTransformer
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
