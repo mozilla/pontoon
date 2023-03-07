@@ -134,4 +134,38 @@ describe('getEmptyMessage', () => {
 
       `);
   });
+
+  it('handles plural messages for locales with no plurals', () => {
+    const source = parseEntry(ftl`
+      selector-multi =
+        { $num ->
+            [one] ONE
+           *[other] OTHER
+        }
+      `);
+    const entry = getEmptyMessageEntry(source, { code: 'zh' });
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
+      selector-multi = { "" }
+
+      `);
+  });
+
+  it('handles plural messages for special locales', () => {
+    const source = parseEntry(ftl`
+      selector-multi =
+        { $num ->
+            [one] ONE
+           *[other] OTHER
+        }
+      `);
+    const entry = getEmptyMessageEntry(source, { code: 'tg' });
+    expect(serializeEntry('ftl', entry)).toBe(ftl`
+      selector-multi =
+          { $num ->
+              [one] { "" }
+             *[other] { "" }
+          }
+
+      `);
+  });
 });
