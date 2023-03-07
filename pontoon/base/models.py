@@ -3203,30 +3203,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities_array
 
 
-class ChangedEntityLocaleManager(models.Manager):
-    def bulk_mark_changed(self, translations, locale=None):
-        """Mark entities as changed, for later sync."""
-        changed_entities = {}
-        existing = self.values_list("entity", "locale").distinct()
-
-        for translation in translations:
-            if (
-                translation.entity.resource.project.data_source
-                == Project.DataSource.DATABASE
-            ):
-                continue
-
-            used_locale = locale if locale else translation.locale
-            key = (translation.entity.pk, used_locale.pk)
-
-            if key not in existing:
-                changed_entities[key] = ChangedEntityLocale(
-                    entity=translation.entity, locale=used_locale
-                )
-
-        self.bulk_create(changed_entities.values())
-
-
 class ChangedEntityLocale(models.Model):
     """
     ManyToMany model for storing what locales have changed translations for a
@@ -3236,8 +3212,6 @@ class ChangedEntityLocale(models.Model):
     entity = models.ForeignKey(Entity, models.CASCADE)
     locale = models.ForeignKey(Locale, models.CASCADE)
     when = models.DateTimeField(default=timezone.now)
-
-    objects = ChangedEntityLocaleManager()
 
     class Meta:
         unique_together = ("entity", "locale")
@@ -3307,6 +3281,28 @@ class TranslationQuerySet(models.QuerySet):
             )
 
         return translations
+
+    def bulk_mark_changed(self):
+        changed_entities = {}
+        existing = ChangedEntityLocale.objects.values_list(
+            "entity", "locale"
+        ).distinct()
+
+        for translation in self:
+            if (
+                translation.entity.resource.project.data_source
+                == Project.DataSource.DATABASE
+            ):
+                continue
+
+            key = (translation.entity.pk, translation.locale.pk)
+
+            if key not in existing:
+                changed_entities[key] = ChangedEntityLocale(
+                    entity=translation.entity, locale=translation.locale
+                )
+
+        ChangedEntityLocale.objects.bulk_create(changed_entities.values())
 
 
 class Translation(DirtyFieldsMixin, models.Model):

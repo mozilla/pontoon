@@ -8,7 +8,6 @@ from pontoon.base.models import (
     Entity,
     TranslatedResource,
     Translation,
-    ChangedEntityLocale,
 )
 from pontoon.actionlog.models import ActionLog
 from pontoon.pretranslation.pretranslate import (
@@ -172,7 +171,8 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
     # Mark translations as changed
-    ChangedEntityLocale.objects.bulk_mark_changed(translations)
+    changed_translations = Translation.objects.filter(pk__in=translation_pks)
+    changed_translations.bulk_mark_changed()
 
     # Update latest activity and stats for changed instances.
     update_changed_instances(tr_filter, tr_dict, translations)

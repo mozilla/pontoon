@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models import (
-    ChangedEntityLocale,
     Entity,
     Locale,
     Project,
@@ -122,7 +121,7 @@ def batch_edit_translations(request):
     TranslatedResource.objects.filter(pk__in=tr_pks).update_stats()
 
     # Mark translations as changed
-    ChangedEntityLocale.objects.bulk_mark_changed(active_translations, locale)
+    active_translations.bulk_mark_changed()
 
     # Reset term translations for entities belonging to the Terminology project
     changed_entity_pks = [entity.pk for entity in action_status["changed_entities"]]
