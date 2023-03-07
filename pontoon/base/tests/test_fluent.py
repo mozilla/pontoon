@@ -1,8 +1,14 @@
 import pytest
 
 from collections import OrderedDict
+from fluent.syntax import FluentParser
+from textwrap import dedent
 
-from pontoon.base.fluent import get_simple_preview
+from pontoon.base.fluent import FlatTransformer, get_simple_preview
+
+
+parser = FluentParser()
+transformer = FlatTransformer()
 
 
 MULTILINE_SOURCE = """key =
@@ -63,6 +69,124 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict(
         ("number-literal", ("key = { 1 }", "{ 1 }")),
     )
 )
+
+
+def test_flat_transformer_value_single_element():
+    # Do not modify value with single element
+    source_string = dedent(
+        """
+        title = My Title
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.value.elements) == 1
+    assert res.value.elements[0].value == "My Title"
+
+
+def test_flat_transformer_attribute_single_element():
+    # Do not modify attributes with single element
+    source_string = dedent(
+        """
+        title =
+            .foo = Bar
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.attributes) == 1
+    assert len(res.attributes[0].value.elements) == 1
+    assert res.attributes[0].value.elements[0].value == "Bar"
+
+
+def test_flat_transformer_single_select_expression():
+    # Do not modify value with a single select expression
+    source_string = dedent(
+        """
+        my-entry =
+            { PLATFORM() ->
+                [variant] Hello!
+                *[another-variant] World!
+            }
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.value.elements) == 1
+    assert (
+        res.value.elements[0].expression.variants[0].value.elements[0].value == "Hello!"
+    )
+    assert (
+        res.value.elements[0].expression.variants[1].value.elements[0].value == "World!"
+    )
+
+
+def test_flat_transformer_value_several_elements():
+    # Flatten value with several elements
+    source_string = dedent(
+        """
+        title = My { $awesome } Title
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.value.elements) == 1
+    assert res.value.elements[0].value == "My { $awesome } Title"
+
+
+def test_flat_transformer_attribute_several_elements():
+    # Flatten attribute with several elements
+    source_string = dedent(
+        """
+        title =
+            .foo = Bar { -foo } Baz
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.attributes) == 1
+    assert len(res.attributes[0].value.elements) == 1
+    assert res.attributes[0].value.elements[0].value == "Bar { -foo } Baz"
+
+
+def test_flat_transformer_value_and_attributes():
+    # Flatten value and attributes
+    source_string = dedent(
+        """
+        batman = The { $dark } Knight
+            .weapon = Brain and { -wayne-enterprise }
+            .history = Lost { 2 } parents, has { 1 } "$alfred"
+    """
+    )
+
+    res = parser.parse_entry(source_string)
+    transformer.visit(res)
+
+    assert len(res.value.elements) == 1
+    assert res.value.elements[0].value == "The { $dark } Knight"
+
+    assert len(res.attributes) == 2
+
+    assert len(res.attributes[0].value.elements) == 1
+    assert (
+        res.attributes[0].value.elements[0].value == "Brain and { -wayne-enterprise }"
+    )
+
+    assert len(res.attributes[1].value.elements) == 1
+    assert (
+        res.attributes[1].value.elements[0].value
+        == 'Lost { 2 } parents, has { 1 } "$alfred"'
+    )
 
 
 @pytest.mark.parametrize("k", SIMPLE_TRANSLATION_TESTS)
