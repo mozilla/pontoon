@@ -1242,6 +1242,13 @@ body > form,
   li
   > header
   .sources
+  li[data-source='Microsoft']:only-child:before,
+#helpers
+  > section.machinery
+  ul
+  li
+  > header
+  .sources
   li[data-source='Google Translate']:only-child:before,
 #helpers
   > section.machinery

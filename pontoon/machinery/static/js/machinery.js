@@ -391,7 +391,6 @@ $(function () {
             $.each(data.translations, function () {
               append({
                 original: this.source,
-                quality: Math.round(this.quality) + '%',
                 url:
                   'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
                   this.source +
