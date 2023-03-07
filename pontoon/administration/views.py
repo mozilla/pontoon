@@ -259,11 +259,16 @@ def manage_project(request, slug=None, template="admin_project.html"):
         pk__in=locales_selected
     )
 
+    locales_pretranslate_available = locales_selected.exclude(
+        pk__in=locales_pretranslate
+    )
+
     # Admins reason in terms of locale codes (see bug 1394194)
     locales_readonly = locales_readonly.order_by("code")
     locales_selected = locales_selected.order_by("code")
     locales_available = locales_available.order_by("code")
     locales_pretranslate = locales_pretranslate.order_by("code")
+    locales_pretranslate_available = locales_pretranslate_available.order_by("code")
 
     data = {
         "slug": slug,
@@ -276,6 +281,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
         "locales_selected": locales_selected,
         "locales_available": locales_available,
         "locales_pretranslate": locales_pretranslate,
+        "locales_pretranslate_available": locales_pretranslate_available,
         "subtitle": subtitle,
         "pk": pk,
         "project": project,
