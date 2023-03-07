@@ -1,7 +1,6 @@
-from collections import OrderedDict
-
 import pytest
 
+from collections import OrderedDict
 from datetime import timedelta
 
 from pontoon.base.templatetags.helpers import (
@@ -11,17 +10,8 @@ from pontoon.base.templatetags.helpers import (
     nospam,
     to_json,
     metric_prefix,
-    get_syntax_type,
-    is_simple_single_attribute_message,
-    get_reconstructed_message,
 )
-
-from fluent.syntax import FluentParser, FluentSerializer
-
 from pontoon.base.utils import aware_datetime
-
-parser = FluentParser()
-serializer = FluentSerializer()
 
 MULTILINE_SOURCE = """key =
     Simple String
@@ -80,168 +70,6 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict(
         ("string-literal", ('key = { "" }', '{ "" }')),
         ("number-literal", ("key = { 1 }", "{ 1 }")),
     )
-)
-
-GET_SYNTAX_TYPE_TESTS = [
-    {"input": "my-entry = Hello!", "output": "simple"},
-    {
-        "input": """
-my-entry =
-    Multi
-    line
-    value.""",
-        "output": "simple",
-    },
-    {
-        "input": 'my-entry = Today is { DATETIME($date, month: "long", year: "numeric", day: "numeric") }',
-        "output": "simple",
-    },
-    {"input": "-my-entry = Hello!", "output": "simple"},
-    {"input": "my-entry = Term { -term } Reference", "output": "simple"},
-    {"input": "my-entry = { my_id }", "output": "simple"},
-    {"input": "my-entry = { my_id.title }", "output": "simple"},
-    {"input": 'my-entry = { "" }', "output": "simple"},
-    {"input": "my-entry = { 5 }", "output": "simple"},
-    {"input": "my-entry = \n    .an-atribute = Hello!", "output": "simple"},
-    {"input": "my-entry = World\n    .an-atribute = Hello!", "output": "rich"},
-    {
-        "input": """
-my-entry =
-    .an-atribute = Hello!
-    .another-atribute = World!""",
-        "output": "rich",
-    },
-    {
-        "input": """
-my-entry =
-    { PLATFORM() ->
-        [variant] Hello!
-        *[another-variant] World!
-    }""",
-        "output": "rich",
-    },
-    {
-        "input": """
-my-entry =
-    There { $num ->
-        [one] is one email
-       *[other] are many emails
-    } for { $gender ->
-       *[masculine] him
-        [feminine] her
-    }""",
-        "output": "rich",
-    },
-    {
-        "input": """
-my-entry =
-    .label =
-        { PLATFORM() ->
-            [macos] Choose
-           *[other] Browse
-        }
-    .accesskey =
-        { PLATFORM() ->
-            [macos] e
-           *[other] o
-        }""",
-        "output": "rich",
-    },
-    {
-        "input": """
-my-entry =
-    { $gender ->
-       *[masculine]
-            { $num ->
-                [one] There is one email for her
-               *[other] There are many emails for her
-            }
-        [feminine]
-            { $num ->
-                [one] There is one email for him
-               *[other] There are many emails for him
-            }
-    }""",
-        "output": "complex",
-    },
-]
-
-SIMPLE_SINGLE_ATTRIBUTE_TESTS = OrderedDict(
-    (
-        ("single-attribute", ("my-entry =\n    .an-atribute = Hello!", True)),
-        (
-            "string-with-text",
-            ("my-entry = Something\n    .an-atribute = Hello!", False),
-        ),
-        (
-            "string-with-several-attributes",
-            (
-                "my-entry =\n    .an-atribute = Hello!\n    .two-attrites = World!",
-                False,
-            ),
-        ),
-    )
-)
-
-GET_RECONSTRUCTED_MESSAGE_TESTS = test_cases = OrderedDict(
-    [
-        (
-            "simple-message",
-            {
-                "original": "title = Marvel Cinematic Universe",
-                "translation": "Univers cinématographique Marvel",
-                "expected": "title = Univers cinématographique Marvel\n",
-            },
-        ),
-        (
-            "single-attribute",
-            {
-                "original": "spoilers =\n    .who-dies = Who dies?",
-                "translation": "Qui meurt ?",
-                "expected": "spoilers =\n    .who-dies = Qui meurt ?\n",
-            },
-        ),
-        (
-            "multiline-simple-message",
-            {
-                "original": "time-travel = They discovered Time Travel",
-                "translation": "Ils ont inventé le\nvoyage temporel",
-                "expected": "time-travel =\n    Ils ont inventé le\n    voyage temporel\n",
-            },
-        ),
-        (
-            "multiline-single-attribute",
-            {
-                "original": "slow-walks =\n    .title = They walk in slow motion",
-                "translation": "Ils se déplacent\nen mouvement lents",
-                "expected": "slow-walks =\n    .title =\n        Ils se déplacent\n        en mouvement lents\n",
-            },
-        ),
-        (
-            "leading-dash-term",
-            {
-                "original": "-my-term = MyTerm",
-                "translation": "Mon Terme",
-                "expected": "-my-term = Mon Terme\n",
-            },
-        ),
-        (
-            "only-first-text-element",
-            {
-                "original": "stark = Tony Stark\n    .hero = IronMan\n    .hair = black",
-                "translation": "Anthony Stark",
-                "expected": "stark = Anthony Stark\n",
-            },
-        ),
-        (
-            "not-duplicating-terms",
-            {
-                "original": "with-term = I am { -term }",
-                "translation": "Je suis { -term }",
-                "expected": "with-term = Je suis { -term }\n",
-            },
-        ),
-    ]
 )
 
 
@@ -315,28 +143,3 @@ def test_helper_base_nospam_unicode(settings):
 
 def test_helper_base_nospam_escape(settings):
     assert str(nospam("<>'\"@&")) == "&lt;&gt;&#x27;&quot;&#64;&amp;"
-
-
-def test_get_syntax_type():
-    for test_case in GET_SYNTAX_TYPE_TESTS:
-        input = test_case["input"]
-        expected_output = test_case["output"]
-        assert get_syntax_type(input) == expected_output
-
-
-@pytest.mark.parametrize("k", SIMPLE_SINGLE_ATTRIBUTE_TESTS)
-def test_is_simple_single_attribute_message(k):
-    string, expected = SIMPLE_SINGLE_ATTRIBUTE_TESTS[k]
-    assert is_simple_single_attribute_message(parser.parse_entry(string)) == expected
-
-
-@pytest.mark.parametrize("k", GET_RECONSTRUCTED_MESSAGE_TESTS)
-def test_get_reconstructed_message(k):
-    result = get_reconstructed_message(
-        GET_RECONSTRUCTED_MESSAGE_TESTS[k]["original"],
-        GET_RECONSTRUCTED_MESSAGE_TESTS[k]["translation"],
-    )
-    assert (
-        serializer.serialize_entry(result)
-        == GET_RECONSTRUCTED_MESSAGE_TESTS[k]["expected"]
-    )
