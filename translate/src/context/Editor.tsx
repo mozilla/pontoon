@@ -232,6 +232,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               next.value = editSource(str);
               next.sourceView = true;
             }
+            next.fields = next.value.map(() => ({ current: null }));
           } else {
             next.value = setEditorMessage(prev.initial, null, str);
           }
@@ -281,13 +282,20 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             const entry = parseEntryFromFluentSource(prev.entry, source);
             if (entry && !requiresSourceView(entry)) {
               const value = editMessageEntry(entry);
-              return { ...prev, entry, sourceView: false, value };
+              return {
+                ...prev,
+                entry,
+                fields: value.map(() => ({ current: null })),
+                sourceView: false,
+                value,
+              };
             }
           } else if (entity.format === 'ftl') {
             const entry = buildMessageEntry(prev.entry, prev.value);
             const source = serializeEntry('ftl', entry);
             return {
               ...prev,
+              fields: [{ current: null }],
               sourceView: true,
               value: editSource(source),
             };
