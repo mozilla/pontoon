@@ -1,5 +1,6 @@
 import logging
 import operator
+import re
 
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
@@ -96,9 +97,9 @@ def get_pretranslations(entity, locale):
 
 
 def get_pretranslated_data(source, locale):
-    # Return empty translation if source text empty
-    if source == "":
-        return "", "tm"
+    # Empty strings do not need translation
+    if re.search("^\\s*$", source):
+        return source, "tm"
 
     # Try to get matches from Translation Memory
     tm_response = get_translation_memory_data(text=source, locale=locale)
