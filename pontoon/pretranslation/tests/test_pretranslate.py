@@ -242,7 +242,7 @@ def test_get_pretranslations_fluent_sibling_selectors(
     entity_a, fluent_resource, google_translate_locale, tm_user
 ):
     # Entity.string is a Fluent string with two sibling selectors.
-    #
+    # - Move any text outside selectors inside selectors.
     TranslationMemoryFactory.create(
         entity=entity_a,
         source="{ $key_count } key and ",
