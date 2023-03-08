@@ -178,13 +178,13 @@ describe('<EditorProvider>', () => {
               [one] ONE
              *[other] OTHER
           }
-
       `;
     const wrapper = mountSpy(Spy, 'ftl', source);
     act(() => actions.clearEditor());
     wrapper.update();
 
     expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
       sourceView: false,
       value: [
         {
@@ -198,6 +198,100 @@ describe('<EditorProvider>', () => {
           labels: [{ label: 'other', plural: true }],
           name: '',
           value: '',
+        },
+      ],
+    });
+  });
+
+  it('sets editor from history', () => {
+    let editor;
+    let actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const wrapper = mountSpy(Spy, 'ftl', `key = VALUE\n`);
+
+    expect(editor).toMatchObject({
+      fields: [{ current: null }],
+      sourceView: false,
+      value: [{ keys: [], labels: [], name: '', value: 'VALUE' }],
+    });
+
+    const source = ftl`
+      key =
+          { $var ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    act(() => actions.setEditorFromHistory(source));
+    wrapper.update();
+
+    expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
+      sourceView: false,
+      value: [
+        {
+          keys: [{ type: 'nmtoken', value: 'one' }],
+          labels: [{ label: 'one', plural: true }],
+          name: '',
+          value: 'ONE',
+        },
+        {
+          keys: [{ type: '*', value: 'other' }],
+          labels: [{ label: 'other', plural: true }],
+          name: '',
+          value: 'OTHER',
+        },
+      ],
+    });
+  });
+
+  it('toggles Fluent source view', () => {
+    let editor;
+    let actions;
+    const Spy = () => {
+      editor = useContext(EditorData);
+      actions = useContext(EditorActions);
+      return null;
+    };
+    const source = ftl`
+      key =
+          { $var ->
+              [one] ONE
+             *[other] OTHER
+          }
+      `;
+    const wrapper = mountSpy(Spy, 'ftl', source);
+    act(() => actions.toggleSourceView());
+    wrapper.update();
+
+    expect(editor).toMatchObject({
+      fields: [{ current: null }],
+      sourceView: true,
+      value: [{ keys: [], labels: [], name: '', value: source }],
+    });
+
+    act(() => actions.toggleSourceView());
+    wrapper.update();
+
+    expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
+      sourceView: false,
+      value: [
+        {
+          keys: [{ type: 'nmtoken', value: 'one' }],
+          labels: [{ label: 'one', plural: true }],
+          name: '',
+          value: 'ONE',
+        },
+        {
+          keys: [{ type: '*', value: 'other' }],
+          labels: [{ label: 'other', plural: true }],
+          name: '',
+          value: 'OTHER',
         },
       ],
     });

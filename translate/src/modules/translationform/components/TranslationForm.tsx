@@ -104,7 +104,7 @@ export function TranslationForm(): React.ReactElement<'div'> {
           return;
         }
       }
-      focusField.current = 0;
+      focusField.current = -1;
     },
     [focusField, fields],
   );
