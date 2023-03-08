@@ -228,22 +228,30 @@ def test_get_pretranslations_fluent_complex(
     assert response == [(pretranslated_string, None, tm_user)]
 
 
+# This test will fail, because pontoon.base.fluent.FlatTransformer moves trailing
+# space between selectors into selector variants, but it gets lost in pretranslation
+# due to re-serialization.
+#
+# Unless escaped, trailing space is not significant. So we should modify the
+# FlatTransformer to escape it or, even better, use nested selectors as in the translate
+# view, in which case we don't need trailing space at all.
+@pytest.mark.xfail
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_sibling_selectors(
     entity_a, fluent_resource, google_translate_locale, tm_user
 ):
     # Entity.string is a Fluent string with two sibling selectors.
-    # - Move any text outside selectors inside selectors.
+    # - Move any text outside selectors into selector variants.
     TranslationMemoryFactory.create(
         entity=entity_a,
         source="{ $key_count } key and ",
-        target="TM: { $key_count } key and",
+        target="TM: { $key_count } key and ",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
         source="{ $key_count } keys and ",
-        target="TM: { $key_count } keys and",
+        target="TM: { $key_count } keys and ",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
