@@ -171,7 +171,9 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
     # Mark translations as changed
-    changed_translations = Translation.objects.filter(pk__in=translation_pks)
+    changed_translations = Translation.objects.filter(
+        pk__in=translation_pks
+    ).prefetch_related("entity__resource__project")
     changed_translations.bulk_mark_changed()
 
     # Update latest activity and stats for changed instances.

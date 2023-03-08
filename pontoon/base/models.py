@@ -3288,13 +3288,9 @@ class TranslationQuerySet(models.QuerySet):
             "entity", "locale"
         ).distinct()
 
-        for translation in self:
-            if (
-                translation.entity.resource.project.data_source
-                == Project.DataSource.DATABASE
-            ):
-                continue
-
+        for translation in self.exclude(
+            entity__resource__project__data_source=Project.DataSource.DATABASE
+        ):
             key = (translation.entity.pk, translation.locale.pk)
 
             if key not in existing:
