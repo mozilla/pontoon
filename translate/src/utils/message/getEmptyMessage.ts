@@ -8,10 +8,10 @@ import type {
 } from 'messageformat';
 
 import type { Locale } from '~/context/Locale';
-import { CLDR_PLURALS } from '../constants';
 import { pojoCopy } from '../pojo';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
+import { getPluralCategories } from './getPluralCategories';
 
 /**
  * Return a copy of a given MessageEntry with all its patterns empty.
@@ -66,12 +66,6 @@ function getEmptyMessage(
     let keys: Variant['keys'] = [];
     let catchall: CatchallKey | null = null;
     if (plurals.includes(i)) {
-      const pr = new Intl.PluralRules(code);
-      const pc = pr.resolvedOptions().pluralCategories;
-      pc.sort((a, b) =>
-        CLDR_PLURALS.indexOf(a) < CLDR_PLURALS.indexOf(b) ? -1 : 1,
-      );
-
       const exactKeys = new Set<string>();
       for (const v of source.variants) {
         const k = v.keys[i];
@@ -82,6 +76,7 @@ function getEmptyMessage(
         }
       }
 
+      const pc = getPluralCategories(code);
       keys = Array.from(exactKeys)
         .concat(pc.filter((cat) => cat !== 'other'))
         .map((value) => ({ type: 'nmtoken', value }));
