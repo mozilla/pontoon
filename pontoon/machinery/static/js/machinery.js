@@ -133,11 +133,10 @@ $(function () {
       var listitems = ul.children('li'),
         sourceMap = {
           'Translation memory': 1,
-          Mozilla: 2,
-          Microsoft: 3,
+          Microsoft: 2,
+          'Google Translate': 3,
           'Systran Translate': 4,
-          'Google Translate': 5,
-          'Microsoft Translator': 6,
+          'Microsoft Translator': 5,
         };
 
       function getTranslationSource(el) {
@@ -390,8 +389,6 @@ $(function () {
           if (data.translations) {
             $.each(data.translations, function () {
               append({
-                original: this.source,
-                quality: Math.round(this.quality) + '%',
                 url:
                   'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
                   this.source +
@@ -401,6 +398,7 @@ $(function () {
                   'Visit Microsoft Terminology Service API.\n' +
                   '© 2018 Microsoft Corporation. All rights reserved.',
                 source: 'Microsoft',
+                original: this.source,
                 translation: this.target,
               });
             });
