@@ -429,9 +429,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     # Mark translations as changed
     changed_translations_pks = [t.pk for t in changeset.changed_translations]
-    changed_translations = Translation.objects.filter(
-        pk__in=changed_translations_pks
-    ).prefetch_related("entity__resource__project")
+    changed_translations = Translation.objects.filter(pk__in=changed_translations_pks)
     changed_translations.bulk_mark_changed()
 
     # Update latest translation
