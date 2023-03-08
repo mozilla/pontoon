@@ -145,39 +145,18 @@ def test_get_pretranslations_fluent_empty(
     assert response == [(pretranslated_string, None, gt_user)]
 
 
-@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
-def test_get_pretranslations_fluent_complex(
-    gt_mock, entity_a, fluent_resource, google_translate_locale, tm_user
+def test_get_pretranslations_fluent_whitespace(
+    fluent_resource, google_translate_locale, tm_user
 ):
-    # Entity.string is a complex Fluent string.
-    # Only translate text nodes.
-    # Service with most translated nodes is picked as translation author.
-    gt_mock.return_value = {
-        "status": True,
-        "translation": "gt_translation",
-    }
-
-    TranslationMemoryFactory.create(
-        entity=entity_a,
-        source="Preferences",
-        target="tm_translation",
-        locale=google_translate_locale,
-    )
-    TranslationMemoryFactory.create(
-        entity=entity_a,
-        source="Settings",
-        target="tm_translation",
-        locale=google_translate_locale,
-    )
-
+    # Various types of whitespace should be preserved
     fluent_string = dedent(
         """
-        my-entry =
-            { PLATFORM() ->
-                [mac] Preferences
-                [win] Settings
-                *[other] Options
+        whitespace =
+            { $count ->
+                [0] { "" }
+                [1] { " " }
+                *[other] { "\t" } { "\n" }
             }
     """
     )
@@ -185,11 +164,133 @@ def test_get_pretranslations_fluent_complex(
 
     expected = dedent(
         """
-        my-entry =
+        whitespace =
+            { $count ->
+                [0] { "" }
+                [1] { " " }
+                *[other] { "\t" } { "\n" }
+            }
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, tm_user)]
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_complex(
+    gt_mock, entity_a, fluent_resource, google_translate_locale, tm_user
+):
+    # Entity.string is a complex Fluent string.
+    # - Uplift selector and repeat shared parts within variants.
+    # - Only translate text nodes.
+    # - Service with most translated nodes is picked as translation author.
+    gt_mock.return_value = {
+        "status": True,
+        "translation": "GT: Open Options and select Search.",
+    }
+
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="Open Preferences and select Search.",
+        target="TM: Open Preferences and select Search.",
+        locale=google_translate_locale,
+    )
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="Open Settings and select Search.",
+        target="TM: Open Settings and select Search.",
+        locale=google_translate_locale,
+    )
+
+    fluent_string = dedent(
+        """
+        complex-entry =
+            Open { PLATFORM() ->
+                [mac] Preferences
+                [win] Settings
+                *[other] Options
+            } and select Search.
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    expected = dedent(
+        """
+        complex-entry =
             { PLATFORM() ->
-                [mac] tm_translation
-                [win] tm_translation
-                *[other] gt_translation
+                [mac] TM: Open Preferences and select Search.
+                [win] TM: Open Settings and select Search.
+                *[other] GT: Open Options and select Search.
+            }
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, tm_user)]
+
+
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_sibling_selectors(
+    entity_a, fluent_resource, google_translate_locale, tm_user
+):
+    # Entity.string is a Fluent string with two sibling selectors.
+    #
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="{ $key_count } key and ",
+        target="TM: { $key_count } key and",
+        locale=google_translate_locale,
+    )
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="{ $key_count } keys and ",
+        target="TM: { $key_count } keys and",
+        locale=google_translate_locale,
+    )
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="{ $lock_count } lock",
+        target="TM: { $lock_count } lock",
+        locale=google_translate_locale,
+    )
+    TranslationMemoryFactory.create(
+        entity=entity_a,
+        source="{ $lock_count } locks",
+        target="TM: { $lock_count } locks",
+        locale=google_translate_locale,
+    )
+
+    fluent_string = dedent(
+        """
+        sibling-selector =
+            { $key_count ->
+                [one] { $key_count } key
+                *[other] { $key_count } keys
+            } and { $lock_count ->
+                [one] { $lock_count } lock
+                *[other] { $lock_count } locks
+            }
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+
+    expected = dedent(
+        """
+        sibling-selector =
+            { $key_count ->
+                [one] TM: { $key_count } key and
+                *[other] TM: { $key_count } keys and
+            }{ $lock_count ->
+                [one] TM: { $lock_count } lock
+                *[other] TM: { $lock_count } locks
             }
     """
     )
