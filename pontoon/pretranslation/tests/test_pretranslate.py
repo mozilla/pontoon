@@ -150,7 +150,7 @@ def test_get_pretranslations_fluent_whitespace(
     fluent_resource, google_translate_locale, tm_user
 ):
     # Various types of whitespace should be preserved
-    fluent_string = dedent(
+    input_string = dedent(
         """
         whitespace =
             { $count ->
@@ -160,21 +160,12 @@ def test_get_pretranslations_fluent_whitespace(
             }
     """
     )
-    fluent_entity = EntityFactory(resource=fluent_resource, string=fluent_string)
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
 
-    expected = dedent(
-        """
-        whitespace =
-            { $count ->
-                [0] { "" }
-                [1] { " " }
-                *[other] { "\t" } { "\n" }
-            }
-    """
-    )
+    output_string = input_string
 
     # Re-serialize to match whitespace
-    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(output_string))
 
     response = get_pretranslations(fluent_entity, google_translate_locale)
     assert response == [(pretranslated_string, None, tm_user)]
