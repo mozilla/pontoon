@@ -1,15 +1,12 @@
 import html
 import datetime
 import json
-import re
 
 import markupsafe
 from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
 from django_jinja import library
-from fluent.syntax import FluentParser, ast
-from fluent.syntax.serializer import serialize_expression
 
 from django import template
 from django.conf import settings
@@ -19,9 +16,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
+from pontoon.base.fluent import get_simple_preview
 
 register = template.Library()
-parser = FluentParser()
 
 
 @library.global_function
@@ -220,182 +217,14 @@ def dict_html_attrs(dict_obj):
     return markupsafe.Markup(" ".join([f'data-{k}="{v}"' for k, v in dict_obj.items()]))
 
 
-def _get_default_variant(variants):
-    """Return default variant from the list of variants."""
-    for variant in variants:
-        if variant.default:
-            return variant
-
-
-def _serialize_value(value):
-    """Serialize AST values into a simple string."""
-    response = ""
-
-    for element in value.elements:
-        if isinstance(element, ast.TextElement):
-            response += element.value
-
-        elif isinstance(element, ast.Placeable):
-            if isinstance(element.expression, ast.SelectExpression):
-                default_variant = _get_default_variant(element.expression.variants)
-                response += _serialize_value(default_variant.value)
-            else:
-                response += "{ " + serialize_expression(element.expression) + " }"
-
-    return response
-
-
 @library.filter
-def as_simple_translation(source):
-    """Transfrom complex FTL-based strings into single-value strings."""
-    translation_ast = parser.parse_entry(source)
+def as_plain_message(source):
+    """
+    Return a plain string representation of a given message.
 
-    # Non-FTL string or string with an error
-    if isinstance(translation_ast, ast.Junk):
-        return source
-
-    # Value: use entire AST
-    if translation_ast.value:
-        tree = translation_ast
-
-    # Attributes (must be present in valid AST if value isn't):
-    # use AST of the first attribute
-    else:
-        tree = translation_ast.attributes[0]
-
-    return _serialize_value(tree.value)
-
-
-def is_single_input_ftl_string(source):
-    """Check if fluent string is single input"""
-    return get_syntax_type(source) == "simple"
-
-
-def get_syntax_type(source):
-    translation_ast = parser.parse_entry(source)
-
-    if not translation_ast or not is_supported_message(translation_ast):
-        return "complex"
-
-    if is_simple_message(translation_ast) or is_simple_single_attribute_message(
-        translation_ast
-    ):
-        return "simple"
-
-    return "rich"
-
-
-def is_supported_message(entry):
-    if not entry or isinstance(entry, ast.Junk):
-        return False
-
-    attributes = entry.attributes
-    value = entry.value
-
-    if isinstance(
-        entry, (ast.Junk, ast.Comment, ast.GroupComment, ast.ResourceComment)
-    ):
-        return False
-
-    if value and not are_supported_elements(value.elements):
-        return False
-
-    return all(
-        attr.value and are_supported_elements(attr.value.elements)
-        for attr in attributes
-    )
-
-
-def are_supported_elements(elements):
-    return all(
-        is_simple_element(element)
-        or (
-            isinstance(element, ast.Placeable)
-            and isinstance(element.expression, ast.SelectExpression)
-            and all(
-                all(
-                    is_simple_element(variant_element)
-                    for variant_element in variant.value.elements
-                )
-                for variant in element.expression.variants
-            )
-        )
-        for element in elements
-    )
-
-
-def is_simple_message(entry):
-    value = entry.value
-    return (
-        isinstance(entry, (ast.Message, ast.Term))
-        and not entry.attributes
-        and (value and all(is_simple_element(element) for element in value.elements))
-    )
-
-
-def is_simple_element(element):
-    if isinstance(element, ast.TextElement):
-        return True
-    if isinstance(element, ast.Placeable):
-        return isinstance(
-            element.expression,
-            (
-                ast.FunctionReference,
-                ast.TermReference,
-                ast.MessageReference,
-                ast.VariableReference,
-                ast.NumberLiteral,
-                ast.StringLiteral,
-            ),
-        )
-
-    return False
-
-
-def is_simple_single_attribute_message(message):
-    return (
-        isinstance(message, ast.Message)
-        and not message.value
-        and message.attributes
-        and len(message.attributes) == 1
-        and all(
-            is_simple_element(element)
-            for element in message.attributes[0].value.elements
-        )
-    )
-
-
-def get_reconstructed_message(original, translation):
-    """Return a reconstructed Fluent message from the original message and some translated content."""
-    translation_ast = parser.parse_entry(original)
-
-    if not isinstance(translation_ast, ast.Message) and not isinstance(
-        translation_ast, ast.Term
-    ):
-        raise ValueError(f"Unexpected type in getReconstructedMessage")
-
-    key = translation_ast.id.name
-    # For Terms, the leading dash is removed in the identifier. We need to add
-    # it back manually.
-    if isinstance(translation_ast, ast.Term):
-        key = "-" + key
-
-    content = f"{key} ="
-    indent = " " * 4
-
-    if translation_ast.attributes and len(translation_ast.attributes) == 1:
-        attribute = translation_ast.attributes[0].id.name
-        content += f"\n{indent}.{attribute} ="
-        indent = indent + indent
-
-    if "\n" in translation:
-        content += "\n" + re.sub(r"^", indent, translation, flags=re.MULTILINE)
-    elif translation:
-        content += " " + translation
-    else:
-        content += ' { "" }'
-
-    return parser.parse_entry(content)
+    Complex FTL strings are transformed into single-value strings.
+    """
+    return get_simple_preview(source)
 
 
 @library.filter

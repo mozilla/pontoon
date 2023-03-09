@@ -43,7 +43,7 @@ from jsonfield import JSONField
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
-from pontoon.base.templatetags.helpers import as_simple_translation
+from pontoon.base.fluent import get_simple_preview
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
@@ -3434,7 +3434,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         source = self.entity.string
 
         if self.entity.resource.format == Resource.Format.FTL:
-            return as_simple_translation(source)
+            return get_simple_preview(source)
 
         return source
 
@@ -3443,7 +3443,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         target = self.string
 
         if self.entity.resource.format == Resource.Format.FTL:
-            return as_simple_translation(target)
+            return get_simple_preview(target)
 
         return target
 
