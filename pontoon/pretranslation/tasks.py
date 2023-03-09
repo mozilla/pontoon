@@ -8,7 +8,6 @@ from pontoon.base.models import (
     Entity,
     TranslatedResource,
     Translation,
-    ChangedEntityLocale,
 )
 from pontoon.actionlog.models import ActionLog
 from pontoon.pretranslation.pretranslate import (
@@ -67,7 +66,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
             obsolete=False,
         )
 
-    entities = entities.prefetch_related("resource__project")
+    entities = entities.prefetch_related("resource")
 
     # get available TranslatedResource pairs
     tr_pairs = (
@@ -172,19 +171,8 @@ def pretranslate(self, project_pk, locales=None, entities=None):
     bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
 
     # Mark translations as changed
-    changed_entities = {}
-    existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
-    for t in translations:
-        if t.entity.resource.project.data_source == Project.DataSource.DATABASE:
-            continue
-
-        key = (t.entity.pk, t.locale.pk)
-        # Remove duplicate changes to prevent unique constraint violation
-        if key not in existing:
-            changed_entities[key] = ChangedEntityLocale(
-                entity=t.entity, locale=t.locale
-            )
-    ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+    changed_translations = Translation.objects.filter(pk__in=translation_pks)
+    changed_translations.bulk_mark_changed()
 
     # Update latest activity and stats for changed instances.
     update_changed_instances(tr_filter, tr_dict, translations)

@@ -35,9 +35,7 @@ def get_translations_info(translations, locale):
     count = translations.count()
     translated_resources = list(translations.translated_resources(locale))
     changed_entities = list(
-        Entity.objects.filter(translation__in=translations)
-        .distinct()
-        .prefetch_related("resource__project")
+        Entity.objects.filter(translation__in=translations).distinct()
     )
 
     return count, translated_resources, changed_entities

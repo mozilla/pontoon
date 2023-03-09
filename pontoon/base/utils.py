@@ -340,7 +340,6 @@ def handle_upload_content(slug, code, part, f, user):
     from pontoon.sync.changeset import ChangeSet
     from pontoon.sync.vcs.models import VCSProject
     from pontoon.base.models import (
-        ChangedEntityLocale,
         Entity,
         Locale,
         Project,
@@ -429,17 +428,9 @@ def handle_upload_content(slug, code, part, f, user):
     TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
 
     # Mark translations as changed
-    changed_entities = {}
-    existing = ChangedEntityLocale.objects.values_list("entity", "locale").distinct()
-    for t in changeset.changed_translations:
-        key = (t.entity.pk, t.locale.pk)
-        # Remove duplicate changes to prevent unique constraint violation
-        if key not in existing:
-            changed_entities[key] = ChangedEntityLocale(
-                entity=t.entity, locale=t.locale
-            )
-
-    ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+    changed_translations_pks = [t.pk for t in changeset.changed_translations]
+    changed_translations = Translation.objects.filter(pk__in=changed_translations_pks)
+    changed_translations.bulk_mark_changed()
 
     # Update latest translation
     if changeset.translations_to_create:

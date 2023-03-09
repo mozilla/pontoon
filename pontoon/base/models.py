@@ -3282,6 +3282,24 @@ class TranslationQuerySet(models.QuerySet):
 
         return translations
 
+    def bulk_mark_changed(self):
+        changed_entities = {}
+        existing = ChangedEntityLocale.objects.values_list(
+            "entity", "locale"
+        ).distinct()
+
+        for translation in self.exclude(
+            entity__resource__project__data_source=Project.DataSource.DATABASE
+        ):
+            key = (translation.entity.pk, translation.locale.pk)
+
+            if key not in existing:
+                changed_entities[key] = ChangedEntityLocale(
+                    entity=translation.entity, locale=translation.locale
+                )
+
+        ChangedEntityLocale.objects.bulk_create(changed_entities.values())
+
 
 class Translation(DirtyFieldsMixin, models.Model):
     entity = models.ForeignKey(Entity, models.CASCADE)
