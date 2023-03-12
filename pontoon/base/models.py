@@ -2904,16 +2904,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         """
         return locale in self.changed_locales.all()
 
-    def mark_changed(self, locale):
-        """
-        Mark the given locale as having changed translations since the
-        last sync.
-        """
-        if self.resource.project.data_source == Project.DataSource.DATABASE:
-            return
-
-        ChangedEntityLocale.objects.get_or_create(entity=self, locale=locale)
-
     def get_active_translation(self, plural_form=None):
         """
         Get active translation for a given entity and plural form.
@@ -3526,7 +3516,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         # changed in the appropriate locale. We could be smarter about
         # this but for now this is fine.
         if self.approved:
-            self.entity.mark_changed(self.locale)
+            self.mark_changed()
 
         if project.slug == "terminology":
             self.entity.reset_term_translation(self.locale)
@@ -3609,7 +3599,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                 project=self.entity.resource.project,
             )
 
-        self.entity.mark_changed(self.locale)
+        self.mark_changed()
 
     def unapprove(self, user):
         """
@@ -3621,7 +3611,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         self.save()
 
         TranslationMemoryEntry.objects.filter(translation=self).delete()
-        self.entity.mark_changed(self.locale)
+        self.mark_changed()
 
     def reject(self, user):
         """
@@ -3631,7 +3621,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         # We must do this before rejecting it.
         if self.approved or self.pretranslated or self.fuzzy:
             TranslationMemoryEntry.objects.filter(translation=self).delete()
-            self.entity.mark_changed(self.locale)
+            self.mark_changed()
 
         self.rejected = True
         self.rejected_user = user
@@ -3663,6 +3653,18 @@ class Translation(DirtyFieldsMixin, models.Model):
             "errors": [error.message for error in self.errors.all()],
             "warnings": [warning.message for warning in self.warnings.all()],
         }
+
+    def mark_changed(self):
+        """
+        Mark the given locale as having changed translations since the
+        last sync.
+        """
+        if self.entity.resource.project.data_source == Project.DataSource.DATABASE:
+            return
+
+        ChangedEntityLocale.objects.get_or_create(
+            entity=self.entity, locale=self.locale
+        )
 
 
 class TranslationMemoryEntryQuerySet(models.QuerySet):

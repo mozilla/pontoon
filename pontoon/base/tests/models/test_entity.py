@@ -508,26 +508,21 @@ def test_entity_project_locale_tags(admin, entity_a, locale_a, tag_a):
 
 @pytest.mark.django_db
 def test_entity_marked_changed_when_project_data_source_is_repository(translation_a):
-    entity = translation_a.entity
-    locale = translation_a.locale
-
     assert ChangedEntityLocale.objects.count() == 0
-    entity.mark_changed(locale)
+    translation_a.mark_changed()
     assert ChangedEntityLocale.objects.count() == 1
 
 
 @pytest.mark.django_db
 def test_entity_marked_changed_when_project_data_source_is_database(translation_a):
-    entity = translation_a.entity
-    project = entity.resource.project
-    locale = translation_a.locale
+    project = translation_a.entity.resource.project
 
     Project.objects.filter(pk=project.pk).update(
         data_source=Project.DataSource.DATABASE
     )
 
-    entity.refresh_from_db()
+    translation_a.refresh_from_db()
 
     assert ChangedEntityLocale.objects.count() == 0
-    entity.mark_changed(locale)
+    translation_a.mark_changed()
     assert ChangedEntityLocale.objects.count() == 0
