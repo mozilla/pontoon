@@ -337,7 +337,7 @@
               {{ form.sync_disabled }}{{ form.sync_disabled.label }}
           </label>
       </div>
-      {% if settings.MANUAL_SYNC %}
+      {% if settings.MANUAL_SYNC and not project.disabled and not project.sync_disabled %}
       <button class="sync button">Sync</button>
       {% endif %}
       <button class="button active save">Save project</button>
