@@ -17,6 +17,11 @@
   float: left;
 }
 
+.entity-navigation button.copy-source {
+  float: left;
+  margin-left: 10px;
+}
+
 .entity-navigation button.previous {
   margin-right: 30px;
 }

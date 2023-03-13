@@ -174,6 +174,15 @@ export const STRING_LINK_COPIED: NotificationMessage = {
   type: 'info',
 };
 
+export const STRING_SOURCE_CONTENT_COPIED: NotificationMessage = {
+  content: (
+    <Localized id='notification--string-link-copied'>
+      Source content copied to clipboard
+    </Localized>
+  ),
+  type: 'info',
+};
+
 export const COMMENT_ADDED: NotificationMessage = {
   content: (
     <Localized id='notification--comment-added'>Comment added</Localized>
