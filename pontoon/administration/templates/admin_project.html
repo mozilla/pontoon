@@ -338,7 +338,7 @@
           </label>
       </div>
       {% if settings.MANUAL_SYNC %}
-      <button class="sync button">Sync</button>
+      <button class="sync button"{% if project.disabled %} disabled{% endif %}>Sync</button>
       {% endif %}
       <button class="button active save">Save project</button>
       <a href="{{ url('pontoon.admin') }}" class="cancel">Cancel</a>
