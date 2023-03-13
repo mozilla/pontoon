@@ -1,18 +1,19 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
+import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
-import { STRING_LINK_COPIED } from '~/core/notification/messages';
+import { STRING_LINK_COPIED, STRING_SOURCE_CONTENT_COPIED } from '~/core/notification/messages';
 
 import './EntityNavigation.css';
 
 /**
  * Component showing entity navigation toolbar.
  *
- * Shows copy link and next/previous buttons.
+ * Shows copy link, copy content and next/previous buttons.
  */
 export function EntityNavigation(): React.ReactElement {
   const location = useContext(Location);
@@ -20,6 +21,7 @@ export function EntityNavigation(): React.ReactElement {
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
   const { checkUnsavedChanges } = useContext(UnsavedActions);
+  const { pluralForm, entity: selectedEntity } = useContext(EntityView);
 
   const copyLinkToClipboard = useCallback(async () => {
     const { locale, project, resource, entity } = location;
@@ -33,6 +35,20 @@ export function EntityNavigation(): React.ReactElement {
 
     showNotification(STRING_LINK_COPIED);
   }, [location]);
+
+  const copySourceContentToClipboard = useCallback(async () => {
+    if (!selectedEntity) {
+        return;
+    }
+
+    const original_string = (pluralForm === -1 || pluralForm === 0)
+        ? selectedEntity.original
+        : selectedEntity.original_plural;
+
+    await navigator.clipboard.writeText(String(original_string));
+
+    showNotification(STRING_SOURCE_CONTENT_COPIED);
+  }, [pluralForm, selectedEntity]);
 
   const goToEntity = useCallback(
     (entity: number | undefined) => {
@@ -92,6 +108,19 @@ export function EntityNavigation(): React.ReactElement {
         >
           {'<glyph></glyph>COPY LINK'}
         </button>
+      </Localized>
+      <Localized
+          id='entitydetails-EntityNavigation--copysource'
+          attrs={{ title: true }}
+          elems={{ glyph: <i className='fa fa-clipboard fa-lg' /> }}
+      >
+          <button
+              className='copy-source'
+              title='Copy Source to Clipboard'
+              onClick={copySourceContentToClipboard}
+          >
+              {'<glyph></glyph>COPY CONTENT'}
+          </button>
       </Localized>
       <Localized
         id='entitydetails-EntityNavigation--next'

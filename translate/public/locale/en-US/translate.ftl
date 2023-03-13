@@ -235,6 +235,8 @@ editor-UnsavedChanges--proceed = PROCEED
 
 entitydetails-EntityNavigation--link = <glyph></glyph>COPY LINK
     .title = Copy Link to String
+entitydetails-EntityNavigation--copysource = <glyph></glyph>COPY CONTENT
+    .title = Copy Source to Clipboard
 entitydetails-EntityNavigation--next = <glyph></glyph>NEXT
     .title = Go To Next String (Alt + Down)
 entitydetails-EntityNavigation--previous = <glyph></glyph>PREVIOUS
@@ -550,6 +552,7 @@ notification--make-suggestions-disabled = Make Suggestions disabled
 notification--ftl-not-supported-rich-editor = Translation not supported in rich editor
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
+notification--string-content-copied = Source content copied to clipboard
 notification--comment-added = Comment added
 
 
