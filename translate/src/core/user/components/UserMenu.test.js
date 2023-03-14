@@ -84,6 +84,23 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
+  it('hides admin · current project menu item when translating all projects', () => {
+    const wrapper = createUserMenu({
+      location: { ...LOCATION, project: 'all-projects' },
+      isAdmin: true,
+    });
+
+    expect(
+      wrapper.find('a[href="/admin/projects/all-projects/"]'),
+    ).toHaveLength(0);
+  });
+
+  it('show admin · current project menu item when translating a project', () => {
+    const wrapper = createUserMenu({ isAdmin: true });
+
+    expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(1);
+  });
+
   it('hides upload & download menu items when translating all resources', () => {
     const wrapper = createUserMenu({
       location: { ...LOCATION, resource: 'all-resources' },
