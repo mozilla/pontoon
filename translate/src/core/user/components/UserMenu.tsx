@@ -167,7 +167,7 @@ export function UserMenuDialog({
               <a href='/admin/'>{'<glyph></glyph>Admin'}</a>
             </Localized>
           </li>
-          {project !== "all-projects" && (
+          {project !== 'all-projects' && (
             <li>
               <Localized
                 id='user-UserMenu--admin-project'
