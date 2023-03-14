@@ -167,16 +167,18 @@ export function UserMenuDialog({
               <a href='/admin/'>{'<glyph></glyph>Admin'}</a>
             </Localized>
           </li>
-          <li>
-            <Localized
-              id='user-UserMenu--admin-project'
-              elems={{ glyph: <i className='fa fa-wrench fa-fw' /> }}
-            >
-              <a href={`/admin/projects/${project}/`}>
-                {'<glyph></glyph>Admin · Current Project'}
-              </a>
-            </Localized>
-          </li>
+          {project !== "all-projects" && (
+            <li>
+              <Localized
+                id='user-UserMenu--admin-project'
+                elems={{ glyph: <i className='fa fa-wrench fa-fw' /> }}
+              >
+                <a href={`/admin/projects/${project}/`}>
+                  {'<glyph></glyph>Admin · Current Project'}
+                </a>
+              </Localized>
+            </li>
+          )}
         </>
       )}
 
