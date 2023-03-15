@@ -95,7 +95,7 @@ describe('<UserMenuDialog>', () => {
     ).toHaveLength(0);
   });
 
-  it('show admin · current project menu item when translating a project', () => {
+  it('shows admin · current project menu item when translating a project', () => {
     const wrapper = createUserMenu({ isAdmin: true });
 
     expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(1);
