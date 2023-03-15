@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { TermState } from '~/modules/term';
+import type { TermState } from '../reducer';
 
 type Props = {
   terms: TermState;

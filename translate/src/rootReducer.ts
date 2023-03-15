@@ -2,7 +2,7 @@ import * as entities from '~/modules/entities/reducer';
 import * as project from '~/modules/project/reducer';
 import * as resource from '~/modules/resource/reducer';
 import * as stats from '~/modules/stats/reducer';
-import * as term from '~/modules/term/reducer';
+import * as term from '~/modules/terms/reducer';
 import * as user from '~/modules/user/reducer';
 import * as batchactions from '~/modules/batchactions/reducer';
 import * as otherlocales from '~/modules/otherlocales/reducer';

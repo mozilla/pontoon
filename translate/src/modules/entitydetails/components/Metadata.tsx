@@ -6,7 +6,7 @@ import Linkify from 'react-linkify';
 
 import type { Entity } from '~/api/entity';
 import { Locale } from '~/context/Locale';
-import type { TermState } from '~/modules/term';
+import type { TermState } from '~/modules/terms';
 import type { UserState } from '~/modules/user';
 import { OriginalString } from '~/modules/originalstring';
 import type { TeamCommentState } from '~/modules/teamcomments';

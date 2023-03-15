@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 
 import type { TermType } from '~/api/terminology';
-import { TermsList } from '~/modules/term';
+import { TermsList } from '~/modules/terms';
 import { useOnDiscard } from '~/utils';
 
 import './TermsPopup.css';
