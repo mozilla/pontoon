@@ -42,8 +42,10 @@ describe('mark terms', () => {
 
     const wrapper = mountMarker(string, terms);
 
-    expect(wrapper.find('mark')).toHaveLength(1);
-    expect(wrapper.find('mark').text()).toEqual('Add-Ons');
+    const mark = wrapper.find('mark')
+    expect(mark).toHaveLength(1);
+    expect(mark.text()).toEqual('Add-Ons');
+    expect(mark.prop('data-match')).toEqual('add-on')
   });
 
   it('only marks terms at the beginning of the word', () => {
