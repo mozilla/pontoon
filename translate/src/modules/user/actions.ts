@@ -10,7 +10,7 @@ import {
   CHECKS_ENABLED,
   SUGGESTIONS_DISABLED,
   SUGGESTIONS_ENABLED,
-} from '~/core/notification/messages';
+} from '~/modules/notification/messages';
 import type { AppThunk } from '~/store';
 
 export const UPDATE = 'user/UPDATE';

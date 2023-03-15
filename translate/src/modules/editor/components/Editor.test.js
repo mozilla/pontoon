@@ -10,7 +10,7 @@ import * as TranslationAPI from '~/api/translation';
 import { EditorActions, EditorProvider } from '~/context/Editor';
 import { EntityViewProvider } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
-import { RECEIVE_ENTITIES } from '~/core/entities/actions';
+import { RECEIVE_ENTITIES } from '~/modules/entities/actions';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';

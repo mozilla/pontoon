@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { App } from './App';
 import { LocationProvider } from './context/Location';
 import { UnsavedChangesProvider } from './context/UnsavedChanges';
-import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';
+import { AppLocalizationProvider } from './modules/l10n/components/AppLocalizationProvider';
 import { history } from './historyInstance';
 import './index.css';
 import { store } from './store';

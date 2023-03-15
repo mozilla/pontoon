@@ -29,8 +29,8 @@ import {
 
 import type { MentionUser } from '~/api/user';
 import { MentionUsers } from '~/context/MentionUsers';
-import type { UserState } from '~/core/user';
-import { UserAvatar } from '~/core/user';
+import type { UserState } from '~/modules/user';
+import { UserAvatar } from '~/modules/user';
 
 import './AddComment.css';
 import { MentionList } from './MentionList';

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 import './ProgressChart.css';
 
-import type { Stats } from '~/core/stats';
+import type { Stats } from '~/modules/stats';
 
 type Props = {
   stats: Stats;

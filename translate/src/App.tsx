@@ -9,11 +9,11 @@ import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';
 import { NotificationProvider } from './context/Notification';
 
-import { WaveLoader } from './core/loaders';
-import { NotificationPanel } from './core/notification/components/NotificationPanel';
-import { getProject } from './core/project/actions';
-import { getResource } from './core/resource/actions';
-import { UserControls } from './core/user/components/UserControls';
+import { WaveLoader } from './modules/loaders';
+import { NotificationPanel } from './modules/notification/components/NotificationPanel';
+import { getProject } from './modules/project/actions';
+import { getResource } from './modules/resource/actions';
+import { UserControls } from './modules/user/components/UserControls';
 
 import { useAppDispatch } from './hooks';
 

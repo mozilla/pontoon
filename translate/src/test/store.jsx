@@ -11,7 +11,7 @@ import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 
 import { LocationProvider } from '~/context/Location';
-import { UPDATE } from '~/core/user/actions';
+import { UPDATE } from '~/modules/user/actions';
 import { reducer } from '~/rootReducer';
 
 import { MockLocalizationProvider } from './utils';

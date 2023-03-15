@@ -7,9 +7,9 @@ import type { Entity } from '~/api/entity';
 import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { CommentsList } from '~/core/comments/components/CommentsList';
-import { Translation } from '~/core/translation';
-import { UserAvatar, UserState } from '~/core/user';
+import { CommentsList } from '~/modules/comments/components/CommentsList';
+import { Translation } from '~/modules/translation';
+import { UserAvatar, UserState } from '~/modules/user';
 import { withActionsDisabled } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 

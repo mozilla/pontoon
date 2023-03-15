@@ -6,7 +6,7 @@ import type { MachineryTranslation } from '~/api/machinery';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
-import { GenericTranslation } from '~/core/translation';
+import { GenericTranslation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';

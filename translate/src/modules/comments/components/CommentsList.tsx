@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { HistoryTranslation } from '~/api/translation';
-import type { UserState } from '~/core/user';
+import type { UserState } from '~/modules/user';
 import { useAddCommentAndRefresh } from '../hooks';
 
 import { AddComment } from './AddComment';

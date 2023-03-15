@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { TermState } from '~/core/term';
+import type { TermState } from '~/modules/term';
 
 type Props = {
   terms: TermState;

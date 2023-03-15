@@ -6,7 +6,7 @@ import Linkify from 'react-linkify';
 import ReactTimeAgo from 'react-time-ago';
 
 import type { TranslationComment } from '~/api/comment';
-import { UserAvatar } from '~/core/user';
+import { UserAvatar } from '~/modules/user';
 
 import './Comment.css';
 

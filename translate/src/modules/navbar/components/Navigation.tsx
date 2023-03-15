@@ -3,9 +3,9 @@ import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 
-import { useProject } from '~/core/project';
-import { ProjectMenu } from '~/core/project/components/ProjectMenu';
-import { ResourceMenu } from '~/core/resource/components/ResourceMenu';
+import { useProject } from '~/modules/project';
+import { ProjectMenu } from '~/modules/project/components/ProjectMenu';
+import { ResourceMenu } from '~/modules/resource/components/ResourceMenu';
 
 import './Navigation.css';
 

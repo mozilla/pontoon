@@ -4,8 +4,8 @@ import React, { useCallback, useContext, useEffect } from 'react';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { useNextEntity, usePreviousEntity } from '~/core/entities/hooks';
-import { STRING_LINK_COPIED } from '~/core/notification/messages';
+import { useNextEntity, usePreviousEntity } from '~/modules/entities/hooks';
+import { STRING_LINK_COPIED } from '~/modules/notification/messages';
 
 import './EntityNavigation.css';
 

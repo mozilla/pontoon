@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import escapeRegExp from 'lodash.escaperegexp';
 import { cloneElement, ReactNode } from 'react';
 import createMarker, { getRules, Parser } from 'react-content-marker';
-import { TermState } from '~/core/term';
+import { TermState } from '~/modules/term';
 
 import './Highlight.css';
 

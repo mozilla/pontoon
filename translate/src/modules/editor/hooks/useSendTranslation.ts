@@ -13,14 +13,14 @@ import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { updateEntityTranslation } from '~/core/entities/actions';
-import { usePushNextTranslatable } from '~/core/entities/hooks';
+import { updateEntityTranslation } from '~/modules/entities/actions';
+import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
   TRANSLATION_SAVED,
-} from '~/core/notification/messages';
-import { updateResource } from '~/core/resource/actions';
-import { updateStats } from '~/core/stats/actions';
+} from '~/modules/notification/messages';
+import { updateResource } from '~/modules/resource/actions';
+import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { serializeEntry } from '~/utils/message';
 

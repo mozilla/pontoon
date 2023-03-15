@@ -8,8 +8,8 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
-import { updateEntityTranslation } from '~/core/entities/actions';
-import { usePushNextTranslatable } from '~/core/entities/hooks';
+import { updateEntityTranslation } from '~/modules/entities/actions';
+import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   TRANSLATION_APPROVED,
   TRANSLATION_REJECTED,
@@ -19,9 +19,9 @@ import {
   UNABLE_TO_REJECT_TRANSLATION,
   UNABLE_TO_UNAPPROVE_TRANSLATION,
   UNABLE_TO_UNREJECT_TRANSLATION,
-} from '~/core/notification/messages';
-import { updateResource } from '~/core/resource/actions';
-import { updateStats } from '~/core/stats/actions';
+} from '~/modules/notification/messages';
+import { updateResource } from '~/modules/resource/actions';
+import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch } from '~/hooks';
 
 /**

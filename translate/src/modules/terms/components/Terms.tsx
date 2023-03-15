@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React from 'react';
 
-import { TermsList, TermState } from '~/core/term';
+import { TermsList, TermState } from '~/modules/term';
 
 import './Terms.css';
 
