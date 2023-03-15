@@ -1,29 +1,15 @@
 import * as Fluent from '@fluent/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import sinon from 'sinon';
 
 import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import { createReduxStore, mountComponentWithStore } from '~/test/store';
+import { createReduxStore, MockStore } from '~/test/store';
 
 import { Term } from './Term';
-
-function mountTerm(term, setEditorSelection, isAuthenticated) {
-  const store = createReduxStore({ user: { isAuthenticated } });
-  return mountComponentWithStore(
-    () => (
-      <Locale.Provider value={{ code: 'kg' }}>
-        <EntityView.Provider value={{ entity: {} }}>
-          <EditorActions.Provider value={{ setEditorSelection }}>
-            <Term term={term} />
-          </EditorActions.Provider>
-        </EntityView.Provider>
-      </Locale.Provider>
-    ),
-    store,
-  );
-}
 
 const TERM = {
   text: 'text',
@@ -32,6 +18,21 @@ const TERM = {
   usage: 'usage',
   translation: 'translation',
 };
+
+function MockTerm({ isAuthenticated, setEditorSelection, term }) {
+  const store = createReduxStore({ user: { isAuthenticated } });
+  return (
+    <MockStore store={store}>
+      <Locale.Provider value={{ code: 'kg' }}>
+        <EntityView.Provider value={{ entity: {} }}>
+          <EditorActions.Provider value={{ setEditorSelection }}>
+            <Term term={term ?? TERM} />
+          </EditorActions.Provider>
+        </EntityView.Provider>
+      </Locale.Provider>
+    </MockStore>
+  );
+}
 
 describe('<Term>', () => {
   let getSelectionBackup;
@@ -46,38 +47,56 @@ describe('<Term>', () => {
     window.getSelection = getSelectionBackup;
     Fluent.Localized.restore();
   });
-  it('renders term correctly', () => {
-    const wrapper = mountTerm(TERM, sinon.spy(), true);
 
-    expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('.text').text()).toEqual('text');
-    expect(wrapper.find('.part-of-speech').text()).toEqual('partOfSpeech');
-    expect(wrapper.find('.definition').text()).toEqual('definition');
-    expect(wrapper.find('.usage .content').text()).toEqual('usage');
-    expect(wrapper.find('.translation').text()).toEqual('translation');
+  it('renders term correctly', () => {
+    const { container } = render(
+      <MockTerm isAuthenticated setEditorSelection={sinon.spy()} />,
+    );
+
+    expect(container.querySelectorAll('li')).toHaveLength(1);
+    expect(container.querySelector('.text').textContent).toEqual('text');
+    expect(container.querySelector('.part-of-speech').textContent).toEqual(
+      'partOfSpeech',
+    );
+    expect(container.querySelector('.definition').textContent).toEqual(
+      'definition',
+    );
+    expect(container.querySelector('.usage .content').textContent).toEqual(
+      'usage',
+    );
+    expect(container.querySelector('.translation').textContent).toEqual(
+      'translation',
+    );
   });
 
-  it('calls the addTextToEditorTranslation function on click', () => {
+  it('calls the addTextToEditorTranslation function on click', async () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm(TERM, spy, true);
-
-    wrapper.find('li').simulate('click');
+    const { container } = render(
+      <MockTerm isAuthenticated setEditorSelection={spy} />,
+    );
+    await userEvent.click(container.querySelector('li'));
     expect(spy.called).toEqual(true);
   });
 
-  it('does not call the addTextToEditorTranslation function if term not translated', () => {
+  it('does not call the addTextToEditorTranslation function if term not translated', async () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm({ ...TERM, translation: '' }, spy, true);
-
-    wrapper.find('li').simulate('click');
+    const { container } = render(
+      <MockTerm
+        isAuthenticated
+        setEditorSelection={spy}
+        term={{ ...TERM, translation: '' }}
+      />,
+    );
+    await userEvent.click(container.querySelector('li'));
     expect(spy.called).toEqual(false);
   });
 
-  it('does not call the addTextToEditorTranslation function if read-only editor', () => {
+  it('does not call the addTextToEditorTranslation function if read-only editor', async () => {
     const spy = sinon.spy();
-    const wrapper = mountTerm(TERM, spy, false);
-
-    wrapper.find('li').simulate('click');
+    const { container } = render(
+      <MockTerm isAuthenticated={false} setEditorSelection={spy} />,
+    );
+    await userEvent.click(container.querySelector('li'));
     expect(spy.called).toEqual(false);
   });
 });
