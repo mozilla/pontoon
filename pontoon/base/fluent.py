@@ -1,3 +1,4 @@
+import copy
 import re
 
 from fluent.syntax import ast, FluentParser, visitor
@@ -173,3 +174,38 @@ def is_plural_expression(expression):
         )
 
     return False
+
+
+def create_locale_plural_variants(node, locale):
+    if not is_plural_expression(node):
+        return
+
+    numeric = []
+    source_plurals = {}
+    locale_plurals = []
+    default = None
+
+    for variant in node.variants:
+        key = variant.key
+        if isinstance(key, ast.NumberLiteral):
+            numeric.append(variant)
+        elif isinstance(key, ast.Identifier) and key.name in locale.cldr_plurals_list():
+            source_plurals[key.name] = variant
+        if variant.default:
+            default = variant
+
+    for plural in locale.cldr_plurals_list().split(", "):
+        if plural in source_plurals.keys():
+            variant = source_plurals[plural]
+        else:
+            variant = copy.deepcopy(default)
+            variant.default = False
+            variant.key.name = plural
+        locale_plurals.append(variant)
+
+    variants = numeric + locale_plurals
+
+    if len([v for v in variants if v.default]) == 0:
+        variants[-1].default = True
+
+    node.variants = variants

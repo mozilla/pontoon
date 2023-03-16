@@ -9,7 +9,7 @@ from fluent.syntax import FluentParser, FluentSerializer
 from functools import reduce
 
 from pontoon.base.models import User, TranslatedResource
-from pontoon.base.fluent import FlatTransformer
+from pontoon.base.fluent import FlatTransformer, create_locale_plural_variants
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
@@ -26,6 +26,10 @@ class PretranslationTransformer(FlatTransformer):
     def __init__(self, locale):
         self.services = []
         self.locale = locale
+
+    def visit_SelectExpression(self, node):
+        create_locale_plural_variants(node, self.locale)
+        return self.generic_visit(node)
 
     def visit_TextElement(self, node):
         pretranslation, service = get_pretranslated_data(node.value, self.locale)
