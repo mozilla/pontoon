@@ -41,7 +41,7 @@ export function Highlight({
       const termParser = {
         rule: new RegExp(`\\b${text}[a-zA-z]*\\b`, 'gi'),
         tag: (x: string) => (
-          <mark className='term' data-match={x}>
+          <mark className='term' data-match={term}>
             {x}
           </mark>
         ),
