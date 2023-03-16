@@ -176,7 +176,7 @@ export const STRING_LINK_COPIED: NotificationMessage = {
 
 export const STRING_SOURCE_CONTENT_COPIED: NotificationMessage = {
   content: (
-    <Localized id='notification--string-link-copied'>
+    <Localized id='notification--string-content-copied'>
       Source content copied to clipboard
     </Localized>
   ),
