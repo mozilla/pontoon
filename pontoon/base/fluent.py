@@ -158,3 +158,18 @@ def get_simple_preview(content):
         tree = translation_ast.attributes[0]
 
     return serialize_value(tree.value)
+
+
+def is_plural_expression(expression):
+    from pontoon.base.models import Locale
+
+    CLDR_PLURALS = [c for _, c in Locale.CLDR_PLURALS]
+
+    if isinstance(expression, ast.SelectExpression):
+        return all(
+            isinstance(variant.key, ast.NumberLiteral)
+            or variant.key.name in CLDR_PLURALS
+            for variant in expression.variants
+        )
+
+    return False
