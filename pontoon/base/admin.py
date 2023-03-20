@@ -8,6 +8,7 @@ from django.forms import ChoiceField
 from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
+from guardian.admin import GuardedModelAdmin
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models, utils
@@ -16,7 +17,6 @@ from pontoon.terminology.models import Term
 
 
 AGGREGATED_STATS_FIELDS = (
-    "total_strings",
     "approved_strings",
     "pretranslated_strings",
     "strings_with_errors",
@@ -77,26 +77,14 @@ class UserAdmin(AuthUserAdmin):
         )
 
         ActionLog.objects.filter(performed_by=obj).update(performed_by=new_user)
-        models.PermissionChangelog.objects.filter(performed_by=obj).update(
-            performed_by=new_user
-        )
-        models.PermissionChangelog.objects.filter(performed_on=obj).update(
-            performed_on=new_user
-        )
+        models.PermissionChangelog.objects.filter(performed_by=obj).update(performed_by=new_user)
+        models.PermissionChangelog.objects.filter(performed_on=obj).update(performed_on=new_user)
         models.Project.objects.filter(contact=obj).update(contact=new_user)
         models.Translation.objects.filter(user=obj).update(user=new_user)
-        models.Translation.objects.filter(approved_user=obj).update(
-            approved_user=new_user
-        )
-        models.Translation.objects.filter(unapproved_user=obj).update(
-            unapproved_user=new_user
-        )
-        models.Translation.objects.filter(rejected_user=obj).update(
-            rejected_user=new_user
-        )
-        models.Translation.objects.filter(unrejected_user=obj).update(
-            unrejected_user=new_user
-        )
+        models.Translation.objects.filter(approved_user=obj).update(approved_user=new_user)
+        models.Translation.objects.filter(unapproved_user=obj).update(unapproved_user=new_user)
+        models.Translation.objects.filter(rejected_user=obj).update(rejected_user=new_user)
+        models.Translation.objects.filter(unrejected_user=obj).update(unrejected_user=new_user)
         Term.objects.filter(created_by=obj).update(created_by=new_user)
         models.Comment.objects.filter(author=obj).update(author=new_user)
 
@@ -205,7 +193,7 @@ class RepositoryInline(admin.TabularInline):
     )
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(GuardedModelAdmin):
     search_fields = ["name", "slug"]
     list_display = (
         "name",
@@ -265,7 +253,7 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 
-class ProjectLocaleAdmin(admin.ModelAdmin):
+class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
     list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
     ordering = ("-pk",)

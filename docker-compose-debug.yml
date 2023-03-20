@@ -1,6 +1,7 @@
 # docker-compose for Pontoon development.
 #
-# Note: Requires docker-compose 1.27+.
+# Note: Requires docker-compose 1.10+.
+version: '2.3'
 services:
   server:
     build:
@@ -8,28 +9,38 @@ services:
       dockerfile: ./docker/Dockerfile
       target: server
     image: local/pontoon
+    command:
+      [
+        "sh",
+        "-c",
+        "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
+      ]
     env_file:
-      - docker/config/server.env
+      - docker/config/dev.env
     depends_on:
       - postgresql
     ports:
       - '8000:8000'
+      - '5678:5678'
     volumes:
       - ./pontoon:/app/pontoon
       - ./requirements:/app/requirements
+      - ./tag-admin:/app/tag-admin
       - ./translate:/app/translate
-      - ~/.ssh:/home/pontoon/.ssh
 
   # Database
   postgresql:
-    image: postgres:13
+    build:
+      context: ./docker/postgres
+      dockerfile: ./Dockerfile
+    image: pontoon-postgresql:latest
+    ports:
+      - '5555:5432'
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
-    ports:
-      - '5555:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
 

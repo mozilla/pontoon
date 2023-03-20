@@ -25,3 +25,11 @@ venv/
 /media/
 /pontoon/coverage.xml
 /static/
+
+# Docker
+.server-build
+docker/config/server.env
+docker/config/server.env-e
+
+# PDM
+.pdm-python

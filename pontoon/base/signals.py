@@ -61,6 +61,23 @@ def assign_group_permissions(instance, group_name, perms):
         )
 
 
+def assign_project_group_permissions(project_locale, group_name, perms):
+    """
+    Create group object permissions.
+    """
+    project = project_locale.project
+
+    project_ct = ContentType.objects.get(app_label="base", model="project")
+
+    group = getattr(project_locale, f"{group_name}_group")
+
+    for perm_name in perms:
+        perm = Permission.objects.get(content_type=project_ct, codename=perm_name)
+        GroupObjectPermission.objects.get_or_create(
+            object_pk=project.pk, content_type=project_ct, group=group, permission=perm
+        )
+
+
 @receiver(pre_save, sender=Locale)
 def create_locale_permissions_groups(sender, **kwargs):
     """
@@ -207,6 +224,7 @@ def assign_project_locale_group_permissions(sender, **kwargs):
         assign_group_permissions(
             instance, "translators", ["can_translate_project_locale"]
         )
+        assign_project_group_permissions(instance, "translators", ["view_project"])
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 
