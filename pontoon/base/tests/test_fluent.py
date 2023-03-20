@@ -1,13 +1,19 @@
 import pytest
 
 from collections import OrderedDict
-from fluent.syntax import FluentParser
+from fluent.syntax import FluentParser, FluentSerializer
 from textwrap import dedent
 
-from pontoon.base.fluent import FlatTransformer, get_simple_preview
+from pontoon.base.fluent import (
+    FlatTransformer,
+    get_simple_preview,
+    is_plural_expression,
+    create_locale_plural_variants,
+)
 
 
 parser = FluentParser()
+serializer = FluentSerializer()
 transformer = FlatTransformer()
 
 
@@ -193,3 +199,145 @@ def test_flat_transformer_value_and_attributes():
 def test_get_simple_preview(k):
     string, expected = SIMPLE_TRANSLATION_TESTS[k]
     assert get_simple_preview(string) == expected
+
+
+def test_is_plural_expression_not_select_expression():
+    # Return False for elements that are not select expressions
+    input = dedent(
+        """
+        my-entry = Hello!
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element) is False
+
+
+def test_is_plural_expression_all_cldr_plurals():
+    # Return True if all variant keys are CLDR plurals
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [one] Hello!
+               *[two] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element.expression) is True
+
+
+def test_is_plural_expression_all_numbers():
+    # Return True if all variant keys are numbers
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [1] Hello!
+               *[2] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element.expression) is True
+
+
+def test_is_plural_expression_one_cldr_plural_one_number():
+    # Return True if one variant key is a CLDR plural and the other is a number
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [one] Hello!
+               *[1] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element.expression) is True
+
+
+def test_is_plural_expression_one_cldr_plural_one_something_else():
+    # Return False if one variant key is a CLDR plural and the other is neither a CLDR plural nor a number
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [one] Hello!
+               *[variant] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element.expression) is False
+
+
+def test_is_plural_expression_neither_cldr_plural_nor_number():
+    # Return False if neither variant key is a CLDR plural nor a number
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [variant] Hello!
+               *[another-variant] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    assert is_plural_expression(element.expression) is False
+
+
+@pytest.mark.django_db
+def test_create_locale_plural_variants(locale_a):
+    # Create default locale plural variants
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [0] Yo!
+                [one] Hello!
+               *[other] { reference } World!
+            }
+    """
+    )
+
+    message = parser.parse_entry(input)
+    expression = message.value.elements[0].expression
+
+    locale_a.cldr_plurals = "1,2,3,5"
+    create_locale_plural_variants(expression, locale_a)
+
+    expected = dedent(
+        """
+        my-entry =
+            { $num ->
+                [0] Yo!
+                [one] Hello!
+                [two] { reference } World!
+                [few] { reference } World!
+               *[other] { reference } World!
+            }
+    """
+    )
+
+    assert serializer.serialize_entry(message) == serializer.serialize_entry(
+        parser.parse_entry(expected)
+    )
