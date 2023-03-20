@@ -198,11 +198,10 @@ def create_locale_plural_variants(node, locale):
             variant = source_plurals[plural]
         else:
             variant = copy.deepcopy(default)
-            variant.default = False
             variant.key.name = plural
+        variant.default = False
         variants.append(variant)
 
-    if any(v.default for v in variants):
-        variants[-1].default = True
+    variants[-1].default = True
 
     node.variants = variants
