@@ -180,15 +180,14 @@ def create_locale_plural_variants(node, locale):
     if not is_plural_expression(node):
         return
 
-    numeric = []
+    variants = []
     source_plurals = {}
-    locale_plurals = []
     default = None
 
     for variant in node.variants:
         key = variant.key
         if isinstance(key, ast.NumberLiteral):
-            numeric.append(variant)
+            variants.append(variant)
         else:
             source_plurals[key.name] = variant
         if variant.default:
@@ -201,9 +200,7 @@ def create_locale_plural_variants(node, locale):
             variant = copy.deepcopy(default)
             variant.default = False
             variant.key.name = plural
-        locale_plurals.append(variant)
-
-    variants = numeric + locale_plurals
+        variants.append(variant)
 
     if len([v for v in variants if v.default]) == 0:
         variants[-1].default = True
