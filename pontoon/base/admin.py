@@ -1,3 +1,5 @@
+from guardian.admin import GuardedModelAdmin
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
@@ -155,6 +157,7 @@ class ProjectLocaleInline(admin.TabularInline):
         "locale",
         "readonly",
         "pretranslation_enabled",
+        "has_custom_translators",
     )
 
 
@@ -172,7 +175,7 @@ class RepositoryInline(admin.TabularInline):
     )
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(GuardedModelAdmin):
     search_fields = ["name", "slug"]
     list_display = (
         "name",
@@ -231,11 +234,19 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 
-class ProjectLocaleAdmin(admin.ModelAdmin):
+class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
-    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
+    list_display = (
+        "pk",
+        "project",
+        "locale",
+        "readonly",
+        "pretranslation_enabled",
+        "has_custom_translators",
+    )
     ordering = ("-pk",)
     autocomplete_fields = ["translators_group", "latest_translation"]
+
 
 
 class ResourceAdmin(admin.ModelAdmin):

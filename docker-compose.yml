@@ -8,12 +8,14 @@ services:
       dockerfile: ./docker/Dockerfile
       target: server
     image: local/pontoon
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
-      - docker/config/server.env
+      - .env
     depends_on:
-      - postgresql
+      - postgres
     ports:
-      - '8000:8000'
+      - "8000:8000"
     volumes:
       - ./documentation:/app/documentation
       - ./pontoon:/app/pontoon
@@ -22,13 +24,15 @@ services:
       - ~/.ssh:/home/pontoon/.ssh
 
   # Database
-  postgresql:
+  postgres:
     image: postgres:15
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=pontoon
+    ports:
+      - "5555:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
