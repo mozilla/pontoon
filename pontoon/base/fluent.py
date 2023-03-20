@@ -189,7 +189,7 @@ def create_locale_plural_variants(node, locale):
         key = variant.key
         if isinstance(key, ast.NumberLiteral):
             numeric.append(variant)
-        elif isinstance(key, ast.Identifier) and key.name in locale.cldr_plurals_list():
+        else:
             source_plurals[key.name] = variant
         if variant.default:
             default = variant
