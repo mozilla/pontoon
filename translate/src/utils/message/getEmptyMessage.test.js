@@ -158,12 +158,13 @@ describe('getEmptyMessage', () => {
            *[other] OTHER
         }
       `);
-    const entry = getEmptyMessageEntry(source, { code: 'tg' });
+    const entry = getEmptyMessageEntry(source, { code: 'pl' });
     expect(serializeEntry('ftl', entry)).toBe(ftl`
       selector-multi =
           { $num ->
               [one] { "" }
-             *[other] { "" }
+              [few] { "" }
+             *[many] { "" }
           }
 
       `);

@@ -13,7 +13,13 @@ export function getPluralCategories(code: string): Intl.LDMLPluralRule[] {
       return ['one', 'other'];
     case 'ltg': // Latgalian
       return ['zero', 'one', 'other'];
+
+    // For the following, deliberately ignore the `other` rule for fractions
+    case 'be': // Belarusian
+    case 'pl': // Polish
+    case 'ru': // Russian
     case 'szl': // Silesian
+    case 'uk': // Ukrainian
       return ['one', 'few', 'many'];
 
     // For the following, deliberately ignore the `many` rule for millions

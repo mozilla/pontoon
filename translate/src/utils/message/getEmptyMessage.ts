@@ -63,7 +63,7 @@ function getEmptyMessage(
       continue;
     }
 
-    let keys: Variant['keys'] = [];
+    const keys: Variant['keys'] = [];
     let catchall: CatchallKey | null = null;
     if (plurals.includes(i)) {
       const exactKeys = new Set<string>();
@@ -75,11 +75,15 @@ function getEmptyMessage(
           exactKeys.add(k.value);
         }
       }
+      for (const key of exactKeys) {
+        keys.push({ type: 'nmtoken', value: key });
+      }
 
       const pc = getPluralCategories(code);
-      keys = Array.from(exactKeys)
-        .concat(pc.filter((cat) => cat !== 'other'))
-        .map((value) => ({ type: 'nmtoken', value }));
+      catchall = { type: '*', value: pc.pop() } as CatchallKey;
+      for (const cat of pc) {
+        keys.push({ type: 'nmtoken', value: cat });
+      }
     } else {
       const keyValues = new Set<string>();
       for (const v of source.variants) {
