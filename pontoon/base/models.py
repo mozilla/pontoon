@@ -907,7 +907,7 @@ class Locale(AggregatedStats):
             "pk": self.pk,
             "nplurals": self.nplurals,
             "plural_rule": self.plural_rule,
-            "cldr_plurals": self.cldr_plurals_list(),
+            "cldr_plurals": self.cldr_plurals_list_string(),
             "direction": self.direction,
             "script": self.script,
             "google_translate_code": self.google_translate_code,
@@ -923,7 +923,10 @@ class Locale(AggregatedStats):
             return [int(p) for p in self.cldr_plurals.split(",")]
 
     def cldr_plurals_list(self):
-        return ", ".join(map(Locale.cldr_id_to_plural, self.cldr_id_list()))
+        return map(Locale.cldr_id_to_plural, self.cldr_id_list())
+
+    def cldr_plurals_list_string(self):
+        return ", ".join(self.cldr_plurals_list())
 
     @classmethod
     def cldr_plural_to_id(self, cldr_plural):

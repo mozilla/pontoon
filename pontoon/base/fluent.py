@@ -194,7 +194,7 @@ def create_locale_plural_variants(node, locale):
         if variant.default:
             default = variant
 
-    for plural in locale.cldr_plurals_list().split(", "):
+    for plural in locale.cldr_plurals_list():
         if plural in source_plurals.keys():
             variant = source_plurals[plural]
         else:
