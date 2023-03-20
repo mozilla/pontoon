@@ -202,7 +202,7 @@ def create_locale_plural_variants(node, locale):
             variant.key.name = plural
         variants.append(variant)
 
-    if len([v for v in variants if v.default]) == 0:
+    if any(v.default for v in variants):
         variants[-1].default = True
 
     node.variants = variants
