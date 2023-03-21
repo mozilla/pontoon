@@ -38,7 +38,7 @@ export type HistoryTranslation = {
   readonly rejected: boolean;
   readonly string: string;
   readonly uid: number | null | undefined;
-  readonly unapprovedUser: string;
+  readonly rejectedUser: string;
   readonly machinerySources: string;
   readonly user: string;
   readonly username: string;

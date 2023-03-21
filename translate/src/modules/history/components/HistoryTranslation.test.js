@@ -29,7 +29,7 @@ describe('<HistoryTranslationComponent>', () => {
     rejected: false,
     string: 'The storm approaches. We speak no more.',
     uid: 0,
-    unapprovedUser: '',
+    rejectedUser: '',
     user: '',
     username: 'michel',
     comments: [],
@@ -121,8 +121,8 @@ describe('<HistoryTranslationComponent>', () => {
     });
   });
 
-  describe('getApprovalTitle', () => {
-    it('returns the correct approver title when approved', () => {
+  describe('getReviewTitle', () => {
+    it('returns the correct review title when approved and approved user is available', () => {
       const translation = {
         ...DEFAULT_TRANSLATION,
         ...{ approved: true, approvedUser: 'Cespenar' },
@@ -138,10 +138,10 @@ describe('<HistoryTranslationComponent>', () => {
       expect(wrapper.find('[title="Approved by Cespenar"]')).toHaveLength(2);
     });
 
-    it('returns the correct approver title when unapproved', () => {
+    it('returns the correct review title when approved and approved user is not available', () => {
       const translation = {
         ...DEFAULT_TRANSLATION,
-        ...{ unapprovedUser: 'Bhaal' },
+        ...{ approved: true },
       };
       const wrapper = shallow(
         <HistoryTranslationBase
@@ -151,10 +151,42 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Unapproved by Bhaal"]')).toHaveLength(2);
+      expect(wrapper.find('[title="Approved"]')).toHaveLength(3);
     });
 
-    it('returns the correct approver title when neither approved or unapproved', () => {
+    it('returns the correct review title when rejected and rejected user is available', () => {
+      const translation = {
+        ...DEFAULT_TRANSLATION,
+        ...{ rejected: true, rejectedUser: 'Bhaal' },
+      };
+      const wrapper = shallow(
+        <HistoryTranslationBase
+          translation={translation}
+          entity={DEFAULT_ENTITY}
+          user={DEFAULT_USER}
+        />,
+      );
+
+      expect(wrapper.find('[title="Rejected by Bhaal"]')).toHaveLength(2);
+    });
+
+    it('returns the correct review title when rejected and rejected user is not available', () => {
+      const translation = {
+        ...DEFAULT_TRANSLATION,
+        ...{ rejected: true },
+      };
+      const wrapper = shallow(
+        <HistoryTranslationBase
+          translation={translation}
+          entity={DEFAULT_ENTITY}
+          user={DEFAULT_USER}
+        />,
+      );
+
+      expect(wrapper.find('[title="Rejected"]')).toHaveLength(2);
+    });
+
+    it('returns the correct approver title when neither approved or rejected', () => {
       const wrapper = shallow(
         <HistoryTranslationBase
           translation={DEFAULT_TRANSLATION}

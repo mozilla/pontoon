@@ -362,7 +362,7 @@ history-Translation--span-copied =
     .title = Copied ({ $machinerySources })
 
 history-translation--approved = Approved by { $user }
-history-translation--unapproved = Unapproved by { $user }
+history-translation--rejected = Rejected by { $user }
 history-translation--unreviewed = Not reviewed yet
 
 

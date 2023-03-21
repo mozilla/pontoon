@@ -427,7 +427,7 @@ def get_translation_history(request):
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
-                "unapproved_user": User.display_name_or_blank(t.unapproved_user),
+                "rejected_user": User.display_name_or_blank(t.rejected_user),
                 "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
                 "machinery_sources": t.machinery_sources_values,
             }

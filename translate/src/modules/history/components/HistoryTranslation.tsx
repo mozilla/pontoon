@@ -129,7 +129,7 @@ const User = ({
       {user}
     </a>
   ) : (
-    <span>{user}</span>
+    <span title={title}>{user}</span>
   );
 
 /**
@@ -195,23 +195,39 @@ export function HistoryTranslationBase({
     setEditorFromHistory(translation.string);
   }, [isReadOnlyEditor, setEditorFromHistory, translation.string]);
 
-  let approvalTitle: string;
-  if (translation.approved && translation.approvedUser) {
+  let reviewTitle: string;
+  if (translation.approved) {
     const user = translation.approvedUser;
-    approvalTitle = l10n.getString(
-      'history-translation--approved',
-      { user },
-      `Approved by ${user}`,
-    );
-  } else if (translation.unapprovedUser) {
-    const user = translation.unapprovedUser;
-    approvalTitle = l10n.getString(
-      'history-translation--unapproved',
-      { user },
-      `Unapproved by ${user}`,
-    );
+    if (user) {
+      reviewTitle = l10n.getString(
+        'history-translation--approved',
+        { user },
+        `Approved by ${user}`,
+      );
+    } else {
+      reviewTitle = l10n.getString(
+        'history-Translation--button-approved.title',
+        null,
+        'Approved',
+      );
+    }
+  } else if (translation.rejected) {
+    const user = translation.rejectedUser;
+    if (user) {
+      reviewTitle = l10n.getString(
+        'history-translation--rejected',
+        { user },
+        `Rejected by ${user}`,
+      );
+    } else {
+      reviewTitle = l10n.getString(
+        'history-Translation--button-rejected.title',
+        null,
+        'Rejected',
+      );
+    }
   } else {
-    approvalTitle = l10n.getString(
+    reviewTitle = l10n.getString(
       'history-translation--unreviewed',
       null,
       'Not reviewed yet',
@@ -257,7 +273,7 @@ export function HistoryTranslationBase({
           <div className='avatar-container'>
             <UserAvatar
               username={translation.username}
-              title={approvalTitle}
+              title={reviewTitle}
               imageUrl={translation.userGravatarUrlSmall}
             />
             {translation.machinerySources ? (
@@ -278,7 +294,7 @@ export function HistoryTranslationBase({
           <div className='content'>
             <header className='clearfix'>
               <div className='info'>
-                <User title={approvalTitle} translation={translation} />
+                <User title={reviewTitle} translation={translation} />
                 <ReactTimeAgo
                   dir='ltr'
                   date={new Date(translation.dateIso)}
