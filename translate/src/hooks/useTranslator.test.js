@@ -1,8 +1,8 @@
 import React from 'react';
 import sinon from 'sinon';
 
-import { PROJECT } from '~/core/project';
-import { USER } from '~/core/user';
+import { PROJECT } from '~/modules/project';
+import { USER } from '~/modules/user';
 import * as Hooks from '~/hooks';
 
 import { useTranslator } from './useTranslator';

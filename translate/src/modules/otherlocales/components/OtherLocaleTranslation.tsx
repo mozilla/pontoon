@@ -7,7 +7,7 @@ import type { OtherLocaleTranslation } from '~/api/other-locales';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { Translation } from '~/core/translation';
+import { Translation } from '~/modules/translation';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { getPlainMessage } from '~/utils/message';
 

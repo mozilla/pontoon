@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import type { SourceType } from '~/api/machinery';
-import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
+import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import {
   buildMessageEntry,

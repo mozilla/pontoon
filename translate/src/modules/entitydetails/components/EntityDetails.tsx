@@ -9,10 +9,10 @@ import React, {
 import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { Editor } from '~/core/editor/components/Editor';
-import { TERM } from '~/core/term';
-import { get as getTerms } from '~/core/term/actions';
-import { USER } from '~/core/user';
+import { Editor } from '~/modules/editor/components/Editor';
+import { TERM } from '~/modules/terms';
+import { get as getTerms } from '~/modules/terms/actions';
+import { USER } from '~/modules/user';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { History } from '~/modules/history/components/History';
 import { OTHERLOCALES } from '~/modules/otherlocales';

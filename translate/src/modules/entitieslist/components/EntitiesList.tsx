@@ -8,10 +8,10 @@ import {
   getEntities,
   getSiblingEntities,
   resetEntities,
-} from '~/core/entities/actions';
-import { useEntities } from '~/core/entities/hooks';
-import { SkeletonLoader } from '~/core/loaders';
-import { ENTITY_NOT_FOUND } from '~/core/notification/messages';
+} from '~/modules/entities/actions';
+import { useEntities } from '~/modules/entities/hooks';
+import { SkeletonLoader } from '~/modules/loaders';
+import { ENTITY_NOT_FOUND } from '~/modules/notification/messages';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
@@ -26,15 +26,14 @@ import { UnsavedActions } from '~/context/UnsavedChanges';
 
 import './EntitiesList.css';
 import { Entity } from './Entity';
-import { USER } from '~/core/user';
+import { USER } from '~/modules/user';
 import { ShowNotification } from '~/context/Notification';
 
 /**
  * Displays a list of entities and their current translation.
  *
- * This component will fetch entities when loaded, then display those
- * entities. It interacts with `core/navigation` when an entity is selected.
- *
+ * This component will fetch entities when loaded,
+ * then display those entities.
  */
 export function EntitiesList(): React.ReactElement<'div'> {
   const dispatch = useAppDispatch();

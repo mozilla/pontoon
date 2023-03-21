@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
 import { Locale } from '~/context/Locale';
-import { GenericTranslation } from '~/core/translation';
+import { GenericTranslation } from '~/modules/translation';
 
 import { TranslationMemory } from './source/TranslationMemory';
 

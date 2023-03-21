@@ -1,7 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useEffect, useState } from 'react';
-import { USER } from '~/core/user';
-import { dismissAddonPromotion_ } from '~/core/user/actions';
+import { USER } from '~/modules/user';
+import { dismissAddonPromotion_ } from '~/modules/user/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import './AddonPromotion.css';
 

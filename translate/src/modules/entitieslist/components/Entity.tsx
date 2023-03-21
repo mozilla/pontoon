@@ -5,8 +5,8 @@ import React, { useCallback, useContext, useState } from 'react';
 import type { Entity as EntityType } from '~/api/entity';
 import { Locale } from '~/context/Locale';
 import type { Location } from '~/context/Location';
-import { useTranslationStatus } from '~/core/entities/useTranslationStatus';
-import { Translation } from '~/core/translation';
+import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
+import { Translation } from '~/modules/translation';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './Entity.css';

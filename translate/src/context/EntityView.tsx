@@ -8,7 +8,7 @@ import React, {
 
 import type { Entity } from '~/api/entity';
 import type { EntityTranslation } from '~/api/translation';
-import { ENTITIES } from '~/core/entities/reducer';
+import { ENTITIES } from '~/modules/entities/reducer';
 import { useAppSelector } from '~/hooks';
 
 import { Locale } from './Locale';

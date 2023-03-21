@@ -2,10 +2,10 @@ import { Localized } from '@fluent/react';
 import React from 'react';
 import { TranslationComment } from '~/api/comment';
 
-import { AddComment } from '~/core/comments/components/AddComment';
-import { Comment } from '~/core/comments/components/Comment';
-import { useAddCommentAndRefresh } from '~/core/comments/hooks';
-import type { UserState } from '~/core/user';
+import { AddComment } from '~/modules/comments/components/AddComment';
+import { Comment } from '~/modules/comments/components/Comment';
+import { useAddCommentAndRefresh } from '~/modules/comments/hooks';
+import type { UserState } from '~/modules/user';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
 import './TeamComments.css';

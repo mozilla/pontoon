@@ -10,7 +10,7 @@ import {
   fetchTranslationMemory,
   MachineryTranslation,
 } from '~/api/machinery';
-import { USER } from '~/core/user';
+import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 import { getPlainMessage } from '~/utils/message';
 
