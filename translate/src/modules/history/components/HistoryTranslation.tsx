@@ -129,7 +129,7 @@ const User = ({
       {user}
     </a>
   ) : (
-    <span>{user}</span>
+    <span title={title}>{user}</span>
   );
 
 /**
