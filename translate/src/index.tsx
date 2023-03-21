@@ -4,12 +4,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 
+import './index.css';
 import { App } from './App';
 import { LocationProvider } from './context/Location';
 import { UnsavedChangesProvider } from './context/UnsavedChanges';
 import { AppLocalizationProvider } from './modules/l10n/components/AppLocalizationProvider';
 import { history } from './historyInstance';
-import './index.css';
 import { store } from './store';
 
 // TODO: Once we have support for more locales in Pontoon, we should

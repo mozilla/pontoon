@@ -88,7 +88,7 @@ def test_get_pretranslations_plurals(
     }
 
     entity_a.string_plural = entity_a.string
-    google_translate_locale.cldr_plurals = "1, 2"
+    google_translate_locale.cldr_plurals = "1,2"
 
     response = get_pretranslations(entity_a, google_translate_locale)
     assert response == [
@@ -169,6 +169,51 @@ def test_get_pretranslations_fluent_whitespace(
 
     response = get_pretranslations(fluent_entity, google_translate_locale)
     assert response == [(pretranslated_string, None, tm_user)]
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_plural(
+    gt_mock, fluent_resource, google_translate_locale, gt_user
+):
+    # Various types of whitespace should be preserved
+    gt_mock.return_value = {
+        "status": True,
+        "translation": "GT",
+    }
+
+    google_translate_locale.cldr_plurals = "1,2,3,5"
+
+    input_string = dedent(
+        """
+        plural =
+            { $count ->
+                [0] No matches found.
+                [one] One match found.
+                *[other] { $count } matches found.
+            }
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    expected = dedent(
+        """
+        plural =
+            { $count ->
+                [0] GT
+                [one] GT
+                [two] GT
+                [few] GT
+                *[other] GT
+            }
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, gt_user)]
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")

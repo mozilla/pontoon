@@ -1,3 +1,4 @@
+import copy
 import re
 
 from fluent.syntax import ast, FluentParser, visitor
@@ -158,3 +159,49 @@ def get_simple_preview(content):
         tree = translation_ast.attributes[0]
 
     return serialize_value(tree.value)
+
+
+def is_plural_expression(expression):
+    from pontoon.base.models import Locale
+
+    CLDR_PLURALS = [c for _, c in Locale.CLDR_PLURALS]
+
+    if isinstance(expression, ast.SelectExpression):
+        return all(
+            isinstance(variant.key, ast.NumberLiteral)
+            or variant.key.name in CLDR_PLURALS
+            for variant in expression.variants
+        )
+
+    return False
+
+
+def create_locale_plural_variants(node, locale):
+    if not is_plural_expression(node):
+        return
+
+    variants = []
+    source_plurals = {}
+    default = None
+
+    for variant in node.variants:
+        key = variant.key
+        if isinstance(key, ast.NumberLiteral):
+            variants.append(variant)
+        else:
+            source_plurals[key.name] = variant
+        if variant.default:
+            default = variant
+
+    for plural in locale.cldr_plurals_list():
+        if plural in source_plurals.keys():
+            variant = source_plurals[plural]
+        else:
+            variant = copy.deepcopy(default)
+            variant.key.name = plural
+        variant.default = False
+        variants.append(variant)
+
+    variants[-1].default = True
+
+    node.variants = variants
