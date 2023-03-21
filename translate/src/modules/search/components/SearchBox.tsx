@@ -10,8 +10,8 @@ import React, {
 
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
-import { resetEntities } from '~/core/entities/actions';
-import { ProjectState, useProject } from '~/core/project';
+import { resetEntities } from '~/modules/entities/actions';
+import { ProjectState, useProject } from '~/modules/project';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import type { SearchAndFilters } from '~/modules/search';
 import { SEARCH } from '~/modules/search';

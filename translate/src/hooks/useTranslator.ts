@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/Locale';
-import { useProject } from '~/core/project';
-import { USER } from '~/core/user';
+import { useProject } from '~/modules/project';
+import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 
 /**

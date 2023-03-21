@@ -3,8 +3,8 @@ import { Localized } from '@fluent/react';
 
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
-import { Highlight } from '~/core/placeable/components/Highlight';
-import type { TermState } from '~/core/term';
+import { Highlight } from '~/modules/placeable/components/Highlight';
+import type { TermState } from '~/modules/terms';
 
 type Props = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;

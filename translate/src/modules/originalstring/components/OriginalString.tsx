@@ -9,8 +9,8 @@ import { TermType } from '~/api/terminology';
 import { EditorActions } from '~/context/Editor';
 
 import { EntityView } from '~/context/EntityView';
-import { Highlight } from '~/core/placeable/components/Highlight';
-import type { TermState } from '~/core/term';
+import { Highlight } from '~/modules/placeable/components/Highlight';
+import type { TermState } from '~/modules/terms';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { parseEntry, requiresSourceView } from '~/utils/message';
 import { editMessageEntry } from '~/utils/message/editMessageEntry';

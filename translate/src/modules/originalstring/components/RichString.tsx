@@ -1,7 +1,7 @@
 import React from 'react';
 import type { EditorMessage } from '~/context/Editor';
-import { Highlight } from '~/core/placeable/components/Highlight';
-import type { TermState } from '~/core/term';
+import { Highlight } from '~/modules/placeable/components/Highlight';
+import type { TermState } from '~/modules/terms';
 
 import './RichString.css';
 

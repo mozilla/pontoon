@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { TranslationDiff } from '~/core/diff';
-import { Highlight } from '~/core/placeable/components/Highlight';
+import { TranslationDiff } from '~/modules/diff';
+import { Highlight } from '~/modules/placeable/components/Highlight';
 import { getSimplePreview } from '~/utils/message';
 import { SearchTerms } from '~/modules/search';
 

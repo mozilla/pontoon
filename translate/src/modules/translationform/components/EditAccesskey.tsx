@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 
 import { EditorActions, useEditorValue } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { useHandleShortcuts } from '~/core/editor';
+import { useHandleShortcuts } from '~/modules/editor';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 import { extractAccessKeyCandidates } from '~/utils/message';
 

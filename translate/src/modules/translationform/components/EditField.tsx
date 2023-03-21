@@ -2,7 +2,7 @@ import { useLocalization } from '@fluent/react';
 import React, { useCallback, useContext } from 'react';
 import { EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { useHandleShortcuts } from '~/core/editor';
+import { useHandleShortcuts } from '~/modules/editor';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 export type EditFieldProps = {

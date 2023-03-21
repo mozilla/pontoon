@@ -4,8 +4,8 @@ import { createMemoryHistory } from 'history';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
 
-import * as EntitiesActions from '~/core/entities/actions';
 import * as BatchActions from '~/modules/batchactions/actions';
+import * as EntitiesActions from '~/modules/entities/actions';
 
 import {
   createDefaultUser,

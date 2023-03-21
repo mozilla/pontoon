@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { Locale, Localization } from '~/context/Locale';
 import type { Location } from '~/context/Location';
-import type { ProjectState } from '~/core/project';
+import type { ProjectState } from '~/modules/project';
 import { useOnDiscard } from '~/utils';
 
 import { ProjectItem } from './ProjectItem';

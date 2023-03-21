@@ -6,7 +6,7 @@ import type { HistoryTranslation } from '~/api/translation';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
-import { COMMENT_ADDED } from '~/core/notification/messages';
+import { COMMENT_ADDED } from '~/modules/notification/messages';
 import { useAppDispatch } from '~/hooks';
 import { get as getTeamComments } from '~/modules/teamcomments/actions';
 

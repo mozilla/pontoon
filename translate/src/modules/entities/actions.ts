@@ -6,7 +6,7 @@ import {
 } from '~/api/entity';
 import { EntityTranslation } from '~/api/translation';
 import { Location } from '~/context/Location';
-import { updateStats } from '~/core/stats/actions';
+import { updateStats } from '~/modules/stats/actions';
 import type { AppDispatch } from '~/store';
 
 export const RECEIVE_ENTITIES = 'entities/RECEIVE';

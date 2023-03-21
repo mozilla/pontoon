@@ -8,7 +8,7 @@ import './index.css';
 import { App } from './App';
 import { LocationProvider } from './context/Location';
 import { UnsavedChangesProvider } from './context/UnsavedChanges';
-import { AppLocalizationProvider } from './core/l10n/components/AppLocalizationProvider';
+import { AppLocalizationProvider } from './modules/l10n/components/AppLocalizationProvider';
 import { history } from './historyInstance';
 import { store } from './store';
 

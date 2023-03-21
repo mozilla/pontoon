@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
+import { TermsList } from './TermsList';
 import { Terms } from './Terms';
-import { TermsList } from '~/core/term';
 
 describe('<Terms>', () => {
   it('returns null while terms are loading', () => {
