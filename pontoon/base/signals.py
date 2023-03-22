@@ -1,19 +1,12 @@
-from guardian.models import GroupObjectPermission
-
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from guardian.models import GroupObjectPermission
 
 from pontoon.base import errors
-from pontoon.base.models import (
-    Locale,
-    Project,
-    ProjectLocale,
-    TranslatedResource,
-    UserProfile,
-)
+from pontoon.base.models import Locale, Project, ProjectLocale, TranslatedResource, UserProfile
 
 
 @receiver(post_delete, sender=ProjectLocale)
@@ -85,6 +78,23 @@ def assign_group_permissions(instance, group_name, perms):
         group = getattr(instance, f"{group_name}_group")
         GroupObjectPermission.objects.get_or_create(
             object_pk=instance.pk, content_type=ct, group=group, permission=perm
+        )
+
+
+def assign_group_project_permissions(project_locale, group_name, perms):
+    """
+    Create group object permissions.
+    """
+    project = project_locale.project
+
+    project_ct = ContentType.objects.get(app_label="base", model="project")
+
+    group = getattr(project_locale, f"{group_name}_group")
+
+    for perm_name in perms:
+        perm = Permission.objects.get(content_type=project_ct, codename=perm_name)
+        GroupObjectPermission.objects.get_or_create(
+            object_pk=project.pk, content_type=project_ct, group=group, permission=perm
         )
 
 
@@ -198,6 +208,7 @@ def assign_project_locale_group_permissions(sender, **kwargs):
         assign_group_permissions(
             instance, "translators", ["can_translate_project_locale"]
         )
+        assign_group_project_permissions(instance, "translators", ["view_project"])
     except ObjectDoesNotExist as e:
         errors.send_exception(e)
 

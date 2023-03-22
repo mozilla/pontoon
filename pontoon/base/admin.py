@@ -8,6 +8,7 @@ from django.forms.models import ModelForm
 from django.forms import ChoiceField
 from django.urls import reverse
 from django.utils.html import format_html
+from guardian.admin import GuardedModelAdmin
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models
@@ -221,7 +222,7 @@ class SubpageInline(admin.TabularInline):
     raw_id_fields = ("resources",)
 
 
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(GuardedModelAdmin):
     search_fields = ["name", "slug"]
     list_display = (
         "name",
@@ -281,7 +282,7 @@ class ProjectAdmin(admin.ModelAdmin):
     )
 
 
-class ProjectLocaleAdmin(admin.ModelAdmin):
+class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
     list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
     ordering = ("-pk",)
