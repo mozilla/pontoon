@@ -43,6 +43,8 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-typescript": "^11.0.0",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.4.3",
     "@types/date-and-time": "^0.13.0",
     "@types/diff-match-patch": "^1.0.32",
     "@types/enzyme": "^3.10.8",
