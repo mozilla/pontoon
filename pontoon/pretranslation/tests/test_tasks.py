@@ -44,12 +44,12 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
         pretranslation_enabled=True,
     )
 
-    tm_user = User.objects.get(email="pontoon-tm@example.com")
-    gt_mock.return_value = [("pretranslation", None, tm_user)]
+    gt_user = User.objects.get(email="pontoon-gt@example.com")
+    gt_mock.return_value = [("pretranslation", None, gt_user)]
 
     pretranslate(project_a.pk)
     project_a.refresh_from_db()
-    translations = Translation.objects.filter(user=tm_user)
+    translations = Translation.objects.filter(user=gt_user)
 
     # Total pretranslations = 2(tr_ax) + 2(tr_bx) + 2(tr_ay)
     assert len(translations) == 6
