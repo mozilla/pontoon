@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from pontoon.base.models import User, Translation
+from pontoon.base.models import ChangedEntityLocale, Translation, User
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.test.factories import (
     EntityFactory,
@@ -53,6 +53,8 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
 
     # Total pretranslations = 2(tr_ax) + 2(tr_bx) + 2(tr_ay)
     assert len(translations) == 6
+
+    assert ChangedEntityLocale.objects.all().count() == 6
 
     # pretranslated count == total pretranslations.
     assert project_a.pretranslated_strings == 6
