@@ -31,7 +31,5 @@ jobs:
         run: make pytest
         env:
           run_opts: --user=root # volumes are only writable by root on gh
-      - name: Install codecov
-        run: pip3 install codecov
-      - name: codecov.io
-        run: python3 -m codecov -F backend
+      - uses: codecov/codecov-action@v3
+        with: { flags: backend }

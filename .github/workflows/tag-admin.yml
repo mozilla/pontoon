@@ -27,13 +27,13 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: npm install --global codecov npm@8
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm ci
       - name: Test
         run: npm test
         working-directory: tag-admin
-      - name: codecov.io
-        run: codecov -F non-frontend-js
+      - uses: codecov/codecov-action@v3
+        with: { flags: non-frontend-js }
       - name: Build
         run: npm run build

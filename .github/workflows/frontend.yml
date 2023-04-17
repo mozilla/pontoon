@@ -40,11 +40,11 @@ jobs:
         with:
           node-version: '14'
       - name: Install globals
-        run: npm install --global codecov npm@8
+        run: npm install --global npm@8
       - name: Install dependencies
         run: npm ci
       - name: Test
         run: npm test --coverage
         working-directory: translate
-      - name: codecov.io
-        run: codecov -F frontend
+      - uses: codecov/codecov-action@v3
+        with: { flags: frontend }
