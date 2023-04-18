@@ -17,7 +17,7 @@
 APScheduler==3.9.1.post1
 bleach==3.3.0
 celery==5.2.6
-compare-locales==8.2.0
+compare-locales==9.0.1
 dj-database-url==0.3.0
 Django==3.2.15
 django-ace==1.0.5
