@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import User
@@ -176,6 +176,7 @@ class ProjectLocaleInline(admin.TabularInline):
         "locale",
         "readonly",
         "pretranslation_enabled",
+        "has_custom_translators",
     )
 
 
@@ -255,9 +256,20 @@ class ProjectAdmin(GuardedModelAdmin):
 
 class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
-    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
+    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled", "has_custom_translators")
     ordering = ("-pk",)
-    autocomplete_fields = ["translators_group", "latest_translation"]
+    actions = ["enable_custom_translators"]
+    
+    @admin.action(description="Enable custom translators")
+    def enable_custom_translators(self, request, queryset):
+        for project_locale in queryset:
+            project_locale.has_custom_translators = True
+            project_locale.save()
+            self.message_user(
+                request,
+                f"Project Locale has been enabled to have custom translators: {project_locale.__str__()}",
+                level=messages.INFO,
+            )
 
 
 class ResourceAdmin(admin.ModelAdmin):
