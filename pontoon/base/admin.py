@@ -1,21 +1,18 @@
 import uuid
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import User
-from django.forms.models import ModelForm
 from django.forms import ChoiceField
+from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base import models
-from pontoon.base import utils
-from pontoon.terminology.models import Term
-
+from pontoon.base import models, utils
 from pontoon.teams.utils import log_user_groups
-
+from pontoon.terminology.models import Term
 
 AGGREGATED_STATS_FIELDS = (
     "total_strings",
@@ -190,6 +187,7 @@ class ProjectLocaleInline(admin.TabularInline):
         "locale",
         "readonly",
         "pretranslation_enabled",
+        "has_custom_translators",
     )
 
 
@@ -283,8 +281,35 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class ProjectLocaleAdmin(admin.ModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
-    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
+    list_display = (
+        "pk",
+        "project",
+        "locale",
+        "readonly",
+        "pretranslation_enabled",
+        "has_custom_translators",
+    )
     ordering = ("-pk",)
+    actions = ["enable_custom_translators"]
+
+    @admin.action(description="Enable custom translators")
+    def enable_custom_translators(self, request, queryset):
+        for project_locale in queryset:
+            project_locale.has_custom_translators = True
+            try:
+                project_locale.save()
+            except Exception as e:
+                self.message_user(
+                    request,
+                    f"Error updating project_locale {str(project_locale)} - {str(e)}",
+                    level=messages.ERROR,
+                )
+                break
+            self.message_user(
+                request,
+                f"Project Locale has been enabled to have custom translators: {str(project_locale)}",
+                level=messages.INFO,
+            )
 
 
 class ResourceAdmin(admin.ModelAdmin):
