@@ -107,6 +107,9 @@ def users_with_translations_counts(
     # Exclude deleted users.
     contributors = contributors.filter(is_active=True)
 
+    # Prefetch user profile.
+    contributors = contributors.prefetch_related("profile")
+
     if None in user_stats.keys():
         contributors = list(contributors)
         contributors.append(
