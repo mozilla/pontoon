@@ -127,7 +127,9 @@ class PretranslationTransformer(Transformer):
     """
 
     def __init__(
-        self, locale: Locale, callback: Callable[[str, str, str], Tuple[Optional[str], str]]
+        self,
+        locale: Locale,
+        callback: Callable[[str, str, str], Tuple[Optional[str], str]],
     ):
         self.locale = locale
         self.callback = callback

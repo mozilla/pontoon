@@ -157,7 +157,7 @@ def test_transformer_callback():
     assert transformer.services[0] == "yy"
 
     assert len(called) == 1
-    assert called[0][0] == 'Hello { $world }!'
+    assert called[0][0] == "Hello { $world }!"
     assert called[0][1] == 'Hello <span id="pt-0" translate="no">{ $world }</span>!'
 
 
