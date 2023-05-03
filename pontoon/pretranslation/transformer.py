@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from typing import Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Callable, Optional, Union, cast
 
 from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
@@ -10,11 +10,11 @@ from pontoon.base.fluent import is_plural_expression
 from pontoon.base.models import Locale
 
 
-def flatten_pattern_elements(pattern: FTL.Pattern, replacements: List[str]):
+def flatten_pattern_elements(pattern: FTL.Pattern, replacements: list[str]):
     """
     Serialize all Placeables other than selects as TextElements.
     """
-    flat_elements: List[Union[FTL.TextElement, FTL.Placeable]] = []
+    flat_elements: list[Union[FTL.TextElement, FTL.Placeable]] = []
     text_fragment: str = ""
     prev_select: Optional[FTL.SelectExpression] = None
 
@@ -92,8 +92,8 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
     if not is_plural_expression(node):
         return
 
-    variants: List[FTL.Variant] = []
-    source_plurals: Dict[str, FTL.Variant] = {}
+    variants: list[FTL.Variant] = []
+    source_plurals: dict[str, FTL.Variant] = {}
     default = cast(FTL.Variant, None)
 
     for variant in node.variants:
@@ -129,12 +129,12 @@ class PretranslationTransformer(Transformer):
     def __init__(
         self,
         locale: Locale,
-        callback: Callable[[str, str, str], Tuple[Optional[str], str]],
+        callback: Callable[[str, str, str], tuple[Optional[str], str]],
     ):
         self.locale = locale
         self.callback = callback
-        self.replacements: List[str] = []
-        self.services: List[str] = []
+        self.replacements: list[str] = []
+        self.services: list[str] = []
 
     def applyReplacements(self, translation: str):
         return re.sub(
