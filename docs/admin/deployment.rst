@@ -83,7 +83,7 @@ you create:
 
 ``DEFAULT_FROM_EMAIL``
    Optional. Default email address to send emails from. Default value:
-   ``Pontoon <noreply@hostname>``.
+   ``Pontoon <pontoon@hostname>``.
 
 ``DISABLE_COLLECTSTATIC``
    Disables running ``./manage.py collectstatic`` during the build. Should be
@@ -145,9 +145,6 @@ you create:
 ``GOOGLE_AUTOML_PROJECT_ID``
    Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
    translation engine by Google.
-
-``LOCALE_REQUEST_FROM_EMAIL``
-   Optional. Requests for new project locales are sent from this email.
 
 ``MAINTENANCE_PAGE_URL``
    Optional. URL to the page displayed to your users when the application is placed
