@@ -124,11 +124,13 @@ export async function fetchTranslationMemory(
 export async function fetchGoogleTranslation(
   original: string,
   locale: Locale,
+  format: 'html' | 'text',
 ): Promise<MachineryTranslation[]> {
   const url = '/google-translate/';
   const params = {
     text: original,
     locale: locale.googleTranslateCode,
+    format,
   };
 
   const { translation } = (await GET_(url, params)) as {

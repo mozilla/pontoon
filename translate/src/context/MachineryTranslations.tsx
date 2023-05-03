@@ -12,7 +12,11 @@ import {
 } from '~/api/machinery';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { getPlainMessage } from '~/utils/message';
+import {
+  getPlainMessage,
+  notranslateUnwrap,
+  notranslateWrap,
+} from '~/utils/message';
 
 import { EntityView } from './EntityView';
 import { Locale } from './Locale';
@@ -101,7 +105,19 @@ export function MachineryProvider({
       // Only make requests to paid services if user is authenticated
       if (isAuthenticated) {
         if (locale.googleTranslateCode) {
-          fetchGoogleTranslation(plain, locale).then(addResults);
+          const wrapped = format === 'ftl' ? notranslateWrap(plain) : plain;
+          const gtFormat = plain === wrapped ? 'text' : 'html';
+          fetchGoogleTranslation(wrapped, locale, gtFormat).then(
+            (newTranslations: MachineryTranslation[]) => {
+              if (gtFormat === 'html') {
+                for (const tx of newTranslations) {
+                  tx.original = plain;
+                  tx.translation = notranslateUnwrap(tx.translation);
+                }
+              }
+              addResults(newTranslations);
+            },
+          );
         }
 
         if (locale.msTranslatorCode) {
