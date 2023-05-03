@@ -171,6 +171,37 @@ def test_get_pretranslations_fluent_whitespace(
     assert response == [(pretranslated_string, None, tm_user)]
 
 
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_multiline(
+    fluent_resource, entity_b, locale_b, tm_user
+):
+    input_string = dedent(
+        """
+        multiline =
+            Multi
+            Line
+            Message
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    # 100% TM match exists
+    tm = TranslationMemoryFactory.create(
+        entity=entity_b,
+        source="Multi Line Message",
+        target="TM: Multi Line Message",
+        locale=locale_b,
+    )
+
+    expected = f"multiline = {tm.target}"
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, locale_b)
+    assert response == [(pretranslated_string, None, tm_user)]
+
+
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_plural(

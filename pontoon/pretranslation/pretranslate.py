@@ -32,11 +32,15 @@ class PretranslationTransformer(FlatTransformer):
         return self.generic_visit(node)
 
     def visit_TextElement(self, node):
-        pretranslation, service = get_pretranslated_data(node.value, self.locale)
+        # Machine translation treats each line as separate sentence,
+        # hence we replace newline characters with spaces.
+        source = node.value.replace("\n", " ")
+
+        pretranslation, service = get_pretranslated_data(source, self.locale)
 
         if pretranslation is None:
             raise ValueError(
-                f"Pretranslation for `{node.value}` to {self.locale.code} not available."
+                f"Pretranslation for `{source}` to {self.locale.code} not available."
             )
 
         node.value = pretranslation
