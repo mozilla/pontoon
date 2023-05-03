@@ -9,39 +9,17 @@ from fluent.syntax import FluentParser, FluentSerializer
 from functools import reduce
 
 from pontoon.base.models import User, TranslatedResource
-from pontoon.base.fluent import FlatTransformer, create_locale_plural_variants
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
+from pontoon.pretranslation.transformer import PretranslationTransformer
 
 
 log = logging.getLogger(__name__)
 
 parser = FluentParser()
 serializer = FluentSerializer()
-
-
-class PretranslationTransformer(FlatTransformer):
-    def __init__(self, locale):
-        self.services = []
-        self.locale = locale
-
-    def visit_SelectExpression(self, node):
-        create_locale_plural_variants(node, self.locale)
-        return self.generic_visit(node)
-
-    def visit_TextElement(self, node):
-        pretranslation, service = get_pretranslated_data(node.value, self.locale)
-
-        if pretranslation is None:
-            raise ValueError(
-                f"Pretranslation for `{node.value}` to {self.locale.code} not available."
-            )
-
-        node.value = pretranslation
-        self.services.append(service)
-        return node
 
 
 def get_pretranslations(entity, locale):
@@ -69,7 +47,7 @@ def get_pretranslations(entity, locale):
 
     if entity.resource.format == "ftl":
         source_ast = parser.parse_entry(source)
-        pt_transformer = PretranslationTransformer(locale)
+        pt_transformer = PretranslationTransformer(locale, get_pretranslated_data)
 
         try:
             pretranslated_ast = pt_transformer.visit(source_ast)
@@ -143,3 +121,4 @@ def update_changed_instances(tr_filter, tr_dict, translations):
         index = tr_dict[tr.locale_resource]
         translation = translations[index]
         translation.update_latest_translation()
+

@@ -1,34 +1,11 @@
 import copy
 import re
 
-from fluent.syntax import ast, FluentParser, visitor
+from fluent.syntax import ast, FluentParser
 from fluent.syntax.serializer import serialize_expression
 
 
 parser = FluentParser()
-
-
-class FlatTransformer(visitor.Transformer):
-    """
-    Flattens the given Pattern, uplifting selectors to the highest possible level and
-    duplicating shared parts in the variants. All other Placeables are serialised as
-    TextElements.
-
-    Empty String Literals `{ "" }` are transformed into empty TextElements.
-    """
-
-    def visit_Attribute(self, node):
-        flatten_pattern_elements(node.value)
-        return self.generic_visit(node)
-
-    def visit_Message(self, node):
-        if node.value:
-            flatten_pattern_elements(node.value)
-        return self.generic_visit(node)
-
-    def visit_TextElement(self, node):
-        node.value = re.sub(r'{ "" }', "", node.value)
-        return node
 
 
 def flatten_pattern_elements(pattern):
