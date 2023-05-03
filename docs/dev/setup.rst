@@ -2,7 +2,7 @@ Developer Setup
 ===============
 
 The following describes how to set up an instance of the site on your
-computer for development with Docker and docker-compose.
+computer for development with Docker.
 
    .. Warning::
 
@@ -14,12 +14,9 @@ Prerequisites
 
 1. Install `Docker <https://docs.docker.com/install/>`_.
 
-2. Install `docker-compose <https://docs.docker.com/compose/install/>`_. You need
-   1.10 or higher.
+2. Install `Node.js 14 and npm 7 or later <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_.
 
-3. Install `Node.js 14 and npm 7 or later <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>`_.
-
-4. Install `make <https://www.gnu.org/software/make/>`_ using either your
+3. Install `make <https://www.gnu.org/software/make/>`_ using either your
    system's package manager (Linux) or Xcode command line developer tools (OSX).
    On Windows, you can use `MozillaBuild <https://wiki.mozilla.org/MozillaBuild>`_.
 
