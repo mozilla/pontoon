@@ -304,42 +304,35 @@ def test_get_pretranslations_fluent_complex(
     assert response == [(pretranslated_string, None, tm_user)]
 
 
-# This test will fail, because pontoon.base.fluent.FlatTransformer moves trailing
-# space between selectors into selector variants, but it gets lost in pretranslation
-# due to re-serialization.
-#
-# Unless escaped, trailing space is not significant. So we should modify the
-# FlatTransformer to escape it or, even better, use nested selectors as in the translate
-# view, in which case we don't need trailing space at all.
-@pytest.mark.xfail
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_sibling_selectors(
     entity_a, fluent_resource, google_translate_locale, tm_user
 ):
     # Entity.string is a Fluent string with two sibling selectors.
     # - Move any text outside selectors into selector variants.
+    # - Keep leading/trailing whitespace outside selector variants.
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $key_count } key and ",
-        target="TM: { $key_count } key and ",
+        source="{ $key_count } key",
+        target="TM: { $key_count } key",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $key_count } keys and ",
-        target="TM: { $key_count } keys and ",
+        source="{ $key_count } keys",
+        target="TM: { $key_count } keys",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $lock_count } lock",
-        target="TM: { $lock_count } lock",
+        source="and { $lock_count } lock",
+        target="TM: and { $lock_count } lock",
         locale=google_translate_locale,
     )
     TranslationMemoryFactory.create(
         entity=entity_a,
-        source="{ $lock_count } locks",
-        target="TM: { $lock_count } locks",
+        source="and { $lock_count } locks",
+        target="TM: and { $lock_count } locks",
         locale=google_translate_locale,
     )
 
@@ -361,11 +354,11 @@ def test_get_pretranslations_fluent_sibling_selectors(
         """
         sibling-selector =
             { $key_count ->
-                [one] TM: { $key_count } key and
-                *[other] TM: { $key_count } keys and
-            }{ $lock_count ->
-                [one] TM: { $lock_count } lock
-                *[other] TM: { $lock_count } locks
+                [one] TM: { $key_count } key
+                *[other] TM: { $key_count } keys
+            }{" "}{ $lock_count ->
+                [one] TM: and { $lock_count } lock
+                *[other] TM: and { $lock_count } locks
             }
     """
     )
@@ -373,5 +366,6 @@ def test_get_pretranslations_fluent_sibling_selectors(
     # Re-serialize to match whitespace
     pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
 
+    google_translate_locale.cldr_plurals = "1,5"
     response = get_pretranslations(fluent_entity, google_translate_locale)
     assert response == [(pretranslated_string, None, tm_user)]

@@ -9,44 +9,18 @@ from fluent.syntax import FluentParser, FluentSerializer
 from functools import reduce
 
 from pontoon.base.models import User, TranslatedResource
-from pontoon.base.fluent import FlatTransformer, create_locale_plural_variants
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
 from pontoon.pretranslation import AUTHORS
+from .transformer import ApplyPretranslation
 
 
 log = logging.getLogger(__name__)
 
 parser = FluentParser()
 serializer = FluentSerializer()
-
-
-class PretranslationTransformer(FlatTransformer):
-    def __init__(self, locale):
-        self.services = []
-        self.locale = locale
-
-    def visit_SelectExpression(self, node):
-        create_locale_plural_variants(node, self.locale)
-        return self.generic_visit(node)
-
-    def visit_TextElement(self, node):
-        # Machine translation treats each line as separate sentence,
-        # hence we replace newline characters with spaces.
-        source = node.value.replace("\n", " ")
-
-        pretranslation, service = get_pretranslated_data(source, self.locale)
-
-        if pretranslation is None:
-            raise ValueError(
-                f"Pretranslation for `{source}` to {self.locale.code} not available."
-            )
-
-        node.value = pretranslation
-        self.services.append(service)
-        return node
 
 
 def get_pretranslations(entity, locale):
@@ -70,18 +44,18 @@ def get_pretranslations(entity, locale):
     services = {k: User.objects.get(email=email) for k, email in AUTHORS.items()}
 
     if entity.resource.format == "ftl":
-        source_ast = parser.parse_entry(source)
-        pt_transformer = PretranslationTransformer(locale)
+        entry = parser.parse_entry(source)
+        pretranslate = ApplyPretranslation(locale, entry, get_pretranslated_data)
 
         try:
-            pretranslated_ast = pt_transformer.visit(source_ast)
+            pretranslate.visit(entry)
         except ValueError as e:
             log.info(f"Fluent pretranslation error: {e}")
             return []
 
-        pretranslation = serializer.serialize_entry(pretranslated_ast)
+        pretranslation = serializer.serialize_entry(entry)
 
-        authors = [services[service] for service in pt_transformer.services]
+        authors = [services[service] for service in pretranslate.services]
         author = max(set(authors), key=authors.count) if authors else services["tm"]
 
         return [(pretranslation, None, author)]
@@ -115,7 +89,9 @@ def get_pretranslated_data(source, locale):
 
     # Fetch from Google Translate
     elif locale.google_translate_code:
-        gt_response = get_google_translate_data(text=source, locale=locale)
+        gt_response = get_google_translate_data(
+            text=source, locale=locale, format="text"
+        )
         if gt_response["status"]:
             return gt_response["translation"], "gt"
 
