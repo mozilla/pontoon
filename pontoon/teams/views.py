@@ -279,7 +279,7 @@ def request_item(request, locale=None):
         EmailMessage(
             subject=mail_subject,
             body=mail_body,
-            from_email=settings.LOCALE_REQUEST_FROM_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             to=settings.PROJECT_MANAGERS,
             cc=cc,
             reply_to=[user.contact_email],
