@@ -1,6 +1,10 @@
+from typing import Callable, List, Optional, Tuple
+
+from fluent.syntax import ast as FTL
 from fluent.syntax.visitor import Transformer
 
 from pontoon.base.fluent import create_locale_plural_variants, flatten_pattern_elements
+from pontoon.base.models import Locale
 
 
 class PretranslationTransformer(Transformer):
@@ -10,25 +14,27 @@ class PretranslationTransformer(Transformer):
     TextElements.
     """
 
-    def __init__(self, locale, callback):
-        self.services = []
+    def __init__(
+        self, locale: Locale, callback: Callable[[str, str], Tuple[Optional[str], str]]
+    ):
+        self.services: List[str] = []
         self.locale = locale
         self.callback = callback
 
-    def visit_Attribute(self, node):
+    def visit_Attribute(self, node: FTL.Attribute):
         flatten_pattern_elements(node.value)
         return self.generic_visit(node)
 
-    def visit_Message(self, node):
+    def visit_Message(self, node: FTL.Message):
         if node.value:
             flatten_pattern_elements(node.value)
         return self.generic_visit(node)
 
-    def visit_SelectExpression(self, node):
+    def visit_SelectExpression(self, node: FTL.SelectExpression):
         create_locale_plural_variants(node, self.locale)
         return self.generic_visit(node)
 
-    def visit_TextElement(self, node):
+    def visit_TextElement(self, node: FTL.TextElement):
         pretranslation, service = self.callback(node.value, self.locale)
 
         if pretranslation is None:
