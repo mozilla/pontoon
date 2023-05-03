@@ -500,10 +500,8 @@ markupsafe==2.0.1 \
     # via
     #   -r requirements/default.in
     #   jinja2
-mercurial==5.2.2 \
-    --hash=sha256:2c44ac796d2581414533da4e39f21a07206b362263489307da2c424c47ff92f5 \
-    --hash=sha256:4c5ea34e2eba25b5d1b5712f1c72df0a64ec47ce206c1279419c87a26fca033b \
-    --hash=sha256:ffc5ff47488c7b5dae6ead3d99f08ef469500d6567592a25311838320106c03b
+mercurial==6.4.2 \
+    --hash=sha256:5b9f6a3c35f4e4695c854ef71428cf9461ca1a529f691c06dc6f7b48e7bb3335
     # via -r requirements/default.in
 newrelic==6.2.0.156 \
     --hash=sha256:242a5e901d684f7ffdd621bc58da8fe9a85d5545b4b63e1070589f5ab45c9e1e \
