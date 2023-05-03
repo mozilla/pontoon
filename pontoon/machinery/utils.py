@@ -19,14 +19,14 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale):
+def get_google_translate_data(text, locale, format="text"):
     if locale.google_automl_model:
-        return get_google_automl_translation(text, locale)
+        return get_google_automl_translation(text, locale, format)
 
-    return get_google_generic_translation(text, locale.google_translate_code)
+    return get_google_generic_translation(text, locale.google_translate_code, format)
 
 
-def get_google_generic_translation(text, locale_code):
+def get_google_generic_translation(text, locale_code, format):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -71,7 +71,7 @@ def get_google_generic_translation(text, locale_code):
         }
 
 
-def get_google_automl_translation(text, locale):
+def get_google_automl_translation(text, locale, format):
     try:
         client = translate.TranslationServiceClient()
     except DefaultCredentialsError as e:
@@ -105,7 +105,7 @@ def get_google_automl_translation(text, locale):
             "model": model_path,
             "source_language_code": "en",
             "parent": parent,
-            "mime_type": "text/plain",
+            "mime_type": "text/html" if format == "html" else "text/plain",
         }
     )
 

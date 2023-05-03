@@ -9,17 +9,18 @@ from pontoon.pretranslation.transformer import (
 
 
 def visit(src):
-    def callback(str, locale):
-        return (str, locale)
+    def callback(str, locale, format):
+        return (str, locale + format)
 
     ast = FluentParser().parse_entry(dedent(src))
-    PretranslationTransformer("xx", callback).visit(ast)
-    return ast
+    transformer = PretranslationTransformer("xx", callback)
+    transformer.visit(ast)
+    return ast, transformer
 
 
 def test_transformer_value_single_element():
     # Do not modify value with single element
-    res = visit(
+    res, transformer = visit(
         """
         title = My Title
     """,
@@ -28,10 +29,12 @@ def test_transformer_value_single_element():
     assert len(res.value.elements) == 1
     assert res.value.elements[0].value == "My Title"
 
+    assert len(transformer.replacements) == 0
+
 
 def test_transformer_attribute_single_element():
     # Do not modify attributes with single element
-    res = visit(
+    res, transformer = visit(
         """
         title =
             .foo = Bar
@@ -42,10 +45,12 @@ def test_transformer_attribute_single_element():
     assert len(res.attributes[0].value.elements) == 1
     assert res.attributes[0].value.elements[0].value == "Bar"
 
+    assert len(transformer.replacements) == 0
+
 
 def test_transformer_single_select_expression():
     # Do not modify value with a single select expression
-    res = visit(
+    res, transformer = visit(
         """
         my-entry =
             { PLATFORM() ->
@@ -63,10 +68,12 @@ def test_transformer_single_select_expression():
         res.value.elements[0].expression.variants[1].value.elements[0].value == "World!"
     )
 
+    assert len(transformer.replacements) == 0
+
 
 def test_transformer_value_several_elements():
     # Flatten value with several elements
-    res = visit(
+    res, transformer = visit(
         """
         title = My { $awesome } Title
     """
@@ -75,10 +82,13 @@ def test_transformer_value_several_elements():
     assert len(res.value.elements) == 1
     assert res.value.elements[0].value == "My { $awesome } Title"
 
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ $awesome }"
+
 
 def test_transformer_attribute_several_elements():
     # Flatten attribute with several elements
-    res = visit(
+    res, transformer = visit(
         """
         title =
             .foo = Bar { -foo } Baz
@@ -89,10 +99,13 @@ def test_transformer_attribute_several_elements():
     assert len(res.attributes[0].value.elements) == 1
     assert res.attributes[0].value.elements[0].value == "Bar { -foo } Baz"
 
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ -foo }"
+
 
 def test_transformer_value_and_attributes():
     # Flatten value and attributes
-    res = visit(
+    res, transformer = visit(
         """
         batman = The { $dark } Knight
             .weapon = Brain and { -wayne-enterprise }
@@ -116,20 +129,36 @@ def test_transformer_value_and_attributes():
         == 'Lost { 2 } parents, has { 1 } "$alfred"'
     )
 
+    assert len(transformer.replacements) == 4
+    assert transformer.replacements[0] == "{ $dark }"
+    assert transformer.replacements[1] == "{ -wayne-enterprise }"
+    assert transformer.replacements[2] == "{ 2 }"
+    assert transformer.replacements[3] == "{ 1 }"
+
 
 def test_transformer_callback():
-    def callback(str, locale):
-        return ("res: " + str, "yy")
+    called = []
 
-    transformer = PretranslationTransformer("en", callback)
-    ast = FluentParser().parse_entry("title = My Title\n")
+    def callback(raw, escaped, locale):
+        called.append((raw, escaped))
+        return ("res: " + escaped, locale)
+
+    transformer = PretranslationTransformer("yy", callback)
+    ast = FluentParser().parse_entry("title = Hello { $world }!\n")
     transformer.visit(ast)
+
+    assert len(ast.value.elements) == 1
+    assert ast.value.elements[0].value == "res: Hello { $world }!"
+
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ $world }"
 
     assert len(transformer.services) == 1
     assert transformer.services[0] == "yy"
 
-    assert len(ast.value.elements) == 1
-    assert ast.value.elements[0].value == "res: My Title"
+    assert len(called) == 1
+    assert called[0][0] == 'Hello { $world }!'
+    assert called[0][1] == 'Hello <span id="pt-0" translate="no">{ $world }</span>!'
 
 
 @pytest.mark.django_db

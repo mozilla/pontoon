@@ -38,7 +38,7 @@ def warm_up_automl_models():
     locales = Locale.objects.exclude(google_automl_model="").order_by("code")
 
     for locale in locales:
-        get_google_automl_translation("t", locale)
+        get_google_automl_translation("t", locale, "text")
         log.info(f"Google AutoML Warmup for {locale.code} complete.")
 
     log.info("Google AutoML Warmup process complete for all locales.")

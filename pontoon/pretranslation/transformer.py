@@ -10,7 +10,7 @@ from pontoon.base.fluent import is_plural_expression
 from pontoon.base.models import Locale
 
 
-def flatten_pattern_elements(pattern: FTL.Pattern):
+def flatten_pattern_elements(pattern: FTL.Pattern, replacements: List[str]):
     """
     Serialize all Placeables other than selects as TextElements.
     """
@@ -30,7 +30,7 @@ def flatten_pattern_elements(pattern: FTL.Pattern):
 
             # Flatten SelectExpression variant elements
             for variant in element.expression.variants:
-                flatten_pattern_elements(variant.value)
+                flatten_pattern_elements(variant.value, replacements)
 
                 # If there is preceding text, include that for all variants
                 if text_fragment:
@@ -48,11 +48,16 @@ def flatten_pattern_elements(pattern: FTL.Pattern):
             prev_select = element.expression
 
         else:
-            str_value = (
-                element.value
-                if isinstance(element, FTL.TextElement)
-                else serialize_expression(element)
-            )
+            str_value: str
+            if isinstance(element, FTL.TextElement):
+                str_value = element.value
+            else:
+                src = serialize_expression(element)
+                idx = len(replacements)
+                replacements.append(src)
+                clean = re.sub(r"[<>\n]", "", src)
+                str_value = f'<span id="pt-{idx}" translate="no">{clean}</span>'
+
             if text_fragment:
                 str_value = text_fragment + str_value
                 text_fragment = ""
@@ -122,19 +127,27 @@ class PretranslationTransformer(Transformer):
     """
 
     def __init__(
-        self, locale: Locale, callback: Callable[[str, str], Tuple[Optional[str], str]]
+        self, locale: Locale, callback: Callable[[str, str, str], Tuple[Optional[str], str]]
     ):
-        self.services: List[str] = []
         self.locale = locale
         self.callback = callback
+        self.replacements: List[str] = []
+        self.services: List[str] = []
+
+    def applyReplacements(self, translation: str):
+        return re.sub(
+            r'<span id="pt-(\d+)" translate="no">[^<>]*</span>',
+            lambda m: self.replacements[int(m.group(1))],
+            translation,
+        )
 
     def visit_Attribute(self, node: FTL.Attribute):
-        flatten_pattern_elements(node.value)
+        flatten_pattern_elements(node.value, self.replacements)
         return self.generic_visit(node)
 
     def visit_Message(self, node: FTL.Message):
         if node.value:
-            flatten_pattern_elements(node.value)
+            flatten_pattern_elements(node.value, self.replacements)
         return self.generic_visit(node)
 
     def visit_SelectExpression(self, node: FTL.SelectExpression):
@@ -142,13 +155,14 @@ class PretranslationTransformer(Transformer):
         return self.generic_visit(node)
 
     def visit_TextElement(self, node: FTL.TextElement):
-        pretranslation, service = self.callback(node.value, self.locale)
+        raw = self.applyReplacements(node.value)
+        translation, service = self.callback(raw, node.value, self.locale)
 
-        if pretranslation is None:
+        if translation is None:
             raise ValueError(
                 f"Pretranslation for `{node.value}` to {self.locale.code} not available."
             )
 
-        node.value = pretranslation
+        node.value = self.applyReplacements(translation)
         self.services.append(service)
         return node

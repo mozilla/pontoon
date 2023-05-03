@@ -63,7 +63,7 @@ def get_pretranslations(entity, locale):
         return [(pretranslation, None, author)]
 
     else:
-        pretranslation, service = get_pretranslated_data(source, locale)
+        pretranslation, service = get_pretranslated_data(source, source, locale)
 
         if pretranslation is None:
             return []
@@ -78,20 +78,23 @@ def get_pretranslations(entity, locale):
             ]
 
 
-def get_pretranslated_data(source, locale):
+def get_pretranslated_data(raw, escaped, locale):
     # Empty strings do not need translation
-    if re.search("^\\s*$", source):
-        return source, "tm"
+    if re.search("^\\s*$", raw):
+        return raw, "tm"
 
     # Try to get matches from Translation Memory
-    tm_response = get_translation_memory_data(text=source, locale=locale)
+    tm_response = get_translation_memory_data(text=raw, locale=locale)
     tm_perfect = [t for t in tm_response if int(t["quality"]) == 100]
     if tm_perfect:
         return tm_perfect[0]["target"], "tm"
 
     # Fetch from Google Translate
     elif locale.google_translate_code:
-        gt_response = get_google_translate_data(text=source, locale=locale)
+        format = "text" if raw == escaped else "html"
+        gt_response = get_google_translate_data(
+            text=escaped, locale=locale, format=format
+        )
         if gt_response["status"]:
             return gt_response["translation"], "gt"
 
@@ -121,4 +124,3 @@ def update_changed_instances(tr_filter, tr_dict, translations):
         index = tr_dict[tr.locale_resource]
         translation = translations[index]
         translation.update_latest_translation()
-
