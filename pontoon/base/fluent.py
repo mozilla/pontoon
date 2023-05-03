@@ -1,86 +1,8 @@
-import copy
-import re
-
 from fluent.syntax import ast, FluentParser
 from fluent.syntax.serializer import serialize_expression
 
 
 parser = FluentParser()
-
-
-def flatten_pattern_elements(pattern):
-    """
-    Serialize all Placeables other than selects as TextElements.
-
-    Should only be called externally with the value of a Message or an Attribute.
-    """
-    flat_elements = []
-    text_fragment = ""
-    prev_select = None
-
-    for element in pattern.elements:
-        if isinstance(element, ast.Placeable) and isinstance(
-            element.expression, ast.SelectExpression
-        ):
-            # In a message with multiple SelectExpressions separated by some
-            # whitespace, keep that whitespace out of select variants.
-            if re.search("^\\s+$", text_fragment):
-                flat_elements.append(ast.TextElement(text_fragment))
-                text_fragment = ""
-
-            # Flatten SelectExpression variant elements
-            for variant in element.expression.variants:
-                flatten_pattern_elements(variant.value)
-
-                # If there is preceding text, include that for all variants
-                if text_fragment:
-                    elements = variant.value.elements
-                    if elements and isinstance(elements[0], ast.TextElement):
-                        first = elements[0]
-                        first.value = text_fragment + first.value
-                    else:
-                        elements.insert(0, ast.TextElement(text_fragment))
-
-            if text_fragment:
-                text_fragment = ""
-
-            flat_elements.append(element)
-            prev_select = element.expression
-
-        else:
-            str_value = (
-                element.value
-                if isinstance(element, ast.TextElement)
-                else serialize_expression(element)
-            )
-            if text_fragment:
-                str_value = text_fragment + str_value
-                text_fragment = ""
-
-            if prev_select:
-                # Keep trailing whitespace out of variant values
-                ws_end = re.match("\\s+$", str_value)
-                if ws_end:
-                    str_value = str_value[0 : ws_end.index]
-                    text_fragment = ws_end[0]
-
-                # If there is a preceding SelectExpression, append to each of its variants
-                for variant in prev_select.variants:
-                    elements = variant.value.elements
-                    if elements and isinstance(elements[-1], ast.TextElement):
-                        last = elements[-1]
-                        last.value += str_value
-                    else:
-                        elements.append(ast.TextElement(str_value))
-            else:
-                # ... otherwise, append to a temporary string
-                text_fragment += str_value
-
-    # Merge any remaining collected text into a TextElement
-    if text_fragment or len(flat_elements) == 0:
-        flat_elements.append(ast.TextElement(text_fragment))
-
-    pattern.elements = flat_elements
 
 
 def get_default_variant(variants):
@@ -151,34 +73,3 @@ def is_plural_expression(expression):
         )
 
     return False
-
-
-def create_locale_plural_variants(node, locale):
-    if not is_plural_expression(node):
-        return
-
-    variants = []
-    source_plurals = {}
-    default = None
-
-    for variant in node.variants:
-        key = variant.key
-        if isinstance(key, ast.NumberLiteral):
-            variants.append(variant)
-        else:
-            source_plurals[key.name] = variant
-        if variant.default:
-            default = variant
-
-    for plural in locale.cldr_plurals_list():
-        if plural in source_plurals.keys():
-            variant = source_plurals[plural]
-        else:
-            variant = copy.deepcopy(default)
-            variant.key.name = plural
-        variant.default = False
-        variants.append(variant)
-
-    variants[-1].default = True
-
-    node.variants = variants

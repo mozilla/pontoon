@@ -1,13 +1,12 @@
 import pytest
 
 from collections import OrderedDict
-from fluent.syntax import FluentParser, FluentSerializer
+from fluent.syntax import FluentParser
 from textwrap import dedent
 
 from pontoon.base.fluent import (
     get_simple_preview,
     is_plural_expression,
-    create_locale_plural_variants,
 )
 
 
@@ -182,42 +181,3 @@ def test_is_plural_expression_neither_cldr_plural_nor_number():
     element = message.value.elements[0]
 
     assert is_plural_expression(element.expression) is False
-
-
-@pytest.mark.django_db
-def test_create_locale_plural_variants(locale_a):
-    # Create default locale plural variants
-    input = dedent(
-        """
-        my-entry =
-            { $num ->
-                [0] Yo!
-                [one] Hello!
-               *[other] { reference } World!
-            }
-    """
-    )
-
-    message = parser.parse_entry(input)
-    expression = message.value.elements[0].expression
-
-    locale_a.cldr_plurals = "1,2,3,5"
-    create_locale_plural_variants(expression, locale_a)
-
-    expected = dedent(
-        """
-        my-entry =
-            { $num ->
-                [0] Yo!
-                [one] Hello!
-                [two] { reference } World!
-                [few] { reference } World!
-               *[other] { reference } World!
-            }
-    """
-    )
-
-    serializer = FluentSerializer()
-    assert serializer.serialize_entry(message) == serializer.serialize_entry(
-        parser.parse_entry(expected)
-    )
