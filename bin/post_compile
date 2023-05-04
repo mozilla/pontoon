@@ -14,6 +14,9 @@ npm ci
 echo "Building translate & tag-admin..."
 npm run build:prod
 
+echo "Build locale-quotes data..."
+node bin/build-locale-quotes.cjs pontoon/machinery/static/locale-quotes.json
+
 echo "Collecting static files..."
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
