@@ -953,8 +953,6 @@ class Locale(AggregatedStats):
             id  - id of project locale
             slug - slug of the project
             name - name of the project
-            all_users - (id, first_name, email) users that aren't translators of given project
-                locale.
             translators - (id, first_name, email) translators assigned to a project locale.
             contributors - (id, first_name, email) people who contributed for a project in
                 current locale.
@@ -1004,17 +1002,6 @@ class Locale(AggregatedStats):
             "groups__pk",
         )
 
-        projects_all_users = defaultdict(set)
-
-        for project_locale in project_locales:
-            projects_all_users[project_locale["translators_group__pk"]] = list(
-                User.objects.exclude(email="")
-                .exclude(groups__projectlocales__pk=project_locale["id"])
-                .values("id", "first_name", "email")
-                .distinct()
-                .order_by("email")
-            )
-
         for project_locale in project_locales:
             group_pk = project_locale["translators_group__pk"]
             locale_projects.append(
@@ -1022,7 +1009,6 @@ class Locale(AggregatedStats):
                     project_locale["id"],
                     project_locale["project__slug"],
                     project_locale["project__name"],
-                    projects_all_users[group_pk],
                     projects_translators[group_pk],
                     project_locale["has_custom_translators"],
                 )

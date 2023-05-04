@@ -116,7 +116,7 @@ def test_ajax_permissions_project_locale_translators_order(
     translators_list = [
         {"id": u.id, "email": u.email, "first_name": u.first_name} for u in translators
     ]
-    assert locale_projects[0][4] == translators_list
+    assert locale_projects[0][3] == translators_list
 
 
 @pytest.mark.django_db
