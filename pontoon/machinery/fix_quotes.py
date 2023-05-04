@@ -2,7 +2,6 @@ import json
 import logging
 import re
 from os.path import dirname, join
-from typing import Tuple
 
 from pontoon.base.models import Locale
 
@@ -10,7 +9,7 @@ log = logging.getLogger(__name__)
 _quotes: dict[str, list[str]] = None
 
 
-def get_quotes(locale: Locale) -> Tuple[str, str]:
+def get_quotes(locale: Locale) -> tuple[str, str]:
     # Cache data
     global _quotes
     if _quotes is None:
