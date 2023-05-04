@@ -8,7 +8,7 @@
     </div>
     <ul>
       {% for user in choices %}
-      <li class="clearfix{% if user.email in extra %} contributor{% endif %}" data-id="{{ user.id }}" title="{{ user.first_name }}"><span class="arrow fa"></span>{{ user.email }}</li>
+      <li class="clearfix contributor" data-id="{{ user.id }}" title="{{ user.first_name }}"><span class="arrow fa"></span>{{ user.email }}</li>
       {% endfor %}
     </ul>
   </div>
