@@ -42,7 +42,7 @@ def get_google_generic_translation(text, locale_code, format):
         "q": text,
         "source": "en",
         "target": locale_code,
-        "format": "text",
+        "format": format,
         "key": api_key,
     }
 
