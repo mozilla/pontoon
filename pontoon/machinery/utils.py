@@ -6,6 +6,7 @@ import requests
 
 from collections import defaultdict
 from functools import reduce
+from html import unescape
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 
@@ -14,16 +15,22 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 import pontoon.base as base
+from .fix_quotes import fix_quotes
 
 log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
 def get_google_translate_data(text, locale, format="text"):
-    if locale.google_automl_model:
-        return get_google_automl_translation(text, locale, format)
+    res = (
+        get_google_automl_translation(text, locale, format)
+        if locale.google_automl_model
+        else get_google_generic_translation(text, locale.google_translate_code, format)
+    )
+    if format == "html" and "translation" in res:
+        res["translation"] = unescape(fix_quotes(res["translation"], locale))
 
-    return get_google_generic_translation(text, locale.google_translate_code, format)
+    return res
 
 
 def get_google_generic_translation(text, locale_code, format):
