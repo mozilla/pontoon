@@ -157,12 +157,16 @@ class PretranslationTransformer(Transformer):
         return self.generic_visit(node)
 
     def visit_TextElement(self, node: FTL.TextElement):
-        raw = self.applyReplacements(node.value)
-        translation, service = self.callback(raw, node.value, self.locale)
+        # Machine translation treats each line as a separate sentence,
+        # hence we replace newline characters with spaces.
+        source = node.value.replace("\n", " ")
+
+        raw = self.applyReplacements(source)
+        translation, service = self.callback(raw, source, self.locale)
 
         if translation is None:
             raise ValueError(
-                f"Pretranslation for `{node.value}` to {self.locale.code} not available."
+                f"Pretranslation for `{source}` to {self.locale.code} not available."
             )
 
         node.value = self.applyReplacements(translation)

@@ -49,16 +49,11 @@ def _get_site_url_netloc():
 
 def _default_from_email():
     return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <noreply@{_get_site_url_netloc()}>"
+        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_url_netloc()}>"
     )
 
 
 DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
-
-# Email from which new locale requests are sent.
-LOCALE_REQUEST_FROM_EMAIL = os.environ.get(
-    "LOCALE_REQUEST_FROM_EMAIL", "pontoon@example.com"
-)
 
 # VCS identity to be used when committing translations.
 VCS_SYNC_NAME = os.environ.get("VCS_SYNC_NAME", "Pontoon")
