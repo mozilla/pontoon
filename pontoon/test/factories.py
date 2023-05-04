@@ -104,6 +104,7 @@ class SubpageFactory(DjangoModelFactory):
 class LocaleFactory(DjangoModelFactory):
     code = Sequence(lambda n: f"en-{n}")
     name = Sequence(lambda n: f"English #{n}")
+    script = Sequence(lambda n: "Latin")
 
     class Meta:
         model = Locale
