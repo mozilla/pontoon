@@ -13,7 +13,6 @@ import {
   createEditor,
   Descendant,
   Editor,
-  Element as SlateElement,
   Node,
   Range,
   Text,
@@ -51,7 +50,7 @@ type Paragraph = {
 type Mention = {
   type: 'mention';
   character: string;
-  url: string;
+  url: string | undefined;
   children: Text[];
 };
 
@@ -72,6 +71,7 @@ export function AddComment({
   const [mentionTarget, setMentionTarget] = useState<Range | null>(null);
   const [mentionIndex, setMentionIndex] = useState(0);
   const [mentionSearch, setMentionSearch] = useState('');
+  const [requireUsers, setRequireUsers] = useState(false);
 
   const { initMentions, mentionUsers } = useContext(MentionUsers);
   const [slateKey, resetValue] = useReducer((key) => key + 1, 0);
@@ -85,50 +85,33 @@ export function AddComment({
     ReactEditor.focus(editor);
     Transforms.select(editor, Editor.end(editor, []));
   }, []);
-  const insertMention = useCallback(({ name, url }: MentionUser) => {
-    const mention: Mention = {
-      type: 'mention',
-      character: name,
-      url,
-      children: [{ text: name }],
-    };
-    Transforms.insertNodes(editor, mention);
-    Transforms.move(editor);
-    Transforms.insertText(editor, ' ');
-  }, []);
+  const insertMention = useCallback(
+    ({ name, url }: { name: string; url?: string }) => {
+      const mention: Mention = {
+        type: 'mention',
+        character: name,
+        url,
+        children: [{ text: name }],
+      };
+      Transforms.insertNodes(editor, mention);
+      Transforms.move(editor);
+      Transforms.insertText(editor, ' ');
+    },
+    [],
+  );
 
   useEffect(initMentions, []);
 
   // Insert project manager as mention when 'Request context / Report issue' button used
   // and then clear the value from state
   useEffect(() => {
-    // check to see if contact person is already mentioned
-    const [isMentioned] = Editor.nodes(editor, {
-      at: [],
-      match: (n) =>
-        SlateElement.isElement(n) &&
-        n.type == 'mention' &&
-        n.character === contactPerson,
-    });
-
     if (contactPerson) {
-      if (!isMentioned) {
-        const contactUser = mentionUsers.find(
-          (user) => user.name === contactPerson,
-        );
-        if (contactUser) {
-          insertMention(contactUser);
-        } else {
-          // If mentionable users are still loading,
-          // do not reset the contact person
-          return;
-        }
-      }
-
+      insertMention({ name: contactPerson });
+      setRequireUsers(true);
       resetContactPerson?.();
       placeFocus();
     }
-  }, [contactPerson, mentionUsers, resetContactPerson]);
+  }, [contactPerson, resetContactPerson]);
 
   // Set focus on Editor
   useEffect(() => {
@@ -226,8 +209,13 @@ export function AddComment({
   };
 
   const submitComment = () => {
-    if (Node.string(editor).trim() !== '') {
-      const comment = editor.children.map((node) => serialize(node)).join('');
+    if (
+      Node.string(editor).trim() !== '' &&
+      (!requireUsers || mentionUsers.length > 0)
+    ) {
+      const comment = editor.children
+        .map((node) => serialize(node, mentionUsers))
+        .join('');
       onAddComment(comment);
 
       Transforms.select(editor, {
@@ -278,6 +266,7 @@ export function AddComment({
         >
           <button
             className='submit-button'
+            disabled={requireUsers && mentionUsers.length === 0}
             title='Submit comment'
             onClick={submitComment}
           >
@@ -300,7 +289,7 @@ const withMentions = (editor: BaseEditor & ReactEditor) => {
   return editor;
 };
 
-function serialize(node: Descendant): string {
+function serialize(node: Descendant, users: MentionUser[]): string {
   if (Text.isText(node)) {
     return escapeHtml(node.text);
   }
@@ -309,12 +298,13 @@ function serialize(node: Descendant): string {
     return '';
   }
 
-  const children = node.children.map((n) => serialize(n)).join('');
+  const children = node.children.map((n) => serialize(n, users)).join('');
 
   switch (node.type) {
     case 'paragraph':
       return `<p>${children.trim()}</p>`;
     case 'mention':
+      node.url ??= users.find((user) => user.name === node.character)?.url;
       return node.url
         ? `<a href="${escapeHtml(node.url)}">${children}</a>`
         : children;
