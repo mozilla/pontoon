@@ -149,7 +149,9 @@ def ajax_notifications(request, slug):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    available_locales = project.locales.order_by("name")
+    available_locales = project.locales.prefetch_project_locale(project).order_by(
+        "name"
+    )
 
     # Send notifications
     if request.method == "POST":
@@ -186,22 +188,18 @@ def ajax_notifications(request, slug):
 
     # Detect previously sent notifications using a unique identifier
     # TODO: We should simplify this with a custom Notifications model
-    notifications = []
+    notifications_map = {}
 
-    identifiers = {
-        data["identifier"]
-        for data in list(
-            Notification.objects.filter(
-                description__isnull=False,
-                target_content_type=ContentType.objects.get_for_model(project),
-                target_object_id=project.id,
-            ).values_list("data", flat=True)
-        )
-    }
+    for notification in Notification.objects.filter(
+        description__isnull=False,
+        target_content_type=ContentType.objects.get_for_model(project),
+        target_object_id=project.id,
+    ):
+        identifier = notification.data["identifier"]
+        if identifier not in notifications_map:
+            notifications_map[identifier] = notification
 
-    for identifier in identifiers:
-        notifications.append(Notification.objects.filter(data__contains=identifier)[0])
-
+    notifications = list(notifications_map.values())
     notifications.sort(key=lambda x: x.timestamp, reverse=True)
 
     # Recipient shortcuts
