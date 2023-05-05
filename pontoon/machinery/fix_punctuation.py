@@ -83,23 +83,16 @@ def fix_punctuation(text: str, locale: Locale):
     # single quote
     text = text.replace("&#39;", "’")
 
-    # general punctuation after tag
-    def fix_tag_end_spaces(matches: re.Match[str]):
-        lc = locale.code
-        tag = matches.group(1)
-        punct = matches.group(2)
-        # https://fr.wikipedia.org/wiki/Ponctuation#En_français
-        if (
-            lc == "fr"
-            or lc == "fr-BE"
-            or lc == "fr-CA"
-            or lc == "fr-CH"
-            or lc == "fr-FR"
-        ):
-            if punct != "," and punct != ".":
-                return tag + "\u202f" + punct
-        return tag + punct
+    # brackets
+    text = re.sub(r"(?s)([\(\[]) *(.*?) *([\)\]])", r"\1\2\3", text)
 
-    text = re.sub(r"(</\w+>)\s+([,.:;·!?~՞؟،%#])", fix_tag_end_spaces, text)
+    # spaces before general punctuation
+    lc = locale.code
+    if lc == "fr" or lc == "fr-BE" or lc == "fr-CA" or lc == "fr-CH" or lc == "fr-FR":
+        # https://fr.wikipedia.org/wiki/Ponctuation#En_français
+        text = re.sub(r"(</\w+>) +([,.])", r"\1\2", text)
+        text = re.sub(r" +([:;!?%#-])", "\u202f\\1", text)
+    else:
+        text = re.sub(r"(</\w+>) +([,.:;·!?~՞؟،%#-])", r"\1\2", text)
 
     return text

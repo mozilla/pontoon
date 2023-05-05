@@ -19,6 +19,13 @@ def test_quotes_guillemets_french():
 
 
 @pytest.mark.django_db
+def test_parentheses():
+    locale = LocaleFactory(code="en-XX")
+    res = fix_punctuation("( foo )", locale)
+    assert res == "(foo)"
+
+
+@pytest.mark.django_db
 def test_question_english():
     locale = LocaleFactory(code="en-XX")
     res = fix_punctuation("</foo> ?", locale)
@@ -28,5 +35,5 @@ def test_question_english():
 @pytest.mark.django_db
 def test_question_french():
     locale = LocaleFactory(code="fr-FR")
-    res = fix_punctuation("</foo> ?", locale)
-    assert res == "</foo>\u202f?"
+    res = fix_punctuation("foo ?", locale)
+    assert res == "foo\u202f?"
