@@ -63,16 +63,43 @@ def get_quotes(locale: Locale) -> tuple[str, str]:
     return tuple(res)
 
 
-def fix_quotes(text: str, locale: Locale):
-    def fix(match: re.Match[str]):
+def fix_punctuation(text: str, locale: Locale):
+    """
+    In particular when dealing with HTML content,
+    machine translation may add extra spaces in particular around inline `<elements>`.
+    For punctuation, we can fix that in a locale-appropriate manner.
+    While there is a risk that this may introduce some unwanted side effects,
+    in general the output is improved.
+    """
+    # double quotes
+    def fix_quotes(match: re.Match[str]):
         start, end = get_quotes(locale)
         return start + match.group(1).strip() + end
 
-    text = re.sub(r"&quot;(.*?)&quot;", fix, text)
-    text = re.sub(r"[„“](.*?)[“”]", fix, text)
-    text = re.sub(r"«(.*?)»", fix, text)
+    text = re.sub(r"&quot;(.*?)&quot;", fix_quotes, text)
+    text = re.sub(r"[„“](.*?)[“”]", fix_quotes, text)
+    text = re.sub(r"«(.*?)»", fix_quotes, text)
 
-    # Always use curly single quote
+    # single quote
     text = text.replace("&#39;", "’")
+
+    # general punctuation after tag
+    def fix_tag_end_spaces(matches: re.Match[str]):
+        lc = locale.code
+        tag = matches.group(1)
+        punct = matches.group(2)
+        # https://fr.wikipedia.org/wiki/Ponctuation#En_français
+        if (
+            lc == "fr"
+            or lc == "fr-BE"
+            or lc == "fr-CA"
+            or lc == "fr-CH"
+            or lc == "fr-FR"
+        ):
+            if punct != "," and punct != ".":
+                return tag + "\u202f" + punct
+        return tag + punct
+
+    text = re.sub(r"(</\w+>)\s+([,.:;·!?~՞؟،%#])", fix_tag_end_spaces, text)
 
     return text
