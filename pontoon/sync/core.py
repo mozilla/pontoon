@@ -381,7 +381,7 @@ def get_changed_locales(db_project, locales, now):
     # Requirement: all translation repositories must have API configured
     # and must be multi-locale repositories.
     for repo in repos:
-        if not repo.api_config and not repo.multi_locale:
+        if not repo.api_config or not repo.multi_locale:
             return locales
 
     log.info(f"Fetching latest commit hashes for project {db_project.slug} started.")
