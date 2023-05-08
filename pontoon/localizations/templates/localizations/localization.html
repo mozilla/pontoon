@@ -72,12 +72,12 @@
           icon = 'file',
         )
       }}
-      {% if project.tags_enabled and tags %}
+      {% if project.tags_enabled and tags_count %}
          {{ Menu.item(
            'Tags',
            url('pontoon.localizations.tags', locale.code, project.slug),
            is_active = (current_page == 'tags'),
-           count = tags,
+           count = tags_count,
            icon = 'tag',
          )
       }}
