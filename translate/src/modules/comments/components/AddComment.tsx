@@ -303,11 +303,11 @@ function serialize(node: Descendant, users: MentionUser[]): string {
   switch (node.type) {
     case 'paragraph':
       return `<p>${children.trim()}</p>`;
-    case 'mention':
-      node.url ??= users.find((user) => user.name === node.character)?.url;
-      return node.url
-        ? `<a href="${escapeHtml(node.url)}">${children}</a>`
-        : children;
+    case 'mention': {
+      const url =
+        node.url ?? users.find((user) => user.name === node.character)?.url;
+      return url ? `<a href="${escapeHtml(url)}">${children}</a>` : children;
+    }
     default:
       return children;
   }
