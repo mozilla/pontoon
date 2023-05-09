@@ -119,7 +119,7 @@
     <section>
         <h3>Editor settings</h3>
         <ul class="check-list">
-            {{ Checkbox.checkbox('Translate toolkit checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
+            {{ Checkbox.checkbox('Translate Toolkit checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
 
             {% if user.translated_locales %}
                 {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
