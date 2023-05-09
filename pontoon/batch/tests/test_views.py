@@ -75,7 +75,7 @@ def translation_dtd_invalid_unapproved():
 
 @pytest.yield_fixture
 def test_batch_edit_translations_no_user(client):
-    """If there are no logged in users, the view redirects to the login page."""
+    """If there are no logged-in users, the view redirects to the login page."""
     response = client.post(reverse("pontoon.batch.edit.translations"))
     assert response.status_code == 302
 
