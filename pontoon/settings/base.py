@@ -183,6 +183,7 @@ INSTALLED_APPS = (
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.gitlab",
+    "allauth.socialaccount.providers.keycloak",
     "notifications",
     "graphene_django",
     "django_ace",
@@ -889,6 +890,10 @@ GITLAB_SECRET_KEY = os.environ.get("GITLAB_SECRET_KEY")
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
 GOOGLE_SECRET_KEY = os.environ.get("GOOGLE_SECRET_KEY")
 
+# Keycloak Accounts
+KEYCLOAK_CLIENT_ID = os.environ.get("KEYCLOAK_CLIENT_ID")
+KEYCLOAK_CLIENT_SECRET = os.environ.get("KEYCLOAK_CLIENT_SECRET")
+
 # All settings related to the AllAuth
 SOCIALACCOUNT_PROVIDERS = {
     "fxa": {
@@ -897,6 +902,10 @@ SOCIALACCOUNT_PROVIDERS = {
         "PROFILE_ENDPOINT": FXA_PROFILE_ENDPOINT,
     },
     "gitlab": {"GITLAB_URL": GITLAB_URL, "SCOPE": ["read_user"]},
+    "keycloak": {
+        "KEYCLOAK_URL": os.environ.get("KEYCLOAK_URL"),
+        "KEYCLOAK_REALM": os.environ.get("KEYCLOAK_REALM"),
+    },
 }
 
 # Defined all trusted origins that will be returned in pontoon.js file.
