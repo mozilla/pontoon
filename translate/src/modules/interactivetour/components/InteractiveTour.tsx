@@ -68,7 +68,7 @@ export function InteractiveTour(): React.ReactElement | null {
           </Localized>
           <Localized id='interactivetour-InteractiveTour--main-toolbar-footer'>
             <p>
-              On the right hand side, logged in users can access notifications
+              On the right hand side, logged-in users can access notifications
               and settings.
             </p>
           </Localized>
