@@ -41,8 +41,8 @@ def localization(request, code, slug):
             "project": project,
             "project_locale": project_locale,
             "resource_count": resource_count,
-            "tags": (
-                len(TagsTool(projects=[project], locales=[locale], priority=True))
+            "tags_count": (
+                project.tag_set.filter(resources__isnull=False).distinct().count()
                 if project.tags_enabled
                 else None
             ),

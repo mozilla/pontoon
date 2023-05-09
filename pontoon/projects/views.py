@@ -64,8 +64,8 @@ def project(request, slug):
             "chart": chart,
             "count": project_locales.count(),
             "project": project,
-            "tags": (
-                len(TagsTool(projects=[project], priority=True))
+            "tags_count": (
+                project.tag_set.filter(resources__isnull=False).distinct().count()
                 if project.tags_enabled
                 else None
             ),
