@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name="visibility_email",
             field=models.CharField(
                 choices=[
-                    ("Logged in users", "Logged in users"),
+                    ("Logged-in users", "Logged-in users"),
                     ("Translators", "Users with translator rights"),
                 ],
                 default="Translators",

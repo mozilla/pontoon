@@ -386,7 +386,7 @@ def notifications(request):
 @require_AJAX
 @transaction.atomic
 def mark_all_notifications_as_read(request):
-    """Mark all notifications of the currently logged in user as read"""
+    """Mark all notifications of the currently logged-in user as read"""
     request.user.notifications.mark_all_as_read()
 
     log_ux_action(

@@ -1689,7 +1689,7 @@ class UserProfile(models.Model):
         TRANSLATORS = "Translators", "Users with translator rights"
 
     class VisibilityLoggedIn(models.TextChoices):
-        LOGGED_IN = "Logged in users", "Logged in users"
+        LOGGED_IN = "Logged-in users", "Logged-in users"
         TRANSLATORS = "Translators", "Users with translator rights"
 
     visibility_email = models.CharField(
