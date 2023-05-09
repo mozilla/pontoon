@@ -383,7 +383,7 @@ interactivetour-InteractiveTour--main-toolbar-content =
     see the progress of your current localization and additional
     project information.
 interactivetour-InteractiveTour--main-toolbar-footer =
-    On the right hand side, logged in users can access notifications
+    On the right hand side, logged-in users can access notifications
     and settings.
 
 interactivetour-InteractiveTour--string-list-title = String List
