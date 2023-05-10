@@ -1047,8 +1047,9 @@ class Locale(AggregatedStats):
             resource__project__disabled=False,
             resource__project__system_project=False,
             resource__project__visibility=Project.Visibility.PUBLIC,
+            resource__entities__obsolete=False,
             locale=self,
-        ).aggregate_stats(self)
+        ).distinct().aggregate_stats(self)
 
     def stats(self):
         """Get locale stats used in All Resources part."""
