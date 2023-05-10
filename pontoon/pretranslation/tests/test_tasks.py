@@ -8,6 +8,7 @@ from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
     TranslatedResourceFactory,
+    TranslationFactory,
     ProjectLocaleFactory,
 )
 
@@ -61,3 +62,51 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
 
     # latest_translation belongs to pretranslations.
     assert project_a.latest_translation in translations
+
+
+@patch("pontoon.pretranslation.tasks.get_pretranslations")
+@pytest.mark.django_db
+def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a):
+    """
+    Verify that we only pretranslate:
+    - strings wihtout any translations
+    - strings with only rejected translations, submitted by humans
+    """
+    project_a.pretranslation_enabled = True
+    project_a.save()
+
+    ProjectLocaleFactory.create(
+        project=project_a,
+        locale=locale_a,
+        pretranslation_enabled=True,
+    )
+
+    resource = ResourceFactory.create(
+        project=project_a, path="resource.po", format="po"
+    )
+    TranslatedResourceFactory.create(resource=resource, locale=locale_a)
+
+    no_translations = EntityFactory.create(resource=resource)
+    non_rejected = EntityFactory.create(resource=resource)
+    rejected_by_human = EntityFactory.create(resource=resource)
+    rejected_by_machine = EntityFactory.create(resource=resource)
+
+    gt_user = User.objects.get(email="pontoon-gt@example.com")
+    gt_mock.return_value = [("pretranslation", None, gt_user)]
+
+    TranslationFactory.create(entity=non_rejected, locale=locale_a, rejected=False)
+    TranslationFactory.create(entity=rejected_by_human, locale=locale_a, rejected=True)
+    TranslationFactory.create(
+        entity=rejected_by_machine,
+        locale=locale_a,
+        rejected=True,
+        user=gt_user,
+    )
+
+    pretranslate(project_a.pk)
+    project_a.refresh_from_db()
+
+    assert len(no_translations.translation_set.filter(string="pretranslation")) == 1
+    assert len(non_rejected.translation_set.filter(string="pretranslation")) == 0
+    assert len(rejected_by_human.translation_set.filter(string="pretranslation")) == 1
+    assert len(rejected_by_machine.translation_set.filter(string="pretranslation")) == 0
