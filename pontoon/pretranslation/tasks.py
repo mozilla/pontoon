@@ -68,7 +68,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     entities = entities.prefetch_related("resource")
 
-    # get available TranslatedResource pairs
+    # Fetch all available locale-resource pairs (TranslatedResource objects)
     tr_pairs = (
         TranslatedResource.objects.filter(
             resource__project=project,
@@ -83,11 +83,15 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         .distinct()
     )
 
-    # Fetch all distinct locale-entity pairs for which translation exists
+    # Fetch all locale-entity pairs with non-rejected or pretranslated translations
     translated_entities = (
         Translation.objects.filter(
             locale__in=locales,
             entity__in=entities,
+        )
+        .filter(
+            Q(rejected=False)
+            | Q(user__email__in=["pontoon-tm@example.com", "pontoon-gt@example.com"])
         )
         .annotate(
             locale_entity=Concat(
