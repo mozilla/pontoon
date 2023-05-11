@@ -171,6 +171,77 @@ def test_get_pretranslations_fluent_whitespace(
     assert response == [(pretranslated_string, None, tm_user)]
 
 
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_accesskeys(
+    gt_mock, fluent_resource, google_translate_locale, gt_user
+):
+    # By default, pretranslate accesskeys
+    input_string = dedent(
+        """
+        title =
+            .foo = Bar
+            .accesskey = B
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    gt_mock.return_value = {
+        "status": True,
+        "translation": "gt_translation",
+    }
+
+    expected = dedent(
+        """
+        title =
+            .foo = gt_translation
+            .accesskey = gt_translation
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, gt_user)]
+
+
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_accesskeys_opt_out(
+    gt_mock, fluent_resource, google_translate_locale, gt_user
+):
+    # For locales that opt-out of accesskey localization, do not pretranslate them
+    google_translate_locale.accesskey_localization = False
+    input_string = dedent(
+        """
+        title =
+            .foo = Bar
+            .accesskey = B
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    gt_mock.return_value = {
+        "status": True,
+        "translation": "gt_translation",
+    }
+
+    expected = dedent(
+        """
+        title =
+            .foo = gt_translation
+            .accesskey = B
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, gt_user)]
+
+
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_multiline(
     fluent_resource, entity_b, locale_b, tm_user
