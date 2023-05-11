@@ -69,7 +69,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
 def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a):
     """
     Verify that we only pretranslate:
-    - strings wihtout any translations
+    - strings without any translations
     - strings with only rejected translations, submitted by humans
     """
     project_a.pretranslation_enabled = True
