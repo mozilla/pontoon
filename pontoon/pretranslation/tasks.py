@@ -8,8 +8,10 @@ from pontoon.base.models import (
     Entity,
     TranslatedResource,
     Translation,
+    User,
 )
 from pontoon.actionlog.models import ActionLog
+from pontoon.pretranslation import AUTHORS
 from pontoon.pretranslation.pretranslate import (
     get_pretranslations,
     update_changed_instances,
@@ -68,7 +70,7 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     entities = entities.prefetch_related("resource")
 
-    # get available TranslatedResource pairs
+    # Fetch all available locale-resource pairs (TranslatedResource objects)
     tr_pairs = (
         TranslatedResource.objects.filter(
             resource__project=project,
@@ -83,12 +85,14 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         .distinct()
     )
 
-    # Fetch all distinct locale-entity pairs for which translation exists
+    # Fetch all locale-entity pairs with non-rejected or pretranslated translations
+    pt_authors = [User.objects.get(email=email) for email in AUTHORS.values()]
     translated_entities = (
         Translation.objects.filter(
             locale__in=locales,
             entity__in=entities,
         )
+        .filter(Q(rejected=False) | Q(user__in=pt_authors))
         .annotate(
             locale_entity=Concat(
                 "locale_id", V("-"), "entity_id", output_field=CharField()

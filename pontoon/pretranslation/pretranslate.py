@@ -14,6 +14,7 @@ from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
+from pontoon.pretranslation import AUTHORS
 
 
 log = logging.getLogger(__name__)
@@ -66,10 +67,7 @@ def get_pretranslations(entity, locale):
         - a user (representing TM or GT service)
     """
     source = entity.string
-    services = {
-        "tm": User.objects.get(email="pontoon-tm@example.com"),
-        "gt": User.objects.get(email="pontoon-gt@example.com"),
-    }
+    services = {k: User.objects.get(email=email) for k, email in AUTHORS.items()}
 
     if entity.resource.format == "ftl":
         source_ast = parser.parse_entry(source)
