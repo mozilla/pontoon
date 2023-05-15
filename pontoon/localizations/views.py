@@ -1,5 +1,5 @@
 import math
-
+from operator import attrgetter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
@@ -170,10 +170,12 @@ def ajax_tags(request, code, slug):
         priority=True,
     )
 
+    tags = sorted(tags_tool, key=attrgetter("priority"), reverse=True)
+
     return render(
         request,
         "localizations/includes/tags.html",
-        {"locale": locale, "project": project, "tags": list(tags_tool)},
+        {"locale": locale, "project": project, "tags": tags},
     )
 
 
