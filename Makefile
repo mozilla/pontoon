@@ -62,13 +62,16 @@ build-translate: node_modules
 build-tagadmin: node_modules
 	npm run build -w tag-admin
 
-build-server: server-env translate/dist tag-admin/dist
+build-server: server-env pontoon/machinery/static/locale-quotes.json translate/dist tag-admin/dist
 	"${DC}" build --build-arg USER_ID=$(USER_ID) --build-arg GROUP_ID=$(GROUP_ID) server
 	touch .server-build
 
 server-env:
 	sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
 	./docker/config/server.env.template > ./docker/config/server.env
+
+pontoon/machinery/static/locale-quotes.json:
+	node bin/build-locale-quotes.cjs $@
 
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh

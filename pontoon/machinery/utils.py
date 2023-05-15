@@ -15,6 +15,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 import pontoon.base as base
+from .fix_punctuation import fix_punctuation
 
 log = logging.getLogger(__name__)
 MAX_RESULTS = 5
@@ -27,7 +28,7 @@ def get_google_translate_data(text, locale, format="text"):
         else get_google_generic_translation(text, locale.google_translate_code, format)
     )
     if format == "html" and "translation" in res:
-        res["translation"] = unescape(res["translation"])
+        res["translation"] = unescape(fix_punctuation(res["translation"], locale))
 
     return res
 

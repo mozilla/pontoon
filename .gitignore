@@ -27,6 +27,9 @@ venv
 .cache/
 coverage/
 
+# Generated during build
+/pontoon/machinery/static/locale-quotes.json
+
 # Docker
 .server-build
 docker/config/server.env
