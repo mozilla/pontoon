@@ -1,5 +1,5 @@
 import uuid
-
+from operator import attrgetter
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -110,10 +110,12 @@ def ajax_tags(request, slug):
         priority=True,
     )
 
+    tags = sorted(tags_tool, key=attrgetter('priority'), reverse=True)
+
     return render(
         request,
         "projects/includes/tags.html",
-        {"project": project, "tags": list(tags_tool)},
+        {"project": project, "tags": tags},
     )
 
 
