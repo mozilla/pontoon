@@ -1,3 +1,4 @@
+import re
 from copy import deepcopy
 from typing import Callable, Optional, cast
 
@@ -93,6 +94,25 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
     node.variants = variants
 
 
+class NotranslateWrapper(Transformer):
+    """
+    Replaces all placeables with a `<span id="pt-#" translate="no">...</span>`
+    text element where the `#` identifies an entry in `replacements`,
+    and the `...` is a sanitized representation of the placeable's serialization.
+    """
+
+    def __init__(self, locale: Locale, replacements: list[str]):
+        self.locale = locale
+        self.replacements = replacements
+
+    def visit_Placeable(self, node: FTL.Placeable):
+        source = serialize_expression(node)
+        idx = len(self.replacements)
+        self.replacements.append(source)
+        clean = re.sub(r"[<>{}\n]", "", source).strip()
+        return FTL.TextElement(f'<span id="pt-{idx}" translate="no">{clean}</span>')
+
+
 class PreparePretranslation(Transformer):
     """
     Flattens the given Pattern, uplifting selectors to the highest possible level and
@@ -120,20 +140,29 @@ class PreparePretranslation(Transformer):
 
 class ApplyPretranslation(Transformer):
     """
-    During `visit()`, calls `callback(source, locale) -> (translation, service)` for each pattern.
+    During `visit()`, calls `callback(raw, wrapped, locale) -> (translation, service)` for each pattern.
     """
 
     def __init__(
         self,
         locale: Locale,
         entry: FTL.EntryType,
-        callback: Callable[[str, str], tuple[Optional[str], str]],
+        callback: Callable[[str, str, str], tuple[Optional[str], str]],
     ):
         prep = PreparePretranslation(locale)
         prep.visit(entry)
         self.callback = callback
         self.locale = locale
+        self.replacements: list[str] = []
+        self.notranslate = NotranslateWrapper(locale, self.replacements)
         self.services: list[str] = []
+
+    def applyReplacements(self, translation: str):
+        return re.sub(
+            r'<span id="pt-(\d+)" translate="no">[^<>]*</span>',
+            lambda m: self.replacements[int(m.group(1))],
+            translation,
+        )
 
     def visit_Pattern(self, node: FTL.Pattern):
         has_selects = False
@@ -145,17 +174,19 @@ class ApplyPretranslation(Transformer):
                 self.generic_visit(el.expression)
                 has_selects = True
             else:
-                source += serialize_expression(el)
+                text = self.notranslate.visit_Placeable(el)
+                source += text.value
         if not has_selects and source != "":
             # Machine translation treats each line as a separate sentence,
             # hence we replace newline characters with spaces.
             source = source.replace("\n", " ")
 
-            translation, service = self.callback(source, self.locale)
+            raw = self.applyReplacements(source)
+            translation, service = self.callback(raw, source, self.locale)
             if translation is None:
                 raise ValueError(
                     f"Pretranslation for `{source}` to {self.locale.code} not available."
                 )
-            node.elements = [FTL.TextElement(translation)]
+            node.elements = [FTL.TextElement(self.applyReplacements(translation))]
             self.services.append(service)
         return node

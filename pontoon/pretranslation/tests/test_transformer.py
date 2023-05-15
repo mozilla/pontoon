@@ -7,8 +7,8 @@ from pontoon.test.factories import LocaleFactory
 
 
 def visit(src):
-    def callback(source, locale):
-        return (source, locale.code)
+    def callback(raw, wrapped, locale):
+        return (wrapped, locale.code)
 
     locale = LocaleFactory(code="en-XX")
     ast = FluentParser().parse_entry(dedent(src))
@@ -29,6 +29,8 @@ def test_transformer_value_single_element():
     assert len(res.value.elements) == 1
     assert res.value.elements[0].value == "My Title"
 
+    assert len(transformer.replacements) == 0
+
 
 @pytest.mark.django_db
 def test_transformer_attribute_single_element():
@@ -43,6 +45,8 @@ def test_transformer_attribute_single_element():
     assert len(res.attributes) == 1
     assert len(res.attributes[0].value.elements) == 1
     assert res.attributes[0].value.elements[0].value == "Bar"
+
+    assert len(transformer.replacements) == 0
 
 
 @pytest.mark.django_db
@@ -66,6 +70,8 @@ def test_transformer_single_select_expression():
         res.value.elements[0].expression.variants[1].value.elements[0].value == "World!"
     )
 
+    assert len(transformer.replacements) == 0
+
 
 @pytest.mark.django_db
 def test_transformer_value_several_elements():
@@ -78,6 +84,9 @@ def test_transformer_value_several_elements():
 
     assert len(res.value.elements) == 1
     assert res.value.elements[0].value == "My { $awesome } Title"
+
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ $awesome }"
 
 
 @pytest.mark.django_db
@@ -93,6 +102,9 @@ def test_transformer_attribute_several_elements():
     assert len(res.attributes) == 1
     assert len(res.attributes[0].value.elements) == 1
     assert res.attributes[0].value.elements[0].value == "Bar { -foo } Baz"
+
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ -foo }"
 
 
 @pytest.mark.django_db
@@ -122,14 +134,20 @@ def test_transformer_value_and_attributes():
         == 'Lost { 2 } parents, has { 1 } "$alfred"'
     )
 
+    assert len(transformer.replacements) == 4
+    assert transformer.replacements[0] == "{ $dark }"
+    assert transformer.replacements[1] == "{ -wayne-enterprise }"
+    assert transformer.replacements[2] == "{ 2 }"
+    assert transformer.replacements[3] == "{ 1 }"
+
 
 @pytest.mark.django_db
 def test_transformer_callback(locale_a):
     called = []
 
-    def callback(source, locale):
-        called.append(source)
-        return ("res: " + source, locale.code)
+    def callback(raw, wrapped, locale):
+        called.append((raw, wrapped))
+        return ("res: " + wrapped, locale.code)
 
     entry = FluentParser().parse_entry("title = Hello { $world }!\n")
     transformer = ApplyPretranslation(locale_a, entry, callback)
@@ -138,20 +156,24 @@ def test_transformer_callback(locale_a):
     assert len(entry.value.elements) == 1
     assert entry.value.elements[0].value == "res: Hello { $world }!"
 
+    assert len(transformer.replacements) == 1
+    assert transformer.replacements[0] == "{ $world }"
+
     assert len(transformer.services) == 1
     assert transformer.services[0] == "kg"
 
     assert len(called) == 1
-    assert called[0] == "Hello { $world }!"
+    assert called[0][0] == "Hello { $world }!"
+    assert called[0][1] == 'Hello <span id="pt-0" translate="no">$world</span>!'
 
 
 @pytest.mark.django_db
 def test_plural_variants(locale_a):
     called = []
 
-    def callback(source, locale):
-        called.append(source)
-        return ("res: " + source, locale.code)
+    def callback(raw, wrapped, locale):
+        called.append((raw, wrapped))
+        return ("res: " + wrapped, locale.code)
 
     input = dedent(
         """
@@ -189,9 +211,9 @@ def test_plural_variants(locale_a):
     assert serializer.serialize_entry(entry) == serializer.serialize_entry(expected)
 
     assert called == [
-        "Yo!",
-        "Hello!",
-        "{ $num } World!",
-        "{ $num } World!",
-        "{ $num } World!",
+        ("Yo!", "Yo!"),
+        ("Hello!", "Hello!"),
+        ("{ $num } World!", '<span id="pt-0" translate="no">$num</span> World!'),
+        ("{ $num } World!", '<span id="pt-1" translate="no">$num</span> World!'),
+        ("{ $num } World!", '<span id="pt-2" translate="no">$num</span> World!'),
     ]
