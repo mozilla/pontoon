@@ -213,7 +213,7 @@ def test_plural_variants(locale_a):
     assert called == [
         ("Yo!", "Yo!"),
         ("Hello!", "Hello!"),
-        ("{ $num } World!", '<span id="pt-0" translate="no">$num</span> World!'),
-        ("{ $num } World!", '<span id="pt-1" translate="no">$num</span> World!'),
-        ("{ $num } World!", '<span id="pt-2" translate="no">$num</span> World!'),
+        ("{ $num } World!", '<span id="pt-0" translate="no">2</span> World!'),
+        ("{ $num } World!", '<span id="pt-1" translate="no">3</span> World!'),
+        ("{ $num } World!", '<span id="pt-2" translate="no">14</span> World!'),
     ]

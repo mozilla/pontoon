@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from typing import Callable, Optional, cast
+from typing import Callable, Optional, Union, cast
 
 from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
@@ -8,6 +8,7 @@ from fluent.syntax.visitor import Transformer
 
 from pontoon.base.fluent import is_plural_expression
 from pontoon.base.models import Locale
+from .plural_examples import find_plural_example
 
 
 def flatten_select_expressions(pattern: FTL.Pattern):
@@ -99,17 +100,51 @@ class NotranslateWrapper(Transformer):
     Replaces all placeables with a `<span id="pt-#" translate="no">...</span>`
     text element where the `#` identifies an entry in `replacements`,
     and the `...` is a sanitized representation of the placeable's serialization.
+    If a variable `pluralSelector` is given, references to that variable
+    will use a numerical value appropriate for each variant.
     """
 
-    def __init__(self, locale: Locale, replacements: list[str]):
+    def __init__(
+        self,
+        locale: Locale,
+        replacements: list[str],
+        pluralSelector: Optional[FTL.InlineExpression] = None,
+    ):
         self.locale = locale
         self.replacements = replacements
+        self.pluralVar = (
+            pluralSelector.id.name
+            if isinstance(pluralSelector, FTL.VariableReference)
+            else None
+        )
+        self.pluralKey: Union[float, int, str, None] = None
+
+    def visit_Variant(self, node: FTL.Variant):
+        if self.pluralVar is not None:
+            self.pluralKey = (
+                node.key.parse()["value"]
+                if isinstance(node.key, FTL.NumberLiteral)
+                else node.key.name
+            )
+        return self.generic_visit(node)
 
     def visit_Placeable(self, node: FTL.Placeable):
         source = serialize_expression(node)
         idx = len(self.replacements)
         self.replacements.append(source)
-        clean = re.sub(r"[<>{}\n]", "", source).strip()
+        clean: str
+        if (
+            self.pluralKey is not None
+            and isinstance(node.expression, FTL.VariableReference)
+            and node.expression.id.name == self.pluralVar
+        ):
+            clean = (
+                find_plural_example(self.locale, self.pluralKey)
+                if isinstance(self.pluralKey, str)
+                else str(self.pluralKey)
+            )
+        else:
+            clean = re.sub(r"[<>{}\n]", "", source).strip()
         return FTL.TextElement(f'<span id="pt-{idx}" translate="no">{clean}</span>')
 
 
@@ -122,6 +157,7 @@ class PreparePretranslation(Transformer):
 
     def __init__(self, locale: Locale):
         self.locale = locale
+        self.replacements: list[str] = []
 
     def visit_Attribute(self, node: FTL.Attribute):
         flatten_select_expressions(node.value)
@@ -135,6 +171,9 @@ class PreparePretranslation(Transformer):
     def visit_SelectExpression(self, node: FTL.SelectExpression):
         if is_plural_expression(node):
             create_locale_plural_variants(node, self.locale)
+            NotranslateWrapper(
+                self.locale, self.replacements, node.selector
+            ).generic_visit(node)
         return self.generic_visit(node)
 
 
@@ -153,7 +192,7 @@ class ApplyPretranslation(Transformer):
         prep.visit(entry)
         self.callback = callback
         self.locale = locale
-        self.replacements: list[str] = []
+        self.replacements = prep.replacements
         self.notranslate = NotranslateWrapper(locale, self.replacements)
         self.services: list[str] = []
 

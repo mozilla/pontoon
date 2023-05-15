@@ -4,5 +4,8 @@
   "devDependencies": {
     "terser": "^5.14.2",
     "yuglify": "^2.0.0"
+  },
+  "dependencies": {
+    "make-plural": "^7.3.0"
   }
 }
