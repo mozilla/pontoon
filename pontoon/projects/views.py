@@ -110,7 +110,7 @@ def ajax_tags(request, slug):
         priority=True,
     )
 
-    tags = sorted(tags_tool, key=attrgetter('priority'), reverse=True)
+    tags = sorted(tags_tool, key=attrgetter("priority"), reverse=True)
 
     return render(
         request,
