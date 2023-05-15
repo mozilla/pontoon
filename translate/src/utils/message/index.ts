@@ -19,6 +19,7 @@ export { getPlainMessage } from './getPlainMessage';
 export { getSimplePreview } from './getSimplePreview';
 export { editMessageEntry } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
+export { notranslateUnwrap, notranslateWrap } from './notranslate';
 export { parseEntry } from './parseEntry';
 export { requiresSourceView } from './requiresSourceView';
 export { serializeEntry } from './serializeEntry';
