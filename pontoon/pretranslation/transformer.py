@@ -96,8 +96,8 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
 class PreparePretranslation(Transformer):
     """
     Flattens the given Pattern, uplifting selectors to the highest possible level and
-    duplicating shared parts in the variants. All other Placeables are serialised as
-    TextElements.
+    duplicating shared parts in the variants. Transforms plural variants to match the
+    locale.
     """
 
     def __init__(self, locale: Locale):
@@ -134,6 +134,14 @@ class ApplyPretranslation(Transformer):
         self.callback = callback
         self.locale = locale
         self.services: list[str] = []
+
+    def visit_Attribute(self, node):
+        if (
+            node.id.name.endswith("accesskey")
+            and not self.locale.accesskey_localization
+        ):
+            return node
+        return self.generic_visit(node)
 
     def visit_Pattern(self, node: FTL.Pattern):
         has_selects = False

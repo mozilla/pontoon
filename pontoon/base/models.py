@@ -888,6 +888,14 @@ class Locale(AggregatedStats):
         related_name="locale_latest",
     )
 
+    accesskey_localization = models.BooleanField(
+        default=True,
+        help_text="""
+        Allow localization of access keys if they are part of a string.
+        Some locales don't translate access keys, mostly because they use non-Latin scripts.
+    """,
+    )
+
     objects = LocaleQuerySet.as_manager()
 
     class Meta:
