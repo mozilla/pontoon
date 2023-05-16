@@ -14,6 +14,6 @@
 # The dependencies are sorted by alphabetical order.
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
-black==21.10b0
+black==22.12.0
 flake8==3.7.7
 pyupgrade==2.10.0

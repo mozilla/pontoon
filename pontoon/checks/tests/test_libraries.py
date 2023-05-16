@@ -111,16 +111,13 @@ def test_ignore_warnings(
     }
 
     # Warnings can be ignored for Translate Toolkit if user decides to do so
-    assert (
-        run_checks(
-            entity_properties_plurals_mock,
-            "en-US",
-            entity_properties_plurals_mock.string,
-            "plural1;plural2;plural3;plural4;plural5",
-            False,
-        )
-        == {"clWarnings": ["expecting 2 plurals, found 5"]}
-    )
+    assert run_checks(
+        entity_properties_plurals_mock,
+        "en-US",
+        entity_properties_plurals_mock.string,
+        "plural1;plural2;plural3;plural4;plural5",
+        False,
+    ) == {"clWarnings": ["expecting 2 plurals, found 5"]}
 
 
 def test_invalid_resource_compare_locales(
@@ -149,16 +146,13 @@ def test_tt_disabled_checks(
     """
     Check if overlapping checks are disabled in Translate Toolkit.
     """
-    assert (
-        run_checks(
-            entity_properties_mock,
-            "en-US",
-            entity_properties_mock.string,
-            "invalid translation \\q",
-            True,
-        )
-        == {"clWarnings": ["unknown escape sequence, \\q"]}
-    )
+    assert run_checks(
+        entity_properties_mock,
+        "en-US",
+        entity_properties_mock.string,
+        "invalid translation \\q",
+        True,
+    ) == {"clWarnings": ["unknown escape sequence, \\q"]}
     run_tt_checks_mock.assert_called_with(
         ANY,
         ANY,
