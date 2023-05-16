@@ -136,12 +136,10 @@ class ApplyPretranslation(Transformer):
         self.services: list[str] = []
 
     def visit_Attribute(self, node):
-        is_accesskey = (
+        if (
             node.id.name.endswith("accesskey")
-            and isinstance(node.value.elements[0], FTL.TextElement)
-            and len(node.value.elements[0].value) <= 1
-        )
-        if is_accesskey and not self.locale.accesskey_localization:
+            and not self.locale.accesskey_localization
+        ):
             return node
         return self.generic_visit(node)
 
