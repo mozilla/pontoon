@@ -97,7 +97,7 @@ class PreparePretranslation(Transformer):
     """
     Flattens the given Pattern, uplifting selectors to the highest possible level and
     duplicating shared parts in the variants. Transforms plural variants to match the
-    locale. All other Placeables are serialised as TextElements.
+    locale.
     """
 
     def __init__(self, locale: Locale):
