@@ -68,14 +68,11 @@ def test_too_long_translation_html_tags(get_entity_mock):
         == {}
     )
 
-    assert (
-        run_checks(
-            get_entity_mock("lang", "MAX_LENGTH: 4"),
-            "",
-            '<a href="pontoon.mozilla.org">012</a><i>23</i>',
-        )
-        == {"pErrors": ["Translation too long"]}
-    )
+    assert run_checks(
+        get_entity_mock("lang", "MAX_LENGTH: 4"),
+        "",
+        '<a href="pontoon.mozilla.org">012</a><i>23</i>',
+    ) == {"pErrors": ["Translation too long"]}
 
     # Check if entities are causing false errors
     assert (
@@ -87,14 +84,11 @@ def test_too_long_translation_html_tags(get_entity_mock):
         == {}
     )
 
-    assert (
-        run_checks(
-            get_entity_mock("lang", "MAX_LENGTH: 4"),
-            "",
-            '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>',
-        )
-        == {"pErrors": ["Translation too long"]}
-    )
+    assert run_checks(
+        get_entity_mock("lang", "MAX_LENGTH: 4"),
+        "",
+        '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>',
+    ) == {"pErrors": ["Translation too long"]}
 
 
 def test_too_long_translation_invalid_length(get_entity_mock):

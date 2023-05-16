@@ -124,7 +124,7 @@ def _get_translated_resources(locales, project, resources):
                     "locale": locale,
                     "approved_strings": (i + 2) ** 3,
                     "unreviewed_strings": (i + 1) ** 3,
-                    "pretranslated_strings": i ** 3,
+                    "pretranslated_strings": i**3,
                 }
             )
     return _kwargs
