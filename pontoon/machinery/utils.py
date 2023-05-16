@@ -32,7 +32,7 @@ def get_google_translate_data(text, locale, format="text"):
     return res
 
 
-def get_google_generic_translation(text, locale_code, format):
+def get_google_generic_translation(text, locale_code, format="text"):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
