@@ -96,8 +96,8 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
 class PreparePretranslation(Transformer):
     """
     Flattens the given Pattern, uplifting selectors to the highest possible level and
-    duplicating shared parts in the variants. All other Placeables are serialised as
-    TextElements.
+    duplicating shared parts in the variants. Transforms plural variants to match the
+    locale. All other Placeables are serialised as TextElements.
     """
 
     def __init__(self, locale: Locale):
