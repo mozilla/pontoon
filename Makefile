@@ -119,10 +119,10 @@ flake8:
 	"${DC}" run --rm server flake8 pontoon/
 
 pyupgrade:
-	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py38-plus *.py `find pontoon -name \*.py`
+	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py39-plus *.py `find pontoon -name \*.py`
 
 check-pyupgrade:
-	"${DC}" run --rm server pyupgrade --py38-plus *.py `find pontoon -name \*.py`
+	"${DC}" run --rm server pyupgrade --py39-plus *.py `find pontoon -name \*.py`
 
 black:
 	"${DC}" run --rm server black pontoon/

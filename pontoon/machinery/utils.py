@@ -6,6 +6,7 @@ import requests
 
 from collections import defaultdict
 from functools import reduce
+from html import unescape
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 
@@ -19,14 +20,19 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale):
-    if locale.google_automl_model:
-        return get_google_automl_translation(text, locale)
+def get_google_translate_data(text, locale, format="text"):
+    res = (
+        get_google_automl_translation(text, locale, format)
+        if locale.google_automl_model
+        else get_google_generic_translation(text, locale.google_translate_code, format)
+    )
+    if format == "html" and "translation" in res:
+        res["translation"] = unescape(res["translation"])
 
-    return get_google_generic_translation(text, locale.google_translate_code)
+    return res
 
 
-def get_google_generic_translation(text, locale_code):
+def get_google_generic_translation(text, locale_code, format="text"):
     api_key = settings.GOOGLE_TRANSLATE_API_KEY
 
     if not api_key:
@@ -42,7 +48,7 @@ def get_google_generic_translation(text, locale_code):
         "q": text,
         "source": "en",
         "target": locale_code,
-        "format": "text",
+        "format": format,
         "key": api_key,
     }
 
@@ -71,7 +77,7 @@ def get_google_generic_translation(text, locale_code):
         }
 
 
-def get_google_automl_translation(text, locale):
+def get_google_automl_translation(text, locale, format="text"):
     try:
         client = translate.TranslationServiceClient()
     except DefaultCredentialsError as e:
@@ -105,7 +111,7 @@ def get_google_automl_translation(text, locale):
             "model": model_path,
             "source_language_code": "en",
             "parent": parent,
-            "mime_type": "text/plain",
+            "mime_type": "text/html" if format == "html" else "text/plain",
         }
     )
 
