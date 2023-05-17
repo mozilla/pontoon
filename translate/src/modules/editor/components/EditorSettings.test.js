@@ -2,7 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { USER } from '~/modules/user/reducer';
 import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
 
 jest.mock('react', () => ({
