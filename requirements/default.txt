@@ -765,7 +765,6 @@ regex==2023.5.5 \
     --hash=sha256:fb2b495dd94b02de8215625948132cc2ea360ae84fe6634cd19b6567709c8ae2 \
     --hash=sha256:fee0016cc35a8a91e8cc9312ab26a6fe638d484131a7afa79e1ce6165328a135
     # via
-    #   -r requirements/default.in
     #   sacrebleu
     #   sacremoses
 requests==2.26.0 \
