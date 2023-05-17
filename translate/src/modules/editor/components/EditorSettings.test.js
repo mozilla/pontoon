@@ -2,7 +2,30 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
+import { USER } from '~/modules/user/reducer';
 import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: () => ({ code: 'en' }),
+}));
+
+jest.mock('~/modules/project/hooks', () => ({
+  useProject: () => ({ slug: 'test' }),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: (selector) =>
+    selector({
+      user: {
+        isAuthenticated: true,
+        managerForLocales: ['en'],
+        translatorForLocales: ['en'],
+        translatorForProjects: { 'en-test': true },
+      },
+    }),
+}));
 
 function createEditorSettingsDialog() {
   const toggleSettingMock = sinon.stub();
@@ -19,6 +42,10 @@ function createEditorSettingsDialog() {
 }
 
 describe('<EditorSettingsDialog>', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('toggles the runQualityChecks setting', () => {
     const [wrapper, toggleSettingMock] = createEditorSettingsDialog();
 
@@ -53,6 +80,9 @@ describe('<EditorSettingsDialog>', () => {
 });
 
 describe('<EditorSettings>', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
   it('toggles the settings menu when clicking the gear icon', () => {
     const wrapper = shallow(<EditorSettings />);
     expect(wrapper.find('EditorSettingsDialog')).toHaveLength(0);
