@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import type { Settings } from '~/modules/user';
 import { useOnDiscard } from '~/utils';
+import { useTranslator } from '~/hooks/useTranslator';
 
 import './EditorSettings.css';
 
@@ -23,6 +24,7 @@ export function EditorSettingsDialog({
   onDiscard,
 }: EditorSettingsProps): React.ReactElement<'ul'> {
   const ref = useRef(null);
+  const isTranslator = useTranslator();
   useOnDiscard(ref, onDiscard);
 
   return (
@@ -43,21 +45,23 @@ export function EditorSettingsDialog({
         </li>
       </Localized>
 
-      <Localized
-        id='editor-EditorSettings--force-suggestions'
-        attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-fw' /> }}
-      >
-        <li
-          className={
-            'check-box' + (settings.forceSuggestions ? ' enabled' : '')
-          }
-          title='Save suggestions instead of translations'
-          onClick={() => toggleSetting('forceSuggestions')}
+      {isTranslator ? ( 
+        <Localized
+          id='editor-EditorSettings--force-suggestions'
+          attrs={{ title: true }}
+          elems={{ glyph: <i className='fa fa-fw' /> }}
         >
-          {'<glyph></glyph>Make Suggestions'}
-        </li>
-      </Localized>
+          <li
+            className={
+              'check-box' + (settings.forceSuggestions ? ' enabled' : '')
+            }
+            title='Save suggestions instead of translations'
+            onClick={() => toggleSetting('forceSuggestions')}
+          >
+            {'<glyph></glyph>Make Suggestions'}
+          </li>
+        </Localized>
+      ) : null}
 
       <li className='horizontal-separator'></li>
       <li>
