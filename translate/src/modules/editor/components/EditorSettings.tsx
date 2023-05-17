@@ -45,7 +45,7 @@ export function EditorSettingsDialog({
         </li>
       </Localized>
 
-      {isTranslator ? ( 
+      {isTranslator ? (
         <Localized
           id='editor-EditorSettings--force-suggestions'
           attrs={{ title: true }}
