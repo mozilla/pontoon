@@ -1,3 +1,5 @@
+import re
+
 from copy import deepcopy
 from typing import Callable, Optional, cast
 
@@ -93,6 +95,51 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
     node.variants = variants
 
 
+def extract_accesskey_candidates(message: FTL.Message, label: str, variant_name=None):
+    def get_source(names):
+        for attribute in message.attributes:
+            if attribute.id.name in names:
+                element = attribute.value.elements[0]
+
+                if isinstance(element, FTL.TextElement):
+                    return element.value
+                elif isinstance(element.expression, FTL.SelectExpression):
+                    variants = element.expression.variants
+                    variant = next(
+                        (v for v in variants if v.key.name == variant_name), variants[0]
+                    )
+                    variant_element = variant.value.elements[0]
+
+                    if isinstance(variant_element, FTL.TextElement):
+                        return variant_element.value
+
+        return None
+
+    prefix_end = label.index("accesskey")
+    prefix = label[0:prefix_end]
+
+    # Generate access key candidates:
+    if prefix:
+        # From a prefixed "label" attribute
+        name = f"{prefix}label"
+        source = get_source([name])
+    else:
+        # From a pre-defined list of attribute names
+        source = get_source(["label", "value", "aria-label"])
+        # From a message value
+        if not source and message.value:
+            source = message.value.elements[0].value
+
+    if not source:
+        return []
+
+    # Exclude placeables (message is flat). See bug 1447103 for details.
+    keys = re.sub(r"(?s){.*?}|[\W_]", "", source)
+
+    # Extract unique candidates
+    return list(dict.fromkeys(keys))
+
+
 class PreparePretranslation(Transformer):
     """
     Flattens the given Pattern, uplifting selectors to the highest possible level and
@@ -132,15 +179,43 @@ class ApplyPretranslation(Transformer):
         prep = PreparePretranslation(locale)
         prep.visit(entry)
         self.callback = callback
+        self.entry = entry
         self.locale = locale
         self.services: list[str] = []
 
-    def visit_Attribute(self, node):
-        if (
-            node.id.name.endswith("accesskey")
-            and not self.locale.accesskey_localization
-        ):
-            return node
+    def visit_Attribute(self, node: FTL.Pattern):
+        name = node.id.name
+
+        def set_accesskey(element, variant_name=None):
+            if isinstance(element, FTL.TextElement) and len(element.value) <= 1:
+                candidates = extract_accesskey_candidates(
+                    self.entry, name, variant_name
+                )
+                if candidates:
+                    element.value = candidates[0]
+                    return True
+
+        if name.endswith("accesskey"):
+            if self.locale.accesskey_localization:
+                element = node.value.elements[0]
+
+                if set_accesskey(element):
+                    return node
+                elif isinstance(element, FTL.Placeable) and isinstance(
+                    element.expression, FTL.SelectExpression
+                ):
+                    variants = element.expression.variants
+                    processed_variants = 0
+                    for variant in variants:
+                        variant_element = variant.value.elements[0]
+                        if set_accesskey(variant_element, variant.key.name):
+                            processed_variants += 1
+                    if processed_variants == len(variants):
+                        return node
+
+            else:
+                return node
+
         return self.generic_visit(node)
 
     def visit_Pattern(self, node: FTL.Pattern):
