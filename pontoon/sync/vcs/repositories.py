@@ -172,8 +172,13 @@ class CommitToGit(CommitToRepository):
         push = ["git", "push", self.url, push_target]
         code, output, error = execute(push, path)
         if code != 0:
-            if "Updates were rejected because the remote contains work that you do" in error:
-                raise CommitToRepositoryException("Remote contains work that you do not have locally." + str(error))
+            if (
+                "Updates were rejected because the remote contains work that you do"
+                in error
+            ):
+                raise CommitToRepositoryException(
+                    "Remote contains work that you do not have locally." + str(error)
+                )
             else:
                 raise CommitToRepositoryException(str(error))
 
