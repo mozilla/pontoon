@@ -20,11 +20,27 @@ jest.mock('react-redux', () => ({
       user: {
         isAuthenticated: true,
         managerForLocales: ['en'],
-        translatorForLocales: ['en'],
-        translatorForProjects: { 'en-test': true },
       },
     }),
 }));
+
+function createEditorSettingsDialogForNonTranslator() {
+  jest.mock('~/hooks/useTranslator', () => ({
+    useTranslator: () => false,
+  }));
+
+  const toggleSettingMock = sinon.stub();
+  const wrapper = shallow(
+    <EditorSettingsDialog
+      settings={{
+        runQualityChecks: false,
+        forceSuggestions: false,
+      }}
+      toggleSetting={toggleSettingMock}
+    />,
+  );
+  return [wrapper, toggleSettingMock];
+}
 
 function createEditorSettingsDialog() {
   const toggleSettingMock = sinon.stub();
@@ -41,8 +57,12 @@ function createEditorSettingsDialog() {
 }
 
 describe('<EditorSettingsDialog>', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
+  it('does not show the forceSuggestions setting if user is not a translator', () => {
+    const [wrapper] = createEditorSettingsDialogForNonTranslator();
+
+    expect(wrapper.find('.menu li').at(1).text()).not.toContain(
+      'Force suggestions',
+    );
   });
 
   it('toggles the runQualityChecks setting', () => {
@@ -79,9 +99,6 @@ describe('<EditorSettingsDialog>', () => {
 });
 
 describe('<EditorSettings>', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
   it('toggles the settings menu when clicking the gear icon', () => {
     const wrapper = shallow(<EditorSettings />);
     expect(wrapper.find('EditorSettingsDialog')).toHaveLength(0);

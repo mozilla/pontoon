@@ -134,13 +134,13 @@ editor-EditorMenu--button-suggesting = <glyph></glyph>SUGGESTING
 ## Editor Settings
 ## Shows options to update user settings regarding the editor.
 
-editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit Checks
+editor-EditorSettings--toolkit-checks = <glyph></glyph>Translate Toolkit checks
     .title = Run Translate Toolkit checks before submitting translations
 
-editor-EditorSettings--force-suggestions = <glyph></glyph>Make Suggestions
+editor-EditorSettings--force-suggestions = <glyph></glyph>Make suggestions
     .title = Save suggestions instead of translations
 
-editor-EditorSettings--change-all = Change All Settings
+editor-EditorSettings--change-all = Change all settings
 
 
 ## Editor FTL Source Editor Switch

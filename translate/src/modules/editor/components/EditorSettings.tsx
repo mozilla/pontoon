@@ -41,7 +41,7 @@ export function EditorSettingsDialog({
           title='Run Translate Toolkit checks before submitting translations'
           onClick={() => toggleSetting('runQualityChecks')}
         >
-          {'<glyph></glyph>Translate Toolkit Checks'}
+          {'<glyph></glyph>Translate Toolkit checks'}
         </li>
       </Localized>
 
@@ -58,7 +58,7 @@ export function EditorSettingsDialog({
             title='Save suggestions instead of translations'
             onClick={() => toggleSetting('forceSuggestions')}
           >
-            {'<glyph></glyph>Make Suggestions'}
+            {'<glyph></glyph>Make suggestions'}
           </li>
         </Localized>
       ) : null}
@@ -66,7 +66,7 @@ export function EditorSettingsDialog({
       <li className='horizontal-separator'></li>
       <li>
         <Localized id='editor-EditorSettings--change-all'>
-          <a href='/settings/'>{'Change All Settings'}</a>
+          <a href='/settings/'>{'Change all settings'}</a>
         </Localized>
       </li>
     </ul>
