@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             field=models.BooleanField(
                 default=True,
                 help_text="\n        Allow localization of access keys if they are part of a string.\n        Some locales don't translate access keys, mostly because they use non-Latin scripts.\n    ",
-                verbose_name="Access key",
+                verbose_name="Access key localization",
             ),
         ),
     ]

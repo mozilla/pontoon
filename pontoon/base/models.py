@@ -890,7 +890,7 @@ class Locale(AggregatedStats):
 
     accesskey_localization = models.BooleanField(
         default=True,
-        verbose_name="Access key",
+        verbose_name="Access key localization",
         help_text="""
         Allow localization of access keys if they are part of a string.
         Some locales don't translate access keys, mostly because they use non-Latin scripts.
