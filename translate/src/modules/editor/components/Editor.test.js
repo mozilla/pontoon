@@ -130,7 +130,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('Salut');
+    expect(input.prop('defaultValue')).toBe('Salut');
   });
 
   it('renders the simple form when passing a simple string with one attribute', () => {
@@ -138,7 +138,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('Quelque chose de bien');
+    expect(input.prop('defaultValue')).toBe('Quelque chose de bien');
   });
 
   it('renders the rich form when passing a supported rich message', () => {
@@ -158,7 +158,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe(BROKEN_STRING.trim());
+    expect(input.prop('defaultValue')).toBe(BROKEN_STRING.trim());
   });
 
   it('converts translation when switching source mode', () => {
@@ -169,7 +169,7 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('my-message = Salut');
+    expect(input.prop('defaultValue')).toBe('my-message = Salut');
   });
 
   it('sets empty initial translation in source mode when untranslated', () => {
@@ -180,19 +180,16 @@ describe('<Editor>', () => {
 
     const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('value')).toBe('my-message = { "" }');
+    expect(input.prop('defaultValue')).toBe('my-message = { "" }');
   });
 
   it('changes editor implementation when changing translation syntax', () => {
-    const [wrapper] = mountEditor(1);
+    const [wrapper, actions] = mountEditor(1);
 
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');
 
-    const input = wrapper.find('TranslationForm textarea');
-    act(() =>
-      input.prop('onChange')({ currentTarget: { value: RICH_MESSAGE_STRING } }),
-    );
+    act(() => actions.setEditorFromHistory(RICH_MESSAGE_STRING));
     wrapper.update();
 
     // Switch to rich mode.
@@ -218,7 +215,7 @@ describe('<Editor>', () => {
     const [wrapper, actions] = mountEditor(1);
 
     // Update the content with new input
-    act(() => actions.setEditorFromInput('Coucou'));
+    act(() => actions.setEditorFromInput(0, 'Coucou'));
     wrapper.update();
     await act(() => wrapper.find('.action-suggest').prop('onClick')());
 

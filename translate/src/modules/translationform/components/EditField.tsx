@@ -1,63 +1,97 @@
 import { useLocalization } from '@fluent/react';
-import React, { useCallback, useContext } from 'react';
-import { EditorActions } from '~/context/Editor';
+import React, {
+  forwardRef,
+  memo,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import { EditFieldHandle, EditorActions } from '~/context/Editor';
 import { Locale } from '~/context/Locale';
-import { useHandleShortcuts } from '~/modules/editor';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useHandleShortcuts } from '~/modules/editor';
 
 export type EditFieldProps = {
+  /** Used by `<label htmlFor>` */
   id?: string;
-  inputRef: React.MutableRefObject<
-    HTMLInputElement | HTMLTextAreaElement | null
-  >;
-  onFocus?: (ev: {
-    currentTarget: HTMLInputElement | HTMLTextAreaElement | null;
-  }) => void;
+  index: number;
+  onFocus?: () => void;
   singleField?: boolean;
-  userInput: React.MutableRefObject<boolean>;
-  value: string;
+  defaultValue: string;
 };
 
-export function EditField({
-  id,
-  inputRef,
-  onFocus,
-  singleField,
-  userInput,
-  value,
-}: EditFieldProps) {
-  const { l10n } = useLocalization();
-  const locale = useContext(Locale);
-  const { setEditorFromInput } = useContext(EditorActions);
+export const EditField = memo(
+  forwardRef<EditFieldHandle, EditFieldProps>(
+    ({ defaultValue, id, index, onFocus, singleField }, ref) => {
+      const { l10n } = useLocalization();
+      const locale = useContext(Locale);
+      const { setEditorFromInput } = useContext(EditorActions);
+      const domRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> =
-    useCallback(
-      (ev) => {
-        userInput.current = true;
-        setEditorFromInput(ev.currentTarget.value);
-      },
-      [userInput, setEditorFromInput],
-    );
-  const handleKeyDown = useHandleShortcuts();
-  const readOnly = useReadonlyEditor();
-  const placeholder =
-    singleField && !readOnly
-      ? l10n.getString('translationform--single-field-placeholder')
-      : undefined;
+      useEffect(() => {
+        const textarea = domRef.current;
+        if (textarea) {
+          textarea.value = defaultValue;
+        }
+      }, [defaultValue]);
 
-  return (
-    <textarea
-      id={id}
-      onChange={handleChange}
-      onFocus={onFocus}
-      onKeyDown={handleKeyDown}
-      placeholder={placeholder}
-      readOnly={readOnly}
-      ref={inputRef as React.MutableRefObject<HTMLTextAreaElement>}
-      value={value}
-      dir={locale.direction}
-      lang={locale.code}
-      data-script={locale.script}
-    />
-  );
-}
+      useImperativeHandle<EditFieldHandle, EditFieldHandle>(
+        ref,
+        () => ({
+          get value() {
+            return domRef.current?.value ?? '';
+          },
+          set value(next) {
+            const textarea = domRef.current;
+            if (textarea) {
+              textarea.value = next;
+            }
+          },
+          focus() {
+            const textarea = domRef.current;
+            if (textarea) {
+              textarea.focus();
+              const end = textarea.value.length;
+              textarea.setSelectionRange(end, end);
+            }
+          },
+          setSelection(content) {
+            const textarea = domRef.current;
+            textarea?.setRangeText(
+              content,
+              textarea.selectionStart,
+              textarea.selectionEnd,
+              'end',
+            );
+          },
+        }),
+        [],
+      );
+
+      const readOnly = useReadonlyEditor();
+      const placeholder =
+        singleField && !readOnly
+          ? l10n.getString('translationform--single-field-placeholder')
+          : undefined;
+
+      return (
+        <textarea
+          ref={domRef}
+          defaultValue={defaultValue}
+          id={id}
+          onChange={(ev) => {
+            setEditorFromInput(index, ev.currentTarget.value);
+          }}
+          onFocus={onFocus}
+          onKeyDown={useHandleShortcuts()}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          dir={locale.direction}
+          lang={locale.code}
+          data-script={locale.script}
+        />
+      );
+    },
+  ),
+);

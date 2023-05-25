@@ -2,7 +2,7 @@ import ftl from '@fluent/dedent';
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
-import { EditorActions, EditorProvider } from '~/context/Editor';
+import { EditorActions, EditorProvider, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 
@@ -33,9 +33,10 @@ function mountForm(string) {
     translation: [{ string }],
   };
 
-  let actions;
+  let actions, result;
   const Spy = () => {
     actions = useContext(EditorActions);
+    result = useContext(EditorResult);
     return null;
   };
 
@@ -55,7 +56,7 @@ function mountForm(string) {
     store,
   );
 
-  return [wrapper, actions];
+  return [wrapper, actions, () => result];
 }
 
 describe('<TranslationForm> with multiple fields', () => {
@@ -198,7 +199,9 @@ describe('<TranslationForm> with multiple fields', () => {
     expect(wrapper.find('input')).toHaveLength(1);
 
     expect(wrapper.find('label').at(1).html()).toContain('label');
-    expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Candidates');
+    expect(wrapper.find('textarea').at(1).prop('defaultValue')).toEqual(
+      'Candidates',
+    );
 
     expect(wrapper.find('label').at(2).html()).toContain('accesskey');
     expect(wrapper.find('input').prop('value')).toEqual('C');
@@ -237,14 +240,15 @@ describe('<TranslationForm> with multiple fields', () => {
   });
 
   it('updates the translation when setEditorSelection is passed', async () => {
-    const [wrapper, actions] = mountForm(ftl`
+    const [wrapper, actions, getResult] = mountForm(ftl`
       title = Value
         .label = Something
       `);
     act(() => actions.setEditorSelection('Add'));
     wrapper.update();
 
-    expect(wrapper.find('textarea').at(0).prop('value')).toEqual('ValueAdd');
-    expect(wrapper.find('textarea').at(1).prop('value')).toEqual('Something');
+    const result = getResult();
+    expect(result[0].value).toEqual('ValueAdd');
+    expect(result[1].value).toEqual('Something');
   });
 });
