@@ -361,9 +361,16 @@ history-Translation--button-comments = { $commentCount ->
 history-Translation--span-copied =
     .title = Copied ({ $machinerySources })
 
-history-translation--approved = Approved by { $user }
-history-translation--rejected = Rejected by { $user }
-history-translation--unreviewed = Not reviewed yet
+history-translation--approved =
+    .title = Approved by { $user }
+history-Translation--approved-anonymous =
+    .title = Approved
+history-translation--rejected =
+    .title = Rejected by { $user }
+history-translation--rejected-anonymous =
+    .title = Rejected
+history-translation--unreviewed =
+    .title = Not reviewed yet
 
 
 ## Interactive Tour

@@ -1,4 +1,4 @@
-import { Localized, useLocalization } from '@fluent/react';
+import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
@@ -153,7 +153,6 @@ export function HistoryTranslationBase({
   updateTranslationStatus,
   user,
 }: InternalProps): React.ReactElement<'li'> {
-  const { l10n } = useLocalization();
   const [isDiffVisible, setDiffVisible] = useState(false);
   const [areCommentsVisible, setCommentsVisible] = useState(false);
   const isTranslator = useTranslator();
@@ -195,43 +194,25 @@ export function HistoryTranslationBase({
     setEditorFromHistory(translation.string);
   }, [isReadOnlyEditor, setEditorFromHistory, translation.string]);
 
-  let reviewTitle: string;
+  const review = {
+    id: 'history-translation--unreviewed',
+    vars: { user: '' },
+    attrs: { title: true },
+  };
   if (translation.approved) {
-    const user = translation.approvedUser;
-    if (user) {
-      reviewTitle = l10n.getString(
-        'history-translation--approved',
-        { user },
-        `Approved by ${user}`,
-      );
+    if (translation.approvedUser) {
+      review.vars.user = translation.approvedUser;
+      review.id = 'history-translation--approved';
     } else {
-      reviewTitle = l10n.getString(
-        'history-Translation--button-approved.title',
-        null,
-        'Approved',
-      );
+      review.id = 'history-Translation--approved-anonymous';
     }
   } else if (translation.rejected) {
-    const user = translation.rejectedUser;
-    if (user) {
-      reviewTitle = l10n.getString(
-        'history-translation--rejected',
-        { user },
-        `Rejected by ${user}`,
-      );
+    if (translation.rejectedUser) {
+      review.vars.user = translation.rejectedUser;
+      review.id = 'history-translation--rejected';
     } else {
-      reviewTitle = l10n.getString(
-        'history-Translation--button-rejected.title',
-        null,
-        'Rejected',
-      );
+      review.id = 'history-Translation--rejected-anonymous';
     }
-  } else {
-    reviewTitle = l10n.getString(
-      'history-translation--unreviewed',
-      null,
-      'Not reviewed yet',
-    );
   }
 
   const commentCount = translation.comments?.length ?? 0;
@@ -271,11 +252,13 @@ export function HistoryTranslationBase({
           onClick={copyTranslationIntoEditor}
         >
           <div className='avatar-container'>
-            <UserAvatar
-              username={translation.username}
-              title={reviewTitle}
-              imageUrl={translation.userGravatarUrlSmall}
-            />
+            <Localized {...review}>
+              <UserAvatar
+                username={translation.username}
+                title=''
+                imageUrl={translation.userGravatarUrlSmall}
+              />
+            </Localized>
             {translation.machinerySources ? (
               <Localized
                 id='history-Translation--span-copied'
@@ -294,7 +277,9 @@ export function HistoryTranslationBase({
           <div className='content'>
             <header className='clearfix'>
               <div className='info'>
-                <User title={reviewTitle} translation={translation} />
+                <Localized {...review}>
+                  <User title='' translation={translation} />
+                </Localized>
                 <ReactTimeAgo
                   dir='ltr'
                   date={new Date(translation.dateIso)}
