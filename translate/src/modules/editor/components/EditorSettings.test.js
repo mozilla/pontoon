@@ -4,6 +4,44 @@ import sinon from 'sinon';
 
 import { EditorSettings, EditorSettingsDialog } from './EditorSettings';
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: () => ({ code: 'en' }),
+}));
+
+jest.mock('~/modules/project/hooks', () => ({
+  useProject: () => ({ slug: 'test' }),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: (selector) =>
+    selector({
+      user: {
+        isAuthenticated: true,
+        managerForLocales: ['en'],
+      },
+    }),
+}));
+
+function createEditorSettingsDialogForNonTranslator() {
+  jest.mock('~/hooks/useTranslator', () => ({
+    useTranslator: () => false,
+  }));
+
+  const toggleSettingMock = sinon.stub();
+  const wrapper = shallow(
+    <EditorSettingsDialog
+      settings={{
+        runQualityChecks: false,
+        forceSuggestions: false,
+      }}
+      toggleSetting={toggleSettingMock}
+    />,
+  );
+  return [wrapper, toggleSettingMock];
+}
+
 function createEditorSettingsDialog() {
   const toggleSettingMock = sinon.stub();
   const wrapper = shallow(
@@ -19,6 +57,14 @@ function createEditorSettingsDialog() {
 }
 
 describe('<EditorSettingsDialog>', () => {
+  it('does not show the forceSuggestions setting if user is not a translator', () => {
+    const [wrapper] = createEditorSettingsDialogForNonTranslator();
+
+    expect(wrapper.find('.menu li').at(1).text()).not.toContain(
+      'Force suggestions',
+    );
+  });
+
   it('toggles the runQualityChecks setting', () => {
     const [wrapper, toggleSettingMock] = createEditorSettingsDialog();
 
