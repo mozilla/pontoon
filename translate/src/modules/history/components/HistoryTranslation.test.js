@@ -1,4 +1,3 @@
-import * as Fluent from '@fluent/react';
 import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
@@ -7,9 +6,6 @@ import * as hookModule from '~/hooks/useTranslator';
 import { HistoryTranslationBase } from './HistoryTranslation';
 
 beforeAll(() => {
-  sinon
-    .stub(Fluent, 'useLocalization')
-    .returns({ l10n: { getString: (_id, _args, fallback) => fallback } });
   sinon.stub(hookModule, 'useTranslator');
 });
 beforeEach(() => hookModule.useTranslator.returns(false));
@@ -121,7 +117,7 @@ describe('<HistoryTranslationComponent>', () => {
     });
   });
 
-  describe('getReviewTitle', () => {
+  describe('review title', () => {
     it('returns the correct review title when approved and approved user is available', () => {
       const translation = {
         ...DEFAULT_TRANSLATION,
@@ -135,7 +131,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Approved by Cespenar"]')).toHaveLength(2);
+      expect(wrapper.find('[id="history-translation--approved"]')).toHaveLength(2);
     });
 
     it('returns the correct review title when approved and approved user is not available', () => {
@@ -151,7 +147,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Approved"]')).toHaveLength(3);
+      expect(wrapper.find('[id="history-translation--approved-anonymous"]')).toHaveLength(2);
     });
 
     it('returns the correct review title when rejected and rejected user is available', () => {
@@ -167,7 +163,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Rejected by Bhaal"]')).toHaveLength(2);
+      expect(wrapper.find('[id="history-translation--rejected"]')).toHaveLength(2);
     });
 
     it('returns the correct review title when rejected and rejected user is not available', () => {
@@ -183,7 +179,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Rejected"]')).toHaveLength(2);
+      expect(wrapper.find('[id="history-translation--rejected-anonymous"]')).toHaveLength(2);
     });
 
     it('returns the correct approver title when neither approved or rejected', () => {
@@ -195,7 +191,7 @@ describe('<HistoryTranslationComponent>', () => {
         />,
       );
 
-      expect(wrapper.find('[title="Not reviewed yet"]')).toHaveLength(2);
+      expect(wrapper.find('[id="history-translation--unreviewed"]')).toHaveLength(2);
     });
   });
 

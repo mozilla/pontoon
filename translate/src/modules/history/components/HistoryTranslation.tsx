@@ -204,14 +204,14 @@ export function HistoryTranslationBase({
       review.vars.user = translation.approvedUser;
       review.id = 'history-translation--approved';
     } else {
-      review.id = 'history-Translation--approved-anonymous';
+      review.id = 'history-translation--approved-anonymous';
     }
   } else if (translation.rejected) {
     if (translation.rejectedUser) {
       review.vars.user = translation.rejectedUser;
       review.id = 'history-translation--rejected';
     } else {
-      review.id = 'history-Translation--rejected-anonymous';
+      review.id = 'history-translation--rejected-anonymous';
     }
   }
 

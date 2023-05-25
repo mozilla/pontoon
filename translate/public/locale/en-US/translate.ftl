@@ -363,7 +363,7 @@ history-Translation--span-copied =
 
 history-translation--approved =
     .title = Approved by { $user }
-history-Translation--approved-anonymous =
+history-translation--approved-anonymous =
     .title = Approved
 history-translation--rejected =
     .title = Rejected by { $user }
