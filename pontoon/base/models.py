@@ -351,7 +351,7 @@ def serialized_notifications(self):
         is_comment = False
 
         if hasattr(notification.actor, "slug"):
-            if "new string" in notification.verb and self.profile.custom_homepage:
+            if "new string" in notification.verb:
                 actor = {
                     "anchor": notification.actor.name,
                     "url": reverse(
