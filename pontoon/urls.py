@@ -53,6 +53,9 @@ urlpatterns = [
         "favicon.ico",
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
     ),
+    # Legacy
+    path("in-context/", RedirectView.as_view(url="/", permanent=True)),
+    path("intro/", RedirectView.as_view(url="/", permanent=True)),
     # Include script
     path("pontoon.js", pontoon_js_view),
     path("static/js/pontoon.js", pontoon_js_view),
@@ -72,7 +75,6 @@ urlpatterns = [
     path("", include("pontoon.batch.urls")),
     path("", include("pontoon.api.urls")),
     path("", include("pontoon.homepage.urls")),
-    path("", include("pontoon.in_context.urls")),
     path("", include("pontoon.uxactionlog.urls")),
     # Team page: Must be at the end
     path("<locale:locale>/", team, name="pontoon.teams.team"),

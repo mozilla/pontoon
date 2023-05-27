@@ -32,8 +32,6 @@ export function UserMenuDialog({
 
   const canDownload =
     project !== 'all-projects' && resource !== 'all-resources';
-
-  /* TODO: Also disable for subpages (in-context l10n) when supported */
   const canUpload = canDownload && isTranslator && !entity.readonly;
 
   const ref = useRef<HTMLUListElement>(null);

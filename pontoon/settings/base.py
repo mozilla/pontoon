@@ -148,7 +148,6 @@ INSTALLED_APPS = (
     "pontoon.base",
     "pontoon.contributors",
     "pontoon.checks",
-    "pontoon.in_context",
     "pontoon.insights",
     "pontoon.localizations",
     "pontoon.machinery",
@@ -410,13 +409,6 @@ PIPELINE_CSS = {
             "css/contributors.css",
         ),
         "output_filename": "css/contributors.min.css",
-    },
-    "in_context": {
-        "source_filenames": (
-            "css/bootstrap.min.css",
-            "css/agency.css",
-        ),
-        "output_filename": "css/in_context.min.css",
     },
     "terms": {
         "source_filenames": ("css/terms.css",),
