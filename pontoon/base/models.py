@@ -1076,11 +1076,10 @@ class Locale(AggregatedStats):
         ]
 
     def parts_stats(self, project):
-        """Get locale-project pages/paths with stats."""
+        """Get locale-project paths with stats."""
 
         def get_details(parts):
             return parts.order_by("title").values(
-                "url",
                 "title",
                 "resource__path",
                 "resource__deadline",
@@ -1096,11 +1095,7 @@ class Locale(AggregatedStats):
             resource__project=project, resource__entities__obsolete=False, locale=self
         ).distinct()
         details = list(
-            get_details(
-                translatedresources.annotate(
-                    title=F("resource__path"), url=F("resource__project__url")
-                )
-            )
+            get_details(translatedresources.annotate(title=F("resource__path")))
         )
 
         all_resources = ProjectLocale.objects.get(project=project, locale=self)
@@ -1311,20 +1306,6 @@ class Project(AggregatedStats):
         choices=Visibility.choices,
     )
 
-    # Website for in place localization
-    url = models.URLField("URL", blank=True)
-    width = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="""
-        Default website (iframe) width in pixels.
-        If set, sidebar will be opened by default.
-    """,
-    )
-    links = models.BooleanField(
-        "Keep links on the project website clickable", default=False
-    )
-
     langpack_url = models.URLField(
         "Language pack URL",
         blank=True,
@@ -1390,9 +1371,6 @@ class Project(AggregatedStats):
             "name": self.name,
             "slug": self.slug,
             "info": self.info,
-            "url": self.url,
-            "width": self.width or "",
-            "links": self.links or "",
             "langpack_url": self.langpack_url or "",
             "contact": self.contact.serialize() if self.contact else None,
         }

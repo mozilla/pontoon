@@ -257,7 +257,6 @@ class ProjectAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-        ("WEBSITE", {"fields": ("url", "width", "links")}),
     )
     readonly_fields = AGGREGATED_STATS_FIELDS + ("latest_translation",)
     inlines = (

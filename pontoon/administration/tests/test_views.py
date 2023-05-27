@@ -398,7 +398,6 @@ def test_project_add_locale(client_superuser):
     # or I don't know how to handle that more gracefully.
     form = ProjectForm(instance=project)
     form_data = dict(form.initial)
-    del form_data["width"]
     del form_data["deadline"]
     del form_data["contact"]
     form_data.update(
