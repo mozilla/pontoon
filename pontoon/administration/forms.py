@@ -9,7 +9,6 @@ from pontoon.base.models import (
     Locale,
     Project,
     Repository,
-    Subpage,
 )
 from pontoon.base.forms import HtmlField
 from pontoon.tags.models import Tag
@@ -72,11 +71,6 @@ class ProjectForm(forms.ModelForm):
         self.fields["contact"].queryset = User.objects.filter(
             groups__name="project_managers"
         ).order_by("email")
-
-
-SubpageInlineFormSet = inlineformset_factory(
-    Project, Subpage, extra=1, fields=("project", "name", "url")
-)
 
 
 RepositoryInlineFormSet = inlineformset_factory(

@@ -7,7 +7,6 @@ from pontoon.test.factories import (
     EntityFactory,
     LocaleFactory,
     ResourceFactory,
-    SubpageFactory,
     TranslatedResourceFactory,
 )
 
@@ -104,7 +103,7 @@ def test_locale_managers_group(locale_a, locale_b, user_a):
 @pytest.mark.django_db
 def test_locale_parts_stats_no_page_one_resource(locale_parts):
     """
-    Return resource paths and stats if no subpage and one resource defined.
+    Return resource paths and stats if one resource defined.
     """
     locale_c, locale_b, entityX = locale_parts
     project = entityX.resource.project
@@ -149,56 +148,3 @@ def test_locale_parts_stats_no_page_multiple_resources(locale_parts):
     assert len(detailsY) == 2
     assert detailsY[0]["title"] == "/other/path.po"
     assert detailsY[0]["unreviewed_strings"] == 0
-
-
-@pytest.mark.django_db
-def test_locale_parts_stats_pages_not_tied_to_resources(locale_parts):
-    """
-    Return subpage name and stats.
-    """
-    locale_a, locale_b, entity_a = locale_parts
-    project = entity_a.resource.project
-    SubpageFactory.create(project=project, name="Subpage")
-    details = locale_a.parts_stats(project)
-    assert details[0]["title"] == "Subpage"
-    assert details[0]["unreviewed_strings"] == 0
-
-
-@pytest.mark.django_db
-def test_locale_parts_stats_pages_tied_to_resources(locale_parts):
-    """
-    Return subpage name and stats for locales resources are available for.
-    """
-    locale_a, locale_b, entity_a = locale_parts
-    project = entity_a.resource.project
-    resourceX = ResourceFactory.create(
-        project=project,
-        path="/other/path.po",
-    )
-    EntityFactory.create(resource=resourceX, string="Entity X")
-    TranslatedResourceFactory.create(
-        resource=resourceX,
-        locale=locale_a,
-    )
-    TranslatedResourceFactory.create(
-        resource=resourceX,
-        locale=locale_b,
-    )
-    sub1 = SubpageFactory.create(
-        project=project,
-        name="Subpage",
-    )
-    sub1.resources.add(resourceX)
-    sub2 = SubpageFactory.create(
-        project=project,
-        name="Other Subpage",
-    )
-    sub2.resources.add(resourceX)
-    details0 = locale_a.parts_stats(project)
-    detailsX = locale_b.parts_stats(project)
-    assert details0[0]["title"] == "Other Subpage"
-    assert details0[0]["unreviewed_strings"] == 0
-    assert details0[1]["title"] == "Subpage"
-    assert details0[1]["unreviewed_strings"] == 0
-    assert detailsX[0]["title"] == "Other Subpage"
-    assert detailsX[0]["unreviewed_strings"] == 0

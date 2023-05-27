@@ -403,10 +403,6 @@ def test_project_add_locale(client_superuser):
     del form_data["contact"]
     form_data.update(
         {
-            "subpage_set-INITIAL_FORMS": "0",
-            "subpage_set-TOTAL_FORMS": "1",
-            "subpage_set-MIN_NUM_FORMS": "0",
-            "subpage_set-MAX_NUM_FORMS": "1000",
             "externalresource_set-TOTAL_FORMS": "1",
             "externalresource_set-MAX_NUM_FORMS": "1000",
             "externalresource_set-MIN_NUM_FORMS": "0",
