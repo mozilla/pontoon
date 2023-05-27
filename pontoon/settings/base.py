@@ -840,10 +840,9 @@ CELERY_ACCEPT_CONTENT = ["pickle"]
 
 # Settings related to the CORS mechanisms.
 # For the sake of integration with other sites,
-# some of javascript files (e.g. pontoon.js)
-# require Access-Control-Allow-Origin header to be set as '*'.
+# all origins are allowed for the GraphQL endpoint.
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_URLS_REGEX = r"^/(pontoon\.js|graphql/?)$"
+CORS_URLS_REGEX = r"^/graphql/?$"
 
 SOCIALACCOUNT_ENABLED = True
 SOCIALACCOUNT_ADAPTER = "pontoon.base.adapter.PontoonSocialAdapter"
@@ -899,14 +898,6 @@ SOCIALACCOUNT_PROVIDERS = {
         "KEYCLOAK_REALM": os.environ.get("KEYCLOAK_REALM"),
     },
 }
-
-# Defined all trusted origins that will be returned in pontoon.js file.
-if os.environ.get("JS_TRUSTED_ORIGINS"):
-    JS_TRUSTED_ORIGINS = os.environ.get("JS_TRUSTED_ORIGINS").split(",")
-else:
-    JS_TRUSTED_ORIGINS = [
-        SITE_URL,
-    ]
 
 # Configuration of `django-notifications-hq` app
 DJANGO_NOTIFICATIONS_CONFIG = {

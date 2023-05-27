@@ -13,10 +13,6 @@ class LocaleConverter(StringConverter):
 
 register_converter(LocaleConverter, "locale")
 
-pontoon_js_view = TemplateView.as_view(
-    template_name="js/pontoon.js", content_type="text/javascript"
-)
-
 permission_denied_view = TemplateView.as_view(template_name="403.html")
 page_not_found_view = TemplateView.as_view(template_name="404.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
@@ -56,9 +52,6 @@ urlpatterns = [
     # Legacy
     path("in-context/", RedirectView.as_view(url="/", permanent=True)),
     path("intro/", RedirectView.as_view(url="/", permanent=True)),
-    # Include script
-    path("pontoon.js", pontoon_js_view),
-    path("static/js/pontoon.js", pontoon_js_view),
     # Include URL configurations from installed apps
     path("terminology/", include("pontoon.terminology.urls")),
     path("translations/", include("pontoon.translations.urls")),
