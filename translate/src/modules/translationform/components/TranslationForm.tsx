@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, {
   useCallback,
   useContext,
-  useLayoutEffect,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -20,14 +20,12 @@ import './TranslationForm.css';
 
 const Label = ({
   getExample,
-  htmlFor,
   labels,
 }: {
   getExample: (label: string) => number | undefined;
-  htmlFor: string;
   labels: Array<{ label: string; plural: boolean }>;
 }) => (
-  <label htmlFor={htmlFor}>
+  <label>
     {labels.map(({ label, plural }, index) => {
       const example = plural && getExample(label);
       const key = label + index;
@@ -58,9 +56,10 @@ const Label = ({
  * interface to the user. The translation is stored as an AST, and changes
  * are made directly to that AST.
  */
-export function TranslationForm(): React.ReactElement<'div'> {
+export function TranslationForm(): React.ReactElement<'div'> | null {
   const { entity } = useContext(EntityView);
-  const { fields, focusField, machinery } = useContext(EditorData);
+  const { fields, focusField, machinery, pk, sourceView } =
+    useContext(EditorData);
   const [shouldFocus, setShouldFocus] = useState(true);
 
   const locale = useContext(Locale);
@@ -77,7 +76,7 @@ export function TranslationForm(): React.ReactElement<'div'> {
 
   // Reset the currently focused element when the entity changes or
   // the translation changes from an external source.
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!searchBoxHasFocus()) {
       setShouldFocus(true);
     }
@@ -102,14 +101,16 @@ export function TranslationForm(): React.ReactElement<'div'> {
     [fields, focusField, shouldFocus],
   );
 
-  return fields.length === 1 ? (
-    <EditField
-      ref={fieldValues[0].ref}
-      key={entity.pk}
-      defaultValue={fields[0].handle.current.value}
-      index={0}
-      singleField
-    />
+  return pk !== entity.pk ? null : fields.length === 1 ? (
+    <div className='singlefield'>
+      <EditField
+        ref={fieldValues[0].ref}
+        key={sourceView ? 's!' + pk : pk}
+        defaultValue={fields[0].handle.current.value}
+        index={0}
+        singleField
+      />
+    </div>
   ) : (
     <div className='translationform' key={entity.pk}>
       <table>
@@ -124,13 +125,13 @@ export function TranslationForm(): React.ReactElement<'div'> {
             return (
               <tr key={id}>
                 <td>
-                  <Label getExample={getExample} htmlFor={id} labels={labels} />
+                  <Label getExample={getExample} labels={labels} />
                 </td>
                 <td>
                   <EditPattern
+                    key={pk + id}
                     ref={ref}
                     defaultValue={value}
-                    id={id}
                     index={i}
                     name={name}
                     onFocus={onFocus}

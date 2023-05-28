@@ -55,27 +55,32 @@ function mountForm(string) {
     store,
   );
 
-  return [wrapper, actions, () => result];
+  const view = wrapper
+    .find('.singlefield')
+    .instance()
+    .querySelector('.cm-content').cmView.view;
+
+  return { actions, getResult: () => result, view, wrapper };
 }
 
 describe('<TranslationForm> with one field', () => {
-  it('renders a textarea with some content', () => {
-    const [wrapper] = mountForm('Salut');
-
-    expect(wrapper.find('textarea').prop('defaultValue')).toBe('Salut');
+  it('renders an editor with some content', () => {
+    const { view } = mountForm('Salut');
+    expect(view.state.doc.toString()).toBe('Salut');
   });
 
-  it('calls the updateTranslation function on change', () => {
-    const [wrapper, _, getResult] = mountForm('hello');
-    const onChange = wrapper.find('textarea').prop('onChange');
-    act(() => onChange({ currentTarget: { value: 'good bye' } }));
-    wrapper.update();
-
+  it('updates the result on change', () => {
+    const { view, getResult } = mountForm('hello');
+    act(() =>
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: 'good bye' },
+      }),
+    );
     expect(getResult()[0].value).toBe('good bye');
   });
 
   it('updates the translation when setEditorSelection is passed without focus', async () => {
-    const [wrapper, actions, getResult] = mountForm('Foo');
+    const { wrapper, actions, getResult } = mountForm('Foo');
     act(() => actions.setEditorSelection(', Bar'));
     wrapper.update();
 
@@ -83,11 +88,10 @@ describe('<TranslationForm> with one field', () => {
   });
 
   it('updates the translation when setEditorSelection is passed with focus', async () => {
-    const [wrapper, actions, getResult] = mountForm('Hello');
+    const { actions, getResult, view, wrapper } = mountForm('Hello');
     act(() => {
-      const ta = wrapper.find('textarea');
-      ta.simulate('focus');
-      ta.getDOMNode().setSelectionRange(5, 5);
+      view.focus();
+      view.dispatch({ selection: { anchor: view.state.doc.length } });
       actions.setEditorSelection(', World');
     });
     wrapper.update();

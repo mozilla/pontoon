@@ -38,13 +38,6 @@
   color: #7bc876;
 }
 
-.translationform table tr > td > textarea {
-  min-height: 0;
-  height: 24px;
-  margin: 2px 0;
-  padding: 0 4px;
-}
-
 .translationform .accesskey-input {
   border: none;
   box-sizing: border-box;
@@ -81,6 +74,46 @@
 }
 
 .translationform .accesskeys .key.active,
-.translationform .accesskeys .key:hover {
+.translationform .accesskeys .key:hover:not(:disabled) {
   border-color: #7bc876;
+}
+
+.translationform .accesskeys .key:disabled {
+  cursor: default;
+}
+
+.cm-editor {
+  background: white;
+  color: #444;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 6px 8px 6px 4px;
+}
+
+.cm-editor .cm-scroller {
+  font-family: inherit;
+}
+
+.singlefield .cm-content,
+.singlefield .cm-gutter {
+  min-height: calc(100px - 12px);
+}
+
+.translationform .cm-editor {
+  margin: 2px 0;
+  padding: 0;
+}
+
+.translationform .cm-content {
+  padding: 2px 0;
+}
+
+.editor input[readonly],
+.editor .readonly .cm-editor {
+  background: #c7cacf;
+  cursor: default;
+}
+
+[data-script='Arabic'] .cm-editor {
+  font-size: 15px;
 }

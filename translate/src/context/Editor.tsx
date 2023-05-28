@@ -30,9 +30,9 @@ import { UnsavedActions } from './UnsavedChanges';
 
 export type EditFieldHandle = {
   get value(): string;
-  set value(next: string);
   focus(): void;
-  setSelection(content: string): void;
+  setSelection(text: string): void;
+  setValue(text: string): void;
 };
 
 export type EditorField = {
@@ -51,6 +51,12 @@ export type EditorField = {
 };
 
 export type EditorData = Readonly<{
+  /**
+   * Should match `useContext(EntityView).pk`.
+   * If it doesn't, the entity has changed but data isn't updated yet.
+   */
+  pk: number;
+
   /** Is a request to send a new translation running? */
   busy: boolean;
 
@@ -100,9 +106,6 @@ export type EditorActions = {
   /** If `format: 'ftl'`, must be called with the source of a full entry */
   setEditorFromHistory(value: string): void;
 
-  /** Set the result value of the active input */
-  setEditorFromInput(idx: number, value: string): void;
-
   /** @param manual Set `true` when value set due to direct user action */
   setEditorFromHelpers(
     value: string,
@@ -111,6 +114,9 @@ export type EditorActions = {
   ): void;
 
   setEditorSelection(content: string): void;
+
+  /** Set the result value of the active input */
+  setResultFromInput(idx: number, value: string): void;
 
   toggleSourceView(): void;
 };
@@ -137,6 +143,7 @@ const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
 });
 
 const initEditorData: EditorData = {
+  pk: 0,
   busy: false,
   entry: { id: '', value: null, attributes: new Map() },
   focusField: { current: null },
@@ -151,8 +158,8 @@ const initEditorActions: EditorActions = {
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
   setEditorFromHistory: () => {},
-  setEditorFromInput: () => {},
   setEditorSelection: () => {},
+  setResultFromInput: () => {},
   toggleSourceView: () => {},
 };
 
@@ -188,13 +195,10 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       clearEditor() {
         setState((state) => {
           for (const field of state.fields) {
-            field.handle.current.value = '';
+            field.handle.current.setValue('');
           }
           return state;
         });
-        setResult((result) =>
-          result.map(({ name, keys }) => ({ name, keys, value: '' })),
-        );
       },
 
       setEditorBusy: (busy) =>
@@ -204,15 +208,14 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
         setState((prev) => {
           const { fields, focusField, sourceView } = prev;
           const field = focusField.current ?? fields[0];
-          field.handle.current.value = str;
+          field.handle.current.setValue(str);
           let next = fields.slice();
-          let result = buildResult(next);
           if (sourceView) {
+            const result = buildResult(next);
             next = editSource(buildMessageEntry(prev.entry, result));
             focusField.current = next[0];
-            result = buildResult(next);
+            setResult(result);
           }
-          setResult(result);
           return {
             ...prev,
             machinery: { manual, translation: str, sources },
@@ -238,18 +241,11 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
             }
           } else {
             next.fields = editMessageEntry(prev.initial);
-            next.fields[0].handle.current.value = str;
+            next.fields[0].handle.current.setValue(str);
           }
           next.focusField.current = next.fields[0];
           setResult(buildResult(next.fields));
           return next;
-        }),
-
-      setEditorFromInput: (idx, value) =>
-        setResult((prev) => {
-          const res = prev.slice();
-          res[idx] = { ...res[idx], value };
-          return res;
         }),
 
       setEditorSelection: (content) =>
@@ -257,8 +253,18 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
           const { fields, focusField } = state;
           const field = focusField.current ?? fields[0];
           field.handle.current.setSelection(content);
-          setResult(buildResult(fields));
           return state;
+        }),
+
+      setResultFromInput: (idx, value) =>
+        setResult((prev) => {
+          if (prev.length > idx) {
+            const res = prev.slice();
+            res[idx] = { ...res[idx], value };
+            return res;
+          } else {
+            return prev;
+          }
         }),
 
       toggleSourceView: () =>
@@ -325,6 +331,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
     const fields = sourceView ? editSource(source) : editMessageEntry(entry);
 
     setState(() => ({
+      pk: entity.pk,
       busy: false,
       entry,
       fields,

@@ -6,6 +6,11 @@ export type UnsavedChanges = Readonly<{
 }>;
 
 export type UnsavedActions = {
+  /**
+   * The `callback` is called as `setTimout(callback)`
+   * to avoid an occasional React complaint about
+   * updating one component while rendering a different component.
+   */
   checkUnsavedChanges(callback: () => void): void;
 
   /**
@@ -50,7 +55,7 @@ export function UnsavedChangesProvider({
           if (prev.check()) {
             return { check: () => true, onIgnore: callback };
           } else {
-            callback();
+            setTimeout(callback);
             return prev;
           }
         }),
@@ -60,11 +65,7 @@ export function UnsavedChangesProvider({
           const { onIgnore } = prev;
           if (onIgnore) {
             if (ignore) {
-              // Needs to happen after the return to avoid an occasional React
-              // complaint about updating one component while rendering a
-              // different component.
               setTimeout(onIgnore);
-
               return { check: () => false, onIgnore: null };
             }
             return { ...prev, onIgnore: null };

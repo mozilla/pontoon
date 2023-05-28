@@ -9,6 +9,9 @@ const emptyHandleRef = (value: string) => ({
     value,
     focus() {},
     setSelection() {},
+    setValue(text: string) {
+      this.value = text;
+    },
   },
 });
 

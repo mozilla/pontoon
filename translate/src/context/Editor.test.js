@@ -219,10 +219,9 @@ describe('<EditorProvider>', () => {
   });
 
   it('clears a rich Fluent value', () => {
-    let editor, result, actions;
+    let editor, actions;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       actions = useContext(EditorActions);
       return null;
     };
@@ -256,10 +255,6 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: '' },
-      { name: '', keys: [{ type: '*', value: 'other' }], value: '' },
-    ]);
   });
 
   it('sets editor from history', () => {
@@ -271,8 +266,6 @@ describe('<EditorProvider>', () => {
       return null;
     };
     const wrapper = mountSpy(Spy, 'ftl', `key = VALUE\n`);
-
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'VALUE' }]);
 
     const source = ftl`
       key =
@@ -304,8 +297,8 @@ describe('<EditorProvider>', () => {
       ],
     });
     expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: 'ONE' },
-      { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
+      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });
 
@@ -340,15 +333,15 @@ describe('<EditorProvider>', () => {
         },
       ],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: source }]);
+    expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
 
     act(() => actions.toggleSourceView());
     wrapper.update();
 
     expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
     expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: 'ONE' },
-      { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
+      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
+      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
     ]);
   });
 });
