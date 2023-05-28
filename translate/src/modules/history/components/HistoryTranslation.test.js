@@ -1,4 +1,4 @@
-import * as Fluent from '@fluent/react';
+import Fluent from '@fluent/react';
 import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
