@@ -209,5 +209,3 @@ button {  width: auto; overflow: visible; }
 }
 
 .clearfix:after { clear: both; }
-/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
-.clearfix { zoom: 1; }
