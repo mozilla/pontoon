@@ -25,10 +25,3 @@
   font-weight: 400;
   src: url('../fonts/OpenSans-Italic.woff2') format('woff2');
 }
-
-@font-face {
-  font-family: 'Ubuntu Regular';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/Ubuntu-RI.ttf');
-}
