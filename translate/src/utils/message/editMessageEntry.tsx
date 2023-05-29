@@ -42,7 +42,7 @@ function* genPatterns(
       const plurals = findPluralSelectors(msg);
       for (const { keys, value } of msg.variants) {
         const labels = keys.map((key, i) => ({
-          label: 'value' in key ? key.value : 'other',
+          label: key.value || 'other',
           plural: plurals.includes(i),
         }));
         yield [keys, labels, patternAsString(value)];

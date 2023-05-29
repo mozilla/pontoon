@@ -1,7 +1,5 @@
-/* global global */
-
 import { createMemoryHistory } from 'history';
-import { act } from 'react-dom/test-utils';
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import sinon from 'sinon';
 
 import * as BatchActions from '~/modules/batchactions/actions';
@@ -14,33 +12,6 @@ import {
 } from '~/test/store';
 
 import { EntitiesList } from './EntitiesList';
-
-class MockIntersectionObserver {
-  static map = new Map();
-
-  static set(isIntersecting) {
-    for (let callback of MockIntersectionObserver.map.values()) {
-      callback([{ isIntersecting }]);
-    }
-  }
-
-  constructor(callback) {
-    MockIntersectionObserver.map.set(this, callback);
-  }
-  disconnect() {
-    MockIntersectionObserver.map.delete(this);
-  }
-  observe() {}
-}
-
-let origIntersectionObserver;
-beforeAll(() => {
-  origIntersectionObserver = global.IntersectionObserver;
-  global.IntersectionObserver = MockIntersectionObserver;
-});
-afterAll(() => {
-  global.IntersectionObserver = origIntersectionObserver;
-});
 
 // Entities shared between tests
 const ENTITIES = [
@@ -60,6 +31,7 @@ describe('<EntitiesList>', () => {
     BatchActions.resetSelection.resetHistory();
     BatchActions.toggleSelection.resetHistory();
     EntitiesActions.getEntities.resetHistory();
+    mockAllIsIntersecting(true);
   });
 
   afterAll(() => {
@@ -118,6 +90,7 @@ describe('<EntitiesList>', () => {
 
   it('excludes current entities when requesting new entities', () => {
     jest.useFakeTimers();
+    mockAllIsIntersecting(false);
 
     const store = createReduxStore();
     store.dispatch({
@@ -127,7 +100,7 @@ describe('<EntitiesList>', () => {
     });
     mountComponentWithStore(EntitiesList, store);
 
-    act(() => MockIntersectionObserver.set(true));
+    mockAllIsIntersecting(true);
     jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
 
     expect(EntitiesActions.getEntities.args[0][1]).toEqual(ENTITIES);

@@ -32,11 +32,14 @@ export function HelperSelectionProvider({
   children: React.ReactElement;
 }) {
   const translation = useActiveTranslation();
-  const [state, setState] = useState<HelperSelection>(() => ({
+  const [state, setState] = useState(() => ({
     ...initHelpers,
     setElement: (element) => setState((prev) => ({ ...prev, element })),
     setTab: (tab) => setState((prev) => ({ ...prev, tab, element: -1 })),
-  }));
+  })) as [
+    HelperSelection,
+    React.Dispatch<React.SetStateAction<HelperSelection>>,
+  ];
 
   useEffect(() => state.setElement(-1), [translation]);
 
