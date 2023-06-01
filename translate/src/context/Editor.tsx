@@ -181,8 +181,7 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const readonly = useReadonlyEditor();
   const machinery = useContext(MachineryTranslations);
   const { setUnsavedChanges } = useContext(UnsavedActions);
-  const { resetFailedChecks, source: failedChecksSource } =
-    useContext(FailedChecksData);
+  const { resetFailedChecks } = useContext(FailedChecksData);
 
   const [state, setState] = useState(initEditorData);
   const [result, setResult] = useState<EditorResult>([]);
@@ -366,31 +365,20 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
-    const hasChanges = () => {
+    resetFailedChecks();
+
+    // Changes in `result` need to be reflected in `UnsavedChanges`,
+    // but the latter needs to be defined at a higher level to make it
+    // available in `EntitiesList`. Therefore, that state is managed here.
+    // Let's also avoid the calculation, unless it's actually required.
+    setUnsavedChanges(() => {
       const { entry, initial, sourceView } = state;
       const next = sourceView
         ? parseEntryFromFluentSource(entry, result[0].value)
         : buildMessageEntry(entry, result);
       return !pojoEquals(initial, next);
-    };
-
-    // Changes in `value` need to be reflected in `UnsavedChanges`,
-    // but the latter needs to be defined at a higher level to make it
-    // available in `EntitiesList`. Therefore, that state is managed here.
-    // Let's also avoid the calculation, unless it's actually required.
-    if (failedChecksSource && hasChanges()) {
-      setUnsavedChanges(() => true);
-      resetFailedChecks();
-    } else {
-      setUnsavedChanges(hasChanges);
-    }
-  }, [
-    failedChecksSource,
-    state.entry,
-    state.initial,
-    state.sourceView,
-    result,
-  ]);
+    });
+  }, [result]);
 
   return (
     <EditorData.Provider value={state}>
