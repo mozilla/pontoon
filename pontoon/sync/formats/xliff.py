@@ -17,7 +17,11 @@ class XLIFFEntity(VCSTranslation):
     def __init__(self, order, unit):
         self.order = order
         self.unit = unit
+        # print(f"Unit: {unit}, ID: {unit.getid()}")  # Add this line
         self.strings = {None: self.target_string} if self.target_string else {}
+        # print(f"Initialized XLIFFEntity with key: {self.key}")
+        # print(f"Initialized XLIFFEntity with target string: {self.target_string}")
+
 
     @property
     def key(self):
@@ -59,6 +63,7 @@ class XLIFFEntity(VCSTranslation):
     @target_string.setter
     def target_string(self, value):
         self.unit.settarget(value)
+        # print(f"Set target string to: {value}")
 
     def sync_changes(self):
         """
@@ -88,44 +93,98 @@ class XLIFFEntity(VCSTranslation):
 
 
 class XLIFFResource(ParsedResource):
-    def __init__(self, path, xliff_file):
+    def __init__(self, path, xliff_file, reference_path=None):
         self.path = path
         self.xliff_file = xliff_file
+        self.reference_path = reference_path
         self.entities = [
             XLIFFEntity(order, unit) for order, unit in enumerate(self.xliff_file.units)
         ]
 
     @property
     def translations(self):
+        # print(f"XLIFFResource translations: {self.entities}")
         return self.entities
+        
 
     def save(self, locale):
+        """
+        Load the reference XLIFF file, modify it with translations made to this 
+        Resource instance, and save it over the locale-specific resource.
+        """
+        if self.reference_path is None:
+            raise ValueError("reference_path cannot be None")
+        
         for entity in self.entities:
             entity.sync_changes()
 
-        locale_code = locale.code
+        # Load the reference XLIFF file
+        with open(self.reference_path, 'r') as f:
+            reference_xml = f.read().encode("utf-8")
+            reference_xliff_file = xliff.xlifffile(reference_xml)
 
-        # TODO: should be made iOS specific
-        # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
-        locale_mapping = {
-            "bn-IN": "bn",
-            "ga-IE": "ga",
-            "nb-NO": "nb",
-            "nn-NO": "nn",
-            "sv-SE": "sv",
-        }
+         # Update self.entities with new strings from the reference XLIFF file
+        self.entities = [
+            XLIFFEntity(order, unit) for order, unit in enumerate(reference_xliff_file.units)
+        ]
 
-        if locale_code in locale_mapping:
-            locale_code = locale_mapping[locale_code]
+        # Create a dictionary mapping keys to entities
+        # entities_dict = {entity.key: entity for entity in self.entities}
+        entities_dict = {entity.key.replace('\x04', ''): entity for entity in self.entities}
+        
+        # print(f"Keys in entities_dict: {entities_dict.keys()}")
 
-        # Set target-language if not set
-        file_node = self.xliff_file.namespaced("file")
-        for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            if not node.get("target-language"):
-                node.set("target-language", locale_code)
+        # Iterate over each unit in the reference XLIFF file
+        for reference_unit in reference_xliff_file.units:
+            reference_entity = XLIFFEntity(0, reference_unit)
+            #If we have a translation for this entity, add it to the reference entity
 
+            reference_entity_key = reference_entity.key.replace('\x04', '')
+            if reference_entity_key in entities_dict: 
+                entity = entities_dict[reference_entity_key]
+                print(f"Entity strings: {entity.strings}")  # Print entity.strings
+
+                if entity.strings and locale in entity.strings:
+                    reference_entity.target_string = entity.strings[locale]
+                    reference_entity.sync_changes()
+              
+                else: 
+                    # If there is no translation, remove the target attribute
+                    xml = reference_entity.unit.xmlelement
+                    target = xml.find(reference_entity.unit.namespaced("target"))
+                    if target is not None:
+                        xml.remove(target)
+        
+        # Save the modified reference XLIFF file to the locale-specific resource
         with open(self.path, "wb") as f:
-            f.write(bytes(self.xliff_file))
+            f.write(bytes(reference_xliff_file))
+
+        # for entity in self.entities:
+        #     entity.sync_changes()
+
+        # locale_code = locale.code
+
+        # # TODO: should be made iOS specific
+        # # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
+        # locale_mapping = {
+        #     "bn-IN": "bn",
+        #     "ga-IE": "ga",
+        #     "nb-NO": "nb",
+        #     "nn-NO": "nn",
+        #     "sv-SE": "sv",
+        # }
+
+        # if locale_code in locale_mapping:
+        #     locale_code = locale_mapping[locale_code]
+
+        # # Set target-language if not set
+        # file_node = self.xliff_file.namespaced("file")
+        # for node in self.xliff_file.document.getroot().iterchildren(file_node):
+        #     if not node.get("target-language"):
+        #         node.set("target-language", locale_code)
+
+        # with open(self.path, "wb") as f:
+        #     f.write(bytes(self.xliff_file))
 
 
 def parse(path, source_path=None, locale=None):
@@ -137,4 +196,4 @@ def parse(path, source_path=None, locale=None):
         except etree.XMLSyntaxError as err:
             raise ParseError(f"Failed to parse {path}: {err}")
 
-    return XLIFFResource(path, xliff_file)
+    return XLIFFResource(path, xliff_file, source_path)

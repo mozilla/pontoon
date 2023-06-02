@@ -260,7 +260,7 @@ def get_download_content(slug, code, part):
 
         # Get source file if needed
         source_path = None
-        if resource.is_asymmetric:
+        if resource.is_asymmetric or resource.format == "xliff":
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
                 source_prefixes, dirnames, vcs_project, resource.path
