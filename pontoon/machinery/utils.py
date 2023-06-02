@@ -96,26 +96,30 @@ def get_google_automl_translation(text, locale, format="text"):
             "message": "Bad Request: Missing Project ID.",
         }
 
-    model_id = locale.google_automl_model
-
     # Google AutoML Translation requires location "us-central1"
     location = "us-central1"
 
     parent = f"projects/{project_id}/locations/{location}"
+    model_id = locale.google_automl_model
     model_path = f"{parent}/models/{model_id}"
 
-    response = client.translate_text(
-        request={
-            "contents": [text],
-            "target_language_code": locale.google_translate_code,
-            "model": model_path,
-            "source_language_code": "en",
-            "parent": parent,
-            "mime_type": "text/html" if format == "html" else "text/plain",
-        }
-    )
+    request_params = {
+        "contents": [text],
+        "target_language_code": locale.google_translate_code,
+        "model": model_path,
+        "source_language_code": "en",
+        "parent": parent,
+        "mime_type": "text/html" if format == "html" else "text/plain",
+    }
 
-    if len(response.translations) == 0:
+    # Get translations
+    response = client.translate_text(request=request_params)
+
+    translations = response.translations
+    if response.glossary_translations:
+        translations = response.glossary_translations
+
+    if len(translations) == 0:
         return {
             "status": False,
             "message": "No translations found.",
@@ -123,7 +127,7 @@ def get_google_automl_translation(text, locale, format="text"):
     else:
         return {
             "status": True,
-            "translation": response.translations[0].translated_text,
+            "translation": translations[0].translated_text,
         }
 
 
