@@ -130,6 +130,7 @@ class XLIFFResource(ParsedResource):
                     {},
                     copy.copy(entity.comments),
                     entity.order,
+                    entity.unit
                 )
 
         # Open the file at the provided path
