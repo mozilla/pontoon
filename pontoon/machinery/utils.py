@@ -1,7 +1,11 @@
+import google.auth
+import google.auth.transport.requests
 import json
 import Levenshtein
 import logging
 import operator
+import os
+import re
 import requests
 
 from collections import defaultdict
@@ -9,6 +13,7 @@ from functools import reduce
 from html import unescape
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
+from google.oauth2 import service_account
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -112,6 +117,8 @@ def get_google_automl_translation(text, locale, format="text"):
         "mime_type": "text/html" if format == "html" else "text/plain",
     }
 
+    use_placeables_glossary(text, client, project_id, location, request_params)
+
     # Get translations
     response = client.translate_text(request=request_params)
 
@@ -129,6 +136,85 @@ def get_google_automl_translation(text, locale, format="text"):
             "status": True,
             "translation": translations[0].translated_text,
         }
+
+
+def use_placeables_glossary(text, client, project_id, location, request_params):
+    placeables = re.findall(r"(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})", text)
+
+    if not placeables:
+        return
+
+    glossary_id = "placeables"
+    glossary_path = client.glossary_path(project_id, location, glossary_id)
+    url = f"https://translation.googleapis.com/v3/{glossary_path}/glossaryEntries"
+
+    auth_req = google.auth.transport.requests.Request()
+    credentials = service_account.Credentials.from_service_account_file(
+        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+    credentials.refresh(auth_req)
+    headers = {
+        "Authorization": f"Bearer {credentials.token}",
+        "Content-Type": "application/json; charset=utf-8",
+    }
+
+    # Retrieve already stored glossary terms
+    existing_terms = get_existing_terms(url, headers)
+
+    # Store any new terms to the glossary
+    if existing_terms:
+        new_terms = set([term for term in placeables if term not in existing_terms])
+
+        if new_terms:
+            store_new_terms(url, headers, new_terms)
+
+    glossary_config = translate.TranslateTextGlossaryConfig(glossary=glossary_path)
+    request_params["glossary_config"] = glossary_config
+
+
+def get_existing_terms(url, headers):
+    try:
+        r = requests.get(url, headers=headers)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        log.error(f"Retrieving existing glossary terms failed: {e}")
+        return None
+
+    return [
+        term["text"]
+        for termset in r.json()["glossaryEntries"]
+        for term in termset["termsSet"]["terms"]
+        if term["languageCode"] == "en"
+    ]
+
+
+def store_new_terms(url, headers, new_terms):
+    locale_codes = ["en"] + sorted(
+        base.models.Locale.objects.exclude(google_translate_code__in=["en", ""])
+        .order_by()  # Clear default ordering on the Locale model
+        .values_list("google_translate_code", flat=True)
+        .distinct()
+    )
+
+    for new_term in new_terms:
+        data = {
+            "termsSet": {
+                "terms": [
+                    {
+                        "languageCode": locale_code,
+                        "text": new_term,
+                    }
+                    for locale_code in locale_codes
+                ],
+            }
+        }
+
+        try:
+            r = requests.post(url, headers=headers, data=json.dumps(data))
+            r.raise_for_status()
+        except requests.exceptions.RequestException:
+            log.error(f"Adding new glossary terms failed: {r.content}")
 
 
 def get_concordance_search_data(text, locale):
