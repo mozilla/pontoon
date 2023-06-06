@@ -18,7 +18,6 @@ from pontoon.pretranslation.pretranslate import (
 )
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import serial_task
-from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import bulk_run_checks
 
 
@@ -125,19 +124,6 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
             if not pretranslations:
                 continue
-
-            failed_checks = run_checks(
-                entity,
-                locale.code,
-                entity.string,
-                pretranslations[0],
-                use_tt_checks=False,
-            )
-
-            if failed_checks:
-                pretranslations = get_pretranslations(
-                    entity, locale, preserve_placeables=True
-                )
 
             for string, plural_form, user in pretranslations:
                 t = Translation(

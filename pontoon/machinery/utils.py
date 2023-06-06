@@ -25,9 +25,9 @@ log = logging.getLogger(__name__)
 MAX_RESULTS = 5
 
 
-def get_google_translate_data(text, locale, format="text", preserve_placeables=False):
+def get_google_translate_data(text, locale, format="text"):
     res = (
-        get_google_automl_translation(text, locale, format, preserve_placeables)
+        get_google_automl_translation(text, locale, format)
         if locale.google_automl_model
         else get_google_generic_translation(text, locale.google_translate_code, format)
     )
@@ -82,7 +82,7 @@ def get_google_generic_translation(text, locale_code, format="text"):
         }
 
 
-def get_google_automl_translation(text, locale, format="text", preserve_placeables=False):
+def get_google_automl_translation(text, locale, format="text"):
     try:
         client = translate.TranslationServiceClient()
     except DefaultCredentialsError as e:
@@ -117,8 +117,7 @@ def get_google_automl_translation(text, locale, format="text", preserve_placeabl
         "mime_type": "text/html" if format == "html" else "text/plain",
     }
 
-    if preserve_placeables:
-        use_placeables_glossary(text, client, project_id, location, request_params)
+    use_placeables_glossary(text, client, project_id, location, request_params)
 
     # Get translations
     response = client.translate_text(request=request_params)

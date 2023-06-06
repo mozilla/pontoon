@@ -23,7 +23,7 @@ parser = FluentParser()
 serializer = FluentSerializer()
 
 
-def get_pretranslations(entity, locale, preserve_placeables=False):
+def get_pretranslations(entity, locale):
     """
     Get pretranslations for the entity-locale pair using internal translation memory and
     Google's machine translation.
@@ -34,7 +34,6 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
 
     :arg Entity entity: the Entity object
     :arg Locale locale: the Locale object
-    :arg boolean preserve_placeables
 
     :returns: a list of tuples, consisting of:
         - a pretranslation of the entity
@@ -46,7 +45,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
 
     if entity.resource.format == "ftl":
         entry = parser.parse_entry(source)
-        pretranslate = ApplyPretranslation(locale, entry, get_pretranslated_data, preserve_placeables)
+        pretranslate = ApplyPretranslation(locale, entry, get_pretranslated_data)
 
         try:
             pretranslate.visit(entry)
@@ -62,7 +61,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
         return [(pretranslation, None, author)]
 
     else:
-        pretranslation, service = get_pretranslated_data(source, locale, preserve_placeables)
+        pretranslation, service = get_pretranslated_data(source, locale)
 
         if pretranslation is None:
             return []
@@ -77,7 +76,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
             ]
 
 
-def get_pretranslated_data(source, locale, preserve_placeables):
+def get_pretranslated_data(source, locale):
     # Empty strings do not need translation
     if re.search("^\\s*$", source):
         return source, "tm"
@@ -90,7 +89,9 @@ def get_pretranslated_data(source, locale, preserve_placeables):
 
     # Fetch from Google Translate
     elif locale.google_translate_code:
-        gt_response = get_google_translate_data(text=source, locale=locale, preserve_placeables=preserve_placeables)
+        gt_response = get_google_translate_data(
+            text=source, locale=locale, format="text"
+        )
         if gt_response["status"]:
             return gt_response["translation"], "gt"
 
