@@ -175,6 +175,7 @@ class ApplyPretranslation(Transformer):
         locale: Locale,
         entry: FTL.EntryType,
         callback: Callable[[str, str], tuple[Optional[str], str]],
+        preserve_placeables: bool,
     ):
         prep = PreparePretranslation(locale)
         prep.visit(entry)
@@ -234,7 +235,7 @@ class ApplyPretranslation(Transformer):
             # hence we replace newline characters with spaces.
             source = source.replace("\n", " ")
 
-            translation, service = self.callback(source, self.locale)
+            translation, service = self.callback(source, self.locale, self.preserve_placeables)
             if translation is None:
                 raise ValueError(
                     f"Pretranslation for `{source}` to {self.locale.code} not available."
