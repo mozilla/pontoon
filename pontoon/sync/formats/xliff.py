@@ -28,6 +28,7 @@ class XLIFFEntity(VCSTranslation):
         strings,
         comments=None,
         order=None,
+        unit=None
     ):
         super().__init__(
             key=key,
@@ -39,6 +40,7 @@ class XLIFFEntity(VCSTranslation):
             fuzzy=False,
             order=order,
         )
+        self.unit = unit
 
     def __repr__(self):
         return "<XLIFFEntity {key}>".format(key=self.key)
@@ -150,7 +152,7 @@ class XLIFFResource(ParsedResource):
                 source_string_plural = ""
 
                 # Get the translated string for the unit. If there's no target string, this will be an empty dictionary
-                target_string = str(unit.get_rich_target()[0]) if unit.get_rich_target() else None
+                target_string = unit.get_rich_target()[0] if unit.get_rich_target() else None
                 strings = {None: target_string} if target_string else {}
 
 
@@ -165,7 +167,9 @@ class XLIFFResource(ParsedResource):
                     strings,
                     comments,
                     order,
+                    unit
                 )
+                print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
                 self.entities[entity.key] = entity
 
@@ -182,10 +186,10 @@ class XLIFFResource(ParsedResource):
         return self.entities
 
     def save(self, locale):
-        for entity in self.entities:
-            entity.sync_changes()
+        # for entity in self.entities:
+        #     entity.sync_changes()
 
-        locale_code = locale.code
+        # locale_code = locale.code
 
         # TODO: should be made iOS specific
         # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
@@ -196,7 +200,7 @@ class XLIFFResource(ParsedResource):
             "nn-NO": "nn",
             "sv-SE": "sv",
         }
-
+        locale_code = locale.code
         if locale_code in locale_mapping:
             locale_code = locale_mapping[locale_code]
 
@@ -205,9 +209,14 @@ class XLIFFResource(ParsedResource):
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
             if not node.get("target-language"):
                 node.set("target-language", locale_code)
+        
+        for entity in self.entities.values():
+            entity.sync_changes()
 
         with open(self.path, "wb") as f:
             f.write(bytes(self.xliff_file))
+        
+        return
 
 # OLD PARSE FUNCTION
 # def parse(path, source_path=None, locale=None):

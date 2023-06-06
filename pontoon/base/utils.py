@@ -294,11 +294,13 @@ def get_download_content(slug, code, part):
                 Q(approved=True) | Q(pretranslated=True)
             ).filter(locale=locale)
 
-        for vcs_translation in resource_file.translations:
-            key = vcs_translation.key
-            if key in entities_dict:
-                entity = entities_dict[key]
+        print(resource_file.translations)
+        for key, vcs_translation in resource_file.translations.items():
+            entity_key = vcs_translation.key
+            if entity_key in entities_dict:
+                entity = entities_dict[entity_key]
                 vcs_translation.update_from_db(entity)
+
 
         resource_file.save(locale)
 
