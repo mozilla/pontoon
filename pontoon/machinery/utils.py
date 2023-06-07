@@ -174,6 +174,8 @@ def use_placeables_glossary(text, client, project_id, location, request_params):
 
 
 def get_existing_terms(url, headers):
+    # TODO: Placeables should be cached in a new DB table, that will be updated in
+    # store_new_terms() and synced daily from upstream to account for any drift.
     try:
         r = requests.get(url, headers=headers)
         r.raise_for_status()
