@@ -9,24 +9,26 @@ class PythonFormatNamedString:
 
 
 class PythonFormatString:
-    parser = r"(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})"
+    parser = re.compile(r"(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})")
 
 
 class PythonFormattingVariable:
-    parser = r"(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))"
+    parser = re.compile(
+        r"(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))"
+    )
     match_index = 0
 
 
 class FluentTerm:
-    parser = r"({ ?-[^}]* ?})"
+    parser = re.compile(r"({ ?-[^}]* ?})")
 
 
 class FluentParametrizedTerm:
-    parser = r"({ ?-[^}]*([^}]*: ?[^}]*) ?})"
+    parser = re.compile(r"({ ?-[^}]*([^}]*: ?[^}]*) ?})")
 
 
 class FluentFunction:
-    parser = r"({ ?[A-W0-9\-_]+[^}]* ?})"
+    parser = re.compile(r"({ ?[A-W0-9\-_]+[^}]* ?})")
 
 
 def get_placeables(text):
