@@ -17,12 +17,12 @@ class XLIFFEntity(VCSTranslation):
     def __init__(
         self,
         key,
+        context,
         source_string,
         source_string_plural,
         strings,
         comments=None,
         order=None,
-        unit=None
     ):
         super().__init__(
             key=key,
@@ -34,7 +34,6 @@ class XLIFFEntity(VCSTranslation):
             fuzzy=False,
             order=order,
         )
-        self.unit = unit
 
     def __repr__(self):
         return "<XLIFFEntity {key}>".format(key=self.key)
@@ -80,10 +79,10 @@ class XLIFFResource(ParsedResource):
                     entity.key,
                     "",
                     "",
+                    "",
                     {},
                     copy.copy(entity.comments),
-                    entity.order,
-                    entity.unit
+                    entity.order
                 )
 
         # Open the file at the provided path
@@ -102,6 +101,7 @@ class XLIFFResource(ParsedResource):
             for order, unit in enumerate(self.xliff_file.units):
                 # Get the unit's ID and source string
                 key = unit.getid()
+                context = unit.xmlelement.get("id")
                 source_string = unit.rich_source[0]
                 source_string_plural = ""
 
@@ -116,12 +116,12 @@ class XLIFFResource(ParsedResource):
                 # Create a new XLIFFEntity from the unit
                 entity = XLIFFEntity(
                     key,
+                    context,
                     source_string,
                     source_string_plural,
                     strings,
                     comments,
-                    order,
-                    unit
+                    order
                 )
                 print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
@@ -129,11 +129,10 @@ class XLIFFResource(ParsedResource):
 
     @property
     def translations(self):
-        return self.entities
+        # return self.entities
+        return sorted(self.entities.values(), key=lambda e: e.order)
 
     def save(self, locale):
-        # TODO: should be made iOS specific
-        # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
         locale_mapping = {
             "bn-IN": "bn",
             "ga-IE": "ga",
@@ -154,10 +153,9 @@ class XLIFFResource(ParsedResource):
         for entity in self.entities.values():
             entity.sync_changes()
 
+        # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
             f.write(bytes(self.xliff_file))
-        
-        return
 
 def parse(path, source_path=None, locale=None):
     if source_path is not None:
