@@ -14,12 +14,6 @@ class XLIFFEntity(VCSTranslation):
     """
     Interface for modifying a single entity in an xliff file.
     """
-    # OLD CODE
-    # def __init__(self, order, unit):
-    #     self.order = order
-    #     self.unit = unit
-    #     self.strings = {None: self.target_string} if self.target_string else {}
-
     def __init__(
         self,
         key,
@@ -44,47 +38,6 @@ class XLIFFEntity(VCSTranslation):
 
     def __repr__(self):
         return "<XLIFFEntity {key}>".format(key=self.key)
-
-    # @property
-    # def key(self):
-    #     return self.unit.getid()
-
-    # @property
-    # def context(self):
-    #     return self.unit.xmlelement.get("id") or ""
-
-    # @property
-    # def source_string(self):
-    #     return str(self.unit.rich_source[0])
-
-    # @property
-    # def source_string_plural(self):
-    #     return ""
-
-    # @property
-    # def comments(self):
-    #     notes = self.unit.getnotes()
-    #     return notes.split("\n") if notes else []
-
-    # @property
-    # def fuzzy(self):
-    #     return False
-
-    # @fuzzy.setter
-    # def fuzzy(self, fuzzy):
-    #     pass  # We don't use fuzzy in XLIFF
-
-    # @property
-    # def source(self):
-    #     return []
-
-    # @property
-    # def target_string(self):
-    #     return str(self.unit.get_rich_target()[0])
-
-    # @target_string.setter
-    # def target_string(self, value):
-    #     self.unit.settarget(value)
 
     def sync_changes(self):
         """
@@ -174,24 +127,11 @@ class XLIFFResource(ParsedResource):
                 # Add the entity to the entities dictionary using its key as the dictionary key
                 self.entities[entity.key] = entity
 
-
-        # OLD CODE
-        # self.path = path
-        # self.xliff_file = xliff_file
-        # self.entities = [
-        #     XLIFFEntity(order, unit) for order, unit in enumerate(self.xliff_file.units)
-        # ]
-
     @property
     def translations(self):
         return self.entities
 
     def save(self, locale):
-        # for entity in self.entities:
-        #     entity.sync_changes()
-
-        # locale_code = locale.code
-
         # TODO: should be made iOS specific
         # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
         locale_mapping = {
@@ -218,18 +158,6 @@ class XLIFFResource(ParsedResource):
             f.write(bytes(self.xliff_file))
         
         return
-
-# OLD PARSE FUNCTION
-# def parse(path, source_path=None, locale=None):
-#     with open(path) as f:
-#         xml = f.read().encode("utf-8")
-
-#         try:
-#             xliff_file = xliff.xlifffile(xml)
-#         except etree.XMLSyntaxError as err:
-#             raise ParseError(f"Failed to parse {path}: {err}")
-
-#     return XLIFFResource(path, xliff_file)
 
 def parse(path, source_path=None, locale=None):
     if source_path is not None:
