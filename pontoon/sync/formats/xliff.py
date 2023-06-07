@@ -129,7 +129,6 @@ class XLIFFResource(ParsedResource):
 
     @property
     def translations(self):
-        # return self.entities
         return sorted(self.entities.values(), key=lambda e: e.order)
 
     def save(self, locale):

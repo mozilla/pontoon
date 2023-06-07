@@ -300,7 +300,6 @@ def get_download_content(slug, code, part):
                 entity = entities_dict[key]
                 vcs_translation.update_from_db(entity)
 
-
         resource_file.save(locale)
 
         if not locale_path:
