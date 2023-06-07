@@ -22,11 +22,25 @@ def test_PythonFormatString():
     assert placeables == ["{ name }"]
 
 
+def test_PythonFormattingVariable():
+    input = "My %(name)d is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%(name)d"]
+
+
 def test_FluentTerm():
     input = "My { -name } is Luka."
     placeables = get_placeables(input)
 
     assert placeables == ["{ -name }"]
+
+
+def test_FluentParametrizedTerm():
+    input = "My { -name(foo-bar: 'now that's a value!') } is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["{ -name(foo-bar: 'now that's a value!') }"]
 
 
 def test_FluentFunction():

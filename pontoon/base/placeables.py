@@ -31,9 +31,9 @@ def get_placeables(text):
     parsers = [
         PythonFormatNamedString.parser,
         PythonFormatString.parser,
-        # PythonFormattingVariable.parser,
+        PythonFormattingVariable.parser,
         FluentTerm.parser,
-        # FluentParametrizedTerm.parser,
+        FluentParametrizedTerm.parser,
         FluentFunction.parser,
     ]
 
