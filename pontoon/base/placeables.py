@@ -31,6 +31,16 @@ class FluentFunction:
     parser = re.compile(r"({ ?[A-W0-9\-_]+[^}]* ?})")
 
 
+class JavaFormattingVariable:
+    parser = re.compile(
+        r"(?x){[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?}"
+    )
+
+
+class JsonPlaceholder:
+    parser = re.compile(r"(\$[A-Z0-9_]+\$)")
+
+
 def get_placeables(text):
     """Return a list of placeables found in the given string."""
     parsers = [
@@ -40,6 +50,8 @@ def get_placeables(text):
         FluentTerm.parser,
         FluentParametrizedTerm.parser,
         FluentFunction.parser,
+        JavaFormattingVariable.parser,
+        JsonPlaceholder.parser,
     ]
 
     placeables = get_placeables_recursively(text, parsers)

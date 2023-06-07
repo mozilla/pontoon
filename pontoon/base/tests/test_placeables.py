@@ -55,6 +55,35 @@ def test_FluentFunction():
     assert placeables == ["{ NAME() }"]
 
 
+def test_JavaFormattingVariable():
+    input = "My {2} is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["{2}"]
+
+    input = "My {1,date} is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["{1,date}"]
+
+    input = "My {0,number,integer} is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["{0,number,integer}"]
+
+
+def test_JsonPlaceholder():
+    input = "My $NAME$ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["$NAME$"]
+
+    input = "My $FIRST_NAME$ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["$FIRST_NAME$"]
+
+
 def test_multiple_placeables():
     input = "This { STRING() } contains multiple { -string } variables with some { -string } variables repeated."
     placeables = get_placeables(input)
