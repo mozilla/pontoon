@@ -5,7 +5,6 @@ import Levenshtein
 import logging
 import operator
 import os
-import re
 import requests
 
 from collections import defaultdict
@@ -20,6 +19,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 import pontoon.base as base
+from pontoon.base.placeables import get_placeables
 
 log = logging.getLogger(__name__)
 MAX_RESULTS = 5
@@ -139,7 +139,7 @@ def get_google_automl_translation(text, locale, format="text"):
 
 
 def use_placeables_glossary(text, client, project_id, location, request_params):
-    placeables = re.findall(r"(\{{?[\w\d!.,[\]%:$<>+-= ]*\}?})", text)
+    placeables = get_placeables(text)
 
     if not placeables:
         return
