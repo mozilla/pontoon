@@ -37,9 +37,18 @@ def get_placeables(text):
         FluentFunction.parser,
     ]
 
-    placeables = []
-
-    for parser in parsers:
-        placeables += re.findall(parser, text)
-
+    placeables = get_placeables_recursively(text, parsers)
     return list(dict.fromkeys(placeables))
+
+
+def get_placeables_recursively(text, parsers):
+    if not parsers:
+        return []
+
+    parser = parsers.pop(0)
+    placeables = re.findall(parser, text)
+
+    for part in re.split(parser, text):
+        placeables += get_placeables_recursively(part, parsers)
+
+    return placeables
