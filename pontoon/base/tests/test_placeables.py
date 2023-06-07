@@ -53,3 +53,11 @@ def test_FluentFunction():
     placeables = get_placeables(input)
 
     assert placeables == ["{ NAME() }"]
+
+
+def test_multiple_placeables():
+    input = "This { STRING() } contains multiple { -string } variables with some { -string } variables repeated."
+    placeables = get_placeables(input)
+
+    assert len(placeables) == 2
+    assert sorted(placeables) == sorted(["{ STRING() }", "{ -string }"])
