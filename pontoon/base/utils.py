@@ -298,6 +298,7 @@ def get_download_content(slug, code, part):
             key = vcs_translation.key
             if key in entities_dict:
                 entity = entities_dict[key]
+                vcs_translation.update_from_db(entity)
 
 
         resource_file.save(locale)
