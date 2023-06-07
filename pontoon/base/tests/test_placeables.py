@@ -14,6 +14,11 @@ def test_PythonFormatNamedString():
 
     assert placeables == ["%(name)s"]
 
+    input = "My %(number)D is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%(number)D"]
+
 
 def test_PythonFormatString():
     input = "My { name } is Luka."

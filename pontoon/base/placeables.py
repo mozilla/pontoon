@@ -2,7 +2,10 @@ import re
 
 
 class PythonFormatNamedString:
-    parser = r"(%\([[\w\d!.,[\]%:$<>+\-= ]*\)[+|-|0\d+|#]?[.\d+]?[s|d|e|f|g|o|x|c|%])"
+    parser = re.compile(
+        r"(%\([[\w\d!.,[\]%:$<>+\-= ]*\)[+|-|0\d+|#]?[.\d+]?[s|d|e|f|g|o|x|c|%])",
+        re.IGNORECASE,
+    )
 
 
 class PythonFormatString:
