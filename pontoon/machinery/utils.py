@@ -164,7 +164,7 @@ def use_placeables_glossary(text, client, project_id, location, request_params):
 
     # Store any new terms to the glossary
     if existing_terms:
-        new_terms = set([term for term in placeables if term not in existing_terms])
+        new_terms = {term for term in placeables if term not in existing_terms}
 
         if new_terms:
             store_new_terms(url, headers, new_terms)
