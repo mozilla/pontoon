@@ -5,7 +5,7 @@ from lxml import etree
 from translate.storage import xliff
 import copy
 
-from pontoon.sync.exceptions import ParseError
+from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.models import VCSTranslation
 
@@ -23,6 +23,7 @@ class XLIFFEntity(VCSTranslation):
         strings,
         comments=None,
         order=None,
+        unit=None
     ):
         super().__init__(
             key=key,
@@ -32,8 +33,9 @@ class XLIFFEntity(VCSTranslation):
             strings=strings,
             comments=comments or [],
             fuzzy=False,
-            order=order,
+            order=order
         )
+        self.unit = unit
 
     def __repr__(self):
         return "<XLIFFEntity {key}>".format(key=self.key)
@@ -80,6 +82,7 @@ class XLIFFResource(ParsedResource):
                     "",
                     "",
                     "",
+                    "",
                     {},
                     copy.copy(entity.comments),
                     entity.order
@@ -121,7 +124,8 @@ class XLIFFResource(ParsedResource):
                     source_string_plural,
                     strings,
                     comments,
-                    order
+                    order,
+                    unit
                 )
                 print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
@@ -132,6 +136,47 @@ class XLIFFResource(ParsedResource):
         return sorted(self.entities.values(), key=lambda e: e.order)
 
     def save(self, locale):
+        if not self.source_resource:
+            raise SyncError(
+                "Cannot save XLIFF resource {}: No source resource given.".format(
+                    self.path
+                )
+            )
+        # Open the file at the provided path
+        with open(self.source_resource.path, "r") as f:
+            # Read the contents of the file and encode it 
+            xml = f.read().encode("utf-8")
+
+            try:
+                # Parse the xml content of the file into an XLIFF file object
+                self.xliff_file = xliff.xlifffile(xml)
+            except etree.XMLSyntaxError as err:
+                # If there is an error parsing the file, raise a ParseError 
+                raise ParseError(f"Failed to parse {self.source_resource.path}: {err}")
+
+            # Loop through each unit in the XLIFF file
+            for order, unit in enumerate(self.xliff_file.units):
+                 # Apply any changes made to this object to the backing unit in the xliff file.
+                if None in unit.strings:
+                    unit.target_string = unit.strings[None]
+                    # Store updated nodes
+                    xml = unit.xmlelement
+                    target = xml.find(unit.namespaced("target"))
+
+                else:
+                    # Read stored nodes
+                    xml = unit.xmlelement
+                    target = xml.find(unit.namespaced("target"))
+                    if target is not None:
+                        xml.remove(target)
+
+                # Clear unused approved tag
+                if "approved" in xml.attrib:
+                    del xml.attrib["approved"]
+
+                # Clear unused state tag
+                if target is not None and "state" in target.attrib:
+                    del target.attrib["state"]
         locale_mapping = {
             "bn-IN": "bn",
             "ga-IE": "ga",
