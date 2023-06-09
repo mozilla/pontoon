@@ -23,7 +23,6 @@ class XLIFFEntity(VCSTranslation):
         strings,
         comments=None,
         order=None,
-        unit=None
     ):
         super().__init__(
             key=key,
@@ -35,37 +34,9 @@ class XLIFFEntity(VCSTranslation):
             fuzzy=False,
             order=order
         )
-        self.unit = unit
 
     def __repr__(self):
         return "<XLIFFEntity {key}>".format(key=self.key)
-
-    def sync_changes(self):
-        """
-        Apply any changes made to this object to the backing unit in the
-        xliff file.
-        """
-        if None in self.strings:
-            self.target_string = self.strings[None]
-            # Store updated nodes
-            xml = self.unit.xmlelement
-            target = xml.find(self.unit.namespaced("target"))
-
-        else:
-            # Read stored nodes
-            xml = self.unit.xmlelement
-            target = xml.find(self.unit.namespaced("target"))
-            if target is not None:
-                xml.remove(target)
-
-        # Clear unused approved tag
-        if "approved" in xml.attrib:
-            del xml.attrib["approved"]
-
-        # Clear unused state tag
-        if target is not None and "state" in target.attrib:
-            del target.attrib["state"]
-
 
 class XLIFFResource(ParsedResource):
     def __init__(self, path, locale, source_resource=None):
@@ -79,7 +50,6 @@ class XLIFFResource(ParsedResource):
             for key, entity in source_resource.entities.items():
                 self.entities[key] = XLIFFEntity(
                     entity.key,
-                    "",
                     "",
                     "",
                     "",
@@ -124,8 +94,7 @@ class XLIFFResource(ParsedResource):
                     source_string_plural,
                     strings,
                     comments,
-                    order,
-                    unit
+                    order
                 )
                 print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
@@ -156,12 +125,21 @@ class XLIFFResource(ParsedResource):
 
             # Loop through each unit in the XLIFF file
             for order, unit in enumerate(self.xliff_file.units):
-                 # Apply any changes made to this object to the backing unit in the xliff file.
-                if None in unit.strings:
-                    unit.target_string = unit.strings[None]
+                # Apply any changes made to this object to the backing unit in the xliff file.
+                key = unit.getid()
+                entity = self.entities.get(key)
+                if None in entity.strings:
+                    unit.target_string = entity.strings[None]
                     # Store updated nodes
                     xml = unit.xmlelement
                     target = xml.find(unit.namespaced("target"))
+
+                     # If there's no existing target, create a new one
+                    if target is None:
+                        target = etree.SubElement(xml, unit.namespaced("target"))
+                        target.text = entity.strings[None]  # set target text to the translation
+                    else:
+                        target.text = entity.strings[None]  # update target text to the translation
 
                 else:
                     # Read stored nodes
@@ -177,6 +155,7 @@ class XLIFFResource(ParsedResource):
                 # Clear unused state tag
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
+                    
         locale_mapping = {
             "bn-IN": "bn",
             "ga-IE": "ga",
@@ -193,9 +172,6 @@ class XLIFFResource(ParsedResource):
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
             if not node.get("target-language"):
                 node.set("target-language", locale_code)
-        
-        for entity in self.entities.values():
-            entity.sync_changes()
 
         # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
