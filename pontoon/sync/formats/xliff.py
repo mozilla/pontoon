@@ -14,6 +14,7 @@ class XLIFFEntity(VCSTranslation):
     """
     Interface for modifying a single entity in an xliff file.
     """
+
     def __init__(
         self,
         key,
@@ -32,11 +33,12 @@ class XLIFFEntity(VCSTranslation):
             strings=strings,
             comments=comments or [],
             fuzzy=False,
-            order=order
+            order=order,
         )
 
     def __repr__(self):
-        return "<XLIFFEntity {key}>".format(key=self.key)
+        return f"<XLIFFEntity {self.key}>"
+
 
 class XLIFFResource(ParsedResource):
     def __init__(self, path, locale, source_resource=None):
@@ -49,25 +51,19 @@ class XLIFFResource(ParsedResource):
         if source_resource:
             for key, entity in source_resource.entities.items():
                 self.entities[key] = XLIFFEntity(
-                    entity.key,
-                    "",
-                    "",
-                    "",
-                    {},
-                    copy.copy(entity.comments),
-                    entity.order
+                    entity.key, "", "", "", {}, copy.copy(entity.comments), entity.order
                 )
 
         # Open the file at the provided path
         with open(path) as f:
-            # Read the contents of the file and encode it 
+            # Read the contents of the file and encode it
             xml = f.read().encode("utf-8")
 
             try:
                 # Parse the xml content of the file into an XLIFF file object
                 self.xliff_file = xliff.xlifffile(xml)
             except etree.XMLSyntaxError as err:
-                # If there is an error parsing the file, raise a ParseError 
+                # If there is an error parsing the file, raise a ParseError
                 raise ParseError(f"Failed to parse {path}: {err}")
 
             # Loop through each unit in the XLIFF file
@@ -79,9 +75,10 @@ class XLIFFResource(ParsedResource):
                 source_string_plural = ""
 
                 # Get the translated string for the unit. If there's no target string, this will be an empty dictionary
-                target_string = unit.get_rich_target()[0] if unit.get_rich_target() else None
+                target_string = (
+                    unit.get_rich_target()[0] if unit.get_rich_target() else None
+                )
                 strings = {None: target_string} if target_string else {}
-
 
                 # Get the unit's comments, split by newline characters
                 comments = unit.getnotes().split("\n") if unit.getnotes() else []
@@ -94,7 +91,7 @@ class XLIFFResource(ParsedResource):
                     source_string_plural,
                     strings,
                     comments,
-                    order
+                    order,
                 )
                 print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
@@ -112,15 +109,15 @@ class XLIFFResource(ParsedResource):
                 )
             )
         # Open the file at the provided path
-        with open(self.source_resource.path, "r") as f:
-            # Read the contents of the file and encode it 
+        with open(self.source_resource.path) as f:
+            # Read the contents of the file and encode it
             xml = f.read().encode("utf-8")
 
             try:
                 # Parse the xml content of the file into an XLIFF file object
                 self.xliff_file = xliff.xlifffile(xml)
             except etree.XMLSyntaxError as err:
-                # If there is an error parsing the file, raise a ParseError 
+                # If there is an error parsing the file, raise a ParseError
                 raise ParseError(f"Failed to parse {self.source_resource.path}: {err}")
 
             # Loop through each unit in the XLIFF file
@@ -129,17 +126,14 @@ class XLIFFResource(ParsedResource):
                 key = unit.getid()
                 entity = self.entities.get(key)
                 if None in entity.strings:
-                    unit.target_string = entity.strings[None]
                     # Store updated nodes
                     xml = unit.xmlelement
                     target = xml.find(unit.namespaced("target"))
 
-                     # If there's no existing target, create a new one
+                    # If there's no existing target, create a new one
                     if target is None:
                         target = etree.SubElement(xml, unit.namespaced("target"))
-                        target.text = entity.strings[None]  # set target text to the translation
-                    else:
-                        target.text = entity.strings[None]  # update target text to the translation
+                    unit.settarget(entity.strings[None])
 
                 else:
                     # Read stored nodes
@@ -155,7 +149,7 @@ class XLIFFResource(ParsedResource):
                 # Clear unused state tag
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
-                    
+
         locale_mapping = {
             "bn-IN": "bn",
             "ga-IE": "ga",
@@ -176,6 +170,7 @@ class XLIFFResource(ParsedResource):
         # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
             f.write(bytes(self.xliff_file))
+
 
 def parse(path, source_path=None, locale=None):
     if source_path is not None:
