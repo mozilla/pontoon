@@ -31,22 +31,6 @@ class FluentFunction:
     parser = re.compile(r"({ *[A-W0-9\-_]+[^}]*})")
 
 
-class JavaFormattingVariable:
-    parser = re.compile(
-        r"""
-        {
-          [0-9]+
-          (,\s*(
-            number(,\s*(integer | currency | percent | [-0#.,E;%\u2030\u00a4']+)?)?
-            | (date | time)(,\s*(short | medium | long | full | .+?))?
-            | choice,([^{]+({.+})?)+
-          )?)?
-        }
-        """,
-        re.X,
-    )
-
-
 class JsonPlaceholder:
     parser = re.compile(r"(\$[A-Z0-9_]+\$)")
 
@@ -60,7 +44,6 @@ def get_placeables(text):
         FluentTerm.parser,
         FluentParametrizedTerm.parser,
         FluentFunction.parser,
-        JavaFormattingVariable.parser,
         JsonPlaceholder.parser,
     ]
 
