@@ -14,7 +14,7 @@ class PythonFormatString:
 
 class PythonFormattingVariable:
     parser = re.compile(
-        r"(%(%|(\([^)]+\)){0,1}[-+0#]{0,1}(\d+|\*){0,1}(\.(\d+|\*)){0,1}[hlL]{0,1}[diouxXeEfFgGcrs]{1}))"
+        r"(%(%|(\([^)]+\))?[-+0#]?(\d+|\*)?(\.(\d+|\*))?[hlL]?[diouxXeEfFgGcrs]))"
     )
     match_index = 0
 
