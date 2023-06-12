@@ -9,7 +9,7 @@ class PythonFormatNamedString:
 
 
 class PythonFormatString:
-    parser = re.compile(r"({{?[\w!.,[\]%:$<>+\-= ]*}?})")
+    parser = re.compile(r"{{|}}|{[\w!.,[\]%:$<>+\-= ]*}")
 
 
 class PythonFormattingVariable:
