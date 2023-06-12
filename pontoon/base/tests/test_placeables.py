@@ -42,10 +42,10 @@ def test_FluentTerm():
 
 
 def test_FluentParametrizedTerm():
-    input = "My { -name(foo-bar: 'now that's a value!') } is Luka."
+    input = "My { -name(foo-bar: \"now that's a value!\") } is Luka."
     placeables = get_placeables(input)
 
-    assert placeables == ["{ -name(foo-bar: 'now that's a value!') }"]
+    assert placeables == ["{ -name(foo-bar: \"now that's a value!\") }"]
 
 
 def test_FluentFunction():
