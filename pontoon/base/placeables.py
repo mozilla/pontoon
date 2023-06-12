@@ -20,7 +20,7 @@ class PythonFormattingVariable:
 
 
 class FluentTerm:
-    parser = re.compile(r"({ ?-[^}]* ?})")
+    parser = re.compile(r"({ *-[^}]*})")
 
 
 class FluentParametrizedTerm:
@@ -28,7 +28,7 @@ class FluentParametrizedTerm:
 
 
 class FluentFunction:
-    parser = re.compile(r"({ ?[A-W0-9\-_]+[^}]* ?})")
+    parser = re.compile(r"({ *[A-W0-9\-_]+[^}]*})")
 
 
 class JavaFormattingVariable:
