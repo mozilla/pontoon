@@ -33,7 +33,17 @@ class FluentFunction:
 
 class JavaFormattingVariable:
     parser = re.compile(
-        r"(?x){[0-9]+(,\s*(number(,\s*(integer|currency|percent|[-0#.,E;%\u2030\u00a4']+)?)?|(date|time)(,\s*(short|medium|long|full|.+?))?|choice,([^{]+({.+})?)+)?)?}"
+        r"""
+        {
+          [0-9]+
+          (,\s*(
+            number(,\s*(integer | currency | percent | [-0#.,E;%\u2030\u00a4']+)?)?
+            | (date | time)(,\s*(short | medium | long | full | .+?))?
+            | choice,([^{]+({.+})?)+
+          )?)?
+        }
+        """,
+        re.X,
     )
 
 
