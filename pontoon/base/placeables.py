@@ -23,10 +23,6 @@ class FluentTerm:
     parser = re.compile(r"({ *-[^}]*})")
 
 
-class FluentParametrizedTerm:
-    parser = re.compile(r"({ ?-[^}]*([^}]*: ?[^}]*) ?})")
-
-
 class FluentFunction:
     parser = re.compile(r"({ *[A-W0-9\-_]+[^}]*})")
 
@@ -42,7 +38,6 @@ def get_placeables(text):
         PythonFormatString.parser,
         PythonFormattingVariable.parser,
         FluentTerm.parser,
-        FluentParametrizedTerm.parser,
         FluentFunction.parser,
         JsonPlaceholder.parser,
     ]

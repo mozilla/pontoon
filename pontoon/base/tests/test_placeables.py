@@ -40,8 +40,6 @@ def test_FluentTerm():
 
     assert placeables == ["{ -name }"]
 
-
-def test_FluentParametrizedTerm():
     input = 'My { -name(foo-bar: "now that\'s a value!") } is Luka.'
     placeables = get_placeables(input)
 
