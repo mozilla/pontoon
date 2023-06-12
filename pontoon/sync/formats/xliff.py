@@ -71,12 +71,12 @@ class XLIFFResource(ParsedResource):
                 # Get the unit's ID and source string
                 key = unit.getid()
                 context = unit.xmlelement.get("id")
-                source_string = unit.rich_source[0]
+                source_string = str(unit.rich_source[0])
                 source_string_plural = ""
 
                 # Get the translated string for the unit. If there's no target string, this will be an empty dictionary
                 target_string = (
-                    unit.get_rich_target()[0] if unit.get_rich_target() else None
+                    str(unit.get_rich_target()[0]) if unit.get_rich_target() else None
                 )
                 strings = {None: target_string} if target_string else {}
 
@@ -93,7 +93,6 @@ class XLIFFResource(ParsedResource):
                     comments,
                     order,
                 )
-                print(f"Adding entity with key {entity.key} to entities")
                 # Add the entity to the entities dictionary using its key as the dictionary key
                 self.entities[entity.key] = entity
 
