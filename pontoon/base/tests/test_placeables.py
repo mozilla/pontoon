@@ -8,6 +8,28 @@ def test_no_placeables():
     assert placeables == []
 
 
+def test_MozillaPrintfString():
+    input = "My %S is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%S"]
+
+    input = "My %1$S is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%1$S"]
+
+    input = "My %@ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%@"]
+
+    input = "My %2$@ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["%2$@"]
+
+
 def test_PythonPrintfString():
     input = "My %(name)s is Luka."
     placeables = get_placeables(input)

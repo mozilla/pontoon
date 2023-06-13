@@ -1,6 +1,10 @@
 import re
 
 
+class MozillaPrintfString:
+    parser = re.compile(r"%(?:[1-9]\$)?[S@]")
+
+
 class PythonPrintfString:
     parser = re.compile(
         r"""
@@ -35,6 +39,7 @@ class JsonPlaceholder:
 def get_placeables(text):
     """Return a list of placeables found in the given string."""
     parsers = [
+        MozillaPrintfString.parser,
         PythonPrintfString.parser,
         PythonFormatString.parser,
         FluentTerm.parser,
