@@ -1,22 +1,23 @@
 import re
 
 
-class PythonFormatNamedString:
+class PythonPrintfString:
     parser = re.compile(
-        r"(%\([[\w\d!.,[\]%:$<>+\-= ]*\)[+-0\d+#]?[.\d+]?[sdefgoxc%])",
-        re.IGNORECASE,
+        r"""
+            %
+            (?:\(.*?\))?  # mapping key
+            [\#0\-\ +]*   # conversion flags
+            [\d*]*        # minimum field width
+            (?:\.[\d*])?  # precision
+            [hlL]?        # length modifier
+            [acdEeFfGgiorsuXx%]  # conversion type
+        """,
+        re.X,
     )
 
 
 class PythonFormatString:
     parser = re.compile(r"{{|}}|{[\w!.,[\]%:$<>+\-= ]*}")
-
-
-class PythonFormattingVariable:
-    parser = re.compile(
-        r"(%(%|(\([^)]+\))?[-+0#]?(\d+|\*)?(\.(\d+|\*))?[hlL]?[diouxXeEfFgGcrs]))"
-    )
-    match_index = 0
 
 
 class FluentTerm:
@@ -34,9 +35,8 @@ class JsonPlaceholder:
 def get_placeables(text):
     """Return a list of placeables found in the given string."""
     parsers = [
-        PythonFormatNamedString.parser,
+        PythonPrintfString.parser,
         PythonFormatString.parser,
-        PythonFormattingVariable.parser,
         FluentTerm.parser,
         FluentFunction.parser,
         JsonPlaceholder.parser,

@@ -8,16 +8,16 @@ def test_no_placeables():
     assert placeables == []
 
 
-def test_PythonFormatNamedString():
+def test_PythonPrintfString():
     input = "My %(name)s is Luka."
     placeables = get_placeables(input)
 
     assert placeables == ["%(name)s"]
 
-    input = "My %(number)D is Luka."
+    input = "My %(name)d is Luka."
     placeables = get_placeables(input)
 
-    assert placeables == ["%(number)D"]
+    assert placeables == ["%(name)d"]
 
 
 def test_PythonFormatString():
@@ -25,13 +25,6 @@ def test_PythonFormatString():
     placeables = get_placeables(input)
 
     assert placeables == ["{ name }"]
-
-
-def test_PythonFormattingVariable():
-    input = "My %(name)d is Luka."
-    placeables = get_placeables(input)
-
-    assert placeables == ["%(name)d"]
 
 
 def test_FluentTerm():
