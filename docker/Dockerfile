@@ -51,4 +51,5 @@ COPY --chown=pontoon:pontoon . /app/
 
 RUN python manage.py collectstatic
 
+STOPSIGNAL SIGINT
 CMD ["/app/docker/server_run.sh"]
