@@ -7,7 +7,7 @@ from pontoon.test.factories import LocaleFactory
 
 
 def visit(src):
-    def callback(source, locale):
+    def callback(source, locale, preserve_placeables):
         return (source, locale.code)
 
     locale = LocaleFactory(code="en-XX")
@@ -127,7 +127,7 @@ def test_transformer_value_and_attributes():
 def test_transformer_callback(locale_a):
     called = []
 
-    def callback(source, locale):
+    def callback(source, locale, preserve_placeables):
         called.append(source)
         return ("res: " + source, locale.code)
 
@@ -149,7 +149,7 @@ def test_transformer_callback(locale_a):
 def test_plural_variants(locale_a):
     called = []
 
-    def callback(source, locale):
+    def callback(source, locale, preserve_placeables):
         called.append(source)
         return ("res: " + source, locale.code)
 
