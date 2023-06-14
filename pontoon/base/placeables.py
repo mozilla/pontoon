@@ -24,12 +24,8 @@ class PythonFormatString:
     parser = re.compile(r"{{|}}|{[\w!.,[\]%:$<>+\-= ]*}")
 
 
-class FluentTerm:
-    parser = re.compile(r"({ *-[^}]*})")
-
-
-class FluentFunction:
-    parser = re.compile(r"({ *[A-W0-9\-_]+[^}]*})")
+class FluentPlaceable:
+    parser = re.compile(r"{ *[A-Z0-9\-_][^}]*}")
 
 
 class JsonPlaceholder:
