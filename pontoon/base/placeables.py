@@ -35,12 +35,11 @@ class JsonPlaceholder:
 def get_placeables(text):
     """Return a list of placeables found in the given string."""
     parsers = [
+        JsonPlaceholder.parser,
         MozillaPrintfString.parser,
         PythonPrintfString.parser,
         PythonFormatString.parser,
-        FluentTerm.parser,
-        FluentFunction.parser,
-        JsonPlaceholder.parser,
+        FluentPlaceable.parser,
     ]
 
     placeables = get_placeables_recursively(text, parsers)
