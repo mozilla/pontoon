@@ -138,7 +138,9 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             attr=attr,
         )
 
-        super().run_save_basic(input_string, expected_string)
+        super().run_save_basic(
+            input_string, expected_string, source_string=input_string
+        )
 
     def test_save_preserve_target_language(self):
         """
@@ -172,7 +174,9 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             attr=attr,
         )
 
-        super().run_save_basic(input_string, expected_string)
+        super().run_save_basic(
+            input_string, expected_string, source_string=input_string
+        )
 
     def test_save_remove(self):
         attr = f'target-language="{self.locale.code}"'
@@ -201,4 +205,6 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             attr=attr,
         )
 
-        super().run_save_remove(input_string, expected_string)
+        super().run_save_remove(
+            input_string, expected_string, source_string=input_string
+        )
