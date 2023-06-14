@@ -8,6 +8,18 @@ def test_no_placeables():
     assert placeables == []
 
 
+def test_JsonPlaceholder():
+    input = "My $NAME$ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["$NAME$"]
+
+    input = "My $FIRST_NAME$ is Luka."
+    placeables = get_placeables(input)
+
+    assert placeables == ["$FIRST_NAME$"]
+
+
 def test_MozillaPrintfString():
     input = "My %S is Luka."
     placeables = get_placeables(input)
@@ -49,7 +61,7 @@ def test_PythonFormatString():
     assert placeables == ["{ name }"]
 
 
-def test_FluentTerm():
+def test_FluentPlaceable():
     input = "My { -name } is Luka."
     placeables = get_placeables(input)
 
@@ -60,24 +72,10 @@ def test_FluentTerm():
 
     assert placeables == ['{ -name(foo-bar: "now that\'s a value!") }']
 
-
-def test_FluentFunction():
     input = "My { NAME() } is Luka."
     placeables = get_placeables(input)
 
     assert placeables == ["{ NAME() }"]
-
-
-def test_JsonPlaceholder():
-    input = "My $NAME$ is Luka."
-    placeables = get_placeables(input)
-
-    assert placeables == ["$NAME$"]
-
-    input = "My $FIRST_NAME$ is Luka."
-    placeables = get_placeables(input)
-
-    assert placeables == ["$FIRST_NAME$"]
 
 
 def test_multiple_placeables():
