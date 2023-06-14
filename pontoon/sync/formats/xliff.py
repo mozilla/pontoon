@@ -128,10 +128,6 @@ class XLIFFResource(ParsedResource):
                     # Store updated nodes
                     xml = unit.xmlelement
                     target = xml.find(unit.namespaced("target"))
-
-                    # If there's no existing target, create a new one
-                    if target is None:
-                        target = etree.SubElement(xml, unit.namespaced("target"))
                     unit.settarget(entity.strings[None])
 
                 else:
