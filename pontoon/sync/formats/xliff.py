@@ -159,8 +159,7 @@ class XLIFFResource(ParsedResource):
         # Set target-language if not set
         file_node = self.xliff_file.namespaced("file")
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            if not node.get("target-language"):
-                node.set("target-language", locale_code)
+            node.set("target-language", locale_code)
 
         # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
