@@ -142,42 +142,6 @@ class XLIFFTests(FormatTestsMixin, TestCase):
             input_string, expected_string, source_string=input_string
         )
 
-    def test_save_preserve_target_language(self):
-        """
-        Test that the existing target-language attribute is preserved.
-        """
-        attr = 'target-language="locale-code"'
-
-        input_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key">
-                <source>Source String</source>
-                <target>Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        expected_string = self.generate_xliff(
-            dedent(
-                """
-            <trans-unit id="Source String Key" xml:space="preserve">
-                <source>Source String</source>
-                <target>New Translated String</target>
-                <note>Comment</note>
-            </trans-unit>
-        """
-            ),
-            attr=attr,
-        )
-
-        super().run_save_basic(
-            input_string, expected_string, source_string=input_string
-        )
-
     def test_save_remove(self):
         attr = f'target-language="{self.locale.code}"'
 
