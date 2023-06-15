@@ -8,11 +8,12 @@ import React, {
 } from 'react';
 
 import type { SourceType } from '~/api/machinery';
-import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
+import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
 import {
   buildMessageEntry,
   editMessageEntry,
+  editSource,
   requiresSourceView,
   getEmptyMessageEntry,
   MessageEntry,
@@ -25,9 +26,16 @@ import { EntityView, useActiveTranslation } from './EntityView';
 import { FailedChecksData } from './FailedChecksData';
 import { Locale } from './Locale';
 import { MachineryTranslations } from './MachineryTranslations';
-import { UnsavedActions, UnsavedChanges } from './UnsavedChanges';
+import { UnsavedActions } from './UnsavedChanges';
 
-export type EditorMessage = Array<{
+export type EditFieldHandle = {
+  get value(): string;
+  focus(): void;
+  setSelection(text: string): void;
+  setValue(text: string): void;
+};
+
+export type EditorField = {
   /** An identifier for this field */
   id: string;
 
@@ -39,6 +47,50 @@ export type EditorMessage = Array<{
 
   labels: Array<{ label: string; plural: boolean }>;
 
+  handle: React.MutableRefObject<EditFieldHandle>;
+};
+
+export type EditorData = Readonly<{
+  /**
+   * Should match `useContext(EntityView).pk`.
+   * If it doesn't, the entity has changed but data isn't updated yet.
+   */
+  pk: number;
+
+  /** Is a request to send a new translation running? */
+  busy: boolean;
+
+  /** Used to reconstruct edited messages */
+  entry: MessageEntry;
+
+  /** Input fields for the value being edited */
+  fields: EditorField[];
+
+  /**
+   * The current or most recent field with focus;
+   * used as the target of machinery replacements.
+   */
+  focusField: React.MutableRefObject<EditorField | null>;
+
+  /** Used for detecting unsaved changes */
+  initial: MessageEntry;
+
+  machinery: {
+    manual: boolean;
+    sources: SourceType[];
+    translation: string;
+  } | null;
+
+  sourceView: boolean;
+}>;
+
+export type EditorResult = Array<{
+  /** Attribute name, or empty for the value */
+  name: string;
+
+  /** Selector keys, or empty array for single-pattern messages */
+  keys: Variant['keys'];
+
   /**
    * A flattened representation of a single message pattern,
    * which may contain syntactic representations of placeholders.
@@ -46,33 +98,28 @@ export type EditorMessage = Array<{
   value: string;
 }>;
 
-function editSource(source: string | MessageEntry) {
-  const value =
-    typeof source === 'string' ? source : serializeEntry('ftl', source);
-  return [{ id: '', name: '', keys: [], labels: [], value: value.trim() }];
-}
+export type EditorActions = {
+  clearEditor(): void;
 
-/**
- * Creates a copy of `base` with an entry matching `id` updated to `value`.
- *
- * @param id If empty, matches first entry of `base`.
- *           If set, a path split by `|` characters.
- */
-function setEditorMessage(
-  base: EditorMessage,
-  id: string | null | undefined,
-  value: string,
-): EditorMessage {
-  let set = false;
-  return base.map((field) => {
-    if (!set && (!id || field.id === id)) {
-      set = true;
-      return { ...field, value };
-    } else {
-      return field;
-    }
-  });
-}
+  setEditorBusy(busy: boolean): void;
+
+  /** If `format: 'ftl'`, must be called with the source of a full entry */
+  setEditorFromHistory(value: string): void;
+
+  /** @param manual Set `true` when value set due to direct user action */
+  setEditorFromHelpers(
+    value: string,
+    sources: SourceType[],
+    manual: boolean,
+  ): void;
+
+  setEditorSelection(content: string): void;
+
+  /** Set the result value of the active input */
+  setResultFromInput(idx: number, value: string): void;
+
+  toggleSourceView(): void;
+};
 
 function parseEntryFromFluentSource(base: MessageEntry, source: string) {
   const entry = parseEntry(source);
@@ -95,71 +142,15 @@ const createSimpleMessageEntry = (id: string, value: string): MessageEntry => ({
   },
 });
 
-export type EditorData = Readonly<{
-  /** Is a request to send a new translation running? */
-  busy: boolean;
-
-  /** Used to reconstruct edited messages */
-  entry: MessageEntry;
-
-  /** Editor input components */
-  fields: Array<
-    React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>
-  >;
-
-  /**
-   * Index in `fields` of the current or most recent field with focus;
-   * used as the target of machinery replacements.
-   */
-  focusField: React.MutableRefObject<number>;
-
-  /** Used for detecting unsaved changes */
-  initial: EditorMessage;
-
-  machinery: {
-    manual: boolean;
-    sources: SourceType[];
-    translation: string;
-  } | null;
-
-  sourceView: boolean;
-
-  /** The current value being edited */
-  value: EditorMessage;
-}>;
-
-export type EditorActions = {
-  clearEditor(): void;
-
-  setEditorBusy(busy: boolean): void;
-
-  /** If `format: 'ftl'`, must be called with the source of a full entry */
-  setEditorFromHistory(value: string): void;
-
-  /** For `view: 'rich'`, if `value` is a string, sets the value of the active input */
-  setEditorFromInput(value: string | EditorMessage): void;
-
-  /** @param manual Set `true` when value set due to direct user action */
-  setEditorFromHelpers(
-    value: string,
-    sources: SourceType[],
-    manual: boolean,
-  ): void;
-
-  setEditorSelection(content: string): void;
-
-  toggleSourceView(): void;
-};
-
 const initEditorData: EditorData = {
+  pk: 0,
   busy: false,
   entry: { id: '', value: null, attributes: new Map() },
-  fields: [],
-  focusField: { current: 0 },
-  initial: [],
+  focusField: { current: null },
+  initial: { id: '', value: null, attributes: new Map() },
   machinery: null,
+  fields: [],
   sourceView: false,
-  value: [],
 };
 
 const initEditorActions: EditorActions = {
@@ -167,13 +158,21 @@ const initEditorActions: EditorActions = {
   setEditorBusy: () => {},
   setEditorFromHelpers: () => {},
   setEditorFromHistory: () => {},
-  setEditorFromInput: () => {},
   setEditorSelection: () => {},
+  setResultFromInput: () => {},
   toggleSourceView: () => {},
 };
 
 export const EditorData = createContext(initEditorData);
+export const EditorResult = createContext<EditorResult>([]);
 export const EditorActions = createContext(initEditorActions);
+
+const buildResult = (message: EditorField[]): EditorResult =>
+  message.map(({ handle, keys, name }) => ({
+    name,
+    keys,
+    value: handle.current.value,
+  }));
 
 export function EditorProvider({ children }: { children: React.ReactElement }) {
   const locale = useContext(Locale);
@@ -182,37 +181,44 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   const readonly = useReadonlyEditor();
   const machinery = useContext(MachineryTranslations);
   const { setUnsavedChanges } = useContext(UnsavedActions);
-  const { exist } = useContext(UnsavedChanges);
   const { resetFailedChecks } = useContext(FailedChecksData);
 
-  const [state, setState] = useState<EditorData>(initEditorData);
+  const [state, setState] = useState(initEditorData);
+  const [result, setResult] = useState<EditorResult>([]);
 
   const actions = useMemo<EditorActions>(() => {
     if (readonly) {
       return initEditorActions;
     }
     return {
-      clearEditor: () =>
-        setState((prev) => {
-          const empty = prev.value.map((field) => ({ ...field, value: '' }));
-          return { ...prev, value: empty };
-        }),
+      clearEditor() {
+        setState((state) => {
+          for (const field of state.fields) {
+            field.handle.current.setValue('');
+          }
+          return state;
+        });
+      },
 
       setEditorBusy: (busy) =>
         setState((prev) => (busy === prev.busy ? prev : { ...prev, busy })),
 
       setEditorFromHelpers: (str, sources, manual) =>
         setState((prev) => {
-          const { fields, focusField, sourceView, value } = prev;
-          const input = fields[focusField.current]?.current;
-          let next = setEditorMessage(value, input?.id, str);
+          const { fields, focusField, sourceView } = prev;
+          const field = focusField.current ?? fields[0];
+          field.handle.current.setValue(str);
+          let next = fields.slice();
           if (sourceView) {
-            next = editSource(buildMessageEntry(prev.entry, next));
+            const result = buildResult(next);
+            next = editSource(buildMessageEntry(prev.entry, result));
+            focusField.current = next[0];
+            setResult(result);
           }
           return {
             ...prev,
             machinery: { manual, translation: str, sources },
-            value: next,
+            fields: next,
           };
         }),
 
@@ -225,80 +231,62 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
               next.entry = entry;
             }
             if (entry && !requiresSourceView(entry)) {
-              next.value = prev.sourceView
+              next.fields = prev.sourceView
                 ? editSource(entry)
                 : editMessageEntry(entry);
             } else {
-              next.value = editSource(str);
+              next.fields = editSource(str);
               next.sourceView = true;
             }
-            next.fields = next.value.map(() => ({ current: null }));
           } else {
-            next.value = setEditorMessage(prev.initial, null, str);
+            next.fields = editMessageEntry(prev.initial);
+            next.fields[0].handle.current.setValue(str);
           }
+          next.focusField.current = next.fields[0];
+          setResult(buildResult(next.fields));
           return next;
         }),
 
-      setEditorFromInput: (input) =>
-        setState((prev) => {
-          if (typeof input === 'string') {
-            const { fields, focusField, value } = prev;
-            const field = fields[focusField.current]?.current;
-            const next = setEditorMessage(value, field?.id, input);
-            return { ...prev, value: next };
-          } else {
-            return { ...prev, value: input };
-          }
+      setEditorSelection: (content) =>
+        setState((state) => {
+          const { fields, focusField } = state;
+          const field = focusField.current ?? fields[0];
+          field.handle.current.setSelection(content);
+          return state;
         }),
 
-      setEditorSelection: (content) =>
-        setState((prev) => {
-          const { fields, focusField, sourceView, value } = prev;
-          let next: EditorMessage;
-          const input = fields[focusField.current]?.current;
-          if (input) {
-            input.setRangeText(
-              content,
-              input.selectionStart ?? 0, // never actually null for <input type="text"> or <textarea>
-              input.selectionEnd ?? 0,
-              'end',
-            );
-            next = setEditorMessage(value, input.id, input.value);
-          } else if (value.length === 1) {
-            next = setEditorMessage(value, null, value[0].value + content);
-            if (sourceView) {
-              next = editSource(buildMessageEntry(prev.entry, next));
-            }
+      setResultFromInput: (idx, value) =>
+        setResult((prev) => {
+          if (prev.length > idx) {
+            const res = prev.slice();
+            res[idx] = { ...res[idx], value };
+            return res;
           } else {
-            next = setEditorMessage(value, null, content);
+            return prev;
           }
-          return { ...prev, value: next };
         }),
 
       toggleSourceView: () =>
         setState((prev) => {
           if (prev.sourceView) {
-            const source = prev.value[0].value;
+            const source = prev.fields[0].handle.current.value;
             const entry = parseEntryFromFluentSource(prev.entry, source);
             if (entry && !requiresSourceView(entry)) {
-              const value = editMessageEntry(entry);
-              return {
-                ...prev,
-                entry,
-                fields: value.map(() => ({ current: null })),
-                sourceView: false,
-                value,
-              };
+              const fields = editMessageEntry(entry);
+              prev.focusField.current = fields[0];
+              setResult(buildResult(fields));
+              return { ...prev, entry, fields, sourceView: false };
             }
           } else if (entity.format === 'ftl') {
-            const entry = buildMessageEntry(prev.entry, prev.value);
+            const entry = buildMessageEntry(
+              prev.entry,
+              buildResult(prev.fields),
+            );
             const source = serializeEntry('ftl', entry);
-            return {
-              ...prev,
-              fields: [{ current: null }],
-              sourceView: true,
-              value: editSource(source),
-            };
+            const fields = editSource(source);
+            prev.focusField.current = fields[0];
+            setResult(buildResult(fields));
+            return { ...prev, fields, sourceView: true };
           }
           return prev;
         }),
@@ -339,20 +327,19 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       entry = createSimpleMessageEntry(entity.key, source);
     }
 
-    const value: EditorMessage = sourceView
-      ? editSource(source)
-      : editMessageEntry(entry);
+    const fields = sourceView ? editSource(source) : editMessageEntry(entry);
 
     setState(() => ({
+      pk: entity.pk,
       busy: false,
       entry,
-      fields: value.map(() => ({ current: null })),
-      focusField: { current: 0 },
-      initial: value,
+      fields,
+      focusField: { current: fields[0] },
+      initial: entry,
       machinery: null,
       sourceView,
-      value,
     }));
+    setResult(buildResult(fields));
   }, [locale, entity, activeTranslation]);
 
   // For missing entries, fill editor initially with a perfect match from
@@ -363,8 +350,8 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
       status === 'missing' &&
       state.machinery === null &&
       !state.sourceView &&
-      state.value.length === 1 &&
-      state.value[0].value === ''
+      state.fields.length === 1 &&
+      state.fields[0].handle.current.value === ''
     ) {
       const perfect = machinery.translations.find((tx) => tx.quality === 100);
       if (perfect) {
@@ -378,34 +365,36 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
-    // Changes in `value` need to be reflected in `UnsavedChanges`,
+    resetFailedChecks();
+
+    // Changes in `result` need to be reflected in `UnsavedChanges`,
     // but the latter needs to be defined at a higher level to make it
     // available in `EntitiesList`. Therefore, that state is managed here.
-    setUnsavedChanges(!pojoEquals(state.initial, state.value));
-
-    if (exist) {
-      resetFailedChecks();
-    }
-  }, [state.value, state.initial]);
+    // Let's also avoid the calculation, unless it's actually required.
+    setUnsavedChanges(() => {
+      const { entry, initial, sourceView } = state;
+      const next = sourceView
+        ? parseEntryFromFluentSource(entry, result[0].value)
+        : buildMessageEntry(entry, result);
+      return !pojoEquals(initial, next);
+    });
+  }, [result]);
 
   return (
     <EditorData.Provider value={state}>
-      <EditorActions.Provider value={actions}>
-        {children}
-      </EditorActions.Provider>
+      <EditorResult.Provider value={result}>
+        <EditorActions.Provider value={actions}>
+          {children}
+        </EditorActions.Provider>
+      </EditorResult.Provider>
     </EditorData.Provider>
   );
 }
 
-export function useEditorValue(): EditorMessage {
-  const { value } = useContext(EditorData);
-  return value;
-}
-
 export function useEditorMessageEntry() {
   const { entry, sourceView } = useContext(EditorData);
-  const value = useEditorValue();
+  const message = useContext(EditorResult);
   return sourceView
-    ? parseEntryFromFluentSource(entry, value[0].value)
-    : buildMessageEntry(entry, value);
+    ? parseEntryFromFluentSource(entry, message[0].value)
+    : buildMessageEntry(entry, message);
 }
