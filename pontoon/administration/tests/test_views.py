@@ -398,15 +398,10 @@ def test_project_add_locale(client_superuser):
     # or I don't know how to handle that more gracefully.
     form = ProjectForm(instance=project)
     form_data = dict(form.initial)
-    del form_data["width"]
     del form_data["deadline"]
     del form_data["contact"]
     form_data.update(
         {
-            "subpage_set-INITIAL_FORMS": "0",
-            "subpage_set-TOTAL_FORMS": "1",
-            "subpage_set-MIN_NUM_FORMS": "0",
-            "subpage_set-MAX_NUM_FORMS": "1000",
             "externalresource_set-TOTAL_FORMS": "1",
             "externalresource_set-MAX_NUM_FORMS": "1000",
             "externalresource_set-MIN_NUM_FORMS": "0",

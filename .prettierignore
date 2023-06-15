@@ -12,7 +12,6 @@ specs/
 /static/
 
 # Jinja templates
-pontoon/base/templates/js/pontoon.js
 translate/public/translate.html
 **/templates/**/*.html
 
@@ -23,4 +22,3 @@ pontoon/base/static/css/boilerplate.css
 pontoon/base/static/css/fontawesome-all.css
 pontoon/base/static/css/nprogress.css
 pontoon/base/static/js/lib/
-pontoon/in_context/static/

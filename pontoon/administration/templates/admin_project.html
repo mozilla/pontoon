@@ -263,26 +263,6 @@
     <option value="Issue tracking">
   </datalist>
 
-  <h3>In-context localization <span class="small stress">(optional)</span></h3>
-
-  <div class="clearfix">
-      {{ form.url.label_tag() }}
-      {{ form.url }}
-      {{ form.url.errors }}
-  </div>
-  <div class="clearfix">
-      {{ form.width.label_tag() }}
-      {{ form.width }}
-      {{ form.width.errors }}
-  </div>
-  <div class="checkbox clearfix">
-      <label for="id_links">
-          {{ form.links }}{{ form.links.label }}
-      </label>
-  </div>
-
-  {{ inline_formset.render(title='Subpages', type='subpage', formset=subpage_formset) }}
-
   <section class="tags">
     <h3>
       <span>Tags</span>

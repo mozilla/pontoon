@@ -1,6 +1,6 @@
 {
   "name": "pontoon",
-  "description": "In-place localization tool.",
+  "description": "Mozilla localization platform",
   "keywords": [
     "l10n",
     "localization",

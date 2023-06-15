@@ -17,7 +17,6 @@ from pontoon.administration.forms import (
     ExternalResourceInlineFormSet,
     ProjectForm,
     RepositoryInlineFormSet,
-    SubpageInlineFormSet,
     TagInlineFormSet,
 )
 from pontoon.base import utils
@@ -87,7 +86,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
         raise PermissionDenied
 
     form = ProjectForm()
-    subpage_formset = SubpageInlineFormSet()
     repo_formset = RepositoryInlineFormSet()
     external_resource_formset = ExternalResourceInlineFormSet()
     tag_formset = TagInlineFormSet()
@@ -116,7 +114,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
             project = Project.objects.visible_for(request.user).get(pk=pk)
             form = ProjectForm(request.POST, instance=project)
             # Needed if form invalid
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
             tag_formset = (
                 TagInlineFormSet(request.POST, instance=project)
@@ -132,14 +129,12 @@ def manage_project(request, slug=None, template="admin_project.html"):
         except MultiValueDictKeyError:
             form = ProjectForm(request.POST)
             # Needed if form invalid
-            subpage_formset = SubpageInlineFormSet(request.POST)
             repo_formset = RepositoryInlineFormSet(request.POST)
             external_resource_formset = ExternalResourceInlineFormSet(request.POST)
             tag_formset = None
 
         if form.is_valid():
             project = form.save(commit=False)
-            subpage_formset = SubpageInlineFormSet(request.POST, instance=project)
             repo_formset = RepositoryInlineFormSet(request.POST, instance=project)
             external_resource_formset = ExternalResourceInlineFormSet(
                 request.POST, instance=project
@@ -147,8 +142,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
             if tag_formset:
                 tag_formset = TagInlineFormSet(request.POST, instance=project)
             formsets_valid = (
-                subpage_formset.is_valid()
-                and repo_formset.is_valid()
+                repo_formset.is_valid()
                 and external_resource_formset.is_valid()
                 and (tag_formset.is_valid() if tag_formset else True)
             )
@@ -191,7 +185,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     pretranslation_enabled=True
                 )
 
-                subpage_formset.save()
                 repo_formset.save()
                 external_resource_formset.save()
                 if tag_formset:
@@ -203,7 +196,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     _create_or_update_translated_resources(project, locales)
 
                 # Properly displays formsets, but removes errors (if valid only)
-                subpage_formset = SubpageInlineFormSet(instance=project)
                 repo_formset = RepositoryInlineFormSet(instance=project)
                 external_resource_formset = ExternalResourceInlineFormSet(
                     instance=project
@@ -223,7 +215,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
             project = Project.objects.get(slug=slug)
             pk = project.pk
             form = ProjectForm(instance=project)
-            subpage_formset = SubpageInlineFormSet(instance=project)
             repo_formset = RepositoryInlineFormSet(instance=project)
             tag_formset = (
                 TagInlineFormSet(instance=project) if project.tags_enabled else None
@@ -273,7 +264,6 @@ def manage_project(request, slug=None, template="admin_project.html"):
     data = {
         "slug": slug,
         "form": form,
-        "subpage_formset": subpage_formset,
         "repo_formset": repo_formset,
         "tag_formset": tag_formset,
         "external_resource_formset": external_resource_formset,

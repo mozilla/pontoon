@@ -1076,11 +1076,10 @@ class Locale(AggregatedStats):
         ]
 
     def parts_stats(self, project):
-        """Get locale-project pages/paths with stats."""
+        """Get locale-project paths with stats."""
 
         def get_details(parts):
             return parts.order_by("title").values(
-                "url",
                 "title",
                 "resource__path",
                 "resource__deadline",
@@ -1092,95 +1091,15 @@ class Locale(AggregatedStats):
                 "approved_strings",
             )
 
-        pages = project.subpage_set.all()
         translatedresources = TranslatedResource.objects.filter(
             resource__project=project, resource__entities__obsolete=False, locale=self
         ).distinct()
-        details = []
-        unbound_details = []
-
-        # If subpages aren't defined,
-        # return resource paths with corresponding stats
-        if len(pages) == 0:
-            details = get_details(
-                translatedresources.annotate(
-                    title=F("resource__path"), url=F("resource__project__url")
-                )
-            )
-
-        # If project has defined subpages, return their names with
-        # corresponding project stats. If subpages have defined resources,
-        # only include stats for page resources.
-        elif len(pages) > 0:
-            # Each subpage must have resources defined
-            if pages[0].resources.exists():
-                locale_pages = pages.filter(resources__translatedresources__locale=self)
-                details = get_details(
-                    # List only subpages, whose resources are available for locale
-                    locale_pages.annotate(
-                        title=F("name"),
-                        resource__path=F("resources__path"),
-                        resource__deadline=F("resources__deadline"),
-                        resource__total_strings=F("resources__total_strings"),
-                        pretranslated_strings=F(
-                            "resources__translatedresources__pretranslated_strings"
-                        ),
-                        strings_with_errors=F(
-                            "resources__translatedresources__strings_with_errors"
-                        ),
-                        strings_with_warnings=F(
-                            "resources__translatedresources__strings_with_warnings"
-                        ),
-                        unreviewed_strings=F(
-                            "resources__translatedresources__unreviewed_strings"
-                        ),
-                        approved_strings=F(
-                            "resources__translatedresources__approved_strings"
-                        ),
-                    )
-                )
-
-            else:
-                locale_pages = pages.filter(
-                    project__resources__translatedresources__locale=self
-                ).exclude(project__resources__total_strings=0)
-                details = get_details(
-                    locale_pages.annotate(
-                        title=F("name"),
-                        resource__path=F("project__resources__path"),
-                        resource__deadline=F("project__resources__deadline"),
-                        resource__total_strings=F("project__resources__total_strings"),
-                        pretranslated_strings=F(
-                            "project__resources__translatedresources__pretranslated_strings"
-                        ),
-                        strings_with_errors=F(
-                            "project__resources__translatedresources__strings_with_errors"
-                        ),
-                        strings_with_warnings=F(
-                            "project__resources__translatedresources__strings_with_warnings"
-                        ),
-                        unreviewed_strings=F(
-                            "project__resources__translatedresources__unreviewed_strings"
-                        ),
-                        approved_strings=F(
-                            "project__resources__translatedresources__approved_strings"
-                        ),
-                    )
-                )
-
-            # List resources not bound to subpages as regular resources
-            bound_resources = locale_pages.values_list("resources", flat=True)
-            unbound_tr = translatedresources.exclude(resource__pk__in=bound_resources)
-            unbound_details = get_details(
-                unbound_tr.annotate(
-                    title=F("resource__path"), url=F("resource__project__url")
-                )
-            )
+        details = list(
+            get_details(translatedresources.annotate(title=F("resource__path")))
+        )
 
         all_resources = ProjectLocale.objects.get(project=project, locale=self)
-
-        details_list = list(details) + list(unbound_details)
-        details_list.append(
+        details.append(
             {
                 "title": "all-resources",
                 "resource__path": [],
@@ -1194,7 +1113,7 @@ class Locale(AggregatedStats):
             }
         )
 
-        return details_list
+        return details
 
     def save(self, *args, **kwargs):
         old = Locale.objects.get(pk=self.pk) if self.pk else None
@@ -1387,20 +1306,6 @@ class Project(AggregatedStats):
         choices=Visibility.choices,
     )
 
-    # Website for in place localization
-    url = models.URLField("URL", blank=True)
-    width = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        help_text="""
-        Default website (iframe) width in pixels.
-        If set, sidebar will be opened by default.
-    """,
-    )
-    links = models.BooleanField(
-        "Keep links on the project website clickable", default=False
-    )
-
     langpack_url = models.URLField(
         "Language pack URL",
         blank=True,
@@ -1466,9 +1371,6 @@ class Project(AggregatedStats):
             "name": self.name,
             "slug": self.slug,
             "info": self.info,
-            "url": self.url,
-            "width": self.width or "",
-            "links": self.links or "",
             "langpack_url": self.langpack_url or "",
             "contact": self.contact.serialize() if self.contact else None,
         }
@@ -1624,13 +1526,6 @@ class Project(AggregatedStats):
         TranslatedResource.objects.filter(
             resource__project=self, resource__entities__obsolete=False
         ).distinct().aggregate_stats(self)
-
-    def parts_to_paths(self, paths):
-        try:
-            subpage = Subpage.objects.get(project=self, name__in=paths)
-            return subpage.resources.values_list("path")
-        except Subpage.DoesNotExist:
-            return paths
 
     @property
     def avg_string_count(self):
@@ -2308,16 +2203,6 @@ class Resource(models.Model):
             return "xliff"
         else:
             return path_format
-
-
-class Subpage(models.Model):
-    project = models.ForeignKey(Project, models.CASCADE)
-    name = models.CharField(max_length=128)
-    url = models.URLField("URL", blank=True)
-    resources = models.ManyToManyField(Resource, blank=True)
-
-    def __str__(self):
-        return self.name
 
 
 class EntityQuerySet(models.QuerySet):
@@ -3043,7 +2928,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         # Filter by path
         if paths:
-            paths = project.parts_to_paths(paths)
             entities = entities.filter(resource__path__in=paths)
 
         if status:
@@ -3400,7 +3284,6 @@ class Translation(DirtyFieldsMixin, models.Model):
         )
 
         if paths:
-            paths = project.parts_to_paths(paths)
             translations = translations.filter(entity__resource__path__in=paths)
 
         return translations

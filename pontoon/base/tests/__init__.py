@@ -77,7 +77,6 @@ class GroupFactory(DjangoModelFactory):
 class ProjectFactory(DjangoModelFactory):
     name = Sequence(lambda n: f"Project {n}")
     slug = LazyAttribute(lambda p: slugify(p.name))
-    links = False
 
     class Meta:
         model = Project
