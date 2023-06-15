@@ -7,11 +7,7 @@ import {
 } from '@codemirror/commands';
 import { bracketMatching } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
-import {
-  EditorView,
-  highlightTrailingWhitespace,
-  keymap,
-} from '@codemirror/view';
+import { EditorView, keymap } from '@codemirror/view';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
@@ -57,7 +53,6 @@ export function useKeyHandlers() {
 export const getExtensions = (
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
-  highlightTrailingWhitespace(),
   history(),
   bracketMatching(),
   closeBrackets(),
