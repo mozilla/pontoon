@@ -152,9 +152,8 @@ class XLIFFResource(ParsedResource):
             "nn-NO": "nn",
             "sv-SE": "sv",
         }
-        locale_code = locale.code
-        if locale_code in locale_mapping:
-            locale_code = locale_mapping[locale_code]
+
+        locale_code = locale_mapping.get(locale.code, locale.code)
 
         # Set target-language if not set
         file_node = self.xliff_file.namespaced("file")
