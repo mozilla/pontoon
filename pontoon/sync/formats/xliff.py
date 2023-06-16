@@ -145,41 +145,23 @@ class XLIFFResource(ParsedResource):
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
 
+        locale_mapping = {
+            "bn-IN": "bn",
+            "ga-IE": "ga",
+            "nb-NO": "nb",
+            "nn-NO": "nn",
+            "sv-SE": "sv",
+        }
+
+        locale_code = locale_mapping.get(locale.code, locale.code)
+
+        # Set target-language if not set
+        file_node = self.xliff_file.namespaced("file")
+        for node in self.xliff_file.document.getroot().iterchildren(file_node):
+            node.set("target-language", locale_code)
+
         # Serialize and save the updated XLIFF file.
-        with open(self.path, "rb+") as f:
-            xml = f.read()
-
-            try:
-                locale_xliff_file = xliff.xlifffile(xml)
-            except etree.XMLSyntaxError as err:
-                raise ParseError(f"Failed to parse {self.path}: {err}")
-
-            # Read target-language if set
-            target_language = None
-            l10n_file = locale_xliff_file.namespaced("file")
-            for node in locale_xliff_file.document.getroot().iterchildren(l10n_file):
-                target_language = node.get("target-language")
-                if target_language:
-                    break
-
-            if target_language:
-                # TODO: should be made iOS specific
-                # Map locale codes for iOS: http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
-                locale_mapping = {
-                    "bn-IN": "bn",
-                    "ga-IE": "ga",
-                    "nb-NO": "nb",
-                    "nn-NO": "nn",
-                    "sv-SE": "sv",
-                }
-
-                target_language = locale_mapping.get(locale.code, locale.code)
-
-                file_node = self.xliff_file.namespaced("file")
-                for node in self.xliff_file.document.getroot().iterchildren(file_node):
-                    node.set("target-language", target_language)
-
-            f.seek(0)
+        with open(self.path, "wb") as f:
             f.write(bytes(self.xliff_file))
 
 
