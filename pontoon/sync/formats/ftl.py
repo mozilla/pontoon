@@ -118,7 +118,7 @@ class FTLResource(ParsedResource):
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
 
-    def save(self, locale):
+    def save(self, locale, project):
         """
         Load the source resource, modify it with changes made to this
         Resource instance, and save it over the locale-specific

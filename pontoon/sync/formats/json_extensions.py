@@ -104,7 +104,7 @@ class JSONExtensionResource(JSONResource):
                 data,
             )
 
-    def save(self, locale):
+    def save(self, locale, project):
         """
         Load the source resource, modify it with changes made to this
         Resource instance, and save it over the locale-specific

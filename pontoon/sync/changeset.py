@@ -177,7 +177,7 @@ class ChangeSet:
             )
 
         for resource in changed_resources:
-            resource.save(self.locale)
+            resource.save(self.locale, self.vcs_project.db_project)
 
     def get_entity_updates(self, vcs_entity, db_entity=None):
         """

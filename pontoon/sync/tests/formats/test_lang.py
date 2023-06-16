@@ -148,7 +148,7 @@ class LangTests(FormatTestsMixin, TestCase):
         """
         )
         path, resource = self.parse_string(expected)
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
         self.assert_file_content(path, expected)
 
     def test_parse_empty_translation(self):

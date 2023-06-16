@@ -68,7 +68,7 @@ class LangResource(ParsedResource):
     def translations(self):
         return [c for c in self.children if isinstance(c, LangEntity)]
 
-    def save(self, locale):
+    def save(self, locale, project):
         with codecs.open(self.path, "w", "utf-8") as f:
             for child in self.children:
                 if isinstance(child, LangEntity):

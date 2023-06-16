@@ -2,6 +2,7 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
     LocaleFactory,
+    ProjectFactory,
 )
 from pontoon.base.utils import match_attr
 
@@ -44,6 +45,8 @@ class FormatTestsMixin:
             plural_rule="(n != 1)",
             cldr_plurals="1,5",
         )
+
+        self.project = ProjectFactory()
 
     def parse_string(
         self,
@@ -293,7 +296,7 @@ class FormatTestsMixin:
         translation.strings[None] = expected_translation or "New Translated String"
         translation.fuzzy = True
 
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -308,7 +311,7 @@ class FormatTestsMixin:
             translation.strings = {}
 
         (remove_cb or default_remove)(resource)
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -318,7 +321,7 @@ class FormatTestsMixin:
         translation = resource.translations[0]
         translation.strings[0] = "New Plural"
         translation.strings[1] = "New Plurals"
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -332,7 +335,7 @@ class FormatTestsMixin:
         translation = resource.translations[0]
         translation.strings[0] = "New Plural"
         del translation.strings[1]
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -340,7 +343,7 @@ class FormatTestsMixin:
         path, resource = self.parse_string(input_string, source_string=source_string)
 
         resource.translations[0].fuzzy = False
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -372,7 +375,7 @@ class FormatTestsMixin:
         missing_translation.strings = {
             None: expected_translation or "Translated Missing String"
         }
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
@@ -396,13 +399,13 @@ class FormatTestsMixin:
 
         translation = match_attr(resource.translations, key="String")
         translation.strings = {None: expected_translation or "Source String"}
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)
 
     def run_save_no_changes(self, input_string, expected_string, source_string=None):
         """Test what happens when no changes are made."""
         path, resource = self.parse_string(input_string, source_string=source_string)
-        resource.save(self.locale)
+        resource.save(self.locale, self.project)
 
         self.assert_file_content(path, expected_string)

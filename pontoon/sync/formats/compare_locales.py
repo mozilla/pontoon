@@ -91,7 +91,7 @@ class CompareLocalesResource(ParsedResource):
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
 
-    def save(self, locale):
+    def save(self, locale, project):
         if not self.source_resource:
             raise SyncError(
                 f"Cannot save resource {self.path}: No source resource given."
