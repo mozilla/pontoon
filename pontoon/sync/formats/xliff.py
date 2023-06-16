@@ -46,6 +46,7 @@ class XLIFFResource(ParsedResource):
         self.locale = locale
         self.source_resource = source_resource
         self.entities = {}
+        self.target_language = None
 
         # Copy entities from the source_resource if it's available.
         if source_resource:
@@ -96,6 +97,12 @@ class XLIFFResource(ParsedResource):
                 # Add the entity to the entities dictionary using its key as the dictionary key
                 self.entities[entity.key] = entity
 
+            # Store target-language, needed for serialization
+            file_tag = self.xliff_file.namespaced("file")
+            file_nodes = self.xliff_file.document.getroot().iterchildren(file_tag)
+            if file_nodes:
+                self.target_language = next(file_nodes).get("target-language")
+
     @property
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
@@ -145,22 +152,24 @@ class XLIFFResource(ParsedResource):
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
 
+        # Map locale codes for iOS:
+        # http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
         locale_mapping = {
-            "bn-IN": "bn",
             "ga-IE": "ga",
             "nb-NO": "nb",
             "nn-NO": "nn",
+            "sat": "sat-Olck",
             "sv-SE": "sv",
+            "tl": "fil",
+            "zgh": "tzm",
         }
-        locale_code = locale.code
-        if locale_code in locale_mapping:
-            locale_code = locale_mapping[locale_code]
+
+        locale_code = locale_mapping.get(locale.code, locale.code)
 
         # Set target-language if not set
         file_node = self.xliff_file.namespaced("file")
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            if not node.get("target-language"):
-                node.set("target-language", locale_code)
+            node.set("target-language", self.target_language or locale_code)
 
         # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
