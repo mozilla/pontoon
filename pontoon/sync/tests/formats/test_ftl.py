@@ -8,6 +8,7 @@ import pytest
 from pontoon.base.tests import (
     assert_attributes_equal,
     create_named_tempfile,
+    LocaleFactory,
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
@@ -77,7 +78,7 @@ class FTLResourceTests(FormatTestsMixin, TestCase):
         translated_resource.translations[0].strings = {None: "New Translated String"}
 
         assert not os.path.exists(path)
-        translated_resource.save(self.locale, self.project)
+        translated_resource.save(LocaleFactory.create())
         assert os.path.exists(path)
 
     def test_parse_with_source_path(self):

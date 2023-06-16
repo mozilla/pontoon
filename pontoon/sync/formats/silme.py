@@ -139,7 +139,7 @@ class SilmeResource(ParsedResource):
     def translations(self):
         return list(self.entities.values())
 
-    def save(self, locale, project):
+    def save(self, locale):
         """
         Load the source resource, modify it with changes made to this
         Resource instance, and save it over the locale-specific

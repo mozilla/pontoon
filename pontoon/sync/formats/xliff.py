@@ -100,7 +100,7 @@ class XLIFFResource(ParsedResource):
     def translations(self):
         return sorted(self.entities.values(), key=lambda e: e.order)
 
-    def save(self, locale, project):
+    def save(self, locale):
         if not self.source_resource:
             raise SyncError(
                 "Cannot save XLIFF resource {}: No source resource given.".format(

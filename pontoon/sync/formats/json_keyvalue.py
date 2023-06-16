@@ -74,7 +74,7 @@ class JSONKVResource(JSONResource):
         # Read all nested values
         self.traverse_json(self.json_file, readEntity)
 
-    def save(self, locale, project):
+    def save(self, locale):
         """
         Load the source resource, modify it with changes made to this
         Resource instance, and save it over the locale-specific

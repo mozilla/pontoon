@@ -75,7 +75,7 @@ class POResource(ParsedResource):
     def translations(self):
         return self.entities
 
-    def save(self, locale, project):
+    def save(self, locale):
         for entity in self.translations:
             entity.update_entry(locale)
 

@@ -9,7 +9,6 @@ import pytest
 from pontoon.base.tests import (
     create_named_tempfile,
     LocaleFactory,
-    ProjectFactory,
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
@@ -94,7 +93,7 @@ class CompareLocalesResourceTests(TestCase):
         translated_resource.translations[0].strings = {None: "New Translated String"}
 
         assert not os.path.exists(path)
-        translated_resource.save(LocaleFactory.create(), ProjectFactory.create())
+        translated_resource.save(LocaleFactory.create())
         assert os.path.exists(path)
 
 

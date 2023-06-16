@@ -9,7 +9,6 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
     LocaleFactory,
-    ProjectFactory,
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
@@ -59,7 +58,7 @@ class SilmeResourceTests(TestCase):
         translated_resource = self.create_nonexistant_resource(path)
 
         translated_resource.translations[0].strings = {None: "New Translated String"}
-        translated_resource.save(LocaleFactory.create(), ProjectFactory.create())
+        translated_resource.save(LocaleFactory.create())
 
         assert os.path.exists(path)
 
@@ -258,7 +257,7 @@ class DTDTests(FormatTestsMixin, TestCase):
         translated_resource.translations[0].strings[None] = "Single Quote '"
         translated_resource.translations[3].strings[None] = 'Double Quote "'
 
-        translated_resource.save(self.locale, self.project)
+        translated_resource.save(self.locale)
 
         expected_string = dedent(
             """
@@ -844,7 +843,7 @@ class IncTests(FormatTestsMixin, TestCase):
         resource.entities["MOZ_LANGPACK_CONTRIBUTORS"].strings = {
             None: "New Contributor list"
         }
-        resource.save(self.locale, self.project)
+        resource.save(self.locale)
 
         self.assert_file_content(
             path,
@@ -879,7 +878,7 @@ class IncTests(FormatTestsMixin, TestCase):
 
         path, resource = self.parse_string(input_string, source_string=source_string)
         resource.entities["MOZ_LANGPACK_CONTRIBUTORS"].strings = {}
-        resource.save(self.locale, self.project)
+        resource.save(self.locale)
 
         self.assert_file_content(
             path,

@@ -326,7 +326,7 @@ class POTests(FormatTestsMixin, TestCase):
         )
         path, resource = self.parse_string(test_input)
 
-        resource.save(self.locale, self.project)
+        resource.save(self.locale)
         self.assert_file_content(
             path,
             self.generate_pofile(
@@ -366,7 +366,7 @@ class POTests(FormatTestsMixin, TestCase):
         older_translation.last_translator = UserFactory(
             first_name="Old", email="old@example.com"
         )
-        resource.save(self.locale, self.project)
+        resource.save(self.locale)
 
         self.assert_file_content(
             path,
