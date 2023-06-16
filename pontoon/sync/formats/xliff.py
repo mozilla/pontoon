@@ -145,25 +145,20 @@ class XLIFFResource(ParsedResource):
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
 
-        locale_mapping = (
-            {
-                "bn-IN": "bn",
-                "ga-IE": "ga",
-                "nb-NO": "nb",
-                "nn-NO": "nn",
-                "sv-SE": "sv",
-            }
-            if "ios" in project.slug
-            else {}
-        )
+        locale_mapping = {
+            "bn-IN": "bn",
+            "ga-IE": "ga",
+            "nb-NO": "nb",
+            "nn-NO": "nn",
+            "sv-SE": "sv",
+        }
 
-        # Set target-language and map locale codes for iOS according to:
-        # http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
-        target_language = locale_mapping.get(locale.code, locale.code)
+        locale_code = locale_mapping.get(locale.code, locale.code)
 
+        # Set target-language if not set
         file_node = self.xliff_file.namespaced("file")
         for node in self.xliff_file.document.getroot().iterchildren(file_node):
-            node.set("target-language", target_language)
+            node.set("target-language", locale_code)
 
         # Serialize and save the updated XLIFF file.
         with open(self.path, "wb") as f:
