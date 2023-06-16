@@ -152,12 +152,16 @@ class XLIFFResource(ParsedResource):
                 if target is not None and "state" in target.attrib:
                     del target.attrib["state"]
 
+        # Map locale codes for iOS:
+        # http://www.ibabbleon.com/iOS-Language-Codes-ISO-639.html
         locale_mapping = {
-            "bn-IN": "bn",
             "ga-IE": "ga",
             "nb-NO": "nb",
             "nn-NO": "nn",
+            "sat": "sat-Olck",
             "sv-SE": "sv",
+            "tl": "fil",
+            "zgh": "tzm",
         }
 
         locale_code = locale_mapping.get(locale.code, locale.code)
