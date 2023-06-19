@@ -3,7 +3,7 @@
   color: #aaa;
   font-size: 12px;
   font-style: italic;
-  min-height: 100px;
+  min-height: 114px;
   line-height: 22px;
   padding: 10px;
 }
@@ -90,4 +90,12 @@
 
 .metadata .resource-comment button {
   white-space: nowrap;
+}
+
+.metadata .context a {
+  color: #aaa;
+}
+
+.metadata .context a:hover {
+  color: #7bc876;
 }

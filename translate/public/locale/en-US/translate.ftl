@@ -276,9 +276,6 @@ entitydetails-Metadata--context =
 entitydetails-Metadata--placeholder =
     .title = PLACEHOLDER EXAMPLES
 
-entitydetails-Metadata--resource =
-    .title = RESOURCE
-
 entitydetails-Metadata--attribute =
     .title = FLUENT ATTRIBUTE
 

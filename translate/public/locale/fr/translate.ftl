@@ -111,9 +111,6 @@ entitydetails-Metadata--context =
 entitydetails-Metadata--placeholder =
     .title = EXEMPLES BOUCHE-TROUS
 
-entitydetails-Metadata--resource =
-    .title = RESSOURCE
-
 
 ## Entity Details PluralString
 ## Shows the original string of an entity with plural forms
