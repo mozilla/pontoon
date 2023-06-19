@@ -17,6 +17,7 @@ import { Locale } from '~/context/Locale';
 import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { getExtensions, useKeyHandlers } from '../utils/editFieldExtensions';
+import { EntityView } from '~/context/EntityView';
 
 export type EditFieldProps = {
   index: number;
@@ -38,13 +39,14 @@ export const EditField = memo(
       const { l10n } = useLocalization();
       const locale = useContext(Locale);
       const readOnly = useReadonlyEditor();
+      const { entity } = useContext(EntityView);
       const { setResultFromInput } = useContext(EditorActions);
       const keyHandlers = useKeyHandlers();
       const [view, setView] = useState<EditorView | null>(null);
 
       const initView = useCallback((parent: HTMLDivElement | null) => {
         if (parent) {
-          const extensions = getExtensions(keyHandlers);
+          const extensions = getExtensions(entity.format, keyHandlers);
           if (readOnly) {
             extensions.push(
               EditorState.readOnly.of(true),
