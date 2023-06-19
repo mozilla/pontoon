@@ -1,7 +1,7 @@
 {
   "name": "pontoon",
   "version": "0.1.0",
-  "description": "Mozilla in-place localization tool.",
+  "description": "Mozilla localization platform",
   "private": true,
   "browserslist": [
     "chrome >= 80",

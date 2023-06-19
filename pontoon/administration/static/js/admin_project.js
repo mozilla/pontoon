@@ -220,7 +220,7 @@ $(function () {
     $(this).parents('.repository').find('.website-wrapper input').val(val);
   });
 
-  // Delete inline form item (e.g. subpage or external resource)
+  // Delete inline form item (e.g. external resource)
   $('body').on('click.pontoon', '.delete-inline', function (e) {
     e.preventDefault();
     $(this).parent().toggleClass('delete');
@@ -228,9 +228,8 @@ $(function () {
   });
   $('.inline [checked]').click().prev().click();
 
-  // Add inline form item (e.g. subpage or external resource)
+  // Add inline form item (e.g. external resource)
   var count = {
-    subpage: $('.subpage:last').data('count'),
     externalresource: $('.externalresource:last').data('count'),
     entity: $('.entity:last').data('count'),
     tag: $('.tag:last').data('count'),

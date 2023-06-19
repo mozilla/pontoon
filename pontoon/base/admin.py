@@ -208,19 +208,6 @@ class RepositoryInline(admin.TabularInline):
     )
 
 
-class SubpageInline(admin.TabularInline):
-    model = models.Subpage
-    extra = 0
-    verbose_name_plural = "Subpages"
-    fields = (
-        "project",
-        "name",
-        "url",
-        "resources",
-    )
-    raw_id_fields = ("resources",)
-
-
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ["name", "slug"]
     list_display = (
@@ -270,11 +257,9 @@ class ProjectAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-        ("WEBSITE", {"fields": ("url", "width", "links")}),
     )
     readonly_fields = AGGREGATED_STATS_FIELDS + ("latest_translation",)
     inlines = (
-        SubpageInline,
         ProjectLocaleInline,
         RepositoryInline,
         ExternalProjectResourceInline,

@@ -4,7 +4,6 @@ from pontoon.base.models import ChangedEntityLocale, Entity, Project
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
-    SubpageFactory,
     TermFactory,
     TranslationFactory,
 )
@@ -17,7 +16,6 @@ def entity_test_models(translation_a, locale_b):
 
     - 2 translations of a plural entity
     - 1 translation of a non-plural entity
-    - A subpage that contains the plural entity
     """
 
     entity_a = translation_a.entity
@@ -57,12 +55,7 @@ def entity_test_models(translation_a, locale_b):
         active=True,
         string="Translation %s" % entity_b.string,
     )
-    subpageX = SubpageFactory(
-        project=project_a,
-        name="Subpage",
-    )
-    subpageX.resources.add(entity_a.resource)
-    return translation_a, translation_a_pl, translationX, subpageX
+    return translation_a, translation_a_pl, translationX
 
 
 @pytest.fixture
@@ -249,7 +242,7 @@ def test_entity_project_locale_filter(admin, entity_test_models, locale_b, proje
     """
     Evaluate entities filtering by locale, project, obsolete.
     """
-    tr0, tr0pl, trX, subpageX = entity_test_models
+    tr0, tr0pl, trX = entity_test_models
     locale_a = tr0.locale
     resource0 = tr0.entity.resource
     project_a = tr0.entity.resource.project
@@ -274,7 +267,7 @@ def test_entity_project_locale_no_paths(
     If paths not specified, return all project entities along with their
     translations for locale.
     """
-    tr0, tr0pl, trX, subpageX = entity_test_models
+    tr0, tr0pl, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity
@@ -344,7 +337,7 @@ def test_entity_project_locale_paths(admin, entity_test_models):
     If paths specified, return project entities from these paths only along
     with their translations for locale.
     """
-    tr0, tr0pl, trX, subpageX = entity_test_models
+    tr0, tr0pl, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     project_a = tr0.entity.resource.project
@@ -366,37 +359,6 @@ def test_entity_project_locale_paths(admin, entity_test_models):
 
 
 @pytest.mark.django_db
-def test_entity_project_locale_subpages(admin, entity_test_models):
-    """
-    If paths specified as subpages, return project entities from paths
-    assigned to these subpages only along with their translations for
-    locale.
-    """
-    tr0 = entity_test_models[0]
-    subpageX = entity_test_models[3]
-    locale_a = tr0.locale
-    preferred_source_locale = ""
-    entity_a = tr0.entity
-    resource0 = tr0.entity.resource
-    project_a = tr0.entity.resource.project
-    subpages = [subpageX.name]
-    entities = Entity.map_entities(
-        locale_a,
-        preferred_source_locale,
-        Entity.for_project_locale(
-            admin,
-            project_a,
-            locale_a,
-            subpages,
-        ),
-    )
-    assert len(entities) == 1
-    assert entities[0]["path"] == resource0.path
-    assert entities[0]["original"] == entity_a.string
-    assert entities[0]["translation"][0]["string"] == tr0.string
-
-
-@pytest.mark.django_db
 def test_entity_project_locale_plurals(
     admin,
     entity_test_models,
@@ -406,7 +368,7 @@ def test_entity_project_locale_plurals(
     """
     For pluralized strings, return all available plural forms.
     """
-    tr0, tr0pl, trX, subpageX = entity_test_models
+    tr0, tr0pl, trX = entity_test_models
     locale_a = tr0.locale
     preferred_source_locale = ""
     entity_a = tr0.entity

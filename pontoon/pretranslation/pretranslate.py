@@ -23,7 +23,7 @@ parser = FluentParser()
 serializer = FluentSerializer()
 
 
-def get_pretranslations(entity, locale):
+def get_pretranslations(entity, locale, preserve_placeables=False):
     """
     Get pretranslations for the entity-locale pair using internal translation memory and
     Google's machine translation.
@@ -34,6 +34,7 @@ def get_pretranslations(entity, locale):
 
     :arg Entity entity: the Entity object
     :arg Locale locale: the Locale object
+    :arg boolean preserve_placeables
 
     :returns: a list of tuples, consisting of:
         - a pretranslation of the entity
@@ -45,7 +46,9 @@ def get_pretranslations(entity, locale):
 
     if entity.resource.format == "ftl":
         entry = parser.parse_entry(source)
-        pretranslate = ApplyPretranslation(locale, entry, get_pretranslated_data)
+        pretranslate = ApplyPretranslation(
+            locale, entry, get_pretranslated_data, preserve_placeables
+        )
 
         try:
             pretranslate.visit(entry)
@@ -61,7 +64,9 @@ def get_pretranslations(entity, locale):
         return [(pretranslation, None, author)]
 
     else:
-        pretranslation, service = get_pretranslated_data(source, locale)
+        pretranslation, service = get_pretranslated_data(
+            source, locale, preserve_placeables
+        )
 
         if pretranslation is None:
             return []
@@ -76,7 +81,7 @@ def get_pretranslations(entity, locale):
             ]
 
 
-def get_pretranslated_data(source, locale):
+def get_pretranslated_data(source, locale, preserve_placeables):
     # Empty strings do not need translation
     if re.search("^\\s*$", source):
         return source, "tm"
@@ -90,7 +95,7 @@ def get_pretranslated_data(source, locale):
     # Fetch from Google Translate
     elif locale.google_translate_code:
         gt_response = get_google_translate_data(
-            text=source, locale=locale, format="text"
+            text=source, locale=locale, preserve_placeables=preserve_placeables
         )
         if gt_response["status"]:
             return gt_response["translation"], "gt"

@@ -107,12 +107,10 @@ Installation
      your Postgres database. It takes the form
      ``postgres://username:password@server_addr/database_name``.
 
-   - ``SITE_URL`` should be set to the URL you will use to connect to your
-     local development site. Some people prefer to use
-     ``http://127.0.0.1:8000`` instead of ``localhost``. However, should you
-     decide to change the ``SITE_URL``, you also need to request_
-     the new ``FXA_CLIENT_ID`` and ``FXA_SECRET_KEY``, and our in-context demo
-     site ``http://localhost:8000/in-context/`` will require change of base url.
+   - ``SITE_URL`` should be set to the URL you will use to connect to your local development site.
+     Some people prefer to use ``http://127.0.0.1:8000`` instead of ``localhost``.
+     However, should you decide to change the ``SITE_URL``,
+     you also need to request_ the new ``FXA_CLIENT_ID`` and ``FXA_SECRET_KEY``.
 
 6. Initialize your database by running the migrations:
 

@@ -13,10 +13,6 @@ class LocaleConverter(StringConverter):
 
 register_converter(LocaleConverter, "locale")
 
-pontoon_js_view = TemplateView.as_view(
-    template_name="js/pontoon.js", content_type="text/javascript"
-)
-
 permission_denied_view = TemplateView.as_view(template_name="403.html")
 page_not_found_view = TemplateView.as_view(template_name="404.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
@@ -53,9 +49,9 @@ urlpatterns = [
         "favicon.ico",
         RedirectView.as_view(url="/static/img/favicon.ico", permanent=True),
     ),
-    # Include script
-    path("pontoon.js", pontoon_js_view),
-    path("static/js/pontoon.js", pontoon_js_view),
+    # Legacy
+    path("in-context/", RedirectView.as_view(url="/", permanent=True)),
+    path("intro/", RedirectView.as_view(url="/", permanent=True)),
     # Include URL configurations from installed apps
     path("terminology/", include("pontoon.terminology.urls")),
     path("translations/", include("pontoon.translations.urls")),
@@ -72,7 +68,6 @@ urlpatterns = [
     path("", include("pontoon.batch.urls")),
     path("", include("pontoon.api.urls")),
     path("", include("pontoon.homepage.urls")),
-    path("", include("pontoon.in_context.urls")),
     path("", include("pontoon.uxactionlog.urls")),
     # Team page: Must be at the end
     path("<locale:locale>/", team, name="pontoon.teams.team"),

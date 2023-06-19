@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { EditorData } from '~/context/Editor';
+import { EditorData, EditorResult } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 
 import { TranslationLength } from './TranslationLength';
@@ -18,7 +18,8 @@ describe('<TranslationLength>', () => {
 
   function mountTranslationLength(format, original, value, comment) {
     const context = new Map([
-      [EditorData, { sourceView: false, value: [{ value }] }],
+      [EditorData, { sourceView: false }],
+      [EditorResult, [{ value }]],
       [EntityView, { entity: { comment, format, original }, pluralForm: 0 }],
     ]);
     React.useContext.callsFake((key) => context.get(key));

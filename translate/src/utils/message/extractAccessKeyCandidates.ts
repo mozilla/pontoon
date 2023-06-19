@@ -1,4 +1,4 @@
-import type { EditorMessage } from '~/context/Editor';
+import type { EditorField } from '~/context/Editor';
 
 /**
  * Return a set of potential access key candidates from either the attribute
@@ -8,7 +8,7 @@ import type { EditorMessage } from '~/context/Editor';
  * @returns A set of access key candidates.
  */
 export function extractAccessKeyCandidates(
-  message: EditorMessage,
+  fields: EditorField[],
   label: string,
 ): string[] {
   let source: string | undefined;
@@ -18,16 +18,16 @@ export function extractAccessKeyCandidates(
 
   if (prefix) {
     const name = `${prefix}label`;
-    source = message
+    source = fields
       .filter((field) => field.name === name)
-      .map((field) => field.value)
+      .map((field) => field.handle.current.value)
       .join('');
   } else {
     // Generate access key candidates from the 'label' attribute or the message value
     for (const name of ['label', '', 'value', 'aria-label']) {
-      const field = message.filter((field) => field.name === name);
-      if (field.length) {
-        source = field.map((field) => field.value).join('');
+      const match = fields.filter((field) => field.name === name);
+      if (match.length) {
+        source = match.map((field) => field.handle.current.value).join('');
         break;
       }
     }

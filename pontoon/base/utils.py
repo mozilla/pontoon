@@ -188,25 +188,13 @@ def _download_file(prefixes, dirnames, vcs_project, relative_path):
             return temp.name
 
 
-def _get_relative_path_from_part(slug, part):
-    """Check if part is a Resource path or Subpage name."""
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import Subpage
-
-    try:
-        subpage = Subpage.objects.get(project__slug=slug, name=part)
-        return subpage.resources.first().path
-    except Subpage.DoesNotExist:
-        return part
-
-
 def get_download_content(slug, code, part):
     """
     Get content of the file to be downloaded.
 
     :arg str slug: Project slug.
     :arg str code: Locale code.
-    :arg str part: Resource path or Subpage name.
+    :arg str part: Resource path.
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
@@ -229,10 +217,7 @@ def get_download_content(slug, code, part):
 
     # Download a single file if project has 1 or >= 10 resources
     else:
-        relative_path = _get_relative_path_from_part(slug, part)
-        resources = [
-            get_object_or_404(Resource, project__slug=slug, path=relative_path)
-        ]
+        resources = [get_object_or_404(Resource, project__slug=slug, path=part)]
 
     locale_prefixes = project.repositories
 
@@ -260,7 +245,7 @@ def get_download_content(slug, code, part):
 
         # Get source file if needed
         source_path = None
-        if resource.is_asymmetric:
+        if resource.is_asymmetric or resource.format == "xliff":
             dirnames = VCSProject.SOURCE_DIR_NAMES
             source_path = _download_file(
                 source_prefixes, dirnames, vcs_project, resource.path
@@ -331,7 +316,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     :arg str slug: Project slug.
     :arg str code: Locale code.
-    :arg str part: Resource path or Subpage name.
+    :arg str part: Resource path.
     :arg UploadedFile f: UploadedFile instance.
     :arg User user: User uploading the file.
     """
@@ -348,10 +333,9 @@ def handle_upload_content(slug, code, part, f, user):
         Translation,
     )
 
-    relative_path = _get_relative_path_from_part(slug, part)
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)
-    resource = get_object_or_404(Resource, project__slug=slug, path=relative_path)
+    resource = get_object_or_404(Resource, project__slug=slug, path=part)
 
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
@@ -370,7 +354,7 @@ def handle_upload_content(slug, code, part, f, user):
     )
     entities_qs = (
         Entity.objects.filter(
-            resource__project=project, resource__path=relative_path, obsolete=False
+            resource__project=project, resource__path=part, obsolete=False
         )
         .prefetch_related(
             Prefetch(
