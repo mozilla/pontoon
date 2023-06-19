@@ -58,10 +58,10 @@ export function useKeyHandlers() {
 }
 
 const style = HighlightStyle.define([
-  { tag: tags.keyword, color: '#708', fontFamily: 'monospace' }, // printf
-  { tag: tags.tagName, color: '#174', fontFamily: 'monospace' }, // <...>
-  { tag: tags.brace, color: '#708', fontWeight: 'bold' }, // {...}
-  { tag: tags.name, color: '#708' }, // {...}
+  { tag: tags.keyword, color: '#872bff', fontFamily: 'monospace' }, // printf
+  { tag: tags.tagName, color: '#3e9682', fontFamily: 'monospace' }, // <...>
+  { tag: tags.brace, color: '#872bff', fontWeight: 'bold' }, // {...}
+  { tag: tags.name, color: '#872bff' }, // {...}
 ]);
 
 export const getExtensions = (
