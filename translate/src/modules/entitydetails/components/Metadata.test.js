@@ -65,7 +65,7 @@ describe('<Metadata>', () => {
     );
 
     expect(
-      wrapper.find('#entitydetails-Metadata--resource a.resource-path').text(),
+      wrapper.find('#entitydetails-Metadata--context a.resource-path').text(),
     ).toContain(ENTITY.path);
   });
 

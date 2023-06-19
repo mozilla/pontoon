@@ -1,13 +1,10 @@
 .history {
   line-height: 22px;
-  overflow: hidden;
 }
 
 .history ul {
-  height: 100%;
   list-style: none;
   margin: 0;
-  overflow: auto;
   padding: 0;
 }
 

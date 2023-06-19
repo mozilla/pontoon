@@ -23,7 +23,6 @@
 
 #app > .main-content > .panel-content,
 #app > .main-content > .panel-list {
-  height: 100%;
   position: relative;
 }
 

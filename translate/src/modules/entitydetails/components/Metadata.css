@@ -1,13 +1,10 @@
 .metadata {
   background-color: #3f4752;
   color: #aaa;
-  flex-shrink: 0;
   font-size: 12px;
   font-style: italic;
-  height: 20%;
-  min-height: 100px;
+  min-height: 114px;
   line-height: 22px;
-  overflow: auto;
   padding: 10px;
 }
 
@@ -93,4 +90,12 @@
 
 .metadata .resource-comment button {
   white-space: nowrap;
+}
+
+.metadata .context a {
+  color: #aaa;
+}
+
+.metadata .context a:hover {
+  color: #7bc876;
 }

@@ -1,8 +1,6 @@
 .translationform {
-  height: 100%;
   line-height: 22px;
   padding: 10px;
-  overflow: auto;
 }
 
 .translationform table {

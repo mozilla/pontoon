@@ -116,14 +116,6 @@ function ResourceComment({ comment }: { comment: string }) {
   );
 }
 
-function EntityContext({ context }: { context: string }) {
-  return (
-    <Datum className='context' id='context' title='CONTEXT'>
-      {context}
-    </Datum>
-  );
-}
-
 function SourceArray({ source }: { source: string[][] }) {
   return source.length > 1 || (source.length === 1 && source[0]) ? (
     <ul>
@@ -161,6 +153,39 @@ function SourceObject({
   );
 }
 
+const EntityContext = ({
+  entity: { context, path, project },
+  localeCode,
+  navigateToPath,
+}: {
+  entity: Entity;
+  localeCode: string;
+  navigateToPath: (path: string) => void;
+}) => (
+  <Localized id='entitydetails-Metadata--context' attrs={{ title: true }}>
+    <Property title='CONTEXT' className='context'>
+      {context ? (
+        <>
+          {context}
+          <span className='divider'>&bull;</span>
+        </>
+      ) : null}
+      <a
+        href={`/${localeCode}/${project.slug}/${path}/`}
+        onClick={(ev) => {
+          ev.preventDefault();
+          navigateToPath(ev.currentTarget.pathname);
+        }}
+        className='resource-path'
+      >
+        {path}
+      </a>
+      <span className='divider'>&bull;</span>
+      <a href={`/${localeCode}/${project.slug}/`}>{project.name}</a>
+    </Property>
+  </Localized>
+);
+
 /**
  * Component showing metadata of an entity.
  *
@@ -186,14 +211,6 @@ export function Metadata({
 }: Props): React.ReactElement {
   const { code } = useContext(Locale);
 
-  const navigateToPath_ = useCallback(
-    (ev: React.MouseEvent<HTMLAnchorElement>) => {
-      ev.preventDefault();
-      navigateToPath(ev.currentTarget.pathname);
-    },
-    [navigateToPath],
-  );
-
   const openTeamComments = useCallback(() => {
     const teamCommentsTab = commentTabRef.current;
     const index = teamCommentsTab?._reactInternalFiber.index ?? 0;
@@ -216,25 +233,16 @@ export function Metadata({
       <GroupComment comment={entity.group_comment} />
       <ResourceComment comment={entity.resource_comment} key={entity.pk} />
       <FluentAttribute entity={entity} />
-      <EntityContext context={entity.context} />
       {Array.isArray(entity.source) ? (
         <SourceArray source={entity.source} />
       ) : entity.source ? (
         <SourceObject source={entity.source} />
       ) : null}
-      <Localized id='entitydetails-Metadata--resource' attrs={{ title: true }}>
-        <Property title='RESOURCE' className='resource'>
-          <a href={`/${code}/${entity.project.slug}/`}>{entity.project.name}</a>
-          <span className='divider'>&bull;</span>
-          <a
-            href={`/${code}/${entity.project.slug}/${entity.path}/`}
-            onClick={navigateToPath_}
-            className='resource-path'
-          >
-            {entity.path}
-          </a>
-        </Property>
-      </Localized>
+      <EntityContext
+        entity={entity}
+        localeCode={code}
+        navigateToPath={navigateToPath}
+      />
     </div>
   );
 }
