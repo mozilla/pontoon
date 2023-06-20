@@ -66,7 +66,7 @@ export const EditField = memo(
                   setResultFromInput(index, update.state.doc.toString());
                 }
               }),
-              EditorView.contentAttributes.of({spellcheck: "true"}),
+              EditorView.contentAttributes.of({ spellcheck: 'true' }),
             );
           }
 
