@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 
-import { EditorActions, EditorProvider, EditorResult } from '~/context/Editor';
+import { EditorActions, EditorProvider } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 
@@ -32,10 +32,9 @@ function mountForm(string) {
     translation: [{ string }],
   };
 
-  let actions, result;
+  let actions;
   const Spy = () => {
     actions = useContext(EditorActions);
-    result = useContext(EditorResult);
     return null;
   };
 
@@ -55,47 +54,43 @@ function mountForm(string) {
     store,
   );
 
-  const view = wrapper
-    .find('.singlefield')
-    .instance()
-    .querySelector('.cm-content').cmView.view;
-
-  return { actions, getResult: () => result, view, wrapper };
+  return [wrapper, actions];
 }
 
 describe('<TranslationForm> with one field', () => {
-  it('renders an editor with some content', () => {
-    const { view } = mountForm('Salut');
-    expect(view.state.doc.toString()).toBe('Salut');
+  it('renders a textarea with some content', () => {
+    const [wrapper] = mountForm('Salut');
+
+    expect(wrapper.find('textarea').prop('value')).toBe('Salut');
   });
 
-  it('updates the result on change', () => {
-    const { view, getResult } = mountForm('hello');
-    act(() =>
-      view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: 'good bye' },
-      }),
-    );
-    expect(getResult()[0].value).toBe('good bye');
+  it('calls the updateTranslation function on change', () => {
+    const [wrapper] = mountForm('hello');
+    const onChange = wrapper.find('textarea').prop('onChange');
+    act(() => onChange({ currentTarget: { value: 'good bye' } }));
+    wrapper.update();
+
+    expect(wrapper.find('textarea').prop('value')).toBe('good bye');
   });
 
   it('updates the translation when setEditorSelection is passed without focus', async () => {
-    const { wrapper, actions, getResult } = mountForm('Foo');
+    const [wrapper, actions] = mountForm('Foo');
     act(() => actions.setEditorSelection(', Bar'));
     wrapper.update();
 
-    expect(getResult()[0].value).toBe('Foo, Bar');
+    expect(wrapper.find('textarea').prop('value')).toBe('Foo, Bar');
   });
 
   it('updates the translation when setEditorSelection is passed with focus', async () => {
-    const { actions, getResult, view, wrapper } = mountForm('Hello');
+    const [wrapper, actions] = mountForm('Hello');
     act(() => {
-      view.focus();
-      view.dispatch({ selection: { anchor: view.state.doc.length } });
+      const ta = wrapper.find('textarea');
+      ta.simulate('focus');
+      ta.getDOMNode().setSelectionRange(5, 5);
       actions.setEditorSelection(', World');
     });
     wrapper.update();
 
-    expect(getResult()[0].value).toBe('Hello, World');
+    expect(wrapper.find('textarea').prop('value')).toBe('Hello, World');
   });
 });

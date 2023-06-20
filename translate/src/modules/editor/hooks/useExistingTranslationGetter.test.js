@@ -2,7 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import { EditorData, EditorResult } from '~/context/Editor';
+import { EditorData } from '~/context/Editor';
 import * as Entity from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
 import { editMessageEntry, parseEntry } from '~/utils/message';
@@ -28,12 +28,6 @@ const HISTORY_FLUENT = {
 };
 
 function mountSpy(format, history, editor) {
-  const result = editor.fields.map(({ handle, keys, name }) => ({
-    name,
-    keys,
-    value: handle.current.value,
-  }));
-
   let res;
   const Spy = () => {
     res = useExistingTranslationGetter()();
@@ -44,9 +38,7 @@ function mountSpy(format, history, editor) {
     <Entity.EntityView.Provider value={{ entity: { format } }}>
       <HistoryData.Provider value={history}>
         <EditorData.Provider value={editor}>
-          <EditorResult.Provider value={result}>
-            <Spy />
-          </EditorResult.Provider>
+          <Spy />
         </EditorData.Provider>
       </HistoryData.Provider>
     </Entity.EntityView.Provider>,
@@ -65,7 +57,7 @@ const mockMessageEntry = (value) => ({
 });
 
 const mockEditorMessage = (value) => [
-  { id: 'msg', name: '', keys: [], labels: [], handle: { current: { value } } },
+  { id: 'msg', name: '', keys: [], labels: [], value },
 ];
 
 describe('useExistingTranslation', () => {
@@ -78,8 +70,8 @@ describe('useExistingTranslation', () => {
     const entry = mockMessageEntry('something');
     const res = mountSpy('simple', HISTORY_STRING, {
       entry,
-      fields: editMessageEntry(entry),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: editMessageEntry(entry),
     });
 
     expect(res).toBe(ACTIVE_TRANSLATION);
@@ -89,8 +81,8 @@ describe('useExistingTranslation', () => {
     const entry = parseEntry('msg = something');
     const res = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(entry),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: editMessageEntry(entry),
     });
 
     expect(res).toBe(ACTIVE_TRANSLATION);
@@ -100,8 +92,8 @@ describe('useExistingTranslation', () => {
     const entry = mockMessageEntry('');
     const res = mountSpy('simple', HISTORY_STRING, {
       entry,
-      fields: editMessageEntry(entry),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: editMessageEntry(entry),
     });
 
     expect(res).toBe(ACTIVE_TRANSLATION);
@@ -112,8 +104,8 @@ describe('useExistingTranslation', () => {
     const prev0 = HISTORY_STRING.translations[0];
     const res0 = mountSpy('simple', HISTORY_STRING, {
       entry,
-      fields: mockEditorMessage(prev0.string),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: mockEditorMessage(prev0.string),
     });
 
     expect(res0).toBe(prev0);
@@ -121,8 +113,8 @@ describe('useExistingTranslation', () => {
     const prev1 = HISTORY_STRING.translations[1];
     const res1 = mountSpy('simple', HISTORY_STRING, {
       entry,
-      fields: mockEditorMessage(prev1.string),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: mockEditorMessage(prev1.string),
     });
 
     expect(res1).toBe(prev1);
@@ -133,8 +125,8 @@ describe('useExistingTranslation', () => {
     const prev0 = HISTORY_FLUENT.translations[0];
     const res0 = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev0.string)),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: editMessageEntry(parseEntry(prev0.string)),
     });
 
     expect(res0).toBe(prev0);
@@ -142,8 +134,8 @@ describe('useExistingTranslation', () => {
     const prev1 = HISTORY_FLUENT.translations[1];
     const res1 = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: editMessageEntry(parseEntry(prev1.string)),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: editMessageEntry(parseEntry(prev1.string)),
     });
 
     expect(res1).toBe(prev1);
@@ -153,8 +145,8 @@ describe('useExistingTranslation', () => {
     const entry = mockMessageEntry('x');
     const res = mountSpy('simple', HISTORY_STRING, {
       entry,
-      fields: mockEditorMessage(''),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: mockEditorMessage(''),
     });
 
     expect(res).toBe(HISTORY_STRING.translations[2]);
@@ -164,8 +156,8 @@ describe('useExistingTranslation', () => {
     const entry = parseEntry('msg = something');
     const res = mountSpy('ftl', HISTORY_FLUENT, {
       entry,
-      fields: mockEditorMessage('Come on Morty!'),
-      initial: entry,
+      initial: editMessageEntry(entry),
+      value: mockEditorMessage('Come on Morty!'),
     });
 
     expect(res).toBe(HISTORY_FLUENT.translations[2]);

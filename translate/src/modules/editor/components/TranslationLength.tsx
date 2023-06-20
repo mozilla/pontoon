@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { EditorData, EditorResult } from '~/context/Editor';
+import { EditorData, useEditorValue } from '~/context/Editor';
 import { EntityView, useEntitySource } from '~/context/EntityView';
 import { getPlainMessage } from '~/utils/message';
 
@@ -16,13 +16,13 @@ export function TranslationLength(): React.ReactElement<'div'> | null {
   const { entity } = useContext(EntityView);
   const source = useEntitySource();
   const { sourceView } = useContext(EditorData);
-  const edit = useContext(EditorResult);
+  const value = useEditorValue();
 
-  if (sourceView || edit.length !== 1) {
+  if (sourceView || value.length !== 1) {
     return null;
   }
 
-  const text = edit[0].value;
+  const text = value[0].value;
 
   const maxLength =
     entity.format === 'lang' && entity.comment.match(/^MAX_LENGTH: (\d+)/);

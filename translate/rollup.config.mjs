@@ -10,7 +10,7 @@ import css from 'rollup-plugin-css-only';
 /** @type {import('rollup').RollupOptions} */
 const config = {
   input: 'src/index.tsx',
-  output: { file: 'dist/translate.js', format: 'iife' },
+  output: { file: 'dist/translate.js' },
 
   treeshake: 'recommended',
 

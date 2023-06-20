@@ -1,13 +1,7 @@
 import { Localized } from '@fluent/react';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useLayoutEffect, useRef } from 'react';
 
-import { EditFieldHandle, EditorData } from '~/context/Editor';
+import { EditorData, useEditorValue } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { Locale } from '~/context/Locale';
 import { usePluralExamples } from '~/hooks/usePluralExamples';
@@ -15,17 +9,19 @@ import { searchBoxHasFocus } from '~/modules/search/components/SearchBox';
 import { CLDR_PLURALS } from '~/utils/constants';
 
 import { EditAccesskey } from './EditAccesskey';
-import { EditField } from './EditField';
+import { EditField, EditFieldProps } from './EditField';
 import './TranslationForm.css';
 
 const Label = ({
   getExample,
+  htmlFor,
   labels,
 }: {
   getExample: (label: string) => number | undefined;
+  htmlFor: string;
   labels: Array<{ label: string; plural: boolean }>;
 }) => (
-  <label>
+  <label htmlFor={htmlFor}>
     {labels.map(({ label, plural }, index) => {
       const example = plural && getExample(label);
       const key = label + index;
@@ -49,6 +45,13 @@ const Label = ({
   </label>
 );
 
+const EditPattern = (props: EditFieldProps & { name: string }) =>
+  props.name.endsWith('accesskey') && props.value.length <= 1 ? (
+    <EditAccesskey {...props} />
+  ) : (
+    <EditField {...props} />
+  );
+
 /**
  * Rich Editor for supported Fluent strings.
  *
@@ -56,11 +59,12 @@ const Label = ({
  * interface to the user. The translation is stored as an AST, and changes
  * are made directly to that AST.
  */
-export function TranslationForm(): React.ReactElement<'div'> | null {
+export function TranslationForm(): React.ReactElement<'div'> {
   const { entity } = useContext(EntityView);
-  const { fields, focusField, machinery, pk, sourceView } =
-    useContext(EditorData);
-  const [shouldFocus, setShouldFocus] = useState(true);
+  const { fields, focusField, machinery } = useContext(EditorData);
+  const value = useEditorValue();
+
+  const userInput = useRef(false);
 
   const locale = useContext(Locale);
   const pluralExamples = usePluralExamples(locale);
@@ -74,72 +78,66 @@ export function TranslationForm(): React.ReactElement<'div'> | null {
     [pluralExamples],
   );
 
-  // Reset the currently focused element when the entity changes or
+  // Reset the currently focused element when the entity changes or when
   // the translation changes from an external source.
-  useEffect(() => {
-    if (!searchBoxHasFocus()) {
-      setShouldFocus(true);
+  useLayoutEffect(() => {
+    if (userInput.current) {
+      userInput.current = false;
+    } else {
+      let input = fields[focusField.current]?.current;
+      if (!input) {
+        focusField.current = 0;
+        input = fields[0]?.current;
+      }
+      if (input && !searchBoxHasFocus()) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
     }
-  }, [entity, machinery, fields]);
+  }, [entity, machinery, value]);
 
-  const fieldValues = useMemo(
-    () =>
-      fields.map((field) => ({
-        onFocus() {
-          focusField.current = field;
-        },
-        ref(handle: EditFieldHandle | null) {
-          if (handle) {
-            field.handle.current = handle;
-            if (shouldFocus && field.id === focusField.current?.id) {
-              handle.focus();
-              setShouldFocus(false);
-            }
-          }
-        },
-      })),
-    [fields, focusField, shouldFocus],
+  const handleFocus = useCallback(
+    (ev: { currentTarget: HTMLInputElement | HTMLTextAreaElement | null }) => {
+      for (let i = 0; i < fields.length; ++i) {
+        if (fields[i].current === ev.currentTarget) {
+          focusField.current = i;
+          return;
+        }
+      }
+      focusField.current = -1;
+    },
+    [focusField, fields],
   );
 
-  return pk !== entity.pk ? null : fields.length === 1 ? (
-    <div className='singlefield'>
-      <EditField
-        ref={fieldValues[0].ref}
-        key={sourceView ? 's!' + pk : pk}
-        defaultValue={fields[0].handle.current.value}
-        index={0}
-        singleField
-      />
-    </div>
+  return value.length === 1 ? (
+    <EditField
+      inputRef={fields[0]}
+      key={entity.pk}
+      singleField
+      userInput={userInput}
+      value={value[0]?.value}
+    />
   ) : (
     <div className='translationform' key={entity.pk}>
       <table>
         <tbody>
-          {fields.map(({ handle, id, labels, name }, i) => {
-            const value = handle.current.value;
-            const EditPattern =
-              name.endsWith('accesskey') && value.length <= 1
-                ? EditAccesskey
-                : EditField;
-            const { onFocus, ref } = fieldValues[i];
-            return (
-              <tr key={id}>
-                <td>
-                  <Label getExample={getExample} labels={labels} />
-                </td>
-                <td>
-                  <EditPattern
-                    key={pk + id}
-                    ref={ref}
-                    defaultValue={value}
-                    index={i}
-                    name={name}
-                    onFocus={onFocus}
-                  />
-                </td>
-              </tr>
-            );
-          })}
+          {value.map(({ id, labels, name, value }, i) => (
+            <tr key={id}>
+              <td>
+                <Label getExample={getExample} htmlFor={id} labels={labels} />
+              </td>
+              <td>
+                <EditPattern
+                  id={id}
+                  inputRef={fields[i]}
+                  name={name}
+                  onFocus={handleFocus}
+                  userInput={userInput}
+                  value={value}
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

@@ -1,6 +1,10 @@
 import { useContext } from 'react';
 import type { HistoryTranslation } from '~/api/translation';
-import { EditorData, useEditorMessageEntry } from '~/context/Editor';
+import {
+  EditorData,
+  useEditorMessageEntry,
+  useEditorValue,
+} from '~/context/Editor';
 import { EntityView, useActiveTranslation } from '~/context/EntityView';
 import { HistoryData } from '~/context/HistoryData';
 import { parseEntry, serializeEntry } from '~/utils/message';
@@ -18,10 +22,11 @@ export function useExistingTranslationGetter() {
   const { translations } = useContext(HistoryData);
   const { entity } = useContext(EntityView);
   const { initial } = useContext(EditorData);
+  const value = useEditorValue();
   const entry = useEditorMessageEntry();
 
   return () => {
-    if (activeTranslation?.pk && pojoEquals(initial, entry)) {
+    if (activeTranslation?.pk && pojoEquals(initial, value)) {
       return activeTranslation;
     }
 

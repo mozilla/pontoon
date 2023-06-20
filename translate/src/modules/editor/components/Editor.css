@@ -5,3 +5,36 @@
   flex-direction: column;
   position: relative;
 }
+
+.editor textarea {
+  border: none;
+  box-sizing: border-box;
+  display: block;
+  font-size: 14px;
+  line-height: 22px;
+  height: calc(100% - 60px);
+  min-height: 100px;
+  overflow: auto;
+  padding: 10px;
+  width: 100%;
+  resize: vertical;
+}
+
+/* Remove highlight in Chrome */
+.editor textarea:focus {
+  outline: none;
+}
+
+.editor .plural-selector ~ textarea {
+  min-height: auto;
+}
+
+.editor input[readonly],
+.editor textarea[readonly] {
+  background: #c7cacf;
+  cursor: default;
+}
+
+.editor textarea[data-script='Arabic'] {
+  font-size: 15px;
+}

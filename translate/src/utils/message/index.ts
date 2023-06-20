@@ -17,7 +17,7 @@ export { extractAccessKeyCandidates } from './extractAccessKeyCandidates';
 export { getEmptyMessageEntry } from './getEmptyMessage';
 export { getPlainMessage } from './getPlainMessage';
 export { getSimplePreview } from './getSimplePreview';
-export { editMessageEntry, editSource } from './editMessageEntry';
+export { editMessageEntry } from './editMessageEntry';
 export { findPluralSelectors } from './findPluralSelectors';
 export { parseEntry } from './parseEntry';
 export { requiresSourceView } from './requiresSourceView';
