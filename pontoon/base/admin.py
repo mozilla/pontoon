@@ -310,6 +310,9 @@ class TranslationAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     raw_id_fields = ("translation", "entity")
 
+class ProjectSlugHistoryAdmin(admin.ModelAdmin):
+    raw_id_fields = ("project",)
+
 
 class TranslationMemoryEntryAdmin(admin.ModelAdmin):
     search_fields = ["source", "target", "locale__name", "locale__code"]
@@ -382,3 +385,4 @@ admin.site.register(models.TranslationMemoryEntry, TranslationMemoryEntryAdmin)
 admin.site.register(models.ChangedEntityLocale, ChangedEntityLocaleAdmin)
 admin.site.register(models.PermissionChangelog, UserRoleLogActionAdmin)
 admin.site.register(models.Comment, CommentAdmin)
+admin.site.register(models.ProjectSlugHistory, ProjectSlugHistoryAdmin)

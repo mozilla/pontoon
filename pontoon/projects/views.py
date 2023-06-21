@@ -9,18 +9,18 @@ from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
+from django.shortcuts import redirect
 
 from guardian.decorators import permission_required_or_403
 from notifications.models import Notification
 from notifications.signals import notify
 
-from pontoon.base.models import Project, Locale
+from pontoon.base.models import Project, Locale, ProjectSlugHistory
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
 from pontoon.tags.utils import TagsTool
-
 
 def projects(request):
     """List all active projects."""
@@ -71,6 +71,25 @@ def project(request, slug):
             ),
         },
     )
+
+def old_slug_redirect_view(request, slug):
+    """
+    Handle the redirection from the old slug to the current project slug.
+    """
+
+    # Try to find the most recent old slug that matches the requested slug
+    slug_history = (
+        ProjectSlugHistory.objects
+        .filter(old_slug=slug)
+        .order_by('-created_at')
+        .first()
+    )
+
+    if slug_history is None:
+        raise Http404("Project not found.")
+
+    # Redirect to the current project slug
+    return redirect('pontoon.projects.project', slug=slug_history.project.slug)
 
 
 @require_AJAX
