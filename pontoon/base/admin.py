@@ -291,8 +291,10 @@ class EntityAdmin(admin.ModelAdmin):
 class TranslationAdmin(admin.ModelAdmin):
     raw_id_fields = ("entity",)
 
+
 class ProjectSlugHistoryAdmin(admin.ModelAdmin):
     raw_id_fields = ("project",)
+
 
 class CommentAdmin(admin.ModelAdmin):
     raw_id_fields = ("translation", "entity")

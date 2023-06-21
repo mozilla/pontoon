@@ -1558,10 +1558,12 @@ class Project(AggregatedStats):
         """Get a list of available locale codes."""
         return list(self.locales.all().values_list("code", flat=True))
 
+
 class ProjectSlugHistory(models.Model):
-    project = models.ForeignKey('Project', on_delete=models.CASCADE)
+    project = models.ForeignKey("Project", on_delete=models.CASCADE)
     old_slug = models.SlugField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 @receiver(pre_save, sender=Project)
 def create_slug_history(sender, instance, **kwargs):
@@ -1569,9 +1571,12 @@ def create_slug_history(sender, instance, **kwargs):
         try:
             old_instance = sender.objects.get(pk=instance.pk)
             if old_instance.slug != instance.slug:
-                ProjectSlugHistory.objects.create(project=instance, old_slug=old_instance.slug)
+                ProjectSlugHistory.objects.create(
+                    project=instance, old_slug=old_instance.slug
+                )
         except sender.DoesNotExist:
             pass
+
 
 class UserProfile(models.Model):
     # This field is required.

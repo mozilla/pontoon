@@ -7,17 +7,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0045_drop_project_links_url_width'),
+        ("base", "0045_drop_project_links_url_width"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProjectSlugHistory',
+            name="ProjectSlugHistory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('old_slug', models.SlugField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='base.project')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("old_slug", models.SlugField(max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="base.project"
+                    ),
+                ),
             ],
         ),
     ]
