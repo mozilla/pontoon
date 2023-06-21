@@ -36,7 +36,7 @@ from django.db.models import (
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 from guardian.shortcuts import get_objects_for_user
@@ -1563,7 +1563,7 @@ class ProjectSlugHistory(models.Model):
     old_slug = models.SlugField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
-@receiver(post_save, sender=Project)
+@receiver(pre_save, sender=Project)
 def create_slug_history(sender, instance, **kwargs):
     if instance.pk:  # checks if instance is not a new object
         try:

@@ -96,10 +96,5 @@ urlpatterns = [
                 ),
             ]
         ),
-    ),
-    path(
-        "projects/<slug:slug>/",
-        views.old_slug_redirect_view,
-        name="pontoon.projects.old_slug_redirect",
-    ),
+    ),  
 ]
