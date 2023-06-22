@@ -103,7 +103,7 @@ function InnerOriginalString({
     if (entry && !requiresSourceView(entry)) {
       const msg = editMessageEntry(entry);
       if (msg.length === 1) {
-        source = msg[0].handle.current.value;
+        source = msg[0].value;
         // fallthrough
       } else {
         return <RichString message={msg} onClick={onClick} terms={terms} />;
