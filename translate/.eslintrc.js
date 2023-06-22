@@ -19,7 +19,6 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-inferrable-types': 0,
-    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
     '@typescript-eslint/prefer-as-const': 0,
     'import/no-default-export': 'error',
   },

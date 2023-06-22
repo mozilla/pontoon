@@ -11,7 +11,6 @@ import { EditorActions, EditorProvider } from '~/context/Editor';
 import { EntityViewProvider } from '~/context/EntityView';
 import { LocationProvider } from '~/context/Location';
 import { RECEIVE_ENTITIES } from '~/modules/entities/actions';
-import { EditField } from '~/modules/translationform/components/EditField';
 
 import { createDefaultUser, createReduxStore } from '~/test/store';
 import { MockLocalizationProvider } from '~/test/utils';
@@ -129,37 +128,37 @@ describe('<Editor>', () => {
   it('renders the simple form when passing a simple string', () => {
     const [wrapper] = mountEditor(1);
 
-    const input = wrapper.find(EditField);
+    const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe('Salut');
+    expect(input.prop('value')).toBe('Salut');
   });
 
   it('renders the simple form when passing a simple string with one attribute', () => {
     const [wrapper] = mountEditor(2);
 
-    const input = wrapper.find(EditField);
+    const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe('Quelque chose de bien');
+    expect(input.prop('value')).toBe('Quelque chose de bien');
   });
 
   it('renders the rich form when passing a supported rich message', () => {
     const [wrapper] = mountEditor(3);
 
-    expect(wrapper.find(EditField)).toHaveLength(2);
+    expect(wrapper.find('TranslationForm textarea')).toHaveLength(2);
   });
 
   it('renders the rich form when passing a message with nested selector', () => {
     const [wrapper] = mountEditor(5);
 
-    expect(wrapper.find(EditField)).toHaveLength(4);
+    expect(wrapper.find('TranslationForm textarea')).toHaveLength(4);
   });
 
   it('renders the source form when passing a broken string', () => {
     const [wrapper] = mountEditor(6);
 
-    const input = wrapper.find(EditField);
+    const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe(BROKEN_STRING.trim());
+    expect(input.prop('value')).toBe(BROKEN_STRING.trim());
   });
 
   it('converts translation when switching source mode', () => {
@@ -168,9 +167,9 @@ describe('<Editor>', () => {
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');
 
-    const input = wrapper.find(EditField);
+    const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe('my-message = Salut');
+    expect(input.prop('value')).toBe('my-message = Salut');
   });
 
   it('sets empty initial translation in source mode when untranslated', () => {
@@ -179,24 +178,27 @@ describe('<Editor>', () => {
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');
 
-    const input = wrapper.find(EditField);
+    const input = wrapper.find('TranslationForm textarea');
     expect(input).toHaveLength(1);
-    expect(input.prop('defaultValue')).toBe('my-message = { "" }');
+    expect(input.prop('value')).toBe('my-message = { "" }');
   });
 
   it('changes editor implementation when changing translation syntax', () => {
-    const [wrapper, actions] = mountEditor(1);
+    const [wrapper] = mountEditor(1);
 
     // Force source mode.
     wrapper.find('button.ftl').simulate('click');
 
-    act(() => actions.setEditorFromHistory(RICH_MESSAGE_STRING));
+    const input = wrapper.find('TranslationForm textarea');
+    act(() =>
+      input.prop('onChange')({ currentTarget: { value: RICH_MESSAGE_STRING } }),
+    );
     wrapper.update();
 
     // Switch to rich mode.
     wrapper.find('button.ftl').simulate('click');
 
-    expect(wrapper.find(EditField)).toHaveLength(2);
+    expect(wrapper.find('TranslationForm textarea')).toHaveLength(2);
   });
 
   it('updates content that comes from an external source', () => {
@@ -207,7 +209,7 @@ describe('<Editor>', () => {
     wrapper.update();
 
     // The translation has been updated to a simplified preview.
-    expect(wrapper.find(EditField).text()).toEqual('Coucou');
+    expect(wrapper.find('textarea').text()).toEqual('Coucou');
   });
 
   it('passes a reconstructed translation to sendTranslation', async () => {
@@ -216,7 +218,7 @@ describe('<Editor>', () => {
     const [wrapper, actions] = mountEditor(1);
 
     // Update the content with new input
-    act(() => actions.setResultFromInput(0, 'Coucou'));
+    act(() => actions.setEditorFromInput('Coucou'));
     wrapper.update();
     await act(() => wrapper.find('.action-suggest').prop('onClick')());
 

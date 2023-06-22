@@ -1,16 +1,11 @@
 import React, { createContext, useMemo, useState } from 'react';
 
 export type UnsavedChanges = Readonly<{
-  check(): boolean;
   onIgnore: (() => void) | null;
+  exist: boolean;
 }>;
 
 export type UnsavedActions = {
-  /**
-   * The `callback` is called as `setTimout(callback)`
-   * to avoid an occasional React complaint about
-   * updating one component while rendering a different component.
-   */
   checkUnsavedChanges(callback: () => void): void;
 
   /**
@@ -18,11 +13,11 @@ export type UnsavedActions = {
    * its callback is triggered.
    */
   resetUnsavedChanges(ignore: boolean): void;
-  setUnsavedChanges(check: () => boolean): void;
+  setUnsavedChanges(exist: boolean): void;
 };
 
 const initUnsavedChanges: UnsavedChanges = {
-  check: () => false,
+  exist: false,
   onIgnore: null,
 };
 
@@ -52,21 +47,25 @@ export function UnsavedChangesProvider({
     () => ({
       checkUnsavedChanges: (callback: () => void) =>
         setState((prev) => {
-          if (prev.check()) {
-            return { check: () => true, onIgnore: callback };
+          if (prev.exist) {
+            return { ...prev, onIgnore: callback };
           } else {
-            setTimeout(callback);
+            callback();
             return prev;
           }
         }),
 
       resetUnsavedChanges: (ignore) =>
         setState((prev) => {
-          const { onIgnore } = prev;
-          if (onIgnore) {
+          if (prev.onIgnore) {
             if (ignore) {
+              // Needs to happen after the return to avoid an occasional React
+              // complaint about updating one component while rendering a
+              // different component.
+              const { onIgnore } = prev;
               setTimeout(onIgnore);
-              return { check: () => false, onIgnore: null };
+
+              return { ...prev, exist: false, onIgnore: null };
             }
             return { ...prev, onIgnore: null };
           } else {
@@ -74,8 +73,12 @@ export function UnsavedChangesProvider({
           }
         }),
 
-      setUnsavedChanges: (check: () => boolean) =>
-        setState({ check, onIgnore: null }),
+      setUnsavedChanges: (exist: boolean) =>
+        setState((prev) =>
+          prev.exist === exist && !prev.onIgnore
+            ? prev
+            : { ...prev, exist, onIgnore: null },
+        ),
     }),
     [],
   );

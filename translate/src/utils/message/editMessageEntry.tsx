@@ -1,41 +1,18 @@
 import type { Message, Pattern, Variant } from 'messageformat';
-import type { EditorField } from '~/context/Editor';
+import type { EditorMessage } from '~/context/Editor';
 import type { MessageEntry } from '.';
 import { findPluralSelectors } from './findPluralSelectors';
-import { serializeEntry } from './serializeEntry';
 
-const emptyHandleRef = (value: string) => ({
-  current: {
-    value,
-    focus() {},
-    setSelection() {},
-    setValue(text: string) {
-      this.value = text;
-    },
-  },
-});
-
-/** Get an `EditorField[]` for the source view */
-export function editSource(source: string | MessageEntry): EditorField[] {
-  const value = (
-    typeof source === 'string' ? source : serializeEntry('ftl', source)
-  ).trim();
-  const handle = emptyHandleRef(value);
-  return [{ id: '', name: '', keys: [], labels: [], handle }];
-}
-
-/** Get an `EditorField[]` corresponding to `entry`. */
-export function editMessageEntry(entry: MessageEntry): EditorField[] {
-  const res: EditorField[] = [];
+/** Get an `EditorMessage` corresponding to `entry`. */
+export function editMessageEntry(entry: MessageEntry): EditorMessage {
+  const res: EditorMessage = [];
   if (entry.value) {
     const hasAttributes = !!entry.attributes?.size;
     for (const [keys, labels, value] of genPatterns(entry.value)) {
       if (hasAttributes) {
         labels.unshift({ label: 'Value', plural: false });
       }
-      const handle = emptyHandleRef(value);
-      const id = getId('', keys);
-      res.push({ handle, id, name: '', keys, labels });
+      res.push({ id: getId('', keys), name: '', keys, labels, value });
     }
   }
   if (entry.attributes) {
@@ -45,9 +22,7 @@ export function editMessageEntry(entry: MessageEntry): EditorField[] {
         if (hasMultiple) {
           labels.unshift({ label: name, plural: false });
         }
-        const handle = emptyHandleRef(value);
-        const id = getId(name, keys);
-        res.push({ handle, id, name, keys, labels });
+        res.push({ id: getId(name, keys), name, keys, labels, value });
       }
     }
   }

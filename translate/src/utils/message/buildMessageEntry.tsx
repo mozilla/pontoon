@@ -1,34 +1,34 @@
 import type { Message } from 'messageformat';
-import type { EditorResult } from '~/context/Editor';
+import type { EditorMessage } from '~/context/Editor';
 import { pojoCopy } from '../pojo';
 import type { MessageEntry } from '.';
 
 /** Get a `MessageEntry` corresponding to `edit`, based on `base`. */
 export function buildMessageEntry(
   base: MessageEntry,
-  next: EditorResult,
+  edit: EditorMessage,
 ): MessageEntry {
   const res = pojoCopy(base);
-  setMessage(res.value, '', next);
+  setMessage(res.value, '', edit);
   if (res.attributes) {
     for (const [name, msg] of res.attributes) {
-      setMessage(msg, name, next);
+      setMessage(msg, name, edit);
     }
   }
   return res;
 }
 
 /** Modifies `msg` according to `edit` entries which match `name`.  */
-function setMessage(msg: Message | null, attrName: string, next: EditorResult) {
+function setMessage(msg: Message | null, name: string, edit: EditorMessage) {
   switch (msg?.type) {
     case 'message':
-      for (const { name, value } of next) {
-        if (name === attrName) {
+      for (const field of edit) {
+        if (field.name === name) {
           const { body } = msg.pattern;
           if (body.length === 1 && body[0].type === 'text') {
-            body[0].value = value;
+            body[0].value = field.value;
           } else {
-            body.splice(0, body.length, { type: 'text', value });
+            body.splice(0, body.length, { type: 'text', value: field.value });
           }
           return;
         }
@@ -37,11 +37,11 @@ function setMessage(msg: Message | null, attrName: string, next: EditorResult) {
 
     case 'select':
       msg.variants = [];
-      for (const { name, keys, value } of next) {
-        if (name === attrName) {
+      for (const field of edit) {
+        if (field.name === name) {
           msg.variants.push({
-            keys,
-            value: { body: [{ type: 'text', value }] },
+            keys: field.keys,
+            value: { body: [{ type: 'text', value: field.value }] },
           });
         }
       }

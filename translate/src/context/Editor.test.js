@@ -6,12 +6,7 @@ import { act } from 'react-dom/test-utils';
 import { createReduxStore, mountComponentWithStore } from '~/test/store';
 import { editMessageEntry, parseEntry } from '~/utils/message';
 
-import {
-  EditorActions,
-  EditorData,
-  EditorProvider,
-  EditorResult,
-} from './Editor';
+import { EditorActions, EditorData, EditorProvider } from './Editor';
 import { EntityView, EntityViewProvider } from './EntityView';
 import { Locale } from './Locale';
 import { Location, LocationProvider } from './Location';
@@ -73,64 +68,37 @@ function mountSpy(Spy, format, translation) {
 
 describe('<EditorProvider>', () => {
   it('provides a simple non-Fluent value', () => {
-    let editor, result;
+    let editor;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       return null;
     };
     mountSpy(Spy, 'simple', 'message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
-      fields: [
-        {
-          id: '',
-          keys: [],
-          labels: [],
-          name: '',
-          handle: { current: { value: 'message' } },
-        },
-      ],
+      initial: [{ id: '', keys: [], labels: [], name: '', value: 'message' }],
+      value: [{ id: '', keys: [], labels: [], name: '', value: 'message' }],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
   });
 
   it('provides a simple Fluent value', () => {
-    let editor, result;
+    let editor;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       return null;
     };
     mountSpy(Spy, 'ftl', 'key = message');
     expect(editor).toMatchObject({
       sourceView: false,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: 'message' }] } },
-      },
-      fields: [
-        {
-          id: '',
-          keys: [],
-          labels: [],
-          name: '',
-          handle: { current: { value: 'message' } },
-        },
-      ],
+      initial: [{ id: '', keys: [], labels: [], name: '', value: 'message' }],
+      value: [{ id: '', keys: [], labels: [], name: '', value: 'message' }],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: 'message' }]);
   });
 
   it('provides a rich Fluent value', () => {
-    let editor, result;
+    let editor;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       return null;
     };
     const source = ftl`
@@ -143,23 +111,14 @@ describe('<EditorProvider>', () => {
       `;
     mountSpy(Spy, 'ftl', source);
 
-    const entry = parseEntry(source);
-    const fields = editMessageEntry(parseEntry(source)).map((field) => ({
-      ...field,
-      handle: { current: { value: field.handle.current.value } },
-    }));
-    expect(editor).toMatchObject({ sourceView: false, initial: entry, fields });
-    expect(result).toMatchObject([
-      { name: '', keys: [{ type: 'nmtoken', value: 'one' }], value: 'ONE' },
-      { name: '', keys: [{ type: '*', value: 'other' }], value: 'OTHER' },
-    ]);
+    const value = editMessageEntry(parseEntry(source));
+    expect(editor).toMatchObject({ sourceView: false, initial: value, value });
   });
 
   it('provides a forced source Fluent value', () => {
-    let editor, result;
+    let editor;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       return null;
     };
     const source = '## comment\n';
@@ -167,28 +126,19 @@ describe('<EditorProvider>', () => {
 
     expect(editor).toMatchObject({
       sourceView: true,
-      initial: {
-        id: 'key',
-        value: { pattern: { body: [{ type: 'text', value: '## comment\n' }] } },
-      },
-      fields: [
-        {
-          handle: { current: { value: '## comment' } },
-          id: '',
-          keys: [],
-          labels: [],
-          name: '',
-        },
+      initial: [
+        { id: '', keys: [], labels: [], name: '', value: '## comment' },
       ],
+      value: [{ id: '', keys: [], labels: [], name: '', value: '## comment' }],
     });
-    expect(result).toMatchObject([{ name: '', keys: [], value: '## comment' }]);
   });
 
   it('updates state on entity and plural form changes', () => {
-    let editor, result, location, entity;
+    let editor;
+    let location;
+    let entity;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       location = useContext(Location);
       entity = useContext(EntityView);
       return null;
@@ -199,27 +149,24 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'one' }] } },
-      },
-      fields: [{ handle: { current: { value: 'one' } } }],
+      sourceView: false,
+      initial: [{ id: '', keys: [], labels: [], name: '', value: 'one' }],
+      value: [{ id: '', keys: [], labels: [], name: '', value: 'one' }],
     });
-    expect(result).toMatchObject([{ value: 'one' }]);
 
     act(() => entity.setPluralForm(1));
     wrapper.update();
 
     expect(editor).toMatchObject({
-      initial: {
-        value: { pattern: { body: [{ type: 'text', value: 'other' }] } },
-      },
-      fields: [{ handle: { current: { value: 'other' } } }],
+      sourceView: false,
+      initial: [{ id: '', keys: [], labels: [], name: '', value: 'other' }],
+      value: [{ id: '', keys: [], labels: [], name: '', value: 'other' }],
     });
-    expect(result).toMatchObject([{ value: 'other' }]);
   });
 
   it('clears a rich Fluent value', () => {
-    let editor, actions;
+    let editor;
+    let actions;
     const Spy = () => {
       editor = useContext(EditorData);
       actions = useContext(EditorActions);
@@ -237,35 +184,40 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
       sourceView: false,
-      fields: [
+      value: [
         {
-          handle: { current: { value: '' } },
-          id: '|one',
           keys: [{ type: 'nmtoken', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
+          value: '',
         },
         {
-          handle: { current: { value: '' } },
-          id: '|other',
           keys: [{ type: '*', value: 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
+          value: '',
         },
       ],
     });
   });
 
   it('sets editor from history', () => {
-    let editor, result, actions;
+    let editor;
+    let actions;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       actions = useContext(EditorActions);
       return null;
     };
     const wrapper = mountSpy(Spy, 'ftl', `key = VALUE\n`);
+
+    expect(editor).toMatchObject({
+      fields: [{ current: null }],
+      sourceView: false,
+      value: [{ keys: [], labels: [], name: '', value: 'VALUE' }],
+    });
 
     const source = ftl`
       key =
@@ -278,35 +230,30 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
       sourceView: false,
-      fields: [
+      value: [
         {
-          handle: { current: { value: 'ONE' } },
-          id: '|one',
           keys: [{ type: 'nmtoken', value: 'one' }],
           labels: [{ label: 'one', plural: true }],
           name: '',
+          value: 'ONE',
         },
         {
-          handle: { current: { value: 'OTHER' } },
-          id: '|other',
           keys: [{ type: '*', value: 'other' }],
           labels: [{ label: 'other', plural: true }],
           name: '',
+          value: 'OTHER',
         },
       ],
     });
-    expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
-      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
-    ]);
   });
 
   it('toggles Fluent source view', () => {
-    let editor, result, actions;
+    let editor;
+    let actions;
     const Spy = () => {
       editor = useContext(EditorData);
-      result = useContext(EditorResult);
       actions = useContext(EditorActions);
       return null;
     };
@@ -322,26 +269,31 @@ describe('<EditorProvider>', () => {
     wrapper.update();
 
     expect(editor).toMatchObject({
+      fields: [{ current: null }],
       sourceView: true,
-      fields: [
-        {
-          handle: { current: { value: source } },
-          id: '',
-          keys: [],
-          labels: [],
-          name: '',
-        },
-      ],
+      value: [{ keys: [], labels: [], name: '', value: source }],
     });
-    expect(result).toMatchObject([{ keys: [], name: '', value: source }]);
 
     act(() => actions.toggleSourceView());
     wrapper.update();
 
-    expect(editor).toMatchObject({ fields: [{}, {}], sourceView: false });
-    expect(result).toMatchObject([
-      { keys: [{ type: 'nmtoken', value: 'one' }], name: '', value: 'ONE' },
-      { keys: [{ type: '*', value: 'other' }], name: '', value: 'OTHER' },
-    ]);
+    expect(editor).toMatchObject({
+      fields: [{ current: null }, { current: null }],
+      sourceView: false,
+      value: [
+        {
+          keys: [{ type: 'nmtoken', value: 'one' }],
+          labels: [{ label: 'one', plural: true }],
+          name: '',
+          value: 'ONE',
+        },
+        {
+          keys: [{ type: '*', value: 'other' }],
+          labels: [{ label: 'other', plural: true }],
+          name: '',
+          value: 'OTHER',
+        },
+      ],
+    });
   });
 });
