@@ -5,12 +5,7 @@ import {
   insertNewlineAndIndent,
   standardKeymap,
 } from '@codemirror/commands';
-import {
-  HighlightStyle,
-  StreamLanguage,
-  bracketMatching,
-  syntaxHighlighting,
-} from '@codemirror/language';
+import { bracketMatching } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { useContext, useEffect, useRef } from 'react';
@@ -22,8 +17,6 @@ import {
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
-import { fluentMode, commonMode } from './editFieldModes';
-import { tags } from '@lezer/highlight';
 
 /**
  * Key handlers depend on application state,
@@ -57,23 +50,13 @@ export function useKeyHandlers() {
   return ref;
 }
 
-const style = HighlightStyle.define([
-  { tag: tags.keyword, color: '#872bff', fontFamily: 'monospace' }, // printf
-  { tag: tags.tagName, color: '#3e9682', fontFamily: 'monospace' }, // <...>
-  { tag: tags.brace, color: '#872bff', fontWeight: 'bold' }, // {...}
-  { tag: tags.name, color: '#872bff' }, // {...}
-]);
-
 export const getExtensions = (
-  format: string,
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
   bracketMatching(),
   closeBrackets(),
   EditorView.lineWrapping,
-  StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
-  syntaxHighlighting(style),
   keymap.of([
     {
       key: 'Enter',
