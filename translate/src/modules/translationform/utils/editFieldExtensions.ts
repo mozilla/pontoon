@@ -72,7 +72,6 @@ export const getExtensions = (
   bracketMatching(),
   closeBrackets(),
   EditorView.lineWrapping,
-  EditorView.contentAttributes.of({ spellcheck: 'true' }),
   StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
   syntaxHighlighting(style),
   keymap.of([
