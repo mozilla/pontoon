@@ -27,6 +27,7 @@ from django.utils.text import slugify
 from django.utils.translation import trans_real
 from django.shortcuts import redirect
 from django.apps import apps
+from django.urls import reverse
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -610,7 +611,7 @@ def is_email(email):
         return False
 
 
-def handle_old_slug_redirect(redirect_url):
+def handle_old_slug_redirect(redirect_view, redirect_kwargs):
     """
     Decorator to handle redirection from old slugs to current project slugs.
     """
@@ -618,24 +619,12 @@ def handle_old_slug_redirect(redirect_url):
     def decorator(view_func):
         def wrapper(request, *args, **kwargs):
             ProjectSlugHistory = apps.get_model("base", "ProjectSlugHistory")
-            # Extract the necessary parameters
-            code = slug = resource = None
 
-            # Case for translate view or views with kwargs.
-            if "locale" in kwargs and "project" in kwargs:
-                code = kwargs.get("locale")
-                slug = kwargs.get("project")
-                resource = kwargs.get("resource")
-            elif "slug" in kwargs:
-                slug = kwargs.get("slug")
+            # Create a dictionary with the arguments
+            arguments = kwargs.copy()
+            arguments.update({key: value for key, value in zip(redirect_kwargs, args)})
 
-            # Case for views with args.
-            elif len(args) == 3:
-                code, slug, resource = args  # For translate view
-            elif len(args) == 2:
-                code, slug = args  # For localization view
-            elif len(args) == 1:
-                slug = args[0]  # For other views
+            slug = arguments.get("slug") or arguments.get("project")
 
             # If slug is still not defined, raise an error.
             if slug is None:
@@ -649,22 +638,20 @@ def handle_old_slug_redirect(redirect_url):
             )
 
             if slug_history is not None:
-                if resource is not None:
-                    # Redirect to the provided URL in a translate context
-                    return redirect(
-                        redirect_url,
-                        locale=code,
-                        project=slug_history.project.slug,
-                        resource=resource,
-                    )
-                elif code is not None:
-                    # Redirect to the provided URL in a localization context
-                    return redirect(
-                        redirect_url, code=code, slug=slug_history.project.slug
-                    )
-                else:
-                    # Redirect to the provided URL
-                    return redirect(redirect_url, slug=slug_history.project.slug)
+                # Create a dict with the required kwargs for the redirect
+                redirect_args = {
+                    arg: arguments[arg] if arg in arguments else None
+                    for arg in redirect_kwargs
+                }
+                # Replace the slug with the current one
+                redirect_args[
+                    "slug" if "slug" in redirect_kwargs else "project"
+                ] = slug_history.project.slug
+
+                # Use the created dict in the reverse call
+                redirect_url = reverse(redirect_view, kwargs=redirect_args)
+
+                return redirect(redirect_url)
 
             # If no slug history is found, continue with the original view function
             return view_func(request, *args, **kwargs)

@@ -19,7 +19,7 @@ from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import TagsTool
 
 
-@handle_old_slug_redirect("pontoon.localizations.localization")
+@handle_old_slug_redirect("pontoon.localizations.localization", ["code", "slug"])
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code=code)

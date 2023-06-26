@@ -41,7 +41,7 @@ def get_preferred_locale(request):
     return None
 
 
-@handle_old_slug_redirect("pontoon.translate")
+@handle_old_slug_redirect("pontoon.translate", ["locale", "project", "resource"])
 def translate(request, locale, project, resource):
     # Validate Locale
     locale = get_object_or_404(Locale, code=locale)

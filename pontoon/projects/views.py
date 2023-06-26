@@ -41,7 +41,7 @@ def projects(request):
     )
 
 
-@handle_old_slug_redirect("pontoon.projects.project")
+@handle_old_slug_redirect("pontoon.projects.project", ["slug"])
 def project(request, slug):
     """Project dashboard."""
     project = get_object_or_404(
@@ -73,7 +73,6 @@ def project(request, slug):
     )
 
 
-@handle_old_slug_redirect
 @require_AJAX
 def ajax_teams(request, slug):
     """Teams tab."""
