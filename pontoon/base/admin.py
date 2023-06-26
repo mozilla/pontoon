@@ -293,7 +293,7 @@ class TranslationAdmin(admin.ModelAdmin):
 
 
 class ProjectSlugHistoryAdmin(admin.ModelAdmin):
-    raw_id_fields = ("project",)
+    readonly_fields = ("created_at",)
 
 
 class CommentAdmin(admin.ModelAdmin):

@@ -15,6 +15,8 @@ from pontoon.base.models import (
     Project,
 )
 
+from pontoon.base.utils import handle_old_slug_redirect
+
 
 @csrf_exempt
 def catchall_dev(request, context=None):
@@ -38,7 +40,7 @@ def get_preferred_locale(request):
 
     return None
 
-
+@handle_old_slug_redirect("pontoon.translate")
 def translate(request, locale, project, resource):
     # Validate Locale
     locale = get_object_or_404(Locale, code=locale)

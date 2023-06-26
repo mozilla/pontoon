@@ -16,13 +16,12 @@ from notifications.models import Notification
 from notifications.signals import notify
 
 from pontoon.base.models import Project, Locale, ProjectSlugHistory
-from pontoon.base.utils import require_AJAX, split_ints
+from pontoon.base.utils import require_AJAX, split_ints, handle_old_slug_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
 from pontoon.tags.utils import TagsTool
-
-
+ 
 def projects(request):
     """List all active projects."""
     projects = (
@@ -41,27 +40,12 @@ def projects(request):
         {"projects": projects, "top_instances": projects.get_top_instances()},
     )
 
-
+@handle_old_slug_redirect("pontoon.projects.project")
 def project(request, slug):
     """Project dashboard."""
-    try:
-        project = get_object_or_404(
-            Project.objects.visible_for(request.user).available(), slug=slug
-        )
-    except Http404:
-        # Try to find a project using old slug
-        slug_history = (
-            ProjectSlugHistory.objects.filter(old_slug=slug)
-            .order_by("-created_at")
-            .first()
-        )
-
-        if slug_history is not None:
-            # Redirect to the current project slug
-            return redirect("pontoon.projects.project", slug=slug_history.project.slug)
-        else:
-            raise Http404("Project not found.")
-
+    project = get_object_or_404(
+        Project.objects.visible_for(request.user).available(), slug=slug
+    )
     project_locales = project.project_locale
     chart = project
 
@@ -87,7 +71,7 @@ def project(request, slug):
         },
     )
 
-
+@handle_old_slug_redirect
 @require_AJAX
 def ajax_teams(request, slug):
     """Teams tab."""

@@ -1564,20 +1564,6 @@ class ProjectSlugHistory(models.Model):
     old_slug = models.SlugField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-@receiver(pre_save, sender=Project)
-def create_slug_history(sender, instance, **kwargs):
-    if instance.pk:  # checks if instance is not a new object
-        try:
-            old_instance = sender.objects.get(pk=instance.pk)
-            if old_instance.slug != instance.slug:
-                ProjectSlugHistory.objects.create(
-                    project=instance, old_slug=old_instance.slug
-                )
-        except sender.DoesNotExist:
-            pass
-
-
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(

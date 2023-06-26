@@ -6,19 +6,22 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
+from django.shortcuts import redirect
 
 from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
     TranslatedResource,
+    ProjectSlugHistory,
 )
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, handle_old_slug_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import TagsTool
+from pontoon.projects.views import handle_old_slug_redirect
 
-
+@handle_old_slug_redirect("pontoon.localizations.localization")
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code=code)
@@ -48,7 +51,6 @@ def localization(request, code, slug):
             ),
         },
     )
-
 
 @require_AJAX
 def ajax_resources(request, code, slug):
@@ -131,7 +133,6 @@ def ajax_resources(request, code, slug):
         },
     )
 
-
 @require_AJAX
 def ajax_tags(request, code, slug):
     """Tags tab."""
@@ -154,7 +155,6 @@ def ajax_tags(request, code, slug):
         "localizations/includes/tags.html",
         {"locale": locale, "project": project, "tags": tags},
     )
-
 
 @require_AJAX
 def ajax_insights(request, code, slug):
