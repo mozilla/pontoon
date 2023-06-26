@@ -36,8 +36,6 @@ from django.db.models import (
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 from guardian.shortcuts import get_objects_for_user
 from jsonfield import JSONField
@@ -1563,6 +1561,7 @@ class ProjectSlugHistory(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
     old_slug = models.SlugField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class UserProfile(models.Model):
     # This field is required.

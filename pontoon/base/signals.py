@@ -208,6 +208,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
+
 @receiver(pre_save, sender=Project)
 def create_slug_history(sender, instance, **kwargs):
     if instance.pk:  # checks if instance is not a new object

@@ -9,19 +9,19 @@ from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
-from django.shortcuts import redirect
 
 from guardian.decorators import permission_required_or_403
 from notifications.models import Notification
 from notifications.signals import notify
 
-from pontoon.base.models import Project, Locale, ProjectSlugHistory
+from pontoon.base.models import Project, Locale
 from pontoon.base.utils import require_AJAX, split_ints, handle_old_slug_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
 from pontoon.tags.utils import TagsTool
- 
+
+
 def projects(request):
     """List all active projects."""
     projects = (
@@ -39,6 +39,7 @@ def projects(request):
         "projects/projects.html",
         {"projects": projects, "top_instances": projects.get_top_instances()},
     )
+
 
 @handle_old_slug_redirect("pontoon.projects.project")
 def project(request, slug):
@@ -70,6 +71,7 @@ def project(request, slug):
             ),
         },
     )
+
 
 @handle_old_slug_redirect
 @require_AJAX
