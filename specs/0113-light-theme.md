@@ -16,9 +16,15 @@ In the first step, we'll replace existing hardcoded color values with CSS variab
 
 See below for the actual light theme color values.
 
-# Color pairs
+# Main color pairs
 
-TODO
+* Main background color: #3f4752 -> #fbfbfb
+* Secondary background color (highlights, buttons, inputs): #333941 -> #eee
+* Tertiary background color (inactive tabs): #4d5967 -> #eee
+* Main border color: #5e6475 -> #e8e8e8
+* Primary font color: #fff, #ebebeb -> #222
+* Secondary font color (translations in sidebar, machinery): #aaa, #ccc -> #888
+* Tertiary font color (icons): #aaa -> #aaa
 
 # Mockup
 
