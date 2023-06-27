@@ -29,7 +29,7 @@ See below for the actual light theme color values.
 # Mockup
 
 ![](0113/translate.png)
-Translate View
+*Translate View*
 
 ![](0113/dashboard.png)
-Team Dashboard
+*Team Dashboard*
