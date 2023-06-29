@@ -12,19 +12,27 @@ Over the years, many users have expressed preference for a light color theme ove
 
 # Implementation notes
 
-In the first step, we'll replace existing hardcoded color values with CSS variables. We'll store those in separate CSS files, with one version of each file for each theme. Users will be able to switch theme in their settings.
+In the first step, we'll replace existing hardcoded color values with CSS variables. We'll store those in separate CSS files, with one version of each file for each theme.
 
-See below for the actual light theme color values.
+Users will be able to switch between themes in their settings. Each theme is represented with a title and a radio box. As soon as the theme is selected, it will get applied and the settings will be saved. A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
 
 # Main color pairs
 
+The following is a non-exhaustive list of color transformations between the dark and the light theme:
+
 * Main background color: #3f4752 -> #fbfbfb
-* Secondary background color (highlights, buttons, inputs): #333941 -> #eee
-* Tertiary background color (inactive tabs): #4d5967 -> #eee
+* Highlighted area background color: #333941 -> #eee
+* Button background color: #333941 -> #eee
+* Input box background color: #333941 -> #eee
+* Inactive tabs background color: #4d5967 -> #eee
 * Main border color: #5e6475 -> #e8e8e8
-* Primary font color: #fff, #ebebeb -> #222
-* Secondary font color (translations in sidebar, machinery): #aaa, #ccc -> #888
-* Tertiary font color (icons): #aaa -> #aaa
+* Source string font color: #fff -> #222
+* History and Machinery font color: #ebebeb -> #222
+* Sidebar translation font color: #aaa -> #888
+* Machinery source string font color: #aaa -> #888
+* Metadata value front color: #aaa -> #888
+* Metadata title front color: #888 -> #888
+* Icons color: #aaa -> #aaa
 
 # Mockup
 
