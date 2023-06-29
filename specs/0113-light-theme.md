@@ -10,11 +10,15 @@ Implement light theme and enable users to switch between the (current) dark them
 
 Over the years, many users have expressed preference for a light color theme over the Pontoon default dark theme. Having the ability to switch themes will also allow us to implement high contrast themes, which benefit low vision users, increase readability and reduce website’s visual noise.
 
+# Feature explanation
+
+Users are able to switch between themes in their settings. Each theme is represented with a title and a radio box. As soon as the theme is selected, it gets applied and the settings get saved. The default theme is the dark theme.
+
+A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
+
 # Implementation notes
 
 In the first step, we'll replace existing hardcoded color values with CSS variables. We'll store those in separate CSS files, with one version of each file for each theme.
-
-Users will be able to switch between themes in their settings. Each theme is represented with a title and a radio box. As soon as the theme is selected, it will get applied and the settings will be saved. A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
 
 # Main color pairs
 
