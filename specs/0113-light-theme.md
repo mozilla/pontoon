@@ -14,7 +14,7 @@ Over the years, many users have expressed preference for a light color theme ove
 
 Users are able to switch between `Dark theme` and `Light theme` in their settings. Each theme is represented with a title and a radio box. As soon as the theme is selected, it gets applied and the setting get saved. The default theme is the dark theme.
 
-A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
+A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. By default, the checkbox is unchecked.
 
 # Implementation notes
 
