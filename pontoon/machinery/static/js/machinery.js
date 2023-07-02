@@ -133,10 +133,9 @@ $(function () {
       var listitems = ul.children('li'),
         sourceMap = {
           'Translation memory': 1,
-          Microsoft: 2,
-          'Google Translate': 3,
-          'Systran Translate': 4,
-          'Microsoft Translator': 5,
+          'Google Translate': 2,
+          'Systran Translate': 3,
+          'Microsoft Translator': 4,
         };
 
       function getTranslationSource(el) {
@@ -363,44 +362,6 @@ $(function () {
               source: 'Systran Translate',
               original: original,
               translation: data.translation,
-            });
-          }
-        },
-        error: error,
-        complete: complete,
-      });
-    }
-
-    // Microsoft Terminology
-    if (self.locale.ms_terminology_code.length) {
-      requests++;
-
-      if (self.XHRmicrosoftTerminology) {
-        self.XHRmicrosoftTerminology.abort();
-      }
-
-      self.XHRmicrosoftTerminology = $.ajax({
-        url: '/microsoft-terminology/',
-        data: {
-          text: original,
-          locale: self.locale.ms_terminology_code,
-        },
-        success: function (data) {
-          if (data.translations) {
-            $.each(data.translations, function () {
-              append({
-                url:
-                  'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-                  this.source +
-                  '&langID=' +
-                  self.locale.ms_terminology_code,
-                title:
-                  'Visit Microsoft Terminology Service API.\n' +
-                  '© 2018 Microsoft Corporation. All rights reserved.',
-                source: 'Microsoft',
-                original: this.source,
-                translation: this.target,
-              });
             });
           }
         },
