@@ -133,10 +133,9 @@ $(function () {
       var listitems = ul.children('li'),
         sourceMap = {
           'Translation memory': 1,
-          Microsoft: 2,
-          'Google Translate': 3,
-          'Systran Translate': 4,
-          'Microsoft Translator': 5,
+          'Google Translate': 2,
+          'Systran Translate': 3,
+          'Microsoft Translator': 4,
         };
 
       function getTranslationSource(el) {
