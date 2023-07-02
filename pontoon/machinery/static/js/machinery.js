@@ -371,44 +371,6 @@ $(function () {
       });
     }
 
-    // Microsoft Terminology
-    if (self.locale.ms_terminology_code.length) {
-      requests++;
-
-      if (self.XHRmicrosoftTerminology) {
-        self.XHRmicrosoftTerminology.abort();
-      }
-
-      self.XHRmicrosoftTerminology = $.ajax({
-        url: '/microsoft-terminology/',
-        data: {
-          text: original,
-          locale: self.locale.ms_terminology_code,
-        },
-        success: function (data) {
-          if (data.translations) {
-            $.each(data.translations, function () {
-              append({
-                url:
-                  'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-                  this.source +
-                  '&langID=' +
-                  self.locale.ms_terminology_code,
-                title:
-                  'Visit Microsoft Terminology Service API.\n' +
-                  '© 2018 Microsoft Corporation. All rights reserved.',
-                source: 'Microsoft',
-                original: this.source,
-                translation: this.target,
-              });
-            });
-          }
-        },
-        error: error,
-        complete: complete,
-      });
-    }
-
     self.NProgressBind();
   }
 

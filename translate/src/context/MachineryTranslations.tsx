@@ -113,10 +113,6 @@ export function MachineryProvider({
         }
       }
 
-      if (locale.msTerminologyCode) {
-        fetchMicrosoftTerminology(plain, locale).then(addResults);
-      }
-
       if (locale.code === 'ga-IE' && pk) {
         fetchCaighdeanTranslation(pk).then(addResults);
       }
