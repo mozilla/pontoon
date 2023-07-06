@@ -12,9 +12,9 @@ Over the years, many users have expressed preference for a light color theme ove
 
 # Feature explanation
 
-Users are able to switch between `Dark theme` and `Light theme` in their settings. Each theme is represented with a title and a radio box. As soon as the theme is selected, it gets applied and the setting get saved. The default theme is the dark theme.
+Users are able to switch between `Dark theme`, `Light theme` and `Match system` in Settings and the Profile menu. Each theme is represented with a title and a radio box. As soon as the theme is selected, it gets applied and the setting get saved. The default setting is the `Dark theme`.
 
-A "Sync with system theme" checkbox allows users to let the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. By default, the checkbox is unchecked.
+The `Match system` setting lets the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
 
 # Implementation notes
 
@@ -40,8 +40,8 @@ The following is a non-exhaustive list of color transformations between the dark
 
 # Mockup
 
-![](0113/translate.png)
+![](0114/translate.png)
 *Translate View*
 
-![](0113/dashboard.png)
+![](0114/dashboard.png)
 *Team Dashboard*
