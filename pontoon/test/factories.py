@@ -17,7 +17,7 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
-    ProjectSlugHistory
+    ProjectSlugHistory,
 )
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
@@ -202,6 +202,8 @@ class TermTranslationFactory(DjangoModelFactory):
 
     class Meta:
         model = TermTranslation
+
+
 class ProjectSlugHistoryFactory(DjangoModelFactory):
     project = SubFactory(ProjectFactory)
     old_slug = Sequence(lambda n: f"old-slug-{n}")

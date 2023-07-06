@@ -25,6 +25,7 @@ from pontoon.test.factories import (
     ProjectLocaleFactory,
 )
 
+
 @pytest.fixture
 def project_c():
     project = ProjectFactory.create(name="Project C", slug="project-c", disabled=False)
@@ -119,6 +120,7 @@ def test_handle_old_slug_redirect_translate(client, project_d, entity_d):
         "pontoon.translate",
         kwargs={"project": new_slug, "locale": "en", "resource": resource_path},
     )
+
 
 @pytest.mark.django_db
 def test_get_m2m_changes_no_change(user_a):
