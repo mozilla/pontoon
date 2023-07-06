@@ -2,6 +2,8 @@ import pytest
 
 from django.contrib.auth import get_user_model
 
+from django.urls import reverse
+
 from pontoon.base.models import Project
 from pontoon.base.utils import (
     aware_datetime,
@@ -13,6 +15,110 @@ from pontoon.base.utils import (
     is_email,
 )
 
+from pontoon.test.factories import (
+    ProjectFactory,
+    ResourceFactory,
+    UserFactory,
+    LocaleFactory,
+    ProjectSlugHistoryFactory,
+    EntityFactory,
+    ProjectLocaleFactory,
+)
+
+@pytest.fixture
+def project_c():
+    project = ProjectFactory.create(name="Project C", slug="project-c", disabled=False)
+    ResourceFactory.create(project=project, path="resource_c.po", format="po")
+    return project
+
+
+@pytest.mark.django_db
+def test_handle_old_slug_redirect(client, project_c):
+    old_slug = project_c.slug
+    new_slug = "project-c-new"
+
+    # Change the slug of project_c to the new_slug
+    project_c.slug = new_slug
+    project_c.save()
+    project_c.refresh_from_db()
+
+    # First access the URL with the new slug and ensure it's working
+    response = client.get(
+        reverse("pontoon.projects.project", kwargs={"slug": new_slug})
+    )
+    assert response.status_code == 200
+
+    # Now access the URL with the old slug
+    response = client.get(
+        reverse("pontoon.projects.project", kwargs={"slug": old_slug})
+    )
+    # The old slug should cause a redirect to the new slug URL
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "pontoon.projects.project", kwargs={"slug": new_slug}
+    )
+
+
+@pytest.fixture
+def project_d():
+    locale = LocaleFactory.create()
+    project = ProjectFactory.create(
+        name="Project D", slug="project-d", disabled=False, system_project=False
+    )
+    ResourceFactory.create(project=project, path="resource_d.po", format="po")
+    ProjectLocaleFactory.create(
+        project=project, locale=locale
+    )  # Pass the locale to the ProjectLocaleFactory.
+    return project
+
+
+@pytest.fixture
+def entity_d(project_d):
+    return EntityFactory.create(resource=project_d.resources.first(), string="Entity D")
+
+
+@pytest.mark.django_db
+def test_handle_old_slug_redirect_translate(client, project_d, entity_d):
+    # Add resource to project
+    resource_path = "resource_d.po"
+
+    old_slug = project_d.slug
+    new_slug = "project-d-new"
+
+    # Record the old slug in the history
+    ProjectSlugHistoryFactory.create(project=project_d, old_slug=old_slug)
+
+    # Change the slug of project_a to the new_slug
+    project_d.slug = new_slug
+    project_d.save()
+    project_d.refresh_from_db()
+
+    # The user is needed for the request
+    user = UserFactory.create(is_superuser=True)
+    client.force_login(user)
+
+    # First access the URL with the new slug and ensure it's working
+    response = client.get(
+        reverse(
+            "pontoon.translate",
+            kwargs={"project": new_slug, "locale": "en", "resource": resource_path},
+        )
+    )
+    assert response.status_code == 200
+
+    # Now access the URL with the old slug
+    response = client.get(
+        reverse(
+            "pontoon.translate",
+            kwargs={"project": old_slug, "locale": "en", "resource": resource_path},
+        )
+    )
+    # The old slug should cause a redirect to the new slug URL
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "pontoon.translate",
+        kwargs={"project": new_slug, "locale": "en", "resource": resource_path},
+    )
 
 @pytest.mark.django_db
 def test_get_m2m_changes_no_change(user_a):
