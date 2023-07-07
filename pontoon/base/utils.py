@@ -613,7 +613,20 @@ def is_email(email):
 
 def handle_old_slug_redirect(redirect_view, redirect_kwargs):
     """
-    Decorator to handle redirection from old slugs to current project slugs.
+    Decorator for Django view functions that redirects requests with outdated project slugs
+    to the corresponding current slug URL.
+
+    This decorator fetches the ProjectSlugHistory model, and if an old slug is used in a request,
+    it retrieves the associated current slug and redirects to the corresponding URL.
+    If no corresponding old slug is found in the history, the original view function is called without redirection.
+
+    Parameters:
+    redirect_view (str): The name of the view to which the request should be redirected in case of an old slug.
+    redirect_kwargs (list): The list of argument names that should be passed to the 'reverse' function
+    when constructing the redirect URL.
+
+    Returns:
+    function: A new function that wraps the original view function, adding the old slug handling and redirection behavior.
     """
 
     def decorator(view_func):

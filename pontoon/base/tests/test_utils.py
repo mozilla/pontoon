@@ -3,6 +3,7 @@ import pytest
 from django.contrib.auth import get_user_model
 
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 
 from pontoon.base.models import Project
 from pontoon.base.utils import (
@@ -18,30 +19,51 @@ from pontoon.base.utils import (
 from pontoon.test.factories import (
     ProjectFactory,
     ResourceFactory,
-    UserFactory,
     LocaleFactory,
     ProjectSlugHistoryFactory,
-    EntityFactory,
     ProjectLocaleFactory,
 )
 
 
 @pytest.fixture
-def project_c():
-    project = ProjectFactory.create(name="Project C", slug="project-c", disabled=False)
-    ResourceFactory.create(project=project, path="resource_c.po", format="po")
+def project_d():
+    """
+    Fixture that sets up and returns a Project with associated Locale and Resource.
+    """
+    locale = LocaleFactory.create()
+    project = ProjectFactory.create(
+        name="Project D", slug="project-d", disabled=False, system_project=False
+    )
+    ResourceFactory.create(project=project, path="resource_d.po", format="po")
+    ProjectLocaleFactory.create(project=project, locale=locale)
+    return project
+
+
+def create_slug_history_and_change_slug(project, new_slug):
+    """
+    This function is a helper for tests that need to simulate changing a project's slug.
+    It records the project's current slug in the history, then updates the project's slug
+    to a new value.
+    """
+    # Record the old slug in the history
+    ProjectSlugHistoryFactory.create(project=project, old_slug=project.slug)
+
+    # Change the slug of the project to the new_slug
+    project.slug = new_slug
+    project.save()
+    project.refresh_from_db()
+
     return project
 
 
 @pytest.mark.django_db
-def test_handle_old_slug_redirect(client, project_c):
-    old_slug = project_c.slug
-    new_slug = "project-c-new"
-
-    # Change the slug of project_c to the new_slug
-    project_c.slug = new_slug
-    project_c.save()
-    project_c.refresh_from_db()
+def test_project_view_redirects_old_slug(client, project_d):
+    """
+    Test to ensure that accessing a project view with an old slug redirects to the new slug URL.
+    """
+    old_slug = project_d.slug
+    new_slug = "project-d-new-1"
+    project_d = create_slug_history_and_change_slug(project_d, new_slug)
 
     # First access the URL with the new slug and ensure it's working
     response = client.get(
@@ -60,49 +82,47 @@ def test_handle_old_slug_redirect(client, project_c):
     )
 
 
-@pytest.fixture
-def project_d():
-    locale = LocaleFactory.create()
-    project = ProjectFactory.create(
-        name="Project D", slug="project-d", disabled=False, system_project=False
-    )
-    ResourceFactory.create(project=project, path="resource_d.po", format="po")
-    ProjectLocaleFactory.create(
-        project=project, locale=locale
-    )  # Pass the locale to the ProjectLocaleFactory.
-    return project
-
-
-@pytest.fixture
-def entity_d(project_d):
-    return EntityFactory.create(resource=project_d.resources.first(), string="Entity D")
+@pytest.mark.django_db
+def test_handle_no_slug_redirect_project(client):
+    """
+    Test to ensure that an attempt to access a project view without a slug raises a NoReverseMatch exception.
+    """
+    with pytest.raises(NoReverseMatch):
+        # Try to access the URL without a slug
+        client.get(reverse("pontoon.projects.project", kwargs={}))
 
 
 @pytest.mark.django_db
-def test_handle_old_slug_redirect_translate(client, project_d, entity_d):
+def test_handle_nonexistent_slug_redirect_project(client):
+    """
+    Test to ensure that an attempt to access a project view with a non-existent slug returns a 404 error.
+    """
+    slug = "nonexistent-slug"
+
+    response = client.get(reverse("pontoon.projects.project", kwargs={"slug": slug}))
+
+    # The expectation here is that the server should return a 404 error
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translation_view_redirects_old_slug(client, project_d):
+    """
+    Test to ensure that accessing a translation view with an old slug redirects to the new slug URL.
+    """
     # Add resource to project
     resource_path = "resource_d.po"
 
     old_slug = project_d.slug
-    new_slug = "project-d-new"
-
-    # Record the old slug in the history
-    ProjectSlugHistoryFactory.create(project=project_d, old_slug=old_slug)
-
-    # Change the slug of project_a to the new_slug
-    project_d.slug = new_slug
-    project_d.save()
-    project_d.refresh_from_db()
-
-    # The user is needed for the request
-    user = UserFactory.create(is_superuser=True)
-    client.force_login(user)
+    new_slug = "project-d-new-2"
+    locale = project_d.locales.first().code
+    project_d = create_slug_history_and_change_slug(project_d, new_slug)
 
     # First access the URL with the new slug and ensure it's working
     response = client.get(
         reverse(
             "pontoon.translate",
-            kwargs={"project": new_slug, "locale": "en", "resource": resource_path},
+            kwargs={"project": new_slug, "locale": locale, "resource": resource_path},
         )
     )
     assert response.status_code == 200
@@ -111,15 +131,119 @@ def test_handle_old_slug_redirect_translate(client, project_d, entity_d):
     response = client.get(
         reverse(
             "pontoon.translate",
-            kwargs={"project": old_slug, "locale": "en", "resource": resource_path},
+            kwargs={"project": old_slug, "locale": locale, "resource": resource_path},
         )
     )
     # The old slug should cause a redirect to the new slug URL
     assert response.status_code == 302
     assert response.url == reverse(
         "pontoon.translate",
-        kwargs={"project": new_slug, "locale": "en", "resource": resource_path},
+        kwargs={"project": new_slug, "locale": locale, "resource": resource_path},
     )
+
+
+@pytest.mark.django_db
+def test_handle_no_slug_redirect_translate(client, project_d):
+    """
+    Test to ensure that an attempt to access a translate view without a slug raises a NoReverseMatch exception.
+    """
+    locale = project_d.locales.first().code
+    resource_path = "resource_d.po"
+
+    with pytest.raises(NoReverseMatch):
+        client.get(
+            reverse(
+                "pontoon.translate",
+                kwargs={"locale": locale, "resource": resource_path},
+            )
+        )
+
+
+@pytest.mark.django_db
+def test_handle_nonexistent_slug_redirect_translate(client, project_d):
+    """
+    Test to ensure that an attempt to access a translate view with a non-existent slug returns a 404 error.
+    """
+    locale = project_d.locales.first().code
+    resource_path = "resource_d.po"
+    slug = "nonexistent-slug"
+
+    response = client.get(
+        reverse(
+            "pontoon.translate",
+            kwargs={"project": slug, "locale": locale, "resource": resource_path},
+        )
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_localization_view_redirects_old_slug(client, project_d):
+    """
+    Test to ensure that accessing a localization view with an old slug redirects to the new slug URL.
+    """
+    old_slug = project_d.slug
+    new_slug = "project-d-new-3"
+    locale = project_d.locales.first().code
+    project_d = create_slug_history_and_change_slug(project_d, new_slug)
+
+    # First access the URL with the new slug and ensure it's working
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"slug": new_slug, "code": locale},
+        )
+    )
+    assert response.status_code == 200
+
+    # Now access the URL with the old slug
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"slug": old_slug, "code": locale},
+        )
+    )
+    # The old slug should cause a redirect to the new slug URL
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "pontoon.localizations.localization",
+        kwargs={"slug": new_slug, "code": locale},
+    )
+
+
+@pytest.mark.django_db
+def test_handle_no_slug_redirect_localization(client, project_d):
+    """
+    Test to ensure that an attempt to access a localization view without a slug raises a NoReverseMatch exception.
+    """
+    locale = project_d.locales.first().code
+
+    with pytest.raises(NoReverseMatch):
+        client.get(
+            reverse(
+                "pontoon.localizations.localization",
+                kwargs={"code": locale},
+            )
+        )
+
+
+@pytest.mark.django_db
+def test_handle_nonexistent_slug_redirect_localization(client, project_d):
+    """
+    Test to ensure that an attempt to access a localization view with a non-existent slug returns a 404 error.
+    """
+    locale = project_d.locales.first().code
+    slug = "nonexistent-slug"
+
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"slug": slug, "code": locale},
+        )
+    )
+
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db

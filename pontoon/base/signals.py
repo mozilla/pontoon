@@ -211,6 +211,9 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=Project)
 def create_slug_history(sender, instance, **kwargs):
+    """
+    Signal receiver that, prior to saving a Project instance, creates a ProjectSlugHistory object if the project's slug has changed.
+    """
     if instance.pk:  # checks if instance is not a new object
         try:
             old_instance = sender.objects.get(pk=instance.pk)
