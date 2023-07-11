@@ -616,9 +616,12 @@ def handle_old_slug_redirect(redirect_view, redirect_kwargs):
     Decorator for Django view functions that redirects requests with outdated project slugs
     to the corresponding current slug URL.
 
-    This decorator fetches the ProjectSlugHistory model, and if an old slug is used in a request,
-    it retrieves the associated current slug and redirects to the corresponding URL.
-    If no corresponding old slug is found in the history, the original view function is called without redirection.
+    This decorator first attempts to find a Project using the current slug. If the Project is found,
+    the original view function is called without redirection.
+
+    If a Project is not found with the current slug, the decorator fetches the ProjectSlugHistory model,
+    and if an old slug is used in a request, it retrieves the associated current slug and redirects to the
+    corresponding URL. If no corresponding old slug is found in the history, the original view function is called without redirection.
 
     Parameters:
     redirect_view (str): The name of the view to which the request should be redirected in case of an old slug.
@@ -631,6 +634,7 @@ def handle_old_slug_redirect(redirect_view, redirect_kwargs):
 
     def decorator(view_func):
         def wrapper(request, *args, **kwargs):
+            Project = apps.get_model("base", "Project")
             ProjectSlugHistory = apps.get_model("base", "ProjectSlugHistory")
 
             # Create a dictionary with the arguments
@@ -642,29 +646,34 @@ def handle_old_slug_redirect(redirect_view, redirect_kwargs):
             # If slug is still not defined, raise an error.
             if slug is None:
                 raise ValueError("Cannot extract slug from view arguments")
+            # Try to find a project using the current slug
+            try:
+                Project.objects.get(slug=slug)
+                # If found, continue with the original view function
+                return view_func(request, *args, **kwargs)
+            except Project.DoesNotExist:
+                # Try to find a project using old slug
+                slug_history = (
+                    ProjectSlugHistory.objects.filter(old_slug=slug)
+                    .order_by("-created_at")
+                    .first()
+                )
 
-            # Try to find a project using old slug
-            slug_history = (
-                ProjectSlugHistory.objects.filter(old_slug=slug)
-                .order_by("-created_at")
-                .first()
-            )
+                if slug_history is not None:
+                    # Create a dict with the required kwargs for the redirect
+                    redirect_args = {
+                        arg: arguments[arg] if arg in arguments else None
+                        for arg in redirect_kwargs
+                    }
+                    # Replace the slug with the current one
+                    redirect_args[
+                        "slug" if "slug" in redirect_kwargs else "project"
+                    ] = slug_history.project.slug
 
-            if slug_history is not None:
-                # Create a dict with the required kwargs for the redirect
-                redirect_args = {
-                    arg: arguments[arg] if arg in arguments else None
-                    for arg in redirect_kwargs
-                }
-                # Replace the slug with the current one
-                redirect_args[
-                    "slug" if "slug" in redirect_kwargs else "project"
-                ] = slug_history.project.slug
+                    # Use the created dict in the reverse call
+                    redirect_url = reverse(redirect_view, kwargs=redirect_args)
 
-                # Use the created dict in the reverse call
-                redirect_url = reverse(redirect_view, kwargs=redirect_args)
-
-                return redirect(redirect_url)
+                    return redirect(redirect_url)
 
             # If no slug history is found, continue with the original view function
             return view_func(request, *args, **kwargs)

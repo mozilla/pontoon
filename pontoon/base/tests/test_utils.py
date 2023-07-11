@@ -83,6 +83,45 @@ def test_project_view_redirects_old_slug(client, project_d):
 
 
 @pytest.mark.django_db
+def test_handle_old_slug_redirect_no_loop(client, project_d):
+    """
+    Test that there is no redirect loop when a project's slug is renamed from 'cc' to 'dd' and then back to 'cc'.
+    """
+    # Rename project from 'cc' to 'dd' and then back to 'cc'
+    create_slug_history_and_change_slug(project_d, "cc")
+    create_slug_history_and_change_slug(project_d, "dd")
+    create_slug_history_and_change_slug(project_d, "cc")
+
+    # Request the project detail view with slug 'cc'
+    response = client.get(reverse("pontoon.projects.project", kwargs={"slug": "cc"}))
+
+    # Assert that the response is not a redirect (status code is not 302)
+    assert response.status_code != 302
+
+
+@pytest.mark.django_db
+def test_handle_old_slug_redirect_no_redirect_to_different_project(client, project_d):
+    """
+    Test that a request for a slug that was changed and then reused by a different project does not redirect to the original project.
+    """
+    # Rename project from 'ee' to 'ff'
+    create_slug_history_and_change_slug(project_d, "ee")
+    create_slug_history_and_change_slug(project_d, "ff")
+
+    # Create a new project with slug 'ee'
+    project = ProjectFactory.create(
+        name="Project E", slug="ee", disabled=False, system_project=False
+    )
+    ResourceFactory.create(project=project, path="resource_e.po", format="po")
+
+    # Request the project detail view with slug 'ee'
+    response = client.get(reverse("pontoon.projects.project", kwargs={"slug": "ee"}))
+
+    # Assert that the response is successful (status code is 200)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_handle_no_slug_redirect_project(client):
     """
     Test to ensure that an attempt to access a project view without a slug raises a NoReverseMatch exception.
