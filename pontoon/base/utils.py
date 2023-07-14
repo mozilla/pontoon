@@ -21,13 +21,13 @@ from django.core.validators import validate_email
 from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.apps import apps
 from django.urls import reverse
+from django.http import Http404
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -611,73 +611,31 @@ def is_email(email):
         return False
 
 
-def handle_old_slug_redirect(redirect_view, redirect_kwargs):
+def get_project_or_redirect(
+    slug, redirect_view_name, slug_arg_name, request_user, **kwargs
+):
     """
-    Decorator for Django view functions that redirects requests with outdated project slugs
-    to the corresponding current slug URL.
-
-    This decorator first attempts to find a Project using the current slug. If the Project is found,
-    the original view function is called without redirection.
-
-    If a Project is not found with the current slug, the decorator fetches the ProjectSlugHistory model,
-    and if an old slug is used in a request, it retrieves the associated current slug and redirects to the
-    corresponding URL. If no corresponding old slug is found in the history, the original view function is called without redirection.
-
-    Parameters:
-    redirect_view (str): The name of the view to which the request should be redirected in case of an old slug.
-    redirect_kwargs (list): The list of argument names that should be passed to the 'reverse' function
-    when constructing the redirect URL.
-
-    Returns:
-    function: A new function that wraps the original view function, adding the old slug handling and redirection behavior.
+    Attempts to get a project with the given slug. If the project doesn't exist, it checks if the slug is in the
+    ProjectSlugHistory and if so, it redirects to the current project slug URL. If the old slug is not found in the
+    history, it raises an Http404 error.
     """
-
-    def decorator(view_func):
-        def wrapper(request, *args, **kwargs):
-            Project = apps.get_model("base", "Project")
-            ProjectSlugHistory = apps.get_model("base", "ProjectSlugHistory")
-
-            # Create a dictionary with the arguments
-            arguments = kwargs.copy()
-            arguments.update({key: value for key, value in zip(redirect_kwargs, args)})
-
-            slug = arguments.get("slug") or arguments.get("project")
-
-            # If slug is still not defined, raise an error.
-            if slug is None:
-                raise ValueError("Cannot extract slug from view arguments")
-            # Try to find a project using the current slug
-            try:
-                Project.objects.get(slug=slug)
-                # If found, continue with the original view function
-                return view_func(request, *args, **kwargs)
-            except Project.DoesNotExist:
-                # Try to find a project using old slug
-                slug_history = (
-                    ProjectSlugHistory.objects.filter(old_slug=slug)
-                    .order_by("-created_at")
-                    .first()
-                )
-
-                if slug_history is not None:
-                    # Create a dict with the required kwargs for the redirect
-                    redirect_args = {
-                        arg: arguments[arg] if arg in arguments else None
-                        for arg in redirect_kwargs
-                    }
-                    # Replace the slug with the current one
-                    redirect_args[
-                        "slug" if "slug" in redirect_kwargs else "project"
-                    ] = slug_history.project.slug
-
-                    # Use the created dict in the reverse call
-                    redirect_url = reverse(redirect_view, kwargs=redirect_args)
-
-                    return redirect(redirect_url)
-
-            # If no slug history is found, continue with the original view function
-            return view_func(request, *args, **kwargs)
-
-        return wrapper
-
-    return decorator
+    Project = apps.get_model("base", "Project")
+    ProjectSlugHistory = apps.get_model("base", "ProjectSlugHistory")
+    try:
+        project = get_object_or_404(
+            Project.objects.visible_for(request_user).available(), slug=slug
+        )
+        return project
+    except Http404:
+        slug_history = (
+            ProjectSlugHistory.objects.filter(old_slug=slug)
+            .order_by("-created_at")
+            .first()
+        )
+        if slug_history is not None:
+            redirect_kwargs = {slug_arg_name: slug_history.project.slug}
+            redirect_kwargs.update(kwargs)
+            redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
+            return redirect(redirect_url)
+        else:
+            raise Http404
