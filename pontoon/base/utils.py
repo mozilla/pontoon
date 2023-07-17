@@ -20,14 +20,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, Http404
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
-from django.shortcuts import redirect, get_object_or_404
-from django.apps import apps
-from django.urls import reverse
-from django.http import Http404
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -619,14 +617,13 @@ def get_project_or_redirect(
     ProjectSlugHistory and if so, it redirects to the current project slug URL. If the old slug is not found in the
     history, it raises an Http404 error.
     """
-    Project = apps.get_model("base", "Project")
-    ProjectSlugHistory = apps.get_model("base", "ProjectSlugHistory")
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import Project, ProjectSlugHistory
+
     try:
-        project = get_object_or_404(
-            Project.objects.visible_for(request_user).available(), slug=slug
-        )
+        project = Project.objects.visible_for(request_user).available().get(slug=slug)
         return project
-    except Http404:
+    except Project.DoesNotExist:
         slug_history = (
             ProjectSlugHistory.objects.filter(old_slug=slug)
             .order_by("-created_at")
