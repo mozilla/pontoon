@@ -79,17 +79,14 @@ def ajax_projects(request, locale):
         request.user.is_authenticated and projects.exclude(locales=locale).count() > 0
     )
 
-    has_pretranslation_to_request = (
-        enabled_projects.filter(
-            project_locale__pretranslation_enabled=True, project_locale__locale=locale
-        ).count()
-        > 0
+    pretranslated_projects = enabled_projects.filter(
+        project_locale__pretranslation_enabled=True, project_locale__locale=locale
     )
 
     pretranslation_request_enabled = (
         locale in request.user.translated_locales
         and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
-        and has_pretranslation_to_request
+        and pretranslated_projects.count() > 0
     )
 
     if not projects:
@@ -104,6 +101,7 @@ def ajax_projects(request, locale):
             "enabled_projects": enabled_projects,
             "no_visible_projects": no_visible_projects,
             "project_request_enabled": project_request_enabled,
+            "pretranslated_projects": pretranslated_projects,
             "pretranslation_request_enabled": pretranslation_request_enabled,
         },
     )

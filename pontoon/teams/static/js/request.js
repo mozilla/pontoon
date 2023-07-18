@@ -17,14 +17,14 @@ var Pontoon = (function (my) {
         if (type === 'locale-projects') {
           var localeProjects = $('#server').data('locale-projects');
 
-          // Hide all projects
+          // Show/hide all projects
           $('.items')
             .toggleClass('request', !show)
             .find('tbody tr')
             .toggleClass('limited', !show)
             .toggle(!show);
 
-          // Show requested projects
+          // Hide/show enabled projects
           $(localeProjects).each(function () {
             $('.items')
               .find('td[data-slug="' + this + '"]')
@@ -38,8 +38,13 @@ var Pontoon = (function (my) {
           $('.project-list').toggleClass('hidden', noProject);
           $('menu.controls').toggleClass('no-projects', noProject);
           $('.no-results').toggle();
+        } else if (type === 'pretranslation') {
+          $('.items').toggleClass('requesting-pretranslation', !show);
 
-          Pontoon.requestItem.toggleButton(!show, 'locale-projects');
+          // Hide/show pretranslated projects
+          $('.items tbody tr.pretranslated')
+            .toggleClass('limited', show)
+            .toggle(show);
         } else if (type === 'team') {
           // Hide all teams and the search bar
           $('.team-list').toggle(show);
@@ -47,9 +52,9 @@ var Pontoon = (function (my) {
 
           // Show team form
           $('#request-team-form').toggle(!show);
-          Pontoon.requestItem.toggleButton(!show, 'team');
         }
 
+        Pontoon.requestItem.toggleButton(!show, type);
         $('.controls input[type=search]:visible').trigger('input');
       },
 
@@ -57,7 +62,7 @@ var Pontoon = (function (my) {
         condition = condition || true;
         var show = condition;
 
-        if (type === 'locale-projects') {
+        if (type === 'locale-projects' || type === 'pretranslation') {
           show = condition && $('.items td.enabled:visible').length > 0;
         } else if (type === 'team') {
           show =
@@ -136,7 +141,9 @@ $(function () {
     e.stopPropagation();
     e.preventDefault();
 
-    Pontoon.requestItem.toggleItem($(this).is('.back'), type);
+    var type_ = $(this).is('.request-pretranslation') ? 'pretranslation' : type;
+
+    Pontoon.requestItem.toggleItem($(this).is('.back'), type_);
     $(this).siblings('.request-toggle').toggle();
   });
 

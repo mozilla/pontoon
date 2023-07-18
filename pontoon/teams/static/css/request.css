@@ -127,7 +127,8 @@
   display: table-cell;
 }
 
-.items.request .item-list th.check {
+.items.request .item-list th.check,
+.items.requesting-pretranslation .item-list th.check {
   text-align: right;
   width: auto;
 }
@@ -139,6 +140,7 @@
 }
 
 .items.request .item-list .check,
+.items.requesting-pretranslation .item-list .check,
 .items.request .item-list .radio {
   cursor: pointer;
   display: block;
@@ -187,8 +189,13 @@
   color: #7bc876;
 }
 
+.items.requesting-pretranslation .item-list .deadline,
 .items.request .item-list .latest-activity,
 .items.request .item-list .progress,
 .items.request .item-list .unreviewed-status {
   display: none;
+}
+
+.items.requesting-pretranslation .item-list .progress {
+  width: 340px;
 }
