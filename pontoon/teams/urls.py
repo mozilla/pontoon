@@ -106,6 +106,12 @@ urlpatterns = [
                     views.request_item,
                     name="pontoon.teams.request.projects",
                 ),
+                # AJAX: Request pretranslation to be enabled for projects
+                path(
+                    "request-pretranslation/",
+                    views.request_pretranslation,
+                    name="pontoon.teams.request.pretranslation",
+                ),
             ]
         ),
     ),

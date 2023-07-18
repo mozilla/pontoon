@@ -133,6 +133,29 @@ var Pontoon = (function (my) {
           },
         });
       },
+
+      requestPretranslation: function (locale, projects) {
+        $.ajax({
+          url: '/' + locale + '/request-pretranslation/',
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: $('body').data('csrf'),
+            projects: projects,
+          },
+          success: function () {
+            Pontoon.endLoader('New pretranslation request sent.', '', 5000);
+          },
+          error: function () {
+            Pontoon.endLoader('Oops, something went wrong.', 'error');
+          },
+          complete: function () {
+            $('.items td.check').removeClass('enabled');
+            Pontoon.requestItem.toggleItem(true, 'pretranslation');
+            $('.controls .request-toggle').show();
+            window.scrollTo(0, 0);
+          },
+        });
+      },
     },
   });
 })(Pontoon || {});
@@ -235,12 +258,13 @@ $(function () {
 
         if ($('.items').is('.request')) {
           $(this).html('Request new projects');
+          Pontoon.requestItem.requestProjects(locale, projects, 'projects');
         } else if ($('.items').is('.requesting-pretranslation')) {
           $(this).html('Request pretranslation');
+          Pontoon.requestItem.requestPretranslation(locale, projects);
         }
 
         $(this).removeClass('confirmed');
-        Pontoon.requestItem.requestProjects(locale, projects, 'projects');
       }
 
       // Requesting from project page
