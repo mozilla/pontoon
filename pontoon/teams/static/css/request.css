@@ -70,6 +70,16 @@
   display: block;
 }
 
+.items.request #request-item-note p.locale-projects,
+.items.requesting-pretranslation #request-item-note p.pretranslation {
+  display: block;
+}
+
+.items.request #request-item-note p.pretranslation,
+.items.requesting-pretranslation #request-item-note p.locale-projects {
+  display: none;
+}
+
 #request-item {
   display: none;
   background: #7bc876;
