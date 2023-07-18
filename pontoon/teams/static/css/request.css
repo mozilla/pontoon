@@ -84,7 +84,7 @@
   color: #7bc876;
 }
 
-#request-item {
+.request-item {
   display: none;
   background: #7bc876;
   border: none;
@@ -95,7 +95,7 @@
   width: 100%;
 }
 
-#request-item.confirmed {
+.request-item.confirmed {
   background: #fed271;
 }
 

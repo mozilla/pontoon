@@ -72,7 +72,12 @@ var Pontoon = (function (my) {
         }
 
         $('#request-item-note').toggle(show);
-        $('#request-item').toggle(show);
+
+        var title = 'Request new projects';
+        if (type === 'pretranslation') {
+          title = 'Request pretranslation';
+        }
+        $('.request-item').html(title).removeClass('confirmed').toggle(show);
       },
 
       requestProjects: function (locale, projects, type) {
@@ -152,8 +157,12 @@ $(function () {
     if ($('.controls .request-toggle').is('.back:visible')) {
       e.stopPropagation();
 
+      var type_ = $('.items').is('.requesting-pretranslation')
+        ? 'pretranslation'
+        : 'locale-projects';
+
       $(this).toggleClass('enabled');
-      Pontoon.requestItem.toggleButton(true, (type = 'locale-projects'));
+      Pontoon.requestItem.toggleButton(true, type_);
     }
   });
 
@@ -208,7 +217,7 @@ $(function () {
   );
 
   // Request projects/team
-  container.on('click', '#request-item', function (e) {
+  container.on('click', '.request-item', function (e) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -216,7 +225,7 @@ $(function () {
 
     if ($(this).is('.confirmed')) {
       // Requesting from team page
-      if (type === 'locale-projects' && $('body').hasClass('locale')) {
+      if ($('body').hasClass('locale')) {
         var projects = $('.items td.check.enabled')
           .map(function (val, element) {
             return $(element).siblings('.name').data('slug');
@@ -224,9 +233,14 @@ $(function () {
           .get();
         locale = $('#server').data('locale') || Pontoon.getSelectedLocale();
 
-        Pontoon.requestItem.requestProjects(locale, projects, 'projects');
+        if ($('.items').is('.request')) {
+          $(this).html('Request new projects');
+        } else if ($('.items').is('.requesting-pretranslation')) {
+          $(this).html('Request pretranslation');
+        }
 
-        $(this).removeClass('confirmed').html('Request new projects');
+        $(this).removeClass('confirmed');
+        Pontoon.requestItem.requestProjects(locale, projects, 'projects');
       }
 
       // Requesting from project page
