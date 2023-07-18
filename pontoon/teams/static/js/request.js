@@ -90,6 +90,7 @@ var Pontoon = (function (my) {
               'far fa fa-circle fa-dot-circle enabled',
             );
             Pontoon.requestItem.toggleItem(true, 'locale-projects');
+            $('.controls .request-toggle').show();
             window.scrollTo(0, 0);
           },
         });
@@ -136,6 +137,7 @@ $(function () {
     e.preventDefault();
 
     Pontoon.requestItem.toggleItem($(this).is('.back'), type);
+    $(this).siblings('.request-toggle').toggle();
   });
 
   // Select projects

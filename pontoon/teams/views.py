@@ -72,13 +72,25 @@ def ajax_projects(request, locale):
         .annotate(enabled_locales=Count("project_locale", distinct=True))
     )
 
-    locale_projects = locale.available_projects_list(request.user)
+    enabled_projects = projects.filter(locales=locale)
+    no_visible_projects = enabled_projects.count() == 0
 
-    no_visible_projects = (
-        locale.project_set.visible().visible_for(request.user).count() == 0
+    project_request_enabled = (
+        request.user.is_authenticated and projects.exclude(locales=locale).count() > 0
     )
 
-    has_projects_to_request = projects.exclude(locales=locale).count() > 0
+    has_pretranslation_to_request = (
+        enabled_projects.filter(
+            project_locale__pretranslation_enabled=True, project_locale__locale=locale
+        ).count()
+        > 0
+    )
+
+    pretranslation_request_enabled = (
+        locale in request.user.translated_locales
+        and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
+        and has_pretranslation_to_request
+    )
 
     if not projects:
         raise Http404
@@ -89,9 +101,10 @@ def ajax_projects(request, locale):
         {
             "locale": locale,
             "projects": projects,
-            "locale_projects": locale_projects,
+            "enabled_projects": enabled_projects,
             "no_visible_projects": no_visible_projects,
-            "has_projects_to_request": has_projects_to_request,
+            "project_request_enabled": project_request_enabled,
+            "pretranslation_request_enabled": pretranslation_request_enabled,
         },
     )
 

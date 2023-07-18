@@ -10,6 +10,10 @@
   margin-left: 2px;
 }
 
+.request-projects {
+  margin-left: 20px;
+}
+
 /* Bug 1468997 */
 .request-team {
   display: none;
@@ -23,10 +27,15 @@
   content: 'Back to enabled teams';
 }
 
+.request-pretranslation:before {
+  content: 'Request pretranslation';
+}
+
 .request-projects:before {
   content: 'Request more projects';
 }
 
+.request-pretranslation.back:after,
 .request-projects.back:after {
   content: 'Back to enabled projects';
 }
