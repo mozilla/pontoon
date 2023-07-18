@@ -80,6 +80,10 @@
   display: none;
 }
 
+#request-item-note p a {
+  color: #7bc876;
+}
+
 #request-item {
   display: none;
   background: #7bc876;
