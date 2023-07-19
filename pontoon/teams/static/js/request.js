@@ -73,9 +73,10 @@ var Pontoon = (function (my) {
 
         $('#request-item-note').toggle(show);
 
-        const title = type === 'pretranslation'
-          ? 'Request pretranslation'
-          : 'Request new projects';
+        const title =
+          type === 'pretranslation'
+            ? 'Request pretranslation'
+            : 'Request new projects';
         $('.request-item').html(title).removeClass('confirmed').toggle(show);
       },
 
