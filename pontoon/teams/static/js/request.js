@@ -82,19 +82,19 @@ var Pontoon = (function (my) {
 
       requestProjects: function (locale, projects, type) {
         $.ajax({
-          url: '/' + locale + '/request/',
+          url: `/${locale}/request/`,
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('body').data('csrf'),
             projects: projects,
           },
-          success: function () {
+          success() {
             Pontoon.endLoader('New ' + type + ' request sent.', '', 5000);
           },
-          error: function () {
+          error() {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           },
-          complete: function () {
+          complete() {
             $('.items td.check').removeClass('enabled');
             $('.items td.radio.enabled').toggleClass(
               'far fa fa-circle fa-dot-circle enabled',
@@ -115,17 +115,17 @@ var Pontoon = (function (my) {
             name: name,
             code: code,
           },
-          success: function () {
+          success() {
             Pontoon.endLoader('New team request sent.', '', 5000);
           },
-          error: function (res) {
+          error(res) {
             if (res.status === 409) {
               Pontoon.endLoader(res.responseText, 'error');
             } else {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
             }
           },
-          complete: function () {
+          complete() {
             $('#request-team-form #id_name').val('');
             $('#request-team-form #id_code').val('');
             Pontoon.requestItem.toggleButton(true, 'team');
