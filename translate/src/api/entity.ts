@@ -30,6 +30,7 @@ export type Entity = {
   readonly translation: Array<EntityTranslation>;
   readonly readonly: boolean;
   readonly isSibling: boolean;
+  readonly date_created: string;
 };
 
 /**
