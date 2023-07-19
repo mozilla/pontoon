@@ -73,10 +73,9 @@ var Pontoon = (function (my) {
 
         $('#request-item-note').toggle(show);
 
-        var title = 'Request new projects';
-        if (type === 'pretranslation') {
-          title = 'Request pretranslation';
-        }
+        const title = type === 'pretranslation'
+          ? 'Request pretranslation'
+          : 'Request new projects';
         $('.request-item').html(title).removeClass('confirmed').toggle(show);
       },
 
@@ -136,19 +135,19 @@ var Pontoon = (function (my) {
 
       requestPretranslation: function (locale, projects) {
         $.ajax({
-          url: '/' + locale + '/request-pretranslation/',
+          url: `/${locale}/request-pretranslation/`,
           type: 'POST',
           data: {
             csrfmiddlewaretoken: $('body').data('csrf'),
             projects: projects,
           },
-          success: function () {
+          success() {
             Pontoon.endLoader('New pretranslation request sent.', '', 5000);
           },
-          error: function () {
+          error() {
             Pontoon.endLoader('Oops, something went wrong.', 'error');
           },
-          complete: function () {
+          complete() {
             $('.items td.check').removeClass('enabled');
             Pontoon.requestItem.toggleItem(true, 'pretranslation');
             $('.controls .request-toggle').show();
