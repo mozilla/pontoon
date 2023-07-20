@@ -56,9 +56,10 @@ def translate(request, locale, project, resource):
         )
         if isinstance(project, HttpResponseRedirect):
             return project
-    # Validate ProjectLocale
-    if locale not in project.locales.all():
-        raise Http404
+
+        # Validate ProjectLocale
+        if locale not in project.locales.all():
+            raise Http404
 
     context = {
         "locale": get_preferred_locale(request),
