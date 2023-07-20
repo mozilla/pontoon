@@ -72,13 +72,25 @@ def ajax_projects(request, locale):
         .annotate(enabled_locales=Count("project_locale", distinct=True))
     )
 
-    locale_projects = locale.available_projects_list(request.user)
+    enabled_projects = projects.filter(locales=locale)
+    no_visible_projects = enabled_projects.count() == 0
 
-    no_visible_projects = (
-        locale.project_set.visible().visible_for(request.user).count() == 0
+    project_request_enabled = (
+        request.user.is_authenticated and projects.exclude(locales=locale).count() > 0
     )
 
-    has_projects_to_request = projects.exclude(locales=locale).count() > 0
+    pretranslated_projects = enabled_projects.filter(
+        project_locale__pretranslation_enabled=True, project_locale__locale=locale
+    )
+
+    pretranslation_request_enabled = (
+        locale in request.user.translated_locales
+        and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
+        and pretranslated_projects.count() < enabled_projects.count()
+    )
+
+    # Temporarily Disabled
+    pretranslation_request_enabled = False
 
     if not projects:
         raise Http404
@@ -89,9 +101,11 @@ def ajax_projects(request, locale):
         {
             "locale": locale,
             "projects": projects,
-            "locale_projects": locale_projects,
+            "enabled_projects": enabled_projects,
             "no_visible_projects": no_visible_projects,
-            "has_projects_to_request": has_projects_to_request,
+            "project_request_enabled": project_request_enabled,
+            "pretranslated_projects": pretranslated_projects,
+            "pretranslation_request_enabled": pretranslation_request_enabled,
         },
     )
 
@@ -265,6 +279,72 @@ def request_item(request, locale=None):
             cc.update(
                 set(locale.managers_group.user_set.values_list("email", flat=True))
             )
+
+        EmailMessage(
+            subject=mail_subject,
+            body=mail_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=settings.PROJECT_MANAGERS,
+            cc=cc,
+            reply_to=[user.contact_email],
+        ).send()
+    else:
+        raise ImproperlyConfigured(
+            "PROJECT_MANAGERS not defined in settings. Email recipient unknown."
+        )
+
+    return HttpResponse("ok")
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+def request_pretranslation(request, locale):
+    """Request pretranslation to be enabled for projects."""
+    # Temporarily Disabled
+    raise NotImplementedError
+
+    user = request.user
+    slug_list = request.POST.getlist("projects[]")
+    locale = get_object_or_404(Locale, code=locale)
+
+    # Validate user
+    if locale not in user.translated_locales:
+        return HttpResponseBadRequest(
+            "Bad Request: Requester is not a translator or manager for the locale"
+        )
+
+    # Validate locale
+    if locale.code not in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES:
+        return HttpResponseBadRequest("Bad Request: Locale not supported")
+
+    # Validate projects
+    project_list = (
+        Project.objects.visible()
+        .visible_for(user)
+        .filter(slug__in=slug_list, can_be_requested=True)
+    )
+    if not project_list:
+        return HttpResponseBadRequest("Bad Request: Non-existent projects specified")
+
+    projects = "".join(f"- {p.name} ({p.slug})\n" for p in project_list)
+
+    mail_subject = "Pretranslation request for {locale} ({code})".format(
+        locale=locale.name, code=locale.code
+    )
+
+    payload = {
+        "locale": locale,
+        "projects": projects,
+        "user": user.display_name_and_email,
+        "user_role": user.locale_role(locale),
+        "user_url": request.build_absolute_uri(user.profile_url),
+    }
+
+    if settings.PROJECT_MANAGERS[0] != "":
+        template = get_template("teams/email_request_pretranslation.jinja")
+        mail_body = template.render(payload)
+        cc = {user.contact_email}
+        cc.update(set(locale.managers_group.user_set.values_list("email", flat=True)))
 
         EmailMessage(
             subject=mail_subject,

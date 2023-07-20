@@ -10,6 +10,10 @@
   margin-left: 2px;
 }
 
+.request-projects {
+  margin-left: 20px;
+}
+
 /* Bug 1468997 */
 .request-team {
   display: none;
@@ -23,10 +27,15 @@
   content: 'Back to enabled teams';
 }
 
+.request-pretranslation:before {
+  content: 'Request pretranslation';
+}
+
 .request-projects:before {
   content: 'Request more projects';
 }
 
+.request-pretranslation.back:after,
 .request-projects.back:after {
   content: 'Back to enabled projects';
 }
@@ -61,7 +70,21 @@
   display: block;
 }
 
-#request-item {
+.items.request #request-item-note p.locale-projects,
+.items.requesting-pretranslation #request-item-note p.pretranslation {
+  display: block;
+}
+
+.items.request #request-item-note p.pretranslation,
+.items.requesting-pretranslation #request-item-note p.locale-projects {
+  display: none;
+}
+
+#request-item-note p a {
+  color: #7bc876;
+}
+
+.request-item {
   display: none;
   background: #7bc876;
   border: none;
@@ -72,7 +95,7 @@
   width: 100%;
 }
 
-#request-item.confirmed {
+.request-item.confirmed {
   background: #fed271;
 }
 
@@ -118,7 +141,8 @@
   display: table-cell;
 }
 
-.items.request .item-list th.check {
+.items.request .item-list th.check,
+.items.requesting-pretranslation .item-list th.check {
   text-align: right;
   width: auto;
 }
@@ -130,6 +154,7 @@
 }
 
 .items.request .item-list .check,
+.items.requesting-pretranslation .item-list .check,
 .items.request .item-list .radio {
   cursor: pointer;
   display: block;
@@ -178,8 +203,13 @@
   color: #7bc876;
 }
 
+.items.requesting-pretranslation .item-list .deadline,
 .items.request .item-list .latest-activity,
 .items.request .item-list .progress,
 .items.request .item-list .unreviewed-status {
   display: none;
+}
+
+.items.requesting-pretranslation .item-list .progress {
+  width: 340px;
 }
