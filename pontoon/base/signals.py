@@ -13,6 +13,7 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslatedResource,
     UserProfile,
+    ProjectSlugHistory,
 )
 
 
@@ -206,3 +207,19 @@ def assign_project_locale_group_permissions(sender, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+
+@receiver(pre_save, sender=Project)
+def create_slug_history(sender, instance, **kwargs):
+    """
+    Signal receiver that, prior to saving a Project instance, creates a ProjectSlugHistory object if the project's slug has changed.
+    """
+    if instance.pk:  # checks if instance is not a new object
+        try:
+            old_instance = sender.objects.get(pk=instance.pk)
+            if old_instance.slug != instance.slug:
+                ProjectSlugHistory.objects.create(
+                    project=instance, old_slug=old_instance.slug
+                )
+        except sender.DoesNotExist:
+            pass
