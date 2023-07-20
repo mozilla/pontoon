@@ -89,6 +89,9 @@ def ajax_projects(request, locale):
         and pretranslated_projects.count() < enabled_projects.count()
     )
 
+    # Temporarily Disabled
+    pretranslation_request_enabled = False
+
     if not projects:
         raise Http404
 
@@ -297,6 +300,9 @@ def request_item(request, locale=None):
 @require_POST
 def request_pretranslation(request, locale):
     """Request pretranslation to be enabled for projects."""
+    # Temporarily Disabled
+    raise NotImplementedError
+
     user = request.user
     slug_list = request.POST.getlist("projects[]")
     locale = get_object_or_404(Locale, code=locale)
