@@ -31,11 +31,7 @@ const emptyEntity: Entity = {
   translation: [],
   readonly: true,
   isSibling: false,
-  date_created: new Date().toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }),
+  date_created: '',
 };
 
 export type EntityView = {
