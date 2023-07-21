@@ -102,14 +102,6 @@ function EntityCreatedDate({ dateCreated }: { dateCreated: string }) {
   // Create a Date object from the dateCreated string
   const date = new Date(dateCreated);
 
-  // Check if date is a valid Date object
-  if (isNaN(date.getTime())) {
-    console.error(
-      `EntityCreatedDate component received invalid date string: ${dateCreated}`,
-    );
-    return null;
-  }
-
   // Format the date and time
   const formattedDate = dateFormatter.format(date);
   const formattedTime = timeFormatter.format(date);

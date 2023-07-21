@@ -20,7 +20,11 @@ const ENTITY = {
     slug: 'callme',
     name: 'CallMe',
   },
+<<<<<<< HEAD
   date_created: new Date().toISOString(),
+=======
+  date_created: new Date().toISOString()
+>>>>>>> 803f7ff6 (Add default date_created to ENTITY objects in tests)
 };
 
 const LOCALE = {
