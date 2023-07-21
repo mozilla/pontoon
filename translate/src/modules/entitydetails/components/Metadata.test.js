@@ -20,7 +20,7 @@ const ENTITY = {
     slug: 'callme',
     name: 'CallMe',
   },
-  date_created: new Date().toISOString()
+  date_created: new Date().toISOString(),
 };
 
 const LOCALE = {
