@@ -84,7 +84,8 @@ def ajax_projects(request, locale):
     )
 
     pretranslation_request_enabled = (
-        locale in request.user.translated_locales
+        request.user.is_authenticated
+        and locale in request.user.translated_locales
         and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
         and pretranslated_projects.count() < enabled_projects.count()
     )
