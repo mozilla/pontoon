@@ -14,6 +14,7 @@ const ENTITY = {
   translation: [{ string: 'test', errors: [], warnings: [] }],
   project: { contact: '' },
   comment: '',
+  date_created: new Date().toISOString(),
 };
 
 function mockEntityDetails(pk) {
