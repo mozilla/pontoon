@@ -54,7 +54,7 @@ A new Insights page is made available at `/insights`. It consists of two charts,
 
 # Out of scope
 
-Sending alerts (e.g. as weekly emails to the Pontoon Team mailing list) with a list of locales that fall behind the acceptance criteria are not covered by this feature.
+Sending alerts (e.g. as weekly emails to the Pontoon Team mailing list) with a list of locales that fall behind the acceptance criteria is not covered by this feature.
 
 # Mockup
 
