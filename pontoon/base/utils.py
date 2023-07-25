@@ -26,6 +26,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -374,10 +377,23 @@ def handle_upload_content(slug, code, part, f, user):
             )
         )
     )
+    log.info(f"Sample keys in entities_qs: {[entity.key for entity in entities_qs[:5]]}")
+
+    # Log the size of entities_qs before entities_dict is created
+    log.info(f"Size of entities_qs: {len(entities_qs)}")
+
     entities_dict = {entity.key: entity for entity in entities_qs}
+
+    log.info(f"Size of entities_dict: {len(entities_dict)}")
+
+    # Log a few sample key-value pairs from entities_dict
+    sample_items = list(entities_dict.items())[:5]  # Get first 5 items
+    for key, value in sample_items:
+        log.info(f"Sample key-value pair: {key}: {value}")
 
     for vcs_translation in resource_file.translations:
         key = vcs_translation.key
+        log.info(f"Processing translation - Key: {key}, Translation: {vcs_translation}")
         if key in entities_dict:
             entity = entities_dict[key]
             changeset.update_entity_translations_from_vcs(
@@ -390,6 +406,7 @@ def handle_upload_content(slug, code, part, f, user):
             )
 
     changeset.bulk_create_translations()
+    log.info(f"Number of created translations: {len(changeset.translations_to_create)}")
     changeset.bulk_update_translations()
     changeset.bulk_log_actions()
 

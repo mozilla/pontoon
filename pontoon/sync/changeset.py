@@ -16,8 +16,9 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
-
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
 
 
 class ChangeSet:
@@ -263,6 +264,7 @@ class ChangeSet:
         db_translations=None,
         db_translations_approved_before_sync=None,
     ):
+        log.info(f"Updating entity translations from VCS for entity: {db_entity.pk}, locale: {locale_code}")
         if db_translations is None:
             db_translations = db_entity.translation_set.filter(
                 locale__code=locale_code,
@@ -283,6 +285,7 @@ class ChangeSet:
 
             # Modify existing translation.
             if db_translation:
+                log.info(f"Found matching db translation with id {db_translation.pk} for entity {db_entity.pk}")
                 new_action = None
                 if (
                     not db_translation.approved
@@ -312,6 +315,7 @@ class ChangeSet:
 
             # Create new translation.
             else:
+                log.info(f"No matching db translation found for entity {db_entity.pk}")
                 self.translations_to_create.append(
                     Translation(
                         entity=db_entity,
