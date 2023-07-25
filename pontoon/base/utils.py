@@ -27,6 +27,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
 import logging
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -377,7 +378,9 @@ def handle_upload_content(slug, code, part, f, user):
             )
         )
     )
-    log.info(f"Sample keys in entities_qs: {[entity.key for entity in entities_qs[:5]]}")
+    log.info(
+        f"Sample keys in entities_qs: {[entity.key for entity in entities_qs[:5]]}"
+    )
 
     # Log the size of entities_qs before entities_dict is created
     log.info(f"Size of entities_qs: {len(entities_qs)}")
