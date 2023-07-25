@@ -65,13 +65,15 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
       dispatch(getTerms(source, lc));
     }
 
-    if (pk !== otherlocales.entity) {
-      dispatch(getOtherLocales(entity, lc));
-    }
+    if (entity > 0) {
+      if (pk !== otherlocales.entity) {
+        dispatch(getOtherLocales(entity, lc));
+      }
 
-    if (pk !== teamComments.entity) {
-      dispatch(requestTeamComments(entity));
-      dispatch(getTeamComments(entity, lc));
+      if (pk !== teamComments.entity) {
+        dispatch(requestTeamComments(entity));
+        dispatch(getTeamComments(entity, lc));
+      }
     }
   }, [activeTranslation]);
 

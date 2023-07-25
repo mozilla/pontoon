@@ -55,8 +55,9 @@ async function wrapFetch(
     init.signal = ac.signal;
   }
 
+  let response: Response | undefined;
   try {
-    const response = await fetch(url, init);
+    response = await fetch(url, init);
     return await response.json();
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -67,9 +68,15 @@ async function wrapFetch(
 
         case 'SyntaxError':
           /* eslint-disable no-console */
-          console.error('The response content is not JSON-compatible');
-          console.error(`URL: ${url} - Method: ${init.method}`);
-          console.error(error);
+          if (response?.ok) {
+            console.error('The response content is not JSON-compatible');
+            console.error(`URL: ${url} - Method: ${init.method}`);
+            console.error(error);
+          } else if (response?.status !== 404) {
+            console.error(
+              `Unexpected HTTP response ${response?.status} ${response?.statusText} for ${init.method} ${url}`,
+            );
+          }
           return {};
       }
     }
