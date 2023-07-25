@@ -4,7 +4,6 @@ import {
   abortMachineryRequests,
   fetchCaighdeanTranslation,
   fetchGoogleTranslation,
-  fetchMicrosoftTerminology,
   fetchMicrosoftTranslation,
   fetchSystranTranslation,
   fetchTranslationMemory,
