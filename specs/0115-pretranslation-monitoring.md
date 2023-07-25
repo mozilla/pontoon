@@ -4,7 +4,7 @@
 
 # Summary
 
-Upgrade Insights dashboards with the ability to continuously monitor quality of pretranslations across locales and projects.
+Extend Insights dashboards with the ability to continuously monitor quality of pretranslations across locales and projects.
 
 # Motivation
 
@@ -13,6 +13,8 @@ As part of the pretranslation feature testing with a limited number of locales, 
 Since the feature is now ready for larger adoption, we'd like to automate the process of collecting the data about pretranslations and show it on the dashboards. That will allow PMs to see which locales struggle with the review performance, which projects are not a good fit for pretranslation, and to make decisions accordingly.
 
 # Feature explanation
+
+## New charts on the Insights tabs
 
 A new "Time to review pretranslations" chart is made available under the "Time to review suggestions" chart in the Team Insights page. It's a line chart displaying two separate data points over the last 12 months:
 * *Current month*: Average age of pretranslations reviewed during the specific month.
@@ -28,14 +30,27 @@ A new "Pretranslation quality" chart is made available at the bottom of the (Tea
 
 **Text for infobox**: *Approval rate and chrF++ score of pretranslations.*
 
-For both charts:
+Time to review suggestions and Age of unreviewed suggestions charts are split into separate panels in order to accomodate the new layout. Fore more details about the design, see the Mockup section.
+
+## New Insights page
+
+A new Insights page is made available at `/insights`. It consists of two charts, presenting data for the period of the last 12 months.
+
+"Team Pretranslation quality" chart contains one line chart per team, showing the percentage of approved pretranslations over time for the given team. Aggregate line chart shows data across all teams. Each line can be toggled.
+
+**Text for infobox**: *Approval rate of pretranslations for each team.*
+
+"Project Pretranslation quality" chart contains one line chart per project, showing the percentage of approved pretranslations over time for the given project. Aggregate line chart shows data across all projects. Each line can be toggled.
+
+**Text for infobox**: *Approval rate of pretranslations for each project.*
+
+## For all charts:
+
 - A tooltip showing the exact data at a given month appears when hovering over a chart.
 - Detailed description of the chart appears after clicking on the info icon.
 - Data is available for each day, but aggregated by month in the chart.
 - A (daily) cron job gathers all the required data for plotting and stores it in the DB.
 - A data migration is used for gathering past data.
-
-Time to review suggestions and Age of unreviewed suggestions charts are split into separate panels in order to accomodate the new layout. Fore more details about the design, see the Mockup section.
 
 # Out of scope
 
