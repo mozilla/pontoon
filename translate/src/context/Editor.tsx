@@ -365,6 +365,9 @@ export function EditorProvider({ children }: { children: React.ReactElement }) {
   }, [state, actions, status, machinery.translations]);
 
   useEffect(() => {
+    // Dismiss failed checks when the results change.
+    // Note that if the editor is updated simultaneously,
+    // setting failed checks needs to be delayed past this.
     resetFailedChecks();
 
     // Changes in `result` need to be reflected in `UnsavedChanges`,
