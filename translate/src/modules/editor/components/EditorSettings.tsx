@@ -1,5 +1,5 @@
 import { Localized } from '@fluent/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Settings } from '~/modules/user';
 import { useOnDiscard } from '~/utils';
@@ -23,9 +23,17 @@ export function EditorSettingsDialog({
   toggleSetting,
   onDiscard,
 }: EditorSettingsProps): React.ReactElement<'ul'> {
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const isTranslator = useTranslator();
   useOnDiscard(ref, onDiscard);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    ref.current?.scrollIntoView({
+      behavior: mediaQuery?.matches ? 'auto' : 'smooth',
+      block: 'nearest',
+    });
+  });
 
   return (
     <ul ref={ref} className='menu'>
