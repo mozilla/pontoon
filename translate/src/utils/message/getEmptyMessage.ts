@@ -1,6 +1,7 @@
 import type {
   CatchallKey,
   Message,
+  Pattern,
   PatternElement,
   PatternMessage,
   SelectMessage,
@@ -41,6 +42,10 @@ export function getEmptyMessageEntry(
   return { id: source.id, value: getEmptyMessage(source.value, locale) };
 }
 
+const getEmptyPattern = (): Pattern => ({
+  body: [{ type: 'text', value: '' }],
+});
+
 function getEmptyMessage(
   source: Message,
   { code }: Locale,
@@ -48,7 +53,7 @@ function getEmptyMessage(
   const declarations = pojoCopy(source.declarations);
 
   if (source.type === 'message' || source.type === 'junk') {
-    return { type: 'message', declarations, pattern: { body: [] } };
+    return { type: 'message', declarations, pattern: getEmptyPattern() };
   }
 
   const plurals = findPluralSelectors(source);
@@ -115,9 +120,12 @@ function getEmptyMessage(
   }
 
   if (selectors.length === 0) {
-    return { type: 'message', declarations, pattern: { body: [] } };
+    return { type: 'message', declarations, pattern: getEmptyPattern() };
   }
 
-  const variants = variantKeys.map((keys) => ({ keys, value: { body: [] } }));
+  const variants = variantKeys.map((keys) => ({
+    keys,
+    value: getEmptyPattern(),
+  }));
   return { type: 'select', declarations, selectors, variants };
 }

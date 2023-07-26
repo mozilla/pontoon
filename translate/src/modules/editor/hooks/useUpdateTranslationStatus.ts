@@ -67,8 +67,12 @@ export function useUpdateTranslationStatus(
 
     // Update the UI based on the response.
     if (results.failedChecks) {
+      // Setting the editor value will update the editor result,
+      // which also resets failed checks.
+      // So to actually set failed checks,
+      // we need to do so in the next event cycle with `setTimeout()`.
       setEditorFromHistory(results.string);
-      setFailedChecks(results.failedChecks, translationId);
+      setTimeout(() => setFailedChecks(results.failedChecks, translationId));
     } else {
       // Show a notification to explain what happened.
       const notif = getNotification(change, !!results.translation);

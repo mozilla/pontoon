@@ -74,6 +74,7 @@ describe('useUpdateTranslationStatus', () => {
   });
 
   it('updates failed checks from response', async () => {
+    jest.useFakeTimers();
     TranslationAPI.setTranslationStatus.returns({
       string: 'string',
       failedChecks: 'FC',
@@ -84,6 +85,7 @@ describe('useUpdateTranslationStatus', () => {
 
     // Let the async code in useUpdateTranslationStatus run
     await 1;
+    jest.runAllTimers();
 
     expect(TranslationAPI.setTranslationStatus.getCalls()).toMatchObject([
       { args: ['approve', 42, 'all', undefined] },
