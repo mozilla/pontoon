@@ -15,21 +15,6 @@ var Pontoon = (function (my) {
           $('#insights h3 .fa-info').removeClass('active');
         });
 
-        // Set up chart group navigation
-        $('body').on(
-          'click',
-          '#insights .chart-group-navigation li',
-          function () {
-            var items = $('.chart-group-navigation li').removeClass('active');
-            $(this).addClass('active');
-            var index = items.index(this);
-            var itemWidth = $('.chart-item').first().outerWidth();
-
-            // Show the selected graph view
-            $('.chart-group').css('marginLeft', -index * itemWidth);
-          },
-        );
-
         // Select active users period
         $('#insights h3 .period-selector .selector').on('click', function () {
           $('#insights h3 .period-selector .selector').removeClass('active');
