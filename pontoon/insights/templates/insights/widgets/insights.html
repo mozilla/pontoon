@@ -57,7 +57,7 @@
                             items=[{
                                 'class': 'current-month',
                                 'name': 'Current month',
-                                'definition': 'Average age of suggestions reviewed during each month.',
+                                'definition': 'Average age of suggestions reviewed during the specific month.',
                             }, {
                                 'class': 'twelve-month-average',
                                 'name': '12-month average',
@@ -87,6 +87,11 @@
                         Age of unreviewed suggestions
                         {{ Tooltip.display(
                             intro='How old are the unreviewed suggestions on average at a particular point in time.',
+                            items=[{
+                                'class': 'current-month',
+                                'name': 'Current month',
+                                'definition': 'Average age of unreviewed suggestions during the specific month.',
+                            }]
                         ) }}
                     </h3>
                     <canvas
@@ -105,6 +110,15 @@
                         Time to review pretranslations
                         {{ Tooltip.display(
                             intro='How much time it takes on average to review a pretranslation.',
+                            items=[{
+                                'class': 'current-month',
+                                'name': 'Current month',
+                                'definition': 'Average age of pretranslations reviewed during the specific month.',
+                            }, {
+                                'class': 'twelve-month-average',
+                                'name': '12-month average',
+                                'definition': 'Average age of pretranslations reviewed in the 12 months before the specific month.',
+                            }]
                         ) }}
                     </h3>
                     <canvas
