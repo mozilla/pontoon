@@ -98,6 +98,24 @@
                 </div>
             </div>
         </section>
+        <section class="half">
+            <div class="block clearfix">
+                <div class="chart-item time-to-review-pretranslations">
+                    <h3 class="controls">
+                        Time to review pretranslations
+                        {{ Tooltip.display(
+                            intro='How much time it takes on average to review a pretranslation.',
+                        ) }}
+                    </h3>
+                    <canvas
+                        id="unreviewed-suggestions-lifespan-chart"
+                        data-lifespans="{{ unreviewed_lifespans }}"
+                        width="410"
+                        height="160">
+                    </canvas>
+                </div>
+            </div>
+        </section>
     </section>
     {% endif %}
 
