@@ -13,7 +13,14 @@ import {
   syntaxTree,
 } from '@codemirror/language';
 import { Extension, Range } from '@codemirror/state';
-import { Decoration, EditorView, ViewPlugin, keymap } from '@codemirror/view';
+import {
+  Decoration,
+  DecorationSet,
+  EditorView,
+  ViewPlugin,
+  ViewUpdate,
+  keymap,
+} from '@codemirror/view';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
@@ -67,20 +74,30 @@ const style = HighlightStyle.define([
 
 // Enable spellchecking only for string content, and not highlighted syntax
 const spellcheckMark = Decoration.mark({ attributes: { spellcheck: 'true' } });
-const spellcheckPlugin = ViewPlugin.define(
-  (view) => {
-    const deco: Range<Decoration>[] = [];
-    syntaxTree(view.state).iterate({
-      enter(node) {
-        if (node.name == 'string') {
-          deco.push(spellcheckMark.range(node.from, node.to));
-        }
-      },
-    });
-    // Wrap in Array to avoid update() method conflicts
-    return [Decoration.set(deco)];
+const spellcheckPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet;
+    constructor(view: EditorView) {
+      this.decorations = this.getDecorations(view);
+    }
+    update(update: ViewUpdate) {
+      if (update.docChanged) {
+        this.decorations = this.getDecorations(update.view);
+      }
+    }
+    private getDecorations(view: EditorView) {
+      const deco: Range<Decoration>[] = [];
+      syntaxTree(view.state).iterate({
+        enter(node) {
+          if (node.name == 'string') {
+            deco.push(spellcheckMark.range(node.from, node.to));
+          }
+        },
+      });
+      return Decoration.set(deco);
+    }
   },
-  { decorations: (v) => v[0] },
+  { decorations: (v) => v.decorations },
 );
 
 export const getExtensions = (
