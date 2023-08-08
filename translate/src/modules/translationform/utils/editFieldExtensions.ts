@@ -66,15 +66,27 @@ export function useKeyHandlers() {
 }
 
 const style = HighlightStyle.define([
-  { tag: tags.keyword, color: '#872bff', fontFamily: 'monospace' }, // printf
-  { tag: tags.tagName, color: '#3e9682', fontFamily: 'monospace' }, // <...>
-  { tag: tags.brace, color: '#872bff', fontWeight: 'bold' }, // {...}
-  { tag: tags.name, color: '#872bff' }, // {...}
+  {
+    tag: tags.keyword,
+    color: '#872bff',
+    fontFamily: 'monospace',
+    whiteSpace: 'pre',
+  }, // printf
+  {
+    tag: tags.tagName,
+    color: '#3e9682',
+    fontFamily: 'monospace',
+    whiteSpace: 'pre',
+  }, // <...>
+  { tag: tags.brace, color: '#872bff', fontWeight: 'bold', whiteSpace: 'pre' }, // {...}
+  { tag: tags.name, color: '#872bff', whiteSpace: 'pre' }, // {...}
 ]);
 
 // Enable spellchecking only for string content, and not highlighted syntax
 const spellcheckMark = Decoration.mark({ attributes: { spellcheck: 'true' } });
-const spellcheckPlugin = ViewPlugin.fromClass(
+// Explicitly mark syntax as contiguous LTR spans, for bidirectional contexts
+const directionMark = Decoration.mark({ attributes: { dir: 'ltr' } });
+const decoratorPlugin = ViewPlugin.fromClass(
   class {
     decorations: DecorationSet;
     constructor(view: EditorView) {
@@ -87,13 +99,25 @@ const spellcheckPlugin = ViewPlugin.fromClass(
     }
     private getDecorations(view: EditorView) {
       const deco: Range<Decoration>[] = [];
+      let syntax: [from: number, to: number] | null = null;
       syntaxTree(view.state).iterate({
         enter(node) {
           if (node.name == 'string') {
+            if (syntax) {
+              if (syntax[1] > syntax[0]) {
+                deco.push(directionMark.range(syntax[0], syntax[1]));
+              }
+              syntax = null;
+            }
             deco.push(spellcheckMark.range(node.from, node.to));
+          } else {
+            syntax = [syntax?.[0] ?? node.from, node.to];
           }
         },
       });
+      if (syntax && syntax[1] > syntax[0]) {
+        deco.push(directionMark.range(syntax[0], syntax[1]));
+      }
       return Decoration.set(deco);
     }
   },
@@ -110,7 +134,7 @@ export const getExtensions = (
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
   syntaxHighlighting(style),
-  spellcheckPlugin,
+  decoratorPlugin,
   keymap.of([
     {
       key: 'Enter',
