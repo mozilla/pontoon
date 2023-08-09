@@ -27,8 +27,8 @@ def get_insight_start_date(from2021=False):
     return datetime(now.year - 1, now.month + 1, 1)
 
 
-def get_time_to_review_suggestions_12_month_avg(query_filters=None):
-    """For each month, get the average age of suggestions reviewed
+def get_time_to_review_12_month_avg(category, query_filters=None):
+    """For each month, get the average age of suggestions or pretranslations reviewed
     in the 12 months before each month.
     """
     snapshots = LocaleInsightsSnapshot.objects.filter(
@@ -45,15 +45,17 @@ def get_time_to_review_suggestions_12_month_avg(query_filters=None):
         # Group By month
         .values("month")
         # Select the avg of the grouping
-        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
+        .annotate(
+            **{f"time_to_review_{category}_avg": Avg(f"time_to_review_{category}")}
+        )
         # Select month and values
         .values(
             "month",
-            "time_to_review_suggestions_avg",
+            f"time_to_review_{category}_avg",
         ).order_by("month")
     )
 
-    times_to_review = [x["time_to_review_suggestions_avg"] for x in insights]
+    times_to_review = [x[f"time_to_review_{category}_avg"] for x in insights]
     reversed_times_to_review = list(reversed(times_to_review))
     times_to_review_12_month_avg = []
 
@@ -94,6 +96,9 @@ def get_locale_insights(query_filters=None):
         # Select the avg/sum of the grouping
         .annotate(unreviewed_lifespan_avg=Avg("unreviewed_suggestions_lifespan"))
         .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
+        .annotate(
+            time_to_review_pretranslations_avg=Avg("time_to_review_pretranslations")
+        )
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
         .annotate(machinery_sum=Sum("machinery_translations"))
@@ -108,6 +113,7 @@ def get_locale_insights(query_filters=None):
             "month",
             "unreviewed_lifespan_avg",
             "time_to_review_suggestions_avg",
+            "time_to_review_pretranslations_avg",
             "completion_avg",
             "human_translations_sum",
             "machinery_sum",
@@ -158,8 +164,14 @@ def get_locale_insights(query_filters=None):
             "time_to_review_suggestions": [
                 x["time_to_review_suggestions_avg"].days for x in insights
             ],
-            "time_to_review_suggestions_12_month_avg": get_time_to_review_suggestions_12_month_avg(
-                query_filters
+            "time_to_review_suggestions_12_month_avg": get_time_to_review_12_month_avg(
+                "suggestions", query_filters
+            ),
+            "time_to_review_pretranslations": [
+                x["time_to_review_pretranslations_avg"].days for x in insights
+            ],
+            "time_to_review_pretranslations_12_month_avg": get_time_to_review_12_month_avg(
+                "pretranslations", query_filters
             ),
             "translation_activity": {
                 "completion": [round(x["completion_avg"], 2) for x in insights],

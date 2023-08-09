@@ -31,6 +31,9 @@ class InsightsSnapshot(AggregatedStats, models.Model):
     # Time to review suggestions
     time_to_review_suggestions = models.DurationField(default=timedelta)
 
+    # Time to review pretranslations
+    time_to_review_pretranslations = models.DurationField(default=timedelta)
+
     # Translation activity
     completion = models.FloatField()
     human_translations = models.PositiveIntegerField(default=0)
