@@ -102,16 +102,22 @@ const decoratorPlugin = ViewPlugin.fromClass(
       let syntax: [from: number, to: number] | null = null;
       syntaxTree(view.state).iterate({
         enter(node) {
-          if (node.name == 'string') {
-            if (syntax) {
-              if (syntax[1] > syntax[0]) {
-                deco.push(directionMark.range(syntax[0], syntax[1]));
+          switch (node.name) {
+            case 'string':
+              if (syntax) {
+                if (syntax[1] > syntax[0]) {
+                  deco.push(directionMark.range(syntax[0], syntax[1]));
+                }
+                syntax = null;
               }
-              syntax = null;
-            }
-            deco.push(spellcheckMark.range(node.from, node.to));
-          } else {
-            syntax = [syntax?.[0] ?? node.from, node.to];
+              deco.push(spellcheckMark.range(node.from, node.to));
+              break;
+            case 'brace':
+            case 'keyword':
+            case 'name':
+            case 'tagName':
+              syntax = [syntax?.[0] ?? node.from, node.to];
+              break;
           }
         },
       });
