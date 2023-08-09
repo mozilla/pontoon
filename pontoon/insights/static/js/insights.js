@@ -7,6 +7,7 @@ var Pontoon = (function (my) {
         Pontoon.insights.renderActiveUsers();
         Pontoon.insights.renderUnreviewedSuggestionsLifespan();
         Pontoon.insights.renderTimeToReviewSuggestions();
+        Pontoon.insights.renderTimeToReviewPretranslatons();
         Pontoon.insights.renderTranslationActivity();
         Pontoon.insights.renderReviewActivity();
       },
@@ -197,6 +198,109 @@ var Pontoon = (function (my) {
               mode: 'index',
               intersect: false,
               borderColor: '#4fc4f6',
+              borderWidth: 1,
+              caretPadding: 5,
+              xPadding: 10,
+              yPadding: 10,
+              callbacks: {
+                label(items, chart) {
+                  const { label } = chart.datasets[items.datasetIndex];
+                  return `${label}: ${items.value} days`;
+                },
+              },
+            },
+            scales: {
+              xAxes: [
+                {
+                  type: 'time',
+                  time: {
+                    displayFormats: {
+                      month: 'MMM',
+                    },
+                    tooltipFormat: 'MMMM YYYY',
+                  },
+                  gridLines: {
+                    display: false,
+                  },
+                  offset: true,
+                  ticks: {
+                    source: 'data',
+                  },
+                },
+              ],
+              yAxes: [
+                {
+                  gridLines: {
+                    display: false,
+                  },
+                  position: 'right',
+                  ticks: {
+                    beginAtZero: true,
+                    maxTicksLimit: 3,
+                    precision: 0,
+                    callback: (value) => `${value} days`,
+                  },
+                },
+              ],
+            },
+          },
+        });
+      },
+      renderTimeToReviewPretranslatons: function () {
+        var chart = $('#time-to-review-pretranslations-chart');
+        if (chart.length === 0) {
+          return;
+        }
+        var ctx = chart[0].getContext('2d');
+
+        var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        gradient.addColorStop(0, '#b3005e66');
+        gradient.addColorStop(1, 'transparent');
+
+        new Chart(chart, {
+          type: 'bar',
+          data: {
+            labels: $('#insights').data('dates'),
+            datasets: [
+              {
+                type: 'line',
+                label: 'Current month',
+                data: chart.data('time-to-review-pretranslations'),
+                backgroundColor: gradient,
+                borderColor: ['#ff5f9e'],
+                borderWidth: 2,
+                pointBackgroundColor: '#ff5f9e',
+                pointHitRadius: 10,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#ff5f9e',
+                pointHoverBorderColor: '#FFF',
+                order: 2,
+              },
+              {
+                type: 'line',
+                label: '12-month average',
+                data: chart.data('time-to-review-pretranslations-12-month-avg'),
+                borderColor: ['#b3005e'],
+                borderWidth: 1,
+                pointBackgroundColor: '#b3005e',
+                pointHitRadius: 10,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#b3005e',
+                pointHoverBorderColor: '#FFF',
+                order: 1,
+              },
+            ],
+          },
+          options: {
+            legend: {
+              display: false,
+            },
+            tooltips: {
+              mode: 'index',
+              intersect: false,
+              borderColor: '#b3005e',
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

@@ -97,6 +97,20 @@
   color: #385465;
 }
 
+/* Time to review pretranslations */
+
+#insights .time-to-review-pretranslations h3 .tooltip li.current-month::marker {
+  color: #ff5f9e;
+}
+
+#insights
+  .time-to-review-pretranslations
+  h3
+  .tooltip
+  li.twelve-month-average::marker {
+  color: #b3005e;
+}
+
 /* Translation activity info tooltip */
 
 #insights h3 .tooltip li.human-translations::marker {
