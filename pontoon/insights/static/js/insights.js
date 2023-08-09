@@ -10,6 +10,7 @@ var Pontoon = (function (my) {
         Pontoon.insights.renderTimeToReviewPretranslatons();
         Pontoon.insights.renderTranslationActivity();
         Pontoon.insights.renderReviewActivity();
+        Pontoon.insights.renderPretranslationQuality();
       },
       renderActiveUsers: function () {
         $('#insights canvas.chart').each(function () {
@@ -734,6 +735,203 @@ var Pontoon = (function (my) {
         Pontoon.insights.attachCustomLegendHandler(
           reviewActivityChart,
           '#review-activity-chart-legend .label',
+        );
+      },
+      renderPretranslationQuality: function () {
+        var chart = $('#pretranslation-quality-chart');
+        if (chart.length === 0) {
+          return;
+        }
+        var ctx = chart[0].getContext('2d');
+
+        var gradient_approval = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient_approval.addColorStop(0, '#FFACFC33');
+        gradient_approval.addColorStop(1, 'transparent');
+
+        var gradient_chrf = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient_chrf.addColorStop(0, '#F148FB33');
+        gradient_chrf.addColorStop(1, 'transparent');
+
+        var approvedData = chart.data('approved') || [];
+        var rejectedData = chart.data('rejected') || [];
+        var newData = chart.data('new') || [];
+
+        var pretranslationQualityChart = new Chart(chart, {
+          type: 'bar',
+          data: {
+            labels: $('#insights').data('dates'),
+            datasets: [
+              {
+                type: 'line',
+                label: 'Approval rate',
+                data: chart.data('approval-rate'),
+                yAxisID: 'approval-rate-y-axis',
+                backgroundColor: gradient_approval,
+                borderColor: ['#FFACFC'],
+                borderWidth: 2,
+                pointBackgroundColor: '#FFACFC',
+                pointHitRadius: 10,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#FFACFC',
+                pointHoverBorderColor: '#FFF',
+              },
+              {
+                type: 'line',
+                label: 'chrf++ score',
+                data: chart.data('chrf-score'),
+                yAxisID: 'approval-rate-y-axis',
+                backgroundColor: gradient_chrf,
+                borderColor: ['#F148FB'],
+                borderWidth: 2,
+                pointBackgroundColor: '#F148FB',
+                pointHitRadius: 10,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#F148FB',
+                pointHoverBorderColor: '#FFF',
+              },
+              approvedData.length > 0 && {
+                type: 'bar',
+                label: 'Approved',
+                data: approvedData,
+                yAxisID: 'strings-y-axis',
+                backgroundColor: '#7122FA',
+                hoverBackgroundColor: '#7122FA',
+                stack: 'reviewed-pretranslations',
+                order: 2,
+              },
+              rejectedData.length > 0 && {
+                type: 'bar',
+                label: 'Rejected',
+                data: rejectedData,
+                yAxisID: 'strings-y-axis',
+                backgroundColor: '#560A86',
+                hoverBackgroundColor: '#560A86',
+                stack: 'reviewed-pretranslations',
+                order: 1,
+              },
+              newData.length > 0 && {
+                type: 'bar',
+                label: 'New pretranslations',
+                data: newData,
+                yAxisID: 'strings-y-axis',
+                backgroundColor: '#272a2f',
+                hoverBackgroundColor: '#272a2f',
+                stack: 'new-pretranslations',
+                order: 3,
+                hidden: true,
+              },
+            ].filter(Boolean), // Filter out empty values
+          },
+          options: {
+            legend: {
+              display: false,
+            },
+            legendCallback: Pontoon.insights.customLegend(chart),
+            tooltips: {
+              mode: 'index',
+              intersect: false,
+              borderColor: '#FFACFC',
+              borderWidth: 1,
+              caretPadding: 5,
+              xPadding: 10,
+              yPadding: 10,
+              itemSort: function (a, b) {
+                // Dataset order affects stacking, tooltip and
+                // legend, but it doesn't work intuitively, so
+                // we need to manually sort tooltip items.
+                if (a.datasetIndex === 2 && b.datasetIndex === 1) {
+                  return 1;
+                }
+              },
+              callbacks: {
+                label: function (items, chart) {
+                  const label = chart.datasets[items.datasetIndex].label;
+                  const value = items.yLabel;
+                  const base = label + ': ' + nf.format(value);
+
+                  switch (label) {
+                    case 'Approval rate':
+                      return base + '%';
+                    default:
+                      return base;
+                  }
+                },
+              },
+            },
+            scales: {
+              xAxes: [
+                {
+                  stacked: true,
+                  type: 'time',
+                  time: {
+                    displayFormats: {
+                      month: 'MMM',
+                    },
+                    tooltipFormat: 'MMMM YYYY',
+                  },
+                  gridLines: {
+                    display: false,
+                  },
+                  offset: true,
+                  ticks: {
+                    source: 'data',
+                  },
+                },
+              ],
+              yAxes: [
+                {
+                  id: 'approval-rate-y-axis',
+                  position: 'right',
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'APPROVAL RATE',
+                    fontColor: '#FFF',
+                    fontStyle: 100,
+                  },
+                  gridLines: {
+                    display: false,
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    max: 100,
+                    stepSize: 20,
+                    callback: function (value) {
+                      return value + ' %';
+                    },
+                  },
+                },
+                {
+                  stacked: true,
+                  id: 'strings-y-axis',
+                  position: 'left',
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'STRINGS',
+                    fontColor: '#FFF',
+                    fontStyle: 100,
+                  },
+                  gridLines: {
+                    display: false,
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    precision: 0,
+                  },
+                },
+              ],
+            },
+          },
+        });
+
+        // Render custom legend
+        $('#pretranslation-quality-chart-legend').html(
+          pretranslationQualityChart.generateLegend(),
+        );
+        Pontoon.insights.attachCustomLegendHandler(
+          pretranslationQualityChart,
+          '#pretranslation-quality-chart-legend .label',
         );
       },
       getPercent: function (value, total) {

@@ -50,6 +50,12 @@ class InsightsSnapshot(AggregatedStats, models.Model):
     rejected = models.PositiveIntegerField(default=0)
     new_suggestions = models.PositiveIntegerField(default=0)
 
+    # Pretranslation quality
+    pretranslations_chrf_score = models.FloatField(default=0)
+    pretranslations_approved = models.PositiveIntegerField(default=0)
+    pretranslations_rejected = models.PositiveIntegerField(default=0)
+    pretranslations_new = models.PositiveIntegerField(default=0)
+
     class Meta:
         abstract = True
 

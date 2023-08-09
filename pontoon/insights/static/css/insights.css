@@ -151,6 +151,28 @@
   color: #4fc4f6;
 }
 
+/* Pretranslation quality info tooltip */
+
+#insights .pretranslation-quality h3 .tooltip li.approval-rate::marker {
+  color: #ffacfc;
+}
+
+#insights .pretranslation-quality h3 .tooltip li.chrf-score::marker {
+  color: #f148fb;
+}
+
+#insights .pretranslation-quality h3 .tooltip li.approved::marker {
+  color: #7122fa;
+}
+
+#insights .pretranslation-quality h3 .tooltip li.rejected::marker {
+  color: #560a86;
+}
+
+#insights .pretranslation-quality h3 .tooltip li.new-pretranslations::marker {
+  color: #272a2f;
+}
+
 /* Custom chart legend */
 
 #insights .legend {
