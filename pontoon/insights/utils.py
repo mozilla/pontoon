@@ -11,17 +11,9 @@ from pontoon.insights.models import (
 )
 
 
-def get_insight_start_date(from2021=False):
-    """Include at most the last year of data in insights.
-
-    For project insights, data is only available from 2020-12-14 onwards,
-    so limit queries to start from 2021-01-01 at earliest.
-
-    TODO: Remove the 2021-specific argument & logic after the year ends.
-    """
+def get_insight_start_date():
+    """Include at most the last year of data in insights."""
     now = datetime.now()
-    if from2021 and now.year == 2021:
-        return datetime(2021, 1, 1)
     if now.month == 12:
         return datetime(now.year, 1, 1)
     return datetime(now.year - 1, now.month + 1, 1)
@@ -81,7 +73,7 @@ def get_locale_insights(query_filters=None):
 
     TODO: Refactor as get_insights(locale, project)
     """
-    start_date = get_insight_start_date(False)
+    start_date = get_insight_start_date()
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if query_filters:
@@ -194,7 +186,7 @@ def get_locale_insights(query_filters=None):
 
 def get_insights(locale=None, project=None):
     """Get data required by the Insights tab."""
-    start_date = get_insight_start_date(True)
+    start_date = get_insight_start_date()
     snapshots = ProjectLocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if locale:
