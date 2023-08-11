@@ -1,13 +1,15 @@
+@import '../../../static/css/dark-theme.css';
+
 .toggle-button {
   font-size: 0;
 }
 
 .toggle-button button {
-  background: #272a2f;
-  border: 1px solid #666;
+  background: var(--black-4);
+  border: 1px solid var(--light-grey-4);
   border-radius: 3px;
   box-sizing: border-box;
-  color: #777777;
+  color: var(--grey-6);
   float: none;
   font-size: 16px;
   font-weight: 100;
@@ -16,7 +18,7 @@
 }
 
 .toggle-button button:first-child {
-  border-right-color: #4d5967;
+  border-right-color: var(--grey-3);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -28,12 +30,12 @@
 }
 
 .toggle-button button:hover {
-  color: #ccc;
+  color: var(--light-grey-7);
 }
 
 .toggle-button button.active {
-  background: #333941;
-  border-color: #4d5967;
-  color: #aaa;
+  background: var(--dark-grey-1);
+  border-color: var(--grey-3);
+  color: var(--light-grey-10);
   font-weight: 400;
 }

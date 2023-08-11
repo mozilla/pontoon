@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 .download-selector {
   float: right;
 }
@@ -9,10 +11,10 @@
 
 .download-selector .selector .fa {
   float: right;
-  background: #3f4752;
+  background: var(--dark-grey-2);
   border-radius: 3px;
   box-sizing: border-box;
-  color: #aaa;
+  color: var(--light-grey-10);
   font-size: 16px;
   height: 32px;
   width: 32px;
@@ -21,11 +23,11 @@
 }
 
 .download-selector .selector .fa:hover {
-  background: #272a2f;
+  background: var(--black-4);
 }
 
 .download-selector.opened .selector .fa {
-  background: #272a2f;
+  background: var(--black-4);
   border-radius: 2px 2px 0 0;
 }
 

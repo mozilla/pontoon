@@ -1,8 +1,10 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .new-contributor-tooltip {
-  background: #272a2f;
-  border: 1px solid #333941;
+  background: var(--black-4);
+  border: 1px solid var(--dark-grey-1);
   border-radius: 10px;
-  box-shadow: 0 0 20px #000b;
+  box-shadow: 0 0 20px var(--black-8);
   box-sizing: border-box;
   margin: -20px auto;
   padding: 20px;
@@ -13,7 +15,7 @@
 }
 
 .new-contributor-tooltip p {
-  color: #aaa;
+  color: var(--light-grey-10);
   font-size: 14px;
   font-weight: 300;
   line-height: 20px;
@@ -30,5 +32,5 @@
 }
 
 .new-contributor-tooltip p a {
-  color: #f36;
+  color: var(--red-pink);
 }

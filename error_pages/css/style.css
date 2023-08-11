@@ -1,13 +1,15 @@
+@import '../../../static/css/dark-theme.css';
+
 html,
 body {
-  background: #333941;
+  background: var(--dark-grey-1);
   padding: 0;
   margin: 0;
   font-family: 'Play', 'Helvetica Neue', 'Arial', sans-serif;
   font-weight: normal;
   line-height: 160%;
   font-size: 16px;
-  color: #fff;
+  color: var(--white-1);
   text-align: center;
 }
 
@@ -84,7 +86,7 @@ h1 {
 
 mark {
   background: #ff0;
-  color: #000;
+  color: var(--black-3);
 }
 
 small {
@@ -203,7 +205,7 @@ input[type='search']::-webkit-search-decoration {
 }
 
 fieldset {
-  border: 1px solid #c0c0c0;
+  border: 1px solid var(--light-grey-11);
   margin: 0 2px;
   padding: 0.35em 0.625em 0.75em;
 }
@@ -248,13 +250,13 @@ section header h1 {
 section header h1:after,
 section header h1:before {
   content: '**********';
-  color: #898989;
+  color: var(--taupe);
   padding: 0 10px;
   font-size: 0.7em;
 }
 
 section header p {
-  color: #898989;
+  color: var(--taupe);
   font-size: 1.2em;
   margin-top: 10px;
 }
@@ -271,27 +273,27 @@ header {
 }
 
 header h1 {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 40px;
   line-height: 50px;
   margin-bottom: -5px;
 }
 
 header h2 {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 20px;
   font-style: italic;
   font-weight: 400;
 }
 
 .btn {
-  border: 2px solid #fff;
-  color: #fff;
+  border: 2px solid var(--white-1);
+  color: var(--white-1);
   display: inline-block;
   padding: 12px 25px 12px 15px;
   text-decoration: none;
   position: relative;
-  background: #3b3b3b;
+  background: var(--brown-2);
   margin: 0 15px;
 }
 
@@ -316,7 +318,7 @@ header h2 {
   z-index: -1;
   width: 100%;
   height: 100%;
-  border: 2px solid #fff;
+  border: 2px solid var(--white-1);
   bottom: -8px;
   right: -8px;
 }
@@ -352,7 +354,7 @@ section.versus .game {
   -moz-align-items: center;
   min-height: 500px;
   height: 90vh;
-  color: #fff;
+  color: var(--white-1);
   padding: 0;
 }
 
@@ -389,14 +391,14 @@ section.versus .game {
 }
 
 #hero .blockrain-score {
-  border: 2px solid #fff;
+  border: 2px solid var(--white-1);
   text-align: center;
   width: 120px;
-  background: #232323;
+  background: var(--dark-brown);
 }
 
 #hero .blockrain-score .blockrain-score-msg {
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid var(--white-1);
   text-transform: uppercase;
   padding: 4px 0;
   font-size: 0.7em;
@@ -435,7 +437,7 @@ section.versus .game {
 }
 
 #features .feature p {
-  color: #898989;
+  color: var(--taupe);
 }
 
 #features:after {
@@ -447,7 +449,7 @@ section.versus .game {
 }
 
 #examples {
-  background: #333941;
+  background: var(--dark-grey-1);
   padding-top: 0px;
 }
 
@@ -477,7 +479,7 @@ section.versus .game {
 }
 
 #example-slider {
-  background: #333941;
+  background: var(--dark-grey-1);
   width: 590px;
   height: 390px;
   position: relative;
@@ -485,7 +487,7 @@ section.versus .game {
 
 .example {
   padding: 50px 0 0 0;
-  color: #7bc876;
+  color: var(--light-green-1);
   position: relative;
 }
 
@@ -504,7 +506,7 @@ section.versus .game {
   text-align: left;
   margin-left: 55px;
   font-size: 14px;
-  color: #7bc876;
+  color: var(--light-green-1);
   line-height: 20px;
 }
 
@@ -522,7 +524,7 @@ section.versus .game {
 
 .example .game .blockrain-start-msg,
 .example .game .blockrain-game-over-msg {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 14px;
   position: absolute;
   top: -16px;
@@ -542,8 +544,8 @@ section.versus .game {
   left: 100%;
   bottom: 3px;
   border: none;
-  background: #7bc876;
-  color: #000;
+  background: var(--light-green-1);
+  color: var(--black-3);
   text-transform: uppercase;
   font-weight: bold;
   margin-left: 55px;
@@ -583,7 +585,7 @@ section.versus .game {
 }
 
 .example .instructions .key {
-  border: 1px solid #7bc876;
+  border: 1px solid var(--light-green-1);
   display: block;
   width: 38px;
   height: 33px;
@@ -630,7 +632,7 @@ section.versus .game {
 }
 
 #versus-arena {
-  background: #333941;
+  background: var(--dark-grey-1);
   width: 590px;
   height: 375px;
   border-radius: 50%/5%;
@@ -640,7 +642,7 @@ section.versus .game {
 
 #versus-arena:before {
   content: '';
-  background: #333941;
+  background: var(--dark-grey-1);
   position: absolute;
   top: 5%;
   bottom: 5%;
@@ -666,7 +668,7 @@ section.versus .game {
   position: absolute;
   right: 100%;
   margin-right: 20px;
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 20px;
   text-align: right;
   line-height: 20px;
@@ -679,7 +681,7 @@ section.versus .game {
 }
 
 #versus-arena .blockrain-score-holder {
-  color: #7bc876;
+  color: var(--light-green-1);
   line-height: 20px;
 }
 
@@ -723,7 +725,7 @@ section.versus .game {
 }
 
 #footer .buttons .btn {
-  background: #3b3d3b;
+  background: var(--dark-green);
 }
 
 #footer p {
@@ -731,7 +733,7 @@ section.versus .game {
 }
 
 #footer p a {
-  color: #ff7b00;
+  color: var(--orange-2);
 }
 
 #footer p img {
@@ -739,7 +741,7 @@ section.versus .game {
 }
 
 footer a {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 14px;
   text-decoration: none;
 }

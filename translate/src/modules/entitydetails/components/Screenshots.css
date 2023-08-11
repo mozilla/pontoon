@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .screenshots {
   float: right;
   text-align: right;
@@ -5,7 +7,7 @@
 }
 
 .screenshots img {
-  border: 1px solid #5e6475;
+  border: 1px solid var(--light-grey-1);
   cursor: zoom-in;
   max-height: 100px;
   max-width: 150px;
@@ -17,7 +19,7 @@
 
 .lightbox {
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--black-5);
   cursor: zoom-out;
   display: flex;
   height: 100%;

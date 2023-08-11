@@ -1,8 +1,10 @@
+@import '../../pontoon/static/css/dark-theme.css'
+
 .blockrain-game-holder {
   position: relative;
   padding: 0;
   margin: 0;
-  color: #ffffff;
+  color: var(--white-4);
   font-size: 18px;
   line-height: 140%;
 }
@@ -15,7 +17,7 @@
   display: block;
   border-radius: 100%;
   border: 1px solid white;
-  background: rgba(255,255,255,0.2);
+  background: var(--grey-8);
   z-index: 10;
 
   -webkit-touch-callout: none;
@@ -76,9 +78,9 @@
   position: relative;
   display: inline-block;
   background: none;
-  color: #ffffff;
+  color: var(--white-4);
   text-decoration: none;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--white-4);
   padding: 15px 30px;
   font-size: 18px;
   text-align: center;
@@ -91,7 +93,7 @@
   left: 0px;
   bottom: 0px;
   right: 0px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--white-4);
   border-top: none;
   border-right: none;
   transition: all 0.2s ease;
@@ -103,7 +105,7 @@
   left: 100%;
   bottom: 0px;
   right: 0px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--white-4);
   border-left: none;
   border-bottom: none;
   transition: all 0.2s ease;

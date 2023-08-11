@@ -1,9 +1,10 @@
-.comments-list ul .comment {
+@import '../../../../../pontoon/static/css/dark-theme.css' .comments-list ul
+  .comment {
   padding-bottom: 10px;
 }
 
 .comments-list .comment a {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-weight: 400;
 }
 
@@ -12,7 +13,7 @@
   .container
   .content
   a[href^='/contributors/']:not(.comment-author) {
-  background-color: #3f4752;
+  background-color: var(--dark-grey-2);
   padding: 0 2px;
   border-radius: 2px;
 }
@@ -22,8 +23,8 @@
 }
 
 .comments-list .comment .content {
-  background-color: #4d5967;
-  border: solid 1px #4d5967;
+  background-color: var(--grey-3);
+  border: solid 1px var(--grey-3);
   border-radius: 4px;
   display: flex;
   font-size: 11px;
@@ -35,7 +36,7 @@
 
 .comments-list .comment .content p,
 .comments-list .comment .content span {
-  color: #cccccc;
+  color: var(--light-grey-9);
 }
 
 .comments-list .comment .content p:first-child {
@@ -43,7 +44,7 @@
 }
 
 .comments-list .comment .info {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 11px;
   font-weight: 300;
   margin-top: -2px;
@@ -58,18 +59,18 @@
 .comments-list .comment .info .pin-button {
   background-color: transparent;
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 11px;
   font-weight: 300;
   padding: 0;
 }
 
 .comments-list .comment .info .pin-button:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .comments-list .comment .comment-pin {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 9px;
   position: absolute;
   right: 4px;

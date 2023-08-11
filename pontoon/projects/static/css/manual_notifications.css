@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 .manual-notifications .right-column #compose {
   padding: 20px;
 
@@ -6,13 +8,13 @@
 }
 
 .manual-notifications #compose h3 {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 22px;
   letter-spacing: 0;
 }
 
 .manual-notifications #compose h3 .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .manual-notifications #compose .toolbar {
@@ -30,7 +32,7 @@
 }
 
 .manual-notifications #compose .errors p {
-  color: #f36;
+  color: var(--red-pink);
   text-transform: uppercase;
   visibility: hidden;
 }
@@ -58,14 +60,14 @@
 }
 
 .manual-notifications #compose .message-wrapper .subtitle {
-  color: #aaa;
+  color: var(--light-grey-10);
   float: left;
   text-transform: uppercase;
 }
 
 .manual-notifications #compose textarea {
-  background: #272a2f;
-  color: #ebebeb;
+  background: var(--black-4);
+  color: var(--white-4);
   font-size: 14px;
   font-weight: 300;
   height: 150px;
@@ -81,5 +83,5 @@
 }
 
 .manual-notifications #sent li.no .icon {
-  color: #272a2f;
+  color: var(--black-4);
 }

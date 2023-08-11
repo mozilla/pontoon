@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .translation p ins,
 .translation p del {
   border-radius: 2px;
@@ -5,13 +7,13 @@
 }
 
 .translation p ins {
-  background: #4b6259;
-  color: #9cd699;
+  background: var(--forest-green-2);
+  color: var(--light-green-3);
 }
 
 .translation p del {
-  background: #674b54;
-  color: #fe8f8f;
+  background: var(--purple-pink);
+  color: var(--coral);
 }
 
 .translation p ins mark,
