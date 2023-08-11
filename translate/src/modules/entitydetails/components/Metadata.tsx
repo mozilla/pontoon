@@ -263,7 +263,6 @@ export function Metadata({
       <GroupComment comment={entity.group_comment} />
       <ResourceComment comment={entity.resource_comment} key={entity.pk} />
       <FluentAttribute entity={entity} />
-      <EntityCreatedDate dateCreated={entity.date_created} />
       {Array.isArray(entity.source) ? (
         <SourceArray source={entity.source} />
       ) : entity.source ? (
