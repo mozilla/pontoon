@@ -110,7 +110,7 @@ function EntityCreatedDate({ dateCreated }: { dateCreated: string }) {
   const formattedDateTime = `${formattedDate} ${formattedTime}`;
 
   return (
-    <Datum id='entity-created-date' title='CREATED DATE'>
+    <Datum id='entity-created-date' title='CREATED'>
       {formattedDateTime}
     </Datum>
   );
@@ -263,7 +263,6 @@ export function Metadata({
       <GroupComment comment={entity.group_comment} />
       <ResourceComment comment={entity.resource_comment} key={entity.pk} />
       <FluentAttribute entity={entity} />
-      <EntityCreatedDate dateCreated={entity.date_created} />
       {Array.isArray(entity.source) ? (
         <SourceArray source={entity.source} />
       ) : entity.source ? (
@@ -274,6 +273,7 @@ export function Metadata({
         localeCode={code}
         navigateToPath={navigateToPath}
       />
+      <EntityCreatedDate dateCreated={entity.date_created} />
     </div>
   );
 }

@@ -279,6 +279,9 @@ entitydetails-Metadata--placeholder =
 entitydetails-Metadata--attribute =
     .title = FLUENT ATTRIBUTE
 
+entitydetails-Metadata--entity-created-date =
+    .title = CREATED
+
 ## Entity Details ContextIssueButton
 ## Shows the request context or report issue button
 
