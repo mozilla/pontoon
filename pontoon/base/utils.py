@@ -375,12 +375,10 @@ def handle_upload_content(slug, code, part, f, user):
             )
         )
     )
-
     entities_dict = {entity.key: entity for entity in entities_qs}
 
     for vcs_translation in resource_file.translations:
         key = vcs_translation.key
-
         if key in entities_dict:
             entity = entities_dict[key]
             changeset.update_entity_translations_from_vcs(

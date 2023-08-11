@@ -17,7 +17,6 @@ from pontoon.base.models import (
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
