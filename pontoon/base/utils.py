@@ -26,10 +26,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
-import logging
-
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -352,7 +348,7 @@ def handle_upload_content(slug, code, part, f, user):
         for chunk in f.chunks():
             temp.write(chunk)
         temp.flush()
-        resource_file = formats.parse(f.name, source_path=temp.name)
+        resource_file = formats.parse(temp.name)
 
     # Update database objects from file
     changeset = ChangeSet(
