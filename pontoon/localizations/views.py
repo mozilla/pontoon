@@ -3,7 +3,7 @@ from operator import attrgetter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
@@ -13,7 +13,7 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslatedResource,
 )
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, get_project_or_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import TagsTool
@@ -22,9 +22,13 @@ from pontoon.tags.utils import TagsTool
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_object_or_404(Locale, code=code)
-    project = get_object_or_404(
-        Project.objects.visible_for(request.user).available(), slug=slug
+
+    project = get_project_or_redirect(
+        slug, "pontoon.localizations.localization", "slug", request.user, code=code
     )
+    if isinstance(project, HttpResponseRedirect):
+        return project
+
     project_locale = get_object_or_404(
         ProjectLocale,
         locale=locale,

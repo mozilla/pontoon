@@ -1,5 +1,5 @@
 import React from 'react';
-import type { EditorMessage } from '~/context/Editor';
+import type { EditorField } from '~/context/Editor';
 import { Highlight } from '~/modules/placeable/components/Highlight';
 import type { TermState } from '~/modules/terms';
 
@@ -13,14 +13,14 @@ export function RichString({
   onClick,
   terms,
 }: {
-  message: EditorMessage;
+  message: EditorField[];
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
   terms: TermState;
 }): React.ReactElement<'table'> {
   return (
     <table className='original fluent-rich-string' onClick={onClick}>
       <tbody>
-        {message.map(({ id, labels, value }) => (
+        {message.map(({ handle, id, labels }) => (
           <tr key={id}>
             <td>
               <label>
@@ -32,7 +32,7 @@ export function RichString({
             <td>
               <span>
                 <Highlight fluent terms={terms}>
-                  {value}
+                  {handle.current.value}
                 </Highlight>
               </span>
             </td>

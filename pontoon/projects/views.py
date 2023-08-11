@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
@@ -15,7 +15,7 @@ from notifications.models import Notification
 from notifications.signals import notify
 
 from pontoon.base.models import Project, Locale
-from pontoon.base.utils import require_AJAX, split_ints
+from pontoon.base.utils import require_AJAX, split_ints, get_project_or_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
@@ -43,9 +43,11 @@ def projects(request):
 
 def project(request, slug):
     """Project dashboard."""
-    project = get_object_or_404(
-        Project.objects.visible_for(request.user).available(), slug=slug
+    project = get_project_or_redirect(
+        slug, "pontoon.projects.project", "slug", request.user
     )
+    if isinstance(project, HttpResponseRedirect):
+        return project
 
     project_locales = project.project_locale
     chart = project

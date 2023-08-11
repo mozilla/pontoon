@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -12,8 +12,9 @@ from django.views.decorators.csrf import (
 
 from pontoon.base.models import (
     Locale,
-    Project,
 )
+
+from pontoon.base.utils import get_project_or_redirect
 
 
 @csrf_exempt
@@ -45,9 +46,16 @@ def translate(request, locale, project, resource):
 
     # Validate Project
     if project.lower() != "all-projects":
-        project = get_object_or_404(
-            Project.objects.visible_for(request.user).available(), slug=project
+        project = get_project_or_redirect(
+            project,
+            "pontoon.translate",
+            "project",
+            request.user,
+            locale=locale.code,
+            resource=resource,
         )
+        if isinstance(project, HttpResponseRedirect):
+            return project
 
         # Validate ProjectLocale
         if locale not in project.locales.all():

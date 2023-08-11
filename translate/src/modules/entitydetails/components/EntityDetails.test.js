@@ -8,14 +8,14 @@ import { createReduxStore, mountComponentWithStore } from '~/test/store';
 
 import { EntityDetails } from './EntityDetails';
 
-const ENTITY = {
-  pk: 42,
+const ENTITY = (pk) => ({
+  pk,
   original: 'le test',
   translation: [{ string: 'test', errors: [], warnings: [] }],
   project: { contact: '' },
   comment: '',
   date_created: new Date().toISOString(),
-};
+});
 
 function mockEntityDetails(pk) {
   const history = createMemoryHistory({
@@ -30,7 +30,7 @@ function mockEntityDetails(pk) {
   const Component = () => (
     <EntityView.Provider
       value={{
-        entity: ENTITY,
+        entity: ENTITY(pk),
         hasPluralForms: false,
         pluralForm: 0,
         setPluralForm: () => {},
@@ -43,8 +43,12 @@ function mockEntityDetails(pk) {
 }
 
 describe('<EntityDetails>', () => {
+  let urls = [];
   beforeAll(() => {
-    global.fetch = () => Promise.resolve({ json: () => Promise.resolve({}) });
+    global.fetch = (url) => {
+      urls.push(url);
+      return Promise.resolve({ json: () => Promise.resolve({}) });
+    };
   });
 
   afterAll(() => {
@@ -52,11 +56,27 @@ describe('<EntityDetails>', () => {
   });
 
   it('loads the correct list of components', () => {
+    urls = [];
     const wrapper = mockEntityDetails(42);
+    expect(urls).toMatchObject([
+      'http://localhost/other-locales/?entity=42&locale=kg',
+      'http://localhost/get-team-comments/?entity=42&locale=kg',
+    ]);
 
     expect(wrapper.find('.entity-navigation')).toHaveLength(1);
     expect(wrapper.find('.metadata')).toHaveLength(1);
     expect(wrapper.find('.editor')).toHaveLength(1);
     expect(wrapper.find('Helpers')).toHaveLength(1);
+  });
+
+  it('does not load anything for entity 0', () => {
+    urls = [];
+    const wrapper = mockEntityDetails(0);
+    expect(urls).toMatchObject([]);
+
+    expect(wrapper.find('.entity-navigation')).toHaveLength(0);
+    expect(wrapper.find('.metadata')).toHaveLength(0);
+    expect(wrapper.find('.editor')).toHaveLength(0);
+    expect(wrapper.find('Helpers')).toHaveLength(0);
   });
 });

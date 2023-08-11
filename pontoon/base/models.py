@@ -1557,6 +1557,12 @@ class Project(AggregatedStats):
         return list(self.locales.all().values_list("code", flat=True))
 
 
+class ProjectSlugHistory(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE)
+    old_slug = models.SlugField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(

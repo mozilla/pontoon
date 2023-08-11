@@ -149,8 +149,7 @@ export async function fetchSiblingEntities(
   locale: string,
 ): Promise<EntitySiblings> {
   const search = new URLSearchParams({ entity: String(entity), locale });
-  const results = await GET('/get-sibling-entities/', search);
-  return keysToCamelCase(results);
+  return GET('/get-sibling-entities/', search);
 }
 
 export async function fetchEntityHistory(

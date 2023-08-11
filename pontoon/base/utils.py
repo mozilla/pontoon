@@ -20,8 +20,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest, Http404
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
@@ -606,3 +607,32 @@ def is_email(email):
         return True
     except ValidationError:
         return False
+
+
+def get_project_or_redirect(
+    slug, redirect_view_name, slug_arg_name, request_user, **kwargs
+):
+    """
+    Attempts to get a project with the given slug. If the project doesn't exist, it checks if the slug is in the
+    ProjectSlugHistory and if so, it redirects to the current project slug URL. If the old slug is not found in the
+    history, it raises an Http404 error.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import Project, ProjectSlugHistory
+
+    try:
+        project = Project.objects.visible_for(request_user).available().get(slug=slug)
+        return project
+    except Project.DoesNotExist:
+        slug_history = (
+            ProjectSlugHistory.objects.filter(old_slug=slug)
+            .order_by("-created_at")
+            .first()
+        )
+        if slug_history is not None:
+            redirect_kwargs = {slug_arg_name: slug_history.project.slug}
+            redirect_kwargs.update(kwargs)
+            redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
+            return redirect(redirect_url)
+        else:
+            raise Http404
