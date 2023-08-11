@@ -85,7 +85,7 @@ class JSONExtensionResource(JSONResource):
         if source_resource:
             for key, entity in source_resource.entities.items():
                 data = copy.copy(entity.data)
-                data["message"] = None
+                # data["message"] = None
 
                 self.entities[key] = JSONExtensionEntity(
                     entity.order,
