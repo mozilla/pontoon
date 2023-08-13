@@ -57,6 +57,7 @@ def populate_time_to_review_pretranslations(apps, schema_editor):
     # Update snapshots
     for key, times_to_review in action_data.items():
         if key in snapshot_data and len(times_to_review) > 0:
+            times_to_review = [i for i in times_to_review if i is not None]
             snapshot_data[key].time_to_review_pretranslations = sum(
                 times_to_review, timedelta()
             ) / len(times_to_review)
@@ -68,7 +69,7 @@ def populate_time_to_review_pretranslations(apps, schema_editor):
 
 def reset_time_to_review_pretranslations(apps, schema_editor):
     LocaleInsightsSnapshot = apps.get_model("insights", "LocaleInsightsSnapshot")
-    LocaleInsightsSnapshot.objects.update(time_to_review_pretranslations=timedelta())
+    LocaleInsightsSnapshot.objects.update(time_to_review_pretranslations=None)
 
 
 class Migration(migrations.Migration):

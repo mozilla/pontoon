@@ -431,9 +431,10 @@ def get_time_to_review_data(category, activities, locale):
         if locale == locale_:
             times_to_review.extend(data[f"times_to_review_{category}"])
 
-    if len(times_to_review) == 0:
-        return timedelta()
+    if not times_to_review:
+        return None
 
+    times_to_review = [i for i in times_to_review if i is not None]
     return sum(times_to_review, timedelta()) / len(times_to_review)
 
 

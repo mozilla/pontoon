@@ -29,10 +29,14 @@ class InsightsSnapshot(AggregatedStats, models.Model):
     unreviewed_suggestions_lifespan = models.DurationField(default=timedelta)
 
     # Time to review suggestions
-    time_to_review_suggestions = models.DurationField(default=timedelta)
+    time_to_review_suggestions = models.DurationField(
+        default=None, null=True, blank=True
+    )
 
     # Time to review pretranslations
-    time_to_review_pretranslations = models.DurationField(default=timedelta)
+    time_to_review_pretranslations = models.DurationField(
+        default=None, null=True, blank=True
+    )
 
     # Translation activity
     completion = models.FloatField()

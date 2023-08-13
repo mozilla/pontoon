@@ -1,7 +1,9 @@
+import json
+
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg, Count, Q, Sum
 
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
@@ -17,6 +19,13 @@ def get_insight_start_date():
     if now.month == 12:
         return datetime(now.year, 1, 1)
     return datetime(now.year - 1, now.month + 1, 1)
+
+
+def get_time_to_review(time_to_review):
+    if not time_to_review:
+        return None
+
+    return time_to_review.days
 
 
 def get_time_to_review_12_month_avg(category, query_filters=None):
@@ -38,7 +47,12 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
         .values("month")
         # Select the avg of the grouping
         .annotate(
-            **{f"time_to_review_{category}_avg": Avg(f"time_to_review_{category}")}
+            **{
+                f"time_to_review_{category}_avg": Avg(
+                    f"time_to_review_{category}",
+                    filter=Q(**{f"time_to_review_{category}__isnull": False}),
+                )
+            }
         )
         # Select month and values
         .values(
@@ -60,10 +74,15 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
         except KeyError:
             break
 
-        average = sum(previous_12_months, timedelta()) / 12
-        times_to_review_12_month_avg.insert(0, average.days)
+        previous_12_months = [i for i in previous_12_months if i is not None]
+        if previous_12_months:
+            average = sum(previous_12_months, timedelta()) / len(previous_12_months)
+            value = average.days
+        else:
+            value = None
+        times_to_review_12_month_avg.insert(0, value)
 
-    return times_to_review_12_month_avg
+    return json.dumps(times_to_review_12_month_avg)
 
 
 def get_locale_insights(query_filters=None):
@@ -87,9 +106,17 @@ def get_locale_insights(query_filters=None):
         .values("month")
         # Select the avg/sum of the grouping
         .annotate(unreviewed_lifespan_avg=Avg("unreviewed_suggestions_lifespan"))
-        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
         .annotate(
-            time_to_review_pretranslations_avg=Avg("time_to_review_pretranslations")
+            time_to_review_suggestions_avg=Avg(
+                "time_to_review_suggestions",
+                filter=Q(time_to_review_suggestions__isnull=False),
+            )
+        )
+        .annotate(
+            time_to_review_pretranslations_avg=Avg(
+                "time_to_review_pretranslations",
+                filter=Q(time_to_review_pretranslations__isnull=False),
+            )
         )
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
@@ -153,15 +180,21 @@ def get_locale_insights(query_filters=None):
             "unreviewed_lifespans": [
                 x["unreviewed_lifespan_avg"].days for x in insights
             ],
-            "time_to_review_suggestions": [
-                x["time_to_review_suggestions_avg"].days for x in insights
-            ],
+            "time_to_review_suggestions": json.dumps(
+                [
+                    get_time_to_review(x["time_to_review_suggestions_avg"])
+                    for x in insights
+                ]
+            ),
             "time_to_review_suggestions_12_month_avg": get_time_to_review_12_month_avg(
                 "suggestions", query_filters
             ),
-            "time_to_review_pretranslations": [
-                x["time_to_review_pretranslations_avg"].days for x in insights
-            ],
+            "time_to_review_pretranslations": json.dumps(
+                [
+                    get_time_to_review(x["time_to_review_pretranslations_avg"])
+                    for x in insights
+                ]
+            ),
             "time_to_review_pretranslations_12_month_avg": get_time_to_review_12_month_avg(
                 "pretranslations", query_filters
             ),

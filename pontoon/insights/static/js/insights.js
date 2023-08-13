@@ -173,6 +173,7 @@ var Pontoon = (function (my) {
                 pointHoverBackgroundColor: '#3e7089',
                 pointHoverBorderColor: '#FFF',
                 order: 2,
+                spanGaps: true,
               },
               {
                 type: 'line',
@@ -187,6 +188,7 @@ var Pontoon = (function (my) {
                 pointHoverBackgroundColor: '#4fc4f6',
                 pointHoverBorderColor: '#FFF',
                 order: 1,
+                spanGaps: true,
               },
             ],
           },
@@ -276,6 +278,7 @@ var Pontoon = (function (my) {
                 pointHoverBackgroundColor: '#ff5f9e',
                 pointHoverBorderColor: '#FFF',
                 order: 2,
+                spanGaps: true,
               },
               {
                 type: 'line',
@@ -290,6 +293,7 @@ var Pontoon = (function (my) {
                 pointHoverBackgroundColor: '#b3005e',
                 pointHoverBorderColor: '#FFF',
                 order: 1,
+                spanGaps: true,
               },
             ],
           },
