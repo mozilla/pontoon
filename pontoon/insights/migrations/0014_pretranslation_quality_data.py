@@ -27,7 +27,7 @@ def populate_pretranslation_quality(apps, schema_editor):
                 approved=True,
             ).string
         except Translation.DoesNotExist:
-            return
+            return None
 
         score = chrfpp.sentence_score(
             action["translation__string"], [approved_translation]
@@ -37,7 +37,7 @@ def populate_pretranslation_quality(apps, schema_editor):
     def store_data(key, action_data, action):
         if key not in action_data:
             action_data[key] = {
-                "pretranslations_chrf_score": list(),
+                "pretranslations_chrf_scores": list(),
                 "pretranslations_approved": set(),
                 "pretranslations_rejected": set(),
                 "pretranslations_new": set(),
@@ -52,19 +52,19 @@ def populate_pretranslation_quality(apps, schema_editor):
         elif action["action_type"] == "translation:approved":
             data["pretranslations_approved"].add(translation)
             # Translation has been approved, no need to claculate the chrF++ score
-            data["pretranslations_chrf_score"].append(100)
+            data["pretranslations_chrf_scores"].append(100)
 
         elif action["action_type"] == "translation:rejected":
             data["pretranslations_rejected"].add(translation)
             score = get_chrf_score(action)
             if score:
-                data["pretranslations_chrf_score"].append(score)
+                data["pretranslations_chrf_scores"].append(score)
 
     def update_snapshots(Model, action_data):
         changed_snapshots = []
 
         # Update snapshots
-        for key, value in action_data.items():
+        for key, data in action_data.items():
             try:
                 if len(key) == 2:
                     locale, created_at = key
@@ -79,13 +79,13 @@ def populate_pretranslation_quality(apps, schema_editor):
             except Model.DoesNotExist:
                 continue
 
-            scores = [i for i in value["pretranslations_chrf_score"] if i != 0]
+            scores = data["pretranslations_chrf_scores"]
             snapshot.pretranslations_chrf_score = (
-                statistics.mean(scores) if scores else 0
+                statistics.mean(scores) if scores else None
             )
-            snapshot.pretranslations_approved = len(value["pretranslations_approved"])
-            snapshot.pretranslations_rejected = len(value["pretranslations_rejected"])
-            snapshot.pretranslations_new = len(value["pretranslations_new"])
+            snapshot.pretranslations_approved = len(data["pretranslations_approved"])
+            snapshot.pretranslations_rejected = len(data["pretranslations_rejected"])
+            snapshot.pretranslations_new = len(data["pretranslations_new"])
 
             changed_snapshots.append(snapshot)
 
@@ -152,24 +152,24 @@ def reset_pretranslation_quality(apps, schema_editor):
     )
 
     LocaleInsightsSnapshot.objects.exclude(
-        pretranslations_chrf_score=0,
+        pretranslations_chrf_score=None,
         pretranslations_approved=0,
         pretranslations_rejected=0,
         pretranslations_new=0,
     ).update(
-        pretranslations_chrf_score=0,
+        pretranslations_chrf_score=None,
         pretranslations_approved=0,
         pretranslations_rejected=0,
         pretranslations_new=0,
     )
 
     ProjectLocaleInsightsSnapshot.objects.exclude(
-        pretranslations_chrf_score=0,
+        pretranslations_chrf_score=None,
         pretranslations_approved=0,
         pretranslations_rejected=0,
         pretranslations_new=0,
     ).update(
-        pretranslations_chrf_score=0,
+        pretranslations_chrf_score=None,
         pretranslations_approved=0,
         pretranslations_rejected=0,
         pretranslations_new=0,

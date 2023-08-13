@@ -468,7 +468,7 @@ def get_chrf_score(action):
             approved=True,
         ).string
     except Translation.DoesNotExist:
-        return
+        return None
 
     score = chrfpp.sentence_score(action["translation__string"], [approved_translation])
     return float(score.format(score_only=True))
@@ -520,7 +520,7 @@ def build_charts_data(start_of_today):
                 "peer_approved": set(),
                 "self_approved": set(),
                 "rejected": set(),
-                "pretranslations_chrf_score": list(),
+                "pretranslations_chrf_scores": list(),
                 "pretranslations_approved": set(),
                 "pretranslations_rejected": set(),
                 "pretranslations_new": set(),
@@ -566,7 +566,7 @@ def build_charts_data(start_of_today):
             if action["user"] in pretranslation_users:
                 data["pretranslations_approved"].add(translation)
                 # Translation has been approved, no need to claculate the chrF++ score
-                data["pretranslations_chrf_score"].append(100)
+                data["pretranslations_chrf_scores"].append(100)
 
         elif action_type == "translation:rejected" and not performed_by_sync:
             data["rejected"].add(translation)
@@ -579,7 +579,7 @@ def build_charts_data(start_of_today):
                 data["pretranslations_rejected"].add(translation)
                 score = get_chrf_score(action)
                 if score:
-                    data["pretranslations_chrf_score"].append(score)
+                    data["pretranslations_chrf_scores"].append(score)
 
     return res
 
@@ -592,7 +592,7 @@ def get_activity_charts_data(activities, project=None, locale=None):
     peer_approved = set()
     self_approved = set()
     rejected = set()
-    pretranslations_chrf_score = list()
+    pretranslations_chrf_scores = list()
     pretranslations_approved = set()
     pretranslations_rejected = set()
     pretranslations_new = set()
@@ -607,14 +607,12 @@ def get_activity_charts_data(activities, project=None, locale=None):
             peer_approved.update(data["peer_approved"])
             self_approved.update(data["self_approved"])
             rejected.update(data["rejected"])
-            pretranslations_chrf_score.extend(data["pretranslations_chrf_score"])
+            pretranslations_chrf_scores.extend(data["pretranslations_chrf_scores"])
             pretranslations_approved.update(data["pretranslations_approved"])
             pretranslations_rejected.update(data["pretranslations_rejected"])
             pretranslations_new.update(data["pretranslations_new"])
 
-    scores = [i for i in pretranslations_chrf_score if i != 0]
-    if scores:
-        pretranslations_chrf_score = statistics.mean(scores)
+    scores = pretranslations_chrf_scores
 
     return (
         len(human_translations),
@@ -623,7 +621,7 @@ def get_activity_charts_data(activities, project=None, locale=None):
         len(peer_approved),
         len(self_approved),
         len(rejected),
-        pretranslations_chrf_score,
+        statistics.mean(scores) if scores else None,
         len(pretranslations_approved),
         len(pretranslations_rejected),
         len(pretranslations_new),

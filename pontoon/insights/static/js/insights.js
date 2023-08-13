@@ -775,6 +775,7 @@ var Pontoon = (function (my) {
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: '#FFACFC',
                 pointHoverBorderColor: '#FFF',
+                spanGaps: true,
               },
               {
                 type: 'line',
@@ -790,6 +791,7 @@ var Pontoon = (function (my) {
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: '#F148FB',
                 pointHoverBorderColor: '#FFF',
+                spanGaps: true,
               },
               approvedData.length > 0 && {
                 type: 'bar',
