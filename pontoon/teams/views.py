@@ -114,8 +114,8 @@ def ajax_projects(request, locale):
 @require_AJAX
 def ajax_insights(request, locale):
     """Insights tab."""
-    if not settings.ENABLE_INSIGHTS_TAB:
-        raise ImproperlyConfigured("ENABLE_INSIGHTS_TAB variable not set in settings.")
+    if not settings.ENABLE_INSIGHTS:
+        raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
     locale = get_object_or_404(Locale, code=locale)
     insights = get_locale_insights(Q(locale=locale))

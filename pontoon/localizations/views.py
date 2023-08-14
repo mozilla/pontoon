@@ -163,8 +163,8 @@ def ajax_tags(request, code, slug):
 @require_AJAX
 def ajax_insights(request, code, slug):
     """Insights tab."""
-    if not settings.ENABLE_INSIGHTS_TAB:
-        raise ImproperlyConfigured("ENABLE_INSIGHTS_TAB variable not set in settings.")
+    if not settings.ENABLE_INSIGHTS:
+        raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
     pl = get_object_or_404(ProjectLocale, locale__code=code, project__slug=slug)
     insights = get_insights(locale=pl.locale, project=pl.project)

@@ -125,8 +125,8 @@ you create:
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
 
-``ENABLE_INSIGHTS_TAB``
-   Optional. Enables Insights tab on team pages, which presents data that needs
+``ENABLE_INSIGHTS``
+   Optional. Enables Insights pages, which present data that needs
    to be collected by the :ref:`collect-insights` scheduled job. It is advised
    to run the job at least once before enabling the tab, otherwise the content
    will be empty. See `the spec`_ for more information.

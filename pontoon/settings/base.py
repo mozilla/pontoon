@@ -850,10 +850,10 @@ USE_L10N = False
 # See bug 1567402 for details. A Mozilla-specific variable.
 ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
 
-# Enable Insights tab on dashboards,
+# Enable Insights dashboards,
 # presenting data that needs to be collected by a scheduled job.
 # See docs/admin/deployment.rst for more information.
-ENABLE_INSIGHTS_TAB = os.environ.get("ENABLE_INSIGHTS_TAB", "False") != "False"
+ENABLE_INSIGHTS = os.environ.get("ENABLE_INSIGHTS", "False") != "False"
 
 # Bleach tags and attributes
 ALLOWED_TAGS = [
