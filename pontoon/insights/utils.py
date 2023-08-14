@@ -25,7 +25,7 @@ def get_time_to_review(time_to_review):
     if not time_to_review:
         return None
 
-    return time_to_review.days
+    return round(time_to_review.total_seconds() / 86400, 2)
 
 
 def get_time_to_review_12_month_avg(category, query_filters=None):
@@ -77,7 +77,7 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
         previous_12_months = [i for i in previous_12_months if i is not None]
         if previous_12_months:
             average = sum(previous_12_months, timedelta()) / len(previous_12_months)
-            value = average.days
+            value = round(average.total_seconds() / 86400, 2)
         else:
             value = None
         times_to_review_12_month_avg.insert(0, value)
