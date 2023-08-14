@@ -3076,6 +3076,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "translation": translation_array,
                     "readonly": entity.resource.project.projectlocale[0].readonly,
                     "is_sibling": is_sibling,
+                    "date_created": entity.date_created,
                 }
             )
 

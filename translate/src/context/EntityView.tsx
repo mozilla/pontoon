@@ -31,6 +31,7 @@ const emptyEntity: Entity = {
   translation: [],
   readonly: true,
   isSibling: false,
+  date_created: '',
 };
 
 export type EntityView = {

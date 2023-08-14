@@ -86,6 +86,36 @@ function GroupComment({ comment }: { comment: string }) {
   );
 }
 
+function EntityCreatedDate({ dateCreated }: { dateCreated: string }) {
+  // Create date and time formatters
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  const timeFormatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
+  // Create a Date object from the dateCreated string
+  const date = new Date(dateCreated);
+
+  // Format the date and time
+  const formattedDate = dateFormatter.format(date);
+  const formattedTime = timeFormatter.format(date);
+
+  // Combine the formatted date and time into one string
+  const formattedDateTime = `${formattedDate} ${formattedTime}`;
+
+  return (
+    <Datum id='entity-created-date' title='CREATED'>
+      {formattedDateTime}
+    </Datum>
+  );
+}
+
 function ResourceComment({ comment }: { comment: string }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = React.useState(false);
@@ -243,6 +273,7 @@ export function Metadata({
         localeCode={code}
         navigateToPath={navigateToPath}
       />
+      <EntityCreatedDate dateCreated={entity.date_created} />
     </div>
   );
 }
