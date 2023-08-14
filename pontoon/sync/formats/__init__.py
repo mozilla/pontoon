@@ -25,7 +25,7 @@ SUPPORTED_FORMAT_PARSERS = {
     "*.ftl": ftl.parse,
     "*.inc": silme.parse_inc,
     "*.ini": silme.parse_ini,
-    "messages.json": json_extensions.parse,
+    "*messages.json": json_extensions.parse,
     "*.json": json_keyvalue.parse,
     "*.lang": lang.parse,
     "*.po": po.parse,

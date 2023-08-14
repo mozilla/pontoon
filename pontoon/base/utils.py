@@ -337,12 +337,13 @@ def handle_upload_content(slug, code, part, f, user):
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)
     resource = get_object_or_404(Resource, project__slug=slug, path=part)
-
     # Store uploaded file to a temporary file and parse it
     extension = os.path.splitext(f.name)[1]
+    is_messages_json = f.name.endswith("messages.json")
+
     with tempfile.NamedTemporaryFile(
         prefix="strings" if extension == ".xml" else "",
-        suffix=extension,
+        suffix=".messages.json" if is_messages_json else extension,
     ) as temp:
         for chunk in f.chunks():
             temp.write(chunk)
