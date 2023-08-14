@@ -61,6 +61,7 @@ urlpatterns = [
     path("", include("pontoon.sync.urls")),
     path("", include("pontoon.projects.urls")),
     path("", include("pontoon.machinery.urls")),
+    path("", include("pontoon.insights.urls")),
     path("", include("pontoon.contributors.urls")),
     path("", include("pontoon.localizations.urls")),
     path("", include("pontoon.base.urls")),

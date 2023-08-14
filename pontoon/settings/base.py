@@ -404,6 +404,13 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/project.min.css",
     },
+    "insights": {
+        "source_filenames": (
+            "css/insights_charts.css",
+            "css/insights.css",
+        ),
+        "output_filename": "css/insights.min.css",
+    },
     "localization": {
         "source_filenames": (
             "css/table.css",
@@ -526,6 +533,14 @@ PIPELINE_JS = {
             "tag_admin.js",
         ),
         "output_filename": "js/admin_project.min.js",
+    },
+    "insights": {
+        "source_filenames": (
+            "js/lib/Chart.bundle.js",
+            "js/insights_charts.js",
+            "js/insights.js",
+        ),
+        "output_filename": "js/insights.min.js",
     },
     "localization": {
         "source_filenames": (
