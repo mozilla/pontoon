@@ -468,7 +468,7 @@ def build_activity_charts_data(start_of_today):
     pretranslation_users = User.objects.filter(
         email__in=[
             "pontoon-tm@example.com",
-            "pontoon-mt@example.com",
+            "pontoon-gt@example.com",
         ]
     ).values_list("pk", flat=True)
 
