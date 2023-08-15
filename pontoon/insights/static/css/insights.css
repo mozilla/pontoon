@@ -154,19 +154,19 @@
 /* Pretranslation quality info tooltip */
 
 #insights .pretranslation-quality h3 .tooltip li.approval-rate::marker {
-  color: #ffacfc;
+  color: #c6c1f0;
 }
 
 #insights .pretranslation-quality h3 .tooltip li.chrf-score::marker {
-  color: #f148fb;
+  color: #8074a8;
 }
 
 #insights .pretranslation-quality h3 .tooltip li.approved::marker {
-  color: #7122fa;
+  color: #c46487;
 }
 
 #insights .pretranslation-quality h3 .tooltip li.rejected::marker {
-  color: #560a86;
+  color: #ffbed1;
 }
 
 #insights .pretranslation-quality h3 .tooltip li.new-pretranslations::marker {

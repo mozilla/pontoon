@@ -767,13 +767,13 @@ var Pontoon = (function (my) {
                 data: chart.data('approval-rate'),
                 yAxisID: 'approval-rate-y-axis',
                 backgroundColor: gradient_approval,
-                borderColor: ['#FFACFC'],
+                borderColor: ['#c6c1f0'],
                 borderWidth: 2,
-                pointBackgroundColor: '#FFACFC',
+                pointBackgroundColor: '#c6c1f0',
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#FFACFC',
+                pointHoverBackgroundColor: '#c6c1f0',
                 pointHoverBorderColor: '#FFF',
                 spanGaps: true,
               },
@@ -783,13 +783,13 @@ var Pontoon = (function (my) {
                 data: chart.data('chrf-score'),
                 yAxisID: 'approval-rate-y-axis',
                 backgroundColor: gradient_chrf,
-                borderColor: ['#F148FB'],
+                borderColor: ['#8074a8'],
                 borderWidth: 2,
-                pointBackgroundColor: '#F148FB',
+                pointBackgroundColor: '#8074a8',
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#F148FB',
+                pointHoverBackgroundColor: '#8074a8',
                 pointHoverBorderColor: '#FFF',
                 spanGaps: true,
               },
@@ -798,8 +798,8 @@ var Pontoon = (function (my) {
                 label: 'Approved',
                 data: approvedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#7122FA',
-                hoverBackgroundColor: '#7122FA',
+                backgroundColor: '#c46487',
+                hoverBackgroundColor: '#c46487',
                 stack: 'reviewed-pretranslations',
                 order: 2,
               },
@@ -808,8 +808,8 @@ var Pontoon = (function (my) {
                 label: 'Rejected',
                 data: rejectedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#560A86',
-                hoverBackgroundColor: '#560A86',
+                backgroundColor: '#ffbed1',
+                hoverBackgroundColor: '#ffbed1',
                 stack: 'reviewed-pretranslations',
                 order: 1,
               },
@@ -843,7 +843,11 @@ var Pontoon = (function (my) {
                 // Dataset order affects stacking, tooltip and
                 // legend, but it doesn't work intuitively, so
                 // we need to manually sort tooltip items.
-                if (a.datasetIndex === 2 && b.datasetIndex === 1) {
+                if (
+                  (a.datasetIndex === 3 && b.datasetIndex === 2) ||
+                  (a.datasetIndex === 3 && b.datasetIndex === 1) ||
+                  (a.datasetIndex === 2 && b.datasetIndex === 1)
+                ) {
                   return 1;
                 }
               },
