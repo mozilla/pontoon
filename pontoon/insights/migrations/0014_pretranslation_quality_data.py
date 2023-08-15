@@ -106,7 +106,7 @@ def populate_pretranslation_quality(apps, schema_editor):
             translation__entity__resource__project__visibility="public",
             translation__user__email__in=[
                 "pontoon-tm@example.com",
-                "pontoon-mt@example.com",
+                "pontoon-gt@example.com",
             ],
             action_type__in=[
                 "translation:created",
