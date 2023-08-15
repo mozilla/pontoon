@@ -2,6 +2,15 @@ const nf = new Intl.NumberFormat('en', {
   style: 'percent',
 });
 
+const shortMonthFormat = new Intl.DateTimeFormat('en', {
+  month: 'short',
+});
+
+const longMonthFormat = new Intl.DateTimeFormat('en', {
+  month: 'long',
+  year: 'numeric',
+});
+
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -48,6 +57,7 @@ var Pontoon = (function (my) {
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
             pointHoverBorderColor: '#FFF',
+            spanGaps: true,
           };
         });
 
@@ -79,24 +89,23 @@ var Pontoon = (function (my) {
 
                   return `${label}: ${value}`;
                 },
+                title: function (items) {
+                  const date = parseInt(items[0].label);
+                  const title = longMonthFormat.format(new Date(date));
+                  return `${title}`;
+                },
               },
             },
             scales: {
               xAxes: [
                 {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
-                  },
                   gridLines: {
                     display: false,
                   },
-                  offset: true,
                   ticks: {
                     source: 'data',
+                    callback: (value) =>
+                      shortMonthFormat.format(new Date(value)),
                   },
                 },
               ],
