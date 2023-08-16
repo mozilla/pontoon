@@ -1,3 +1,28 @@
 #insights .block {
   margin-bottom: 40px;
 }
+
+#insights .block .chart-wrapper {
+  float: right;
+  width: 680px;
+}
+
+/* Custom chart legend */
+
+#insights .legend {
+  float: left;
+  text-align: left;
+  width: 240px;
+}
+
+#insights .legend ul {
+  height: 330px;
+  margin: 0;
+  overflow-y: auto;
+}
+
+#insights .legend li {
+  display: block;
+  margin: 0;
+  margin-bottom: 5px;
+}

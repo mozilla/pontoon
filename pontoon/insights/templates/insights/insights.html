@@ -20,14 +20,14 @@
                     Team pretranslation quality
                     {{ Tooltip.display(intro='Approval rate of pretranslations for each team.') }}
                 </h3>
-                <canvas
-                    id="team-pretranslation-quality-chart"
-                    data-dataset="{{ team_pretranslation_quality.dataset }}"
-                    data-dates="{{ team_pretranslation_quality.dates }}"
-                    width="920"
-                    height="400">
-                </canvas>
-                <div id="team-pretranslation-quality-chart-legend" class="legend"></div>
+                <div class="chart-wrapper">
+                    <canvas
+                        id="team-pretranslation-quality-chart"
+                        data-dataset="{{ team_pretranslation_quality.dataset }}"
+                        data-dates="{{ team_pretranslation_quality.dates }}">
+                    </canvas>
+                </div>
+                <div id="team-pretranslation-quality-chart-legend" class="legend" width="240"></div>
             </figure>
         </section>
         <section class="project-pretranslation-quality">
@@ -36,13 +36,13 @@
                     Project pretranslation quality
                     {{ Tooltip.display(intro='Approval rate of pretranslations for each project.') }}
                 </h3>
-                <canvas
-                    id="project-pretranslation-quality-chart"
-                    data-dataset="{{ project_pretranslation_quality.dataset }}"
-                    data-dates="{{ project_pretranslation_quality.dates }}"
-                    width="920"
-                    height="400">
-                </canvas>
+                <div class="chart-wrapper">
+                    <canvas
+                        id="project-pretranslation-quality-chart"
+                        data-dataset="{{ project_pretranslation_quality.dataset }}"
+                        data-dates="{{ project_pretranslation_quality.dates }}">
+                    </canvas>
+                </div>
                 <div id="project-pretranslation-quality-chart-legend" class="legend"></div>
             </figure>
         </section>

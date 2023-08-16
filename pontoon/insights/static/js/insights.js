@@ -61,7 +61,7 @@ var Pontoon = (function (my) {
           };
         });
 
-        new Chart(chart, {
+        const pretranslationQualityChart = new Chart(chart, {
           type: 'bar',
           data: {
             labels: chart.data('dates'),
@@ -69,11 +69,9 @@ var Pontoon = (function (my) {
           },
           options: {
             legend: {
-              position: 'left',
-              labels: {
-                boxWidth: 1,
-              },
+              display: false,
             },
+            legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -127,6 +125,17 @@ var Pontoon = (function (my) {
             },
           },
         });
+
+        // Render custom legend
+        var chartId = chart.attr('id');
+        chart
+          .parent()
+          .next('.legend')
+          .html(pretranslationQualityChart.generateLegend());
+        Pontoon.insights.attachCustomLegendHandler(
+          pretranslationQualityChart,
+          `#${chartId}-legend .label`,
+        );
       },
     },
   });
