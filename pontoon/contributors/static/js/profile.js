@@ -356,3 +356,14 @@ Pontoon.insights.renderCharts();
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
 Pontoon.profile.handleContributionGraphClick();
+
+// Set up chart group navigation
+$('body').on('click', '#insights .chart-group-navigation li', function () {
+  var items = $('.chart-group-navigation li').removeClass('active');
+  $(this).addClass('active');
+  var index = items.index(this);
+  var itemWidth = $('.chart-item').first().outerWidth();
+
+  // Show the selected graph view
+  $('.chart-group').css('marginLeft', -index * itemWidth);
+});
