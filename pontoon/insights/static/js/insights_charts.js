@@ -72,16 +72,25 @@ var Pontoon = (function (my) {
       },
       // Custom legend item event handler
       attachCustomLegendHandler: function (chart, selector) {
-        $('body').on('click', selector, function () {
+        $('body').on('click', selector, function (e) {
           var li = $(this).parent();
           var index = li.index();
 
-          var meta = chart.getDatasetMeta(index);
-          var dataset = chart.data.datasets[index];
+          if (e.altKey || e.metaKey) {
+            // Show clicked and hide the rest
+            chart.data.datasets.forEach((obj, i) => {
+              var meta = chart.getDatasetMeta(i);
+              meta.hidden = i === index ? null : true;
+            });
+            li.parent().find('li').addClass('disabled');
+          } else {
+            // Toggle clicked
+            var meta = chart.getDatasetMeta(index);
+            var dataset = chart.data.datasets[index];
+            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
+          }
 
-          meta.hidden = meta.hidden === null ? !dataset.hidden : null;
           chart.update();
-
           li.toggleClass('disabled');
         });
       },
