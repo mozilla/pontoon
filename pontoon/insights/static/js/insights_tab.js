@@ -948,51 +948,6 @@ var Pontoon = (function (my) {
         const n = value / total;
         return pf.format(isFinite(n) ? n : 0);
       },
-      // Legend configuration doesn't allow for enough flexibility,
-      // so we build our own legend
-      // eslint-disable-next-line no-unused-vars
-      customLegend: function (chart) {
-        return function (chart) {
-          function renderLabels(chart) {
-            return chart.data.datasets
-              .map(function (dataset) {
-                var disabled = dataset.hidden ? 'disabled' : '';
-                var color = dataset.borderColor || dataset.backgroundColor;
-
-                return (
-                  '<li class="' +
-                  disabled +
-                  '">' +
-                  '<i class="icon" style="background-color:' +
-                  color +
-                  '"></i>' +
-                  '<span class="label">' +
-                  dataset.label +
-                  '</span>' +
-                  '</li>'
-                );
-              })
-              .join('');
-          }
-
-          return '<ul>' + renderLabels(chart) + '</ul>';
-        };
-      },
-      // Custom legend item event handler
-      attachCustomLegendHandler: function (chart, selector) {
-        $('body').on('click', selector, function () {
-          var li = $(this).parent();
-          var index = li.index();
-
-          var meta = chart.getDatasetMeta(index);
-          var dataset = chart.data.datasets[index];
-
-          meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-          chart.update();
-
-          li.toggleClass('disabled');
-        });
-      },
     },
   });
 })(Pontoon || {});
