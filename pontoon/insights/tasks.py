@@ -460,18 +460,41 @@ def get_time_to_review_data(category, activities, locale):
     return sum(times_to_review, timedelta()) / len(times_to_review)
 
 
-def get_chrf_score(action):
+def get_chrf_score(action, approved_translations):
+    key = (action["translation__entity"], action["translation__locale"])
     try:
-        approved_translation = Translation.objects.get(
-            entity=action["translation__entity"],
-            locale=action["translation__locale"],
-            approved=True,
-        ).string
-    except Translation.DoesNotExist:
+        approved_translation = approved_translations[key]
+    except KeyError:
         return None
 
     score = chrfpp.sentence_score(action["translation__string"], [approved_translation])
     return float(score.format(score_only=True))
+
+
+def get_approved_translations(actions, pretranslation_users):
+    """Fetch approved translations of entities with rejected pretranslations, needed for
+    faster chrf++ score calculation."""
+    rejected_pretranslation_actions = [
+        action
+        for action in actions
+        if action["action_type"] == "translation:rejected"
+        and action["user"] in pretranslation_users
+    ]
+
+    # This will catch a superset of required approved translations, which is much more
+    # convenient to capture than the exact set, but doesn't seem to impact performance.
+    approved_translations = Translation.objects.filter(
+        entity__in=[a["translation__entity"] for a in rejected_pretranslation_actions],
+        locale__in=[a["translation__locale"] for a in rejected_pretranslation_actions],
+        approved=True,
+    ).values("entity", "locale", "string")
+
+    res = {}
+    for translation in approved_translations:
+        key = (translation["entity"], translation["locale"])
+        res[key] = translation["string"]
+
+    return res
 
 
 def query_actions(start_of_today):
@@ -510,7 +533,10 @@ def build_charts_data(start_of_today):
         ]
     ).values_list("pk", flat=True)
 
-    for action in query_actions(start_of_today):
+    actions = query_actions(start_of_today)
+    approved_translations = get_approved_translations(actions, pretranslation_users)
+
+    for action in actions:
         key = (action["translation__locale"], action["project"])
         if key not in res:
             res[key] = {
@@ -577,7 +603,7 @@ def build_charts_data(start_of_today):
                     data["times_to_review_pretranslations"].append(review_time)
             if action["user"] in pretranslation_users:
                 data["pretranslations_rejected"].add(translation)
-                score = get_chrf_score(action)
+                score = get_chrf_score(action, approved_translations)
                 if score:
                     data["pretranslations_chrf_scores"].append(score)
 
