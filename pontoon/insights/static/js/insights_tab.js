@@ -1,5 +1,9 @@
 var Pontoon = (function (my) {
   const nf = new Intl.NumberFormat('en');
+  const pf = new Intl.NumberFormat('en', {
+    style: 'percent',
+    maximumFractionDigits: 2,
+  });
 
   return $.extend(true, my, {
     insights: {
@@ -454,7 +458,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Completion':
-                      return base + '%';
+                      return pf.format(value/100);
                     case 'Human translations':
                     case 'Machinery translations': {
                       const pct = Pontoon.insights.getPercent(
@@ -507,7 +511,7 @@ var Pontoon = (function (my) {
                     max: 100,
                     stepSize: 20,
                     callback: function (value) {
-                      return value + ' %';
+                      return pf.format(value/100);
                     },
                   },
                 },
@@ -859,7 +863,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Approval rate':
-                      return base + '%';
+                      return pf.format(value/100);
                     default:
                       return base;
                   }
@@ -904,7 +908,7 @@ var Pontoon = (function (my) {
                     max: 100,
                     stepSize: 20,
                     callback: function (value) {
-                      return value + ' %';
+                      return pf.format(value/100);
                     },
                   },
                 },
@@ -941,10 +945,6 @@ var Pontoon = (function (my) {
         );
       },
       getPercent: function (value, total) {
-        const pf = new Intl.NumberFormat('en', {
-          style: 'percent',
-          maximumFractionDigits: 2,
-        });
         const n = value / total;
         return pf.format(isFinite(n) ? n : 0);
       },
