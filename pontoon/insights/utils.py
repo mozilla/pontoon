@@ -1,7 +1,9 @@
+import json
+
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.db.models.functions import TruncMonth
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg, Count, Q, Sum
 
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
@@ -11,24 +13,23 @@ from pontoon.insights.models import (
 )
 
 
-def get_insight_start_date(from2021=False):
-    """Include at most the last year of data in insights.
-
-    For project insights, data is only available from 2020-12-14 onwards,
-    so limit queries to start from 2021-01-01 at earliest.
-
-    TODO: Remove the 2021-specific argument & logic after the year ends.
-    """
+def get_insight_start_date():
+    """Include at most the last year of data in insights."""
     now = datetime.now()
-    if from2021 and now.year == 2021:
-        return datetime(2021, 1, 1)
     if now.month == 12:
         return datetime(now.year, 1, 1)
     return datetime(now.year - 1, now.month + 1, 1)
 
 
-def get_time_to_review_suggestions_12_month_avg(query_filters=None):
-    """For each month, get the average age of suggestions reviewed
+def get_time_to_review(time_to_review):
+    if not time_to_review:
+        return None
+
+    return round(time_to_review.total_seconds() / 86400, 2)
+
+
+def get_time_to_review_12_month_avg(category, query_filters=None):
+    """For each month, get the average age of suggestions or pretranslations reviewed
     in the 12 months before each month.
     """
     snapshots = LocaleInsightsSnapshot.objects.filter(
@@ -45,15 +46,22 @@ def get_time_to_review_suggestions_12_month_avg(query_filters=None):
         # Group By month
         .values("month")
         # Select the avg of the grouping
-        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
+        .annotate(
+            **{
+                f"time_to_review_{category}_avg": Avg(
+                    f"time_to_review_{category}",
+                    filter=Q(**{f"time_to_review_{category}__isnull": False}),
+                )
+            }
+        )
         # Select month and values
         .values(
             "month",
-            "time_to_review_suggestions_avg",
+            f"time_to_review_{category}_avg",
         ).order_by("month")
     )
 
-    times_to_review = [x["time_to_review_suggestions_avg"] for x in insights]
+    times_to_review = [x[f"time_to_review_{category}_avg"] for x in insights]
     reversed_times_to_review = list(reversed(times_to_review))
     times_to_review_12_month_avg = []
 
@@ -66,10 +74,15 @@ def get_time_to_review_suggestions_12_month_avg(query_filters=None):
         except KeyError:
             break
 
-        average = sum(previous_12_months, timedelta()) / 12
-        times_to_review_12_month_avg.insert(0, average.days)
+        previous_12_months = [i for i in previous_12_months if i is not None]
+        if previous_12_months:
+            average = sum(previous_12_months, timedelta()) / len(previous_12_months)
+            value = round(average.total_seconds() / 86400, 2)
+        else:
+            value = None
+        times_to_review_12_month_avg.insert(0, value)
 
-    return times_to_review_12_month_avg
+    return json.dumps(times_to_review_12_month_avg)
 
 
 def get_locale_insights(query_filters=None):
@@ -79,7 +92,7 @@ def get_locale_insights(query_filters=None):
 
     TODO: Refactor as get_insights(locale, project)
     """
-    start_date = get_insight_start_date(False)
+    start_date = get_insight_start_date()
     snapshots = LocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if query_filters:
@@ -93,7 +106,18 @@ def get_locale_insights(query_filters=None):
         .values("month")
         # Select the avg/sum of the grouping
         .annotate(unreviewed_lifespan_avg=Avg("unreviewed_suggestions_lifespan"))
-        .annotate(time_to_review_suggestions_avg=Avg("time_to_review_suggestions"))
+        .annotate(
+            time_to_review_suggestions_avg=Avg(
+                "time_to_review_suggestions",
+                filter=Q(time_to_review_suggestions__isnull=False),
+            )
+        )
+        .annotate(
+            time_to_review_pretranslations_avg=Avg(
+                "time_to_review_pretranslations",
+                filter=Q(time_to_review_pretranslations__isnull=False),
+            )
+        )
         .annotate(completion_avg=Avg("completion"))
         .annotate(human_translations_sum=Sum("human_translations"))
         .annotate(machinery_sum=Sum("machinery_translations"))
@@ -108,6 +132,7 @@ def get_locale_insights(query_filters=None):
             "month",
             "unreviewed_lifespan_avg",
             "time_to_review_suggestions_avg",
+            "time_to_review_pretranslations_avg",
             "completion_avg",
             "human_translations_sum",
             "machinery_sum",
@@ -155,11 +180,23 @@ def get_locale_insights(query_filters=None):
             "unreviewed_lifespans": [
                 x["unreviewed_lifespan_avg"].days for x in insights
             ],
-            "time_to_review_suggestions": [
-                x["time_to_review_suggestions_avg"].days for x in insights
-            ],
-            "time_to_review_suggestions_12_month_avg": get_time_to_review_suggestions_12_month_avg(
-                query_filters
+            "time_to_review_suggestions": json.dumps(
+                [
+                    get_time_to_review(x["time_to_review_suggestions_avg"])
+                    for x in insights
+                ]
+            ),
+            "time_to_review_suggestions_12_month_avg": get_time_to_review_12_month_avg(
+                "suggestions", query_filters
+            ),
+            "time_to_review_pretranslations": json.dumps(
+                [
+                    get_time_to_review(x["time_to_review_pretranslations_avg"])
+                    for x in insights
+                ]
+            ),
+            "time_to_review_pretranslations_12_month_avg": get_time_to_review_12_month_avg(
+                "pretranslations", query_filters
             ),
             "translation_activity": {
                 "completion": [round(x["completion_avg"], 2) for x in insights],
@@ -182,7 +219,7 @@ def get_locale_insights(query_filters=None):
 
 def get_insights(locale=None, project=None):
     """Get data required by the Insights tab."""
-    start_date = get_insight_start_date(True)
+    start_date = get_insight_start_date()
     snapshots = ProjectLocaleInsightsSnapshot.objects.filter(created_at__gte=start_date)
 
     if locale:

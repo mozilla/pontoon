@@ -37,8 +37,7 @@ def collect_insights(self):
 
     log.info(f"Collect insights for {date}: Begin.")
 
-    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
-    activities = build_activity_charts_data(start_of_today, sync_user)
+    activities = build_activity_charts_data(start_of_today)
     entities = query_entities(start_of_today)
     log.info(f"Collect insights for {date}: Common data gathered.")
 
@@ -250,8 +249,11 @@ def get_locale_insights_snapshot(
         suggestions
     )
 
-    time_to_review_suggestions = get_time_to_review_suggestions_data(
-        activities, locale=locale.id
+    time_to_review_suggestions = get_time_to_review_data(
+        "suggestions", activities, locale=locale.id
+    )
+    time_to_review_pretranslations = get_time_to_review_data(
+        "pretranslations", activities, locale=locale.id
     )
 
     (
@@ -285,6 +287,8 @@ def get_locale_insights_snapshot(
         unreviewed_suggestions_lifespan=unreviewed_suggestions_lifespan,
         # Time to review suggestions
         time_to_review_suggestions=time_to_review_suggestions,
+        # Time to review pretranslations
+        time_to_review_pretranslations=time_to_review_pretranslations,
         # Translation activity
         completion=round(locale.completed_percent, 2),
         human_translations=human_translations,
@@ -419,17 +423,18 @@ def get_unreviewed_suggestions_lifespan_data(suggestions):
     return unreviewed_suggestions_lifespan
 
 
-def get_time_to_review_suggestions_data(activities, locale):
-    """Get average time to review a suggestion."""
+def get_time_to_review_data(category, activities, locale):
+    """Get average time to review a suggestion or pretranslation."""
     times_to_review = list()
 
     for (locale_, _), data in activities.items():
         if locale == locale_:
-            times_to_review.extend(data["times_to_review"])
+            times_to_review.extend(data[f"times_to_review_{category}"])
 
-    if len(times_to_review) == 0:
-        return timedelta()
+    if not times_to_review:
+        return None
 
+    times_to_review = [i for i in times_to_review if i is not None]
     return sum(times_to_review, timedelta()) / len(times_to_review)
 
 
@@ -455,9 +460,17 @@ def query_activity_actions(start_of_today):
     )
 
 
-def build_activity_charts_data(start_of_today, sync_user):
+def build_activity_charts_data(start_of_today):
     """Fetch and prepare data for Translation activity and Review activity charts."""
     res = dict()
+
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+    pretranslation_users = User.objects.filter(
+        email__in=[
+            "pontoon-tm@example.com",
+            "pontoon-gt@example.com",
+        ]
+    ).values_list("pk", flat=True)
 
     for action in query_activity_actions(start_of_today):
         key = (action["translation__locale"], action["project"])
@@ -469,7 +482,8 @@ def build_activity_charts_data(start_of_today, sync_user):
                 "peer_approved": set(),
                 "self_approved": set(),
                 "rejected": set(),
-                "times_to_review": list(),
+                "times_to_review_suggestions": list(),
+                "times_to_review_pretranslations": list(),
             }
         data = res[key]
 
@@ -500,14 +514,18 @@ def build_activity_charts_data(start_of_today, sync_user):
             else:
                 data["peer_approved"].add(translation)
                 if action["approved_date"]:
-                    data["times_to_review"].append(
-                        action["approved_date"] - action["date"]
-                    )
+                    review_time = action["approved_date"] - action["date"]
+                    data["times_to_review_suggestions"].append(review_time)
+                    if action["user"] in pretranslation_users:
+                        data["times_to_review_pretranslations"].append(review_time)
 
         elif action_type == "translation:rejected" and not performed_by_sync:
             data["rejected"].add(translation)
             if action["rejected_date"]:
-                data["times_to_review"].append(action["rejected_date"] - action["date"])
+                review_time = action["rejected_date"] - action["date"]
+                data["times_to_review_suggestions"].append(review_time)
+                if action["user"] in pretranslation_users:
+                    data["times_to_review_pretranslations"].append(review_time)
 
     return res
 
