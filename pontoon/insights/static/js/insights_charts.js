@@ -43,10 +43,7 @@ var Pontoon = (function (my) {
       // Legend configuration doesn't allow for enough flexibility,
       // so we build our own legend
       // eslint-disable-next-line no-unused-vars
-      customLegend: function (chart) {
-        return function (chart) {
-          function renderLabels(chart) {
-            return chart.data.datasets
+      customLegend: (chart) => (chart) => (chart) => chart.data.datasets
               .map(function (dataset) {
                 var disabled = dataset.hidden ? 'disabled' : '';
                 var color = dataset.borderColor || dataset.backgroundColor;
