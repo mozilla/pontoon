@@ -49,16 +49,7 @@ var Pontoon = (function (my) {
                 var color = dataset.borderColor || dataset.backgroundColor;
 
                 return (
-                  '<li class="' +
-                  disabled +
-                  '">' +
-                  '<i class="icon" style="background-color:' +
-                  color +
-                  '"></i>' +
-                  '<span class="label">' +
-                  dataset.label +
-                  '</span>' +
-                  '</li>'
+                  `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`
                 );
               })
               .join('');
