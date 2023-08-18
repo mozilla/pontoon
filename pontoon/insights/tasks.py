@@ -591,7 +591,9 @@ def build_charts_data(start_of_today):
                         data["times_to_review_pretranslations"].append(review_time)
             if action["user"] in pretranslation_users:
                 data["pretranslations_approved"].add(translation)
-                # Translation has been approved, no need to claculate the chrF++ score
+                # Translation has been approved, no need to claculate the chrF++ score.
+                # Note that the score is assigned to the pretranslation review date
+                # rather than its creation date, which would be preferable.
                 data["pretranslations_chrf_scores"].append(100)
 
         elif action_type == "translation:rejected" and not performed_by_sync:
