@@ -458,7 +458,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Completion':
-                      return pf.format(value/100);
+                      return pf.format(value / 100);
                     case 'Human translations':
                     case 'Machinery translations': {
                       const pct = Pontoon.insights.getPercent(
@@ -511,7 +511,7 @@ var Pontoon = (function (my) {
                     max: 100,
                     stepSize: 20,
                     callback: function (value) {
-                      return pf.format(value/100);
+                      return pf.format(value / 100);
                     },
                   },
                 },
@@ -863,7 +863,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Approval rate':
-                      return pf.format(value/100);
+                      return pf.format(value / 100);
                     default:
                       return base;
                   }
@@ -908,7 +908,7 @@ var Pontoon = (function (my) {
                     max: 100,
                     stepSize: 20,
                     callback: function (value) {
-                      return pf.format(value/100);
+                      return pf.format(value / 100);
                     },
                   },
                 },
