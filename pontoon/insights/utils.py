@@ -85,6 +85,28 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
     return json.dumps(times_to_review_12_month_avg)
 
 
+def get_approval_rate(insight):
+    """Get percentage of approved pretranslations."""
+    approved = insight["pretranslations_approved_sum"]
+    rejected = insight["pretranslations_rejected_sum"]
+    reviewed = approved + rejected
+
+    if reviewed == 0:
+        return None
+
+    return round(approved / reviewed * 100, 2)
+
+
+def get_chrf_score(insight):
+    """Get chrF++ score."""
+    score = insight["pretranslations_chrf_score_avg"]
+
+    if not score:
+        return None
+
+    return round(score, 2)
+
+
 def get_locale_insights(query_filters=None):
     """Get data required by the Locale Insights tab.
 
@@ -127,6 +149,15 @@ def get_locale_insights(query_filters=None):
         .annotate(self_approved_sum=Sum("self_approved"))
         .annotate(rejected_sum=Sum("rejected"))
         .annotate(new_suggestions_sum=Sum("new_suggestions"))
+        .annotate(
+            pretranslations_chrf_score_avg=Avg(
+                "pretranslations_chrf_score",
+                filter=Q(pretranslations_chrf_score__isnull=False),
+            )
+        )
+        .annotate(pretranslations_approved_sum=Sum("pretranslations_approved"))
+        .annotate(pretranslations_rejected_sum=Sum("pretranslations_rejected"))
+        .annotate(pretranslations_new_sum=Sum("pretranslations_new"))
         # Select month and values
         .values(
             "month",
@@ -142,6 +173,10 @@ def get_locale_insights(query_filters=None):
             "self_approved_sum",
             "rejected_sum",
             "new_suggestions_sum",
+            "pretranslations_chrf_score_avg",
+            "pretranslations_approved_sum",
+            "pretranslations_rejected_sum",
+            "pretranslations_new_sum",
         )
         .order_by("month")
     )
@@ -211,6 +246,13 @@ def get_locale_insights(query_filters=None):
                 "rejected": [x["rejected_sum"] for x in insights],
                 "new_suggestions": [x["new_suggestions_sum"] for x in insights],
             },
+            "pretranslation_quality": {
+                "approval_rate": json.dumps([get_approval_rate(x) for x in insights]),
+                "chrf_score": json.dumps([get_chrf_score(x) for x in insights]),
+                "approved": [x["pretranslations_approved_sum"] for x in insights],
+                "rejected": [x["pretranslations_rejected_sum"] for x in insights],
+                "new": [x["pretranslations_new_sum"] for x in insights],
+            },
         }
     )
 
@@ -246,6 +288,15 @@ def get_insights(locale=None, project=None):
         .annotate(self_approved_sum=Sum("self_approved"))
         .annotate(rejected_sum=Sum("rejected"))
         .annotate(new_suggestions_sum=Sum("new_suggestions"))
+        .annotate(
+            pretranslations_chrf_score_avg=Avg(
+                "pretranslations_chrf_score",
+                filter=Q(pretranslations_chrf_score__isnull=False),
+            )
+        )
+        .annotate(pretranslations_approved_sum=Sum("pretranslations_approved"))
+        .annotate(pretranslations_rejected_sum=Sum("pretranslations_rejected"))
+        .annotate(pretranslations_new_sum=Sum("pretranslations_new"))
         # Select month and values
         .values(
             "month",
@@ -260,6 +311,10 @@ def get_insights(locale=None, project=None):
             "self_approved_sum",
             "rejected_sum",
             "new_suggestions_sum",
+            "pretranslations_chrf_score_avg",
+            "pretranslations_approved_sum",
+            "pretranslations_rejected_sum",
+            "pretranslations_new_sum",
         )
         .order_by("month")
     )
@@ -296,5 +351,12 @@ def get_insights(locale=None, project=None):
             "self_approved": [x["self_approved_sum"] for x in insights],
             "rejected": [x["rejected_sum"] for x in insights],
             "new_suggestions": [x["new_suggestions_sum"] for x in insights],
+        },
+        "pretranslation_quality": {
+            "approval_rate": json.dumps([get_approval_rate(x) for x in insights]),
+            "chrf_score": json.dumps([get_chrf_score(x) for x in insights]),
+            "approved": [x["pretranslations_approved_sum"] for x in insights],
+            "rejected": [x["pretranslations_rejected_sum"] for x in insights],
+            "new": [x["pretranslations_new_sum"] for x in insights],
         },
     }

@@ -1,4 +1,5 @@
 import logging
+import statistics
 
 from celery import shared_task
 from datetime import timedelta
@@ -16,7 +17,10 @@ from pontoon.insights.models import (
     ProjectLocaleInsightsSnapshot,
 )
 
+from sacrebleu.metrics import CHRF
 
+
+chrfpp = CHRF(word_order=2)
 log = logging.getLogger(__name__)
 
 
@@ -37,7 +41,7 @@ def collect_insights(self):
 
     log.info(f"Collect insights for {date}: Begin.")
 
-    activities = build_activity_charts_data(start_of_today)
+    activities = build_charts_data(start_of_today)
     entities = query_entities(start_of_today)
     log.info(f"Collect insights for {date}: Common data gathered.")
 
@@ -263,6 +267,10 @@ def get_locale_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
+        pretranslations_chrf_score,
+        pretranslations_approved,
+        pretranslations_rejected,
+        pretranslations_new,
     ) = get_activity_charts_data(activities, locale=locale.id)
 
     return LocaleInsightsSnapshot(
@@ -299,6 +307,11 @@ def get_locale_insights_snapshot(
         self_approved=self_approved,
         rejected=rejected,
         new_suggestions=new_suggestions,
+        # Pretranslation quality
+        pretranslations_chrf_score=pretranslations_chrf_score,
+        pretranslations_approved=pretranslations_approved,
+        pretranslations_rejected=pretranslations_rejected,
+        pretranslations_new=pretranslations_new,
     )
 
 
@@ -316,6 +329,10 @@ def get_project_locale_insights_snapshot(
         peer_approved,
         self_approved,
         rejected,
+        pretranslations_chrf_score,
+        pretranslations_approved,
+        pretranslations_rejected,
+        pretranslations_new,
     ) = get_activity_charts_data(
         activities, locale=project_locale.project.id, project=project_locale.project.id
     )
@@ -340,6 +357,11 @@ def get_project_locale_insights_snapshot(
         self_approved=self_approved,
         rejected=rejected,
         new_suggestions=new_suggestions,
+        # Pretranslation quality
+        pretranslations_chrf_score=pretranslations_chrf_score,
+        pretranslations_approved=pretranslations_approved,
+        pretranslations_rejected=pretranslations_rejected,
+        pretranslations_new=pretranslations_new,
     )
 
 
@@ -438,8 +460,45 @@ def get_time_to_review_data(category, activities, locale):
     return sum(times_to_review, timedelta()) / len(times_to_review)
 
 
-def query_activity_actions(start_of_today):
-    """Get actions of the previous day, needed for the Translation and Review activity charts."""
+def get_chrf_score(action, approved_translations):
+    key = (action["translation__entity"], action["translation__locale"])
+    try:
+        approved_translation = approved_translations[key]
+    except KeyError:
+        return None
+
+    score = chrfpp.sentence_score(action["translation__string"], [approved_translation])
+    return float(score.format(score_only=True))
+
+
+def get_approved_translations(actions, pretranslation_users):
+    """Fetch approved translations of entities with rejected pretranslations, needed for
+    faster chrf++ score calculation."""
+    rejected_pretranslation_actions = [
+        action
+        for action in actions
+        if action["action_type"] == "translation:rejected"
+        and action["user"] in pretranslation_users
+    ]
+
+    # This will catch a superset of required approved translations, which is much more
+    # convenient to capture than the exact set, but doesn't seem to impact performance.
+    approved_translations = Translation.objects.filter(
+        entity__in=[a["translation__entity"] for a in rejected_pretranslation_actions],
+        locale__in=[a["translation__locale"] for a in rejected_pretranslation_actions],
+        approved=True,
+    ).values("entity", "locale", "string")
+
+    res = {}
+    for translation in approved_translations:
+        key = (translation["entity"], translation["locale"])
+        res[key] = translation["string"]
+
+    return res
+
+
+def query_actions(start_of_today):
+    """Get actions of the previous day, needed to render charts."""
     return ActionLog.objects.filter(
         created_at__gte=start_of_today - relativedelta(days=1),
         created_at__lt=start_of_today,
@@ -449,7 +508,9 @@ def query_activity_actions(start_of_today):
         "action_type",
         "performed_by",
         "translation",
+        "translation__entity",
         "translation__locale",
+        "translation__string",
         machinery_sources=F("translation__machinery_sources"),
         user=F("translation__user"),
         approved_user=F("translation__approved_user"),
@@ -460,8 +521,8 @@ def query_activity_actions(start_of_today):
     )
 
 
-def build_activity_charts_data(start_of_today):
-    """Fetch and prepare data for Translation activity and Review activity charts."""
+def build_charts_data(start_of_today):
+    """Fetch and prepare data needed to render charts."""
     res = dict()
 
     sync_user = User.objects.get(email="pontoon-sync@example.com").pk
@@ -472,7 +533,10 @@ def build_activity_charts_data(start_of_today):
         ]
     ).values_list("pk", flat=True)
 
-    for action in query_activity_actions(start_of_today):
+    actions = query_actions(start_of_today)
+    approved_translations = get_approved_translations(actions, pretranslation_users)
+
+    for action in actions:
         key = (action["translation__locale"], action["project"])
         if key not in res:
             res[key] = {
@@ -482,6 +546,10 @@ def build_activity_charts_data(start_of_today):
                 "peer_approved": set(),
                 "self_approved": set(),
                 "rejected": set(),
+                "pretranslations_chrf_scores": list(),
+                "pretranslations_approved": set(),
+                "pretranslations_rejected": set(),
+                "pretranslations_new": set(),
                 "times_to_review_suggestions": list(),
                 "times_to_review_pretranslations": list(),
             }
@@ -504,6 +572,9 @@ def build_activity_charts_data(start_of_today):
             if not action["approved_date"] or action["approved_date"] > action["date"]:
                 data["new_suggestions"].add(translation)
 
+            if action["user"] in pretranslation_users:
+                data["pretranslations_new"].add(translation)
+
             # Self-approval can also happen on translation submission
             if performed_by == action["approved_user"] and not performed_by_sync:
                 data["self_approved"].add(translation)
@@ -518,6 +589,12 @@ def build_activity_charts_data(start_of_today):
                     data["times_to_review_suggestions"].append(review_time)
                     if action["user"] in pretranslation_users:
                         data["times_to_review_pretranslations"].append(review_time)
+            if action["user"] in pretranslation_users:
+                data["pretranslations_approved"].add(translation)
+                # Translation has been approved, no need to claculate the chrF++ score.
+                # Note that the score is assigned to the pretranslation review date
+                # rather than its creation date, which would be preferable.
+                data["pretranslations_chrf_scores"].append(100)
 
         elif action_type == "translation:rejected" and not performed_by_sync:
             data["rejected"].add(translation)
@@ -526,6 +603,11 @@ def build_activity_charts_data(start_of_today):
                 data["times_to_review_suggestions"].append(review_time)
                 if action["user"] in pretranslation_users:
                     data["times_to_review_pretranslations"].append(review_time)
+            if action["user"] in pretranslation_users:
+                data["pretranslations_rejected"].add(translation)
+                score = get_chrf_score(action, approved_translations)
+                if score:
+                    data["pretranslations_chrf_scores"].append(score)
 
     return res
 
@@ -538,6 +620,10 @@ def get_activity_charts_data(activities, project=None, locale=None):
     peer_approved = set()
     self_approved = set()
     rejected = set()
+    pretranslations_chrf_scores = list()
+    pretranslations_approved = set()
+    pretranslations_rejected = set()
+    pretranslations_new = set()
 
     for (locale_, project_), data in activities.items():
         if (project is None or project == project_) and (
@@ -549,6 +635,12 @@ def get_activity_charts_data(activities, project=None, locale=None):
             peer_approved.update(data["peer_approved"])
             self_approved.update(data["self_approved"])
             rejected.update(data["rejected"])
+            pretranslations_chrf_scores.extend(data["pretranslations_chrf_scores"])
+            pretranslations_approved.update(data["pretranslations_approved"])
+            pretranslations_rejected.update(data["pretranslations_rejected"])
+            pretranslations_new.update(data["pretranslations_new"])
+
+    scores = pretranslations_chrf_scores
 
     return (
         len(human_translations),
@@ -557,4 +649,8 @@ def get_activity_charts_data(activities, project=None, locale=None):
         len(peer_approved),
         len(self_approved),
         len(rejected),
+        statistics.mean(scores) if scores else None,
+        len(pretranslations_approved),
+        len(pretranslations_rejected),
+        len(pretranslations_new),
     )
