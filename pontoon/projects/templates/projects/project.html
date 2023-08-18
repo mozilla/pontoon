@@ -86,7 +86,7 @@
           icon = 'users',
         )
       }}
-      {% if settings.ENABLE_INSIGHTS_TAB %}
+      {% if settings.ENABLE_INSIGHTS %}
       {{ Menu.item(
           'Insights',
           url('pontoon.projects.insights', project.slug),

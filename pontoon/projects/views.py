@@ -124,8 +124,8 @@ def ajax_tags(request, slug):
 @require_AJAX
 def ajax_insights(request, slug):
     """Insights tab."""
-    if not settings.ENABLE_INSIGHTS_TAB:
-        raise ImproperlyConfigured("ENABLE_INSIGHTS_TAB variable not set in settings.")
+    if not settings.ENABLE_INSIGHTS:
+        raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug

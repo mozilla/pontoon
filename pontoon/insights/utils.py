@@ -1,4 +1,5 @@
 import json
+import statistics
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -359,4 +360,72 @@ def get_insights(locale=None, project=None):
             "rejected": [x["pretranslations_rejected_sum"] for x in insights],
             "new": [x["pretranslations_new_sum"] for x in insights],
         },
+    }
+
+
+def get_global_pretranslation_quality(category, id):
+    start_date = get_insight_start_date()
+    snapshots = ProjectLocaleInsightsSnapshot.objects.filter(
+        created_at__gte=start_date,
+        project_locale__pretranslation_enabled=True,
+    )
+
+    insights = (
+        snapshots
+        # Truncate to month and add to select list
+        .annotate(month=TruncMonth("created_at"))
+        # Group By month and locale
+        .values("month", f"project_locale__{category}")
+        # Select the avg/sum of the grouping
+        .annotate(pretranslations_approved_sum=Sum("pretranslations_approved"))
+        .annotate(pretranslations_rejected_sum=Sum("pretranslations_rejected"))
+        # Select month and values
+        .values(
+            "month",
+            f"project_locale__{category}__{id}",
+            f"project_locale__{category}__name",
+            "pretranslations_approved_sum",
+            "pretranslations_rejected_sum",
+        )
+        .order_by("month")
+    )
+
+    data = {
+        "all": {
+            "name": "All",
+            "approval_rate": [],
+        }
+    }
+
+    for insight in insights:
+        key = insight[f"project_locale__{category}__{id}"]
+        name = insight[f"project_locale__{category}__name"]
+
+        if category == "locale":
+            name = f"{name} · {key}"
+
+        item = data.setdefault(
+            key,
+            {
+                "name": name,
+                "approval_rate": [],
+            },
+        )
+
+        item["approval_rate"].append(get_approval_rate(insight))
+
+    # Monthly total across the entire category
+    category_approval_rates = [value["approval_rate"] for value in data.values()]
+
+    for month in zip(*category_approval_rates[1:]):
+        not_none = [x for x in month if x is not None]
+        if not_none:
+            total = statistics.mean(not_none)
+        else:
+            total = None
+        data["all"]["approval_rate"].append(total)
+
+    return {
+        "dates": list({convert_to_unix_time(x["month"]) for x in insights}),
+        "dataset": json.dumps([v for _, v in data.items()]),
     }

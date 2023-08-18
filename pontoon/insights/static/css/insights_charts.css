@@ -67,3 +67,38 @@
 #insights h3 .tooltip li:not(:last-child) {
   padding-bottom: 5px;
 }
+
+/* Custom chart legend */
+
+#insights .legend {
+  text-align: center;
+}
+
+#insights .legend li {
+  display: inline-block;
+  font-size: 12px;
+  margin: 15px;
+  margin-bottom: 5px;
+}
+
+#insights .legend li .icon {
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+#insights .legend li .label {
+  cursor: pointer;
+  font-weight: bold;
+  vertical-align: text-top;
+}
+
+#insights .legend li.disabled .label {
+  color: #4d5967;
+}
+
+#insights .legend li.disabled .label:hover {
+  color: #888;
+}

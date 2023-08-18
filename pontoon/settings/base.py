@@ -400,9 +400,16 @@ PIPELINE_CSS = {
             "css/multiple_team_selector.css",
             "css/manual_notifications.css",
             "css/insights_charts.css",
-            "css/insights.css",
+            "css/insights_tab.css",
         ),
         "output_filename": "css/project.min.css",
+    },
+    "insights": {
+        "source_filenames": (
+            "css/insights_charts.css",
+            "css/insights.css",
+        ),
+        "output_filename": "css/insights.min.css",
     },
     "localization": {
         "source_filenames": (
@@ -412,7 +419,7 @@ PIPELINE_CSS = {
             "css/info.css",
             "css/download_selector.css",
             "css/insights_charts.css",
-            "css/insights.css",
+            "css/insights_tab.css",
         ),
         "output_filename": "css/localization.min.css",
     },
@@ -433,7 +440,7 @@ PIPELINE_CSS = {
             "css/team.css",
             "css/request.css",
             "css/insights_charts.css",
-            "css/insights.css",
+            "css/insights_tab.css",
             "css/info.css",
         ),
         "output_filename": "css/team.min.css",
@@ -527,6 +534,14 @@ PIPELINE_JS = {
         ),
         "output_filename": "js/admin_project.min.js",
     },
+    "insights": {
+        "source_filenames": (
+            "js/lib/Chart.bundle.js",
+            "js/insights_charts.js",
+            "js/insights.js",
+        ),
+        "output_filename": "js/insights.min.js",
+    },
     "localization": {
         "source_filenames": (
             "js/lib/Chart.bundle.js",
@@ -534,7 +549,7 @@ PIPELINE_JS = {
             "js/progress-chart.js",
             "js/tabs.js",
             "js/insights_charts.js",
-            "js/insights.js",
+            "js/insights_tab.js",
             "js/info.js",
         ),
         "output_filename": "js/localization.min.js",
@@ -550,7 +565,7 @@ PIPELINE_JS = {
             "js/multiple_team_selector.js",
             "js/manual_notifications.js",
             "js/insights_charts.js",
-            "js/insights.js",
+            "js/insights_tab.js",
         ),
         "output_filename": "js/project.min.js",
     },
@@ -572,7 +587,7 @@ PIPELINE_JS = {
             "js/request.js",
             "js/permissions.js",
             "js/insights_charts.js",
-            "js/insights.js",
+            "js/insights_tab.js",
             "js/info.js",
         ),
         "output_filename": "js/team.min.js",
@@ -850,10 +865,10 @@ USE_L10N = False
 # See bug 1567402 for details. A Mozilla-specific variable.
 ENABLE_BUGS_TAB = os.environ.get("ENABLE_BUGS_TAB", "False") != "False"
 
-# Enable Insights tab on dashboards,
+# Enable Insights dashboards,
 # presenting data that needs to be collected by a scheduled job.
 # See docs/admin/deployment.rst for more information.
-ENABLE_INSIGHTS_TAB = os.environ.get("ENABLE_INSIGHTS_TAB", "False") != "False"
+ENABLE_INSIGHTS = os.environ.get("ENABLE_INSIGHTS", "False") != "False"
 
 # Bleach tags and attributes
 ALLOWED_TAGS = [
