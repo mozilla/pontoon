@@ -44,18 +44,15 @@ var Pontoon = (function (my) {
       // so we build our own legend
       // eslint-disable-next-line no-unused-vars
       customLegend: (chart) => (chart) => {
-        const renderLabels = (chart) => {
-          return chart.data.datasets
-            .map((dataset) => {
-              var disabled = dataset.hidden ? 'disabled' : '';
-              var color = dataset.borderColor || dataset.backgroundColor;
+        const labels = chart.data.datasets
+          .map((dataset) => {
+            var disabled = dataset.hidden ? 'disabled' : '';
+            var color = dataset.borderColor || dataset.backgroundColor;
 
-              return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
-            })
-            .join('');
-        };
+            return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
+          })
+          .join('');
 
-        const labels = renderLabels(chart);
         return `<ul>${labels}</ul>`;
       },
       // Custom legend item event handler
