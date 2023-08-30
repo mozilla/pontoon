@@ -3,16 +3,22 @@ import { Range } from '@codemirror/state';
 import {
   Decoration,
   DecorationSet,
+  Direction,
   EditorView,
   ViewPlugin,
   ViewUpdate,
 } from '@codemirror/view';
 
 /** Use content-based automatic direction for values inside quotes */
-const dirAuto = Decoration.mark({ attributes: { dir: 'auto' } });
+const dirAuto = Decoration.mark({
+  attributes: { dir: 'auto', style: 'unicode-bidi: isolate' },
+});
 
 /** Explicitly mark placeholders and tags as LTR spans, for bidirectional contexts */
-const dirLTR = Decoration.mark({ attributes: { dir: 'ltr' } });
+const dirLTR = Decoration.mark({
+  attributes: { dir: 'ltr', style: 'unicode-bidi: isolate' },
+  bidiIsolate: Direction.LTR,
+});
 
 /** Enable spellchecking only for string content, and not highlighted syntax or quoted literals */
 const spellcheck = Decoration.mark({ attributes: { spellcheck: 'true' } });
@@ -132,6 +138,15 @@ export const decoratorPlugins = [
         }
       }
     },
-    { decorations: (v) => v.decorations },
+    {
+      provide: (plugin) => {
+        const access = (view: EditorView) =>
+          view.plugin(plugin)?.decorations ?? Decoration.none;
+        return [
+          EditorView.decorations.of(access),
+          EditorView.bidiIsolatedRanges.of(access),
+        ];
+      },
+    },
   ),
 );
