@@ -18,7 +18,7 @@ import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
-import { decoratorPlugins } from './decoratorPlugins';
+import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
   useHandleEnter,
@@ -87,7 +87,7 @@ export const getExtensions = (
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
   syntaxHighlighting(style),
-  decoratorPlugins,
+  decoratorPlugin,
   keymap.of([
     {
       key: 'Enter',
