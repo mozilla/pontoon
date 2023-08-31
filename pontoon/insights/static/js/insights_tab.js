@@ -458,7 +458,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Completion':
-                      return pf.format(value / 100);
+                      return label + ': ' + pf.format(value / 100);
                     case 'Human translations':
                     case 'Machinery translations': {
                       const pct = Pontoon.insights.getPercent(
@@ -863,7 +863,7 @@ var Pontoon = (function (my) {
 
                   switch (label) {
                     case 'Approval rate':
-                      return pf.format(value / 100);
+                      return label + ': ' + pf.format(value / 100);
                     default:
                       return base;
                   }
