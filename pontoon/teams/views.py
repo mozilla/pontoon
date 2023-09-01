@@ -314,9 +314,7 @@ def request_pretranslation(request, locale):
 
     # Validate projects
     project_list = (
-        Project.objects.visible()
-        .visible_for(user)
-        .filter(slug__in=slug_list, can_be_requested=True)
+        Project.objects.visible().visible_for(user).filter(slug__in=slug_list)
     )
     if not project_list:
         return HttpResponseBadRequest("Bad Request: Non-existent projects specified")
