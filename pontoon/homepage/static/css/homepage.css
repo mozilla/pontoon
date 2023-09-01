@@ -275,8 +275,8 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 ol {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
   counter-reset: item;
   list-style: none;
   margin-left: -28px;
