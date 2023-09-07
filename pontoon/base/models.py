@@ -2173,7 +2173,6 @@ class Resource(models.Model):
         Format.INC,
         Format.INI,
         Format.PROPERTIES,
-        Format.XML,
     }
 
     objects = ResourceQuerySet.as_manager()
