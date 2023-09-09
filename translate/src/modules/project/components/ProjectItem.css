@@ -1,12 +1,13 @@
-.project-menu .menu li.no-results,
-.project-menu .menu li a {
+@import '../../../../../pontoon/static/css/dark-theme.css' .project-menu .menu
+    li.no-results,
+  .project-menu .menu li a {
   display: block;
   padding: 2px 4px;
 }
 
 .project-menu .menu li a:hover {
-  background: #3f4752;
-  color: #fff;
+  background: var(--dark-grey-2);
+  color: var(--white-1);
 }
 
 .project-menu .menu li a .project {
@@ -18,6 +19,6 @@
 }
 
 .project-menu .menu .percent {
-  color: #7bc876;
+  color: var(--light-green-1);
   float: right;
 }

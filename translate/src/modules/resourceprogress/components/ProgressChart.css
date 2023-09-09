@@ -1,9 +1,10 @@
-.progress-chart canvas {
+@import '../../../../../pontoon/static/css/dark-theme.css' .progress-chart
+  canvas {
   border-radius: 100%;
 }
 
 .progress-chart:hover .selector canvas {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .progress-chart .menu canvas {

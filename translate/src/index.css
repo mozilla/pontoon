@@ -1,3 +1,5 @@
+@import '../../pontoon/static/css/dark-theme.css';
+
 /* Reset HTML5 Search Input in Webkit */
 input[type='search'] {
   -webkit-appearance: none;
@@ -14,8 +16,8 @@ button {
 }
 
 body {
-  background: #272a2f;
-  color: #ebebeb;
+  background: var(--black-4);
+  color: var(--white-4);
 }
 
 body,
@@ -27,14 +29,14 @@ html,
 
 a:link,
 a:visited {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-weight: 300;
   text-decoration: none;
 }
 
 a:hover,
 a:active {
-  color: #7bc876;
+  color: var(--light-green-1);
   text-decoration: none;
 }
 

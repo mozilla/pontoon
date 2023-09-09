@@ -1,7 +1,7 @@
-.editor .ftl {
+@import '../../../../../pontoon/static/css/dark-theme.css' .editor .ftl {
   background: transparent;
   border: 0;
-  color: #aaa;
+  color: var(--light-grey-10);
   float: left;
   font-size: 18px;
   font-weight: bold;
@@ -13,9 +13,9 @@
 
 .editor .ftl.active,
 .editor .ftl:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .editor .ftl.error {
-  color: #f36;
+  color: var(--red-pink);
 }

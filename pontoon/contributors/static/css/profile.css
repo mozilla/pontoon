@@ -1,9 +1,11 @@
+@import '../../../static/css/dark-theme.css';
+
 #main .container > div {
   float: left;
 }
 
 #main .container .left-column {
-  color: #ccc;
+  color: var(--light-grey-7);
   margin-right: 30px;
   width: 260px;
 }
@@ -19,12 +21,12 @@
 }
 
 #main .container .left-column hr {
-  border-color: #4d5967;
+  border-color: var(--grey-3);
   margin: 8px 0;
 }
 
 h2 {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 18px;
   font-weight: bold;
   line-height: 1.4em;
@@ -32,7 +34,7 @@ h2 {
 }
 
 .avatar img.rounded {
-  border-color: #333941;
+  border-color: var(--dark-grey-1);
 }
 
 .display-name {
@@ -41,7 +43,7 @@ h2 {
 }
 
 .username {
-  color: #7bc876;
+  color: var(--light-green-1);
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
@@ -53,7 +55,7 @@ h2 {
 }
 
 .item-with-icon {
-  color: #888;
+  color: var(--light-grey-2);
   font-size: 14px;
   font-weight: normal;
   line-height: 1.8em;
@@ -73,20 +75,20 @@ h2 {
 }
 
 .item-with-icon a {
-  color: #888;
+  color: var(--light-grey-2);
   font-weight: normal;
 }
 
 .item-with-icon a:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .item-with-icon .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .personal-information .button {
-  background: #333941;
+  background: var(--dark-grey-1);
   border-radius: 2px;
   box-sizing: border-box;
   font-size: 16px;
@@ -103,11 +105,11 @@ h4 {
 }
 
 h4.superuser {
-  border: 1px solid #f36;
+  border: 1px solid var(--red-pink);
   border-radius: 16px;
   line-height: 30px;
   text-align: center;
-  color: #f36;
+  color: var(--red-pink);
 }
 
 /* Approval Ratio */
@@ -127,22 +129,22 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li.active .icon {
-  background-color: #7bc876;
+  background-color: var(--light-green-1);
 }
 
 #insights h3 .tooltip li.current-month::marker {
-  color: #41554c;
+  color: var(--forest-green-1);
 }
 
 #insights h3 .tooltip li.twelve-month-average::marker {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 /* Stats */
 
 #stats {
   border-radius: 6px;
-  background: #333941;
+  background: var(--dark-grey-1);
   box-sizing: border-box;
   float: right;
   padding: 20px;
@@ -160,21 +162,21 @@ h4.superuser {
 }
 
 #stats > div span {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 14px;
   text-transform: uppercase;
 }
 
 #stats > div.translated span {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #stats > div.unreviewed span {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 #stats > div p {
-  color: #ffffff;
+  color: var(--white-4);
   font-size: 25px;
 }
 
@@ -227,14 +229,14 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu {
-  background: #333941;
+  background: var(--dark-grey-1);
   bottom: auto;
   box-sizing: border-box;
   width: 100%;
 }
 
 #contributions .type-selector .menu li span {
-  color: #ccc;
+  color: var(--light-grey-7);
   width: 100%;
 }
 
@@ -245,7 +247,7 @@ h4.superuser {
 
 #contributions h3,
 #timeline h3 {
-  color: #ccc;
+  color: var(--light-grey-7);
   font-size: 16px;
   font-weight: 400;
   font-style: normal;
@@ -255,19 +257,19 @@ h4.superuser {
 #contribution-graph rect.day:hover,
 #contribution-graph rect.day.selected {
   stroke-width: 1;
-  stroke: #fff;
+  stroke: var(--white-1);
 }
 
 svg.js-calendar-graph-svg {
-  fill: #aaa;
+  fill: var(--light-grey-10);
   font-weight: 100;
 }
 
 .svg-tip {
   display: none;
   padding: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #bbb;
+  background: var(--black-5);
+  color: var(--light-grey-5);
   font-size: 12px;
   position: absolute;
   z-index: 99999;
@@ -285,13 +287,13 @@ svg.js-calendar-graph-svg {
   margin: 0 0 0 -5px;
   content: ' ';
   border: 5px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.8);
+  border-top-color: var(--black-5);
 }
 
 /* Contribution Timeline */
 
 #timeline {
-  color: #888;
+  color: var(--light-grey-2);
   margin-top: 40px;
 }
 
@@ -300,15 +302,15 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .contribution-group {
-  border-left: 2px solid #333941;
+  border-left: 2px solid var(--dark-grey-1);
   margin-left: 20px;
   padding: 20px 0 20px 30px;
 }
 
 #timeline .heading {
-  background: #333941;
+  background: var(--dark-grey-1);
   border-radius: 6px 6px 0 0;
-  color: #ccc;
+  color: var(--light-grey-7);
   padding: 20px 20px 0;
   position: relative;
 }
@@ -319,12 +321,12 @@ svg.js-calendar-graph-svg {
   bottom: 2px;
   content: ' ';
   border: 7px solid transparent;
-  border-right-color: #333941;
+  border-right-color: var(--dark-grey-1);
 }
 
 #timeline .heading .icon {
-  background: #333941;
-  border: 2px solid #272a2f;
+  background: var(--dark-grey-1);
+  border: 2px solid var(--black-4);
   box-sizing: border-box;
   display: block;
   height: 36px;
@@ -337,7 +339,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .heading .icon:before {
-  color: #888;
+  color: var(--light-grey-2);
   font-size: 16px;
 }
 
@@ -354,7 +356,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations {
-  background: #333941;
+  background: var(--dark-grey-1);
   border-radius: 0 0 6px 6px;
   list-style: none;
   margin: 0;
@@ -367,19 +369,19 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li:hover {
-  background: #272a2f;
+  background: var(--black-4);
 }
 
 #timeline .localizations li a {
-  color: #aaa;
+  color: var(--light-grey-10);
   display: block;
 }
 
 #timeline .localizations li a .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #timeline .localizations li a .contribution-count {
-  color: #888;
+  color: var(--light-grey-2);
   float: right;
 }

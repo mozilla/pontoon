@@ -1,5 +1,6 @@
-.machinery .translation {
-  border-bottom: 1px solid #5e6475;
+@import '../../../../../pontoon/static/css/dark-theme.css' .machinery
+  .translation {
+  border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
   padding: 10px;
 }
@@ -14,11 +15,11 @@
 
 .machinery .translation:not(.cannot-copy):hover,
 .machinery .translation.selected {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 .machinery .translation > header {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   display: block;
   font-size: 11px;
   font-weight: 300;
@@ -46,13 +47,13 @@
 
 .machinery .translation > header .quality::after {
   content: '•';
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   padding-left: 3px;
 }
 
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .machinery .translation > header .projects {
@@ -69,5 +70,5 @@
 }
 
 .machinery .translation p.original {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
 }

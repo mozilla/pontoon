@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 table.table {
   text-align: center;
 }
@@ -18,7 +20,7 @@ table.table.project-list.hidden {
 }
 
 .table tbody tr:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 .table th:first-child {
@@ -118,21 +120,21 @@ table.table.project-list.hidden {
 }
 
 .table a {
-  color: #ebebeb;
+  color: var(--white-4);
 }
 
 .table a:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 /* Selector must also match heading-info */
 .deadline time.approaching {
-  color: #ffa10f;
+  color: var(--orange-1);
 }
 
 /* Selector must also match heading-info */
 .deadline time.overdue {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .table td.code div {
@@ -143,7 +145,7 @@ table.table.project-list.hidden {
 }
 
 .table td.code a {
-  color: #7bc876;
+  color: var(--light-green-1);
   line-height: 47px;
   padding: 15px 5px 14px;
 }
@@ -171,15 +173,15 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity time:hover {
-  color: #ebebeb;
+  color: var(--white-4);
 }
 
 .table .latest-activity .tooltip {
   display: block;
-  background: #1c1e21;
+  background: var(--black-1);
   border-radius: 10px;
   bottom: 30px;
-  color: #ebebeb;
+  color: var(--white-4);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -201,7 +203,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 30px;
 }
 
@@ -212,7 +214,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer {
-  color: #888888;
+  color: var(--light-grey-3);
   font-style: italic;
   height: 48px;
   margin-top: 10px;
@@ -239,7 +241,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .table .latest-activity .tooltip footer img {
@@ -272,7 +274,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
-  color: #3f4752;
+  color: var(--dark-grey-2);
   font-size: 18px;
   position: absolute;
   right: 0;
@@ -280,27 +282,27 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status.pending {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 .table .progress .chart-wrapper .translated {
-  background: #7bc876;
+  background: var(--light-green-1);
 }
 
 .table .progress .chart-wrapper .pretranslated {
-  background: #c0ff00;
+  background: var(--neon-green);
 }
 
 .table .progress .chart-wrapper .warnings {
-  background: #ffa10f;
+  background: var(--orange-1);
 }
 
 .table .progress .chart-wrapper .errors {
-  background: #f36;
+  background: var(--red-pink);
 }
 
 .table .progress .chart-wrapper .missing {
-  background: #5f7285;
+  background: var(--blue-2);
 }
 
 .table tr:hover .progress .chart-wrapper {
@@ -333,7 +335,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li a {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   display: block;
   margin-top: -5px;
 }
@@ -346,31 +348,31 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.translated .title {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .table .progress .legend li.pretranslated .title {
-  color: #c0ff00;
+  color: var(--neon-green);
 }
 
 .table .progress .legend li.warnings .title {
-  color: #ffa10f;
+  color: var(--orange-1);
 }
 
 .table .progress .legend li.errors .title {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .table .progress .legend li.missing .title {
-  color: #7c8b9c;
+  color: #var(--light-grey-6);
 }
 
 .table .progress .legend li.unreviewed .title {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 .table .progress .legend li.all .title {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
 }
 
 .table .progress .legend li .value {
@@ -379,10 +381,10 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li a:hover .title {
-  color: #ebebeb;
+  color: var(--white-3);
 }
 
 .table .progress .legend li a:hover .value {
-  color: #ebebeb;
+  color: var(--white-3);
   font-weight: 700;
 }

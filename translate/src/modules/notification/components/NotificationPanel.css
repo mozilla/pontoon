@@ -1,5 +1,5 @@
-.notification-panel {
-  background: rgba(51, 57, 65, 0.9);
+@import '../../../../../pontoon/static/css/dark-theme.css' .notification-panel {
+  background: var(--grey-7);
   cursor: pointer;
   font-size: 14px;
   font-style: italic;
@@ -17,11 +17,11 @@
 
 .notification-panel .info,
 .notification-panel .success {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .notification-panel .error {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 /* Showing and hiding animations. */

@@ -1,10 +1,12 @@
+@import '../../../static/css/dark-theme.css'
+
 /* Make clicks pass-through */
 #nprogress {
   pointer-events: none;
 }
 
 #nprogress .bar {
-  background: #7BC876;
+  background: var(--light-green-1);
 
   position: fixed;
   z-index: 1031;
@@ -22,7 +24,7 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #7BC876, 0 0 5px #7BC876;
+  box-shadow: 0 0 10px var(--light-green-1), 0 0 5px var(--light-green-1);
   opacity: 1.0;
 
   -webkit-transform: rotate(3deg) translate(0px, -4px);
@@ -45,8 +47,8 @@
   box-sizing: border-box;
 
   border: solid 2px transparent;
-  border-top-color: #7BC876;
-  border-left-color: #7BC876;
+  border-top-color: var(--light-green-1);
+  border-left-color: var(--light-green-1);
   border-radius: 50%;
 
   -webkit-animation: nprogress-spinner 400ms linear infinite;

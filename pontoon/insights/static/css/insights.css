@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 #insights .half {
   width: 470px;
   float: left;
@@ -30,7 +32,7 @@
 #insights .controls .period-selector li .selector.active,
 #insights .controls .period-selector li .selector:hover {
   background: #7bc876;
-  color: #272a2f;
+  color: var(--black-4);
 }
 
 /* Active users */
@@ -65,7 +67,7 @@
 }
 
 #insights .active-users-chart .active {
-  border-bottom: 2px solid #888888;
+  border-bottom: 2px solid var(--light-grey-3);
   display: inline-block;
   font-size: 40px;
   font-weight: bold;
@@ -73,7 +75,7 @@
 }
 
 #insights .active-users-chart .total {
-  color: #888;
+  color: var(--light-grey-2);
   font-size: 16px;
   left: 0;
   right: 0;
@@ -90,25 +92,25 @@
 /* Time to review suggestions and Age of unreviewed info tooltip */
 
 #insights h3 .tooltip li.current-month::marker {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 #insights h3 .tooltip li.twelve-month-average::marker {
-  color: #385465;
+  color: var(--grey-5);
 }
 
 /* Translation activity info tooltip */
 
 #insights h3 .tooltip li.human-translations::marker {
-  color: #4f7256;
+  color: var(--green);
 }
 
 #insights h3 .tooltip li.machinery-translations::marker {
-  color: #41554c;
+  color: var(--forest-green-1);
 }
 
 #insights h3 .tooltip li.new-source-strings::marker {
-  color: #272a2f;
+  color: var(--black-4);
 }
 
 #insights h3 .tooltip li.completion::marker {
@@ -118,23 +120,23 @@
 /* Review activity info tooltip */
 
 #insights h3 .tooltip li.peer-approved::marker {
-  color: #3e7089;
+  color: var(--blue-1);
 }
 
 #insights h3 .tooltip li.self-approved::marker {
-  color: #385465;
+  color: var(--grey-5);
 }
 
 #insights h3 .tooltip li.rejected::marker {
-  color: #843650;
+  color: var(--magenta);
 }
 
 #insights h3 .tooltip li.new-suggestions::marker {
-  color: #272a2f;
+  color: var(--black-4);
 }
 
 #insights h3 .tooltip li.unreviewed::marker {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 /* Custom chart legend */
@@ -165,9 +167,9 @@
 }
 
 #insights .legend li.disabled .label {
-  color: #4d5967;
+  color: var(--grey-3);
 }
 
 #insights .legend li.disabled .label:hover {
-  color: #fff;
+  color: var(--white-1);
 }

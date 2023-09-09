@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .user-notifications-menu {
   float: right;
   height: 60px;
@@ -12,16 +14,16 @@
 }
 
 .user-notifications-menu .selector .icon {
-  color: #4d5967;
+  color: var(--grey-3);
   font-size: 26px;
   margin-top: 17px;
 }
 
 .user-notifications-menu .selector .badge {
-  background: #f36;
-  border: 3px solid #272a2f;
+  background: var(--red-pink);
+  border: 3px solid var(--black-4);
   border-radius: 12px;
-  color: #fff;
+  color: var(--white-1);
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
@@ -35,8 +37,8 @@
 }
 
 .user-notifications-menu .menu {
-  background-color: #272a2f;
-  border: 1px solid #333941;
+  background-color: var(--black-4);
+  border: 1px solid var(--dark-grey-1);
   border-top: none;
   padding: 0;
   position: absolute;
@@ -54,13 +56,13 @@
 }
 
 .user-notifications-menu .menu li {
-  color: #aaa;
+  color: var(--light-grey-10);
   font-size: 14px;
   font-weight: 300;
 }
 
 .user-notifications-menu .menu li:hover {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .user-notifications-menu .menu li.no {
@@ -71,24 +73,24 @@
 }
 
 .user-notifications-menu .menu li.no .icon {
-  color: #333941;
+  color: var(--dark-grey-1);
   font-size: 92px;
   padding-bottom: 8px;
 }
 
 .user-notifications-menu .menu li.no .title {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 16px;
 }
 
 .user-notifications-menu .menu li.no .description {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 12px;
   padding-top: 4px;
 }
 
 .user-notifications-menu .menu .see-all {
-  border-top: 1px solid #333941;
+  border-top: 1px solid var(--dark-grey-1);
 }
 
 .user-notifications-menu .menu .see-all a {
@@ -99,6 +101,6 @@
 }
 
 .user-notifications-menu .menu .see-all a:hover {
-  background: #3f4752;
-  color: #ffffff;
+  background: var(--dark-grey-2);
+  color: var(--white-4);
 }

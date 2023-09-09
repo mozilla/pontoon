@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 .menu.left-column {
   float: left;
   width: 300px;
@@ -8,11 +10,11 @@
 }
 
 .menu.left-column li.selected {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .menu.left-column li.selected a {
-  color: #ffffff;
+  color: var(--white-4);
 }
 
 .menu.left-column li {
@@ -26,12 +28,12 @@
 }
 
 .menu.left-column .count {
-  background: #333941;
+  background: var(--dark-grey-1);
   float: right;
 }
 
 .menu.right-column {
-  background: #333941;
+  background: var(--dark-grey-1);
   float: right;
   width: 640px;
 }

@@ -1,7 +1,9 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .machinery .translation mark.search {
-  color: #ffa10f;
+  color: var(--orange-1);
   font-weight: normal;
   font-style: inherit;
-  background: #676054;
+  background: var(--brown-1);
   border-radius: 2px;
 }
