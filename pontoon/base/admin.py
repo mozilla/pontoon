@@ -1,3 +1,4 @@
+import csv
 import uuid
 
 from django.contrib import admin, messages
@@ -6,6 +7,7 @@ from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import User
 from django.forms import ChoiceField
 from django.forms.models import ModelForm
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from guardian.admin import GuardedModelAdmin
@@ -253,6 +255,72 @@ class ProjectAdmin(GuardedModelAdmin):
         ExternalProjectResourceInline,
     )
 
+    actions = ["export_project_translation_stats_to_CSV"]
+
+    @admin.action(description="Export translations and stats to CSV")
+    def export_project_translation_stats_to_CSV(self, request, queryset):
+        """
+        Export untranslated strings to CSV.
+        """
+
+        if queryset.count() != 1:
+            self.message_user(
+                request,
+                "Please select one and only one project to export.",
+                level=messages.ERROR,
+            )
+            return
+        p = queryset.first()
+        project_locales = p.project_locale.all()
+        pl_names = [ pl.locale.name for pl in project_locales ]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{p.slug}_approved_translations_or_stats.csv"'
+
+        headers = ['Project', 'Resource', "Source Strings"] + pl_names
+        writer = csv.writer(response,  quoting=csv.QUOTE_ALL)
+        writer.writerow(headers)
+
+        csv_dict = { field: [] for field in headers}
+        for resource in p.resources.all():
+            all_resource_entities = resource.entities.all()
+            for i, pl in enumerate(project_locales):
+                # l = pl.locale
+                # q = Q(Q(resource__project__id=p.id) & Q(resource__id=resource.id) & ~Entity.objects.translated(l, p))
+                # untranslated_entities = Entity.objects.filter(q)
+                if i == 0:
+                    csv_dict['Project'] += [ p.name ] * len(all_resource_entities)
+                    csv_dict['Resource'] += [ resource.path ] * len(all_resource_entities)
+                for entity in all_resource_entities:
+                    if i == 0:
+                        csv_dict['Source Strings'].append(entity.string)
+                    if translation := entity.translation_set.filter(active=True, locale_id=pl.locale.id).first():
+                        if translation.approved:
+                            mark = translation.string
+                        elif translation.pretranslated:
+                            mark = 'PRETRANSLATED'
+                        elif translation.rejected:
+                            mark = 'REJECTED'
+                        elif translation.fuzzy:
+                            mark = 'FUZZY'
+                        else:
+                            mark = 'UNREVIEWED'
+                    else:
+                        mark = 'MISSING'
+                    csv_dict[pl.locale.name].append(mark)
+        
+        columns = [ column for column in csv_dict.values() ]
+        rows = list(zip(*columns))
+        writer.writerows(rows)
+
+        self.message_user(
+            request,
+            "CSV file generated.",
+            level=messages.INFO,
+        )
+        return response
+
+
 
 class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
@@ -270,7 +338,6 @@ class ProjectLocaleAdmin(GuardedModelAdmin):
                 f"Project Locale has been enabled to have custom translators: {project_locale.__str__()}",
                 level=messages.INFO,
             )
-
 
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ["path", "format", "project__name", "project__slug"]

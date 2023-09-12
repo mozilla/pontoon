@@ -4,10 +4,6 @@
 version: '2.3'
 services:
   server:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-      target: server
     image: local/pontoon
     command:
       [
@@ -16,7 +12,7 @@ services:
         "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
       ]
     env_file:
-      - docker/config/dev.env
+      - .env
     depends_on:
       - postgresql
     ports:
