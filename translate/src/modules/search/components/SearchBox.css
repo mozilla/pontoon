@@ -1,14 +1,16 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .search-box {
   margin: 9px 5px 11px;
   position: static;
 }
 
 .search-box input[type='search'] {
-  background: #333941;
+  background: var(--dark-grey-1);
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: #fff;
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -28,11 +30,11 @@
 
 /* Style placeholder color in Chrome */
 .search-box input[type='search']::-webkit-input-placeholder {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
 }
 
 .search-box > label {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   cursor: text;
   font-size: 17px;
   left: auto;
@@ -53,7 +55,7 @@
 }
 
 .search-box .status.fa::before {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   content: '';
 }
 
@@ -63,27 +65,27 @@
 }
 
 .search-box .translated .status:before {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .search-box .pretranslated .status:before {
-  color: #c0ff00;
+  color: var(--neon-green);
 }
 
 .search-box .warnings .status:before {
-  color: #ffa10f;
+  color: var(--orange-1);
 }
 
 .search-box .errors .status:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .search-box .missing .status:before {
-  color: #5f7285;
+  color: var(--blue-2);
 }
 
 .search-box .unreviewed .status:before {
-  color: #4fc4f6;
+  color: var(--light-blue);
   content: '';
   font-size: 18px;
 }

@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .project-menu {
   font-weight: 100;
 }
@@ -21,19 +23,19 @@
 }
 
 .project-menu.closed .selector:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 .project-menu .selector .icon {
-  color: #7bc876;
+  color: var(--light-green-1);
   padding-left: 7px;
 }
 
 .project-menu .menu {
-  background-color: #272a2f;
-  border: 1px solid #333941;
+  background-color: var(--black-4);
+  border: 1px solid var(--dark-grey-1);
   border-top: none;
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   line-height: 1.231em;
   list-style: none;
   padding: 10px 12px;
@@ -50,7 +52,7 @@
 }
 
 .project-menu .menu .search-wrapper .icon {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 1.2em;
   position: absolute;
   left: 6px;
@@ -59,10 +61,10 @@
 }
 
 .project-menu .menu .search-wrapper input[type='search'] {
-  color: #ffffff;
+  color: var(--white-4);
   padding: 4px 3px 3px 25px;
-  background: #333941;
-  border: 1px solid #4d5967;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--grey-3);
   border-radius: 3px;
   font-weight: 300;
   height: 28px;
@@ -93,17 +95,17 @@
 }
 
 .project-menu .menu .static-links {
-  border-top: 1px solid #5e6475;
+  border-top: 1px solid var(--light-grey-1);
   margin-top: 5px;
   padding-top: 5px;
 }
 
 .project-menu .menu .current a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .project-menu .menu .header {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   padding: 5px 4px;
   overflow: auto;
   font-size: 13px;

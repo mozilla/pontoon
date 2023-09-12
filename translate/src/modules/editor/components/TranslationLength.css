@@ -1,10 +1,10 @@
-.translation-length {
-  color: #aaaaaa;
+@import '../../../../../pontoon/static/css/dark-theme.css' .translation-length {
+  color: var(--light-grey-8);
   float: left;
   line-height: 22px;
   padding: 9px 5px;
 }
 
 .translation-length .countdown .overflow {
-  color: #f36;
+  color: var(--red-pink);
 }

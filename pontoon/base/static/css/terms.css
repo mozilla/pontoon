@@ -1,12 +1,14 @@
+@import '../../../static/css/dark-theme.css';
+
 #main .container {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   font-size: 16px;
   font-weight: 300;
 }
 
 #main a:link,
 #main a:visited {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #main p,
@@ -16,7 +18,7 @@
 }
 
 #main dt {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 28px;
   padding-bottom: 10px;
 }

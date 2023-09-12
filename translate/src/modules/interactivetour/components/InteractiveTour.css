@@ -1,5 +1,7 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 #___reactour .interactive-tour {
-  color: #2d2323;
+  color: var(--black-brown);
   margin: -15px;
 }
 
@@ -16,5 +18,5 @@
 }
 
 .interactive-tour p a {
-  color: #f36;
+  color: var(--red-pink);
 }

@@ -1,12 +1,13 @@
-.resource-menu .menu li.no-results,
-.resource-menu .menu li a {
+@import '../../../../../pontoon/static/css/dark-theme.css' .resource-menu .menu
+    li.no-results,
+  .resource-menu .menu li a {
   display: block;
   padding: 2px 4px;
 }
 
 .resource-menu .menu li a:hover {
-  background: #3f4752;
-  color: #fff;
+  background: var(--dark-grey-2);
+  color: var(--white-1);
 }
 
 .resource-menu .menu li a .path {

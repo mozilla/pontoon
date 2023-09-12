@@ -1,11 +1,13 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .other-locales .translation {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
   padding: 10px;
 }
 
 .other-locales ul.preferred-list .translation:last-child {
-  border-bottom-color: #7bc876;
+  border-bottom-color: var(--light-green-1);
 }
 
 .other-locales .translation.cannot-copy {
@@ -14,12 +16,12 @@
 
 .other-locales .translation:not(.cannot-copy):hover,
 .other-locales .translation.selected {
-  background: #333941;
-  border-color: #5e6475;
+  background: var(--dark-grey-1);
+  border-color: var(--light-grey-1);
 }
 
 .other-locales .translation > header {
-  color: #aaaaaa;
+  color: var(--light-grey-8);
   display: block;
   font-size: 11px;
   font-weight: 300;
@@ -29,7 +31,7 @@
 }
 
 .other-locales .translation > header span {
-  color: #7bc876;
+  color: var(--light-green-1);
   padding-left: 3px;
 }
 

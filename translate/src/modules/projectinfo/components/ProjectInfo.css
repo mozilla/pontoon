@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .project-info {
   float: left;
   font-size: 14px;
@@ -13,9 +15,9 @@
 }
 
 .project-info .panel {
-  background: #272a2f;
+  background: var(--black-4);
   bottom: auto;
-  color: #aaa;
+  color: var(--light-grey-10);
   padding: 10px 12px;
   position: absolute;
   top: 59px;
@@ -24,7 +26,7 @@
 }
 
 .project-info .panel h2 {
-  color: #888888;
+  color: var(--light-grey-3);
   font-size: 14px;
   font-weight: 300;
   margin-bottom: 15px;
@@ -36,5 +38,5 @@
 }
 
 .project-info .panel a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

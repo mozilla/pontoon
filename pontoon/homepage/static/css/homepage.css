@@ -1,3 +1,5 @@
+@import '../../../static/css/dark-theme.css';
+
 /* General styles */
 
 :root {
@@ -14,7 +16,7 @@ body > header {
 }
 
 body > header.menu-opened {
-  border-color: #333941;
+  border-color: var(--dark-grey-1);
 }
 
 #main {
@@ -24,7 +26,7 @@ body > header.menu-opened {
 }
 
 #main p {
-  color: #dddddd;
+  color: var(--white-6);
   line-height: 1.5rem;
 }
 
@@ -42,7 +44,7 @@ body > header.menu-opened {
 }
 
 .section {
-  color: #f4f4f4;
+  color: var(--white-2);
 }
 
 .section .container {
@@ -62,7 +64,7 @@ body > header.menu-opened {
 }
 
 h2 {
-  color: #ffffff;
+  color: var(--white-4);
   font-weight: 700;
   font-size: 36px;
   letter-spacing: -1px;
@@ -72,8 +74,8 @@ h2 {
 }
 
 #main .button {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--white-4);
+  color: var(--black-2);
   display: flex;
   border-radius: 2px;
   width: 240px;
@@ -85,7 +87,7 @@ h2 {
 }
 
 #main .button.primary {
-  background-color: #7bc876;
+  background-color: var(--light-green-1);
 }
 
 .flex {
@@ -143,7 +145,7 @@ nav#sections ul li:hover a.active span {
   width: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 100%;
-  background-color: #7bc876;
+  background-color: var(--light-green-1);
 }
 
 nav#sections ul li a span {
@@ -153,7 +155,7 @@ nav#sections ul li a span {
   height: 4px;
   width: 4px;
   border: 0;
-  background-color: #888888;
+  background-color: var(--light-grey-3);
   left: 50%;
   top: 50%;
   margin: -2px 0 0 -2px;
@@ -186,8 +188,8 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #edit-homepage .button {
-  background: #7bc876;
-  color: #000;
+  background: var(--light-green-1);
+  color: var(--black-3);
 }
 
 #edit-homepage .fa {
@@ -238,8 +240,8 @@ body.addon-promotion-active #edit-homepage .select {
 
 #section-1 .scroll::after {
   content: '';
-  border-right: 2px solid #7bc876;
-  border-bottom: 2px solid #7bc876;
+  border-right: 2px solid var(--light-green-1);
+  border-bottom: 2px solid var(--light-green-1);
   width: 30px;
   height: 30px;
   position: absolute;
@@ -271,7 +273,7 @@ body.addon-promotion-active #edit-homepage .select {
   margin-top: 40px;
   width: 2px;
   height: 290px;
-  background-color: #7bc876;
+  background-color: var(--light-green-1);
 }
 
 #section-3 ol {
@@ -285,16 +287,16 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 li {
-  color: #dddddd;
+  color: var(--white-6);
   counter-increment: item;
   margin: 40px 0;
 }
 
 #section-3 li:before {
-  background-color: #272a2f;
-  border: 2px solid #7bc876;
+  background-color: var(--black-4);
+  border: 2px solid var(--light-green-1);
   border-radius: 100%;
-  color: #ffffff;
+  color: var(--white-4);
   content: counter(item);
   display: inline-block;
   font-size: 20px;
@@ -307,7 +309,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 .checkmark {
-  background-color: #7bc876;
+  background-color: var(--light-green-1);
   border-radius: 100%;
   width: 54px;
   height: 39px;
@@ -324,7 +326,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box {
-  border: 2px solid #4d5967;
+  border: 2px solid var(--grey-3);
   border-radius: 3px;
   margin-left: 20px;
   padding: 10px;
@@ -334,7 +336,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box .box-image {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 35px;
   margin-bottom: 10px;
 }
@@ -354,7 +356,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-5 img {
-  border: 2px solid #4d5967;
+  border: 2px solid var(--grey-3);
   border-radius: 3px;
   width: 436px;
 }
@@ -401,9 +403,9 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer a {
-  color: #ffffff;
+  color: var(--white-4);
 }
 
 #section-6 .footer a:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

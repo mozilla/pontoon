@@ -1,12 +1,61 @@
+@import '../../../static/css/dark-theme.css';
+
 #insights .block {
   border-radius: 6px;
-  background: #333941;
+  background: var(--dark-grey-1);
   overflow: hidden;
   padding: 30px;
 }
 
+/* Chart group */
+
+#insights .chart-group {
+  width: 1000px;
+  overflow: hidden;
+  transition: margin 0.4s ease-in-out;
+}
+
+#insights .chart-group .chart-item {
+  float: left;
+  padding-right: 60px;
+}
+
+#insights .chart-group-navigation {
+  text-align: center;
+}
+
+#insights .chart-group-navigation ul li {
+  cursor: pointer;
+  display: inline-block;
+  margin: 15px 15px 0;
+}
+
+#insights .chart-group-navigation ul li .icon {
+  background-color: var(--black-4);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+#insights .chart-group-navigation ul li .label {
+  color: var(--grey-3);
+  cursor: pointer;
+  font-weight: bold;
+  vertical-align: text-top;
+}
+
+#insights .chart-group-navigation ul li.active .icon {
+  background-color: var(--light-blue);
+}
+
+#insights .chart-group-navigation ul li.active .label {
+  color: var(--white-4);
+}
+
 #insights h3 {
-  color: #ebebeb;
+  color: var(--white-4);
   font-size: 20px;
   font-style: normal;
   font-weight: bold;
@@ -18,8 +67,8 @@
 /* Tooltip */
 
 #insights .controls .selector {
-  background: #3f4752;
-  color: #aaa;
+  background: var(--dark-grey-2);
+  color: var(--light-grey-10);
   cursor: pointer;
   width: 24px;
   height: 24px;
@@ -37,11 +86,11 @@
 
 #insights h3 .fa.active,
 #insights h3 .fa:hover {
-  background: #272a2f;
+  background: var(--black-4);
 }
 
 #insights h3 .tooltip {
-  background: #000000dd;
+  background: var(--black-3) 000dd;
   position: absolute;
   display: none;
   margin-top: 10px;

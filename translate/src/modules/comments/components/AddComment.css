@@ -1,3 +1,5 @@
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
 .comments-list .add-comment div.container {
   flex-flow: row nowrap;
   align-items: flex-end;
@@ -5,10 +7,10 @@
 }
 
 .comments-list .add-comment .comment-editor {
-  background-color: #333941;
+  background-color: var(--dark-grey-1);
   border: none;
   border-radius: 4px;
-  color: #ffffff;
+  color: var(--white-4);
   display: flex;
   flex-grow: 2;
   font-size: 11px;
@@ -25,7 +27,7 @@
 }
 
 .comments-list .add-comment .comment-editor .mention-element {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .comments-mention-list {
@@ -34,8 +36,8 @@
   position: absolute;
   z-index: 1;
   padding: 10px 12px;
-  background-color: #272a2f;
-  border: 1px solid #333941;
+  background-color: var(--black-4);
+  border: 1px solid var(--dark-grey-1);
 }
 
 .comments-mention-list .mention {
@@ -45,7 +47,7 @@
 
 .comments-mention-list .mention:hover,
 .comments-mention-list .active-mention {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .comments-mention-list .mention .user-avatar {
@@ -55,7 +57,7 @@
 
 .comments-mention-list .mention .user-avatar img {
   border-radius: 2px;
-  border: 1px solid #5e6475;
+  border: 1px solid var(--light-grey-1);
   margin-right: 8px;
 }
 
@@ -64,10 +66,10 @@
 }
 
 .comments-list .add-comment .submit-button {
-  background-color: #4d5967;
-  border: solid 1px #4d5967;
+  background-color: var(--grey-3);
+  border: solid 1px var(--grey-3);
   border-radius: 4px;
-  color: #ccc;
+  color: var(--light-grey-7);
   display: flex;
   align-items: center;
   flex-shrink: 0;
@@ -78,8 +80,8 @@
 }
 
 .comments-list .add-comment .submit-button:hover:not(:disabled) {
-  color: #272a2f;
-  background: #7bc876;
+  color: var(--black-4);
+  background: var(--light-green-1);
 }
 
 .comments-list .add-comment .submit-button:disabled {

@@ -1,4 +1,4 @@
-.tag-resources {
+@import '../../pontoon/static/css/dark-theme.css' .tag-resources {
   text-align: left;
 }
 
@@ -8,11 +8,11 @@
 }
 
 .tag-resources .rt-table {
-  color: white;
+  color: var(--white-5);
 }
 
 .tag-resource-widget {
-  background: #999;
+  background: var(--taupe-2);
   margin-bottom: 2em;
   padding-bottom: 0.3em;
 }
@@ -23,7 +23,7 @@
 }
 
 .tag-resources .ReactTable .pagination-bottom .-pageInfo {
-  color: #333;
+  color: var(--black-9);
 }
 
 .tag-resources .rt-th {

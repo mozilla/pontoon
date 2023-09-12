@@ -1,4 +1,4 @@
-.comments-list {
+@import '../../../../../pontoon/static/css/dark-theme.css' .comments-list {
   line-height: 22px;
   padding: 8px 0;
 }
@@ -8,14 +8,14 @@
 }
 
 .comments-list .pinned-comments .title {
-  color: #aaa;
+  color: var(--light-grey-10);
   font-size: 11px;
   font-weight: 100;
   margin-bottom: 6px;
 }
 
 .comments-list .pinned-comments ul {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   margin-bottom: 8px;
 }
 
@@ -34,7 +34,7 @@
 
 .comments-list .comment .user-avatar img {
   border-radius: 4px;
-  border: 2px solid #5e6475;
+  border: 2px solid var(--light-grey-1);
   width: 32px;
   height: 32px;
 }

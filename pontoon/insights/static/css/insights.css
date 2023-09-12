@@ -1,10 +1,142 @@
+@import '../../../static/css/dark-theme.css';
+
+#insights .half {
+  width: 470px;
+  float: left;
+}
+
+#insights .half:last-child {
+  float: right;
+}
+
 #insights .block {
   margin-bottom: 40px;
 }
 
 #insights .block .chart-wrapper {
   float: right;
-  width: 680px;
+  font-size: 0;
+  margin-right: 10px;
+}
+
+#insights .controls .period-selector li {
+  display: inline-block;
+}
+
+#insights .controls .period-selector li .selector {
+  font-size: 12px;
+  text-transform: uppercase;
+  width: 32px;
+}
+
+#insights .controls .period-selector li .selector.active,
+#insights .controls .period-selector li .selector:hover {
+  background: #7bc876;
+  color: #272a2f;
+}
+
+/* Active users */
+
+#insights .active-users-chart {
+  height: 160px;
+}
+
+#insights .active-users-chart {
+  float: left;
+  margin-right: 40px;
+  position: relative;
+  text-align: center;
+}
+
+#insights .active-users-chart:last-child {
+  margin-right: 0;
+}
+
+#insights .active-users-chart h4 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px auto 0;
+  width: 100px;
+}
+
+#insights .active-users-chart .active-wrapper {
+  left: 0;
+  right: 0;
+  top: 15px;
+  position: absolute;
+}
+
+#insights .active-users-chart .active {
+  border-bottom: 2px solid #888888;
+  display: inline-block;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 48px;
+}
+
+#insights .active-users-chart .total {
+  color: #888;
+  font-size: 16px;
+  left: 0;
+  right: 0;
+  top: 68px;
+  position: absolute;
+}
+
+/* Active users info tooltip */
+
+#insights h3 .tooltip li::marker {
+  color: #7bc876;
+}
+
+/* Time to review suggestions and Age of unreviewed info tooltip */
+
+#insights h3 .tooltip li.current-month::marker {
+  color: #4fc4f6;
+}
+
+#insights h3 .tooltip li.twelve-month-average::marker {
+  color: #385465;
+}
+
+/* Translation activity info tooltip */
+
+#insights h3 .tooltip li.human-translations::marker {
+  color: #4f7256;
+}
+
+#insights h3 .tooltip li.machinery-translations::marker {
+  color: #41554c;
+}
+
+#insights h3 .tooltip li.new-source-strings::marker {
+  color: #272a2f;
+}
+
+#insights h3 .tooltip li.completion::marker {
+  color: #7bc876;
+}
+
+/* Review activity info tooltip */
+
+#insights h3 .tooltip li.peer-approved::marker {
+  color: #3e7089;
+}
+
+#insights h3 .tooltip li.self-approved::marker {
+  color: #385465;
+}
+
+#insights h3 .tooltip li.rejected::marker {
+  color: #843650;
+}
+
+#insights h3 .tooltip li.new-suggestions::marker {
+  color: #272a2f;
+}
+
+#insights h3 .tooltip li.unreviewed::marker {
+  color: #4fc4f6;
 }
 
 /* Custom chart legend */
@@ -25,4 +157,26 @@
   display: block;
   margin: 0;
   margin-bottom: 5px;
+}
+
+#insights .legend li .icon {
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+#insights .legend li .label {
+  cursor: pointer;
+  font-weight: bold;
+  vertical-align: text-top;
+}
+
+#insights .legend li.disabled .label {
+  color: #4d5967;
+}
+
+#insights .legend li.disabled .label:hover {
+  color: #fff;
 }
