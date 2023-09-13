@@ -1,7 +1,6 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
-.filters-panel .menu
-  li.for-time-range button {
+.filters-panel .menu li.for-time-range button {
   background: transparent;
   border: none;
   color: var(--light-grey-7);

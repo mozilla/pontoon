@@ -1,7 +1,6 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
-.machinery
-  .translation {
+.machinery .translation {
   border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
   padding: 10px;

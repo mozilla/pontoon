@@ -1,7 +1,6 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
-.metadata
-  .source-string-comment .context-issue-button {
+.metadata .source-string-comment .context-issue-button {
   background: var(--dark-grey-1);
   border: 1px solid var(--dark-grey-2);
   border-radius: 4px;

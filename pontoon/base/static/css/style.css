@@ -468,7 +468,7 @@ tfoot td a {
 }
 
 .select .menu ul li .chart span.missing {
-  background: var(  --blue-2);
+  background: var(--blue-2);
 }
 
 .select .menu ul li .latest {
@@ -1308,7 +1308,7 @@ body > form,
 
 #helpers > section ul li > p del {
   background: var(--purple-pink);
-  color: var(  --coral);
+  color: var(--coral);
 }
 
 #helpers > section ul li > p ins mark,

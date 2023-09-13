@@ -1,7 +1,6 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
-.comments-list ul
-  .comment {
+.comments-list ul .comment {
   padding-bottom: 10px;
 }
 

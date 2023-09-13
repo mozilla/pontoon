@@ -1,8 +1,7 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
-.resource-menu .menu
-    li.no-results,
-  .resource-menu .menu li a {
+.resource-menu .menu li.no-results,
+.resource-menu .menu li a {
   display: block;
   padding: 2px 4px;
 }
