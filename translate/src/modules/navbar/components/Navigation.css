@@ -19,7 +19,7 @@
 }
 
 .navigation > ul > li > a {
-  color: var(--white-4);
+  color: var(--white-1);
   font-weight: 300;
   padding: 0 12px;
 }

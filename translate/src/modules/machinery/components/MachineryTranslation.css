@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .machinery
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.machinery
   .translation {
   border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
@@ -19,7 +21,7 @@
 }
 
 .machinery .translation > header {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: block;
   font-size: 11px;
   font-weight: 300;
@@ -47,7 +49,7 @@
 
 .machinery .translation > header .quality::after {
   content: '•';
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   padding-left: 3px;
 }
 
@@ -70,5 +72,5 @@
 }
 
 .machinery .translation p.original {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }

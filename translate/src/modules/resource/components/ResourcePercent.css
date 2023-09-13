@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .resource-menu .menu
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.resource-menu .menu
   .percent {
   color: var(--light-green-1);
   float: right;

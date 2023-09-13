@@ -8,7 +8,7 @@
 }
 
 .manual-notifications #compose h3 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 22px;
   letter-spacing: 0;
 }
@@ -60,14 +60,14 @@
 }
 
 .manual-notifications #compose .message-wrapper .subtitle {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: left;
   text-transform: uppercase;
 }
 
 .manual-notifications #compose textarea {
-  background: var(--black-4);
-  color: var(--white-4);
+  background: var(--black-3);
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   height: 150px;
@@ -83,5 +83,5 @@
 }
 
 .manual-notifications #sent li.no .icon {
-  color: var(--black-4);
+  color: var(--black-3);
 }

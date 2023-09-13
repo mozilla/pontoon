@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .progress-chart
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.progress-chart
   canvas {
   border-radius: 100%;
 }

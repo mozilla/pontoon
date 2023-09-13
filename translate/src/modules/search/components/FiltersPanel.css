@@ -11,7 +11,7 @@
 }
 
 .filters-panel .visibility-switch {
-  color: var(--white-4);
+  color: var(--white-1);
   cursor: pointer;
   display: inline-block;
   font-weight: 300;
@@ -32,14 +32,14 @@
 }
 
 .filters-panel .visibility-switch:hover .status:before {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 .filters-panel .menu {
-  background: var(--black-4);
+  background: var(--black-3);
   bottom: auto;
   box-sizing: border-box;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: block;
   left: 5px;
   list-style: none;
@@ -62,14 +62,14 @@
 }
 
 .filters-panel .menu li {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   cursor: pointer;
   font-weight: 300;
   padding: 2px 4px;
 }
 
 .filters-panel .menu li:hover {
-  color: var(--white-4);
+  color: var(--white-1);
   background-color: var(--dark-grey-2);
 }
 
@@ -126,14 +126,14 @@
 .filters-panel .menu li .count {
   background: var(--dark-grey-2);
   border-radius: 3px;
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   right: 4px;
   top: 4px;
 }
 
 .filters-panel .menu li:hover .count {
   background: var(--grey-3);
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
 }
 
 .filters-panel .menu li .priority {
@@ -183,13 +183,13 @@
 }
 
 .filters-panel .menu li.author .name {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 16px;
   padding-bottom: 4px;
 }
 
 .filters-panel .menu li.author .role {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }
 
 .filters-panel .menu li.author .count {
@@ -214,7 +214,7 @@
 }
 
 .filters-panel .menu li.author .status:before {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }
 
 .filters-panel .menu li.author.selected .status,
@@ -241,7 +241,7 @@
 .filters-panel .toolbar button {
   background: none;
   border: none;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-weight: 300;
 }
 

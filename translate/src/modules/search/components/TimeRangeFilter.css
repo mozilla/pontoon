@@ -1,8 +1,10 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .filters-panel .menu
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.filters-panel .menu
   li.for-time-range button {
   background: transparent;
   border: none;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   float: right;
   font-weight: 300;
   margin: -3px 4px 0 0;
@@ -34,7 +36,7 @@
 }
 
 .filters-panel .menu li.time-range label {
-  color: var(--white-4);
+  color: var(--white-1);
   float: left;
   font-size: 13px;
 }
@@ -52,7 +54,7 @@
   background: transparent;
   border: 1px solid transparent;
   box-sizing: border-box;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   cursor: pointer;
   display: inline-block;
   font-size: 13px;

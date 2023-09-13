@@ -8,7 +8,7 @@
 
 .editor-settings .selector {
   cursor: pointer;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 22px;
   padding: 9px 5px 9px 0;
 }
@@ -18,9 +18,9 @@
 }
 
 .editor-settings .menu {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   bottom: auto;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   list-style: none;
   margin: 0;
   max-height: 318px;
@@ -33,7 +33,7 @@
 }
 
 .editor-settings .menu li {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   cursor: pointer;
   font-weight: 300;
   padding: 2px 4px;

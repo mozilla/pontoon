@@ -14,7 +14,7 @@
 
 #locale-settings .label,
 .toggle-label {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: left;
   font-size: 16px;
   font-weight: 300;
@@ -33,7 +33,7 @@
 }
 
 #locale-settings .locale-selector .locale.select .button {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 16px;
   font-weight: 400;
   height: 32px;
@@ -42,7 +42,7 @@
 }
 
 #locale-settings .locale-selector .locale.select .button:hover {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #locale-settings .locale-selector .locale.select .menu {
@@ -54,7 +54,7 @@
 }
 
 #display-name {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 48px;
   letter-spacing: normal;
   padding: 10px 0 0;
@@ -79,7 +79,7 @@
 }
 
 #main .field {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 16px;
   margin-bottom: 20px;
   text-align: left;
@@ -100,12 +100,12 @@
 }
 
 #main .field label:hover {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #main .field input,
 #main .field textarea {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   background: var(--dark-grey-1);
   border: 1px solid var(--grey-3);
   border-radius: 3px;
@@ -127,7 +127,7 @@
 }
 
 #main .field .help {
-  color: var(--light-grey-3);
+  color: var(--light-grey-2);
   font-style: italic;
 }
 
@@ -145,7 +145,7 @@
 }
 
 #main .check-list li {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: table;
   font-size: 16px;
   font-weight: 300;
@@ -158,7 +158,7 @@
 }
 
 #main .check-list li:hover {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #main .check-list .fa {

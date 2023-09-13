@@ -16,11 +16,11 @@
 }
 
 .terms-list .term .text {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
 }
 
 .terms-list .term .part-of-speech {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 300;
   padding-left: 3px;
@@ -42,11 +42,11 @@
 }
 
 .terms-list .term .translation {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 .terms-list .term .details {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-style: italic;
   padding: 5px 0 0 15px;
 }

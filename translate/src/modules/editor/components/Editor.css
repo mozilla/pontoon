@@ -1,5 +1,7 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .editor {
-  background: var(--black-7);
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.editor {
+  background: var(--black-3);
   border-bottom: 1px solid var(--light-grey-1);
   display: flex;
   flex-direction: column;

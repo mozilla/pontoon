@@ -22,7 +22,7 @@
 }
 
 .machinery > .search-wrapper > label {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   cursor: text;
   font-size: 17px;
   left: auto;
@@ -34,7 +34,7 @@
 .machinery > .search-wrapper > label > button {
   background-color: transparent;
   border: none;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   padding: 0;
 }
 
@@ -47,7 +47,7 @@
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -69,7 +69,7 @@
 
 /* Style placeholder color in Chrome */
 .machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }
 
 .machinery .load-more-container {
@@ -82,7 +82,7 @@
   background: var(--dark-grey-1);
   border: 1px solid var(--dark-grey-2);
   border-radius: 4px;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 100;
   margin-right: 6px;

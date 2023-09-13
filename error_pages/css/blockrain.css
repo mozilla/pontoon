@@ -1,10 +1,10 @@
-@import '../../pontoon/static/css/dark-theme.css'
+@import '../../pontoon/static/css/dark-theme.css';
 
 .blockrain-game-holder {
   position: relative;
   padding: 0;
   margin: 0;
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 18px;
   line-height: 140%;
 }
@@ -78,9 +78,9 @@
   position: relative;
   display: inline-block;
   background: none;
-  color: var(--white-4);
+  color: var(--white-1);
   text-decoration: none;
-  border: 2px solid var(--white-4);
+  border: 2px solid var(--white-1);
   padding: 15px 30px;
   font-size: 18px;
   text-align: center;
@@ -93,7 +93,7 @@
   left: 0px;
   bottom: 0px;
   right: 0px;
-  border: 2px solid var(--white-4);
+  border: 2px solid var(--white-1);
   border-top: none;
   border-right: none;
   transition: all 0.2s ease;
@@ -105,7 +105,7 @@
   left: 100%;
   bottom: 0px;
   right: 0px;
-  border: 2px solid var(--white-4);
+  border: 2px solid var(--white-1);
   border-left: none;
   border-bottom: none;
   transition: all 0.2s ease;

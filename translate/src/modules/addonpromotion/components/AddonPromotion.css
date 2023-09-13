@@ -5,7 +5,7 @@
 }
 
 .addon-promotion {
-  background: var(--black-4);
+  background: var(--black-3);
   border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
@@ -25,13 +25,13 @@
 .addon-promotion .dismiss {
   background: transparent;
   border: none;
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 28px;
   padding: 0;
 }
 
 .addon-promotion .dismiss:hover {
-  color: var(--black-4);
+  color: var(--black-3);
 }
 
 .addon-promotion .text {
@@ -39,9 +39,9 @@
 }
 
 .addon-promotion .get {
-  background: var(--black-4);
+  background: var(--black-3);
   border-radius: 3px;
-  color: var(--white-4);
+  color: var(--white-1);
   font-weight: normal;
   margin-left: auto;
   padding: 7px 12px;

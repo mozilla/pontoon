@@ -19,7 +19,7 @@
 
 .lightbox {
   align-items: center;
-  background-color: var(--black-5);
+  background-color: var(--black-4);
   cursor: zoom-out;
   display: flex;
   height: 100%;

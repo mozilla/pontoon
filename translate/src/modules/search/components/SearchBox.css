@@ -30,11 +30,11 @@
 
 /* Style placeholder color in Chrome */
 .search-box input[type='search']::-webkit-input-placeholder {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }
 
 .search-box > label {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   cursor: text;
   font-size: 17px;
   left: auto;
@@ -55,7 +55,7 @@
 }
 
 .search-box .status.fa::before {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   content: '';
 }
 

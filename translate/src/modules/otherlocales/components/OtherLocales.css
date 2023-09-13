@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .other-locales {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.other-locales {
   line-height: 22px;
 }
 
@@ -8,7 +10,7 @@
 }
 
 .other-locales > p {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-style: italic;
   padding: 15px 10px;
 }

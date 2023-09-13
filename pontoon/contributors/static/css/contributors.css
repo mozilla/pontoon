@@ -53,7 +53,7 @@ body.top-contributors #heading .legend li .status.fa {
 }
 
 .contributor p.role {
-  color: var(--white-4);
+  color: var(--white-1);
   left: 67px;
   position: absolute;
   top: 42px;
@@ -70,7 +70,7 @@ body.top-contributors #heading .legend li .status.fa {
 }
 
 .details div p {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 th:last-child,

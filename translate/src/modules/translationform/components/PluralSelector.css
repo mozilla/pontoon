@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .plural-selector ul {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.plural-selector ul {
   display: table;
   line-height: 22px;
   table-layout: fixed;
@@ -26,7 +28,7 @@
 .plural-selector ul li button {
   background: none;
   border: none;
-  color: var(--light-grey-7);
+  color: var(--light-grey-6);
   cursor: pointer;
   display: block;
   font-weight: 300;

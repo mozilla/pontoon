@@ -1,7 +1,7 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
 .entity {
-  color: var(--white-5);
+  color: var(--white-1);
   cursor: pointer;
   line-height: 2rem;
   padding: 10px 25px 10px 43px;
@@ -43,7 +43,7 @@
 }
 
 .entity .translation-string {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   min-height: 20px;
   text-align: start;
 }
@@ -102,7 +102,7 @@
 }
 
 .entity .sibling-entities-icon {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   left: 17px;
   top: 39px;
   position: absolute;

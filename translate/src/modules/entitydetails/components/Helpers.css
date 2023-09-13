@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .third-column .top {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.third-column .top {
   border-bottom: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   height: calc(40% + 21px);
@@ -29,7 +31,7 @@
   border-bottom: 1px solid var(--light-grey-1);
   border-right: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   cursor: pointer;
   display: table-cell;
   font-weight: 300;
@@ -63,7 +65,7 @@
 .react-tabs span.count {
   background: var(--dark-grey-2);
   border-radius: 3px;
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   font-weight: 300;
   margin-left: 3px;
   padding: 0 5px;

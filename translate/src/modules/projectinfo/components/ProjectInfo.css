@@ -15,9 +15,9 @@
 }
 
 .project-info .panel {
-  background: var(--black-4);
+  background: var(--black-3);
   bottom: auto;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   padding: 10px 12px;
   position: absolute;
   top: 59px;
@@ -26,7 +26,7 @@
 }
 
 .project-info .panel h2 {
-  color: var(--light-grey-3);
+  color: var(--light-grey-2);
   font-size: 14px;
   font-weight: 300;
   margin-bottom: 15px;

@@ -2,7 +2,9 @@
  * All styles are related to forms visible for the contributor.
  */
 
-@import '../../../static/css/dark-theme.css' form.user-locales-settings {
+@import '../../../static/css/dark-theme.css';
+
+form.user-locales-settings {
   width: 620px;
 }
 

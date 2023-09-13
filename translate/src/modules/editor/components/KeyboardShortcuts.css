@@ -1,7 +1,7 @@
 @import '../../../../../pontoon/static/css/dark-theme.css';
 
 .keyboard-shortcuts {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   cursor: pointer;
   float: left;
 }
@@ -12,7 +12,7 @@
 }
 
 .keyboard-shortcuts .overlay {
-  background: var(--black-4);
+  background: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   font-size: 13px;
   width: 400px;

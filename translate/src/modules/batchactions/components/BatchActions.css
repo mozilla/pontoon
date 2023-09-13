@@ -12,7 +12,7 @@
 }
 
 .batch-actions .topbar .selecting {
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   float: right;
   margin-top: 2px;
 }
@@ -20,7 +20,7 @@
 .batch-actions .topbar button {
   background: none;
   border: none;
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   font-weight: 300;
   padding: 0;
 }
@@ -66,14 +66,14 @@
 }
 
 .batch-actions .actions-panel h2 {
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 2px;
 }
 
 .batch-actions .actions-panel .intro p {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-style: italic;
 }
 
@@ -91,7 +91,7 @@
   background: var(--light-green-1);
   border: none;
   border-radius: 3px;
-  color: var(--black-4);
+  color: var(--black-3);
   font-weight: 600;
   margin-top: 10px;
   padding: 15px 5px;
@@ -113,7 +113,7 @@
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--light-grey-1);
-  color: var(--white-4);
+  color: var(--white-1);
   float: none;
   margin-bottom: 10px;
   padding: 15px 0 5px;
@@ -131,5 +131,5 @@
 
 /* Style placeholder color in Chrome */
 .batch-actions .actions-panel input::-webkit-input-placeholder {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }

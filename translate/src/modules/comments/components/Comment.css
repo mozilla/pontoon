@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .comments-list ul
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.comments-list ul
   .comment {
   padding-bottom: 10px;
 }
@@ -36,7 +38,7 @@
 
 .comments-list .comment .content p,
 .comments-list .comment .content span {
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
 }
 
 .comments-list .comment .content p:first-child {
@@ -44,7 +46,7 @@
 }
 
 .comments-list .comment .info {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 300;
   margin-top: -2px;
@@ -59,7 +61,7 @@
 .comments-list .comment .info .pin-button {
   background-color: transparent;
   border: none;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 300;
   padding: 0;

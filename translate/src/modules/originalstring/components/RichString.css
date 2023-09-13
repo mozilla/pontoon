@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .fluent-rich-string {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.fluent-rich-string {
   line-height: 22px;
   padding: 10px;
   margin-bottom: 6px;
@@ -17,7 +19,7 @@
   background: transparent;
   border: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: block;
   font-weight: normal;
   margin: 2px 5px 2px 0;

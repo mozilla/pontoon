@@ -86,7 +86,7 @@ h1 {
 
 mark {
   background: #ff0;
-  color: var(--black-3);
+  color: var(--black-2);
 }
 
 small {
@@ -205,7 +205,7 @@ input[type='search']::-webkit-search-decoration {
 }
 
 fieldset {
-  border: 1px solid var(--light-grey-11);
+  border: 1px solid var(--light-grey-8);
   margin: 0 2px;
   padding: 0.35em 0.625em 0.75em;
 }
@@ -250,13 +250,13 @@ section header h1 {
 section header h1:after,
 section header h1:before {
   content: '**********';
-  color: var(--taupe);
+  color: var(--taupe-1);
   padding: 0 10px;
   font-size: 0.7em;
 }
 
 section header p {
-  color: var(--taupe);
+  color: var(--taupe-1);
   font-size: 1.2em;
   margin-top: 10px;
 }
@@ -273,7 +273,7 @@ header {
 }
 
 header h1 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 40px;
   line-height: 50px;
   margin-bottom: -5px;
@@ -437,7 +437,7 @@ section.versus .game {
 }
 
 #features .feature p {
-  color: var(--taupe);
+  color: var(--taupe-1);
 }
 
 #features:after {
@@ -524,7 +524,7 @@ section.versus .game {
 
 .example .game .blockrain-start-msg,
 .example .game .blockrain-game-over-msg {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 14px;
   position: absolute;
   top: -16px;
@@ -545,7 +545,7 @@ section.versus .game {
   bottom: 3px;
   border: none;
   background: var(--light-green-1);
-  color: var(--black-3);
+  color: var(--black-2);
   text-transform: uppercase;
   font-weight: bold;
   margin-left: 55px;
@@ -741,7 +741,7 @@ section.versus .game {
 }
 
 footer a {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 14px;
   text-decoration: none;
 }

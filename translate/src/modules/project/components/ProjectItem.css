@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .project-menu .menu
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.project-menu .menu
     li.no-results,
   .project-menu .menu li a {
   display: block;

@@ -16,8 +16,8 @@ button {
 }
 
 body {
-  background: var(--black-4);
-  color: var(--white-4);
+  background: var(--black-3);
+  color: var(--white-1);
 }
 
 body,
@@ -29,7 +29,7 @@ html,
 
 a:link,
 a:visited {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-weight: 300;
   text-decoration: none;
 }

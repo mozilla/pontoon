@@ -120,7 +120,7 @@ table.table.project-list.hidden {
 }
 
 .table a {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 .table a:hover {
@@ -173,7 +173,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity time:hover {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 .table .latest-activity .tooltip {
@@ -181,7 +181,7 @@ table.table.project-list.hidden {
   background: var(--black-1);
   border-radius: 10px;
   bottom: 30px;
-  color: var(--white-4);
+  color: var(--white-1);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -214,7 +214,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer {
-  color: var(--light-grey-3);
+  color: var(--light-grey-2);
   font-style: italic;
   height: 48px;
   margin-top: 10px;
@@ -335,7 +335,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li a {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: block;
   margin-top: -5px;
 }
@@ -364,7 +364,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.missing .title {
-  color: #var(--light-grey-6);
+  color: var(--light-grey-5);
 }
 
 .table .progress .legend li.unreviewed .title {
@@ -372,7 +372,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.all .title {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
 }
 
 .table .progress .legend li .value {

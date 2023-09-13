@@ -1,7 +1,9 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .editor .ftl {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.editor .ftl {
   background: transparent;
   border: 0;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: left;
   font-size: 18px;
   font-weight: bold;

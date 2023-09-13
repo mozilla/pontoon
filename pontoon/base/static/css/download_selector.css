@@ -14,7 +14,7 @@
   background: var(--dark-grey-2);
   border-radius: 3px;
   box-sizing: border-box;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 16px;
   height: 32px;
   width: 32px;
@@ -23,11 +23,11 @@
 }
 
 .download-selector .selector .fa:hover {
-  background: var(--black-4);
+  background: var(--black-3);
 }
 
 .download-selector.opened .selector .fa {
-  background: var(--black-4);
+  background: var(--black-3);
   border-radius: 2px 2px 0 0;
 }
 

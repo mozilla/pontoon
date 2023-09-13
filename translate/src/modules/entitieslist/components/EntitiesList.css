@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .entities {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.entities {
   background-color: var(--dark-grey-2);
   height: calc(100% - 53px);
   overflow-y: auto;
@@ -27,7 +29,7 @@
 }
 
 .entities .no-results {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 28px;
   font-style: italic;
   font-weight: 300;

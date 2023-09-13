@@ -1,8 +1,10 @@
-@import '../../../../pontoon/pontoon/static/css/dark-theme.css' ul.errors {
+@import '../../../../pontoon/pontoon/static/css/dark-theme.css';
+
+ul.errors {
   padding: 0.3em;
   margin: 0;
   list-style: none;
-  background: var(--light-grey-7);
+  background: var(--light-grey-6);
 }
 
 ul.errors li.error {

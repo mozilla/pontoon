@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .entity-navigation {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.entity-navigation {
   background: var(--grey-3);
   border-bottom: 1px solid var(--light-grey-1);
   padding: 12px 10px 13px;
@@ -7,7 +9,7 @@
 .entity-navigation button {
   background: none;
   border: none;
-  color: var(--light-grey-9);
+  color: var(--light-grey-6);
   float: right;
   font-weight: 300;
   padding: 0;

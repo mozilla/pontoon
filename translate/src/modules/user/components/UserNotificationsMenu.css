@@ -21,7 +21,7 @@
 
 .user-notifications-menu .selector .badge {
   background: var(--red-pink);
-  border: 3px solid var(--black-4);
+  border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);
   font-size: 12px;
@@ -37,7 +37,7 @@
 }
 
 .user-notifications-menu .menu {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   border-top: none;
   padding: 0;
@@ -56,7 +56,7 @@
 }
 
 .user-notifications-menu .menu li {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 14px;
   font-weight: 300;
 }
@@ -79,12 +79,12 @@
 }
 
 .user-notifications-menu .menu li.no .title {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 16px;
 }
 
 .user-notifications-menu .menu li.no .description {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 12px;
   padding-top: 4px;
 }
@@ -102,5 +102,5 @@
 
 .user-notifications-menu .menu .see-all a:hover {
   background: var(--dark-grey-2);
-  color: var(--white-4);
+  color: var(--white-1);
 }

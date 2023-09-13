@@ -21,7 +21,7 @@
   background: transparent;
   border: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   display: block;
   font-weight: normal;
   margin: 2px 5px 2px 0;
@@ -62,7 +62,7 @@
 .translationform .accesskeys .key {
   border: 1px solid var(--light-grey-1);
   background: var(--grey-3);
-  color: var(--white-4);
+  color: var(--white-1);
   cursor: pointer;
   display: inline-block;
   line-height: 22px;

@@ -1,4 +1,6 @@
-@import '../../../static/css/dark-theme.css' a.avatar {
+@import '../../../static/css/dark-theme.css';
+
+a.avatar {
   display: block;
   margin-bottom: 5px;
   position: relative;
@@ -6,7 +8,7 @@
 
 a.avatar .desc {
   bottom: 0;
-  color: var(--white-4);
+  color: var(--white-1);
   display: none;
   font-size: 16px;
   font-weight: bold;

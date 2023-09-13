@@ -1,5 +1,7 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .no-terms {
-  color: var(--light-grey-10);
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.no-terms {
+  color: var(--light-grey-7);
   font-style: italic;
   line-height: 22px;
   padding: 15px 10px;

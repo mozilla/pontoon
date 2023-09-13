@@ -14,7 +14,7 @@ ul {
 }
 
 #heading h1 a {
-  color: var(--white-4);
+  color: var(--white-1);
   font-weight: bold;
   font-size: 32px;
 }
@@ -41,7 +41,7 @@ ul {
 }
 
 #heading .details .title {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   padding-right: 5px;
   position: relative;
   text-transform: uppercase;
@@ -53,12 +53,12 @@ ul {
 }
 
 #heading .details .value {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: right;
 }
 
 #heading .details .value a {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #heading .details .value a:hover {
@@ -104,7 +104,7 @@ ul {
 
 #heading .progress .number:after {
   content: '%';
-  color: var(--light-grey-3);
+  color: var(--light-grey-2);
   display: block;
   font-size: 20px;
   font-weight: 100;
@@ -117,7 +117,7 @@ ul {
 }
 
 #heading .legend li {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   padding-left: 25px;
   position: relative;
   text-align: left;
@@ -125,7 +125,7 @@ ul {
 }
 
 #heading .legend li a {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #heading .legend li:hover a {
@@ -138,12 +138,12 @@ ul {
 }
 
 #heading .legend li span.value {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: right;
 }
 
 #heading .legend li a span.value {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #heading .legend li:hover a span.value {
@@ -155,7 +155,7 @@ ul {
 }
 
 #heading .non-plottable p {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-weight: 300;
   line-height: 24px;
   text-align: right;
@@ -163,7 +163,7 @@ ul {
 }
 
 #heading .non-plottable a p {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #heading .non-plottable a:hover p {

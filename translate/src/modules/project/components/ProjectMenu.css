@@ -32,10 +32,10 @@
 }
 
 .project-menu .menu {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   border-top: none;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   line-height: 1.231em;
   list-style: none;
   padding: 10px 12px;
@@ -52,7 +52,7 @@
 }
 
 .project-menu .menu .search-wrapper .icon {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 1.2em;
   position: absolute;
   left: 6px;
@@ -61,7 +61,7 @@
 }
 
 .project-menu .menu .search-wrapper input[type='search'] {
-  color: var(--white-4);
+  color: var(--white-1);
   padding: 4px 3px 3px 25px;
   background: var(--dark-grey-1);
   border: 1px solid var(--grey-3);

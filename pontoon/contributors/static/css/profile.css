@@ -5,7 +5,7 @@
 }
 
 #main .container .left-column {
-  color: var(--light-grey-7);
+  color: var(--light-grey-6);
   margin-right: 30px;
   width: 260px;
 }
@@ -26,7 +26,7 @@
 }
 
 h2 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 18px;
   font-weight: bold;
   line-height: 1.4em;
@@ -203,7 +203,7 @@ h4.superuser {
 }
 
 #stats > div span {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 14px;
   text-transform: uppercase;
 }
@@ -217,7 +217,7 @@ h4.superuser {
 }
 
 #stats > div p {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 25px;
 }
 
@@ -277,7 +277,7 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu li span {
-  color: var(--light-grey-7);
+  color: var(--light-grey-6);
   width: 100%;
 }
 
@@ -288,7 +288,7 @@ h4.superuser {
 
 #contributions h3,
 #timeline h3 {
-  color: var(--light-grey-7);
+  color: var(--light-grey-6);
   font-size: 16px;
   font-weight: 400;
   font-style: normal;
@@ -302,15 +302,15 @@ h4.superuser {
 }
 
 svg.js-calendar-graph-svg {
-  fill: var(--light-grey-10);
+  fill: var(--light-grey-7);
   font-weight: 100;
 }
 
 .svg-tip {
   display: none;
   padding: 10px;
-  background: var(--black-5);
-  color: var(--light-grey-5);
+  background: var(--black-4);
+  color: var(--light-grey-4);
   font-size: 12px;
   position: absolute;
   z-index: 99999;
@@ -328,7 +328,7 @@ svg.js-calendar-graph-svg {
   margin: 0 0 0 -5px;
   content: ' ';
   border: 5px solid transparent;
-  border-top-color: var(--black-5);
+  border-top-color: var(--black-4);
 }
 
 /* Contribution Timeline */
@@ -351,7 +351,7 @@ svg.js-calendar-graph-svg {
 #timeline .heading {
   background: var(--dark-grey-1);
   border-radius: 6px 6px 0 0;
-  color: var(--light-grey-7);
+  color: var(--light-grey-6);
   padding: 20px 20px 0;
   position: relative;
 }
@@ -367,7 +367,7 @@ svg.js-calendar-graph-svg {
 
 #timeline .heading .icon {
   background: var(--dark-grey-1);
-  border: 2px solid var(--black-4);
+  border: 2px solid var(--black-3);
   box-sizing: border-box;
   display: block;
   height: 36px;
@@ -410,11 +410,11 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li:hover {
-  background: var(--black-4);
+  background: var(--black-3);
 }
 
 #timeline .localizations li a {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   display: block;
 }
 

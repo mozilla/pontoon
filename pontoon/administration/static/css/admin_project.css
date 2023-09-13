@@ -15,7 +15,7 @@ select {
 }
 
 h1 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 48px;
   letter-spacing: -1px;
   margin-bottom: 40px;
@@ -37,7 +37,7 @@ h1 a {
 }
 
 body > form {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 14px;
   padding: 40px 20px 100px;
 }
@@ -66,7 +66,7 @@ h3 {
 }
 
 h4 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 18px;
   font-style: italic;
   font-weight: 300;
@@ -153,14 +153,14 @@ form .button {
 .controls .button.sync,
 .controls .button.sync:hover {
   background: var(--dark-grey-1);
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: left;
 }
 
 .controls .button.pretranslate,
 .controls .button.pretranslate:hover {
   background: var(--dark-grey-1);
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   float: right;
 }
 
@@ -419,7 +419,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: var(--black-3);
+  color: var(--black-2);
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;

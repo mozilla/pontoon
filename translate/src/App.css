@@ -8,7 +8,7 @@
 }
 
 #app > header {
-  background: var(--black-4);
+  background: var(--black-3);
   border-bottom: 1px solid var(--dark-grey-1);
   box-sizing: border-box;
   height: 60px;

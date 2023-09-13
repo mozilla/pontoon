@@ -1,4 +1,7 @@
-@import '../../../static/css/dark-theme.css' /** @listing */ .log-list {
+@import '../../../static/css/dark-theme.css';
+
+/** @listing */ 
+.log-list {
   text-align: left;
   width: 100%;
 }
@@ -42,7 +45,7 @@ td {
 
 .sync-details .detail-label {
   border: none;
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 12px;
   margin: 0.5em 0;
   text-transform: uppercase;
@@ -97,7 +100,7 @@ td {
 }
 
 .project .project-name {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 36px;
   text-align: left;
   text-transform: none;
@@ -109,7 +112,7 @@ td {
 }
 
 .repository-logs .repository-logs-column {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   padding: 1em;
   text-align: left;
   text-transform: uppercase;

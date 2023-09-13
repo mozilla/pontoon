@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .notification-panel {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.notification-panel {
   background: var(--grey-7);
   cursor: pointer;
   font-size: 14px;

@@ -26,7 +26,7 @@ body > header.menu-opened {
 }
 
 #main p {
-  color: var(--white-6);
+  color: var(--white-4);
   line-height: 1.5rem;
 }
 
@@ -64,7 +64,7 @@ body > header.menu-opened {
 }
 
 h2 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-weight: 700;
   font-size: 36px;
   letter-spacing: -1px;
@@ -74,7 +74,7 @@ h2 {
 }
 
 #main .button {
-  background-color: var(--white-4);
+  background-color: var(--white-1);
   color: var(--black-2);
   display: flex;
   border-radius: 2px;
@@ -155,7 +155,7 @@ nav#sections ul li a span {
   height: 4px;
   width: 4px;
   border: 0;
-  background-color: var(--light-grey-3);
+  background-color: var(--light-grey-2);
   left: 50%;
   top: 50%;
   margin: -2px 0 0 -2px;
@@ -189,7 +189,7 @@ body.addon-promotion-active #edit-homepage .select {
 
 #edit-homepage .button {
   background: var(--light-green-1);
-  color: var(--black-3);
+  color: var(--black-2);
 }
 
 #edit-homepage .fa {
@@ -287,16 +287,16 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 li {
-  color: var(--white-6);
+  color: var(--white-4);
   counter-increment: item;
   margin: 40px 0;
 }
 
 #section-3 li:before {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   border: 2px solid var(--light-green-1);
   border-radius: 100%;
-  color: var(--white-4);
+  color: var(--white-1);
   content: counter(item);
   display: inline-block;
   font-size: 20px;
@@ -403,7 +403,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer a {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #section-6 .footer a:hover {

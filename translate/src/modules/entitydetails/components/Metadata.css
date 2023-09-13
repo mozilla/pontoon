@@ -1,6 +1,8 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .metadata {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.metadata {
   background-color: var(--dark-grey-2);
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-size: 12px;
   font-style: italic;
   min-height: 114px;
@@ -93,7 +95,7 @@
 }
 
 .metadata .context a {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
 }
 
 .metadata .context a:hover {

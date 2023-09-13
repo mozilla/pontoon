@@ -33,7 +33,7 @@
 }
 
 .user-menu .menu {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   border-right: none;
   border-top: none;
@@ -48,7 +48,7 @@
 }
 
 .user-menu .menu li {
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   cursor: pointer;
   font-size: 14px;
   font-weight: 300;
@@ -61,12 +61,12 @@
 }
 
 .user-menu .menu li.details .name {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 16px;
 }
 
 .user-menu .menu li.details .email {
-  color: var(--light-grey-8);
+  color: var(--light-grey-7);
   font-size: 12px;
 }
 
@@ -79,7 +79,7 @@
 .user-menu li button {
   background: none;
   border: none;
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   font-weight: 300;
   padding: 0;
   text-align: left;

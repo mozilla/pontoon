@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .skeleton-loader {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.skeleton-loader {
   animation: fading 1.5s infinite;
 }
 
@@ -14,7 +16,7 @@
 
 .skeleton-loader p {
   height: 0.8125rem;
-  background-color: var(--white-7);
+  background-color: var(--white-5);
   padding-bottom: 3px;
 }
 

@@ -1,4 +1,6 @@
-@import '../../../../../pontoon/static/css/dark-theme.css' .user-signin {
+@import '../../../../../pontoon/static/css/dark-theme.css';
+
+.user-signin {
   display: inline-block;
 }
 

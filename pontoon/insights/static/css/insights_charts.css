@@ -31,7 +31,7 @@
 }
 
 #insights .chart-group-navigation ul li .icon {
-  background-color: var(--black-4);
+  background-color: var(--black-3);
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
@@ -51,11 +51,11 @@
 }
 
 #insights .chart-group-navigation ul li.active .label {
-  color: var(--white-4);
+  color: var(--white-1);
 }
 
 #insights h3 {
-  color: var(--white-4);
+  color: var(--white-1);
   font-size: 20px;
   font-style: normal;
   font-weight: bold;
@@ -68,7 +68,7 @@
 
 #insights .controls .selector {
   background: var(--dark-grey-2);
-  color: var(--light-grey-10);
+  color: var(--light-grey-7);
   cursor: pointer;
   width: 24px;
   height: 24px;
@@ -86,11 +86,11 @@
 
 #insights h3 .fa.active,
 #insights h3 .fa:hover {
-  background: var(--black-4);
+  background: var(--black-3);
 }
 
 #insights h3 .tooltip {
-  background: var(--black-3) 000dd;
+  background: var(--black-6);
   position: absolute;
   display: none;
   margin-top: 10px;
