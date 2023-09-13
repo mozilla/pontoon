@@ -1,5 +1,3 @@
-@import '../../../static/css/dark-theme.css';
-
 html,
 body {
   background: var(--dark-grey-1);

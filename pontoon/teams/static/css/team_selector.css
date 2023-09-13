@@ -1,5 +1,3 @@
-@import '../../../static/css/dark-theme.css';
-
 .locale-selector .locale.select .button.breadcrumbs {
   background: var(--dark-grey-1);
   border-radius: 2px;

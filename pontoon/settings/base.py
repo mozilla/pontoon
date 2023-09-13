@@ -362,6 +362,7 @@ GUARDIAN_RAISE_403 = True
 PIPELINE_CSS = {
     "base": {
         "source_filenames": (
+            "css/dark-theme.css",
             "css/fontawesome-all.css",
             "css/nprogress.css",
             "css/boilerplate.css",

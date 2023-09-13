@@ -1,5 +1,3 @@
-@import '../../pontoon/static/css/dark-theme.css';
-
 /* Reset HTML5 Search Input in Webkit */
 input[type='search'] {
   -webkit-appearance: none;

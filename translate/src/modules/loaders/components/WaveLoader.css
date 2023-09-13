@@ -3,8 +3,6 @@
 * https://github.com/tobiasahlin/SpinKit/blob/master/LICENSE
 */
 
-@import '../../../../../pontoon/static/css/dark-theme.css';
-
 .wave-loader {
   position: fixed;
   z-index: 14;

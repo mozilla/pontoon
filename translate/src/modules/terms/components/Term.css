@@ -1,5 +1,3 @@
-@import '../../../../../pontoon/static/css/dark-theme.css';
-
 .terms-list .term {
   border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
