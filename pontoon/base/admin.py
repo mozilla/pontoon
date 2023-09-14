@@ -1,4 +1,5 @@
 import csv
+import json
 import uuid
 
 from django.contrib import admin, messages
@@ -262,7 +263,6 @@ class ProjectAdmin(GuardedModelAdmin):
         """
         Export untranslated strings to CSV.
         """
-
         if queryset.count() != 1:
             self.message_user(
                 request,
@@ -270,18 +270,26 @@ class ProjectAdmin(GuardedModelAdmin):
                 level=messages.ERROR,
             )
             return
+
         p = queryset.first()
         project_locales = p.project_locale.all()
-        pl_names = [ pl.locale.name for pl in project_locales ]
+        pl_names = [pl.locale.name for pl in project_locales]
 
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{p.slug}_approved_translations_or_stats.csv"'
+        response = HttpResponse(content_type="text/csv")
+        response[
+            "Content-Disposition"
+        ] = f'attachment; filename="{p.slug}_approved_translations_or_stats.csv"'
 
-        headers = ['Project', 'Resource', "Source Strings"] + pl_names
-        writer = csv.writer(response,  quoting=csv.QUOTE_ALL)
+        headers = [
+            "Project",
+            "Resource",
+            "Translation Key",
+            "Translation Source String",
+        ] + pl_names
+        writer = csv.writer(response, quoting=csv.QUOTE_ALL)
         writer.writerow(headers)
 
-        csv_dict = { field: [] for field in headers}
+        csv_dict = {field: [] for field in headers}
         for resource in p.resources.all():
             all_resource_entities = resource.entities.all()
             for i, pl in enumerate(project_locales):
@@ -289,45 +297,55 @@ class ProjectAdmin(GuardedModelAdmin):
                 # q = Q(Q(resource__project__id=p.id) & Q(resource__id=resource.id) & ~Entity.objects.translated(l, p))
                 # untranslated_entities = Entity.objects.filter(q)
                 if i == 0:
-                    csv_dict['Project'] += [ p.name ] * len(all_resource_entities)
-                    csv_dict['Resource'] += [ resource.path ] * len(all_resource_entities)
+                    csv_dict["Project"] += [p.name] * len(all_resource_entities)
+                    csv_dict["Resource"] += [resource.path] * len(all_resource_entities)
                 for entity in all_resource_entities:
                     if i == 0:
-                        csv_dict['Source Strings'].append(entity.string)
-                    if translation := entity.translation_set.filter(active=True, locale_id=pl.locale.id).first():
+                        if resource.format == "json":
+                            key: str = ".".join(json.loads(entity.key))
+                        elif resource.format == "xliff":
+                            key = entity.key.split("\x04")[-1]
+                        else:
+                            key = entity.key
+                        csv_dict["Translation Key"].append(key)
+                        csv_dict["Translation Source String"].append(entity.string)
+                    if translation := entity.translation_set.filter(
+                        active=True, locale_id=pl.locale.id
+                    ).first():
                         if translation.approved:
                             mark = translation.string
                         elif translation.pretranslated:
-                            mark = 'PRETRANSLATED'
+                            mark = "PRETRANSLATED"
                         elif translation.rejected:
-                            mark = 'REJECTED'
+                            mark = "REJECTED"
                         elif translation.fuzzy:
-                            mark = 'FUZZY'
+                            mark = "FUZZY"
                         else:
-                            mark = 'UNREVIEWED'
+                            mark = "UNREVIEWED"
                     else:
-                        mark = 'MISSING'
+                        mark = "MISSING"
                     csv_dict[pl.locale.name].append(mark)
-        
-        columns = [ column for column in csv_dict.values() ]
+
+        columns = [column for column in csv_dict.values()]
         rows = list(zip(*columns))
         writer.writerows(rows)
 
-        self.message_user(
-            request,
-            "CSV file generated.",
-            level=messages.INFO,
-        )
         return response
-
 
 
 class ProjectLocaleAdmin(GuardedModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
-    list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled", "has_custom_translators")
+    list_display = (
+        "pk",
+        "project",
+        "locale",
+        "readonly",
+        "pretranslation_enabled",
+        "has_custom_translators",
+    )
     ordering = ("-pk",)
     actions = ["enable_custom_translators"]
-    
+
     @admin.action(description="Enable custom translators")
     def enable_custom_translators(self, request, queryset):
         for project_locale in queryset:
@@ -338,6 +356,7 @@ class ProjectLocaleAdmin(GuardedModelAdmin):
                 f"Project Locale has been enabled to have custom translators: {project_locale.__str__()}",
                 level=messages.INFO,
             )
+
 
 class ResourceAdmin(admin.ModelAdmin):
     search_fields = ["path", "format", "project__name", "project__slug"]
