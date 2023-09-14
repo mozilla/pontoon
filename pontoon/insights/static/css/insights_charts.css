@@ -5,55 +5,8 @@
   padding: 30px;
 }
 
-/* Chart group */
-
-#insights .chart-group {
-  width: 1000px;
-  overflow: hidden;
-  transition: margin 0.4s ease-in-out;
-}
-
-#insights .chart-group .chart-item {
-  float: left;
-  padding-right: 60px;
-}
-
-#insights .chart-group-navigation {
-  text-align: center;
-}
-
-#insights .chart-group-navigation ul li {
-  cursor: pointer;
-  display: inline-block;
-  margin: 15px 15px 0;
-}
-
-#insights .chart-group-navigation ul li .icon {
-  background-color: var(--black-3);
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 8px;
-  height: 12px;
-  width: 12px;
-}
-
-#insights .chart-group-navigation ul li .label {
-  color: var(--grey-3);
-  cursor: pointer;
-  font-weight: bold;
-  vertical-align: text-top;
-}
-
-#insights .chart-group-navigation ul li.active .icon {
-  background-color: var(--light-blue);
-}
-
-#insights .chart-group-navigation ul li.active .label {
-  color: var(--white-1);
-}
-
 #insights h3 {
-  color: var(--white-1);
+  color: var(--white-3);
   font-size: 20px;
   font-style: normal;
   font-weight: bold;
@@ -143,9 +96,9 @@
 }
 
 #insights .legend li.disabled .label {
-  color: #4d5967;
+  color: var(--grey-3);
 }
 
 #insights .legend li.disabled .label:hover {
-  color: #888;
+  color: var(--light-grey-2);
 }

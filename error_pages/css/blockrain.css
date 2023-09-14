@@ -2,7 +2,7 @@
   position: relative;
   padding: 0;
   margin: 0;
-  color: var(--white-1);
+  color: #ffffff;
   font-size: 18px;
   line-height: 140%;
 }
@@ -15,7 +15,7 @@
   display: block;
   border-radius: 100%;
   border: 1px solid white;
-  background: var(--grey-8);
+  background: rgba(255,255,255,0.2);
   z-index: 10;
 
   -webkit-touch-callout: none;
@@ -76,9 +76,9 @@
   position: relative;
   display: inline-block;
   background: none;
-  color: var(--white-1);
+  color: #ffffff;
   text-decoration: none;
-  border: 2px solid var(--white-1);
+  border: 2px solid #ffffff;
   padding: 15px 30px;
   font-size: 18px;
   text-align: center;
@@ -91,7 +91,7 @@
   left: 0px;
   bottom: 0px;
   right: 0px;
-  border: 2px solid var(--white-1);
+  border: 2px solid #ffffff;
   border-top: none;
   border-right: none;
   transition: all 0.2s ease;
@@ -103,7 +103,7 @@
   left: 100%;
   bottom: 0px;
   right: 0px;
-  border: 2px solid var(--white-1);
+  border: 2px solid #ffffff;
   border-left: none;
   border-bottom: none;
   transition: all 0.2s ease;
@@ -160,4 +160,3 @@
   font-size: 18px;
   margin-bottom: 30px;
 }
-
