@@ -61,6 +61,20 @@ declare module 'slate' {
   }
 }
 
+function isEditable(elem: Element | null): boolean {
+  if (!elem) {
+    return false;
+  }
+  if (
+    elem.tagName === 'INPUT' ||
+    elem.tagName === 'TEXTAREA' ||
+    elem.getAttribute('contenteditable') === 'true'
+  ) {
+    return true;
+  }
+  return isEditable(elem.parentElement);
+}
+
 export function AddComment({
   contactPerson,
   initFocus,
@@ -115,7 +129,7 @@ export function AddComment({
 
   // Set focus on Editor
   useEffect(() => {
-    if (initFocus) {
+    if (initFocus && !isEditable(document.activeElement)) {
       placeFocus();
     }
   }, [initFocus]);
