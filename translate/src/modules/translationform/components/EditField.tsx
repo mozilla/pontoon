@@ -44,39 +44,42 @@ export const EditField = memo(
       const keyHandlers = useKeyHandlers();
       const [view, setView] = useState<EditorView | null>(null);
 
-      const initView = useCallback((parent: HTMLDivElement | null) => {
-        if (parent) {
-          const extensions = getExtensions(entity.format, keyHandlers);
-          if (readOnly) {
-            extensions.push(
-              EditorState.readOnly.of(true),
-              EditorView.editable.of(false),
-            );
-          } else {
-            if (singleField) {
-              const l10nId = 'translationform--single-field-placeholder';
-              extensions.push(placeholder(l10n.getString(l10nId)));
+      const initView = useCallback(
+        (parent: HTMLDivElement | null) => {
+          if (parent) {
+            const extensions = getExtensions(entity.format, keyHandlers);
+            if (readOnly) {
+              extensions.push(
+                EditorState.readOnly.of(true),
+                EditorView.editable.of(false),
+              );
+            } else {
+              if (singleField) {
+                const l10nId = 'translationform--single-field-placeholder';
+                extensions.push(placeholder(l10n.getString(l10nId)));
+              }
+              extensions.push(
+                EditorView.updateListener.of((update) => {
+                  if (onFocus && update.focusChanged && update.view.hasFocus) {
+                    onFocus();
+                  }
+                  if (update.docChanged) {
+                    setResultFromInput(index, update.state.doc.toString());
+                  }
+                }),
+              );
             }
-            extensions.push(
-              EditorView.updateListener.of((update) => {
-                if (onFocus && update.focusChanged && update.view.hasFocus) {
-                  onFocus();
-                }
-                if (update.docChanged) {
-                  setResultFromInput(index, update.state.doc.toString());
-                }
-              }),
-            );
-          }
 
-          const state = EditorState.create({ doc: defaultValue, extensions });
-          view?.destroy();
-          setView(new EditorView({ state, parent }));
-        } else if (view) {
-          view.destroy();
-          setView(null);
-        }
-      }, []);
+            const state = EditorState.create({ doc: defaultValue, extensions });
+            view?.destroy();
+            setView(new EditorView({ state, parent }));
+          } else if (view) {
+            view.destroy();
+            setView(null);
+          }
+        },
+        [readOnly],
+      );
 
       const setValue = useCallback(
         (text: string) => {
