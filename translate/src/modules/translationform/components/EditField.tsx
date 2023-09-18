@@ -80,10 +80,13 @@ export const EditField = memo(
 
       const setValue = useCallback(
         (text: string) => {
-          view?.dispatch({
-            changes: { from: 0, to: view.state.doc.length, insert: text },
-            selection: { anchor: text.length },
-          });
+          const prev = view?.state.doc.toString();
+          if (text !== prev) {
+            view?.dispatch({
+              changes: { from: 0, to: view.state.doc.length, insert: text },
+              selection: { anchor: text.length },
+            });
+          }
         },
         [view],
       );
