@@ -11,13 +11,11 @@ import {
 import type { Tree } from '@lezer/common';
 
 /** Use content-based automatic direction for values inside quotes */
-const dirAuto = Decoration.mark({
-  attributes: { dir: 'auto', style: 'unicode-bidi: isolate' },
-});
+const dirAuto = Decoration.mark({ attributes: { dir: 'auto' } });
 
 /** Explicitly mark placeholders and tags as LTR spans, for bidirectional contexts */
 const dirLTR = Decoration.mark({
-  attributes: { dir: 'ltr', style: 'unicode-bidi: isolate' },
+  attributes: { dir: 'ltr' },
   bidiIsolate: Direction.LTR,
 });
 
