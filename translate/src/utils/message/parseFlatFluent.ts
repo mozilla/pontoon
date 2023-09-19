@@ -5,6 +5,7 @@ import {
   Message,
   Pattern,
   serializeExpression,
+  Term,
   TextElement,
   Transformer,
 } from '@fluent/syntax';
@@ -15,11 +16,14 @@ class FlatParseTransformer extends Transformer {
     return this.genericVisit(node);
   }
 
-  visitMessage(node: Message) {
+  visitMessage(node: Message | Term) {
     if (node.value) {
       flattenPatternElements(node.value);
     }
     return this.genericVisit(node);
+  }
+  visitTerm(node: Term) {
+    return this.visitMessage(node);
   }
 
   visitTextElement(node: TextElement) {
