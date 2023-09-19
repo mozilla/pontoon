@@ -21,6 +21,7 @@
   --forest-green-1: #41554c;
   --forest-green-2: #4b6259;
   --green: #4f7256;
+  --green-2: #64906d;
   --grey-1: #637283;
   --grey-2: #525a65;
   --grey-3: #4d5967;
@@ -33,6 +34,7 @@
   --light-green-1: #7bc876;
   --light-green-2: #7bc176;
   --light-green-3: #9cd699;
+  --dark-green: #7bc87633;
   --light-grey-1: #5e6475;
   --light-grey-2: #888888;
   --light-grey-3: #666666;
@@ -47,7 +49,6 @@
   --orange-1: #ffa10f;
   --orange-2: #ff7b00;
   --pink: #ff3366cc;
-  --pink-2: #c46487;
   --light-pink: #ffbed1;
   --purple-pink: #674b54;
   --hot-pink: #ff5f9e;
@@ -55,7 +56,6 @@
   --red-pink: #ff3366;
   --dark-pink: #b3005e;
   --lilac: #c6c1f0;
-  --purple: #8074a8;
   --taupe-1: #898989;
   --taupe-2: #999999;
   --white-1: #ffffff;
@@ -63,4 +63,22 @@
   --white-3: #ebebeb;
   --white-4: #dddddd;
   --white-5: #e2e2e2;
+  /* Insights_tab.css Variables */
+  --green-blue: #4fc4f666;
+  --grey-9: #5f7285;
+  --dark-purple: #f148fb33;
+  --pink-3: #ffacfc;
+  --dark-purple-2: #ffacfc33;
+  --dark-magenta: #b3005e66;
+  /* Insights Pretranslation Quality Chart */
+  --brown-grey: #9c9290;
+  --brown-grey-2: #c5bfbe;
+  --lilac-purple: #9b93c9;
+  --pink-2: #c46487;
+  --light-pink-2: #ddb5d5;
+  --light-pink-3: #f498b6;
+  --light-pink-4: #c799bc;
+  --dark-pink: #b173a0;
+  --purple: #8074a8;
+  --green-brown: #7c7270;
 }

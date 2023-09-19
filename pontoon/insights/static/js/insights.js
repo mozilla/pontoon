@@ -28,19 +28,19 @@ var Pontoon = (function (my) {
         }
 
         const colors = [
-          '#fff',
-          '#8074a8',
-          '#c6c1f0',
-          '#c46487',
-          '#ffbed1',
-          '#9c9290',
-          '#c5bfbe',
-          '#9b93c9',
-          '#ddb5d5',
-          '#7c7270',
-          '#f498b6',
-          '#b173a0',
-          '#c799bc',
+          'getComputedStyle(document.documentElement).getPropertyValue("--white-1").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--purple").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--lilac").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--pink-2").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--brown-grey").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--brown-grey-2").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--lilac-purple").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-2").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--green-brown").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-3").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--dark-pink").trim()',
+          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-4").trim()',
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
@@ -56,7 +56,9 @@ var Pontoon = (function (my) {
             pointRadius: 4,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
-            pointHoverBorderColor: '#FFF',
+            pointHoverBorderColor: getComputedStyle(document.documentElement)
+              .getPropertyValue('--white-1')
+              .trim(),
             spanGaps: true,
           };
         });
@@ -75,7 +77,9 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#FFF',
+              borderColor: getComputedStyle(document.documentElement)
+                .getPropertyValue('--white-1')
+                .trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

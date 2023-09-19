@@ -37,7 +37,12 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(0, '#7BC87633');
+        gradient.addColorStop(
+          0,
+          getComputedStyle(document.documentElement)
+            .getPropertyValue('--dark-green')
+            .trim(),
+        );
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -50,28 +55,56 @@ var Pontoon = (function (my) {
                 label: 'Current month',
                 data: data1,
                 backgroundColor: gradient,
-                borderColor: ['#41554c'],
+                borderColor: [
+                  getComputedStyle(document.documentElement)
+                    .getPropertyValue('--forest-green-1')
+                    .trim(),
+                ],
                 borderWidth: 2,
-                pointBackgroundColor: '#41554c',
+                pointBackgroundColor: getComputedStyle(document.documentElement)
+                  .getPropertyValue('--forest-green-1')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#41554c',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--forest-green-1')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 2,
               },
               {
                 type: 'line',
                 label: '12-month average',
                 data: data2,
-                borderColor: ['#7BC876'],
+                borderColor: [
+                  getComputedStyle(document.documentElement)
+                    .getPropertyValue('--light-green-1')
+                    .trim(),
+                ],
                 borderWidth: 1,
-                pointBackgroundColor: '#7BC876',
+                pointBackgroundColor: getComputedStyle(document.documentElement)
+                  .getPropertyValue('--light-green-1')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#7BC876',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--light-green-1')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 1,
               },
             ],
@@ -83,7 +116,9 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#7BC876',
+              borderColor: getComputedStyle(document.documentElement)
+                .getPropertyValue('--light-green-1')
+                .trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -183,19 +218,29 @@ var Pontoon = (function (my) {
           let color;
           switch (true) {
             case count === 0:
-              color = '#333941';
+              color = getComputedStyle(document.documentElement)
+                .getPropertyValue('--dark-grey-1')
+                .trim();
               break;
             case count < 10:
-              color = '#41554c';
+              color = getComputedStyle(document.documentElement)
+                .getPropertyValue('--forest-green-1')
+                .trim();
               break;
             case count < 25:
-              color = '#4f7256';
+              color = getComputedStyle(document.documentElement)
+                .getPropertyValue('--green')
+                .trim();
               break;
             case count < 50:
-              color = '#64906D';
+              color = getComputedStyle(document.documentElement)
+                .getPropertyValue('--green-2')
+                .trim();
               break;
             default:
-              color = '#7bc876';
+              color = getComputedStyle(document.documentElement)
+                .getPropertyValue('--light-green-1')
+                .trim();
           }
 
           const y = currentDate.getDay() * step;

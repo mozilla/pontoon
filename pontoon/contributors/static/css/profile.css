@@ -148,7 +148,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .icon {
-  background-color: #272a2f;
+  background-color: var(--black-3);
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
@@ -157,7 +157,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li .label {
-  color: #4d5967;
+  color: var(--grey-3);
   cursor: pointer;
   font-weight: bold;
   vertical-align: text-top;
@@ -168,7 +168,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li.active .label {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 #insights h3 .tooltip li.current-month::marker {

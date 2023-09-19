@@ -192,7 +192,7 @@ table.table.project-list.hidden {
   content: '';
   position: absolute;
   border: 10px solid;
-  border-color: #1c1e21 transparent transparent transparent;
+  border-color: var(--black-1) transparent transparent transparent;
   bottom: -20px;
   left: 160px; /* Must be (tooltip width + tooltip padding + bottom) / 2 */
   clip: rect(0 20px 10px 0);
