@@ -83,4 +83,18 @@ describe('parseFlatFluent', () => {
       'Lost { 2 } parents, has { 1 } "$alfred"',
     );
   });
+
+  it('flattens a term', () => {
+    const res = parseFlatFluent(ftl`
+      -term = My { $awesome } term
+        .attr = { "" }
+      `);
+
+    expect(res.value.elements).toMatchObject([
+      { value: 'My { $awesome } term' },
+    ]);
+    expect(res.attributes).toMatchObject([
+      { id: { name: 'attr' }, value: { elements: [{ value: '' }] } },
+    ]);
+  });
 });
