@@ -387,8 +387,8 @@ steps, as they don't affect your setup if nothing has changed:
 
 .. code-block:: shell
 
-   # Pull the latest code (assuming you've already checked out master).
-   git pull origin master
+   # Pull the latest code (assuming you've already checked out main).
+   git pull origin main
 
    # Install new dependencies or update existing ones.
    pip install -U --force --require-hashes -r requirements/default.txt

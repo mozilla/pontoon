@@ -135,7 +135,7 @@ documentation resources:
 
 -  If you want to work on the front-end, it is important that you read
    the `Front-End
-   Documentation <https://github.com/mozilla/pontoon/tree/master/translate>`_.
+   Documentation <https://github.com/mozilla/pontoon/tree/HEAD/translate>`_.
 -  Most of the documentation around installing and developing can be
    found in `Pontoon's
    Documentation <https://mozilla-pontoon.readthedocs.io/en/latest/>`_.

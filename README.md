@@ -50,7 +50,7 @@ If you want to go further, you can:
 
 This software is licensed under the
 [New BSD License](https://creativecommons.org/licenses/BSD/). For more
-information, read [LICENSE](https://github.com/mozilla/pontoon/blob/master/LICENSE).
+information, read [LICENSE](https://github.com/mozilla/pontoon/blob/HEAD/LICENSE).
 
 ## Screenshots
 

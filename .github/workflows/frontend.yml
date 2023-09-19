@@ -3,13 +3,13 @@ name: Frontend
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - translate/**
       - .github/workflows/frontend.yml
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - translate/**
       - .github/workflows/frontend.yml
