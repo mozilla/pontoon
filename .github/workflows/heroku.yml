@@ -3,13 +3,13 @@ name: Heroku
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - app.json
       - .github/workflows/heroku.yml
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - app.json
       - .github/workflows/heroku.yml

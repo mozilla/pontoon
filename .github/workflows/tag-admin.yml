@@ -3,14 +3,14 @@ name: Non-frontend JavaScript
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - tag-admin/**
       - package.json
       - .github/workflows/tag-admin.yml
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - tag-admin/**
       - package.json

@@ -10,7 +10,7 @@ For quick and easy deployment without leaving your web browser, click this butto
 
 .. raw:: html
 
-   <a class="reference external image-reference" href="https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/master">
+   <a class="reference external image-reference" href="https://heroku.com/deploy?template=https://github.com/mozilla/pontoon/tree/main">
       <img src="https://www.herokucdn.com/deploy/button.svg">
    </a>
 
@@ -254,7 +254,7 @@ you create:
 ``VCS_SYNC_EMAIL``
   Optional. Default committer's email used when committing translations to version control system.
 
-.. _the spec: https://github.com/mozilla/pontoon/blob/master/specs/0108-community-health-dashboard.md
+.. _the spec: https://github.com/mozilla/pontoon/blob/HEAD/specs/0108-community-health-dashboard.md
 .. _Heroku Reference: https://devcenter.heroku.com/articles/error-pages#customize-pages
 .. _Firefox Accounts: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
 .. _Microsoft Translator API: http://msdn.microsoft.com/en-us/library/hh454950

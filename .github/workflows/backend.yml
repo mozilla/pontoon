@@ -3,7 +3,7 @@ name: Backend
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - requirements/**
       - docker**
@@ -11,7 +11,7 @@ on:
       - .github/workflows/backend.yml
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - requirements/**
       - docker**
