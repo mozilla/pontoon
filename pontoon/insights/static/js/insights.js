@@ -29,21 +29,20 @@ var Pontoon = (function (my) {
           return;
         }
 
-        
         const colors = [
-          style.getPropertyValue("--white-1"),
-          style.getPropertyValue("--purple"),
-          style.getPropertyValue("--lilac"),
-          style.getPropertyValue("--pink-2"),
-          style.getPropertyValue("--light-pink"),
-          style.getPropertyValue("--brown-grey"),
-          style.getPropertyValue("--brown-grey-2"),
-          style.getPropertyValue("--lilac-purple"),
-          style.getPropertyValue("--light-pink-2"),
-          style.getPropertyValue("--green-brown"),
-          style.getPropertyValue("--light-pink-3"),
-          style.getPropertyValue("--dark-pink"),
-          style.getPropertyValue("--light-pink-4"),
+          style.getPropertyValue('--white-1'),
+          style.getPropertyValue('--purple'),
+          style.getPropertyValue('--lilac'),
+          style.getPropertyValue('--pink-2'),
+          style.getPropertyValue('--light-pink'),
+          style.getPropertyValue('--brown-grey'),
+          style.getPropertyValue('--brown-grey-2'),
+          style.getPropertyValue('--lilac-purple'),
+          style.getPropertyValue('--light-pink-2'),
+          style.getPropertyValue('--green-brown'),
+          style.getPropertyValue('--light-pink-3'),
+          style.getPropertyValue('--dark-pink'),
+          style.getPropertyValue('--light-pink-4'),
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
@@ -78,8 +77,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--white-1')
-                .trim(),
+              borderColor: style.getPropertyValue('--white-1').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

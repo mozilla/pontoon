@@ -35,7 +35,8 @@ var Pontoon = (function (my) {
         });
 
         // Set up default Chart.js configuration
-        Chart.defaults.global.defaultFontColor = style.getPropertyValue('--light-grey-7');
+        Chart.defaults.global.defaultFontColor =
+          style.getPropertyValue('--light-grey-7');
         Chart.defaults.global.defaultFontFamily = 'Open Sans';
         Chart.defaults.global.defaultFontStyle = '100';
         Chart.defaults.global.datasets.bar.barPercentage = 0.7;

@@ -39,10 +39,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(
-          0,
-          style.getPropertyValue('--dark-green'),
-        );
+        gradient.addColorStop(0, style.getPropertyValue('--dark-green'));
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -55,15 +52,15 @@ var Pontoon = (function (my) {
                 label: 'Current month',
                 data: data1,
                 backgroundColor: gradient,
-                borderColor: [
-                  style.getPropertyValue('--forest-green-1'),
-                ],
+                borderColor: [style.getPropertyValue('--forest-green-1')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--forest-green-1'),
+                pointBackgroundColor:
+                  style.getPropertyValue('--forest-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: style.getPropertyValue('--forest-green-1'),
+                pointHoverBackgroundColor:
+                  style.getPropertyValue('--forest-green-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
               },
@@ -71,15 +68,14 @@ var Pontoon = (function (my) {
                 type: 'line',
                 label: '12-month average',
                 data: data2,
-                borderColor: [
-                  style.getPropertyValue('--light-green-1'),
-                ],
+                borderColor: [style.getPropertyValue('--light-green-1')],
                 borderWidth: 1,
                 pointBackgroundColor: style.getPropertyValue('--light-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: style.getPropertyValue('--light-green-1'),
+                pointHoverBackgroundColor:
+                  style.getPropertyValue('--light-green-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
               },
