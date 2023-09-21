@@ -12,6 +12,8 @@ const shortDateFormat = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
+const style = getComputedStyle(document.documentElement);
+
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -39,9 +41,7 @@ var Pontoon = (function (my) {
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
         gradient.addColorStop(
           0,
-          getComputedStyle(document.documentElement)
-            .getPropertyValue('--dark-green')
-            .trim(),
+          style.getPropertyValue('--dark-green'),
         );
         gradient.addColorStop(1, 'transparent');
 
@@ -56,27 +56,15 @@ var Pontoon = (function (my) {
                 data: data1,
                 backgroundColor: gradient,
                 borderColor: [
-                  getComputedStyle(document.documentElement)
-                    .getPropertyValue('--forest-green-1')
-                    .trim(),
+                  style.getPropertyValue('--forest-green-1'),
                 ],
                 borderWidth: 2,
-                pointBackgroundColor: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--forest-green-1')
-                  .trim(),
+                pointBackgroundColor: style.getPropertyValue('--forest-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: getComputedStyle(
-                  document.documentElement,
-                )
-                  .getPropertyValue('--forest-green-1')
-                  .trim(),
-                pointHoverBorderColor: getComputedStyle(
-                  document.documentElement,
-                )
-                  .getPropertyValue('--white-1')
-                  .trim(),
+                pointHoverBackgroundColor: style.getPropertyValue('--forest-green-1'),
+                pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
               },
               {
@@ -84,27 +72,15 @@ var Pontoon = (function (my) {
                 label: '12-month average',
                 data: data2,
                 borderColor: [
-                  getComputedStyle(document.documentElement)
-                    .getPropertyValue('--light-green-1')
-                    .trim(),
+                  style.getPropertyValue('--light-green-1'),
                 ],
                 borderWidth: 1,
-                pointBackgroundColor: getComputedStyle(document.documentElement)
-                  .getPropertyValue('--light-green-1')
-                  .trim(),
+                pointBackgroundColor: style.getPropertyValue('--light-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: getComputedStyle(
-                  document.documentElement,
-                )
-                  .getPropertyValue('--light-green-1')
-                  .trim(),
-                pointHoverBorderColor: getComputedStyle(
-                  document.documentElement,
-                )
-                  .getPropertyValue('--white-1')
-                  .trim(),
+                pointHoverBackgroundColor: style.getPropertyValue('--light-green-1'),
+                pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
               },
             ],
@@ -116,9 +92,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: getComputedStyle(document.documentElement)
-                .getPropertyValue('--light-green-1')
-                .trim(),
+              borderColor: style.getPropertyValue('--light-green-1'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -218,29 +192,19 @@ var Pontoon = (function (my) {
           let color;
           switch (true) {
             case count === 0:
-              color = getComputedStyle(document.documentElement)
-                .getPropertyValue('--dark-grey-1')
-                .trim();
+              color = style.getPropertyValue('--dark-grey-1');
               break;
             case count < 10:
-              color = getComputedStyle(document.documentElement)
-                .getPropertyValue('--forest-green-1')
-                .trim();
+              color = style.getPropertyValue('--forest-green-1');
               break;
             case count < 25:
-              color = getComputedStyle(document.documentElement)
-                .getPropertyValue('--green')
-                .trim();
+              color = style.getPropertyValue('--green');
               break;
             case count < 50:
-              color = getComputedStyle(document.documentElement)
-                .getPropertyValue('--green-2')
-                .trim();
+              color = style.getPropertyValue('--green-2');
               break;
             default:
-              color = getComputedStyle(document.documentElement)
-                .getPropertyValue('--light-green-1')
-                .trim();
+              color = style.getPropertyValue('--light-green-1');
           }
 
           const y = currentDate.getDay() * step;

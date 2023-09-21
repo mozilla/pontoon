@@ -11,6 +11,8 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
   year: 'numeric',
 });
 
+const style = getComputedStyle(document.documentElement);
+
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -27,20 +29,21 @@ var Pontoon = (function (my) {
           return;
         }
 
+        
         const colors = [
-          'getComputedStyle(document.documentElement).getPropertyValue("--white-1").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--purple").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--lilac").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--pink-2").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--brown-grey").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--brown-grey-2").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--lilac-purple").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-2").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--green-brown").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-3").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--dark-pink").trim()',
-          'getComputedStyle(document.documentElement).getPropertyValue("--light-pink-4").trim()',
+          style.getPropertyValue("--white-1"),
+          style.getPropertyValue("--purple"),
+          style.getPropertyValue("--lilac"),
+          style.getPropertyValue("--pink-2"),
+          style.getPropertyValue("--light-pink"),
+          style.getPropertyValue("--brown-grey"),
+          style.getPropertyValue("--brown-grey-2"),
+          style.getPropertyValue("--lilac-purple"),
+          style.getPropertyValue("--light-pink-2"),
+          style.getPropertyValue("--green-brown"),
+          style.getPropertyValue("--light-pink-3"),
+          style.getPropertyValue("--dark-pink"),
+          style.getPropertyValue("--light-pink-4"),
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
@@ -56,9 +59,7 @@ var Pontoon = (function (my) {
             pointRadius: 4,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
-            pointHoverBorderColor: getComputedStyle(document.documentElement)
-              .getPropertyValue('--white-1')
-              .trim(),
+            pointHoverBorderColor: style.getPropertyValue('--white-1'),
             spanGaps: true,
           };
         });
@@ -77,8 +78,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: getComputedStyle(document.documentElement)
-                .getPropertyValue('--white-1')
+              borderColor: style.getPropertyValue('--white-1')
                 .trim(),
               borderWidth: 1,
               caretPadding: 5,
