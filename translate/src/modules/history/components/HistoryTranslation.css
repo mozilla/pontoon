@@ -1,5 +1,5 @@
 .history .wrapper {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
 }
 
 .history .translation {
@@ -13,7 +13,7 @@
 }
 
 .history .translation:not(.cannot-copy):hover {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 .history .translation .user-avatar {
@@ -24,11 +24,11 @@
 
 .history .translation .user-avatar img {
   border-radius: 6px;
-  border: 2px solid #5e6475;
+  border: 2px solid var(--light-grey-1);
 }
 
 .history .translation:hover .user-avatar img {
-  border-color: #637283;
+  border-color: var(--grey-1);
 }
 
 .history .translation .content {
@@ -36,7 +36,7 @@
 }
 
 .history .translation .content > header {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: block;
   font-size: 11px;
   font-weight: 300;
@@ -68,12 +68,12 @@
 }
 
 .history .translation .content > header .info a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .history .translation .content > header .toggle {
-  background: #333941;
-  border: 1px solid #3f4752;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--dark-grey-2);
   border-radius: 4px;
   font-size: inherit;
   font-weight: 100;
@@ -83,25 +83,25 @@
 }
 
 .history .translation .content > header .toggle.on {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .history .translation:hover .content > header .toggle {
-  border-color: #4d5967;
+  border-color: var(--grey-3);
 }
 
 .history .translation .content > header .toggle:hover {
-  border-color: #637283;
+  border-color: var(--grey-1);
 }
 
 .history .translation .content > header .toggle.active .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .history .translation .content > header button {
   background: no-repeat transparent;
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: inline-block;
   padding: 0;
   outline: none;
@@ -136,11 +136,11 @@
 }
 
 .history .translation.pretranslated .content > header button.approve:before {
-  color: #c0ff00;
+  color: var(--neon-green);
 }
 
 .history .translation.fuzzy .content > header button.approve:before {
-  color: #fed271;
+  color: var(--mustard-yellow);
 }
 
 .history .translation .content > header button.approve:before,
@@ -150,7 +150,7 @@
 
 .history .translation.can-approve .content > header button.approve:hover:before,
 .history .translation .content > header button.unapprove:before {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .history .translation:not(.can-approve) .content > header button.approve:before,
@@ -175,7 +175,7 @@
 
 .history .translation.can-reject .content > header button.reject:hover:before,
 .history .translation .content > header button.unreject:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .history .translation:not(.can-reject) .content > header button.reject:before,
@@ -204,14 +204,14 @@
 }
 
 .translation .content > header button.delete:hover:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .machinery-sources {
   position: absolute;
   top: 0;
   left: -2px;
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 14px;
 }
 

@@ -12,13 +12,13 @@ ul {
 }
 
 #heading h1 a {
-  color: #ebebeb;
+  color: var(--white-1);
   font-weight: bold;
   font-size: 32px;
 }
 
 #heading h1 .small {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-weight: 300;
   padding-left: 5px;
 }
@@ -39,7 +39,7 @@ ul {
 }
 
 #heading .details .title {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   padding-right: 5px;
   position: relative;
   text-transform: uppercase;
@@ -51,16 +51,16 @@ ul {
 }
 
 #heading .details .value {
-  color: #aaa;
+  color: var(--light-grey-7);
   float: right;
 }
 
 #heading .details .value a {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 #heading .details .value a:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #heading .details .priority .value {
@@ -102,7 +102,7 @@ ul {
 
 #heading .progress .number:after {
   content: '%';
-  color: #888888;
+  color: var(--light-grey-2);
   display: block;
   font-size: 20px;
   font-weight: 100;
@@ -115,7 +115,7 @@ ul {
 }
 
 #heading .legend li {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   padding-left: 25px;
   position: relative;
   text-align: left;
@@ -123,11 +123,11 @@ ul {
 }
 
 #heading .legend li a {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 #heading .legend li:hover a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #heading .legend li .status.fa {
@@ -136,16 +136,16 @@ ul {
 }
 
 #heading .legend li span.value {
-  color: #aaa;
+  color: var(--light-grey-7);
   float: right;
 }
 
 #heading .legend li a span.value {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 #heading .legend li:hover a span.value {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #heading .non-plottable {
@@ -153,7 +153,7 @@ ul {
 }
 
 #heading .non-plottable p {
-  color: #aaa;
+  color: var(--light-grey-7);
   font-weight: 300;
   line-height: 24px;
   text-align: right;
@@ -161,11 +161,11 @@ ul {
 }
 
 #heading .non-plottable a p {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 #heading .non-plottable a:hover p {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #heading .non-plottable p.value {
@@ -183,10 +183,10 @@ ul {
 }
 
 #heading .non-plottable .unreviewed .status.fa:before {
-  color: #4d5967;
+  color: var(--grey-3);
   font-size: 18px;
 }
 
 #heading .non-plottable .unreviewed.pending .status.fa:before {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }

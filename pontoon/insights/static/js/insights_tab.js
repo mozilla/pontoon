@@ -4,7 +4,7 @@ var Pontoon = (function (my) {
     style: 'percent',
     maximumFractionDigits: 2,
   });
-
+  const style = getComputedStyle(document.documentElement);
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -42,7 +42,11 @@ var Pontoon = (function (my) {
           }
           var activeStart = -0.5;
           var activeEnd = activeStart + activeLength;
-          plot(activeStart, activeEnd, '#7BC876');
+          plot(
+            activeStart,
+            activeEnd,
+            style.getPropertyValue('--light-green-1').trim(),
+          );
 
           var inactiveLength = 2;
           if (total !== 0) {
@@ -50,7 +54,11 @@ var Pontoon = (function (my) {
           }
           var inactiveStart = activeEnd;
           var inactiveEnd = inactiveStart + inactiveLength;
-          plot(inactiveStart, inactiveEnd, '#5F7285');
+          plot(
+            inactiveStart,
+            inactiveEnd,
+            style.getPropertyValue('--grey-9').trim(),
+          );
 
           // Update number
           parent.find('.active').html(active);
@@ -72,7 +80,8 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(0, '#4fc4f666');
+        let greenBlue = style.getPropertyValue('--green-blue').trim();
+        gradient.addColorStop(0, greenBlue);
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -84,14 +93,24 @@ var Pontoon = (function (my) {
                 label: 'Age of unreviewed suggestions',
                 data: chart.data('lifespans'),
                 backgroundColor: gradient,
-                borderColor: ['#4fc4f6'],
+                borderColor: [style.getPropertyValue('--light-blue').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#4fc4f6',
+                pointBackgroundColor: style
+                  .getPropertyValue('--light-blue')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#4fc4f6',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--light-blue')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
               },
             ],
           },
@@ -100,7 +119,7 @@ var Pontoon = (function (my) {
               display: false,
             },
             tooltips: {
-              borderColor: '#4fc4f6',
+              borderColor: style.getPropertyValue('--light-blue').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -156,7 +175,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(0, '#4fc4f666');
+        gradient.addColorStop(0, style.getPropertyValue('--green-blue').trim());
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -169,14 +188,22 @@ var Pontoon = (function (my) {
                 label: 'Current month',
                 data: chart.data('time-to-review-suggestions'),
                 backgroundColor: gradient,
-                borderColor: ['#3e7089'],
+                borderColor: [style.getPropertyValue('--blue-1').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#3e7089',
+                pointBackgroundColor: style.getPropertyValue('--blue-1').trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#3e7089',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--blue-1')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 2,
                 spanGaps: true,
               },
@@ -184,14 +211,24 @@ var Pontoon = (function (my) {
                 type: 'line',
                 label: '12-month average',
                 data: chart.data('time-to-review-suggestions-12-month-avg'),
-                borderColor: ['#4fc4f6'],
+                borderColor: [style.getPropertyValue('--light-blue').trim()],
                 borderWidth: 1,
-                pointBackgroundColor: '#4fc4f6',
+                pointBackgroundColor: style
+                  .getPropertyValue('--light-blue')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#4fc4f6',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--light-blue')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 1,
                 spanGaps: true,
               },
@@ -204,7 +241,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#4fc4f6',
+              borderColor: style.getPropertyValue('--light-blue').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -261,7 +298,10 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(0, '#b3005e66');
+        gradient.addColorStop(
+          0,
+          style.getPropertyValue('--dark-magenta').trim(),
+        );
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -274,14 +314,24 @@ var Pontoon = (function (my) {
                 label: 'Current month',
                 data: chart.data('time-to-review-pretranslations'),
                 backgroundColor: gradient,
-                borderColor: ['#ff5f9e'],
+                borderColor: [style.getPropertyValue('--hot-pink').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#ff5f9e',
+                pointBackgroundColor: style
+                  .getPropertyValue('--hot-pink')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#ff5f9e',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--hot-pink')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 2,
                 spanGaps: true,
               },
@@ -289,14 +339,24 @@ var Pontoon = (function (my) {
                 type: 'line',
                 label: '12-month average',
                 data: chart.data('time-to-review-pretranslations-12-month-avg'),
-                borderColor: ['#b3005e'],
+                borderColor: [style.getPropertyValue('--dark-pink').trim()],
                 borderWidth: 1,
-                pointBackgroundColor: '#b3005e',
+                pointBackgroundColor: style
+                  .getPropertyValue('--dark-pink')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#b3005e',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--dark-pink')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 order: 1,
                 spanGaps: true,
               },
@@ -309,7 +369,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#b3005e',
+              borderColor: style.getPropertyValue('--dark-pink').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -366,7 +426,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, '#7BC87633');
+        gradient.addColorStop(0, style.getPropertyValue('--dark-green').trim());
         gradient.addColorStop(1, 'transparent');
 
         var humanData = chart.data('human-translations') || [];
@@ -384,22 +444,32 @@ var Pontoon = (function (my) {
                 data: chart.data('completion'),
                 yAxisID: 'completion-y-axis',
                 backgroundColor: gradient,
-                borderColor: ['#7BC876'],
+                borderColor: [style.getPropertyValue('--light-green-1').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#7BC876',
+                pointBackgroundColor: style
+                  .getPropertyValue('--light-green-1')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#7BC876',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--light-green-1')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
               },
               humanData.length > 0 && {
                 type: 'bar',
                 label: 'Human translations',
                 data: humanData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#4f7256',
-                hoverBackgroundColor: '#4f7256',
+                backgroundColor: style.getPropertyValue('--green').trim(),
+                hoverBackgroundColor: style.getPropertyValue('--green').trim(),
                 stack: 'translations',
                 order: 2,
               },
@@ -408,8 +478,12 @@ var Pontoon = (function (my) {
                 label: 'Machinery translations',
                 data: machineryData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#41554c',
-                hoverBackgroundColor: '#41554c',
+                backgroundColor: style
+                  .getPropertyValue('--forest-green-1')
+                  .trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--forest-green-1')
+                  .trim(),
                 stack: 'translations',
                 order: 1,
               },
@@ -418,8 +492,10 @@ var Pontoon = (function (my) {
                 label: 'New source strings',
                 data: newSourcesData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#272a2f',
-                hoverBackgroundColor: '#272a2f',
+                backgroundColor: style.getPropertyValue('--black-3').trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--black-3')
+                  .trim(),
                 stack: 'source-strings',
                 order: 3,
                 hidden: true,
@@ -434,7 +510,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#7BC876',
+              borderColor: style.getPropertyValue('--light-green-1').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -500,7 +576,7 @@ var Pontoon = (function (my) {
                   scaleLabel: {
                     display: true,
                     labelString: 'COMPLETION',
-                    fontColor: '#FFF',
+                    fontColor: style.getPropertyValue('--white-1').trim(),
                     fontStyle: 100,
                   },
                   gridLines: {
@@ -522,7 +598,7 @@ var Pontoon = (function (my) {
                   scaleLabel: {
                     display: true,
                     labelString: 'STRINGS',
-                    fontColor: '#FFF',
+                    fontColor: style.getPropertyValue('--white-1').trim(),
                     fontStyle: 100,
                   },
                   gridLines: {
@@ -555,7 +631,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, '#4fc4f688');
+        gradient.addColorStop(0, style.getPropertyValue('--light-blue').trim());
         gradient.addColorStop(1, 'transparent');
 
         var unreviewedData = chart.data('unreviewed') || [];
@@ -575,22 +651,32 @@ var Pontoon = (function (my) {
                 data: unreviewedData,
                 yAxisID: 'strings-y-axis',
                 backgroundColor: gradient,
-                borderColor: ['#4fc4f6'],
+                borderColor: [style.getPropertyValue('--light-blue').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#4fc4f6',
+                pointBackgroundColor: style
+                  .getPropertyValue('--light-blue')
+                  .trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#4fc4f6',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--light-blue')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
               },
               peerApprovedData.length > 0 && {
                 type: 'bar',
                 label: 'Peer-approved',
                 data: peerApprovedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#3e7089',
-                hoverBackgroundColor: '#3e7089',
+                backgroundColor: style.getPropertyValue('--blue-1').trim(),
+                hoverBackgroundColor: style.getPropertyValue('--blue-1').trim(),
                 stack: 'review-actions',
                 order: 3,
               },
@@ -599,8 +685,8 @@ var Pontoon = (function (my) {
                 label: 'Self-approved',
                 data: selfApprovedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#385465',
-                hoverBackgroundColor: '#385465',
+                backgroundColor: style.getPropertyValue('--grey-5').trim(),
+                hoverBackgroundColor: style.getPropertyValue('--grey-5').trim(),
                 stack: 'review-actions',
                 order: 2,
               },
@@ -609,8 +695,10 @@ var Pontoon = (function (my) {
                 label: 'Rejected',
                 data: rejectedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#843650',
-                hoverBackgroundColor: '#843650',
+                backgroundColor: style.getPropertyValue('--magenta').trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--magenta')
+                  .trim(),
                 stack: 'review-actions',
                 order: 1,
               },
@@ -619,8 +707,10 @@ var Pontoon = (function (my) {
                 label: 'New suggestions',
                 data: chart.data('new-suggestions'),
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#272a2f',
-                hoverBackgroundColor: '#272a2f',
+                backgroundColor: style.getPropertyValue('--black-3').trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--black-3')
+                  .trim(),
                 stack: 'new-suggestions',
                 order: 4,
                 hidden: true,
@@ -635,7 +725,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#4fc4f6',
+              borderColor: style.getPropertyValue('--light-blue').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -716,7 +806,7 @@ var Pontoon = (function (my) {
                   scaleLabel: {
                     display: true,
                     labelString: 'STRINGS',
-                    fontColor: '#FFF',
+                    fontColor: style.getPropertyValue('--white-1').trim(),
                     fontStyle: 100,
                   },
                   gridLines: {
@@ -749,11 +839,17 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient_approval = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient_approval.addColorStop(0, '#FFACFC33');
+        gradient_approval.addColorStop(
+          0,
+          style.getPropertyValue('--dark-purple-2').trim(),
+        );
         gradient_approval.addColorStop(1, 'transparent');
 
         var gradient_chrf = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient_chrf.addColorStop(0, '#F148FB33');
+        gradient_chrf.addColorStop(
+          0,
+          style.getPropertyValue('--dark-purple').trim(),
+        );
         gradient_chrf.addColorStop(1, 'transparent');
 
         var approvedData = chart.data('approved') || [];
@@ -771,14 +867,22 @@ var Pontoon = (function (my) {
                 data: chart.data('approval-rate'),
                 yAxisID: 'approval-rate-y-axis',
                 backgroundColor: gradient_approval,
-                borderColor: ['#c6c1f0'],
+                borderColor: [style.getPropertyValue('--lilac').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#c6c1f0',
+                pointBackgroundColor: style.getPropertyValue('--lilac').trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#c6c1f0',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--lilac')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 spanGaps: true,
               },
               {
@@ -787,14 +891,22 @@ var Pontoon = (function (my) {
                 data: chart.data('chrf-score'),
                 yAxisID: 'approval-rate-y-axis',
                 backgroundColor: gradient_chrf,
-                borderColor: ['#8074a8'],
+                borderColor: [style.getPropertyValue('--purple').trim()],
                 borderWidth: 2,
-                pointBackgroundColor: '#8074a8',
+                pointBackgroundColor: style.getPropertyValue('--purple').trim(),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#8074a8',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--purple')
+                  .trim(),
+                pointHoverBorderColor: getComputedStyle(
+                  document.documentElement,
+                )
+                  .getPropertyValue('--white-1')
+                  .trim(),
                 spanGaps: true,
               },
               approvedData.length > 0 && {
@@ -802,8 +914,8 @@ var Pontoon = (function (my) {
                 label: 'Approved',
                 data: approvedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#c46487',
-                hoverBackgroundColor: '#c46487',
+                backgroundColor: style.getPropertyValue('--pink-2').trim(),
+                hoverBackgroundColor: style.getPropertyValue('--pink-2').trim(),
                 stack: 'reviewed-pretranslations',
                 order: 2,
               },
@@ -812,8 +924,10 @@ var Pontoon = (function (my) {
                 label: 'Rejected',
                 data: rejectedData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#ffbed1',
-                hoverBackgroundColor: '#ffbed1',
+                backgroundColor: style.getPropertyValue('--light-pink').trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--light-pink')
+                  .trim(),
                 stack: 'reviewed-pretranslations',
                 order: 1,
               },
@@ -822,8 +936,10 @@ var Pontoon = (function (my) {
                 label: 'New pretranslations',
                 data: newData,
                 yAxisID: 'strings-y-axis',
-                backgroundColor: '#272a2f',
-                hoverBackgroundColor: '#272a2f',
+                backgroundColor: style.getPropertyValue('--black-3').trim(),
+                hoverBackgroundColor: style
+                  .getPropertyValue('--black-3')
+                  .trim(),
                 stack: 'new-pretranslations',
                 order: 3,
                 hidden: true,
@@ -838,7 +954,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#FFACFC',
+              borderColor: style.getPropertyValue('--pink-3').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -897,7 +1013,7 @@ var Pontoon = (function (my) {
                   scaleLabel: {
                     display: true,
                     labelString: 'APPROVAL RATE',
-                    fontColor: '#FFF',
+                    fontColor: style.getPropertyValue('--white-1').trim(),
                     fontStyle: 100,
                   },
                   gridLines: {
@@ -919,7 +1035,7 @@ var Pontoon = (function (my) {
                   scaleLabel: {
                     display: true,
                     labelString: 'STRINGS',
-                    fontColor: '#FFF',
+                    fontColor: style.getPropertyValue('--white-1').trim(),
                     fontStyle: 100,
                   },
                   gridLines: {

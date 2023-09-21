@@ -13,7 +13,7 @@
 }
 
 .history > p {
-  color: #aaa;
+  color: var(--light-grey-7);
   font-style: italic;
   padding: 15px 10px;
 }

@@ -9,7 +9,7 @@
 }
 
 .filters-panel .visibility-switch {
-  color: #ffffff;
+  color: var(--white-1);
   cursor: pointer;
   display: inline-block;
   font-weight: 300;
@@ -30,14 +30,14 @@
 }
 
 .filters-panel .visibility-switch:hover .status:before {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .filters-panel .menu {
-  background: #272a2f;
+  background: var(--black-3);
   bottom: auto;
   box-sizing: border-box;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: block;
   left: 5px;
   list-style: none;
@@ -60,15 +60,15 @@
 }
 
 .filters-panel .menu li {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   cursor: pointer;
   font-weight: 300;
   padding: 2px 4px;
 }
 
 .filters-panel .menu li:hover {
-  color: #ffffff;
-  background-color: #3f4752;
+  color: var(--white-1);
+  background-color: var(--dark-grey-2);
 }
 
 .filters-panel .menu li .status {
@@ -96,7 +96,7 @@
 .filters-panel .menu li.horizontal-separator {
   background: transparent;
   border-top: none;
-  color: #7bc876;
+  color: var(--light-green-1);
   cursor: default;
   font-size: 13px;
   height: auto;
@@ -122,16 +122,16 @@
 }
 
 .filters-panel .menu li .count {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   border-radius: 3px;
-  color: #cccccc;
+  color: var(--light-grey-6);
   right: 4px;
   top: 4px;
 }
 
 .filters-panel .menu li:hover .count {
-  background: #4d5967;
-  color: #cccccc;
+  background: var(--grey-3);
+  color: var(--light-grey-6);
 }
 
 .filters-panel .menu li .priority {
@@ -140,12 +140,12 @@
 }
 
 .filters-panel .menu li .priority .fa-star {
-  color: #637283;
+  color: var(--grey-1);
   float: left;
 }
 
 .filters-panel .menu li .priority .fa-star.active {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .filters-panel
@@ -171,7 +171,7 @@
 
 .filters-panel .menu li.author img {
   border-radius: 6px;
-  border: 2px solid #4d5967;
+  border: 2px solid var(--grey-3);
   vertical-align: top;
 }
 
@@ -181,13 +181,13 @@
 }
 
 .filters-panel .menu li.author .name {
-  color: #ffffff;
+  color: var(--white-1);
   font-size: 16px;
   padding-bottom: 4px;
 }
 
 .filters-panel .menu li.author .role {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .filters-panel .menu li.author .count {
@@ -212,7 +212,7 @@
 }
 
 .filters-panel .menu li.author .status:before {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .filters-panel .menu li.author.selected .status,
@@ -229,7 +229,7 @@
   position: sticky;
   bottom: 0;
   background: #111111;
-  border-top: 1px solid #5e6475;
+  border-top: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   line-height: 23px;
   padding: 10px 12px;
@@ -239,7 +239,7 @@
 .filters-panel .toolbar button {
   background: none;
   border: none;
-  color: #aaa;
+  color: var(--light-grey-7);
   font-weight: 300;
 }
 
@@ -259,5 +259,5 @@
 .filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

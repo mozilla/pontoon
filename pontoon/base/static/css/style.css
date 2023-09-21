@@ -17,28 +17,28 @@
 }
 
 .status.fa:before {
-  color: #5f7285;
+  color: var(--blue-2);
   content: '';
 }
 
 .translated .status.fa:before {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .pretranslated .status.fa:before {
-  color: #c0ff00;
+  color: var(--neon-green);
 }
 
 .warnings .status.fa:before {
-  color: #ffa10f;
+  color: var(--orange-1);
 }
 
 .errors .status.fa:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .unreviewed .status.fa:before {
-  color: #4fc4f6;
+  color: var(--light-blue);
   content: '';
 }
 
@@ -58,13 +58,13 @@ button {
 }
 
 body {
-  background: #272a2f;
-  color: #ebebeb;
+  background: var(--black-3);
+  color: var(--white-1);
 }
 
 #heading,
 #middle {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 #heading,
@@ -87,7 +87,7 @@ button {
 }
 
 h2 {
-  color: #888888;
+  color: var(--light-grey-2);
   font-size: 14px;
   font-weight: 300;
   text-transform: uppercase;
@@ -95,7 +95,7 @@ h2 {
 }
 
 h3 {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 26px;
   font-weight: 300;
   font-style: italic;
@@ -103,7 +103,7 @@ h3 {
 }
 
 h3 .stress {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 h3 .small {
@@ -113,20 +113,20 @@ h3 .small {
 
 a:link,
 a:visited {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-weight: 300;
   text-decoration: none;
 }
 
 a:hover,
 a:active {
-  color: #7bc876;
+  color: var(--light-green-1);
   text-decoration: none;
 }
 
 sup a:link,
 sup a:visited {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 input[type='text'],
@@ -135,7 +135,7 @@ input[type='password'],
 input[type='url'],
 input[type='number'],
 textarea {
-  background: #888888;
+  background: var(--light-grey-2);
   border: none;
   padding: 4px 3px 3px;
   width: 205px;
@@ -152,7 +152,7 @@ input[type='password']:focus,
 input[type='url']:focus,
 input[type='number']:focus,
 textarea:focus {
-  background-color: #ffffff;
+  background-color: var(--white-1);
   outline: none; /* Remove WebKit Glow */
 }
 
@@ -161,7 +161,7 @@ label {
 }
 
 table {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 13px;
   text-align: left;
   width: 100%;
@@ -172,11 +172,11 @@ tbody {
 }
 
 thead tr {
-  border-bottom: 1px solid #4d5967;
+  border-bottom: 1px solid var(--grey-3);
 }
 
 th {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   padding: 10px;
   text-transform: uppercase;
 }
@@ -186,7 +186,7 @@ th {
 }
 
 .table-sort th:hover {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .table-sort th i {
@@ -213,11 +213,11 @@ td {
 }
 
 table.striped tr:nth-child(even) {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 tfoot tr {
-  border-top: 1px solid #4d5967;
+  border-top: 1px solid var(--grey-3);
 }
 
 tfoot td {
@@ -231,15 +231,15 @@ tfoot td a {
 }
 
 .count {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   border-radius: 3px;
-  color: #cccccc;
+  color: var(--light-grey-6);
   margin-left: 5px;
   padding: 0 5px;
 }
 
 .button {
-  color: #ffffff;
+  color: var(--white-1);
   cursor: pointer;
   display: inline-block;
   font-weight: 300;
@@ -270,9 +270,9 @@ tfoot td a {
 }
 
 .select .menu {
-  background: #272a2f;
+  background: var(--black-3);
   bottom: 50px;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: none;
   list-style: none;
   margin-left: 0;
@@ -288,7 +288,7 @@ tfoot td a {
 
 .select > .button.breadcrumbs,
 #go {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   font-size: 16px;
   height: 20px;
   margin: 10px 10px 10px 0;
@@ -311,7 +311,7 @@ tfoot td a {
   content: '';
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
-  border-left: 20px solid #272a2f;
+  border-left: 20px solid var(--black-3);
   position: absolute;
   left: 0;
   top: 10px;
@@ -321,7 +321,7 @@ tfoot td a {
   content: '';
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
-  border-left: 20px solid #3f4752;
+  border-left: 20px solid var(--dark-grey-2);
   position: absolute;
   right: -10px;
   top: 10px;
@@ -337,30 +337,30 @@ tfoot td a {
 }
 
 .select > .button.breadcrumbs:hover {
-  background: #4d5967;
+  background: var(--grey-3);
 }
 
 .select > .button.breadcrumbs:hover:after {
-  border-left-color: #4d5967;
+  border-left-color: var(--grey-3);
 }
 
 .select.opened > .button.breadcrumbs {
-  background: #4d5967;
+  background: var(--grey-3);
 }
 
 .select.opened > .button.breadcrumbs:after {
-  border-left-color: #4d5967;
+  border-left-color: var(--grey-3);
 }
 
 #go {
-  color: #ffffff;
+  color: var(--white-1);
   float: left;
 }
 
 #go.active,
 #go:hover {
-  background: #7bc876;
-  color: #272a2f;
+  background: var(--light-green-1);
+  color: var(--black-3);
 }
 
 .project.select,
@@ -458,15 +458,15 @@ tfoot td a {
 }
 
 .select .menu ul li .chart span.translated {
-  background: #7bc876;
+  background: var(--light-green-1);
 }
 
 .select .menu ul li .chart span.pretranslated {
-  background: #c0ff00;
+  background: var(--neon-green);
 }
 
 .select .menu ul li .chart span.missing {
-  background: #5f7285;
+  background: var(--blue-2);
 }
 
 .select .menu ul li .latest {
@@ -484,7 +484,7 @@ tfoot td a {
 }
 
 .select .menu ul li .latest a {
-  color: #7bc876;
+  color: var(--light-green-1);
   display: inline-block;
 }
 
@@ -507,27 +507,27 @@ tfoot td a {
 }
 
 .menu li {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-weight: 300;
   padding: 2px 4px;
 }
 
 .menu li.hover {
-  color: #ffffff;
-  background: #3f4752;
+  color: var(--white-1);
+  background: var(--dark-grey-2);
 }
 
 .menu li.hover a {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .menu li a:hover,
 .menu li a:active {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .menu li.horizontal-separator {
-  border-top: 1px solid #525a65;
+  border-top: 1px solid var(--grey-2);
   height: 0;
   margin: 5px 0;
   padding: 0;
@@ -549,13 +549,13 @@ tfoot td a {
 }
 
 .search-wrapper {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   margin-bottom: 10px;
   position: relative;
 }
 
 .search-wrapper .icon {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 1.2em;
   position: absolute;
   left: 3px;
@@ -564,7 +564,7 @@ tfoot td a {
 
 .search-wrapper input[type='search'] {
   background: transparent;
-  color: #ffffff;
+  color: var(--white-1);
   padding-left: 22px;
 }
 
@@ -575,7 +575,7 @@ tfoot td a {
 
 .menu input[type='search'] {
   background: transparent;
-  color: #ffffff;
+  color: var(--white-1);
   float: none;
   font-weight: 300;
   padding-left: 25px;
@@ -588,13 +588,13 @@ tfoot td a {
 }
 
 .locale .code {
-  color: #7bc876;
+  color: var(--light-green-1);
   text-align: left;
 }
 
 .notification {
-  background: rgba(51, 57, 65, 0.9);
-  color: #7bc876;
+  background: var(--grey-7);
+  color: var(--light-green-1);
   cursor: pointer;
   font-style: italic;
   left: 0;
@@ -613,16 +613,16 @@ tfoot td a {
 }
 
 .notification li.error {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 img.rounded {
   border-radius: 6px;
-  border: 2px solid #4d5967;
+  border: 2px solid var(--grey-3);
 }
 
 #error {
-  background: #333941;
+  background: var(--dark-grey-1);
   bottom: 0;
   display: table;
   height: 100%;
@@ -642,8 +642,8 @@ img.rounded {
 }
 
 #addon-promotion {
-  background: #ff3366cc;
-  border-bottom: 1px solid #333941;
+  background: var(--pink);
+  border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
   top: -44px;
@@ -665,13 +665,13 @@ body.addon-promotion-active #addon-promotion {
 #addon-promotion .dismiss {
   background: transparent;
   border: none;
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 28px;
   padding: 0;
 }
 
 #addon-promotion .dismiss:hover {
-  color: #272a2f;
+  color: var(--black-3);
 }
 
 #addon-promotion .text {
@@ -679,21 +679,21 @@ body.addon-promotion-active #addon-promotion {
 }
 
 #addon-promotion .get {
-  background: #272a2f;
+  background: var(--black-3);
   border-radius: 3px;
-  color: #ebebeb;
+  color: var(--white-1);
   font-weight: normal;
   margin-left: auto;
   padding: 7px 12px;
 }
 
 #addon-promotion .get:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 body > header {
-  background: #272a2f;
-  border-bottom: 1px solid #333941;
+  background: var(--black-3);
+  border-bottom: 1px solid var(--dark-grey-1);
   height: 60px;
   transition: margin-top 0.3s;
 }
@@ -730,7 +730,7 @@ header nav .right .sign-in-header {
 
 header nav .right .sign-in-header button {
   background: transparent;
-  border: 1.5px solid #7bc176;
+  border: 1.5px solid var(--light-green-2);
   border-radius: 2px;
   color: white;
   font-size: 14px;
@@ -743,7 +743,7 @@ header nav .right .sign-in-header button {
 }
 
 header nav .right .sign-in-header button:hover {
-  background-color: #7bc176;
+  background-color: var(--light-green-2);
 }
 
 header .select .menu {
@@ -767,16 +767,16 @@ header .right .select .menu {
 }
 
 #notifications .button .icon {
-  color: #4d5967;
+  color: var(--grey-3);
   font-size: 26px;
   margin-top: 17px;
 }
 
 #notifications .button .badge {
-  background: #f36;
-  border: 3px solid #272a2f;
+  background: var(--red-pink);
+  border: 3px solid var(--black-3);
   border-radius: 12px;
-  color: #fff;
+  color: var(--white-1);
   display: none;
   font-size: 12px;
   font-style: normal;
@@ -796,7 +796,7 @@ header .right .select .menu {
 
 #notifications .menu,
 #profile .menu {
-  border: 1px solid #333941;
+  border: 1px solid var(--dark-grey-1);
   border-top: none;
 }
 
@@ -829,21 +829,21 @@ header .right .select .menu {
   .menu
   ul.notification-list
   li.notification-item[data-unread='true'] {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .notifications .menu li.notification-item span {
-  color: #ebebeb;
+  color: var(--white-1);
   float: none;
 }
 
 .notifications .menu li.notification-item a {
-  color: #f36;
+  color: var(--red-pink);
   display: inline;
 }
 
 .notifications .menu li.notification-item .verb {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .notifications .menu li.notification-item .description ul {
@@ -864,11 +864,11 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .message.trim a {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .notifications .menu li.notification-item.hover .message.trim a {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .notifications .menu li.notification-item .message.trim p {
@@ -882,7 +882,7 @@ header .right .select .menu {
 .notifications .menu li.notification-item .message h4,
 .notifications .menu li.notification-item .message h5,
 .notifications .menu li.notification-item .message h6 {
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 14px;
   font-style: normal;
   font-weight: bold;
@@ -913,7 +913,7 @@ header .right .select .menu {
 /* End message styling */
 
 .notifications .menu li.notification-item .timeago {
-  color: #888888;
+  color: var(--light-grey-2);
   font-size: 11px;
   font-weight: normal;
   margin-top: 8px;
@@ -922,12 +922,12 @@ header .right .select .menu {
 }
 
 #notifications .menu li.horizontal-separator {
-  border-color: #333941;
+  border-color: var(--dark-grey-1);
   margin: 0;
 }
 
 .notification-list li.horizontal-separator {
-  border-color: #272a2f;
+  border-color: var(--black-3);
   margin: 0;
 }
 
@@ -939,20 +939,20 @@ header .right .select .menu {
 }
 
 .notifications .menu li.no .icon {
-  color: #333941;
+  color: var(--dark-grey-1);
   font-size: 92px;
   padding-bottom: 8px;
 }
 
 .notifications .menu li.no .title,
 #profile .menu li.details .name {
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 16px;
 }
 
 .notifications .menu li.no .description,
 #profile .menu li.details .email {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 12px;
 }
 
@@ -990,7 +990,7 @@ header .right .select .menu {
 }
 
 #profile .button .menu-icon {
-  border: 2px solid #4d5967;
+  border: 2px solid var(--grey-3);
   border-radius: 100%;
   float: right;
   font-size: 20px;
@@ -1043,21 +1043,21 @@ nav .links li {
 
 .links li a:link,
 .links li a:visited {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .links li a:hover,
 .links li a:active {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .submenu.tabs {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
 }
 
 .submenu .links a:link,
 .submenu .links a:visited {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: inline-block;
   padding: 6px;
   text-transform: uppercase;
@@ -1066,7 +1066,7 @@ nav .links li {
 .submenu .links li.active a,
 .submenu .links a:hover,
 .submenu .links a:active {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .submenu.tabs .links {
@@ -1084,8 +1084,8 @@ nav .links li {
 }
 
 .submenu.tabs .links li.active {
-  border-color: #5e6475;
-  background: #272a2f;
+  border-color: var(--light-grey-1);
+  background: var(--black-3);
 }
 
 .submenu.tabs .links a {
@@ -1097,12 +1097,12 @@ nav .links li {
 }
 
 .submenu.tabs .links a:hover {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .submenu.tabs .links li.active a {
   background-color: transparent;
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .submenu.tabs .links a .fa {
@@ -1115,7 +1115,7 @@ noscript p {
 
 #title,
 #title a {
-  color: #ebebeb;
+  color: var(--white-1);
   display: inline-block;
   font-size: 48px;
   font-weight: bold;
@@ -1134,7 +1134,7 @@ noscript p {
 }
 
 #error #box a {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 108px;
 }
 
@@ -1146,14 +1146,14 @@ noscript p {
 
 #subtitle,
 #subtitle a {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 32px;
   font-style: italic;
   text-transform: none;
 }
 
 #action {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 14px;
   font-weight: 300;
   height: 40px;
@@ -1161,7 +1161,7 @@ noscript p {
 }
 
 #action #link {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 body > form,
@@ -1183,12 +1183,12 @@ body > form,
 }
 
 .check-box .fa:before {
-  color: #f36;
+  color: var(--red-pink);
   content: '';
 }
 
 .check-box.enabled .fa:before {
-  color: #7bc876;
+  color: var(--light-green-1);
   content: '';
 }
 
@@ -1198,14 +1198,14 @@ body > form,
 }
 
 #helpers > section ul li {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   padding-bottom: 20px;
   padding-top: 5px;
   text-align: right;
 }
 
 #helpers > section ul li > header {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: block;
   font-size: 11px;
   font-weight: 300;
@@ -1214,7 +1214,7 @@ body > form,
 }
 
 #helpers > section ul li > header .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -1224,7 +1224,7 @@ body > form,
 }
 
 #helpers > section.machinery ul li > header sup {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #helpers > section.machinery ul li > header .sources {
@@ -1300,13 +1300,13 @@ body > form,
 }
 
 #helpers > section ul li > p ins {
-  background: #4b6259;
-  color: #9cd699;
+  background: var(--forest-green-2);
+  color: var(--light-green-3);
 }
 
 #helpers > section ul li > p del {
-  background: #674b54;
-  color: #fe8f8f;
+  background: var(--purple-pink);
+  color: var(--coral);
 }
 
 #helpers > section ul li > p ins mark,
@@ -1317,12 +1317,12 @@ body > form,
 }
 
 #helpers > section ul li.disabled p {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-style: italic;
 }
 
 #helpers > section ul li p.original {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .tabs nav ul li {
@@ -1347,7 +1347,7 @@ body > form,
 }
 
 .no-results {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-style: italic;
   text-align: center;
 }
@@ -1379,10 +1379,10 @@ body > form,
 }
 
 .controls .button {
-  background: #333941;
+  background: var(--dark-grey-1);
   border: none;
   border-radius: 2px;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-weight: 400;
   height: auto;
   padding: 6px;
@@ -1405,8 +1405,8 @@ body > form,
 .controls a.button:hover,
 .controls li.active a.button,
 .controls .button.active {
-  background: #7bc876;
-  color: #272a2f;
+  background: var(--light-green-1);
+  color: var(--black-3);
 }
 
 .controls .button.active {
@@ -1414,7 +1414,7 @@ body > form,
 }
 
 .controls .button.selector:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
   color: inherit;
 }
 
@@ -1442,8 +1442,8 @@ body > form,
 }
 
 .controls > .search-wrapper input {
-  background: #333941;
-  border: 1px solid #4d5967;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--grey-3);
   border-radius: 3px;
   font-size: 13px;
   font-weight: 300;
@@ -1455,12 +1455,12 @@ body > form,
 }
 
 .priority .fa-star {
-  color: #637283;
+  color: var(--grey-1);
   float: left;
 }
 
 .priority .fa-star.active {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .container .info {
@@ -1478,5 +1478,5 @@ body > form,
 }
 
 .container .info a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

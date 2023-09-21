@@ -1,5 +1,5 @@
 .entity {
-  color: white;
+  color: var(--white-1);
   cursor: pointer;
   line-height: 2rem;
   padding: 10px 25px 10px 43px;
@@ -15,7 +15,7 @@
 .entity.selected,
 .entity.sibling:hover,
 .entity:hover {
-  background-color: #333941;
+  background-color: var(--dark-grey-1);
 }
 
 .entity > div {
@@ -23,10 +23,10 @@
 }
 
 .entity mark.search {
-  color: #ffa10f;
+  color: var(--orange-1);
   font-weight: normal;
   font-style: inherit;
-  background: #676054;
+  background: var(--brown-1);
   border-radius: 2px;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .entity .translation-string {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   min-height: 20px;
   text-align: start;
 }
@@ -67,7 +67,7 @@
 }
 
 .entity .status:before {
-  color: #5f7285;
+  color: var(--blue-2);
   content: '';
 }
 
@@ -80,27 +80,27 @@
 }
 
 .entity.approved .status:before {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .entity.pretranslated .status:before {
-  color: #c0ff00;
+  color: var(--neon-green);
 }
 
 .entity.errors .status:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .entity.warnings .status:before {
-  color: #ffa10f;
+  color: var(--orange-1);
 }
 
 .entity.sibling {
-  background-color: #4d5967;
+  background-color: var(--grey-3);
 }
 
 .entity .sibling-entities-icon {
-  color: #aaa;
+  color: var(--light-grey-7);
   left: 17px;
   top: 39px;
   position: absolute;
@@ -110,5 +110,5 @@
 }
 
 .entity .sibling-entities-icon:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

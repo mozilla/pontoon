@@ -12,6 +12,8 @@ const shortDateFormat = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
+const style = getComputedStyle(document.documentElement);
+
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -37,7 +39,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        gradient.addColorStop(0, '#7BC87633');
+        gradient.addColorStop(0, style.getPropertyValue('--dark-green'));
         gradient.addColorStop(1, 'transparent');
 
         new Chart(chart, {
@@ -50,28 +52,31 @@ var Pontoon = (function (my) {
                 label: 'Current month',
                 data: data1,
                 backgroundColor: gradient,
-                borderColor: ['#41554c'],
+                borderColor: [style.getPropertyValue('--forest-green-1')],
                 borderWidth: 2,
-                pointBackgroundColor: '#41554c',
+                pointBackgroundColor:
+                  style.getPropertyValue('--forest-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#41554c',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor:
+                  style.getPropertyValue('--forest-green-1'),
+                pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
               },
               {
                 type: 'line',
                 label: '12-month average',
                 data: data2,
-                borderColor: ['#7BC876'],
+                borderColor: [style.getPropertyValue('--light-green-1')],
                 borderWidth: 1,
-                pointBackgroundColor: '#7BC876',
+                pointBackgroundColor: style.getPropertyValue('--light-green-1'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#7BC876',
-                pointHoverBorderColor: '#FFF',
+                pointHoverBackgroundColor:
+                  style.getPropertyValue('--light-green-1'),
+                pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
               },
             ],
@@ -83,7 +88,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#7BC876',
+              borderColor: style.getPropertyValue('--light-green-1'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -183,19 +188,19 @@ var Pontoon = (function (my) {
           let color;
           switch (true) {
             case count === 0:
-              color = '#333941';
+              color = style.getPropertyValue('--dark-grey-1');
               break;
             case count < 10:
-              color = '#41554c';
+              color = style.getPropertyValue('--forest-green-1');
               break;
             case count < 25:
-              color = '#4f7256';
+              color = style.getPropertyValue('--green');
               break;
             case count < 50:
-              color = '#64906D';
+              color = style.getPropertyValue('--green-2');
               break;
             default:
-              color = '#7bc876';
+              color = style.getPropertyValue('--light-green-1');
           }
 
           const y = currentDate.getDay() * step;

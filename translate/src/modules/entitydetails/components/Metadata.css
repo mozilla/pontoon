@@ -1,6 +1,6 @@
 .metadata {
-  background-color: #3f4752;
-  color: #aaa;
+  background-color: var(--dark-grey-2);
+  color: var(--light-grey-7);
   font-size: 12px;
   font-style: italic;
   min-height: 114px;
@@ -18,11 +18,11 @@
 }
 
 .metadata .title {
-  color: #888;
+  color: var(--light-grey-2);
 }
 
 .metadata div a {
-  color: #7bc876;
+  color: var(--light-green-1);
   text-decoration: none;
 }
 
@@ -53,7 +53,7 @@
 
 .metadata .original .term {
   background: inherit;
-  border-bottom: 1px solid #7bc876;
+  border-bottom: 1px solid var(--light-green-1);
   color: inherit;
   cursor: pointer;
   font-weight: normal;
@@ -69,7 +69,7 @@
 .metadata button {
   background: none;
   border: none;
-  color: #7bc876;
+  color: var(--light-green-1);
   font-style: italic;
   padding: 0 0 0 2px;
 }
@@ -93,9 +93,9 @@
 }
 
 .metadata .context a {
-  color: #aaa;
+  color: var(--light-grey-7);
 }
 
 .metadata .context a:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

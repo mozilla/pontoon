@@ -1,7 +1,7 @@
 .filters-panel .menu li.for-time-range button {
   background: transparent;
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   float: right;
   font-weight: 300;
   margin: -3px 4px 0 0;
@@ -9,11 +9,11 @@
 }
 
 .filters-panel .menu .for-time-range button.save-range {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .filters-panel .menu li.for-time-range button:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .filters-panel .menu li.for-time-range button .fa {
@@ -33,7 +33,7 @@
 }
 
 .filters-panel .menu li.time-range label {
-  color: #ffffff;
+  color: var(--white-1);
   float: left;
   font-size: 13px;
 }
@@ -51,7 +51,7 @@
   background: transparent;
   border: 1px solid transparent;
   box-sizing: border-box;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   cursor: pointer;
   display: inline-block;
   font-size: 13px;
@@ -64,7 +64,7 @@
 }
 
 .filters-panel .menu li.time-range.editing input {
-  border-color: #525a65;
+  border-color: var(--grey-2);
   cursor: auto;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .filters-panel .menu li.time-range input.error {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .filters-panel .menu li.time-range .to input {

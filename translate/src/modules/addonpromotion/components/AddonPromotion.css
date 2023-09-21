@@ -3,8 +3,8 @@
 }
 
 .addon-promotion {
-  background: #272a2f;
-  border-bottom: 1px solid #333941;
+  background: var(--black-3);
+  border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
   top: 0;
@@ -14,7 +14,7 @@
 
 .addon-promotion .container {
   align-items: center;
-  background: #ff3366cc;
+  background: var(--pink);
   display: flex;
   height: 100%;
   padding: 0 10px;
@@ -23,13 +23,13 @@
 .addon-promotion .dismiss {
   background: transparent;
   border: none;
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 28px;
   padding: 0;
 }
 
 .addon-promotion .dismiss:hover {
-  color: #272a2f;
+  color: var(--black-3);
 }
 
 .addon-promotion .text {
@@ -37,14 +37,14 @@
 }
 
 .addon-promotion .get {
-  background: #272a2f;
+  background: var(--black-3);
   border-radius: 3px;
-  color: #ebebeb;
+  color: var(--white-1);
   font-weight: normal;
   margin-left: auto;
   padding: 7px 12px;
 }
 
 .addon-promotion .get:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
 }

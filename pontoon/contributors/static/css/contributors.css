@@ -1,5 +1,5 @@
 #heading .banner .title {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #heading .legend {
@@ -51,7 +51,7 @@ body.top-contributors #heading .legend li .status.fa {
 }
 
 .contributor p.role {
-  color: #ebebeb;
+  color: var(--white-1);
   left: 67px;
   position: absolute;
   top: 42px;
@@ -68,7 +68,7 @@ body.top-contributors #heading .legend li .status.fa {
 }
 
 .details div p {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 th:last-child,
@@ -91,11 +91,11 @@ th:last-child sup {
 }
 
 .stats .details div.approved {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .stats .details div.unreviewed {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 .stats .details div p {

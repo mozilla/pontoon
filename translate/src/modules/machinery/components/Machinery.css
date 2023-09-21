@@ -20,7 +20,7 @@
 }
 
 .machinery > .search-wrapper > label {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   cursor: text;
   font-size: 17px;
   left: auto;
@@ -32,7 +32,7 @@
 .machinery > .search-wrapper > label > button {
   background-color: transparent;
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   padding: 0;
 }
 
@@ -41,11 +41,11 @@
 }
 
 .machinery > .search-wrapper input[type='search'] {
-  background: #333941;
+  background: var(--dark-grey-1);
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: #ffffff;
+  color: var(--white-1);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -67,7 +67,7 @@
 
 /* Style placeholder color in Chrome */
 .machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .machinery .load-more-container {
@@ -77,10 +77,10 @@
 }
 
 .machinery .load-more-button {
-  background: #333941;
-  border: 1px solid #3f4752;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--dark-grey-2);
   border-radius: 4px;
-  color: #aaa;
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 100;
   margin-right: 6px;
@@ -89,5 +89,5 @@
 }
 
 .machinery .load-more-button:hover {
-  border-color: #637283;
+  border-color: var(--grey-1);
 }

@@ -1,8 +1,8 @@
 mark.placeable {
-  background: #4d5967;
-  border: 1px solid #5e6475;
+  background: var(--grey-3);
+  border: 1px solid var(--light-grey-1);
   border-radius: 2px;
-  color: #cccccc;
+  color: var(--light-grey-6);
   font-style: normal;
   font-weight: normal;
   margin: 0 1px;

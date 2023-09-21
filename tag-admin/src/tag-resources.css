@@ -8,11 +8,11 @@
 }
 
 .tag-resources .rt-table {
-  color: white;
+  color: var(--white-1);
 }
 
 .tag-resource-widget {
-  background: #999;
+  background: var(--taupe-2);
   margin-bottom: 2em;
   padding-bottom: 0.3em;
 }
@@ -23,7 +23,7 @@
 }
 
 .tag-resources .ReactTable .pagination-bottom .-pageInfo {
-  color: #333;
+  color: var(--dark-grey-3);
 }
 
 .tag-resources .rt-th {

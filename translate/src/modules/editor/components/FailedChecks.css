@@ -1,6 +1,6 @@
 .failed-checks {
-  background: #272a2f;
-  border-top: 1px solid #5e6475;
+  background: var(--black-3);
+  border-top: 1px solid var(--light-grey-1);
   bottom: 0;
   box-sizing: border-box;
   left: 0;
@@ -16,7 +16,7 @@
 .failed-checks .close {
   background: none;
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   float: right;
   font-size: 24px;
   font-weight: 100;
@@ -26,11 +26,11 @@
 }
 
 .failed-checks .close:hover {
-  color: #ffffff;
+  color: var(--white-1);
 }
 
 .failed-checks .title {
-  color: #f36;
+  color: var(--red-pink);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 5px;
@@ -54,23 +54,23 @@
 }
 
 .failed-checks .warning {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .failed-checks .error:before {
-  color: #f36;
+  color: var(--red-pink);
 }
 
 .failed-checks .warning:before {
-  color: #4d5967;
+  color: var(--grey-3);
 }
 
 .failed-checks .anyway {
-  background: #7bc876;
+  background: var(--light-green-1);
   border: none;
   border-radius: 3px;
   bottom: 10px;
-  color: #272a2f;
+  color: var(--black-3);
   font-weight: 600;
   margin-left: 10px;
   padding: 10px;
@@ -79,9 +79,9 @@
 }
 
 .failed-checks .anyway.suggest {
-  background: #4fc4f6;
+  background: var(--light-blue);
 }
 
 .failed-checks .anyway:hover {
-  color: #ebebeb;
+  color: var(--white-1);
 }

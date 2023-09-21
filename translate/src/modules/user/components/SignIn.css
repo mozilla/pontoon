@@ -4,7 +4,7 @@
 
 .user-signin button {
   background: transparent;
-  border: 1.5px solid #7bc176;
+  border: 1.5px solid var(--light-green-2);
   border-radius: 2px;
   color: white;
   font-size: 14px;
@@ -16,5 +16,5 @@
 }
 
 .user-signin button:hover {
-  background-color: #7bc176;
+  background-color: var(--light-green-2);
 }

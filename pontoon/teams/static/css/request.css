@@ -65,7 +65,7 @@
 
 #request-item-note p {
   font-style: italic;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   text-align: center;
   display: block;
 }
@@ -81,12 +81,12 @@
 }
 
 #request-item-note p a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .request-item {
   display: none;
-  background: #7bc876;
+  background: var(--light-green-1);
   border: none;
   border-radius: 3px;
   margin-top: 15px;
@@ -96,7 +96,7 @@
 }
 
 .request-item.confirmed {
-  background: #fed271;
+  background: var(--mustard-yellow);
 }
 
 #team-form {
@@ -114,9 +114,9 @@
 }
 
 #team-form .field input {
-  color: #ffffff;
-  background: #333941;
-  border: 1px solid #4d5967;
+  color: var(--white-1);
+  background: var(--dark-grey-1);
+  border: 1px solid var(--grey-3);
   border-radius: 3px;
   float: none;
   width: 480px;
@@ -162,7 +162,7 @@
 
 .item-list td.check,
 .item-list td.radio {
-  color: #3f4752;
+  color: var(--dark-grey-2);
   float: right;
   font-size: 16px;
   height: 47px;
@@ -174,7 +174,7 @@
 }
 
 .item-list td.radio {
-  color: #4d5967;
+  color: var(--grey-3);
 }
 
 .item-list td.check:before {
@@ -186,7 +186,7 @@
 .item-list td.check:hover:before,
 .item-list td.check.enabled:before {
   content: '';
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .item-list td.check.enabled:before {
@@ -200,7 +200,7 @@
 
 .item-list td.radio:hover:before,
 .item-list td.radio.enabled:before {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .items.requesting-pretranslation .item-list .deadline,

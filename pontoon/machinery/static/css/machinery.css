@@ -18,7 +18,7 @@
 
 .clipboard-success {
   float: left;
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 #helpers .machinery li {
@@ -27,6 +27,6 @@
 }
 
 #helpers .machinery li:hover {
-  background: #333941;
+  background: var(--dark-grey-1);
   cursor: pointer;
 }

@@ -1,5 +1,5 @@
 .entity-details {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   display: flex;
   height: 100%;
 }
@@ -16,6 +16,6 @@
 
 .entity-details .third-column {
   width: 33.33%;
-  border-left: 1px solid #5e6475;
+  border-left: 1px solid var(--light-grey-1);
   box-sizing: border-box;
 }

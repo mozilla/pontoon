@@ -6,8 +6,8 @@
 }
 
 #app > header {
-  background: #272a2f;
-  border-bottom: 1px solid #333941;
+  background: var(--black-3);
+  border-bottom: 1px solid var(--dark-grey-1);
   box-sizing: border-box;
   height: 60px;
   min-width: 700px;
@@ -31,7 +31,7 @@
 }
 
 #app > .main-content > .panel-content {
-  border-left: 1px solid #5e6475;
+  border-left: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   width: 75%;
 }
@@ -42,7 +42,7 @@
 }
 
 #nprogress .bar {
-  background: #7bc876;
+  background: var(--light-green-1);
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -57,7 +57,7 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #7bc876, 0 0 5px #7bc876;
+  box-shadow: 0 0 10px var(--light-green-1), 0 0 5px var(--light-green-1);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }

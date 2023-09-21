@@ -13,7 +13,7 @@ select {
 }
 
 h1 {
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 48px;
   letter-spacing: -1px;
   margin-bottom: 40px;
@@ -27,7 +27,7 @@ h1 aside {
 }
 
 h1 a {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
@@ -35,7 +35,7 @@ h1 a {
 }
 
 body > form {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 14px;
   padding: 40px 20px 100px;
 }
@@ -64,7 +64,7 @@ h3 {
 }
 
 h4 {
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 18px;
   font-style: italic;
   font-weight: 300;
@@ -116,7 +116,7 @@ textarea {
 }
 
 form .button {
-  background: #888888;
+  background: 88;
   border: none;
   display: block;
   float: right;
@@ -126,7 +126,7 @@ form .button {
 }
 
 .button.delete-inline {
-  color: #333333;
+  color: var(--dark-grey-3);
   font-size: 20px;
   padding: 4px;
 }
@@ -150,21 +150,21 @@ form .button {
 
 .controls .button.sync,
 .controls .button.sync:hover {
-  background: #333941;
-  color: #aaa;
+  background: var(--dark-grey-1);
+  color: var(--light-grey-7);
   float: left;
 }
 
 .controls .button.pretranslate,
 .controls .button.pretranslate:hover {
-  background: #333941;
-  color: #aaa;
+  background: var(--dark-grey-1);
+  color: var(--light-grey-7);
   float: right;
 }
 
 form a:link,
 form a:visited {
-  color: #7bc876;
+  color: var(--light-green-1);
   float: right;
   text-transform: uppercase;
 }
@@ -188,7 +188,7 @@ form a:visited {
 }
 
 .double-list-selector .locale.select .menu {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   margin: 2px 0 -4px -1px;
   padding: 10px 0;
   width: 295px;
@@ -417,7 +417,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: #000;
+  color: var(--black-2);
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;
@@ -462,7 +462,7 @@ textarea.strings-source {
 }
 
 .errorlist {
-  color: #f36;
+  color: var(--red-pink);
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occures */

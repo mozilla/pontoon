@@ -1,6 +1,7 @@
 /**
  * All styles are related to forms visible for the contributor.
  */
+
 form.user-locales-settings {
   width: 620px;
 }
@@ -18,7 +19,7 @@ form .locale.select.selected {
 
 form .locale.select .menu {
   background: transparent;
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   margin: 2px 0 -4px -1px;
   overflow: auto;
   padding: 10px 0;
@@ -65,7 +66,7 @@ label {
 
 form a:link,
 form a:visited {
-  color: #7bc876;
+  color: var(--light-green-1);
   float: right;
   text-transform: uppercase;
 }

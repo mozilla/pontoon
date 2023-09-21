@@ -2,9 +2,9 @@ ul.errors {
   padding: 0.3em;
   margin: 0;
   list-style: none;
-  background: #ccc;
+  background: var(--light-grey-6);
 }
 
 ul.errors li.error {
-  color: #f36;
+  color: var(--red-pink);
 }

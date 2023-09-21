@@ -1,19 +1,19 @@
 .user-notification {
-  border-top: 1px solid #333941;
+  border-top: 1px solid var(--dark-grey-1);
   cursor: default;
   padding: 0;
 }
 
 .user-notification:first-child {
-  border-color: #272a2f;
+  border-color: var(--black-3);
 }
 
 .user-notification:first-child:hover {
-  border-color: #333941;
+  border-color: var(--dark-grey-1);
 }
 
 .user-notification.unread {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .user-notification.read {
@@ -23,11 +23,11 @@
 
 @keyframes fadeout-background {
   0% {
-    background: #3f4752;
+    background: var(--dark-grey-2);
   }
 
   100% {
-    background: #272a2f;
+    background: var(--black-3);
   }
 }
 
@@ -37,17 +37,17 @@
 }
 
 .user-notification span {
-  color: #ebebeb;
+  color: var(--white-1);
   float: none;
 }
 
 .user-notification a {
-  color: #f36;
+  color: var(--red-pink);
   display: inline;
 }
 
 .user-notification .verb {
-  color: #ebebeb;
+  color: var(--white-1);
   padding: 0 3px;
 }
 
@@ -64,7 +64,7 @@
 .user-notification .message.trim,
 .user-notification .message.trim p {
   pointer-events: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -73,11 +73,11 @@
 .user-notification .item-content:hover .message,
 .user-notification .item-content:hover .message.trim p,
 .user-notification .item-content:hover .message.trim a {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .user-notification .message.trim a {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
 }
 
 .user-notification .message.trim p {
@@ -91,7 +91,7 @@
 .user-notification .message h4,
 .user-notification .message h5,
 .user-notification .message h6 {
-  color: #ebebeb;
+  color: var(--white-1);
   font-size: 14px;
   font-style: normal;
   font-weight: bold;
@@ -121,7 +121,7 @@
 /* End message styling */
 
 .user-notification .timeago {
-  color: #888888;
+  color: var(--light-grey-2);
   display: block;
   font-size: 11px;
   font-weight: normal;

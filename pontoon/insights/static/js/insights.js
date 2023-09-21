@@ -11,6 +11,8 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
   year: 'numeric',
 });
 
+const style = getComputedStyle(document.documentElement);
+
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -28,19 +30,19 @@ var Pontoon = (function (my) {
         }
 
         const colors = [
-          '#fff',
-          '#8074a8',
-          '#c6c1f0',
-          '#c46487',
-          '#ffbed1',
-          '#9c9290',
-          '#c5bfbe',
-          '#9b93c9',
-          '#ddb5d5',
-          '#7c7270',
-          '#f498b6',
-          '#b173a0',
-          '#c799bc',
+          style.getPropertyValue('--white-1'),
+          style.getPropertyValue('--purple'),
+          style.getPropertyValue('--lilac'),
+          style.getPropertyValue('--pink-2'),
+          style.getPropertyValue('--light-pink'),
+          style.getPropertyValue('--brown-grey'),
+          style.getPropertyValue('--brown-grey-2'),
+          style.getPropertyValue('--lilac-purple'),
+          style.getPropertyValue('--light-pink-2'),
+          style.getPropertyValue('--green-brown'),
+          style.getPropertyValue('--light-pink-3'),
+          style.getPropertyValue('--dark-pink'),
+          style.getPropertyValue('--light-pink-4'),
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
@@ -56,7 +58,7 @@ var Pontoon = (function (my) {
             pointRadius: 4,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
-            pointHoverBorderColor: '#FFF',
+            pointHoverBorderColor: style.getPropertyValue('--white-1'),
             spanGaps: true,
           };
         });
@@ -75,7 +77,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: '#FFF',
+              borderColor: style.getPropertyValue('--white-1').trim(),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

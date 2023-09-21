@@ -1,8 +1,8 @@
 .metadata .source-string-comment .context-issue-button {
-  background: #333941;
-  border: 1px solid #3f4752;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--dark-grey-2);
   border-radius: 4px;
-  color: #ccc;
+  color: var(--light-grey-6);
   float: right;
   font-size: 11px;
   font-style: normal;
@@ -12,5 +12,5 @@
 }
 
 .metadata .source-string-comment .context-issue-button:hover {
-  border-color: #637283;
+  border-color: var(--grey-1);
 }

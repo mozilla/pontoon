@@ -17,9 +17,9 @@
 
 .translationform label {
   background: transparent;
-  border: 1px solid #5e6475;
+  border: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: block;
   font-weight: normal;
   margin: 2px 5px 2px 0;
@@ -28,12 +28,12 @@
 
 .translationform label > :not(:last-child)::after {
   content: '·';
-  color: #7bc876;
+  color: var(--light-green-1);
   padding: 0 3px;
 }
 
 .translationform label .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .translationform .accesskey-input {
@@ -58,9 +58,9 @@
 }
 
 .translationform .accesskeys .key {
-  border: 1px solid #5e6475;
-  background: #4d5967;
-  color: #ebebeb;
+  border: 1px solid var(--light-grey-1);
+  background: var(--grey-3);
+  color: var(--white-1);
   cursor: pointer;
   display: inline-block;
   line-height: 22px;
@@ -73,7 +73,7 @@
 
 .translationform .accesskeys .key.active,
 .translationform .accesskeys .key:hover:not(:disabled) {
-  border-color: #7bc876;
+  border-color: var(--light-green-1);
 }
 
 .translationform .accesskeys .key:disabled {
@@ -82,7 +82,7 @@
 
 .cm-editor {
   background: white;
-  color: #444;
+  color: var(--dark-grey-4);
   font-size: 14px;
   padding: 6px 8px 6px 4px;
 }

@@ -1,6 +1,6 @@
 .terms-popup {
-  background-color: #272a2f;
-  border: 1px solid #333941;
+  background-color: var(--black-3);
+  border: 1px solid var(--dark-grey-1);
   font-style: normal;
   max-width: 500px;
   position: absolute;
@@ -8,7 +8,7 @@
 }
 
 .terms-popup .terms-list .term:not(.cannot-copy):hover {
-  background-color: #3f4752;
+  background-color: var(--dark-grey-2);
 }
 
 .terms-popup li.term:last-child {

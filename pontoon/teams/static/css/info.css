@@ -3,10 +3,10 @@
 }
 
 #info-wrapper .read-write-info textarea {
-  background: #333941;
-  border: 1px solid #4d5967;
+  background: var(--dark-grey-1);
+  border: 1px solid var(--grey-3);
   border-radius: 3px;
-  color: #ffffff;
+  color: var(--white-1);
   font-weight: 300;
   margin-bottom: 10px;
   padding: 5px;
@@ -17,7 +17,7 @@
 }
 
 #info-wrapper .read-write-info .toolbar .subtitle {
-  color: #aaa;
+  color: var(--light-grey-7);
   float: left;
   text-transform: uppercase;
 }
@@ -28,7 +28,7 @@
 
 #info-wrapper .controls .cancel {
   display: none;
-  color: #7bc876;
+  color: var(--light-green-1);
   margin: 9px;
   text-transform: uppercase;
 }

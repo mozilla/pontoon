@@ -32,7 +32,7 @@
 }
 
 .buglist tbody .id a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .buglist th {
@@ -40,7 +40,7 @@
 }
 
 .buglist th:hover {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .buglist th i {
@@ -90,7 +90,7 @@
 }
 
 #permissions-form h3 .remove-project:hover {
-  background: #f36;
+  background: var(--red-pink);
 }
 
 #permissions-form h3 .remove-project .fa {
@@ -129,7 +129,7 @@
 
 #permissions-form .user.select label,
 #permissions-form .user.select label a {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 13px;
   font-weight: bold;
   text-align: center;
@@ -144,11 +144,11 @@
 #permissions-form .user.select.managers label:hover,
 #permissions-form .user.select label a.active,
 #permissions-form .user.select label a:hover {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 #permissions-form .user.select .menu {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   overflow: auto;
   padding: 10px 0;
 }
@@ -178,7 +178,7 @@
 }
 
 #permissions-form .user.select .intro {
-  color: #aaa;
+  color: var(--light-grey-7);
   font-size: 13px;
   font-style: italic;
   font-weight: 300;
@@ -206,7 +206,7 @@
 }
 
 #permissions-form #project-selector .menu {
-  background: #333941;
+  background: var(--dark-grey-1);
   bottom: 28px;
   width: 287px;
 }
@@ -216,7 +216,7 @@
 }
 
 #permissions-form #project-selector .menu li {
-  color: #cccccc;
+  color: var(--light-grey-6);
   cursor: pointer;
 }
 

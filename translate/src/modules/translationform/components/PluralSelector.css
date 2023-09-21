@@ -6,8 +6,8 @@
 }
 
 .plural-selector ul li {
-  background: #4d5967;
-  border: 1px solid #5e6475;
+  background: var(--grey-3);
+  border: 1px solid var(--light-grey-1);
   border-bottom: none;
   border-left: none;
   display: table-cell;
@@ -16,7 +16,7 @@
 
 .plural-selector ul li.active,
 .plural-selector ul li:hover {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .plural-selector ul li.active {
@@ -26,7 +26,7 @@
 .plural-selector ul li button {
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--light-grey-6);
   cursor: pointer;
   display: block;
   font-weight: 300;
@@ -36,7 +36,7 @@
 }
 
 .plural-selector ul li button sup {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 11px;
   font-weight: 400;
   padding-left: 1px;

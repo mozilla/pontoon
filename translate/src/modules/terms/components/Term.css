@@ -1,5 +1,5 @@
 .terms-list .term {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   cursor: pointer;
   padding: 10px;
 }
@@ -9,16 +9,16 @@
 }
 
 .terms-list .term:not(.cannot-copy):hover {
-  background: #333941;
-  border-color: #5e6475;
+  background: var(--dark-grey-1);
+  border-color: var(--light-grey-1);
 }
 
 .terms-list .term .text {
-  color: #aaa;
+  color: var(--light-grey-7);
 }
 
 .terms-list .term .part-of-speech {
-  color: #aaa;
+  color: var(--light-grey-7);
   font-size: 11px;
   font-weight: 300;
   padding-left: 3px;
@@ -31,7 +31,7 @@
 }
 
 .terms-list .term .translate {
-  color: #7bc876;
+  color: var(--light-green-1);
   float: right;
   font-size: 11px;
   font-weight: 300;
@@ -40,17 +40,17 @@
 }
 
 .terms-list .term .translation {
-  color: #ebebeb;
+  color: var(--white-1);
 }
 
 .terms-list .term .details {
-  color: #aaa;
+  color: var(--light-grey-7);
   font-style: italic;
   padding: 5px 0 0 15px;
 }
 
 .terms-list .term .usage .title {
-  color: #7bc876;
+  color: var(--light-green-1);
   font-size: 11px;
   margin-right: 3px;
 }

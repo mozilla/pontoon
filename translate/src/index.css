@@ -14,8 +14,8 @@ button {
 }
 
 body {
-  background: #272a2f;
-  color: #ebebeb;
+  background: var(--black-3);
+  color: var(--white-1);
 }
 
 body,
@@ -27,14 +27,14 @@ html,
 
 a:link,
 a:visited {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-weight: 300;
   text-decoration: none;
 }
 
 a:hover,
 a:active {
-  color: #7bc876;
+  color: var(--light-green-1);
   text-decoration: none;
 }
 

@@ -18,7 +18,7 @@
 }
 
 .sync-log .start-time a {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 /** @details */
@@ -43,7 +43,7 @@ td {
 
 .sync-details .detail-label {
   border: none;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 12px;
   margin: 0.5em 0;
   text-transform: uppercase;
@@ -55,7 +55,7 @@ td {
 }
 
 .command-details {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 .command-details .detail-item {
@@ -64,41 +64,41 @@ td {
 }
 
 .command-details .start-time {
-  border-color: #7bc876;
+  border-color: var(--light-green-1);
 }
 
 .command-details .end-time {
-  border-color: #4fc4f6;
+  border-color: var(--light-blue);
 }
 
 .command-details .duration {
-  border-color: #fed271;
+  border-color: var(--mustard-yellow);
 }
 
 .project-details .start-time .detail-label,
 .repository-details .start-time .detail-label {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .project-details .end-time .detail-label,
 .repository-details .end-time .detail-label {
-  color: #4fc4f6;
+  color: var(--light-blue);
 }
 
 .project-details .duration .detail-label,
 .repository-details .duration .detail-label {
-  color: #fed271;
+  color: var(--mustard-yellow);
 }
 
 .project {
-  border: 1px solid #5c6172;
+  border: 1px solid var(--grey-4);
   border-radius: 5px;
   margin-bottom: 1em;
   padding: 1em;
 }
 
 .project .project-name {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   font-size: 36px;
   text-align: left;
   text-transform: none;
@@ -110,7 +110,7 @@ td {
 }
 
 .repository-logs .repository-logs-column {
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   padding: 1em;
   text-align: left;
   text-transform: uppercase;
@@ -121,7 +121,7 @@ td {
 }
 
 .repository:nth-child(even) {
-  background: #333941;
+  background: var(--dark-grey-1);
 }
 
 /** @pagination */

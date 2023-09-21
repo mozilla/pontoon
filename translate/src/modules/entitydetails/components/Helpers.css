@@ -1,5 +1,5 @@
 .third-column .top {
-  border-bottom: 1px solid #5e6475;
+  border-bottom: 1px solid var(--light-grey-1);
   box-sizing: border-box;
   height: calc(40% + 21px);
   min-height: 200px;
@@ -25,11 +25,11 @@
 }
 
 .react-tabs__tab {
-  background: #4d5967;
-  border-bottom: 1px solid #5e6475;
-  border-right: 1px solid #5e6475;
+  background: var(--grey-3);
+  border-bottom: 1px solid var(--light-grey-1);
+  border-right: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: #cccccc;
+  color: var(--light-grey-6);
   cursor: pointer;
   display: table-cell;
   font-weight: 300;
@@ -45,7 +45,7 @@
 }
 
 .react-tabs__tab--selected {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   border-bottom: none;
 }
 
@@ -61,19 +61,19 @@
 
 /* Other tools styles */
 .react-tabs span.count {
-  background: #3f4752;
+  background: var(--dark-grey-2);
   border-radius: 3px;
-  color: #cccccc;
+  color: var(--light-grey-6);
   font-weight: 300;
   margin-left: 3px;
   padding: 0 5px;
 }
 
 .react-tabs .react-tabs__tab--selected span.count {
-  background: #4d5967;
+  background: var(--grey-3);
 }
 
 .react-tabs span.count .preferred,
 .react-tabs span.count .pinned {
-  color: #7bc876;
+  color: var(--light-green-1);
 }

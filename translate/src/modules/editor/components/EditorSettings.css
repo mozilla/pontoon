@@ -6,19 +6,19 @@
 
 .editor-settings .selector {
   cursor: pointer;
-  color: #aaa;
+  color: var(--light-grey-7);
   font-size: 22px;
   padding: 9px 5px 9px 0;
 }
 
 .editor-settings .selector:hover {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
 
 .editor-settings .menu {
-  background-color: #272a2f;
+  background-color: var(--black-3);
   bottom: auto;
-  color: #aaa;
+  color: var(--light-grey-7);
   list-style: none;
   margin: 0;
   max-height: 318px;
@@ -31,24 +31,24 @@
 }
 
 .editor-settings .menu li {
-  color: #aaa;
+  color: var(--light-grey-7);
   cursor: pointer;
   font-weight: 300;
   padding: 2px 4px;
 }
 
 .editor-settings .menu li:hover {
-  background: #3f4752;
+  background: var(--dark-grey-2);
 }
 
 .editor-settings .menu li:hover,
 .editor-settings .menu li:hover a,
 .editor-settings .menu li:active a {
-  color: #fff;
+  color: var(--white-1);
 }
 
 .editor-settings .menu .horizontal-separator {
-  border-top: 1px solid #525a65;
+  border-top: 1px solid var(--grey-2);
   height: 0;
   margin: 5px 0;
   padding: 0;
@@ -59,11 +59,11 @@
 }
 
 .editor-settings .menu .check-box .fa:before {
-  color: #f36;
+  color: var(--red-pink);
   content: '';
 }
 
 .editor-settings .menu .check-box.enabled .fa:before {
-  color: #7bc876;
+  color: var(--light-green-1);
   content: '';
 }

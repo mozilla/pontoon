@@ -15,9 +15,9 @@
 
 .fluent-rich-string label {
   background: transparent;
-  border: 1px solid #5e6475;
+  border: 1px solid var(--light-grey-1);
   box-sizing: border-box;
-  color: #aaaaaa;
+  color: var(--light-grey-7);
   display: block;
   font-weight: normal;
   margin: 2px 5px 2px 0;
@@ -26,7 +26,7 @@
 
 .fluent-rich-string label > :not(:last-child)::after {
   content: '·';
-  color: #7bc876;
+  color: var(--light-green-1);
   padding: 0 3px;
 }
 

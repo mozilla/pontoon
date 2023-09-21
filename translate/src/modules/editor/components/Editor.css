@@ -1,6 +1,6 @@
 .editor {
-  background: rgb(39, 42, 47);
-  border-bottom: 1px solid #5e6475;
+  background: var(--black-3);
+  border-bottom: 1px solid var(--light-grey-1);
   display: flex;
   flex-direction: column;
   position: relative;

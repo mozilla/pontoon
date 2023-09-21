@@ -1,13 +1,13 @@
 .tm-source {
   font-size: 11px;
   padding: 10px 0;
-  border-top: 1px solid #5e6475;
+  border-top: 1px solid var(--light-grey-1);
   width: 100%;
   text-align: center;
-  background: #4d5967;
-  color: #ccc;
+  background: var(--grey-3);
+  color: var(--light-grey-6);
 }
 
 .tm-source .stress {
-  color: #7bc876;
+  color: var(--light-green-1);
 }
