@@ -3,7 +3,6 @@ import jwt
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
-from statistics import mean
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -236,11 +235,18 @@ def get_shares_of_totals(list1, list2):
     ]
 
 
-def get_sublist_averages(main_list, sublist_len):
+def get_12_month_sums(lst):
     """
-    Get a list of average values for each sublist with a given length
+    Get a list of 12-month sums.
     """
-    return [mean(main_list[x : x + sublist_len]) for x in range(sublist_len)]
+    return [sum(lst[x : x + 12]) for x in range(12)]
+
+
+def get_12_month_averages(list1, list2):
+    """
+    Get a list of 12-month averages.
+    """
+    return get_shares_of_totals(get_12_month_sums(list1), get_12_month_sums(list2))
 
 
 def get_approvals_charts_data(user):
@@ -279,9 +285,11 @@ def get_approvals_charts_data(user):
     )
 
     approval_rates = get_shares_of_totals(peer_approvals, peer_rejections)
-    approval_rates_12_month_avg = get_sublist_averages(approval_rates, 12)
+    approval_rates_12_month_avg = get_12_month_averages(peer_approvals, peer_rejections)
     self_approval_rates = get_shares_of_totals(self_approvals, peer_approvals)
-    self_approval_rates_12_month_avg = get_sublist_averages(self_approval_rates, 12)
+    self_approval_rates_12_month_avg = get_12_month_averages(
+        self_approvals, peer_approvals
+    )
 
     return {
         "dates": months[-12:],

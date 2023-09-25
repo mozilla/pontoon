@@ -170,8 +170,21 @@ def test_get_shares_of_totals():
     assert utils.get_shares_of_totals(list1, list2) == [50, 0, 0, 100, 75]
 
 
-def test_get_sublist_averages():
-    assert utils.get_sublist_averages([1, 2, 3, 4, 5], 3) == [2, 3, 4]
+def test_get_12_month_averages():
+    assert utils.get_12_month_averages([1, 2, 3], [1, 2, 3]) == [
+        50,
+        50,
+        50,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    ]
 
 
 @pytest.mark.django_db
@@ -189,11 +202,9 @@ def test_get_approvals_charts_data_with_actions(user_a, action_user_a, action_us
     data = utils.get_approvals_charts_data(user_a)
 
     assert data["approval_rates"] == [0] * 11 + [100]
-    assert data["approval_rates_12_month_avg"] == [0] * 11 + [8.333333333333334]
+    assert data["approval_rates_12_month_avg"] == [0] * 11 + [100]
     assert data["self_approval_rates"] == [0] * 10 + [100, 0]
-    assert (
-        data["self_approval_rates_12_month_avg"] == [0] * 10 + [8.333333333333334] * 2
-    )
+    assert data["self_approval_rates_12_month_avg"] == [0] * 10 + [100, 50]
 
 
 @pytest.mark.django_db
