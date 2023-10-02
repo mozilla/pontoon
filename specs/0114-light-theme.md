@@ -45,3 +45,9 @@ The following is a non-exhaustive list of color transformations between the dark
 
 ![](0114/dashboard.png)
 *Team Dashboard*
+
+![](0114/theme-selector-profile.png)
+*Theme selector in the Profile menu*
+
+![](0114/theme-selector-settings.png)
+*Theme selector in the Settings*
