@@ -67,12 +67,12 @@
    <section class="appearance" >
         <h3>Appearance</h3>
         <div class="field">
-            <p class="help">Choose if Pontoon’s appearance should be dark, light, or follow your system’s settings</a></p>
+            <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
         </div>
         <span class="toggle-button">
-            <button type="button" class="dark active" title="Use a dark theme in Pontoon"><i class="icon far fa-moon"></i>Dark theme</button>
-            <button type="button" class="light" title="Use a light theme in Pontoon"><i class="icon fa fa-sun"></i>Light theme</button>
-            <button type="button" class="system" title="Use a theme in Pontoon that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button>
+            <button type="button" class="dark active" title="Use a dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
+            <button type="button" class="light" title="Use a light theme"><i class="icon fa fa-sun"></i>Light theme</button>
+            <button type="button" class="system" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button>
         </span>
     </section>
         
@@ -172,5 +172,4 @@
 
 {% block extend_js %}
   {% javascript 'settings' %}
-  {% javascript 'theme-switcher' %}
 {% endblock %}

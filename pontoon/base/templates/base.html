@@ -35,7 +35,7 @@
   <body
     class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{{ request.user.profile.theme }}-theme{% endif %}"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
->
+  >
     {% block content %}
 
       {% include "addon_promotion.html" %}
