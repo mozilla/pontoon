@@ -13,12 +13,14 @@
     <meta name="description" content="Mozilla’s Localization Platform">
     <meta name="author" content="Mozilla">
     <meta name="color-scheme" content="only light">
+    <link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" title="" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/light-theme.css' %}" title="" type="text/css"/>
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/nprogress.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/boilerplate.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" title="" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" title="" type="text/css" />
+
 
     {% include "tracker.html" %}
 
@@ -121,5 +123,6 @@
     <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/jquery-3.6.1.js' %}"></script>
     <script type="text/javascript" charset="utf-8" src="{% static 'js/lib/nprogress.js' %}"></script>
     <script type="text/javascript" charset="utf-8" src="{% static 'js/main.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'js/theme-switcher.js' %}"></script>
   </body>
 </html>

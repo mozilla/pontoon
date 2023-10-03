@@ -1569,11 +1569,18 @@ class UserProfile(models.Model):
         User, models.CASCADE, related_name="profile", primary_key=True
     )
 
+    # Themes
+    class Themes(models.TextChoices):
+        DARK = "Dark", "Dark"
+        LIGHT = "Light", "Light"
+        SYSTEM = "System", "System"
+
     # Personal information
     username = models.SlugField(unique=True, blank=True, null=True)
     contact_email = models.EmailField("Contact email address", blank=True, null=True)
     contact_email_verified = models.BooleanField(default=False)
     bio = models.TextField(max_length=160, blank=True, null=True)
+    theme = models.CharField(choices=Themes.choices, max_length=20, default=Themes.DARK)
 
     # External accounts
     chat = models.CharField("Chat username", max_length=255, blank=True, null=True)

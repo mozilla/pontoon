@@ -363,6 +363,7 @@ PIPELINE_CSS = {
     "base": {
         "source_filenames": (
             "css/dark-theme.css",
+            "css/light-theme.css",
             "css/fontawesome-all.css",
             "css/nprogress.css",
             "css/boilerplate.css",
@@ -515,6 +516,7 @@ PIPELINE_JS = {
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
             "js/main.js",
+            "js/theme-switcher.js",
         ),
         "output_filename": "js/base.min.js",
     },
