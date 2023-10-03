@@ -1,0 +1,12 @@
+/* Light Theme Variables */
+.light-theme {
+  --dark-grey-2: #fbfbfb;
+  --dark-grey-1: #eee;
+  --light-grey-7: #aaaaaa;
+  --grey-3: #eee;
+  --light-grey-1: #e8e8e8;
+  --white-1: #222;
+  --white-3: #222;
+  --light-grey-7: #888;
+  --light-grey-2: #888888;
+}

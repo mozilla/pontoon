@@ -21,7 +21,7 @@
   border-bottom-right-radius: 0;
 }
 
-.toggle-button button:nth-child(2) {
+.toggle-button button:last-child {
   border-left: none;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;

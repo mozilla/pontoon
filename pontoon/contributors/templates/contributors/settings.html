@@ -64,6 +64,19 @@
         </div>
       </section>
 
+   <section class="appearance" >
+        <input type="hidden" name="{{ user_profile_form.theme.name }}" id="{{ user_profile_form.theme.id_for_label }}" value="{{ user_profile_form.theme.value }}">
+        <h3>Appearance</h3>
+        <span class="toggle-button">
+            <button type="button" class="dark active" title="Dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
+            <button type="button" class="light" title="Light theme"><i class="icon fa fa-sun"></i>Light theme</button>
+            <button type="button" class="system" title="System theme"><i class="icon fa fa-laptop"></i>Match system</button>
+        </span>
+        <div class="field">
+            <p class="help">Choose if Pontoon’s appearance should be dark, light, or follow your system’s settings</a></p>
+        </div>
+    </section>
+       
     <section>
         <h3>External accounts</h3>
         <div class="field">
@@ -160,4 +173,5 @@
 
 {% block extend_js %}
   {% javascript 'settings' %}
+  {% javascript 'theme-switcher' %}
 {% endblock %}
