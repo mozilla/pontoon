@@ -12,7 +12,7 @@ Over the years, many users have expressed preference for a light color theme ove
 
 # Feature explanation
 
-Users are able to switch between `Dark theme`, `Light theme` and `Match system` in Settings and the Profile menu. Each theme is represented with a title and a radio box. As soon as the theme is selected, it gets applied and the setting get saved. The default setting is the `Dark theme`.
+Users are able to switch between `Dark theme`, `Light theme` and `Match system` in Settings and the Profile menu. Each theme is represented with a title and an icon. Tooltip shows more information about each theme, e.g. "Use a theme that matches your system settings". As soon as the theme is selected, it gets applied and the setting get saved. The default setting is the `Dark theme`.
 
 The `Match system` setting lets the browser pick the theme from the OS setting using the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature.
 
