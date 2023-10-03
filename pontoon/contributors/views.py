@@ -209,14 +209,13 @@ def toggle_theme(request, username):
         profile.theme = theme
         profile.full_clean()
         profile.save()
-    except ValidationError as e:
+    except ValidationError:
         return JsonResponse(
             {"status": False, "message": "Bad Request: Invalid theme"},
             status=400,
         )
 
     return JsonResponse({"status": True})
-
 
 
 @login_required(redirect_field_name="", login_url="/403")
