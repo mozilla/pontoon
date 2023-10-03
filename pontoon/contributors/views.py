@@ -190,6 +190,36 @@ def toggle_user_profile_attribute(request, username):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
+def toggle_theme(request, username):
+    user = get_object_or_404(User, username=username)
+    if user != request.user:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to edit this user",
+            },
+            status=403,
+        )
+
+    theme = request.POST.get("theme", None)
+    allowed_themes = ["light", "dark", "system"]
+
+    if theme not in allowed_themes:
+        return JsonResponse(
+            {"status": False, "message": "Bad Request: Invalid theme"},
+            status=400,
+        )
+
+    profile = user.profile
+    profile.theme = theme
+    profile.save()
+
+    return JsonResponse({"status": True})
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
 def save_custom_homepage(request):
     """Save custom homepage."""
     form = forms.UserCustomHomepageForm(request.POST, instance=request.user.profile)
@@ -250,11 +280,6 @@ def settings(request):
             request.POST,
             instance=profile,
         )
-        theme = request.POST.get("theme", None)
-        if theme:
-            if theme in ["Light", "Dark", "System"]:
-                profile.theme = theme
-                profile.save()
 
         if (
             locales_form.is_valid()

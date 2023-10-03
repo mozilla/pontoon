@@ -65,18 +65,17 @@
       </section>
 
    <section class="appearance" >
-        <input type="hidden" name="{{ user_profile_form.theme.name }}" id="{{ user_profile_form.theme.id_for_label }}" value="{{ user_profile_form.theme.value }}">
         <h3>Appearance</h3>
-        <span class="toggle-button">
-            <button type="button" class="dark active" title="Dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
-            <button type="button" class="light" title="Light theme"><i class="icon fa fa-sun"></i>Light theme</button>
-            <button type="button" class="system" title="System theme"><i class="icon fa fa-laptop"></i>Match system</button>
-        </span>
         <div class="field">
             <p class="help">Choose if Pontoon’s appearance should be dark, light, or follow your system’s settings</a></p>
         </div>
+        <span class="toggle-button">
+            <button type="button" class="dark active" title="Use a dark theme in Pontoon"><i class="icon far fa-moon"></i>Dark theme</button>
+            <button type="button" class="light" title="Use a light theme in Pontoon"><i class="icon fa fa-sun"></i>Light theme</button>
+            <button type="button" class="system" title="Use a theme in Pontoon that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button>
+        </span>
     </section>
-       
+        
     <section>
         <h3>External accounts</h3>
         <div class="field">
@@ -141,7 +140,7 @@
     </section>
 
     <section>
-        <h3>Locale settings</h3>
+        <h3>Default locales</h3>
         <div id="locale-settings" class="clearfix">
             <div id="homepage">
                 <span class="label">Homepage</span>
@@ -155,7 +154,7 @@
     </section>
 
     <section>
-        <h3><span class="small stress">Preferred locales to get suggestions from</span></h3>
+        <h3>Preferred locales to get suggestions from</h3>
         {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
     </section>
 
