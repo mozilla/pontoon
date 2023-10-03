@@ -280,7 +280,6 @@ def settings(request):
             request.POST,
             instance=profile,
         )
-        
         if (
             locales_form.is_valid()
             and user_form.is_valid()
