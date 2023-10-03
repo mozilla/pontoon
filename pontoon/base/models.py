@@ -1580,8 +1580,7 @@ class UserProfile(models.Model):
     contact_email = models.EmailField("Contact email address", blank=True, null=True)
     contact_email_verified = models.BooleanField(default=False)
     bio = models.TextField(max_length=160, blank=True, null=True)
-    theme = models.CharField(choices=Themes.choices, max_length=20, default=Themes.DARK)
-
+   
     # Theme
     theme = models.CharField(choices=Themes.choices, max_length=20, default=Themes.DARK)
 
