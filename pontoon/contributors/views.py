@@ -280,12 +280,7 @@ def settings(request):
             request.POST,
             instance=profile,
         )
-        theme = request.POST.get("theme", None)
-        if theme:
-            if theme in ["Light", "Dark", "System"]:
-                profile.theme = theme
-                profile.save()
-
+        
         if (
             locales_form.is_valid()
             and user_form.is_valid()
