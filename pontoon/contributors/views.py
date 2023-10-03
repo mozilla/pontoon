@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.http import (
@@ -202,19 +203,20 @@ def toggle_theme(request, username):
         )
 
     theme = request.POST.get("theme", None)
-    allowed_themes = ["light", "dark", "system"]
 
-    if theme not in allowed_themes:
+    try:
+        profile = user.profile
+        profile.theme = theme
+        profile.full_clean()
+        profile.save()
+    except ValidationError as e:
         return JsonResponse(
             {"status": False, "message": "Bad Request: Invalid theme"},
             status=400,
         )
 
-    profile = user.profile
-    profile.theme = theme
-    profile.save()
-
     return JsonResponse({"status": True})
+
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -280,6 +282,7 @@ def settings(request):
             request.POST,
             instance=profile,
         )
+
         if (
             locales_form.is_valid()
             and user_form.is_valid()
