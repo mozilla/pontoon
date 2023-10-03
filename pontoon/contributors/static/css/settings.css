@@ -130,7 +130,7 @@
 }
 
 #main .appearance .field .help {
-  margin-left: 0;
+  margin: 0 0 -12px;
 }
 
 #main .appearance .toggle-button button {

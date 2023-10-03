@@ -62,6 +62,12 @@ urlpatterns = [
         views.toggle_user_profile_attribute,
         name="pontoon.contributors.toggle_user_profile_attribute",
     ),
+    # API: Toggle user theme preference
+    path(
+        "api/v1/user/theme/<username:username>/",
+        views.toggle_theme,
+        name="pontoon.contributors.toggle_theme",
+    ),
     # AJAX: Save custom homepage
     path(
         "save-custom-homepage/",

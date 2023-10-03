@@ -1,83 +1,41 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const themeHiddenInput = document.querySelector('[name="theme"]');
-  const darkButton = document.querySelector('.dark');
-  const lightButton = document.querySelector('.light');
-  const systemButton = document.querySelector('.system');
+$(function () {
+  $('.appearance .toggle-button button').click(function (e) {
+    e.preventDefault();
 
-  if (!themeHiddenInput || !darkButton || !lightButton || !systemButton) {
-    console.error('Theme elements not found!');
-    return;
-  }
+    var self = $(this);
 
-  darkButton.addEventListener('click', function () {
-    applyTheme('Dark');
-  });
+    // If the clicked button is already active, do nothing
+    if (self.is('.active')) {
+      return;
+    }
 
-  lightButton.addEventListener('click', function () {
-    applyTheme('Light');
-  });
+    var theme = self.attr('class').split(' ')[0]; // gets the theme (dark, light, system) based on the button's class
 
-  systemButton.addEventListener('click', function () {
-    applyTheme('System');
+    $.ajax({
+      url: '/api/v1/user/theme/' + $('#server').data('username') + '/',
+      type: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        theme: theme,
+      },
+      success: function () {
+        $('.appearance .toggle-button button').removeClass('active');
+
+        self.addClass('active');
+
+        $('body')
+          .removeClass('dark-theme light-theme system-theme')
+          .addClass(`${theme}-theme`);
+
+        Pontoon.endLoader(`Theme changed to ${theme}.`);
+      },
+      error: function (request) {
+        if (request.responseText === 'error') {
+          Pontoon.endLoader('Oops, something went wrong.', 'error');
+        } else {
+          Pontoon.endLoader(request.responseText, 'error');
+        }
+      },
+    });
   });
 });
-
-function applyTheme(theme) {
-  const bodyElement = document.body;
-  const themeHiddenInput = document.querySelector('[name="theme"]');
-
-  // Remove all theme classes first
-  bodyElement.classList.remove('dark-theme', 'light-theme');
-
-  if (theme === 'Dark') {
-    bodyElement.classList.add('dark-theme');
-  } else if (theme === 'Light') {
-    bodyElement.classList.add('light-theme');
-  } else if (theme === 'System') {
-    if (
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-    ) {
-      bodyElement.classList.add('dark-theme');
-    } else {
-      bodyElement.classList.add('light-theme');
-    }
-  }
-
-  // Update hidden input value
-  themeHiddenInput.value = theme;
-}
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     const themeSelector = document.querySelector('[name="themes"]');
-
-//     if (!themeSelector) {
-//         console.error('Theme selector not found!');
-//         return;
-//     }
-
-//     themeSelector.addEventListener('change', function() {
-//         applyTheme(this.value);
-//     });
-// });
-
-// function applyTheme(theme) {
-//     alert("Hello")
-//     const bodyElement = document.body;
-
-//     if (theme === 'Dark') {
-//         bodyElement.classList.add('dark-theme');
-//         bodyElement.classList.remove('light-theme');
-//     } else if (theme === 'Light') {
-//         bodyElement.classList.add('light-theme');
-//         bodyElement.classList.remove('dark-theme');
-//     } else if (theme === 'System') {
-//         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-//             bodyElement.classList.add('dark-theme');
-//             bodyElement.classList.remove('light-theme');
-//         } else {
-//             bodyElement.classList.add('light-theme');
-//             bodyElement.classList.remove('dark-theme');
-//         }
-//     }
-// }
