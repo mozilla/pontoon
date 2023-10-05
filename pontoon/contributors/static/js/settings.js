@@ -24,7 +24,7 @@ $(function () {
         self.addClass('active');
         self.siblings().removeClass('active');
 
-        var label = self.parents('.field').find('label').text();
+        var label = self.parents('.field').find('.toggle-label').text();
         Pontoon.endLoader(`${label} visibility set to ${value}.`);
       },
       error: function (request) {
