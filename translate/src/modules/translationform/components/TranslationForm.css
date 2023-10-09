@@ -84,12 +84,13 @@
   background: white;
   color: #444;
   font-size: 14px;
-  padding: 6px 8px 6px 4px;
+  padding: 6px 0;
 }
 
 .cm-editor .cm-scroller {
   font-family: inherit;
   line-height: 22px;
+  padding: 0 8px 0 4px;
 }
 
 .singlefield .cm-content,
@@ -99,6 +100,10 @@
 
 .translationform .cm-editor {
   margin: 2px 0;
+  padding: 0;
+}
+
+.translationform .cm-scroller {
   padding: 0;
 }
 
