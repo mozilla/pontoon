@@ -1,6 +1,6 @@
 $(function () {
   // Toggle visibility
-  $('.toggle-button button').click(function (e) {
+  $('.data-visibility .toggle-button button').click(function (e) {
     e.preventDefault();
 
     var self = $(this);

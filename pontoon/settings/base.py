@@ -516,12 +516,12 @@ PIPELINE_JS = {
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
             "js/main.js",
-            "js/theme-switcher.js",
+            "js/themeSwitcher.js",
         ),
         "output_filename": "js/base.min.js",
     },
     "translate": {
-        "source_filenames": ("translate.js",),
+        "source_filenames": ("translate.js", "js/themeSwitcher.js"),
         "output_filename": "js/translate.min.js",
     },
     "admin": {
