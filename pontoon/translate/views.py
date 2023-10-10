@@ -44,6 +44,10 @@ def translate(request, locale, project, resource):
     # Validate Locale
     locale = get_object_or_404(Locale, code=locale)
 
+    # Get user theme
+    if request.user.is_authenticated:
+        user_theme = request.user.profile.theme + "-theme"
+
     # Validate Project
     if project.lower() != "all-projects":
         project = get_project_or_redirect(
@@ -64,6 +68,7 @@ def translate(request, locale, project, resource):
     context = {
         "locale": get_preferred_locale(request),
         "notifications": [],
+        "user_theme": user_theme,
     }
 
     # Get system notifications and pass them down. We need to transform the

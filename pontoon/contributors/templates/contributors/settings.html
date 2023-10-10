@@ -70,9 +70,9 @@
             <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
         </div>
         <span class="toggle-button">
-            <button type="button" class="dark active" title="Use a dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
-            <button type="button" class="light" title="Use a light theme"><i class="icon fa fa-sun"></i>Light theme</button>
-            <button type="button" class="system" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button>
+        <button type="button" class="dark {% if user.profile.theme == "dark" %}active{% endif %}" title="Use a dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
+        <button type="button" class="light {% if user.profile.theme == "light" %}active{% endif %}" title="Use a light theme"><i class="icon fa fa-sun"></i>Light theme</button>
+        <button type="button" class="system {% if user.profile.theme == "system" %}active{% endif %}" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button>
         </span>
     </section>
         
@@ -95,7 +95,7 @@
         </div>
     </section>
 
-    <section>
+    <section class="data-visibility">
         <h3>Visibility of data on the Profile page</h3>
         <div class="field">
             <span class="toggle-label">{{ user_profile_visibility_form.visibility_email.label }}</span>
