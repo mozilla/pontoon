@@ -10,7 +10,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(sql="""
+        migrations.RunSQL(
+            sql="""
 UPDATE base_translation AS tx
 SET plural_form = 0
 FROM base_entity AS ent
@@ -18,5 +19,6 @@ WHERE
   tx.plural_form IS NULL AND
   tx.entity_id = ent.id AND
   ent.string_plural != '';
-"""),
+"""
+        ),
     ]
