@@ -2,7 +2,7 @@ $(function () {
   function getSystemTheme() {
     if (
       window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: light)').matches
+      window.matchMedia('(prefers-color-scheme: dark)').matches
     ) {
       return 'dark';
     } else {
@@ -16,8 +16,7 @@ $(function () {
     }
     $('body')
       .removeClass('dark-theme light-theme system-theme')
-      .addClass(`${newTheme}-theme`)
-      .data('theme', newTheme);
+      .addClass(`${newTheme}-theme`);
   }
 
   window
@@ -63,6 +62,9 @@ $(function () {
         $('.appearance .toggle-button button').removeClass('active');
         self.addClass('active');
         applyTheme(theme);
+
+        // Set the data-theme attribute after successfully changing the theme
+        $('body').data('theme', theme);
 
         // Notify the user about the theme change after AJAX success
         Pontoon.endLoader(`Theme changed to ${theme}.`);
