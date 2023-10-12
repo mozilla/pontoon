@@ -2,7 +2,7 @@ $(function () {
   function getSystemTheme() {
     if (
       window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
+      window.matchMedia('(prefers-color-scheme: light)').matches
     ) {
       return 'dark';
     } else {
@@ -10,37 +10,36 @@ $(function () {
     }
   }
 
-  function updateTheme(newTheme) {
+  function applyTheme(newTheme) {
     if (newTheme === 'system') {
       newTheme = getSystemTheme();
     }
     $('body')
       .removeClass('dark-theme light-theme system-theme')
-      .addClass(`${newTheme}-theme`);
-
-    if (newTheme !== 'system') {
-      Pontoon.endLoader(`Theme changed to ${newTheme}.`);
-    }
+      .addClass(`${newTheme}-theme`)
+      .data('theme', newTheme);
   }
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', function (e) {
-      if ($('.appearance .toggle-button button.system').hasClass('active')) {
+      // Check the 'data-theme' attribute on the body element
+      let userThemeSetting = $('body').data('theme');
+
+      if (userThemeSetting === 'system') {
+        // Apply the system theme based on current system settings
         if (e.matches) {
-          updateTheme('dark');
+          applyTheme('dark');
         } else {
-          updateTheme('light');
+          applyTheme('light');
         }
       }
     });
 
-  $(document).ready(function () {
-    if ($('body').hasClass('system-theme')) {
-      let systemTheme = getSystemTheme();
-      $('body').removeClass('system-theme').addClass(`${systemTheme}-theme`);
-    }
-  });
+  if ($('body').hasClass('system-theme')) {
+    let systemTheme = getSystemTheme();
+    $('body').removeClass('system-theme').addClass(`${systemTheme}-theme`);
+  }
 
   $('.appearance .toggle-button button').click(function (e) {
     e.preventDefault();
@@ -51,7 +50,7 @@ $(function () {
       return;
     }
 
-    var theme = self.attr('class').split(' ')[0];
+    var theme = self.val();
 
     $.ajax({
       url: '/api/v1/user/' + $('#server').data('username') + '/theme/',
@@ -63,7 +62,10 @@ $(function () {
       success: function () {
         $('.appearance .toggle-button button').removeClass('active');
         self.addClass('active');
-        updateTheme(theme);
+        applyTheme(theme);
+
+        // Notify the user about the theme change after AJAX success
+        Pontoon.endLoader(`Theme changed to ${theme}.`);
       },
       error: function (request) {
         if (request.responseText === 'error') {

@@ -373,7 +373,11 @@ PIPELINE_CSS = {
         "output_filename": "css/base.min.css",
     },
     "translate": {
-        "source_filenames": ("translate.css", "css/dark-theme.css"),
+        "source_filenames": (
+            "translate.css",
+            "css/dark-theme.css",
+            "css/light-theme.css",
+        ),
         "output_filename": "css/translate.min.css",
     },
     "admin": {
@@ -516,12 +520,12 @@ PIPELINE_JS = {
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
             "js/main.js",
-            "js/themeSwitcher.js",
+            "js/theme-switcher.js",
         ),
         "output_filename": "js/base.min.js",
     },
     "translate": {
-        "source_filenames": ("translate.js", "js/themeSwitcher.js"),
+        "source_filenames": ("translate.js"),
         "output_filename": "js/translate.min.js",
     },
     "admin": {

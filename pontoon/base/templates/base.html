@@ -33,7 +33,7 @@
   </head>
 
   <body
-    class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{% if user.profile.theme == 'system' %}system{% else %}{{ user.profile.theme }}{% endif %}-theme{% endif %}"
+    class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{{ user.profile.theme }}-theme{% endif %}"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
   >
 
