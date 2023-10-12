@@ -525,7 +525,7 @@ PIPELINE_JS = {
         "output_filename": "js/base.min.js",
     },
     "translate": {
-        "source_filenames": ("translate.js"),
+        "source_filenames": ("translate.js",),
         "output_filename": "js/translate.min.js",
     },
     "admin": {
