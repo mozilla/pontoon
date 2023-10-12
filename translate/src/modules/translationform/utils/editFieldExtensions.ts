@@ -10,28 +10,21 @@ import {
   StreamLanguage,
   bracketMatching,
   syntaxHighlighting,
-  syntaxTree,
 } from '@codemirror/language';
-import { Extension, Range } from '@codemirror/state';
-import {
-  Decoration,
-  DecorationSet,
-  EditorView,
-  ViewPlugin,
-  ViewUpdate,
-  keymap,
-} from '@codemirror/view';
+import { Extension } from '@codemirror/state';
+import { EditorView, keymap } from '@codemirror/view';
+import { tags } from '@lezer/highlight';
 import { useContext, useEffect, useRef } from 'react';
 
 import { EditorActions } from '~/context/Editor';
 import { useCopyOriginalIntoEditor } from '~/modules/editor';
+import { decoratorPlugin } from './decoratorPlugin';
 import {
   useHandleCtrlShiftArrow,
   useHandleEnter,
   useHandleEscape,
 } from './editFieldShortcuts';
 import { fluentMode, commonMode } from './editFieldModes';
-import { tags } from '@lezer/highlight';
 
 /**
  * Key handlers depend on application state,
@@ -66,39 +59,23 @@ export function useKeyHandlers() {
 }
 
 const style = HighlightStyle.define([
-  { tag: tags.keyword, color: '#872bff', fontFamily: 'monospace' }, // printf
-  { tag: tags.tagName, color: '#3e9682', fontFamily: 'monospace' }, // <...>
-  { tag: tags.brace, color: '#872bff', fontWeight: 'bold' }, // {...}
-  { tag: tags.name, color: '#872bff' }, // {...}
+  {
+    tag: tags.keyword,
+    color: '#872bff',
+    fontFamily: 'monospace',
+    whiteSpace: 'pre',
+  }, // printf
+  {
+    tag: [tags.bracket, tags.tagName],
+    color: '#3e9682',
+    fontFamily: 'monospace',
+    whiteSpace: 'pre',
+  }, // <...>
+  { tag: tags.brace, color: '#872bff', fontWeight: 'bold', whiteSpace: 'pre' }, // { }
+  { tag: tags.name, color: '#872bff', whiteSpace: 'pre' }, // {...}
+  { tag: [tags.quote, tags.literal], whiteSpace: 'pre' }, // "..."
+  { tag: tags.string, whiteSpace: 'pre-line' },
 ]);
-
-// Enable spellchecking only for string content, and not highlighted syntax
-const spellcheckMark = Decoration.mark({ attributes: { spellcheck: 'true' } });
-const spellcheckPlugin = ViewPlugin.fromClass(
-  class {
-    decorations: DecorationSet;
-    constructor(view: EditorView) {
-      this.decorations = this.getDecorations(view);
-    }
-    update(update: ViewUpdate) {
-      if (update.docChanged) {
-        this.decorations = this.getDecorations(update.view);
-      }
-    }
-    private getDecorations(view: EditorView) {
-      const deco: Range<Decoration>[] = [];
-      syntaxTree(view.state).iterate({
-        enter(node) {
-          if (node.name == 'string') {
-            deco.push(spellcheckMark.range(node.from, node.to));
-          }
-        },
-      });
-      return Decoration.set(deco);
-    }
-  },
-  { decorations: (v) => v.decorations },
-);
 
 export const getExtensions = (
   format: string,
@@ -110,7 +87,7 @@ export const getExtensions = (
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),
   syntaxHighlighting(style),
-  spellcheckPlugin,
+  decoratorPlugin,
   keymap.of([
     {
       key: 'Enter',
