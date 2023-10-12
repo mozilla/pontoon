@@ -956,7 +956,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_DISPLAY = account_username
 
-# Firefox Accounts
+# Mozilla Accounts (formerly Firefox Accounts)
 FXA_CLIENT_ID = os.environ.get("FXA_CLIENT_ID")
 FXA_SECRET_KEY = os.environ.get("FXA_SECRET_KEY")
 FXA_OAUTH_ENDPOINT = os.environ.get("FXA_OAUTH_ENDPOINT", "")
