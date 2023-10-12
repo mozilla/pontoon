@@ -68,7 +68,6 @@ def translate(request, locale, project, resource):
     context = {
         "locale": get_preferred_locale(request),
         "notifications": [],
-        "user_theme": user_theme,
     }
 
     # Get system notifications and pass them down. We need to transform the
