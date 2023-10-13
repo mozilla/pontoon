@@ -233,7 +233,7 @@ tfoot td a {
 .count {
   background: var(--dark-grey-2);
   border-radius: 3px;
-  color: var(--light-grey-6);
+  color: var(--light-grey-7);
   margin-left: 5px;
   padding: 0 5px;
 }
@@ -564,7 +564,7 @@ tfoot td a {
 
 .search-wrapper input[type='search'] {
   background: transparent;
-  color: var(--white-1);
+  color: var(--input-color-1);
   padding-left: 22px;
 }
 
@@ -618,7 +618,7 @@ tfoot td a {
 
 img.rounded {
   border-radius: 6px;
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--header-icon-border-1);
 }
 
 #error {
@@ -693,7 +693,7 @@ body.addon-promotion-active #addon-promotion {
 
 body > header {
   background: var(--black-3);
-  border-bottom: 1px solid var(--dark-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   height: 60px;
   transition: margin-top 0.3s;
 }
@@ -767,7 +767,7 @@ header .right .select .menu {
 }
 
 #notifications .button .icon {
-  color: var(--grey-3);
+  color: var(--header-icon-border-1);
   font-size: 26px;
   margin-top: 17px;
 }
@@ -1415,7 +1415,7 @@ body > form,
 }
 
 .controls .button {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   border: none;
   border-radius: 2px;
   color: var(--light-grey-7);
