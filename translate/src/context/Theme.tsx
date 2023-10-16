@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from 'react';
 
 export const ThemeContext = createContext({
   theme: 'system',
-  setTheme: (theme: string) => {},
 });
 
 function getSystemTheme() {
@@ -54,7 +53,7 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme }}>
       {children}
     </ThemeContext.Provider>
   );
