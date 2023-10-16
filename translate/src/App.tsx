@@ -33,7 +33,6 @@ import { SearchBox } from './modules/search/components/SearchBox';
  * Main entry point to the application. Will render the structure of the page.
  */
 export function App() {
-  console.log('App component started rendering.');
   const dispatch = useAppDispatch();
   const location = useContext(Location);
   const batchactions = useBatchactions();
@@ -58,7 +57,7 @@ export function App() {
   if (!l10nReady || locale.fetching) {
     return <WaveLoader />;
   }
-  console.log('Rendering');
+
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>

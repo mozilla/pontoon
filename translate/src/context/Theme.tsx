@@ -1,12 +1,15 @@
 import { createContext, useEffect, useState } from 'react';
 
 export const ThemeContext = createContext({
-  theme: 'system', 
-  setTheme: (theme: string) => {}, 
+  theme: 'system',
+  setTheme: (theme: string) => {},
 });
 
 function getSystemTheme() {
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  if (
+    window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  ) {
     return 'dark';
   } else {
     return 'light';
@@ -14,46 +17,45 @@ function getSystemTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
-    console.log("ThemeProvider running.");
-    const [theme, setTheme] = useState(() => {
-      const currentTheme = document.body.getAttribute('data-theme') || 'system';
-      if (currentTheme === 'system') {
-        return getSystemTheme();
+  const [theme, setTheme] = useState(() => {
+    const currentTheme = document.body.getAttribute('data-theme') || 'system';
+    if (currentTheme === 'system') {
+      return getSystemTheme();
+    }
+    return currentTheme;
+  });
+
+  useEffect(() => {
+    function applyTheme(newTheme: string) {
+      if (newTheme === 'system') {
+        newTheme = getSystemTheme();
       }
-      return currentTheme;
-    });
-  
-    useEffect(() => {
-      function applyTheme(newTheme: string) {
-        if (newTheme === 'system') {
-          newTheme = getSystemTheme();
-        }
-        document.body.classList.remove('dark-theme', 'light-theme');
-        document.body.classList.add(`${newTheme}-theme`);
+      document.body.classList.remove('dark-theme', 'light-theme');
+      document.body.classList.add(`${newTheme}-theme`);
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    function handleThemeChange(e: MediaQueryListEvent) {
+      let userThemeSetting =
+        document.body.getAttribute('data-theme') || 'system';
+
+      if (userThemeSetting === 'system') {
+        applyTheme(e.matches ? 'dark' : 'light');
       }
-  
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      function handleThemeChange(e: MediaQueryListEvent) {
-        let userThemeSetting = document.body.getAttribute('data-theme') || 'system';
-  
-        if (userThemeSetting === 'system') {
-          applyTheme(e.matches ? 'dark' : 'light');
-        }
-      }
-  
-      mediaQuery.addEventListener('change', handleThemeChange);
-  
-      applyTheme(theme);
-  
-      return () => {
-        mediaQuery.removeEventListener('change', handleThemeChange);
-      };
-    }, [theme]);
-  
-    return (
-      <ThemeContext.Provider value={{ theme, setTheme }}>
-        {children}
-      </ThemeContext.Provider>
-    );
-  }
-  
+    }
+
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    applyTheme(theme);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
