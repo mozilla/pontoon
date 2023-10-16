@@ -16,7 +16,7 @@ function getSystemTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
-  const [theme, setTheme] = useState(() => {
+  const [theme] = useState(() => {
     const currentTheme = document.body.getAttribute('data-theme') || 'system';
     if (currentTheme === 'system') {
       return getSystemTheme();
@@ -53,8 +53,6 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ theme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
   );
 }
