@@ -24,7 +24,7 @@
 
     {% include "tracker.html" %}
   </head>
-  <body class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{{ user.profile.theme }}-theme{% endif %}">
+  <body class="{% block class %}{% endblock %}{% if request.user.is_authenticated %}{{user.profile.theme}}-theme{% endif %}" data-theme="{% if request.user.is_authenticated %}{{user.profile.theme}}{% else %}system{% endif %}">
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
