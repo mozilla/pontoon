@@ -26,12 +26,7 @@ $(function () {
       let userThemeSetting = $('body').data('theme');
 
       if (userThemeSetting === 'system') {
-        // Apply the system theme based on current system settings
-        if (e.matches) {
-          applyTheme('dark');
-        } else {
-          applyTheme('light');
-        }
+        applyTheme(e.matches ? 'dark' : 'light');
       }
     });
 

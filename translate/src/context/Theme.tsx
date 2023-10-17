@@ -36,24 +36,13 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
       let userThemeSetting = document.body.getAttribute('data-theme')!;
 
       if (userThemeSetting === 'system') {
-        if (e.matches) {
-          applyTheme('dark');
-        } else {
-          applyTheme('light');
-        }
-      } else {
-        applyTheme(userThemeSetting);
+        applyTheme(e.matches ? 'dark' : 'light');
       }
     }
 
     mediaQuery.addEventListener('change', handleThemeChange);
-    if (document.body.classList.contains('system-theme')) {
-      let systemTheme = getSystemTheme();
-      document.body.classList.remove('system-theme');
-      document.body.classList.add(`${systemTheme}-theme`);
-    } else {
-      applyTheme(document.body.getAttribute('data-theme')!);
-    }
+
+    applyTheme(theme);
 
     return () => {
       mediaQuery.removeEventListener('change', handleThemeChange);
