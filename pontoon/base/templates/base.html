@@ -33,9 +33,9 @@
   </head>
 
   <body
-    class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{{ user.profile.theme }}-theme{% endif %}"
+    class="{% block class %}{% endblock %} {% if request.user.is_authenticated %}{{ user.profile.theme }}{% else %}dark{% endif %}-theme"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-    data-theme="{% if user.profile.theme %}{{ user.profile.theme }}{% else %}system{% endif %}">
+    data-theme="{% if request.user.is_authenticated %}{{ user.profile.theme }}{% else %}dark{% endif %}">
     {% block content %}
 
       {% include "addon_promotion.html" %}
