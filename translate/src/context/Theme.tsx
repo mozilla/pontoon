@@ -16,36 +16,44 @@ function getSystemTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
-  const [theme] = useState(() => {
-    const currentTheme = document.body.getAttribute('data-theme') || 'system';
-    if (currentTheme === 'system') {
-      return getSystemTheme();
-    }
-    return currentTheme;
-  });
+  const [theme] = useState(() => document.body.getAttribute('data-theme')!);
 
   useEffect(() => {
     function applyTheme(newTheme: string) {
       if (newTheme === 'system') {
         newTheme = getSystemTheme();
       }
-      document.body.classList.remove('dark-theme', 'light-theme');
+      document.body.classList.remove(
+        'dark-theme',
+        'light-theme',
+        'system-theme',
+      );
       document.body.classList.add(`${newTheme}-theme`);
     }
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     function handleThemeChange(e: MediaQueryListEvent) {
-      let userThemeSetting =
-        document.body.getAttribute('data-theme') || 'system';
+      let userThemeSetting = document.body.getAttribute('data-theme')!;
 
       if (userThemeSetting === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
+        if (e.matches) {
+          applyTheme('dark');
+        } else {
+          applyTheme('light');
+        }
+      } else {
+        applyTheme(userThemeSetting);
       }
     }
 
     mediaQuery.addEventListener('change', handleThemeChange);
-
-    applyTheme(theme);
+    if (document.body.classList.contains('system-theme')) {
+      let systemTheme = getSystemTheme();
+      document.body.classList.remove('system-theme');
+      document.body.classList.add(`${systemTheme}-theme`);
+    } else {
+      applyTheme(document.body.getAttribute('data-theme')!);
+    }
 
     return () => {
       mediaQuery.removeEventListener('change', handleThemeChange);
