@@ -12,7 +12,7 @@ const shortDateFormat = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
-const style = getComputedStyle(document.documentElement);
+const style = getComputedStyle(document.body);
 
 var Pontoon = (function (my) {
   return $.extend(true, my, {
