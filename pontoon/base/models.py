@@ -1582,7 +1582,13 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=160, blank=True, null=True)
 
     # Theme
-    theme = models.CharField(choices=Themes.choices, max_length=20, default=Themes.DARK)
+    theme = models.CharField(
+        choices=Themes.choices,
+        max_length=20,
+        default=Themes.DARK,
+        blank=True,
+        null=True,
+    )
 
     # External accounts
     chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
