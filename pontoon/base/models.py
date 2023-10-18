@@ -1586,8 +1586,6 @@ class UserProfile(models.Model):
         choices=Themes.choices,
         max_length=20,
         default=Themes.DARK,
-        blank=True,
-        null=True,
     )
 
     # External accounts

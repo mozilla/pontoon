@@ -221,7 +221,6 @@ class UserProfileForm(forms.ModelForm):
             "chat",
             "github",
             "bugzilla",
-            "theme",
         )
 
 
