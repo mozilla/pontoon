@@ -35,7 +35,8 @@
   <body
     class="{% block class %}{% endblock %} {{ theme(request.user) }}-theme"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
-    data-theme="{{ theme(request.user) }}">
+    data-theme="{{ theme(request.user) }}"
+  >
     {% block content %}
 
       {% include "addon_promotion.html" %}
