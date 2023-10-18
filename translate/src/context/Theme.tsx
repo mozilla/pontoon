@@ -16,7 +16,9 @@ function getSystemTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
-  const [theme] = useState(() => document.body.getAttribute('data-theme')!);
+  const [theme] = useState(
+    () => document.body.getAttribute('data-theme') || 'dark',
+  );
 
   useEffect(() => {
     function applyTheme(newTheme: string) {
@@ -33,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     function handleThemeChange(e: MediaQueryListEvent) {
-      let userThemeSetting = document.body.getAttribute('data-theme')!;
+      let userThemeSetting = document.body.getAttribute('data-theme') || 'dark';
 
       if (userThemeSetting === 'system') {
         applyTheme(e.matches ? 'dark' : 'light');
