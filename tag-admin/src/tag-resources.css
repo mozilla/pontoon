@@ -12,9 +12,9 @@
 }
 
 .tag-resource-widget {
-  background: var(--taupe-2);
+  background: var(--popup-background-1);
   margin-bottom: 2em;
-  padding-bottom: 0.3em;
+  padding: 0.3em 1em;
 }
 
 .tag-resources .rt-table input {

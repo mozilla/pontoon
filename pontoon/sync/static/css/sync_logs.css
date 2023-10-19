@@ -56,6 +56,8 @@ td {
 
 .command-details {
   background: var(--dark-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
+  margin-top: -1px;
 }
 
 .command-details .detail-item {
@@ -91,7 +93,7 @@ td {
 }
 
 .project {
-  border: 1px solid var(--grey-4);
+  border: 1px solid var(--main-border-1);
   border-radius: 5px;
   margin-bottom: 1em;
   padding: 1em;
