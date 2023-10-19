@@ -8,6 +8,7 @@ import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';
 import { NotificationProvider } from './context/Notification';
+import { ThemeProvider } from './context/Theme';
 
 import { WaveLoader } from './modules/loaders';
 import { NotificationPanel } from './modules/notification/components/NotificationPanel';
@@ -60,34 +61,36 @@ export function App() {
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>
-        <MentionUsersProvider>
-          <EntityViewProvider>
-            <div id='app'>
-              <AddonPromotion />
-              <header>
-                <Navigation />
-                <ResourceProgress />
-                {allProjects ? null : <ProjectInfo />}
-                <NotificationPanel />
-                <UserControls />
-              </header>
-              <section className='main-content'>
-                <section className='panel-list'>
-                  <SearchBox />
-                  <EntitiesList />
+        <ThemeProvider>
+          <MentionUsersProvider>
+            <EntityViewProvider>
+              <div id='app'>
+                <AddonPromotion />
+                <header>
+                  <Navigation />
+                  <ResourceProgress />
+                  {allProjects ? null : <ProjectInfo />}
+                  <NotificationPanel />
+                  <UserControls />
+                </header>
+                <section className='main-content'>
+                  <section className='panel-list'>
+                    <SearchBox />
+                    <EntitiesList />
+                  </section>
+                  <section className='panel-content'>
+                    {batchactions.entities.length === 0 ? (
+                      <Entity />
+                    ) : (
+                      <BatchActions />
+                    )}
+                  </section>
                 </section>
-                <section className='panel-content'>
-                  {batchactions.entities.length === 0 ? (
-                    <Entity />
-                  ) : (
-                    <BatchActions />
-                  )}
-                </section>
-              </section>
-              <InteractiveTour />
-            </div>
-          </EntityViewProvider>
-        </MentionUsersProvider>
+                <InteractiveTour />
+              </div>
+            </EntityViewProvider>
+          </MentionUsersProvider>
+        </ThemeProvider>
       </NotificationProvider>
     </Locale.Provider>
   );

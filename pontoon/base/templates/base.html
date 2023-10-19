@@ -33,8 +33,9 @@
   </head>
 
   <body
-    class="{% block class %}{% endblock %}"
+    class="{% block class %}{% endblock %} {{ theme(request.user) }}-theme"
     {% if csrf_token %}data-csrf="{{ csrf_token }}"{% endif %}
+    data-theme="{{ theme(request.user) }}"
   >
     {% block content %}
 

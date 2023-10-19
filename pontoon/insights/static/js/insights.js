@@ -11,7 +11,7 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
   year: 'numeric',
 });
 
-const style = getComputedStyle(document.documentElement);
+const style = getComputedStyle(document.body);
 
 var Pontoon = (function (my) {
   return $.extend(true, my, {
@@ -77,7 +77,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--white-1').trim(),
+              borderColor: style.getPropertyValue('--white-1'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

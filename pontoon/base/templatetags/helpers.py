@@ -37,6 +37,14 @@ def return_url(request):
 
 
 @library.global_function
+def theme(user):
+    """Get user's theme or return 'dark' if user is not authenticated."""
+    if user.is_authenticated:
+        return user.profile.theme
+    return "dark"
+
+
+@library.global_function
 def static(path):
     return staticfiles_storage.url(path)
 
