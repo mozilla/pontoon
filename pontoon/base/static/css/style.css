@@ -498,13 +498,13 @@ tfoot td a {
 }
 
 .search-wrapper input[type='search'] {
-    background: transparent;
-    border: none;
-    float: none;
-    font-weight: 300;
-    padding-left: 25px;
-    padding-right: 0;
-    width: 200px;
+  background: transparent;
+  border: none;
+  float: none;
+  font-weight: 300;
+  padding-left: 25px;
+  padding-right: 0;
+  width: 200px;
 }
 
 .search-wrapper input[type='search']::-webkit-search-decoration,
