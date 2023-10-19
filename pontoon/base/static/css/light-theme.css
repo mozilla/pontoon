@@ -2,8 +2,10 @@
 .light-theme {
     /* Main */
     --main-border-1: #d8d8d8;
+    --moz-logo: url(../img/moz-logo.svg);
 
     /* Primary (darker) background */
+    --background-1: #f6f6f6;
     --background-hover-1: #ffffff;
     --button-background-1: #ffffff;
     --popup-background-1: #ffffff;
@@ -23,6 +25,10 @@
     --tooltip-background: #000000dd;
     --tooltip-color: #ffffff;
     --tooltip-border: #4d5967;
+
+    /* Homepage */
+    --homepage-background-image: url(../img/background-light.svg);
+    --homepage-tour-button-background: #FFFFFF;
 
     /* Insights_tab.css Variables */
     --green-blue: #4fc4f666;
@@ -103,8 +109,6 @@
     --taupe-1: #898989;
     --taupe-2: #999999;
     --white-1: #444444;
-    --white-2: #f4f4f4;
     --white-3: #222222;
-    --white-4: #dddddd;
     --white-5: #e2e2e2;
 }

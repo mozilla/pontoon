@@ -14,7 +14,7 @@ body > header {
 }
 
 body > header.menu-opened {
-  border-color: var(--dark-grey-1);
+  border-color: var(--main-border-1);
 }
 
 #main {
@@ -24,7 +24,6 @@ body > header.menu-opened {
 }
 
 #main p {
-  color: var(--white-4);
   line-height: 1.5rem;
 }
 
@@ -36,13 +35,10 @@ body > header.menu-opened {
   height: 100vh;
   width: 100vw;
 
-  background-image: url(../img/background.svg);
+  background-color: var(--background-1);
+  background-image: var(--homepage-background-image);
   background-attachment: fixed;
   background-size: cover;
-}
-
-.section {
-  color: var(--white-2);
 }
 
 .section .container {
@@ -72,7 +68,7 @@ h2 {
 }
 
 #main .button {
-  background-color: var(--white-1);
+  background-color: var(--homepage-tour-button-background);
   color: var(--black-2);
   display: flex;
   border-radius: 2px;
@@ -285,13 +281,12 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 li {
-  color: var(--white-4);
   counter-increment: item;
   margin: 40px 0;
 }
 
 #section-3 li:before {
-  background-color: var(--black-3);
+  background-color: var(--background-1);
   border: 2px solid var(--light-green-1);
   border-radius: 100%;
   color: var(--white-1);
@@ -324,7 +319,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--main-border-1);
   border-radius: 3px;
   margin-left: 20px;
   padding: 10px;
@@ -354,7 +349,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-5 img {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--main-border-1);
   border-radius: 3px;
   width: 436px;
 }
@@ -389,6 +384,8 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer .mozilla .logo {
+  background: var(--moz-logo) no-repeat;
+  height: 22px;
   width: 80px;
 }
 
