@@ -1,16 +1,5 @@
-/* Light Theme Variables */
+/* Light Theme Variables Placeholder */
 .light-theme {
-  --dark-grey-2: #fbfbfb;
-  --dark-grey-1: #eee;
-  --light-grey-7: #aaaaaa;
-  --grey-3: #eee;
-  --light-grey-1: #e8e8e8;
-  --white-1: #222;
-  --white-3: #222;
-  --light-grey-7: #888;
-  --light-grey-2: #888888;
-
-  /* Dark theme as placeholder*/
   --black-1: #1c1e21;
   --black-2: #000000;
   --black-3: #272a2f;
@@ -25,6 +14,8 @@
   --coral: #fe8f8f;
   --dark-brown: #232323;
   --dark-green: #3b3d3b;
+  --dark-grey-1: #333941;
+  --dark-grey-2: #3f4752;
   --dark-grey-3: #333333;
   --dark-grey-4: #444444;
   --forest-green-1: #41554c;
@@ -33,6 +24,7 @@
   --green-2: #64906d;
   --grey-1: #637283;
   --grey-2: #525a65;
+  --grey-3: #4d5967;
   --grey-4: #5c6172;
   --grey-5: #385465;
   --grey-6: #777777;
@@ -43,10 +35,13 @@
   --light-green-2: #7bc176;
   --light-green-3: #9cd699;
   --dark-green: #7bc87633;
+  --light-grey-1: #5e6475;
+  --light-grey-2: #888888;
   --light-grey-3: #666666;
   --light-grey-4: #bbbbbb;
   --light-grey-5: #7c8b9c;
   --light-grey-6: #cccccc;
+  --light-grey-7: #aaaaaa;
   --light-grey-8: #c0c0c0;
   --magenta: #843650;
   --mustard-yellow: #fed271;
@@ -63,7 +58,9 @@
   --lilac: #c6c1f0;
   --taupe-1: #898989;
   --taupe-2: #999999;
+  --white-1: #ffffff;
   --white-2: #f4f4f4;
+  --white-3: #ebebeb;
   --white-4: #dddddd;
   --white-5: #e2e2e2;
   /* Insights_tab.css Variables */
