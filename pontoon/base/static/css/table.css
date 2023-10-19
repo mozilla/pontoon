@@ -18,7 +18,7 @@ table.table.project-list.hidden {
 }
 
 .table tbody tr:hover {
-  background: var(--dark-grey-1);
+  background: var(--background-hover-1);
 }
 
 .table th:first-child {
@@ -176,10 +176,10 @@ table.table.project-list.hidden {
 
 .table .latest-activity .tooltip {
   display: block;
-  background: var(--black-1);
+  background: var(--tooltip-background);
   border-radius: 10px;
   bottom: 30px;
-  color: var(--white-1);
+  color: var(--tooltip-color);
   left: -100px;
   padding: 10px;
   position: absolute;
@@ -243,6 +243,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer img {
+  border-color: var(--tooltip-border);
   display: inline-block;
   margin-left: 8px;
 }
@@ -272,7 +273,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status {
-  color: var(--dark-grey-2);
+  color: var(--icon-background-1);
   font-size: 18px;
   position: absolute;
   right: 0;

@@ -213,11 +213,11 @@
   </h3>
 
   <div class="clearfix">
-    <input id="id_configuration_file" name="configuration_file" type="text" placeholder="l10n.toml" value="{{ form.configuration_file.value() or '' }}">
     <label for="id_configuration_file">
       {{ form.configuration_file.help_text|trim }}
       <a href="https://moz-l10n-config.readthedocs.io/en/latest/fileformat.html" target="_blank">Learn more.</a>
     </label>
+    <input id="id_configuration_file" name="configuration_file" type="text" placeholder="l10n.toml" value="{{ form.configuration_file.value() or '' }}">
     {{ form.configuration_file.errors }}
   </div>
 

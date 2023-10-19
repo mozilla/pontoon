@@ -2,7 +2,7 @@
 {% macro locale(locales_list, locale_selected) %}
 <div class="locale-selector">
   <div class="locale select">
-    <div class="button breadcrumbs selector noselect">
+    <div class="button selector noselect">
       <span class="language" {{ locale_selected.serialize() | dict_html_attrs }}>{{ locale_selected.name }}</span><span class="code">{{ locale_selected.code }}</span>
     </div>
 

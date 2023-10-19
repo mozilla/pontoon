@@ -115,8 +115,8 @@
 
 #team-form .field input {
   color: var(--white-1);
-  background: var(--dark-grey-1);
-  border: 1px solid var(--grey-3);
+  background: var(--input-background-1);
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
   float: none;
   width: 480px;
@@ -162,7 +162,7 @@
 
 .item-list td.check,
 .item-list td.radio {
-  color: var(--dark-grey-2);
+  color: var(--icon-background-1);
   float: right;
   font-size: 16px;
   height: 47px;

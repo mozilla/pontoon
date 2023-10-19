@@ -8,7 +8,7 @@
 }
 
 .menu.left-column li.selected {
-  background: var(--dark-grey-2);
+  background: var(--background-hover-1);
 }
 
 .menu.left-column li.selected a {
@@ -26,7 +26,7 @@
 }
 
 .menu.left-column .count {
-  background: var(--dark-grey-1);
+  background: var(--button-background-2);
   float: right;
 }
 
@@ -42,6 +42,10 @@
 
 .menu.right-column > section.selected {
   display: block;
+}
+
+.menu.right-column li.hover {
+  background: var(--background-hover-2);
 }
 
 .menu.right-column li.no .title {

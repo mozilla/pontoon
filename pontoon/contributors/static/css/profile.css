@@ -19,7 +19,7 @@
 }
 
 #main .container .left-column hr {
-  border-color: var(--grey-3);
+  border-color: var(--main-border-1);
   margin: 8px 0;
 }
 
@@ -275,7 +275,7 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu li span {
-  color: var(--light-grey-6);
+  color: var(--light-grey-7);
   width: 100%;
 }
 
@@ -286,7 +286,7 @@ h4.superuser {
 
 #contributions h3,
 #timeline h3 {
-  color: var(--light-grey-6);
+  color: var(--white-1);
   font-size: 16px;
   font-weight: 400;
   font-style: normal;
