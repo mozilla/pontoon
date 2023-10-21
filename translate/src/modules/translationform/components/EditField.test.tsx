@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import * as Fluent from '@fluent/react';
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import sinon from 'sinon';
@@ -135,5 +135,14 @@ describe('<EditField>', () => {
       ref.current!.setSelection('bar');
     });
     expect(spy.getCalls()).toMatchObject([{ args: [0, 'foobar'] }]);
+  });
+
+  it('does not highlight `% d` as code (#2988)', () => {
+    render(<MockEditField defaultValue='{0}% done' format='plain' />);
+    const placeholder = screen.getByText(/0/);
+    const notPrintf = screen.getByText(/% d/);
+    const certainlyText = screen.getByText(/one/);
+    expect(notPrintf).not.toBe(placeholder);
+    expect(notPrintf).toBe(certainlyText);
   });
 });
