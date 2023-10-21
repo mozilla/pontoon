@@ -8,7 +8,6 @@ import {
 import {
   HighlightStyle,
   StreamLanguage,
-  bracketMatching,
   syntaxHighlighting,
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
@@ -73,8 +72,8 @@ const style = HighlightStyle.define([
   }, // <...>
   { tag: tags.brace, color: '#872bff', fontWeight: 'bold', whiteSpace: 'pre' }, // { }
   { tag: tags.name, color: '#872bff', whiteSpace: 'pre' }, // {...}
-  { tag: [tags.quote, tags.literal], whiteSpace: 'pre' }, // "..."
-  { tag: tags.string, whiteSpace: 'pre-line' },
+  { tag: [tags.quote, tags.literal], whiteSpace: 'pre-wrap' }, // "..."
+  { tag: tags.string, whiteSpace: 'pre-wrap' },
 ]);
 
 export const getExtensions = (
@@ -82,7 +81,6 @@ export const getExtensions = (
   ref: ReturnType<typeof useKeyHandlers>,
 ): Extension[] => [
   history(),
-  bracketMatching(),
   closeBrackets(),
   EditorView.lineWrapping,
   StreamLanguage.define<any>(format === 'ftl' ? fluentMode : commonMode),

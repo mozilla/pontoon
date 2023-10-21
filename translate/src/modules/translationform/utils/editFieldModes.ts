@@ -3,6 +3,7 @@ import { StreamParser } from '@codemirror/language';
 export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
   {
     name: 'fluent',
+    languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
     startState: () => [],
     token(stream, state) {
       const ch = stream.next();
@@ -31,8 +32,19 @@ export const fluentMode: StreamParser<Array<'expression' | 'literal' | 'tag'>> =
             case '{':
               state.push('expression');
               return 'brace';
+            // These will mis-highlight actual } or > in literals,
+            // but that's a rare enough occurrence when balanced
+            // with the improved editing experience.
+            case '}':
+              state.pop();
+              state.pop();
+              return 'brace';
+            case '>':
+              state.pop();
+              state.pop();
+              return 'bracket';
             default:
-              stream.eatWhile(/[^"{]+/);
+              stream.eatWhile(/[^"{}>]+/);
               return 'literal';
           }
 
@@ -75,6 +87,7 @@ const pythonFormat = /^{[\w.[\]]*(![rsa])?(:.*?)?}/;
 
 export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   name: 'common',
+  languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
   startState: () => [],
   token(stream, state) {
     if (stream.match(printf) || stream.match(pythonFormat)) {
