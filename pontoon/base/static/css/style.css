@@ -1420,6 +1420,10 @@ body > form,
   float: left;
 }
 
+.priority .value .fa-star {
+  color: var(--icon-background-2);
+}
+
 .priority .fa-star.active {
   color: var(--light-green-1);
 }
