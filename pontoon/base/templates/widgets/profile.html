@@ -15,6 +15,7 @@
       <img class="rounded" src="{{ user.gravatar_url(176) }}" width="88" height="88">
       <p class="name">{{ user.name_or_email|nospam }}</p>
       <p class="email">{{ user.email|nospam }}</p>
+      <input type="hidden" name="username" value="{{ user.username }}" />
     </a>
   </li>
   <li class="horizontal-separator"></li>
