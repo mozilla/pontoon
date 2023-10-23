@@ -37,6 +37,7 @@ $(function () {
 
   $('.appearance .toggle-button button').click(function (e) {
     e.preventDefault();
+    e.stopPropagation();
 
     var self = $(this);
 
