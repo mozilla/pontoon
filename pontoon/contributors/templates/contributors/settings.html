@@ -64,6 +64,18 @@
         </div>
       </section>
 
+   <section class="appearance">
+        <h3>Appearance</h3>
+        <div class="field">
+            <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
+        </div>
+        <span class="toggle-button">
+        <button type="button" value="dark" class="dark {% if user.profile.theme == 'dark' %}active{% endif %}" title="Use a dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
+        <button type="button" value="light" class="light {% if user.profile.theme == 'light' %}active{% endif %}" title="Use a light theme"><i class="icon fa fa-sun"></i>Light theme</button>
+        <button type="button" value="system" class="system {% if user.profile.theme == 'system' %}active{% endif %}" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button> 
+        </span>
+    </section>
+        
     <section>
         <h3>External accounts</h3>
         <div class="field">
@@ -83,7 +95,7 @@
         </div>
     </section>
 
-    <section>
+    <section class="data-visibility">
         <h3>Visibility of data on the Profile page</h3>
         <div class="field">
             <span class="toggle-label">{{ user_profile_visibility_form.visibility_email.label }}</span>
@@ -128,7 +140,7 @@
     </section>
 
     <section>
-        <h3>Locale settings</h3>
+        <h3>Default locales</h3>
         <div id="locale-settings" class="clearfix">
             <div id="homepage">
                 <span class="label">Homepage</span>
@@ -142,7 +154,7 @@
     </section>
 
     <section>
-        <h3><span class="small stress">Preferred locales to get suggestions from</span></h3>
+        <h3>Preferred locales to get suggestions from</h3>
         {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
     </section>
 

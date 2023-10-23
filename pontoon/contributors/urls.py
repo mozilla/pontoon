@@ -56,6 +56,12 @@ urlpatterns = [
         views.mark_all_notifications_as_read,
         name="pontoon.contributors.notifications.mark.all.as.read",
     ),
+    # API: Toggle user theme preference
+    path(
+        "api/v1/user/<username:username>/theme/",
+        views.toggle_theme,
+        name="pontoon.contributors.toggle_theme",
+    ),
     # API: Toggle user profile attribute
     path(
         "api/v1/user/<username:username>/",

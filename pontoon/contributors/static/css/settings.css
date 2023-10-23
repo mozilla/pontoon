@@ -129,6 +129,26 @@
   font-style: italic;
 }
 
+#main .appearance .field .help {
+  margin: 0 0 -12px;
+}
+
+#main .appearance .toggle-button button {
+  width: 207px;
+}
+
+#main .appearance .toggle-button button:first-child {
+  margin-right: -1px;
+}
+
+#main .appearance .toggle-button button:nth-child(2) {
+  border-radius: 0;
+}
+
+#main .appearance .toggle-button button .icon {
+  margin-right: 10px;
+}
+
 #main .field .verify {
   color: var(--light-green-1);
   font-style: italic;

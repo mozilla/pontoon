@@ -363,6 +363,7 @@ PIPELINE_CSS = {
     "base": {
         "source_filenames": (
             "css/dark-theme.css",
+            "css/light-theme.css",
             "css/fontawesome-all.css",
             "css/nprogress.css",
             "css/boilerplate.css",
@@ -372,7 +373,11 @@ PIPELINE_CSS = {
         "output_filename": "css/base.min.css",
     },
     "translate": {
-        "source_filenames": ("translate.css", "css/dark-theme.css"),
+        "source_filenames": (
+            "translate.css",
+            "css/dark-theme.css",
+            "css/light-theme.css",
+        ),
         "output_filename": "css/translate.min.css",
     },
     "admin": {
@@ -515,6 +520,7 @@ PIPELINE_JS = {
             "js/lib/jquery.color-2.1.2.js",
             "js/lib/nprogress.js",
             "js/main.js",
+            "js/theme-switcher.js",
         ),
         "output_filename": "js/base.min.js",
     },
@@ -956,7 +962,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_DISPLAY = account_username
 
-# Firefox Accounts
+# Mozilla Accounts (formerly Firefox Accounts)
 FXA_CLIENT_ID = os.environ.get("FXA_CLIENT_ID")
 FXA_SECRET_KEY = os.environ.get("FXA_SECRET_KEY")
 FXA_OAUTH_ENDPOINT = os.environ.get("FXA_OAUTH_ENDPOINT", "")

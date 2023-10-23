@@ -24,7 +24,7 @@
 
     {% include "tracker.html" %}
   </head>
-  <body>
+  <body class="{% block class %}{% endblock %} {{ theme(request.user) }}-theme" data-theme="{{ theme(request.user) }}">
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>

@@ -1,5 +1,5 @@
 var Pontoon = (function (my) {
-  const style = getComputedStyle(document.documentElement);
+  const style = getComputedStyle(document.body);
   return $.extend(true, my, {
     insights: {
       initialize: function () {
