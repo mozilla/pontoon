@@ -37,6 +37,7 @@ $(function () {
 
   $('.appearance .toggle-button button').click(function (e) {
     e.preventDefault();
+    e.stopPropagation();
 
     var self = $(this);
 
@@ -47,7 +48,10 @@ $(function () {
     var theme = self.val();
 
     $.ajax({
-      url: '/api/v1/user/' + $('#server').data('username') + '/theme/',
+      url:
+        '/api/v1/user/' +
+        $('#profile input[name="username"]').val() +
+        '/theme/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -55,7 +59,9 @@ $(function () {
       },
       success: function () {
         $('.appearance .toggle-button button').removeClass('active');
-        self.addClass('active');
+        $(`.appearance .toggle-button button[value=${theme}]`).addClass(
+          'active',
+        );
         applyTheme(theme);
 
         // Set the data-theme attribute after successfully changing the theme

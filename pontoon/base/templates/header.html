@@ -1,6 +1,7 @@
 {% import "widgets/signin.html" as SignIn with context %}
 {% import "widgets/signout.html" as SignOut with context %}
 {% import "widgets/profile.html" as Profile with context %}
+{% import "widgets/theme_toggle.html" as ThemeToggle %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 
 <header>
@@ -35,6 +36,15 @@
           <div class="menu">
             <ul>
               {{ Profile.top_menu() }}
+
+              {% if user.is_authenticated %}
+              <li class="appearance clearfix">
+                <p class="help">Choose appearance</p>
+                {{ ThemeToggle.button(user, long_name=False) }}
+              </li>
+
+              <li class="horizontal-separator"></li>
+              {% endif %}
 
               <li><a href="{{ url('pontoon.terms') }}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
               <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>

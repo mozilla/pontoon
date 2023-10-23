@@ -13,7 +13,7 @@ $(function () {
     var value = self.text();
 
     $.ajax({
-      url: '/api/v1/user/' + $('#server').data('username') + '/',
+      url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),
@@ -42,7 +42,7 @@ $(function () {
     var self = $(this);
 
     $.ajax({
-      url: '/api/v1/user/' + $('#server').data('username') + '/',
+      url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
       type: 'POST',
       data: {
         csrfmiddlewaretoken: $('body').data('csrf'),

@@ -2,19 +2,12 @@
 
 {% import "widgets/checkbox.html" as Checkbox %}
 {% import "widgets/toggle.html" as Toggle %}
+{% import "widgets/theme_toggle.html" as ThemeToggle %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
 {% import 'teams/widgets/team_selector.html' as team_selector %}
 
 
 {% block title %}Settings{% endblock %}
-
-{% block before %}
-<!-- Server data -->
-<div id="server" class="hidden"
-     data-username="{{ user.username }}"
-     >
-</div>
-{% endblock %}
 
 {% block heading %}
 <section id="heading">
@@ -69,11 +62,7 @@
         <div class="field">
             <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
         </div>
-        <span class="toggle-button">
-        <button type="button" value="dark" class="dark {% if user.profile.theme == 'dark' %}active{% endif %}" title="Use a dark theme"><i class="icon far fa-moon"></i>Dark theme</button>
-        <button type="button" value="light" class="light {% if user.profile.theme == 'light' %}active{% endif %}" title="Use a light theme"><i class="icon fa fa-sun"></i>Light theme</button>
-        <button type="button" value="system" class="system {% if user.profile.theme == 'system' %}active{% endif %}" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>Match system</button> 
-        </span>
+        {{ ThemeToggle.button(user) }}
     </section>
         
     <section>
