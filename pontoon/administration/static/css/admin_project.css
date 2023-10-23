@@ -136,7 +136,7 @@ form .controls .button.delete-inline {
   margin-left: 0;
 }
 
-#admin-strings-form .strings-list .entity textarea:nth-child(3) {
+#admin-strings-form .strings-list .entity textarea {
   margin-bottom: 20px;
 }
 

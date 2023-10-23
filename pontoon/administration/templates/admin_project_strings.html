@@ -26,7 +26,7 @@
   <section class="strings-list">
     {{ entities_form.management_form }}
     {% for form in entities_form %}
-      <div class="entity inline clearfix">
+      <div class="entity inline controls clearfix">
         {{ form.id }}
         {% for field in ['string', 'comment'] %}
           {{ form[field].label_tag(label_suffix='') }}

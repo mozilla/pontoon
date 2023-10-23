@@ -243,7 +243,7 @@ $(function () {
       .replace(/__prefix__/g, count[type]);
 
     $('.' + type + ':last').before(
-      '<div class="' + type + ' inline clearfix">' + form + '</div>',
+      '<div class="' + type + ' inline controls clearfix">' + form + '</div>',
     );
     count[type]++;
 
