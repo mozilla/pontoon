@@ -1025,6 +1025,42 @@ header .right .select .menu {
   text-align: center;
 }
 
+#profile .menu li.appearance {
+  cursor: default;
+  padding: 4px 0;
+}
+
+#profile .menu li.appearance:hover {
+  background: transparent;
+  color: inherit;
+}
+
+#profile .menu li.appearance .help {
+  padding-bottom: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+#profile .menu li.appearance button {
+  font-size: 14px;
+  width: 78px;
+  border-radius: 3px;
+  margin: 0;
+}
+
+#profile .menu li.appearance button:nth-child(2) {
+  margin: 0 8px;
+}
+
+#profile .menu li.appearance button:last-child {
+  border-left: 1px solid var(--light-grey-3);
+}
+
+#profile .menu li.appearance button .icon {
+  display: block;
+  margin: 5px 0;
+}
+
 .links li {
   list-style: none;
   display: inline-block;
