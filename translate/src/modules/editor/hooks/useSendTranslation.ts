@@ -61,7 +61,10 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       entity.pk,
       translation,
       locale.code,
-      hasPluralForms ? pluralForm : -1,
+      // Gettext messages with plural forms in the original
+      // need to use index 0 for the "plural form" of translations
+      // to locales that do not use plural forms.
+      hasPluralForms ? pluralForm : entity.original_plural ? 0 : -1,
       entity.original,
       forceSuggestions,
       location.resource,
