@@ -978,7 +978,7 @@ header .right .select .menu {
 }
 
 #profile .menu li.appearance button:last-child {
-  border-left: 1px solid var(--light-grey-3);
+  border-left: 1px solid var(--main-border-1);
 }
 
 #profile .menu li.appearance button .icon {
@@ -1444,11 +1444,11 @@ body > form,
 }
 
 .toggle-button button {
-  background: var(--black-3);
-  border: 1px solid var(--light-grey-3);
+  background: transparent;
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
   box-sizing: border-box;
-  color: var(--grey-6);
+  color: var(--toggle-background-1);
   float: none;
   font-size: 16px;
   font-weight: 100;
@@ -1457,7 +1457,6 @@ body > form,
 }
 
 .toggle-button button:first-child {
-  border-right-color: var(--grey-3);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -1473,8 +1472,8 @@ body > form,
 }
 
 .toggle-button button.active {
-  background: var(--dark-grey-1);
-  border-color: var(--grey-3);
+  background: var(--button-background-1);
+  border-color: var(--main-border-1);
   color: var(--light-grey-7);
   font-weight: 400;
 }
