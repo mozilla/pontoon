@@ -758,7 +758,7 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item span {
-  color: var(--white-1);
+  color: var(--translation-color);
   float: none;
 }
 
@@ -782,6 +782,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
+  color: var(--translation-secondary-color);
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -792,6 +793,8 @@ header .right .select .menu {
   color: var(--light-grey-7);
 }
 
+.notifications .menu li.notification-item.hover .message.trim,
+.notifications .menu li.notification-item.hover .message.trim > p,
 .notifications .menu li.notification-item.hover .message.trim a {
   color: var(--white-1);
 }

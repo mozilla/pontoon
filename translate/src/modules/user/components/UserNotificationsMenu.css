@@ -60,7 +60,7 @@
 }
 
 .user-notifications-menu .menu li:hover {
-  background: var(--dark-grey-2);
+  background: var(--background-hover-2);
 }
 
 .user-notifications-menu .menu li.no {
