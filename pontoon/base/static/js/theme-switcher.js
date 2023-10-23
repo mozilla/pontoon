@@ -55,7 +55,7 @@ $(function () {
       },
       success: function () {
         $('.appearance .toggle-button button').removeClass('active');
-        self.addClass('active');
+        $(`.appearance .toggle-button button[value=${theme}]`).addClass('active');
         applyTheme(theme);
 
         // Set the data-theme attribute after successfully changing the theme
