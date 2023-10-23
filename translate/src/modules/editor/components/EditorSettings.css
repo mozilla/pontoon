@@ -6,7 +6,7 @@
 
 .editor-settings .selector {
   cursor: pointer;
-  color: var(--light-grey-7);
+  color: var(--editor-menu-color);
   font-size: 22px;
   padding: 9px 5px 9px 0;
 }
@@ -17,6 +17,7 @@
 
 .editor-settings .menu {
   background-color: var(--black-3);
+  border: 1px solid var(--main-border-1);
   bottom: auto;
   color: var(--light-grey-7);
   list-style: none;
@@ -48,7 +49,7 @@
 }
 
 .editor-settings .menu .horizontal-separator {
-  border-top: 1px solid var(--grey-2);
+  border-top: 1px solid var(--main-border-1);
   height: 0;
   margin: 5px 0;
   padding: 0;

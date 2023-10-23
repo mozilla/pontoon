@@ -32,6 +32,7 @@
 
 .entity .source-string,
 .entity .translation-string {
+  color: var(--translation-color);
   display: inline-block;
   margin: 0;
   padding-bottom: 3px;
@@ -41,7 +42,7 @@
 }
 
 .entity .translation-string {
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
   min-height: 20px;
   text-align: start;
 }

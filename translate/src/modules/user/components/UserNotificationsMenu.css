@@ -12,7 +12,7 @@
 }
 
 .user-notifications-menu .selector .icon {
-  color: var(--grey-3);
+  color: var(--icon-border-1);
   font-size: 26px;
   margin-top: 17px;
 }
@@ -36,7 +36,7 @@
 
 .user-notifications-menu .menu {
   background-color: var(--black-3);
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--main-border-1);
   border-top: none;
   padding: 0;
   position: absolute;
@@ -88,7 +88,7 @@
 }
 
 .user-notifications-menu .menu .see-all {
-  border-top: 1px solid var(--dark-grey-1);
+  border-top: 1px solid var(--main-border-1);
 }
 
 .user-notifications-menu .menu .see-all a {

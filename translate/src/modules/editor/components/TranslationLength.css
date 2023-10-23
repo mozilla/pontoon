@@ -1,5 +1,5 @@
 .translation-length {
-  color: var(--light-grey-7);
+  color: var(--editor-menu-color);
   float: left;
   line-height: 22px;
   padding: 9px 5px;

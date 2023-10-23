@@ -1,5 +1,5 @@
 .other-locales .translation {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   cursor: pointer;
   padding: 10px;
 }
@@ -15,7 +15,6 @@
 .other-locales .translation:not(.cannot-copy):hover,
 .other-locales .translation.selected {
   background: var(--dark-grey-1);
-  border-color: var(--light-grey-1);
 }
 
 .other-locales .translation > header {
@@ -34,6 +33,7 @@
 }
 
 .other-locales .translation > p {
+  color: var(--translation-color);
   min-height: 22px;
   text-align: start;
   white-space: pre-wrap;

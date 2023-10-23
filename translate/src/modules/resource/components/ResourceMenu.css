@@ -31,7 +31,7 @@
 
 .resource-menu .menu {
   background-color: var(--black-3);
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--main-border-1);
   border-top: none;
   color: var(--light-grey-7);
   line-height: 1.231em;
@@ -59,10 +59,10 @@
 }
 
 .resource-menu .menu .search-wrapper input[type='search'] {
-  color: var(--white-1);
+  color: var(--input-color-1);
   padding: 4px 3px 3px 25px;
-  background: var(--dark-grey-1);
-  border: 1px solid var(--grey-3);
+  background: var(--input-background-1);
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
   font-weight: 300;
   height: 28px;
@@ -93,7 +93,7 @@
 }
 
 .resource-menu .menu .static-links {
-  border-top: 1px solid var(--light-grey-1);
+  border-top: 1px solid var(--main-border-1);
   margin-top: 5px;
   padding-top: 5px;
 }
@@ -103,7 +103,7 @@
 }
 
 .resource-menu .menu .header {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   padding: 5px 4px;
   overflow: auto;
   font-size: 13px;

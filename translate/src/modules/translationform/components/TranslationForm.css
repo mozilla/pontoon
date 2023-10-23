@@ -1,6 +1,7 @@
 .translationform {
+  background: var(--editor-form-background);
   line-height: 22px;
-  padding: 10px;
+  padding: 10px 10px 0;
 }
 
 .translationform table {
@@ -17,13 +18,13 @@
 
 .translationform label {
   background: transparent;
-  border: 1px solid var(--light-grey-1);
+  border: 1px solid var(--translation-border);
   box-sizing: border-box;
   color: var(--light-grey-7);
   display: block;
   font-weight: normal;
   margin: 2px 5px 2px 0;
-  padding: 0 4px;
+  padding: 1px 4px;
 }
 
 .translationform label > :not(:last-child)::after {
@@ -81,10 +82,14 @@
 }
 
 .cm-editor {
-  background: white;
-  color: var(--dark-grey-4);
+  background: var(--editor-background);
+  color: var(--editor-color);
   font-size: 14px;
   padding: 6px 0;
+}
+
+.cm-editor.cm-focused {
+  outline: none;
 }
 
 .cm-editor .cm-scroller {

@@ -1,5 +1,4 @@
 .entities {
-  background-color: var(--dark-grey-2);
   height: calc(100% - 53px);
   overflow-y: auto;
   position: relative;

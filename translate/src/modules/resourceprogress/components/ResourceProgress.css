@@ -38,13 +38,15 @@
 
 .progress-chart .menu {
   background: var(--black-3);
+  border: 1px solid var(--main-border-1);
+  border-top: none;
   left: 50%;
   line-height: 18px;
   margin-left: -200px; /* Must be half the width */
   padding: 0;
   position: absolute;
   text-align: center;
-  top: 48px;
+  top: 51px;
   width: 400px;
   z-index: 20;
 }

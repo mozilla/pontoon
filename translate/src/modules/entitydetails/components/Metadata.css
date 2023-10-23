@@ -1,6 +1,6 @@
 .metadata {
-  background-color: var(--dark-grey-2);
-  color: var(--light-grey-7);
+  border-bottom: 1px solid var(--main-border-1);
+  color: var(--translation-secondary-color);
   font-size: 12px;
   font-style: italic;
   min-height: 114px;
@@ -18,7 +18,7 @@
 }
 
 .metadata .title {
-  color: var(--light-grey-2);
+  color: var(--translation-subtitle-color);
 }
 
 .metadata div a {
@@ -37,7 +37,7 @@
 }
 
 .metadata .original {
-  color: white;
+  color: var(--translation-color);
   font-size: 14px;
   font-style: normal;
   line-height: 22px;
@@ -93,7 +93,7 @@
 }
 
 .metadata .context a {
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
 }
 
 .metadata .context a:hover {

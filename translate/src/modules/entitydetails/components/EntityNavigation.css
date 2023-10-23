@@ -1,6 +1,6 @@
 .entity-navigation {
   background: var(--grey-3);
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   padding: 12px 10px 13px;
 }
 

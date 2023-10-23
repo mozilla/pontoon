@@ -1,5 +1,5 @@
 .user-notification {
-  border-top: 1px solid var(--dark-grey-1);
+  border-top: 1px solid var(--main-border-1);
   cursor: default;
   padding: 0;
 }
@@ -9,7 +9,7 @@
 }
 
 .user-notification:first-child:hover {
-  border-color: var(--dark-grey-1);
+  border-color: var(--main-border-1);
 }
 
 .user-notification.unread {

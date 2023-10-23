@@ -4,11 +4,11 @@
 }
 
 .search-box input[type='search'] {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: var(--white-1);
+  color: var(--translation-color);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;

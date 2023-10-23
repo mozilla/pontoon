@@ -45,6 +45,27 @@
   --blue-2: #5f7285;
   --light-blue: #4fc4f6;
 
+  /* Translation workspace */
+  --translation-background: #f6f6f6;
+  --translation-border: #bbbbbb;
+  --translation-color: #000000;
+  --translation-secondary-color: #888888;
+  --translation-main-button-color: #000000;
+  --translation-subtitle-color: #555555;
+  --editor-background: #ffffff;
+  --editor-color: #444444;
+  --editor-form-background: #e8e8e8;
+  --editor-menu-background: #ffffff;
+  --editor-menu-color: #555555;
+  --editor-menu-action-button-color: #000000;
+
+  /* Rarely used */
+  --black-brown: #2d2323;
+  --brown-1: #676054;
+  --mustard-yellow: #fed271;
+  --pink: #ff3366cc;
+  --red: #ff0a43;
+
   /* Chart colors */
   --green-blue: #4fc4f666;
   --grey-9: #5f7285;
@@ -98,10 +119,4 @@
 
   --white-1: #444444;
   --white-5: #e2e2e2;
-
-  --black-brown: #2d2323;
-  --brown-1: #676054;
-  --mustard-yellow: #fed271;
-  --pink: #ff3366cc;
-  --red: #ff0a43;
 }

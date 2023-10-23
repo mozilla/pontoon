@@ -7,7 +7,7 @@
 
 #app > header {
   background: var(--black-3);
-  border-bottom: 1px solid var(--dark-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   box-sizing: border-box;
   height: 60px;
   min-width: 700px;
@@ -31,7 +31,7 @@
 }
 
 #app > .main-content > .panel-content {
-  border-left: 1px solid var(--light-grey-1);
+  border-left: 1px solid var(--main-border-1);
   box-sizing: border-box;
   width: 75%;
 }

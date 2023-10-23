@@ -5,7 +5,7 @@
 
 .batch-actions .topbar {
   background: var(--grey-3);
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   padding: 12px 10px 13px;
 }
 
@@ -89,7 +89,7 @@
   background: var(--light-green-1);
   border: none;
   border-radius: 3px;
-  color: var(--black-3);
+  color: var(--translation-main-button-color);
   font-weight: 600;
   margin-top: 10px;
   padding: 15px 5px;

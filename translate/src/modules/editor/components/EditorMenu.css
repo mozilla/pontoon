@@ -1,7 +1,12 @@
 .editor-menu {
+  background: var(--editor-menu-background);
   color: var(--white-1);
   padding: 10px;
   position: relative;
+}
+
+.translationform + .editor-menu {
+  background: var(--editor-form-background);
 }
 
 .editor-menu .actions {
@@ -11,7 +16,7 @@
 .editor-menu .actions button {
   background: transparent;
   border: none;
-  color: var(--white-1);
+  color: var(--editor-menu-action-button-color);
   height: 40px;
   margin: 0 2px;
   padding: 10px 3px;
@@ -30,7 +35,7 @@
 .editor-menu .actions .action-suggest {
   background: var(--light-green-1);
   border-radius: 3px;
-  color: var(--black-3);
+  color: var(--translation-main-button-color);
   font-weight: 600;
   margin-left: 10px;
   padding: 10px;

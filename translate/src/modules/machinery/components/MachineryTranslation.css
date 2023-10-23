@@ -1,5 +1,5 @@
 .machinery .translation {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   cursor: pointer;
   padding: 10px;
 }
@@ -63,11 +63,12 @@
 }
 
 .machinery .translation p {
+  color: var(--translation-color);
   min-height: 22px;
   text-align: start;
   white-space: pre-wrap;
 }
 
 .machinery .translation p.original {
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
 }
