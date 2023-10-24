@@ -3,6 +3,7 @@ import {
   fetchUserData,
   markAllNotificationsAsRead,
   updateUserSetting,
+  updateUserTheme,
 } from '~/api/user';
 import { NotificationMessage } from '~/context/Notification';
 import {
@@ -15,8 +16,9 @@ import type { AppThunk } from '~/store';
 
 export const UPDATE = 'user/UPDATE';
 export const UPDATE_SETTINGS = 'user/UPDATE_SETTINGS';
+export const UPDATE_THEME = 'user/UPDATE_THEME';
 
-export type Action = UpdateAction | UpdateSettingsAction;
+export type Action = UpdateAction | UpdateSettingsAction | UpdateThemeAction;
 
 /**
  * Update the user data.
@@ -38,6 +40,21 @@ export type UpdateSettingsAction = {
   readonly type: typeof UPDATE_SETTINGS;
   readonly settings: Settings;
 };
+
+/**
+ * Update the user theme.
+ */
+export type UpdateThemeAction = {
+  readonly type: typeof UPDATE_THEME;
+  readonly theme: string;
+};
+
+export function updateTheme(theme: string) {
+  return {
+    type: UPDATE_THEME,
+    theme,
+  };
+}
 
 function getNotification(setting: keyof Settings, value: boolean) {
   switch (setting) {
@@ -62,6 +79,14 @@ export function saveSetting(
 
     const notif = getNotification(setting, value);
     showNotification(notif);
+  };
+}
+
+export function saveTheme(theme: string, username: string): AppThunk {
+  return async (dispatch) => {
+    await updateUserTheme(username, theme);
+
+    dispatch({ type: UPDATE_THEME, theme });
   };
 }
 
