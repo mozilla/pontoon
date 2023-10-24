@@ -1,5 +1,5 @@
 import { Localized } from '@fluent/react';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
@@ -14,6 +14,8 @@ import './UserMenu.css';
 
 type Props = {
   user: UserState;
+  theme: string;
+  onThemeChange: (theme: string) => void;
 };
 
 type UserMenuProps = Props & {
@@ -23,6 +25,7 @@ type UserMenuProps = Props & {
 export function UserMenuDialog({
   onDiscard,
   user,
+  onThemeChange,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
   const { entity } = useContext(EntityView);
@@ -37,6 +40,57 @@ export function UserMenuDialog({
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
 
+  const [theme, setTheme] = useState<string>(
+    () => document.body.getAttribute('data-theme') || 'dark',
+  );
+
+  function getSystemTheme() {
+    if (
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'dark';
+    } else {
+      return 'light';
+    }
+  }
+
+  useEffect(() => {
+    function applyTheme(newTheme: string) {
+      if (newTheme === 'system') {
+        newTheme = getSystemTheme();
+      }
+      document.body.classList.remove(
+        'dark-theme',
+        'light-theme',
+        'system-theme',
+      );
+      document.body.classList.add(`${newTheme}-theme`);
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    function handleThemeChange(e: MediaQueryListEvent) {
+      let userThemeSetting = document.body.getAttribute('data-theme') || 'dark';
+
+      if (userThemeSetting === 'system') {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    }
+
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    applyTheme(theme);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, [theme]);
+
+  const handleThemeButtonClick = (selectedTheme: string) => {
+    setTheme(selectedTheme); // Update the local state
+    onThemeChange(selectedTheme); // Save theme to the database
+  };
+
   return (
     <ul ref={ref} className='menu'>
       {user.isAuthenticated && (
@@ -48,6 +102,39 @@ export function UserMenuDialog({
               <p className='email'>{user.email}</p>
             </a>
           </li>
+          <li className='horizontal-separator'></li>
+
+          <p className='help'>Choose appearance</p>
+          <span className='toggle-button'>
+            <button
+              type='button'
+              value='dark'
+              className={`dark ${theme === 'dark' ? 'active' : ''}`}
+              title='Use a dark theme'
+              onClick={() => handleThemeButtonClick('dark')}
+            >
+              <i className='icon far fa-moon'></i>Dark
+            </button>
+            <button
+              type='button'
+              value='light'
+              className={`light ${theme === 'light' ? 'active' : ''}`}
+              title='Use a light theme'
+              onClick={() => handleThemeButtonClick('light')}
+            >
+              <i className='icon fa fa-sun'></i>Light
+            </button>
+            <button
+              type='button'
+              value='system'
+              className={`system ${theme === 'system' ? 'active' : ''}`}
+              title='Use a theme that matches your system settings'
+              onClick={() => handleThemeButtonClick('system')}
+            >
+              <i className='icon fa fa-laptop'></i>System
+            </button>
+          </span>
+
           <li className='horizontal-separator'></li>
         </>
       )}
