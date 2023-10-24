@@ -1329,13 +1329,21 @@ body > form,
 #standalone-sign-in input[type='text'],
 #standalone-sign-in input[type='password'] {
   float: none;
-  background-color: white;
   padding: 10px;
   margin: 10px;
 }
 
 #standalone-sign-in .controls .button {
   font-size: 14px;
+}
+
+#standalone-sign-in ul {
+  list-style: none;
+  margin: 0;
+}
+
+#standalone-sign-in ul.errorlist {
+  color: var(--red-pink);
 }
 
 .controls {
