@@ -285,10 +285,12 @@ class TranslatedResourceAdmin(admin.ModelAdmin):
 
 
 class EntityAdmin(admin.ModelAdmin):
+    search_fields = ["string", "string_plural"]
     raw_id_fields = ("resource",)
 
 
 class TranslationAdmin(admin.ModelAdmin):
+    search_fields = ["string"]
     raw_id_fields = ("entity",)
 
 
@@ -297,6 +299,7 @@ class ProjectSlugHistoryAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
+    search_fields = ["content"]
     raw_id_fields = ("translation", "entity")
 
 
