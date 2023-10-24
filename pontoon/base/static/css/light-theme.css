@@ -31,12 +31,7 @@
   /* Homepage */
   --homepage-background-image: url(../img/background-light.svg);
   --homepage-tour-button-background: #ffffff;
-
-  /* Diff */
-  --forest-green-2: #4b6259;
-  --light-green-3: #9cd699;
-  --purple-pink: #674b54;
-  --coral: #fe8f8f;
+  --homepage-tour-button-color: #000000;
 
   /* Translation status */
   --light-green-1: #7bc876;
@@ -45,6 +40,7 @@
   --red-pink: #ff3366;
   --blue-2: #5f7285;
   --light-blue: #4fc4f6;
+  --mustard-yellow: #fed271;
 
   /* Translation workspace */
   --translation-background: #f6f6f6;
@@ -60,12 +56,13 @@
   --editor-menu-color: #555555;
   --editor-menu-action-button-color: #000000;
 
-  /* Rarely used */
-  --black-brown: #2d2323;
-  --brown-1: #676054;
-  --mustard-yellow: #fed271;
-  --pink: #ff3366cc;
-  --red: #ff0a43;
+  /* Highlights */
+  --diff-del-background: #ffebe9;
+  --diff-del-color: #fe5c5c;
+  --diff-ins-background: #e5feeb;
+  --diff-ins-color: #42983e;
+  --search-color: #ffa10f;
+  --search-background: #fff4e2;
 
   /* Chart colors */
   --green-blue: #4fc4f666;
@@ -85,6 +82,7 @@
   --hot-pink: #ff5f9e;
   --dark-pink: #b3005e;
   --lilac: #c6c1f0;
+  --grey-5: #385465;
 
   /* Insights Pretranslation Quality Chart */
   --brown-grey: #9c9290;
@@ -98,26 +96,14 @@
   --purple: #8074a8;
   --green-brown: #7c7270;
 
-  --black-2: #000000;
   --black-3: #f6f6f6;
-  --black-4: #000000cc;
-  --black-5: #000000bb;
-
-  --grey-1: #aaaaaa;
-  --grey-2: #525a65;
   --grey-3: #e8e8e8;
-  --grey-5: #385465;
-  --grey-7: #eeeeeee6;
+  --white-1: #444444;
 
   --dark-grey-1: #ffffff;
   --dark-grey-2: #e8e8e8;
-  --dark-grey-4: #444444;
-
   --light-grey-1: #e8e8e8;
   --light-grey-2: #888888;
   --light-grey-6: #444444;
   --light-grey-7: #666666;
-
-  --white-1: #444444;
-  --white-5: #e2e2e2;
 }

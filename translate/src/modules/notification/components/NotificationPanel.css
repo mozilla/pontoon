@@ -1,5 +1,5 @@
 .notification-panel {
-  background: var(--grey-7);
+  background: var(--tooltip-background);
   cursor: pointer;
   font-size: 14px;
   font-style: italic;

@@ -326,7 +326,7 @@ svg.js-calendar-graph-svg {
   margin: 0 0 0 -5px;
   content: ' ';
   border: 5px solid transparent;
-  border-top-color: var(--black-4);
+  border-top-color: var(--tooltip-background);
 }
 
 /* Contribution Timeline */

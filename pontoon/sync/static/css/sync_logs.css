@@ -74,7 +74,7 @@ td {
 }
 
 .command-details .duration {
-  border-color: var(--mustard-yellow);
+  border-color: var(--orange-1);
 }
 
 .project-details .start-time .detail-label,
@@ -89,7 +89,7 @@ td {
 
 .project-details .duration .detail-label,
 .repository-details .duration .detail-label {
-  color: var(--mustard-yellow);
+  color: var(--orange-1);
 }
 
 .project {

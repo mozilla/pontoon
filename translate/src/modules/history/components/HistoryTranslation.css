@@ -28,7 +28,7 @@
 }
 
 .history .translation:hover .user-avatar img {
-  border-color: var(--grey-1);
+  border-color: var(--translation-border);
 }
 
 .history .translation .content {
@@ -91,7 +91,7 @@
 }
 
 .history .translation .content > header .toggle:hover {
-  border-color: var(--grey-1);
+  border-color: var(--translation-border);
 }
 
 .history .translation .content > header .toggle.active .stress {

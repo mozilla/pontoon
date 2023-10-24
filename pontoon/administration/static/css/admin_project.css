@@ -399,7 +399,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: var(--black-2);
+  color: var(var(--light-grey-7));
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;

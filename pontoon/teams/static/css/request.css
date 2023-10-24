@@ -96,7 +96,7 @@
 }
 
 .request-item.confirmed {
-  background: var(--mustard-yellow);
+  background: var(--orange-1);
 }
 
 #team-form {

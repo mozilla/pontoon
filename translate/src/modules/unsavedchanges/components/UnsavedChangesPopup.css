@@ -41,7 +41,7 @@
 }
 
 .unsaved-changes .anyway {
-  background: var(--red);
+  background: var(--red-pink);
   border: none;
   border-radius: 3px;
   bottom: 10px;

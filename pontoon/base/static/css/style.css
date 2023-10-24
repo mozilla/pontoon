@@ -567,7 +567,7 @@ img.rounded {
 }
 
 #addon-promotion {
-  background: var(--pink);
+  background: var(--red-pink);
   border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
@@ -1265,13 +1265,13 @@ body > form,
 }
 
 #helpers > section ul li > p ins {
-  background: var(--forest-green-2);
-  color: var(--light-green-3);
+  background: var(--diff-ins-background);
+  color: var(--diff-ins-color);
 }
 
 #helpers > section ul li > p del {
-  background: var(--purple-pink);
-  color: var(--coral);
+  background: var(--diff-del-background);
+  color: var(--diff-del-color);
 }
 
 #helpers > section ul li > p ins mark,

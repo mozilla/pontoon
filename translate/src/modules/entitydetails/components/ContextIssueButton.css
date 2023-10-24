@@ -12,5 +12,5 @@
 }
 
 .metadata .source-string-comment .context-issue-button:hover {
-  border-color: var(--grey-1);
+  border-color: var(--translation-border);
 }

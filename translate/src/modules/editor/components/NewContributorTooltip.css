@@ -2,7 +2,7 @@
   background: var(--black-3);
   border: 1px solid var(--dark-grey-1);
   border-radius: 10px;
-  box-shadow: 0 0 20px var(--black-5);
+  box-shadow: 0 0 20px -2px var(--tooltip-background);
   box-sizing: border-box;
   margin: -20px auto;
   padding: 20px;

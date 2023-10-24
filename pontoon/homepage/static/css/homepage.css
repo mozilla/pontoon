@@ -69,7 +69,7 @@ h2 {
 
 #main .button {
   background-color: var(--homepage-tour-button-background);
-  color: var(--black-2);
+  color: var(--homepage-tour-button-color);
   display: flex;
   border-radius: 2px;
   width: 240px;
@@ -183,7 +183,7 @@ body.addon-promotion-active #edit-homepage .select {
 
 #edit-homepage .button {
   background: var(--light-green-1);
-  color: var(--black-2);
+  color: var(--homepage-tour-button-color);
 }
 
 #edit-homepage .fa {
