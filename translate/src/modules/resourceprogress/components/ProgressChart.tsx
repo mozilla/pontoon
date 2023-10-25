@@ -18,6 +18,7 @@ export function ProgressChart({
 }: Props): React.ReactElement<'canvas'> {
   const canvas = useRef<HTMLCanvasElement>(null);
   const dpr = window.devicePixelRatio || 1;
+  const style = getComputedStyle(document.body);
 
   useEffect(() => {
     if (canvas.current) {
@@ -43,11 +44,11 @@ export function ProgressChart({
     }
 
     const data = [
-      { type: approved, color: '#7BC876' },
-      { type: pretranslated, color: '#C0FF00' },
-      { type: warnings, color: '#FFA10F' },
-      { type: errors, color: '#F36' },
-      { type: missing, color: '#5F7285' },
+      { type: approved, color: style.getPropertyValue('--light-green-1') },
+      { type: pretranslated, color: style.getPropertyValue('--neon-green') },
+      { type: warnings, color: style.getPropertyValue('--orange-1') },
+      { type: errors, color: style.getPropertyValue('--red-pink') },
+      { type: missing, color: style.getPropertyValue('--blue-2') },
     ];
 
     // Clear old canvas content to avoid aliasing
