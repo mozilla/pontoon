@@ -26,11 +26,7 @@ export function UserControls(): React.ReactElement<'div'> {
     <div className='user-controls'>
       <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
 
-      <UserMenu
-        user={user}
-        theme={user.theme}
-        onThemeChange={handleThemeChange}
-      />
+      <UserMenu user={user} onThemeChange={handleThemeChange} />
 
       <UserNotificationsMenu
         markAllNotificationsAsRead={() =>

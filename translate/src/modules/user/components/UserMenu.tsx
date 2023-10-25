@@ -1,10 +1,11 @@
 import { Localized } from '@fluent/react';
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 
 import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
+import { useTheme } from '~/hooks/useTheme';
 
 import type { UserState } from '../index';
 import { FileUpload } from './FileUpload';
@@ -14,7 +15,6 @@ import './UserMenu.css';
 
 type Props = {
   user: UserState;
-  theme: string;
   onThemeChange: (theme: string) => void;
 };
 
@@ -44,47 +44,7 @@ export function UserMenuDialog({
     () => document.body.getAttribute('data-theme') || 'dark',
   );
 
-  function getSystemTheme() {
-    if (
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-    ) {
-      return 'dark';
-    } else {
-      return 'light';
-    }
-  }
-
-  useEffect(() => {
-    function applyTheme(newTheme: string) {
-      if (newTheme === 'system') {
-        newTheme = getSystemTheme();
-      }
-      document.body.classList.remove(
-        'dark-theme',
-        'light-theme',
-        'system-theme',
-      );
-      document.body.classList.add(`${newTheme}-theme`);
-    }
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    function handleThemeChange(e: MediaQueryListEvent) {
-      let userThemeSetting = document.body.getAttribute('data-theme') || 'dark';
-
-      if (userThemeSetting === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
-      }
-    }
-
-    mediaQuery.addEventListener('change', handleThemeChange);
-
-    applyTheme(theme);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, [theme]);
+  useTheme(theme);
 
   const handleThemeButtonClick = (selectedTheme: string) => {
     setTheme(selectedTheme); // Update the local state
