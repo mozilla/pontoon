@@ -49,13 +49,6 @@ export type UpdateThemeAction = {
   readonly theme: string;
 };
 
-export function updateTheme(theme: string) {
-  return {
-    type: UPDATE_THEME,
-    theme,
-  };
-}
-
 function getNotification(setting: keyof Settings, value: boolean) {
   switch (setting) {
     case 'runQualityChecks':

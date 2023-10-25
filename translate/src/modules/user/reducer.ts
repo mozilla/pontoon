@@ -142,7 +142,7 @@ export function reducer(state: UserState = initial, action: Action): UserState {
           notifications: [],
           unread_count: '0',
         },
-        theme: action.data.theme ?? state.theme,
+        theme: action.data.theme ?? 'dark',
       };
     case UPDATE_SETTINGS:
       return {
