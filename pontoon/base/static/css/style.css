@@ -1463,7 +1463,7 @@ body > form,
   border: 1px solid var(--main-border-1);
   border-radius: 3px;
   box-sizing: border-box;
-  color: var(--toggle-background-1);
+  color: var(--toggle-color-1);
   float: none;
   font-size: 16px;
   font-weight: 100;
