@@ -183,7 +183,7 @@ ul {
 }
 
 #heading .non-plottable .unreviewed .status.fa:before {
-  color: var(--grey-3);
+  color: var(--icon-background-2);
   font-size: 18px;
 }
 
