@@ -11,7 +11,7 @@
 }
 
 .keyboard-shortcuts .selector:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .keyboard-shortcuts .overlay {

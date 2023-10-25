@@ -45,7 +45,7 @@ var Pontoon = (function (my) {
           plot(
             activeStart,
             activeEnd,
-            style.getPropertyValue('--light-green-1'),
+            style.getPropertyValue('--status-translated'),
           );
 
           var inactiveLength = 2;
@@ -89,14 +89,14 @@ var Pontoon = (function (my) {
                 label: 'Age of unreviewed suggestions',
                 data: chart.data('lifespans'),
                 backgroundColor: gradient,
-                borderColor: [style.getPropertyValue('--light-blue')],
+                borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--light-blue'),
+                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
-                  style.getPropertyValue('--light-blue'),
+                  style.getPropertyValue('--status-unreviewed'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
             ],
@@ -106,7 +106,7 @@ var Pontoon = (function (my) {
               display: false,
             },
             tooltips: {
-              borderColor: style.getPropertyValue('--light-blue'),
+              borderColor: style.getPropertyValue('--status-unreviewed'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -190,14 +190,14 @@ var Pontoon = (function (my) {
                 type: 'line',
                 label: '12-month average',
                 data: chart.data('time-to-review-suggestions-12-month-avg'),
-                borderColor: [style.getPropertyValue('--light-blue')],
+                borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 1,
-                pointBackgroundColor: style.getPropertyValue('--light-blue'),
+                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
-                  style.getPropertyValue('--light-blue'),
+                  style.getPropertyValue('--status-unreviewed'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
@@ -211,7 +211,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--light-blue'),
+              borderColor: style.getPropertyValue('--status-unreviewed'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -392,14 +392,14 @@ var Pontoon = (function (my) {
                 data: chart.data('completion'),
                 yAxisID: 'completion-y-axis',
                 backgroundColor: gradient,
-                borderColor: [style.getPropertyValue('--light-green-1')],
+                borderColor: [style.getPropertyValue('--status-translated')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--light-green-1'),
+                pointBackgroundColor: style.getPropertyValue('--status-translated'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
-                  style.getPropertyValue('--light-green-1'),
+                  style.getPropertyValue('--status-translated'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
               humanData.length > 0 && {
@@ -444,7 +444,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--light-green-1'),
+              borderColor: style.getPropertyValue('--status-translated'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -565,7 +565,7 @@ var Pontoon = (function (my) {
         var ctx = chart[0].getContext('2d');
 
         var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, style.getPropertyValue('--light-blue'));
+        gradient.addColorStop(0, style.getPropertyValue('--status-unreviewed'));
         gradient.addColorStop(1, 'transparent');
 
         var unreviewedData = chart.data('unreviewed') || [];
@@ -585,14 +585,14 @@ var Pontoon = (function (my) {
                 data: unreviewedData,
                 yAxisID: 'strings-y-axis',
                 backgroundColor: gradient,
-                borderColor: [style.getPropertyValue('--light-blue')],
+                borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--light-blue'),
+                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
-                  style.getPropertyValue('--light-blue'),
+                  style.getPropertyValue('--status-unreviewed'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
               peerApprovedData.length > 0 && {
@@ -646,7 +646,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--light-blue'),
+              borderColor: style.getPropertyValue('--status-unreviewed'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,

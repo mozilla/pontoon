@@ -30,7 +30,7 @@
 }
 
 .failed-checks .title {
-  color: var(--red-pink);
+  color: var(--status-error);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 5px;
@@ -58,7 +58,7 @@
 }
 
 .failed-checks .error:before {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .failed-checks .warning:before {
@@ -66,7 +66,7 @@
 }
 
 .failed-checks .anyway {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   border: none;
   border-radius: 3px;
   bottom: 10px;
@@ -79,7 +79,7 @@
 }
 
 .failed-checks .anyway.suggest {
-  background: var(--light-blue);
+  background: var(--status-unreviewed);
 }
 
 .failed-checks .anyway:hover {

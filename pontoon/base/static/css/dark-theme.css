@@ -35,13 +35,13 @@
   --tooltip-border: #4d5967;
 
   /* Translation status */
-  --light-green-1: #7bc876;
-  --neon-green: #c0ff00;
-  --orange-1: #ffa10f;
-  --red-pink: #ff3366;
+  --status-translated: #7bc876;
+  --status-pretranslated: #c0ff00;
+  --status-warning: #ffa10f;
+  --status-error: #ff3366;
   --status-missing: #5f7285;
-  --light-blue: #4fc4f6;
-  --mustard-yellow: #fed271;
+  --status-unreviewed: #4fc4f6;
+  --status-fuzzy: #fed271;
 
   /* Translation workspace */
   --translation-background: #3f4752;

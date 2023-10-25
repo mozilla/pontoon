@@ -81,7 +81,7 @@ h2 {
 }
 
 #main .button.primary {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 .flex {
@@ -139,7 +139,7 @@ nav#sections ul li:hover a.active span {
   width: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 100%;
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 nav#sections ul li a span {
@@ -182,7 +182,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #edit-homepage .button {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   color: var(--homepage-tour-button-color);
 }
 
@@ -234,8 +234,8 @@ body.addon-promotion-active #edit-homepage .select {
 
 #section-1 .scroll::after {
   content: '';
-  border-right: 2px solid var(--light-green-1);
-  border-bottom: 2px solid var(--light-green-1);
+  border-right: 2px solid var(--status-translated);
+  border-bottom: 2px solid var(--status-translated);
   width: 30px;
   height: 30px;
   position: absolute;
@@ -267,7 +267,7 @@ body.addon-promotion-active #edit-homepage .select {
   margin-top: 40px;
   width: 2px;
   height: 290px;
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 #section-3 ol {
@@ -287,7 +287,7 @@ body.addon-promotion-active #edit-homepage .select {
 
 #section-3 li:before {
   background-color: var(--background-1);
-  border: 2px solid var(--light-green-1);
+  border: 2px solid var(--status-translated);
   border-radius: 100%;
   color: var(--white-1);
   content: counter(item);
@@ -302,7 +302,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 .checkmark {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
   border-radius: 100%;
   width: 54px;
   height: 39px;
@@ -329,7 +329,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box .box-image {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 35px;
   margin-bottom: 10px;
 }
@@ -402,5 +402,5 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

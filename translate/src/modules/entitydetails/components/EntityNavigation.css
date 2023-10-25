@@ -22,7 +22,7 @@
 }
 
 .entity-navigation button:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .entity-navigation button:disabled {

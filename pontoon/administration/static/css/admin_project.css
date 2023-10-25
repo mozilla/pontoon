@@ -27,7 +27,7 @@ h1 aside {
 }
 
 h1 a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
@@ -147,7 +147,7 @@ form .controls .button.delete-inline {
 
 form a:link,
 form a:visited {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   float: right;
   text-transform: uppercase;
 }
@@ -444,7 +444,7 @@ textarea.strings-source {
 }
 
 .errorlist {
-  color: var(--red-pink);
+  color: var(--status-error);
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occures */

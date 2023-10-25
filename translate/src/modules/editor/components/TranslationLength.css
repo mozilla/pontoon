@@ -6,5 +6,5 @@
 }
 
 .translation-length .countdown .overflow {
-  color: var(--red-pink);
+  color: var(--status-error);
 }

@@ -29,12 +29,12 @@
 
 .translationform label > :not(:last-child)::after {
   content: '·';
-  color: var(--light-green-1);
+  color: var(--status-translated);
   padding: 0 3px;
 }
 
 .translationform label .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .translationform .accesskey-input {
@@ -74,7 +74,7 @@
 
 .translationform .accesskeys .key.active,
 .translationform .accesskeys .key:hover:not(:disabled) {
-  border-color: var(--light-green-1);
+  border-color: var(--status-translated);
 }
 
 .translationform .accesskeys .key:disabled {

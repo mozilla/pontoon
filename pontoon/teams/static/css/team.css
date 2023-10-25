@@ -32,7 +32,7 @@
 }
 
 .buglist tbody .id a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .buglist th {
@@ -90,7 +90,7 @@
 }
 
 #permissions-form h3 .remove-project:hover {
-  background: var(--red-pink);
+  background: var(--status-error);
 }
 
 #permissions-form h3 .remove-project .fa {

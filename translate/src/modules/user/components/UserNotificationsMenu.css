@@ -18,7 +18,7 @@
 }
 
 .user-notifications-menu .selector .badge {
-  background: var(--red-pink);
+  background: var(--status-error);
   border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);

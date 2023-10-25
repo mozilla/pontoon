@@ -12,7 +12,7 @@
 }
 
 .editor-settings .selector:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .editor-settings .menu {
@@ -60,11 +60,11 @@
 }
 
 .editor-settings .menu .check-box .fa:before {
-  color: var(--red-pink);
+  color: var(--status-error);
   content: '';
 }
 
 .editor-settings .menu .check-box.enabled .fa:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   content: '';
 }

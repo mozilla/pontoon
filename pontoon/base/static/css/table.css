@@ -122,17 +122,17 @@ table.table.project-list.hidden {
 }
 
 .table a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 /* Selector must also match heading-info */
 .deadline time.approaching {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 /* Selector must also match heading-info */
 .deadline time.overdue {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .table td.code div {
@@ -143,7 +143,7 @@ table.table.project-list.hidden {
 }
 
 .table td.code a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   line-height: 47px;
   padding: 15px 5px 14px;
 }
@@ -201,7 +201,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip .quote {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 30px;
 }
 
@@ -239,7 +239,7 @@ table.table.project-list.hidden {
 }
 
 .table .latest-activity .tooltip footer .translation-action a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .table .latest-activity .tooltip footer img {
@@ -281,23 +281,23 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .unreviewed-status.pending {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 .table .progress .chart-wrapper .translated {
-  background: var(--light-green-1);
+  background: var(--status-translated);
 }
 
 .table .progress .chart-wrapper .pretranslated {
-  background: var(--neon-green);
+  background: var(--status-pretranslated);
 }
 
 .table .progress .chart-wrapper .warnings {
-  background: var(--orange-1);
+  background: var(--status-warning);
 }
 
 .table .progress .chart-wrapper .errors {
-  background: var(--red-pink);
+  background: var(--status-error);
 }
 
 .table .progress .chart-wrapper .missing {
@@ -347,19 +347,19 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.translated .title {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .table .progress .legend li.pretranslated .title {
-  color: var(--neon-green);
+  color: var(--status-pretranslated);
 }
 
 .table .progress .legend li.warnings .title {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 .table .progress .legend li.errors .title {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .table .progress .legend li.missing .title {
@@ -367,7 +367,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.unreviewed .title {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 .table .progress .legend li.all .title {

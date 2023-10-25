@@ -96,13 +96,13 @@ export const CHART_OPTIONS = {
         hover: {
           fill: 'none',
           style: {
-            color: style.getPropertyValue('--light-green-1'),
+            color: style.getPropertyValue('--status-translated'),
           },
         },
         select: {
           fill: 'none',
           style: {
-            color: style.getPropertyValue('--light-green-1'),
+            color: style.getPropertyValue('--status-translated'),
             fontWeight: 300,
           },
         },
@@ -126,7 +126,7 @@ export const CHART_OPTIONS = {
     },
     series: {
       type: 'column',
-      color: style.getPropertyValue('--light-green-1'),
+      color: style.getPropertyValue('--status-translated'),
     },
     xAxis: {
       lineWidth: 1,

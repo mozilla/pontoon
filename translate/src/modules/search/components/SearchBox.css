@@ -63,19 +63,19 @@
 }
 
 .search-box .translated .status:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .search-box .pretranslated .status:before {
-  color: var(--neon-green);
+  color: var(--status-pretranslated);
 }
 
 .search-box .warnings .status:before {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 .search-box .errors .status:before {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .search-box .missing .status:before {
@@ -83,7 +83,7 @@
 }
 
 .search-box .unreviewed .status:before {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
   content: '';
   font-size: 18px;
 }

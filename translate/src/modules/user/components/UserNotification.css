@@ -42,7 +42,7 @@
 }
 
 .user-notification a {
-  color: var(--red-pink);
+  color: var(--status-error);
   display: inline;
 }
 

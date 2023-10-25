@@ -12,7 +12,7 @@
 }
 
 .manual-notifications #compose h3 .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .manual-notifications #compose .toolbar {
@@ -30,7 +30,7 @@
 }
 
 .manual-notifications #compose .errors p {
-  color: var(--red-pink);
+  color: var(--status-error);
   text-transform: uppercase;
   visibility: hidden;
 }

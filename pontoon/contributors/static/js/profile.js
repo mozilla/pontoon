@@ -68,14 +68,14 @@ var Pontoon = (function (my) {
                 type: 'line',
                 label: '12-month average',
                 data: data2,
-                borderColor: [style.getPropertyValue('--light-green-1')],
+                borderColor: [style.getPropertyValue('--status-translated')],
                 borderWidth: 1,
-                pointBackgroundColor: style.getPropertyValue('--light-green-1'),
+                pointBackgroundColor: style.getPropertyValue('--status-translated'),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
-                  style.getPropertyValue('--light-green-1'),
+                  style.getPropertyValue('--status-translated'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
               },
@@ -88,7 +88,7 @@ var Pontoon = (function (my) {
             tooltips: {
               mode: 'index',
               intersect: false,
-              borderColor: style.getPropertyValue('--light-green-1'),
+              borderColor: style.getPropertyValue('--status-translated'),
               borderWidth: 1,
               caretPadding: 5,
               xPadding: 10,
@@ -200,7 +200,7 @@ var Pontoon = (function (my) {
               color = style.getPropertyValue('--green-2');
               break;
             default:
-              color = style.getPropertyValue('--light-green-1');
+              color = style.getPropertyValue('--status-translated');
           }
 
           const y = currentDate.getDay() * step;

@@ -25,7 +25,7 @@
 }
 
 .project-menu .selector .icon {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   padding-left: 7px;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .project-menu .menu .current a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .project-menu .menu .header {

@@ -16,5 +16,5 @@
 }
 
 .interactive-tour p a {
-  color: var(--red-pink);
+  color: var(--status-error);
 }

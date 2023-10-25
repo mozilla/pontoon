@@ -23,7 +23,7 @@
 }
 
 .editor-menu .actions button:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .editor-menu .actions button .fa {
@@ -33,7 +33,7 @@
 .editor-menu .actions .action-approve,
 .editor-menu .actions .action-save,
 .editor-menu .actions .action-suggest {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   border-radius: 3px;
   color: var(--translation-main-button-color);
   font-weight: 600;
@@ -42,7 +42,7 @@
 }
 
 .editor-menu .actions .action-suggest {
-  background: var(--light-blue);
+  background: var(--status-unreviewed);
 }
 
 .editor-menu .actions .action-approve:hover,
@@ -63,7 +63,7 @@
 .editor-menu .banner button {
   background: none;
   border: none;
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-style: inherit;
   padding: 0;
 }

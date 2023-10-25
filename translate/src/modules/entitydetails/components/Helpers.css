@@ -75,5 +75,5 @@
 
 .react-tabs span.count .preferred,
 .react-tabs span.count .pinned {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

@@ -5,7 +5,7 @@
 }
 
 .other-locales ul.preferred-list .translation:last-child {
-  border-bottom-color: var(--light-green-1);
+  border-bottom-color: var(--status-translated);
 }
 
 .other-locales .translation.cannot-copy {
@@ -28,7 +28,7 @@
 }
 
 .other-locales .translation > header span {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   padding-left: 3px;
 }
 

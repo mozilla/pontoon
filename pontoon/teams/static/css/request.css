@@ -81,12 +81,12 @@
 }
 
 #request-item-note p a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .request-item {
   display: none;
-  background: var(--light-green-1);
+  background: var(--status-translated);
   border: none;
   border-radius: 3px;
   margin-top: 15px;
@@ -96,7 +96,7 @@
 }
 
 .request-item.confirmed {
-  background: var(--orange-1);
+  background: var(--status-warning);
 }
 
 #team-form {
@@ -186,7 +186,7 @@
 .item-list td.check:hover:before,
 .item-list td.check.enabled:before {
   content: '';
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .item-list td.check.enabled:before {
@@ -200,7 +200,7 @@
 
 .item-list td.radio:hover:before,
 .item-list td.radio.enabled:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .items.requesting-pretranslation .item-list .deadline,

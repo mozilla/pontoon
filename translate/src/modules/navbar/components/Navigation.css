@@ -23,7 +23,7 @@
 }
 
 .navigation > ul > li > a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .navigation img {
@@ -32,6 +32,6 @@
 }
 
 .navigation .locale-code {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   padding-left: 7px;
 }

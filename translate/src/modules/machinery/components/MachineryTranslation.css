@@ -52,7 +52,7 @@
 
 .machinery .translation > header .quality,
 .machinery .translation > header sup {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .machinery .translation > header .projects {

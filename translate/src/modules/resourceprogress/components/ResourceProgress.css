@@ -107,19 +107,19 @@
 }
 
 .progress-chart .menu .details div.approved {
-  border-color: var(--light-green-1);
+  border-color: var(--status-translated);
 }
 
 .progress-chart .menu .details div.pretranslated {
-  border-color: var(--neon-green);
+  border-color: var(--status-pretranslated);
 }
 
 .progress-chart .menu .details div.warnings {
-  border-color: var(--orange-1);
+  border-color: var(--status-warning);
 }
 
 .progress-chart .menu .details div.errors {
-  border-color: var(--red-pink);
+  border-color: var(--status-error);
 }
 
 .progress-chart .menu .details div.missing {

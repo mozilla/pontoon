@@ -146,7 +146,7 @@
 }
 
 #main .field .verify {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-style: italic;
 }
 
@@ -181,7 +181,7 @@
 }
 
 .errorlist {
-  color: var(--red-pink);
+  color: var(--status-error);
   font-style: italic;
   list-style: none;
 }

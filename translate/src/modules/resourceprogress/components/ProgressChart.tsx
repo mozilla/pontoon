@@ -44,10 +44,10 @@ export function ProgressChart({
     }
 
     const data = [
-      { type: approved, color: style.getPropertyValue('--light-green-1') },
-      { type: pretranslated, color: style.getPropertyValue('--neon-green') },
-      { type: warnings, color: style.getPropertyValue('--orange-1') },
-      { type: errors, color: style.getPropertyValue('--red-pink') },
+      { type: approved, color: style.getPropertyValue('--status-translated') },
+      { type: pretranslated, color: style.getPropertyValue('--status-pretranslated') },
+      { type: warnings, color: style.getPropertyValue('--status-warning') },
+      { type: errors, color: style.getPropertyValue('--status-error') },
       { type: missing, color: style.getPropertyValue('--status-missing') },
     ];
 

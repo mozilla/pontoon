@@ -41,7 +41,7 @@ h2 {
 }
 
 .username {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
@@ -78,11 +78,11 @@ h2 {
 }
 
 .item-with-icon a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .item-with-icon .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .personal-information .button {
@@ -103,11 +103,11 @@ h4 {
 }
 
 h4.superuser {
-  border: 1px solid var(--red-pink);
+  border: 1px solid var(--status-error);
   border-radius: 16px;
   line-height: 30px;
   text-align: center;
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 /* Approval Ratio */
@@ -164,7 +164,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li.active .icon {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 #insights .chart-group-navigation ul li.active .label {
@@ -176,7 +176,7 @@ h4.superuser {
 }
 
 #insights h3 .tooltip li.twelve-month-average::marker {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 /* Stats */
@@ -207,11 +207,11 @@ h4.superuser {
 }
 
 #stats > div.translated span {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #stats > div.unreviewed span {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 #stats > div p {
@@ -417,7 +417,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #timeline .localizations li a .contribution-count {
