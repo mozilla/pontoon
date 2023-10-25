@@ -6,7 +6,7 @@
 
 #main a:link,
 #main a:visited {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 #main p,

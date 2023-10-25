@@ -513,7 +513,7 @@ tfoot td a {
 }
 
 .locale .code {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   text-align: left;
 }
 
@@ -1179,7 +1179,7 @@ body > form,
 }
 
 #helpers > section ul li > header .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -1189,7 +1189,7 @@ body > form,
 }
 
 #helpers > section.machinery ul li > header sup {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 #helpers > section.machinery ul li > header .sources {
@@ -1451,7 +1451,7 @@ body > form,
 }
 
 .container .info a {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .toggle-button {

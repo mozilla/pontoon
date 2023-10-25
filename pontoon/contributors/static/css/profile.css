@@ -41,7 +41,7 @@ h2 {
 }
 
 .username {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
@@ -82,7 +82,7 @@ h2 {
 }
 
 .item-with-icon .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .personal-information .button {
@@ -207,7 +207,7 @@ h4.superuser {
 }
 
 #stats > div.translated span {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 #stats > div.unreviewed span {
@@ -417,7 +417,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 #timeline .localizations li a .contribution-count {

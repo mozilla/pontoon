@@ -147,7 +147,7 @@ form .controls .button.delete-inline {
 
 form a:link,
 form a:visited {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   float: right;
   text-transform: uppercase;
 }

@@ -18,7 +18,7 @@
 }
 
 .sync-log .start-time a {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 /** @details */
@@ -79,7 +79,7 @@ td {
 
 .project-details .start-time .detail-label,
 .repository-details .start-time .detail-label {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .project-details .end-time .detail-label,

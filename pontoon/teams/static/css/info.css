@@ -28,7 +28,7 @@
 
 #info-wrapper .controls .cancel {
   display: none;
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   margin: 9px;
   text-transform: uppercase;
 }
