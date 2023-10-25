@@ -68,7 +68,7 @@
 }
 
 .history .translation .content > header .info a {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .history .translation .content > header .toggle {
@@ -95,7 +95,7 @@
 }
 
 .history .translation .content > header .toggle.active .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .history .translation .content > header button {

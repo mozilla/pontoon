@@ -1,4 +1,4 @@
 .resource-menu .menu .percent {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   float: right;
 }

@@ -18,6 +18,6 @@
 }
 
 .project-menu .menu .percent {
-  color: var(--status-translated);
+  color: var(--status-translate-alt);
   float: right;
 }

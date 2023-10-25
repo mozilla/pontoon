@@ -36,7 +36,7 @@
 }
 
 .batch-actions .topbar button.selected-count .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .batch-actions .topbar button .fa {

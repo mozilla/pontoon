@@ -97,7 +97,7 @@
 .filters-panel .menu li.horizontal-separator {
   background: transparent;
   border-top: none;
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   cursor: default;
   font-size: 13px;
   height: auto;

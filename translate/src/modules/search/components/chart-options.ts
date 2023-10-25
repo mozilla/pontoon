@@ -102,7 +102,7 @@ export const CHART_OPTIONS = {
         select: {
           fill: 'none',
           style: {
-            color: style.getPropertyValue('--status-translated'),
+            color: style.getPropertyValue('--status-translated-alt'),
             fontWeight: 300,
           },
         },

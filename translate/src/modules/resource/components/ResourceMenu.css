@@ -99,7 +99,7 @@
 }
 
 .resource-menu .menu .current a {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .resource-menu .menu .header {

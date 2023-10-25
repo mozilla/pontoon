@@ -32,6 +32,6 @@
 }
 
 .navigation .locale-code {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   padding-left: 7px;
 }

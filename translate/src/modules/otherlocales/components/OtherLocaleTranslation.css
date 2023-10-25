@@ -28,7 +28,7 @@
 }
 
 .other-locales .translation > header span {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   padding-left: 3px;
 }
 

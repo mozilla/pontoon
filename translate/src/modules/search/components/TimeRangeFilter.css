@@ -9,7 +9,7 @@
 }
 
 .filters-panel .menu .for-time-range button.save-range {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .filters-panel .menu li.for-time-range button:hover {

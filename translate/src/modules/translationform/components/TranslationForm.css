@@ -29,12 +29,12 @@
 
 .translationform label > :not(:last-child)::after {
   content: '·';
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
   padding: 0 3px;
 }
 
 .translationform label .stress {
-  color: var(--status-translated);
+  color: var(--status-translated-alt);
 }
 
 .translationform .accesskey-input {
