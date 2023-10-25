@@ -301,7 +301,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .chart-wrapper .missing {
-  background: var(--blue-2);
+  background: var(--status-missing);
 }
 
 .table tr:hover .progress .chart-wrapper {
@@ -363,7 +363,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.missing .title {
-  color: var(--blue-2);
+  color: var(--status-missing);
 }
 
 .table .progress .legend li.unreviewed .title {

@@ -79,7 +79,7 @@
 }
 
 .search-box .missing .status:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
 }
 
 .search-box .unreviewed .status:before {

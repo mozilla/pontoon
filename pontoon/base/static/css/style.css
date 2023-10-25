@@ -17,7 +17,7 @@
 }
 
 .status.fa:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
   content: '';
 }
 
@@ -397,7 +397,7 @@ tfoot td a {
 }
 
 .select .menu ul li .chart span.missing {
-  background: var(--blue-2);
+  background: var(--status-missing);
 }
 
 .select .menu ul li .latest {

@@ -68,7 +68,7 @@
 }
 
 .entity .status:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
   content: '';
 }
 

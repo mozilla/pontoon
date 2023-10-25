@@ -48,7 +48,7 @@ export function ProgressChart({
       { type: pretranslated, color: style.getPropertyValue('--neon-green') },
       { type: warnings, color: style.getPropertyValue('--orange-1') },
       { type: errors, color: style.getPropertyValue('--red-pink') },
-      { type: missing, color: style.getPropertyValue('--blue-2') },
+      { type: missing, color: style.getPropertyValue('--status-missing') },
     ];
 
     // Clear old canvas content to avoid aliasing

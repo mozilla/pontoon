@@ -123,7 +123,7 @@
 }
 
 .progress-chart .menu .details div.missing {
-  border-color: var(--blue-2);
+  border-color: var(--status-missing);
 }
 
 .progress-chart .menu .details div .title {
