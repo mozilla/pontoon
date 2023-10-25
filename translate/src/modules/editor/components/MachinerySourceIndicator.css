@@ -1,10 +1,11 @@
 .tm-source {
   font-size: 11px;
   padding: 10px 0;
-  border-top: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
+  border-top: 1px solid var(--main-border-1);
   width: 100%;
   text-align: center;
-  background: var(--grey-3);
+  background: var(--translation-background);
   color: var(--light-grey-6);
 }
 
