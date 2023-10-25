@@ -351,7 +351,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.pretranslated .title {
-  color: var(--status-pretranslated);
+  color: var(--status-pretranslated-alt);
 }
 
 .table .progress .legend li.warnings .title {
@@ -363,7 +363,7 @@ table.table.project-list.hidden {
 }
 
 .table .progress .legend li.missing .title {
-  color: var(--status-missing);
+  color: var(--status-missing-alt);
 }
 
 .table .progress .legend li.unreviewed .title {

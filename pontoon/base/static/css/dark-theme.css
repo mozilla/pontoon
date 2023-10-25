@@ -36,10 +36,13 @@
 
   /* Translation status */
   --status-translated: #7bc876;
+  --status-translated-alt: #7bc876;
   --status-pretranslated: #c0ff00;
+  --status-pretranslated-alt: #c0ff00;
   --status-warning: #ffa10f;
   --status-error: #ff3366;
   --status-missing: #5f7285;
+  --status-missing-alt: #5f7285;
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 

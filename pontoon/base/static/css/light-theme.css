@@ -35,10 +35,13 @@
 
   /* Translation status */
   --status-translated: #7bc876;
+  --status-translated-alt: #49A643;
   --status-pretranslated: #c0ff00;
+  --status-pretranslated-alt: #80a900;
   --status-warning: #ffa10f;
   --status-error: #ff3366;
   --status-missing: #bec7d1;
+  --status-missing-alt: #5f7285;
   --status-unreviewed: #4fc4f6;
   --status-fuzzy: #fed271;
 
