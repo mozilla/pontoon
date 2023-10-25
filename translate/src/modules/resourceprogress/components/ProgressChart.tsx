@@ -45,7 +45,10 @@ export function ProgressChart({
 
     const data = [
       { type: approved, color: style.getPropertyValue('--status-translated') },
-      { type: pretranslated, color: style.getPropertyValue('--status-pretranslated') },
+      {
+        type: pretranslated,
+        color: style.getPropertyValue('--status-pretranslated'),
+      },
       { type: warnings, color: style.getPropertyValue('--status-warning') },
       { type: errors, color: style.getPropertyValue('--status-error') },
       { type: missing, color: style.getPropertyValue('--status-missing') },

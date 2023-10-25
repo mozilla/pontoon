@@ -70,12 +70,15 @@ var Pontoon = (function (my) {
                 data: data2,
                 borderColor: [style.getPropertyValue('--status-translated')],
                 borderWidth: 1,
-                pointBackgroundColor: style.getPropertyValue('--status-translated'),
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor:
-                  style.getPropertyValue('--status-translated'),
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
               },

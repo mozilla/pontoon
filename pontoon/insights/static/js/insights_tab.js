@@ -91,12 +91,15 @@ var Pontoon = (function (my) {
                 backgroundColor: gradient,
                 borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor:
-                  style.getPropertyValue('--status-unreviewed'),
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
             ],
@@ -192,12 +195,15 @@ var Pontoon = (function (my) {
                 data: chart.data('time-to-review-suggestions-12-month-avg'),
                 borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 1,
-                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor:
-                  style.getPropertyValue('--status-unreviewed'),
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
@@ -394,12 +400,15 @@ var Pontoon = (function (my) {
                 backgroundColor: gradient,
                 borderColor: [style.getPropertyValue('--status-translated')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--status-translated'),
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor:
-                  style.getPropertyValue('--status-translated'),
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-translated',
+                ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
               humanData.length > 0 && {
@@ -587,12 +596,15 @@ var Pontoon = (function (my) {
                 backgroundColor: gradient,
                 borderColor: [style.getPropertyValue('--status-unreviewed')],
                 borderWidth: 2,
-                pointBackgroundColor: style.getPropertyValue('--status-unreviewed'),
+                pointBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHitRadius: 10,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor:
-                  style.getPropertyValue('--status-unreviewed'),
+                pointHoverBackgroundColor: style.getPropertyValue(
+                  '--status-unreviewed',
+                ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
               },
               peerApprovedData.length > 0 && {
