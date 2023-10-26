@@ -21,7 +21,7 @@ function getSystemTheme() {
  * That allows us to set the theme class already in the Django template, which (unlike
  * setting it on the client) prevents FOUC.
  */
-function storeSystemTheme(systemTheme) {
+function storeSystemTheme(systemTheme: string) {
   document.cookie = `system_theme=${systemTheme}; path=/; max-age=${
     60 * 60 * 24 * 365
   }; Secure`;
