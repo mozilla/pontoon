@@ -15,17 +15,19 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    function handleThemeChange(e: MediaQueryListEvent) {
-      let userThemeSetting = document.body.getAttribute('data-theme') || 'dark';
+    function handleThemeChange() {
+      let userThemeSetting = document.body.getAttribute('data-theme');
 
       if (userThemeSetting === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
+        applyTheme(userThemeSetting);
       }
     }
 
     mediaQuery.addEventListener('change', handleThemeChange);
 
-    applyTheme(theme);
+    if (theme === 'system') {
+      applyTheme(theme);
+    }
 
     return () => {
       mediaQuery.removeEventListener('change', handleThemeChange);
