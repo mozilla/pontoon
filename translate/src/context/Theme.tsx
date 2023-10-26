@@ -25,6 +25,8 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
 
     mediaQuery.addEventListener('change', handleThemeChange);
 
+    applyTheme(theme);
+
     return () => {
       mediaQuery.removeEventListener('change', handleThemeChange);
     };
