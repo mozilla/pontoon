@@ -2,10 +2,10 @@ import { Localized } from '@fluent/react';
 import React, { useContext, useRef, useState } from 'react';
 
 import { EntityView } from '~/context/EntityView';
+import { ThemeContext } from '~/context/Theme';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
-import { useTheme } from '~/hooks/useTheme';
 
 import type { UserState } from '../index';
 import { FileUpload } from './FileUpload';
@@ -29,6 +29,7 @@ export function UserMenuDialog({
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
   const { entity } = useContext(EntityView);
+  const { theme, setTheme } = useContext(ThemeContext);
 
   const location = useContext(Location);
   const { locale, project, resource } = location;
@@ -39,12 +40,6 @@ export function UserMenuDialog({
 
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
-
-  const [theme, setTheme] = useState<string>(
-    () => document.body.getAttribute('data-theme') || 'dark',
-  );
-
-  useTheme(theme);
 
   const handleThemeButtonClick = (selectedTheme: string) => {
     setTheme(selectedTheme); // Update the local state

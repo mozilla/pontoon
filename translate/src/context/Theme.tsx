@@ -2,17 +2,21 @@ import { createContext, useState } from 'react';
 import { useTheme } from '~/hooks/useTheme';
 
 export const ThemeContext = createContext({
-  theme: 'system',
+  theme: 'dark',
+  setTheme: (_theme: string) => {}, // placeholder function to match signature
 });
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
-  const [theme] = useState(
+  const [theme, setTheme] = useState(
     () => document.body.getAttribute('data-theme') || 'dark',
   );
+  const { applyTheme } = useTheme();
 
-  useTheme(theme);
+  applyTheme(theme);
 
   return (
-    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
   );
 }
