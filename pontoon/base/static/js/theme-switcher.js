@@ -19,6 +19,17 @@ $(function () {
       .addClass(`${newTheme}-theme`);
   }
 
+  /*
+    Storing system theme setting in a cookie makes the setting available to the server.
+    That allows us to set the theme class already in the Django template, which (unlike
+    setting it on the client) prevents FOUC.
+   */
+  function storeSystemTheme(systemTheme) {
+    document.cookie = `system_theme=${systemTheme}; path=/; max-age=${
+      60 * 60 * 24 * 365
+    }; Secure`;
+  }
+
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', function (e) {
@@ -26,13 +37,20 @@ $(function () {
       let userThemeSetting = $('body').data('theme');
 
       if (userThemeSetting === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
+        const systemTheme = e.matches ? 'dark' : 'light';
+        applyTheme(systemTheme);
+        storeSystemTheme(systemTheme);
       }
     });
 
-  if ($('body').hasClass('system-theme')) {
+  if ($('body').data('theme') === 'system') {
     let systemTheme = getSystemTheme();
-    $('body').removeClass('system-theme').addClass(`${systemTheme}-theme`);
+
+    if ($('body').hasClass('system-theme')) {
+      $('body').removeClass('system-theme').addClass(`${systemTheme}-theme`);
+    }
+
+    storeSystemTheme(systemTheme);
   }
 
   $('.appearance .toggle-button button').click(function (e) {
