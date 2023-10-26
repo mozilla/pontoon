@@ -109,24 +109,15 @@
 
 /* Theme Toggle */
 
-.toggle-button {
-  font-size: 0;
-  cursor: default;
+.appearance {
+  color: var(--light-grey-7);
   padding: 4px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
 }
 
-.toggle-button:hover {
-  background: transparent;
-  color: inherit;
-}
-
-.toggle-button .help {
+.appearance .help {
   padding-bottom: 5px;
   font-size: 12px;
+  font-weight: 300;
   text-transform: uppercase;
 }
 
@@ -134,30 +125,15 @@
   background: var(--black-3);
   border: 1px solid var(--light-grey-3);
   border-radius: 3px;
-  box-sizing: border-box;
   color: var(--grey-6);
   font-size: 14px;
   font-weight: 100;
   padding: 4px;
   width: 78px;
-  margin: 0;
-  float: none;
-}
-
-.toggle-button button:first-child {
-  border-right-color: var(--grey-3);
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
 .toggle-button button:nth-child(2) {
   margin: 0 8px;
-}
-
-.toggle-button button:last-child {
-  border-left: 1px solid var(--light-grey-3);
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
 }
 
 .toggle-button button:hover {
