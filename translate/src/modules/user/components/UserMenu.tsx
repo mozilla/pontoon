@@ -22,6 +22,33 @@ type UserMenuProps = Props & {
   onDiscard: () => void;
 };
 
+const ThemeButton = ({
+  value,
+  text,
+  title,
+  icon,
+  user,
+  onClick,
+}: {
+  value: string;
+  text: string;
+  title: string;
+  icon: string;
+  user: UserState;
+  onClick: (theme: string) => void;
+}) => (
+  <button
+    type='button'
+    value={value}
+    className={`${value} ${user.theme === value ? 'active' : ''}`}
+    title={title}
+    onClick={() => onClick(value)}
+  >
+    <i className={`icon ${icon}`}></i>
+    {text}
+  </button>
+);
+
 export function UserMenuDialog({
   onDiscard,
   user,
@@ -60,36 +87,33 @@ export function UserMenuDialog({
           </li>
           <li className='horizontal-separator'></li>
 
-          <div class='appearance'>
+          <div className='appearance'>
             <p className='help'>Choose appearance</p>
             <span className='toggle-button'>
-              <button
-                type='button'
+              <ThemeButton
                 value='dark'
-                className={`dark ${user.theme === 'dark' ? 'active' : ''}`}
+                text='Dark'
                 title='Use a dark theme'
-                onClick={() => handleThemeButtonClick('dark')}
-              >
-                <i className='icon far fa-moon'></i>Dark
-              </button>
-              <button
-                type='button'
+                icon='far fa-moon'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
+              <ThemeButton
                 value='light'
-                className={`light ${user.theme === 'light' ? 'active' : ''}`}
+                text='Light'
                 title='Use a light theme'
-                onClick={() => handleThemeButtonClick('light')}
-              >
-                <i className='icon fa fa-sun'></i>Light
-              </button>
-              <button
-                type='button'
+                icon='fa fa-sun'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
+              <ThemeButton
                 value='system'
-                className={`system ${user.theme === 'system' ? 'active' : ''}`}
+                text='System'
                 title='Use a theme that matches your system settings'
-                onClick={() => handleThemeButtonClick('system')}
-              >
-                <i className='icon fa fa-laptop'></i>System
-              </button>
+                icon='fa fa-laptop'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
             </span>
           </div>
 
