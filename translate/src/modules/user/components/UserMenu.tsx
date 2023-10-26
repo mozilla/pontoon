@@ -37,16 +37,20 @@ const ThemeButton = ({
   user: UserState;
   onClick: (theme: string) => void;
 }) => (
-  <button
-    type='button'
-    value={value}
-    className={`${value} ${user.theme === value ? 'active' : ''}`}
-    title={title}
-    onClick={() => onClick(value)}
+  <Localized
+    id={`user-UserMenu--appearance-${value}`}
+    elems={{ glyph: <i className={`icon ${icon}`} /> }}
   >
-    <i className={`icon ${icon}`}></i>
-    {text}
-  </button>
+    <button
+      type='button'
+      value={value}
+      className={`${value} ${user.theme === value ? 'active' : ''}`}
+      title={title}
+      onClick={() => onClick(value)}
+    >
+      {`<glyph></glyph> ${text}`}
+    </button>
+  </Localized>
 );
 
 export function UserMenuDialog({
@@ -88,7 +92,9 @@ export function UserMenuDialog({
           <li className='horizontal-separator'></li>
 
           <div className='appearance'>
-            <p className='help'>Choose appearance</p>
+            <Localized id={`user-UserMenu--appearance-title`}>
+              <p className='help'>Choose appearance</p>
+            </Localized>
             <span className='toggle-button'>
               <ThemeButton
                 value='dark'

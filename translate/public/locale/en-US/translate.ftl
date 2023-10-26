@@ -723,6 +723,14 @@ user-UserAvatar--alt-text =
 user-SignIn--sign-in = Sign in
 user-SignOut--sign-out = <glyph></glyph>Sign out
 
+user-UserMenu--appearance-title = Choose appearance
+user-UserMenu--appearance-dark = <glyph></glyph> Dark
+    .title = Use a dark theme
+user-UserMenu--appearance-light = <glyph></glyph> Light
+    .title = Use a light theme
+user-UserMenu--appearance-system = <glyph></glyph> System
+    .title = Use a theme that matches your system settings
+
 user-UserMenu--download-terminology = <glyph></glyph>Download Terminology
 user-UserMenu--download-tm = <glyph></glyph>Download Translation Memory
 user-UserMenu--download-translations = <glyph></glyph>Download Translations
