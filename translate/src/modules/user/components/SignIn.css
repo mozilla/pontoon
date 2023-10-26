@@ -4,7 +4,7 @@
 
 .user-signin button {
   background: transparent;
-  border: 1.5px solid var(--light-green-2);
+  border: 1.5px solid var(--status-translated);
   border-radius: 2px;
   color: white;
   font-size: 14px;
@@ -16,5 +16,5 @@
 }
 
 .user-signin button:hover {
-  background-color: var(--light-green-2);
+  background-color: var(--status-translated);
 }

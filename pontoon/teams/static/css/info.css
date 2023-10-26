@@ -3,8 +3,8 @@
 }
 
 #info-wrapper .read-write-info textarea {
-  background: var(--dark-grey-1);
-  border: 1px solid var(--grey-3);
+  background: var(--input-background-1);
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
   color: var(--white-1);
   font-weight: 300;
@@ -28,7 +28,7 @@
 
 #info-wrapper .controls .cancel {
   display: none;
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   margin: 9px;
   text-transform: uppercase;
 }

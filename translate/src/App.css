@@ -7,7 +7,7 @@
 
 #app > header {
   background: var(--black-3);
-  border-bottom: 1px solid var(--dark-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   box-sizing: border-box;
   height: 60px;
   min-width: 700px;
@@ -31,7 +31,7 @@
 }
 
 #app > .main-content > .panel-content {
-  border-left: 1px solid var(--light-grey-1);
+  border-left: 1px solid var(--main-border-1);
   box-sizing: border-box;
   width: 75%;
 }
@@ -42,7 +42,7 @@
 }
 
 #nprogress .bar {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -57,7 +57,8 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px var(--light-green-1), 0 0 5px var(--light-green-1);
+  box-shadow: 0 0 10px var(--status-translated),
+    0 0 5px var(--status-translated);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }

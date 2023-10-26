@@ -7,7 +7,7 @@
 {{ formset.management_form }}
 {% for form in formset %}
 {{ form.id }}
-<div class="{{ type }} inline clearfix">
+<div class="{{ type }} inline controls clearfix">
   {{ form.name.label_tag(label_suffix='') }}
   {{ form.slug.label_tag(label_suffix='') }}
   {{ form.priority.label_tag(label_suffix='') }}
@@ -43,7 +43,7 @@
 </div>
 {% endfor %}
 
-<div class="{{ type }} inline clearfix" data-count="{{ formset.total_form_count() }}">
+<div class="{{ type }} inline controls clearfix" data-count="{{ formset.total_form_count() }}">
     {{ formset.empty_form.name.label_tag(label_suffix='') }}
     {{ formset.empty_form.slug.label_tag(label_suffix='') }}
     {{ formset.empty_form.priority.label_tag(label_suffix='') }}

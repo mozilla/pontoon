@@ -8,7 +8,7 @@
   background-color: var(--dark-grey-1);
   border: none;
   border-radius: 4px;
-  color: var(--white-1);
+  color: var(--translation-color);
   font-size: 11px;
   max-height: 144px;
   margin: auto;
@@ -24,7 +24,7 @@
 }
 
 .comments-list .add-comment .comment-editor .mention-element {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .comments-mention-list {
@@ -78,7 +78,7 @@
 
 .comments-list .add-comment .submit-button:hover:not(:disabled) {
   color: var(--black-3);
-  background: var(--light-green-1);
+  background: var(--status-translated);
 }
 
 .comments-list .add-comment .submit-button:disabled {

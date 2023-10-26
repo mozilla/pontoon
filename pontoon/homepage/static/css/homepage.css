@@ -14,7 +14,7 @@ body > header {
 }
 
 body > header.menu-opened {
-  border-color: var(--dark-grey-1);
+  border-color: var(--main-border-1);
 }
 
 #main {
@@ -24,7 +24,6 @@ body > header.menu-opened {
 }
 
 #main p {
-  color: var(--white-4);
   line-height: 1.5rem;
 }
 
@@ -36,13 +35,10 @@ body > header.menu-opened {
   height: 100vh;
   width: 100vw;
 
-  background-image: url(../img/background.svg);
+  background-color: var(--background-1);
+  background-image: var(--homepage-background-image);
   background-attachment: fixed;
   background-size: cover;
-}
-
-.section {
-  color: var(--white-2);
 }
 
 .section .container {
@@ -72,8 +68,8 @@ h2 {
 }
 
 #main .button {
-  background-color: var(--white-1);
-  color: var(--black-2);
+  background-color: var(--homepage-tour-button-background);
+  color: var(--homepage-tour-button-color);
   display: flex;
   border-radius: 2px;
   width: 240px;
@@ -85,7 +81,7 @@ h2 {
 }
 
 #main .button.primary {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 .flex {
@@ -143,7 +139,7 @@ nav#sections ul li:hover a.active span {
   width: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 100%;
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 nav#sections ul li a span {
@@ -186,8 +182,8 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #edit-homepage .button {
-  background: var(--light-green-1);
-  color: var(--black-2);
+  background: var(--status-translated);
+  color: var(--homepage-tour-button-color);
 }
 
 #edit-homepage .fa {
@@ -238,8 +234,8 @@ body.addon-promotion-active #edit-homepage .select {
 
 #section-1 .scroll::after {
   content: '';
-  border-right: 2px solid var(--light-green-1);
-  border-bottom: 2px solid var(--light-green-1);
+  border-right: 2px solid var(--status-translated);
+  border-bottom: 2px solid var(--status-translated);
   width: 30px;
   height: 30px;
   position: absolute;
@@ -271,7 +267,7 @@ body.addon-promotion-active #edit-homepage .select {
   margin-top: 40px;
   width: 2px;
   height: 290px;
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 #section-3 ol {
@@ -285,14 +281,13 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 li {
-  color: var(--white-4);
   counter-increment: item;
   margin: 40px 0;
 }
 
 #section-3 li:before {
-  background-color: var(--black-3);
-  border: 2px solid var(--light-green-1);
+  background-color: var(--background-1);
+  border: 2px solid var(--status-translated);
   border-radius: 100%;
   color: var(--white-1);
   content: counter(item);
@@ -307,7 +302,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-3 .checkmark {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
   border-radius: 100%;
   width: 54px;
   height: 39px;
@@ -324,7 +319,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--main-border-1);
   border-radius: 3px;
   margin-left: 20px;
   padding: 10px;
@@ -334,7 +329,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-4 .box .box-image {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 35px;
   margin-bottom: 10px;
 }
@@ -354,7 +349,7 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-5 img {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--main-border-1);
   border-radius: 3px;
   width: 436px;
 }
@@ -389,6 +384,8 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer .mozilla .logo {
+  background: var(--moz-logo) no-repeat;
+  height: 22px;
   width: 80px;
 }
 
@@ -405,5 +402,5 @@ body.addon-promotion-active #edit-homepage .select {
 }
 
 #section-6 .footer a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

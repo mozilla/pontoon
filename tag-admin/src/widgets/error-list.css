@@ -6,5 +6,5 @@ ul.errors {
 }
 
 ul.errors li.error {
-  color: var(--red-pink);
+  color: var(--status-error);
 }

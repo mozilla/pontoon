@@ -23,15 +23,16 @@
 }
 
 .entity mark.search {
-  color: var(--orange-1);
+  background: var(--search-background);
+  color: var(--search-color);
   font-weight: normal;
   font-style: inherit;
-  background: var(--brown-1);
   border-radius: 2px;
 }
 
 .entity .source-string,
 .entity .translation-string {
+  color: var(--translation-color);
   display: inline-block;
   margin: 0;
   padding-bottom: 3px;
@@ -41,7 +42,7 @@
 }
 
 .entity .translation-string {
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
   min-height: 20px;
   text-align: start;
 }
@@ -67,7 +68,7 @@
 }
 
 .entity .status:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
   content: '';
 }
 
@@ -80,19 +81,19 @@
 }
 
 .entity.approved .status:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .entity.pretranslated .status:before {
-  color: var(--neon-green);
+  color: var(--status-pretranslated);
 }
 
 .entity.errors .status:before {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .entity.warnings .status:before {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 .entity.sibling {
@@ -110,5 +111,5 @@
 }
 
 .entity .sibling-entities-icon:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

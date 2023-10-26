@@ -3,7 +3,7 @@
 }
 
 .comments-list .comment a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-weight: 400;
 }
 
@@ -65,11 +65,11 @@
 }
 
 .comments-list .comment .info .pin-button:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .comments-list .comment .comment-pin {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 9px;
   position: absolute;
   right: 4px;

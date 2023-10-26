@@ -14,7 +14,6 @@ button {
 }
 
 body {
-  background: var(--black-3);
   color: var(--white-1);
 }
 
@@ -34,7 +33,7 @@ a:visited {
 
 a:hover,
 a:active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   text-decoration: none;
 }
 

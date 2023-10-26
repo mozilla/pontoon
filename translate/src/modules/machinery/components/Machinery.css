@@ -45,7 +45,7 @@
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: var(--white-1);
+  color: var(--translation-color);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -68,26 +68,4 @@
 /* Style placeholder color in Chrome */
 .machinery > .search-wrapper input[type='search']::-webkit-input-placeholder {
   color: var(--light-grey-7);
-}
-
-.machinery .load-more-container {
-  display: flex;
-  justify-content: center;
-  padding: 15px 0 20px 0;
-}
-
-.machinery .load-more-button {
-  background: var(--dark-grey-1);
-  border: 1px solid var(--dark-grey-2);
-  border-radius: 4px;
-  color: var(--light-grey-7);
-  font-size: 11px;
-  font-weight: 100;
-  margin-right: 6px;
-  padding: 2px 4px;
-  pointer-events: auto;
-}
-
-.machinery .load-more-button:hover {
-  border-color: var(--grey-1);
 }

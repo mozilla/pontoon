@@ -29,7 +29,7 @@
 
 #insights .controls .period-selector li .selector.active,
 #insights .controls .period-selector li .selector:hover {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   color: var(--black-3);
 }
 
@@ -84,13 +84,13 @@
 /* Active users info tooltip */
 
 #insights h3 .tooltip li::marker {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 /* Time to review suggestions and Age of unreviewed info tooltip */
 
 #insights h3 .tooltip li.current-month::marker {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 #insights h3 .tooltip li.twelve-month-average::marker {
@@ -126,7 +126,7 @@
 }
 
 #insights h3 .tooltip li.completion::marker {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 /* Review activity info tooltip */
@@ -148,7 +148,7 @@
 }
 
 #insights h3 .tooltip li.unreviewed::marker {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 /* Pretranslation quality info tooltip */

@@ -1,4 +1,6 @@
 // Default Time Range chart configuration
+const style = getComputedStyle(document.body);
+
 export const CHART_OPTIONS = {
   credits: {
     enabled: false,
@@ -86,7 +88,7 @@ export const CHART_OPTIONS = {
       stroke: 'none',
       width: null,
       style: {
-        color: '#FFFFFF',
+        color: style.getPropertyValue('--translation-color'),
         fontWeight: 300,
         textTransform: 'uppercase',
       },
@@ -94,19 +96,19 @@ export const CHART_OPTIONS = {
         hover: {
           fill: 'none',
           style: {
-            color: '#7BC876',
+            color: style.getPropertyValue('--status-translated'),
           },
         },
         select: {
           fill: 'none',
           style: {
-            color: '#7BC876',
+            color: style.getPropertyValue('--status-translated-alt'),
             fontWeight: 300,
           },
         },
         disabled: {
           style: {
-            color: '#888888',
+            color: style.getPropertyValue('--translation-secondary-color'),
             cursor: 'default',
           },
         },
@@ -117,18 +119,18 @@ export const CHART_OPTIONS = {
   navigator: {
     height: 80,
     maskFill: 'rgba(77, 89, 103, 0.2)',
-    outlineColor: '#4D5967',
+    outlineColor: style.getPropertyValue('--icon-border-1'),
     handles: {
-      backgroundColor: '#4D5967',
-      borderColor: '#272A2F',
+      backgroundColor: style.getPropertyValue('--icon-border-1'),
+      borderColor: style.getPropertyValue('--time-range-handles'),
     },
     series: {
       type: 'column',
-      color: '#7BC876',
+      color: style.getPropertyValue('--status-translated'),
     },
     xAxis: {
       lineWidth: 1,
-      lineColor: '#4D5967',
+      lineColor: style.getPropertyValue('--icon-border-1'),
       gridLineWidth: 0,
       labels: {
         enabled: false,

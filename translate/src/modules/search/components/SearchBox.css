@@ -4,11 +4,11 @@
 }
 
 .search-box input[type='search'] {
-  background: var(--dark-grey-1);
+  background: var(--input-background-1);
   border: none;
   border-radius: 20px;
   box-sizing: border-box;
-  color: var(--white-1);
+  color: var(--translation-color);
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -63,27 +63,27 @@
 }
 
 .search-box .translated .status:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .search-box .pretranslated .status:before {
-  color: var(--neon-green);
+  color: var(--status-pretranslated);
 }
 
 .search-box .warnings .status:before {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 .search-box .errors .status:before {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .search-box .missing .status:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
 }
 
 .search-box .unreviewed .status:before {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
   content: '';
   font-size: 18px;
 }

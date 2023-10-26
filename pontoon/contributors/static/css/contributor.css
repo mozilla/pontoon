@@ -1,5 +1,5 @@
 a.avatar {
-  display: block;
+  display: inline-block;
   margin-bottom: 5px;
   position: relative;
 }

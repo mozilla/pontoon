@@ -9,6 +9,7 @@
 }
 
 .history p {
+  color: var(--translation-color);
   min-height: 22px;
 }
 

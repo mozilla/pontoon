@@ -1,10 +1,10 @@
 .translation-length {
-  color: var(--light-grey-7);
+  color: var(--editor-menu-color);
   float: left;
   line-height: 22px;
   padding: 9px 5px;
 }
 
 .translation-length .countdown .overflow {
-  color: var(--red-pink);
+  color: var(--status-error);
 }

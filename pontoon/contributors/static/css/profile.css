@@ -19,7 +19,7 @@
 }
 
 #main .container .left-column hr {
-  border-color: var(--grey-3);
+  border-color: var(--main-border-1);
   margin: 8px 0;
 }
 
@@ -41,7 +41,7 @@ h2 {
 }
 
 .username {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   line-height: 1.4em;
   font-size: 20px;
   font-weight: 300;
@@ -78,11 +78,11 @@ h2 {
 }
 
 .item-with-icon a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .item-with-icon .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 .personal-information .button {
@@ -103,11 +103,11 @@ h4 {
 }
 
 h4.superuser {
-  border: 1px solid var(--red-pink);
+  border: 1px solid var(--status-error);
   border-radius: 16px;
   line-height: 30px;
   text-align: center;
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 /* Approval Ratio */
@@ -164,7 +164,7 @@ h4.superuser {
 }
 
 #insights .chart-group-navigation ul li.active .icon {
-  background-color: var(--light-green-1);
+  background-color: var(--status-translated);
 }
 
 #insights .chart-group-navigation ul li.active .label {
@@ -176,7 +176,7 @@ h4.superuser {
 }
 
 #insights h3 .tooltip li.twelve-month-average::marker {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 /* Stats */
@@ -207,11 +207,11 @@ h4.superuser {
 }
 
 #stats > div.translated span {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 #stats > div.unreviewed span {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 #stats > div p {
@@ -275,7 +275,7 @@ h4.superuser {
 }
 
 #contributions .type-selector .menu li span {
-  color: var(--light-grey-6);
+  color: var(--light-grey-7);
   width: 100%;
 }
 
@@ -286,7 +286,7 @@ h4.superuser {
 
 #contributions h3,
 #timeline h3 {
-  color: var(--light-grey-6);
+  color: var(--white-1);
   font-size: 16px;
   font-weight: 400;
   font-style: normal;
@@ -307,8 +307,8 @@ svg.js-calendar-graph-svg {
 .svg-tip {
   display: none;
   padding: 10px;
-  background: var(--black-4);
-  color: var(--light-grey-4);
+  background: var(--tooltip-background);
+  color: var(--tooltip-color-2);
   font-size: 12px;
   position: absolute;
   z-index: 99999;
@@ -326,7 +326,7 @@ svg.js-calendar-graph-svg {
   margin: 0 0 0 -5px;
   content: ' ';
   border: 5px solid transparent;
-  border-top-color: var(--black-4);
+  border-top-color: var(--tooltip-background);
 }
 
 /* Contribution Timeline */
@@ -417,7 +417,7 @@ svg.js-calendar-graph-svg {
 }
 
 #timeline .localizations li a .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 #timeline .localizations li a .contribution-count {

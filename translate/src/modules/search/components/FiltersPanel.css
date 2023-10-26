@@ -35,6 +35,7 @@
 
 .filters-panel .menu {
   background: var(--black-3);
+  border: 1px solid var(--main-border-1);
   bottom: auto;
   box-sizing: border-box;
   color: var(--light-grey-7);
@@ -96,7 +97,7 @@
 .filters-panel .menu li.horizontal-separator {
   background: transparent;
   border-top: none;
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   cursor: default;
   font-size: 13px;
   height: auto;
@@ -130,7 +131,7 @@
 }
 
 .filters-panel .menu li:hover .count {
-  background: var(--grey-3);
+  background: var(--translation-background);
   color: var(--light-grey-6);
 }
 
@@ -140,12 +141,12 @@
 }
 
 .filters-panel .menu li .priority .fa-star {
-  color: var(--grey-1);
+  color: var(--icon-background-1);
   float: left;
 }
 
 .filters-panel .menu li .priority .fa-star.active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .filters-panel
@@ -181,13 +182,13 @@
 }
 
 .filters-panel .menu li.author .name {
-  color: var(--white-1);
+  color: var(--translation-color);
   font-size: 16px;
   padding-bottom: 4px;
 }
 
 .filters-panel .menu li.author .role {
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
 }
 
 .filters-panel .menu li.author .count {
@@ -239,12 +240,12 @@
 .filters-panel .toolbar button {
   background: none;
   border: none;
-  color: var(--light-grey-7);
+  color: var(--transla-grey-7);
   font-weight: 300;
 }
 
 .filters-panel .toolbar button .fa {
-  padding-right: 4px;
+  padding-right: 6px;
 }
 
 .filters-panel .toolbar .clear-selection {
@@ -259,5 +260,5 @@
 .filters-panel .toolbar .clear-selection:hover,
 .filters-panel .toolbar .apply-selected:hover,
 .filters-panel .toolbar .apply-selected .applied-count {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

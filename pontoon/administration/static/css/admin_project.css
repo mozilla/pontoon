@@ -27,7 +27,7 @@ h1 aside {
 }
 
 h1 a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 14px;
   font-weight: 300;
   letter-spacing: 0;
@@ -95,12 +95,12 @@ textarea {
 
 .half input {
   margin-right: 5px;
-  width: 482px;
+  width: 480px;
 }
 
 .half input:last-child {
   margin-right: 0;
-  width: 483px;
+  width: 481px;
 }
 
 .half .for-name .errorlist {
@@ -116,26 +116,18 @@ textarea {
 }
 
 form .button {
-  background: 88;
-  border: none;
-  display: block;
   float: right;
-  font-size: 14px;
-  height: 31px;
-  width: 31px;
 }
 
-.button.delete-inline {
-  color: var(--dark-grey-3);
-  font-size: 20px;
+form .controls .button.delete-inline {
+  font-size: 18px;
+  height: 33px;
+  width: 33px;
   padding: 4px;
 }
 
-#admin-strings-form .controls .button,
-#admin-form .controls .button {
-  border-radius: 3px;
-  font-weight: 400;
-  text-transform: uppercase;
+.controls .button,
+.controls .button {
   width: 150px;
 }
 
@@ -144,27 +136,18 @@ form .button {
   margin-left: 0;
 }
 
-#admin-strings-form .strings-list .entity textarea:nth-child(3) {
+#admin-strings-form .strings-list .entity textarea {
   margin-bottom: 20px;
 }
 
 .controls .button.sync,
 .controls .button.sync:hover {
-  background: var(--dark-grey-1);
-  color: var(--light-grey-7);
   float: left;
-}
-
-.controls .button.pretranslate,
-.controls .button.pretranslate:hover {
-  background: var(--dark-grey-1);
-  color: var(--light-grey-7);
-  float: right;
 }
 
 form a:link,
 form a:visited {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   float: right;
   text-transform: uppercase;
 }
@@ -188,7 +171,6 @@ form a:visited {
 }
 
 .double-list-selector .locale.select .menu {
-  border-bottom: 1px solid var(--light-grey-1);
   margin: 2px 0 -4px -1px;
   padding: 10px 0;
   width: 295px;
@@ -349,7 +331,7 @@ form .locales-pretranslate .locale.select.selected {
 }
 
 .repository .details-wrapper input {
-  width: 908px;
+  width: 916px;
 }
 
 .repository.git .details-wrapper input {
@@ -384,11 +366,11 @@ form .locales-pretranslate .locale.select.selected {
 
 .inline input[id*='url'] {
   float: left;
-  width: 607px;
+  width: 603px;
 }
 
 .branch-wrapper input[type='text'] {
-  width: 134px;
+  width: 142px;
 }
 
 .edit section .bottom {
@@ -417,7 +399,7 @@ label[for='id_configuration_file'] a {
 
 .externalresource .arrow::after {
   content: '▾';
-  color: var(--black-2);
+  color: var(var(--light-grey-7));
   float: left;
   margin: 6px 0 0 -20px;
   pointer-events: none;
@@ -462,7 +444,7 @@ textarea.strings-source {
 }
 
 .errorlist {
-  color: var(--red-pink);
+  color: var(--status-error);
   display: inline-block;
   font-size: 12px;
   line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
@@ -558,6 +540,6 @@ textarea.strings-source {
 }
 
 .tag.inline select[name^='tag_set-'][name$='-priority'] {
-  width: 276px;
+  width: 272px;
   margin-top: 0;
 }

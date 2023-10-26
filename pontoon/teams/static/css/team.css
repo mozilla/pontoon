@@ -32,7 +32,7 @@
 }
 
 .buglist tbody .id a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .buglist th {
@@ -90,7 +90,7 @@
 }
 
 #permissions-form h3 .remove-project:hover {
-  background: var(--red-pink);
+  background: var(--status-error);
 }
 
 #permissions-form h3 .remove-project .fa {
@@ -148,7 +148,7 @@
 }
 
 #permissions-form .user.select .menu {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   overflow: auto;
   padding: 10px 0;
 }
@@ -206,7 +206,7 @@
 }
 
 #permissions-form #project-selector .menu {
-  background: var(--dark-grey-1);
+  background: var(--popup-background-1);
   bottom: 28px;
   width: 287px;
 }

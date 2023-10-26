@@ -1,5 +1,5 @@
 .third-column .top {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   box-sizing: border-box;
   height: calc(40% + 21px);
   min-height: 200px;
@@ -26,8 +26,8 @@
 
 .react-tabs__tab {
   background: var(--grey-3);
-  border-bottom: 1px solid var(--light-grey-1);
-  border-right: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
+  border-right: 1px solid var(--main-border-1);
   box-sizing: border-box;
   color: var(--light-grey-6);
   cursor: pointer;
@@ -45,7 +45,7 @@
 }
 
 .react-tabs__tab--selected {
-  background: var(--dark-grey-2);
+  background: inherit;
   border-bottom: none;
 }
 
@@ -61,7 +61,7 @@
 
 /* Other tools styles */
 .react-tabs span.count {
-  background: var(--dark-grey-2);
+  background: var(--translation-background);
   border-radius: 3px;
   color: var(--light-grey-6);
   font-weight: 300;
@@ -75,5 +75,5 @@
 
 .react-tabs span.count .preferred,
 .react-tabs span.count .pinned {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }

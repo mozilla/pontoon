@@ -1,5 +1,5 @@
 .notification-panel {
-  background: var(--grey-7);
+  background: var(--tooltip-background);
   cursor: pointer;
   font-size: 14px;
   font-style: italic;
@@ -17,11 +17,11 @@
 
 .notification-panel .info,
 .notification-panel .success {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .notification-panel .error {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 /* Showing and hiding animations. */

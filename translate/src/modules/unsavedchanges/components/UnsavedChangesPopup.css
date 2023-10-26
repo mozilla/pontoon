@@ -30,7 +30,7 @@
 }
 
 .unsaved-changes .title {
-  color: var(--red-pink);
+  color: var(--status-error);
   font-size: 14px;
   font-weight: 300;
   padding-bottom: 5px;
@@ -41,7 +41,7 @@
 }
 
 .unsaved-changes .anyway {
-  background: var(--red);
+  background: var(--status-error);
   border: none;
   border-radius: 3px;
   bottom: 10px;

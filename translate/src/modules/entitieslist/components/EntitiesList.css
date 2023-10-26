@@ -1,5 +1,4 @@
 .entities {
-  background-color: var(--dark-grey-2);
   height: calc(100% - 53px);
   overflow-y: auto;
   position: relative;
@@ -37,7 +36,7 @@
 }
 
 .entities .no-results div {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   display: block;
   font-size: 128px;
   margin-bottom: 20px;

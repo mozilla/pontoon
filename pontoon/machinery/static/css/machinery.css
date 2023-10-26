@@ -18,7 +18,7 @@
 
 .clipboard-success {
   float: left;
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #helpers .machinery li {

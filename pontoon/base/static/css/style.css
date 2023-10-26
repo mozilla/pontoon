@@ -17,28 +17,28 @@
 }
 
 .status.fa:before {
-  color: var(--blue-2);
+  color: var(--status-missing);
   content: '';
 }
 
 .translated .status.fa:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .pretranslated .status.fa:before {
-  color: var(--neon-green);
+  color: var(--status-pretranslated);
 }
 
 .warnings .status.fa:before {
-  color: var(--orange-1);
+  color: var(--status-warning);
 }
 
 .errors .status.fa:before {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 .unreviewed .status.fa:before {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
   content: '';
 }
 
@@ -60,6 +60,10 @@ button {
 body {
   background: var(--black-3);
   color: var(--white-1);
+}
+
+#heading {
+  border-bottom: 1px solid var(--main-border-1);
 }
 
 #heading,
@@ -95,7 +99,7 @@ h2 {
 }
 
 h3 {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 26px;
   font-weight: 300;
   font-style: italic;
@@ -120,13 +124,13 @@ a:visited {
 
 a:hover,
 a:active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   text-decoration: none;
 }
 
 sup a:link,
 sup a:visited {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 input[type='text'],
@@ -134,9 +138,12 @@ input[type='search'],
 input[type='password'],
 input[type='url'],
 input[type='number'],
+input[type='email'],
 textarea {
-  background: var(--light-grey-2);
-  border: none;
+  background: var(--input-background-1);
+  border: 1px solid var(--main-border-1);
+  border-radius: 3px;
+  color: var(--input-color-1);
   padding: 4px 3px 3px;
   width: 205px;
   float: left;
@@ -146,14 +153,14 @@ textarea {
   float: none;
 }
 
-input[type='text']:focus,
-input[type='search']:focus,
-input[type='password']:focus,
-input[type='url']:focus,
-input[type='number']:focus,
+input:focus,
 textarea:focus {
-  background-color: var(--white-1);
   outline: none; /* Remove WebKit Glow */
+}
+
+input:invalid,
+textarea:invalid {
+  box-shadow: none; /* Override Boilerplate Default */
 }
 
 label {
@@ -172,7 +179,7 @@ tbody {
 }
 
 thead tr {
-  border-bottom: 1px solid var(--grey-3);
+  border-bottom: 1px solid var(--main-border-1);
 }
 
 th {
@@ -217,7 +224,7 @@ table.striped tr:nth-child(even) {
 }
 
 tfoot tr {
-  border-top: 1px solid var(--grey-3);
+  border-top: 1px solid var(--main-border-1);
 }
 
 tfoot td {
@@ -231,9 +238,9 @@ tfoot td a {
 }
 
 .count {
-  background: var(--dark-grey-2);
+  background: var(--button-background-2);
   border-radius: 3px;
-  color: var(--light-grey-6);
+  color: var(--light-grey-7);
   margin-left: 5px;
   padding: 0 5px;
 }
@@ -270,7 +277,7 @@ tfoot td a {
 }
 
 .select .menu {
-  background: var(--black-3);
+  background: var(--popup-background-2);
   bottom: 50px;
   color: var(--light-grey-7);
   display: none;
@@ -284,83 +291,6 @@ tfoot td a {
 
 .select .menu.permanent {
   z-index: 19; /* Must be lower than for the (popup) .menu */
-}
-
-.select > .button.breadcrumbs,
-#go {
-  background: var(--dark-grey-2);
-  font-size: 16px;
-  height: 20px;
-  margin: 10px 10px 10px 0;
-  overflow: hidden;
-  padding: 10px 20px 10px 40px;
-  text-overflow: ellipsis;
-  width: 200px;
-}
-
-#settings .menu {
-  width: 185px;
-}
-
-#go {
-  width: auto;
-}
-
-.select > .button.breadcrumbs:before,
-#go:before {
-  content: '';
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 20px solid var(--black-3);
-  position: absolute;
-  left: 0;
-  top: 10px;
-}
-
-.select > .button.breadcrumbs:after {
-  content: '';
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 20px solid var(--dark-grey-2);
-  position: absolute;
-  right: -10px;
-  top: 10px;
-  z-index: 1;
-}
-
-.locale.select > .button.breadcrumbs {
-  padding-left: 20px;
-}
-
-.locale.select > .button.breadcrumbs:before {
-  display: none;
-}
-
-.select > .button.breadcrumbs:hover {
-  background: var(--grey-3);
-}
-
-.select > .button.breadcrumbs:hover:after {
-  border-left-color: var(--grey-3);
-}
-
-.select.opened > .button.breadcrumbs {
-  background: var(--grey-3);
-}
-
-.select.opened > .button.breadcrumbs:after {
-  border-left-color: var(--grey-3);
-}
-
-#go {
-  color: var(--white-1);
-  float: left;
-}
-
-#go.active,
-#go:hover {
-  background: var(--light-green-1);
-  color: var(--black-3);
 }
 
 .project.select,
@@ -387,6 +317,7 @@ tfoot td a {
 .project.select input[type='search'],
 .locale.select input[type='search'],
 .part.select input[type='search'] {
+  border: none;
   width: 100%;
 
   -moz-box-sizing: border-box;
@@ -458,15 +389,15 @@ tfoot td a {
 }
 
 .select .menu ul li .chart span.translated {
-  background: var(--light-green-1);
+  background: var(--status-translated);
 }
 
 .select .menu ul li .chart span.pretranslated {
-  background: var(--neon-green);
+  background: var(--status-pretranslated);
 }
 
 .select .menu ul li .chart span.missing {
-  background: var(--blue-2);
+  background: var(--status-missing);
 }
 
 .select .menu ul li .latest {
@@ -484,7 +415,7 @@ tfoot td a {
 }
 
 .select .menu ul li .latest a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   display: inline-block;
 }
 
@@ -514,7 +445,11 @@ tfoot td a {
 
 .menu li.hover {
   color: var(--white-1);
-  background: var(--dark-grey-2);
+  background: var(--background-hover-1);
+}
+
+.menu:not(.permanent) li.hover {
+  background: var(--background-hover-2);
 }
 
 .menu li.hover a {
@@ -527,7 +462,7 @@ tfoot td a {
 }
 
 .menu li.horizontal-separator {
-  border-top: 1px solid var(--grey-2);
+  border-top: 1px solid var(--main-border-1);
   height: 0;
   margin: 5px 0;
   padding: 0;
@@ -549,7 +484,7 @@ tfoot td a {
 }
 
 .search-wrapper {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   margin-bottom: 10px;
   position: relative;
 }
@@ -564,18 +499,7 @@ tfoot td a {
 
 .search-wrapper input[type='search'] {
   background: transparent;
-  color: var(--white-1);
-  padding-left: 22px;
-}
-
-.search-wrapper input[type='search']::-webkit-search-decoration,
-.search-wrapper input[type='search']::-webkit-search-cancel-button {
-  display: none;
-}
-
-.menu input[type='search'] {
-  background: transparent;
-  color: var(--white-1);
+  border: none;
   float: none;
   font-weight: 300;
   padding-left: 25px;
@@ -583,18 +507,19 @@ tfoot td a {
   width: 200px;
 }
 
-.menu input[type='search']:focus {
-  background-color: transparent;
+.search-wrapper input[type='search']::-webkit-search-decoration,
+.search-wrapper input[type='search']::-webkit-search-cancel-button {
+  display: none;
 }
 
 .locale .code {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   text-align: left;
 }
 
 .notification {
-  background: var(--grey-7);
-  color: var(--light-green-1);
+  background: var(--tooltip-background);
+  color: var(--status-translated);
   cursor: pointer;
   font-style: italic;
   left: 0;
@@ -613,12 +538,12 @@ tfoot td a {
 }
 
 .notification li.error {
-  color: var(--red-pink);
+  color: var(--status-error);
 }
 
 img.rounded {
   border-radius: 6px;
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--icon-border-1);
 }
 
 #error {
@@ -642,7 +567,7 @@ img.rounded {
 }
 
 #addon-promotion {
-  background: var(--pink);
+  background: var(--status-error);
   border-bottom: 1px solid var(--dark-grey-1);
   height: 44px;
   position: fixed;
@@ -693,7 +618,7 @@ body.addon-promotion-active #addon-promotion {
 
 body > header {
   background: var(--black-3);
-  border-bottom: 1px solid var(--dark-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
   height: 60px;
   transition: margin-top 0.3s;
 }
@@ -730,7 +655,7 @@ header nav .right .sign-in-header {
 
 header nav .right .sign-in-header button {
   background: transparent;
-  border: 1.5px solid var(--light-green-2);
+  border: 1.5px solid var(--status-translated);
   border-radius: 2px;
   color: white;
   font-size: 14px;
@@ -743,7 +668,7 @@ header nav .right .sign-in-header button {
 }
 
 header nav .right .sign-in-header button:hover {
-  background-color: var(--light-green-2);
+  background-color: var(--status-translated);
 }
 
 header .select .menu {
@@ -767,13 +692,13 @@ header .right .select .menu {
 }
 
 #notifications .button .icon {
-  color: var(--grey-3);
+  color: var(--icon-border-1);
   font-size: 26px;
   margin-top: 17px;
 }
 
 #notifications .button .badge {
-  background: var(--red-pink);
+  background: var(--status-error);
   border: 3px solid var(--black-3);
   border-radius: 12px;
   color: var(--white-1);
@@ -796,7 +721,7 @@ header .right .select .menu {
 
 #notifications .menu,
 #profile .menu {
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--main-border-1);
   border-top: none;
 }
 
@@ -829,16 +754,16 @@ header .right .select .menu {
   .menu
   ul.notification-list
   li.notification-item[data-unread='true'] {
-  background: var(--dark-grey-2);
+  background: var(--background-hover-1);
 }
 
 .notifications .menu li.notification-item span {
-  color: var(--white-1);
+  color: var(--translation-color);
   float: none;
 }
 
 .notifications .menu li.notification-item a {
-  color: var(--red-pink);
+  color: var(--status-error);
   display: inline;
 }
 
@@ -857,6 +782,7 @@ header .right .select .menu {
 
 .notifications .menu li.notification-item .message.trim,
 .notifications .menu li.notification-item .message.trim > p {
+  color: var(--translation-secondary-color);
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -867,6 +793,8 @@ header .right .select .menu {
   color: var(--light-grey-7);
 }
 
+.notifications .menu li.notification-item.hover .message.trim,
+.notifications .menu li.notification-item.hover .message.trim > p,
 .notifications .menu li.notification-item.hover .message.trim a {
   color: var(--white-1);
 }
@@ -922,7 +850,7 @@ header .right .select .menu {
 }
 
 #notifications .menu li.horizontal-separator {
-  border-color: var(--dark-grey-1);
+  border-color: var(--main-border-1);
   margin: 0;
 }
 
@@ -990,7 +918,7 @@ header .right .select .menu {
 }
 
 #profile .button .menu-icon {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--main-border-1);
   border-radius: 100%;
   float: right;
   font-size: 20px;
@@ -1053,7 +981,7 @@ header .right .select .menu {
 }
 
 #profile .menu li.appearance button:last-child {
-  border-left: 1px solid var(--light-grey-3);
+  border-left: 1px solid var(--main-border-1);
 }
 
 #profile .menu li.appearance button .icon {
@@ -1084,11 +1012,12 @@ nav .links li {
 
 .links li a:hover,
 .links li a:active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .submenu.tabs {
-  border-bottom: 1px solid var(--light-grey-1);
+  border-bottom: 1px solid var(--main-border-1);
+  margin-top: -1px;
 }
 
 .submenu .links a:link,
@@ -1102,7 +1031,7 @@ nav .links li {
 .submenu .links li.active a,
 .submenu .links a:hover,
 .submenu .links a:active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .submenu.tabs .links {
@@ -1120,7 +1049,7 @@ nav .links li {
 }
 
 .submenu.tabs .links li.active {
-  border-color: var(--light-grey-1);
+  border-color: var(--main-border-1);
   background: var(--black-3);
 }
 
@@ -1170,7 +1099,7 @@ noscript p {
 }
 
 #error #box a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 108px;
 }
 
@@ -1182,7 +1111,7 @@ noscript p {
 
 #subtitle,
 #subtitle a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-size: 32px;
   font-style: italic;
   text-transform: none;
@@ -1197,7 +1126,7 @@ noscript p {
 }
 
 #action #link {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 body > form,
@@ -1219,12 +1148,12 @@ body > form,
 }
 
 .check-box .fa:before {
-  color: var(--red-pink);
+  color: var(--status-error);
   content: '';
 }
 
 .check-box.enabled .fa:before {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   content: '';
 }
 
@@ -1250,7 +1179,7 @@ body > form,
 }
 
 #helpers > section ul li > header .stress {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -1260,7 +1189,7 @@ body > form,
 }
 
 #helpers > section.machinery ul li > header sup {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 #helpers > section.machinery ul li > header .sources {
@@ -1336,13 +1265,13 @@ body > form,
 }
 
 #helpers > section ul li > p ins {
-  background: var(--forest-green-2);
-  color: var(--light-green-3);
+  background: var(--diff-ins-background);
+  color: var(--diff-ins-color);
 }
 
 #helpers > section ul li > p del {
-  background: var(--purple-pink);
-  color: var(--coral);
+  background: var(--diff-del-background);
+  color: var(--diff-del-color);
 }
 
 #helpers > section ul li > p ins mark,
@@ -1400,7 +1329,6 @@ body > form,
 #standalone-sign-in input[type='text'],
 #standalone-sign-in input[type='password'] {
   float: none;
-  background-color: white;
   padding: 10px;
   margin: 10px;
 }
@@ -1409,15 +1337,24 @@ body > form,
   font-size: 14px;
 }
 
+#standalone-sign-in ul {
+  list-style: none;
+  margin: 0;
+}
+
+#standalone-sign-in ul.errorlist {
+  color: var(--status-error);
+}
+
 .controls {
   margin-bottom: 20px;
   position: relative;
 }
 
 .controls .button {
-  background: var(--dark-grey-1);
+  background: var(--button-background-1);
   border: none;
-  border-radius: 2px;
+  border-radius: 3px;
   color: var(--light-grey-7);
   font-weight: 400;
   height: auto;
@@ -1441,7 +1378,7 @@ body > form,
 .controls a.button:hover,
 .controls li.active a.button,
 .controls .button.active {
-  background: var(--light-green-1);
+  background: var(--status-translated);
   color: var(--black-3);
 }
 
@@ -1479,24 +1416,24 @@ body > form,
 
 .controls > .search-wrapper input {
   background: var(--dark-grey-1);
-  border: 1px solid var(--grey-3);
-  border-radius: 3px;
+  border: 1px solid var(--main-border-1);
   font-size: 13px;
-  font-weight: 300;
   height: 28px;
-  padding-left: 25px;
-  position: absolute;
   width: 100%;
   z-index: 10;
 }
 
 .priority .fa-star {
-  color: var(--grey-1);
+  color: var(--icon-background-1);
   float: left;
 }
 
+.priority .value .fa-star {
+  color: var(--icon-background-2);
+}
+
 .priority .fa-star.active {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .container .info {
@@ -1514,7 +1451,7 @@ body > form,
 }
 
 .container .info a {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 .toggle-button {
@@ -1522,11 +1459,11 @@ body > form,
 }
 
 .toggle-button button {
-  background: var(--black-3);
-  border: 1px solid var(--light-grey-3);
+  background: transparent;
+  border: 1px solid var(--main-border-1);
   border-radius: 3px;
   box-sizing: border-box;
-  color: var(--grey-6);
+  color: var(--toggle-color-1);
   float: none;
   font-size: 16px;
   font-weight: 100;
@@ -1535,7 +1472,6 @@ body > form,
 }
 
 .toggle-button button:first-child {
-  border-right-color: var(--grey-3);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -1551,8 +1487,8 @@ body > form,
 }
 
 .toggle-button button.active {
-  background: var(--dark-grey-1);
-  border-color: var(--grey-3);
+  background: var(--button-background-1);
+  border-color: var(--main-border-1);
   color: var(--light-grey-7);
   font-weight: 400;
 }

@@ -9,7 +9,7 @@
 
 .download-selector .selector .fa {
   float: right;
-  background: var(--dark-grey-2);
+  background: var(--button-background-2);
   border-radius: 3px;
   box-sizing: border-box;
   color: var(--light-grey-7);
@@ -21,11 +21,11 @@
 }
 
 .download-selector .selector .fa:hover {
-  background: var(--black-3);
+  background: var(--button-background-hover-2);
 }
 
 .download-selector.opened .selector .fa {
-  background: var(--black-3);
+  background: var(--button-background-hover-2);
   border-radius: 2px 2px 0 0;
 }
 

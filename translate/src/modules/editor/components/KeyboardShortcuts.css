@@ -5,13 +5,18 @@
 }
 
 .keyboard-shortcuts .selector {
+  color: var(--editor-menu-color);
   font-size: 22px;
   padding: 9px 5px;
 }
 
+.keyboard-shortcuts .selector:hover {
+  color: var(--status-translated);
+}
+
 .keyboard-shortcuts .overlay {
   background: var(--black-3);
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--main-border-1);
   font-size: 13px;
   width: 400px;
   height: 435px;
@@ -52,7 +57,7 @@
 
 .keyboard-shortcuts .overlay span {
   background: var(--dark-grey-2);
-  border: 1px solid var(--light-grey-1);
+  border: 1px solid var(--main-border-1);
   border-radius: 2px;
   font-weight: 300;
   margin: 0 4px;

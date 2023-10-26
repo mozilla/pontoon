@@ -1,5 +1,5 @@
-.locale-selector .locale.select .button.breadcrumbs {
-  background: var(--dark-grey-1);
+.locale-selector .locale.select .button {
+  background: var(--button-background-1);
   border-radius: 2px;
   box-sizing: border-box;
   font-size: 14px;
@@ -25,7 +25,7 @@
 }
 
 .locale-selector .locale.select .menu {
-  background: var(--dark-grey-1);
+  background: var(--popup-background-1);
   top: 28px;
   display: none;
   position: absolute;

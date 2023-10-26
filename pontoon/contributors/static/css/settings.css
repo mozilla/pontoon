@@ -44,7 +44,7 @@
 }
 
 #locale-settings .locale-selector .locale.select .menu {
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--popup-background-1);
   top: 30px;
   width: 295px;
   z-index: 30;
@@ -103,10 +103,6 @@
 
 #main .field input,
 #main .field textarea {
-  color: var(--light-grey-7);
-  background: var(--dark-grey-1);
-  border: 1px solid var(--grey-3);
-  border-radius: 3px;
   float: none;
   padding: 4px;
   box-sizing: border-box;
@@ -150,7 +146,7 @@
 }
 
 #main .field .verify {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-style: italic;
 }
 
@@ -185,7 +181,7 @@
 }
 
 .errorlist {
-  color: var(--red-pink);
+  color: var(--status-error);
   font-style: italic;
   list-style: none;
 }

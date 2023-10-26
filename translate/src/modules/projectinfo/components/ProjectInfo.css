@@ -14,6 +14,8 @@
 
 .project-info .panel {
   background: var(--black-3);
+  border: 1px solid var(--main-border-1);
+  border-top: none;
   bottom: auto;
   color: var(--light-grey-7);
   padding: 10px 12px;
@@ -36,5 +38,5 @@
 }
 
 .project-info .panel a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }

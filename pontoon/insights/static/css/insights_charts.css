@@ -6,7 +6,7 @@
 }
 
 #insights h3 {
-  color: var(--white-3);
+  color: var(--white-1);
   font-size: 20px;
   font-style: normal;
   font-weight: bold;
@@ -18,7 +18,7 @@
 /* Tooltip */
 
 #insights .controls .selector {
-  background: var(--dark-grey-2);
+  background: var(--button-background-2);
   color: var(--light-grey-7);
   cursor: pointer;
   width: 24px;
@@ -37,11 +37,12 @@
 
 #insights h3 .fa.active,
 #insights h3 .fa:hover {
-  background: var(--black-3);
+  background: var(--button-background-hover-2);
 }
 
 #insights h3 .tooltip {
-  background: var(--black-6);
+  background: var(--tooltip-background);
+  color: var(--tooltip-color);
   position: absolute;
   display: none;
   margin-top: 10px;

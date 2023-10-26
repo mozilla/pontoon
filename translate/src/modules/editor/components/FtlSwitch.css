@@ -1,7 +1,7 @@
 .editor .ftl {
   background: transparent;
   border: 0;
-  color: var(--light-grey-7);
+  color: var(--editor-menu-color);
   float: left;
   font-size: 18px;
   font-weight: bold;
@@ -13,9 +13,9 @@
 
 .editor .ftl.active,
 .editor .ftl:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 .editor .ftl.error {
-  color: var(--red-pink);
+  color: var(--status-error);
 }

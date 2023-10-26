@@ -1,5 +1,5 @@
 .user-notification {
-  border-top: 1px solid var(--dark-grey-1);
+  border-top: 1px solid var(--main-border-1);
   cursor: default;
   padding: 0;
 }
@@ -9,7 +9,7 @@
 }
 
 .user-notification:first-child:hover {
-  border-color: var(--dark-grey-1);
+  border-color: var(--main-border-1);
 }
 
 .user-notification.unread {
@@ -37,12 +37,12 @@
 }
 
 .user-notification span {
-  color: var(--white-1);
+  color: var(--translation-color);
   float: none;
 }
 
 .user-notification a {
-  color: var(--red-pink);
+  color: var(--status-error);
   display: inline;
 }
 
@@ -64,7 +64,7 @@
 .user-notification .message.trim,
 .user-notification .message.trim p {
   pointer-events: none;
-  color: var(--light-grey-7);
+  color: var(--translation-secondary-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

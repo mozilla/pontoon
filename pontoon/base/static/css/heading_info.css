@@ -18,7 +18,7 @@ ul {
 }
 
 #heading h1 .small {
-  color: var(--light-green-1);
+  color: var(--status-translated);
   font-weight: 300;
   padding-left: 5px;
 }
@@ -60,7 +60,7 @@ ul {
 }
 
 #heading .details .value a:hover {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #heading .details .priority .value {
@@ -127,7 +127,7 @@ ul {
 }
 
 #heading .legend li:hover a {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #heading .legend li .status.fa {
@@ -145,7 +145,7 @@ ul {
 }
 
 #heading .legend li:hover a span.value {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #heading .non-plottable {
@@ -165,7 +165,7 @@ ul {
 }
 
 #heading .non-plottable a:hover p {
-  color: var(--light-green-1);
+  color: var(--status-translated);
 }
 
 #heading .non-plottable p.value {
@@ -183,10 +183,10 @@ ul {
 }
 
 #heading .non-plottable .unreviewed .status.fa:before {
-  color: var(--grey-3);
+  color: var(--icon-background-2);
   font-size: 18px;
 }
 
 #heading .non-plottable .unreviewed.pending .status.fa:before {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }

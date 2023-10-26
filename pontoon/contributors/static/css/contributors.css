@@ -1,5 +1,5 @@
 #heading .banner .title {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 #heading .legend {
@@ -91,11 +91,11 @@ th:last-child sup {
 }
 
 .stats .details div.approved {
-  color: var(--light-green-1);
+  color: var(--status-translated-alt);
 }
 
 .stats .details div.unreviewed {
-  color: var(--light-blue);
+  color: var(--status-unreviewed);
 }
 
 .stats .details div p {

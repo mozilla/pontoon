@@ -11,7 +11,7 @@
 .user-menu .selector img,
 .user-menu .selector .menu-icon,
 .user-menu .menu li.details img {
-  border: 2px solid var(--grey-3);
+  border: 2px solid var(--icon-border-1);
   border-radius: 6px;
 }
 
@@ -32,7 +32,7 @@
 
 .user-menu .menu {
   background-color: var(--black-3);
-  border: 1px solid var(--dark-grey-1);
+  border: 1px solid var(--main-border-1);
   border-right: none;
   border-top: none;
   list-style: none;
@@ -101,7 +101,7 @@
 }
 
 .user-menu .menu .horizontal-separator {
-  border-top: 1px solid var(--grey-2);
+  border-top: 1px solid var(--main-border-1);
   height: 0;
   margin: 5px 0;
   padding: 0;
