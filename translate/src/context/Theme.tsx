@@ -9,7 +9,7 @@ export function ThemeProvider({ children }: { children: React.ReactElement }) {
   const [theme] = useState(
     () => document.body.getAttribute('data-theme') || 'dark',
   );
-  const { applyTheme } = useTheme();
+  const applyTheme = useTheme();
 
   applyTheme(theme);
 

@@ -40,16 +40,10 @@ export function UserMenuDialog({
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
 
-  const [theme, setTheme] = useState<string>(
-    () => document.body.getAttribute('data-theme') || 'dark',
-  );
-
-  const { applyTheme } = useTheme();
-
-  applyTheme(theme);
+  const applyTheme = useTheme();
 
   const handleThemeButtonClick = (selectedTheme: string) => {
-    setTheme(selectedTheme); // Update the local state
+    applyTheme(selectedTheme);
     onThemeChange(selectedTheme); // Save theme to the database
   };
 
@@ -71,7 +65,7 @@ export function UserMenuDialog({
             <button
               type='button'
               value='dark'
-              className={`dark ${theme === 'dark' ? 'active' : ''}`}
+              className={`dark ${user.theme === 'dark' ? 'active' : ''}`}
               title='Use a dark theme'
               onClick={() => handleThemeButtonClick('dark')}
             >
@@ -80,7 +74,7 @@ export function UserMenuDialog({
             <button
               type='button'
               value='light'
-              className={`light ${theme === 'light' ? 'active' : ''}`}
+              className={`light ${user.theme === 'light' ? 'active' : ''}`}
               title='Use a light theme'
               onClick={() => handleThemeButtonClick('light')}
             >
@@ -89,7 +83,7 @@ export function UserMenuDialog({
             <button
               type='button'
               value='system'
-              className={`system ${theme === 'system' ? 'active' : ''}`}
+              className={`system ${user.theme === 'system' ? 'active' : ''}`}
               title='Use a theme that matches your system settings'
               onClick={() => handleThemeButtonClick('system')}
             >

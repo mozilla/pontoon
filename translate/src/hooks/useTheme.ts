@@ -10,13 +10,11 @@ export function useTheme() {
     }
   }
 
-  function applyTheme(newTheme: string) {
+  return function (newTheme: string) {
     if (newTheme === 'system') {
       newTheme = getSystemTheme();
     }
     document.body.classList.remove('dark-theme', 'light-theme', 'system-theme');
     document.body.classList.add(`${newTheme}-theme`);
-  }
-
-  return { applyTheme };
+  };
 }
