@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useContext, useRef, useState } from 'react';
 
 import { EntityView } from '~/context/EntityView';
+import { useTheme } from '~/hooks/useTheme';
 import { Location } from '~/context/Location';
 import { useOnDiscard } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
@@ -14,15 +15,48 @@ import './UserMenu.css';
 
 type Props = {
   user: UserState;
+  onThemeChange: (theme: string) => void;
 };
 
 type UserMenuProps = Props & {
   onDiscard: () => void;
 };
 
+const ThemeButton = ({
+  value,
+  text,
+  title,
+  icon,
+  user,
+  onClick,
+}: {
+  value: string;
+  text: string;
+  title: string;
+  icon: string;
+  user: UserState;
+  onClick: (theme: string) => void;
+}) => (
+  <Localized
+    id={`user-UserMenu--appearance-${value}`}
+    elems={{ glyph: <i className={`icon ${icon}`} /> }}
+  >
+    <button
+      type='button'
+      value={value}
+      className={`${value} ${user.theme === value ? 'active' : ''}`}
+      title={title}
+      onClick={() => onClick(value)}
+    >
+      {`<glyph></glyph> ${text}`}
+    </button>
+  </Localized>
+);
+
 export function UserMenuDialog({
   onDiscard,
   user,
+  onThemeChange,
 }: UserMenuProps): React.ReactElement<'ul'> {
   const isTranslator = useTranslator();
   const { entity } = useContext(EntityView);
@@ -37,6 +71,13 @@ export function UserMenuDialog({
   const ref = useRef<HTMLUListElement>(null);
   useOnDiscard(ref, onDiscard);
 
+  const applyTheme = useTheme();
+
+  const handleThemeButtonClick = (selectedTheme: string) => {
+    applyTheme(selectedTheme);
+    onThemeChange(selectedTheme); // Save theme to the database
+  };
+
   return (
     <ul ref={ref} className='menu'>
       {user.isAuthenticated && (
@@ -48,6 +89,40 @@ export function UserMenuDialog({
               <p className='email'>{user.email}</p>
             </a>
           </li>
+          <li className='horizontal-separator'></li>
+
+          <div className='appearance'>
+            <Localized id={`user-UserMenu--appearance-title`}>
+              <p className='help'>Choose appearance</p>
+            </Localized>
+            <span className='toggle-button'>
+              <ThemeButton
+                value='dark'
+                text='Dark'
+                title='Use a dark theme'
+                icon='far fa-moon'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
+              <ThemeButton
+                value='light'
+                text='Light'
+                title='Use a light theme'
+                icon='fa fa-sun'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
+              <ThemeButton
+                value='system'
+                text='System'
+                title='Use a theme that matches your system settings'
+                icon='fa fa-laptop'
+                user={user}
+                onClick={handleThemeButtonClick}
+              />
+            </span>
+          </div>
+
           <li className='horizontal-separator'></li>
         </>
       )}

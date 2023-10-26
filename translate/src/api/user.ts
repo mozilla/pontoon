@@ -93,6 +93,19 @@ export function updateUserSetting(
   return POST(`/api/v1/user/${username}/`, payload, { headers });
 }
 
+export function updateUserTheme(
+  username: string,
+  theme: string,
+): Promise<void> {
+  const csrfToken = getCSRFToken();
+  const payload = new URLSearchParams({
+    theme,
+    csrfmiddlewaretoken: csrfToken,
+  });
+  const headers = new Headers({ 'X-CSRFToken': csrfToken });
+  return POST(`/api/v1/user/${username}/theme/`, payload, { headers });
+}
+
 /** Update Interactive Tour status to a given step. */
 export function updateTourStatus(step: number): Promise<void> {
   const csrfToken = getCSRFToken();

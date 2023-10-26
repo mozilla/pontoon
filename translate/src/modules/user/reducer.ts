@@ -1,4 +1,4 @@
-import { Action, UPDATE, UPDATE_SETTINGS } from './actions';
+import { Action, UPDATE, UPDATE_SETTINGS, UPDATE_THEME } from './actions';
 
 // Name of this module.
 // Used as the key to store this module's reducer.
@@ -84,6 +84,7 @@ export type UserState = {
   readonly gravatarURLSmall: string;
   readonly gravatarURLBig: string;
   readonly notifications: Notifications;
+  readonly theme: string;
 };
 
 const initial: UserState = {
@@ -110,6 +111,7 @@ const initial: UserState = {
     notifications: [],
     unread_count: '0',
   },
+  theme: 'dark',
 };
 
 export function reducer(state: UserState = initial, action: Action): UserState {
@@ -140,11 +142,17 @@ export function reducer(state: UserState = initial, action: Action): UserState {
           notifications: [],
           unread_count: '0',
         },
+        theme: action.data.theme ?? 'dark',
       };
     case UPDATE_SETTINGS:
       return {
         ...state,
         settings: settings(state.settings, action),
+      };
+    case UPDATE_THEME:
+      return {
+        ...state,
+        theme: action.theme,
       };
     default:
       return state;

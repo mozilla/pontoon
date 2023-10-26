@@ -6,7 +6,11 @@ import { EntityView } from '~/context/EntityView';
 import { Location } from '~/context/Location';
 import * as Translator from '~/hooks/useTranslator';
 
-import { findLocalizedById, MockLocalizationProvider } from '~/test/utils';
+import {
+  findLocalizedById,
+  MockLocalizationProvider,
+  mockMatchMedia,
+} from '~/test/utils';
 
 import { FileUpload } from './FileUpload';
 import { SignInOutForm } from './SignInOutForm';
@@ -14,6 +18,7 @@ import { UserMenu, UserMenuDialog } from './UserMenu';
 
 describe('<UserMenuDialog>', () => {
   beforeAll(() => {
+    mockMatchMedia();
     sinon.stub(Translator, 'useTranslator');
   });
   afterAll(() => {

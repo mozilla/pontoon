@@ -10,15 +10,23 @@ import './UserControls.css';
 import { UserNotificationsMenu } from './UserNotificationsMenu';
 import { UserMenu } from './UserMenu';
 
+import { saveTheme } from '../actions';
+
 export function UserControls(): React.ReactElement<'div'> {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state[USER]);
+
+  const handleThemeChange = (newTheme: string) => {
+    if (user.username) {
+      dispatch(saveTheme(newTheme, user.username));
+    }
+  };
 
   return (
     <div className='user-controls'>
       <UserAutoUpdater getUserData={() => dispatch(getUserData())} />
 
-      <UserMenu user={user} />
+      <UserMenu user={user} onThemeChange={handleThemeChange} />
 
       <UserNotificationsMenu
         markAllNotificationsAsRead={() =>

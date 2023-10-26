@@ -888,6 +888,7 @@ def user_data(request):
             "gravatar_url_small": user.gravatar_url(88),
             "gravatar_url_big": user.gravatar_url(176),
             "notifications": user.serialized_notifications,
+            "theme": user.profile.theme,
         }
     )
 

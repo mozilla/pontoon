@@ -106,3 +106,48 @@
   margin: 5px 0;
   padding: 0;
 }
+
+/* Theme Toggle */
+
+.appearance {
+  color: var(--light-grey-7);
+  padding: 4px 0;
+}
+
+.appearance .help {
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.toggle-button button {
+  background: var(--black-3);
+  border: 1px solid var(--light-grey-3);
+  border-radius: 3px;
+  color: var(--grey-6);
+  font-size: 14px;
+  font-weight: 100;
+  padding: 4px;
+  width: 78px;
+}
+
+.toggle-button button:nth-child(2) {
+  margin: 0 8px;
+}
+
+.toggle-button button:hover {
+  color: var(--light-grey-6);
+}
+
+.toggle-button button.active {
+  background: var(--dark-grey-1);
+  border-color: var(--grey-3);
+  color: var(--light-grey-7);
+  font-weight: 400;
+}
+
+.toggle-button button .icon {
+  display: block;
+  margin: 5px 0;
+}
