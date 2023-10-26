@@ -51,5 +51,8 @@ class CreateTranslationForm(forms.Form):
             return None
         return self.cleaned_data["plural_form"]
 
+    def clean_original(self):
+        return self.data.get("original", "")
+
     def clean_translation(self):
         return self.data.get("translation", "")
