@@ -52,6 +52,7 @@ class ProjectLocaleInsightsSnapshotAdmin(admin.ModelAdmin):
         "completion",
         "unreviewed_strings",
     )
+    readonly_fields = ("project_locale",)
 
 
 admin.site.register(LocaleInsightsSnapshot, LocaleInsightsSnapshotAdmin)
