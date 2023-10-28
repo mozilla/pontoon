@@ -26,7 +26,7 @@ def insights(request):
                 "locale", "code"
             ),
             "project_pretranslation_quality": get_global_pretranslation_quality(
-                "project", "slug"
+                "entity__resource__project", "slug"
             ),
         },
     )
