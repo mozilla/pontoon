@@ -75,6 +75,7 @@ var Pontoon = (function (my) {
             },
             legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
+              position: 'nearest',
               mode: 'index',
               intersect: false,
               borderColor: style.getPropertyValue('--white-1'),
