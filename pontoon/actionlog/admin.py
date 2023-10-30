@@ -20,6 +20,7 @@ class ActionLogAdmin(admin.ModelAdmin):
         "entity",
         "translation",
     )
+    readonly_fields = ("created_at",)
 
 
 admin.site.register(ActionLog, ActionLogAdmin)
