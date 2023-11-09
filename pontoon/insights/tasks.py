@@ -334,7 +334,7 @@ def get_project_locale_insights_snapshot(
         pretranslations_rejected,
         pretranslations_new,
     ) = get_activity_charts_data(
-        activities, locale=project_locale.project.id, project=project_locale.project.id
+        activities, locale=project_locale.locale.id, project=project_locale.project.id
     )
 
     return ProjectLocaleInsightsSnapshot(
