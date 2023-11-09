@@ -1,11 +1,12 @@
 import json
-import statistics
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.models import User
 from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Count, Q, Sum
 
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
@@ -365,25 +366,43 @@ def get_insights(locale=None, project=None):
 
 def get_global_pretranslation_quality(category, id):
     start_date = get_insight_start_date()
-    snapshots = ProjectLocaleInsightsSnapshot.objects.filter(
-        created_at__gte=start_date,
-        project_locale__pretranslation_enabled=True,
-    )
 
-    insights = (
-        snapshots
+    sync_user = User.objects.get(email="pontoon-sync@example.com").pk
+
+    pretranslation_users = User.objects.filter(
+        email__in=[
+            "pontoon-tm@example.com",
+            "pontoon-gt@example.com",
+        ]
+    ).values_list("pk", flat=True)
+
+    actions = (
+        ActionLog.objects.filter(
+            created_at__gte=start_date,
+            action_type__in=["translation:approved", "translation:rejected"],
+            translation__user__in=pretranslation_users,
+        )
+        .exclude(performed_by=sync_user)
         # Truncate to month and add to select list
         .annotate(month=TruncMonth("created_at"))
         # Group By month and locale
-        .values("month", f"project_locale__{category}")
-        # Select the avg/sum of the grouping
-        .annotate(pretranslations_approved_sum=Sum("pretranslations_approved"))
-        .annotate(pretranslations_rejected_sum=Sum("pretranslations_rejected"))
+        .values("month", f"translation__{category}")
+        # Select the sum of the grouping
+        .annotate(
+            pretranslations_approved_sum=Count(
+                "id", filter=Q(action_type="translation:approved")
+            )
+        )
+        .annotate(
+            pretranslations_rejected_sum=Count(
+                "id", filter=Q(action_type="translation:rejected")
+            )
+        )
         # Select month and values
         .values(
             "month",
-            f"project_locale__{category}__{id}",
-            f"project_locale__{category}__name",
+            f"translation__{category}__{id}",
+            f"translation__{category}__name",
             "pretranslations_approved_sum",
             "pretranslations_rejected_sum",
         )
@@ -393,13 +412,27 @@ def get_global_pretranslation_quality(category, id):
     data = {
         "all": {
             "name": "All",
-            "approval_rate": [],
+            "approval_rate": [None] * 12,
         }
     }
 
-    for insight in insights:
-        key = insight[f"project_locale__{category}__{id}"]
-        name = insight[f"project_locale__{category}__name"]
+    approved = "pretranslations_approved_sum"
+    rejected = "pretranslations_rejected_sum"
+
+    totals = [
+        {
+            approved: 0,
+            rejected: 0,
+        }
+        for x in range(0, 12)
+    ]
+
+    for action in actions:
+        key = action[f"translation__{category}__{id}"]
+        name = action[f"translation__{category}__name"]
+        month_index = relativedelta(
+            action["month"].replace(tzinfo=None), start_date
+        ).months
 
         if category == "locale":
             name = f"{name} · {key}"
@@ -408,24 +441,22 @@ def get_global_pretranslation_quality(category, id):
             key,
             {
                 "name": name,
-                "approval_rate": [],
+                "approval_rate": [None] * 12,
             },
         )
+        item["approval_rate"][month_index] = get_approval_rate(action)
+        totals[month_index][approved] += action[approved]
+        totals[month_index][rejected] += action[rejected]
 
-        item["approval_rate"].append(get_approval_rate(insight))
-
-    # Monthly total across the entire category
-    category_approval_rates = [value["approval_rate"] for value in data.values()]
-
-    for month in zip(*category_approval_rates[1:]):
-        not_none = [x for x in month if x is not None]
-        if not_none:
-            total = statistics.mean(not_none)
-        else:
-            total = None
-        data["all"]["approval_rate"].append(total)
+    # Monthly totals across the entire category
+    total_approval_rates = data["all"]["approval_rate"]
+    for idx, _ in enumerate(total_approval_rates):
+        total_approval_rates[idx] = get_approval_rate(totals[idx])
+    total_approval_rates = [
+        get_approval_rate(totals[idx]) for idx, _ in enumerate(total_approval_rates)
+    ]
 
     return {
-        "dates": list({convert_to_unix_time(x["month"]) for x in insights}),
+        "dates": list({convert_to_unix_time(x["month"]) for x in actions}),
         "dataset": json.dumps([v for _, v in data.items()]),
     }
