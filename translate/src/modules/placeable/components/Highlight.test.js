@@ -97,6 +97,30 @@ describe('<Highlight search>', () => {
     const wrapper = mountMarker('foo (bar)', [], '(bar');
     expect(wrapper.find('mark.search').text()).toEqual('(bar');
   });
+
+  it('does not mark search if empty', () => {
+    const wrapper = mountMarker('123456', [], '');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(1);
+    expect(marks.at(0).hasClass('placeable'));
+    expect(marks.at(0).text()).toEqual('123456');
+  });
+
+  it('prefers search marks over placeholders at start of mark', () => {
+    const wrapper = mountMarker('123456', [], '123');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(1);
+    expect(marks.at(0).hasClass('search'));
+    expect(marks.at(0).text()).toEqual('123');
+  });
+
+  it('prefers search marks over placeholders at end of mark', () => {
+    const wrapper = mountMarker('123456', [], '456');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(1);
+    expect(marks.at(0).hasClass('search'));
+    expect(marks.at(0).text()).toEqual('456');
+  });
 });
 
 describe('specific marker', () => {

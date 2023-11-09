@@ -160,6 +160,9 @@ export function Highlight({
     }
   }
 
+  // Sort by position, prefer longer marks
+  marks.sort((a, b) => a.index - b.index || b.length - a.length);
+
   if (search) {
     const searchTerms = search.match(/(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+/g);
     for (let term of searchTerms ?? []) {
@@ -170,7 +173,11 @@ export function Highlight({
       let pos = 0;
       let next: number;
       while ((next = lcSource.indexOf(lcTerm, pos)) !== -1) {
-        marks.push({
+        let i = marks.findIndex((m) => m.index + m.length >= next);
+        if (i === -1) {
+          i = marks.length;
+        }
+        marks.splice(i, 0, {
           index: next,
           length: term.length,
           mark: (
@@ -183,9 +190,6 @@ export function Highlight({
       }
     }
   }
-
-  // Sort by position, prefer longer marks
-  marks.sort((a, b) => a.index - b.index || b.length - a.length);
 
   const res: Array<string | ReactElement> = [];
   let pos = 0;
