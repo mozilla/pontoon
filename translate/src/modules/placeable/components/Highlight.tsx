@@ -70,38 +70,40 @@ export function Highlight({
     const text = match[0];
     switch (text[0]) {
       case '<':
-        l10nId = 'term-placeholder-html';
+        l10nId = 'highlight-placeholder-html';
         break;
       case '{':
       case '$':
-        l10nId = 'term-placeholder';
+        l10nId = 'highlight-placeholder';
         break;
       case '%':
-        l10nId = 'term-placeholder-printf';
+        l10nId = 'highlight-placeholder-printf';
         break;
       case '&':
-        l10nId = 'term-placeholder-entity';
+        l10nId = 'highlight-placeholder-entity';
         break;
       case '\\':
-        l10nId = 'term-escape';
+        l10nId = 'highlight-escape';
         break;
       case '-':
-        l10nId = 'term-cli-option';
+        l10nId = 'highlight-cli-option';
         break;
       case 'f':
       case 'h':
-        l10nId = 'term-url';
+        l10nId = 'highlight-url';
         break;
       case '\n':
-        l10nId = 'term-newline';
+        l10nId = 'highlight-newline';
         hidden = '¶';
         break;
       case '\t':
-        l10nId = 'term-tab';
+        l10nId = 'highlight-tab';
         hidden = ' →';
         break;
       default:
-        l10nId = /^\s/.test(text) ? 'term-spaces' : 'term-punctuation';
+        l10nId = /^\s/.test(text)
+          ? 'highlight-spaces'
+          : 'highlight-punctuation';
     }
     marks.push({
       index: match.index ?? -1,
@@ -118,8 +120,8 @@ export function Highlight({
   }
 
   for (const { l10nId, re } of [
-    { l10nId: 'term-email', re: /(?:mailto:)?\w[\w.-]*@\w[\w.]*\w/g },
-    { l10nId: 'term-number', re: /[-+]?\d+(?:[\u00A0.,]\d+)*\b/gu },
+    { l10nId: 'highlight-email', re: /(?:mailto:)?\w[\w.-]*@\w[\w.]*\w/g },
+    { l10nId: 'highlight-number', re: /[-+]?\d+(?:[\u00A0.,]\d+)*\b/gu },
   ]) {
     for (const match of source.matchAll(re)) {
       const text = match[0];

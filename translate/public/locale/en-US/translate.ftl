@@ -1,10 +1,5 @@
 ### Localization for the Translate page of Pontoon
 
-# Naming convention for l10n IDs: "module-ComponentName--string-summary".
-# This allows us to minimize the risk of conflicting IDs throughout the app.
-# Please sort alphabetically by (module name, component name). For each module,
-# keep strings in order of appearance.
-
 
 ## Pontoon Add-On promotion
 ## Renders Pontoon Add-On promotion banner
@@ -573,31 +568,31 @@ otherlocales-Translation--header-link =
 ## Message terms
 ## Used to mark specific terms and characters in translations.
 
-term-cli-option =
+highlight-cli-option =
     .title = Command line option
-term-email =
+highlight-email =
     .title = Email
-term-escape =
+highlight-escape =
     .title = Escape sequence
-term-newline =
+highlight-newline =
     .title = Newline character
-term-number =
+highlight-number =
     .title = Number
-term-placeholder =
+highlight-placeholder =
     .title = Placeholder
-term-placeholder-entity =
+highlight-placeholder-entity =
     .title = HTML/XML entity
-term-placeholder-html =
+highlight-placeholder-html =
     .title = HTML tag
-term-placeholder-printf =
+highlight-placeholder-printf =
     .title = Printf format string
-term-punctuation =
+highlight-punctuation =
     .title = Punctuation
-term-spaces =
+highlight-spaces =
     .title = Unusual space
-term-tab =
+highlight-tab =
     .title = Tab character
-term-url =
+highlight-url =
     .title = URL
 
 
