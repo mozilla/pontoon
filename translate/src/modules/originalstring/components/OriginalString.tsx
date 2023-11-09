@@ -65,7 +65,8 @@ export function OriginalString({
         const markedTerm = target.dataset['match'];
         if (markedTerm) {
           setPopupTerms(
-            terms.terms?.filter((t) => t.text.toLowerCase() === markedTerm) ?? [],
+            terms.terms?.filter((t) => t.text.toLowerCase() === markedTerm) ??
+              [],
           );
         }
       }
@@ -115,9 +116,7 @@ function InnerOriginalString({
 
   return (
     <p className='original' onClick={onClick}>
-      <Highlight terms={terms}>
-        {source}
-      </Highlight>
+      <Highlight terms={terms}>{source}</Highlight>
     </p>
   );
 }

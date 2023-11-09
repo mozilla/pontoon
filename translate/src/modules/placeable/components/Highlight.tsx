@@ -117,7 +117,6 @@ export function Highlight({
     });
   }
 
-
   for (const { l10nId, re } of [
     { l10nId: 'term-email', re: /(?:mailto:)?\w[\w.-]*@\w[\w.]*\w/g },
     { l10nId: 'term-number', re: /[-+]?\d+(?:[\u00A0.,]\d+)*\b/gu },

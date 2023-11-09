@@ -223,6 +223,8 @@ describe('specific marker', () => {
     ['10 % complete', '10'],
     ['There were % d cows'],
     ['There were %(number) 3d cows'],
+    ['Verified by %@', '%@'],
+    ['Update login %1$@ for %2$@?', '%1$@', '%2$@'],
     // Qt
     ['Hello, %1', '%1'],
     ['Hello, %99', '%99'],
