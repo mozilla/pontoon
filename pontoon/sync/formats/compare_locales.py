@@ -12,7 +12,11 @@ from compare_locales import (
 
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
+from pontoon.sync.utils import (
+    create_parent_directory,
+    escape_apostrophes,
+    unescape_apostrophes,
+)
 from pontoon.sync.vcs.models import VCSTranslation
 
 
@@ -81,7 +85,7 @@ class CompareLocalesResource(ParsedResource):
             if isinstance(entity, parser.Entity):
                 self.entities[entity.key] = CompareLocalesEntity(
                     entity.key,
-                    entity.unwrap(),
+                    unescape_apostrophes(entity.unwrap()),
                     entity.pre_comment,
                     order,
                 )
@@ -99,7 +103,7 @@ class CompareLocalesResource(ParsedResource):
 
         # A dictionary of new translations
         new_l10n = {
-            key: entity.strings[None] if entity.strings else None
+            key: escape_apostrophes(entity.strings[None]) if entity.strings else None
             for key, entity in self.entities.items()
         }
 
