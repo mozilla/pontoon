@@ -168,14 +168,14 @@ export function Highlight({
   if (search) {
     const searchTerms = search.match(/(?<!\\)"(?:\\"|[^"])+(?<!\\)"|\S+/g);
     for (let term of searchTerms ?? []) {
-      if (term.startsWith('"') && term.endsWith('"')) {
+      if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);
       }
       let lcTerm = term.toLowerCase();
       let pos = 0;
       let next: number;
       while ((next = lcSource.indexOf(lcTerm, pos)) !== -1) {
-        let i = marks.findIndex((m) => m.index + m.length >= next);
+        let i = marks.findIndex((m) => m.index + m.length > next);
         if (i === -1) {
           i = marks.length;
         }
