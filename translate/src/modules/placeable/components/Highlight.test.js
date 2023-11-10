@@ -121,6 +121,20 @@ describe('<Highlight search>', () => {
     expect(marks.at(0).hasClass('search'));
     expect(marks.at(0).text()).toEqual('456');
   });
+
+  it('does not break for lone " quotes', () => {
+    const wrapper = mountMarker('123456"', [], '"');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(2);
+    expect(marks.at(1).text()).toEqual('"');
+  });
+
+  it('does not break for doubled "" quotes', () => {
+    const wrapper = mountMarker('123456""', [], '""');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(2);
+    expect(marks.at(1).text()).toEqual('""');
+  });
 });
 
 describe('specific marker', () => {
