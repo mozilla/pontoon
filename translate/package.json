@@ -28,7 +28,6 @@
     "messageformat": "^4.0.0-2",
     "nprogress": "^0.2.0",
     "react": "^16.14.0",
-    "react-content-marker": "^2.2.0",
     "react-dom": "^16.14.0",
     "react-infinite-scroll-hook": "^4.0.1",
     "react-linkify": "^0.2.2",

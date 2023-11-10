@@ -1,10 +1,5 @@
 ### Localization for the Translate page of Pontoon
 
-# Naming convention for l10n IDs: "module-ComponentName--string-summary".
-# This allows us to minimize the risk of conflicting IDs throughout the app.
-# Please sort alphabetically by (module name, component name). For each module,
-# keep strings in order of appearance.
-
 
 ## Editor Menu
 ## Allows contributors to modify or propose a translation
@@ -186,65 +181,35 @@ otherlocales-Translation--copy =
     .title = Copier la traduction
 
 
-## Placeable parsers
+## Message terms
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-altAttribute =
-    .title = Attribut 'alt' dans une balise XML
-placeable-parser-camelCaseString =
-    .title = Chaîne Camel Case
-placeable-parser-emailPattern =
+highlight-cli-option =
+    .title = Option de ligne de commande
+highlight-email =
     .title = Courriel
-placeable-parser-escapeSequence =
+highlight-escape =
     .title = Séquence d'échappement
-placeable-parser-filePattern =
-    .title = Emplacement de fichier
-placeable-parser-javaFormattingVariable =
-    .title = Variable de mise en forme Java Message
-placeable-parser-jsonPlaceholder =
-    .title = Emplacment JSON
-placeable-parser-multipleSpaces =
-    .title = Espaces multiple
-placeable-parser-narrowNonBreakingSpace =
-    .title = Espace insécable fine
-placeable-parser-newlineCharacter =
+highlight-newline =
     .title = Caractère de nouvelle ligne
-placeable-parser-newlineEscape =
-    .title = Caractère de nouvelle ligne échappé
-placeable-parser-nonBreakingSpace =
-    .title = Espace insécable
-placeable-parser-nsisVariable =
-    .title = Variable NSIS
-placeable-parser-numberString =
+highlight-number =
     .title = Nombre
-placeable-parser-optionPattern =
-    .title = Otion de ligne de commande
-placeable-parser-punctuation =
+highlight-placeholder =
+    .title = Emplacement
+highlight-placeholder-entity =
+    .title = Entité HTML/XML
+highlight-placeholder-html =
+    .title = Balise HTML
+highlight-placeholder-printf =
+    .title = Chaîne de mise en forme Printf
+highlight-punctuation =
     .title = Ponctuation
-placeable-parser-pythonFormatNamedString =
-    .title = Chaîne de mise en forme Python
-placeable-parser-pythonFormatString =
-    .title = Chaîne de mise en forme Python
-placeable-parser-pythonFormattingVariable =
-    .title = Variable de chaîne de mise en forme Python
-placeable-parser-qtFormatting =
-    .title = Variable de chaîne de mise en forme Qt
-placeable-parser-stringFormattingVariable =
-    .title = Variable de chaîne de mise en forme
-placeable-parser-shortCapitalNumberString =
-    .title = Chaîne courte de majuscules et chiffres
-placeable-parser-tabCharacter =
+highlight-spaces =
+    .title = Espace inhabituelle
+highlight-tab =
     .title = Caractère tabulation
-placeable-parser-thinSpace =
-    .title = Espace fine
-placeable-parser-unusualSpace =
-    .title = Espace inhabituelle dans la chaîne
-placeable-parser-uriPattern =
-    .title = URI
-placeable-parser-xmlEntity =
-    .title = Entité XML
-placeable-parser-xmlTag =
-    .title = Balise XML
+highlight-url =
+    .title = URL
 
 
 ## Resource menu

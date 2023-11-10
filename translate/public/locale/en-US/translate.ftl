@@ -1,10 +1,5 @@
 ### Localization for the Translate page of Pontoon
 
-# Naming convention for l10n IDs: "module-ComponentName--string-summary".
-# This allows us to minimize the risk of conflicting IDs throughout the app.
-# Please sort alphabetically by (module name, component name). For each module,
-# keep strings in order of appearance.
-
 
 ## Pontoon Add-On promotion
 ## Renders Pontoon Add-On promotion banner
@@ -570,75 +565,35 @@ otherlocales-Translation--header-link =
     .title = Open string in { $locale } ({ $code })
 
 
-## Placeable parsers
+## Message terms
 ## Used to mark specific terms and characters in translations.
 
-placeable-parser-altAttribute =
-    .title = 'alt' attribute inside XML tag
-placeable-parser-camelCaseString =
-    .title = Camel case string
-placeable-parser-emailPattern =
-    .title = Email
-placeable-parser-escapeSequence =
-    .title = Escape sequence
-placeable-parser-filePattern =
-    .title = File location
-placeable-parser-fluentFunction =
-    .title = Fluent function
-placeable-parser-fluentParametrizedTerm =
-    .title = Fluent parametrized term
-placeable-parser-fluentString =
-    .title = Fluent string
-placeable-parser-fluentTerm =
-    .title = Fluent term
-placeable-parser-javaFormattingVariable =
-    .title = Java Message formatting variable
-placeable-parser-jsonPlaceholder =
-    .title = JSON placeholder
-placeable-parser-leadingSpace =
-    .title = Leading space
-placeable-parser-multipleSpaces =
-    .title = Multiple spaces
-placeable-parser-narrowNonBreakingSpace =
-    .title = Narrow non-breaking space
-placeable-parser-newlineCharacter =
-    .title = Newline character
-placeable-parser-newlineEscape =
-    .title = Escaped newline
-placeable-parser-nonBreakingSpace =
-    .title = Non-breaking space
-placeable-parser-nsisVariable =
-    .title = NSIS Variable
-placeable-parser-numberString =
-    .title = Number
-placeable-parser-optionPattern =
+highlight-cli-option =
     .title = Command line option
-placeable-parser-punctuation =
+highlight-email =
+    .title = Email
+highlight-escape =
+    .title = Escape sequence
+highlight-newline =
+    .title = Newline character
+highlight-number =
+    .title = Number
+highlight-placeholder =
+    .title = Placeholder
+highlight-placeholder-entity =
+    .title = HTML/XML entity
+highlight-placeholder-html =
+    .title = HTML tag
+highlight-placeholder-printf =
+    .title = Printf format string
+highlight-punctuation =
     .title = Punctuation
-placeable-parser-pythonFormatNamedString =
-    .title = Python format string
-placeable-parser-pythonFormatString =
-    .title = Python format string
-placeable-parser-pythonFormattingVariable =
-    .title = Python string formatting variable
-placeable-parser-qtFormatting =
-    .title = Qt string formatting variable
-placeable-parser-shortCapitalNumberString =
-    .title = Short capital letter and number string
-placeable-parser-stringFormattingVariable =
-    .title = String formatting variable
-placeable-parser-tabCharacter =
+highlight-spaces =
+    .title = Unusual space
+highlight-tab =
     .title = Tab character
-placeable-parser-thinSpace =
-    .title = Thin space
-placeable-parser-unusualSpace =
-    .title = Unusual space in string
-placeable-parser-uriPattern =
-    .title = URI
-placeable-parser-xmlEntity =
-    .title = XML entity
-placeable-parser-xmlTag =
-    .title = XML tag
+highlight-url =
+    .title = URL
 
 
 ## Project menu

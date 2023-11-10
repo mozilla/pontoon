@@ -36,7 +36,7 @@ describe('<OriginalString>', () => {
   it('renders original input as simple string', () => {
     const wrapper = mountOriginalString();
 
-    expect(wrapper.find('.original').children().children().text()).toMatch(
+    expect(wrapper.find('.original').children().text()).toMatch(
       /^Hello\W*\nSimple\W*\nString$/,
     );
   });

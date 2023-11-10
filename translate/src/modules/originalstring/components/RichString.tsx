@@ -31,9 +31,7 @@ export function RichString({
             </td>
             <td>
               <span>
-                <Highlight fluent terms={terms}>
-                  {handle.current.value}
-                </Highlight>
+                <Highlight terms={terms}>{handle.current.value}</Highlight>
               </span>
             </td>
           </tr>
