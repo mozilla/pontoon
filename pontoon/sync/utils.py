@@ -132,6 +132,21 @@ def source_to_locale_path(path):
     return path
 
 
+def escape_apostrophes(value):
+    """
+    Apostrophes (straight single quotes) have special usage in Android strings.xml files,
+    so they need to be escaped according to the standard XML/HTML escaping rules.
+
+    Learn more:
+    https://developer.android.com/guide/topics/resources/string-resource.html#escaping_quotes
+    """
+    return value.replace("'", "\\'")
+
+
+def unescape_apostrophes(value):
+    return value.replace("\\'", "'")
+
+
 def escape_quotes(value):
     """
     DTD files can use single or double quotes for identifying strings,
