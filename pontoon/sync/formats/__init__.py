@@ -7,7 +7,6 @@ import os.path
 import fnmatch
 
 from pontoon.sync.formats import (
-    compare_locales,
     ftl,
     json_extensions,
     json_keyvalue,
@@ -15,6 +14,7 @@ from pontoon.sync.formats import (
     po,
     silme,
     xliff,
+    xml,
 )
 
 # To add support for a new resource format, add an entry to this dict
@@ -33,7 +33,7 @@ SUPPORTED_FORMAT_PARSERS = {
     "*.properties": silme.parse_properties,
     "*.xlf": xliff.parse,
     "*.xliff": xliff.parse,
-    "*.xml": compare_locales.parse,
+    "*.xml": xml.parse,
 }
 
 

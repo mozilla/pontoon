@@ -2,7 +2,7 @@ from pontoon.base.tests import TestCase
 from pontoon.sync.formats import are_compatible_files
 
 
-class CompareLocalesResourceTests(TestCase):
+class FormatsTests(TestCase):
     def test_are_compatible_files(self):
         """
         Return True if both extensions use the same file parser.

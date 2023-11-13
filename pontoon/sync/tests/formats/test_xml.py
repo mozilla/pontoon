@@ -12,11 +12,11 @@ from pontoon.base.tests import (
     TestCase,
 )
 from pontoon.sync.exceptions import ParseError
-from pontoon.sync.formats import compare_locales
+from pontoon.sync.formats import xml
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
-class CompareLocalesResourceTests(TestCase):
+class XMLResourceTests(TestCase):
     def setUp(self):
         super().setUp()
         self.tempdir = tempfile.mkdtemp()
@@ -46,9 +46,9 @@ class CompareLocalesResourceTests(TestCase):
             suffix=".xml",
             directory=self.tempdir,
         )
-        source_resource = compare_locales.CompareLocalesResource(source_path)
+        source_resource = xml.XMLResource(source_path)
 
-        return compare_locales.CompareLocalesResource(
+        return xml.XMLResource(
             path,
             source_resource=source_resource,
         )
@@ -60,7 +60,7 @@ class CompareLocalesResourceTests(TestCase):
         """
         path = self.get_invalid_file_path()
         with pytest.raises(ParseError):
-            compare_locales.CompareLocalesResource(path, source_resource=None)
+            xml.XMLResource(path, source_resource=None)
 
     def test_init_missing_resource(self):
         """
@@ -69,7 +69,7 @@ class CompareLocalesResourceTests(TestCase):
         """
         path = self.get_nonexistant_file_path()
         with pytest.raises(ParseError):
-            compare_locales.CompareLocalesResource(path, source_resource=None)
+            xml.XMLResource(path, source_resource=None)
 
     def test_init_missing_resource_with_source(self):
         """
@@ -113,7 +113,7 @@ BASE_ANDROID_XML_FILE = """<?xml version="1.0" encoding="utf-8"?>
 
 
 class AndroidXMLTests(FormatTestsMixin, TestCase):
-    parse = staticmethod(compare_locales.parse)
+    parse = staticmethod(xml.parse)
     supports_keys = False
     supports_source = False
     supports_source_string = False
