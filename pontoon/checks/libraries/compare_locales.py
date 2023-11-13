@@ -10,7 +10,7 @@ from compare_locales.parser.properties import PropertiesEntityMixin
 
 from compare_locales.paths import File
 
-from pontoon.sync.utils import escape_quotes, escape_apostrophes
+from pontoon.sync.utils import escape_apostrophes
 
 
 CommentEntity = namedtuple("Comment", ("all",))
@@ -102,10 +102,6 @@ def cast_to_compare_locales(resource_ext, entity, string):
         )
 
     elif resource_ext == ".dtd":
-        if "mobile/android/base" in entity.resource.path:
-            entity.string = escape_quotes(entity.string)
-            string = escape_quotes(string)
-
         return (
             CompareDTDEntity(
                 entity.key,
@@ -186,9 +182,6 @@ def run_checks(entity, locale_code, string):
         Both keys are optional.
     """
     resource_ext = f".{entity.resource.format}"
-    extra_tests = (
-        {"android-dtd"} if "mobile/android/base" in entity.resource.path else None
-    )
 
     source_ent, translation_ent = cast_to_compare_locales(
         resource_ext,
@@ -198,7 +191,6 @@ def run_checks(entity, locale_code, string):
 
     checker = getChecker(
         File(entity.resource.path, entity.resource.path, locale=locale_code),
-        extra_tests,
     )
     if checker is None:
         # compare-locales has no checks for this format, it's OK.
