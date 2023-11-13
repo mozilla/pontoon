@@ -134,8 +134,8 @@ def source_to_locale_path(path):
 
 def escape_apostrophes(value):
     """
-    Apostrophes (straight single quotes) have special usage in Android strings.xml files,
-    so they need to be escaped according to the standard XML/HTML escaping rules.
+    Apostrophes (straight single quotes) have special meaning in Android strings.xml files,
+    so they need to be escaped using a preceding backslash.
 
     Learn more:
     https://developer.android.com/guide/topics/resources/string-resource.html#escaping_quotes
