@@ -7,6 +7,7 @@ from textwrap import dedent
 import pytest
 
 from pontoon.base.tests import (
+    assert_attributes_equal,
     create_named_tempfile,
     LocaleFactory,
     TestCase,
@@ -319,3 +320,39 @@ class AndroidXMLTests(FormatTestsMixin, TestCase):
         self.run_save_translation_identical(
             source_string, input_string, expected_string
         )
+
+    def test_quotes(self):
+        tempdir = tempfile.mkdtemp()
+
+        path = create_named_tempfile(
+            dedent(
+                """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="String">\'</string>
+</resources>
+        """
+            ),
+            prefix="strings",
+            suffix=".xml",
+            directory=tempdir,
+        )
+
+        resource = self.parse(path)
+
+        # Unescape quotes when parsing
+        assert_attributes_equal(resource.translations[0], strings={None: "'"})
+
+        # Escape quotes when saving
+        translated_resource = xml.XMLResource(path, source_resource=resource)
+        translated_resource.translations[0].strings[None] = "Apostrophe '"
+
+        translated_resource.save(self.locale)
+
+        expected_string = dedent(
+            """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="String">Apostrophe \\'</string>
+</resources>
+        """
+        )
+        self.assert_file_content(path, expected_string)
