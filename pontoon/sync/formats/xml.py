@@ -1,6 +1,5 @@
 """
-Parser and serializer for file formats supported by compare-locales library:
-https://hg.mozilla.org/l10n/compare-locales/
+Parser for the strings.xml file format.
 """
 import logging
 
@@ -12,16 +11,20 @@ from compare_locales import (
 
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
+from pontoon.sync.utils import (
+    create_parent_directory,
+    escape_apostrophes,
+    unescape_apostrophes,
+)
 from pontoon.sync.vcs.models import VCSTranslation
 
 
 log = logging.getLogger(__name__)
 
 
-class CompareLocalesEntity(VCSTranslation):
+class XMLEntity(VCSTranslation):
     """
-    Represents an entity in a file handled by compare-locales.
+    Represents an entity in an XML file.
     """
 
     def __init__(self, key, string, comment, order):
@@ -38,7 +41,7 @@ class CompareLocalesEntity(VCSTranslation):
         self.source = []
 
 
-class CompareLocalesResource(ParsedResource):
+class XMLResource(ParsedResource):
     def __init__(self, path, source_resource=None):
         self.path = path
         self.entities = OrderedDict()  # Preserve entity order.
@@ -57,7 +60,7 @@ class CompareLocalesResource(ParsedResource):
         # source resource entity.
         if source_resource:
             for key, entity in source_resource.entities.items():
-                self.entities[key] = CompareLocalesEntity(
+                self.entities[key] = XMLEntity(
                     entity.key,
                     None,
                     None,
@@ -79,9 +82,9 @@ class CompareLocalesResource(ParsedResource):
 
         for entity in self.parsed_objects:
             if isinstance(entity, parser.Entity):
-                self.entities[entity.key] = CompareLocalesEntity(
+                self.entities[entity.key] = XMLEntity(
                     entity.key,
-                    entity.unwrap(),
+                    unescape_apostrophes(entity.unwrap()),
                     entity.pre_comment,
                     order,
                 )
@@ -99,7 +102,7 @@ class CompareLocalesResource(ParsedResource):
 
         # A dictionary of new translations
         new_l10n = {
-            key: entity.strings[None] if entity.strings else None
+            key: escape_apostrophes(entity.strings[None]) if entity.strings else None
             for key, entity in self.entities.items()
         }
 
@@ -120,8 +123,8 @@ class CompareLocalesResource(ParsedResource):
 
 def parse(path, source_path=None, locale=None):
     if source_path is not None:
-        source_resource = CompareLocalesResource(source_path)
+        source_resource = XMLResource(source_path)
     else:
         source_resource = None
 
-    return CompareLocalesResource(path, source_resource)
+    return XMLResource(path, source_resource)
