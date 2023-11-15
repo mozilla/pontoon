@@ -26,7 +26,7 @@ def unescape_strings_xml_apostrophes(apps, schema_editor):
     )
     source_tm_entries = tm_entries.filter(source__contains="\\'")
     source_tm_entries.update(source=Replace("source", Value("\\'"), Value("'")))
-    target_tm_entries = tm_entries.filter(source__contains="\\'")
+    target_tm_entries = tm_entries.filter(target__contains="\\'")
     target_tm_entries.update(target=Replace("target", Value("\\'"), Value("'")))
 
 
