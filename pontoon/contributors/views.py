@@ -314,7 +314,7 @@ def settings(request):
     # Set custom homepage selector value
     custom_homepage_code = profile.custom_homepage
     custom_homepage_locale = get_locale_or_redirect(
-        custom_homepage_code, request, "pontoon.contributors.views.settings", "locale"
+        custom_homepage_code, "pontoon.contributors.views.settings", "locale"
     )
     if isinstance(custom_homepage_locale, HttpResponseRedirect):
         return custom_homepage_locale
@@ -326,7 +326,7 @@ def settings(request):
     # Set preferred source locale
     preferred_source_code = profile.preferred_source_locale
     preferred_source_locale = get_locale_or_redirect(
-        preferred_source_code, request, "pontoon.contributors.views.settings", "locale"
+        preferred_source_code, "pontoon.contributors.views.settings", "locale"
     )
     if isinstance(preferred_source_locale, HttpResponseRedirect):
         return preferred_source_locale

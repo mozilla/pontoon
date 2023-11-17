@@ -639,7 +639,7 @@ def get_project_or_redirect(
             raise Http404
 
 
-def get_locale_or_redirect(code, request, redirect_view_name, url_arg_name, **kwargs):
+def get_locale_or_redirect(code, redirect_view_name, url_arg_name, **kwargs):
     """
     Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory 
     for a record of the old code. If an entry is found, it redirects to the view specified by redirect_view_name 

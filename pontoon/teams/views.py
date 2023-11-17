@@ -51,7 +51,7 @@ def teams(request):
 
 def team(request, locale):
     """Team dashboard."""
-    locale = get_locale_or_redirect(locale, request, "pontoon.teams.team", "locale")
+    locale = get_locale_or_redirect(locale, "pontoon.teams.team", "locale")
     if isinstance(locale, HttpResponseRedirect):
         return locale
     available_count = locale.project_set.available().visible_for(request.user).count()

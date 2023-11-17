@@ -44,7 +44,6 @@ def translate(request, locale, project, resource):
     # Validate Locale
     locale = get_locale_or_redirect(
         locale,
-        request,
         "pontoon.translate",
         "locale",
         project=project,

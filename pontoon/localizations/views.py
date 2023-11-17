@@ -26,7 +26,7 @@ from pontoon.tags.utils import TagsTool
 def localization(request, code, slug):
     """Locale-project overview."""
     locale = get_locale_or_redirect(
-        code, request, "pontoon.localizations.localization", "code", slug=slug
+        code, "pontoon.localizations.localization", "code", slug=slug
     )
     if isinstance(locale, HttpResponseRedirect):
         return locale
