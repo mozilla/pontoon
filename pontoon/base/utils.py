@@ -641,9 +641,9 @@ def get_project_or_redirect(
 
 def get_locale_or_redirect(code, redirect_view_name, url_arg_name, **kwargs):
     """
-    Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory 
-    for a record of the old code. If an entry is found, it redirects to the view specified by redirect_view_name 
-    using the new locale code. The url_arg_name parameter specifies the argument name for the locale code 
+    Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory
+    for a record of the old code. If an entry is found, it redirects to the view specified by redirect_view_name
+    using the new locale code. The url_arg_name parameter specifies the argument name for the locale code
     used in the URL pattern of the redirect view. If the old code is not found in the history, it raises an Http404 error.
     """
     # Avoid circular import; someday we should refactor to avoid.
