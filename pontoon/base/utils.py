@@ -637,3 +637,31 @@ def get_project_or_redirect(
             return redirect(redirect_url)
         else:
             raise Http404
+
+
+def get_locale_or_redirect(code, request, redirect_view_name, url_arg_name, **kwargs):
+    """
+    Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory 
+    for a record of the old code. If an entry is found, it redirects to the view specified by redirect_view_name 
+    using the new locale code. The url_arg_name parameter specifies the argument name for the locale code 
+    used in the URL pattern of the redirect view. If the old code is not found in the history, it raises an Http404 error.
+    """
+    # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import Locale, LocaleCodeHistory
+
+    try:
+        locale = Locale.objects.get(code=code)
+        return locale
+    except Locale.DoesNotExist:
+        code_history = (
+            LocaleCodeHistory.objects.filter(old_code=code)
+            .order_by("-created_at")
+            .first()
+        )
+        if code_history is not None:
+            redirect_kwargs = {url_arg_name: code_history.locale.code}
+            redirect_kwargs.update(kwargs)
+            redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
+            return redirect(redirect_url)
+        else:
+            raise Http404

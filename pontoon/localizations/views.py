@@ -13,7 +13,11 @@ from pontoon.base.models import (
     ProjectLocale,
     TranslatedResource,
 )
-from pontoon.base.utils import require_AJAX, get_project_or_redirect
+from pontoon.base.utils import (
+    require_AJAX,
+    get_project_or_redirect,
+    get_locale_or_redirect,
+)
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.tags.utils import TagsTool
@@ -21,7 +25,11 @@ from pontoon.tags.utils import TagsTool
 
 def localization(request, code, slug):
     """Locale-project overview."""
-    locale = get_object_or_404(Locale, code=code)
+    locale = get_locale_or_redirect(
+        code, request, "pontoon.localizations.localization", "code", slug=slug
+    )
+    if isinstance(locale, HttpResponseRedirect):
+        return locale
 
     project = get_project_or_redirect(
         slug, "pontoon.localizations.localization", "slug", request.user, code=code
