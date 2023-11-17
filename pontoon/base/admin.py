@@ -1,5 +1,3 @@
-import csv
-import json
 import uuid
 
 from django.contrib import admin, messages
@@ -8,13 +6,13 @@ from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import User
 from django.forms import ChoiceField
 from django.forms.models import ModelForm
-from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
 from guardian.admin import GuardedModelAdmin
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models, utils
+from pontoon.projects.views import generate_translation_stats_csv
 from pontoon.teams.utils import log_user_groups
 from pontoon.terminology.models import Term
 
@@ -270,67 +268,9 @@ class ProjectAdmin(GuardedModelAdmin):
                 level=messages.ERROR,
             )
             return
-
-        p = queryset.first()
-        project_locales = p.project_locale.all()
-        pl_names = [pl.locale.name for pl in project_locales]
-
-        response = HttpResponse(content_type="text/csv")
-        response[
-            "Content-Disposition"
-        ] = f'attachment; filename="{p.slug}_approved_translations_or_stats.csv"'
-
-        headers = [
-            "Project",
-            "Resource",
-            "Translation Key",
-            "Translation Source String",
-        ] + pl_names
-        writer = csv.writer(response, quoting=csv.QUOTE_ALL)
-        writer.writerow(headers)
-
-        csv_dict = {field: [] for field in headers}
-        for resource in p.resources.all():
-            all_resource_entities = resource.entities.all()
-            for i, pl in enumerate(project_locales):
-                # l = pl.locale
-                # q = Q(Q(resource__project__id=p.id) & Q(resource__id=resource.id) & ~Entity.objects.translated(l, p))
-                # untranslated_entities = Entity.objects.filter(q)
-                if i == 0:
-                    csv_dict["Project"] += [p.name] * len(all_resource_entities)
-                    csv_dict["Resource"] += [resource.path] * len(all_resource_entities)
-                for entity in all_resource_entities:
-                    if i == 0:
-                        if resource.format == "json":
-                            key: str = ".".join(json.loads(entity.key))
-                        elif resource.format == "xliff":
-                            key = entity.key.split("\x04")[-1]
-                        else:
-                            key = entity.key
-                        csv_dict["Translation Key"].append(key)
-                        csv_dict["Translation Source String"].append(entity.string)
-                    if translation := entity.translation_set.filter(
-                        active=True, locale_id=pl.locale.id
-                    ).first():
-                        if translation.approved:
-                            mark = translation.string
-                        elif translation.pretranslated:
-                            mark = "PRETRANSLATED"
-                        elif translation.rejected:
-                            mark = "REJECTED"
-                        elif translation.fuzzy:
-                            mark = "FUZZY"
-                        else:
-                            mark = "UNREVIEWED"
-                    else:
-                        mark = "MISSING"
-                    csv_dict[pl.locale.name].append(mark)
-
-        columns = [column for column in csv_dict.values()]
-        rows = list(zip(*columns))
-        writer.writerows(rows)
-
-        return response
+        project = queryset.first()
+        user = request.user
+        return generate_translation_stats_csv(project=project, user=user)
 
 
 class ProjectLocaleAdmin(GuardedModelAdmin):

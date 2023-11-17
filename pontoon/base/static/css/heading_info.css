@@ -191,3 +191,12 @@ ul {
 #heading .non-plottable .unreviewed.pending .status.fas:before {
   color: var(--status-unreviewed);
 }
+#heading .controls label {
+  color: var(--white-1);
+  background-color: var(--button-background-1);
+}
+
+#heading .controls label:hover {
+  color: var(--black-3);
+  background-color: var(--status-translated);
+}

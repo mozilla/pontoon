@@ -33,3 +33,6 @@ docker/config/server.env-e
 
 # PDM
 .pdm-python
+
+# Cursor IDE
+.cursorignore
