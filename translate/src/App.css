@@ -36,6 +36,17 @@
   width: 75%;
 }
 
+@media screen and (max-width: 600px) {
+  #app > .main-content > .panel-content {
+    width: 100%;
+  }
+
+  #app > .main-content > .panel-list {
+    left: -100%;
+    width: 0%;
+  }
+}
+
 /* NProgress: A nanoscopic progress bar. */
 #nprogress {
   pointer-events: none;
