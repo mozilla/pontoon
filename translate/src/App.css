@@ -37,6 +37,10 @@
 }
 
 @media screen and (max-width: 600px) {
+  #app > header {
+    min-width: auto;
+  }
+
   #app > .main-content > .panel-content {
     width: 100%;
   }
