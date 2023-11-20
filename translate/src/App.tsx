@@ -22,6 +22,7 @@ import { AddonPromotion } from './modules/addonpromotion/components/AddonPromoti
 import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
+import { EntitiesListToggle } from './modules/entitieslist/components/EntitiesListToggle';
 import { Entity } from './modules/entitydetails/components/Entity';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar/components/Navigation';
@@ -68,6 +69,7 @@ export function App() {
                 <AddonPromotion />
                 <header>
                   <Navigation />
+                  <EntitiesListToggle />
                   <ResourceProgress />
                   {allProjects ? null : <ProjectInfo />}
                   <NotificationPanel />

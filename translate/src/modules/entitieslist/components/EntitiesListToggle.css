@@ -1,0 +1,22 @@
+.entities-list-toggle {
+  display: none;
+  float: left;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .entities-list-toggle {
+    display: block;
+  }
+}
+
+.entities-list-toggle .icon {
+  border: 2px solid var(--icon-border-1);
+  border-radius: 6px;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+  margin: 6px 5px 6px 5px;
+  padding: 12px;
+  text-align: center;
+}

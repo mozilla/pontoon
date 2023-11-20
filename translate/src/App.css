@@ -45,9 +45,18 @@
     width: 100%;
   }
 
+  #app > .main-content.entities-list > .panel-content {
+    width: 0%;
+  }
+
   #app > .main-content > .panel-list {
     left: -100%;
     width: 0%;
+  }
+
+  #app > .main-content.entities-list > .panel-list {
+    left: 0%;
+    width: 100%;
   }
 }
 
