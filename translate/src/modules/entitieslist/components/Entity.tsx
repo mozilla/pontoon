@@ -62,6 +62,9 @@ export function Entity({
         )
       ) {
         selectEntity(entity);
+        document
+          .querySelector('#app > .main-content')
+          .classList.toggle('entities-list');
       }
     },
     [entity, selectEntity],

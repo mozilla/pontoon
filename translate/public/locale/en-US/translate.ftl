@@ -228,6 +228,8 @@ editor-UnsavedChanges--proceed = PROCEED
 ## Entity Details Navigation
 ## Shows Copy Link and Next/Previous buttons.
 
+entitydetails-EntityNavigation--string-list = <glyph></glyph>STRINGS
+    .title = Go to String List
 entitydetails-EntityNavigation--link = <glyph></glyph>COPY LINK
     .title = Copy Link to String
 entitydetails-EntityNavigation--next = <glyph></glyph>NEXT

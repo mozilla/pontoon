@@ -13,6 +13,12 @@
   padding: 0;
 }
 
+.entity-navigation button.string-list {
+  display: none;
+  float: left;
+  margin-right: 30px;
+}
+
 .entity-navigation button.link {
   float: left;
 }
@@ -33,4 +39,15 @@
 
 .entity-navigation button .fa {
   padding-right: 5px;
+}
+
+@media screen and (max-width: 600px) {
+  .entity-navigation button.string-list {
+    display: block;
+    margin-right: 15px;
+  }
+
+  .entity-navigation button.previous {
+    margin-right: 15px;
+  }
 }

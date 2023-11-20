@@ -21,6 +21,12 @@ export function EntityNavigation(): React.ReactElement {
   const previousEntity = usePreviousEntity();
   const { checkUnsavedChanges } = useContext(UnsavedActions);
 
+  const goToStringList = () => {
+    document
+      .querySelector('#app > .main-content')
+      .classList.toggle('entities-list');
+  };
+
   const copyLinkToClipboard = useCallback(async () => {
     const { locale, project, resource, entity } = location;
 
@@ -80,6 +86,19 @@ export function EntityNavigation(): React.ReactElement {
 
   return (
     <div className='entity-navigation clearfix'>
+      <Localized
+        id='entitydetails-EntityNavigation--string-list'
+        attrs={{ title: true }}
+        elems={{ glyph: <i className='fa fa-bars fa-lg' /> }}
+      >
+        <button
+          className='string-list'
+          title='Go to String List'
+          onClick={goToStringList}
+        >
+          {'<glyph></glyph>STRINGS'}
+        </button>
+      </Localized>
       <Localized
         id='entitydetails-EntityNavigation--link'
         attrs={{ title: true }}
