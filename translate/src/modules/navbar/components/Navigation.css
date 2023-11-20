@@ -5,7 +5,11 @@
 }
 
 @media screen and (max-width: 600px) {
-  .navigation {
+  .navigation > ul > li:first-child {
+    margin-right: -7px;
+  }
+
+  .navigation > ul > li:not(:first-child) {
     display: none;
   }
 }
