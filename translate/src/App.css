@@ -47,6 +47,7 @@
 
   #app > .main-content.entities-list > .panel-content {
     width: 0%;
+    overflow: hidden;
   }
 
   #app > .main-content > .panel-list {
