@@ -74,37 +74,37 @@
     display: none;
   }
 
-  /* String List */
-  #app > .main-content > .panel-list {
-    left: -100%;
-    width: 0%;
+  /* Main Content */
+  #app > .main-content {
+    overflow-x: hidden; /* Prevent horizontal scroll */
   }
 
-  #app > .main-content.entities-list > .panel-list {
-    left: 0%;
+  #app > .main-content > .panel-list,
+  #app > .main-content > .panel-content {
+    flex: none;
+    left: -100%;
+    transition: left 0.3s ease-in-out;
     width: 100%;
+  }
+
+  /* String List */
+  #app > .main-content.entities-list {
+    overflow: hidden; /* Prevent double scroll */
+  }
+
+  #app > .main-content.entities-list > .panel-list,
+  #app > .main-content.entities-list > .panel-content {
+    left: 0%;
   }
 
   /* Editor */
-  #app > .main-content > .panel-content {
-    width: 100%;
-  }
-
-  #app > .main-content.entities-list > .panel-content {
-    width: 0%;
-    overflow: hidden;
-  }
-
   #app .entity-details {
     display: block;
+  }
+
+  #app .entity-details > section {
     height: auto;
-  }
-
-  #app .entity-details .main-column {
-    width: 100%;
-  }
-
-  #app .entity-details .third-column {
+    max-height: none;
     width: 100%;
   }
 

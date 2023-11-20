@@ -89,7 +89,7 @@ export function EntityNavigation(): React.ReactElement {
       <Localized
         id='entitydetails-EntityNavigation--string-list'
         attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-bars fa-lg' /> }}
+        elems={{ glyph: <i className='fa fa-chevron-left fa-lg' /> }}
       >
         <button
           className='string-list'
