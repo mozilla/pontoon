@@ -35,31 +35,6 @@
   width: 75%;
 }
 
-@media screen and (max-width: 600px) {
-  #app > header {
-    min-width: auto;
-  }
-
-  #app > .main-content > .panel-content {
-    width: 100%;
-  }
-
-  #app > .main-content.entities-list > .panel-content {
-    width: 0%;
-    overflow: hidden;
-  }
-
-  #app > .main-content > .panel-list {
-    left: -100%;
-    width: 0%;
-  }
-
-  #app > .main-content.entities-list > .panel-list {
-    left: 0%;
-    width: 100%;
-  }
-}
-
 /* NProgress: A nanoscopic progress bar. */
 #nprogress {
   pointer-events: none;
@@ -85,4 +60,62 @@
     0 0 5px var(--status-translated);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
+}
+
+@media screen and (max-width: 600px) {
+  /* Header */
+  #app > header {
+    min-width: auto;
+  }
+
+  #app .navigation > ul > li:first-child {
+    margin-right: -7px;
+  }
+
+  #app .navigation > ul > li:not(:first-child) {
+    display: none;
+  }
+
+  /* String List */
+  #app > .main-content > .panel-list {
+    left: -100%;
+    width: 0%;
+  }
+
+  #app > .main-content.entities-list > .panel-list {
+    left: 0%;
+    width: 100%;
+  }
+
+  /* Editor */
+  #app > .main-content > .panel-content {
+    width: 100%;
+  }
+
+  #app > .main-content.entities-list > .panel-content {
+    width: 0%;
+    overflow: hidden;
+  }
+
+  #app .entity-details {
+    display: block;
+    height: auto;
+  }
+
+  #app .entity-details .main-column {
+    width: 100%;
+  }
+
+  #app .entity-details .third-column {
+    width: 100%;
+  }
+
+  #app .entity-navigation button.string-list {
+    display: block;
+    margin-right: 15px;
+  }
+
+  #app .entity-navigation button.previous {
+    margin-right: 15px;
+  }
 }

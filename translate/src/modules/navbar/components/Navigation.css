@@ -4,16 +4,6 @@
   line-height: 60px;
 }
 
-@media screen and (max-width: 600px) {
-  .navigation > ul > li:first-child {
-    margin-right: -7px;
-  }
-
-  .navigation > ul > li:not(:first-child) {
-    display: none;
-  }
-}
-
 .navigation > ul > li {
   float: left;
 }

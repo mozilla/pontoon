@@ -18,18 +18,3 @@
   border-left: 1px solid var(--main-border-1);
   box-sizing: border-box;
 }
-
-@media screen and (max-width: 600px) {
-  .entity-details {
-    display: block;
-    height: auto;
-  }
-
-  .entity-details .main-column {
-    width: 100%;
-  }
-
-  .entity-details .third-column {
-    width: 100%;
-  }
-}
