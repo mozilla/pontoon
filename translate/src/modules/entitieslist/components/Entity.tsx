@@ -6,7 +6,9 @@ import type { Entity as EntityType } from '~/api/entity';
 import { Locale } from '~/context/Locale';
 import type { Location } from '~/context/Location';
 import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
+import { toggleEntitiesList } from '~/modules/entitieslist/actions';
 import { Translation } from '~/modules/translation';
+import { useAppDispatch } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './Entity.css';
@@ -50,6 +52,7 @@ export function Entity({
   selectEntity,
   toggleForBatchEditing,
 }: Props): React.ReactElement<'li'> {
+  const dispatch = useAppDispatch();
   const isTranslator = useTranslator();
   const [areSiblingsActive, setSiblingsActive] = useState(false);
 
@@ -62,9 +65,7 @@ export function Entity({
         )
       ) {
         selectEntity(entity);
-        document
-          .querySelector('#app > .main-content')
-          .classList.toggle('entities-list');
+        dispatch(toggleEntitiesList());
       }
     },
     [entity, selectEntity],

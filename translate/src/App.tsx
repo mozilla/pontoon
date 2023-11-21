@@ -22,6 +22,7 @@ import { AddonPromotion } from './modules/addonpromotion/components/AddonPromoti
 import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
+import { useEntitiesList } from './modules/entitieslist/hooks';
 import { Entity } from './modules/entitydetails/components/Entity';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar/components/Navigation';
@@ -36,6 +37,7 @@ export function App() {
   const dispatch = useAppDispatch();
   const location = useContext(Location);
   const batchactions = useBatchactions();
+  const entitiesList = useEntitiesList();
   const { l10n } = useLocalization();
 
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -73,7 +75,11 @@ export function App() {
                   <NotificationPanel />
                   <UserControls />
                 </header>
-                <section className='main-content'>
+                <section
+                  className={`main-content ${
+                    entitiesList.show ? 'entities-list' : ''
+                  }`}
+                >
                   <section className='panel-list'>
                     <SearchBox />
                     <EntitiesList />
