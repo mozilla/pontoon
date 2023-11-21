@@ -149,6 +149,7 @@ export function Entity({
             search={parameters.search}
           />
         </p>
+        <div className='indicator fa fa-chevron-right'></div>
       </div>
     </li>
   );

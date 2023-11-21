@@ -54,6 +54,14 @@
   font-style: italic;
 }
 
+.entity .indicator {
+  display: none;
+  color: var(--light-grey-6);
+  position: absolute;
+  top: 26px;
+  right: 10px;
+}
+
 /* Make selection area bigger and fit the entire row for easier use */
 .entity > .status {
   margin: -13px -13px -13px -16px;

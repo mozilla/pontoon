@@ -97,6 +97,10 @@
     left: 0%;
   }
 
+  #app .entity:hover .indicator {
+    display: block;
+  }
+
   /* Editor */
   #app .entity-details {
     display: block;
