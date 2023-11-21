@@ -1,7 +1,6 @@
 #app {
   display: flex;
   flex-direction: column;
-  flex-flow: column;
   height: 100%;
 }
 
@@ -15,7 +14,6 @@
 
 #app > .main-content {
   display: flex;
-  flex: 1;
   justify-content: space-between;
   overflow: auto;
 }
