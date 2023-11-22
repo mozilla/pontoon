@@ -1,4 +1,5 @@
 import { useLocalization } from '@fluent/react';
+import classNames from 'classnames';
 import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
@@ -60,6 +61,11 @@ export function App() {
     return <WaveLoader />;
   }
 
+  const mcClass = classNames(
+    'main-content',
+    entitiesList.show && 'entities-list',
+  );
+
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>
@@ -75,11 +81,7 @@ export function App() {
                   <NotificationPanel />
                   <UserControls />
                 </header>
-                <section
-                  className={`main-content ${
-                    entitiesList.show ? 'entities-list' : ''
-                  }`}
-                >
+                <section className={mcClass}>
                   <section className='panel-list'>
                     <SearchBox />
                     <EntitiesList />
