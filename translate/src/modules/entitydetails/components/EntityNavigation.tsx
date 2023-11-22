@@ -1,6 +1,7 @@
 import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect } from 'react';
 
+import { EntitiesList } from '~/context/EntitiesList';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
@@ -20,6 +21,11 @@ export function EntityNavigation(): React.ReactElement {
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
   const { checkUnsavedChanges } = useContext(UnsavedActions);
+  const entitiesList = useContext(EntitiesList);
+
+  const goToStringList = () => {
+    entitiesList.show(true);
+  };
 
   const copyLinkToClipboard = useCallback(async () => {
     const { locale, project, resource, entity } = location;
@@ -80,6 +86,19 @@ export function EntityNavigation(): React.ReactElement {
 
   return (
     <div className='entity-navigation clearfix'>
+      <Localized
+        id='entitydetails-EntityNavigation--string-list'
+        attrs={{ title: true }}
+        elems={{ glyph: <i className='fa fa-chevron-left fa-lg' /> }}
+      >
+        <button
+          className='string-list'
+          title='Go to String List'
+          onClick={goToStringList}
+        >
+          {'<glyph></glyph>STRINGS'}
+        </button>
+      </Localized>
       <Localized
         id='entitydetails-EntityNavigation--link'
         attrs={{ title: true }}

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 
 import type { Entity as EntityType } from '~/api/entity';
+import { EntitiesList } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import type { Location } from '~/context/Location';
 import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
@@ -52,6 +53,7 @@ export function Entity({
 }: Props): React.ReactElement<'li'> {
   const isTranslator = useTranslator();
   const [areSiblingsActive, setSiblingsActive] = useState(false);
+  const entitiesList = useContext(EntitiesList);
 
   const handleSelectEntity = useCallback(
     (ev: React.MouseEvent) => {
@@ -62,6 +64,7 @@ export function Entity({
         )
       ) {
         selectEntity(entity);
+        entitiesList.show(false);
       }
     },
     [entity, selectEntity],
@@ -146,6 +149,7 @@ export function Entity({
             search={parameters.search}
           />
         </p>
+        <div className='indicator fa fa-chevron-right'></div>
       </div>
     </li>
   );
