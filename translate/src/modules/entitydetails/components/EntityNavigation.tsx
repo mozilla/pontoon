@@ -21,10 +21,10 @@ export function EntityNavigation(): React.ReactElement {
   const nextEntity = useNextEntity();
   const previousEntity = usePreviousEntity();
   const { checkUnsavedChanges } = useContext(UnsavedActions);
-  const { toggleEntitiesList } = useContext(EntitiesList);
+  const { showEntitiesList } = useContext(EntitiesList);
 
   const goToStringList = () => {
-    toggleEntitiesList();
+    showEntitiesList(true);
   };
 
   const copyLinkToClipboard = useCallback(async () => {

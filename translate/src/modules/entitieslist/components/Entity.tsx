@@ -53,7 +53,7 @@ export function Entity({
 }: Props): React.ReactElement<'li'> {
   const isTranslator = useTranslator();
   const [areSiblingsActive, setSiblingsActive] = useState(false);
-  const { toggleEntitiesList } = useContext(EntitiesList);
+  const { showEntitiesList } = useContext(EntitiesList);
 
   const handleSelectEntity = useCallback(
     (ev: React.MouseEvent) => {
@@ -64,7 +64,7 @@ export function Entity({
         )
       ) {
         selectEntity(entity);
-        toggleEntitiesList();
+        showEntitiesList(false);
       }
     },
     [entity, selectEntity],

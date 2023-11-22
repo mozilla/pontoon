@@ -2,12 +2,12 @@ import { createContext, useState } from 'react';
 
 type EntitiesList = Readonly<{
   visible: boolean;
-  toggleEntitiesList(): void;
+  showEntitiesList(visible: boolean): void;
 }>;
 
 const initEntitiesList: EntitiesList = {
   visible: false,
-  toggleEntitiesList: () => {},
+  showEntitiesList: () => {},
 };
 
 export const EntitiesList = createContext(initEntitiesList);
@@ -19,10 +19,9 @@ export function EntitiesListProvider({
 }) {
   const [state, setState] = useState(() => ({
     ...initEntitiesList,
-    toggleEntitiesList: () =>
-      setState((prev) => ({ ...prev, visible: !prev.visible })),
-  }));
-
+    showEntitiesList: (visible: boolean) =>
+      setState((prev) => ({ ...prev, visible })),
+  })) as [EntitiesList, React.Dispatch<React.SetStateAction<EntitiesList>>];
   return (
     <EntitiesList.Provider value={state}>{children}</EntitiesList.Provider>
   );
