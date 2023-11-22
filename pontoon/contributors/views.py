@@ -310,14 +310,9 @@ def settings(request):
     all_locales = list(Locale.objects.all())
     all_locales.insert(0, default_homepage_locale)
 
-    # Set default for custom homepage locale based on name
-    custom_homepage_locale_object = get_locale_or_redirect(profile.custom_homepage)
-    custom_homepage_locale_name = custom_homepage_locale_object.name
-
-    if custom_homepage_locale_name:
-        custom_homepage_locale = Locale.objects.filter(
-            name=custom_homepage_locale_name
-        ).first()
+    # Set default for custom homepage locale based on code
+    if profile.custom_homepage:
+        custom_homepage_locale = get_locale_or_redirect(profile.custom_homepage)
     else:
         custom_homepage_locale = default_homepage_locale
 
@@ -326,15 +321,11 @@ def settings(request):
     preferred_locales = list(Locale.objects.all())
     preferred_locales.insert(0, default_preferred_source_locale)
 
-    # Set preferred source locale based on name
-    preferred_source_locale_object = get_locale_or_redirect(
-        profile.preferred_source_locale
-    )
-    preferred_source_locale_name = preferred_source_locale_object.name
-    if preferred_source_locale_name:
-        preferred_source_locale = Locale.objects.filter(
-            name=preferred_source_locale_name
-        ).first()
+    # Set preferred source locale based on code
+    if profile.preferred_source_locale:
+        preferred_source_locale = get_locale_or_redirect(
+            profile.preferred_source_locale
+        )
     else:
         preferred_source_locale = default_preferred_source_locale
 
