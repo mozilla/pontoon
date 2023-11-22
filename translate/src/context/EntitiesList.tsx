@@ -17,10 +17,10 @@ export function EntitiesListProvider({
 }: {
   children: React.ReactElement;
 }) {
-  const [state, setState] = useState(() => ({
+  const [state, setState] = useState<EntitiesList>(() => ({
     ...initEntitiesList,
     show: (visible: boolean) => setState((prev) => ({ ...prev, visible })),
-  })) as [EntitiesList, React.Dispatch<React.SetStateAction<EntitiesList>>];
+  }));
   return (
     <EntitiesList.Provider value={state}>{children}</EntitiesList.Provider>
   );
