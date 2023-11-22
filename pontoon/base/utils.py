@@ -658,13 +658,13 @@ def get_locale_or_redirect(code, redirect_view_name=None, url_arg_name=None, **k
             .order_by("-created_at")
             .first()
         )
-        if code_history:
-            if redirect_view_name and url_arg_name:
-                redirect_kwargs = {url_arg_name: code_history.locale.code}
-                redirect_kwargs.update(kwargs)
-                redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
-                return redirect(redirect_url)
-            else:
-                return code_history.locale  # Return the locale instead of redirecting
-        else:
-            raise Http404
+    if code_history:
+        if not redirect_view_name or not url_arg_name:
+            return code_history.locale
+
+        redirect_kwargs = {url_arg_name: code_history.locale.code}
+        redirect_kwargs.update(kwargs)
+        redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
+        return redirect(redirect_url)
+
+    raise Http404
