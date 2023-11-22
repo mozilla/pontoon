@@ -3,12 +3,11 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 
 import type { Entity as EntityType } from '~/api/entity';
+import { EntitiesList } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import type { Location } from '~/context/Location';
 import { useTranslationStatus } from '~/modules/entities/useTranslationStatus';
-import { toggleEntitiesList } from '~/modules/entitieslist/actions';
 import { Translation } from '~/modules/translation';
-import { useAppDispatch } from '~/hooks';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './Entity.css';
@@ -52,9 +51,9 @@ export function Entity({
   selectEntity,
   toggleForBatchEditing,
 }: Props): React.ReactElement<'li'> {
-  const dispatch = useAppDispatch();
   const isTranslator = useTranslator();
   const [areSiblingsActive, setSiblingsActive] = useState(false);
+  const { toggleEntitiesList } = useContext(EntitiesList);
 
   const handleSelectEntity = useCallback(
     (ev: React.MouseEvent) => {
@@ -65,7 +64,7 @@ export function Entity({
         )
       ) {
         selectEntity(entity);
-        dispatch(toggleEntitiesList());
+        toggleEntitiesList();
       }
     },
     [entity, selectEntity],

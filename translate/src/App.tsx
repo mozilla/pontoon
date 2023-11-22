@@ -4,6 +4,10 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
+import {
+  EntitiesList as EntitiesListContext,
+  EntitiesListProvider,
+} from './context/EntitiesList';
 import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
@@ -23,7 +27,6 @@ import { AddonPromotion } from './modules/addonpromotion/components/AddonPromoti
 import { BatchActions } from './modules/batchactions/components/BatchActions';
 import { useBatchactions } from './modules/batchactions/hooks';
 import { EntitiesList } from './modules/entitieslist';
-import { useEntitiesList } from './modules/entitieslist/hooks';
 import { Entity } from './modules/entitydetails/components/Entity';
 import { InteractiveTour } from './modules/interactivetour/components/InteractiveTour';
 import { Navigation } from './modules/navbar/components/Navigation';
@@ -38,7 +41,7 @@ export function App() {
   const dispatch = useAppDispatch();
   const location = useContext(Location);
   const batchactions = useBatchactions();
-  const entitiesList = useEntitiesList();
+  const entitieslist = useContext(EntitiesListContext);
   const { l10n } = useLocalization();
 
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -61,11 +64,6 @@ export function App() {
     return <WaveLoader />;
   }
 
-  const mcClass = classNames(
-    'main-content',
-    entitiesList.show && 'entities-list',
-  );
-
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>
@@ -81,19 +79,26 @@ export function App() {
                   <NotificationPanel />
                   <UserControls />
                 </header>
-                <section className={mcClass}>
-                  <section className='panel-list'>
-                    <SearchBox />
-                    <EntitiesList />
-                  </section>
-                  <section className='panel-content'>
-                    {batchactions.entities.length === 0 ? (
-                      <Entity />
-                    ) : (
-                      <BatchActions />
+                <EntitiesListProvider>
+                  <section
+                    className={classNames(
+                      'main-content',
+                      entitieslist.visible && 'entities-list',
                     )}
+                  >
+                    <section className='panel-list'>
+                      <SearchBox />
+                      <EntitiesList />
+                    </section>
+                    <section className='panel-content'>
+                      {batchactions.entities.length === 0 ? (
+                        <Entity />
+                      ) : (
+                        <BatchActions />
+                      )}
+                    </section>
                   </section>
-                </section>
+                </EntitiesListProvider>
                 <InteractiveTour />
               </div>
             </EntityViewProvider>
