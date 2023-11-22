@@ -4,10 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
-import {
-  EntitiesList as EntitiesListContext,
-  EntitiesListProvider,
-} from './context/EntitiesList';
+import { EntitiesList as EntitiesListContext } from './context/EntitiesList';
 import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
@@ -41,7 +38,7 @@ export function App() {
   const dispatch = useAppDispatch();
   const location = useContext(Location);
   const batchactions = useBatchactions();
-  const entitieslist = useContext(EntitiesListContext);
+  const { visible } = useContext(EntitiesListContext);
   const { l10n } = useLocalization();
 
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -79,26 +76,24 @@ export function App() {
                   <NotificationPanel />
                   <UserControls />
                 </header>
-                <EntitiesListProvider>
-                  <section
-                    className={classNames(
-                      'main-content',
-                      entitieslist.visible && 'entities-list',
-                    )}
-                  >
-                    <section className='panel-list'>
-                      <SearchBox />
-                      <EntitiesList />
-                    </section>
-                    <section className='panel-content'>
-                      {batchactions.entities.length === 0 ? (
-                        <Entity />
-                      ) : (
-                        <BatchActions />
-                      )}
-                    </section>
+                <section
+                  className={classNames(
+                    'main-content',
+                    visible ? 'entities-list' : '',
+                  )}
+                >
+                  <section className='panel-list'>
+                    <SearchBox />
+                    <EntitiesList />
                   </section>
-                </EntitiesListProvider>
+                  <section className='panel-content'>
+                    {batchactions.entities.length === 0 ? (
+                      <Entity />
+                    ) : (
+                      <BatchActions />
+                    )}
+                  </section>
+                </section>
                 <InteractiveTour />
               </div>
             </EntityViewProvider>
