@@ -13,6 +13,12 @@
   padding: 0;
 }
 
+.entity-navigation button.string-list {
+  display: none;
+  float: left;
+  margin-right: 30px;
+}
+
 .entity-navigation button.link {
   float: left;
 }
