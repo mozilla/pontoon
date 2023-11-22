@@ -639,29 +639,32 @@ def get_project_or_redirect(
             raise Http404
 
 
-def get_locale_or_redirect(code, redirect_view_name, url_arg_name, **kwargs):
+def get_locale_or_redirect(code, redirect_view_name=None, url_arg_name=None, **kwargs):
     """
     Attempts to retrieve a locale using the given code. If the locale does not exist, it checks the LocaleCodeHistory
-    for a record of the old code. If an entry is found, it redirects to the view specified by redirect_view_name
-    using the new locale code. The url_arg_name parameter specifies the argument name for the locale code
-    used in the URL pattern of the redirect view. If the old code is not found in the history, it raises an Http404 error.
+    for a record of the old code. If an entry is found, it either redirects to the view specified by redirect_view_name
+    using the new locale code or returns the Locale object if no redirect_view_name is provided.
+    The url_arg_name parameter specifies the argument name for the locale code used in the URL pattern of the redirect view.
+    If the old code is not found in the history, it raises an Http404 error.
     """
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.base.models import Locale, LocaleCodeHistory
 
     try:
-        locale = Locale.objects.get(code=code)
-        return locale
+        return Locale.objects.get(code=code)
     except Locale.DoesNotExist:
         code_history = (
             LocaleCodeHistory.objects.filter(old_code=code)
             .order_by("-created_at")
             .first()
         )
-        if code_history is not None:
-            redirect_kwargs = {url_arg_name: code_history.locale.code}
-            redirect_kwargs.update(kwargs)
-            redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
-            return redirect(redirect_url)
+        if code_history:
+            if redirect_view_name and url_arg_name:
+                redirect_kwargs = {url_arg_name: code_history.locale.code}
+                redirect_kwargs.update(kwargs)
+                redirect_url = reverse(redirect_view_name, kwargs=redirect_kwargs)
+                return redirect(redirect_url)
+            else:
+                return code_history.locale  # Return the locale instead of redirecting
         else:
             raise Http404

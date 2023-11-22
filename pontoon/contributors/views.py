@@ -11,7 +11,6 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
-    HttpResponseRedirect,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -311,25 +310,33 @@ def settings(request):
     all_locales = list(Locale.objects.all())
     all_locales.insert(0, default_homepage_locale)
 
-    # Set custom homepage selector value
-    custom_homepage_code = profile.custom_homepage
-    custom_homepage_locale = get_locale_or_redirect(
-        custom_homepage_code, "pontoon.contributors.views.settings", "locale"
-    )
-    if isinstance(custom_homepage_locale, HttpResponseRedirect):
-        return custom_homepage_locale
+    # Set default for custom homepage locale based on name
+    custom_homepage_locale_object = get_locale_or_redirect(profile.custom_homepage)
+    custom_homepage_locale_name = custom_homepage_locale_object.name
 
+    if custom_homepage_locale_name:
+        custom_homepage_locale = Locale.objects.filter(
+            name=custom_homepage_locale_name
+        ).first()
+    else:
+        custom_homepage_locale = default_homepage_locale
+
+    # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
     preferred_locales = list(Locale.objects.all())
     preferred_locales.insert(0, default_preferred_source_locale)
 
-    # Set preferred source locale
-    preferred_source_code = profile.preferred_source_locale
-    preferred_source_locale = get_locale_or_redirect(
-        preferred_source_code, "pontoon.contributors.views.settings", "locale"
+    # Set preferred source locale based on name
+    preferred_source_locale_object = get_locale_or_redirect(
+        profile.preferred_source_locale
     )
-    if isinstance(preferred_source_locale, HttpResponseRedirect):
-        return preferred_source_locale
+    preferred_source_locale_name = preferred_source_locale_object.name
+    if preferred_source_locale_name:
+        preferred_source_locale = Locale.objects.filter(
+            name=preferred_source_locale_name
+        ).first()
+    else:
+        preferred_source_locale = default_preferred_source_locale
 
     return render(
         request,
