@@ -1565,7 +1565,7 @@ class ProjectSlugHistory(models.Model):
 
 class LocaleCodeHistory(models.Model):
     locale = models.ForeignKey("Locale", on_delete=models.CASCADE)
-    old_code = models.CharField(max_length=10)
+    old_code = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
