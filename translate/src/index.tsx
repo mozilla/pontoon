@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import './index.css';
 import { App } from './App';
+import { EntitiesListProvider } from './context/EntitiesList';
 import { LocationProvider } from './context/Location';
 import { UnsavedChangesProvider } from './context/UnsavedChanges';
 import { AppLocalizationProvider } from './modules/l10n/components/AppLocalizationProvider';
@@ -22,7 +23,9 @@ render(
     <LocationProvider history={history}>
       <AppLocalizationProvider>
         <UnsavedChangesProvider>
-          <App />
+          <EntitiesListProvider>
+            <App />
+          </EntitiesListProvider>
         </UnsavedChangesProvider>
       </AppLocalizationProvider>
     </LocationProvider>

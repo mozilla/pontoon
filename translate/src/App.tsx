@@ -1,8 +1,10 @@
 import { useLocalization } from '@fluent/react';
+import classNames from 'classnames';
 import React, { useContext, useEffect, useState } from 'react';
 
 import './App.css';
 
+import { EntitiesList as EntitiesListContext } from './context/EntitiesList';
 import { EntityViewProvider } from '~/context/EntityView';
 import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
@@ -36,6 +38,7 @@ export function App() {
   const dispatch = useAppDispatch();
   const location = useContext(Location);
   const batchactions = useBatchactions();
+  const { visible } = useContext(EntitiesListContext);
   const { l10n } = useLocalization();
 
   const [locale, _setLocale] = useState(initLocale((next) => _setLocale(next)));
@@ -73,7 +76,12 @@ export function App() {
                   <NotificationPanel />
                   <UserControls />
                 </header>
-                <section className='main-content'>
+                <section
+                  className={classNames(
+                    'main-content',
+                    visible ? 'entities-list' : '',
+                  )}
+                >
                   <section className='panel-list'>
                     <SearchBox />
                     <EntitiesList />

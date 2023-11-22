@@ -1,7 +1,6 @@
 #app {
   display: flex;
   flex-direction: column;
-  flex-flow: column;
   height: 100%;
 }
 
@@ -10,13 +9,11 @@
   border-bottom: 1px solid var(--main-border-1);
   box-sizing: border-box;
   height: 60px;
-  min-width: 700px;
   position: relative;
 }
 
 #app > .main-content {
   display: flex;
-  flex: 1;
   justify-content: space-between;
   overflow: auto;
 }
@@ -61,4 +58,66 @@
     0 0 5px var(--status-translated);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
+}
+
+@media screen and (max-width: 600px) {
+  /* Header */
+  #app > header {
+    min-width: auto;
+  }
+
+  #app .navigation > ul > li:first-child {
+    margin-right: -7px;
+  }
+
+  #app .navigation > ul > li:not(:first-child) {
+    display: none;
+  }
+
+  /* Main Content */
+  #app > .main-content {
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+
+  #app > .main-content > .panel-list,
+  #app > .main-content > .panel-content {
+    flex: none;
+    left: -100%;
+    transition: left 0.3s ease-in-out;
+    width: 100%;
+  }
+
+  /* String List */
+  #app > .main-content.entities-list {
+    overflow: hidden; /* Prevent double scroll */
+  }
+
+  #app > .main-content.entities-list > .panel-list,
+  #app > .main-content.entities-list > .panel-content {
+    left: 0%;
+  }
+
+  #app .entity:hover .indicator {
+    display: block;
+  }
+
+  /* Editor */
+  #app .entity-details {
+    display: block;
+  }
+
+  #app .entity-details > section {
+    height: auto;
+    max-height: none;
+    width: 100%;
+  }
+
+  #app .entity-navigation button.string-list {
+    display: block;
+    margin-right: 15px;
+  }
+
+  #app .entity-navigation button.previous {
+    margin-right: 15px;
+  }
 }
