@@ -25,7 +25,7 @@ export function NotificationPanel(): React.ReactElement<'div'> {
   useEffect(() => {
     window.clearTimeout(timeout.current);
     if (message) {
-      timeout.current = window.setTimeout(hide, 20000);
+      timeout.current = window.setTimeout(hide, 2000);
     }
   }, [message]);
 
