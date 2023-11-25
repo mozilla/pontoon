@@ -11,6 +11,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
+    Http404,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -311,10 +312,17 @@ def settings(request):
     all_locales.insert(0, default_homepage_locale)
 
     # Set default for custom homepage locale based on code
-    if profile.custom_homepage:
-        custom_homepage_locale = get_locale_or_redirect(profile.custom_homepage)
-    else:
+    try:
+        if profile.custom_homepage:
+            custom_homepage_locale = get_locale_or_redirect(profile.custom_homepage)
+        else:
+            custom_homepage_locale = default_homepage_locale
+    except Http404:
         custom_homepage_locale = default_homepage_locale
+        messages.info(
+            request,
+            "Your previously selected custom homepage locale is no longer available. Reverted to default.",
+        )
 
     # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
@@ -322,12 +330,19 @@ def settings(request):
     preferred_locales.insert(0, default_preferred_source_locale)
 
     # Set preferred source locale based on code
-    if profile.preferred_source_locale:
-        preferred_source_locale = get_locale_or_redirect(
-            profile.preferred_source_locale
-        )
-    else:
+    try:
+        if profile.preferred_source_locale:
+            preferred_source_locale = get_locale_or_redirect(
+                profile.preferred_source_locale
+            )
+        else:
+            preferred_source_locale = default_preferred_source_locale
+    except Http404:
         preferred_source_locale = default_preferred_source_locale
+        messages.info(
+            request,
+            "Your previously selected preferred source locale is no longer available. Reverted to default.",
+        )
 
     return render(
         request,
