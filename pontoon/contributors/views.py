@@ -311,38 +311,36 @@ def settings(request):
     all_locales = list(Locale.objects.all())
     all_locales.insert(0, default_homepage_locale)
 
+    custom_homepage_locale = default_homepage_locale
+
     # Set default for custom homepage locale based on code
-    try:
-        if profile.custom_homepage:
+    if profile.custom_homepage:
+        try:
             custom_homepage_locale = get_locale_or_redirect(profile.custom_homepage)
-        else:
-            custom_homepage_locale = default_homepage_locale
-    except Http404:
-        custom_homepage_locale = default_homepage_locale
-        messages.info(
-            request,
-            "Your previously selected custom homepage locale is no longer available. Reverted to default.",
-        )
+        except Http404:
+            messages.info(
+                request,
+                "Your previously selected custom homepage locale is no longer available. Please pick a different one.",
+            )
 
     # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
     preferred_locales = list(Locale.objects.all())
     preferred_locales.insert(0, default_preferred_source_locale)
 
+    preferred_source_locale = default_preferred_source_locale
+
     # Set preferred source locale based on code
-    try:
-        if profile.preferred_source_locale:
+    if profile.preferred_source_locale:
+        try:
             preferred_source_locale = get_locale_or_redirect(
                 profile.preferred_source_locale
             )
-        else:
-            preferred_source_locale = default_preferred_source_locale
-    except Http404:
-        preferred_source_locale = default_preferred_source_locale
-        messages.info(
-            request,
-            "Your previously selected preferred source locale is no longer available. Reverted to default.",
-        )
+        except Http404:
+            messages.info(
+                request,
+                "Your previously selected preferred source locale is no longer available. Please pick a different one.",
+            )
 
     return render(
         request,
