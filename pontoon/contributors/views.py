@@ -11,6 +11,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
+    Http404,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -20,7 +21,7 @@ from django.utils.html import escape
 
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
-from pontoon.base.utils import require_AJAX
+from pontoon.base.utils import require_AJAX, get_locale_or_redirect
 from pontoon.contributors import utils
 from pontoon.uxactionlog.utils import log_ux_action
 
@@ -310,27 +311,36 @@ def settings(request):
     all_locales = list(Locale.objects.all())
     all_locales.insert(0, default_homepage_locale)
 
-    # Set custom homepage selector value
-    custom_homepage_locale = profile.custom_homepage
-    if custom_homepage_locale:
-        custom_homepage_locale = Locale.objects.filter(
-            code=custom_homepage_locale
-        ).first()
-    else:
-        custom_homepage_locale = default_homepage_locale
+    custom_homepage_locale = default_homepage_locale
 
+    # Set default for custom homepage locale based on code
+    if profile.custom_homepage:
+        try:
+            custom_homepage_locale = get_locale_or_redirect(profile.custom_homepage)
+        except Http404:
+            messages.info(
+                request,
+                "Your previously selected custom homepage locale is no longer available. Please pick a different one.",
+            )
+
+    # Similar logic for preferred source locale
     default_preferred_source_locale = Locale(name="Default project locale", code="")
     preferred_locales = list(Locale.objects.all())
     preferred_locales.insert(0, default_preferred_source_locale)
 
-    # Set preferred source locale
-    preferred_source_locale = profile.preferred_source_locale
-    if preferred_source_locale:
-        preferred_source_locale = Locale.objects.filter(
-            code=preferred_source_locale
-        ).first()
-    else:
-        preferred_source_locale = default_preferred_source_locale
+    preferred_source_locale = default_preferred_source_locale
+
+    # Set preferred source locale based on code
+    if profile.preferred_source_locale:
+        try:
+            preferred_source_locale = get_locale_or_redirect(
+                profile.preferred_source_locale
+            )
+        except Http404:
+            messages.info(
+                request,
+                "Your previously selected preferred source locale is no longer available. Please pick a different one.",
+            )
 
     return render(
         request,

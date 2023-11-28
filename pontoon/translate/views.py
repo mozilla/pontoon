@@ -14,7 +14,7 @@ from pontoon.base.models import (
     Locale,
 )
 
-from pontoon.base.utils import get_project_or_redirect
+from pontoon.base.utils import get_project_or_redirect, get_locale_or_redirect
 
 
 @csrf_exempt
@@ -42,7 +42,15 @@ def get_preferred_locale(request):
 
 def translate(request, locale, project, resource):
     # Validate Locale
-    locale = get_object_or_404(Locale, code=locale)
+    locale = get_locale_or_redirect(
+        locale,
+        "pontoon.translate",
+        "locale",
+        project=project,
+        resource=resource,
+    )
+    if isinstance(locale, HttpResponseRedirect):
+        return locale
 
     # Validate Project
     if project.lower() != "all-projects":

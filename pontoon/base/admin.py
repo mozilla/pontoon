@@ -298,6 +298,10 @@ class ProjectSlugHistoryAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
 
+class LocaleCodeHistoryAdmin(admin.ModelAdmin):
+    readonly_fields = ("created_at",)
+
+
 class CommentAdmin(admin.ModelAdmin):
     search_fields = ["content"]
     raw_id_fields = ("translation", "entity")
@@ -375,3 +379,4 @@ admin.site.register(models.ChangedEntityLocale, ChangedEntityLocaleAdmin)
 admin.site.register(models.PermissionChangelog, UserRoleLogActionAdmin)
 admin.site.register(models.Comment, CommentAdmin)
 admin.site.register(models.ProjectSlugHistory, ProjectSlugHistoryAdmin)
+admin.site.register(models.LocaleCodeHistory, LocaleCodeHistoryAdmin)

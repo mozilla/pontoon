@@ -14,6 +14,7 @@ from pontoon.base.models import (
     TranslatedResource,
     UserProfile,
     ProjectSlugHistory,
+    LocaleCodeHistory,
 )
 
 
@@ -220,6 +221,22 @@ def create_slug_history(sender, instance, **kwargs):
             if old_instance.slug != instance.slug:
                 ProjectSlugHistory.objects.create(
                     project=instance, old_slug=old_instance.slug
+                )
+        except sender.DoesNotExist:
+            pass
+
+
+@receiver(pre_save, sender=Locale)
+def create_locale_code_history(sender, instance, **kwargs):
+    """
+    Signal receiver that, prior to saving a Locale instance, creates a LocaleCodeHistory object if a locale's code has changed.
+    """
+    if instance.pk:
+        try:
+            old_instance = sender.objects.get(pk=instance.pk)
+            if old_instance.code != instance.code:
+                LocaleCodeHistory.objects.create(
+                    locale=instance, old_code=old_instance.code
                 )
         except sender.DoesNotExist:
             pass

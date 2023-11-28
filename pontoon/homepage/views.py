@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.template import Template, Context
+from django.http import Http404
 
 from pontoon.base.models import Locale
 from pontoon.homepage.models import Homepage
-from pontoon.base.utils import get_project_locale_from_request
+from pontoon.base.utils import get_project_locale_from_request, get_locale_or_redirect
 
 
 def homepage(request):
@@ -19,7 +20,14 @@ def homepage(request):
                 user.profile.save(update_fields=["custom_homepage"])
 
         if user.profile.custom_homepage:
-            return redirect("pontoon.teams.team", locale=user.profile.custom_homepage)
+            try:
+                # Call to get_locale_or_redirect to check if the custom homepage locale exists
+                get_locale_or_redirect(user.profile.custom_homepage)
+                return redirect(
+                    "pontoon.teams.team", locale=user.profile.custom_homepage
+                )
+            except Http404:
+                pass
 
     # Guess user's team page or redirect to /teams
     locale = get_project_locale_from_request(request, Locale.objects.available())

@@ -1563,6 +1563,12 @@ class ProjectSlugHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class LocaleCodeHistory(models.Model):
+    locale = models.ForeignKey("Locale", on_delete=models.CASCADE)
+    old_code = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class UserProfile(models.Model):
     # This field is required.
     user = models.OneToOneField(
