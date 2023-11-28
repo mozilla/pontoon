@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
+from django.http import HttpResponseRedirect
 
 from pontoon.base.models import Project
 from pontoon.base.utils import (
@@ -22,7 +23,238 @@ from pontoon.test.factories import (
     LocaleFactory,
     ProjectSlugHistoryFactory,
     ProjectLocaleFactory,
+    LocaleCodeHistoryFactory,
 )
+
+
+@pytest.fixture
+def locale_a():
+    """
+    Fixture that sets up and returns a Locale.
+    """
+    return LocaleFactory.create(code="locale-a", name="Locale A")
+
+
+def create_code_history_and_change_code(locale, new_code):
+    """
+    Helper function to simulate changing a locale's code.
+    It records the locale's current code in the history, then updates the locale's code.
+    """
+    LocaleCodeHistoryFactory.create(locale=locale, old_code=locale.code)
+    locale.code = new_code
+    locale.save()
+    locale.refresh_from_db()
+    return locale
+
+
+@pytest.mark.django_db
+def test_settings_view_with_changed_locale(client, user_a, locale_a):
+    """
+    Test the settings view when the user's custom homepage locale has changed.
+    """
+    # Set up the user's profile with an old locale code
+    profile = user_a.profile
+    old_code = locale_a.code
+    new_code = "locale-a-new-1"
+    profile.custom_homepage = old_code
+    profile.save()
+
+    # Simulate the locale code change
+    locale_a = create_code_history_and_change_code(locale_a, new_code)
+
+    client.force_login(user_a)
+    response = client.get(reverse("pontoon.contributors.settings"))
+
+    # Check if the view correctly handles the changed locale
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_handle_old_code_redirect_no_loop(client, locale_a, project_a):
+    """
+    Test that there is no redirect loop when a locale's code is renamed and then renamed back to the original.
+    """
+    # Rename locale code and then rename it back
+    create_code_history_and_change_code(locale_a, "code-b")
+    create_code_history_and_change_code(locale_a, "code-c")
+    create_code_history_and_change_code(locale_a, "code-a")
+
+    # Request the view with the original locale code
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"code": "code-a", "slug": project_a.slug},
+        )
+    )
+
+    # Assert that the response is not a redirect (status code is not 302)
+    assert response.status_code != 302
+
+
+@pytest.mark.django_db
+def test_localization_view_with_changed_locale(client, locale_a, project_a):
+    """
+    Test the localization view with a changed locale code.
+    """
+    old_code = locale_a.code
+    new_code = "locale-a-new-2"
+    locale_a = create_code_history_and_change_code(locale_a, new_code)
+
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"code": old_code, "slug": project_a.slug},
+        )
+    )
+
+    assert isinstance(response, HttpResponseRedirect)
+    assert response.url == reverse(
+        "pontoon.localizations.localization",
+        kwargs={"code": new_code, "slug": project_a.slug},
+    )
+
+
+@pytest.mark.django_db
+def test_handle_no_code_redirect_localization(client, project_a):
+    """
+    Test to ensure that an attempt to access a localization view without a code raises a NoReverseMatch exception.
+    """
+    with pytest.raises(NoReverseMatch):
+        client.get(
+            reverse(
+                "pontoon.localizations.localization",
+                kwargs={"slug": project_a.slug},
+            )
+        )
+
+
+@pytest.mark.django_db
+def test_handle_nonexistent_code_redirect_localization(client, project_a):
+    """
+    Test to ensure that an attempt to access a localization view with a non-existent code returns a 404 error.
+    """
+    code = "nonexistent-code"
+
+    response = client.get(
+        reverse(
+            "pontoon.localizations.localization",
+            kwargs={"code": code, "slug": project_a.slug},
+        )
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_translate_view_with_changed_locale(client, locale_a, project_a, resource_a):
+    """
+    Test the translate view with a changed locale code.
+    """
+    old_code = locale_a.code
+    new_code = "locale-a-new-3"
+    locale_a = create_code_history_and_change_code(locale_a, new_code)
+
+    response = client.get(
+        reverse(
+            "pontoon.translate",
+            kwargs={
+                "locale": old_code,
+                "project": project_a.slug,
+                "resource": resource_a.path,
+            },
+        )
+    )
+
+    assert isinstance(response, HttpResponseRedirect)
+    assert response.url == reverse(
+        "pontoon.translate",
+        kwargs={
+            "locale": new_code,
+            "project": project_a.slug,
+            "resource": resource_a.path,
+        },
+    )
+
+
+@pytest.mark.django_db
+def test_handle_no_code_redirect_translate(client, project_a, resource_a):
+    """
+    Test to ensure that an attempt to access the translate view without a locale code raises a NoReverseMatch exception.
+    """
+    with pytest.raises(NoReverseMatch):
+        client.get(
+            reverse(
+                "pontoon.translate",
+                kwargs={"project": project_a.slug, "resource": resource_a.path},
+            )
+        )
+
+
+@pytest.mark.django_db
+def test_handle_nonexistent_code_redirect_translate(client, project_a, resource_a):
+    """
+    Test to ensure that an attempt to access the translate view with a non-existent locale code returns a 404 error.
+    """
+    code = "nonexistent-code"
+
+    response = client.get(
+        reverse(
+            "pontoon.translate",
+            kwargs={
+                "locale": code,
+                "project": project_a.slug,
+                "resource": resource_a.path,
+            },
+        )
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_team_view_with_changed_locale(client, locale_a):
+    """
+    Test the team view with a changed locale code.
+    """
+    old_code = locale_a.code
+    new_code = "locale-a-new-4"
+    locale_a = create_code_history_and_change_code(locale_a, new_code)
+
+    response = client.get(reverse("pontoon.teams.team", kwargs={"locale": old_code}))
+
+    assert isinstance(response, HttpResponseRedirect)
+    assert response.url == reverse("pontoon.teams.team", kwargs={"locale": new_code})
+
+
+@pytest.mark.django_db
+def test_handle_no_code_redirect_team(client):
+    """
+    Test to ensure that an attempt to access the team view without a locale code raises a NoReverseMatch exception.
+    """
+    with pytest.raises(NoReverseMatch):
+        client.get(
+            reverse(
+                "pontoon.teams.team",
+                kwargs={},
+            )
+        )
+
+
+@pytest.mark.django_db
+def test_handle_nonexistent_code_redirect_team(client):
+    """
+    Test to ensure that an attempt to access the team view with a non-existent locale code returns a 404 error.
+    """
+    code = "nonexistent-code"
+
+    response = client.get(
+        reverse(
+            "pontoon.teams.team",
+            kwargs={"locale": code},
+        )
+    )
+
+    assert response.status_code == 404
 
 
 @pytest.fixture

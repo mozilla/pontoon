@@ -18,6 +18,7 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
     ProjectSlugHistory,
+    LocaleCodeHistory,
 )
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag
@@ -210,3 +211,11 @@ class ProjectSlugHistoryFactory(DjangoModelFactory):
 
     class Meta:
         model = ProjectSlugHistory
+
+
+class LocaleCodeHistoryFactory(DjangoModelFactory):
+    locale = SubFactory(LocaleFactory)
+    old_code = Sequence(lambda n: f"old-code-{n}")
+
+    class Meta:
+        model = LocaleCodeHistory
