@@ -56,3 +56,7 @@ def test_user_locale_role(user_a, user_b, user_c, locale_a):
     # Manager
     locale_a.managers_group.user_set.add(user_c)
     assert user_c.locale_role(locale_a) == "Manager"
+
+    # Admin and Manager
+    locale_a.managers_group.user_set.add(user_a)
+    assert user_a.locale_role(locale_a) == "Manager"
