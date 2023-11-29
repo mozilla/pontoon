@@ -5,6 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import type { Entity } from '~/api/entity';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
+import { useViewport } from '~/hooks/useViewport';
 import type { TermState } from '~/modules/terms';
 import type { UserState } from '~/modules/user';
 import { Machinery, MachineryCount } from '~/modules/machinery';
@@ -55,6 +56,83 @@ export function Helpers({
   const { setTab } = useContext(HelperSelection);
 
   const isTerminologyProject = parameters.project === 'terminology';
+
+  const { width } = useViewport();
+  const breakpoint = 600;
+
+  if (width < breakpoint) {
+    return (
+      <>
+        <div className='bottom'>
+          <Tabs
+            selectedIndex={commentTabIndex}
+            onSelect={(index, lastIndex) => {
+              if (index === lastIndex) {
+                return false;
+              } else {
+                setTab(index);
+              }
+              setCommentTabIndex(index);
+            }}
+          >
+            <TabList>
+              <Tab>
+                <Localized id='entitydetails-Helpers--machinery'>
+                  {'MACHINERY'}
+                </Localized>
+                <MachineryCount />
+              </Tab>
+              <Tab>
+                <Localized id='entitydetails-Helpers--locales'>
+                  {'LOCALES'}
+                </Localized>
+                <OtherLocalesCount otherlocales={otherlocales} />
+              </Tab>
+              {isTerminologyProject ? null : (
+                <Tab>
+                  <Localized id='entitydetails-Helpers--terms'>
+                    {'TERMS'}
+                  </Localized>
+                  <TermCount terms={terms} />
+                </Tab>
+              )}
+              <Tab ref={commentTabRef}>
+                <Localized id='entitydetails-Helpers--comments'>
+                  {'COMMENTS'}
+                </Localized>
+                <CommentCount teamComments={teamComments} />
+              </Tab>
+            </TabList>
+            <TabPanel>
+              <Machinery />
+            </TabPanel>
+            <TabPanel>
+              <OtherLocales
+                entity={entity}
+                otherlocales={otherlocales}
+                parameters={parameters}
+              />
+            </TabPanel>
+            {isTerminologyProject ? null : (
+              <TabPanel>
+                <Terms terms={terms} navigateToPath={navigateToPath} />
+              </TabPanel>
+            )}
+            <TabPanel>
+              <TeamComments
+                contactPerson={contactPerson}
+                initFocus={!isTerminologyProject}
+                teamComments={teamComments}
+                user={user}
+                togglePinnedStatus={togglePinnedStatus}
+                resetContactPerson={resetContactPerson}
+              />
+            </TabPanel>
+          </Tabs>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

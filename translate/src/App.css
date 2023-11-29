@@ -120,4 +120,9 @@
   #app .entity-navigation button.previous {
     margin-right: 15px;
   }
+
+  /* Helpers */
+  #app > .main-content .third-column {
+    border-left: none;
+  }
 }
