@@ -121,6 +121,11 @@
     margin-right: 15px;
   }
 
+  /* History */
+  #app .entity-details .history {
+    background: var(--editor-menu-background);
+  }
+
   /* Helpers */
   #app > .main-content .third-column {
     border-left: none;
