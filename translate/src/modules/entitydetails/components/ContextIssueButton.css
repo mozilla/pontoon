@@ -1,4 +1,4 @@
-.metadata .source-string-comment .context-issue-button {
+.context-issue-button {
   background: var(--dark-grey-1);
   border: 1px solid var(--dark-grey-2);
   border-radius: 4px;
@@ -11,6 +11,6 @@
   padding: 2px 4px;
 }
 
-.metadata .source-string-comment .context-issue-button:hover {
+.context-issue-button:hover {
   border-color: var(--translation-border);
 }
