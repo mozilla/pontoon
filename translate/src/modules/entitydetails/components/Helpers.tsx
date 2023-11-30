@@ -33,6 +33,57 @@ type Props = {
   resetContactPerson: () => void;
 };
 
+function MachineryTab() {
+  return (
+    <Tab>
+      <Localized id='entitydetails-Helpers--machinery'>{'MACHINERY'}</Localized>
+      <MachineryCount />
+    </Tab>
+  );
+}
+
+function OtherLocalesTab({ otherlocales }: { otherlocales: LocalesState }) {
+  return (
+    <Tab>
+      <Localized id='entitydetails-Helpers--locales'>{'LOCALES'}</Localized>
+      <OtherLocalesCount otherlocales={otherlocales} />
+    </Tab>
+  );
+}
+
+function TermsTab({
+  terms,
+  isTerminologyProject,
+}: {
+  terms: TermState;
+  isTerminologyProject: boolean;
+}) {
+  if (isTerminologyProject) {
+    return null;
+  }
+  return (
+    <Tab>
+      <Localized id='entitydetails-Helpers--terms'>{'TERMS'}</Localized>
+      <TermCount terms={terms} />
+    </Tab>
+  );
+}
+
+function CommentsTab({
+  teamComments,
+  commentTabRef,
+}: {
+  teamComments: TeamCommentState;
+  commentTabRef: any;
+}) {
+  return (
+    <Tab ref={commentTabRef}>
+      <Localized id='entitydetails-Helpers--comments'>{'COMMENTS'}</Localized>
+      <CommentCount teamComments={teamComments} />
+    </Tab>
+  );
+}
+
 /**
  * Component showing details about an entity.
  *
@@ -73,32 +124,16 @@ export function Helpers({
             }}
           >
             <TabList>
-              <Tab>
-                <Localized id='entitydetails-Helpers--machinery'>
-                  {'MACHINERY'}
-                </Localized>
-                <MachineryCount />
-              </Tab>
-              <Tab>
-                <Localized id='entitydetails-Helpers--locales'>
-                  {'LOCALES'}
-                </Localized>
-                <OtherLocalesCount otherlocales={otherlocales} />
-              </Tab>
-              {isTerminologyProject ? null : (
-                <Tab>
-                  <Localized id='entitydetails-Helpers--terms'>
-                    {'TERMS'}
-                  </Localized>
-                  <TermCount terms={terms} />
-                </Tab>
-              )}
-              <Tab ref={commentTabRef}>
-                <Localized id='entitydetails-Helpers--comments'>
-                  {'COMMENTS'}
-                </Localized>
-                <CommentCount teamComments={teamComments} />
-              </Tab>
+              <MachineryTab />
+              <OtherLocalesTab otherlocales={otherlocales} />
+              <TermsTab
+                terms={terms}
+                isTerminologyProject={isTerminologyProject}
+              />
+              <CommentsTab
+                teamComments={teamComments}
+                commentTabRef={commentTabRef}
+              />
             </TabList>
             <TabPanel>
               <Machinery />
@@ -139,20 +174,14 @@ export function Helpers({
           onSelect={(tab) => setCommentTabIndex(tab)}
         >
           <TabList>
-            {isTerminologyProject ? null : (
-              <Tab>
-                <Localized id='entitydetails-Helpers--terms'>
-                  {'TERMS'}
-                </Localized>
-                <TermCount terms={terms} />
-              </Tab>
-            )}
-            <Tab ref={commentTabRef}>
-              <Localized id='entitydetails-Helpers--comments'>
-                {'COMMENTS'}
-              </Localized>
-              <CommentCount teamComments={teamComments} />
-            </Tab>
+            <TermsTab
+              terms={terms}
+              isTerminologyProject={isTerminologyProject}
+            />
+            <CommentsTab
+              teamComments={teamComments}
+              commentTabRef={commentTabRef}
+            />
           </TabList>
           {isTerminologyProject ? null : (
             <TabPanel>
@@ -182,18 +211,16 @@ export function Helpers({
           }}
         >
           <TabList>
-            <Tab>
-              <Localized id='entitydetails-Helpers--machinery'>
-                {'MACHINERY'}
-              </Localized>
-              <MachineryCount />
-            </Tab>
-            <Tab>
-              <Localized id='entitydetails-Helpers--locales'>
-                {'LOCALES'}
-              </Localized>
-              <OtherLocalesCount otherlocales={otherlocales} />
-            </Tab>
+            <MachineryTab />
+            <OtherLocalesTab otherlocales={otherlocales} />
+            <TermsTab
+              terms={terms}
+              isTerminologyProject={isTerminologyProject}
+            />
+            <CommentsTab
+              teamComments={teamComments}
+              commentTabRef={commentTabRef}
+            />
           </TabList>
           <TabPanel>
             <Machinery />
