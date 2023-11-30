@@ -130,4 +130,21 @@
   #app > .main-content .third-column {
     border-left: none;
   }
+
+  #app > .main-content .third-column .react-tabs span.count {
+    background: var(--light-grey-6);
+    box-shadow: 0 0 5px;
+    color: var(--light-grey-6); /* used as box-shadow color */
+    font-size: 0;
+    height: 4px;
+    width: 4px;
+    padding: 0;
+    position: absolute;
+  }
+
+  #app > .main-content .third-column .react-tabs span.count:has(.preferred),
+  #app > .main-content .third-column .react-tabs span.count:has(.pinned) {
+    background: var(--status-translated-alt);
+    color: var(--status-translated-alt); /* used as box-shadow color */
+  }
 }
