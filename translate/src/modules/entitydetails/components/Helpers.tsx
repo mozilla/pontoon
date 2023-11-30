@@ -5,7 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import type { Entity } from '~/api/entity';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { useViewport } from '~/hooks/useViewport';
+import { useNarrowScreen } from '~/hooks/useNarrowScreen';
 import type { TermState } from '~/modules/terms';
 import type { UserState } from '~/modules/user';
 import { Machinery, MachineryCount } from '~/modules/machinery';
@@ -57,10 +57,7 @@ export function Helpers({
 
   const isTerminologyProject = parameters.project === 'terminology';
 
-  const { width } = useViewport();
-  const breakpoint = 600;
-
-  if (width < breakpoint) {
+  if (useNarrowScreen()) {
     return (
       <>
         <div className='bottom'>

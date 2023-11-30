@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Return current window width. Useful in Responsive Web Design.
+ * Return true if the screen is narrower than 600 px. Useful in Responsive Web Design.
  */
-export function useViewport(): { width: number } {
+export function useNarrowScreen(): boolean {
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -12,5 +12,5 @@ export function useViewport(): { width: number } {
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
 
-  return { width };
+  return width <= 600;
 }
