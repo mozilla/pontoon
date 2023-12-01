@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 
+const NARROW_SCREEN_MAX_WIDTH = 600;
+
 /**
- * Return true if the screen is narrower than 600 px. Useful in Responsive Web Design.
+ * Return true if the screen is narrower than 600px. Useful in Responsive Web Design.
  */
 export function useNarrowScreen(): boolean {
-  const [width, setWidth] = useState(window.innerWidth);
+  const [isNarrow, setIsNarrow] = useState(
+    window.innerWidth <= NARROW_SCREEN_MAX_WIDTH,
+  );
 
   useEffect(() => {
-    const handleWindowResize = () => setWidth(window.innerWidth);
+    const handleWindowResize = () =>
+      setIsNarrow(window.innerWidth <= NARROW_SCREEN_MAX_WIDTH);
     window.addEventListener('resize', handleWindowResize);
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
 
-  return width <= 600;
+  return isNarrow;
 }

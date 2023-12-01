@@ -33,57 +33,6 @@ type Props = {
   resetContactPerson: () => void;
 };
 
-function MachineryTab() {
-  return (
-    <Tab>
-      <Localized id='entitydetails-Helpers--machinery'>{'MACHINERY'}</Localized>
-      <MachineryCount />
-    </Tab>
-  );
-}
-
-function OtherLocalesTab({ otherlocales }: { otherlocales: LocalesState }) {
-  return (
-    <Tab>
-      <Localized id='entitydetails-Helpers--locales'>{'LOCALES'}</Localized>
-      <OtherLocalesCount otherlocales={otherlocales} />
-    </Tab>
-  );
-}
-
-function TermsTab({
-  terms,
-  isTerminologyProject,
-}: {
-  terms: TermState;
-  isTerminologyProject: boolean;
-}) {
-  if (isTerminologyProject) {
-    return null;
-  }
-  return (
-    <Tab>
-      <Localized id='entitydetails-Helpers--terms'>{'TERMS'}</Localized>
-      <TermCount terms={terms} />
-    </Tab>
-  );
-}
-
-function CommentsTab({
-  teamComments,
-  commentTabRef,
-}: {
-  teamComments: TeamCommentState;
-  commentTabRef: any;
-}) {
-  return (
-    <Tab ref={commentTabRef}>
-      <Localized id='entitydetails-Helpers--comments'>{'COMMENTS'}</Localized>
-      <CommentCount teamComments={teamComments} />
-    </Tab>
-  );
-}
-
 /**
  * Component showing details about an entity.
  *
@@ -108,6 +57,90 @@ export function Helpers({
 
   const isTerminologyProject = parameters.project === 'terminology';
 
+  function MachineryTab() {
+    return (
+      <Tab>
+        <Localized id='entitydetails-Helpers--machinery'>
+          {'MACHINERY'}
+        </Localized>
+        <MachineryCount />
+      </Tab>
+    );
+  }
+
+  function OtherLocalesTab() {
+    return (
+      <Tab>
+        <Localized id='entitydetails-Helpers--locales'>{'LOCALES'}</Localized>
+        <OtherLocalesCount otherlocales={otherlocales} />
+      </Tab>
+    );
+  }
+
+  function TermsTab() {
+    if (isTerminologyProject) {
+      return null;
+    }
+    return (
+      <Tab>
+        <Localized id='entitydetails-Helpers--terms'>{'TERMS'}</Localized>
+        <TermCount terms={terms} />
+      </Tab>
+    );
+  }
+
+  function CommentsTab() {
+    return (
+      <Tab ref={commentTabRef}>
+        <Localized id='entitydetails-Helpers--comments'>{'COMMENTS'}</Localized>
+        <CommentCount teamComments={teamComments} />
+      </Tab>
+    );
+  }
+
+  function MachineryPanel() {
+    return (
+      <TabPanel>
+        <Machinery />
+      </TabPanel>
+    );
+  }
+
+  function OtherLocalesPanel() {
+    return (
+      <TabPanel>
+        <OtherLocales
+          entity={entity}
+          otherlocales={otherlocales}
+          parameters={parameters}
+        />
+      </TabPanel>
+    );
+  }
+
+  function TermsPanel() {
+    return isTerminologyProject ? null : (
+      <TabPanel>
+        <Terms terms={terms} navigateToPath={navigateToPath} />
+      </TabPanel>
+    );
+  }
+
+  function CommentsPanel() {
+    return (
+      <TabPanel>
+        <TeamComments
+          contactPerson={contactPerson}
+          initFocus={!isTerminologyProject}
+          teamComments={teamComments}
+          user={user}
+          togglePinnedStatus={togglePinnedStatus}
+          resetContactPerson={resetContactPerson}
+        />
+      </TabPanel>
+    );
+  }
+
   if (useNarrowScreen()) {
     return (
       <>
@@ -125,41 +158,14 @@ export function Helpers({
           >
             <TabList>
               <MachineryTab />
-              <OtherLocalesTab otherlocales={otherlocales} />
-              <TermsTab
-                terms={terms}
-                isTerminologyProject={isTerminologyProject}
-              />
-              <CommentsTab
-                teamComments={teamComments}
-                commentTabRef={commentTabRef}
-              />
+              <OtherLocalesTab />
+              <TermsTab />
+              <CommentsTab />
             </TabList>
-            <TabPanel>
-              <Machinery />
-            </TabPanel>
-            <TabPanel>
-              <OtherLocales
-                entity={entity}
-                otherlocales={otherlocales}
-                parameters={parameters}
-              />
-            </TabPanel>
-            {isTerminologyProject ? null : (
-              <TabPanel>
-                <Terms terms={terms} navigateToPath={navigateToPath} />
-              </TabPanel>
-            )}
-            <TabPanel>
-              <TeamComments
-                contactPerson={contactPerson}
-                initFocus={!isTerminologyProject}
-                teamComments={teamComments}
-                user={user}
-                togglePinnedStatus={togglePinnedStatus}
-                resetContactPerson={resetContactPerson}
-              />
-            </TabPanel>
+            <MachineryPanel />
+            <OtherLocalesPanel />
+            <TermsPanel />
+            <CommentsPanel />
           </Tabs>
         </div>
       </>
@@ -174,30 +180,11 @@ export function Helpers({
           onSelect={(tab) => setCommentTabIndex(tab)}
         >
           <TabList>
-            <TermsTab
-              terms={terms}
-              isTerminologyProject={isTerminologyProject}
-            />
-            <CommentsTab
-              teamComments={teamComments}
-              commentTabRef={commentTabRef}
-            />
+            <TermsTab />
+            <CommentsTab />
           </TabList>
-          {isTerminologyProject ? null : (
-            <TabPanel>
-              <Terms terms={terms} navigateToPath={navigateToPath} />
-            </TabPanel>
-          )}
-          <TabPanel>
-            <TeamComments
-              contactPerson={contactPerson}
-              initFocus={!isTerminologyProject}
-              teamComments={teamComments}
-              user={user}
-              togglePinnedStatus={togglePinnedStatus}
-              resetContactPerson={resetContactPerson}
-            />
-          </TabPanel>
+          <TermsPanel />
+          <CommentsPanel />
         </Tabs>
       </div>
       <div className='bottom'>
@@ -212,26 +199,10 @@ export function Helpers({
         >
           <TabList>
             <MachineryTab />
-            <OtherLocalesTab otherlocales={otherlocales} />
-            <TermsTab
-              terms={terms}
-              isTerminologyProject={isTerminologyProject}
-            />
-            <CommentsTab
-              teamComments={teamComments}
-              commentTabRef={commentTabRef}
-            />
+            <OtherLocalesTab />
           </TabList>
-          <TabPanel>
-            <Machinery />
-          </TabPanel>
-          <TabPanel>
-            <OtherLocales
-              entity={entity}
-              otherlocales={otherlocales}
-              parameters={parameters}
-            />
-          </TabPanel>
+          <MachineryPanel />
+          <OtherLocalesPanel />
         </Tabs>
       </div>
     </>

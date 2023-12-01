@@ -97,7 +97,11 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
 
   const openTeamComments = useCallback(() => {
     const teamCommentsTab = commentTabRef.current;
+
+    // FIXME: This is an ugly hack.
+    // https://github.com/mozilla/pontoon/issues/2300
     const index = teamCommentsTab?._reactInternalFiber.index ?? 0;
+
     setCommentTabIndex(index);
     setContactPerson(selectedEntity.project.contact.name);
   }, [selectedEntity, setCommentTabIndex, setContactPerson]);
