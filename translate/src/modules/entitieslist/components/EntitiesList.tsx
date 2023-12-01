@@ -1,7 +1,9 @@
+import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 
 import type { Entity as EntityType } from '~/api/entity';
+import { EntitiesList as EntitiesListContext } from '~/context/EntitiesList';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import {
@@ -13,6 +15,7 @@ import { useEntities } from '~/modules/entities/hooks';
 import { SkeletonLoader } from '~/modules/loaders';
 import { ENTITY_NOT_FOUND } from '~/modules/notification/messages';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
+import { useNarrowScreen } from '~/hooks/useNarrowScreen';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
   checkSelection,
@@ -28,6 +31,51 @@ import './EntitiesList.css';
 import { Entity } from './Entity';
 import { USER } from '~/modules/user';
 import { ShowNotification } from '~/context/Notification';
+
+const EntitiesToolbar = ({
+  count,
+  onEdit,
+  onClear,
+}: {
+  count: number;
+  onEdit: () => void;
+  onClear: () => void;
+}) => (
+  <div className='toolbar clearfix'>
+    <Localized
+      id='entitieslist-EntitiesList--clear-selected'
+      attrs={{ title: true }}
+      elems={{
+        glyph: <i className='fa fa-times fa-lg' />,
+      }}
+    >
+      <button
+        title='Uncheck selected strings'
+        onClick={onClear}
+        className='clear-selected'
+      >
+        {'<glyph></glyph> CLEAR'}
+      </button>
+    </Localized>
+    <Localized
+      id='entitieslist-EntitiesList--edit-selected'
+      attrs={{ title: true }}
+      elems={{
+        glyph: <i className='fa fa-chevron-right fa-lg' />,
+        stress: <span className='selected-count' />,
+      }}
+      vars={{ count }}
+    >
+      <button
+        title='Edit Selected Strings'
+        onClick={onEdit}
+        className='edit-selected'
+      >
+        {'EDIT <stress>{ $count }</stress> STRINGS<glyph></glyph>'}
+      </button>
+    </Localized>
+  </div>
+);
 
 /**
  * Displays a list of entities and their current translation.
@@ -224,6 +272,12 @@ export function EntitiesList(): React.ReactElement<'div'> {
     );
   }
 
+  const selectedEntitiesCount = batchactions.entities.length;
+  const isNarrowScreen = useNarrowScreen();
+  const entitiesList = useContext(EntitiesListContext);
+  const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
+  const showBatchActions = useCallback(() => entitiesList.show(false), []);
+
   return (
     <div className='entities unselectable' ref={list}>
       <ul>
@@ -234,9 +288,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
             toggleForBatchEditing={toggleForBatchEditing}
             entity={entity}
             isReadOnlyEditor={entity.readonly || !isAuthUser}
-            selected={
-              !batchactions.entities.length && entity.pk === location.entity
-            }
+            selected={!selectedEntitiesCount && entity.pk === location.entity}
             selectEntity={selectEntity}
             getSiblingEntities={getSiblingEntities_}
             parameters={location}
@@ -244,6 +296,13 @@ export function EntitiesList(): React.ReactElement<'div'> {
         ))}
       </ul>
       {hasNextPage && <SkeletonLoader items={entities} sentryRef={sentryRef} />}
+      {selectedEntitiesCount === 0 || !isNarrowScreen ? null : (
+        <EntitiesToolbar
+          count={selectedEntitiesCount}
+          onEdit={showBatchActions}
+          onClear={quitBatchActions}
+        />
+      )}
     </div>
   );
 }

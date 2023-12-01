@@ -297,6 +297,16 @@ entitydetails-PluralString--singular = SINGULAR
 entitieslist-Entity--sibling-strings-title =
     .title = Click to reveal sibling strings
 
+entitieslist-EntitiesList--clear-selected = <glyph></glyph>CLEAR
+    .title = Uncheck selected strings
+
+entitieslist-EntitiesList--edit-selected =
+    EDIT <stress>{ $count }</stress> { $count ->
+        [one] STRING
+       *[other] STRINGS
+    }<glyph></glyph>
+    .title = Edit Selected Strings
+
 
 ## Translation Form
 
