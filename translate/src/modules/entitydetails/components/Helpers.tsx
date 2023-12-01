@@ -59,76 +59,73 @@ export function Helpers({
 
   function MachineryTab() {
     return (
-      <Tab>
+      <>
         <Localized id='entitydetails-Helpers--machinery'>
           {'MACHINERY'}
         </Localized>
         <MachineryCount />
-      </Tab>
+      </>
     );
   }
 
   function OtherLocalesTab() {
     return (
-      <Tab>
+      <>
         <Localized id='entitydetails-Helpers--locales'>{'LOCALES'}</Localized>
         <OtherLocalesCount otherlocales={otherlocales} />
-      </Tab>
+      </>
     );
   }
 
   function TermsTab() {
-    if (isTerminologyProject) {
-      return null;
-    }
     return (
-      <Tab>
+      <>
         <Localized id='entitydetails-Helpers--terms'>{'TERMS'}</Localized>
         <TermCount terms={terms} />
-      </Tab>
+      </>
     );
   }
 
   function CommentsTab() {
     return (
-      <Tab ref={commentTabRef}>
+      <>
         <Localized id='entitydetails-Helpers--comments'>{'COMMENTS'}</Localized>
         <CommentCount teamComments={teamComments} />
-      </Tab>
+      </>
     );
   }
 
   function MachineryPanel() {
     return (
-      <TabPanel>
+      <>
         <Machinery />
-      </TabPanel>
+      </>
     );
   }
 
   function OtherLocalesPanel() {
     return (
-      <TabPanel>
+      <>
         <OtherLocales
           entity={entity}
           otherlocales={otherlocales}
           parameters={parameters}
         />
-      </TabPanel>
+      </>
     );
   }
 
   function TermsPanel() {
-    return isTerminologyProject ? null : (
-      <TabPanel>
+    return (
+      <>
         <Terms terms={terms} navigateToPath={navigateToPath} />
-      </TabPanel>
+      </>
     );
   }
 
   function CommentsPanel() {
     return (
-      <TabPanel>
+      <>
         <TeamComments
           contactPerson={contactPerson}
           initFocus={!isTerminologyProject}
@@ -137,7 +134,7 @@ export function Helpers({
           togglePinnedStatus={togglePinnedStatus}
           resetContactPerson={resetContactPerson}
         />
-      </TabPanel>
+      </>
     );
   }
 
@@ -157,15 +154,35 @@ export function Helpers({
             }}
           >
             <TabList>
-              <MachineryTab />
-              <OtherLocalesTab />
-              <TermsTab />
-              <CommentsTab />
+              <Tab>
+                <MachineryTab />
+              </Tab>
+              <Tab>
+                <OtherLocalesTab />
+              </Tab>
+              {isTerminologyProject ? null : (
+                <Tab>
+                  <TermsTab />
+                </Tab>
+              )}
+              <Tab ref={commentTabRef}>
+                <CommentsTab />
+              </Tab>
             </TabList>
-            <MachineryPanel />
-            <OtherLocalesPanel />
-            <TermsPanel />
-            <CommentsPanel />
+            <TabPanel>
+              <MachineryPanel />
+            </TabPanel>
+            <TabPanel>
+              <OtherLocalesPanel />
+            </TabPanel>
+            {isTerminologyProject ? null : (
+              <TabPanel>
+                <TermsPanel />
+              </TabPanel>
+            )}
+            <TabPanel>
+              <CommentsPanel />
+            </TabPanel>
           </Tabs>
         </div>
       </>
@@ -180,11 +197,23 @@ export function Helpers({
           onSelect={(tab) => setCommentTabIndex(tab)}
         >
           <TabList>
-            <TermsTab />
-            <CommentsTab />
+            {isTerminologyProject ? null : (
+              <Tab>
+                <TermsTab />
+              </Tab>
+            )}
+            <Tab ref={commentTabRef}>
+              <CommentsTab />
+            </Tab>
           </TabList>
-          <TermsPanel />
-          <CommentsPanel />
+          {isTerminologyProject ? null : (
+            <TabPanel>
+              <TermsPanel />
+            </TabPanel>
+          )}
+          <TabPanel>
+            <CommentsPanel />
+          </TabPanel>
         </Tabs>
       </div>
       <div className='bottom'>
@@ -198,11 +227,19 @@ export function Helpers({
           }}
         >
           <TabList>
-            <MachineryTab />
-            <OtherLocalesTab />
+            <Tab>
+              <MachineryTab />
+            </Tab>
+            <Tab>
+              <OtherLocalesTab />
+            </Tab>
           </TabList>
-          <MachineryPanel />
-          <OtherLocalesPanel />
+          <TabPanel>
+            <MachineryPanel />
+          </TabPanel>
+          <TabPanel>
+            <OtherLocalesPanel />
+          </TabPanel>
         </Tabs>
       </div>
     </>
