@@ -15,5 +15,9 @@ export function TermCount(props: Props): null | React.ReactElement<'span'> {
 
   const termCount = terms.terms.length;
 
+  if (!termCount) {
+    return null;
+  }
+
   return <span className='count'>{termCount}</span>;
 }

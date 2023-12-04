@@ -13,6 +13,11 @@
   width: 66.67%;
 }
 
+.entity-details .main-column .original-string-panel {
+  border-bottom: 1px solid var(--main-border-1);
+  padding: 10px;
+}
+
 .entity-details .third-column {
   width: 33.33%;
   border-left: 1px solid var(--main-border-1);

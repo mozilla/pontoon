@@ -7,9 +7,11 @@ import React, {
 } from 'react';
 
 import { EntityView, useActiveTranslation } from '~/context/EntityView';
+import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { Editor } from '~/modules/editor/components/Editor';
+import { OriginalString } from '~/modules/originalstring';
 import { TERM } from '~/modules/terms';
 import { get as getTerms } from '~/modules/terms/actions';
 import { USER } from '~/modules/user';
@@ -25,10 +27,13 @@ import {
 } from '~/modules/teamcomments/actions';
 import { getPlainMessage } from '~/utils/message';
 
-import './EntityDetails.css';
+import { ContextIssueButton } from './ContextIssueButton';
 import { EntityNavigation } from './EntityNavigation';
 import { Helpers } from './Helpers';
 import { Metadata } from './Metadata';
+import { Screenshots } from './Screenshots';
+
+import './EntityDetails.css';
 
 /**
  * Component showing details about an entity.
@@ -88,21 +93,39 @@ export function EntityDetails(): React.ReactElement<'section'> | null {
     [dispatch],
   );
 
+  const { code } = useContext(Locale);
+
+  const openTeamComments = useCallback(() => {
+    const teamCommentsTab = commentTabRef.current;
+
+    // FIXME: This is an ugly hack.
+    // https://github.com/mozilla/pontoon/issues/2300
+    const index = teamCommentsTab?._reactInternalFiber.index ?? 0;
+
+    setCommentTabIndex(index);
+    setContactPerson(selectedEntity.project.contact.name);
+  }, [selectedEntity, setCommentTabIndex, setContactPerson]);
+
+  const showContextIssueButton =
+    user.isAuthenticated && selectedEntity.project.contact;
+
   // No content while loading entity data
   return selectedEntity.pk === 0 ? null : (
     <section className='entity-details'>
       <section className='main-column'>
         <EntityNavigation />
-        <Metadata
-          entity={selectedEntity}
-          terms={terms}
-          navigateToPath={navigateToPath}
-          teamComments={teamComments}
-          user={user}
-          commentTabRef={commentTabRef}
-          setCommentTabIndex={setCommentTabIndex}
-          setContactPerson={setContactPerson}
-        />
+        <section className='original-string-panel'>
+          {showContextIssueButton && (
+            <ContextIssueButton openTeamComments={openTeamComments} />
+          )}
+          <Screenshots source={selectedEntity.comment} locale={code} />
+          <OriginalString navigateToPath={navigateToPath} terms={terms} />
+          <Metadata
+            entity={selectedEntity}
+            navigateToPath={navigateToPath}
+            teamComments={teamComments}
+          />
+        </section>
         <Editor />
         <History />
       </section>

@@ -1,32 +1,22 @@
 import { Localized } from '@fluent/react';
 import parse from 'html-react-parser';
-import React, { useCallback, useContext, useLayoutEffect } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 // @ts-expect-error Working types are unavailable for react-linkify 0.2.2
 import Linkify from 'react-linkify';
 
 import type { Entity } from '~/api/entity';
-import { Locale } from '~/context/Locale';
-import type { TermState } from '~/modules/terms';
-import type { UserState } from '~/modules/user';
-import { OriginalString } from '~/modules/originalstring';
 import type { TeamCommentState } from '~/modules/teamcomments';
 
-import { ContextIssueButton } from './ContextIssueButton';
+import { Locale } from '~/context/Locale';
 import { FluentAttribute } from './FluentAttribute';
 import { Property } from './Property';
-import { Screenshots } from './Screenshots';
 
 import './Metadata.css';
 
 type Props = {
   entity: Entity;
-  terms: TermState;
   teamComments: TeamCommentState;
-  user: UserState;
-  commentTabRef: React.RefObject<{ _reactInternalFiber: { index: number } }>;
   navigateToPath: (path: string) => void;
-  setCommentTabIndex: (id: number) => void;
-  setContactPerson: (contact: string) => void;
 };
 
 const Datum = ({
@@ -230,34 +220,14 @@ const EntityContext = ({
  *  - a link to the project
  */
 export function Metadata({
-  commentTabRef,
   entity,
   navigateToPath,
-  setCommentTabIndex,
-  setContactPerson,
-  terms,
   teamComments,
-  user,
 }: Props): React.ReactElement {
   const { code } = useContext(Locale);
 
-  const openTeamComments = useCallback(() => {
-    const teamCommentsTab = commentTabRef.current;
-    const index = teamCommentsTab?._reactInternalFiber.index ?? 0;
-    setCommentTabIndex(index);
-    setContactPerson(entity.project.contact.name);
-  }, [entity, setCommentTabIndex, setContactPerson]);
-
-  const contactPerson = entity.project.contact;
-  const showContextIssueButton = user.isAuthenticated && contactPerson;
-
   return (
     <div className='metadata'>
-      {showContextIssueButton && (
-        <ContextIssueButton openTeamComments={openTeamComments} />
-      )}
-      <Screenshots source={entity.comment} locale={code} />
-      <OriginalString navigateToPath={navigateToPath} terms={terms} />
       <PinnedComments teamComments={teamComments} />
       <EntityComment comment={entity.comment} />
       <GroupComment comment={entity.group_comment} />

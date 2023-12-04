@@ -23,16 +23,16 @@
   --popup-background-2: #272a2f;
   --icon-background-2: #4d5967;
 
-  /* Homepage */
-  --homepage-background-image: url(../img/background.svg);
-  --homepage-tour-button-background: #ffffff;
-  --homepage-tour-button-color: #000000;
-
   /* Tooltip */
   --tooltip-background: #000000dd;
   --tooltip-color: #ffffff;
   --tooltip-color-2: #888888;
   --tooltip-border: #4d5967;
+
+  /* Homepage */
+  --homepage-background-image: url(../img/background.svg);
+  --homepage-tour-button-background: #ffffff;
+  --homepage-tour-button-color: #000000;
 
   /* Translation status */
   --status-translated: #7bc876;

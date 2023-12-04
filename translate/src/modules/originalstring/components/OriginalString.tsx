@@ -19,6 +19,8 @@ import { PluralString } from './PluralString';
 import { RichString } from './RichString';
 import { TermsPopup } from './TermsPopup';
 
+import './OriginalString.css';
+
 type Props = {
   navigateToPath: (path: string) => void;
   terms: TermState;
