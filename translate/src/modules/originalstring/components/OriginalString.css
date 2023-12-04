@@ -1,0 +1,22 @@
+.original-string-panel .original {
+  color: var(--translation-color);
+  font-size: 14px;
+  font-style: normal;
+  line-height: 22px;
+  margin: -2px 0 6px; /* Align with the source string comment button */
+  text-align: start;
+  white-space: pre-wrap;
+}
+
+.original-string-panel .original .placeable {
+  cursor: pointer;
+}
+
+.original-string-panel .original .term {
+  background: inherit;
+  border-bottom: 1px solid var(--status-translated);
+  color: inherit;
+  cursor: pointer;
+  font-weight: normal;
+  font-style: inherit;
+}

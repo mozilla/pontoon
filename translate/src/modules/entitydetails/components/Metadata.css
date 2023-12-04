@@ -1,11 +1,9 @@
 .metadata {
-  border-bottom: 1px solid var(--main-border-1);
   color: var(--translation-secondary-color);
   font-size: 12px;
   font-style: italic;
   min-height: 114px;
   line-height: 22px;
-  padding: 10px;
 }
 
 .metadata h2 {
@@ -34,30 +32,6 @@
   font-style: normal;
   font-weight: 100;
   margin: 0 3px;
-}
-
-.metadata .original {
-  color: var(--translation-color);
-  font-size: 14px;
-  font-style: normal;
-  line-height: 22px;
-  margin-top: -2px; /* Align with the source string comment button */
-  padding-bottom: 6px;
-  text-align: start;
-  white-space: pre-wrap;
-}
-
-.metadata .original .placeable {
-  cursor: pointer;
-}
-
-.metadata .original .term {
-  background: inherit;
-  border-bottom: 1px solid var(--status-translated);
-  color: inherit;
-  cursor: pointer;
-  font-weight: normal;
-  font-style: inherit;
 }
 
 .metadata ul {
