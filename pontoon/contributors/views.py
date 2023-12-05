@@ -1,4 +1,5 @@
 import json
+import logging
 
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
@@ -24,6 +25,9 @@ from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX, get_locale_or_redirect
 from pontoon.contributors import utils
 from pontoon.uxactionlog.utils import log_ux_action
+
+
+log = logging.getLogger(__name__)
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -210,9 +214,10 @@ def toggle_theme(request, username):
         profile.theme = theme
         profile.full_clean()
         profile.save()
-    except ValidationError:
+    except ValidationError as e:
+        log.error(f"User profile validation error: {e}")
         return JsonResponse(
-            {"status": False, "message": "Bad Request: Invalid theme"},
+            {"status": False, "message": "Bad Request: User profile validation failed"},
             status=400,
         )
 
