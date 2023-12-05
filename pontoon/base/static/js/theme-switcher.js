@@ -77,9 +77,6 @@ $(function () {
 
         // Set the data-theme attribute after successfully changing the theme
         $('body').data('theme', theme);
-
-        // Notify the user about the theme change after AJAX success
-        Pontoon.endLoader(`Theme changed to ${theme}.`);
       },
       error: function (request) {
         if (request.responseText === 'error') {
