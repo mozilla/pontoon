@@ -215,10 +215,9 @@ def toggle_theme(request, username):
         profile.full_clean()
         profile.save()
     except ValidationError as e:
-        error_message = f"User profile validation error: {e}"
-        log.error(error_message)
+        log.error(f"User profile validation error: {e}")
         return JsonResponse(
-            {"status": False, "message": error_message},
+            {"status": False, "message": "Bad Request: User profile validation failed"},
             status=400,
         )
 
