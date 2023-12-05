@@ -78,10 +78,8 @@ $(function () {
         // Set the data-theme attribute after successfully changing the theme
         $('body').data('theme', theme);
       },
-      error: function (request) {
+      error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
-        // eslint-disable-next-line no-console
-        console.log(request);
       },
     });
   });
