@@ -79,11 +79,9 @@ $(function () {
         $('body').data('theme', theme);
       },
       error: function (request) {
-        if (request.responseText === 'error') {
-          Pontoon.endLoader('Oops, something went wrong.', 'error');
-        } else {
-          Pontoon.endLoader(request.responseText, 'error');
-        }
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+        // eslint-disable-next-line no-console
+        console.log(request);
       },
     });
   });
