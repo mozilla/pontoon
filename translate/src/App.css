@@ -74,6 +74,20 @@
     display: none;
   }
 
+  #app .navigation > ul > li.locale {
+    display: block;
+  }
+
+  #app .navigation > ul > li.locale .locale-name {
+    display: none;
+  }
+
+  #app .navigation > ul > li.locale .locale-code {
+    color: inherit;
+    margin-left: -5px;
+    padding: 0;
+  }
+
   #app .progress-chart .menu {
     position: fixed;
     top: 59px;
