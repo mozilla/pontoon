@@ -74,6 +74,21 @@
     display: none;
   }
 
+  #app .progress-chart .menu {
+    position: fixed;
+    top: 59px;
+  }
+
+  #app .project-info .panel {
+    left: -1px;
+    right: -1px;
+  }
+
+  #app .user-notifications-menu .menu {
+    right: -1px;
+    position: fixed;
+  }
+
   /* Main Content */
   #app > .main-content {
     overflow-x: hidden; /* Prevent horizontal scroll */
@@ -101,6 +116,12 @@
     display: block;
   }
 
+  #app .filters-panel .menu {
+    border: 0;
+    left: 0;
+    width: 100%;
+  }
+
   /* Editor */
   #app .entity-details {
     display: block;
@@ -109,6 +130,7 @@
   #app .entity-details > section {
     height: auto;
     max-height: none;
+    overflow-y: inherit;
     width: 100%;
   }
 
@@ -119,6 +141,11 @@
 
   #app .entity-navigation button.previous {
     margin-right: 15px;
+  }
+
+  #app .keyboard-shortcuts .overlay {
+    padding: 10px;
+    width: 360px;
   }
 
   /* History */
