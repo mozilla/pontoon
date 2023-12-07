@@ -54,6 +54,7 @@ export function Helpers({
   resetContactPerson,
 }: Props): React.ReactElement<any> {
   const { setTab } = useContext(HelperSelection);
+  const windowWidth = useWindowWidth();
 
   const isTerminologyProject = parameters.project === 'terminology';
 
@@ -138,7 +139,7 @@ export function Helpers({
     );
   }
 
-  if (useWindowWidth('medium')) {
+  if (windowWidth === 'narrow' || windowWidth === 'medium') {
     return (
       <>
         <div className='bottom'>

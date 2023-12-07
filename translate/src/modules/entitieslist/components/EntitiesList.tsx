@@ -273,7 +273,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   }
 
   const selectedEntitiesCount = batchactions.entities.length;
-  const isNarrowScreen = useWindowWidth('narrow');
+  const windowWidth = useWindowWidth();
   const entitiesList = useContext(EntitiesListContext);
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
   const showBatchActions = useCallback(() => entitiesList.show(false), []);
@@ -296,7 +296,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
         ))}
       </ul>
       {hasNextPage && <SkeletonLoader items={entities} sentryRef={sentryRef} />}
-      {selectedEntitiesCount === 0 || !isNarrowScreen ? null : (
+      {selectedEntitiesCount === 0 || windowWidth !== 'narrow' ? null : (
         <EntitiesToolbar
           count={selectedEntitiesCount}
           onEdit={showBatchActions}
