@@ -15,7 +15,7 @@ import { useEntities } from '~/modules/entities/hooks';
 import { SkeletonLoader } from '~/modules/loaders';
 import { ENTITY_NOT_FOUND } from '~/modules/notification/messages';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { useNarrowScreen } from '~/hooks/useNarrowScreen';
+import { useWindowWidth } from '~/hooks/useWindowWidth';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
   checkSelection,
@@ -273,7 +273,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   }
 
   const selectedEntitiesCount = batchactions.entities.length;
-  const isNarrowScreen = useNarrowScreen();
+  const windowWidth = useWindowWidth();
   const entitiesList = useContext(EntitiesListContext);
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
   const showBatchActions = useCallback(() => entitiesList.show(false), []);
@@ -296,7 +296,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
         ))}
       </ul>
       {hasNextPage && <SkeletonLoader items={entities} sentryRef={sentryRef} />}
-      {selectedEntitiesCount === 0 || !isNarrowScreen ? null : (
+      {selectedEntitiesCount === 0 || windowWidth !== 'narrow' ? null : (
         <EntitiesToolbar
           count={selectedEntitiesCount}
           onEdit={showBatchActions}

@@ -34,7 +34,7 @@ export function Navigation(): React.ReactElement<'nav'> {
   return (
     <nav className='navigation'>
       <ul>
-        <li>
+        <li className='logo'>
           <a href='/'>
             <img
               src='/static/img/logo.svg'
@@ -44,9 +44,9 @@ export function Navigation(): React.ReactElement<'nav'> {
             />
           </a>
         </li>
-        <li>
+        <li className='locale'>
           <a href={`/${code}/`}>
-            {name}
+            <span className='locale-name'>{name}</span>
             <span className='locale-code'>{code}</span>
           </a>
         </li>

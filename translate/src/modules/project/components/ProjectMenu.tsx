@@ -153,7 +153,7 @@ export function ProjectMenu({
 
   if (parameters.project !== 'all-projects') {
     return (
-      <li>
+      <li className='project'>
         <a href={`/${code}/${project.slug}/`}>{project.name}</a>
       </li>
     );
