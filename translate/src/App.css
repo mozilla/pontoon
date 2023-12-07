@@ -60,12 +60,8 @@
   transform: rotate(3deg) translate(0px, -4px);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   /* Header */
-  #app > header {
-    min-width: auto;
-  }
-
   #app .navigation > ul > li:first-child {
     margin-right: -7px;
   }
@@ -74,9 +70,79 @@
     display: none;
   }
 
+  #app .navigation > ul > li.locale {
+    display: block;
+  }
+
+  #app .navigation > ul > li.locale .locale-name {
+    display: none;
+  }
+
+  #app .navigation > ul > li.locale .locale-code {
+    color: inherit;
+    margin-left: -5px;
+    padding: 0;
+  }
+
+  #app .project-info .panel,
+  #app .resource-menu .menu {
+    right: -1px;
+  }
+
   /* Main Content */
   #app > .main-content {
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    height: calc(100% - 60px);
+    overflow: hidden;
+  }
+
+  #app > .main-content > .panel-list {
+    width: 33%;
+  }
+
+  #app > .main-content > .panel-content {
+    overflow-y: auto;
+    width: 67%;
+  }
+
+  /* Editor */
+  #app .entity-details {
+    display: block;
+    height: 160%; /* Prevent jumping when moving between tabs */
+  }
+
+  #app .entity-details > section {
+    height: auto;
+    max-height: none;
+    overflow-y: inherit;
+    width: 100%;
+  }
+
+  /* History */
+  #app .entity-details .history {
+    background: var(--editor-menu-background);
+  }
+
+  /* Helpers */
+  #app > .main-content .third-column {
+    border-left: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  /* Header */
+  #app .progress-chart .menu {
+    position: fixed;
+    top: 59px;
+  }
+
+  #app .project-info .panel {
+    left: -1px;
+    right: -1px;
+  }
+
+  #app .user-notifications-menu .menu {
+    right: -1px;
+    position: fixed;
   }
 
   #app > .main-content > .panel-list,
@@ -101,14 +167,9 @@
     display: block;
   }
 
-  /* Editor */
-  #app .entity-details {
-    display: block;
-  }
-
-  #app .entity-details > section {
-    height: auto;
-    max-height: none;
+  #app .filters-panel .menu {
+    border: 0;
+    left: 0;
     width: 100%;
   }
 
@@ -121,14 +182,9 @@
     margin-right: 15px;
   }
 
-  /* History */
-  #app .entity-details .history {
-    background: var(--editor-menu-background);
-  }
-
-  /* Helpers */
-  #app > .main-content .third-column {
-    border-left: none;
+  #app .keyboard-shortcuts .overlay {
+    padding: 10px;
+    width: 360px;
   }
 
   #app > .main-content .third-column .react-tabs span.count {

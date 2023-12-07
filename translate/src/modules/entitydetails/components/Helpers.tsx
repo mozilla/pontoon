@@ -5,7 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import type { Entity } from '~/api/entity';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { useNarrowScreen } from '~/hooks/useNarrowScreen';
+import { useWindowWidth } from '~/hooks/useWindowWidth';
 import type { TermState } from '~/modules/terms';
 import type { UserState } from '~/modules/user';
 import { Machinery, MachineryCount } from '~/modules/machinery';
@@ -54,6 +54,7 @@ export function Helpers({
   resetContactPerson,
 }: Props): React.ReactElement<any> {
   const { setTab } = useContext(HelperSelection);
+  const windowWidth = useWindowWidth();
 
   const isTerminologyProject = parameters.project === 'terminology';
 
@@ -138,7 +139,7 @@ export function Helpers({
     );
   }
 
-  if (useNarrowScreen()) {
+  if (windowWidth === 'narrow' || windowWidth === 'medium') {
     return (
       <>
         <div className='bottom'>
