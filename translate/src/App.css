@@ -107,6 +107,7 @@
   /* Editor */
   #app .entity-details {
     display: block;
+    height: 160%;  /* Prevent jumping when moving between tabs */
   }
 
   #app .entity-details > section {
