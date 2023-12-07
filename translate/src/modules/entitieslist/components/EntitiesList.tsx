@@ -15,7 +15,7 @@ import { useEntities } from '~/modules/entities/hooks';
 import { SkeletonLoader } from '~/modules/loaders';
 import { ENTITY_NOT_FOUND } from '~/modules/notification/messages';
 import { useAppDispatch, useAppSelector, useAppStore } from '~/hooks';
-import { isNarrowerThan } from '~/hooks/useNarrowScreen';
+import { useWindowWidth } from '~/hooks/useWindowWidth';
 import { usePrevious } from '~/hooks/usePrevious';
 import {
   checkSelection,
@@ -273,7 +273,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
   }
 
   const selectedEntitiesCount = batchactions.entities.length;
-  const isNarrowScreen = isNarrowerThan(600);
+  const isNarrowScreen = useWindowWidth('narrow');
   const entitiesList = useContext(EntitiesListContext);
   const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
   const showBatchActions = useCallback(() => entitiesList.show(false), []);

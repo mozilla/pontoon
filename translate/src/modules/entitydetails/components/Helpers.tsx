@@ -5,7 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import type { Entity } from '~/api/entity';
 import { HelperSelection } from '~/context/HelperSelection';
 import type { Location } from '~/context/Location';
-import { isNarrowerThan } from '~/hooks/useNarrowScreen';
+import { useWindowWidth } from '~/hooks/useWindowWidth';
 import type { TermState } from '~/modules/terms';
 import type { UserState } from '~/modules/user';
 import { Machinery, MachineryCount } from '~/modules/machinery';
@@ -138,7 +138,7 @@ export function Helpers({
     );
   }
 
-  if (isNarrowerThan(800)) {
+  if (useWindowWidth('medium')) {
     return (
       <>
         <div className='bottom'>
