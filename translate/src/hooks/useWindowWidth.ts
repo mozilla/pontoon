@@ -10,8 +10,8 @@ const BREAKPOINTS = {
  *
  * Useful in Responsive Web Design.
  */
-export function useWindowWidth(): string {
-  function get_range() {
+export function useWindowWidth(): 'narrow' | 'medium' | 'wide' {
+  function get_range(): 'narrow' | 'medium' | 'wide' {
     if (window.innerWidth <= BREAKPOINTS.narrow) {
       return 'narrow';
     }
