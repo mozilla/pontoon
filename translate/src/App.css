@@ -60,6 +60,51 @@
   transform: rotate(3deg) translate(0px, -4px);
 }
 
+@media screen and (max-width: 800px) {
+  /* Header Menus */
+  #app .project-info .panel,
+  #app .resource-menu .menu {
+    right: -1px;
+  }
+
+  /* Main Content */
+  #app > .main-content {
+    height: calc(100% - 60px);
+    overflow: hidden;
+  }
+
+  #app > .main-content > .panel-list {
+    width: 33%;
+  }
+
+  #app > .main-content > .panel-content {
+    overflow-y: auto;
+    width: 67%;
+  }
+
+  /* Editor */
+  #app .entity-details {
+    display: block;
+  }
+
+  #app .entity-details > section {
+    height: auto;
+    max-height: none;
+    overflow-y: inherit;
+    width: 100%;
+  }
+
+  /* History */
+  #app .entity-details .history {
+    background: var(--editor-menu-background);
+  }
+
+  /* Helpers */
+  #app > .main-content .third-column {
+    border-left: none;
+  }
+}
+
 @media screen and (max-width: 600px) {
   /* Header */
   #app > header {
@@ -103,11 +148,6 @@
     position: fixed;
   }
 
-  /* Main Content */
-  #app > .main-content {
-    overflow-x: hidden; /* Prevent horizontal scroll */
-  }
-
   #app > .main-content > .panel-list,
   #app > .main-content > .panel-content {
     flex: none;
@@ -136,18 +176,6 @@
     width: 100%;
   }
 
-  /* Editor */
-  #app .entity-details {
-    display: block;
-  }
-
-  #app .entity-details > section {
-    height: auto;
-    max-height: none;
-    overflow-y: inherit;
-    width: 100%;
-  }
-
   #app .entity-navigation button.string-list {
     display: block;
     margin-right: 15px;
@@ -160,16 +188,6 @@
   #app .keyboard-shortcuts .overlay {
     padding: 10px;
     width: 360px;
-  }
-
-  /* History */
-  #app .entity-details .history {
-    background: var(--editor-menu-background);
-  }
-
-  /* Helpers */
-  #app > .main-content .third-column {
-    border-left: none;
   }
 
   #app > .main-content .third-column .react-tabs span.count {
