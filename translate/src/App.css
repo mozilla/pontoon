@@ -61,7 +61,29 @@
 }
 
 @media screen and (max-width: 800px) {
-  /* Header Menus */
+  /* Header */
+  #app .navigation > ul > li:first-child {
+    margin-right: -7px;
+  }
+
+  #app .navigation > ul > li:not(:first-child) {
+    display: none;
+  }
+
+  #app .navigation > ul > li.locale {
+    display: block;
+  }
+
+  #app .navigation > ul > li.locale .locale-name {
+    display: none;
+  }
+
+  #app .navigation > ul > li.locale .locale-code {
+    color: inherit;
+    margin-left: -5px;
+    padding: 0;
+  }
+
   #app .project-info .panel,
   #app .resource-menu .menu {
     right: -1px;
@@ -107,32 +129,6 @@
 
 @media screen and (max-width: 600px) {
   /* Header */
-  #app > header {
-    min-width: auto;
-  }
-
-  #app .navigation > ul > li:first-child {
-    margin-right: -7px;
-  }
-
-  #app .navigation > ul > li:not(:first-child) {
-    display: none;
-  }
-
-  #app .navigation > ul > li.locale {
-    display: block;
-  }
-
-  #app .navigation > ul > li.locale .locale-name {
-    display: none;
-  }
-
-  #app .navigation > ul > li.locale .locale-code {
-    color: inherit;
-    margin-left: -5px;
-    padding: 0;
-  }
-
   #app .progress-chart .menu {
     position: fixed;
     top: 59px;
