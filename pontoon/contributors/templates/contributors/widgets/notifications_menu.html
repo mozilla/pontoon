@@ -74,9 +74,15 @@
             <a href="{{ actor_url }}">{{ actor_anchor }}</a>
           </span>
 
-          <span class="verb">
-            {{ notification.verb }}
-          </span>
+          {% if "has added a comment in" in notification.verb %}
+            <span class="verb">
+              has added a comment 
+            </span>
+          {% else %}
+            <span class="verb">
+              {{ notification.verb }} 
+            </span>
+          {% endif %}
 
           {% if target %}
             <span class="target">
