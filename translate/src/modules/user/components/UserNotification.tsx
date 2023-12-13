@@ -39,10 +39,14 @@ const Comment = ({
     <span className='actor'>{actor.anchor}</span>
 
     <span className='verb'>
-      <a href={target.url}>{verb}</a>
+      {target ? (
+        <a href={target.url}>{verb}</a>
+      ) : (
+        verb.replace('has added a comment in', 'has added a comment')
+      )}
     </span>
 
-    <span className='target'>{target.anchor}</span>
+    {target ? <span className='target'>{target.anchor}</span> : null}
 
     <ReactTimeAgo
       className='timeago'
