@@ -79,7 +79,7 @@ const Other = ({
     </span>
 
     <span className='verb'>
-      {verb.includes('has added a comment in') ? 'has added a comment' : verb}
+      {verb.replace('has added a comment in', 'has added a comment')}
     </span>
 
     {!target ? null : (
