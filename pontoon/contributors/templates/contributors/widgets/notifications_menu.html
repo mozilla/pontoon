@@ -74,16 +74,10 @@
             <a href="{{ actor_url }}">{{ actor_anchor }}</a>
           </span>
 
-          {% if "has added a comment in" in notification.verb %}
-            <span class="verb">
-              has added a comment 
-            </span>
-          {% else %}
-            <span class="verb">
-              {{ notification.verb }} 
-            </span>
-          {% endif %}
-
+          <span class="verb">
+            {{ notification.verb.replace("has added a comment in", "has added a comment") }}
+          </span>
+        
           {% if target %}
             <span class="target">
               <a href="{{ url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
