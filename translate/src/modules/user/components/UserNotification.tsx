@@ -39,14 +39,10 @@ const Comment = ({
     <span className='actor'>{actor.anchor}</span>
 
     <span className='verb'>
-      {target ? (
-        <a href={target.url}>{verb}</a>
-      ) : (
-        verb.replace('has added a comment in', 'has added a comment')
-      )}
+      <a href={target.url}>{verb}</a>
     </span>
 
-    {target ? <span className='target'>{target.anchor}</span> : null}
+    <span className='target'>{target.anchor}</span>
 
     <ReactTimeAgo
       className='timeago'
@@ -82,7 +78,13 @@ const Other = ({
       <a href={actor.url}>{actor.anchor}</a>
     </span>
 
-    <span className='verb'>{verb}</span>
+    <span className='verb'>
+      {target ? (
+        <a href={target.url}>{verb}</a>
+      ) : (
+        verb.replace('has added a comment in', 'has added a comment')
+      )}
+    </span>
 
     {!target ? null : (
       <span className='target'>
