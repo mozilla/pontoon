@@ -75,7 +75,7 @@
           </span>
 
           <span class="verb">
-            {{ notification.verb }}
+            {{ notification.verb.replace("has added a comment in", "has added a comment") }}
           </span>
 
           {% if target %}

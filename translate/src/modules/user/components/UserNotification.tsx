@@ -78,7 +78,9 @@ const Other = ({
       <a href={actor.url}>{actor.anchor}</a>
     </span>
 
-    <span className='verb'>{verb}</span>
+    <span className='verb'>
+      {verb.replace('has added a comment in', 'has added a comment')}
+    </span>
 
     {!target ? null : (
       <span className='target'>
