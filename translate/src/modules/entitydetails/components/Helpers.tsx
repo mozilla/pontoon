@@ -124,21 +124,6 @@ export function Helpers({
     );
   }
 
-  function CommentsPanel() {
-    return (
-      <>
-        <TeamComments
-          contactPerson={contactPerson}
-          initFocus={!isTerminologyProject}
-          teamComments={teamComments}
-          user={user}
-          togglePinnedStatus={togglePinnedStatus}
-          resetContactPerson={resetContactPerson}
-        />
-      </>
-    );
-  }
-
   if (windowWidth === 'narrow' || windowWidth === 'medium') {
     return (
       <>
@@ -182,7 +167,14 @@ export function Helpers({
               </TabPanel>
             )}
             <TabPanel>
-              <CommentsPanel />
+              <TeamComments
+                contactPerson={contactPerson}
+                initFocus={!isTerminologyProject}
+                teamComments={teamComments}
+                user={user}
+                togglePinnedStatus={togglePinnedStatus}
+                resetContactPerson={resetContactPerson}
+              />
             </TabPanel>
           </Tabs>
         </div>
@@ -213,7 +205,14 @@ export function Helpers({
             </TabPanel>
           )}
           <TabPanel>
-            <CommentsPanel />
+            <TeamComments
+              contactPerson={contactPerson}
+              initFocus={!isTerminologyProject}
+              teamComments={teamComments}
+              user={user}
+              togglePinnedStatus={togglePinnedStatus}
+              resetContactPerson={resetContactPerson}
+            />
           </TabPanel>
         </Tabs>
       </div>
