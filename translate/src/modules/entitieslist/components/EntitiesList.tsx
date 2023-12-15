@@ -97,6 +97,12 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const mounted = useRef(false);
   const list = useRef<HTMLDivElement>(null);
 
+  const selectedEntitiesCount = batchactions.entities.length;
+  const windowWidth = useWindowWidth();
+  const entitiesList = useContext(EntitiesListContext);
+  const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
+  const showBatchActions = useCallback(() => entitiesList.show(false), []);
+
   useEffect(() => {
     const handleShortcuts = (ev: KeyboardEvent) => {
       // On Ctrl + Shift + A, select all entities for batch editing.
@@ -271,12 +277,6 @@ export function EntitiesList(): React.ReactElement<'div'> {
       </div>
     );
   }
-
-  const selectedEntitiesCount = batchactions.entities.length;
-  const windowWidth = useWindowWidth();
-  const entitiesList = useContext(EntitiesListContext);
-  const quitBatchActions = useCallback(() => dispatch(resetSelection()), []);
-  const showBatchActions = useCallback(() => entitiesList.show(false), []);
 
   return (
     <div className='entities unselectable' ref={list}>
