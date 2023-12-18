@@ -206,6 +206,7 @@ export function Helpers({
             </TabPanel>
           )}
           <TabPanel>
+            {/* HACK: Required inline due to https://github.com/mozilla/pontoon/issues/2300 */}
             <TeamComments
               contactPerson={contactPerson}
               initFocus={!isTerminologyProject}
