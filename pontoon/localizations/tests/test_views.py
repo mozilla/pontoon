@@ -10,6 +10,7 @@ from pontoon.base.tests import (
     ResourceFactory,
     TranslationFactory,
     TranslatedResourceFactory,
+    ProjectLocaleFactory,
 )
 
 
@@ -18,6 +19,7 @@ from pontoon.base.tests import (
 @patch.object(Locale, "parts_stats")
 def test_latest_activity(mock_parts_stats, mock_render, client, project_a, locale_a):
     """Ensure that the latest_activity field is added to parts."""
+    ProjectLocaleFactory.create(locale=locale_a, project=project_a)
     resource = ResourceFactory.create(project=project_a, path="has/stats.po")
     resource2 = ResourceFactory.create(project=project_a, path="has/stats2.po")
 

@@ -71,6 +71,9 @@ def ajax_resources(request, code, slug):
         slug=slug,
     )
 
+    # Check if ProjectLocale exists
+    get_object_or_404(ProjectLocale, locale=locale, project=project)
+
     # Amend the parts dict with latest activity info.
     translatedresources_qs = TranslatedResource.objects.filter(
         resource__project=project, locale=locale
@@ -150,6 +153,9 @@ def ajax_tags(request, code, slug):
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
+    # Check if ProjectLocale exists
+    get_object_or_404(ProjectLocale, locale=locale, project=project)
+
     if not project.tags_enabled:
         raise Http404
 
@@ -174,6 +180,9 @@ def ajax_insights(request, code, slug):
     if not settings.ENABLE_INSIGHTS:
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
+    get_object_or_404(Locale, code=code)
+    get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
+
     pl = get_object_or_404(ProjectLocale, locale__code=code, project__slug=slug)
     insights = get_insights(locale=pl.locale, project=pl.project)
 
@@ -188,6 +197,10 @@ class LocalizationContributorsView(ContributorsMixin, DetailView):
     template_name = "localizations/includes/contributors.html"
 
     def get_object(self):
+        get_object_or_404(Locale, code=self.kwargs["code"])
+        get_object_or_404(
+            Project.objects.visible_for(self.request.user), slug=self.kwargs["slug"]
+        )
         return get_object_or_404(
             ProjectLocale,
             locale__code=self.kwargs["code"],
