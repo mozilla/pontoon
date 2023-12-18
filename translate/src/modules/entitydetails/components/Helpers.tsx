@@ -124,21 +124,6 @@ export function Helpers({
     );
   }
 
-  function CommentsPanel() {
-    return (
-      <>
-        <TeamComments
-          contactPerson={contactPerson}
-          initFocus={!isTerminologyProject}
-          teamComments={teamComments}
-          user={user}
-          togglePinnedStatus={togglePinnedStatus}
-          resetContactPerson={resetContactPerson}
-        />
-      </>
-    );
-  }
-
   if (windowWidth === 'narrow' || windowWidth === 'medium') {
     return (
       <>
@@ -182,7 +167,15 @@ export function Helpers({
               </TabPanel>
             )}
             <TabPanel>
-              <CommentsPanel />
+              {/* HACK: Required inline due to https://github.com/mozilla/pontoon/issues/2300 */}
+              <TeamComments
+                contactPerson={contactPerson}
+                initFocus={!isTerminologyProject}
+                teamComments={teamComments}
+                user={user}
+                togglePinnedStatus={togglePinnedStatus}
+                resetContactPerson={resetContactPerson}
+              />
             </TabPanel>
           </Tabs>
         </div>
@@ -213,7 +206,15 @@ export function Helpers({
             </TabPanel>
           )}
           <TabPanel>
-            <CommentsPanel />
+            {/* HACK: Required inline due to https://github.com/mozilla/pontoon/issues/2300 */}
+            <TeamComments
+              contactPerson={contactPerson}
+              initFocus={!isTerminologyProject}
+              teamComments={teamComments}
+              user={user}
+              togglePinnedStatus={togglePinnedStatus}
+              resetContactPerson={resetContactPerson}
+            />
           </TabPanel>
         </Tabs>
       </div>
