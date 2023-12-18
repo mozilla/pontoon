@@ -182,7 +182,6 @@ def ajax_insights(request, code, slug):
 
     get_object_or_404(Locale, code=code)
     get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-
     pl = get_object_or_404(ProjectLocale, locale__code=code, project__slug=slug)
     insights = get_insights(locale=pl.locale, project=pl.project)
 
