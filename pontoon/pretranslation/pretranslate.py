@@ -57,6 +57,15 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
             return []
 
         pretranslation = serializer.serialize_entry(entry)
+        print(pretranslation)
+        # error-not-subscribed = Esta dirección de correo electrónico no está suscrita a {-product-name}.
+
+        # Parse and serialize pretranslation again in order to assure cannonical style
+        parsed_pretranslation = parser.parse_entry(pretranslation)
+        pretranslation = serializer.serialize_entry(parsed_pretranslation)
+        # error-not-subscribed = Esta dirección de correo electrónico no está suscrita a { -product-name }.
+
+        print(pretranslation)
 
         authors = [services[service] for service in pretranslate.services]
         author = max(set(authors), key=authors.count) if authors else services["tm"]
