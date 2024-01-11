@@ -156,16 +156,12 @@ def google_translate(request):
     """Get translation from Google machine translation service."""
     try:
         text = request.GET["text"]
-        locale_code = request.GET["locale"]
+        locale = Locale.objects.get(code=request.GET["locale"])
 
-        if not locale_code:
-            raise ValueError("Locale code is empty")
-
-        locale = Locale.objects.filter(google_translate_code=locale_code).first()
-        if not locale:
+        if not locale.google_translate_code:
             raise ValueError("Locale code not supported")
 
-    except (MultiValueDictKeyError, ValueError) as e:
+    except (Locale.DoesNotExist, MultiValueDictKeyError, ValueError) as e:
         return JsonResponse(
             {"status": False, "message": f"Bad Request: {e}"},
             status=400,

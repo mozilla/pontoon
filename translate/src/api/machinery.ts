@@ -128,7 +128,7 @@ export async function fetchGoogleTranslation(
   const url = '/google-translate/';
   const params = {
     text: original,
-    locale: locale.googleTranslateCode,
+    locale: locale.code,
   };
 
   const { translation } = (await GET_(url, params)) as {
