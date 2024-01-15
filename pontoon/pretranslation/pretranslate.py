@@ -5,7 +5,7 @@ import re
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
 
-from fluent.syntax import FluentParser, FluentSerializer
+from fluent.syntax import ast, FluentParser, FluentSerializer
 from functools import reduce
 
 from pontoon.base.models import User, TranslatedResource
@@ -57,15 +57,17 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
             return []
 
         pretranslation = serializer.serialize_entry(entry)
-        print(pretranslation)
-        # error-not-subscribed = Esta dirección de correo electrónico no está suscrita a {-product-name}.
 
         # Parse and serialize pretranslation again in order to assure cannonical style
         parsed_pretranslation = parser.parse_entry(pretranslation)
-        pretranslation = serializer.serialize_entry(parsed_pretranslation)
-        # error-not-subscribed = Esta dirección de correo electrónico no está suscrita a { -product-name }.
 
-        print(pretranslation)
+        if isinstance(parsed_pretranslation, ast.Junk):
+            log.info(
+                f"Fluent pretranslation error: Invalid translation: {pretranslation}"
+            )
+            return []
+
+        pretranslation = serializer.serialize_entry(parsed_pretranslation)
 
         authors = [services[service] for service in pretranslate.services]
         author = max(set(authors), key=authors.count) if authors else services["tm"]
