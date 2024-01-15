@@ -48,6 +48,22 @@ def test_get_pretranslations_empty_string(entity_a, locale_b, tm_user):
 
 
 @pytest.mark.django_db
+def test_get_pretranslations_whitespace(entity_a, locale_b, tm_user):
+    # Entity.string is an empty string
+    entity_a.string = " "
+    response = get_pretranslations(entity_a, locale_b)
+    assert response == [(" ", None, tm_user)]
+
+    entity_a.string = "\t"
+    response = get_pretranslations(entity_a, locale_b)
+    assert response == [("\t", None, tm_user)]
+
+    entity_a.string = "\n"
+    response = get_pretranslations(entity_a, locale_b)
+    assert response == [("\n", None, tm_user)]
+
+
+@pytest.mark.django_db
 def test_get_pretranslations_tm_match(entity_a, entity_b, locale_b, tm_user):
     # 100% TM match exists
     TranslationMemoryFactory.create(
@@ -143,32 +159,6 @@ def test_get_pretranslations_fluent_empty(
 
     response = get_pretranslations(fluent_entity, google_translate_locale)
     assert response == [(pretranslated_string, None, gt_user)]
-
-
-@pytest.mark.django_db
-def test_get_pretranslations_fluent_whitespace(
-    fluent_resource, google_translate_locale, tm_user
-):
-    # Various types of whitespace should be preserved
-    input_string = dedent(
-        """
-        whitespace =
-            { $count ->
-                [0] { "" }
-                [1] { " " }
-                *[other] { "\t" } { "\n" }
-            }
-    """
-    )
-    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
-
-    output_string = input_string
-
-    # Re-serialize to match whitespace
-    pretranslated_string = serializer.serialize_entry(parser.parse_entry(output_string))
-
-    response = get_pretranslations(fluent_entity, google_translate_locale)
-    assert response == [(pretranslated_string, None, tm_user)]
 
 
 @patch("pontoon.pretranslation.pretranslate.get_google_translate_data")

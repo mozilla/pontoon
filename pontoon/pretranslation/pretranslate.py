@@ -93,7 +93,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
 
 
 def get_pretranslated_data(source, locale, preserve_placeables):
-    # Empty strings do not need translation
+    # Empty strings and strings containing whitespace only do not need translation
     if re.search("^\\s*$", source):
         return source, "tm"
 
