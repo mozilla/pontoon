@@ -4,24 +4,27 @@
 
 # Summary
 
-Introduce LLM-assisted translations in Pontoon to provide alternative, formal, and informal translation options, enhancing the localization process and community health.
+Introduce LLM-assisted translations in Pontoon to provide alternative, formal, and informal translation options, enhancing translation quality.
 
 # Motivation
 
-In the realm of machine translation, recent studies have highlighted the evolving capabilities of Large Language Models (LLMs). This feature aims to revitalize community engagement and improve the efficiency of localization in Mozilla's projects. Incorporating LLM-assisted translations keeps Mozilla competitive with other TMS providers, adopting new technology for better community health and more effective translation.
+Modern Large Language Models (LLMs) — like OpenAI’s GPT-4 — have reached a quality level for localization tasks that is on par with dedicated machine translation engines. This feature is primarily focused on introducing a tool that aims to improve translation quality in Mozilla's projects. By incorporating LLM-assisted translations, Mozilla not only remains competitive with other Translation Management Systems (TMS) providers but also embraces new technology to enhance the overall translation process. This feature also lays the groundwork for future integrations that could further enhance efficiency and broaden the scope of translation improvements within Mozilla's localization efforts.
 
 # Feature explanation
 
-In the Machinery tab of the Pontoon translate view, users will encounter a new dropdown option for each 100% translation memory match for a given string, offering three choices: 
-1) Provide an alternative to this translation
-2) Provide a more formal version of this translation
-3) Provide a more informal version of this translation 
+In the Machinery tab of the Pontoon translate view, users will encounter a new dropdown option for each machine translation suggestion for a given string, offering three choices: 
+1) `"Make Informal"` - Provide a more informal version of this translation 
+2)  `"Make Formal"` - Provide a more formal version of this translation
+3) `"Rephrase"` - Provide an alternative to this translation 
 
-These options will utilize OpenAI’s GPT-4 API to generate translations, particularly beneficial for phrases that do not traditionally translate well, such as idiomatic expressions. The feature will leverage the LLM's in-context learning for translations that resonate with the stylistic nuances of the target language. 
+Upon selecting any of these options, the original machine translation will temporarily show `"AI is writing"` as the LLM generates the new translation. This revised translation will then appear in place of the original suggestion. Users can either accept or reject this new translation. Choosing 'accept' will directly replace the original machine translation with the new one. Each action will be followed by a confirmation pop-up.
 
-Additionally, data on the frequency of LLM usage and the adoption rate of LLM-provided translations will be collected to assess the tool's impact and refine its capabilities.
 
 # Implementation notes
+
+The translation enhancement options will utilize OpenAI’s GPT-4 API to improve the existing machine translation suggestions. This is especially useful for accurately translating challenging phrases, like idiomatic expressions, by utilizing the LLM's capability to adapt translations to the specific style and nuances of the target language.
+
+Additionally, data on the frequency of LLM usage and the adoption rate of LLM-provided translations will be collected to assess the tool's impact and refine its capabilities.
 
 The implementation will be divided into several subtasks:
 1. API integration to facilitate interaction between Pontoon and the GPT-4 API and logic to utilize translation memory as an input.
@@ -31,4 +34,28 @@ The implementation will be divided into several subtasks:
 
 # Mockup
 
-TBD
+![](0116/initial-drop-down.png)
+
+*Initial drop-down menu*
+
+![](0116/collapsed-drop-down.png)
+
+*Collapsed drop-down menu*
+
+![](0116/rephrase-selected.png)
+
+*"Rephrase" option is selected*
+
+![](0116/accept-or-reject.png)
+
+*User can accept or reject the selection*
+
+![](0116/confirmation.png)
+
+*Confirmation pop-up*
+
+![](0116/updated-translation.png)
+
+*Updated translation*
+
+
