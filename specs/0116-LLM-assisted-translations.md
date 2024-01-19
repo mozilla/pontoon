@@ -19,7 +19,6 @@ In the Machinery tab of the Pontoon translate view, users will encounter a new d
 
 Upon selecting any of these options, the original machine translation will temporarily show `"AI is writing"` as the LLM generates the new translation. This revised translation will then appear in place of the original suggestion. Users can either accept or reject this new translation. Choosing 'accept' will directly replace the original machine translation with the new one. Each action will be followed by a confirmation pop-up.
 
-
 # Implementation notes
 
 The translation enhancement options will utilize OpenAI’s GPT-4 API to improve the existing machine translation suggestions. This is especially useful for accurately translating challenging phrases, like idiomatic expressions, by utilizing the LLM's capability to adapt translations to the specific style and nuances of the target language.
@@ -57,5 +56,3 @@ The implementation will be divided into several subtasks:
 ![](0116/updated-translation.png)
 
 *Updated translation*
-
-
