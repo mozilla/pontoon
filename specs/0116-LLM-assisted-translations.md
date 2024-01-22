@@ -12,12 +12,13 @@ Modern Large Language Models (LLMs) — like OpenAI’s GPT-4 — have reached a
 
 # Feature explanation
 
-In the Machinery tab of the Pontoon translate view, users will encounter a new dropdown option for each machine translation suggestion for a given string, offering three choices: 
-1) `"Make Informal"` - Provide a more informal version of this translation 
-2)  `"Make Formal"` - Provide a more formal version of this translation
-3) `"Rephrase"` - Provide an alternative to this translation 
+In the Machinery tab of the Pontoon translate view, users will encounter a new drop-down option for each machine translation suggestion for a given string, offering four choices: 
+1) `"SHOW ORIGINAL"` - Restore the translation that was initially recommended  by machine translation 
+2) `"MAKE INFORMAL"` - Provide a more informal version of this translation 
+3)  `"MAKE FORMAL"` - Provide a more formal version of this translation
+4) `"REPHRASE"` - Provide an alternative to this translation 
 
-Upon selecting any of these options, the original machine translation will temporarily show `"AI is writing"` as the LLM generates the new translation. This revised translation will then appear in place of the original suggestion. Users can either accept or reject this new translation. Choosing 'accept' will directly replace the original machine translation with the new one. Each action will be followed by a confirmation pop-up.
+Upon selecting any of these options, the original machine translation will temporarily show `"AI is writing"` as the LLM generates the new translation. This revised translation will then appear in place of the original suggestion. Users can revert to the original translation by selecting the `"SHOW ORIGINAL"` option from the drop-down menu. 
 
 # Implementation notes
 
@@ -26,7 +27,7 @@ The translation enhancement options will utilize OpenAI’s GPT-4 API to improve
 Additionally, data on the frequency of LLM usage and the adoption rate of LLM-provided translations will be collected to assess the tool's impact and refine its capabilities.
 
 The implementation will be divided into several subtasks:
-1. API integration to facilitate interaction between Pontoon and the GPT-4 API and logic to utilize translation memory as an input.
+1. API integration to facilitate interaction between Pontoon and the GPT-4 API and logic to utilize machine translation as an input.
 2. Implement the ability to provide alternative translation suggestions and to adjust translations for formality.
 3. Frontend implementation for the new features.
 4. Gather feedback, refine UI/UX, and fix any issues encountered.
@@ -44,14 +45,6 @@ The implementation will be divided into several subtasks:
 ![](0116/rephrase-selected.png)
 
 *"Rephrase" option is selected*
-
-![](0116/accept-or-reject.png)
-
-*User can accept or reject the selection*
-
-![](0116/confirmation.png)
-
-*Confirmation pop-up*
 
 ![](0116/updated-translation.png)
 
