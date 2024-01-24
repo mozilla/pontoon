@@ -31,7 +31,7 @@ Additionally, after selecting an option from the drop-down menu, the label besid
 
 The translation enhancement options will utilize OpenAI’s GPT-4 API to improve the existing machine translation suggestions. This is especially useful for accurately translating challenging phrases, like idiomatic expressions, by utilizing the LLM's capability to adapt translations to the specific style and nuances of the target language.
 
-Additionally, data on the frequency of LLM usage and the adoption rate of LLM-provided translations will be collected to assess the tool's impact and refine its capabilities. This will include identifying additional Machinery sources, such as "LLM", to better understand if the feature is being utilized. Furthermore, we will log user experience (UX) actions for each selection made in the drop-down menu.
+Additionally, data on the frequency of LLM usage and the adoption rate of LLM-provided translations will be collected to assess the tool's impact and refine its capabilities. This will include storing additional machinery sources, such as "LLM", to better understand if the feature is being utilized. Furthermore, we will log user experience (UX) actions for each selection made in the drop-down menu.
 
 The implementation will be divided into several subtasks:
 1. API integration to facilitate interaction between Pontoon and the GPT-4 API, and logic to utilize machine translation as an input.
