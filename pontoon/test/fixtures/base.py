@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import User
 
 from pontoon.test import factories
 
@@ -17,6 +18,17 @@ def client_superuser(client, admin):
     """Provides a client with a logged in superuser."""
     client.force_login(admin)
     return client
+
+
+@pytest.fixture
+def system_user():
+    """Add the system user to the test data."""
+    return factories.UserFactory(email="pontoon-sync@example.com")
+
+
+@pytest.fixture
+def pretranslation_user():
+    return User.objects.get(email="pontoon-tm@example.com")
 
 
 @pytest.fixture
