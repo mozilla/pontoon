@@ -6,14 +6,12 @@ from unittest.mock import patch
 
 import pytest
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.urls import reverse
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.insights import views
 from pontoon.test.factories import (
-    UserFactory,
     ResourceFactory,
     TranslationFactory,
 )
@@ -35,17 +33,6 @@ class MonthlyQualityEntry:
     months_ago: int
     approved: int
     rejected: int
-
-
-@pytest.fixture
-def system_user():
-    # Test data doesn't contain the system user, so we create them here.
-    return UserFactory(email="pontoon-sync@example.com")
-
-
-@pytest.fixture
-def pretranslation_user():
-    return User.objects.get(email="pontoon-tm@example.com")
 
 
 @pytest.mark.django_db
