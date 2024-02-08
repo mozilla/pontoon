@@ -74,7 +74,7 @@ you create:
 
 ``BLOCKED_IPS``
    A comma-separated list of IP addresses to be blocked from accessing the app,
-   because they are DDoS'ing the server.
+   for example because they are DDoS'ing the server.
 
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to
