@@ -267,6 +267,7 @@ INSTALLED_APPS = (
     "django_ace",
 )
 
+# A list of IP addresses to be blocked from accessing the app, because they are DDoS'ing the server
 BLOCKED_IPS = os.environ.get("BLOCKED_IPS", "").split(",")
 
 MIDDLEWARE = (

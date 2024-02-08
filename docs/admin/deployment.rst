@@ -72,6 +72,10 @@ you create:
    Set to 'gitlab' if you want to use 'GitLab' (corresponding GITLAB_* settings must be set if required).
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
+``BLOCKED_IPS``
+   A comma-separated list of IP addresses to be blocked from accessing the app,
+   for example because they are DDoS'ing the server.
+
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to
    Celery or executed immediately and synchronously. Set this to ``False`` on
