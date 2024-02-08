@@ -40,3 +40,16 @@ Finally, you need to simply access the worker:
 
    # Replace my-app-name with your Heroku app's name.
    celery --broker=`heroku config:get RABBITMQ_URL --app=my-app-name` worker
+
+Mitigating DDoS attacks
+-----------------------
+In a distributed denial-of-service attack (`DDoS`_ attack), the incoming traffic
+flooding the victim originates from many different sources. This stops everyone
+else from accessing the website as there is too much traffic flowing to it.
+
+One way to mitigate DDoS attacks is to identify the IP addresses of the
+attackers and block them. Find the attacking IP addresses in the Log
+Management Add-On (Papertrail) and add them to the BLOCKED_IPs config variable
+in Heroku Settings.
+
+.. _DDoS: https://en.wikipedia.org/wiki/Denial-of-service_attack
