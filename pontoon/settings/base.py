@@ -673,6 +673,9 @@ else:
         }
     }
 
+# Default timeout for the per-view cache, in seconds.
+PER_VIEW_CACHE_TIMEOUT = 60 * 60 * 24  # 1 day
+
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1
 

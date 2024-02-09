@@ -78,6 +78,10 @@ def test_project_top_contributors(client, project_a, project_b):
             project_a_contributor
         ]
 
+    with patch(
+        "pontoon.projects.views.ProjectContributorsView.render_to_response",
+        return_value=HttpResponse(""),
+    ) as mock_render:
         client.get(
             f"/projects/{project_b.slug}/ajax/contributors/",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
