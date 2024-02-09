@@ -78,6 +78,7 @@ def test_project_top_contributors(client, project_a, project_b):
             project_a_contributor
         ]
 
+    # The ProjectContributorsView URL is cached, so we need a new mock
     with patch(
         "pontoon.projects.views.ProjectContributorsView.render_to_response",
         return_value=HttpResponse(""),

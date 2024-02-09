@@ -235,21 +235,26 @@ def test_default_period(
 
 
 @pytest.mark.django_db
-def test_invalid_period(
-    member, mock_contributors_render, mock_users_translations_counts
-):
+def test_invalid_period(member, mock_users_translations_counts):
     """
     Checks how view handles invalid period, it result in period being None - displays all data.
     """
     # If period parameter is invalid value
-    member.client.get("/contributors/?period=invalidperiod")
-    assert mock_contributors_render.call_args[0][0]["period"] is None
-    assert mock_users_translations_counts.call_args[0][0] is None
+    with patch.object(
+        views.ContributorsView, "render_to_response", return_value=HttpResponse("")
+    ) as mock_contributors_render:
+        member.client.get("/contributors/?period=invalidperiod")
+        assert mock_contributors_render.call_args[0][0]["period"] is None
+        assert mock_users_translations_counts.call_args[0][0] is None
 
     # Period shouldn't be negative integer
-    member.client.get("/contributors/?period=-6")
-    assert mock_contributors_render.call_args[0][0]["period"] is None
-    assert mock_users_translations_counts.call_args[0][0] is None
+    # The ContributorsView URL is cached, so we need a new mock
+    with patch.object(
+        views.ContributorsView, "render_to_response", return_value=HttpResponse("")
+    ) as mock_contributors_render:
+        member.client.get("/contributors/?period=-6")
+        assert mock_contributors_render.call_args[0][0]["period"] is None
+        assert mock_users_translations_counts.call_args[0][0] is None
 
 
 @pytest.mark.django_db

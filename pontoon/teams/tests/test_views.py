@@ -185,6 +185,7 @@ def test_locale_top_contributors(client, translation_a, locale_b):
         assert mock_render.call_args[0][0]["locale"] == translation_a.locale
         assert list(mock_render.call_args[0][0]["contributors"]) == [translation_a.user]
 
+    # The LocaleContributorsView URL is cached, so we need a new mock
     with patch(
         "pontoon.teams.views.LocaleContributorsView.render_to_response",
         return_value=HttpResponse(""),
