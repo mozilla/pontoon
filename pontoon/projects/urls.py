@@ -81,7 +81,7 @@ urlpatterns = [
                             # Project insights
                             path(
                                 "insights/",
-                                views.ajax_insights,
+                                cache_page(VIEW_CACHE_TIMEOUT)(views.ajax_insights),
                                 name="pontoon.projects.ajax.insights",
                             ),
                             # Project info
