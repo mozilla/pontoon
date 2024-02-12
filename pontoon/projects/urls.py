@@ -2,7 +2,7 @@ from django.urls import include, path
 from django.views.decorators.cache import cache_page
 from django.views.generic import RedirectView
 
-from pontoon.settings import PER_VIEW_CACHE_TIMEOUT
+from pontoon.settings import VIEW_CACHE_TIMEOUT
 
 from . import views
 
@@ -73,7 +73,7 @@ urlpatterns = [
                             # Project contributors
                             path(
                                 "contributors/",
-                                cache_page(PER_VIEW_CACHE_TIMEOUT)(
+                                cache_page(VIEW_CACHE_TIMEOUT)(
                                     views.ProjectContributorsView.as_view()
                                 ),
                                 name="pontoon.projects.ajax.contributors",
