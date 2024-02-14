@@ -18,16 +18,6 @@ serializer = FluentSerializer()
 
 
 @pytest.fixture
-def tm_user():
-    return User.objects.get(email="pontoon-tm@example.com")
-
-
-@pytest.fixture
-def gt_user():
-    return User.objects.get(email="pontoon-gt@example.com")
-
-
-@pytest.fixture
 def fluent_resource(project_a):
     return ResourceFactory(project=project_a, path="resource.ftl", format="ftl")
 

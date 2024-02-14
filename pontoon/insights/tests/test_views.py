@@ -36,9 +36,7 @@ class MonthlyQualityEntry:
 
 
 @pytest.mark.django_db
-def test_default_empty(
-    client, system_user, pretranslation_user, locale_a, project_a, user_a
-):
+def test_default_empty(client, sync_user, tm_user, locale_a, project_a, user_a):
     url = reverse("pontoon.insights")
     with patch.object(views, "render", wraps=render) as mock_render:
         response = client.get(url)
@@ -91,9 +89,7 @@ def test_default_empty(
 
 
 @pytest.mark.django_db
-def test_default_with_data(
-    client, system_user, pretranslation_user, locale_a, project_a, user_a
-):
+def test_default_with_data(client, sync_user, tm_user, locale_a, project_a, user_a):
     entries = [
         MonthlyQualityEntry(months_ago=0, approved=1, rejected=0),
         MonthlyQualityEntry(months_ago=1, approved=0, rejected=1),
@@ -109,7 +105,7 @@ def test_default_with_data(
         timestamp = now - relativedelta(now, months=entry.months_ago)
         for approval_index in range(entry.approved):
             translation = TranslationFactory.create(
-                entity__resource=resource, locale=locale_a, user=pretranslation_user
+                entity__resource=resource, locale=locale_a, user=tm_user
             )
             perform_action(
                 ActionLog.ActionType.TRANSLATION_APPROVED,
@@ -119,7 +115,7 @@ def test_default_with_data(
             )
         for rejected_index in range(entry.rejected):
             translation = TranslationFactory.create(
-                entity__resource=resource, locale=locale_a, user=pretranslation_user
+                entity__resource=resource, locale=locale_a, user=tm_user
             )
             perform_action(
                 ActionLog.ActionType.TRANSLATION_REJECTED,

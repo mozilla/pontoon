@@ -21,13 +21,18 @@ def client_superuser(client, admin):
 
 
 @pytest.fixture
-def system_user():
-    """Add the system user to the test data."""
+def sync_user():
+    """Add the sync user to the test data."""
     return factories.UserFactory(email="pontoon-sync@example.com")
 
 
 @pytest.fixture
-def pretranslation_user():
+def gt_user():
+    return User.objects.get(email="pontoon-gt@example.com")
+
+
+@pytest.fixture
+def tm_user():
     return User.objects.get(email="pontoon-tm@example.com")
 
 
