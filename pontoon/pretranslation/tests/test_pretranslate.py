@@ -4,7 +4,6 @@ from fluent.syntax import FluentParser, FluentSerializer
 from textwrap import dedent
 from unittest.mock import patch
 
-from pontoon.base.models import User
 from pontoon.pretranslation.pretranslate import get_pretranslations
 from pontoon.test.factories import (
     EntityFactory,
