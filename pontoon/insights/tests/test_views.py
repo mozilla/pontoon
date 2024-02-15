@@ -6,8 +6,9 @@ from unittest.mock import patch
 
 import pytest
 from dateutil.relativedelta import relativedelta
+from django.core.cache import cache
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, clear_url_caches
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.insights import views
@@ -15,6 +16,11 @@ from pontoon.test.factories import (
     ResourceFactory,
     TranslationFactory,
 )
+
+
+@pytest.fixture
+def clear_cache():
+    cache.clear()
 
 
 def perform_action(action_type, translation, user, timestamp):
@@ -36,7 +42,9 @@ class MonthlyQualityEntry:
 
 
 @pytest.mark.django_db
-def test_default_empty(client, sync_user, tm_user, locale_a, project_a, user_a):
+def test_default_empty(
+    client, clear_cache, sync_user, tm_user, locale_a, project_a, user_a
+):
     url = reverse("pontoon.insights")
     with patch.object(views, "render", wraps=render) as mock_render:
         response = client.get(url)
@@ -89,7 +97,9 @@ def test_default_empty(client, sync_user, tm_user, locale_a, project_a, user_a):
 
 
 @pytest.mark.django_db
-def test_default_with_data(client, sync_user, tm_user, locale_a, project_a, user_a):
+def test_default_with_data(
+    client, clear_cache, sync_user, tm_user, locale_a, project_a, user_a
+):
     entries = [
         MonthlyQualityEntry(months_ago=0, approved=1, rejected=0),
         MonthlyQualityEntry(months_ago=1, approved=0, rejected=1),
