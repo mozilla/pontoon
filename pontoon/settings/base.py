@@ -267,6 +267,7 @@ INSTALLED_APPS = (
     "django_ace",
 )
 
+# A list of IP addresses to be blocked from accessing the app, because they are DDoS'ing the server
 BLOCKED_IPS = os.environ.get("BLOCKED_IPS", "").split(",")
 
 MIDDLEWARE = (
@@ -672,6 +673,9 @@ else:
             "LOCATION": "pontoon",
         }
     }
+
+# Default timeout for the per-view cache, in seconds.
+VIEW_CACHE_TIMEOUT = 60 * 60 * 24  # 1 day
 
 # Site ID is used by Django's Sites framework.
 SITE_ID = 1

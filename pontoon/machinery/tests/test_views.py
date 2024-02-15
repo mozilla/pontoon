@@ -84,7 +84,7 @@ def test_view_google_translate(
         m.post("https://translation.googleapis.com/language/translate/v2", json=data)
         response = member.client.get(
             url,
-            {"text": "text", "locale": google_translate_locale.google_translate_code},
+            {"text": "text", "locale": google_translate_locale.code},
         )
 
     assert response.status_code == 200

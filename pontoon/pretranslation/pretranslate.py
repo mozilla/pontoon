@@ -58,6 +58,10 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
 
         pretranslation = serializer.serialize_entry(entry)
 
+        # Parse and serialize pretranslation again in order to assure cannonical style
+        parsed_pretranslation = parser.parse_entry(pretranslation)
+        pretranslation = serializer.serialize_entry(parsed_pretranslation)
+
         authors = [services[service] for service in pretranslate.services]
         author = max(set(authors), key=authors.count) if authors else services["tm"]
 
@@ -82,7 +86,7 @@ def get_pretranslations(entity, locale, preserve_placeables=False):
 
 
 def get_pretranslated_data(source, locale, preserve_placeables):
-    # Empty strings do not need translation
+    # Empty strings and strings containing whitespace only do not need translation
     if re.search("^\\s*$", source):
         return source, "tm"
 

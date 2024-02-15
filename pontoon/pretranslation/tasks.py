@@ -105,16 +105,16 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     translated_entities = list(translated_entities)
 
-    translations = []
-
-    # To keep track of changed TranslatedResources and their latest_translation
-    tr_dict = {}
-
-    tr_filter = []
-    index = -1
-
     for locale in locales:
         log.info(f"Fetching pretranslations for locale {locale.code} started")
+
+        translations = []
+
+        # To keep track of changed TranslatedResources and their latest_translation
+        tr_dict = {}
+        tr_filter = []
+        index = -1
+
         for entity in entities:
             locale_entity = f"{locale.id}-{entity.id}"
             locale_resource = f"{locale.id}-{entity.resource.id}"
@@ -165,39 +165,42 @@ def pretranslate(self, project_pk, locales=None, entities=None):
                 # Update the latest translation index
                 tr_dict[locale_resource] = index
 
-        log.info(f"Fetching pretranslations for locale {locale.code} done")
+        if len(translations) == 0:
+            log.info(
+                f"Fetching pretranslations for locale {locale.code} done: No pretranslation fetched"
+            )
+            continue
 
-    if len(translations) == 0:
-        return
+        translations = Translation.objects.bulk_create(translations)
 
-    translations = Translation.objects.bulk_create(translations)
+        # Log creating actions
+        actions_to_log = [
+            ActionLog(
+                action_type=ActionLog.ActionType.TRANSLATION_CREATED,
+                performed_by=t.user,
+                translation=t,
+            )
+            for t in translations
+        ]
 
-    # Log creating actions
-    actions_to_log = [
-        ActionLog(
-            action_type=ActionLog.ActionType.TRANSLATION_CREATED,
-            performed_by=t.user,
-            translation=t,
+        ActionLog.objects.bulk_create(actions_to_log)
+
+        # Run checks on all translations
+        translation_pks = {translation.pk for translation in translations}
+        bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
+
+        # Mark translations as changed
+        changed_translations = Translation.objects.filter(
+            pk__in=translation_pks,
+            # Do not sync translations with errors and warnings
+            errors__isnull=True,
+            warnings__isnull=True,
         )
-        for t in translations
-    ]
+        changed_translations.bulk_mark_changed()
 
-    ActionLog.objects.bulk_create(actions_to_log)
+        # Update latest activity and stats for changed instances.
+        update_changed_instances(tr_filter, tr_dict, translations)
 
-    # Run checks on all translations
-    translation_pks = {translation.pk for translation in translations}
-    bulk_run_checks(Translation.objects.for_checks().filter(pk__in=translation_pks))
-
-    # Mark translations as changed
-    changed_translations = Translation.objects.filter(
-        pk__in=translation_pks,
-        # Do not sync translations with errors and warnings
-        errors__isnull=True,
-        warnings__isnull=True,
-    )
-    changed_translations.bulk_mark_changed()
-
-    # Update latest activity and stats for changed instances.
-    update_changed_instances(tr_filter, tr_dict, translations)
+        log.info(f"Fetching pretranslations for locale {locale.code} done")
 
     log.info(f"Fetching pretranslations for project {project.name} done")
