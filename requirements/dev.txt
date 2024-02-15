@@ -20,9 +20,9 @@ click==8.0.3 \
     # via
     #   -c requirements/default.txt
     #   pip-tools
-django==3.2.15 \
-    --hash=sha256:115baf5049d5cf4163e43492cdc7139c306ed6d451e7d3571fe9612903903713 \
-    --hash=sha256:f71934b1a822f14a86c9ac9634053689279cd04ae69cb6ade4a59471b886582b
+django==3.2.24 \
+    --hash=sha256:5dd5b787c3ba39637610fe700f54bf158e33560ea0dba600c19921e7ff926ec5 \
+    --hash=sha256:aaee9fb0fb4ebd4311520887ad2e33313d368846607f82a9a0ed461cd4c35b18
     # via
     #   -c requirements/default.txt
     #   django-debug-toolbar
