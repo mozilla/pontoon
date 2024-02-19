@@ -3,6 +3,7 @@ from .resources import TagsResourcesTool
 from .stats import TagsStatsTool
 from .tagged import TaggedLocale
 from .tag import TagTool
+from .utils import Tags
 from .tags import TagsTool
 from .translations import TagsLatestTranslationsTool
 
@@ -16,6 +17,7 @@ __all__ = (
     "TagsLatestTranslationsTool",
     "TagsResourcesTool",
     "TagsStatsTool",
+    "Tags",
     "TagsTool",
     "TagTool",
 )

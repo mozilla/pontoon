@@ -532,6 +532,25 @@ class AggregatedStats(models.Model):
         abstract = True
 
     @classmethod
+    def get_chart_dict(cls, obj):
+        """Get chart data dictionary"""
+        if obj.total_strings:
+            return {
+                "total_strings": obj.total_strings,
+                "approved_strings": obj.approved_strings,
+                "pretranslated_strings": obj.pretranslated_strings,
+                "strings_with_errors": obj.strings_with_errors,
+                "strings_with_warnings": obj.strings_with_warnings,
+                "unreviewed_strings": obj.unreviewed_strings,
+                "approved_share": round(obj.approved_percent),
+                "pretranslated_share": round(obj.pretranslated_percent),
+                "errors_share": round(obj.errors_percent),
+                "warnings_share": round(obj.warnings_percent),
+                "unreviewed_share": round(obj.unreviewed_percent),
+                "completion_percent": int(math.floor(obj.completed_percent)),
+            }
+
+    @classmethod
     def get_stats_sum(cls, qs):
         """
         Get sum of stats for all items in the queryset.
@@ -1836,25 +1855,6 @@ class ProjectLocale(AggregatedStats):
                 chart = cls.get_chart_dict(project_locale)
 
         return chart
-
-    @classmethod
-    def get_chart_dict(cls, obj):
-        """Get chart data dictionary"""
-        if obj.total_strings:
-            return {
-                "total_strings": obj.total_strings,
-                "approved_strings": obj.approved_strings,
-                "pretranslated_strings": obj.pretranslated_strings,
-                "strings_with_errors": obj.strings_with_errors,
-                "strings_with_warnings": obj.strings_with_warnings,
-                "unreviewed_strings": obj.unreviewed_strings,
-                "approved_share": round(obj.approved_percent),
-                "pretranslated_share": round(obj.pretranslated_percent),
-                "errors_share": round(obj.errors_percent),
-                "warnings_share": round(obj.warnings_percent),
-                "unreviewed_share": round(obj.unreviewed_percent),
-                "completion_percent": int(math.floor(obj.completed_percent)),
-            }
 
     def aggregate_stats(self):
         TranslatedResource.objects.filter(

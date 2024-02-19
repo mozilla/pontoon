@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Priority
-from pontoon.tags.utils import TaggedLocale, TagTool
+from pontoon.tags.utils import TagTool
 
 
 @pytest.mark.django_db
@@ -170,7 +170,7 @@ def test_view_project_tag_locales(client, project_a, tag_a):
 
 
 @pytest.mark.django_db
-def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_a):
+def test_view_project_tag_locales_ajax(client, project_a, tag_a):
     url = reverse(
         "pontoon.tags.ajax.teams",
         kwargs=dict(project=project_a.slug, tag=tag_a.slug),
@@ -192,7 +192,6 @@ def test_view_project_tag_locales_ajax(client, project_a, project_locale_a, tag_
 
     for i, locale in enumerate(locales):
         locale = response.context_data["locales"][i]
-        assert isinstance(locale, TaggedLocale)
         assert locale.code == locales[i].locale.code
         assert locale.name == locales[i].locale.name
 
