@@ -5,7 +5,6 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Priority
-from pontoon.tags.utils import TagTool
 
 
 @pytest.mark.django_db
@@ -144,14 +143,11 @@ def test_view_project_tag_locales(client, project_a, tag_a):
     )
 
     # tag is not associated with project
+    project_a.tag_set.remove(tag_a)
     response = client.get(url)
     assert response.status_code == 404
 
-    # tag has no priority so still wont show up...
     project_a.tag_set.add(tag_a)
-    response = client.get(url)
-    assert response.status_code == 404
-
     tag_a.priority = Priority.NORMAL
     tag_a.save()
     response = client.get(url)
@@ -165,8 +161,7 @@ def test_view_project_tag_locales(client, project_a, tag_a):
     assert response.context_data["project"] == project_a
 
     res_tag = response.context_data["tag"]
-    assert isinstance(res_tag, TagTool)
-    assert res_tag.object == tag_a
+    assert res_tag == tag_a
 
 
 @pytest.mark.django_db
