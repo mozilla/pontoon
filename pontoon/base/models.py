@@ -3284,6 +3284,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             ("entity", "locale", "fuzzy"),
             ("locale", "user", "entity"),
             ("date", "locale"),
+            ("approved_date", "locale"),
         )
         constraints = [
             models.UniqueConstraint(
