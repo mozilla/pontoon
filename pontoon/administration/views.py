@@ -45,7 +45,9 @@ def admin(request):
 
     projects = (
         Project.objects.all()
-        .prefetch_related("latest_translation__user")
+        .prefetch_related(
+            "latest_translation__user", "latest_translation__approved_user"
+        )
         .order_by("name")
     )
 

@@ -683,7 +683,7 @@ class LocaleQuerySet(models.QuerySet):
                 "project_locale",
                 queryset=(
                     ProjectLocale.objects.filter(project=project).prefetch_related(
-                        "latest_translation__user"
+                        "latest_translation__user", "latest_translation__approved_user"
                     )
                 ),
                 to_attr="fetched_project_locale",
@@ -1210,7 +1210,7 @@ class ProjectQuerySet(models.QuerySet):
                 "project_locale",
                 queryset=(
                     ProjectLocale.objects.filter(locale=locale).prefetch_related(
-                        "latest_translation__user"
+                        "latest_translation__user", "latest_translation__approved_user"
                     )
                 ),
                 to_attr="fetched_project_locale",
