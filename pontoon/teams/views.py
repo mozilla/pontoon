@@ -31,7 +31,9 @@ from pontoon.teams.forms import LocaleRequestForm
 
 def teams(request):
     """List all active localization teams."""
-    locales = Locale.objects.available().prefetch_related("latest_translation__user")
+    locales = Locale.objects.available().prefetch_related(
+        "latest_translation__user", "latest_translation__approved_user"
+    )
 
     form = LocaleRequestForm()
 
