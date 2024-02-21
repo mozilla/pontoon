@@ -1,4 +1,3 @@
-import math
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
@@ -42,7 +41,15 @@ def localization(request, code, slug):
         project=project,
     )
 
-    resource_count = len(locale.parts_stats(project)) - 1
+    resource_count = (
+        TranslatedResource.objects.filter(
+            resource__project=project,
+            locale=locale,
+            resource__entities__obsolete=False,
+        )
+        .distinct()
+        .count()
+    )
 
     return render(
         request,
@@ -73,65 +80,33 @@ def ajax_resources(request, code, slug):
     # Check if ProjectLocale exists
     get_object_or_404(ProjectLocale, locale=locale, project=project)
 
-    # Amend the parts dict with latest activity info.
-    translatedresources_qs = TranslatedResource.objects.filter(
-        resource__project=project, locale=locale
-    ).prefetch_related("resource", "latest_translation__user")
+    # Prefetch data needed for the latest activity column
+    translatedresources = (
+        TranslatedResource.objects.filter(
+            resource__project=project,
+            locale=locale,
+            resource__entities__obsolete=False,
+        )
+        .order_by("resource__path")
+        .prefetch_related(
+            "resource", "latest_translation__user", "latest_translation__approved_user"
+        )
+        .distinct()
+    )
 
-    if not len(translatedresources_qs):
+    if not len(translatedresources):
         raise Http404
-
-    translatedresources = {s.resource.path: s for s in translatedresources_qs}
-    translatedresources = dict(list(translatedresources.items()))
-    parts = locale.parts_stats(project)
 
     resource_priority_map = project.resource_priority_map()
 
-    for part in parts:
-        part["resource__priority"] = resource_priority_map.get(part["title"], None)
-
-        translatedresource = translatedresources.get(part["title"], None)
-        if translatedresource and translatedresource.latest_translation:
-            part[
-                "latest_activity"
-            ] = translatedresource.latest_translation.latest_activity
-        else:
-            part["latest_activity"] = None
-
-        part["chart"] = {
-            "unreviewed_strings": part["unreviewed_strings"],
-            "pretranslated_strings": part["pretranslated_strings"],
-            "strings_with_errors": part["strings_with_errors"],
-            "strings_with_warnings": part["strings_with_warnings"],
-            "total_strings": part["resource__total_strings"],
-            "approved_strings": part["approved_strings"],
-            "approved_share": round(
-                part["approved_strings"] / part["resource__total_strings"] * 100
-            ),
-            "unreviewed_share": round(
-                part["unreviewed_strings"] / part["resource__total_strings"] * 100
-            ),
-            "pretranslated_share": round(
-                part["pretranslated_strings"] / part["resource__total_strings"] * 100
-            ),
-            "errors_share": round(
-                part["strings_with_errors"] / part["resource__total_strings"] * 100
-            ),
-            "warnings_share": round(
-                part["strings_with_warnings"] / part["resource__total_strings"] * 100
-            ),
-            "completion_percent": int(
-                math.floor(
-                    (
-                        part["approved_strings"]
-                        + part["pretranslated_strings"]
-                        + part["strings_with_warnings"]
-                    )
-                    / part["resource__total_strings"]
-                    * 100
-                )
-            ),
-        }
+    for tr in translatedresources:
+        tr.title = tr.resource.path
+        tr.deadline = tr.resource.deadline
+        tr.priority = resource_priority_map.get(tr.resource.path, None)
+        tr.latest_activity = (
+            tr.latest_translation.latest_activity if tr.latest_translation else None
+        )
+        tr.chart = TranslatedResource.get_chart_dict(tr)
 
     return render(
         request,
@@ -139,9 +114,9 @@ def ajax_resources(request, code, slug):
         {
             "locale": locale,
             "project": project,
-            "resources": parts,
-            "deadline": any(part["resource__deadline"] for part in parts),
-            "priority": any(part["resource__priority"] for part in parts),
+            "resources": translatedresources,
+            "deadline": any(tr.resource.deadline for tr in translatedresources),
+            "priority": any(tr.priority for tr in translatedresources),
         },
     )
 
