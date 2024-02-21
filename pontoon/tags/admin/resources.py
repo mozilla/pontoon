@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from pontoon.tags.exceptions import InvalidProjectError
+from pontoon.tags.admin.exceptions import InvalidProjectError
 
 from .base import TagsDataTool
 

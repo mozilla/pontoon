@@ -2,13 +2,13 @@ from unittest.mock import MagicMock, patch, PropertyMock
 
 import pytest
 
-from pontoon.tags.models import Tag
-from pontoon.tags.utils import (
+from pontoon.tags.admin import (
     TagsResourcesTool,
     TagsTool,
     TagTool,
 )
-from pontoon.tags.utils.base import Clonable
+from pontoon.tags.admin.base import Clonable
+from pontoon.tags.models import Tag
 
 
 def test_util_tags_tool():
@@ -31,7 +31,7 @@ def test_util_tags_tool():
         dict(slug=1, locales=2, projects=3, path=4),
     ],
 )
-@patch("pontoon.tags.utils.TagsTool.resources_class")
+@patch("pontoon.tags.admin.TagsTool.resources_class")
 def test_util_tags_tool_resources(resources_mock, kwargs):
     # tests instantiation of tag.resources_tool with different args
     tags_tool = TagsTool(**kwargs)
@@ -40,8 +40,8 @@ def test_util_tags_tool_resources(resources_mock, kwargs):
     assert resources_mock.call_args[1] == kwargs
 
 
-@patch("pontoon.tags.utils.TagsTool.tag_class")
-@patch("pontoon.tags.utils.TagsTool.get_tags")
+@patch("pontoon.tags.admin.TagsTool.tag_class")
+@patch("pontoon.tags.admin.TagsTool.get_tags")
 def test_util_tags_tool_get(tags_mock, class_mock):
     # tests getting a TagTool from TagsTool
     tags_tool = TagsTool()
@@ -62,7 +62,7 @@ def test_util_tags_tool_call_and_clone():
     assert isinstance(cloned, Clonable)
 
 
-@patch("pontoon.tags.utils.TagsTool.__call__")
+@patch("pontoon.tags.admin.TagsTool.__call__")
 def test_util_tags_tool_getitem(call_mock):
     # test that calling __getitem__ calls __call__ with slug
     tags_tool = TagsTool()
@@ -73,7 +73,7 @@ def test_util_tags_tool_getitem(call_mock):
     assert call_mock.call_args_list[1][1] == dict(slug=slugs[1])
 
 
-@patch("pontoon.tags.utils.TagsTool.tag_manager", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagsTool.tag_manager", new_callable=PropertyMock)
 def test_util_tags_tool_get_tags(tag_mock):
     filter_mock = MagicMock(**{"filter.return_value": 23})
     tag_mock.configure_mock(

@@ -1,9 +1,9 @@
 from unittest.mock import patch, MagicMock, PropertyMock
 
-from pontoon.tags.utils import TagsTool, TagTool
+from pontoon.tags.admin import TagsTool, TagTool
 
 
-@patch("pontoon.tags.utils.TagTool.resource_tool", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagTool.resource_tool", new_callable=PropertyMock)
 def test_util_tag_tool_linked_resources(resources_mock):
     tag_tool = TagTool(
         TagsTool(), name=None, pk=None, priority=None, project=None, slug=7
@@ -28,7 +28,7 @@ def test_util_tag_tool_linked_resources(resources_mock):
     assert list(order_by_mock.call_args) == [("path",), {}]
 
 
-@patch("pontoon.tags.utils.TagTool.resource_tool", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagTool.resource_tool", new_callable=PropertyMock)
 def test_util_tag_tool_linkable_resources(resources_mock):
     tag_tool = TagTool(
         TagsTool(), name=None, pk=None, priority=None, project=None, slug=7
@@ -53,7 +53,7 @@ def test_util_tag_tool_linkable_resources(resources_mock):
     assert list(order_by_mock.call_args) == [("path",), {}]
 
 
-@patch("pontoon.tags.utils.TagTool.resource_tool", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagTool.resource_tool", new_callable=PropertyMock)
 def test_util_tag_tool_link_resources(resources_mock):
     tag_tool = TagTool(
         TagsTool(), name=None, pk=None, priority=None, project=None, slug=7
@@ -67,7 +67,7 @@ def test_util_tag_tool_link_resources(resources_mock):
     assert list(resources_mock.return_value.link.call_args) == [(7,), {"resources": 13}]
 
 
-@patch("pontoon.tags.utils.TagTool.resource_tool", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagTool.resource_tool", new_callable=PropertyMock)
 def test_util_tag_tool_unlink_resources(resources_mock):
     tag_tool = TagTool(
         TagsTool(), name=None, pk=None, priority=None, project=None, slug=7
@@ -84,7 +84,7 @@ def test_util_tag_tool_unlink_resources(resources_mock):
     ]
 
 
-@patch("pontoon.tags.utils.TagsTool.tag_manager", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagsTool.tag_manager", new_callable=PropertyMock)
 def test_util_tag_tool_object(tag_mock):
     tag_mock.configure_mock(
         **{"return_value.select_related" ".return_value.get.return_value": 23}
@@ -103,7 +103,7 @@ def test_util_tag_tool_object(tag_mock):
     ]
 
 
-@patch("pontoon.tags.utils.TagsTool.resource_tool", new_callable=PropertyMock)
+@patch("pontoon.tags.admin.TagsTool.resource_tool", new_callable=PropertyMock)
 def test_util_tag_tool_resource_tool(resources_mock):
     tool_mock = MagicMock(return_value=23)
     resources_mock.return_value = tool_mock
