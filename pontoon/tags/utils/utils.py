@@ -87,17 +87,13 @@ class Tags:
         )
 
         for tr in trs:
-            if tr["approved_date"] is not None and tr["approved_date"] > tr["date"]:
-                date = "approved_date"
-            else:
-                date = "date"
-
-            dates[tr[date]] = tr[group_by]
+            date = max(tr["date"], tr["approved_date"] or tr["date"])
+            dates[date] = tr[group_by]
             prefix = "entity__" if group_by == "resource__tag" else ""
 
             # Find translations with matching date and tag/locale
             translations |= Translation.objects.filter(
-                Q(**{date: tr[date], f"{prefix}{group_by}": tr[group_by]})
+                Q(**{"date": date, f"{prefix}{group_by}": tr[group_by]})
             ).prefetch_related("user", "approved_user")
 
         for t in translations:
