@@ -58,4 +58,4 @@ jobs:
           pip install -U pip
           pip install -r requirements/lint.txt
       - name: pyupgrade
-        run: pyupgrade --py39-plus *.py `find pontoon -name \*.py`
+        run: pyupgrade --py310-plus *.py `find pontoon -name \*.py`
