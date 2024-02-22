@@ -465,12 +465,12 @@ class VCSProject:
                     continue
                 locales = []
 
-            locales = {l for l in locales if l in self.locales}
+            locales = {loc for loc in locales if loc in self.locales}
             self.synced_locales.update(locales)
 
             log.debug(
                 "Detected resource file {} for {}".format(
-                    path, ",".join([l.code for l in locales]) or "source"
+                    path, ",".join([loc.code for loc in locales]) or "source"
                 )
             )
 

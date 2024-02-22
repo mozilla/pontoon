@@ -78,7 +78,7 @@ def _tag_iterator(things, **kwargs):
     # `things` can  be either translations or translated_resources, but
     # they must have their `locale`, `project`, `resource` and
     # `resource.path` denormalized where required.
-    locales = list(l.id for l in kwargs.get("locales", []))
+    locales = list(loc.id for loc in kwargs.get("locales", []))
     projects = list(p.id for p in kwargs.get("projects", []))
     slug = kwargs.get("slug", None)
     path = kwargs.get("path", None)
