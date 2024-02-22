@@ -1,8 +1,7 @@
 from django.db.models import Q
 
-from pontoon.tags.exceptions import InvalidProjectError
-
 from .base import TagsDataTool
+from .exceptions import InvalidProjectError
 
 
 class TagsResourcesTool(TagsDataTool):

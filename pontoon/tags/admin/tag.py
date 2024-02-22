@@ -1,9 +1,7 @@
 from django.utils.functional import cached_property
 
-from .tagged import Tagged, TaggedLocale
 
-
-class TagTool(Tagged):
+class TagTool:
     """This wraps ``Tag`` model kwargs providing an API for
     efficient retrieval of related information, eg tagged ``Resources``,
     ``Locales`` and ``Projects``, and methods for managing linked
@@ -29,15 +27,6 @@ class TagTool(Tagged):
         """``Resources`` that are linked to this ``Tag``"""
         return self.resource_tool.get_linked_resources(self.slug).order_by("path")
 
-    @property
-    def locale_stats(self):
-        return self.tags_tool.stat_tool(slug=self.slug, groupby="locale").data
-
-    @cached_property
-    def locale_latest(self):
-        """A cached property containing latest locale changes"""
-        return self.tags_tool.translation_tool(slug=self.slug, groupby="locale").data
-
     @cached_property
     def object(self):
         """Returns the ``Tag`` model object for this tag.
@@ -60,19 +49,6 @@ class TagTool(Tagged):
             if self.project
             else self.tags_tool.resource_tool
         )
-
-    def iter_locales(self, project=None):
-        """Iterate ``Locales`` that are associated with this tag
-        (given any filtering in ``self.tags_tool``)
-
-        yields a ``TaggedLocale`` that can be used to get eg chart data
-        """
-        for locale in self.locale_stats:
-            yield TaggedLocale(
-                project=project,
-                latest_translation=self.locale_latest.get(locale["locale"]),
-                **locale
-            )
 
     def link_resources(self, resources):
         """Link Resources to this tag, raises an Error if the tag's
