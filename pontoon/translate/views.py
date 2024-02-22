@@ -1,18 +1,12 @@
 from django.conf import settings
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import (
-    get_object_or_404,
-    render,
-)
+from django.shortcuts import render
 from django.views.decorators.csrf import (
     csrf_exempt,
     ensure_csrf_cookie,
 )
 
-from pontoon.base.models import (
-    Locale,
-)
 
 from pontoon.base.utils import get_project_or_redirect, get_locale_or_redirect
 

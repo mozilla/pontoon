@@ -2,7 +2,6 @@
 
 import statistics
 
-from datetime import datetime, timedelta
 from django.db import migrations
 from django.db.models import F
 from sacrebleu.metrics import CHRF

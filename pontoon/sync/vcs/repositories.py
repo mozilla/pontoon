@@ -263,16 +263,16 @@ def execute(command, cwd=None, env=None):
 
         # Make sure that we manipulate strings instead of bytes, to avoid
         # compatibility errors in Python 3.
-        if type(output) is bytes:
+        if isinstance(output, bytes):
             output = output.decode("utf-8")
-        if type(error) is bytes:
+        if isinstance(error, bytes):
             error = error.decode("utf-8")
 
         code = proc.returncode
         return code, output, error
 
     except OSError as error:
-        if type(error) is bytes:
+        if isinstance(error, bytes):
             error = error.decode("utf-8")
         return -1, "", error
 
