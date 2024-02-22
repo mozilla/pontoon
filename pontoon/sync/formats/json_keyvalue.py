@@ -37,9 +37,9 @@ class JSONKVEntity(VCSTranslation):
             key=key,
             context=context,
             source_string=source_value,
-            strings=(
-                {None: value} if value else {}
-            ),  # No plural support in key value JSON
+            strings={None: value}
+            if value
+            else {},  # No plural support in key value JSON
             comments=[],
             fuzzy=False,
         )
@@ -109,7 +109,7 @@ class JSONKVResource(JSONResource):
             currentKey.append(key)
             if isinstance(value, dict):
                 self.traverse_json(value, function, keys=currentKey)
-            elif isinstance(value, str):
+            elif type(value) == str:
                 internal_key = json.dumps(currentKey)
                 dot_key = ".".join(currentKey)
                 function(internal_key, dot_key, value)
