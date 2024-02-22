@@ -310,7 +310,7 @@ def settings(request):
         user_profile_form = forms.UserProfileForm(instance=profile)
 
     selected_locales = list(profile.sorted_locales)
-    available_locales = Locale.objects.exclude(pk__in=[l.pk for l in selected_locales])
+    available_locales = Locale.objects.exclude(pk__in=[loc.pk for loc in selected_locales])
 
     default_homepage_locale = Locale(name="Default homepage", code="")
     all_locales = list(Locale.objects.all())

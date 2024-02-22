@@ -212,8 +212,8 @@ def sync_translations(
     # We should also sync files for which source file change - but only for read-only locales.
     # See https://github.com/mozilla/pontoon/issues/2068 for more details.
     if added_and_changed_resources:
-        changed_locales_pks = [l.pk for l in locales]
-        readonly_locales_pks = [l.pk for l in readonly_locales]
+        changed_locales_pks = [loc.pk for loc in locales]
+        readonly_locales_pks = [loc.pk for loc in readonly_locales]
         locales = db_project.locales.filter(
             pk__in=changed_locales_pks + readonly_locales_pks
         )
