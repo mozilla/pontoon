@@ -251,9 +251,7 @@ def update_translated_resources_no_files(db_project, locale, changed_resources):
         # only create TranslatedResources if the file is present in the repository for the locale,
         # which we cannot check without files.
         if not resource.is_asymmetric:
-            log.error(
-                f"Unable to calculate stats for asymmetric resource: {resource}"
-            )
+            log.error(f"Unable to calculate stats for asymmetric resource: {resource}")
             continue
 
         translatedresource, _ = TranslatedResource.objects.get_or_create(
