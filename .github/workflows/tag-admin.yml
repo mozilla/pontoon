@@ -22,8 +22,8 @@ jobs:
     name: Test & build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with: { node-version: '18' }
       - name: Install globals
         run: npm install --global npm@8
@@ -32,7 +32,7 @@ jobs:
       - name: Test
         run: npm test
         working-directory: tag-admin
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with: { flags: non-frontend-js }
       - name: Build
         run: npm run build
