@@ -24,12 +24,12 @@ jobs:
     name: pytest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build
         run: make build
       - name: Pytest
         run: make pytest
         env:
           run_opts: --user=root # volumes are only writable by root on gh
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with: { flags: backend }
