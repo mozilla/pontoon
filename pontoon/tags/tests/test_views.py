@@ -3,23 +3,37 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Priority
+from pontoon.test.factories import TagFactory, TranslatedResourceFactory
 
 
 @pytest.mark.django_db
-def test_view_project_tag_locales(client, project_a, tag_a):
-    url = reverse(
-        "pontoon.tags.project.tag",
-        kwargs=dict(project=project_a.slug, tag=tag_a.slug),
+def test_view_project_tag_locales(client, locale_a, project_a, resource_a):
+    TranslatedResourceFactory.create(resource=resource_a, locale=locale_a)
+
+    tag = TagFactory.create(
+        slug="tag",
+        name="Tag",
     )
 
-    # tag is not associated with project
-    project_a.tag_set.remove(tag_a)
+    url = reverse(
+        "pontoon.tags.project.tag",
+        kwargs=dict(project=project_a.slug, tag=tag.slug),
+    )
+
+    # tag is not associated with a project
     response = client.get(url)
     assert response.status_code == 404
 
-    project_a.tag_set.add(tag_a)
-    tag_a.priority = Priority.NORMAL
-    tag_a.save()
+    tag.project = project_a
+    tag.save()
+
+    # tag is not associated with a resource
+    response = client.get(url)
+    assert response.status_code == 404
+
+    tag.resources.add(resource_a)
+    tag.save()
+
     response = client.get(url)
     assert response.status_code == 200
 
@@ -31,7 +45,7 @@ def test_view_project_tag_locales(client, project_a, tag_a):
     assert response.context_data["project"] == project_a
 
     res_tag = response.context_data["tag"]
-    assert res_tag == tag_a
+    assert res_tag == tag
 
 
 @pytest.mark.django_db
