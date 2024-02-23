@@ -38,7 +38,7 @@ class ChangeSet:
         self.locale = locale
 
         # Store locales and resources for FK relationships.
-        self.locales = {loc.code: loc for loc in Locale.objects.all()}
+        self.locales = {l.code: l for l in Locale.objects.all()}
         self.resources = {r.path: r for r in self.db_project.resources.all()}
 
         self.executed = False

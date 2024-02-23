@@ -187,8 +187,8 @@ def test_manage_project_strings_translated_resource(client_superuser):
     project = Project.objects.get(id=project.id)
     assert project.total_strings == strings_count * locales_count
 
-    for loc in locales:
-        locale = Locale.objects.get(id=loc.id)
+    for l in locales:
+        locale = Locale.objects.get(id=l.id)
         assert locale.total_strings == strings_count
 
 

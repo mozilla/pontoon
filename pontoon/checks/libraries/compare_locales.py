@@ -28,7 +28,7 @@ class ComparePropertiesEntity(PropertiesEntityMixin):
 
     @property
     def all(self):
-        return "%s = %s"
+        return f"%s = %s"
 
     def __repr__(self):
         return 'ComparePropertiesEntity<key="{}",raw_val="{}",pre_comment="{}">'.format(

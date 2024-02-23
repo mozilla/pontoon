@@ -1,7 +1,7 @@
 import re
 
 from copy import deepcopy
-from typing import Callable, cast
+from typing import Callable, Optional, cast
 
 from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
@@ -174,7 +174,7 @@ class ApplyPretranslation(Transformer):
         self,
         locale: Locale,
         entry: FTL.EntryType,
-        callback: Callable[[str, str], tuple[str | None, str]],
+        callback: Callable[[str, str], tuple[Optional[str], str]],
         preserve_placeables: bool = None,
     ):
         prep = PreparePretranslation(locale)

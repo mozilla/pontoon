@@ -158,7 +158,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
 
                 (
                     ProjectLocale.objects.filter(project=project)
-                    .exclude(locale__pk__in=[loc.pk for loc in locales])
+                    .exclude(locale__pk__in=[l.pk for l in locales])
                     .delete()
                 )
                 for locale in locales:
@@ -167,7 +167,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 project_locales = ProjectLocale.objects.filter(project=project)
 
                 # Update readonly flags
-                locales_readonly_pks = [loc.pk for loc in locales_readonly_form]
+                locales_readonly_pks = [l.pk for l in locales_readonly_form]
                 project_locales.exclude(locale__pk__in=locales_readonly_pks).update(
                     readonly=False
                 )
@@ -179,7 +179,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 locales_pretranslate_form = form.cleaned_data.get(
                     "locales_pretranslate", []
                 )
-                locales_pretranslate_pks = [loc.pk for loc in locales_pretranslate_form]
+                locales_pretranslate_pks = [l.pk for l in locales_pretranslate_form]
                 project_locales.exclude(locale__pk__in=locales_pretranslate_pks).update(
                     pretranslation_enabled=False
                 )
@@ -244,7 +244,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
             {
                 "name": p.name,
                 # Cannot use values_list() here, because it hits the DB again
-                "locales": [loc.pk for loc in p.locales.all()],
+                "locales": [l.pk for l in p.locales.all()],
             }
         )
 

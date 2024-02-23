@@ -251,7 +251,11 @@ def update_translated_resources_no_files(db_project, locale, changed_resources):
         # only create TranslatedResources if the file is present in the repository for the locale,
         # which we cannot check without files.
         if not resource.is_asymmetric:
-            log.error(f"Unable to calculate stats for asymmetric resource: {resource}")
+            log.error(
+                "Unable to calculate stats for asymmetric resource: {resource}.".format(
+                    resource
+                )
+            )
             continue
 
         translatedresource, _ = TranslatedResource.objects.get_or_create(
@@ -430,11 +434,11 @@ def get_changed_locales(db_project, locales, now):
 
     # Check if any locale for which the exception was raised hasn't been processed yet.
     # For those locales we can't be sure if a change happened, so we assume it did.
-    for loc in error_locale_pks:
-        if loc not in changed_locale_pks + unchanged_locale_pks:
+    for l in error_locale_pks:
+        if l not in changed_locale_pks + unchanged_locale_pks:
             log.error(
                 "Unable to fetch latest commit hash for locale {locale} in project {project}".format(
-                    locale=Locale.objects.get(pk=loc), project=db_project.slug
+                    locale=Locale.objects.get(pk=l), project=db_project.slug
                 )
             )
             changed_locale_pks.append(locale.pk)

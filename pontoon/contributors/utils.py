@@ -94,11 +94,11 @@ def users_with_translations_counts(
         Prefetch("translators_group__user_set", to_attr="fetched_translators"),
     )
 
-    for loc in locales:
-        for user in loc.managers_group.fetched_managers:
-            managers[user].add(loc.code)
-        for user in loc.translators_group.fetched_translators:
-            translators[user].add(loc.code)
+    for l in locales:
+        for user in l.managers_group.fetched_managers:
+            managers[user].add(l.code)
+        for user in l.translators_group.fetched_translators:
+            translators[user].add(l.code)
 
     # Assign properties to user objects.
     contributors = User.objects.filter(pk__in=user_stats.keys())
