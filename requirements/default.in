@@ -19,7 +19,7 @@ bleach==3.3.0
 celery==5.2.6
 compare-locales==9.0.2
 dj-database-url==0.3.0
-Django==3.2.24
+Django==3.2.15
 django-ace==1.0.5
 django-allauth==0.51.0
 django-bmemcached==0.2.3
@@ -27,7 +27,7 @@ django-cors-headers==3.5.0
 django-csp==3.7
 django-dirtyfields==1.3.1
 django-guardian==2.3.0
-django-jinja==2.11.0
+django-jinja==2.7.0
 django-notifications-hq==1.6.0
 django-pipeline==2.0.6
 google-cloud-translate==3.8.4
