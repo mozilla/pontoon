@@ -27,9 +27,7 @@ def projects(request):
     projects = (
         Project.objects.visible()
         .visible_for(request.user)
-        .prefetch_related(
-            "latest_translation__user", "latest_translation__approved_user"
-        )
+        .prefetch_related("latest_translation__user")
         .order_by("name")
     )
 
