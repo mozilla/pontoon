@@ -3,29 +3,35 @@ from pontoon.gpt.openai_connection import OpenAIService
 
 
 class Command(BaseCommand):
-    help = "Refines machine translations using OpenAI with specified formality"
+    help = "Refines machine translations using OpenAI with specified characteristics"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "formality",
+            "characteristic",
             type=str,
             choices=["informal", "formal", "alternative"],
-            help="The formality of the translation (informal, formal, alternative)",
+            help="The specified characteristic of the translation (informal, formal, alternative)",
         )
-        parser.add_argument("english_text", type=str, help="The original English text")
         parser.add_argument(
-            "slovenian_text",
+            "english_text", type=str, help="The source string in English"
+        )
+        parser.add_argument(
+            "target_text", type=str, help="The machine-generated translation to refine"
+        )
+        parser.add_argument(
+            "locale_name",
             type=str,
-            help="The machine-generated Slovenian translation to refine",
+            help="The name of the target locale for the translation",
         )
 
     def handle(self, *args, **options):
-        formality = options["formality"]
+        characteristic = options["characteristic"]
         english_text = options["english_text"]
-        slovenian_text = options["slovenian_text"]
+        target_text = options["target_text"]
+        locale_name = options["locale_name"]
 
         translator = OpenAIService()
         translation = translator.get_translation(
-            english_text, slovenian_text, formality
+            english_text, target_text, characteristic, locale_name
         )
         self.stdout.write(self.style.SUCCESS(translation))
