@@ -1,4 +1,5 @@
 import math
+from operator import attrgetter
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
@@ -19,7 +20,7 @@ from pontoon.base.utils import (
 )
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
-from pontoon.tags.utils import Tags
+from pontoon.tags.utils import TagsTool
 
 
 def localization(request, code, slug):
@@ -158,7 +159,13 @@ def ajax_tags(request, code, slug):
     if not project.tags_enabled:
         raise Http404
 
-    tags = Tags(project=project, locale=locale).get()
+    tags_tool = TagsTool(
+        locales=[locale],
+        projects=[project],
+        priority=True,
+    )
+
+    tags = sorted(tags_tool, key=attrgetter("priority"), reverse=True)
 
     return render(
         request,

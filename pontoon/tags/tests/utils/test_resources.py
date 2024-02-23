@@ -10,9 +10,9 @@ from pontoon.test.factories import (
     ResourceFactory,
     TagFactory,
 )
-from pontoon.tags.admin import TagsResourcesTool
-from pontoon.tags.admin.exceptions import InvalidProjectError
+from pontoon.tags.exceptions import InvalidProjectError
 from pontoon.tags.models import Tag
+from pontoon.tags.utils import TagsResourcesTool
 
 
 @pytest.fixture
@@ -161,7 +161,7 @@ def test_util_tags_resources_tool_link_bad(resource_a, tag_c, project_b):
 def test_util_tags_resources_tool_linked_resources(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
-    _patch_ctx = patch("pontoon.tags.admin.TagsResourcesTool.get")
+    _patch_ctx = patch("pontoon.tags.utils.TagsResourcesTool.get")
     with _patch_ctx as m:
         values = MagicMock()
         values.values.return_value = 7
@@ -176,7 +176,7 @@ def test_util_tags_resources_tool_linked_resources(resource_a, tag_c):
 def test_util_tags_resources_tool_linkable_resources(resource_a, tag_c):
     resource_tool = TagsResourcesTool()
 
-    _patch_ctx = patch("pontoon.tags.admin.TagsResourcesTool.find")
+    _patch_ctx = patch("pontoon.tags.utils.TagsResourcesTool.find")
     with _patch_ctx as m:
         values = MagicMock()
         values.values.return_value = 7
@@ -245,7 +245,7 @@ def test_util_tag_resources_tool_get():
     resource_tool = TagsResourcesTool()
 
     _patch_ctx = patch(
-        "pontoon.tags.admin.TagsResourcesTool.filtered_data",
+        "pontoon.tags.utils.TagsResourcesTool.filtered_data",
         new_callable=PropertyMock(),
     )
     with _patch_ctx as p:

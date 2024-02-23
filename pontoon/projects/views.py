@@ -1,4 +1,5 @@
 import uuid
+from operator import attrgetter
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -18,7 +19,7 @@ from pontoon.base.utils import require_AJAX, split_ints, get_project_or_redirect
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms
-from pontoon.tags.utils import Tags
+from pontoon.tags.utils import TagsTool
 
 
 def projects(request):
@@ -108,7 +109,12 @@ def ajax_tags(request, slug):
     if not project.tags_enabled:
         raise Http404
 
-    tags = Tags(project=project).get()
+    tags_tool = TagsTool(
+        projects=[project],
+        priority=True,
+    )
+
+    tags = sorted(tags_tool, key=attrgetter("priority"), reverse=True)
 
     return render(
         request,

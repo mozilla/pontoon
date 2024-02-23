@@ -8,8 +8,8 @@ from pontoon.base.models import (
     Translation,
 )
 
-from pontoon.tags.admin.base import Clonable, TagsDataTool
 from pontoon.tags.models import Tag
+from pontoon.tags.utils.base import Clonable, TagsDataTool
 
 
 def test_util_clonable():

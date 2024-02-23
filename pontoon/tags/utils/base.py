@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.db.models import Q
 from django.utils.functional import cached_property
 
 from pontoon.base.models import (
@@ -136,3 +137,50 @@ class TagsDataTool(FilteredDataTool):
     @property
     def tr_manager(self):
         return TranslatedResource.objects
+
+
+class TagsTRTool(TagsDataTool):
+    """Data Tool from the perspective of TranslatedResources"""
+
+    clone_kwargs = TagsDataTool.clone_kwargs + ("annotations", "groupby")
+
+    @property
+    def data_manager(self):
+        return self.tr_manager
+
+    def filter_locales(self, trs):
+        return trs.filter(locale__in=self.locales) if self.locales else trs
+
+    def filter_path(self, trs):
+        return (
+            trs.filter(resource__path__contains=self.path).distinct()
+            if self.path
+            else trs
+        )
+
+    def filter_projects(self, trs):
+        return trs.filter(resource__project__in=self.projects) if self.projects else trs
+
+    def filter_tag(self, trs):
+        """Filters on tag.slug and tag.priority"""
+
+        q = Q()
+        if not self.slug:
+            # if slug is not specified, then just remove all resources
+            # that have no tag
+            q &= ~Q(resource__tag__isnull=True)
+
+        if self.slug:
+            q &= Q(resource__tag__slug__contains=self.slug)
+
+        if self.priority is not None:
+            if self.priority is False:
+                # if priority is False, exclude tags with priority
+                q &= Q(resource__tag__priority__isnull=True)
+            elif self.priority is True:
+                # if priority is True show only tags with priority
+                q &= Q(resource__tag__priority__isnull=False)
+            elif isinstance(self.priority, int):
+                # if priority is an int, filter on that priority
+                q &= Q(resource__tag__priority=self.priority)
+        return trs.filter(q)

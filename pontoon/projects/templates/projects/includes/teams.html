@@ -19,12 +19,10 @@
   {% set locale_projects = project.available_locales_list() %}
 
   {% for locale in locales %}
-    {% if not tag %}
     {% set main_link = url('pontoon.projects.project', project.slug) %}
     {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') %}
     {% set latest_activity = locale.get_latest_activity(project) %}
     {% set chart = locale.get_chart(project) %}
-    {% endif %}
     {% if locale.code in locale_projects %}
       {% set class = 'limited' %}
       {% if chart %}
@@ -37,8 +35,6 @@
     {% if tag %}
       {% set main_link = url('pontoon.projects.project', project.slug) + '?tag=' + tag.slug %}
       {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') + '?tag=' + tag.slug %}
-      {% set latest_activity = locale.latest_activity %}
-      {% set chart = locale.chart %}
       {% if chart %}
         {% set main_link = chart_link %}
       {% endif %}
