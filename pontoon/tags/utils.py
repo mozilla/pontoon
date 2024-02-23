@@ -13,7 +13,9 @@ class Tags:
         self.project = kwargs.get("project")
         self.locale = kwargs.get("locale")
         self.slug = kwargs.get("slug")
-        self.tag = Tag.objects.filter(project=self.project, slug=self.slug).first()
+        self.tag = Tag.objects.filter(
+            project=self.project, slug=self.slug, resources__isnull=False
+        ).first()
 
     def get(self):
         tags = (
