@@ -35,13 +35,13 @@
 
     {% if deadline %}
     <td class="deadline">
-      {{ Deadline.deadline(resource.deadline, chart.completion_percent == 100) }}
+      {{ Deadline.deadline(resource.resource__deadline, chart.completion_percent == 100) }}
     </td>
     {% endif %}
 
     {% if priority %}
     <td class="priority">
-      {{ Priority.priority(resource.priority) }}
+      {{ Priority.priority(resource.resource__priority) }}
     </td>
     {% endif %}
 
