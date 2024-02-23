@@ -4,6 +4,7 @@ from fluent.syntax import FluentParser, FluentSerializer
 from textwrap import dedent
 from unittest.mock import patch
 
+from pontoon.base.models import User
 from pontoon.pretranslation.pretranslate import get_pretranslations
 from pontoon.test.factories import (
     EntityFactory,
@@ -14,6 +15,16 @@ from pontoon.test.factories import (
 
 parser = FluentParser()
 serializer = FluentSerializer()
+
+
+@pytest.fixture
+def tm_user():
+    return User.objects.get(email="pontoon-tm@example.com")
+
+
+@pytest.fixture
+def gt_user():
+    return User.objects.get(email="pontoon-gt@example.com")
 
 
 @pytest.fixture
