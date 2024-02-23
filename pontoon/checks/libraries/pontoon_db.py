@@ -28,20 +28,27 @@ def get_max_length(comment):
 
 class IsEmptyVisitor(Visitor):
     def __init__(self):
-        self.is_empty = True
+        self.is_empty = False
+        self.is_pattern_empty = True
+
+    def visit_Pattern(self, node):
+        self.is_pattern_empty = True
+        self.visit(node.elements)
+        if self.is_pattern_empty:
+            self.is_empty = True
 
     def visit_Placeable(self, node):
         if isinstance(node.expression, ast.Literal):
             if node.expression.parse()["value"]:
-                self.is_empty = False
+                self.is_pattern_empty = False
         elif isinstance(node.expression, ast.SelectExpression):
             self.generic_visit(node.expression)
         else:
-            self.is_empty = False
+            self.is_pattern_empty = False
 
     def visit_TextElement(self, node):
         if node.value:
-            self.is_empty = False
+            self.is_pattern_empty = False
 
 
 def run_checks(entity, original, string):

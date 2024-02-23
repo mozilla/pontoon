@@ -131,6 +131,11 @@ def test_empty_translations(get_entity_mock):
     ) == {"pndbWarnings": ["Empty translation"]}
 
     assert (
+        run_checks(get_entity_mock("ftl", string="key = value"), "", 'key = { "x" }')
+        == {}
+    )
+
+    assert (
         run_checks(
             get_entity_mock("ftl", string="key =\n  .attr = value"),
             "",
@@ -143,6 +148,51 @@ def test_empty_translations(get_entity_mock):
             """,
         )
         == {"pndbWarnings": ["Empty translation"]}
+    )
+
+    assert (
+        run_checks(
+            get_entity_mock("ftl", string="key =\n  .attr = value"),
+            "",
+            """key =
+              { $var ->
+                  [a] { "x" }
+                 *[b] { "y" }
+              }
+              .attr = { "" }
+            """,
+        )
+        == {"pndbWarnings": ["Empty translation"]}
+    )
+
+    assert (
+        run_checks(
+            get_entity_mock("ftl", string="key =\n  .attr = value"),
+            "",
+            """key =
+              { $var ->
+                  [a] { "x" }
+                 *[b] { "" }
+              }
+              .attr = { "y" }
+            """,
+        )
+        == {"pndbWarnings": ["Empty translation"]}
+    )
+
+    assert (
+        run_checks(
+            get_entity_mock("ftl", string="key =\n  .attr = value"),
+            "",
+            """key =
+              { $var ->
+                  [a] { "x" }
+                 *[b] { "y" }
+              }
+              .attr = { "z" }
+            """,
+        )
+        == {}
     )
 
 
