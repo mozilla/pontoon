@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from pontoon.machinery.gpt.openai_connection import OpenAIService
+from pontoon.machinery.openai_service import OpenAIService
 
 
 class Command(BaseCommand):

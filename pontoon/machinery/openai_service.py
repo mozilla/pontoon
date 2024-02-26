@@ -26,7 +26,7 @@ class OpenAIService:
 
         formal = (
             f"You will be provided with text in English, along with its machine-generated translation in {target_language}. "
-            "Your objective is to revise the {target_language} translation to ensure it adheres to a higher level of formality. Adhere to the following guidelines to achieve this:\n"
+            "Your objective is to revise the {target_language} translation to ensure it utilizes a higher level of formality. Adhere to the following guidelines to achieve this:\n"
             "- Adjust the Tone: Ensure the tone is respectful, polished, and devoid of colloquialisms or informal expressions commonly used in casual conversation.\n"
             "- Formal Addressing: Where applicable, use formal modes of address.\n"
             "- Consistency: Maintain a consistent level of formality throughout the translation, avoiding shifts in tone or style.\n"
@@ -34,8 +34,8 @@ class OpenAIService:
         )
 
         alternative = (
-            f"You will provided text in English along with its machine-generated translation in {target_language}. "
-            "Your objective is to provide an alternative translation, Adhere to the following guidelines to achieve this:\n"
+            f"You will be provided with text in English, along with its machine-generated translation in {target_language}. "
+            "Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:\n"
             "- Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.\n"
             "- Clarification and Accuracy: Where the source text is ambiguous or idiomatic, offer clarifications or alternative expressions in {target_language}.\n"
             "Just provide the text for the alternative translation."
