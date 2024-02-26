@@ -5,7 +5,7 @@ Contributing
 Source code
 ===========
 
-Pontoon source code is available in `GitHub <https://github.com/mozilla/pontoon>`_.
+Pontoon source code is available on `GitHub <https://github.com/mozilla/pontoon>`_.
 
 
 Issues
