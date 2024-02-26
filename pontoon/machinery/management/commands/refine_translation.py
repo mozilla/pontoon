@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
-from pontoon.gpt.openai_connection import OpenAIService
+from pontoon.machinery.gpt.openai_connection import OpenAIService
 
 
 class Command(BaseCommand):
-    help = "Refines machine translations using OpenAI with specified characteristics"
+    help = "Refines machine translations using OpenAI's GPT-4 API with specified characteristics"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -19,19 +19,19 @@ class Command(BaseCommand):
             "target_text", type=str, help="The machine-generated translation to refine"
         )
         parser.add_argument(
-            "locale_name",
+            "language_name",
             type=str,
-            help="The name of the target locale for the translation",
+            help="The name of the target language for the translation",
         )
 
     def handle(self, *args, **options):
         characteristic = options["characteristic"]
         english_text = options["english_text"]
         target_text = options["target_text"]
-        locale_name = options["locale_name"]
+        language_name = options["language_name"]
 
         translator = OpenAIService()
         translation = translator.get_translation(
-            english_text, target_text, characteristic, locale_name
+            english_text, target_text, characteristic, language_name
         )
         self.stdout.write(self.style.SUCCESS(translation))
