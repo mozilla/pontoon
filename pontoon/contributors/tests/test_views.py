@@ -223,42 +223,30 @@ def mock_users_translations_counts():
 
 
 @pytest.mark.django_db
-def test_default_period(
-    member, mock_contributors_render, mock_users_translations_counts
-):
+def test_default_period(member, mock_contributors_render):
     """
     Calling the top contributors should result in period being None.
     """
     member.client.get("/contributors/")
     assert mock_contributors_render.call_args[0][0]["period"] is None
-    assert mock_users_translations_counts.call_args[0][0] is None
 
 
 @pytest.mark.django_db
-def test_invalid_period(member, mock_users_translations_counts):
+def test_invalid_period(member, mock_contributors_render):
     """
     Checks how view handles invalid period, it result in period being None - displays all data.
     """
     # If period parameter is invalid value
-    with patch.object(
-        views.ContributorsView, "render_to_response", return_value=HttpResponse("")
-    ) as mock_contributors_render:
-        member.client.get("/contributors/?period=invalidperiod")
-        assert mock_contributors_render.call_args[0][0]["period"] is None
-        assert mock_users_translations_counts.call_args[0][0] is None
+    member.client.get("/contributors/?period=invalidperiod")
+    assert mock_contributors_render.call_args[0][0]["period"] is None
 
     # Period shouldn't be negative integer
-    # The ContributorsView URL is cached, so we need a new mock
-    with patch.object(
-        views.ContributorsView, "render_to_response", return_value=HttpResponse("")
-    ) as mock_contributors_render:
-        member.client.get("/contributors/?period=-6")
-        assert mock_contributors_render.call_args[0][0]["period"] is None
-        assert mock_users_translations_counts.call_args[0][0] is None
+    member.client.get("/contributors/?period=-6")
+    assert mock_contributors_render.call_args[0][0]["period"] is None
 
 
 @pytest.mark.django_db
-def test_given_period(member, mock_contributors_render, mock_users_translations_counts):
+def test_given_period(member, mock_contributors_render):
     """
     Checks if view sets and returns data for right period.
     """
@@ -269,6 +257,3 @@ def test_given_period(member, mock_contributors_render, mock_users_translations_
     ):
         member.client.get("/contributors/?period=6")
         assert mock_contributors_render.call_args[0][0]["period"] == 6
-        assert mock_users_translations_counts.call_args[0][0] == aware_datetime(
-            2015, 1, 5
-        )

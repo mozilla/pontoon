@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
@@ -24,6 +25,7 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import require_AJAX, get_locale_or_redirect
 from pontoon.contributors import utils
+from pontoon.settings import VIEW_CACHE_TIMEOUT
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -465,14 +467,26 @@ class ContributorsMixin:
             period = None
             start_date = None
 
-        context["contributors"] = utils.users_with_translations_counts(
-            start_date,
-            self.contributors_filter(**kwargs)
-            & Q(user__isnull=False)
-            & Q(user__profile__system_user=False),
-            kwargs.get("locale"),
-            100,
-        )
+        qs = str(self.contributors_filter(**kwargs)).replace(" ", "")
+        key = f"{__name__}.{qs}.{period}"
+
+        # Cannot use cache.get_or_set(), because it always calls the slow function
+        # users_with_translations_count(). The reason we use cache in first place is to
+        # avoid that.
+        contributors = cache.get(key)
+        if not contributors:
+            contributors = utils.users_with_translations_counts(
+                start_date,
+                self.contributors_filter(**kwargs)
+                & Q(user__isnull=False)
+                & Q(user__profile__system_user=False),
+                kwargs.get("locale"),
+                100,
+            )
+            cache.set(key, contributors, VIEW_CACHE_TIMEOUT)
+
+        context["contributors"] = contributors
+
         context["period"] = period
         return context
 

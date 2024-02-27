@@ -170,29 +170,28 @@ def test_users_permissions_for_ajax_permissions_view(
 
 
 @pytest.mark.django_db
-def test_locale_top_contributors(client, translation_a, locale_b):
+@patch(
+    "pontoon.teams.views.LocaleContributorsView.render_to_response",
+    return_value=HttpResponse(""),
+)
+def test_locale_top_contributors(mock_render, client, translation_a, locale_b):
     """
     Tests if the view returns top contributors specific for given locale.
     """
-    with patch(
-        "pontoon.teams.views.LocaleContributorsView.render_to_response",
-        return_value=HttpResponse(""),
-    ) as mock_render:
-        client.get(
-            f"/{translation_a.locale.code}/ajax/contributors/",
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        assert mock_render.call_args[0][0]["locale"] == translation_a.locale
-        assert list(mock_render.call_args[0][0]["contributors"]) == [translation_a.user]
+    client.get(
+        f"/{translation_a.locale.code}/ajax/contributors/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
 
-    # The LocaleContributorsView URL is cached, so we need a new mock
-    with patch(
-        "pontoon.teams.views.LocaleContributorsView.render_to_response",
-        return_value=HttpResponse(""),
-    ) as mock_render:
-        client.get(
-            f"/{locale_b.code}/ajax/contributors/",
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        assert mock_render.call_args[0][0]["locale"] == locale_b
-        assert list(mock_render.call_args[0][0]["contributors"]) == []
+    response_context = mock_render.call_args[0][0]
+    assert response_context["locale"] == translation_a.locale
+    assert list(response_context["contributors"]) == [translation_a.user]
+
+    client.get(
+        f"/{locale_b.code}/ajax/contributors/",
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    response_context = mock_render.call_args[0][0]
+    assert response_context["locale"] == locale_b
+    assert list(response_context["contributors"]) == []

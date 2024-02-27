@@ -73,9 +73,7 @@ urlpatterns = [
                             # Team contributors
                             path(
                                 "contributors/",
-                                cache_page(VIEW_CACHE_TIMEOUT)(
-                                    views.LocaleContributorsView.as_view()
-                                ),
+                                views.LocaleContributorsView.as_view(),
                                 name="pontoon.teams.ajax.contributors",
                             ),
                             # Team insights
