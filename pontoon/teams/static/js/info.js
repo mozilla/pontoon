@@ -1,5 +1,5 @@
 $(function () {
-  var container = $('#main .container');
+  const container = $('#main .container');
 
   function toggleWidgets() {
     container
@@ -15,8 +15,8 @@ $(function () {
 
   container.on('click', '#info-wrapper .edit-info', function (e) {
     e.preventDefault();
-    var content = container.find('.info').html();
-    var textArea = container
+    const content = container.find('.info').html();
+    const textArea = container
       .find('.read-write-info textarea')
       .val($.trim(content));
     toggleWidgets();
@@ -30,7 +30,7 @@ $(function () {
 
   container.on('click', '#info-wrapper .save', function (e) {
     e.preventDefault();
-    var textArea = container.find('.read-write-info textarea');
+    const textArea = container.find('.read-write-info textarea');
     $.ajax({
       url: textArea.parent().data('url'),
       type: 'POST',

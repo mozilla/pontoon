@@ -4,7 +4,7 @@
 $(function () {
   $('canvas.chart').each(function () {
     // Get data
-    var stats = {},
+    const stats = {},
       progress = $(this).parents('.progress');
 
     progress
@@ -19,7 +19,7 @@ $(function () {
       .find('.all .value')
       .data('value');
 
-    var fraction = {
+    const fraction = {
         translated: stats.all ? stats.translated / stats.all : 0,
         pretranslated: stats.all ? stats.pretranslated / stats.all : 0,
         warnings: stats.all ? stats.warnings / stats.all : 0,
@@ -34,11 +34,11 @@ $(function () {
       );
 
     // Update graph
-    var canvas = this,
+    const canvas = this,
       context = canvas.getContext('2d');
 
     // Set up canvas to be HiDPI display ready
-    var dpr = window.devicePixelRatio || 1;
+    const dpr = window.devicePixelRatio || 1;
     canvas.style.width = canvas.width + 'px';
     canvas.style.height = canvas.height + 'px';
     canvas.width = canvas.width * dpr;
@@ -48,16 +48,16 @@ $(function () {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.lineWidth = 3 * dpr;
 
-    var x = canvas.width / 2,
+    const x = canvas.width / 2,
       y = canvas.height / 2,
-      radius = (canvas.width - context.lineWidth) / 2,
-      end = -0.5;
+      radius = (canvas.width - context.lineWidth) / 2;
+    let end = -0.5;
 
     progress
       .siblings('.legend')
       .find('li')
       .each(function () {
-        var length = fraction[$(this).attr('class')] * 2,
+        const length = fraction[$(this).attr('class')] * 2,
           start = end,
           color = window
             .getComputedStyle($(this).find('.status')[0], ':before')

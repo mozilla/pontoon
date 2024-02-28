@@ -2,7 +2,7 @@ $(function () {
   // Before submitting the form
   $('#admin-form').submit(function () {
     // Update locales
-    var locales = [
+    const locales = [
       {
         selector: '.admin-team-selector .locale.selected',
         input: $('#id_locales'),
@@ -18,7 +18,7 @@ $(function () {
     ];
 
     locales.forEach(function (type) {
-      var ids = $(type.selector)
+      const ids = $(type.selector)
         .find('li[data-id]')
         .map(function () {
           return $(this).data('id');
@@ -28,7 +28,7 @@ $(function () {
     });
 
     // Update form action
-    var slug = $('#id_slug').val();
+    let slug = $('#id_slug').val();
     if (slug.length > 0) {
       slug += '/';
     }
@@ -48,7 +48,7 @@ $(function () {
         $('input[type=text]:focus').length > 0 ||
         $('input[type=url]:focus').length > 0
       ) {
-        var key = e.keyCode || e.which;
+        const key = e.keyCode || e.which;
         if (key === 13) {
           // A short delay to allow digest of autocomplete before submit
           setTimeout(function () {
@@ -69,7 +69,7 @@ $(function () {
   $('.sync').click(function (e) {
     e.preventDefault();
 
-    var button = $(this),
+    const button = $(this),
       title = button.html();
 
     if (button.is('.in-progress')) {
@@ -98,7 +98,7 @@ $(function () {
   $('.pretranslate').click(function (e) {
     e.preventDefault();
 
-    var button = $(this),
+    const button = $(this),
       title = button.html();
 
     if (button.is('.in-progress')) {
@@ -135,7 +135,7 @@ $(function () {
         name: $('#id_name').val(),
       },
       success: function (data) {
-        var value = data === 'error' ? '' : data;
+        const value = data === 'error' ? '' : data;
         $('#id_slug').val(value);
       },
       error: function () {
@@ -145,8 +145,8 @@ $(function () {
   });
 
   $('body').on('blur', '[id^=id_tag_set-][id$=-name]', function () {
-    var target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
-    var $this = this;
+    const target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
+    const $this = this;
     if (target.val() || !$(this).val()) {
       return;
     }
@@ -157,7 +157,7 @@ $(function () {
         name: $($this).val(),
       },
       success: function (data) {
-        var value = data === 'error' ? '' : data;
+        const value = data === 'error' ? '' : data;
         target.val(value);
         target.attr('placeholder', '');
       },
@@ -169,7 +169,7 @@ $(function () {
 
   // Copy locales from another project
   $('#copy-locales option').on('click', function () {
-    var projectLocales = [];
+    let projectLocales = [];
 
     try {
       projectLocales = JSON.parse($(this).val());
@@ -203,7 +203,7 @@ $(function () {
       $('.repositories').show();
     }
   }
-  var dataSourceInput = $('#id_data_source');
+  const dataSourceInput = $('#id_data_source');
   dataSourceInput.on('change', function () {
     displayNewStringsInput(dataSourceInput);
   });
@@ -211,7 +211,7 @@ $(function () {
 
   // Suggest public repository website URL
   $('body').on('blur', '.repo input', function () {
-    var val = $(this)
+    const val = $(this)
       .val()
       .replace(/\.git$/, '')
       .replace('git@github.com:', 'https://github.com/')
@@ -229,7 +229,7 @@ $(function () {
   $('.inline [checked]').click().prev().click();
 
   // Add inline form item (e.g. external resource)
-  var count = {
+  const count = {
     externalresource: $('.externalresource:last').data('count'),
     entity: $('.entity:last').data('count'),
     tag: $('.tag:last').data('count'),
@@ -237,8 +237,8 @@ $(function () {
   $('.add-inline').click(function (e) {
     e.preventDefault();
 
-    var type = $(this).data('type');
-    var form = $('.' + type + ':last')
+    const type = $(this).data('type');
+    const form = $('.' + type + ':last')
       .html()
       .replace(/__prefix__/g, count[type]);
 
@@ -268,13 +268,13 @@ $(function () {
   });
 
   // Add repo
-  var $totalForms = $('#id_repositories-TOTAL_FORMS');
+  const $totalForms = $('#id_repositories-TOTAL_FORMS');
   $('.add-repo').click(function (e) {
     e.preventDefault();
-    var count = parseInt($totalForms.val(), 10);
+    const count = parseInt($totalForms.val(), 10);
 
-    var $emptyForm = $('.repository-empty');
-    var form = $emptyForm.html().replace(/__prefix__/g, count);
+    const $emptyForm = $('.repository-empty');
+    const form = $emptyForm.html().replace(/__prefix__/g, count);
     $('.repository:last').after(
       '<div class="repository clearfix">' + form + '</div>',
     );

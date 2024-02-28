@@ -35,7 +35,7 @@ $(function () {
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', function () {
       // Check the 'data-theme' attribute on the body element
-      let userThemeSetting = $('body').data('theme');
+      const userThemeSetting = $('body').data('theme');
 
       if (userThemeSetting === 'system') {
         applyTheme(userThemeSetting);
@@ -50,13 +50,13 @@ $(function () {
     e.preventDefault();
     e.stopPropagation();
 
-    var self = $(this);
+    const self = $(this);
 
     if (self.is('.active')) {
       return;
     }
 
-    var theme = self.val();
+    const theme = self.val();
 
     $.ajax({
       url:

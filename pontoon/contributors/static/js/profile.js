@@ -14,18 +14,19 @@ const shortDateFormat = new Intl.DateTimeFormat('en-US', {
 
 const style = getComputedStyle(document.body);
 
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
-        var approvalRateChart = $('#approval-rate-chart');
+        const approvalRateChart = $('#approval-rate-chart');
         Pontoon.insights.renderRateChart(
           approvalRateChart,
           approvalRateChart.data('approval-rates'),
           approvalRateChart.data('approval-rates-12-month-avg'),
         );
 
-        var selfApprovalRateChart = $('#self-approval-rate-chart');
+        const selfApprovalRateChart = $('#self-approval-rate-chart');
         Pontoon.insights.renderRateChart(
           selfApprovalRateChart,
           selfApprovalRateChart.data('self-approval-rates'),
@@ -36,9 +37,9 @@ var Pontoon = (function (my) {
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
         gradient.addColorStop(0, style.getPropertyValue('--dark-green'));
         gradient.addColorStop(1, 'transparent');
 
@@ -156,7 +157,7 @@ var Pontoon = (function (my) {
         const contributions = graph.data('contributions');
 
         // Set start date to 365 days before now
-        let startDate = new Date();
+        const startDate = new Date();
         startDate.setMonth(startDate.getMonth() - 12);
         startDate.setUTCDate(startDate.getUTCDate() + 1);
         startDate.setUTCHours(0, 0, 0, 0);
@@ -165,9 +166,9 @@ var Pontoon = (function (my) {
         let graphHTML = '';
         const step = 13;
 
-        let currentDate = startDate;
+        const currentDate = startDate;
         let currentMonth = currentDate.getMonth();
-        let monthPosition = [{ monthIndex: currentMonth, x: 0 }];
+        const monthPosition = [{ monthIndex: currentMonth, x: 0 }];
 
         let week = 0;
         let gx = week * step;
@@ -367,10 +368,10 @@ Pontoon.profile.handleContributionGraphClick();
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {
-  var items = $('.chart-group-navigation li').removeClass('active');
+  const items = $('.chart-group-navigation li').removeClass('active');
   $(this).addClass('active');
-  var index = items.index(this);
-  var itemWidth = $('.chart-item').first().outerWidth();
+  const index = items.index(this);
+  const itemWidth = $('.chart-item').first().outerWidth();
 
   // Show the selected graph view
   $('.chart-group').css('marginLeft', -index * itemWidth);

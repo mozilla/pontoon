@@ -9,7 +9,8 @@ $.expr[':'].containsi = function (a, i, m) {
 };
 
 /* Latest activity tooltip */
-var date_formatter = new Intl.DateTimeFormat('en-US', {
+const delay = 500,
+  date_formatter = new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -18,16 +19,15 @@ var date_formatter = new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-  }),
-  timer = null,
-  delay = 500;
+  });
+let timer = null;
 
 $('body')
   .on('mouseenter', '.latest-activity .latest time', function () {
-    var $element = $(this);
+    const $element = $(this);
 
     timer = setTimeout(function () {
-      var translation = Pontoon.doNotRender($element.data('translation')),
+      const translation = Pontoon.doNotRender($element.data('translation')),
         avatar = $element.data('user-avatar'),
         action = $element.data('action'),
         name = $element.data('user-name'),
@@ -74,6 +74,7 @@ $('body')
   });
 
 /* Public functions used across different files */
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     table: {
@@ -89,7 +90,7 @@ var Pontoon = (function (my) {
           }
 
           // Filter input field
-          var field = $(this),
+          const field = $(this),
             // Selector of the element containing a list of items to filter
             list = $(this).data('list') || '.table-sort tbody',
             // Selector of the list item element, relative to list
@@ -120,7 +121,7 @@ var Pontoon = (function (my) {
       sort: (function () {
         $('body').on('click', 'table.table-sort th', function () {
           function getProgress(el) {
-            var legend = $(el).find('.progress .legend'),
+            const legend = $(el).find('.progress .legend'),
               all = legend.find('.all .value').data('value') || 0,
               translated =
                 legend.find('.translated .value').data('value') / all || 0,
@@ -145,7 +146,7 @@ var Pontoon = (function (my) {
           }
 
           function getTime(el) {
-            var date =
+            const date =
               $(el)
                 .find('td:eq(' + index + ')')
                 .find('time')
@@ -171,7 +172,7 @@ var Pontoon = (function (my) {
               .text();
           }
 
-          var node = $(this),
+          const node = $(this),
             index = node.index(),
             table = node.parents('.table-sort'),
             list = table.find('tbody'),
@@ -180,8 +181,9 @@ var Pontoon = (function (my) {
             cls = node.hasClass('asc') ? 'desc' : 'asc';
 
           // Default value for rows which don't have a timestamp
+          let defaultTime;
           if (node.is('.deadline')) {
-            var defaultTime = new Date(0).getTime();
+            defaultTime = new Date(0).getTime();
           }
 
           $(table).find('th').removeClass('asc desc');
@@ -190,7 +192,7 @@ var Pontoon = (function (my) {
           items.sort(function (a, b) {
             // Sort by completion
             if (node.is('.progress')) {
-              var chartA = getProgress(a),
+              const chartA = getProgress(a),
                 chartB = getProgress(b);
 
               if (chartA === 'not-ready') {
@@ -212,7 +214,7 @@ var Pontoon = (function (my) {
 
               // Sort by deadline
             } else if (node.is('.deadline')) {
-              var timeA = getTime(a),
+              const timeA = getTime(a),
                 timeB = getTime(b);
 
               if (timeA === defaultTime && timeB === defaultTime) {

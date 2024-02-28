@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     requestItem: {
@@ -15,7 +16,7 @@ var Pontoon = (function (my) {
           .toggleClass('fa-chevron-left', !show);
 
         if (type === 'locale-projects') {
-          var localeProjects = $('#server').data('locale-projects');
+          const localeProjects = $('#server').data('locale-projects');
 
           // Show/hide all projects
           $('.items')
@@ -34,7 +35,7 @@ var Pontoon = (function (my) {
           });
 
           // Toggle table & search box, show no results message based on project visibility
-          var noProject = $('.project-list tr.limited').length === 0;
+          const noProject = $('.project-list tr.limited').length === 0;
           $('.project-list').toggleClass('hidden', noProject);
           $('menu.controls').toggleClass('no-projects', noProject);
           $('.no-results').toggle();
@@ -60,7 +61,7 @@ var Pontoon = (function (my) {
 
       toggleButton: function (condition, type) {
         condition = condition || true;
-        var show = condition;
+        let show = condition;
 
         if (type === 'locale-projects' || type === 'pretranslation') {
           show = condition && $('.items td.enabled:visible').length > 0;
@@ -161,15 +162,17 @@ var Pontoon = (function (my) {
 })(Pontoon || {});
 
 $(function () {
-  var container = $('#main .container');
-  var type = $('#server').data('locale-projects') ? 'locale-projects' : 'team';
+  const container = $('#main .container');
+  let type = $('#server').data('locale-projects') ? 'locale-projects' : 'team';
 
   // Switch between available projects/teams and projects/team to request
   container.on('click', '.controls .request-toggle', function (e) {
     e.stopPropagation();
     e.preventDefault();
 
-    var type_ = $(this).is('.request-pretranslation') ? 'pretranslation' : type;
+    const type_ = $(this).is('.request-pretranslation')
+      ? 'pretranslation'
+      : type;
 
     Pontoon.requestItem.toggleItem($(this).is('.back'), type_);
     $(this).siblings('.request-toggle').toggle();
@@ -180,7 +183,7 @@ $(function () {
     if ($('.controls .request-toggle').is('.back:visible')) {
       e.stopPropagation();
 
-      var type_ = $('.items').is('.requesting-pretranslation')
+      const type_ = $('.items').is('.requesting-pretranslation')
         ? 'pretranslation'
         : 'locale-projects';
 
@@ -220,7 +223,7 @@ $(function () {
   });
 
   // Prevent openning project page from the request panel
-  var menu = container.find('.project .menu');
+  const menu = container.find('.project .menu');
   menu.find('a').click(function (e) {
     if (menu.find('.search-wrapper > a').is('.back:visible')) {
       e.preventDefault();
@@ -244,12 +247,12 @@ $(function () {
     e.preventDefault();
     e.stopPropagation();
 
-    var locale = '';
+    let locale = '';
 
     if ($(this).is('.confirmed')) {
       // Requesting from team page
       if ($('body').hasClass('locale')) {
-        var projects = $('.items td.check.enabled')
+        const projects = $('.items td.check.enabled')
           .map(function (val, element) {
             return $(element).siblings('.name').data('slug');
           })
@@ -269,7 +272,7 @@ $(function () {
 
       // Requesting from project page
       else if (type === 'locale-projects' && $('body').hasClass('project')) {
-        var project = $('#server').data('project');
+        const project = $('#server').data('project');
         locale = $('.items td.radio.enabled').siblings('.name').data('slug');
 
         Pontoon.requestItem.requestProjects(locale, [project], 'language');
@@ -277,7 +280,7 @@ $(function () {
         $(this).removeClass('confirmed').html('Request new language');
       } else if (type === 'team') {
         locale = $.trim($('#request-team-form #id_name').val());
-        var code = $.trim($('#request-team-form #id_code').val());
+        const code = $.trim($('#request-team-form #id_code').val());
 
         Pontoon.requestItem.requestTeam(locale, code);
 

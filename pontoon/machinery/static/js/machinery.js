@@ -1,11 +1,11 @@
 $(function () {
-  var self = Pontoon;
+  const self = Pontoon;
 
   // Trigger search with Enter
   $('#search input')
     .unbind('keydown.pontoon')
     .bind('keydown.pontoon', function (e) {
-      var value = $(this).val();
+      const value = $(this).val();
 
       if (e.which === 13 && value.length > 0) {
         self.locale = $('.locale .selector .language').data();
@@ -15,10 +15,10 @@ $(function () {
     });
 
   // Handle "Copy to clipboard" of search results on main Machinery page
-  var clipboard = new Clipboard('.machinery .machinery li');
+  const clipboard = new Clipboard('.machinery .machinery li');
 
   clipboard.on('success', function (event) {
-    var successMessage = $('<span class="clipboard-success">Copied!</span>'),
+    const successMessage = $('<span class="clipboard-success">Copied!</span>'),
       $trigger = $(event.trigger);
 
     $('.clipboard-success').remove();
@@ -36,19 +36,20 @@ $(function () {
    * original Original string
    */
   function getMachinery(original) {
-    var ul = $('#helpers > .machinery').children('ul').empty(),
+    const ul = $('#helpers > .machinery').children('ul').empty(),
       tab = $('#search').addClass('loading'), // .loading class used on the /machinery page
-      requests = 0,
-      preferred = 0,
-      remaining = 0,
       sourcesMap = {};
+
+    let preferred = 0,
+      remaining = 0,
+      requests = 0;
 
     self.NProgressUnbind();
 
     function append(data) {
-      var sources = sourcesMap[data.original + data.translation],
+      let originalText = data.original;
+      const sources = sourcesMap[data.original + data.translation],
         occurrencesTitle = 'Number of translation occurrences',
-        originalText = data.original,
         translationText = data.translation;
 
       if (sources) {
@@ -71,10 +72,10 @@ $(function () {
           sources.prepend('<span class="stress">' + data.quality + '</span>');
         }
       } else {
-        var originalTextForDiff = originalText;
+        const originalTextForDiff = originalText;
         originalText = originalText ? diff(original, originalTextForDiff) : '';
 
-        var li = $(
+        const li = $(
           '<li class="suggestion"' +
             ' title="Copy to clipboard"' +
             ' data-clipboard-text="' +
@@ -130,7 +131,7 @@ $(function () {
       }
 
       // Sort by quality
-      var listitems = ul.children('li'),
+      const listitems = ul.children('li'),
         sourceMap = {
           'Translation memory': 1,
           'Google Translate': 2,
@@ -139,7 +140,7 @@ $(function () {
         };
 
       function getTranslationSource(el) {
-        var sources = $(el).find('.translation-source span');
+        const sources = $(el).find('.translation-source span');
 
         if (sources.length > 1) {
           return Math.min.apply(
@@ -154,7 +155,7 @@ $(function () {
       }
 
       listitems.sort(function (a, b) {
-        var stressA = $(a).find('.stress'),
+        const stressA = $(a).find('.stress'),
           stressB = $(b).find('.stress'),
           valA = stressA.length ? parseInt(stressA.html().split('%')[0]) : 0,
           valB = stressB.length ? parseInt(stressB.html().split('%')[0]) : 0,
@@ -176,10 +177,10 @@ $(function () {
 
       // Sort sources inside results.
       ul.find('.sources').each(function () {
-        var $sourcesList = $(this),
+        const $sourcesList = $(this),
           sources = $sourcesList.children('li'),
           sortedItems = sources.sort(function (a, b) {
-            var sourceA = sourceMap[$(a).find('span').text()],
+            const sourceA = sourceMap[$(a).find('span').text()],
               sourceB = sourceMap[$(b).find('span').text()];
             return sourceA > sourceB ? 1 : sourceA < sourceB ? -1 : 0;
           });
@@ -406,10 +407,10 @@ $(function () {
 
     /* Multiple spaces */
     string = string.replace(/  +/gi, function (match) {
-      var title = 'Multiple spaces';
-      var replacement = '';
+      const title = 'Multiple spaces';
+      let replacement = '';
 
-      for (var i = 0; i < match.length; i++) {
+      for (let i = 0; i < match.length; i++) {
         replacement += ' &middot; ';
       }
       return getPlaceableMarkup(title, replacement);
@@ -453,16 +454,16 @@ $(function () {
    * Mark diff between the string and the reference string
    */
   function diff(reference, string) {
-    var diff_obj = new diff_match_patch();
-    var diff = diff_obj.diff_main(reference, string);
-    var output = '';
+    const diff_obj = new diff_match_patch();
+    const diff = diff_obj.diff_main(reference, string);
+    let output = '';
 
     diff_obj.diff_cleanupSemantic(diff);
     diff_obj.diff_cleanupEfficiency(diff);
 
     $.each(diff, function () {
-      var type = this[0];
-      var slice = this[1];
+      const type = this[0];
+      const slice = this[1];
 
       switch (type) {
         case DIFF_INSERT:

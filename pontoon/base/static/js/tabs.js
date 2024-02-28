@@ -2,9 +2,9 @@
  * Manage tab content as single-page application
  */
 $(function () {
-  var urlSplit = $('#server').data('url-split'),
-    container = $('#main .container'),
-    inProgress = false;
+  const urlSplit = $('#server').data('url-split'),
+    container = $('#main .container');
+  let inProgress = false;
 
   // Page load
   loadTabContent(window.location.pathname + window.location.search);
@@ -33,14 +33,14 @@ $(function () {
 
       e.preventDefault();
 
-      var url = $(this).attr('href');
+      const url = $(this).attr('href');
       loadTabContent(url);
       window.history.pushState({}, '', url);
     },
   );
 
   function showTabMessage(text) {
-    var message = $('<p>', {
+    const message = $('<p>', {
       class: 'no-results',
       html: text,
     });
@@ -63,7 +63,7 @@ $(function () {
       inProgress.abort();
     }
 
-    var url = '/' + path.split('/' + urlSplit + '/')[1],
+    const url = '/' + path.split('/' + urlSplit + '/')[1],
       tab = $('#middle .links a[href="' + path.split('?')[0] + '"]');
 
     // Update menu
@@ -79,7 +79,7 @@ $(function () {
           container.append(data);
 
           if (url.startsWith('/contributors/')) {
-            var count = $('table > tbody > tr').length;
+            const count = $('table > tbody > tr').length;
             updateTabCount(tab, count);
           }
 
