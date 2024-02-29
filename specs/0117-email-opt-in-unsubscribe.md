@@ -95,3 +95,15 @@ As a user I can:
 - Subscribe for emails with a single button.
 - Receive a confirmation that I have successfully unsubscribed/subscribed. I am also instructed how to change my subscriptions later through my user preferences.
 - (In future implementations) Select specific categories of emails to receive / no longer receive. 
+
+(Section: content)
+ - Title: `Mozilla Localization - Pontoon`
+ - Header: `Update Your Email Preferences`
+ - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform.`
+ - Radio button: `Please unsubscribe from all Mozilla localization emails.`
+ - Radio button: `Please keep me sending me emails from Mozilla localization.`
+ - Button: `Submit`
+
+ - On submit alert (Unsubscribe): `You've successfully unsubscribed. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a>.`
+ - On submit alert (Subscribe): `Thanks! You will continue to receive emails from Mozilla localization. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a>.`
+ 
