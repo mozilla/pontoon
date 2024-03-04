@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     bugzilla: {
@@ -35,7 +36,7 @@ var Pontoon = (function (my) {
                 return l.last_change_time < r.last_change_time ? 1 : -1;
               });
 
-              var tbody = $('<tbody>'),
+              const tbody = $('<tbody>'),
                 formatter = new Intl.DateTimeFormat('en-US', {
                   day: 'numeric',
                   month: 'long',
@@ -44,9 +45,9 @@ var Pontoon = (function (my) {
 
               $.each(data.bugs, function (i, bug) {
                 // Prevent malicious bug summary from executin JS code
-                var summary = Pontoon.doNotRender(bug.summary);
+                const summary = Pontoon.doNotRender(bug.summary);
 
-                var tr = $('<tr>', {
+                const tr = $('<tr>', {
                   title: summary,
                 });
 
@@ -79,7 +80,7 @@ var Pontoon = (function (my) {
                 tbody.append(tr);
               });
 
-              var table = $('<table>', {
+              const table = $('<table>', {
                 class: 'buglist striped',
                 html:
                   '<thead>' +
@@ -95,7 +96,7 @@ var Pontoon = (function (my) {
               container.append(table);
               table.show();
 
-              var count = data.bugs.length;
+              const count = data.bugs.length;
               countCallback(tab, count);
             } else {
               errorCallback('Zarro Boogs Found.');
@@ -127,11 +128,11 @@ var Pontoon = (function (my) {
           }
 
           function getTime(el) {
-            var date = $(el).find('.last-changed').attr('datetime') || 0;
+            const date = $(el).find('.last-changed').attr('datetime') || 0;
             return new Date(date).getTime();
           }
 
-          var node = $(this),
+          const node = $(this),
             index = node.index(),
             table = node.parents('.buglist'),
             list = table.find('tbody'),

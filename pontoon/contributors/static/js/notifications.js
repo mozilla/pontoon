@@ -7,7 +7,7 @@ $(function () {
 
   // Filter notifications
   $('.left-column a').on('click', function () {
-    var notifications = $(this).data('notifications');
+    const notifications = $(this).data('notifications');
 
     // Show all notifications
     if (!notifications) {
@@ -19,7 +19,7 @@ $(function () {
       // Show project notifications
     } else {
       $('.right-column .notification-item').each(function () {
-        var isProjectNotification =
+        const isProjectNotification =
           $.inArray($(this).data('id'), notifications) > -1;
         $(this).toggle(isProjectNotification);
         $(this).next('.horizontal-separator').toggle(isProjectNotification);

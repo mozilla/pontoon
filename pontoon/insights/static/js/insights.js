@@ -13,6 +13,7 @@ const longMonthFormat = new Intl.DateTimeFormat('en', {
 
 const style = getComputedStyle(document.body);
 
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     insights: {
@@ -46,7 +47,7 @@ var Pontoon = (function (my) {
         ];
 
         const datasets = chart.data('dataset').map(function (item, index) {
-          var color = colors[index % colors.length];
+          const color = colors[index % colors.length];
           return {
             type: 'line',
             label: item.name,
@@ -130,7 +131,7 @@ var Pontoon = (function (my) {
         });
 
         // Render custom legend
-        var chartId = chart.attr('id');
+        const chartId = chart.attr('id');
         chart
           .parent()
           .next('.legend')

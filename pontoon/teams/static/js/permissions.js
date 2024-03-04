@@ -1,5 +1,5 @@
 $(function () {
-  var container = $('#main .container');
+  const container = $('#main .container');
 
   function inputHidden(name, value, cssClass) {
     return $(
@@ -15,16 +15,16 @@ $(function () {
 
   container.on('click', '#permissions-form .save', function (e) {
     e.preventDefault();
-    var $form = $('#permissions-form');
+    const $form = $('#permissions-form');
 
     // Remove stale permissions items (bug 1416890)
     $('input.permissions-form-item').remove();
 
     // Before submitting the form, update translators and managers
     $.each(['translators', 'managers'], function (i, value) {
-      var data = $form.find('.user.' + value + ' li');
+      const data = $form.find('.user.' + value + ' li');
       data.each(function () {
-        var itemId = $(this).data('id');
+        const itemId = $(this).data('id');
 
         if ($(this).parents('.general').length > 0) {
           $form.append(
@@ -32,7 +32,7 @@ $(function () {
           );
         } else {
           // We have to retrieve an index of parent project locale form
-          var localeProjectIndex = $(this)
+          const localeProjectIndex = $(this)
             .parents('.project-locale')
             .data('index');
           $form.append(
@@ -65,7 +65,7 @@ $(function () {
 
     $(this).addClass('active').siblings('a').removeClass('active');
 
-    var available = $(this).parents('.user.available');
+    const available = $(this).parents('.user.available');
     available.find('li').show();
 
     if ($(this).is('.contributors')) {
@@ -81,7 +81,7 @@ $(function () {
     'input.search',
     '.user.available .menu input[type=search]',
     function () {
-      var available = $(this).parents('.user.available');
+      const available = $(this).parents('.user.available');
 
       if (available.find('label a.contributors').is('.active')) {
         available.find('li:not(".contributor")').hide();
@@ -96,7 +96,7 @@ $(function () {
 
   // Add project
   container.on('click', '#project-selector .menu li', function () {
-    var slug = $(this).data('slug'),
+    const slug = $(this).data('slug'),
       $permsForm = $(".project-locale[data-slug='" + slug + "']");
 
     $('.project-locale:last').after($permsForm.removeClass('hidden'));
@@ -137,7 +137,7 @@ $(function () {
 
   // Remove project
   container.on('click', '.remove-project', function (e) {
-    var $permsForm = $(this).parents('.project-locale');
+    const $permsForm = $(this).parents('.project-locale');
     e.preventDefault();
 
     $('#project-selector').removeClass('hidden');

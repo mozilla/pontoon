@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   const nf = new Intl.NumberFormat('en');
   const pf = new Intl.NumberFormat('en', {
@@ -19,41 +20,43 @@ var Pontoon = (function (my) {
       renderActiveUsers: function () {
         $('#insights canvas.chart').each(function () {
           // Collect data
-          var parent = $(this).parents('.active-users-chart');
-          var id = parent.attr('id');
-          var period = $('.period-selector .active').data('period').toString();
-          var active = $('.active-users').data(period)[id];
-          var total = $('.active-users').data('total')[id];
+          const parent = $(this).parents('.active-users-chart');
+          const id = parent.attr('id');
+          const period = $('.period-selector .active')
+            .data('period')
+            .toString();
+          const active = $('.active-users').data(period)[id];
+          const total = $('.active-users').data('total')[id];
 
           // Clear old canvas content to avoid aliasing
-          var canvas = this;
-          var context = canvas.getContext('2d');
-          var dpr = window.devicePixelRatio || 1;
+          const canvas = this;
+          const context = canvas.getContext('2d');
+          const dpr = window.devicePixelRatio || 1;
           context.clearRect(0, 0, canvas.width, canvas.height);
           context.lineWidth = 3 * dpr;
 
-          var x = canvas.width / 2;
-          var y = canvas.height / 2;
-          var radius = (canvas.width - context.lineWidth) / 2;
+          const x = canvas.width / 2;
+          const y = canvas.height / 2;
+          const radius = (canvas.width - context.lineWidth) / 2;
 
-          var activeLength = 0;
+          let activeLength = 0;
           if (total !== 0) {
             activeLength = (active / total) * 2;
           }
-          var activeStart = -0.5;
-          var activeEnd = activeStart + activeLength;
+          const activeStart = -0.5;
+          const activeEnd = activeStart + activeLength;
           plot(
             activeStart,
             activeEnd,
             style.getPropertyValue('--status-translated'),
           );
 
-          var inactiveLength = 2;
+          let inactiveLength = 2;
           if (total !== 0) {
             inactiveLength = ((total - active) / total) * 2;
           }
-          var inactiveStart = activeEnd;
-          var inactiveEnd = inactiveStart + inactiveLength;
+          const inactiveStart = activeEnd;
+          const inactiveEnd = inactiveStart + inactiveLength;
           plot(inactiveStart, inactiveEnd, style.getPropertyValue('--grey-9'));
 
           // Update number
@@ -69,14 +72,14 @@ var Pontoon = (function (my) {
         });
       },
       renderUnreviewedSuggestionsLifespan: function () {
-        var chart = $('#unreviewed-suggestions-lifespan-chart');
+        const chart = $('#unreviewed-suggestions-lifespan-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 160);
-        let greenBlue = style.getPropertyValue('--green-blue');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        const greenBlue = style.getPropertyValue('--green-blue');
         gradient.addColorStop(0, greenBlue);
         gradient.addColorStop(1, 'transparent');
 
@@ -158,13 +161,13 @@ var Pontoon = (function (my) {
         });
       },
       renderTimeToReviewSuggestions: function () {
-        var chart = $('#time-to-review-suggestions-chart');
+        const chart = $('#time-to-review-suggestions-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
         gradient.addColorStop(0, style.getPropertyValue('--green-blue'));
         gradient.addColorStop(1, 'transparent');
 
@@ -267,13 +270,13 @@ var Pontoon = (function (my) {
         });
       },
       renderTimeToReviewPretranslatons: function () {
-        var chart = $('#time-to-review-pretranslations-chart');
+        const chart = $('#time-to-review-pretranslations-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
         gradient.addColorStop(0, style.getPropertyValue('--dark-magenta'));
         gradient.addColorStop(1, 'transparent');
 
@@ -373,21 +376,21 @@ var Pontoon = (function (my) {
         });
       },
       renderTranslationActivity: function () {
-        var chart = $('#translation-activity-chart');
+        const chart = $('#translation-activity-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, style.getPropertyValue('--dark-green'));
         gradient.addColorStop(1, 'transparent');
 
-        var humanData = chart.data('human-translations') || [];
-        var machineryData = chart.data('machinery-translations') || [];
-        var newSourcesData = chart.data('new-source-strings') || [];
+        const humanData = chart.data('human-translations') || [];
+        const machineryData = chart.data('machinery-translations') || [];
+        const newSourcesData = chart.data('new-source-strings') || [];
 
-        var translationActivityChart = new Chart(chart, {
+        const translationActivityChart = new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -567,23 +570,23 @@ var Pontoon = (function (my) {
         );
       },
       renderReviewActivity: function () {
-        var chart = $('#review-activity-chart');
+        const chart = $('#review-activity-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, style.getPropertyValue('--status-unreviewed'));
         gradient.addColorStop(1, 'transparent');
 
-        var unreviewedData = chart.data('unreviewed') || [];
-        var peerApprovedData = chart.data('peer-approved') || [];
-        var selfApprovedData = chart.data('self-approved') || [];
-        var rejectedData = chart.data('rejected') || [];
-        var newSuggestionsData = chart.data('new-suggestions') || [];
+        const unreviewedData = chart.data('unreviewed') || [];
+        const peerApprovedData = chart.data('peer-approved') || [];
+        const selfApprovedData = chart.data('self-approved') || [];
+        const rejectedData = chart.data('rejected') || [];
+        const newSuggestionsData = chart.data('new-suggestions') || [];
 
-        var reviewActivityChart = new Chart(chart, {
+        const reviewActivityChart = new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -765,28 +768,28 @@ var Pontoon = (function (my) {
         );
       },
       renderPretranslationQuality: function () {
-        var chart = $('#pretranslation-quality-chart');
+        const chart = $('#pretranslation-quality-chart');
         if (chart.length === 0) {
           return;
         }
-        var ctx = chart[0].getContext('2d');
+        const ctx = chart[0].getContext('2d');
 
-        var gradient_approval = ctx.createLinearGradient(0, 0, 0, 400);
+        const gradient_approval = ctx.createLinearGradient(0, 0, 0, 400);
         gradient_approval.addColorStop(
           0,
           style.getPropertyValue('--dark-purple-2'),
         );
         gradient_approval.addColorStop(1, 'transparent');
 
-        var gradient_chrf = ctx.createLinearGradient(0, 0, 0, 400);
+        const gradient_chrf = ctx.createLinearGradient(0, 0, 0, 400);
         gradient_chrf.addColorStop(0, style.getPropertyValue('--dark-purple'));
         gradient_chrf.addColorStop(1, 'transparent');
 
-        var approvedData = chart.data('approved') || [];
-        var rejectedData = chart.data('rejected') || [];
-        var newData = chart.data('new') || [];
+        const approvedData = chart.data('approved') || [];
+        const rejectedData = chart.data('rejected') || [];
+        const newData = chart.data('new') || [];
 
-        var pretranslationQualityChart = new Chart(chart, {
+        const pretranslationQualityChart = new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),

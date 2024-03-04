@@ -3,14 +3,14 @@ $(function () {
   $('.data-visibility .toggle-button button').click(function (e) {
     e.preventDefault();
 
-    var self = $(this);
+    const self = $(this);
 
     if (self.is('.active')) {
       return;
     }
 
-    var attribute = self.data('attribute');
-    var value = self.text();
+    const attribute = self.data('attribute');
+    const value = self.text();
 
     $.ajax({
       url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
@@ -24,7 +24,7 @@ $(function () {
         self.addClass('active');
         self.siblings().removeClass('active');
 
-        var label = self.parents('.field').find('.toggle-label').text();
+        const label = self.parents('.field').find('.toggle-label').text();
         Pontoon.endLoader(`${label} visibility set to ${value}.`);
       },
       error: function (request) {
@@ -39,7 +39,7 @@ $(function () {
 
   // Toggle user profile attribute
   $('.check-box').click(function () {
-    var self = $(this);
+    const self = $(this);
 
     $.ajax({
       url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
@@ -51,8 +51,8 @@ $(function () {
       },
       success: function () {
         self.toggleClass('enabled');
-        var is_enabled = self.is('.enabled');
-        var status = is_enabled ? 'enabled' : 'disabled';
+        const is_enabled = self.is('.enabled');
+        const status = is_enabled ? 'enabled' : 'disabled';
 
         Pontoon.endLoader(self.text() + ' ' + status + '.');
       },
@@ -68,7 +68,7 @@ $(function () {
 
   // Save custom homepage
   $('#homepage .locale .menu li:not(".no-match")').click(function () {
-    var custom_homepage = $(this).find('.language').data('code');
+    const custom_homepage = $(this).find('.language').data('code');
 
     $.ajax({
       url: '/save-custom-homepage/',
@@ -94,7 +94,7 @@ $(function () {
 
   // Save preferred source locale
   $('#preferred-locale .locale .menu li:not(".no-match")').click(function () {
-    var preferred_source_locale = $(this).find('.language').data('code');
+    const preferred_source_locale = $(this).find('.language').data('code');
 
     $.ajax({
       url: '/save-preferred-source-locale/',

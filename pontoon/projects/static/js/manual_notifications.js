@@ -1,5 +1,5 @@
 $(function () {
-  var container = $('#main .container');
+  const container = $('#main .container');
 
   function isValidForm($form, locales, message) {
     $form.find('.errors p').css('visibility', 'hidden');
@@ -18,10 +18,10 @@ $(function () {
   // Send notification
   container.on('click', '#send-notification .send', function (e) {
     e.preventDefault();
-    var $form = $('#send-notification');
+    const $form = $('#send-notification');
 
     // Validate form
-    var locales = $form.find('[name=selected_locales]').val(),
+    const locales = $form.find('[name=selected_locales]').val(),
       message = $form.find('[name=message]').val();
 
     if (!isValidForm($form, locales, message)) {
@@ -52,7 +52,7 @@ $(function () {
   container.on('click', '.locale-selector .shortcuts a', function (e) {
     e.preventDefault();
 
-    var locales = $(this).data('ids').reverse(),
+    const locales = $(this).data('ids').reverse(),
       $localeSelector = $(this).parents('.locale-selector');
 
     $localeSelector.find('.selected .move-all').click();

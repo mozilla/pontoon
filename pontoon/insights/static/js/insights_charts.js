@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   const style = getComputedStyle(document.body);
   return $.extend(true, my, {
@@ -25,9 +26,9 @@ var Pontoon = (function (my) {
 
         // Set up canvas to be HiDPI display ready
         $('#insights canvas.chart').each(function () {
-          var canvas = this;
+          const canvas = this;
 
-          var dpr = window.devicePixelRatio || 1;
+          const dpr = window.devicePixelRatio || 1;
           canvas.style.width = canvas.width + 'px';
           canvas.style.height = canvas.height + 'px';
           canvas.width = canvas.width * dpr;
@@ -48,8 +49,8 @@ var Pontoon = (function (my) {
       customLegend: (chart) => (chart) => {
         const labels = chart.data.datasets
           .map((dataset) => {
-            var disabled = dataset.hidden ? 'disabled' : '';
-            var color = dataset.borderColor || dataset.backgroundColor;
+            const disabled = dataset.hidden ? 'disabled' : '';
+            const color = dataset.borderColor || dataset.backgroundColor;
 
             return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
           })
@@ -60,20 +61,20 @@ var Pontoon = (function (my) {
       // Custom legend item event handler
       attachCustomLegendHandler: function (chart, selector) {
         $('body').on('click', selector, function (e) {
-          var li = $(this).parent();
-          var index = li.index();
+          const li = $(this).parent();
+          const index = li.index();
 
           if (e.altKey || e.metaKey) {
             // Show clicked and hide the rest
             chart.data.datasets.forEach((obj, i) => {
-              var meta = chart.getDatasetMeta(i);
+              const meta = chart.getDatasetMeta(i);
               meta.hidden = i === index ? null : true;
             });
             li.parent().find('li').addClass('disabled');
           } else {
             // Toggle clicked
-            var meta = chart.getDatasetMeta(index);
-            var dataset = chart.data.datasets[index];
+            const meta = chart.getDatasetMeta(index);
+            const dataset = chart.data.datasets[index];
             meta.hidden = meta.hidden === null ? !dataset.hidden : null;
           }
 

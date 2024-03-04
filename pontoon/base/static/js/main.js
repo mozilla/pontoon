@@ -9,6 +9,7 @@ $.expr[':'].containsi = function (a, i, m) {
 };
 
 /* Public functions used across different files */
+// eslint-disable-next-line no-var
 var Pontoon = (function (my) {
   return $.extend(true, my, {
     /*
@@ -42,7 +43,7 @@ var Pontoon = (function (my) {
         url: '/notifications/mark-all-as-read/',
         success: function () {
           $('#notifications.unread .button .badge').hide();
-          var unreadNotifications = $(
+          const unreadNotifications = $(
             '.notifications .menu ul.notification-list li.notification-item[data-unread="true"]',
           );
 
@@ -166,12 +167,12 @@ $(function () {
    * - Page loaded on Firefox or Chrome (add-on not available for other browsers)
    */
   setTimeout(function () {
-    var dismissed = !$('#addon-promotion').length;
-    var installed = window.PontoonAddon && window.PontoonAddon.installed;
+    const dismissed = !$('#addon-promotion').length;
+    const installed = window.PontoonAddon && window.PontoonAddon.installed;
     if (!dismissed && !installed) {
-      var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
-      var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
-      var downloadHref = '';
+      const isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+      const isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+      let downloadHref = '';
       if (isFirefox) {
         downloadHref =
           'https://addons.mozilla.org/firefox/addon/pontoon-tools/';
@@ -258,7 +259,7 @@ $(function () {
   });
 
   // Display any notifications
-  var notifications = $('.notification li');
+  const notifications = $('.notification li');
   if (notifications.length) {
     Pontoon.endLoader(notifications.text());
   }
@@ -279,7 +280,7 @@ $(function () {
 
   // Sign out button action
   $('.sign-out a, #sign-out a').on('click', function (ev) {
-    var $this = $(this),
+    const $this = $(this),
       $form = $this.find('form');
 
     ev.preventDefault();
@@ -343,7 +344,7 @@ $(function () {
         return;
       }
 
-      var ul = $(this).parent().siblings('ul'),
+      const ul = $(this).parent().siblings('ul'),
         val = $(this).val(),
         // Only search a limited set if defined
         limited = ul.find('li.limited').length > 0 ? '.limited' : '';
@@ -372,10 +373,12 @@ $(function () {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     function moveMenu(type) {
-      var options =
+      const options =
         type === 'up' ? ['first', 'last', -1] : ['last', 'first', 1];
-      var items = menu.find('li:visible:not(.horizontal-separator, :has(li))');
-      var element = null;
+      const items = menu.find(
+        'li:visible:not(.horizontal-separator, :has(li))',
+      );
+      let element = null;
 
       if (
         hovered.length === 0 ||
@@ -384,7 +387,7 @@ $(function () {
         menu.find('li.hover').removeClass('hover');
         element = items[options[1]]();
       } else {
-        var current = menu.find('li.hover'),
+        const current = menu.find('li.hover'),
           next = items.index(current) + options[2];
 
         current.removeClass('hover');
@@ -401,9 +404,10 @@ $(function () {
       }
     }
 
-    var key = e.which;
+    const key = e.which;
 
     if ($('.menu:not(".permanent")').is(':visible')) {
+      // eslint-disable-next-line no-var
       var menu = $('.menu:not(".permanent"):visible'),
         hovered = menu.find('li.hover');
 
@@ -426,7 +430,7 @@ $(function () {
 
       // Enter: confirm
       if (key === 13) {
-        var a = hovered.find('a');
+        const a = hovered.find('a');
         if (a.length > 0) {
           a.click();
         } else {

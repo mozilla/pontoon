@@ -4,7 +4,7 @@ $(function () {
    * Function keeps track of inputs that contain information about the order of selected locales.
    */
   function updateSelectedLocales() {
-    var $selectedList = $('.multiple-team-selector .locale.selected'),
+    const $selectedList = $('.multiple-team-selector .locale.selected'),
       $selectedLocalesField = $selectedList.find('input[type=hidden]'),
       selectedLocales = $selectedList
         .find('li[data-id]')
@@ -21,7 +21,7 @@ $(function () {
     'click',
     '.multiple-team-selector .locale.select li',
     function () {
-      var ls = $(this).parents('.locale.select'),
+      const ls = $(this).parents('.locale.select'),
         target = ls.siblings('.locale.select').find('ul'),
         item = $(this).remove();
 
@@ -34,7 +34,7 @@ $(function () {
   // Choose/remove all locales
   $('body').on('click', '.multiple-team-selector .move-all', function (e) {
     e.preventDefault();
-    var ls = $(this).parents('.locale.select'),
+    const ls = $(this).parents('.locale.select'),
       target = ls.siblings('.locale.select').find('ul'),
       items = ls.find('li:visible:not(".no-match")').remove();
 
