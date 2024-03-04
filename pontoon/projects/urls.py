@@ -73,9 +73,7 @@ urlpatterns = [
                             # Project contributors
                             path(
                                 "contributors/",
-                                cache_page(VIEW_CACHE_TIMEOUT)(
-                                    views.ProjectContributorsView.as_view()
-                                ),
+                                views.ProjectContributorsView.as_view(),
                                 name="pontoon.projects.ajax.contributors",
                             ),
                             # Project insights

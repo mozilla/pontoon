@@ -68,9 +68,7 @@ urlpatterns = [
                             # Localization contributors
                             path(
                                 "contributors/",
-                                cache_page(VIEW_CACHE_TIMEOUT)(
-                                    views.LocalizationContributorsView.as_view()
-                                ),
+                                views.LocalizationContributorsView.as_view(),
                                 name="pontoon.localizations.ajax.contributors",
                             ),
                             # Project insights
