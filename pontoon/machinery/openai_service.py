@@ -1,9 +1,14 @@
 from openai import OpenAI
 from pontoon.base.models import Locale
+import os
+import textwrap
 
 
 class OpenAIService:
     def __init__(self):
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("Missing OpenAI API key")
         self.client = OpenAI()
 
     def get_translation(
@@ -16,29 +21,29 @@ class OpenAIService:
                 f"The target language '{target_language_name}' is not supported."
             )
 
-        informal = (
-            f"You will be provided with text in English, along with its machine-generated translation in {target_language}. "
-            "Your objective is to revise the {target_language} translation to ensure it utilizes simpler language. Adhere to the following guidelines to achieve this:\n"
-            "- Clarity is Key: Ensure the translation conveys the original message in the clearest possible manner, without ambiguity or unnecessary complexity.\n"
-            "- Consistent Simplicity: Maintain a consistent level of simplicity throughout the translation.\n"
-            "The goal is to produce a translation that accurately reflects the original English text, but in a way that is more approachable and easier to understand for all {target_language} speakers."
+        informal = textwrap.dedent(
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            Your objective is to revise the {target_language} translation to ensure it utilizes simpler language. Adhere to the following guidelines to achieve this:
+            - Clarity is Key: Ensure the translation conveys the original message in the clearest possible manner, without ambiguity or unnecessary complexity.
+            - Consistent Simplicity: Maintain a consistent level of simplicity throughout the translation.
+            The goal is to produce a translation that accurately reflects the original English text, but in a way that is more approachable and easier to understand for all {target_language} speakers."""
         )
 
-        formal = (
-            f"You will be provided with text in English, along with its machine-generated translation in {target_language}. "
-            "Your objective is to revise the {target_language} translation to ensure it utilizes a higher level of formality. Adhere to the following guidelines to achieve this:\n"
-            "- Adjust the Tone: Ensure the tone is respectful, polished, and devoid of colloquialisms or informal expressions commonly used in casual conversation.\n"
-            "- Formal Addressing: Where applicable, use formal modes of address.\n"
-            "- Consistency: Maintain a consistent level of formality throughout the translation, avoiding shifts in tone or style.\n"
-            "Your goal is to produce a translation that not only accurately conveys the meaning of the English text but also meets the expectations for formality in {target_language}-speaking professional or formal settings."
+        formal = textwrap.dedent(
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            Your objective is to revise the {target_language} translation to ensure it utilizes a higher level of formality. Adhere to the following guidelines to achieve this:
+            - Adjust the Tone: Ensure the tone is respectful, polished, and devoid of colloquialisms or informal expressions commonly used in casual conversation.
+            - Formal Addressing: Where applicable, use formal modes of address.
+            - Consistency: Maintain a consistent level of formality throughout the translation, avoiding shifts in tone or style.
+            Your goal is to produce a translation that not only accurately conveys the meaning of the English text but also meets the expectations for formality in {target_language}-speaking professional or formal settings."""
         )
 
-        alternative = (
-            f"You will be provided with text in English, along with its machine-generated translation in {target_language}. "
-            "Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:\n"
-            "- Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.\n"
-            "- Clarification and Accuracy: Where the source text is ambiguous or idiomatic, offer clarifications or alternative expressions in {target_language}.\n"
-            "Just provide the text for the alternative translation."
+        alternative = textwrap.dedent(
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:
+            - Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.
+            - Clarification and Accuracy: Where the source text is ambiguous or idiomatic, offer clarifications or alternative expressions in {target_language}.
+            Just provide the text for the alternative translation."""
         )
 
         system_messages = {

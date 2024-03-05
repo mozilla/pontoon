@@ -39,9 +39,71 @@
   pointer-events: auto;
 }
 
-.machinery .translation > header ul li:not(:first-child)::before {
+.machinery .translation > header > ul > li:not(:first-child)::before {
   content: '•';
   padding-right: 3px;
+}
+
+.machinery .translation > header li.google-translation {
+  position: relative;
+}
+
+.machinery
+  .translation
+  > header
+  li.google-translation:hover
+  .translation-source {
+  color: var(--status-translated);
+}
+
+.machinery .translation > header li.google-translation .selected-option {
+  margin-left: 3px;
+  margin-right: 3px;
+  color: var(--status-translated);
+}
+
+.machinery .translation > header li.google-translation .dropdown-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--status-translated);
+}
+
+.machinery .translation > header li.google-translation .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background-color: var(--black-3);
+  border: 1px solid var(--main-border-1);
+  color: var(--light-grey-7);
+  overflow: hidden;
+  list-style: none;
+}
+
+.machinery .translation > header li.google-translation .dropdown-menu li {
+  padding: 2px 4px;
+  text-align: left;
+  display: block;
+  white-space: nowrap;
+}
+
+.machinery .translation > header li.google-translation .dropdown-menu li:hover {
+  background: var(--dark-grey-2);
+  color: var(--white-1);
+}
+
+.machinery
+  .translation
+  > header
+  li.google-translation
+  .dropdown-menu
+  li.horizontal-separator {
+  border-top: 1px solid var(--main-border-1);
+  height: 0;
+  margin: 5px 0;
+  padding: 0;
 }
 
 .machinery .translation > header .quality::after {
