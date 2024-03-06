@@ -1,4 +1,4 @@
-- Feature Name: Email consent opt-in and Unsubscribe page
+- Feature Name: Email opt-in consent and Unsubscribe page
 - Created: 2024-02-21
 - Associated Issue: #3109
 
@@ -8,23 +8,21 @@ Work required to enable email communication with Pontoon users: opt-in consent u
 
 # Motivation
 
-There does not exist currently an email communication consent opt-in for users who register with Pontoon. This restricts our ability to reach contributors outside of the platform and reduces our effectiveness in keeping localizers informed and engaged. So we need to create settings that allow users to control their ability to opt in to email messages.
+The ability to opt in to non-transactional email communications does not currently exist for users who register with Pontoon. This restricts our ability to reach contributors outside of the platform and reduces our effectiveness in keeping localizers informed and engaged. So we need to create settings that allow users to control their ability to opt in to email messages.
 
-This will allow us to reach out within legal compliance to the wider audience of registered users for things such as surveys, online events, etc. Future major platform enhancements will be able to build off this work, and starting this early will provide enough time to ensure interested and active contributors are opted-in ahead of time.
+This will allow us to reach out within legal compliance to the wider audience of registered users for things such as surveys, online events, etc. Future major platform enhancements can build off this work, and starting early will provide enough time to ensure interested and active contributors are opted-in ahead of time.
 
 Value for users / problems solved:
 - Users can select their preference for email communication
-- Engagement/reach expanded beyond logged-in active Pontoon users
-
+- Engagement/reach expanded beyond logged-in active Pontoon users that respects user preferences and complies with legal requirements
 
 # Feature explanation
 
 ## Email communication user settings
 
-The email opt-in consent option is available under an “Email communications” option in user preferences. “Contact email address” should be moved from Personal information to under this section and an option for non-transactional mass emails opt-ing should be added.
+The email opt-in consent option is available under the new “Email communications” option in user settings. “Contact email address” is moved from the "Personal information" section to this section.
 
 These user email communication preferences are stored and referenced in database to determine if emails should be sent to the user.
-
 
 (Section: content)
 - Section title: `Email communications`
@@ -33,44 +31,61 @@ These user email communication preferences are stored and referenced in database
 - Check box: `Receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform.`
 - Subtitle to check box: `I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
-## Standalone page for email consent shown after existing user login
+Note: All texts need to configurable per instance, i.e. we should not be hard-coding "Mozilla".
+
+## Standalone page for email opt-in consent shown after existing user login
 
 We need to make existing users aware of the new email communication preference.
 
-Upon login (after a user’s previous session expires) an email consent page should be displayed to existing users logging in for the first time after the consent feature is enabled. 
+Upon accessing Pontoon for the first time after the feature is enabled, an email opt-in consent page is displayed to existing users.
 
-They should be shown two buttons, one to opt in to emails or one declining to opt in. This should not be shown again if the user clicks either of the buttons, but should be shown again upon next login if the user closed their tab/browser.
+The user selects their preference by clicking one of two buttons, one to opt in to emails or one declining to opt in. This page is not shown again if the user clicks either of the buttons. The page is shown again if the user navigates away from the page without clicking either of the buttons.
 
-This page also should not be shown if the user has already opted in via their settings.
+This page is not shown if the user has already opted in via their settings.
 
 (Section: content)
 - Header: `Update your email communication preferences`
 - Sub-header: `You can now choose your email communication preferences within Pontoon.`
-- Body: `Would you like to receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform?`
-- Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
-- Button: `Enable email updates`
+- Sub-header: `Stay connected with the latest updates from Mozilla localization`
+- Unordered list: `Subscribe to emails to receive updates about:`
+- List item: `What’s happening in localization at Mozilla`
+- List item: `Invitations to events for contributors and surveys`
+- List item: `Announcements and changes about projects happening on Pontoon`
+- List item: `Changes and updates to the Pontoon platform`
+- Sub-header: `Click below to subscribe now`
+- Body: `Would you like to receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform? This can be changed at any time in your settings.`
+- Subtitle: `You can update your email communication preferences at any time in your settings.`
 - Button: `No, thank you`
-- Body: `You can update your email communication preferences at any time in your settings.`
+- Button (primary): `Enable email updates`
+- Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
-## New account creation email opt-in
+## New account creation email opt-in consent
 
 Ideally, we would like users to set up their email communication preferences right away upon successful account creation.
 
 After a user successfully creates their Pontoon account, display a standalone page which redirects to the homepage after the user enables or rejects email updates. This page informs the user of successful account creation and requests them to update their email communication preferences.
 
-They should be shown two buttons, one to opt in to emails or one declining to opt in. This should not be shown again if the user clicks either of the buttons, but the standalone page for email consent (above) should be shown again upon next login if the user closed their tab/browser.
+They should be shown two buttons, one to opt in to emails or one declining to opt in. This should not be shown again if the user clicks either of the buttons, but the standalone page for email opt-in consent (above) should be shown again upon next visit if the user closed their tab/browser.
 
 (Section: content)
 - Header: `Welcome to Pontoon!`
-- Sub-header: `You have successfully created your Pontoon account.`
+- Subtitle: `You have successfully created your Pontoon account.`
+- Sub-header: `Stay connected with the latest updates from Mozilla localization`
+- Unordered list: `Subscribe to emails to receive updates about:`
+- List item: `What’s happening in localization at Mozilla`
+- List item: `Invitations to events for contributors and surveys`
+- List item: `Announcements and changes about projects happening on Pontoon`
+- List item: `Changes and updates to the Pontoon platform`
+- Sub-header: `Click below to subscribe now`
 - Body: `Would you like to receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform? This can be changed at any time in your settings.`
-- Button: `Enable email updates`
+- Subtitle: `You can update your email communication preferences at any time in your settings.`
 - Button: `No, thank you`
+- Button (primary): `Enable email updates`
 - Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
 ## Additional card for tour
 
-As part of new user onboarding, point new users to user preferences and call out the ability to enable email communication preferences.
+As part of new user onboarding, we point new users to user preferences and call out the ability to enable email communication preferences.
 
 (Section: content)
 - Header: `Stay up to date`
@@ -85,25 +100,31 @@ As part of new user onboarding, point new users to user preferences and call out
 Legal regulations (e.g. CAN-SPAM act) have specific requirements to include an unsubscribe link in commercial email messages to manage email preferences without requiring a login.
 
 As a user I can:
-- Access my unique/personal unsubscribe page through a link without logging in. The link would typically be included with non-transactional emails from Pontoon as an “Unsubscribe” link in the footer.
+- Access my unique/personal unsubscribe page through a link without logging in. The link is typically included with non-transactional emails from Pontoon as an “Unsubscribe” link in the footer.
   - Link technical specs:
   1) Pontoon generates a random unique identifier and assigns it to each user. The algorithm doesn't use any existing user data to generate the ID, which needs to be sufficiently complex to avoid a potential attacker guessing.
   2) The unsubscribe page can be accessed without login. If a user ID is not provided, or it's incorrect, it will display an error message.
   3) Unsubscribe links in emails will include the user's unique identifier in the URL to correctly identify the user.
-- All options are managed from a single page; I do not need to navigate from the page linked in the email to manage subscriptions.
-- Unsubscribe from all emails with a single button.
-- Subscribe for emails with a single button.
-- Receive a confirmation that I have successfully unsubscribed/subscribed. I am also instructed how to change my subscriptions later through my user preferences.
-- (In future implementations) Select specific categories of emails to receive / no longer receive. 
+- Access all options from a single page; I do not need to navigate from the page linked in the email to manage subscriptions.
 
 (Section: content)
  - Title: `Mozilla Localization - Pontoon`
  - Header: `Update Your Email Preferences`
  - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform.`
  - Radio button: `Please unsubscribe from all Mozilla localization emails.`
- - Radio button: `Please keep me sending me emails from Mozilla localization.`
+ - Radio button: `Please keep sending me emails from Mozilla localization.`
  - Button: `Submit`
 
  - On submit alert (Unsubscribe): `You've successfully unsubscribed. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a>.`
  - On submit alert (Subscribe): `Thanks! You will continue to receive emails from Mozilla localization. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a>.`
  
+ # Mockup
+*Note*: Mockups for illustrative purposes, not final design
+
+*New account email opt-in consent*
+
+![](0117/new-user-opt-in.png)
+
+*Existing account email opt-in consent*
+
+![](0117/existing-user-opt-in.png)
