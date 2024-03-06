@@ -2576,11 +2576,9 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def prefetch_active_translations(self, locale):
-        """
-        Prefetch active translations for given locale.
-        """
-        return self.prefetch_related(
+    def prefetch_entities_data(self, locale, preferred_source_locale):
+        # Prefetch active translations for given locale
+        entities = self.prefetch_related(
             Prefetch(
                 "translation_set",
                 queryset=(
@@ -2595,17 +2593,30 @@ class EntityQuerySet(models.QuerySet):
             )
         )
 
-    def prefetch_alternative_originals(self, code):
-        """
-        Prefetch approved translations for given preferred source locale.
-        """
-        return self.prefetch_related(
+        # Prefetch related Translations, Resources, Projects and ProjectLocales
+        entities = entities.prefetch_related(
             Prefetch(
-                "translation_set",
-                queryset=(Translation.objects.filter(locale__code=code, approved=True)),
-                to_attr="alternative_originals",
+                "resource__project__project_locale",
+                queryset=ProjectLocale.objects.filter(locale=locale),
+                to_attr="projectlocale",
             )
         )
+
+        # Prefetch approved translations for given preferred source locale
+        if preferred_source_locale != "":
+            entities = entities.prefetch_related(
+                Prefetch(
+                    "translation_set",
+                    queryset=(
+                        Translation.objects.filter(
+                            locale__code=preferred_source_locale, approved=True
+                        )
+                    ),
+                    to_attr="alternative_originals",
+                )
+            )
+
+        return entities
 
     def reset_active_translations(self, locale):
         """
@@ -3043,17 +3054,7 @@ class Entity(DirtyFieldsMixin, models.Model):
     ):
         entities_array = []
 
-        # Prefetch related Translations, Resources, Projects and ProjectLocales
-        entities = entities.prefetch_active_translations(locale).prefetch_related(
-            Prefetch(
-                "resource__project__project_locale",
-                queryset=ProjectLocale.objects.filter(locale=locale),
-                to_attr="projectlocale",
-            )
-        )
-
-        if preferred_source_locale != "":
-            entities = entities.prefetch_alternative_originals(preferred_source_locale)
+        entities = entities.prefetch_entities_data(locale, preferred_source_locale)
 
         for entity in entities:
             translation_array = []
