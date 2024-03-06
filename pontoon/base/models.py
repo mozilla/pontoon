@@ -3051,10 +3051,19 @@ class Entity(DirtyFieldsMixin, models.Model):
         preferred_source_locale,
         entities,
         is_sibling=False,
+        requested_entity=None,
     ):
         entities_array = []
 
         entities = entities.prefetch_entities_data(locale, preferred_source_locale)
+
+        # If requested entity not in the current page
+        if requested_entity and requested_entity not in [e.pk for e in entities]:
+            entities = list(entities) + list(
+                Entity.objects.filter(pk=requested_entity).prefetch_entities_data(
+                    locale, preferred_source_locale
+                )
+            )
 
         for entity in entities:
             translation_array = []
