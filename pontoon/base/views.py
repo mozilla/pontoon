@@ -188,21 +188,13 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
     has_next = entities_page.has_next()
     entities_to_map = entities_page.object_list
 
-    # If requested entity not on the first page
-    if form.cleaned_data["entity"]:
-        entity_pk = form.cleaned_data["entity"]
-        entities_to_map_pks = [e.pk for e in entities_to_map]
-
-        # TODO: entities_to_map.values_list() doesn't return entities from selected page
-        if entity_pk not in entities_to_map_pks:
-            if entity_pk in entities.values_list("pk", flat=True):
-                entities_to_map_pks.append(entity_pk)
-                entities_to_map = entities.filter(pk__in=entities_to_map_pks)
-
     return JsonResponse(
         {
             "entities": Entity.map_entities(
-                locale, preferred_source_locale, entities_to_map
+                locale,
+                preferred_source_locale,
+                entities_to_map,
+                requested_entity=form.cleaned_data["entity"],
             ),
             "has_next": has_next,
             "stats": TranslatedResource.objects.stats(
