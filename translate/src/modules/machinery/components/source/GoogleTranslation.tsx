@@ -1,40 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Localized } from '@fluent/react';
-import './dropdown.css'; 
+import './dropdown.css';
+
+/**
+ * Show the translation source from Google Translate.
+ */
 
 export function GoogleTranslation(): React.ReactElement<'li'> {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const dropdownRef = useRef<HTMLLIElement>(null); // Ref to the dropdown container
 
-  const toggleDropdown = () => {
-    console.log("toggleDropdown called");
-    setDropdownOpen(!isDropdownOpen);
-    console.log(isDropdownOpen);
+  const toggleDropdown = (ev: React.MouseEvent) => {
+    ev.stopPropagation();
+    setDropdownOpen((isDropdownOpen) => !isDropdownOpen);
   };
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = (ev: React.MouseEvent, option: string) => {
+    ev.stopPropagation();
     setSelectedOption(option);
+    console.log(option);
     setDropdownOpen(false); // Close the dropdown after selection
   };
 
-  // This effect handles closing the dropdown when clicking outside of it
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
   return (
-    <li ref={dropdownRef} className="google-translation">
-      <Localized id='machinery-GoogleTranslation--visit-google' attrs={{ title: true }}>
+    <li ref={dropdownRef} className='google-translation'>
+      <Localized
+        id='machinery-GoogleTranslation--visit-google'
+        attrs={{ title: true }}
+      >
         <a
           className='translation-source'
           href='https://translate.google.com/'
@@ -44,17 +38,28 @@ export function GoogleTranslation(): React.ReactElement<'li'> {
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <span>GOOGLE TRANSLATE</span>
-          {selectedOption && <span className="selected-option"> {selectedOption.toUpperCase()}</span>}
+          <span className='selected-option'>
+            TEST {selectedOption.toUpperCase()}
+          </span>
         </a>
       </Localized>
-      <button onClick={toggleDropdown} className="dropdown-toggle" aria-haspopup="true" aria-expanded={isDropdownOpen}>
+      <button
+        onClick={toggleDropdown}
+        className='dropdown-toggle'
+        aria-haspopup='true'
+        aria-expanded={isDropdownOpen}
+      >
         {isDropdownOpen ? '▲' : '▼'}
       </button>
       {isDropdownOpen && (
-        <ul className="dropdown-menu">
-          <li onClick={() => handleOptionClick('Rephrase')}>REPHRASE</li>
-          <li onClick={() => handleOptionClick('Make formal')}>MAKE FORMAL</li>
-          <li onClick={() => handleOptionClick('Make informal')}>MAKE INFORMAL</li>
+        <ul className='dropdown-menu' style={{ display: 'block' }}>
+          <li onClick={(ev) => handleOptionClick(ev, 'Rephrase')}>REPHRASE</li>
+          <li onClick={(ev) => handleOptionClick(ev, 'Make formal')}>
+            MAKE FORMAL
+          </li>
+          <li onClick={(ev) => handleOptionClick(ev, 'Make informal')}>
+            MAKE INFORMAL
+          </li>
         </ul>
       )}
     </li>
