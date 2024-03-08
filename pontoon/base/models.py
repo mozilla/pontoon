@@ -1248,22 +1248,6 @@ class ProjectQuerySet(models.QuerySet):
         """
         return AggregatedStats.get_top_instances(self)
 
-    def reset_resource_order(self):
-        """
-        Sorting resources by path is a heavy operation, so we use the Resource.order field
-        to represent the alphabetic order of resources in the project.
-
-        This method resets the order field, and should be called when new resources are
-        added to or removed from the project.
-        """
-        ordered_resources = []
-
-        for idx, r in enumerate(self.resources.order_by("path")):
-            r.order = idx
-            ordered_resources.append(r)
-
-        Resource.objects.bulk_update(ordered_resources, ["order"])
-
 
 class Priority(models.IntegerChoices):
     LOWEST = 1, "Lowest"
@@ -1590,6 +1574,22 @@ class Project(AggregatedStats):
     def available_locales_list(self):
         """Get a list of available locale codes."""
         return list(self.locales.all().values_list("code", flat=True))
+
+    def reset_resource_order(self):
+        """
+        Sorting resources by path is a heavy operation, so we use the Resource.order field
+        to represent the alphabetic order of resources in the project.
+
+        This method resets the order field, and should be called when new resources are
+        added to or removed from the project.
+        """
+        ordered_resources = []
+
+        for idx, r in enumerate(self.resources.order_by("path")):
+            r.order = idx
+            ordered_resources.append(r)
+
+        Resource.objects.bulk_update(ordered_resources, ["order"])
 
 
 class ProjectSlugHistory(models.Model):
