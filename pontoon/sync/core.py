@@ -133,6 +133,7 @@ def update_resources(db_project, vcs_project):
         resource.save()
 
         if created:
+            db_project.reset_resource_order()
             added_paths.append(relative_path)
 
     log.debug("Added files: {}".format(", ".join(added_paths) or "None"))

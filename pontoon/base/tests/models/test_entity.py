@@ -30,6 +30,7 @@ def entity_test_models(translation_a, locale_b):
     resourceX = ResourceFactory(
         project=project_a,
         path="resourceX.po",
+        order=1,
     )
     entity_a.string = "Entity zero"
     entity_a.key = entity_a.string
