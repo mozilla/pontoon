@@ -294,6 +294,7 @@ class GetEntitiesForm(forms.Form):
     locale = forms.CharField()
     paths = forms.MultipleChoiceField(required=False)
     limit = forms.IntegerField(required=False, initial=50)
+    page = forms.IntegerField(required=False, initial=1)
     status = forms.CharField(required=False)
     extra = forms.CharField(required=False)
     tag = forms.CharField(required=False)
@@ -303,7 +304,6 @@ class GetEntitiesForm(forms.Form):
     reviewer = forms.CharField(required=False)
     exclude_self_reviewed = forms.BooleanField(required=False)
     search = forms.CharField(required=False)
-    exclude_entities = forms.CharField(required=False)
     entity_ids = forms.CharField(required=False)
     pk_only = forms.BooleanField(required=False)
     inplace_editor = forms.BooleanField(required=False)
@@ -322,13 +322,16 @@ class GetEntitiesForm(forms.Form):
         except (TypeError, ValueError):
             return 50
 
+    def clean_page(self):
+        try:
+            return int(self.cleaned_data["page"])
+        except (TypeError, ValueError):
+            return 1
+
     def clean_search(self):
         # Return the search input as is, without any cleaning. This is in order to allow
         # users to search for strings with leading or trailing whitespaces.
         return self.data.get("search")
-
-    def clean_exclude_entities(self):
-        return utils.split_ints(self.cleaned_data["exclude_entities"])
 
     def clean_entity_ids(self):
         return utils.split_ints(self.cleaned_data["entity_ids"])

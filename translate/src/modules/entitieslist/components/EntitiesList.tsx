@@ -89,7 +89,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
 
   const showNotification = useContext(ShowNotification);
   const batchactions = useBatchactions();
-  const { entities, fetchCount, fetching, hasMore } = useEntities();
+  const { entities, fetchCount, fetching, hasMore, page } = useEntities();
   const location = useContext(Location);
   const isAuthUser = useAppSelector((state) => state[USER].isAuthenticated);
   const { checkUnsavedChanges } = useContext(UnsavedActions);
@@ -245,9 +245,9 @@ export function EntitiesList(): React.ReactElement<'div'> {
   const getMoreEntities = useCallback(() => {
     if (!fetching) {
       // Currently shown entities should be excluded from the next results.
-      dispatch(getEntities(location, entities));
+      dispatch(getEntities(location, page));
     }
-  }, [dispatch, entities, fetching, location]);
+  }, [dispatch, entities, fetching, location, page]);
 
   // Must be after other useEffect() calls, as they are run in order during mount
   useEffect(() => {

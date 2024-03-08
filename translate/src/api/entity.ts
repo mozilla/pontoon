@@ -76,23 +76,21 @@ type EntitiesResponse =
  * Return a list of entities for a project and locale.
  *
  * Pass in a `resource` to restrict the list to a specific path.
- * If the `exclude` array has values, those entities will be excluded from
- * the query. Use this to query for the next set of entities.
  */
 export async function fetchEntities(
   location: Location & { list: number[] },
 ): Promise<{ entities: Entity[]; stats: APIStats }>;
 export async function fetchEntities(
   location: Location,
-  exclude: Entity[],
+  page: number,
 ): Promise<EntitiesResponse>;
 export async function fetchEntities(
   location: Location,
-  exclude?: Entity[],
+  page?: number,
 ): Promise<EntitiesResponse> {
   const payload = buildFetchPayload(location);
-  if (exclude?.length) {
-    payload.append('exclude_entities', exclude.map((ent) => ent.pk).join(','));
+  if (page) {
+    payload.append('page', String(page));
   }
   return await POST('/get-entities/', payload);
 }

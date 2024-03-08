@@ -179,14 +179,15 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
     This is used by the regular mode of the Translate page.
     """
     paginator = Paginator(entities, form.cleaned_data["limit"])
+    page = form.cleaned_data["page"]
 
     try:
-        entities_page = paginator.page(1)
+        entities_page = paginator.page(page)
     except EmptyPage:
         return JsonResponse({"has_next": False, "stats": {}})
 
-    has_next = entities_page.has_next()
     entities_to_map = entities_page.object_list
+    requested_entity = form.cleaned_data["entity"] if page == 1 else None
 
     return JsonResponse(
         {
@@ -194,9 +195,9 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
                 locale,
                 preferred_source_locale,
                 entities_to_map,
-                requested_entity=form.cleaned_data["entity"],
+                requested_entity=requested_entity,
             ),
-            "has_next": has_next,
+            "has_next": entities_page.has_next(),
             "stats": TranslatedResource.objects.stats(
                 project, form.cleaned_data["paths"], locale
             ),
@@ -244,7 +245,6 @@ def entities(request):
         "paths",
         "status",
         "search",
-        "exclude_entities",
         "extra",
         "time",
         "author",
