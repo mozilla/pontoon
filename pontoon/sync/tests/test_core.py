@@ -141,6 +141,22 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
         other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
         assert other_db_resource.total_strings == len(self.other_vcs_resource.entities)
 
+    def test_order(self):
+        # Check if Resource.order gets reset for all Project resources.
+        self.other_db_resource.delete()
+
+        assert self.main_db_resource.order == 0  # path="main.lang"
+        assert self.missing_db_resource.order == 0  # path="missing.lang"
+        assert self.other_db_resource.order == 0  # path="other.lang"
+
+        update_resources(self.db_project, self.vcs_project)
+        self.missing_db_resource.refresh_from_db()
+        other_db_resource = Resource.objects.get(path=self.other_vcs_resource.path)
+
+        assert self.main_db_resource.order == 0
+        assert self.missing_db_resource.order == 1
+        assert other_db_resource.order == 2
+
 
 class UpdateTranslatedResourcesTests(FakeCheckoutTestCase):
     @patch("pontoon.sync.core.update_translated_resources_without_config")

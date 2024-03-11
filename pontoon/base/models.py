@@ -1575,6 +1575,22 @@ class Project(AggregatedStats):
         """Get a list of available locale codes."""
         return list(self.locales.all().values_list("code", flat=True))
 
+    def reset_resource_order(self):
+        """
+        Sorting resources by path is a heavy operation, so we use the Resource.order field
+        to represent the alphabetic order of resources in the project.
+
+        This method resets the order field, and should be called when new resources are
+        added to or removed from the project.
+        """
+        ordered_resources = []
+
+        for idx, r in enumerate(self.resources.order_by("path")):
+            r.order = idx
+            ordered_resources.append(r)
+
+        Resource.objects.bulk_update(ordered_resources, ["order"])
+
 
 class ProjectSlugHistory(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE)
@@ -2147,6 +2163,15 @@ class ResourceQuerySet(models.QuerySet):
 class Resource(models.Model):
     project = models.ForeignKey(Project, models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
+
+    """
+    Index in the alphabetically sorted list of resources
+
+    Sorting resources by path is a heavy operation, so we use this field
+    to represent the alphabetic order of resources in the project.
+    """
+    order = models.PositiveIntegerField(default=0)
+
     total_strings = models.PositiveIntegerField(default=0)
     obsolete = models.BooleanField(default=False)
 
@@ -3038,7 +3063,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         if exclude_entities:
             entities = entities.exclude(pk__in=exclude_entities)
 
-        order_fields = ("resource__path", "order")
+        order_fields = ("resource__order", "order")
         if project.slug == "all-projects":
             order_fields = ("resource__project__name",) + order_fields
 
