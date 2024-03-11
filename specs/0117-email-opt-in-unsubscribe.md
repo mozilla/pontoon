@@ -14,7 +14,8 @@ This will allow us to reach out within legal compliance to the wider audience of
 
 Value for users / problems solved:
 - Users can select their preference for email communication
-- Engagement/reach expanded beyond logged-in active Pontoon users that respects user preferences and complies with legal requirements
+- Engagement/reach that respects user preferences and complies with legal requirements
+- Expands the types of information and messaging we can send to community members beyond what can be included in transactional emails
 
 # Feature explanation
 
@@ -88,7 +89,7 @@ They should be shown two buttons, one to opt in to emails or one declining to op
 As part of new user onboarding, we point new users to user preferences and call out the ability to enable email communication preferences.
 
 (Section: content)
-- Header: `Stay up to date`
+- Header: `Keep up to date`
 - Body: `You can receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform by email. If you'd like to stay up to date, you can enable these emails in your settings.`
 
 *Display if user logged in:*
