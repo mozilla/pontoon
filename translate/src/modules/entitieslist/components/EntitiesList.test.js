@@ -88,6 +88,24 @@ describe('<EntitiesList>', () => {
     expect(wrapper.find('Entity')).toHaveLength(2);
   });
 
+  it('when requesting new entities, load page 2', () => {
+    jest.useFakeTimers();
+    mockAllIsIntersecting(false);
+
+    const store = createReduxStore();
+    store.dispatch({
+      type: EntitiesActions.RECEIVE_ENTITIES,
+      entities: ENTITIES,
+      hasMore: true,
+    });
+    mountComponentWithStore(EntitiesList, store);
+
+    mockAllIsIntersecting(true);
+    jest.advanceTimersByTime(100); // default value for react-infinite-scroll-hook delayInMs
+
+    expect(EntitiesActions.getEntities.args[0][1]).toEqual(2);
+  });
+
   it('redirects to the first entity when none is selected', () => {
     const history = createMemoryHistory({
       initialEntries: ['/kg/firefox/all-resources/'],
