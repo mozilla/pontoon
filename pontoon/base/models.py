@@ -2164,13 +2164,13 @@ class Resource(models.Model):
     project = models.ForeignKey(Project, models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
 
+    order = models.PositiveIntegerField(default=0)
     """
     Index in the alphabetically sorted list of resources
 
     Sorting resources by path is a heavy operation, so we use this field
     to represent the alphabetic order of resources in the project.
     """
-    order = models.PositiveIntegerField(default=0)
 
     total_strings = models.PositiveIntegerField(default=0)
     obsolete = models.BooleanField(default=False)
