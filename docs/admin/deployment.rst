@@ -402,14 +402,14 @@ is designed to run in the beginning of the day, every day.
 
 Clearing the session store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-When a user logs in, Django adds a row to the django_session database table. If
-the user logs out manually, Django deletes the row. But if the user does not
-log out, the row never gets deleted.
+When a user logs in, Django adds a row to the ``django_session`` database
+table. If the user logs out manually, Django deletes the row. But if the user
+does not log out, the row never gets deleted.
 
 Django does not provide automatic purging of expired sessions. Therefore, it’s
 your job to purge expired sessions on a regular basis. Django provides a
-clean-up management command for this purpose: clearsessions. It’s recommended
-to call this command on a regular basis, for example as a daily cron job.
+clean-up management command for this purpose: ``clearsessions``. It’s
+recommended to run this command as a daily cron job.
 
 .. code-block:: bash
 
