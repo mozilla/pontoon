@@ -21,7 +21,7 @@ Other Documentation
 
 Important additional Pontoon documentation can also be found at the following sites:
 
-`How To Use Pontoon <https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/>`_ (Mozilla Localizer Documentation)
+`How to localize with Pontoon <https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/>`_ (Mozilla Localizer Documentation)
 
 `Working with Pontoon <https://mozilla-l10n.github.io/documentation/tools/pontoon>`_ (Mozilla Internal Tools Documentation)
 
