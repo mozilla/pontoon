@@ -184,7 +184,7 @@ export function Highlight({
           length: term.length,
           mark: (
             <mark className='search' key={++keyCounter}>
-              {term}
+              {source.substring(next, next + term.length)}
             </mark>
           ),
         });

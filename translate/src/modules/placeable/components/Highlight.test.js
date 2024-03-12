@@ -135,6 +135,13 @@ describe('<Highlight search>', () => {
     expect(marks).toHaveLength(2);
     expect(marks.at(1).text()).toEqual('""');
   });
+
+  it("does not alter source text's capitalization", () => {
+    const wrapper = mountMarker('hello world', [], 'HELLO');
+    const marks = wrapper.find('mark');
+    expect(marks).toHaveLength(1);
+    expect(marks.at(0).text()).toEqual('hello');
+  });
 });
 
 describe('specific marker', () => {
