@@ -63,10 +63,10 @@ export const updateEntityTranslation = (
 
 /** Fetch entities and their translation.  */
 export const getEntities =
-  (location: Location, exclude: Entity[]) => async (dispatch: AppDispatch) => {
+  (location: Location, page: number) => async (dispatch: AppDispatch) => {
     dispatch({ type: REQUEST_ENTITIES });
 
-    const content = await fetchEntities(location, exclude);
+    const content = await fetchEntities(location, page);
 
     if (content.entities) {
       dispatch({

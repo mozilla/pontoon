@@ -2920,7 +2920,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         status=None,
         tag=None,
         search=None,
-        exclude_entities=None,
         extra=None,
         time=None,
         author=None,
@@ -3059,9 +3058,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
-
-        if exclude_entities:
-            entities = entities.exclude(pk__in=exclude_entities)
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":

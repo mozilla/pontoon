@@ -47,47 +47,44 @@ def test_view_entity_filters(member, resource_a, locale_a):
 
 
 @pytest.mark.django_db
-def test_view_entity_exclude_entities(
+def test_view_get_entities_paging(
     member,
     resource_a,
     locale_a,
 ):
     """
-    Excluded entities shouldn't be returned by get_entities.
+    Only entities from the requested page should be returned by get_entities().
     """
     TranslatedResource.objects.create(resource=resource_a, locale=locale_a)
     ProjectLocaleFactory.create(project=resource_a.project, locale=locale_a)
     entities = EntityFactory.create_batch(size=3, resource=resource_a)
-    excluded_pk = entities[1].pk
+
     response = member.client.post(
         "/get-entities/",
         {
             "project": resource_a.project.slug,
             "locale": locale_a.code,
             "paths[]": [resource_a.path],
-            "exclude_entities": [excluded_pk],
+            "page": 1,
             "limit": 1,
         },
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 200
     assert json.loads(response.content)["has_next"] is True
-    assert [e["pk"] for e in json.loads(response.content)["entities"]] != [excluded_pk]
+    assert json.loads(response.content)["entities"][0]["pk"] == entities[0].pk
 
-    exclude_entities = ",".join(map(str, [entities[2].pk, entities[1].pk]))
     response = member.client.post(
         "/get-entities/",
         {
             "project": resource_a.project.slug,
             "locale": locale_a.code,
             "paths[]": [resource_a.path],
-            "exclude_entities": exclude_entities,
+            "page": len(entities),
             "limit": 1,
         },
         HTTP_X_REQUESTED_WITH="XMLHttpRequest",
     )
     assert response.status_code == 200
     assert json.loads(response.content)["has_next"] is False
-    assert [e["pk"] for e in json.loads(response.content)["entities"]] == [
-        entities[0].pk
-    ]
+    assert json.loads(response.content)["entities"][0]["pk"] == entities[-1].pk

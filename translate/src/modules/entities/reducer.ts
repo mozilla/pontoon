@@ -19,6 +19,7 @@ type EntitiesState = {
   readonly fetching: boolean;
   readonly fetchCount: number;
   readonly hasMore: boolean;
+  readonly page: number;
 };
 
 function updateEntityTranslation(
@@ -82,6 +83,7 @@ const initial: EntitiesState = {
   fetching: false,
   fetchCount: 0,
   hasMore: true,
+  page: 1,
 };
 
 export function reducer(
@@ -96,6 +98,7 @@ export function reducer(
         fetching: false,
         fetchCount: state.fetchCount + 1,
         hasMore: action.hasMore,
+        page: state.page + 1,
       };
     case REQUEST_ENTITIES:
       return {
@@ -109,6 +112,7 @@ export function reducer(
         entities: [],
         fetching: false,
         hasMore: true,
+        page: 1,
       };
     case UPDATE_ENTITIES:
       return {
