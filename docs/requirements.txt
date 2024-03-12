@@ -190,9 +190,9 @@ pygments==2.17.2 \
     --hash=sha256:b27c2826c47d0f3219f29554824c30c5e8945175d888647acd804ddd04af846c \
     --hash=sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367
     # via sphinx
-readthedocs-sphinx-search==0.1.1 \
-    --hash=sha256:1f96e2875eee87aa4f1da1ad54adc55195ef1001db41f137aca9fb282aad3589 \
-    --hash=sha256:7216c260244e2272e5577e7c37771f7fd34eeeda229bbeb5735b79e04c54a047
+readthedocs-sphinx-search==0.3.2 \
+    --hash=sha256:277773bfa28566a86694c08e568d5a648cd80f22826545555a764d6d20c365fb \
+    --hash=sha256:58716fd21f01581e6e67bf3bc02e79c77e10dc58b5f8e4c7cc1977e013eda173
     # via -r docs/requirements.in
 requests==2.31.0 \
     --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f \
