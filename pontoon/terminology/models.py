@@ -160,10 +160,12 @@ class Term(models.Model):
 
         # Using update() to avoid circular Term.save() call
         Term.objects.filter(pk=self.pk).update(entity_id=entity.id)
+        entity.term = self
 
         if not created:
             entity.obsolete = False
-            entity.save(update_fields=["obsolete"])
+
+        entity.save()
 
         # Make sure Term entities are ordered alphabetically
         entities = list(
