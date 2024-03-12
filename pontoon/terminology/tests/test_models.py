@@ -267,3 +267,28 @@ def test_handle_term_update_definition(
     assert create_entity_mock.call_count == 0
     assert obsolete_entity_mock.call_count == 0
     assert update_terminology_project_stats_mock.call_count == 0
+
+
+@pytest.mark.django_db
+def test_create_entity_for_new_term(localizable_term):
+    """
+    Given a new localizable term when create_entity() is called,
+    then a new corresponding entity should be created and related to the term.
+    """
+    localizable_term.create_entity()
+    assert localizable_term.entity is not None
+    assert localizable_term.text in localizable_term.entity.string
+    assert localizable_term.entity.term == localizable_term
+
+
+@pytest.mark.django_db
+def test_create_entity_on_term_text_change(localizable_term):
+    """
+    Given an existing localizable term with an associated entity,
+    when the term's text is changed and create_entity() is called again,
+    then a new entity should be created and associated with the term.
+    """
+    original_entity = localizable_term.entity
+    localizable_term.text = "Changed text"
+    localizable_term.create_entity()
+    assert localizable_term.entity != original_entity
