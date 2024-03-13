@@ -186,20 +186,27 @@ def ajax_notifications(request, slug):
                 identifier=identifier,
             )
 
-    # Detect previously sent notifications using a unique identifier
-    # TODO: We should simplify this with a custom Notifications model
-    notifications_map = {}
+    notifications = list(
+        Notification.objects.filter(
+            description__isnull=False,
+            target_content_type=ContentType.objects.get_for_model(project),
+            target_object_id=project.id,
+        )
+        # Each project notification is stored in one Notification instance per user. To
+        # identify unique project Notifications, we use the identifier stored in the
+        # Notification.data field.
+        #
+        # PostgreSQL allows us to retrieve Notifications with unique Notification.data
+        # fields by combining .order_by(*fields) and .distinct(*fields) calls. Read more:
+        # https://docs.djangoproject.com/en/3.2/ref/models/querysets/#distinct
+        #
+        # That approach doesn't allow us to order Notifications by their timestamp, so
+        # we have to do that in python below.
+        .order_by("data")
+        .distinct("data")
+        .prefetch_related("actor", "target")
+    )
 
-    for notification in Notification.objects.filter(
-        description__isnull=False,
-        target_content_type=ContentType.objects.get_for_model(project),
-        target_object_id=project.id,
-    ):
-        identifier = notification.data["identifier"]
-        if identifier not in notifications_map:
-            notifications_map[identifier] = notification
-
-    notifications = list(notifications_map.values())
     notifications.sort(key=lambda x: x.timestamp, reverse=True)
 
     # Recipient shortcuts
