@@ -25,12 +25,3 @@
   font-weight: 400;
   src: url('../fonts/OpenSans-Italic.woff2') format('woff2');
 }
-
-/* Workaround for https://github.com/google/fonts/issues/6221 */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/OpenSans-Regular.woff2') format('woff2');
-  unicode-range: U+60;
-}
