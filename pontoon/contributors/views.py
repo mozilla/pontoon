@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -387,23 +386,12 @@ def verify_email_address(request, token):
 
 @login_required(redirect_field_name="", login_url="/403")
 def notifications(request):
-    """View and edit user notifications."""
-    notifications = request.user.notifications.prefetch_related(
-        "actor", "target", "action_object"
-    )
+    """View user notifications.
 
-    # In order to prefetch Resource and Project data for Entities, we need to split the
-    # QuerySet into two parts: one for comment notifications, which store Entity objects
-    # into the Notification.target field, and one for other notifications.
-    comment_query = {
-        "target_content_type": ContentType.objects.get(app_label="base", model="entity")
-    }
-    comment_notifications = notifications.filter(**comment_query).prefetch_related(
-        "target__resource__project"
-    )
-    other_notifications = notifications.exclude(**comment_query)
-    notifications = list(comment_notifications) + list(other_notifications)
-    notifications.sort(key=lambda x: x.timestamp, reverse=True)
+    Only first 100 notifications are displayed for performance reasons. The rest are
+    loaded via AJAX.
+    """
+    notifications = request.user.notification_list
 
     projects = {}
 
@@ -440,9 +428,29 @@ def notifications(request):
         request,
         "contributors/notifications.html",
         {
-            "notifications": notifications,
+            "has_more": len(notifications) > 100,
+            "notifications": notifications[:100],
             "projects": projects,
             "ordered_projects": ordered_projects,
+        },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def ajax_notifications(request):
+    """View (remaining) user notifications.
+
+    The first 100 notifictions are displayed on the page load. The rest are loaded via
+    this AJAX view.
+    """
+    notifications = request.user.notification_list
+
+    return render(
+        request,
+        "contributors/includes/notifications_remaining.html",
+        {
+            "notifications": notifications[100:],
         },
     )
 

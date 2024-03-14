@@ -1,0 +1,3 @@
+{% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
+
+{{ Notifications.list(notifications=notifications, no_title="No notifications.") }}

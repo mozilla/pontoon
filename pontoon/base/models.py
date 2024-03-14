@@ -17,6 +17,7 @@ from urllib.parse import quote, urlencode, urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import ArrayField
 
 from django.core.exceptions import ValidationError
@@ -310,6 +311,30 @@ def is_new_contributor(self, locale):
 
 
 @property
+def notification_list(self):
+    """A list of notifications to display in the notifications menu."""
+    notifications = self.notifications.prefetch_related(
+        "actor", "target", "action_object"
+    )
+
+    # In order to prefetch Resource and Project data for Entities, we need to split the
+    # QuerySet into two parts: one for comment notifications, which store Entity objects
+    # into the Notification.target field, and one for other notifications.
+    comment_query = {
+        "target_content_type": ContentType.objects.get(app_label="base", model="entity")
+    }
+    comment_notifications = notifications.filter(**comment_query).prefetch_related(
+        "target__resource__project"
+    )
+    other_notifications = notifications.exclude(**comment_query)
+    notifications = list(comment_notifications) + list(other_notifications)
+
+    notifications.sort(key=lambda x: x.timestamp, reverse=True)
+
+    return notifications
+
+
+@property
 def menu_notifications(self):
     """A list of notifications to display in the notifications menu."""
     unread_count = self.notifications.unread().count()
@@ -476,6 +501,7 @@ User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("is_new_contributor", is_new_contributor)
+User.add_to_class("notification_list", notification_list)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
