@@ -14,37 +14,38 @@ Currently, we can only send in-app notifications with limited targeting capabili
 
 ## Notification Center
 
-This feature has the ability to compose a message with a subject and body, send a message as either an in-app notification or email, and target a set of recipients based on commonly used criteria.
+This feature has the ability to compose a message with a subject and body, send a message as an in-app notification and/or email, and target a set of recipients based on commonly used criteria.
 
-### Required functionality:
-
+- Top menu item: `Notification Center`
+  - Item that appears in the top menu only for those with administrator priveleges
+  - Navigates to the `Notification Center` page.
 - Title: `Notification Center`
 - Header: `Message type`
   - Selects the type of message to be sent
-  - Checkboxes: `Email`, `Notification` (multiselect, default: both boxes empty)
+  - Checkboxes: `Email`, `Notification` (default: both boxes deselected)
   - Validation: Error if no checkbox selected - `You must select at least one message type.`
 - Header: `Message editor`
-  - Creates a subject and body for emails. Subject line will be required for in-app messages; in app-messages have the subject line combined with the body message as the first line of the message separated by a newline.
+  - Creates a subject and body for emails. Subject line will also be required for in-app notifications, which will have it combined with the body as the first line of the message separated by a newline.
   - Field: `Subject` (text input)
   - Field: `Body` (text input with formatting: markdown or html)
-  - Button: `Preview` - shows a rendered version of the text in `Body` for checking formatting, similar to how the preview for GitHub comments work
+  - Tab: `Preview` - shows a rendered version of the text in `Body` for checking formatting, similar to how the preview for GitHub comments work
   - Validation: 
     - Error if `Subject` field empty: `Your message must include a subject.`
     - Error if `Body` field empty: `Your message must include a body.`
 - Header: `Recipients`
-  - Select who will receive a message based on a combination of the below filters.
-  - Checkbox: `Filter by User Role` (default empty) - enables User Role as a filter.
+  - Select who will receive a message based on a combination of the following filters.
+  - Checkbox: `Filter by User Role` (default: deselected) - enables User Role as a filter.
     - Checkboxes: `Manager`, `Translator`, `Contributor` (multiselect, default: all boxes empty)
     - Validation:
       - Error if `Filter by User Role` enabled but no roles selected: `You must select at least one user role.`
-  - Checkbox: `Filter by Locale` (default empty) - enables Locale as a filter.
-    - Use existing 2-panel widget already used for selecting locales in Pontoon
-    - Choose locales by moving them from `Available` to `Chosen`(all locales available)
+  - Checkbox: `Filter by Locale` (default: deselected) - enables Locale as a filter.
+    - Use existing 2-panel widget like the one already used for selecting locales in Pontoon
+    - Choose locales by moving them from `Available` to `Chosen` (all locales available)
     - Include a `Move All` option
     - Validation:
       - Error if `Filter by Locale` enabled but no locales selected: `You must select at least one locale.`
   - Checkbox: `Projects`
-    - Use existing 2-panel widget already used for selecting locales in Pontoon
+    - Use a 2-panel widget similar to the one used for selecting locales in Pontoon
     - Choose projects by moving them from `Available` to `Chosen` (all projects available)
     - Include a `Move All` option
   - Subheader `Filter by Activity`
@@ -56,21 +57,21 @@ This feature has the ability to compose a message with a subject and body, send 
       - Options: `Select activity type`, `Submitted translations`, `Performed reviews`, `Last login`
       - Select one
       - Default value: `Select activity type`
+      - If one or more filters already exist, dynamically remove existing types from the dropdown list
       - Form dynamically displays the appropriate filter inputs below based on the selection in the dropdown. `Select activity type` does not display any filter fields.
       - Validation:
-        - Multiple activity filters can used at the same time
-        - Error if more than one filter of the same type used: `You cannot use multiple of the same activity type.`
-        - Error if `Select activity type` selected as a filter in the dropdown: `You must select an activity type when you add an activity filter.`
+        - Multiple activity filters can be used at the same time
+        - Disable `Review message` button and show error message if `Select activity type` selected as a filter in the dropdown: `You must select an activity type when you add an activity filter.`
     - Filter inputs:
       - Inputs for `Submitted translations` / `Performed reviews`
         - `Activity level`
-          - Input box: `Minimum`  (value required, default value: 0, only accepts non-negative integers)
-          - Input box: `Maximum` (value optional, default value: empty, leaving empty will mean there is no maximum and all numbers greater than or equal to the value in `Minimum` will be included.
+          - Input box: `Minimum` (value required, default value: 0, only accepts non-negative integers)
+          - Input box: `Maximum` (value optional, default value: empty, leaving empty will mean there is no maximum and all numbers greater than or equal to the value in `Minimum` will be included.)
           - Tooltip on `Maximum`: `Leave empty to include all numbers greater than or equal to Minimum.`
         - `Timeframe filter`
-          - Checkbox (default empty): `Enable timeframe filter`
+          - Checkbox (default: deselected): `Enable timeframe filter`
             - Checking the box displays datepickers
-          - Datepicker: `From:` (Default value: today's date)
+          - Datepicker: `From:` (Default value: 1 year before today's date)
           - Datepicker: `To:` (Default value: today's date)
       - Inputs for `Last login`
         - `Timeframe filter`
@@ -79,10 +80,10 @@ This feature has the ability to compose a message with a subject and body, send 
 - Header: `Transactional email`
   - By default, emails are sent to users who have enabled opt-in consent. (Does not apply to in-app notifications.)
   - This “Transactional” option flags emails as transactional and sends emails to users regardless of their opt-in status. However, this email content would be restricted to content transactional in nature (e.g. account status notifications, etc.).
-  - Checkbox (default empty): `This is a transactional email`
+  - Checkbox (default: deselected): `This is a transactional email`
   - Text description: `Transactional emails are sent to users who have not opted in to email communication. Transactional emails are restricted in the type of content that can be included.`
   - Validation:
-    - Error if `Transactional email` enabled but `Message type` does not include `Email`: `You cannnot enable the transactional email option if the Message type does not include email.`
+    - Disable `Review message` button and show error message if `Transactional email` enabled but `Message type` does not include `Email`: `You cannnot enable the transactional email option if the Message type does not include email.`
 - Button: `Review message`
   - A send button is not displayed on the same page as the message editor and recipient selection to avoid sending an incomplete message or a message to the wrong recipients.
   - When pressed a validation step is performed on inputs to ensure there are no issues with the form. If there are no issues, the user proceeds to the Review/Confirmation page.
@@ -94,10 +95,12 @@ This feature has the ability to compose a message with a subject and body, send 
     - The number of recipients
     - The filters being applied
   - Whether this is a transactional email. If enabled, a warning will be shown: `Warning: transactional emails are sent to users who have not opted in to email communication. Transactional emails are restricted in the type of content that can be included. When in doubt, please review with legal.`
+  - Button: `Send test to myself`
+    - Sends the current message to the user creating the message in the same format(s) as it is being sent.
   - Button: `Edit`
-    - Clicking the `Edit` button or navigating back in the browser brings you to the previous page
-    - The previously entered content is preserved when `Edit` or the browser's back button is useds so work is not lost
-  - Checkbox (default empty): `I’ve reviewed the work and this is ready to be sent.`
+    - Clicking the ` Edit` button or navigating back in the browser brings you to the previous page
+    - The previously entered content is preserved when `Edit` or the browser's back button is used so work is not lost
+  - Checkbox (default: deselected): `I’ve reviewed the work and this is ready to be sent.`
     - This is another safeguard to avoid accidentally sending messages without thorough review.
     - Validation:
       - Error if this is not checked: `You must confirm that you have reviewed the contents of this message.`
