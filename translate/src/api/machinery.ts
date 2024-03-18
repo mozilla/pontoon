@@ -13,6 +13,7 @@ export type SourceType =
   | 'microsoft-translator'
   | 'systran-translate'
   | 'microsoft-terminology'
+  | 'gpt-transform'
   | 'caighdean';
 
 export type MachineryTranslation = {
@@ -138,6 +139,44 @@ export async function fetchGoogleTranslation(
   return translation
     ? [{ sources: ['google-translate'], original, translation }]
     : [];
+}
+
+/**
+ * Return refined translation by GPT-4.
+ */
+
+export async function fetchGPTTransformation(
+  englishText: string,
+  translatedText: string,
+  locale: Locale,
+  characteristic: string,
+): Promise<MachineryTranslation[]> {
+  const url = '/gpt-transform/';
+  const params = {
+    english_text: englishText,
+    translated_text: translatedText,
+    characteristic: characteristic,
+    locale: locale.code,
+  };
+
+  try {
+    const { translation } = (await GET_(url, params)) as {
+      translation: string;
+    };
+    if (translation) {
+      return [
+        {
+          sources: ['gpt-transform'],
+          original: englishText,
+          translation: translation,
+        },
+      ];
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching GPT transformation:', error);
+    return [];
+  }
 }
 
 /**
