@@ -72,3 +72,50 @@
 .machinery .translation p.original {
   color: var(--translation-secondary-color);
 }
+
+.google-translation {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+  color: var(--status-translated);
+}
+
+.selected-option {
+  margin-left: 10px;
+  margin-right: 10px;
+  color: var(--status-translated);
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  background-color: var(--black-3);
+  color: var(--status-translated);
+  box-shadow: 0px 8px 16px 0px var(--toggle-color-1);
+  z-index: 1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.machinery .translation > header ul li .dropdown-menu li {
+  padding: 12px 16px;
+  text-align: left;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  list-style-type: none;
+}
+
+.dropdown-menu li:hover {
+  background: var(--dark-grey-2);
+  color: var(--white-1);
+}
