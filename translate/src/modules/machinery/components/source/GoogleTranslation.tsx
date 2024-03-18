@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { Localized } from '@fluent/react';
-import './dropdown.css';
 
 /**
  * Show the translation source from Google Translate.
@@ -9,7 +8,7 @@ import './dropdown.css';
 export function GoogleTranslation(): React.ReactElement<'li'> {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-  const dropdownRef = useRef<HTMLLIElement>(null); // Ref to the dropdown container
+  const dropdownRef = useRef<HTMLLIElement>(null);
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();
@@ -19,8 +18,7 @@ export function GoogleTranslation(): React.ReactElement<'li'> {
   const handleOptionClick = (ev: React.MouseEvent, option: string) => {
     ev.stopPropagation();
     setSelectedOption(option);
-    console.log(option);
-    setDropdownOpen(false); // Close the dropdown after selection
+    setDropdownOpen(false);
   };
 
   return (
@@ -38,18 +36,17 @@ export function GoogleTranslation(): React.ReactElement<'li'> {
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <span>GOOGLE TRANSLATE</span>
-          <span className='selected-option'>
-            TEST {selectedOption.toUpperCase()}
-          </span>
         </a>
       </Localized>
+      <span> </span>
+      <span className='selected-option'>{selectedOption.toUpperCase()}</span>
       <button
         onClick={toggleDropdown}
         className='dropdown-toggle'
         aria-haspopup='true'
         aria-expanded={isDropdownOpen}
       >
-        {isDropdownOpen ? '▲' : '▼'}
+        <i className='fa fa-caret-down'></i>
       </button>
       {isDropdownOpen && (
         <ul className='dropdown-menu' style={{ display: 'block' }}>
