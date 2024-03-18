@@ -174,6 +174,28 @@ def google_translate(request):
         return JsonResponse(data, status=400)
 
     return JsonResponse(data)
+  
+
+@login_required(redirect_field_name="", login_url="/403")
+def gpt_transform(request):
+    """
+    Transforms and returns text using GPT-4 based on specified characteristics like rephrasing or changing formality, 
+    by fetching English text, its machine translation, desired transformation characteristic, and target language from the request.
+    """
+    try:
+        english_text = request.GET.get("english_text")
+        translated_text = request.GET.get("translated_text")
+        characteristic = request.GET.get("characteristic")  
+        target_language_name = request.GET.get("locale")
+
+        service = OpenAIService()
+        transformed_text = service.get_translation(english_text, translated_text, characteristic, target_language_name)
+
+        return JsonResponse({"status": True, "translation": transformed_text})
+
+    except Exception as e:
+        return JsonResponse({"status": False, "message": str(e)}, status=400)
+
 
 
 @login_required(redirect_field_name="", login_url="/403")
