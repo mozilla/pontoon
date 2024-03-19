@@ -50,6 +50,12 @@ urlpatterns = [
         views.notifications,
         name="pontoon.contributors.notifications",
     ),
+    # Current user's remaining notifications
+    path(
+        "ajax/notifications/",
+        views.ajax_notifications,
+        name="pontoon.contributors.ajax.notifications",
+    ),
     # Mark current user's notifications as read
     path(
         "notifications/mark-all-as-read/",

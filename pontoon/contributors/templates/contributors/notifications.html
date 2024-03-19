@@ -4,6 +4,14 @@
 
 {% block title %}Notifications{% endblock %}
 
+{% block before %}
+<!-- Server data -->
+<div id="server"
+     class="hidden"
+     data-has-more="{{ has_more|to_json() }}">
+</div>
+{% endblock %}
+
 {% block heading %}
   {{ Heading.heading(title='Notifications', subtitle='Updates for localizations you contribute to') }}
 {% endblock %}

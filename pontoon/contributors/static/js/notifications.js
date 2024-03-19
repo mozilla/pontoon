@@ -1,4 +1,6 @@
 $(function () {
+  const self = Pontoon;
+
   window.history.replaceState(
     {},
     document.title,
@@ -36,5 +38,25 @@ $(function () {
     setTimeout(function () {
       Pontoon.markAllNotificationsAsRead();
     }, 1000);
+  }
+
+  // Load remaining notifications
+  if ($('#server').data('hasMore')) {
+    self.NProgressUnbind();
+
+    $.ajax({
+      url: '/ajax/notifications/',
+      success: function (data) {
+        $('#main .notification-list').append(data);
+
+        // Re-apply notification filters
+        $('.left-column .selected:not(.all) a').trigger('click');
+      },
+      error: function () {
+        Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
+    });
+
+    self.NProgressBind();
   }
 });

@@ -386,10 +386,13 @@ def verify_email_address(request, token):
 
 @login_required(redirect_field_name="", login_url="/403")
 def notifications(request):
-    """View and edit user notifications."""
-    notifications = request.user.notifications.prefetch_related(
-        "actor", "target"
-    ).order_by("-pk")
+    """View user notifications.
+
+    Only first 100 notifications are displayed for performance reasons. The rest are
+    loaded via AJAX.
+    """
+    notifications = request.user.notification_list
+
     projects = {}
 
     for notification in notifications:
@@ -425,9 +428,29 @@ def notifications(request):
         request,
         "contributors/notifications.html",
         {
-            "notifications": notifications,
+            "has_more": len(notifications) > 100,
+            "notifications": notifications[:100],
             "projects": projects,
             "ordered_projects": ordered_projects,
+        },
+    )
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def ajax_notifications(request):
+    """View (remaining) user notifications.
+
+    The first 100 notifictions are displayed on the page load. The rest are loaded via
+    this AJAX view.
+    """
+    notifications = request.user.notification_list
+
+    return render(
+        request,
+        "contributors/includes/notifications_remaining.html",
+        {
+            "notifications": notifications[100:],
         },
     )
 
