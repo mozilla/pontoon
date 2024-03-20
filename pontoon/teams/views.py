@@ -21,9 +21,8 @@ import bleach
 from guardian.decorators import permission_required_or_403
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, User
 from pontoon.base.utils import require_AJAX, get_locale_or_redirect
-from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
@@ -192,13 +191,16 @@ def ajax_permissions(request, locale):
     translators = locale.translators_group.user_set.exclude(pk__in=managers).order_by(
         "email"
     )
-    contributors = users_with_translations_counts(
-        None,
-        Q(locale=locale)
-        & Q(user__isnull=False)
-        & Q(user__profile__system_user=False)
-        & ~Q(user__pk__in=managers | translators),
-        None,
+
+    manager_pks = [manager.pk for manager in managers]
+    translators_pks = [translator.pk for translator in translators]
+    contributors = (
+        User.objects.filter(
+            translation__locale=locale, profile__system_user=False, is_active=True
+        )
+        .exclude(pk__in=manager_pks + translators_pks)
+        .distinct()
+        .order_by("email")
     )
 
     locale_projects = locale.projects_permissions(request.user)
