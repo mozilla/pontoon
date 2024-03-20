@@ -33,7 +33,9 @@ export function MachineryTranslationSource({
         );
         break;
       case 'google-translate':
-        sources.push(<GoogleTranslation key={source} />);
+        sources.push(
+          <GoogleTranslation translation={translation} key={source} />,
+        );
         break;
       case 'microsoft-translator':
         sources.push(<MicrosoftTranslation key={source} />);
