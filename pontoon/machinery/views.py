@@ -192,7 +192,7 @@ def gpt_transform(request):
             english_text, translated_text, characteristic, target_language_name
         )
 
-        return JsonResponse({"status": True, "translation": transformed_text})
+        return JsonResponse({"translation": transformed_text})
 
     except Exception as e:
         return JsonResponse({"status": False, "message": str(e)}, status=400)

@@ -148,15 +148,16 @@ export async function fetchGoogleTranslation(
 export async function fetchGPTTransformation(
   englishText: string,
   translatedText: string,
-  locale: Locale,
+
   characteristic: string,
+  locale: string,
 ): Promise<MachineryTranslation[]> {
   const url = '/gpt-transform/';
   const params = {
     english_text: englishText,
     translated_text: translatedText,
     characteristic: characteristic,
-    locale: locale.code,
+    locale: locale,
   };
 
   try {

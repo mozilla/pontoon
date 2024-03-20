@@ -35,11 +35,7 @@ export function MachineryTranslationSource({
         break;
       case 'google-translate':
         sources.push(
-          <GoogleTranslation
-            translation={translation}
-            key={source}
-            onLLMTranslationChange={handleLLMTranslationChange}
-          />,
+          <GoogleTranslation translation={translation} key={source} />,
         );
         break;
       case 'microsoft-translator':
