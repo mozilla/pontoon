@@ -10,22 +10,19 @@
                 'available',
                 choices=contributors,
                 label='team contributors',
-                description="Click on user's email address to move it to the group pointed to by the arrow.",
-                extra=contributors
+                description="Click on user's email address to move it to the group pointed to by the arrow."
             ) }}
             {{ ContributorSelectorList.list(
                 'translators',
                 choices=translators,
                 label='translators',
-                description="Translators can submit and approve translations in all projects, unless overridden below.",
-                extra=contributors
+                description="Translators can submit and approve translations in all projects, unless overridden below."
             ) }}
             {{ ContributorSelectorList.list(
                 'managers',
                 choices=managers,
                 label='managers',
-                description="Managers can change team permissions and edit other settings like team description.",
-                extra=contributors
+                description="Managers can change team permissions and edit other settings like team description."
             ) }}
         </div>
     </div>
