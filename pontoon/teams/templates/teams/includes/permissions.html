@@ -1,74 +1,73 @@
 {% import 'contributors/widgets/contributor_selector_list.html' as ContributorSelectorList %}
 
-{% macro user_selector(index=None) %}
-    {{ ContributorSelectorList.list(
-        'available',
-        choices=contributors,
-        label='team contributors',
-        description="Click on user's email address to move it to the group pointed to by the arrow.",
-        index=index,
-        extra=contributors
-    ) }}
-{% endmacro %}
-
-{% macro translator_selector(description, translators, index=None) %}
-    {{ ContributorSelectorList.list(
-        'translators',
-        choices=translators,
-        label='translators',
-        description=description,
-        index=index,
-        extra=contributors
-    ) }}
-{% endmacro %}
-
-{% macro manager_selector() %}
-    {{ ContributorSelectorList.list(
-        'managers',
-        choices=managers,
-        label='managers',
-        description='Managers can change team permissions and edit other settings like team description.',
-        extra=contributors
-    ) }}
-{% endmacro %}
-
 <form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
     <div class="permissions-groups general clearfix">
         <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
         <div class="selector-wrapper double-list-selector clearfix">
-            {{ user_selector() }}
-            {{ translator_selector('Translators can submit and approve translations in all projects, unless overridden below.', translators) }}
-            {{ manager_selector() }}
+            {{ ContributorSelectorList.list(
+                'available',
+                choices=contributors,
+                label='team contributors',
+                description="Click on user's email address to move it to the group pointed to by the arrow.",
+                extra=contributors
+            ) }}
+            {{ ContributorSelectorList.list(
+                'translators',
+                choices=translators,
+                label='translators',
+                description="Translators can submit and approve translations in all projects, unless overridden below.",
+                extra=contributors
+            ) }}
+            {{ ContributorSelectorList.list(
+                'managers',
+                choices=managers,
+                label='managers',
+                description="Managers can change team permissions and edit other settings like team description.",
+                extra=contributors
+            ) }}
         </div>
     </div>
 
     {{ project_locale_form.management_form }}
-    {% for pk, slug, name, translators, has_custom_translators in locale_projects %}
-        <div class="permissions-groups project-locale clearfix{% if not has_custom_translators %} hidden{% endif %}"
-             data-slug="{{ slug }}"
-             data-index="{{ loop.index0 }}">
-            <input type="hidden" name="project-locale-{{ loop.index0 }}-id" value="{{ pk }}">
 
-            {% if has_custom_translators %}
-                <input type="hidden" name="project-locale-{{ loop.index0 }}-has_custom_translators" value="1">
-            {% endif %}
+    {% for project_locale in project_locales %}
+    <div class="permissions-groups project-locale clearfix{% if not project_locale.has_custom_translators %} hidden{% endif %}"
+         data-slug="{{ project_locale.project.slug }}"
+         data-index="{{ loop.index0 }}">
+        <input type="hidden" name="project-locale-{{ loop.index0 }}-id" value="{{ project_locale.pk }}">
 
-            <h3 class="controls">
-                {{ name }} <span class="small stress">(override team translators for this project)</span>
-                <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
-            </h3>
-            <div class="selector-wrapper double-list-selector clearfix">
-                {{ user_selector(pk) }}
-                {{ translator_selector('Add or remove Translators to override default team translators set in the General section.', translators, pk) }}
-            </div>
+        {% if project_locale.has_custom_translators %}
+        <input type="hidden" name="project-locale-{{ loop.index0 }}-has_custom_translators" value="1">
+        {% endif %}
+
+        <h3 class="controls">
+            {{ project_locale.project.name }} <span class="small stress">(override team translators for this project)</span>
+            <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
+        </h3>
+        <div class="selector-wrapper double-list-selector clearfix">
+            {{ ContributorSelectorList.list(
+                'available',
+                choices=project_locale.contributors,
+                label='team contributors',
+                description="Click on user's email address to move it to the group pointed to by the arrow.",
+                index=project_locale.pk
+            ) }}
+            {{ ContributorSelectorList.list(
+                'translators',
+                choices=project_locale.translators,
+                label='translators',
+                description="Add or remove Translators to override default team translators set in the General section.",
+                index=project_locale.pk
+            ) }}
         </div>
+    </div>
     {% endfor %}
 
     <menu class="controls">
         <button class="button active save">Save</button>
-        <div id="project-selector" class="select{% if all_projects_in_translation %} hidden{% endif %}">
+        <div id="project-selector" class="select{% if hide_project_selector %} hidden{% endif %}">
             <div class="button selector">Add custom permissions for project<span class="icon fa fa-caret-up"></span></div>
             <div class="menu">
                 <div class="search-wrapper clearfix">
@@ -76,8 +75,8 @@
                     <input autocomplete="off" autofocus="" type="search">
                 </div>
                 <ul>
-                    {% for pk, slug, name, translators, has_custom_translators in locale_projects %}
-                        <li data-slug="{{ slug }}" data-id="{{ pk }}" class="{% if has_custom_translators %}hidden{% else %}limited{% endif %}">{{ name }}</li>
+                    {% for project_locale in project_locales %}
+                        <li data-slug="{{ project_locale.project.slug }}" class="{% if project_locale.has_custom_translators %}hidden{% else %}limited{% endif %}">{{ project_locale.project.name }}</li>
                     {% endfor %}
                 </ul>
 

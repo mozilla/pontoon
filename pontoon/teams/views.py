@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from django.http import (
     Http404,
     HttpResponse,
@@ -192,18 +192,42 @@ def ajax_permissions(request, locale):
         "email"
     )
 
-    manager_pks = [manager.pk for manager in managers]
-    translators_pks = [translator.pk for translator in translators]
-    contributors = (
+    locale_contributors = (
         User.objects.filter(
             translation__locale=locale, profile__system_user=False, is_active=True
         )
-        .exclude(pk__in=manager_pks + translators_pks)
         .distinct()
         .order_by("email")
     )
+    contributors = [
+        contributor
+        for contributor in locale_contributors
+        if contributor not in managers and contributor not in translators
+    ]
 
-    locale_projects = locale.projects_permissions(request.user)
+    project_locales = project_locales.prefetch_related(
+        "project",
+        Prefetch(
+            "translators_group__user_set",
+            queryset=User.objects.order_by("email"),
+            to_attr="fetched_translators",
+        ),
+    ).order_by("project__name")
+
+    for project_locale in project_locales:
+        if not project_locale.has_custom_translators:
+            continue
+
+        project_locale.translators = (
+            project_locale.translators_group.fetched_translators
+        )
+        project_locale.contributors = [
+            contributor
+            for contributor in locale_contributors
+            if contributor not in project_locale.translators
+        ]
+
+    hide_project_selector = all([pl.has_custom_translators for pl in project_locales])
 
     return render(
         request,
@@ -213,9 +237,9 @@ def ajax_permissions(request, locale):
             "contributors": contributors,
             "translators": translators,
             "managers": managers,
-            "locale_projects": locale_projects,
             "project_locale_form": project_locale_form,
-            "all_projects_in_translation": all([x[4] for x in locale_projects]),
+            "project_locales": project_locales,
+            "hide_project_selector": hide_project_selector,
         },
     )
 
