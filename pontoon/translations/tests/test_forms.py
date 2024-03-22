@@ -38,6 +38,36 @@ def test_create_translation_form_clean_entity(entity_a, locale_a):
 
 
 @pytest.mark.django_db
+def test_create_translation_form_clean_entity_invalid(locale_a):
+    form = CreateTranslationForm(
+        {
+            "entity": 42,
+            "translation": "salut",
+            "locale": locale_a.code,
+            "plural_form": "-1",
+            "original": "hello",
+        }
+    )
+    assert not form.is_valid()
+    assert form.errors["entity"][0] == "Entity `42` could not be found"
+
+
+@pytest.mark.django_db
+def test_create_translation_form_clean_locale_invalid(entity_a):
+    form = CreateTranslationForm(
+        {
+            "entity": entity_a.pk,
+            "translation": "salut",
+            "locale": "invalid",
+            "plural_form": "-1",
+            "original": "hello",
+        }
+    )
+    assert not form.is_valid()
+    assert form.errors["locale"][0] == "Locale `invalid` could not be found"
+
+
+@pytest.mark.django_db
 def test_create_translation_form_clean_locale(entity_a, locale_a):
     form = CreateTranslationForm(
         {
