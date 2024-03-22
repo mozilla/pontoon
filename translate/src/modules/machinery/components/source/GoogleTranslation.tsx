@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
 import { fetchGPTTransformation } from '~/api/machinery';
@@ -6,6 +6,7 @@ import { Locale } from '~/context/Locale';
 
 type Props = {
   translation: MachineryTranslation;
+  onLLMTranslationChange: (llmTranslation: string) => void;
 };
 
 /**
@@ -14,6 +15,7 @@ type Props = {
 
 export function GoogleTranslation({
   translation,
+  onLLMTranslationChange,
 }: Props): React.ReactElement<'li'> {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -23,11 +25,17 @@ export function GoogleTranslation({
   );
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
+  const [llmTranslation, setLLMTranslation] = useState('');
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();
     setDropdownOpen((isDropdownOpen) => !isDropdownOpen);
   };
+
+  useEffect(() => {
+    // Whenever llmTranslation changes, communicate this change to the parent component
+    onLLMTranslationChange(llmTranslation);
+  }, [llmTranslation, onLLMTranslationChange]);
 
   const handleTransformation = async (
     ev: React.MouseEvent,
@@ -52,11 +60,14 @@ export function GoogleTranslation({
             );
           console.log(translationWithoutQuotes);
           setCurrentTranslation(translationWithoutQuotes);
+          setLLMTranslation(translationWithoutQuotes);
+          onLLMTranslationChange(translationWithoutQuotes);
           setShowOriginalOption(true);
         }
       } else {
         console.log(translation.translation);
         setCurrentTranslation(translation.translation);
+        setLLMTranslation('');
         setSelectedOption('');
       }
     } catch (error) {
