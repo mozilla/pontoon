@@ -51,24 +51,12 @@ export function MachineryTranslationComponent({
     setLlmTranslation(newTranslation);
   }, []);
 
-  const copyTranslationIntoEditor = useCallback(
-    (useLLMTranslation = false) => {
-      if (window.getSelection()?.isCollapsed !== false) {
-        setElement(index);
-        const textToCopy = useLLMTranslation
-          ? llmTranslation
-          : translation.translation;
-        setEditorFromHelpers(textToCopy, translation.sources, true);
-
-        if (useLLMTranslation) {
-          logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
-            action: 'Copy LLM Translation',
-          });
-        }
-      }
-    },
-    [index, setEditorFromHelpers, translation, llmTranslation],
-  );
+  const copyTranslationIntoEditor = useCallback(() => {
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setEditorFromHelpers(translation.translation, translation.sources, true);
+    }
+  }, [index, setEditorFromHelpers, translation]);
 
   const className = classNames(
     'translation',
@@ -105,8 +93,6 @@ export function MachineryTranslationComponent({
             sourceString={sourceString}
             translation={translation}
             llmTranslation={llmTranslation}
-            handleLLMTranslationChange={handleLLMTranslationChange}
-            onLLMClick={() => copyTranslationIntoEditor(true)}
           />
         )}
       </li>
@@ -118,14 +104,10 @@ function MachineryTranslationSuggestion({
   sourceString,
   translation,
   llmTranslation,
-  handleLLMTranslationChange,
-  onLLMClick,
 }: {
   sourceString: string;
   translation: MachineryTranslation;
   llmTranslation?: string;
-  handleLLMTranslationChange: (newTranslation: string) => void;
-  onLLMClick: () => void;
 }) {
   const { code, direction, script } = useContext(Locale);
   const contentToDisplay = llmTranslation || translation.translation;

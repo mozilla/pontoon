@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 import type { MachineryTranslation } from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
@@ -9,7 +11,7 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;
-  handleLLMTranslationChange: (llmTranslation: string) => void;
+  onLLMTranslationChange?: (llmTranslation: string) => void;
 };
 
 /**
@@ -21,7 +23,11 @@ export function MachineryTranslationSource({
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
+  const [llmTranslation, setLLMTranslation] = useState('');
 
+  const handleLLMTranslationChange = (newTranslation: string) => {
+    setLLMTranslation(newTranslation);
+  };
   for (const source of translation.sources) {
     if (seen.includes(source)) {
       continue;
@@ -35,7 +41,11 @@ export function MachineryTranslationSource({
         break;
       case 'google-translate':
         sources.push(
-          <GoogleTranslation translation={translation} key={source} />,
+          <GoogleTranslation
+            translation={translation}
+            key={source}
+            onLLMTranslationChange={handleLLMTranslationChange}
+          />,
         );
         break;
       case 'microsoft-translator':
