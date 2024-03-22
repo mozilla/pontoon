@@ -1,6 +1,12 @@
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
 import { EditorActions } from '~/context/Editor';
@@ -36,6 +42,13 @@ export function MachineryTranslationComponent({
   const { setEditorFromHelpers } = useContext(EditorActions);
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
+
+  const [llmTranslation, setLlmTranslation] = useState('');
+
+  // Handler to update LLM translation
+  const handleLLMTranslationChange = useCallback((newTranslation: string) => {
+    setLlmTranslation(newTranslation);
+  }, []);
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -78,6 +91,7 @@ export function MachineryTranslationComponent({
           <MachineryTranslationSuggestion
             sourceString={sourceString}
             translation={translation}
+            llmTranslation={llmTranslation}
           />
         )}
       </li>
@@ -88,11 +102,14 @@ export function MachineryTranslationComponent({
 function MachineryTranslationSuggestion({
   sourceString,
   translation,
+  llmTranslation,
 }: {
   sourceString: string;
   translation: MachineryTranslation;
+  llmTranslation?: string;
 }) {
   const { code, direction, script } = useContext(Locale);
+  const contentToDisplay = llmTranslation || translation.translation;
   return (
     <>
       <header>
@@ -117,7 +134,7 @@ function MachineryTranslationSuggestion({
         data-script={script}
         lang={code}
       >
-        <GenericTranslation content={translation.translation} />
+        <GenericTranslation content={contentToDisplay} />
       </p>
     </>
   );
