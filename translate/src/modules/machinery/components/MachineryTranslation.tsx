@@ -93,6 +93,7 @@ export function MachineryTranslationComponent({
             sourceString={sourceString}
             translation={translation}
             llmTranslation={llmTranslation}
+            handleLLMTranslationChange={handleLLMTranslationChange}
           />
         )}
       </li>
@@ -104,10 +105,12 @@ function MachineryTranslationSuggestion({
   sourceString,
   translation,
   llmTranslation,
+  handleLLMTranslationChange,
 }: {
   sourceString: string;
   translation: MachineryTranslation;
   llmTranslation?: string;
+  handleLLMTranslationChange: (newTranslation: string) => void;
 }) {
   const { code, direction, script } = useContext(Locale);
   const contentToDisplay = llmTranslation || translation.translation;

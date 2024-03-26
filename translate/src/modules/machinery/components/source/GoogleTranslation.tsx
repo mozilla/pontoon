@@ -35,7 +35,7 @@ export function GoogleTranslation({
   useEffect(() => {
     // Whenever llmTranslation changes, communicate this change to the parent component
     onLLMTranslationChange(llmTranslation);
-  }, [llmTranslation, onLLMTranslationChange]);
+  }, [llmTranslation]);
 
   const handleTransformation = async (
     ev: React.MouseEvent,
@@ -58,10 +58,8 @@ export function GoogleTranslation({
               /^['"](.*)['"]$/,
               '$1',
             );
-          console.log(translationWithoutQuotes);
           setCurrentTranslation(translationWithoutQuotes);
           setLLMTranslation(translationWithoutQuotes);
-          onLLMTranslationChange(translationWithoutQuotes);
           setShowOriginalOption(true);
         }
       } else {
@@ -69,6 +67,7 @@ export function GoogleTranslation({
         setCurrentTranslation(translation.translation);
         setLLMTranslation('');
         setSelectedOption('');
+        setShowOriginalOption(false);
       }
     } catch (error) {
       console.error('Error fetching GPT transformation:', error);
