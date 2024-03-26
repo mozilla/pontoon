@@ -107,12 +107,11 @@
 .dropdown-menu {
   display: none;
   position: absolute;
-  bottom: 100%;
+  top: 100%;
   left: 0;
   right: 0;
   background-color: var(--black-3);
   color: var(--status-translated);
-  z-index: 999;
   border-radius: 4px;
   overflow: hidden;
 }
