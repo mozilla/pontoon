@@ -11,7 +11,7 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;
-  onLLMTranslationChange?: (llmTranslation: string) => void;
+  handleLLMTranslationChange: (llmTranslation: string) => void;
 };
 
 /**
@@ -19,14 +19,11 @@ type Props = {
  */
 export function MachineryTranslationSource({
   translation,
+  handleLLMTranslationChange,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
-  const [llmTranslation, setLLMTranslation] = useState('');
 
-  const handleLLMTranslationChange = (newTranslation: string) => {
-    setLLMTranslation(newTranslation);
-  };
   for (const source of translation.sources) {
     if (seen.includes(source)) {
       continue;
