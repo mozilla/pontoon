@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 import type { MachineryTranslation } from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
