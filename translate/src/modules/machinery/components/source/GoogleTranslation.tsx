@@ -103,14 +103,6 @@ export function GoogleTranslation({
     handleTransformation(ev, characteristic);
   };
 
-  const navigateToGoogleTranslate = () => {
-    window.open(
-      'https://translate.google.com/',
-      '_blank',
-      'noopener noreferrer',
-    );
-  };
-
   return (
     <li ref={dropdownRef} className='google-translation'>
       <Localized
@@ -119,13 +111,12 @@ export function GoogleTranslation({
       >
         <span
           className='translation-source'
-          title='Visit Google Translate'
-          onClick={navigateToGoogleTranslate}
+          title='Toggle dropdown'
+          onClick={toggleDropdown}
         >
           <span>GOOGLE TRANSLATE</span>
         </span>
       </Localized>
-      <span> </span>
       <span className='selected-option'>{selectedOption.toUpperCase()}</span>
       <button
         onClick={toggleDropdown}
