@@ -92,6 +92,7 @@ export function MachineryTranslationComponent({
             sourceString={sourceString}
             translation={translation}
             llmTranslation={llmTranslation}
+            handleLLMTranslationChange={handleLLMTranslationChange}
           />
         )}
       </li>
@@ -103,10 +104,12 @@ function MachineryTranslationSuggestion({
   sourceString,
   translation,
   llmTranslation,
+  handleLLMTranslationChange,
 }: {
   sourceString: string;
   translation: MachineryTranslation;
   llmTranslation?: string;
+  handleLLMTranslationChange: (newTranslation: string) => void;
 }) {
   const { code, direction, script } = useContext(Locale);
   const contentToDisplay = llmTranslation || translation.translation;
@@ -116,7 +119,10 @@ function MachineryTranslationSuggestion({
         {translation.quality && (
           <span className='quality'>{translation.quality + '%'}</span>
         )}
-        <MachineryTranslationSource translation={translation} />
+        <MachineryTranslationSource
+          translation={translation}
+          handleLLMTranslationChange={handleLLMTranslationChange}
+        />
       </header>
       <p className='original'>
         <GenericTranslation
