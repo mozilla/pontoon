@@ -95,25 +95,24 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  margin-left: 5px;
   color: var(--status-translated);
 }
 
 .selected-option {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 3px;
+  margin-right: 3px;
   color: var(--status-translated);
 }
 
 .dropdown-menu {
   display: none;
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 0;
   right: 0;
   background-color: var(--black-3);
   color: var(--status-translated);
-  z-index: 1;
+  z-index: 999;
   border-radius: 4px;
   overflow: hidden;
 }
