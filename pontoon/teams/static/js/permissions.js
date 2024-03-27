@@ -116,6 +116,17 @@ $(function () {
       $('#project-selector').addClass('hidden');
     }
 
+    // Initialize Project Contributors (must be above Copying Translators)
+    if ($permsForm.find('.user.available li').length === 0) {
+      $('.permissions-groups.general .user li').each(function () {
+        $(this)
+          .clone()
+          .appendTo(
+            ".project-locale[data-slug='" + slug + "'] .user.available ul",
+          );
+      });
+    }
+
     // Copy Translators from the General section
     // Reverse selector order to keep presentation order (prepend)
     $($('.permissions-groups.general .translators li').get().reverse()).each(
