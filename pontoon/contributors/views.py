@@ -474,8 +474,8 @@ def mark_all_notifications_as_read(request):
 @login_required(redirect_field_name="", login_url="/403")
 @require_POST
 @transaction.atomic
-def toggle_user_suspension(request, username):
-    # only admins are authorized to (un)suspend users
+def toggle_user_status(request, username):
+    # only admins are authorized to (dis|en)able users
     if not (
         request.user.is_authenticated
         and (request.user.is_staff or request.user.is_superuser)

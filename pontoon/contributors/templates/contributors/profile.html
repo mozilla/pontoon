@@ -25,13 +25,13 @@
             {% set translator_for_locales = contributor.translator_for_locales %}
             {% set manager_for_locales = contributor.manager_for_locales %}
             {% set user_is_translator = user.translated_locales %}
-            {% set profile_is_suspended = contributor.is_active == False %}
+            {% set profile_is_disabled = contributor.is_active == False %}
 
             <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
                 {% if is_my_profile %}
                 <div class="desc">Update profile picture</div>
                 {% endif %}
-                {% if profile_is_suspended %}
+                {% if profile_is_disabled %}
                 <div class="status">
                     <i class="fa fa-exclamation-circle fa-sm"></i>
                     <span>Account disabled by an administrator</span>
@@ -106,7 +106,7 @@
                 {% endif %}
                 {% set is_admin = (user.is_authenticated and (user.is_staff or user.is_superuser)) %}
                     {% if is_admin and not is_my_profile %}
-                    <form id="account-status-form" action="{{ url('pontoon.contributors.suspend_user', username=contributor.username) }}" method="POST">
+                    <form id="account-status-form" action="{{ url('pontoon.contributors.toggle_user_status', username=contributor.username) }}" method="POST">
                         {% csrf_token %}
                         {% if contributor.is_active %}
                         <button class="button" type="submit"><i class="icon fa fa-lock fa-xs"></i>Suspend</button>

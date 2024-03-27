@@ -260,8 +260,8 @@ def test_given_period(member, mock_contributors_render):
 
 
 @pytest.mark.django_db
-def test_toggle_user_suspension(client_superuser, user_a):
-    url = reverse("pontoon.contributors.suspend_user", args=[user_a.username])
+def test_toggle_user_status(client_superuser, user_a):
+    url = reverse("pontoon.contributors.toggle_user_status", args=[user_a.username])
 
     # request on active user --> user suspended
     assert user_a.is_active is True
@@ -274,15 +274,15 @@ def test_toggle_user_suspension(client_superuser, user_a):
 
 
 @pytest.mark.django_db
-def test_toggle_user_suspension_user_not_found(client_superuser):
-    url = reverse("pontoon.contributors.suspend_user", args=["unknown"])
+def test_toggle_user_status_user_not_found(client_superuser):
+    url = reverse("pontoon.contributors.toggle_user_status", args=["unknown"])
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
-def test_toggle_user_suspension_requires_admin(member, admin, client_superuser):
-    url = reverse("pontoon.contributors.suspend_user", args=[member.user.username])
+def test_toggle_user_status_requires_admin(member, admin, client_superuser):
+    url = reverse("pontoon.contributors.toggle_user_status", args=[member.user.username])
 
     member.client.force_login(member.user)
     response = member.client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
