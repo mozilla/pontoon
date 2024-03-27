@@ -25,10 +25,17 @@
             {% set translator_for_locales = contributor.translator_for_locales %}
             {% set manager_for_locales = contributor.manager_for_locales %}
             {% set user_is_translator = user.translated_locales %}
+            {% set profile_is_suspended = contributor.is_active == False %}
 
             <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
                 {% if is_my_profile %}
                 <div class="desc">Update profile picture</div>
+                {% endif %}
+                {% if profile_is_suspended %}
+                <div class="status">
+                    <i class="fa fa-exclamation-circle fa-sm"></i>
+                    <span>Account disabled by an administrator</span>
+                </div>
                 {% endif %}
                 <img class="rounded" src="{{ contributor.gravatar_url(512) }}" width="256" height="256">
             </a>
