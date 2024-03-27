@@ -127,9 +127,8 @@ $(function () {
       });
     }
 
-    // Copy Translators from the General section
-    // Reverse selector order to keep presentation order (prepend)
-    $($('.permissions-groups.general .translators li').get().reverse()).each(
+    // Initialize Project Translators with Managers and Translators from the General section
+    $('.permissions-groups.general .user:not(".available") li').each(
       function () {
         $permsForm
           .find('.user.available li[data-id="' + $(this).data('id') + '"]')
