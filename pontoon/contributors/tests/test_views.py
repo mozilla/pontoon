@@ -282,7 +282,9 @@ def test_toggle_user_status_user_not_found(client_superuser):
 
 @pytest.mark.django_db
 def test_toggle_user_status_requires_admin(member, admin, client_superuser):
-    url = reverse("pontoon.contributors.toggle_user_status", args=[member.user.username])
+    url = reverse(
+        "pontoon.contributors.toggle_user_status", args=[member.user.username]
+    )
 
     member.client.force_login(member.user)
     response = member.client.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")

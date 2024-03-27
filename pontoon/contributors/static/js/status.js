@@ -12,9 +12,6 @@ $(function () {
       success: function () {
         location.reload();
       },
-      error: function (request) {
-        console.error('Error updating account status:', request.error);
-      },
     });
   });
 });
