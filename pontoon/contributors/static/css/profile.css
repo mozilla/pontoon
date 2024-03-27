@@ -424,3 +424,15 @@ svg.js-calendar-graph-svg {
   color: var(--light-grey-2);
   float: right;
 }
+
+#account-status-form {
+  margin-top: 8px;
+}
+
+#account-status-form button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border: none;
+}

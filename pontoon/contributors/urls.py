@@ -104,4 +104,10 @@ urlpatterns = [
         views.update_contribution_timeline,
         name="pontoon.contributors.update_contribution_timeline",
     ),
+    # AJAX: Toggle user account suspension
+    path(
+        "toggle-user-suspension/<username:username>/",
+        views.toggle_user_suspension,
+        name="pontoon.contributors.suspend_user",
+    ),
 ]

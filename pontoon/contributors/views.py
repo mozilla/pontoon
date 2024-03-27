@@ -471,6 +471,29 @@ def mark_all_notifications_as_read(request):
     return JsonResponse({"status": True})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def toggle_user_suspension(request, username):
+    # only admins are authorized to (un)suspend users
+    if not (
+        request.user.is_authenticated
+        and (request.user.is_staff or request.user.is_superuser)
+    ):
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: Not authorized to make this request",
+            },
+            status=403,
+        )
+
+    user = get_object_or_404(User, username=username)
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active"])
+    return JsonResponse({"status": True})
+
+
 class ContributorsMixin:
     def contributors_filter(self, **kwargs):
         """
