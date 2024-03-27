@@ -104,19 +104,27 @@ def test_ajax_permissions_project_locale_translators_order(
     "Permissions" tab.
     """
     project_locale_a.translators_group.user_set.add(*translators)
+    project_locale_a.has_custom_translators = True
+    project_locale_a.save()
 
     admin_client.get("/%s/ajax/permissions/" % locale_a.code)
     response_context = render_mock.call_args[0][2]
-    locale_projects = response_context["locale_projects"]
+    project_locales = response_context["project_locales"]
 
     # Check project_locale id in the permissions form
-    assert locale_projects[0][0] == project_locale_a.pk
+    assert project_locales[0].pk == project_locale_a.pk
 
     # Check project_locale translators
-    translators_list = [
-        {"id": u.id, "email": u.email, "first_name": u.first_name} for u in translators
-    ]
-    assert locale_projects[0][3] == translators_list
+    assert len(project_locales[0].translators) == len(translators)
+    assert project_locales[0].translators[0].pk == translators[0].pk
+    assert project_locales[0].translators[0].email == translators[0].email
+    assert project_locales[0].translators[0].first_name == translators[0].first_name
+    assert project_locales[0].translators[1].pk == translators[1].pk
+    assert project_locales[0].translators[1].email == translators[1].email
+    assert project_locales[0].translators[1].first_name == translators[1].first_name
+    assert project_locales[0].translators[2].pk == translators[2].pk
+    assert project_locales[0].translators[2].email == translators[2].email
+    assert project_locales[0].translators[2].first_name == translators[2].first_name
 
 
 @pytest.mark.django_db

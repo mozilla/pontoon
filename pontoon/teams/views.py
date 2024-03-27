@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from django.http import (
     Http404,
     HttpResponse,
@@ -21,9 +21,8 @@ import bleach
 from guardian.decorators import permission_required_or_403
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project
+from pontoon.base.models import Locale, Project, User
 from pontoon.base.utils import require_AJAX, get_locale_or_redirect
-from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
@@ -192,16 +191,43 @@ def ajax_permissions(request, locale):
     translators = locale.translators_group.user_set.exclude(pk__in=managers).order_by(
         "email"
     )
-    contributors = users_with_translations_counts(
-        None,
-        Q(locale=locale)
-        & Q(user__isnull=False)
-        & Q(user__profile__system_user=False)
-        & ~Q(user__pk__in=managers | translators),
-        None,
-    )
 
-    locale_projects = locale.projects_permissions(request.user)
+    locale_contributors = (
+        User.objects.filter(
+            translation__locale=locale, profile__system_user=False, is_active=True
+        )
+        .distinct()
+        .order_by("email")
+    )
+    contributors = [
+        contributor
+        for contributor in locale_contributors
+        if contributor not in managers and contributor not in translators
+    ]
+
+    project_locales = project_locales.prefetch_related(
+        "project",
+        Prefetch(
+            "translators_group__user_set",
+            queryset=User.objects.order_by("email"),
+            to_attr="fetched_translators",
+        ),
+    ).order_by("project__name")
+
+    for project_locale in project_locales:
+        if not project_locale.has_custom_translators:
+            continue
+
+        project_locale.translators = (
+            project_locale.translators_group.fetched_translators
+        )
+        project_locale.contributors = [
+            contributor
+            for contributor in locale_contributors
+            if contributor not in project_locale.translators
+        ]
+
+    hide_project_selector = all([pl.has_custom_translators for pl in project_locales])
 
     return render(
         request,
@@ -211,9 +237,9 @@ def ajax_permissions(request, locale):
             "contributors": contributors,
             "translators": translators,
             "managers": managers,
-            "locale_projects": locale_projects,
             "project_locale_form": project_locale_form,
-            "all_projects_in_translation": all([x[4] for x in locale_projects]),
+            "project_locales": project_locales,
+            "hide_project_selector": hide_project_selector,
         },
     )
 

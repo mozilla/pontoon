@@ -116,9 +116,19 @@ $(function () {
       $('#project-selector').addClass('hidden');
     }
 
-    // Copy Translators from the General section
-    // Reverse selector order to keep presentation order (prepend)
-    $($('.permissions-groups.general .translators li').get().reverse()).each(
+    // Initialize Project Contributors (must be above Copying Translators)
+    if ($permsForm.find('.user.available li').length === 0) {
+      $('.permissions-groups.general .user li').each(function () {
+        $(this)
+          .clone()
+          .appendTo(
+            ".project-locale[data-slug='" + slug + "'] .user.available ul",
+          );
+      });
+    }
+
+    // Initialize Project Translators with Managers and Translators from the General section
+    $('.permissions-groups.general .user:not(".available") li').each(
       function () {
         $permsForm
           .find('.user.available li[data-id="' + $(this).data('id') + '"]')
