@@ -3262,6 +3262,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         SYSTRAN_TRANSLATE = "systran-translate", "Systran Translate"
         MICROSOFT_TERMINOLOGY = "microsoft-terminology", "Microsoft"
         CAIGHDEAN = "caighdean", "Caighdean"
+        LLM = "gpt-transform", "GPT Transform"
 
     machinery_sources = ArrayField(
         models.CharField(max_length=30, choices=MachinerySource.choices),
