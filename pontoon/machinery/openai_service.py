@@ -1,13 +1,13 @@
 from openai import OpenAI
 from pontoon.base.models import Locale
-from django.conf import settings
+import os
 
 
 class OpenAIService:
     def __init__(self):
-        api_key = settings.OPENAI_API_KEY
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError("Missing OpenAI api key")
+            raise ValueError("Missing OpenAI API key")
         self.client = OpenAI()
 
     def get_translation(
