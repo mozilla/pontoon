@@ -263,11 +263,9 @@ def get_concordance_search_data(text, locale):
 
 
 def get_translation_memory_data(text, locale, pk=None):
-    entries = (
-        base.models.TranslationMemoryEntry.objects.filter(locale=locale)
-        .minimum_levenshtein_ratio(text)
-        .exclude(translation__approved=False, translation__fuzzy=False)
-    )
+    entries = base.models.TranslationMemoryEntry.objects.filter(
+        locale=locale
+    ).minimum_levenshtein_ratio(text)
 
     # Exclude existing entity
     if pk:
