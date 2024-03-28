@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { MachineryTranslation } from '~/api/machinery';
 
 import { GoogleTranslation } from './source/GoogleTranslation';
@@ -11,6 +9,7 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;
+  handleLLMTranslationChange: (llmTranslation: string) => void;
 };
 
 /**
@@ -18,9 +17,11 @@ type Props = {
  */
 export function MachineryTranslationSource({
   translation,
+  handleLLMTranslationChange,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
+
   for (const source of translation.sources) {
     if (seen.includes(source)) {
       continue;
@@ -33,7 +34,13 @@ export function MachineryTranslationSource({
         );
         break;
       case 'google-translate':
-        sources.push(<GoogleTranslation key={source} />);
+        sources.push(
+          <GoogleTranslation
+            translation={translation}
+            key={source}
+            onLLMTranslationChange={handleLLMTranslationChange}
+          />,
+        );
         break;
       case 'microsoft-translator':
         sources.push(<MicrosoftTranslation key={source} />);
