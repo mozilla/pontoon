@@ -376,3 +376,19 @@ $('body').on('click', '#insights .chart-group-navigation li', function () {
   // Show the selected graph view
   $('.chart-group').css('marginLeft', -index * itemWidth);
 });
+
+$('#account-status-form').on('submit', function (event) {
+  event.preventDefault();
+
+  const form = $(this);
+  $.ajax({
+    url: form.attr('action'),
+    type: 'POST',
+    data: {
+      csrfmiddlewaretoken: $('body').data('csrf'),
+    },
+    success: function () {
+      location.reload();
+    },
+  });
+});

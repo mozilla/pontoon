@@ -104,4 +104,10 @@ urlpatterns = [
         views.update_contribution_timeline,
         name="pontoon.contributors.update_contribution_timeline",
     ),
+    # AJAX: Toggle user account status (i.e. `is_active`)
+    path(
+        "toggle-active-user-status/<username:username>/",
+        views.toggle_active_user_status,
+        name="pontoon.contributors.toggle_active_user_status",
+    ),
 ]
