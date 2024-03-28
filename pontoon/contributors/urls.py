@@ -106,8 +106,8 @@ urlpatterns = [
     ),
     # AJAX: Toggle user account status (i.e. `is_active`)
     path(
-        "toggle-user-status/<username:username>/",
-        views.toggle_user_status,
-        name="pontoon.contributors.toggle_user_status",
+        "toggle-active-user-status/<username:username>/",
+        views.toggle_active_user_status,
+        name="pontoon.contributors.toggle_active_user_status",
     ),
 ]

@@ -260,30 +260,32 @@ def test_given_period(member, mock_contributors_render):
 
 
 @pytest.mark.django_db
-def test_toggle_user_status(client_superuser, user_a):
-    url = reverse("pontoon.contributors.toggle_user_status", args=[user_a.username])
+def test_toggle_active_user_status(client_superuser, user_a):
+    url = reverse(
+        "pontoon.contributors.toggle_active_user_status", args=[user_a.username]
+    )
 
-    # request on active user --> user suspended
+    # request on active user --> user disabled
     assert user_a.is_active is True
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 200, User.objects.get(pk=user_a).is_active is False
 
-    # request on suspended user --> user active
+    # request on disabled user --> user enabled
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 200, User.objects.get(pk=user_a).is_active is True
 
 
 @pytest.mark.django_db
-def test_toggle_user_status_user_not_found(client_superuser):
-    url = reverse("pontoon.contributors.toggle_user_status", args=["unknown"])
+def test_toggle_active_user_status_user_not_found(client_superuser):
+    url = reverse("pontoon.contributors.toggle_active_user_status", args=["unknown"])
     response = client_superuser.post(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
-def test_toggle_user_status_requires_admin(member, admin, client_superuser):
+def test_toggle_active_user_status_requires_admin(member, admin, client_superuser):
     url = reverse(
-        "pontoon.contributors.toggle_user_status", args=[member.user.username]
+        "pontoon.contributors.toggle_active_user_status", args=[member.user.username]
     )
 
     member.client.force_login(member.user)
