@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
+import { logUXAction } from '~/api/uxaction';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
@@ -50,12 +51,24 @@ export function MachineryTranslationComponent({
     setLlmTranslation(newTranslation);
   }, []);
 
-  const copyTranslationIntoEditor = useCallback(() => {
-    if (window.getSelection()?.isCollapsed !== false) {
-      setElement(index);
-      setEditorFromHelpers(translation.translation, translation.sources, true);
-    }
-  }, [index, setEditorFromHelpers, translation]);
+  const copyTranslationIntoEditor = useCallback(
+    (useLLMTranslation = false) => {
+      if (window.getSelection()?.isCollapsed !== false) {
+        setElement(index);
+        const textToCopy = useLLMTranslation
+          ? llmTranslation
+          : translation.translation;
+        setEditorFromHelpers(textToCopy, translation.sources, true);
+
+        if (useLLMTranslation) {
+          logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+            action: 'Copy LLM Translation',
+          });
+        }
+      }
+    },
+    [index, setEditorFromHelpers, translation, llmTranslation],
+  );
 
   const className = classNames(
     'translation',
@@ -79,7 +92,7 @@ export function MachineryTranslationComponent({
       <li
         className={className}
         title='Copy Into Translation (Ctrl + Shift + Down)'
-        onClick={copyTranslationIntoEditor}
+        onClick={() => copyTranslationIntoEditor(false)}
         ref={translationRef}
       >
         {translation.sources.includes('concordance-search') ? (
@@ -93,6 +106,7 @@ export function MachineryTranslationComponent({
             translation={translation}
             llmTranslation={llmTranslation}
             handleLLMTranslationChange={handleLLMTranslationChange}
+            onLLMClick={() => copyTranslationIntoEditor(true)}
           />
         )}
       </li>
@@ -105,11 +119,13 @@ function MachineryTranslationSuggestion({
   translation,
   llmTranslation,
   handleLLMTranslationChange,
+  onLLMClick,
 }: {
   sourceString: string;
   translation: MachineryTranslation;
   llmTranslation?: string;
   handleLLMTranslationChange: (newTranslation: string) => void;
+  onLLMClick: () => void;
 }) {
   const { code, direction, script } = useContext(Locale);
   const contentToDisplay = llmTranslation || translation.translation;
@@ -139,6 +155,7 @@ function MachineryTranslationSuggestion({
         dir={direction}
         data-script={script}
         lang={code}
+        onClick={onLLMClick}
       >
         <GenericTranslation content={contentToDisplay} />
       </p>
