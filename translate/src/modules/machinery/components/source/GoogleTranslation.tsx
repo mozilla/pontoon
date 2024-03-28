@@ -3,6 +3,7 @@ import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
 import { fetchGPTTransformation } from '~/api/machinery';
 import { Locale } from '~/context/Locale';
+import { logUXAction } from '~/api/uxaction';
 
 type Props = {
   translation: MachineryTranslation;
@@ -99,6 +100,14 @@ export function GoogleTranslation({
       default:
         break;
     }
+
+    const trackllmTranslation = option;
+    onLLMTranslationChange(trackllmTranslation);
+
+    logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
+      optionSelected: option,
+      targetLanguage: locale.name,
+    });
 
     handleTransformation(ev, characteristic);
   };
