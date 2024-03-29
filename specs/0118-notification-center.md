@@ -1,10 +1,10 @@
-- Feature Name: Notification Center
+- Feature Name: Messaging Center
 - Created: 2024-03-12
 - Associated Issue: 
 
 # Summary
 
-Introduce a Notification Center feature to make Pontoon the best tool to send communications to localizers directly, allowing sending of targeted in-app notifications and emails within Pontoon itself.
+Introduce a Messaging Center feature to make Pontoon the best tool to send communications to localizers directly, allowing sending of targeted in-app notifications and emails within Pontoon itself.
 
 # Motivation
 
@@ -12,14 +12,18 @@ Currently, we can only send in-app notifications with limited targeting capabili
 
 # Feature explanation
 
-## Notification Center
+## Messaging Center
 
 This feature has the ability to compose a message with a subject and body, send a message as an in-app notification and/or email, and target a set of recipients based on commonly used criteria.
 
-- Top menu item: `Notification Center`
+### Composing
+
+#### Message Editor
+
+- Top menu item: `Messaging`
   - Item that appears in the top menu only for those with administrator priveleges
-  - Navigates to the `Notification Center` page.
-- Title: `Notification Center`
+  - Navigates to the `Messaging Center` page.
+- Title: `Messaging Center`
 - Header: `Message type`
   - Selects the type of message to be sent
   - Checkboxes: `Email`, `Notification` (default: both boxes deselected)
@@ -32,22 +36,27 @@ This feature has the ability to compose a message with a subject and body, send 
   - Validation: 
     - Error if `Subject` field empty: `Your message must include a subject.`
     - Error if `Body` field empty: `Your message must include a body.`
+
+#### Selecting Recipients with Filters
+
 - Header: `Recipients`
   - Select who will receive a message based on a combination of the following filters.
-  - Checkbox: `Filter by User Role` (default: deselected) - enables User Role as a filter.
-    - Checkboxes: `Manager`, `Translator`, `Contributor` (multiselect, default: all boxes empty)
+  - `Included User Roles` - enables User Role as a filter.
+    - Checkboxes: `Manager`, `Translator`, `Contributor` (multiselect, default: all boxes selected)
     - Validation:
-      - Error if `Filter by User Role` enabled but no roles selected: `You must select at least one user role.`
-  - Checkbox: `Filter by Locale` (default: deselected) - enables Locale as a filter.
+      - Error if `Included User Roles` has no roles selected: `You must select at least one user role.`
+  - Subheader: `Filter by Locale`
     - Use existing 2-panel widget like the one already used for selecting locales in Pontoon
     - Choose locales by moving them from `Available` to `Chosen` (all locales available)
     - Include a `Move All` option
     - Validation:
-      - Error if `Filter by Locale` enabled but no locales selected: `You must select at least one locale.`
-  - Checkbox: `Projects`
+      - Error if no locales selected: `You must select at least one locale.`
+  - Subheader: `Filter by Projects`
     - Use a 2-panel widget similar to the one used for selecting locales in Pontoon
     - Choose projects by moving them from `Available` to `Chosen` (all projects available)
     - Include a `Move All` option
+    - Validation:
+      - Error if no projects selected: `You must select at least one project.`
   - Subheader `Filter by Activity`
     - Button: `Add activity filter`
       - Creates a new section of the form labeled `Activity filter` and an associated button `Remove filter`.
@@ -77,6 +86,9 @@ This feature has the ability to compose a message with a subject and body, send 
         - `Timeframe filter`
           - Datepicker: `From:` (Default value: today's date)
           - Datepicker: `To:` (Default value: today's date)
+
+#### Flagging as Transactional
+
 - Header: `Transactional email`
   - By default, emails are sent to users who have enabled opt-in consent. (Does not apply to in-app notifications.)
   - This “Transactional” option flags emails as transactional and sends emails to users regardless of their opt-in status. However, this email content would be restricted to content transactional in nature (e.g. account status notifications, etc.).
@@ -84,9 +96,13 @@ This feature has the ability to compose a message with a subject and body, send 
   - Text description: `Transactional emails are sent to users who have not opted in to email communication. Transactional emails are restricted in the type of content that can be included.`
   - Validation:
     - Disable `Review message` button and show error message if `Transactional email` enabled but `Message type` does not include `Email`: `You cannnot enable the transactional email option if the Message type does not include email.`
+
+#### Proceed Button
 - Button: `Review message`
   - A send button is not displayed on the same page as the message editor and recipient selection to avoid sending an incomplete message or a message to the wrong recipients.
   - When pressed a validation step is performed on inputs to ensure there are no issues with the form. If there are no issues, the user proceeds to the Review/Confirmation page.
+
+### Review
 
 - Title: `Review message`
 - A review step is required to reduce errors because messages could be sent to a large number of people. This page allows you to review all aspects of the email before sending, including:
