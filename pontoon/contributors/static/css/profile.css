@@ -47,7 +47,7 @@ h2 {
   bottom: 3px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  background: var(--button-background-2);
+  background: var(--dark-grey-1);
   color: var(--light-grey-6);
 }
 
@@ -456,4 +456,10 @@ svg.js-calendar-graph-svg {
   align-items: center;
   gap: 8px;
   border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+}
+
+#account-status-form button:hover {
+  color: var(--white-1);
 }
