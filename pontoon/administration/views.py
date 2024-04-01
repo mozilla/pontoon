@@ -161,8 +161,13 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     .exclude(locale__pk__in=[loc.pk for loc in locales])
                     .delete()
                 )
-                for locale in locales:
-                    ProjectLocale.objects.get_or_create(project=project, locale=locale)
+
+                project_locales = [
+                    ProjectLocale(project=project, locale=locale) for locale in locales
+                ]
+                ProjectLocale.objects.bulk_create(
+                    project_locales, ignore_conflicts=True
+                )
 
                 project_locales = ProjectLocale.objects.filter(project=project)
 
