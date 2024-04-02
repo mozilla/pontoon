@@ -471,6 +471,26 @@ def mark_all_notifications_as_read(request):
     return JsonResponse({"status": True})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_POST
+@transaction.atomic
+def toggle_active_user_status(request, username):
+    # only admins are authorized to (dis|en)able users
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to change user active status.",
+            },
+            status=403,
+        )
+
+    user = get_object_or_404(User, username=username)
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active"])
+    return JsonResponse({"status": True})
+
+
 class ContributorsMixin:
     def contributors_filter(self, **kwargs):
         """

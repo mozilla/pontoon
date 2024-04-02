@@ -35,6 +35,27 @@ h2 {
   border-color: var(--dark-grey-1);
 }
 
+.avatar .status {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: absolute;
+  bottom: 3px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background: var(--dark-grey-1);
+  color: var(--light-grey-6);
+}
+
+.avatar .status span {
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .display-name {
   font-size: 24px;
   padding-bottom: 0;
@@ -423,4 +444,22 @@ svg.js-calendar-graph-svg {
 #timeline .localizations li a .contribution-count {
   color: var(--light-grey-2);
   float: right;
+}
+
+#account-status-form {
+  margin-top: 8px;
+}
+
+#account-status-form button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+}
+
+#account-status-form button:hover {
+  color: var(--white-1);
 }
