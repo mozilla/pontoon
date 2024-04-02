@@ -70,7 +70,7 @@
       <select id="copy-locales">
         <option selected>Copy locales from another project</option>
         {% for project in projects %}
-          <option value="{{ project.locales|to_json() }}">{{ project.name }}</option>
+          <option>{{ project }}</option>
         {% endfor %}
       </select>
     </section>

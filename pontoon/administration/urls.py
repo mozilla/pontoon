@@ -46,4 +46,10 @@ urlpatterns = [
     ),
     # Get slug
     path("get-slug/", views.get_slug, name="pontoon.admin.get_slug"),
+    # AJAX view: Get project locales
+    path(
+        "get-project-locales/",
+        views.get_project_locales,
+        name="pontoon.admin.project.locales",
+    ),
 ]

@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
 from django.db.models import Max
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -77,6 +77,26 @@ def get_slug(request):
     slug = slugify(name)
     log.debug("Slug: " + slug)
     return HttpResponse(slug)
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def get_project_locales(request):
+    """Get a map of project names and corresponding locale codes."""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to retrieve project locales.",
+            },
+            status=403,
+        )
+
+    data = {}
+    for p in Project.objects.prefetch_related("locales"):
+        data[p.name] = [locale.pk for locale in p.locales.all()]
+
+    return JsonResponse(data, safe=False)
 
 
 @transaction.atomic
@@ -243,15 +263,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     # Override default label suffix
     form.label_suffix = ""
 
-    projects = []
-    for p in Project.objects.prefetch_related("locales").order_by("name"):
-        projects.append(
-            {
-                "name": p.name,
-                # Cannot use values_list() here, because it hits the DB again
-                "locales": [loc.pk for loc in p.locales.all()],
-            }
-        )
+    projects = sorted([p.name for p in Project.objects.all()])
 
     locales_available = Locale.objects.exclude(pk__in=locales_readonly).exclude(
         pk__in=locales_selected
