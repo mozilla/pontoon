@@ -16,14 +16,31 @@ Currently, we can only send in-app notifications with limited targeting capabili
 
 This feature has the ability to compose a message with a subject and body, send a message as an in-app notification and/or email, and target a set of recipients based on commonly used criteria.
 
+- Top menu item: `Messaging`
+  - Item that appears in the top menu only for those with administrator privileges
+  - Navigates to the `Messaging Center` page.
+- Title: `Messaging Center`
+- Button: `Create new message`
+  - Clicking navigates to [Message Editor](#message-editor)
+- List: `Previously sent messages`
+  - Contains a list of all previously sent emails or in-app messages from the Messaging Center
+  - List shows the `Subject` and `Sent date` for each message
+  - Organized in reverse chronological order by sent date (recent first)
+  - Clicking on a message will navigate to the [review past message](#review-past-message) screen
+
+### Review past message
+
+- Title: `Review past message`
+- Shows:
+ - A rendered version of the message
+ - A summary of who received the message:
+    - The number of recipients
+    - The filters that were applied
+
+
 ### Composing
 
 #### Message Editor
-
-- Top menu item: `Messaging`
-  - Item that appears in the top menu only for those with administrator priveleges
-  - Navigates to the `Messaging Center` page.
-- Title: `Messaging Center`
 - Header: `Message type`
   - Selects the type of message to be sent
   - Checkboxes: `Email`, `Notification` (default: both boxes deselected)
@@ -96,7 +113,7 @@ This feature has the ability to compose a message with a subject and body, send 
   - Checkbox (default: deselected): `This is a transactional email`
   - Text description: `Transactional emails are sent to users who have not opted in to email communication. Transactional emails are restricted in the type of content that can be included.`
   - Validation:
-    - Disable `Review message` button and show error message if `Transactional email` enabled but `Message type` does not include `Email`: `You cannnot enable the transactional email option if the Message type does not include email.`
+    - Disable `Review message` button and show error message if `Transactional email` enabled but `Message type` does not include `Email`: `You cannot enable the transactional email option if the Message type does not include email.`
 
 #### Proceed Button
 - Button: `Review message`
@@ -108,7 +125,7 @@ This feature has the ability to compose a message with a subject and body, send 
 - Title: `Review message`
 - A review step is required to reduce errors because messages could be sent to a large number of people. This page allows you to review all aspects of the email before sending, including:
  - A rendered version of the message to ensure things like Markdown tags or html don’t have issues.
- - A summary of who will be receiving the nessage:
+ - A summary of who will be receiving the message:
     - The number of recipients
     - The filters being applied
   - Whether this is a transactional email. If enabled, a warning will be shown: `Warning: transactional emails are sent to users who have not opted in to email communication. Transactional emails are restricted in the type of content that can be included. When in doubt, please review with legal.`
