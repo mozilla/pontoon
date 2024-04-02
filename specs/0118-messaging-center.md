@@ -1,6 +1,6 @@
 - Feature Name: Messaging Center
 - Created: 2024-03-12
-- Associated Issue: 
+- Associated Issue: #3162
 
 # Summary
 
@@ -32,7 +32,6 @@ This feature has the ability to compose a message with a subject and body, send 
   - Creates a subject and body for emails. Subject line will also be required for in-app notifications, which will have it combined with the body as the first line of the message separated by a newline.
   - Field: `Subject` (text input)
   - Field: `Body` (text input with formatting: markdown or html)
-  - Tab: `Preview` - shows a rendered version of the text in `Body` for checking formatting, similar to how the preview for GitHub comments work
   - Validation: 
     - Error if `Subject` field empty: `Your message must include a subject.`
     - Error if `Body` field empty: `Your message must include a body.`
@@ -48,12 +47,14 @@ This feature has the ability to compose a message with a subject and body, send 
   - Subheader: `Filter by Locale`
     - Use existing 2-panel widget like the one already used for selecting locales in Pontoon
     - Choose locales by moving them from `Available` to `Chosen` (all locales available)
+    - Default value: all locales `Chosen`
     - Include a `Move All` option
     - Validation:
       - Error if no locales selected: `You must select at least one locale.`
   - Subheader: `Filter by Projects`
     - Use a 2-panel widget similar to the one used for selecting locales in Pontoon
     - Choose projects by moving them from `Available` to `Chosen` (all projects available)
+    - Default value: all projects `Chosen`
     - Include a `Move All` option
     - Validation:
       - Error if no projects selected: `You must select at least one project.`
@@ -114,7 +115,7 @@ This feature has the ability to compose a message with a subject and body, send 
   - Button: `Send test to myself`
     - Sends the current message to the user creating the message in the same format(s) as it is being sent.
   - Button: `Edit`
-    - Clicking the ` Edit` button or navigating back in the browser brings you to the previous page
+    - Clicking the `Edit` button or navigating back in the browser brings you to the previous page
     - The previously entered content is preserved when `Edit` or the browser's back button is used so work is not lost
   - Button: `Send`
     - Triggers validation step
@@ -122,9 +123,9 @@ This feature has the ability to compose a message with a subject and body, send 
 
 ## Email Content
 
-When sending an email to users via the Notification Center, emails include the following content:
-- Subject: Content filled from “Subject” field in Notification Center
-- Body: Content filled from “Body” field in Notification Center (rendered in email compliant HTML)
+When sending an email to users via the Messaging Center, emails include the following content:
+- Subject: Content filled from “Subject” field in Messaging Center
+- Body: Content filled from “Body” field in Messaging Center (rendered in email compliant HTML)
 - Footer: Added to the bottom of all non-transactional emails: `You’re receiving this email as a contributor to Mozilla localization on Pontoon. <br>To no longer receive emails like these, unsubscribe here: <unsubscribe-link>Unsubscribe</unsubscribe-link>.`
 
 ## Other
