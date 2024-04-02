@@ -87,7 +87,7 @@ def concordance_search(request):
     # ArrayAgg (used in get_concordance_search_data()) does not support using
     # distinct=True in combination with ordering, so we need to do one of them
     # manually - after pagination, to reduce the number of rows processed.
-    projects = Project.objects.order_by("disabled", "-priority").values_list(
+    projects = Project.objects.order_by("disabled", "-priority", "name").values_list(
         "name", flat=True
     )
     for r in data.object_list:
