@@ -20,7 +20,7 @@ from pontoon.administration.forms import (
     TagInlineFormSet,
 )
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX, is_ajax
+from pontoon.base.utils import require_AJAX
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -54,28 +54,28 @@ def admin(request):
     return render(request, "admin.html", {"admin": True, "projects": projects})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
 def get_slug(request):
     """Convert project name to slug."""
-    log.debug("Convert project name to slug.")
-
     if not request.user.has_perm("base.can_manage_project"):
-        log.error("Insufficient privileges.")
-        return HttpResponse("error")
-
-    if not is_ajax(request):
-        log.error("Non-AJAX request")
-        return HttpResponse("error")
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to retrieve project slug.",
+            },
+            status=403,
+        )
 
     try:
         name = request.GET["name"]
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    log.debug("Name: " + name)
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
 
     slug = slugify(name)
-    log.debug("Slug: " + slug)
     return HttpResponse(slug)
 
 

@@ -25,7 +25,7 @@ urlpatterns = [
                 path(
                     "sync/",
                     views.manually_sync_project,
-                    name="pontoon.project.sync",
+                    name="pontoon.admin.project.sync",
                 ),
                 # Project strings
                 path(
@@ -37,15 +37,15 @@ urlpatterns = [
                 path(
                     "pretranslate/",
                     views.manually_pretranslate_project,
-                    name="pontoon.project.sync",
+                    name="pontoon.admin.project.pretranslate",
                 ),
                 # Edit project
                 path("", views.manage_project, name="pontoon.admin.project"),
             ]
         ),
     ),
-    # Get slug
-    path("get-slug/", views.get_slug, name="pontoon.admin.get_slug"),
+    # AJAX view: Get slug
+    path("get-slug/", views.get_slug, name="pontoon.admin.project.slug"),
     # AJAX view: Get project locales
     path(
         "get-project-locales/",
