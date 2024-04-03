@@ -50,15 +50,25 @@ jobs:
           -r requirements/dev.txt
           -r requirements/test.txt
           -r requirements/lint.txt
+
+      # Set environment variables
       - run: pip install pytest-dotenv
       - run: >
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
           docker/config/server.env.template > .env
+
+      # Install & setup node dependencies
+      - run: npm install
+        working-directory: pontoon
+      - run: echo 'TERSER_BINARY=pontoon/node_modules/.bin/terser' >> .env
+      - run: echo 'YUGLIFY_BINARY=pontoon/node_modules/.bin/yuglify' >> .env
+
       # Directories normally created by the front-end builds, which we're skipping here
       - run: mkdir -p tag-admin/dist translate/dist translate/public
       - run: python manage.py collectstatic
+
       - run: pytest
       - uses: codecov/codecov-action@v4
         with: { flags: backend }
