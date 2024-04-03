@@ -1,0 +1,5 @@
+msgid "Other Source String"
+msgstr "Translated Other Source String"
+
+msgid "Common String"
+msgstr "Translated Common String"

@@ -1,0 +1,6 @@
+msgid "Source String"
+msgstr "Source String"
+
+msgid "Common String"
+msgstr "Common String"
+

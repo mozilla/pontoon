@@ -918,15 +918,6 @@ class VCSTranslation:
         self.last_translator = last_translator
         self.last_updated = last_updated
 
-    @property
-    def extra(self):
-        """
-        Return a dict of custom properties to store in the database.
-        Useful for subclasses from specific formats that have extra data
-        that needs to be preserved.
-        """
-        return {}
-
     def update_from_db(self, db_translations):
         """
         Update translation with current DB state.

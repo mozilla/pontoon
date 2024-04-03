@@ -1,0 +1,6 @@
+msgid "Other Source String"
+msgstr "Inactive Other Source String"
+
+msgid "Common String"
+msgstr "Inactive Common String"
+

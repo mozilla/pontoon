@@ -613,10 +613,6 @@ packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \
     --hash=sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522
     # via bleach
-parsimonious==0.10.0 \
-    --hash=sha256:8281600da180ec8ae35427a4ab4f7b82bfec1e3d1e52f80cb60ea82b9512501c \
-    --hash=sha256:982ab435fabe86519b57f6b35610aa4e4e977e9f02a14353edf4bbc75369fc0f
-    # via -r requirements/default.in
 polib==1.0.6 \
     --hash=sha256:20d2a0d589a692c11df549bd7cda83c665eef2a83e017b843fecdf956edbad74 \
     --hash=sha256:b1ea141d58ed5e48aed2674f7c894dfb83f639c3286d7b32b2e19fa032a5b400
@@ -910,7 +906,6 @@ regex==2023.5.5 \
     --hash=sha256:fb2b495dd94b02de8215625948132cc2ea360ae84fe6634cd19b6567709c8ae2 \
     --hash=sha256:fee0016cc35a8a91e8cc9312ab26a6fe638d484131a7afa79e1ce6165328a135
     # via
-    #   parsimonious
     #   sacrebleu
     #   sacremoses
 requests==2.26.0 \

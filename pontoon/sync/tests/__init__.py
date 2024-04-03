@@ -100,13 +100,19 @@ class FakeCheckoutTestCase(TestCase):
             repositories=[self.repository],
         )
         self.main_db_resource = ResourceFactory.create(
-            project=self.db_project, path="main.lang", format="lang"
+            project=self.db_project,
+            path="main.po",
+            format="po",
         )
         self.other_db_resource = ResourceFactory.create(
-            project=self.db_project, path="other.lang", format="lang"
+            project=self.db_project,
+            path="other.po",
+            format="po",
         )
         self.missing_db_resource = ResourceFactory.create(
-            project=self.db_project, path="missing.lang", format="lang"
+            project=self.db_project,
+            path="missing.po",
+            format="po",
         )
         self.main_db_entity = EntityFactory.create(
             resource=self.main_db_resource,
@@ -127,7 +133,6 @@ class FakeCheckoutTestCase(TestCase):
             string="Translated String",
             date=aware_datetime(1970, 1, 1),
             approved=True,
-            extra={"tags": []},
         )
 
         # Load paths from the fake locale directory.

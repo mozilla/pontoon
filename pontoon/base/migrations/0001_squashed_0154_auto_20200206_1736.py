@@ -441,12 +441,7 @@ class Migration(migrations.Migration):
                 ("rejected", models.BooleanField(default=False)),
                 ("rejected_date", models.DateTimeField(blank=True, null=True)),
                 ("unrejected_date", models.DateTimeField(blank=True, null=True)),
-                (
-                    "extra",
-                    jsonfield.fields.JSONField(
-                        default=pontoon.base.models.extra_default
-                    ),
-                ),
+                ("extra", jsonfield.fields.JSONField(default=dict)),
                 (
                     "approved_user",
                     models.ForeignKey(

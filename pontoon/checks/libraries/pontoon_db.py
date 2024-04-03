@@ -1,8 +1,3 @@
-import html
-import re
-
-import bleach
-
 from collections import defaultdict
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
@@ -10,20 +5,7 @@ from fluent.syntax.visitor import Visitor
 from pontoon.sync.formats.ftl import localizable_entries
 
 
-MAX_LENGTH_RE = re.compile(r"MAX_LENGTH:( *)(\d+)", re.MULTILINE)
 parser = FluentParser()
-
-
-def get_max_length(comment):
-    """
-    Return max length value for an entity with MAX_LENTH.
-    """
-    max_length = re.findall(MAX_LENGTH_RE, comment or "")
-
-    if max_length:
-        return int(max_length[0][1])
-
-    return None
 
 
 class IsEmptyVisitor(Visitor):
@@ -60,22 +42,6 @@ def run_checks(entity, original, string):
     """
     checks = defaultdict(list)
     resource_ext = entity.resource.format
-
-    if resource_ext == "lang":
-        # Newlines are not allowed in .lang files (bug 1190754)
-        if "\n" in string:
-            checks["pErrors"].append("Newline characters are not allowed")
-
-        # Prevent translations exceeding the given length limit
-        max_length = get_max_length(entity.comment)
-
-        if max_length:
-            string_length = len(
-                html.unescape(bleach.clean(string, strip=True, tags=()))
-            )
-
-            if string_length > max_length:
-                checks["pErrors"].append("Translation too long")
 
     # Bug 1599056: Original and translation must either both end in a newline,
     # or none of them should.

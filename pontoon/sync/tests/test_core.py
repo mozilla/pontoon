@@ -145,9 +145,9 @@ class UpdateResourcesTests(FakeCheckoutTestCase):
         # Check if Resource.order gets reset for all Project resources.
         self.other_db_resource.delete()
 
-        assert self.main_db_resource.order == 0  # path="main.lang"
-        assert self.missing_db_resource.order == 0  # path="missing.lang"
-        assert self.other_db_resource.order == 0  # path="other.lang"
+        assert self.main_db_resource.order == 0  # path="main.po"
+        assert self.missing_db_resource.order == 0  # path="missing.po"
+        assert self.other_db_resource.order == 0  # path="other.po"
 
         update_resources(self.db_project, self.vcs_project)
         self.missing_db_resource.refresh_from_db()

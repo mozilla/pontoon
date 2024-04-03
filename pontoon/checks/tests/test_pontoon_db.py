@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from pontoon.checks.libraries.pontoon_db import get_max_length, run_checks
+from pontoon.checks.libraries.pontoon_db import run_checks
 
 
 @pytest.fixture()
@@ -21,83 +21,6 @@ def get_entity_mock():
         return entity
 
     yield _f
-
-
-@pytest.mark.parametrize(
-    "comment, expected",
-    (
-        ("MAX_LENGTH: 24", 24),
-        ("MAX_LENGTH: 4", 4),
-        ("MAX_LENGTH:  4", 4),
-        ("MAX_LENGTH:4 ", 4),
-        ("MAX_LENGTH:  42  ", 42),
-        ("MAX_LENGTH:  42\n MAX_LENGTH: 10 ", 42),
-        ("MAX_LENGTH: 123 characters", 123),
-        ("MAX_LENGTH: 4\naaaa", 4),
-        ("bbbb \n MAX_LENGTH: 4\naaaa", 4),
-        ("MAX_LENGTH: 4 characters\naaaa", 4),
-        ("bbbb\nMAX_xLENGTH: 4 characters\naaaa", None),
-        ("bbbb\nMAX_LENGTH: z characters\naaaa", None),
-        ("bbbb\nMAX_LENGTH:\n 4 characters\naaaa", None),
-    ),
-)
-def test_too_long_translation_max_length(comment, expected):
-    """
-    Checks should return an error if a translation is too long.
-    """
-    assert get_max_length(comment) == expected
-
-
-def test_too_long_translation_valid_length(get_entity_mock):
-    """
-    Checks shouldn't return an error if a translation isn't too long.
-    """
-    assert run_checks(get_entity_mock("lang", "MAX_LENGTH: 4"), "", "0123") == {}
-
-
-def test_too_long_translation_html_tags(get_entity_mock):
-    """
-    HTML tags can't be included in the MAX_LENGTH check.
-    """
-    assert (
-        run_checks(
-            get_entity_mock("lang", "MAX_LENGTH: 4"),
-            "",
-            '<a href="pontoon.mozilla.org">01</a><i>23</i>',
-        )
-        == {}
-    )
-
-    assert run_checks(
-        get_entity_mock("lang", "MAX_LENGTH: 4"),
-        "",
-        '<a href="pontoon.mozilla.org">012</a><i>23</i>',
-    ) == {"pErrors": ["Translation too long"]}
-
-    # Check if entities are causing false errors
-    assert (
-        run_checks(
-            get_entity_mock("lang", "MAX_LENGTH: 4"),
-            "",
-            '<a href="pontoon.mozilla.org">ł&nbsp;</a><i>ń&nbsp;</i>',
-        )
-        == {}
-    )
-
-    assert run_checks(
-        get_entity_mock("lang", "MAX_LENGTH: 4"),
-        "",
-        '<a href="pontoon.mozilla.org">ł&nbsp;&nbsp;</a><i>ń&nbsp;</i>',
-    ) == {"pErrors": ["Translation too long"]}
-
-
-def test_too_long_translation_invalid_length(get_entity_mock):
-    """
-    Checks should return an error if a translation is too long.
-    """
-    assert run_checks(get_entity_mock("lang", "MAX_LENGTH: 2"), "", "0123") == {
-        "pErrors": ["Translation too long"]
-    }
 
 
 def test_ending_newline(get_entity_mock):
@@ -196,12 +119,7 @@ def test_empty_translations(get_entity_mock):
     )
 
 
-def test_lang_newlines(get_entity_mock):
-    """Newlines aren't allowed in lang files"""
-    assert run_checks(get_entity_mock("lang"), "", "aaa\nbbb") == {
-        "pErrors": ["Newline characters are not allowed"]
-    }
-
+def test_po_newlines(get_entity_mock):
     assert run_checks(get_entity_mock("po"), "", "aaa\nbbb") == {}
 
 
