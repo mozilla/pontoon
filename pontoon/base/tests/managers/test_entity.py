@@ -1184,24 +1184,24 @@ def test_lookup_collation(resource_a, locale_a):
     ]
 
     # Check if 'Iı' and 'İi' are appropriately distinguished and filtered
-    # according to turkish(tr_tr) collation
+    # according to Turkish (tr) collation
     assert set(
-        resource_a.entities.filter(string__icontains_collate=("string", "tr_tr"))
+        resource_a.entities.filter(string__icontains_collate=("string", "tr-x-icu"))
     ) == set([entities[n] for n in [0, 1]] + [entity])
     assert set(
-        resource_a.entities.filter(comment__icontains_collate=("strİng", "tr_tr"))
+        resource_a.entities.filter(comment__icontains_collate=("strİng", "tr-x-icu"))
     ) == {entities[n] for n in [1, 2]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=("string", "tr_tr"))
+        Translation.objects.filter(string__icontains_collate=("string", "tr-x-icu"))
     ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=("string", "tr_tr"))
+        Translation.objects.filter(string__icontains_collate=("string", "tr-x-icu"))
     ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=("strİng", "tr_tr"))
+        Translation.objects.filter(string__icontains_collate=("strİng", "tr-x-icu"))
     ) == {translations[n] for n in [0, 1, 4]}
     assert set(
-        Translation.objects.filter(string__icontains_collate=("strıng", "tr_tr"))
+        Translation.objects.filter(string__icontains_collate=("strıng", "tr-x-icu"))
     ) == {translations[n] for n in [2, 3]}
     # Check if differentiation fails without any collation(C)
     assert set(
