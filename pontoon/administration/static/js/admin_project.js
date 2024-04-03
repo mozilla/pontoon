@@ -168,6 +168,8 @@ $(function () {
     });
   });
 
+  self.NProgressUnbind();
+
   // Set locales to existing projects to be copied to the current project
   $.ajax({
     url: '/admin/get-project-locales/',
@@ -181,6 +183,8 @@ $(function () {
       });
     },
   });
+
+  self.NProgressBind();
 
   // Copy locales from another project
   $('#copy-locales option').on('click', function () {
