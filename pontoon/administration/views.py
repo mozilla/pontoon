@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction, IntegrityError
 from django.db.models import Max
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -20,7 +20,7 @@ from pontoon.administration.forms import (
     TagInlineFormSet,
 )
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX, is_ajax
+from pontoon.base.utils import require_AJAX
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -54,29 +54,49 @@ def admin(request):
     return render(request, "admin.html", {"admin": True, "projects": projects})
 
 
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
 def get_slug(request):
     """Convert project name to slug."""
-    log.debug("Convert project name to slug.")
-
     if not request.user.has_perm("base.can_manage_project"):
-        log.error("Insufficient privileges.")
-        return HttpResponse("error")
-
-    if not is_ajax(request):
-        log.error("Non-AJAX request")
-        return HttpResponse("error")
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to retrieve the project slug.",
+            },
+            status=403,
+        )
 
     try:
         name = request.GET["name"]
     except MultiValueDictKeyError as e:
-        log.error(str(e))
-        return HttpResponse("error")
-
-    log.debug("Name: " + name)
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
 
     slug = slugify(name)
-    log.debug("Slug: " + slug)
     return HttpResponse(slug)
+
+
+@login_required(redirect_field_name="", login_url="/403")
+@require_AJAX
+def get_project_locales(request):
+    """Get a map of project names and corresponding locale codes."""
+    if not request.user.has_perm("base.can_manage_project"):
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Forbidden: You don't have permission to retrieve project locales.",
+            },
+            status=403,
+        )
+
+    data = {}
+    for p in Project.objects.prefetch_related("locales"):
+        data[p.name] = [locale.pk for locale in p.locales.all()]
+
+    return JsonResponse(data, safe=False)
 
 
 @transaction.atomic
@@ -161,8 +181,13 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     .exclude(locale__pk__in=[loc.pk for loc in locales])
                     .delete()
                 )
-                for locale in locales:
-                    ProjectLocale.objects.get_or_create(project=project, locale=locale)
+
+                project_locales = [
+                    ProjectLocale(project=project, locale=locale) for locale in locales
+                ]
+                ProjectLocale.objects.bulk_create(
+                    project_locales, ignore_conflicts=True
+                )
 
                 project_locales = ProjectLocale.objects.filter(project=project)
 
@@ -238,15 +263,7 @@ def manage_project(request, slug=None, template="admin_project.html"):
     # Override default label suffix
     form.label_suffix = ""
 
-    projects = []
-    for p in Project.objects.prefetch_related("locales").order_by("name"):
-        projects.append(
-            {
-                "name": p.name,
-                # Cannot use values_list() here, because it hits the DB again
-                "locales": [loc.pk for loc in p.locales.all()],
-            }
-        )
+    projects = sorted([p.name for p in Project.objects.all()])
 
     locales_available = Locale.objects.exclude(pk__in=locales_readonly).exclude(
         pk__in=locales_selected

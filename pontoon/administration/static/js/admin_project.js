@@ -144,6 +144,7 @@ $(function () {
     });
   });
 
+  // Suggest slugified name for tags
   $('body').on('blur', '[id^=id_tag_set-][id$=-name]', function () {
     const target = $('input#' + $(this).attr('id').replace('-name', '-slug'));
     const $this = this;
@@ -165,6 +166,20 @@ $(function () {
         target.attr('placeholder', '');
       },
     });
+  });
+
+  // Set locales to existing projects to be copied to the current project
+  $.ajax({
+    url: '/admin/get-project-locales/',
+    success: function (data) {
+      $('#copy-locales option').each(function () {
+        const project = $(this).text();
+        const locales = data[project];
+        if (locales) {
+          $(this).val(JSON.stringify(locales));
+        }
+      });
+    },
   });
 
   // Copy locales from another project

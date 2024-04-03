@@ -334,10 +334,8 @@ def notification_list(self):
     return notifications
 
 
-@property
-def menu_notifications(self):
+def menu_notifications(self, unread_count):
     """A list of notifications to display in the notifications menu."""
-    unread_count = self.notifications.unread().count()
     count = settings.NOTIFICATIONS_MAX_COUNT
 
     if unread_count > count:
@@ -348,15 +346,12 @@ def menu_notifications(self):
     ]
 
 
-@property
-def unread_notifications_display(self):
+def unread_notifications_display(self, unread_count):
     """Textual representation of the unread notifications count."""
-    count = self.notifications.unread().count()
-
-    if count > 9:
+    if unread_count > 9:
         return "9+"
 
-    return count
+    return unread_count
 
 
 @property
@@ -454,7 +449,7 @@ def serialized_notifications(self):
     return {
         "has_unread": unread_count > 0,
         "notifications": notifications,
-        "unread_count": str(self.unread_notifications_display),
+        "unread_count": str(self.unread_notifications_display(unread_count)),
     }
 
 
