@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - requirements/**
-      - docker**
+      - docker/config/server.env.template
       - pontoon/**
       - .github/workflows/backend.yml
   pull_request:
@@ -14,7 +14,7 @@ on:
       - main
     paths:
       - requirements/**
-      - docker**
+      - docker/config/server.env.template
       - pontoon/**
       - .github/workflows/backend.yml
   workflow_dispatch:
@@ -23,13 +23,38 @@ jobs:
   test:
     name: pytest
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13.4
+        env:
+          POSTGRES_USER: pontoon
+          POSTGRES_PASSWORD: pontoon
+          POSTGRES_DB: pontoon
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - name: Build
-        run: make build
-      - name: Pytest
-        run: make pytest
-        env:
-          run_opts: --user=root # volumes are only writable by root on gh
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: pip
+          cache-dependency-path: |
+            requirements/default.txt
+            requirements/dev.txt
+            requirements/lint.txt
+            requirements/test.txt
+      - run: >
+          pip install
+          -r requirements/default.txt
+          -r requirements/dev.txt
+          -r requirements/test.txt
+          -r requirements/lint.txt
+      - run: >
+          sed
+          -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
+          -e '/^SITE_URL=/d'
+          docker/config/server.env.template > .env
+      - run: pytest
       - uses: codecov/codecov-action@v4
         with: { flags: backend }
