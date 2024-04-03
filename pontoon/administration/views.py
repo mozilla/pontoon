@@ -62,7 +62,7 @@ def get_slug(request):
         return JsonResponse(
             {
                 "status": False,
-                "message": "Forbidden: You don't have permission to retrieve project slug.",
+                "message": "Forbidden: You don't have permission to retrieve the project slug.",
             },
             status=403,
         )
