@@ -56,6 +56,8 @@ jobs:
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
           docker/config/server.env.template > .env
+      # Directories normally created by the front-end builds, which we're skipping here
+      - run: mkdir -p tag-admin/dist translate/dist translate/public
       - run: python manage.py collectstatic
       - run: pytest
       - uses: codecov/codecov-action@v4
