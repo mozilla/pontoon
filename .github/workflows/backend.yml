@@ -56,6 +56,7 @@ jobs:
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
           docker/config/server.env.template > .env
+      - run: python manage.py collectstatic
       - run: pytest
       - uses: codecov/codecov-action@v4
         with: { flags: backend }
