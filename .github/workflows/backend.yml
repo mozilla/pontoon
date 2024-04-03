@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:13.4
+        image: postgres:15
         env:
           POSTGRES_USER: pontoon
           POSTGRES_PASSWORD: pontoon
