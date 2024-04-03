@@ -50,6 +50,7 @@ jobs:
           -r requirements/dev.txt
           -r requirements/test.txt
           -r requirements/lint.txt
+      - run: pip install pytest-dotenv
       - run: >
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
