@@ -59,13 +59,9 @@ jobs:
           -e '/^SITE_URL=/d'
           docker/config/server.env.template > .env
 
-      # Install & setup node dependencies
+      # Run collectstatic with minimal dependencies, skipping the actual front-end build
       - run: npm install
         working-directory: pontoon
-      - run: echo 'TERSER_BINARY=pontoon/node_modules/.bin/terser' >> .env
-      - run: echo 'YUGLIFY_BINARY=pontoon/node_modules/.bin/yuglify' >> .env
-
-      # Directories normally created by the front-end builds, which we're skipping here
       - run: mkdir -p tag-admin/dist translate/dist translate/public
       - run: python manage.py collectstatic
 
