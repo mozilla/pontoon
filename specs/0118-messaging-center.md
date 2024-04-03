@@ -20,13 +20,16 @@ This feature has the ability to compose a message with a subject and body, send 
   - Item that appears in the top menu only for those with administrator privileges
   - Navigates to the `Messaging Center` page.
 - Title: `Messaging Center`
-- Button: `Create new message`
-  - Clicking navigates to [Message Editor](#message-editor)
-- List: `Previously sent messages`
-  - Contains a list of all previously sent emails or in-app messages from the Messaging Center
-  - List shows the `Subject` and `Sent date` for each message
-  - Organized in reverse chronological order by sent date (recent first)
-  - Clicking on a message will navigate to the [review past message](#review-past-message) screen
+- Layout: two columns
+  - Left column: contains two clickable elements that determine what appears in the right column
+    - `Compose` (default view when opening Messaging Center): displays the [Message Editor](#message-editor)
+    - `Sent`: displays a list of all previously sent emails or in-app messages from the Messaging Center in the right column
+      - List shows the `Subject` and `Sent date` for each message
+      - Organized in reverse chronological order by sent date (recent first)
+      - Clicking on a message will navigate to the [review past message](#review-past-message) screen
+  - The left column is always visible
+  - The element currently selected is highlighted by using styling (e.g. different background color)
+  - Anything input in `Compose` will be preserved. Inputs won't be lost if the user clicks `Sent` and later clicks back to `Compose`.
 
 ### Review past message
 
