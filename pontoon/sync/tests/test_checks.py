@@ -1,7 +1,7 @@
 from unittest.mock import patch, PropertyMock
 
 from pontoon.base.utils import aware_datetime
-from pontoon.base.tests import TranslationFactory
+from pontoon.base.tests import EntityFactory, ResourceFactory, TranslationFactory
 from pontoon.checks.models import (
     Warning,
     Error,
@@ -59,14 +59,26 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
         * check if errors are detected
         * check if only valid translation will land in the Translate Memory
         """
+        db_resource = ResourceFactory.create(
+            project=self.db_project,
+            path="resource.ftl",
+            format="ftl",
+        )
+        db_entity = EntityFactory.create(
+            resource=db_resource,
+            string="key = Source String",
+            key="key",
+            obsolete=False,
+        )
         invalid_translation, valid_translation = TranslationFactory.create_batch(
             2,
             locale=self.translated_locale,
-            entity=self.main_db_entity,
+            entity=db_entity,
+            string="key = Translated String",
             approved=True,
             date=aware_datetime(2015, 1, 1),
         )
-        invalid_translation.string = "a\nb"
+        invalid_translation.string = "Translated String"
         invalid_translation.save()
 
         # Clear TM entries for those translations
@@ -85,7 +97,7 @@ class TestChangesetTranslationsChecks(FakeCheckoutTestCase):
         (error,) = Error.objects.all()
 
         assert error.library == FailedCheck.Library.PONTOON
-        assert error.message == "Newline characters are not allowed"
+        assert error.message == 'Expected token: "="'
         assert error.translation == invalid_translation
 
         self.changeset.translations_to_update = {

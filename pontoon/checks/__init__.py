@@ -3,7 +3,6 @@ DB_FORMATS = (
     "dtd",
     "ftl",
     "ini",
-    "lang",
     "properties",
     "xml",
 )

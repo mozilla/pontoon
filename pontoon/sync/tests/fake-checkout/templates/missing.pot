@@ -1,0 +1,2 @@
+msgid "This file does not exist in the translated locale."
+msgstr "This file does not exist in the translated locale."

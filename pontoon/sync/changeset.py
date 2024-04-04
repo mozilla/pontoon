@@ -299,7 +299,6 @@ class ChangeSet:
                     db_translation.approved_date = self.now
                 db_translation.rejected = False
                 db_translation.fuzzy = vcs_translation.fuzzy
-                db_translation.extra = vcs_translation.extra
 
                 if db_translation.is_dirty():
                     self.translations_to_update[db_translation.pk] = db_translation
@@ -323,7 +322,6 @@ class ChangeSet:
                         approved_date=self.now if not vcs_translation.fuzzy else None,
                         user=user,
                         fuzzy=vcs_translation.fuzzy,
-                        extra=vcs_translation.extra,
                     )
                 )
 
@@ -488,7 +486,6 @@ class ChangeSet:
                     "approved_date",
                     "rejected",
                     "fuzzy",
-                    "extra",
                 ],
             )
 

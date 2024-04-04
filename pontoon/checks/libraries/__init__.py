@@ -64,8 +64,6 @@ def run_checks(
                         "startwhitespace",
                     ]
                 )
-        elif resource_ext == "lang":
-            tt_disabled_checks.update(["newlines"])
 
         tt_checks = translate_toolkit.run_checks(
             original, string, locale_code, tt_disabled_checks

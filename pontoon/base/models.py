@@ -2134,7 +2134,6 @@ class Resource(models.Model):
         INC = "inc", "inc"
         INI = "ini", "ini"
         JSON = "json", "json"
-        LANG = "lang", "lang"
         PO = "po", "po"
         PROPERTIES = "properties", "properties"
         XLF = "xlf", "xliff"
@@ -3095,11 +3094,6 @@ class ChangedEntityLocale(models.Model):
         unique_together = ("entity", "locale")
 
 
-def extra_default():
-    """Default value for the Translation.extra field."""
-    return {}
-
-
 class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         return TranslatedResource.objects.filter(
@@ -3250,11 +3244,6 @@ class Translation(DirtyFieldsMixin, models.Model):
     )
 
     objects = TranslationQuerySet.as_manager()
-
-    # extra stores data that we want to save for the specific format
-    # this translation is stored in, but that we otherwise don't care
-    # about.
-    extra = JSONField(default=extra_default)
 
     class Meta:
         index_together = (

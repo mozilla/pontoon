@@ -198,7 +198,6 @@ class ChangeSetTests(FakeCheckoutTestCase):
         """
         # Set up DB and VCS to differ and require an update.
         self.main_db_translation.fuzzy = True
-        self.main_db_translation.extra = {}
         self.main_db_translation.save()
 
         self.main_vcs_entity.key = "Source String"
@@ -207,9 +206,6 @@ class ChangeSetTests(FakeCheckoutTestCase):
         self.main_vcs_entity.string_plural = "plural string"
         self.main_vcs_entity.source = ["foo.py:87"]
         self.main_vcs_translation.fuzzy = False
-        # The test translation is from a langfile so we can use tags
-        # for testing extra.
-        self.main_vcs_translation.tags = {"ok"}
 
         self.update_main_db_entity()
         self.main_db_entity.refresh_from_db()
@@ -223,9 +219,7 @@ class ChangeSetTests(FakeCheckoutTestCase):
         )
 
         self.main_db_translation.refresh_from_db()
-        assert_attributes_equal(
-            self.main_db_translation, fuzzy=False, extra={"tags": ["ok"]}
-        )
+        assert_attributes_equal(self.main_db_translation, fuzzy=False)
 
     def test_update_db_clean_entity_translation(self):
         """
@@ -294,7 +288,6 @@ class ChangeSetTests(FakeCheckoutTestCase):
             approved=True,
             approved_date=aware_datetime(1970, 1, 1),
             fuzzy=False,
-            extra={"tags": []},
         )
 
         assert ActionLog.objects.filter(
