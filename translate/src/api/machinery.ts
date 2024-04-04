@@ -145,7 +145,7 @@ export async function fetchGoogleTranslation(
  * Return refined translation by GPT-4.
  */
 
-export async function fetchGPTTransformation(
+export async function fetchGPTTransform(
   englishText: string,
   translatedText: string,
 

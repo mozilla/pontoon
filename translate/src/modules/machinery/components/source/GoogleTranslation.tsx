@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
-import { fetchGPTTransformation } from '~/api/machinery';
+import { fetchGPTTransform } from '~/api/machinery';
 import { Locale } from '~/context/Locale';
 import { logUXAction } from '~/api/uxaction';
 
@@ -46,7 +46,7 @@ export function GoogleTranslation({
     try {
       // Only fetch transformation if not reverting to original
       if (characteristic !== 'original') {
-        const machineryTranslations = await fetchGPTTransformation(
+        const machineryTranslations = await fetchGPTTransform(
           translation.original,
           currentTranslation,
           characteristic,
