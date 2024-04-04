@@ -29,7 +29,7 @@ These user email communication preferences are stored and referenced in database
 - Section title: `Email communications`
 - Input field: `Contact email address`
 - Subtitle of input: `If provided, this email address will be used for email communications and will appear under your Profile page instead of the email used for login.`
-- Check box: `Receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform.`
+- Check box: `Receive the latest updates about localization at Mozilla, announcements about new Pontoon features, receive invitations to contributor events and more.`
 - Subtitle to check box: `I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
 Note: All texts need to configurable per instance, i.e. we should not be hard-coding "Mozilla".
@@ -45,20 +45,11 @@ The user selects their preference by clicking one of two buttons, one to opt in 
 This page is not shown if the user has already opted in via their settings.
 
 (Section: content)
-- Header: `Update your email communication preferences`
-- Sub-header: `You can now choose your email communication preferences within Pontoon.`
-- Sub-header: `Stay connected with the latest updates from Mozilla localization`
-- Unordered list: `Subscribe to emails to receive updates about:`
-- List item: `What’s happening in localization at Mozilla`
-- List item: `Invitations to events for contributors and surveys`
-- List item: `Announcements and changes about projects happening on Pontoon`
-- List item: `Changes and updates to the Pontoon platform`
-- Sub-header: `Click below to subscribe now`
-- Body: `Would you like to receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform? This can be changed at any time in your settings.`
-- Subtitle: `You can update your email communication preferences at any time in your settings.`
-- Button: `No, thank you`
+- Header: `Let’s Keep in Touch`
+- Paragraph: `Want to stay up to date and informed about all localization matters at Mozilla? Just hit the button below to get the latest updates, announcements about new Pontoon features, receive invitations to contributor events and more. We won’t spam you — promise!`
 - Button (primary): `Enable email updates`
-- Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
+- Button: `No, thanks`
+- Privacy Notice: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
 ## Email opt-in consent as a step of account creation
 
@@ -69,20 +60,7 @@ After a user successfully creates their Pontoon account, display a standalone pa
 They should be shown two buttons, one to opt in to emails or one declining to opt in. This should not be shown again if the user clicks either of the buttons, but the standalone page for email opt-in consent (above) should be shown again upon next visit if the user closed their tab/browser.
 
 (Section: content)
-- Header: `Welcome to Pontoon!`
-- Subtitle: `You have successfully created your Pontoon account.`
-- Sub-header: `Stay connected with the latest updates from Mozilla localization`
-- Unordered list: `Subscribe to emails to receive updates about:`
-- List item: `What’s happening in localization at Mozilla`
-- List item: `Invitations to events for contributors and surveys`
-- List item: `Announcements and changes about projects happening on Pontoon`
-- List item: `Changes and updates to the Pontoon platform`
-- Sub-header: `Click below to subscribe now`
-- Body: `Would you like to receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform? This can be changed at any time in your settings.`
-- Subtitle: `You can update your email communication preferences at any time in your settings.`
-- Button: `No, thank you`
-- Button (primary): `Enable email updates`
-- Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
+Same page as shown to [existing users](#standalone-page-for-email-opt-in-consent-shown-after-existing-user-login)
 
 ## Additional card for tour
 
@@ -90,11 +68,7 @@ As part of new user onboarding, we point new users to user preferences and call 
 
 (Section: content)
 - Header: `Keep up to date`
-- Body: `You can receive updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform by email. If you'd like to stay up to date, you can enable these emails in your settings.`
-
-*Display if user logged in:*
-- Button: `Enable email updates`
-- Consent: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
+- Body: `Want to stay up to date and informed about all localization matters at Mozilla? Enable email updates from your <a href="https://pontoon.mozilla.org/settings/">settings</a> to get the latest updates, announcements about new Pontoon features, receive invitations to contributor events and more. (Make sure that you’re logged in to access your settings.)`
 
 ## Unsubscribe page
 
@@ -111,22 +85,18 @@ As a user I can:
 (Section: content)
  - Title: `Mozilla Localization - Pontoon`
  - Header: `Update Your Email Preferences`
- - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email updates related to localization at Mozilla, projects on Pontoon, and updates to the Pontoon platform.`
+ - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email updates related to localization at Mozilla.`
  - Radio button (default selection): `Please unsubscribe me from all Mozilla localization emails.`
  - Radio button: `Please keep sending me emails from Mozilla localization.`
  - Button: `Submit`
  - Subtitle: `If you don’t want to unsubscribe or have clicked the link by mistake, you can close this page and we will not make any changes to your email preferences.`
 
  - On submit alert (Unsubscribe): `You've successfully unsubscribed. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a> (make sure that you're logged in to access this page).`
- - On submit alert (Subscribe): `Thanks! You will continue to receive emails from Mozilla localization. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a> (make sure that you're logged in to access this page).`
+ - On submit alert (Subscribe): `Thanks! You will continue to receive emails from Mozilla localization. You can update your preferences at any time from your <a href="https://pontoon.mozilla.org/settings/">settings</a> (make sure that you're logged in to access this page).`
  
  # Mockup
 *Note*: Mockups for illustrative purposes, not final design
 
-*New account email opt-in consent*
+*Email opt-in consent*
 
-![](0117/new-user-opt-in.png)
-
-*Existing account email opt-in consent*
-
-![](0117/existing-user-opt-in.png)
+![](0117/user-opt-in.png)
