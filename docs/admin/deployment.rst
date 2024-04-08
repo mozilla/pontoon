@@ -400,6 +400,16 @@ is designed to run in the beginning of the day, every day.
 
    ./manage.py collect_insights
 
+Warm up cache
+~~~~~~~~~~~~~
+We cache data for some of the views (e.g. Contributors) for a day. Some of them
+don't get a lot of visits, not even one per day, meaning that the visitors of
+these pages often hit the cold cache. We use this job to refresh data in the
+cache every day, because it changes often. The command is designed to run daily.
+
+.. code-block:: bash
+   ./manage.py warmup_cache
+
 Clearing the session store
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 When a user logs in, Django adds a row to the ``django_session`` database
