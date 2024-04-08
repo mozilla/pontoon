@@ -825,8 +825,8 @@ CSP_SCRIPT_SRC = (
     "'unsafe-eval'",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
     # Rules related to Google Analytics
-    "'sha256-G5/M3dBlZdlvno5Cibw42fbeLr2PTEGd1M909Z7vPZE='",
-    "https://www.google-analytics.com/analytics.js",
+    "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
+    "https://www.googletagmanager.com/gtag/js",
 )
 CSP_STYLE_SRC = (
     "'self'",
