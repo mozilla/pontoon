@@ -27,9 +27,10 @@ class Command(BaseCommand):
         self.warmup_contributors_cache()
         self.warmup_insights_cache()
 
-    def warmup_url(self, url):
+    def warmup_url(self, url, is_ajax=False):
         try:
-            requests.get(url)
+            headers = {"x-requested-with": "XMLHttpRequest"} if is_ajax else None
+            requests.get(url, headers=headers)
         except requests.exceptions.RequestException as e:
             self.stdout.write(f"Failed to warm up {url}: {e}")
 
@@ -74,7 +75,7 @@ class Command(BaseCommand):
                 "pontoon.projects.ajax.insights", kwargs={"slug": project.slug}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url)
+            self.warmup_url(url, is_ajax=True)
         self.stdout.write("Project Insights tabs warmed up.")
 
         self.stdout.write("Warm up Team Insights tabs.")
@@ -83,7 +84,7 @@ class Command(BaseCommand):
                 "pontoon.teams.ajax.insights", kwargs={"locale": locale.code}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url)
+            self.warmup_url(url, is_ajax=True)
         self.stdout.write("Team Insights tabs warmed up.")
 
         # We do not warm up ProjectLocale pages, because there are too many of them and
