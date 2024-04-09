@@ -29,7 +29,9 @@ apscheduler==3.9.1.post1 \
 asgiref==3.8.1 \
     --hash=sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47 \
     --hash=sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 billiard==3.6.4.0 \
     --hash=sha256:299de5a8da28a783d51b197d496bef4f1595dd023a93a4f59dde1886ae905547 \
     --hash=sha256:87103ea78fa6ab4d5c751c4909bcff74617d985de7fa8b672cf8618afd5a875b
@@ -274,15 +276,16 @@ distro==1.9.0 \
     --hash=sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed \
     --hash=sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2
     # via openai
-dj-database-url==0.3.0 \
-    --hash=sha256:ca01768fdecde134301f3170743226f60edff5c3935f12437378ebd911506353 \
-    --hash=sha256:f2e273ed34acbb560962d5cf12917936d8df02297df09bd3089b8546d4584138
+dj-database-url==2.1.0 \
+    --hash=sha256:04bc34b248d4c21aaa13e4ab419ae6575ef5f10f3df735ce7da97722caa356e0 \
+    --hash=sha256:f2042cefe1086e539c9da39fad5ad7f61173bf79665e69bf7e4de55fa88b135f
     # via -r requirements/default.in
 django==3.2.24 \
     --hash=sha256:5dd5b787c3ba39637610fe700f54bf158e33560ea0dba600c19921e7ff926ec5 \
     --hash=sha256:aaee9fb0fb4ebd4311520887ad2e33313d368846607f82a9a0ed461cd4c35b18
     # via
     #   -r requirements/default.in
+    #   dj-database-url
     #   django-ace
     #   django-allauth
     #   django-cors-headers
@@ -294,30 +297,31 @@ django==3.2.24 \
     #   django-notifications-hq
     #   graphene-django
     #   jsonfield
-django-ace==1.0.5 \
-    --hash=sha256:1334f08b4c5548e8ab13b25787e6a3f49dfe5fc92bb3a3d845b5b42fa0e1aff6 \
-    --hash=sha256:a2616b0265bdc1f839cc905c77243f779d82c00f3fddf58d23c08eb07e91e189
+django-ace==1.32.4 \
+    --hash=sha256:65c709dfdd2766b4080676541d3889762500a8c8a9150d4356285903b89b4d3a \
+    --hash=sha256:d1bd881ed85acd261d4e996c41b44ea02168ca59991cb2229669688f91ba5fd1
     # via -r requirements/default.in
 django-allauth==0.51.0 \
     --hash=sha256:ca1622733b6faa591580ccd3984042f12d8c79ade93438212de249b7ffb6f91f
     # via -r requirements/default.in
-django-bmemcached==0.2.3 \
-    --hash=sha256:c9e4f5ca17417a26354e7d6a8899e44e34d541e8731ea0d987f2bf5a04df351a
+django-bmemcached==0.3.0 \
+    --hash=sha256:4e4b7d97216dbae331c1de10e699ca22804b94ec3a90d2762dd5d146e6986a8a
     # via -r requirements/default.in
-django-cors-headers==3.5.0 \
-    --hash=sha256:9322255c296d5f75089571f29e520c83ff9693df17aa3cf9f6a4bea7c6740169 \
-    --hash=sha256:db82b2840f667d47872ae3e4a4e0a0d72fbecb42779b8aa233fa8bb965f7836a
+django-cors-headers==4.3.1 \
+    --hash=sha256:0b1fd19297e37417fc9f835d39e45c8c642938ddba1acce0c1753d3edef04f36 \
+    --hash=sha256:0bf65ef45e606aff1994d35503e6b677c0b26cafff6506f8fd7187f3be840207
     # via -r requirements/default.in
-django-csp==3.7 \
-    --hash=sha256:01443a07723f9a479d498bd7bb63571aaa771e690f64bde515db6cdb76e8041a \
-    --hash=sha256:01eda02ad3f10261c74131cdc0b5a6a62b7c7ad4fd017fbefb7a14776e0a9727
+django-csp==3.8 \
+    --hash=sha256:19b2978b03fcd73517d7d67acbc04fbbcaec0facc3e83baa502965892d1e0719 \
+    --hash=sha256:ef0f1a9f7d8da68ae6e169c02e9ac661c0ecf04db70e0d1d85640512a68471c0
     # via -r requirements/default.in
-django-dirtyfields==1.3.1 \
-    --hash=sha256:c3aafe524fc26c6ac573bbaf3ea852607e7b0f8622a2ec23dcdf65e1a9dcb7bb
+django-dirtyfields==1.9.2 \
+    --hash=sha256:93b272eab993f813faabf3ea842ebfad63a03712e7213291aebdbddc5a012a5d \
+    --hash=sha256:eb2dbed51c2a9bc23e84d19797f4cd074f59c935f8f39bb716d185dc6b86401a
     # via -r requirements/default.in
-django-guardian==2.3.0 \
-    --hash=sha256:0e70706c6cda88ddaf8849bddb525b8df49de05ba0798d4b3506049f0d95cbc8 \
-    --hash=sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b
+django-guardian==2.4.0 \
+    --hash=sha256:440ca61358427e575323648b25f8384739e54c38b3d655c81d75e0cd0d61b697 \
+    --hash=sha256:c58a68ae76922d33e6bdc0e69af1892097838de56e93e78a8361090bcd9f89a0
     # via -r requirements/default.in
 django-jinja==2.11.0 \
     --hash=sha256:47c06d3271e6b2f27d3596278af517bfe2e19c1eb36ae1c0b1cc302d7f0259af \
@@ -327,13 +331,12 @@ django-model-utils==4.5.0 \
     --hash=sha256:08715a87fe114d1038c889c1c9eadade5f400f16230a9988e6ee36ace589240b \
     --hash=sha256:745bf343f44e4c95216dd1c0b8307ad50906caadb9b8b4c337d768452840c252
     # via django-notifications-hq
-django-notifications-hq==1.6.0 \
-    --hash=sha256:debeb71b7076b08487b40bf07664d1cc43b9977c4480bbc969b30236dda7a461 \
-    --hash=sha256:dfc6f8bd4034ceae91143bc3802ddfb6e276eaec90e63dd23e2584c052561576
+django-notifications-hq==1.8.3 \
+    --hash=sha256:0f4b216bb382b7c7c4eef273eb211e59c1c6a0ea38cba6077415ac031d330725
     # via -r requirements/default.in
-django-pipeline==2.0.6 \
-    --hash=sha256:3ec726e2bf9f61f213f41ee4513f4191a02ab2f5df86c9e3751a9a607c814031 \
-    --hash=sha256:443c560000b3202dafa873cf9b9a49018ded4b2090979dec8e8858b8b1f867c0
+django-pipeline==3.0.0 \
+    --hash=sha256:49a8bee298668100bb6e8a2144dff8c607baa5297820a2503793c38693f34103 \
+    --hash=sha256:e9e08b084ef3ebf599795510519a8d44f2240b487782bebf4a8fcaf6302c31d1
     # via -r requirements/default.in
 exceptiongroup==1.2.0 \
     --hash=sha256:4bfd3996ac73b41e9b9628b04e079f193850720ea5945fc96a08633c66912f14 \
@@ -347,7 +350,6 @@ google-api-core[grpc]==2.18.0 \
     --hash=sha256:5a63aa102e0049abe85b5b88cb9409234c1f70afcda21ce1e40b285b9629c1d6 \
     --hash=sha256:62d97417bfc674d6cef251e5c4d639a9655e00c45528c4364fbfebb478ce72a9
     # via
-    #   google-api-core
     #   google-cloud-core
     #   google-cloud-translate
 google-auth==2.29.0 \
@@ -917,7 +919,6 @@ pytz==2022.1 \
     #   apscheduler
     #   celery
     #   django
-    #   django-dirtyfields
     #   django-notifications-hq
 raygun4py==4.3.0 \
     --hash=sha256:9a675da0215df310a929ef8fe4f9f6c7882b3ee44a925d73e5c191fd962d7c4d
@@ -1105,6 +1106,7 @@ typing-extensions==4.11.0 \
     # via
     #   anyio
     #   asgiref
+    #   dj-database-url
     #   fluent-syntax
     #   openai
     #   pydantic
@@ -1153,5 +1155,6 @@ wsgi-sslify==1.0.1 \
     # via -r requirements/default.in
 
 # WARNING: The following packages were not pinned, but pip requires them to be
-# pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.
+# pinned when the requirements file includes hashes and the requirement is not
+# satisfied by a package already installed. Consider using the --allow-unsafe flag.
 # setuptools
