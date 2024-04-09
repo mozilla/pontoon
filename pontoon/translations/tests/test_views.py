@@ -7,7 +7,7 @@ from pontoon.checks.models import Warning, FailedCheck
 from pontoon.test.factories import TranslationFactory
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def request_create_translation():
     """
     Return a function to call the create_translation view with default parameters.
@@ -115,7 +115,7 @@ def test_create_translation_force_suggestions(
     assert Translation.objects.last().approved is False
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def properties_resource(resource_a):
     """
     A resource to trigger Translate Toolkit and compare-locales checks at once.
@@ -127,7 +127,7 @@ def properties_resource(resource_a):
     yield resource_a
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def properties_entity(entity_a, properties_resource):
     """
     An entity from properties_resource.

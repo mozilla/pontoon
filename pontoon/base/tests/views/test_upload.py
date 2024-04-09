@@ -4,7 +4,7 @@ from pontoon.base.models import Translation
 from pontoon.base.tests import po_file
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translator_a(
     member,
     project_locale_a,
@@ -17,7 +17,7 @@ def translator_a(
     yield member
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def readonly_project_locale(project_locale_a):
     project_locale_a.readonly = True
     project_locale_a.save()
@@ -25,7 +25,7 @@ def readonly_project_locale(project_locale_a):
     yield project_locale_a
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def po_translation(translation_a):
     """
     Some tests require entity with non-empty key.

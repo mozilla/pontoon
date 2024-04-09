@@ -57,7 +57,7 @@ def mock_quality_check_args(
     }
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def entity_with_comment(entity_a):
     """
     A simple entity that contains pre-defined key and comment.
@@ -67,7 +67,7 @@ def entity_with_comment(entity_a):
     return entity_a
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def plural_entity(entity_with_comment):
     """
     Entity with plural string.
@@ -78,7 +78,7 @@ def plural_entity(entity_with_comment):
     return entity_with_comment
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def plural_translation(translation_a):
     translation_a.plural_form = 1
     translation_a.string = "Plural translation for entity_a"
