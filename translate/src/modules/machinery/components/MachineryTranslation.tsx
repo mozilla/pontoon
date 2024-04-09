@@ -51,24 +51,22 @@ export function MachineryTranslationComponent({
     setLlmTranslation(newTranslation);
   }, []);
 
-  const copyTranslationIntoEditor = useCallback(
-    (useLLMTranslation = false) => {
-      if (window.getSelection()?.isCollapsed !== false) {
-        setElement(index);
-        const textToCopy = useLLMTranslation
-          ? llmTranslation
-          : translation.translation;
-        setEditorFromHelpers(textToCopy, translation.sources, true);
+  const copyRegularTranslationIntoEditor = useCallback(() => {
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setEditorFromHelpers(translation.translation, translation.sources, true);
+    }
+  }, [index, setEditorFromHelpers, translation]);
 
-        if (useLLMTranslation) {
-          logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
-            action: 'Copy LLM Translation',
-          });
-        }
-      }
-    },
-    [index, setEditorFromHelpers, translation, llmTranslation],
-  );
+  const copyLLMTranslationIntoEditor = useCallback(() => {
+    if (window.getSelection()?.isCollapsed !== false) {
+      setElement(index);
+      setEditorFromHelpers(llmTranslation, translation.sources, true);
+      logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+        action: 'Copy LLM Translation',
+      });
+    }
+  }, [index, setEditorFromHelpers, translation, llmTranslation]);
 
   const className = classNames(
     'translation',
@@ -92,7 +90,11 @@ export function MachineryTranslationComponent({
       <li
         className={className}
         title='Copy Into Translation (Ctrl + Shift + Down)'
-        onClick={() => copyTranslationIntoEditor(false)}
+        onClick={() =>
+          llmTranslation
+            ? copyLLMTranslationIntoEditor()
+            : copyRegularTranslationIntoEditor()
+        }
         ref={translationRef}
       >
         {translation.sources.includes('concordance-search') ? (
@@ -106,7 +108,7 @@ export function MachineryTranslationComponent({
             translation={translation}
             llmTranslation={llmTranslation}
             handleLLMTranslationChange={handleLLMTranslationChange}
-            onLLMClick={() => copyTranslationIntoEditor(true)}
+            onLLMClick={copyLLMTranslationIntoEditor}
           />
         )}
       </li>

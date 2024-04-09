@@ -38,82 +38,70 @@ export function GoogleTranslation({
     onLLMTranslationChange(llmTranslation);
   }, [llmTranslation]);
 
-  const handleTransformation = async (
-    ev: React.MouseEvent,
-    characteristic: string,
-  ) => {
-    ev.stopPropagation();
-    try {
-      // Only fetch transformation if not reverting to original
-      if (characteristic !== 'original') {
-        const machineryTranslations = await fetchGPTTransform(
-          translation.original,
-          currentTranslation,
-          characteristic,
-          locale.name,
-        );
+  const handleTransformation = async (characteristic: string) => {
+    // Only fetch transformation if not reverting to original
+    if (characteristic !== 'original') {
+      const machineryTranslations = await fetchGPTTransform(
+        translation.original,
+        currentTranslation,
+        characteristic,
+        locale.name,
+      );
 
-        if (machineryTranslations.length > 0) {
-          const translationWithoutQuotes =
-            machineryTranslations[0].translation.replace(
-              /^['"](.*)['"]$/,
-              '$1',
-            );
-          setCurrentTranslation(translationWithoutQuotes);
-          setLLMTranslation(translationWithoutQuotes);
-          setShowOriginalOption(true);
-        }
-      } else {
-        console.log(translation.translation);
-        setCurrentTranslation(translation.translation);
-        setLLMTranslation('');
-        setSelectedOption('');
-        setShowOriginalOption(false);
+      if (machineryTranslations.length > 0) {
+        setCurrentTranslation(machineryTranslations[0].translation);
+        setLLMTranslation(machineryTranslations[0].translation);
+        setShowOriginalOption(true);
       }
-    } catch (error) {
-      console.error('Error fetching GPT transformation:', error);
+    } else {
+      setCurrentTranslation(translation.translation);
+      setLLMTranslation('');
+      setSelectedOption('');
+      setShowOriginalOption(false);
     }
   };
 
-  const handleOptionClick = (ev: React.MouseEvent, option: string) => {
+  const handleOptionClick = (ev: React.MouseEvent<HTMLLIElement>) => {
     ev.stopPropagation();
-    setSelectedOption(option);
-    setDropdownOpen(false);
+    const target = ev.currentTarget;
+    const characteristic = target.getAttribute('data-characteristic');
 
-    let characteristic = '';
-    switch (option) {
-      case 'Rephrase':
-        characteristic = 'alternative';
-        setSelectedOption('REPHRASED');
-        break;
-      case 'Make formal':
-        characteristic = 'formal';
-        setSelectedOption('FORMAL');
-        break;
-      case 'Make informal':
-        characteristic = 'informal';
-        setSelectedOption('INFORMAL');
-        break;
-      case 'Show original':
-        characteristic = 'original'; // Special handling to revert to original
-        break;
-      default:
-        break;
+    if (characteristic) {
+      let displayText = '';
+
+      switch (characteristic) {
+        case 'alternative':
+          displayText = 'REPHRASED';
+          break;
+        case 'formal':
+          displayText = 'FORMAL';
+          break;
+        case 'informal':
+          displayText = 'INFORMAL';
+          break;
+        case 'original':
+          displayText = '';
+          break;
+        default:
+          break;
+      }
+      setSelectedOption(displayText);
+      setDropdownOpen(false);
+
+      const trackllmTranslation = target.innerText;
+      onLLMTranslationChange(trackllmTranslation);
+
+      logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
+        optionSelected: trackllmTranslation,
+        targetLanguage: locale.name,
+      });
+
+      handleTransformation(characteristic);
     }
-
-    const trackllmTranslation = option;
-    onLLMTranslationChange(trackllmTranslation);
-
-    logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
-      optionSelected: option,
-      targetLanguage: locale.name,
-    });
-
-    handleTransformation(ev, characteristic);
   };
 
   return (
-    <li ref={dropdownRef} className='google-translation'>
+    <li ref={dropdownRef} className='translation-dropdown-container'>
       <Localized
         id='machinery-GoogleTranslation--visit-google'
         attrs={{ title: true }}
@@ -137,15 +125,17 @@ export function GoogleTranslation({
       </button>
       {isDropdownOpen && (
         <ul className='dropdown-menu' style={{ display: 'block' }}>
-          <li onClick={(ev) => handleOptionClick(ev, 'Rephrase')}>REPHRASE</li>
-          <li onClick={(ev) => handleOptionClick(ev, 'Make formal')}>
+          <li data-characteristic='alternative' onClick={handleOptionClick}>
+            REPHRASE
+          </li>
+          <li data-characteristic='formal' onClick={handleOptionClick}>
             MAKE FORMAL
           </li>
-          <li onClick={(ev) => handleOptionClick(ev, 'Make informal')}>
+          <li data-characteristic='informal' onClick={handleOptionClick}>
             MAKE INFORMAL
           </li>
           {showOriginalOption && (
-            <li onClick={(ev) => handleOptionClick(ev, 'Show original')}>
+            <li data-characteristic='original' onClick={handleOptionClick}>
               SHOW ORIGINAL
             </li>
           )}

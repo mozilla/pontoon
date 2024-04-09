@@ -164,12 +164,13 @@ export async function fetchGPTTransform(
     const { translation } = (await GET_(url, params)) as {
       translation: string;
     };
+    const cleanedTranslation = translation.replace(/^['"](.*)['"]$/, '$1');
     if (translation) {
       return [
         {
           sources: ['gpt-transform'],
           original: englishText,
-          translation: translation,
+          translation: cleanedTranslation,
         },
       ];
     }
