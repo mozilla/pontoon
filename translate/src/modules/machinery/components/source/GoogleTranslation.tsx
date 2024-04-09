@@ -125,19 +125,27 @@ export function GoogleTranslation({
       </button>
       {isDropdownOpen && (
         <ul className='dropdown-menu' style={{ display: 'block' }}>
-          <li data-characteristic='alternative' onClick={handleOptionClick}>
-            REPHRASE
-          </li>
-          <li data-characteristic='formal' onClick={handleOptionClick}>
-            MAKE FORMAL
-          </li>
-          <li data-characteristic='informal' onClick={handleOptionClick}>
-            MAKE INFORMAL
-          </li>
-          {showOriginalOption && (
-            <li data-characteristic='original' onClick={handleOptionClick}>
-              SHOW ORIGINAL
+          <Localized id='machinery-GoogleTranslation--option-rephrase'>
+            <li data-characteristic='alternative' onClick={handleOptionClick}>
+              REPHRASE
             </li>
+          </Localized>
+          <Localized id='machinery-GoogleTranslation--option-make-formal'>
+            <li data-characteristic='formal' onClick={handleOptionClick}>
+              MAKE FORMAL
+            </li>
+          </Localized>
+          <Localized id='machinery-GoogleTranslation--option-make-informal'>
+            <li data-characteristic='informal' onClick={handleOptionClick}>
+              MAKE INFORMAL
+            </li>
+          </Localized>
+          {showOriginalOption && (
+            <Localized id='machinery-GoogleTranslation--option-show-original'>
+              <li data-characteristic='original' onClick={handleOptionClick}>
+                SHOW ORIGINAL
+              </li>
+            </Localized>
           )}
         </ul>
       )}
