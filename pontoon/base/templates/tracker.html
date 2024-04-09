@@ -1,3 +1,4 @@
+{% if settings.GOOGLE_ANALYTICS_KEY %}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.GOOGLE_ANALYTICS_KEY }}"></script>
 <script>
@@ -7,3 +8,4 @@
 
   gtag('config', '{{ settings.GOOGLE_ANALYTICS_KEY }}');
 </script>
+{% endif %}
