@@ -809,6 +809,7 @@ CSP_WORKER_SRC = ("https:",)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
+    "https://region1.google-analytics.com/g/collect",
 )
 CSP_FONT_SRC = ("'self'",)
 CSP_IMG_SRC = (
