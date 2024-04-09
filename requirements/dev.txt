@@ -26,17 +26,18 @@ django==3.2.24 \
     # via
     #   -c requirements/default.txt
     #   django-debug-toolbar
+    #   django-extensions
     #   django-sslserver
-django-debug-toolbar==3.2.1 \
-    --hash=sha256:a5ff2a54f24bf88286f9872836081078f4baa843dc3735ee88524e89f8821e33 \
-    --hash=sha256:e759e63e3fe2d3110e0e519639c166816368701eab4a47fed75d7de7018467b9
+django-debug-toolbar==4.3.0 \
+    --hash=sha256:0b0dddee5ea29b9cb678593bc0d7a6d76b21d7799cb68e091a2148341a80f3c4 \
+    --hash=sha256:e09b7dcb8417b743234dfc57c95a7c1d1d87a88844abd13b4c5387f807b31bf6
     # via -r requirements/dev.in
-django-extensions==3.0.9 \
-    --hash=sha256:6809c89ca952f0e08d4e0766bc0101dfaf508d7649aced1180c091d737046ea7 \
-    --hash=sha256:dc663652ac9460fd06580a973576820430c6d428720e874ae46b041fa63e0efa
+django-extensions==3.2.3 \
+    --hash=sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a \
+    --hash=sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401
     # via -r requirements/dev.in
-django-sslserver==0.19 \
-    --hash=sha256:1363835229a0585f89c42f3beca836572f3f6babdc1508f13352aed84b0924b3
+django-sslserver==0.22 \
+    --hash=sha256:c598a363d2ccdc2421c08ddb3d8b0973f80e8e47a3a5b74e4a2896f21c2947c5
     # via -r requirements/dev.in
 packaging==21.3 \
     --hash=sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb \

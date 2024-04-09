@@ -17,7 +17,7 @@
 # requirements/default.txt contains all dependencies required to run the project in the production environment.
 -c default.txt
 
-django-debug-toolbar==3.2.1
-django-extensions==3.0.9
-django-sslserver==0.19
+django-debug-toolbar==4.3.0
+django-extensions==3.2.3
+django-sslserver==0.22
 pip-tools==6.13.0
