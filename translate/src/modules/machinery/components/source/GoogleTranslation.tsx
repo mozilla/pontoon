@@ -64,7 +64,7 @@ export function GoogleTranslation({
   const handleOptionClick = (ev: React.MouseEvent<HTMLLIElement>) => {
     ev.stopPropagation();
     const target = ev.currentTarget;
-    const characteristic = target.getAttribute('data-characteristic');
+    const characteristic = target.dataset['characteristic'];
 
     if (characteristic) {
       let displayText = '';

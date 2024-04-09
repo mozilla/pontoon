@@ -164,8 +164,8 @@ export async function fetchGPTTransform(
     const { translation } = (await GET_(url, params)) as {
       translation: string;
     };
-    const cleanedTranslation = translation.replace(/^['"](.*)['"]$/, '$1');
     if (translation) {
+      const cleanedTranslation = translation.replace(/^['"](.*)['"]$/, '$1');
       return [
         {
           sources: ['gpt-transform'],
