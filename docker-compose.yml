@@ -24,9 +24,7 @@ services:
 
   # Database
   postgresql:
-    build:
-      context: ./docker/postgres
-      dockerfile: ./Dockerfile
+    image: postgres:15
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
