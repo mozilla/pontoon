@@ -27,10 +27,10 @@ These user email communication preferences are stored and referenced in database
 
 (Section: content)
 - Section title: `Email communications`
-- Input field: `Contact email address`
-- Subtitle of input: `If provided, this email address will be used for email communications and will appear under your Profile page instead of the email used for login.`
+- Input field: `Contact email address (optional)`
+- Subtitle of input: `If you would like to provide a different email address from your login email for email communications, please do so here. Note, this email will also appear under your <a href="/profile/">Profile page</a>.`
 - Check box: `Receive the latest updates about localization at Mozilla, announcements about new Pontoon features, receive invitations to contributor events and more.`
-- Subtitle to check box: `I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
+- Subtitle to check box: `I agree to Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
 Note: All texts need to configurable per instance, i.e. we should not be hard-coding "Mozilla".
 
@@ -42,14 +42,16 @@ Upon accessing Pontoon for the first time after the feature is enabled, an email
 
 The user selects their preference by clicking one of two buttons, one to opt in to emails or one declining to opt in. This page is not shown again if the user clicks either of the buttons. The page is shown again on their next visit if the user navigates away from the page without clicking either of the buttons.
 
+When the user makes a choice of being opted-in or opted-out, their choice will be recorded in the database, along with the date and time of their choice.
+
 This page is not shown if the user has already opted in via their settings.
 
 (Section: content)
 - Header: `Let’s Keep in Touch`
 - Paragraph: `Want to stay up to date and informed about all localization matters at Mozilla? Just hit the button below to get the latest updates, announcements about new Pontoon features, receive invitations to contributor events and more. We won’t spam you — promise!`
-- Button (primary): `Enable email updates`
+- Button (primary): `Enable email communications`
 - Button: `No, thanks`
-- Privacy Notice: `By enabling email updates, I’m okay with Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
+- Privacy Notice: `By enabling email communications, I agree to Mozilla handling my personal information as explained in this <a href="https://www.mozilla.org/privacy/websites/">Privacy Notice</a>.`
 
 ## Email opt-in consent as a step of account creation
 
@@ -58,6 +60,8 @@ Ideally, we would like users to set up their email communication preferences rig
 After a user successfully creates their Pontoon account, display a standalone page which redirects to the homepage after the user enables or rejects email updates. This page informs the user of successful account creation and requests them to update their email communication preferences.
 
 They should be shown two buttons, one to opt in to emails or one declining to opt in. This should not be shown again if the user clicks either of the buttons, but the standalone page for email opt-in consent (above) should be shown again upon next visit if the user closed their tab/browser.
+
+When the user makes a choice of being opted-in or opted-out, their choice will be recorded in the database, along with the date and time of their choice.
 
 (Section: content)
 Same page as shown to [existing users](#standalone-page-for-email-opt-in-consent-shown-after-existing-user-login)
@@ -68,7 +72,7 @@ As part of new user onboarding, we point new users to user preferences and call 
 
 (Section: content)
 - Header: `Keep up to date`
-- Body: `Want to stay up to date and informed about all localization matters at Mozilla? Enable email updates from your <a href="https://pontoon.mozilla.org/settings/">settings</a> to get the latest updates, announcements about new Pontoon features, receive invitations to contributor events and more. (Make sure that you’re logged in to access your settings.)`
+- Body: `Want to stay up to date and informed about all localization matters at Mozilla? Enable email communications from your <a href="https://pontoon.mozilla.org/settings/">settings</a> to get the latest updates, announcements about new Pontoon features, receive invitations to contributor events and more. (Make sure that you’re logged in to access your settings.)`
 
 ## Unsubscribe page
 
@@ -85,16 +89,14 @@ As a user I can:
 (Section: content)
  - Title: `Mozilla Localization - Pontoon`
  - Header: `Update Your Email Preferences`
- - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email updates related to localization at Mozilla.`
+ - Body: `Thank you for contributing to localization at Mozilla. Please use the form below if you would like to stop receiving email communications related to localization at Mozilla (excluding essential account related communications).`
  - Radio button (default selection): `Please unsubscribe me from all Mozilla localization emails.`
  - Radio button: `Please keep sending me emails from Mozilla localization.`
  - Button: `Submit`
- - Subtitle: `If you don’t want to unsubscribe or have clicked the link by mistake, you can close this page and we will not make any changes to your email preferences.`
-
  - On submit alert (Unsubscribe): `You've successfully unsubscribed. You can update your preferences anytimes from your <a href="https://pontoon.mozilla.org/settings/">settings</a> (make sure that you're logged in to access this page).`
  - On submit alert (Subscribe): `Thanks! You will continue to receive emails from Mozilla localization. You can update your preferences at any time from your <a href="https://pontoon.mozilla.org/settings/">settings</a> (make sure that you're logged in to access this page).`
- 
- # Mockup
+
+# Mockup
 *Note*: Mockups for illustrative purposes, not final design
 
 *Email opt-in consent*
