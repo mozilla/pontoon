@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.db import transaction
@@ -123,7 +124,14 @@ def ajax_insights(request, locale):
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
     locale = get_object_or_404(Locale, code=locale)
-    insights = get_locale_insights(Q(locale=locale))
+
+    # Cannot use cache.get_or_set(), because it always calls the slow function
+    # get_locale_insights(). The reason we use cache in first place is to avoid that.
+    key = f"/{__name__}/{locale.code}/insights"
+    insights = cache.get(key)
+    if not insights:
+        insights = get_locale_insights(Q(locale=locale))
+        cache.set(key, insights, settings.VIEW_CACHE_TIMEOUT)
 
     return render(request, "teams/includes/insights.html", insights)
 

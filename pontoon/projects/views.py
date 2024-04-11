@@ -2,6 +2,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Q
@@ -126,7 +127,14 @@ def ajax_insights(request, slug):
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
-    insights = get_insights(project=project)
+
+    # Cannot use cache.get_or_set(), because it always calls the slow function
+    # get_insights(). The reason we use cache in first place is to avoid that.
+    key = f"/{__name__}/{slug}/insights"
+    insights = cache.get(key)
+    if not insights:
+        insights = get_insights(project=project)
+        cache.set(key, insights, settings.VIEW_CACHE_TIMEOUT)
 
     return render(request, "projects/includes/insights.html", insights)
 

@@ -1,8 +1,6 @@
 from django.urls import include, path, re_path
-from django.views.decorators.cache import cache_page
 
 from pontoon.projects import views as projects_views
-from pontoon.settings import VIEW_CACHE_TIMEOUT
 from pontoon.teams import views as teams_views
 
 from . import views
@@ -74,7 +72,7 @@ urlpatterns = [
                             # Project insights
                             path(
                                 "insights/",
-                                cache_page(VIEW_CACHE_TIMEOUT)(views.ajax_insights),
+                                views.ajax_insights,
                                 name="pontoon.localizations.ajax.insights",
                             ),
                         ]
