@@ -84,7 +84,7 @@
   color: var(--translation-secondary-color);
 }
 
-.translation-dropdown-container {
+.google-translation {
   position: relative;
   display: flex;
   flex-direction: column;

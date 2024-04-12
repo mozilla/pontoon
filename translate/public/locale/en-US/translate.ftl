@@ -503,7 +503,7 @@ machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
-machinery-GoogleTranslation--visit-google = GOOGLE TRANSLATE
+machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
     .title = Visit Google Translate
     
 machinery-GoogleTranslation--option-rephrase = REPHRASE

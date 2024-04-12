@@ -85,14 +85,11 @@ export function GoogleTranslation({
         default:
           break;
       }
-      setSelectedOption(displayText);
+      setSelectedOption(displayText); // TODO: Localize displayText before setting it as selected option.
       setDropdownOpen(false);
 
-      const trackllmTranslation = target.innerText;
-      onLLMTranslationChange(trackllmTranslation);
-
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
-        optionSelected: trackllmTranslation,
+        optionSelected: characteristic,
         targetLanguage: locale.name,
       });
 
@@ -101,9 +98,9 @@ export function GoogleTranslation({
   };
 
   return (
-    <li ref={dropdownRef} className='translation-dropdown-container'>
+    <li ref={dropdownRef} className='google-translation'>
       <Localized
-        id='machinery-GoogleTranslation--visit-google'
+        id='machinery-GoogleTranslation--translation-source'
         attrs={{ title: true }}
       >
         <span
@@ -114,7 +111,7 @@ export function GoogleTranslation({
           <span>GOOGLE TRANSLATE</span>
         </span>
       </Localized>
-      <span className='selected-option'>{selectedOption.toUpperCase()}</span>
+      <span className='selected-option'>{selectedOption}</span>
       <button
         onClick={toggleDropdown}
         className='dropdown-toggle'

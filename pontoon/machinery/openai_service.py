@@ -22,8 +22,7 @@ class OpenAIService:
             )
 
         informal = textwrap.dedent(
-            f"""
-            You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
             Your objective is to revise the {target_language} translation to ensure it utilizes simpler language. Adhere to the following guidelines to achieve this:
             - Clarity is Key: Ensure the translation conveys the original message in the clearest possible manner, without ambiguity or unnecessary complexity.
             - Consistent Simplicity: Maintain a consistent level of simplicity throughout the translation.
@@ -31,8 +30,7 @@ class OpenAIService:
         )
 
         formal = textwrap.dedent(
-            f"""
-            You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
             Your objective is to revise the {target_language} translation to ensure it utilizes a higher level of formality. Adhere to the following guidelines to achieve this:
             - Adjust the Tone: Ensure the tone is respectful, polished, and devoid of colloquialisms or informal expressions commonly used in casual conversation.
             - Formal Addressing: Where applicable, use formal modes of address.
@@ -41,8 +39,7 @@ class OpenAIService:
         )
 
         alternative = textwrap.dedent(
-            f"""
-            You will be provided with text in English, along with its machine-generated translation in {target_language}.
+            f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
             Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:
             - Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.
             - Clarification and Accuracy: Where the source text is ambiguous or idiomatic, offer clarifications or alternative expressions in {target_language}.
