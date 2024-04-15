@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
@@ -151,7 +152,14 @@ def ajax_insights(request, code, slug):
     get_object_or_404(Locale, code=code)
     get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
     pl = get_object_or_404(ProjectLocale, locale__code=code, project__slug=slug)
-    insights = get_insights(locale=pl.locale, project=pl.project)
+
+    # Cannot use cache.get_or_set(), because it always calls the slow function
+    # get_insights(). The reason we use cache in first place is to avoid that.
+    key = f"/{__name__}/{code}/{slug}/insights"
+    insights = cache.get(key)
+    if not insights:
+        insights = get_insights(locale=pl.locale, project=pl.project)
+        cache.set(key, insights, settings.VIEW_CACHE_TIMEOUT)
 
     return render(request, "localizations/includes/insights.html", insights)
 
