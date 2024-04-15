@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
 import { fetchGPTTransform } from '~/api/machinery';
@@ -26,17 +26,11 @@ export function GoogleTranslation({
   );
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
-  const [llmTranslation, setLLMTranslation] = useState('');
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();
     setDropdownOpen((isDropdownOpen) => !isDropdownOpen);
   };
-
-  useEffect(() => {
-    // Whenever llmTranslation changes, communicate this change to the parent component
-    onLLMTranslationChange(llmTranslation);
-  }, [llmTranslation]);
 
   const handleTransformation = async (characteristic: string) => {
     // Only fetch transformation if not reverting to original
@@ -50,12 +44,12 @@ export function GoogleTranslation({
 
       if (machineryTranslations.length > 0) {
         setCurrentTranslation(machineryTranslations[0].translation);
-        setLLMTranslation(machineryTranslations[0].translation);
+        onLLMTranslationChange(machineryTranslations[0].translation);
         setShowOriginalOption(true);
       }
     } else {
       setCurrentTranslation(translation.translation);
-      setLLMTranslation('');
+      onLLMTranslationChange('');
       setSelectedOption('');
       setShowOriginalOption(false);
     }
@@ -99,10 +93,7 @@ export function GoogleTranslation({
 
   return (
     <li ref={dropdownRef} className='google-translation'>
-      <Localized
-        id='machinery-GoogleTranslation--translation-source'
-        attrs={{ title: true }}
-      >
+      <Localized id='machinery-GoogleTranslation--translation-source'>
         <span
           className='translation-source'
           title='Toggle dropdown'
