@@ -2,6 +2,7 @@ import requests
 
 from urllib.parse import urljoin
 
+from django.core.cache import cache
 from django.core.management.base import BaseCommand
 from django.urls import reverse
 
@@ -27,8 +28,13 @@ class Command(BaseCommand):
         self.warmup_contributors_cache()
         self.warmup_insights_cache()
 
-    def warmup_url(self, url, is_ajax=False):
+    def warmup_url(self, url, keys=[], is_ajax=False):
         try:
+            # Make sure cache data is refreshed by deleting it
+            # before making a request which will populate it again.
+            for key in keys:
+                cache.delete(key)
+
             headers = {"x-requested-with": "XMLHttpRequest"} if is_ajax else None
             requests.get(url, headers=headers)
         except requests.exceptions.RequestException as e:
@@ -38,7 +44,8 @@ class Command(BaseCommand):
         self.stdout.write("Warm up Contributors page.")
         path = reverse("pontoon.contributors")
         url = urljoin(SITE_URL, path)
-        self.warmup_url(url)
+        key = "pontoon.contributors.views.(AND:).None"
+        self.warmup_url(url, keys=[key])
         self.stdout.write("Contributors page warmed up.")
 
         self.stdout.write("Warm up Project Contributors tabs.")
@@ -47,7 +54,10 @@ class Command(BaseCommand):
                 "pontoon.projects.ajax.contributors", kwargs={"slug": project.slug}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url)
+            key = f"pontoon.contributors.views.(AND:('entity__resource__project',<Project:{project}>)).None".replace(
+                " ", ""
+            )
+            self.warmup_url(url, keys=[key])
         self.stdout.write("Project Contributors tabs warmed up.")
 
         self.stdout.write("Warm up Team Contributors tabs.")
@@ -56,7 +66,10 @@ class Command(BaseCommand):
                 "pontoon.teams.ajax.contributors", kwargs={"locale": locale.code}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url)
+            key = f"pontoon.contributors.views.(AND:('locale',<Locale:{locale}>)).None".replace(
+                " ", ""
+            )
+            self.warmup_url(url, keys=[key])
         self.stdout.write("Team Contributors tabs warmed up.")
 
         # We do not warm up ProjectLocale pages, because there are too many of them and
@@ -66,7 +79,11 @@ class Command(BaseCommand):
         self.stdout.write("Warm up Insights page.")
         path = reverse("pontoon.insights")
         url = urljoin(SITE_URL, path)
-        self.warmup_url(url)
+        keys = [
+            f"/pontoon.insights.views/team_pretranslation_quality",
+            f"/pontoon.insights.views/project_pretranslation_quality",
+        ]
+        self.warmup_url(url, keys=keys)
         self.stdout.write("Insights page warmed up.")
 
         self.stdout.write("Warm up Project Insights tabs.")
@@ -75,7 +92,8 @@ class Command(BaseCommand):
                 "pontoon.projects.ajax.insights", kwargs={"slug": project.slug}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url, is_ajax=True)
+            key = f"/pontoon.projects.views/{project.slug}/insights"
+            self.warmup_url(url, keys=[key], is_ajax=True)
         self.stdout.write("Project Insights tabs warmed up.")
 
         self.stdout.write("Warm up Team Insights tabs.")
@@ -84,7 +102,8 @@ class Command(BaseCommand):
                 "pontoon.teams.ajax.insights", kwargs={"locale": locale.code}
             )
             url = urljoin(SITE_URL, path)
-            self.warmup_url(url, is_ajax=True)
+            key = f"/pontoon.teams.views/{locale.code}/insights"
+            self.warmup_url(url, keys=[key], is_ajax=True)
         self.stdout.write("Team Insights tabs warmed up.")
 
         # We do not warm up ProjectLocale pages, because there are too many of them and
