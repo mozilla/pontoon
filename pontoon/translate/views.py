@@ -70,6 +70,11 @@ def translate(request, locale, project, resource):
             raise Http404
 
     context = {
+        "is_google_translate_supported": bool(settings.GOOGLE_TRANSLATE_API_KEY),
+        "is_microsoft_translator_supported": bool(
+            settings.MICROSOFT_TRANSLATOR_API_KEY
+        ),
+        "is_systran_translate_supported": bool(settings.SYSTRAN_TRANSLATE_API_KEY),
         "locale": get_preferred_locale(request),
         "notifications": [],
     }

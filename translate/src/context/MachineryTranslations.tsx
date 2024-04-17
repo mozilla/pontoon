@@ -99,15 +99,24 @@ export function MachineryProvider({
 
       // Only make requests to paid services if user is authenticated
       if (isAuthenticated) {
-        if (locale.googleTranslateCode) {
+        const root = document.getElementById('root');
+
+        const isGoogleTranslateSupported =
+          root?.dataset.isGoogleTranslateSupported === 'true';
+        const isMicrosoftTranslatorSupported =
+          root?.dataset.isMicrosoftTranslatorSupported === 'true';
+        const isSystranTranslateSupported =
+          root?.dataset.isSystranTranslateSupported === 'true';
+
+        if (isGoogleTranslateSupported && locale.googleTranslateCode) {
           fetchGoogleTranslation(plain, locale).then(addResults);
         }
 
-        if (locale.msTranslatorCode) {
+        if (isMicrosoftTranslatorSupported && locale.msTranslatorCode) {
           fetchMicrosoftTranslation(plain, locale).then(addResults);
         }
 
-        if (locale.systranTranslateCode) {
+        if (isSystranTranslateSupported && locale.systranTranslateCode) {
           fetchSystranTranslation(plain, locale).then(addResults);
         }
       }
