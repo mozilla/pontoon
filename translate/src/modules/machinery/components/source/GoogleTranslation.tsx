@@ -112,7 +112,7 @@ export function GoogleTranslation({
         <i className='fa fa-caret-down'></i>
       </button>
       {isDropdownOpen && (
-        <ul className='dropdown-menu' style={{ display: 'block' }}>
+        <ul className='dropdown-menu'>
           <Localized id='machinery-GoogleTranslation--option-rephrase'>
             <li data-characteristic='alternative' onClick={handleOptionClick}>
               REPHRASE
@@ -129,11 +129,14 @@ export function GoogleTranslation({
             </li>
           </Localized>
           {showOriginalOption && (
-            <Localized id='machinery-GoogleTranslation--option-show-original'>
-              <li data-characteristic='original' onClick={handleOptionClick}>
-                SHOW ORIGINAL
-              </li>
-            </Localized>
+            <>
+              <li className='horizontal-separator'></li>
+              <Localized id='machinery-GoogleTranslation--option-show-original'>
+                <li data-characteristic='original' onClick={handleOptionClick}>
+                  SHOW ORIGINAL
+                </li>
+              </Localized>
+            </>
           )}
         </ul>
       )}
