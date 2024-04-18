@@ -137,9 +137,9 @@ colorama==0.4.6 \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
     # via sacrebleu
-compare-locales==9.0.2 \
-    --hash=sha256:588780f837942926760847f43b223056e6cf97f0b3029f51d41d6b9edc0269eb \
-    --hash=sha256:8ec46e2333718ba81a8c23f120e1b2380bd944f58bd69dac15de40e619e8904b
+compare-locales==9.0.3 \
+    --hash=sha256:9be0f94a56df0c342880f09fd7394a4ffac447462ba51dc043e8b31502c32190 \
+    --hash=sha256:b823b15d112dad4683dbc49ae89993afe90e721c34e2a352774d7982327a1962
     # via -r requirements/default.in
 cryptography==36.0.0 \
     --hash=sha256:2049f8b87f449fc6190350de443ee0c1dd631f2ce4fa99efad2984de81031681 \
