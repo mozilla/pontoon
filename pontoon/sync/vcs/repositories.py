@@ -373,7 +373,7 @@ class SvnRepository(VCSRepository):
                 for line in output.split("\n")
                 if line and line[0] in statuses
             ]
-        return []
+        return None
 
     def get_removed_files(self, path, from_revision):
         return self.get_changed_files(path, from_revision, ("D",))
@@ -398,7 +398,7 @@ class GitRepository(VCSRepository):
                 for line in output.split("\n")
                 if line and line[0] in statuses
             ]
-        return []
+        return None
 
     def get_removed_files(self, path, from_revision):
         return self.get_changed_files(path, from_revision, ("D",))
@@ -437,7 +437,7 @@ class HgRepository(VCSRepository):
                 for line in output.split("\n")
                 if line and line[0] in statuses
             ]
-        return []
+        return None
 
     def get_removed_files(self, path, from_revision):
         return self.get_changed_files(path, self._strip(from_revision), ("R",))
@@ -459,18 +459,19 @@ def get_changed_files(repo_type, path, revision):
     """Return a list of changed files for the repository."""
     repo = VCSRepository.for_type(repo_type, path)
     log.info(f"Retrieving changed files for: {path}:{revision}")
+
+    if revision is not None:
+        changed = repo.get_changed_files(path, revision)
+        removed = repo.get_removed_files(path, revision)
+        if changed is not None and removed is not None:
+            return changed, removed
+
     # If there's no latest revision we should return all the files in the latest
     # version of repository
-    if revision is None:
-        paths = []
-        for root, _, files in os.walk(path):
-            for f in files:
-                if root[0] == "." or "/." in root:
-                    continue
-                paths.append(os.path.join(root, f).replace(path + "/", ""))
-        return paths, []
-
-    return (
-        repo.get_changed_files(path, revision),
-        repo.get_removed_files(path, revision),
-    )
+    paths = []
+    for root, _, files in os.walk(path):
+        for f in files:
+            if root[0] == "." or "/." in root:
+                continue
+            paths.append(os.path.join(root, f).replace(path + "/", ""))
+    return paths, []

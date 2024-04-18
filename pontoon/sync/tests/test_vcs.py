@@ -69,7 +69,7 @@ class VCSChangedFilesTests:
         with patch.object(
             self.vcsrepository, "execute", side_effect=self.execute_failure
         ) as mock_execute:
-            assert self.vcsrepository.get_changed_files("path", "1") == []
+            assert self.vcsrepository.get_changed_files("path", "1") is None
             assert mock_execute.called
 
     def test_removed_files(self):
@@ -87,7 +87,7 @@ class VCSChangedFilesTests:
         with patch.object(
             self.vcsrepository, "execute", side_effect=self.execute_failure
         ) as mock_execute:
-            assert self.vcsrepository.get_removed_files("path", "1") == []
+            assert self.vcsrepository.get_removed_files("path", "1") is None
             assert mock_execute.called
 
 
