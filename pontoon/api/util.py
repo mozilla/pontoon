@@ -1,4 +1,4 @@
-from graphql.language.ast import FragmentSpread
+from graphql.language.ast import FragmentSpreadNode
 
 
 def get_fields(info):
@@ -35,7 +35,7 @@ def get_fields(info):
     def iterate_field_names(prefix, field):
         name = field.name.value
 
-        if isinstance(field, FragmentSpread):
+        if isinstance(field, FragmentSpreadNode):
             results = []
             new_prefix = prefix
             sub_selection = info.fragments[name].selection_set.selections
@@ -53,7 +53,7 @@ def get_fields(info):
         return results
 
     results = []
-    for field_ast in info.field_asts:
+    for field_ast in info.field_nodes:
         results.extend(iterate_field_names("", field_ast))
 
     return results
