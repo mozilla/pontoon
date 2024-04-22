@@ -20,9 +20,9 @@ click==8.1.7 \
     # via
     #   -c requirements/default.txt
     #   pip-tools
-django==4.0.10 \
-    --hash=sha256:2c2f73c16b11cb272c6d5e3b063f0d1be06f378d8dc6005fbe8542565db659cc \
-    --hash=sha256:4496eb4f65071578b703fdc6e6f29302553c7440e3f77baf4cefa4a4e091fc3d
+django==4.1.13 \
+    --hash=sha256:04ab3f6f46d084a0bba5a2c9a93a3a2eb3fe81589512367a75f79ee8acf790ce \
+    --hash=sha256:94a3f471e833c8f124ee7a2de11e92f633991d975e3fa5bdd91e8abd66426318
     # via
     #   -c requirements/default.txt
     #   django-debug-toolbar
@@ -79,6 +79,7 @@ wheel==0.43.0 \
     # via pip-tools
 
 # WARNING: The following packages were not pinned, but pip requires them to be
-# pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.
+# pinned when the requirements file includes hashes and the requirement is not
+# satisfied by a package already installed. Consider using the --allow-unsafe flag.
 # pip
 # setuptools
