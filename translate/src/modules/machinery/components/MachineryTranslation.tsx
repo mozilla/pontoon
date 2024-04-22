@@ -40,8 +40,10 @@ export function MachineryTranslationComponent({
   const isSelected = element === index;
 
   const { llmTranslation } = useLLMTranslation();
+  // console.log(llmTranslation);
 
   const copyRegularTranslationIntoEditor = useCallback(() => {
+    console.log(llmTranslation ? 'LLM' : 'REG');
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       setEditorFromHelpers(translation.translation, translation.sources, true);
@@ -49,6 +51,7 @@ export function MachineryTranslationComponent({
   }, [index, setEditorFromHelpers, translation]);
 
   const copyLLMTranslationIntoEditor = useCallback(() => {
+    console.log('LLM');
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       setEditorFromHelpers(llmTranslation, translation.sources, true);
@@ -111,8 +114,7 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
-  const { llmTranslation } = useLLMTranslation();
-  const contentToDisplay = llmTranslation || translation.translation;
+  const { llmTranslation, loading } = useLLMTranslation();
   return (
     <>
       <header>
@@ -138,7 +140,13 @@ function MachineryTranslationSuggestion({
         data-script={script}
         lang={code}
       >
-        <GenericTranslation content={contentToDisplay} />
+        {loading ? (
+          <span>Loading...</span>
+        ) : (
+          <GenericTranslation
+            content={llmTranslation || translation.translation}
+          />
+        )}
       </p>
     </>
   );

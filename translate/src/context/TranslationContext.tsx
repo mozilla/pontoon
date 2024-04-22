@@ -10,7 +10,7 @@ import { fetchGPTTransform } from '~/api/machinery';
 interface LLMTranslationContextType {
   llmTranslation: string;
   setLlmTranslation: Dispatch<SetStateAction<string>>;
-
+  loading: boolean;
   selectedOption: string;
   setSelectedOption: Dispatch<SetStateAction<string>>;
   transformLLMTranslation: (
@@ -24,7 +24,7 @@ interface LLMTranslationContextType {
 const LLMTranslationContext = createContext<LLMTranslationContextType>({
   llmTranslation: '',
   setLlmTranslation: () => {},
-
+  loading: false,
   selectedOption: '',
   setSelectedOption: () => {},
   transformLLMTranslation: async () => {},
@@ -32,7 +32,7 @@ const LLMTranslationContext = createContext<LLMTranslationContextType>({
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
   const [llmTranslation, setLlmTranslation] = useState<string>('');
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
 
   const handleSetSelectedOption = (option: string) => {
@@ -62,6 +62,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     characteristic: string,
     localeName: string,
   ) => {
+    setLoading(true);
     if (characteristic !== 'original') {
       const machineryTranslations = await fetchGPTTransform(
         original,
@@ -77,6 +78,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
       setLlmTranslation('');
       handleSetSelectedOption('');
     }
+    setLoading(false);
   };
 
   return (
@@ -84,6 +86,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
       value={{
         llmTranslation,
         setLlmTranslation,
+        loading,
         selectedOption,
         setSelectedOption,
         transformLLMTranslation,
