@@ -1,13 +1,12 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Localized } from '@fluent/react';
 import type { MachineryTranslation } from '~/api/machinery';
-import { fetchGPTTransform } from '~/api/machinery';
 import { Locale } from '~/context/Locale';
 import { logUXAction } from '~/api/uxaction';
+import { useLLMTranslation } from '~/context/TranslationContext';
 
 type Props = {
   translation: MachineryTranslation;
-  onLLMTranslationChange: (llmTranslation: string) => void;
 };
 
 /**
@@ -16,78 +15,36 @@ type Props = {
 
 export function GoogleTranslation({
   translation,
-  onLLMTranslationChange,
 }: Props): React.ReactElement<'li'> {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('');
-  const [showOriginalOption, setShowOriginalOption] = useState(false);
-  const [currentTranslation, setCurrentTranslation] = useState(
-    translation.translation,
-  );
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
+
+  const { transformLLMTranslation, selectedOption } = useLLMTranslation();
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();
     setDropdownOpen((isDropdownOpen) => !isDropdownOpen);
   };
 
-  const handleTransformation = async (characteristic: string) => {
-    // Only fetch transformation if not reverting to original
-    if (characteristic !== 'original') {
-      const machineryTranslations = await fetchGPTTransform(
-        translation.original,
-        currentTranslation,
-        characteristic,
-        locale.name,
-      );
-
-      if (machineryTranslations.length > 0) {
-        setCurrentTranslation(machineryTranslations[0].translation);
-        onLLMTranslationChange(machineryTranslations[0].translation);
-        setShowOriginalOption(true);
-      }
-    } else {
-      setCurrentTranslation(translation.translation);
-      onLLMTranslationChange('');
-      setSelectedOption('');
-      setShowOriginalOption(false);
-    }
-  };
-
-  const handleOptionClick = (ev: React.MouseEvent<HTMLLIElement>) => {
+  const handleOptionClick = async (ev: React.MouseEvent<HTMLLIElement>) => {
     ev.stopPropagation();
     const target = ev.currentTarget;
     const characteristic = target.dataset['characteristic'];
 
     if (characteristic) {
-      let displayText = '';
-
-      switch (characteristic) {
-        case 'alternative':
-          displayText = 'REPHRASED';
-          break;
-        case 'formal':
-          displayText = 'FORMAL';
-          break;
-        case 'informal':
-          displayText = 'INFORMAL';
-          break;
-        case 'original':
-          displayText = '';
-          break;
-        default:
-          break;
-      }
-      setSelectedOption(displayText); // TODO: Localize displayText before setting it as selected option.
       setDropdownOpen(false);
+      await transformLLMTranslation(
+        translation.original,
+        translation.translation,
+        characteristic,
+        locale.name,
+      );
 
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
         targetLanguage: locale.name,
       });
-
-      handleTransformation(characteristic);
     }
   };
 
@@ -128,16 +85,12 @@ export function GoogleTranslation({
               MAKE INFORMAL
             </li>
           </Localized>
-          {showOriginalOption && (
-            <>
-              <li className='horizontal-separator'></li>
-              <Localized id='machinery-GoogleTranslation--option-show-original'>
-                <li data-characteristic='original' onClick={handleOptionClick}>
-                  SHOW ORIGINAL
-                </li>
-              </Localized>
-            </>
-          )}
+          <li className='horizontal-separator'></li>
+          <Localized id='machinery-GoogleTranslation--option-show-original'>
+            <li data-characteristic='original' onClick={handleOptionClick}>
+              SHOW ORIGINAL
+            </li>
+          </Localized>
         </ul>
       )}
     </li>

@@ -11,7 +11,6 @@ import { TranslationMemory } from './source/TranslationMemory';
 
 type Props = {
   translation: MachineryTranslation;
-  handleLLMTranslationChange: (llmTranslation: string) => void;
 };
 
 /**
@@ -19,7 +18,6 @@ type Props = {
  */
 export function MachineryTranslationSource({
   translation,
-  handleLLMTranslationChange,
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
@@ -37,11 +35,7 @@ export function MachineryTranslationSource({
         break;
       case 'google-translate':
         sources.push(
-          <GoogleTranslation
-            translation={translation}
-            key={source}
-            onLLMTranslationChange={handleLLMTranslationChange}
-          />,
+          <GoogleTranslation translation={translation} key={source} />,
         );
         break;
       case 'microsoft-translator':

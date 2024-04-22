@@ -8,6 +8,7 @@ import { SkeletonLoader } from '~/modules/loaders';
 
 import './Machinery.css';
 import { MachineryTranslationComponent } from './MachineryTranslation';
+import { LLMTranslationProvider } from '~/context/TranslationContext';
 
 /**
  * Show translations from machines.
@@ -70,22 +71,26 @@ export function Machinery(): React.ReactElement<'section'> {
       <div className='list-wrapper' ref={rootRef}>
         <ul>
           {translations.map((translation, index) => (
-            <MachineryTranslationComponent
-              index={index}
-              sourceString={source}
-              translation={translation}
-              key={index}
-            />
+            <LLMTranslationProvider>
+              <MachineryTranslationComponent
+                index={index}
+                sourceString={source}
+                translation={translation}
+                key={index}
+              />
+            </LLMTranslationProvider>
           ))}
         </ul>
         <ul>
           {results.map((result, index) => (
-            <MachineryTranslationComponent
-              index={index + translations.length}
-              sourceString={query}
-              translation={result}
-              key={index + translations.length}
-            />
+            <LLMTranslationProvider>
+              <MachineryTranslationComponent
+                index={index + translations.length}
+                sourceString={query}
+                translation={result}
+                key={index + translations.length}
+              />
+            </LLMTranslationProvider>
           ))}
         </ul>
         {(fetching || hasMore) && (
