@@ -44,6 +44,7 @@ export function GoogleTranslation({
     }
   };
 
+  // TODO: Localize selectedOptionText before setting it as selected option.
   let selectedOptionText: string;
   switch (selectedOption) {
     case 'alternative':

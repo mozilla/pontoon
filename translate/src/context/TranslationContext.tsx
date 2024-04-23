@@ -1,6 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+} from 'react';
 import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
-import { useActiveTranslation } from './EntityView';
 
 type SelState = {
   loading: boolean;
@@ -29,42 +34,49 @@ const LLMTranslationContext = createContext<LLMTranslationContextType>({
 });
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
-  const translation = useActiveTranslation();
-  const [state, setState] = useState(new Map<MachineryTranslation, SelState>());
+  const stateRef = useRef(new WeakMap<MachineryTranslation, SelState>());
+  const [version, setVersion] = useState(0); // Counter to trigger re-renders
 
-  useEffect(() => setState(new Map()), [translation]);
-
-  const getSelState = (mt: MachineryTranslation) =>
-    state.get(mt) ?? initSelState();
+  const getSelState = useCallback(
+    (mt: MachineryTranslation): SelState => {
+      return stateRef.current.get(mt) ?? initSelState();
+    },
+    [version],
+  );
 
   const transformLLMTranslation = async (
     mt: MachineryTranslation,
     characteristic: string,
     localeName: string,
   ) => {
-    let { llmTranslation, selectedOption } = getSelState(mt);
-    if (characteristic !== 'original') {
-      let next = new Map(state);
-      next.set(mt, { loading: true, selectedOption, llmTranslation });
-      setState(next);
-      const machineryTranslations = await fetchGPTTransform(
-        mt.original,
-        mt.translation,
-        characteristic,
-        localeName,
-      );
-      if (machineryTranslations.length > 0) {
-        llmTranslation = machineryTranslations[0].translation;
-        selectedOption = characteristic;
-      }
-      next = new Map(state);
-      next.set(mt, { loading: false, selectedOption, llmTranslation });
-      setState(next);
+    const currentState = getSelState(mt);
+    stateRef.current.set(mt, {
+      ...currentState,
+      loading: true,
+      selectedOption: currentState.selectedOption,
+      llmTranslation: currentState.llmTranslation,
+    });
+    setVersion((v) => v + 1); // Trigger re-render
+
+    const machineryTranslations = await fetchGPTTransform(
+      mt.original,
+      mt.translation,
+      characteristic,
+      localeName,
+    );
+    if (machineryTranslations.length > 0) {
+      stateRef.current.set(mt, {
+        loading: false,
+        selectedOption: characteristic,
+        llmTranslation: machineryTranslations[0].translation,
+      });
     } else {
-      let next = new Map(state);
-      next.delete(mt);
-      setState(next);
+      stateRef.current.set(mt, {
+        ...currentState,
+        loading: false,
+      });
     }
+    setVersion((v) => v + 1);
   };
 
   return (
