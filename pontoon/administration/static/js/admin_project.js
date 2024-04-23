@@ -1,4 +1,6 @@
 $(function () {
+  const self = Pontoon;
+
   // Before submitting the form
   $('#admin-form').submit(function () {
     // Update locales
