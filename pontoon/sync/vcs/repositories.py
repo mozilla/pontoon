@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import logging
 import os
 import subprocess
+from typing import Any
 
 from django.conf import settings
 
@@ -14,242 +15,182 @@ class PullFromRepositoryException(Exception):
     pass
 
 
-class PullFromRepository:
-    def __init__(self, source, target, branch):
-        self.source = source
-        self.target = target
-        self.branch = branch
+def updateFromGit(source: str, target: str, branch: str | None):
+    log.debug("Git: Update repository.")
 
-    def pull(self, source=None, target=None):
-        raise NotImplementedError
+    command = ["git", "fetch", "--all"]
+    execute(command, target)
 
+    # Undo local changes
+    remote = f"origin/{branch}" if branch else "origin"
 
-class PullFromGit(PullFromRepository):
-    def pull(self, source=None, target=None, branch=None):
-        log.debug("Git: Update repository.")
+    command = ["git", "reset", "--hard", remote]
+    code, output, error = execute(command, target)
 
-        source = source or self.source
-        target = target or self.target
-        branch = branch or self.branch
+    if code != 0:
+        log.info("Git: " + str(error))
+        log.debug("Git: Clone instead.")
+        command = ["git", "clone", source, target]
+        code, output, error = execute(command)
 
-        command = ["git", "fetch", "--all"]
-        execute(command, target)
+        if code != 0:
+            raise PullFromRepositoryException(str(error))
 
-        # Undo local changes
-        remote = "origin"
-        if branch:
-            remote += "/" + branch
+        log.debug("Git: Repository at " + source + " cloned.")
+    else:
+        log.debug("Git: Repository at " + source + " updated.")
 
-        command = ["git", "reset", "--hard", remote]
+    if branch:
+        command = ["git", "checkout", branch]
         code, output, error = execute(command, target)
 
         if code != 0:
-            log.info("Git: " + str(error))
-            log.debug("Git: Clone instead.")
-            command = ["git", "clone", source, target]
-            code, output, error = execute(command)
-
-            if code != 0:
-                raise PullFromRepositoryException(str(error))
-
-            log.debug("Git: Repository at " + source + " cloned.")
-        else:
-            log.debug("Git: Repository at " + source + " updated.")
-
-        if branch:
-            command = ["git", "checkout", branch]
-            code, output, error = execute(command, target)
-
-            if code != 0:
-                raise PullFromRepositoryException(str(error))
-
-            log.debug("Git: Branch " + branch + " checked out.")
-
-
-class PullFromHg(PullFromRepository):
-    def pull(self, source=None, target=None):
-        log.debug("Mercurial: Update repository.")
-
-        source = source or self.source
-        target = target or self.target
-
-        # Undo local changes: Mercurial doesn't offer anything more elegant
-        command = ["rm", "-rf", target]
-        code, output, error = execute(command)
-
-        command = ["hg", "clone", source, target]
-        code, output, error = execute(command)
-
-        if code == 0:
-            log.debug("Mercurial: Repository at " + source + " cloned.")
-
-        else:
             raise PullFromRepositoryException(str(error))
 
+        log.debug(f"Git: Branch {branch} checked out.")
 
-class PullFromSvn(PullFromRepository):
-    def pull(self, source=None, target=None):
-        log.debug("Subversion: Checkout or update repository.")
 
-        source = source or self.source
-        target = target or self.target
+def updateFromHg(source: str, target: str):
+    log.debug("Mercurial: Update repository.")
 
-        if os.path.exists(target):
-            status = "updated"
-            command = ["svn", "update", "--accept", "theirs-full", target]
+    # Undo local changes: Mercurial doesn't offer anything more elegant
+    command = ["rm", "-rf", target]
+    code, output, error = execute(command)
 
-        else:
-            status = "checked out"
-            command = [
-                "svn",
-                "checkout",
-                "--trust-server-cert",
-                "--non-interactive",
-                source,
-                target,
-            ]
+    command = ["hg", "clone", source, target]
+    code, output, error = execute(command)
 
-        code, output, error = execute(command, env=get_svn_env())
+    if code == 0:
+        log.debug(f"Mercurial: Repository at {source} cloned.")
 
-        if code != 0:
-            raise PullFromRepositoryException(str(error))
+    else:
+        raise PullFromRepositoryException(str(error))
 
-        log.debug("Subversion: Repository at " + source + " %s." % status)
+
+def updateFromSvn(source: str, target: str):
+    log.debug("Subversion: Checkout or update repository.")
+
+    if os.path.exists(target):
+        status = "updated"
+        command = ["svn", "update", "--accept", "theirs-full", target]
+
+    else:
+        status = "checked out"
+        command = [
+            "svn",
+            "checkout",
+            "--trust-server-cert",
+            "--non-interactive",
+            source,
+            target,
+        ]
+
+    code, output, error = execute(command, env=get_svn_env())
+
+    if code != 0:
+        raise PullFromRepositoryException(str(error))
+
+    log.debug(f"Subversion: Repository at {source} {status}.")
 
 
 class CommitToRepositoryException(Exception):
     pass
 
 
-class CommitToRepository:
-    def __init__(self, path, message, user, branch, url):
-        self.path = path
-        self.message = message
-        self.user = user
-        self.url = url
-        self.branch = branch
+def commitToGit(path: str, message: str, user: Any, branch: str | None, url: str):
+    log.debug("Git: Commit to repository.")
 
-    def commit(self, path=None, message=None, user=None):
-        raise NotImplementedError
+    # Embed git identity info into commands
+    git_cmd = [
+        "git",
+        "-c",
+        f"user.name={settings.VCS_SYNC_NAME}",
+        "-c",
+        f"user.email={settings.VCS_SYNC_EMAIL}",
+    ]
 
-    def nothing_to_commit(self):
+    # Add new and remove missing paths
+    execute(git_cmd + ["add", "-A", "--", path], path)
+
+    # Commit
+    commit = git_cmd + [
+        "commit",
+        "-m",
+        message,
+        "--author",
+        user.display_name_and_email,
+    ]
+    code, output, error = execute(commit, path)
+    if code != 0 and len(error):
+        raise CommitToRepositoryException(str(error))
+
+    # Push
+    push = ["git", "push", url, branch or "HEAD"]
+    code, output, error = execute(push, path)
+    exception_message = str(error)
+
+    if code != 0:
+        if (
+            "Updates were rejected because the remote contains work that you do"
+            in error
+        ):
+            exception_message = (
+                "Remote contains work that you do not have locally. "
+                + exception_message
+            )
+        raise CommitToRepositoryException(exception_message)
+
+    if "Everything up-to-date" in error:
         return log.warning("Nothing to commit")
 
-
-class CommitToGit(CommitToRepository):
-    def commit(self, path=None, message=None, user=None, branch=None):
-        log.debug("Git: Commit to repository.")
-
-        path = path or self.path
-        message = message or self.message
-        user = user or self.user
-        branch = branch or self.branch
-        author = user.display_name_and_email
-
-        # Embed git identity info into commands
-        git_cmd = [
-            "git",
-            "-c",
-            f"user.name={settings.VCS_SYNC_NAME}",
-            "-c",
-            f"user.email={settings.VCS_SYNC_EMAIL}",
-        ]
-
-        # Add new and remove missing paths
-        execute(git_cmd + ["add", "-A", "--", path], path)
-
-        # Commit
-        commit = git_cmd + ["commit", "-m", message, "--author", author]
-        code, output, error = execute(commit, path)
-        if code != 0 and len(error):
-            raise CommitToRepositoryException(str(error))
-
-        # Push
-        push_target = "HEAD"
-        if branch:
-            push_target = branch
-
-        push = ["git", "push", self.url, push_target]
-        code, output, error = execute(push, path)
-        exception_message = str(error)
-
-        if code != 0:
-            if (
-                "Updates were rejected because the remote contains work that you do"
-                in error
-            ):
-                exception_message = (
-                    "Remote contains work that you do not have locally. "
-                    + exception_message
-                )
-            raise CommitToRepositoryException(exception_message)
-
-        if "Everything up-to-date" in error:
-            return self.nothing_to_commit()
-
-        log.info(message)
+    log.info(message)
 
 
-class CommitToHg(CommitToRepository):
-    def commit(self, path=None, message=None, user=None):
-        log.debug("Mercurial: Commit to repository.")
+def commitToHg(path: str, message: str, user: Any):
+    log.debug("Mercurial: Commit to repository.")
 
-        path = path or self.path
-        message = message or self.message
-        user = user or self.user
-        author = user.display_name_and_email
+    # Add new and remove missing paths
+    execute(["hg", "addremove"], path)
 
-        # Add new and remove missing paths
-        add = ["hg", "addremove"]
-        execute(add, path)
+    # Commit
+    commit = ["hg", "commit", "-m", message, "-u", user.display_name_and_email]
+    code, output, error = execute(commit, path)
+    if code != 0 and len(error):
+        raise CommitToRepositoryException(str(error))
 
-        # Commit
-        commit = ["hg", "commit", "-m", message, "-u", author]
-        code, output, error = execute(commit, path)
-        if code != 0 and len(error):
-            raise CommitToRepositoryException(str(error))
+    # Push
+    code, output, error = execute(["hg", "push"], path)
 
-        # Push
-        push = ["hg", "push"]
-        code, output, error = execute(push, path)
+    if code == 1 and "no changes found" in output:
+        return log.warning("Nothing to commit")
 
-        if code == 1 and "no changes found" in output:
-            return self.nothing_to_commit()
+    if code != 0 and len(error):
+        raise CommitToRepositoryException(str(error))
 
-        if code != 0 and len(error):
-            raise CommitToRepositoryException(str(error))
-
-        log.info(message)
+    log.info(message)
 
 
-class CommitToSvn(CommitToRepository):
-    def commit(self, path=None, message=None, user=None):
-        log.debug("Subversion: Commit to repository.")
+def commitToSvn(path: str, message: str, user: Any):
+    log.debug("Subversion: Commit to repository.")
 
-        path = path or self.path
-        message = message or self.message
-        user = user or self.user
-        author = user.display_name_and_email
+    # Commit
+    commit = [
+        "svn",
+        "commit",
+        "-m",
+        message,
+        "--with-revprop",
+        f"author={user.display_name_and_email}",
+        path,
+    ]
+    code, output, error = execute(commit, env=get_svn_env())
+    if code != 0:
+        raise CommitToRepositoryException(error)
 
-        # Commit
-        command = [
-            "svn",
-            "commit",
-            "-m",
-            message,
-            "--with-revprop",
-            "author=%s" % author,
-            path,
-        ]
+    if not output and not error:
+        return log.warning("Nothing to commit")
 
-        code, output, error = execute(command, env=get_svn_env())
-        if code != 0:
-            raise CommitToRepositoryException(error)
-
-        if not output and not error:
-            return self.nothing_to_commit()
-
-        log.info(message)
+    log.info(message)
 
 
 def execute(command, cwd=None, env=None):
@@ -277,18 +218,31 @@ def execute(command, cwd=None, env=None):
         return -1, "", error
 
 
-def update_from_vcs(repo_type, url, path, branch):
-    obj = globals()["PullFrom%s" % repo_type.capitalize()](url, path, branch)
-    obj.pull()
+def update_from_vcs(repo_type: str, url: str, path: str, branch: str | None):
+    type = repo_type.lower()
+    if type == "git":
+        updateFromGit(url, path, branch)
+    elif type == "hg":
+        updateFromHg(url, path)
+    elif type == "svn":
+        updateFromSvn(url, path)
+    else:
+        raise NotImplementedError
 
 
-def commit_to_vcs(repo_type, path, message, user, branch, url):
+def commit_to_vcs(
+    repo_type: str, path: str, message: str, user: Any, branch: str | None, url: str
+):
+    type = repo_type.lower()
     try:
-        obj = globals()["CommitTo%s" % repo_type.capitalize()](
-            path, message, user, branch, url
-        )
-        return obj.commit()
-
+        if type == "git":
+            return commitToGit(path, message, user, branch, url)
+        elif type == "hg":
+            return commitToHg(path, message, user)
+        elif type == "svn":
+            return commitToSvn(path, message, user)
+        else:
+            raise NotImplementedError
     except CommitToRepositoryException as e:
         log.debug(f"{repo_type.upper()} Commit Error for {path}: {e}")
         raise e
@@ -425,7 +379,7 @@ class HgRepository(VCSRepository):
                 "-a",
                 "-m",
                 "-r",
-                "--rev={}".format(self._strip(from_revision)),
+                f"--rev={self._strip(from_revision)}",
                 "--rev=default",
             ],
             cwd=path,

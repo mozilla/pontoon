@@ -5,7 +5,7 @@ from pontoon.base.models import Resource
 from pontoon.base.utils import extension_in, first
 
 
-def is_hidden(path):
+def is_hidden(path: str) -> bool:
     """
     Return true if path contains hidden directory.
     """
@@ -15,7 +15,7 @@ def is_hidden(path):
     return False
 
 
-def is_resource(filename):
+def is_resource(filename: str) -> bool:
     """
     Return True if the filename's extension is a supported Resource
     format.
@@ -23,7 +23,7 @@ def is_resource(filename):
     return extension_in(filename, Resource.ALLOWED_EXTENSIONS)
 
 
-def is_source_resource(filename):
+def is_source_resource(filename: str) -> bool:
     """
     Return True if the filename's extension is a source-only Resource
     format.
@@ -31,7 +31,7 @@ def is_source_resource(filename):
     return extension_in(filename, Resource.SOURCE_EXTENSIONS)
 
 
-def is_asymmetric_resource(filename):
+def is_asymmetric_resource(filename: str) -> bool:
     """
     Return True if the filename's extension is an asymmetric Resource
     format.
@@ -39,14 +39,14 @@ def is_asymmetric_resource(filename):
     return extension_in(filename, Resource.ASYMMETRIC_FORMATS)
 
 
-def get_parent_directory(path):
+def get_parent_directory(path: str) -> str:
     """
     Get parent directory of the path
     """
     return os.path.abspath(os.path.join(path, os.pardir))
 
 
-def uses_undercore_as_separator(directory):
+def uses_undercore_as_separator(directory: str) -> bool:
     """
     Return True if the names of folders in a directory contain more '_' than '-'.
     """
@@ -60,7 +60,7 @@ def uses_undercore_as_separator(directory):
     return "".join(only_folders).count("_") > "".join(only_folders).count("-")
 
 
-def directory_contains_resources(directory_path, source_only=False):
+def directory_contains_resources(directory_path: str, source_only=False) -> bool:
     """
     Return True if the given directory contains at least one
     supported resource file (checked via file extension), or False
@@ -77,29 +77,33 @@ def directory_contains_resources(directory_path, source_only=False):
     return False
 
 
-def locale_directory_path(checkout_path, locale_code, parent_directories=None):
+def locale_directory_path(
+    checkout_path: str, locale_code: str, parent_directories: list[str]
+) -> str:
     """
     Path to the directory where strings for the given locale are
     stored.
     """
-    possible_paths = []
 
     # Check paths that use underscore as locale/country code separator
     locale_code_variants = [locale_code, locale_code.replace("-", "_")]
 
     # Optimization for directories with a lot of paths: if parent_directories
     # is provided, we simply join it with locale_code and check if path exists
-    for parent_directory in parent_directories:
-        for locale in locale_code_variants:
-            candidate = os.path.join(parent_directory, locale)
-            if os.path.exists(candidate):
-                possible_paths.append(candidate)
-
-    if not possible_paths:
-        for root, dirnames, filenames in os.walk(checkout_path):
-            for locale in locale_code_variants:
-                if locale in dirnames:
-                    possible_paths.append(os.path.join(root, locale))
+    possible_paths = [
+        path
+        for path in (
+            os.path.join(parent_directory, locale)
+            for locale in locale_code_variants
+            for parent_directory in parent_directories
+        )
+        if os.path.exists(path)
+    ] or [
+        os.path.join(root, locale)
+        for locale in locale_code_variants
+        for root, dirnames, filenames in os.walk(checkout_path)
+        if locale in dirnames
+    ]
 
     for possible_path in possible_paths:
         if directory_contains_resources(possible_path):
@@ -109,30 +113,26 @@ def locale_directory_path(checkout_path, locale_code, parent_directories=None):
     if possible_paths:
         return possible_paths[0]
 
-    raise OSError("Directory for locale `{}` not found".format(locale_code or "source"))
+    raise OSError(f"Directory for locale `{locale_code or 'source'}` not found")
 
 
-def locale_to_source_path(path):
+def locale_to_source_path(path: str) -> str:
     """
     Return source resource path for the given locale resource path.
     Source files for .po files are actually .pot.
     """
-    if path.endswith("po"):
-        path += "t"
-    return path
+    return path + "t" if path.endswith("po") else path
 
 
-def source_to_locale_path(path):
+def source_to_locale_path(path: str) -> str:
     """
     Return locale resource path for the given source resource path.
     Locale files for .pot files are actually .po.
     """
-    if path.endswith("pot"):
-        path = path[:-1]
-    return path
+    return path[:-1] if path.endswith("pot") else path
 
 
-def escape_apostrophes(value):
+def escape_apostrophes(value: str) -> str:
     """
     Apostrophes (straight single quotes) have special meaning in Android strings.xml files,
     so they need to be escaped using a preceding backslash.
@@ -143,11 +143,11 @@ def escape_apostrophes(value):
     return value.replace("'", "\\'")
 
 
-def unescape_apostrophes(value):
+def unescape_apostrophes(value: str) -> str:
     return value.replace("\\'", "'")
 
 
-def escape_quotes(value):
+def escape_quotes(value: str) -> str:
     """
     DTD files can use single or double quotes for identifying strings,
     so &quot; and &apos; are the safe bet that will work in both cases.
@@ -158,7 +158,7 @@ def escape_quotes(value):
     return value
 
 
-def unescape_quotes(value):
+def unescape_quotes(value: str) -> str:
     value = value.replace("\\&quot;", '"')
     value = value.replace("\\u0022", '"')  # Bug 1390111
     value = value.replace('\\"', '"')
@@ -170,7 +170,7 @@ def unescape_quotes(value):
     return value
 
 
-def create_parent_directory(path):
+def create_parent_directory(path: str) -> None:
     """
     Create parent directory of the given path if it doesn't exist yet.
     """

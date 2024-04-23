@@ -1,10 +1,11 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 
 from pontoon.sync.models import SyncLog
 
 
-def sync_log_list(request):
+def sync_log_list(request: HttpRequest):
     sync_logs = SyncLog.objects.order_by("-start_time")
     paginator = Paginator(sync_logs, 24)
 
@@ -19,7 +20,7 @@ def sync_log_list(request):
     return render(request, "sync/log_list.html", {"sync_logs": sync_logs})
 
 
-def sync_log_details(request, sync_log_pk):
+def sync_log_details(request: HttpRequest, sync_log_pk: int):
     # Prefetch for the end_time
     queryset = SyncLog.objects.prefetch_related(
         "project_sync_logs__repository_sync_logs__repository",
