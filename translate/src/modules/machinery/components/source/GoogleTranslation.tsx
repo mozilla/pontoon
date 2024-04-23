@@ -20,7 +20,8 @@ export function GoogleTranslation({
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
 
-  const { transformLLMTranslation, selectedOption } = useLLMTranslation();
+  const { transformLLMTranslation, selectedOption } =
+    useLLMTranslation(translation);
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();
@@ -34,12 +35,7 @@ export function GoogleTranslation({
 
     if (characteristic) {
       setDropdownOpen(false);
-      await transformLLMTranslation(
-        translation.original,
-        translation.translation,
-        characteristic,
-        locale.name,
-      );
+      await transformLLMTranslation(translation, characteristic, locale.name);
 
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
@@ -47,6 +43,21 @@ export function GoogleTranslation({
       });
     }
   };
+
+  let selectedOptionText: string;
+  switch (selectedOption) {
+    case 'alternative':
+      selectedOptionText = 'REPHRASED';
+      break;
+    case 'formal':
+      selectedOptionText = 'FORMAL';
+      break;
+    case 'informal':
+      selectedOptionText = 'INFORMAL';
+      break;
+    default:
+      selectedOptionText = '';
+  }
 
   return (
     <li ref={dropdownRef} className='google-translation'>
@@ -59,7 +70,7 @@ export function GoogleTranslation({
           <span>GOOGLE TRANSLATE</span>
         </span>
       </Localized>
-      <span className='selected-option'>{selectedOption}</span>
+      <span className='selected-option'>{selectedOptionText}</span>
       <button
         onClick={toggleDropdown}
         className='dropdown-toggle'

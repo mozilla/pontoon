@@ -39,7 +39,7 @@ export function MachineryTranslationComponent({
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
-  const { llmTranslation } = useLLMTranslation();
+  const { llmTranslation } = useLLMTranslation(translation);
 
   const copyRegularTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -111,7 +111,7 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
-  const { llmTranslation, loading } = useLLMTranslation();
+  const { llmTranslation, loading } = useLLMTranslation(translation);
   return (
     <>
       <header>

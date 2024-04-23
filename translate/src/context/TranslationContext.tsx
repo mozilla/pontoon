@@ -1,100 +1,84 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import { fetchGPTTransform } from '~/api/machinery';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
+import { useActiveTranslation } from './EntityView';
 
-interface LLMTranslationContextType {
-  llmTranslation: string;
-  setLlmTranslation: Dispatch<SetStateAction<string>>;
+type SelState = {
   loading: boolean;
   selectedOption: string;
-  setSelectedOption: Dispatch<SetStateAction<string>>;
+  llmTranslation: string;
+};
+
+interface LLMTranslationContextType {
+  getSelState(mt: MachineryTranslation): SelState;
   transformLLMTranslation: (
-    original: string,
-    current: string,
+    mt: MachineryTranslation,
     characteristic: string,
     localeName: string,
   ) => Promise<void>;
 }
 
-const LLMTranslationContext = createContext<LLMTranslationContextType>({
-  llmTranslation: '',
-  setLlmTranslation: () => {},
+const initSelState = () => ({
   loading: false,
   selectedOption: '',
-  setSelectedOption: () => {},
+  llmTranslation: '',
+});
+
+const LLMTranslationContext = createContext<LLMTranslationContextType>({
+  getSelState: initSelState,
   transformLLMTranslation: async () => {},
 });
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
-  const [llmTranslation, setLlmTranslation] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const translation = useActiveTranslation();
+  const [state, setState] = useState(new Map<MachineryTranslation, SelState>());
 
-  const handleSetSelectedOption = (option: string) => {
-    let displayText = '';
+  useEffect(() => setState(new Map()), [translation]);
 
-    switch (option) {
-      case 'alternative':
-        displayText = 'REPHRASED';
-        break;
-      case 'formal':
-        displayText = 'FORMAL';
-        break;
-      case 'informal':
-        displayText = 'INFORMAL';
-        break;
-      case 'original':
-        displayText = '';
-        break;
-    }
-
-    setSelectedOption(displayText);
-  };
+  const getSelState = (mt: MachineryTranslation) =>
+    state.get(mt) ?? initSelState();
 
   const transformLLMTranslation = async (
-    original: string,
-    current: string,
+    mt: MachineryTranslation,
     characteristic: string,
     localeName: string,
   ) => {
-    setLoading(true);
+    let { llmTranslation, selectedOption } = getSelState(mt);
     if (characteristic !== 'original') {
+      let next = new Map(state);
+      next.set(mt, { loading: true, selectedOption, llmTranslation });
+      setState(next);
       const machineryTranslations = await fetchGPTTransform(
-        original,
-        current,
+        mt.original,
+        mt.translation,
         characteristic,
         localeName,
       );
       if (machineryTranslations.length > 0) {
-        setLlmTranslation(machineryTranslations[0].translation);
-        handleSetSelectedOption(characteristic);
+        llmTranslation = machineryTranslations[0].translation;
+        selectedOption = characteristic;
       }
+      next = new Map(state);
+      next.set(mt, { loading: false, selectedOption, llmTranslation });
+      setState(next);
     } else {
-      setLlmTranslation('');
-      handleSetSelectedOption('');
+      let next = new Map(state);
+      next.delete(mt);
+      setState(next);
     }
-    setLoading(false);
   };
 
   return (
     <LLMTranslationContext.Provider
-      value={{
-        llmTranslation,
-        setLlmTranslation,
-        loading,
-        selectedOption,
-        setSelectedOption,
-        transformLLMTranslation,
-      }}
+      value={{ getSelState, transformLLMTranslation }}
     >
       {children}
     </LLMTranslationContext.Provider>
   );
 };
 
-export const useLLMTranslation = () => useContext(LLMTranslationContext);
+export const useLLMTranslation = (mt: MachineryTranslation) => {
+  const { getSelState, transformLLMTranslation } = useContext(
+    LLMTranslationContext,
+  );
+  return { ...getSelState(mt), transformLLMTranslation };
+};
