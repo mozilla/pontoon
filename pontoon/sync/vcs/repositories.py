@@ -425,7 +425,7 @@ class HgRepository(VCSRepository):
                 "-a",
                 "-m",
                 "-r",
-                "--rev={}".format(self._strip(from_revision)),
+                f"--rev={self._strip(from_revision)}",
                 "--rev=default",
             ],
             cwd=path,
