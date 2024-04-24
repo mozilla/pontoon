@@ -1372,7 +1372,7 @@ def test_get_word_count(input, expected_count):
 
 
 @pytest.mark.django_db
-@patch("pontoon.base.models.get_word_count")
+@patch("pontoon.base.models.entity.get_word_count")
 def test_mgr_get_or_create(get_word_count_mock, admin, resource_a, locale_a):
     """
     Get or create entities method works and counts words
@@ -1394,7 +1394,7 @@ def test_mgr_get_or_create(get_word_count_mock, admin, resource_a, locale_a):
 
 
 @pytest.mark.django_db
-@patch("pontoon.base.models.get_word_count")
+@patch("pontoon.base.models.entity.get_word_count")
 def test_mgr_bulk_update(get_word_count_mock, admin, resource_a, locale_a):
     """
     Update entities method works and updates word_count field
