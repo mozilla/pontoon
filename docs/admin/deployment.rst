@@ -187,6 +187,10 @@ you create:
    Controls the base URL for the site, including the protocol and port.
    Defaults to ``http://localhost:8000``, should always be set in production.
 
+``ALLOWED_HOSTS``
+   A list of strings representing the host/domain names the site can serve.
+   Defaults to ``.localhost, 127.0.0.1, [::1]``, should always be set in production.
+
 ``SSH_CONFIG``
    Contents of the ``~/.ssh/config`` file used when Pontoon connects to VCS
    servers via SSH. Used for disabling strict key checking and setting the

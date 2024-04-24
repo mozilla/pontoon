@@ -465,8 +465,12 @@ class Translation(DirtyFieldsMixin, models.Model):
             "rejected": self.rejected,
             "pretranslated": self.pretranslated,
             "fuzzy": self.fuzzy,
-            "errors": [error.message for error in self.errors.all()],
-            "warnings": [warning.message for warning in self.warnings.all()],
+            "errors": (
+                [error.message for error in self.errors.all()] if self.pk else []
+            ),
+            "warnings": (
+                [warning.message for warning in self.warnings.all()] if self.pk else []
+            ),
         }
 
     def mark_changed(self):

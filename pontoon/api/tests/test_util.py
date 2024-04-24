@@ -12,7 +12,7 @@ class MockResolveInfo:
     """
 
     def __init__(self, query, fragments=None):
-        self.field_asts = query.selection_set.selections
+        self.field_nodes = query.selection_set.selections
         self.fragments = fragments
 
 
