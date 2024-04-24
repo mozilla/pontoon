@@ -43,7 +43,7 @@ class LocaleQuerySet(models.QuerySet):
         Visible locales have at least one TranslatedResource defined from a non
         system project.
         """
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return self.available().filter(
             pk__in=ProjectLocale.objects.visible().values_list("locale", flat=True)
@@ -63,7 +63,7 @@ class LocaleQuerySet(models.QuerySet):
         """
         Prefetch ProjectLocale and latest translation data for given project.
         """
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return self.prefetch_related(
             Prefetch(
@@ -361,12 +361,12 @@ class Locale(AggregatedStats):
         return Locale.cldr_id_to_plural(self.cldr_id_list()[plural_id])
 
     def get_latest_activity(self, project=None):
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_latest_activity(self, project)
 
     def get_chart(self, project=None):
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_chart(self, project)
 
@@ -398,7 +398,8 @@ class Locale(AggregatedStats):
 
     def parts_stats(self, project):
         """Get locale-project paths with stats."""
-        from pontoon.base.models import ProjectLocale, TranslatedResource
+        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.project_locale import ProjectLocale
 
         def get_details(parts):
             return parts.order_by("title").values(

@@ -71,7 +71,7 @@ class ProjectQuerySet(models.QuerySet):
         """
         Prefetch ProjectLocale and latest translation data for given locale.
         """
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return self.prefetch_related(
             Prefetch(
@@ -377,12 +377,12 @@ class Project(AggregatedStats):
         return Repository.objects.filter(pk__in=pks)
 
     def get_latest_activity(self, locale=None):
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_latest_activity(self, locale)
 
     def get_chart(self, locale=None):
-        from pontoon.base.models import ProjectLocale
+        from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_chart(self, locale)
 
