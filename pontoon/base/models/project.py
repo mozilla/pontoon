@@ -367,7 +367,7 @@ class Project(AggregatedStats):
         """
         Returns a list of project repositories containing translations.
         """
-        from pontoon.base.models import Repository
+        from pontoon.base.models.repository import Repository
 
         pks = [
             repo.pk
