@@ -70,7 +70,7 @@ class EntityQuerySet(models.QuerySet):
         :returns: a QuerySet of values of entity PKs
 
         """
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         # First, separately filter entities with plurals (for performance reasons)
         plural_pks = []
@@ -400,7 +400,7 @@ class EntityQuerySet(models.QuerySet):
 
     def prefetch_entities_data(self, locale, preferred_source_locale):
         # Prefetch active translations for given locale
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         entities = self.prefetch_related(
             Prefetch(
@@ -446,7 +446,7 @@ class EntityQuerySet(models.QuerySet):
         """
         Reset active translation for given set of entities and locale.
         """
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         translations = Translation.objects.filter(
             entity__in=self,
@@ -654,7 +654,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         Get active translation for a given entity and plural form.
         Active translations must be prefetched for the requested locale.
         """
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         translations = self.active_translations
 
@@ -668,7 +668,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         Reset active translation for given entity, locale and plural form.
         Return active translation if exists or empty Translation instance.
         """
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         translations = self.translation_set.filter(locale=locale)
 
@@ -703,7 +703,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         because it needs to be rejected first, which triggers the call to this
         function.
         """
-        from pontoon.base.models import Translation
+        from pontoon.base.models.translation import Translation
 
         term = self.term
 

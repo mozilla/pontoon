@@ -194,7 +194,7 @@ def user_locale_role(self, locale):
 @property
 def contributed_translations(self):
     """Filtered contributions provided by user."""
-    from pontoon.base.models import Translation
+    from pontoon.base.models.translation import Translation
 
     return Translation.objects.filter(user=self)
 
