@@ -7,13 +7,13 @@ from pontoon.base.models import Resource
 from pontoon.checks.libraries import run_checks
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def run_tt_checks_mock():
     with patch("pontoon.checks.libraries.translate_toolkit.run_checks") as mock:
         yield mock
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def entity_properties_mock():
     """
     Mock of entity from a .properties file.
@@ -28,7 +28,7 @@ def entity_properties_mock():
     yield mock
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def entity_dtd_mock():
     """
     Mock of entity from a .dtd file.
@@ -44,7 +44,7 @@ def entity_dtd_mock():
     yield mock
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def entity_properties_plurals_mock():
     """
     Mock of entity from a .properties file.
@@ -59,7 +59,7 @@ def entity_properties_plurals_mock():
     yield mock
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def entity_invalid_resource_mock():
     """
     Mock of entity from a resource with unsupported filetype.
@@ -74,7 +74,7 @@ def entity_invalid_resource_mock():
     yield mock
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def entity_ftl_mock():
     """
     Mock of entity from a  a .ftl file.

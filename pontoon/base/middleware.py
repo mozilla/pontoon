@@ -6,6 +6,10 @@ from raygun4py.middleware.django import Provider
 
 
 class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
+    def __init__(self, get_response):
+        super().__init__(get_response)
+        self._async_check()
+
     def process_exception(self, request, exception):
         # Ignore non-failure exceptions. We don't need to be notified
         # of these.

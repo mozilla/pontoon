@@ -125,7 +125,7 @@ class Locale(DjangoObjectType, Stats):
 
 
 class Query(graphene.ObjectType):
-    debug = graphene.Field(DjangoDebug, name="__debug")
+    debug = graphene.Field(DjangoDebug, name="_debug")
 
     # include_disabled=True will return both active and disabled projects.
     # include_system=True will return both system and non-system projects.

@@ -323,9 +323,7 @@ TEMPLATES = [
             "extensions": [
                 "jinja2.ext.do",
                 "jinja2.ext.loopcontrols",
-                "jinja2.ext.with_",
                 "jinja2.ext.i18n",
-                "jinja2.ext.autoescape",
                 "django_jinja.builtins.extensions.CsrfExtension",
                 "django_jinja.builtins.extensions.CacheExtension",
                 "django_jinja.builtins.extensions.TimezoneExtension",
@@ -707,27 +705,8 @@ STATICFILES_DIRS = [
     os.path.join(TAGADMIN_DIR, "dist"),
 ]
 
-
-# Set ALLOWED_HOSTS based on SITE_URL setting.
-def _allowed_hosts():
-    host = _get_site_url_netloc()  # Remove protocol and path
-    result = [host]
-    # In order to be able to use ALLOWED_HOSTS to validate URLs, we need to
-    # have a version of the host that contains the port. This only applies
-    # to local development (usually the host is localhost:8000).
-    if ":" in host:
-        host_no_port = host.rsplit(":", 1)[0]
-        result = [host, host_no_port]
-
-    # add values from environment variable. Needed in case of URL/domain redirections
-    env_vars_str = os.getenv("ALLOWED_HOSTS", "127.0.0.1:8000")
-    env_vars = [x.strip() for x in env_vars_str.split(",")]
-    result.extend(env_vars)
-
-    return result
-
-
-ALLOWED_HOSTS = lazy(_allowed_hosts, list)()
+allowed_hosts = os.environ.get("ALLOWED_HOSTS")
+ALLOWED_HOSTS = allowed_hosts.split(",") if allowed_hosts else []
 
 # Auth
 # The first hasher in this list will be used for new passwords.
