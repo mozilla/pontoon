@@ -1,8 +1,8 @@
-from django.db import models
-
-from pontoon.base.models.comment import Comment
 from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
+from pontoon.base.models.comment import Comment
 from pontoon.base.models.entity import Entity, get_word_count
+from pontoon.base.models.external_resource import ExternalResource
 from pontoon.base.models.locale import Locale, LocaleCodeHistory, validate_cldr
 from pontoon.base.models.permission_changelog import PermissionChangelog
 from pontoon.base.models.project import Priority, Project, ProjectSlugHistory
@@ -40,23 +40,3 @@ __all__ = [
     "repository_url_validator",
     "validate_cldr",
 ]
-
-
-class ExternalResource(models.Model):
-    """
-    Represents links to external project resources like staging websites,
-    production websites, development builds, production builds, screenshots,
-    langpacks, etc. or team resources like style guides, dictionaries,
-    glossaries, etc.
-    Has no relation to the Resource class.
-    """
-
-    locale = models.ForeignKey(Locale, models.CASCADE, blank=True, null=True)
-    project = models.ForeignKey(Project, models.CASCADE, blank=True, null=True)
-    name = models.CharField(max_length=32)
-    url = models.URLField("URL", blank=True)
-
-    def __str__(self):
-        return self.name
-
-
