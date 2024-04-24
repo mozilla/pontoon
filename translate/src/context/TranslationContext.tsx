@@ -29,7 +29,7 @@ const LLMTranslationContext = createContext<LLMTranslationContextType>({
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
   const stateRef = useRef(new WeakMap<MachineryTranslation, SelState>());
-  const [_, setVersion] = useState(0); // Counter to trigger re-renders
+  const [, setVersion] = useState(0); // Counter to trigger re-renders
 
   const getSelState = (mt: MachineryTranslation): SelState => {
     return stateRef.current.get(mt) ?? initSelState();
