@@ -263,7 +263,8 @@ class Translation(DirtyFieldsMixin, models.Model):
         return self.string
 
     def save(self, update_stats=True, failed_checks=None, *args, **kwargs):
-        from pontoon.base.models import TranslatedResource, TranslationMemoryEntry
+        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
         # We parametrize update of stats to make testing easier.
         if update_stats:
@@ -381,7 +382,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Approve translation.
         """
-        from pontoon.base.models import TranslationMemoryEntry
+        from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
         self.approved = True
         self.approved_user = user
@@ -415,7 +416,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Unapprove translation.
         """
-        from pontoon.base.models import TranslationMemoryEntry
+        from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
         self.approved = False
         self.unapproved_user = user
@@ -429,7 +430,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         """
         Reject translation.
         """
-        from pontoon.base.models import TranslationMemoryEntry
+        from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
         # Check if translation was approved or pretranslated or fuzzy.
         # We must do this before rejecting it.
