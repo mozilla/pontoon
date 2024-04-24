@@ -430,7 +430,7 @@ class Project(AggregatedStats):
         This method resets the order field, and should be called when new resources are
         added to or removed from the project.
         """
-        from pontoon.base.models import Resource
+        from pontoon.base.models.resource import Resource
 
         ordered_resources = []
 
