@@ -45,10 +45,39 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import utils
 from pontoon.base.fluent import get_simple_preview
+from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
+from pontoon.base.models.comment import Comment
+from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.models.permission_changelog import PermissionChangelog
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
 from pontoon.db import IContainsCollate, LevenshteinDistance  # noqa
 from pontoon.sync import KEY_SEPARATOR
+
+__all__ = [
+    "AggregatedStats",
+    "ChangedEntityLocale",
+    "Comment",
+    "Entity",
+    "ExternalResource",
+    "Locale",
+    "LocaleCodeHistory",
+    "PermissionChangelog",
+    "Priority",
+    "Project",
+    "ProjectLocale",
+    "ProjectSlugHistory",
+    "Repository",
+    "Resource",
+    "TranslatedResource",
+    "Translation",
+    "TranslationMemoryEntry",
+    "User",
+    "UserProfile",
+    "get_word_count",
+    "repository_url_validator",
+    "validate_cldr",
+]
 
 log = logging.getLogger(__name__)
 
@@ -502,180 +531,6 @@ User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
 User.add_to_class("serialize", user_serialize)
 User.add_to_class("latest_action", latest_action)
-
-
-class PermissionChangelog(models.Model):
-    """
-    Track changes of roles added or removed from a user.
-    """
-
-    # Managers can perform various action on a user.
-    class ActionType(models.TextChoices):
-        # User has been added to a group (e.g. translators, managers).
-        ADDED = "added", "Added"
-        # User has been removed from a group (e.g. translators, managers).
-        REMOVED = "removed", "Removed"
-
-    action_type = models.CharField(max_length=20, choices=ActionType.choices)
-    performed_by = models.ForeignKey(
-        User, models.SET_NULL, null=True, related_name="changed_permissions_log"
-    )
-    performed_on = models.ForeignKey(
-        User, models.SET_NULL, null=True, related_name="permisions_log"
-    )
-    group = models.ForeignKey(Group, models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = "User permissions log"
-        verbose_name_plural = "Users permissions logs"
-        ordering = ("pk",)
-
-    def __repr__(self):
-        return "User(pk={}) {} User(pk={}) from {}".format(
-            self.performed_by_id,
-            self.action_type,
-            self.performed_on_id,
-            self.group.name,
-        )
-
-
-class AggregatedStats(models.Model):
-    total_strings = models.PositiveIntegerField(default=0)
-    approved_strings = models.PositiveIntegerField(default=0)
-    pretranslated_strings = models.PositiveIntegerField(default=0)
-    strings_with_errors = models.PositiveIntegerField(default=0)
-    strings_with_warnings = models.PositiveIntegerField(default=0)
-    unreviewed_strings = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        abstract = True
-
-    @classmethod
-    def get_chart_dict(cls, obj):
-        """Get chart data dictionary"""
-        if obj.total_strings:
-            return {
-                "total_strings": obj.total_strings,
-                "approved_strings": obj.approved_strings,
-                "pretranslated_strings": obj.pretranslated_strings,
-                "strings_with_errors": obj.strings_with_errors,
-                "strings_with_warnings": obj.strings_with_warnings,
-                "unreviewed_strings": obj.unreviewed_strings,
-                "approved_share": round(obj.approved_percent),
-                "pretranslated_share": round(obj.pretranslated_percent),
-                "errors_share": round(obj.errors_percent),
-                "warnings_share": round(obj.warnings_percent),
-                "unreviewed_share": round(obj.unreviewed_percent),
-                "completion_percent": int(math.floor(obj.completed_percent)),
-            }
-
-    @classmethod
-    def get_stats_sum(cls, qs):
-        """
-        Get sum of stats for all items in the queryset.
-        """
-        return {
-            "total_strings": sum(x.total_strings for x in qs),
-            "approved_strings": sum(x.approved_strings for x in qs),
-            "pretranslated_strings": sum(x.pretranslated_strings for x in qs),
-            "strings_with_errors": sum(x.strings_with_errors for x in qs),
-            "strings_with_warnings": sum(x.strings_with_warnings for x in qs),
-            "unreviewed_strings": sum(x.unreviewed_strings for x in qs),
-        }
-
-    @classmethod
-    def get_top_instances(cls, qs):
-        """
-        Get top instances in the queryset.
-        """
-        return {
-            "most_strings": sorted(qs, key=lambda x: x.total_strings)[-1],
-            "most_translations": sorted(qs, key=lambda x: x.approved_strings)[-1],
-            "most_suggestions": sorted(qs, key=lambda x: x.unreviewed_strings)[-1],
-            "most_missing": sorted(qs, key=lambda x: x.missing_strings)[-1],
-        }
-
-    def adjust_stats(
-        self,
-        total_strings_diff,
-        approved_strings_diff,
-        pretranslated_strings_diff,
-        strings_with_errors_diff,
-        strings_with_warnings_diff,
-        unreviewed_strings_diff,
-    ):
-        self.total_strings = F("total_strings") + total_strings_diff
-        self.approved_strings = F("approved_strings") + approved_strings_diff
-        self.pretranslated_strings = (
-            F("pretranslated_strings") + pretranslated_strings_diff
-        )
-        self.strings_with_errors = F("strings_with_errors") + strings_with_errors_diff
-        self.strings_with_warnings = (
-            F("strings_with_warnings") + strings_with_warnings_diff
-        )
-        self.unreviewed_strings = F("unreviewed_strings") + unreviewed_strings_diff
-
-        self.save(
-            update_fields=[
-                "total_strings",
-                "approved_strings",
-                "pretranslated_strings",
-                "strings_with_errors",
-                "strings_with_warnings",
-                "unreviewed_strings",
-            ]
-        )
-
-    @property
-    def missing_strings(self):
-        return (
-            self.total_strings
-            - self.approved_strings
-            - self.pretranslated_strings
-            - self.strings_with_errors
-            - self.strings_with_warnings
-        )
-
-    @property
-    def completed_strings(self):
-        return (
-            self.approved_strings
-            + self.pretranslated_strings
-            + self.strings_with_warnings
-        )
-
-    @property
-    def complete(self):
-        return self.total_strings == self.completed_strings
-
-    @property
-    def completed_percent(self):
-        return self.percent_of_total(self.completed_strings)
-
-    @property
-    def approved_percent(self):
-        return self.percent_of_total(self.approved_strings)
-
-    @property
-    def pretranslated_percent(self):
-        return self.percent_of_total(self.pretranslated_strings)
-
-    @property
-    def errors_percent(self):
-        return self.percent_of_total(self.strings_with_errors)
-
-    @property
-    def warnings_percent(self):
-        return self.percent_of_total(self.strings_with_warnings)
-
-    @property
-    def unreviewed_percent(self):
-        return self.percent_of_total(self.unreviewed_strings)
-
-    def percent_of_total(self, n):
-        return n / self.total_strings * 100 if self.total_strings else 0
 
 
 def validate_cldr(value):
@@ -3080,20 +2935,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         return entities_array
 
 
-class ChangedEntityLocale(models.Model):
-    """
-    ManyToMany model for storing what locales have changed translations for a
-    specific entity since the last sync.
-    """
-
-    entity = models.ForeignKey(Entity, models.CASCADE)
-    locale = models.ForeignKey(Locale, models.CASCADE)
-    when = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ("entity", "locale")
-
-
 class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
         return TranslatedResource.objects.filter(
@@ -3981,50 +3822,3 @@ class TranslatedResource(AggregatedStats):
             strings_with_warnings_diff,
             unreviewed_strings_diff,
         )
-
-
-class Comment(models.Model):
-    author = models.ForeignKey(User, models.SET_NULL, null=True)
-    timestamp = models.DateTimeField(default=timezone.now)
-    translation = models.ForeignKey(
-        Translation,
-        models.CASCADE,
-        related_name="comments",
-        blank=True,
-        null=True,
-    )
-    locale = models.ForeignKey(
-        Locale, models.CASCADE, related_name="comments", blank=True, null=True
-    )
-    entity = models.ForeignKey(
-        Entity, models.CASCADE, related_name="comments", blank=True, null=True
-    )
-    content = models.TextField()
-    pinned = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.content
-
-    def serialize(self):
-        return {
-            "author": self.author.name_or_email,
-            "username": self.author.username,
-            "user_gravatar_url_small": self.author.gravatar_url(88),
-            "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
-            "date_iso": self.timestamp.isoformat(),
-            "content": self.content,
-            "pinned": self.pinned,
-            "id": self.id,
-        }
-
-    def save(self, *args, **kwargs):
-        """
-        Validate Comments before saving.
-        """
-        if not (
-            (self.translation and not self.locale and not self.entity)
-            or (not self.translation and self.locale and self.entity)
-        ):
-            raise ValidationError("Invalid comment arguments")
-
-        super().save(*args, **kwargs)
