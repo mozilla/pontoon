@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useState, useRef } from 'react';
 import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
 
 type SelState = {
@@ -35,14 +29,11 @@ const LLMTranslationContext = createContext<LLMTranslationContextType>({
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
   const stateRef = useRef(new WeakMap<MachineryTranslation, SelState>());
-  const [version, setVersion] = useState(0); // Counter to trigger re-renders
+  const [_, setVersion] = useState(0); // Counter to trigger re-renders
 
-  const getSelState = useCallback(
-    (mt: MachineryTranslation): SelState => {
-      return stateRef.current.get(mt) ?? initSelState();
-    },
-    [version],
-  );
+  const getSelState = (mt: MachineryTranslation): SelState => {
+    return stateRef.current.get(mt) ?? initSelState();
+  };
 
   const transformLLMTranslation = async (
     mt: MachineryTranslation,
@@ -53,8 +44,6 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     stateRef.current.set(mt, {
       ...currentState,
       loading: true,
-      selectedOption: currentState.selectedOption,
-      llmTranslation: currentState.llmTranslation,
     });
     setVersion((v) => v + 1); // Trigger re-render
 
