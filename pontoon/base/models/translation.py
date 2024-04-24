@@ -21,7 +21,7 @@ from pontoon.checks.utils import save_failed_checks
 
 class TranslationQuerySet(models.QuerySet):
     def translated_resources(self, locale):
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         return TranslatedResource.objects.filter(
             resource__entities__translation__in=self, locale=locale
@@ -263,7 +263,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         return self.string
 
     def save(self, update_stats=True, failed_checks=None, *args, **kwargs):
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
         # We parametrize update of stats to make testing easier.
@@ -352,7 +352,7 @@ class Translation(DirtyFieldsMixin, models.Model):
         Set `latest_translation` to this translation if its more recent than
         the currently stored translation. Do this for all affected models.
         """
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         resource = self.entity.resource
         project = resource.project

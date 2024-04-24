@@ -53,7 +53,7 @@ class LocaleQuerySet(models.QuerySet):
         """
         Available locales have at least one TranslatedResource defined.
         """
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         return self.filter(
             pk__in=TranslatedResource.objects.values_list("locale", flat=True)
@@ -371,7 +371,8 @@ class Locale(AggregatedStats):
         return ProjectLocale.get_chart(self, project)
 
     def aggregate_stats(self):
-        from pontoon.base.models import Project, TranslatedResource
+        from pontoon.base.models.project import Project
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         TranslatedResource.objects.filter(
             resource__project__disabled=False,
@@ -398,7 +399,7 @@ class Locale(AggregatedStats):
 
     def parts_stats(self, project):
         """Get locale-project paths with stats."""
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.project_locale import ProjectLocale
 
         def get_details(parts):

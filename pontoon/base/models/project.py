@@ -387,7 +387,7 @@ class Project(AggregatedStats):
         return ProjectLocale.get_chart(self, locale)
 
     def aggregate_stats(self):
-        from pontoon.base.models import TranslatedResource
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         TranslatedResource.objects.filter(
             resource__project=self, resource__entities__obsolete=False
