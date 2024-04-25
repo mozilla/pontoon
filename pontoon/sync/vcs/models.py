@@ -32,7 +32,7 @@ from pontoon.sync.utils import (
     locale_to_source_path,
     source_to_locale_path,
 )
-from pontoon.sync.vcs.repositories import get_changed_files
+from pontoon.sync.repositories import get_changed_files
 
 
 log = logging.getLogger(__name__)

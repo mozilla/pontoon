@@ -26,7 +26,7 @@ from pontoon.sync.core import (
     get_changed_locales,
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
-from pontoon.sync.vcs.repositories import CommitToRepositoryException
+from pontoon.sync.repositories import CommitToRepositoryException
 from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
 from pontoon.pretranslation.tasks import pretranslate
 

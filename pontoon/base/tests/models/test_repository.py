@@ -131,10 +131,8 @@ def test_repo_url_for_path_no_match(repo_git, locale_a, settings):
 
 @pytest.mark.django_db
 def test_repo_pull(repo_git):
-    with patch(
-        "pontoon.sync.vcs.repositories.update_from_vcs"
-    ) as m_update_from_vcs, patch(
-        "pontoon.sync.vcs.repositories.get_revision"
+    with patch("pontoon.sync.repositories.update_from_vcs") as m_update_from_vcs, patch(
+        "pontoon.sync.repositories.get_revision"
     ) as m_get_revision:
         repo_git.url = "https://example.com"
         m_get_revision.return_value = "asdf"
@@ -159,8 +157,8 @@ def test_repo_pull_multi_locale(project_locale_a, repo_git, locale_b):
         locale=locale_b,
     )
 
-    with patch("pontoon.sync.vcs.repositories.update_from_vcs") as m_update_from_vcs:
-        with patch("pontoon.sync.vcs.repositories.get_revision") as m_get_revision:
+    with patch("pontoon.sync.repositories.update_from_vcs") as m_update_from_vcs:
+        with patch("pontoon.sync.repositories.get_revision") as m_get_revision:
             repo_git.url = "https://example.com/{locale_code}/"
             repo_git.locale_url = lambda locale: "https://example.com/%s" % locale.code
             repo_git.locale_checkout_path = lambda locale: "/media/%s" % locale.code
@@ -192,7 +190,7 @@ def test_repo_pull_multi_locale(project_locale_a, repo_git, locale_b):
 def test_repo_commit(repo_git):
     repo_git.url = "https://example.com"
 
-    with patch("pontoon.sync.vcs.repositories.commit_to_vcs") as m:
+    with patch("pontoon.sync.repositories.commit_to_vcs") as m:
         repo_git.commit("message", "author", "path")
         assert m.call_args[0] == (
             "git",
@@ -214,7 +212,7 @@ def test_repo_commit_multi_locale(repo_git):
 
     repo_git.url_for_path = Mock(return_value="https://example.com/for_path")
 
-    with patch("pontoon.sync.vcs.repositories.commit_to_vcs") as m:
+    with patch("pontoon.sync.repositories.commit_to_vcs") as m:
         repo_git.commit("message", "author", "path")
         assert m.call_args[0] == (
             "git",

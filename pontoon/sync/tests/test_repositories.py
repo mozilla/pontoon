@@ -2,11 +2,11 @@ from textwrap import dedent
 from unittest.mock import Mock, patch
 
 from pontoon.base.tests import CONTAINS, TestCase
-from pontoon.sync.vcs.repositories import get_repo
+from pontoon.sync.repositories import get_repo
 
 
 class VCSRevisionTests(TestCase):
-    @patch("pontoon.sync.vcs.git.log")
+    @patch("pontoon.sync.repositories.git.log")
     @patch("subprocess.Popen")
     def test_git_revision(self, mock_popen, mock_log):
         attrs = {"communicate.return_value": (b"output", b"stderr"), "returncode": 1}
@@ -14,7 +14,7 @@ class VCSRevisionTests(TestCase):
         assert get_repo("git").revision("path/") is None
         mock_log.error.assert_called_with(CONTAINS("stderr", "rev-parse", "path/"))
 
-    @patch("pontoon.sync.vcs.hg.log")
+    @patch("pontoon.sync.repositories.hg.log")
     @patch("subprocess.Popen")
     def test_hg_revision(self, mock_popen, mock_log):
         attrs = {"communicate.return_value": (b"output", b"stderr"), "returncode": 1}
@@ -22,7 +22,7 @@ class VCSRevisionTests(TestCase):
         assert get_repo("hg").revision("path/") is None
         mock_log.error.assert_called_with(CONTAINS("stderr", "identify", "path/"))
 
-    @patch("pontoon.sync.vcs.svn.log")
+    @patch("pontoon.sync.repositories.svn.log")
     @patch("subprocess.Popen")
     def test_svn_revision(self, mock_popen, mock_log):
         attrs = {"communicate.return_value": (b"output", b"stderr"), "returncode": 1}
