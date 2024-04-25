@@ -20,10 +20,10 @@ def test_ajax_resources(mock_render, client, project_a, locale_a):
     """Ensure that the latest_activity field is added to parts."""
     ProjectLocaleFactory.create(locale=locale_a, project=project_a)
 
-    resource = ResourceFactory.create(project=project_a, path="has/stats.po")
+    resource1 = ResourceFactory.create(project=project_a, path="has/stats1.po")
     resource2 = ResourceFactory.create(project=project_a, path="has/stats2.po")
 
-    entity = EntityFactory.create(resource=resource)
+    entity = EntityFactory.create(resource=resource1)
     EntityFactory.create(resource=resource2)
     translation = TranslationFactory.create(entity=entity, locale=locale_a)
 
@@ -45,11 +45,12 @@ def test_ajax_resources(mock_render, client, project_a, locale_a):
 
     assert len(ctx["resources"]) == 2
 
-    assert ctx["resources"][0].title == "has/stats2.po"
-    assert ctx["resources"][0].deadline is None
-    assert ctx["resources"][0].priority is None
-    assert ctx["resources"][0].latest_activity == translation.latest_activity
-    assert ctx["resources"][0].chart == {
+    res = ctx["resources"][1]
+    assert res.title == "has/stats2.po"
+    assert res.deadline is None
+    assert res.priority is None
+    assert res.latest_activity == translation.latest_activity
+    assert res.chart == {
         "pretranslated_strings": 0,
         "total_strings": 1,
         "approved_strings": 0,
