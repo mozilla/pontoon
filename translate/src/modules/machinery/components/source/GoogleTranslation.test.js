@@ -15,14 +15,12 @@ describe('<GoogleTranslation>', () => {
     );
 
     expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('Localized').props().id).toEqual(
+    expect(wrapper.find('.selector Localized').props().id).toEqual(
       'machinery-GoogleTranslation--translation-source',
     );
     expect(wrapper.find('span.translation-source')).toHaveLength(1);
-    expect(
-      wrapper.find('span.translation-source').props().onClick,
-    ).toBeDefined();
-    expect(wrapper.find('span.translation-source span').text()).toEqual(
+    expect(wrapper.find('.selector').props().onClick).toBeDefined();
+    expect(wrapper.find('span.translation-source').text()).toEqual(
       'GOOGLE TRANSLATE',
     );
   });
