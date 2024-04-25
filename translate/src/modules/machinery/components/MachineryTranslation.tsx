@@ -41,20 +41,16 @@ export function MachineryTranslationComponent({
 
   const { llmTranslation } = useLLMTranslation(translation);
 
-  const copyRegularTranslationIntoEditor = useCallback(() => {
+  const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setEditorFromHelpers(translation.translation, translation.sources, true);
-    }
-  }, [index, setEditorFromHelpers, translation]);
-
-  const copyLLMTranslationIntoEditor = useCallback(() => {
-    if (window.getSelection()?.isCollapsed !== false) {
-      setElement(index);
-      setEditorFromHelpers(llmTranslation, translation.sources, true);
-      logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
-        action: 'Copy LLM Translation',
-      });
+      const content = llmTranslation || translation.translation;
+      setEditorFromHelpers(content, translation.sources, true);
+      if (llmTranslation) {
+        logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+          action: 'Copy LLM Translation',
+        });
+      }
     }
   }, [index, setEditorFromHelpers, translation, llmTranslation]);
 
@@ -80,11 +76,7 @@ export function MachineryTranslationComponent({
       <li
         className={className}
         title='Copy Into Translation (Ctrl + Shift + Down)'
-        onClick={
-          llmTranslation
-            ? copyLLMTranslationIntoEditor
-            : copyRegularTranslationIntoEditor
-        }
+        onClick={() => copyTranslationIntoEditor()}
         ref={translationRef}
       >
         {translation.sources.includes('concordance-search') ? (
