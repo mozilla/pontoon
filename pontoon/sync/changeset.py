@@ -19,7 +19,9 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
-from .vcs.models import VCSEntity, VCSProject, VCSTranslation
+from .vcs.resource import VCSEntity
+from .vcs.project import VCSProject
+from .vcs.translation import VCSTranslation
 
 log = logging.getLogger(__name__)
 

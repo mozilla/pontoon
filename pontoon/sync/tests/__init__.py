@@ -16,7 +16,9 @@ from pontoon.base.tests import (
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
-from pontoon.sync.vcs.models import VCSEntity, VCSProject, VCSResource, VCSTranslation
+from pontoon.sync.vcs.project import VCSProject
+from pontoon.sync.vcs.resource import VCSEntity, VCSResource
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 FAKE_CHECKOUT_PATH = os.path.join(

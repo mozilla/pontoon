@@ -1,31 +1,25 @@
-"""
-Models for working with remote translation data stored in a VCS.
-"""
 import logging
 import os
 import shutil
-from datetime import datetime
 from itertools import chain
 
-from django.utils import timezone
 from django.utils.functional import cached_property
 
 from pontoon.base import MOZILLA_REPOS
 from pontoon.sync.exceptions import ParseError
+from pontoon.sync.repositories import get_changed_files
 from pontoon.sync.utils import (
+    directory_contains_resources,
+    get_parent_directory,
+    is_asymmetric_resource,
     is_hidden,
     is_resource,
-    is_asymmetric_resource,
-    get_parent_directory,
-    uses_undercore_as_separator,
-    directory_contains_resources,
     locale_directory_path,
-    locale_to_source_path,
     source_to_locale_path,
+    uses_undercore_as_separator,
 )
-from pontoon.sync.repositories import get_changed_files
 from pontoon.sync.vcs.config import VCSConfiguration
-
+from pontoon.sync.vcs.resource import VCSResource
 
 log = logging.getLogger(__name__)
 
@@ -542,207 +536,3 @@ class VCSProject:
             for filename in filenames:
                 if is_resource(filename):
                     yield os.path.join(root, filename)
-
-
-class VCSResource:
-    """Represents a single resource across multiple locales."""
-
-    def __init__(self, vcs_project, path, locales=None):
-        """
-        Load the resource file for each enabled locale and store its
-        translations in VCSEntity instances.
-        """
-        from pontoon.base.models import Locale
-        from pontoon.sync import formats  # Avoid circular import.
-
-        self.vcs_project = vcs_project
-        self.path = path
-        self.locales = locales or []
-        self.files = {}
-        self.entities = {}
-
-        # Create entities using resources from the source directory,
-        source_resource_path = os.path.join(
-            vcs_project.source_directory_path, self.path
-        )
-        source_resource_path = locale_to_source_path(source_resource_path)
-        source_resource_file = formats.parse(
-            source_resource_path, locale=Locale.objects.get(code="en-US")
-        )
-
-        for index, translation in enumerate(source_resource_file.translations):
-            vcs_entity = VCSEntity(
-                resource=self,
-                key=translation.key,
-                context=translation.context,
-                string=translation.source_string,
-                string_plural=translation.source_string_plural,
-                comments=translation.comments,
-                group_comments=(
-                    translation.group_comments
-                    if hasattr(translation, "group_comments")
-                    else None
-                ),
-                resource_comments=(
-                    translation.resource_comments
-                    if hasattr(translation, "resource_comments")
-                    else None
-                ),
-                source=translation.source,
-                order=translation.order or index,
-            )
-            self.entities[vcs_entity.key] = vcs_entity
-
-        # Fill in translations from the locale resources.
-        for locale in locales:
-            locale_directory = self.vcs_project.locale_directory_paths[locale.code]
-
-            if self.vcs_project.configuration:
-                # Some resources might not be available for this locale
-                resource_path = self.vcs_project.configuration.l10n_path(
-                    locale,
-                    source_resource_path,
-                )
-                if resource_path is None:
-                    continue
-            else:
-                resource_path = os.path.join(locale_directory, self.path)
-
-            log.debug("Parsing resource file: %s", resource_path)
-
-            try:
-                resource_file = formats.parse(
-                    resource_path, source_resource_path, locale
-                )
-
-            # File doesn't exist or is invalid: log it and move on
-            except (OSError, ParseError) as err:
-                log.error(
-                    "Skipping resource {path} due to {type}: {err}".format(
-                        path=path, type=type(err).__name__, err=err
-                    )
-                )
-                continue
-
-            self.files[locale] = resource_file
-
-            log.debug("Discovered %s translations.", len(resource_file.translations))
-
-            for translation in resource_file.translations:
-                try:
-                    self.entities[translation.key].translations[
-                        locale.code
-                    ] = translation
-                except KeyError:
-                    # If the source is missing an entity, we consider it
-                    # deleted and don't add it.
-                    pass
-
-    def save(self, locale=None):
-        """
-        Save changes made to any of the translations in this resource
-        back to the filesystem for all locales.
-        """
-        if locale:
-            self.files[locale].save(locale)
-
-        else:
-            for locale, resource_file in self.files.items():
-                resource_file.save(locale)
-
-
-class VCSEntity:
-    """
-    An Entity is a single string to be translated, and a VCSEntity
-    stores the translations for an entity from several locales.
-    """
-
-    def __init__(
-        self,
-        resource,
-        key,
-        string,
-        source,
-        comments,
-        group_comments=None,
-        resource_comments=None,
-        context="",
-        string_plural="",
-        order=0,
-    ):
-        self.resource = resource
-        self.key = key
-        self.string = string
-        self.string_plural = string_plural
-        self.source = source
-        self.comments = comments
-        self.group_comments = group_comments or []
-        self.resource_comments = resource_comments or []
-        self.context = context
-        self.order = order
-        self.translations = {}
-
-    def has_translation_for(self, locale_code):
-        """Return True if a translation exists for the given locale."""
-        return locale_code in self.translations
-
-
-class VCSTranslation:
-    """
-    A single translation of a source string into another language.
-
-    Since a string can have different translations based on plural
-    forms, all of the different forms are stored under self.strings, a
-    dict where the keys equal possible values for
-    pontoon.base.models.Translation.plural_form and the values equal the
-    translation for that plural form.
-    """
-
-    def __init__(
-        self,
-        key,
-        strings,
-        comments,
-        fuzzy,
-        context="",
-        source_string="",
-        source_string_plural="",
-        group_comments=None,
-        resource_comments=None,
-        order=0,
-        source=None,
-        last_translator=None,
-        last_updated=None,
-    ):
-        self.key = key
-        self.context = context
-        self.source_string = source_string
-        self.source_string_plural = source_string_plural
-        self.strings = strings
-        self.comments = comments
-        self.group_comments = group_comments
-        self.resource_comments = resource_comments
-        self.fuzzy = fuzzy
-        self.order = order
-        self.source = source or []
-        self.last_translator = last_translator
-        self.last_updated = last_updated
-
-    def update_from_db(self, db_translations):
-        """
-        Update translation with current DB state.
-        """
-        # If no DB translations are fuzzy, set fuzzy to False.
-        # Otherwise, it's true.
-        self.fuzzy = any(t for t in db_translations if t.fuzzy)
-
-        if len(db_translations) > 0:
-            last_translation = max(
-                db_translations,
-                key=lambda t: t.date or timezone.make_aware(datetime.min),
-            )
-            self.last_updated = last_translation.date
-            self.last_translator = last_translation.user
-
-        # Replace existing translations with ones from the database.
-        self.strings = {db.plural_form: db.string for db in db_translations}

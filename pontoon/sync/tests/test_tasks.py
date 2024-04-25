@@ -44,7 +44,7 @@ class SyncProjectTests(TestCase):
         )
 
         self.mock_source_directory_path = self.patch(
-            "pontoon.sync.vcs.models.VCSProject.source_directory_path",
+            "pontoon.sync.vcs.project.VCSProject.source_directory_path",
             return_value=self.repository.checkout_path,
         )
 

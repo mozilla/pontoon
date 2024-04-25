@@ -23,8 +23,9 @@ from pontoon.sync.tests import (
     VCSEntityFactory,
     VCSTranslationFactory,
 )
+from pontoon.sync.vcs.project import VCSProject
 from pontoon.sync.vcs.config import VCSConfiguration
-from pontoon.sync.vcs.models import VCSResource, VCSProject
+from pontoon.sync.vcs.resource import VCSResource
 
 TEST_CHECKOUT_PATH = os.path.join(
     os.path.dirname(__file__), "directory_detection_tests"
@@ -79,7 +80,7 @@ class VCSProjectTests(VCSTestCase):
 
         # Return empty dict if no reference path found for any of the paths
         with patch(
-            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            "pontoon.sync.vcs.config.VCSConfiguration.reference_path",
             return_value=None,
         ):
             files = self.vcs_project.get_relevant_files_with_config(paths)
@@ -87,7 +88,7 @@ class VCSProjectTests(VCSTestCase):
 
         # Return empty dict if no reference path found for any of the paths
         with patch(
-            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            "pontoon.sync.vcs.config.VCSConfiguration.reference_path",
             return_value="reference/path/to/localizable_file.ftl",
         ):
             files = self.vcs_project.get_relevant_files_with_config(paths)
@@ -229,8 +230,8 @@ class VCSProjectTests(VCSTestCase):
                 return "successful resource"
 
         changed_vcs_resources = {"success": [], "failure": []}
-        with patch("pontoon.sync.vcs.models.VCSResource") as MockVCSResource, patch(
-            "pontoon.sync.vcs.models.log"
+        with patch("pontoon.sync.vcs.project.VCSResource") as MockVCSResource, patch(
+            "pontoon.sync.vcs.project.log"
         ) as mock_log, patch.object(
             VCSProject,
             "changed_files",
@@ -280,8 +281,8 @@ class VCSProjectTests(VCSTestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch("pontoon.sync.vcs.models.os", wraps=os) as mock_os, patch(
-            "pontoon.sync.vcs.models.MOZILLA_REPOS", [url]
+        with patch("pontoon.sync.vcs.project.os", wraps=os) as mock_os, patch(
+            "pontoon.sync.vcs.project.MOZILLA_REPOS", [url]
         ):
             mock_os.walk.return_value = [
                 ("/root", [], ["foo.pot", "region.properties"])
@@ -304,7 +305,7 @@ class VCSProjectTests(VCSTestCase):
             ("/root/templates", [], ("foo.pot",)),
         )
         with patch(
-            "pontoon.sync.vcs.models.os.walk",
+            "pontoon.sync.vcs.project.os.walk",
             wraps=os,
             return_value=hidden_paths,
         ):

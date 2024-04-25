@@ -27,7 +27,7 @@ from pontoon.sync.core import (
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.repositories import CommitToRepositoryException
-from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
+from pontoon.sync.vcs.project import MissingSourceDirectoryError, VCSProject
 from pontoon.pretranslation.tasks import pretranslate
 
 

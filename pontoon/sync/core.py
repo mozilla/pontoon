@@ -21,7 +21,7 @@ from pontoon.base.models import (
     TranslatedResource,
 )
 from .changeset import ChangeSet
-from .vcs.models import VCSProject
+from .vcs.project import VCSProject
 
 
 log = logging.getLogger(__name__)
