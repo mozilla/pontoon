@@ -8,19 +8,10 @@ export function MicrosoftTranslation(): React.ReactElement<'li'> {
   return (
     <li>
       <Localized
-        id='machinery-MicrosoftTranslation--visit-bing'
+        id='machinery-MicrosoftTranslation--translation-source'
         attrs={{ title: true }}
       >
-        <a
-          className='translation-source'
-          href='https://www.bing.com/translator'
-          title='Visit Microsoft Translator'
-          target='_blank'
-          rel='noopener noreferrer'
-          onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        >
-          <span>MICROSOFT TRANSLATOR</span>
-        </a>
+        <span className='translation-source'>MICROSOFT TRANSLATOR</span>
       </Localized>
     </li>
   );

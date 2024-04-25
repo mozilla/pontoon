@@ -493,8 +493,8 @@ machinery-Machinery--load-more = LOAD MORE
 
 ## Machinery Caighdean Translation
 ## Shows the translation source from Caighdean Machine Translation.
-machinery-CaighdeanTranslation--visit-caighdean = CAIGHDEAN
-    .title = Visit Caighdean Machine Translation
+machinery-CaighdeanTranslation--translation-source = CAIGHDEAN
+
 
 ## Machinery Concordance Search
 ## Shows concordance search results from Pontoon's memory.
@@ -504,8 +504,6 @@ machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 ## Machinery Google Translation
 ## Shows the translation source from Google Translate.
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
-    .title = Visit Google Translate
-
 machinery-GoogleTranslation--selector =
     .title = Refine using AI
 
@@ -517,22 +515,17 @@ machinery-GoogleTranslation--option-show-original = SHOW ORIGINAL
 
 ## Machinery Microsoft Translation
 ## Shows the translation source from Microsoft Translation.
-machinery-MicrosoftTranslation--visit-bing = MICROSOFT TRANSLATOR
-    .title = Visit Microsoft Translator
+machinery-MicrosoftTranslation--translation-source = MICROSOFT TRANSLATOR
 
 
 ## Machinery Systran Translate
 ## Shows the translation source from Systran Translate.
-machinery-SystranTranslate--visit-systran = SYSTRAN TRANSLATE
-    .title = Visit Systran Translate
+machinery-SystranTranslate--translation-source = SYSTRAN TRANSLATE
 
 
 ## Machinery Microsoft Terminology
 ## Shows the translation source from Microsoft Terminology.
-machinery-MicrosoftTerminology--visit-microsoft = MICROSOFT
-    .title =
-        Visit Microsoft Terminology Service API.
-        © 2018 Microsoft Corporation. All rights reserved.
+machinery-MicrosoftTerminology--translation-source = MICROSOFT
 
 
 ## Machinery Translation
@@ -543,9 +536,7 @@ machinery-Translation--copy =
 
 ## Machinery Translation Memory
 ## Shows the translation source from Pontoon's memory.
-machinery-TranslationMemory--pontoon-homepage =
-    .title = Pontoon Homepage
-machinery-TranslationMemory--translation-memory = TRANSLATION MEMORY
+machinery-TranslationMemory--translation-source = TRANSLATION MEMORY
 machinery-TranslationMemory--number-occurrences =
     .title = Number of translation occurrences
 
