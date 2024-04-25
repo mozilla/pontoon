@@ -28,8 +28,12 @@ def tm_entry_short():
 
 
 @pytest.mark.django_db
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio")
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.python_levenshtein_ratio")
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio"
+)
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.python_levenshtein_ratio"
+)
 def test_levenshtein_ratio_string_below_255_chars(
     python_mock, postgresql_mock, tm_entry_short
 ):
@@ -47,8 +51,12 @@ def test_levenshtein_ratio_string_below_255_chars(
 
 
 @pytest.mark.django_db
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio")
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.python_levenshtein_ratio")
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio"
+)
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.python_levenshtein_ratio"
+)
 def test_levenshtein_ratio_string_equals_255_chars(
     python_mock, postgresql_mock, tm_entry_medium
 ):
@@ -66,8 +74,12 @@ def test_levenshtein_ratio_string_equals_255_chars(
 
 
 @pytest.mark.django_db
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio")
-@patch("pontoon.base.models.TranslationMemoryEntryQuerySet.python_levenshtein_ratio")
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.postgres_levenshtein_ratio"
+)
+@patch(
+    "pontoon.base.models.translation_memory.TranslationMemoryEntryQuerySet.python_levenshtein_ratio"
+)
 def test_levenshtein_ratio_string_above_255_chars(
     python_mock, postgresql_mock, tm_entry_long
 ):
