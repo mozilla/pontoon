@@ -9,14 +9,8 @@ describe('<CaighdeanTranslation>', () => {
 
     expect(wrapper.find('li')).toHaveLength(1);
     expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-CaighdeanTranslation--visit-caighdean',
+      'machinery-CaighdeanTranslation--translation-source',
     );
-    expect(wrapper.find('li a').props().href).toEqual(
-      'https://github.com/kscanne/caighdean',
-    );
-    expect(wrapper.find('li a').props().title).toEqual(
-      'Visit Caighdean Machine Translation',
-    );
-    expect(wrapper.find('li a span').text()).toEqual('CAIGHDEAN');
+    expect(wrapper.find('li span').text()).toEqual('CAIGHDEAN');
   });
 });

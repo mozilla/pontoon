@@ -7,20 +7,8 @@ import { Localized } from '@fluent/react';
 export function CaighdeanTranslation(): React.ReactElement<'li'> {
   return (
     <li>
-      <Localized
-        id='machinery-CaighdeanTranslation--visit-caighdean'
-        attrs={{ title: true }}
-      >
-        <a
-          className='translation-source'
-          href='https://github.com/kscanne/caighdean'
-          title='Visit Caighdean Machine Translation'
-          target='_blank'
-          rel='noopener noreferrer'
-          onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        >
-          <span>CAIGHDEAN</span>
-        </a>
+      <Localized id='machinery-CaighdeanTranslation--translation-source'>
+        <span className='translation-source'>CAIGHDEAN</span>
       </Localized>
     </li>
   );

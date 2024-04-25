@@ -45,9 +45,7 @@ export function MachineryTranslationSource({
         sources.push(<SystranTranslation key={source} />);
         break;
       case 'microsoft-terminology':
-        sources.push(
-          <MicrosoftTerminology original={translation.original} key={source} />,
-        );
+        sources.push(<MicrosoftTerminology key={source} />);
         break;
       case 'caighdean':
         sources.push(<CaighdeanTranslation key={source} />);
