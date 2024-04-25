@@ -20,7 +20,7 @@ export function GoogleTranslation({
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
 
-  const { transformLLMTranslation, selectedOption } =
+  const { transformLLMTranslation, selectedOption, restoreOriginal } =
     useLLMTranslation(translation);
 
   const toggleDropdown = (ev: React.MouseEvent) => {
@@ -31,17 +31,18 @@ export function GoogleTranslation({
   const handleOptionClick = async (ev: React.MouseEvent<HTMLLIElement>) => {
     ev.stopPropagation();
     const target = ev.currentTarget;
-    const characteristic = target.dataset['characteristic'];
+    const characteristic = target.dataset['characteristic'] as string;
 
-    if (characteristic) {
-      setDropdownOpen(false);
+    if (characteristic === 'original') {
+      restoreOriginal(translation);
+    } else {
       await transformLLMTranslation(translation, characteristic, locale.name);
-
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
         targetLanguage: locale.name,
       });
     }
+    setDropdownOpen(false);
   };
 
   // TODO: Localize selectedOptionText before setting it as selected option.
@@ -97,12 +98,16 @@ export function GoogleTranslation({
               MAKE INFORMAL
             </li>
           </Localized>
-          <li className='horizontal-separator'></li>
-          <Localized id='machinery-GoogleTranslation--option-show-original'>
-            <li data-characteristic='original' onClick={handleOptionClick}>
-              SHOW ORIGINAL
-            </li>
-          </Localized>
+          {selectedOption && selectedOption !== '' && (
+            <>
+              <li className='horizontal-separator'></li>
+              <Localized id='machinery-GoogleTranslation--option-show-original'>
+                <li data-characteristic='original' onClick={handleOptionClick}>
+                  SHOW ORIGINAL
+                </li>
+              </Localized>
+            </>
+          )}
         </ul>
       )}
     </li>

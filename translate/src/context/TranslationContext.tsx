@@ -14,6 +14,7 @@ interface LLMTranslationContextType {
     characteristic: string,
     localeName: string,
   ) => Promise<void>;
+  restoreOriginal: (mt: MachineryTranslation) => void;
 }
 
 const initSelState = () => ({
@@ -25,6 +26,7 @@ const initSelState = () => ({
 const LLMTranslationContext = createContext<LLMTranslationContextType>({
   getSelState: initSelState,
   transformLLMTranslation: async () => {},
+  restoreOriginal: () => {},
 });
 
 export const LLMTranslationProvider: React.FC = ({ children }) => {
@@ -68,9 +70,18 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     setVersion((v) => v + 1);
   };
 
+  const restoreOriginal = (mt: MachineryTranslation) => {
+    const currentState = getSelState(mt);
+    stateRef.current.set(mt, {
+      ...currentState,
+      selectedOption: '',
+      llmTranslation: '',
+    });
+    setVersion((v) => v + 1);
+  };
   return (
     <LLMTranslationContext.Provider
-      value={{ getSelState, transformLLMTranslation }}
+      value={{ getSelState, transformLLMTranslation, restoreOriginal }}
     >
       {children}
     </LLMTranslationContext.Provider>
@@ -78,8 +89,8 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
 };
 
 export const useLLMTranslation = (mt: MachineryTranslation) => {
-  const { getSelState, transformLLMTranslation } = useContext(
+  const { getSelState, transformLLMTranslation, restoreOriginal } = useContext(
     LLMTranslationContext,
   );
-  return { ...getSelState(mt), transformLLMTranslation };
+  return { ...getSelState(mt), transformLLMTranslation, restoreOriginal };
 };
