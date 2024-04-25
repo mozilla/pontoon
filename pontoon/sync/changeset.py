@@ -212,7 +212,7 @@ class ChangeSet:
                 )
             )
 
-            verb = "updated with {} new string{}".format(count, pluralize(count))
+            verb = f"updated with {count} new string{pluralize(count)}"
             contributors = User.objects.filter(
                 translation__entity__resource__project=self.db_project,
                 profile__new_string_notifications=True,
