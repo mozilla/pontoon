@@ -505,7 +505,10 @@ machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 ## Shows the translation source from Google Translate.
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
     .title = Visit Google Translate
-    
+
+machinery-GoogleTranslation--selector =
+    .title = Refine using AI
+
 machinery-GoogleTranslation--option-rephrase = REPHRASE
 machinery-GoogleTranslation--option-make-formal = MAKE FORMAL
 machinery-GoogleTranslation--option-make-informal = MAKE INFORMAL

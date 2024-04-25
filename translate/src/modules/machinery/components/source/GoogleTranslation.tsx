@@ -63,24 +63,27 @@ export function GoogleTranslation({
 
   return (
     <li ref={dropdownRef} className='google-translation'>
-      <Localized id='machinery-GoogleTranslation--translation-source'>
+      <Localized id='machinery-GoogleTranslation--selector'>
         <span
-          className='translation-source'
-          title='Toggle dropdown'
+          className='selector'
           onClick={toggleDropdown}
+          title='Refine using AI'
         >
-          <span>GOOGLE TRANSLATE</span>
+          <Localized id='machinery-GoogleTranslation--translation-source'>
+            <span className='translation-source'>GOOGLE TRANSLATE</span>
+          </Localized>
+
+          <span className='selected-option'>{selectedOptionText}</span>
+
+          <button
+            className='dropdown-toggle'
+            aria-haspopup='true'
+            aria-expanded={isDropdownOpen}
+          >
+            <i className='fa fa-caret-down'></i>
+          </button>
         </span>
       </Localized>
-      <span className='selected-option'>{selectedOptionText}</span>
-      <button
-        onClick={toggleDropdown}
-        className='dropdown-toggle'
-        aria-haspopup='true'
-        aria-expanded={isDropdownOpen}
-      >
-        <i className='fa fa-caret-down'></i>
-      </button>
       {isDropdownOpen && (
         <ul className='dropdown-menu'>
           <Localized id='machinery-GoogleTranslation--option-rephrase'>
