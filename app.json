@@ -43,6 +43,10 @@
       "description": "Base URL of the site. Has to be https://{app-name}.herokuapp.com.",
       "required": true
     },
+    "ALLOWED_HOSTS": {
+      "description": "A list of strings representing the host/domain names the site can serve. Has to be {app-name}.herokuapp.com.",
+      "required": true
+    },
     "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION": {
       "value": "python",
       "description": "Needed for Google AutoML Translation.",

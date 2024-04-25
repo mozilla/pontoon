@@ -4,7 +4,6 @@ import io
 import os
 import re
 
-import pytz
 import requests
 import tempfile
 import time
@@ -451,7 +450,7 @@ def parse_time_interval(interval):
 
     def parse_timestamp(timestamp):
         return timezone.make_aware(
-            datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=pytz.UTC
+            datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc
         )
 
     start, end = interval.split("-")

@@ -6,7 +6,7 @@ from pontoon.checks.utils import bulk_run_checks
 from pontoon.test.factories import TranslationFactory, ProjectLocaleFactory
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def batch_action(client, admin_client):
     """
     Shortcut function to make API-call more readable in tests.
@@ -32,7 +32,7 @@ def batch_action(client, admin_client):
     return _action
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translation_dtd_unapproved():
     translation = TranslationFactory.create(
         string="Test Translation",
@@ -52,7 +52,7 @@ def translation_dtd_unapproved():
     yield translation
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translation_dtd_invalid_unapproved():
     # Provide invalid characters in translation to cause checks to fail
     translation = TranslationFactory.create(
@@ -73,7 +73,7 @@ def translation_dtd_invalid_unapproved():
     yield translation
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def test_batch_edit_translations_no_user(client):
     """If there are no logged-in users, the view redirects to the login page."""
     response = client.post(reverse("pontoon.batch.edit.translations"))

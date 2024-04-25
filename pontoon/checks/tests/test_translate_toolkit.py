@@ -3,7 +3,7 @@ import pytest
 from pontoon.checks.libraries.translate_toolkit import run_checks
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def mock_locale():
     """Small mock of Locale object to make faster unit-tests."""
     yield "en-US"

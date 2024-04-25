@@ -13,7 +13,7 @@ from pontoon.checks.models import (
 )
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def translation_properties(translation_a):
     resource = translation_a.entity.resource
     resource.path = "test.properties"
@@ -23,7 +23,7 @@ def translation_properties(translation_a):
     yield translation_a
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translation_compare_locales_warning(translation_properties):
     # Create new instance
     translation = Translation.objects.get(pk=translation_properties.pk)
@@ -35,7 +35,7 @@ def translation_compare_locales_warning(translation_properties):
     yield translation
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translation_compare_locales_error(translation_properties):
     # Create new instance
     translation = Translation.objects.get(pk=translation_properties.pk)
@@ -51,7 +51,7 @@ def translation_compare_locales_error(translation_properties):
     yield translation
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def translation_pontoon_error(translation_a):
     # Create new instance
     translation = Translation.objects.get(pk=translation_a.pk)
