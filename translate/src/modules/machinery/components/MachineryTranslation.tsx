@@ -130,7 +130,7 @@ function MachineryTranslationSuggestion({
         lang={code}
       >
         {loading ? (
-          <span>Loading...</span>
+          <i className='fa fa-circle-notch fa-spin' />
         ) : (
           <GenericTranslation
             content={llmTranslation || translation.translation}

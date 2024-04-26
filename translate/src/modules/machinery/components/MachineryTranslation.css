@@ -134,3 +134,7 @@
 .machinery .translation p.original {
   color: var(--translation-secondary-color);
 }
+
+.machinery .translation p.suggestion .fa-spin {
+  color: var(--translation-secondary-color);
+}
