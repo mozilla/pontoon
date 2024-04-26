@@ -1,13 +1,14 @@
-from openai import OpenAI
-from pontoon.base.models import Locale
-import os
 import textwrap
+
+from openai import OpenAI
+
+from pontoon.base.models import Locale
+from pontoon.settings.base import OPENAI_API_KEY
 
 
 class OpenAIService:
     def __init__(self):
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
+        if not OPENAI_API_KEY:
             raise ValueError("Missing OpenAI API key")
         self.client = OpenAI()
 

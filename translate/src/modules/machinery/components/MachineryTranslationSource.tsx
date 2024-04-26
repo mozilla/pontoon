@@ -22,6 +22,10 @@ export function MachineryTranslationSource({
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
 
+  const root = document.getElementById('root');
+  const isOpenAIChatGPTSupported =
+    root?.dataset.isOpenaiChatgptSupported === 'true';
+
   for (const source of translation.sources) {
     if (seen.includes(source)) {
       continue;
@@ -35,7 +39,11 @@ export function MachineryTranslationSource({
         break;
       case 'google-translate':
         sources.push(
-          <GoogleTranslation translation={translation} key={source} />,
+          <GoogleTranslation
+            isOpenAIChatGPTSupported={isOpenAIChatGPTSupported}
+            translation={translation}
+            key={source}
+          />,
         );
         break;
       case 'microsoft-translator':

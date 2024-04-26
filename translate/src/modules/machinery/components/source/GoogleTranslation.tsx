@@ -6,16 +6,31 @@ import { logUXAction } from '~/api/uxaction';
 import { useLLMTranslation } from '~/context/TranslationContext';
 
 type Props = {
+  isOpenAIChatGPTSupported: boolean;
   translation: MachineryTranslation;
 };
 
 /**
  * Show the translation source from Google Translate.
+ *
+ * If OpenAI ChatGPT is supported, this component also handles machine translation
+ * refinement using AI.
  */
 
 export function GoogleTranslation({
+  isOpenAIChatGPTSupported,
   translation,
 }: Props): React.ReactElement<'li'> {
+  const TITLE = (
+    <Localized id='machinery-GoogleTranslation--translation-source'>
+      <span className='translation-source'>GOOGLE TRANSLATE</span>
+    </Localized>
+  );
+
+  if (!isOpenAIChatGPTSupported) {
+    return <li className='google-translation'>{TITLE}</li>;
+  }
+
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
@@ -80,9 +95,7 @@ export function GoogleTranslation({
           onClick={toggleDropdown}
           title='Refine using AI'
         >
-          <Localized id='machinery-GoogleTranslation--translation-source'>
-            <span className='translation-source'>GOOGLE TRANSLATE</span>
-          </Localized>
+          {TITLE}
 
           {selectedOptionElement}
 
