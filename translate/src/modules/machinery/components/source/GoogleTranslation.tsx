@@ -21,16 +21,6 @@ export function GoogleTranslation({
   isOpenAIChatGPTSupported,
   translation,
 }: Props): React.ReactElement<'li'> {
-  const TITLE = (
-    <Localized id='machinery-GoogleTranslation--translation-source'>
-      <span className='translation-source'>GOOGLE TRANSLATE</span>
-    </Localized>
-  );
-
-  if (!isOpenAIChatGPTSupported) {
-    return <li className='google-translation'>{TITLE}</li>;
-  }
-
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
@@ -60,34 +50,13 @@ export function GoogleTranslation({
     setDropdownOpen(false);
   };
 
-  let selectedOptionElement;
-  switch (selectedOption) {
-    case 'alternative':
-      selectedOptionElement = (
-        <Localized id='machinery-GoogleTranslation--option-rephrase-selected'>
-          <span className='selected-option'>REPHRASED</span>
-        </Localized>
-      );
-      break;
-    case 'formal':
-      selectedOptionElement = (
-        <Localized id='machinery-GoogleTranslation--option-make-formal-selected'>
-          <span className='selected-option'>FORMAL</span>
-        </Localized>
-      );
-      break;
-    case 'informal':
-      selectedOptionElement = (
-        <Localized id='machinery-GoogleTranslation--option-make-informal-selected'>
-          <span className='selected-option'>INFORMAL</span>
-        </Localized>
-      );
-      break;
-    default:
-      selectedOptionElement = <span className='selected-option'></span>;
-  }
+  const title = (
+    <Localized id='machinery-GoogleTranslation--translation-source'>
+      <span className='translation-source'>GOOGLE TRANSLATE</span>
+    </Localized>
+  );
 
-  return (
+  return isOpenAIChatGPTSupported ? (
     <li ref={dropdownRef} className='google-translation'>
       <Localized id='machinery-GoogleTranslation--selector'>
         <span
@@ -95,9 +64,13 @@ export function GoogleTranslation({
           onClick={toggleDropdown}
           title='Refine using AI'
         >
-          {TITLE}
+          {title}
 
-          {selectedOptionElement}
+          <Localized
+            id={`machinery-GoogleTranslation--option-${selectedOption}`}
+          >
+            <span className='selected-option'>{selectedOption}</span>
+          </Localized>
 
           <button
             className='dropdown-toggle'
@@ -111,7 +84,7 @@ export function GoogleTranslation({
       {isDropdownOpen && (
         <ul className='dropdown-menu'>
           <Localized id='machinery-GoogleTranslation--option-rephrase'>
-            <li data-characteristic='alternative' onClick={handleOptionClick}>
+            <li data-characteristic='rephrased' onClick={handleOptionClick}>
               REPHRASE
             </li>
           </Localized>
@@ -138,5 +111,7 @@ export function GoogleTranslation({
         </ul>
       )}
     </li>
+  ) : (
+    <li className='google-translation'>{title}</li>
   );
 }

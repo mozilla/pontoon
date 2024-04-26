@@ -28,7 +28,7 @@ describe('<GoogleTranslation>', () => {
     );
 
     expect(wrapper.find('li')).toHaveLength(1);
-    expect(wrapper.find('.selector Localized').props().id).toEqual(
+    expect(wrapper.find('.selector Localized').first().props().id).toEqual(
       'machinery-GoogleTranslation--translation-source',
     );
     expect(wrapper.find('span.translation-source')).toHaveLength(1);

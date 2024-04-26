@@ -39,7 +39,7 @@ class OpenAIService:
             Your goal is to produce a translation that not only accurately conveys the meaning of the English text but also meets the expectations for formality in {target_language}-speaking professional or formal settings."""
         )
 
-        alternative = textwrap.dedent(
+        rephrased = textwrap.dedent(
             f"""You will be provided with text in English, along with its machine-generated translation in {target_language}.
             Your objective is to provide an alternative translation. Adhere to the following guidelines to achieve this:
             - Cultural Nuances: Pay attention to cultural nuances and idiomatic expressions, ensuring they are appropriately translated for the {target_language}-speaking audience.
@@ -50,7 +50,7 @@ class OpenAIService:
         system_messages = {
             "informal": informal,
             "formal": formal,
-            "alternative": alternative,
+            "rephrased": rephrased,
         }
 
         system_message = system_messages.get(characteristic)

@@ -76,7 +76,7 @@ export function MachineryTranslationComponent({
       <li
         className={className}
         title='Copy Into Translation (Ctrl + Shift + Down)'
-        onClick={() => copyTranslationIntoEditor()}
+        onClick={copyTranslationIntoEditor}
         ref={translationRef}
       >
         {translation.sources.includes('concordance-search') ? (
