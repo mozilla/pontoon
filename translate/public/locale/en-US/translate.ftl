@@ -508,8 +508,11 @@ machinery-GoogleTranslation--selector =
     .title = Refine using AI
 
 machinery-GoogleTranslation--option-rephrase = REPHRASE
+machinery-GoogleTranslation--option-rephrase-selected = REPHRASED
 machinery-GoogleTranslation--option-make-formal = MAKE FORMAL
+machinery-GoogleTranslation--option-make-formal-selected = FORMAL
 machinery-GoogleTranslation--option-make-informal = MAKE INFORMAL
+machinery-GoogleTranslation--option-make-informal-selected = INFORMAL
 machinery-GoogleTranslation--option-show-original = SHOW ORIGINAL
 
 

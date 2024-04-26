@@ -45,20 +45,31 @@ export function GoogleTranslation({
     setDropdownOpen(false);
   };
 
-  // TODO: Localize selectedOptionText before setting it as selected option.
-  let selectedOptionText: string;
+  let selectedOptionElement;
   switch (selectedOption) {
     case 'alternative':
-      selectedOptionText = 'REPHRASED';
+      selectedOptionElement = (
+        <Localized id='machinery-GoogleTranslation--option-rephrase-selected'>
+          <span className='selected-option'>REPHRASED</span>
+        </Localized>
+      );
       break;
     case 'formal':
-      selectedOptionText = 'FORMAL';
+      selectedOptionElement = (
+        <Localized id='machinery-GoogleTranslation--option-make-formal-selected'>
+          <span className='selected-option'>FORMAL</span>
+        </Localized>
+      );
       break;
     case 'informal':
-      selectedOptionText = 'INFORMAL';
+      selectedOptionElement = (
+        <Localized id='machinery-GoogleTranslation--option-make-informal-selected'>
+          <span className='selected-option'>INFORMAL</span>
+        </Localized>
+      );
       break;
     default:
-      selectedOptionText = '';
+      selectedOptionElement = <span className='selected-option'></span>;
   }
 
   return (
@@ -73,7 +84,7 @@ export function GoogleTranslation({
             <span className='translation-source'>GOOGLE TRANSLATE</span>
           </Localized>
 
-          <span className='selected-option'>{selectedOptionText}</span>
+          {selectedOptionElement}
 
           <button
             className='dropdown-toggle'
