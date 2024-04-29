@@ -173,6 +173,10 @@ you create:
    Optional. Name to give to this app on New Relic. Required if you're using
    New Relic.
 
+``OPENAI_API_KEY``
+   Optional. Set your `OpenAI API`_ key to add the ability to refine machine
+   translations using ChatGPT.
+
 ``PROJECT_MANAGERS``
    Optional. A list of project manager email addresses to send project requests to
 

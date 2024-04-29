@@ -21,6 +21,11 @@ export function MachineryTranslationSource({
 }: Props): React.ReactElement<'ul'> {
   const sources: React.ReactElement<'li'>[] = [];
   const seen: string[] = [];
+
+  const root = document.getElementById('root');
+  const isOpenAIChatGPTSupported =
+    root?.dataset.isOpenaiChatgptSupported === 'true';
+
   for (const source of translation.sources) {
     if (seen.includes(source)) {
       continue;
@@ -33,7 +38,13 @@ export function MachineryTranslationSource({
         );
         break;
       case 'google-translate':
-        sources.push(<GoogleTranslation key={source} />);
+        sources.push(
+          <GoogleTranslation
+            isOpenAIChatGPTSupported={isOpenAIChatGPTSupported}
+            translation={translation}
+            key={source}
+          />,
+        );
         break;
       case 'microsoft-translator':
         sources.push(<MicrosoftTranslation key={source} />);
@@ -42,9 +53,7 @@ export function MachineryTranslationSource({
         sources.push(<SystranTranslation key={source} />);
         break;
       case 'microsoft-terminology':
-        sources.push(
-          <MicrosoftTerminology original={translation.original} key={source} />,
-        );
+        sources.push(<MicrosoftTerminology key={source} />);
         break;
       case 'caighdean':
         sources.push(<CaighdeanTranslation key={source} />);

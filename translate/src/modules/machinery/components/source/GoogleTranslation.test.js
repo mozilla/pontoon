@@ -9,14 +9,32 @@ describe('<GoogleTranslation>', () => {
 
     expect(wrapper.find('li')).toHaveLength(1);
     expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-GoogleTranslation--visit-google',
+      'machinery-GoogleTranslation--translation-source',
     );
-    expect(wrapper.find('li a').props().href).toContain(
-      'https://translate.google.com/',
+    expect(wrapper.find('li span').text()).toEqual('GOOGLE TRANSLATE');
+  });
+
+  it('renders the GoogleTranslation LLM features properly', () => {
+    const mockTranslation = {
+      translation: 'Translated text here',
+      original: 'Original text here',
+    };
+
+    const wrapper = shallow(
+      <GoogleTranslation
+        isOpenAIChatGPTSupported={true}
+        translation={mockTranslation}
+      />,
     );
-    expect(wrapper.find('li a').props().title).toContain(
-      'Visit Google Translate',
+
+    expect(wrapper.find('li')).toHaveLength(1);
+    expect(wrapper.find('.selector Localized').first().props().id).toEqual(
+      'machinery-GoogleTranslation--translation-source',
     );
-    expect(wrapper.find('li a span').text()).toEqual('GOOGLE TRANSLATE');
+    expect(wrapper.find('span.translation-source')).toHaveLength(1);
+    expect(wrapper.find('.selector').props().onClick).toBeDefined();
+    expect(wrapper.find('span.translation-source').text()).toEqual(
+      'GOOGLE TRANSLATE',
+    );
   });
 });

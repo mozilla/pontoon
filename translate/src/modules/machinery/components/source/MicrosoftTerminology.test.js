@@ -24,17 +24,8 @@ describe('<MicrosoftTerminology>', () => {
 
     expect(wrapper.find('li')).toHaveLength(1);
     expect(wrapper.find('Localized').props().id).toEqual(
-      'machinery-MicrosoftTerminology--visit-microsoft',
+      'machinery-MicrosoftTerminology--translation-source',
     );
-    expect(wrapper.find('li a').props().href).toContain(
-      'https://www.microsoft.com/Language/en-US/Search.aspx?sString=' +
-        PROPS.original +
-        '&langID=' +
-        LOCALE.msTerminologyCode,
-    );
-    expect(wrapper.find('li a').props().title).toContain(
-      'Visit Microsoft Terminology Service API.',
-    );
-    expect(wrapper.find('li a span').text()).toEqual('MICROSOFT');
+    expect(wrapper.find('li span').text()).toEqual('MICROSOFT');
   });
 });

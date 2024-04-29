@@ -6,6 +6,7 @@ import { HelperSelectionProvider } from '~/context/HelperSelection';
 import { HistoryProvider } from '~/context/HistoryData';
 import { MachineryProvider } from '~/context/MachineryTranslations';
 import { SearchProvider } from '~/context/SearchData';
+import { LLMTranslationProvider } from '~/context/TranslationContext';
 import { EntityDetails } from './EntityDetails';
 
 export const Entity = () => (
@@ -15,7 +16,9 @@ export const Entity = () => (
         <FailedChecksProvider>
           <EditorProvider>
             <HelperSelectionProvider>
-              <EntityDetails />
+              <LLMTranslationProvider>
+                <EntityDetails />
+              </LLMTranslationProvider>
             </HelperSelectionProvider>
           </EditorProvider>
         </FailedChecksProvider>

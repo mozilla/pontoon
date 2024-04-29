@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import type { MachineryTranslation } from '~/api/machinery';
+import { logUXAction } from '~/api/uxaction';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
 import { Locale } from '~/context/Locale';
@@ -11,6 +12,7 @@ import { useReadonlyEditor } from '~/hooks/useReadonlyEditor';
 
 import { ConcordanceSearch } from './ConcordanceSearch';
 import { MachineryTranslationSource } from './MachineryTranslationSource';
+import { useLLMTranslation } from '~/context/TranslationContext';
 
 import './ConcordanceSearch.css';
 import './MachineryTranslation.css';
@@ -37,12 +39,20 @@ export function MachineryTranslationComponent({
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
+  const { llmTranslation } = useLLMTranslation(translation);
+
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
-      setEditorFromHelpers(translation.translation, translation.sources, true);
+      const content = llmTranslation || translation.translation;
+      setEditorFromHelpers(content, translation.sources, true);
+      if (llmTranslation) {
+        logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
+          action: 'Copy LLM Translation',
+        });
+      }
     }
-  }, [index, setEditorFromHelpers, translation]);
+  }, [index, setEditorFromHelpers, translation, llmTranslation]);
 
   const className = classNames(
     'translation',
@@ -93,12 +103,14 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
+  const { llmTranslation, loading } = useLLMTranslation(translation);
   return (
     <>
       <header>
         {translation.quality && (
           <span className='quality'>{translation.quality + '%'}</span>
         )}
+
         <MachineryTranslationSource translation={translation} />
       </header>
       <p className='original'>
@@ -117,7 +129,13 @@ function MachineryTranslationSuggestion({
         data-script={script}
         lang={code}
       >
-        <GenericTranslation content={translation.translation} />
+        {loading ? (
+          <i className='fa fa-circle-notch fa-spin' />
+        ) : (
+          <GenericTranslation
+            content={llmTranslation || translation.translation}
+          />
+        )}
       </p>
     </>
   );
