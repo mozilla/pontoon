@@ -66,7 +66,7 @@ export function GoogleTranslation({
         >
           {title}
 
-          {selectedOption && selectedOption !== '' ? (
+          {selectedOption ? (
             <Localized
               id={`machinery-GoogleTranslation--option-${selectedOption}`}
             >
@@ -105,7 +105,7 @@ export function GoogleTranslation({
               MAKE INFORMAL
             </li>
           </Localized>
-          {selectedOption && selectedOption !== '' && (
+          {selectedOption && (
             <>
               <li className='horizontal-separator'></li>
               <Localized id='machinery-GoogleTranslation--option-show-original'>
