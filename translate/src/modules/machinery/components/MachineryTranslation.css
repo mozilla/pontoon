@@ -63,10 +63,15 @@
 }
 
 .machinery .translation > header li.google-translation .dropdown-toggle {
-  background: transparent;
+  background: var(--status-translated);
   border: none;
-  padding: 0;
-  color: var(--status-translated);
+  border-radius: 2px;
+  color: var(--translation-main-button-color);
+  padding: 0 2px;
+}
+
+.machinery .translation > header li.google-translation .dropdown-title {
+  padding-right: 2px;
 }
 
 .machinery .translation > header li.google-translation .dropdown-menu {

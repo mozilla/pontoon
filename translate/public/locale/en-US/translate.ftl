@@ -506,6 +506,7 @@ machinery-ConcordanceSearch--translation-memory = TRANSLATION MEMORY
 machinery-GoogleTranslation--translation-source = GOOGLE TRANSLATE
 machinery-GoogleTranslation--selector =
     .title = Refine using AI
+machinery-GoogleTranslation--dropdown-title = AI
 
 machinery-GoogleTranslation--option-rephrase = REPHRASE
 machinery-GoogleTranslation--option-rephrased = REPHRASED
