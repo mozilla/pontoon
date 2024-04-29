@@ -91,17 +91,29 @@ export function GoogleTranslation({
       {isDropdownOpen && (
         <ul className='dropdown-menu'>
           <Localized id='machinery-GoogleTranslation--option-rephrase'>
-            <li data-characteristic='rephrased' onClick={handleOptionClick}>
+            <li
+              data-characteristic='rephrased'
+              onClick={handleOptionClick}
+              title=''
+            >
               REPHRASE
             </li>
           </Localized>
           <Localized id='machinery-GoogleTranslation--option-make-formal'>
-            <li data-characteristic='formal' onClick={handleOptionClick}>
+            <li
+              data-characteristic='formal'
+              onClick={handleOptionClick}
+              title=''
+            >
               MAKE FORMAL
             </li>
           </Localized>
           <Localized id='machinery-GoogleTranslation--option-make-informal'>
-            <li data-characteristic='informal' onClick={handleOptionClick}>
+            <li
+              data-characteristic='informal'
+              onClick={handleOptionClick}
+              title=''
+            >
               MAKE INFORMAL
             </li>
           </Localized>
@@ -109,7 +121,11 @@ export function GoogleTranslation({
             <>
               <li className='horizontal-separator'></li>
               <Localized id='machinery-GoogleTranslation--option-show-original'>
-                <li data-characteristic='original' onClick={handleOptionClick}>
+                <li
+                  data-characteristic='original'
+                  onClick={handleOptionClick}
+                  title=''
+                >
                   SHOW ORIGINAL
                 </li>
               </Localized>
