@@ -66,11 +66,15 @@ export function GoogleTranslation({
         >
           {title}
 
-          <Localized
-            id={`machinery-GoogleTranslation--option-${selectedOption}`}
-          >
+          {selectedOption && selectedOption !== '' ? (
+            <Localized
+              id={`machinery-GoogleTranslation--option-${selectedOption}`}
+            >
+              <span className='selected-option'>{selectedOption}</span>
+            </Localized>
+          ) : (
             <span className='selected-option'>{selectedOption}</span>
-          </Localized>
+          )}
 
           <button
             className='dropdown-toggle'
