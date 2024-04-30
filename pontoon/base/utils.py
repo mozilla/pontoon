@@ -199,7 +199,7 @@ def get_download_content(slug, code, part):
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
     from pontoon.sync.utils import source_to_locale_path
-    from pontoon.sync.vcs.models import VCSProject
+    from pontoon.sync.vcs.project import VCSProject
     from pontoon.base.models import Entity, Locale, Project, Resource
 
     project = get_object_or_404(Project, slug=slug)
@@ -323,7 +323,7 @@ def handle_upload_content(slug, code, part, f, user):
     # Avoid circular import; someday we should refactor to avoid.
     from pontoon.sync import formats
     from pontoon.sync.changeset import ChangeSet
-    from pontoon.sync.vcs.models import VCSProject
+    from pontoon.sync.vcs.project import VCSProject
     from pontoon.base.models import (
         Entity,
         Locale,

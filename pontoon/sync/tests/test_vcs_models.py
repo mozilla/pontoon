@@ -1,7 +1,5 @@
-import tempfile
 import os
 
-from http.client import HTTPException
 from pathlib import Path
 from unittest.mock import Mock, patch, PropertyMock, MagicMock
 
@@ -25,12 +23,9 @@ from pontoon.sync.tests import (
     VCSEntityFactory,
     VCSTranslationFactory,
 )
-from pontoon.sync.vcs.models import (
-    VCSConfiguration,
-    VCSResource,
-    VCSProject,
-    DownloadTOMLParser,
-)
+from pontoon.sync.vcs.project import VCSProject
+from pontoon.sync.vcs.config import VCSConfiguration
+from pontoon.sync.vcs.resource import VCSResource
 
 TEST_CHECKOUT_PATH = os.path.join(
     os.path.dirname(__file__), "directory_detection_tests"
@@ -44,7 +39,7 @@ class VCSTestCase(TestCase):
 
     def setUp(self):
         self.get_project_config_patcher = patch(
-            "pontoon.sync.vcs.models.DownloadTOMLParser.get_project_config"
+            "pontoon.sync.vcs.config.DownloadTOMLParser.get_project_config"
         )
         self.get_project_config_mock = self.get_project_config_patcher.start()
         self.get_project_config_mock.side_effect = lambda config_path: os.path.join(
@@ -85,7 +80,7 @@ class VCSProjectTests(VCSTestCase):
 
         # Return empty dict if no reference path found for any of the paths
         with patch(
-            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            "pontoon.sync.vcs.config.VCSConfiguration.reference_path",
             return_value=None,
         ):
             files = self.vcs_project.get_relevant_files_with_config(paths)
@@ -93,7 +88,7 @@ class VCSProjectTests(VCSTestCase):
 
         # Return empty dict if no reference path found for any of the paths
         with patch(
-            "pontoon.sync.vcs.models.VCSConfiguration.reference_path",
+            "pontoon.sync.vcs.config.VCSConfiguration.reference_path",
             return_value="reference/path/to/localizable_file.ftl",
         ):
             files = self.vcs_project.get_relevant_files_with_config(paths)
@@ -235,8 +230,8 @@ class VCSProjectTests(VCSTestCase):
                 return "successful resource"
 
         changed_vcs_resources = {"success": [], "failure": []}
-        with patch("pontoon.sync.vcs.models.VCSResource") as MockVCSResource, patch(
-            "pontoon.sync.vcs.models.log"
+        with patch("pontoon.sync.vcs.project.VCSResource") as MockVCSResource, patch(
+            "pontoon.sync.vcs.project.log"
         ) as mock_log, patch.object(
             VCSProject,
             "changed_files",
@@ -286,8 +281,8 @@ class VCSProjectTests(VCSTestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch("pontoon.sync.vcs.models.os", wraps=os) as mock_os, patch(
-            "pontoon.sync.vcs.models.MOZILLA_REPOS", [url]
+        with patch("pontoon.sync.vcs.project.os", wraps=os) as mock_os, patch(
+            "pontoon.sync.vcs.project.MOZILLA_REPOS", [url]
         ):
             mock_os.walk.return_value = [
                 ("/root", [], ["foo.pot", "region.properties"])
@@ -310,7 +305,7 @@ class VCSProjectTests(VCSTestCase):
             ("/root/templates", [], ("foo.pot",)),
         )
         with patch(
-            "pontoon.sync.vcs.models.os.walk",
+            "pontoon.sync.vcs.project.os.walk",
             wraps=os,
             return_value=hidden_paths,
         ):
@@ -622,53 +617,3 @@ class VCSChangedConfigFilesTests(FakeCheckoutTestCase):
             self.assertSetEqual(
                 self.vcs_project.changed_config_files, {"test-l10n.toml"}
             )
-
-
-class DownloadTOMLParserTests(TestCase):
-    def setUp(self):
-        self.requests_patcher = patch("pontoon.sync.vcs.models.requests.get")
-        self.requests_mock = self.requests_patcher.start()
-        self.temp_dir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        self.requests_patcher.stop()
-
-    def test_config_file_not_found(self):
-        """
-        When the project config file is not available, throw an error.
-        """
-        self.requests_mock.return_value.raise_for_status.side_effect = HTTPException(
-            "not found"
-        )
-
-        with self.assertRaises(HTTPException):
-            parser = DownloadTOMLParser(
-                self.temp_dir, "https://example.com/", "l10n.toml"
-            )
-            parser.parse()
-
-    def test_remote_path(self):
-        parser = DownloadTOMLParser(
-            "", "https://example.com/without-locale-code/", "l10n.toml"
-        )
-        self.assertEqual(
-            parser.get_remote_path("l10n.toml"),
-            "https://example.com/without-locale-code/l10n.toml",
-        )
-        self.assertEqual(
-            parser.get_remote_path("subdir/l10n.toml"),
-            "https://example.com/without-locale-code/subdir/l10n.toml",
-        )
-
-    def test_local_path(self):
-        parser = DownloadTOMLParser(self.temp_dir, "", "aaa.toml")
-        self.assertEqual(parser.get_local_path("aaa.toml"), f"{self.temp_dir}/aaa.toml")
-
-    def test_get_project_config(self):
-        parser = DownloadTOMLParser(self.temp_dir, "https://example.com/", "l10n.toml")
-        self.requests_mock.return_value.content = b"test-content"
-        project_config_path = parser.get_project_config("l10n.toml")
-
-        self.assertTrue(self.requests_mock.called)
-        self.assertEqual(project_config_path, self.temp_dir + "/l10n.toml")
-        self.assertEqual(open(project_config_path).read(), "test-content")

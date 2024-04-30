@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from django.conf import settings
 from django.db import transaction
@@ -25,8 +26,8 @@ from pontoon.sync.core import (
     get_changed_locales,
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
-from pontoon.sync.vcs.repositories import CommitToRepositoryException
-from pontoon.sync.vcs.models import VCSProject, MissingSourceDirectoryError
+from pontoon.sync.repositories import CommitToRepositoryException
+from pontoon.sync.vcs.project import MissingSourceDirectoryError, VCSProject
 from pontoon.pretranslation.tasks import pretranslate
 
 
@@ -50,7 +51,7 @@ def sync_project_error(error, *args, **kwargs):
     ).skip()
 
 
-def update_locale_project_locale_stats(locale, project):
+def update_locale_project_locale_stats(locale: Locale, project: Project):
     locale.aggregate_stats()
     locale.project_locale.get(project=project).aggregate_stats()
 
@@ -80,9 +81,7 @@ def sync_project(
         SyncLog,
         pk=sync_log_pk,
         message=(
-            "Could not sync project {}, log with pk={} not found.".format(
-                db_project.slug, sync_log_pk
-            )
+            f"Could not sync project {db_project.slug}, log with pk={sync_log_pk} not found."
         ),
     )
 
@@ -119,7 +118,7 @@ def sync_project(
     )
 
 
-def sync_sources(db_project, now, force, no_pull):
+def sync_sources(db_project: Project, now: datetime, force: bool, no_pull: bool):
     # Pull from source repository
     if no_pull:
         has_source_repo_changed = True
@@ -168,9 +167,9 @@ def sync_sources(db_project, now, force, no_pull):
 
 
 def sync_translations(
-    db_project,
-    project_sync_log,
-    now,
+    db_project: Project,
+    project_sync_log: ProjectSyncLog,
+    now: datetime,
     has_source_repo_changed,
     added_paths=None,
     removed_paths=None,

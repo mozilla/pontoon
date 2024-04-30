@@ -7,7 +7,7 @@ import copy
 
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs.models import VCSTranslation
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 class XLIFFEntity(VCSTranslation):

@@ -7,7 +7,7 @@ from fluent.syntax import ast, FluentParser, FluentSerializer
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.utils import create_parent_directory
-from pontoon.sync.vcs.models import VCSTranslation
+from pontoon.sync.vcs.translation import VCSTranslation
 
 log = logging.getLogger(__name__)
 

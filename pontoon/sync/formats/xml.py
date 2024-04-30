@@ -16,7 +16,7 @@ from pontoon.sync.utils import (
     escape_apostrophes,
     unescape_apostrophes,
 )
-from pontoon.sync.vcs.models import VCSTranslation
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 log = logging.getLogger(__name__)

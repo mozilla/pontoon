@@ -20,7 +20,7 @@ from pontoon.sync.utils import (
 )
 
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs.models import VCSTranslation
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 class SilmeEntity(VCSTranslation):

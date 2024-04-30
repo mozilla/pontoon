@@ -10,7 +10,7 @@ import polib
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs.models import VCSTranslation
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 class POEntity(VCSTranslation):

@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 
 from collections import defaultdict
@@ -11,11 +12,16 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Entity,
     Locale,
+    Project,
+    Resource,
     Translation,
     TranslationMemoryEntry,
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
+from .vcs.resource import VCSEntity
+from .vcs.project import VCSProject
+from .vcs.translation import VCSTranslation
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +33,13 @@ class ChangeSet:
     stored, execute all the changes at once efficiently.
     """
 
-    def __init__(self, db_project, vcs_project, now, locale=None):
+    def __init__(
+        self,
+        db_project: Project,
+        vcs_project: VCSProject,
+        now: datetime,
+        locale: Locale | None = None,
+    ):
         """
         :param now:
             Datetime to use for marking when approvals happened.
@@ -39,7 +51,9 @@ class ChangeSet:
 
         # Store locales and resources for FK relationships.
         self.locales = {loc.code: loc for loc in Locale.objects.all()}
-        self.resources = {r.path: r for r in self.db_project.resources.all()}
+        self.resources: dict[str, Resource] = {
+            r.path: r for r in self.db_project.resources.all()
+        }
 
         self.executed = False
         self.changes = {
@@ -56,8 +70,8 @@ class ChangeSet:
         self.actions_to_log = []
 
         self.commit_authors_per_locale = defaultdict(list)
-        self.locales_to_commit = set()
-        self.new_entities = []
+        self.locales_to_commit: set[Locale] = set()
+        self.new_entities: list[Entity] = []
 
         self.sync_user = User.objects.get(username="pontoon-sync")
 
@@ -66,7 +80,9 @@ class ChangeSet:
         """A list of Translation objects that have been created or updated."""
         return self.translations_to_create + list(self.translations_to_update.values())
 
-    def update_vcs_entity(self, locale, db_entity, vcs_entity):
+    def update_vcs_entity(
+        self, locale: Locale, db_entity: Entity, vcs_entity: VCSEntity
+    ):
         """
         Replace the translations in VCS with the translations from the
         database.
@@ -76,19 +92,21 @@ class ChangeSet:
             self.changes["update_vcs"].append((locale.code, db_entity, vcs_entity))
             self.locales_to_commit.add(locale)
 
-    def create_db_entity(self, vcs_entity):
+    def create_db_entity(self, vcs_entity: VCSEntity):
         """Create a new entity in the database."""
         self.changes["create_db"].append(vcs_entity)
 
-    def update_db_entity(self, locale, db_entity, vcs_entity):
+    def update_db_entity(
+        self, locale: Locale, db_entity: Entity, vcs_entity: VCSEntity
+    ):
         """Update the database with translations from VCS."""
         self.changes["update_db"].append((locale.code, db_entity, vcs_entity))
 
-    def update_db_source_entity(self, db_entity, vcs_entity):
+    def update_db_source_entity(self, db_entity: Entity, vcs_entity: VCSEntity):
         """Update the entities with the latest data from vcs."""
         self.changes["update_db"].append((None, db_entity, vcs_entity))
 
-    def obsolete_db_entity(self, db_entity):
+    def obsolete_db_entity(self, db_entity: Entity):
         """Mark the given entity as obsolete."""
         self.changes["obsolete_db"].append(db_entity.pk)
 
@@ -179,7 +197,9 @@ class ChangeSet:
         for resource in changed_resources:
             resource.save(self.locale)
 
-    def get_entity_updates(self, vcs_entity, db_entity=None):
+    def get_entity_updates(
+        self, vcs_entity: VCSEntity, db_entity: Entity | None = None
+    ):
         """
         Return a dict of the properties and values necessary to create
         or update a database entity from a VCS entity.
@@ -206,11 +226,7 @@ class ChangeSet:
         count = len(new_entities)
 
         if count > 0:
-            log.info(
-                "Sending new string notifications for project {}.".format(
-                    self.db_project
-                )
-            )
+            log.info(f"Sending new string notifications for project {self.db_project}.")
 
             verb = f"updated with {count} new string{pluralize(count)}"
             contributors = User.objects.filter(
@@ -244,9 +260,9 @@ class ChangeSet:
                             string=string,
                             plural_form=plural_form,
                             approved=not vcs_translation.fuzzy,
-                            approved_date=self.now
-                            if not vcs_translation.fuzzy
-                            else None,
+                            approved_date=(
+                                self.now if not vcs_translation.fuzzy else None
+                            ),
                             fuzzy=vcs_translation.fuzzy,
                         )
                     )
@@ -256,9 +272,9 @@ class ChangeSet:
 
     def update_entity_translations_from_vcs(
         self,
-        db_entity,
-        locale_code,
-        vcs_translation,
+        db_entity: Entity,
+        locale_code: str,
+        vcs_translation: VCSTranslation,
         user=None,
         db_translations=None,
         db_translations_approved_before_sync=None,

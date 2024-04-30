@@ -352,7 +352,7 @@ class Project(AggregatedStats):
         Returns an instance of repository which contains the path to source files.
         """
         if not self.has_single_repo:
-            from pontoon.sync.vcs.models import VCSProject
+            from pontoon.sync.models import VCSProject
 
             source_directories = VCSProject.SOURCE_DIR_SCORES.keys()
 

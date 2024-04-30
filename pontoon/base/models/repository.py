@@ -202,7 +202,7 @@ class Repository(models.Model):
         Pull changes from VCS. Returns the revision(s) of the repo after
         pulling.
         """
-        from pontoon.sync.vcs.repositories import (
+        from pontoon.sync.repositories import (
             PullFromRepositoryException,
             get_revision,
             update_from_vcs,
@@ -239,7 +239,7 @@ class Repository(models.Model):
         if self.multi_locale:
             url = self.url_for_path(path)
 
-        from pontoon.sync.vcs.repositories import commit_to_vcs
+        from pontoon.sync.repositories import commit_to_vcs
 
         return commit_to_vcs(self.type, path, message, author, self.branch, url)
 
@@ -248,7 +248,7 @@ class Repository(models.Model):
         Set last_synced_revisions to a dictionary of revisions
         that are currently downloaded on the disk.
         """
-        from pontoon.sync.vcs.repositories import get_revision
+        from pontoon.sync.repositories import get_revision
 
         current_revisions = {}
 
