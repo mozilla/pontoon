@@ -118,10 +118,6 @@
       "description": "Enabled features like a standalone login page etc.",
       "value": "1"
     },
-    "LOCALE_REQUEST_FROM_EMAIL": {
-      "description": "Optional. Requests for new project locales are sent from this email.",
-      "value": "pontoon@example.com"
-    },
     "VCS_SYNC_NAME": {
       "description": "Optional. Default committer's name used when committing translations to version control system.",
       "value": "Pontoon"
