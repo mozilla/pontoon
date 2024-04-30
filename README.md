@@ -16,9 +16,8 @@ It specializes in open source localization that is driven by the community and u
 
 Prerequisits:
 
-Python version: `3.11.9`
-Node version: `v18.19.0`
-pyenv
+- pyenv
+- nvm
 
 1. Set up local Git repo
 
@@ -34,6 +33,8 @@ git remote add upstream https://github.com/mozilla/pontoon
 
 ```sh
 pyenv install `pyenv local`
+nvm install v18 --lts
+
 python -m venv venv
 pip install -r requirements/default.txt
 pip install -r requirements/dev.txt
@@ -144,6 +145,7 @@ Copy below chunk to your terminal and hit enter.
 ```sh
 export image_hash=$(git rev-parse --short upstream/main) && \
   export today=$(printf '%(%Y%m%d)T') && \
+  nvm use v18 && \
   make build-translate && \
   make build-tagadmin && \
   docker build -f ./docker/Dockerfile --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 \
