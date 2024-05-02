@@ -197,17 +197,6 @@ class SilmeResource(ParsedResource):
                     if len(line) == 0:
                         new_structure.remove_element(pos)
 
-        # Temporary fix for bug 1236281 until bug 721211 lands
-        if (
-            self.path.endswith("browser/chrome/browser/browser.properties")
-            and locale.code == "zh-CN"
-        ):
-            new_entity = silme.core.entity.Entity(
-                "browser.startup.homepage", "https://start.firefoxchina.cn"
-            )
-            new_structure.add_entity(new_entity)
-            new_structure.add_string("\n")
-
         create_parent_directory(self.path)
 
         with codecs.open(self.path, "w", "utf-8") as f:
