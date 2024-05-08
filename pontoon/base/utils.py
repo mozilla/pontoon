@@ -10,7 +10,7 @@ import time
 import zipfile
 
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from guardian.decorators import permission_required as guardian_permission_required
 from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
@@ -22,7 +22,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest, Http404
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone as dj_timezone
 from django.utils.text import slugify
 from django.utils.translation import trans_real
 
@@ -351,7 +351,7 @@ def handle_upload_content(slug, code, part, f, user):
 
     # Update database objects from file
     changeset = ChangeSet(
-        project, VCSProject(project, locales=[locale]), timezone.now()
+        project, VCSProject(project, locales=[locale]), dj_timezone.now()
     )
     entities_qs = (
         Entity.objects.filter(
@@ -368,7 +368,7 @@ def handle_upload_content(slug, code, part, f, user):
             Prefetch(
                 "translation_set",
                 queryset=Translation.objects.filter(
-                    locale=locale, approved_date__lte=timezone.now()
+                    locale=locale, approved_date__lte=dj_timezone.now()
                 ),
                 to_attr="db_translations_approved_before_sync",
             )
@@ -424,7 +424,7 @@ def handle_upload_content(slug, code, part, f, user):
 
 def aware_datetime(*args, **kwargs):
     """Return an aware datetime using Django's configured timezone."""
-    return timezone.make_aware(datetime(*args, **kwargs))
+    return dj_timezone.make_aware(datetime(*args, **kwargs))
 
 
 def latest_datetime(datetimes):
@@ -436,7 +436,7 @@ def latest_datetime(datetimes):
     if all(map(lambda d: d is None, datetimes)):
         return None
 
-    min_datetime = timezone.make_aware(datetime.min)
+    min_datetime = dj_timezone.make_aware(datetime.min)
     datetimes = map(lambda d: d or min_datetime, datetimes)
     return max(datetimes)
 
@@ -449,10 +449,9 @@ def parse_time_interval(interval):
     """
 
     def parse_timestamp(timestamp):
-        return timezone.make_aware(
+        return dj_timezone.make_aware(
             datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc
         )
-
     start, end = interval.split("-")
 
     return parse_timestamp(start), parse_timestamp(end) + timedelta(minutes=1)

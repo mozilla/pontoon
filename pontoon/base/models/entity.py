@@ -4,7 +4,7 @@ from re import findall, match
 
 from dirtyfields import DirtyFieldsMixin
 from django.db import models
-from django.db.models import F, Prefetch, Q
+from django.db.models import F, Prefetch, Q, Index
 from django.utils import timezone
 from jsonfield import JSONField
 
@@ -527,7 +527,9 @@ class Entity(DirtyFieldsMixin, models.Model):
     objects = EntityQuerySet.as_manager()
 
     class Meta:
-        index_together = (("resource", "obsolete", "string_plural"),)
+        indexes = [
+            models.Index(fields=['resource', 'obsolete', 'string_plural']),
+        ]
 
     @property
     def cleaned_key(self):
@@ -852,6 +854,9 @@ class Entity(DirtyFieldsMixin, models.Model):
             entity_filters = (
                 Q(string__icontains=search)
                 | Q(string_plural__icontains=search)
+                | Q(comment__icontains=search)
+                | Q(group_comment__icontains=search)
+                | Q(resource_comment__icontains=search)
                 | Q(key__icontains=search)
                 for search in search_list
             )

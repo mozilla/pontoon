@@ -27,7 +27,8 @@ def action_a(translation_a):
         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
         translation=translation_a,
     )
-    action.created_at = datetime(2020, 1, 1)
+    aware_datetime = timezone.make_aware(datetime(2020, 1, 1))
+    action.created_at = aware_datetime
     action.save()
     return action
 
@@ -38,7 +39,8 @@ def action_b(translation_a):
         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
         translation=translation_a,
     )
-    action.created_at = datetime(2020, 1, 1)
+    aware_datetime = timezone.make_aware(datetime(2020, 1, 1))
+    action.created_at = aware_datetime
     action.save()
     return action
 
@@ -49,7 +51,8 @@ def action_c(translation_a):
         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
         translation=translation_a,
     )
-    action.created_at = datetime(2020, 2, 1)
+    aware_datetime = timezone.make_aware(datetime(2020, 2, 1))
+    action.created_at = aware_datetime
     action.save()
     return action
 
@@ -61,7 +64,7 @@ def action_user_a(translation_a, user_a):
         performed_by=user_a,
         translation=translation_a,
     )
-    action.created_at = datetime.now() - relativedelta(months=1)
+    action.created_at = timezone.now() - relativedelta(months=1)
     action.save()
     return action
 
@@ -73,7 +76,7 @@ def action_user_b(translation_a, user_b):
         performed_by=user_b,
         translation=translation_a,
     )
-    action.created_at = datetime.now()
+    action.created_at = timezone.now()
     action.save()
     return action
 
@@ -85,7 +88,7 @@ def yesterdays_action_user_a(translation_a, user_a):
         performed_by=user_a,
         translation=translation_a,
     )
-    action.created_at = datetime.now() - relativedelta(days=1)
+    action.created_at = timezone.now() - relativedelta(days=1)
     action.save()
     return action
 
