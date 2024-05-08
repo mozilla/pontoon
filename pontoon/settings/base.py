@@ -699,9 +699,9 @@ STATIC_URL = STATIC_HOST + "/static/"
 # STATICFILES_STORAGE = "pontoon.base.storage.CompressedManifestPipelineStorage"
 
 STORAGES = {
-   "staticfiles": {
-       "BACKEND": "pontoon.base.storage.CompressedManifestPipelineStorage",
-   },
+    "staticfiles": {
+        "BACKEND": "pontoon.base.storage.CompressedManifestPipelineStorage",
+    },
 }
 
 STATICFILES_FINDERS = (

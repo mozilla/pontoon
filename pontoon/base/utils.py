@@ -452,6 +452,7 @@ def parse_time_interval(interval):
         return dj_timezone.make_aware(
             datetime.strptime(timestamp, "%Y%m%d%H%M"), timezone=timezone.utc
         )
+
     start, end = interval.split("-")
 
     return parse_timestamp(start), parse_timestamp(end) + timedelta(minutes=1)

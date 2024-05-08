@@ -1,7 +1,7 @@
 from dirtyfields import DirtyFieldsMixin
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import Count, Q, Index
+from django.db.models import Count, Q
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -175,13 +175,13 @@ class Translation(DirtyFieldsMixin, models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['entity', 'user', 'approved', 'pretranslated']),
-            models.Index(fields=['entity', 'locale', 'approved']),
-            models.Index(fields=['entity', 'locale', 'pretranslated']),
-            models.Index(fields=['entity', 'locale', 'fuzzy']),
-            models.Index(fields=['locale', 'user', 'entity']),
-            models.Index(fields=['date', 'locale']),
-            models.Index(fields=['approved_date', 'locale']),
+            models.Index(fields=["entity", "user", "approved", "pretranslated"]),
+            models.Index(fields=["entity", "locale", "approved"]),
+            models.Index(fields=["entity", "locale", "pretranslated"]),
+            models.Index(fields=["entity", "locale", "fuzzy"]),
+            models.Index(fields=["locale", "user", "entity"]),
+            models.Index(fields=["date", "locale"]),
+            models.Index(fields=["approved_date", "locale"]),
         ]
         constraints = [
             models.UniqueConstraint(

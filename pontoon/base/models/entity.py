@@ -4,7 +4,7 @@ from re import findall, match
 
 from dirtyfields import DirtyFieldsMixin
 from django.db import models
-from django.db.models import F, Prefetch, Q, Index
+from django.db.models import F, Prefetch, Q
 from django.utils import timezone
 from jsonfield import JSONField
 
@@ -528,7 +528,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['resource', 'obsolete', 'string_plural']),
+            models.Index(fields=["resource", "obsolete", "string_plural"]),
         ]
 
     @property
