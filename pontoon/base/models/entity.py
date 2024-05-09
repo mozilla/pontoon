@@ -854,9 +854,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             entity_filters = (
                 Q(string__icontains=search)
                 | Q(string_plural__icontains=search)
-                | Q(comment__icontains=search)
-                | Q(group_comment__icontains=search)
-                | Q(resource_comment__icontains=search)
                 | Q(key__icontains=search)
                 for search in search_list
             )
