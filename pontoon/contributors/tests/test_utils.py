@@ -49,7 +49,7 @@ def action_c(translation_a):
         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
         translation=translation_a,
     )
-    action.created_at = timezone.make_aware(datetime(2020, 1, 1))
+    action.created_at = timezone.make_aware(datetime(2020, 2, 1))
     action.save()
     return action
 
