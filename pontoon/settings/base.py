@@ -696,8 +696,6 @@ MEDIA_URL = "/media/"
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = STATIC_HOST + "/static/"
 
-# STATICFILES_STORAGE = "pontoon.base.storage.CompressedManifestPipelineStorage"
-
 STORAGES = {
     "staticfiles": {
         "BACKEND": "pontoon.base.storage.CompressedManifestPipelineStorage",
