@@ -67,4 +67,7 @@ jobs:
 
       - run: pytest
       - uses: codecov/codecov-action@v4
-        with: { flags: backend }
+        with:
+          flags: backend
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

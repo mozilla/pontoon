@@ -46,4 +46,7 @@ jobs:
         run: npm test --coverage
         working-directory: translate
       - uses: codecov/codecov-action@v4
-        with: { flags: frontend }
+        with:
+          flags: frontend
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

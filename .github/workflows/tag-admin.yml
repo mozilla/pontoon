@@ -33,6 +33,9 @@ jobs:
         run: npm test
         working-directory: tag-admin
       - uses: codecov/codecov-action@v4
-        with: { flags: non-frontend-js }
+        with:
+          flags: non-frontend-js
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Build
         run: npm run build
