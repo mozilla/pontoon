@@ -527,7 +527,9 @@ class Entity(DirtyFieldsMixin, models.Model):
     objects = EntityQuerySet.as_manager()
 
     class Meta:
-        index_together = (("resource", "obsolete", "string_plural"),)
+        indexes = [
+            models.Index(fields=["resource", "obsolete", "string_plural"]),
+        ]
 
     @property
     def cleaned_key(self):

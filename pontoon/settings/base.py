@@ -696,7 +696,12 @@ MEDIA_URL = "/media/"
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = STATIC_HOST + "/static/"
 
-STATICFILES_STORAGE = "pontoon.base.storage.CompressedManifestPipelineStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "pontoon.base.storage.CompressedManifestPipelineStorage",
+    },
+}
+
 STATICFILES_FINDERS = (
     "pipeline.finders.PipelineFinder",
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -719,9 +724,7 @@ PASSWORD_HASHERS = (
     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
     "django.contrib.auth.hashers.BCryptPasswordHasher",
-    "django.contrib.auth.hashers.SHA1PasswordHasher",
     "django.contrib.auth.hashers.MD5PasswordHasher",
-    "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",
 )
 
 # Logging
@@ -849,10 +852,6 @@ TIME_ZONE = os.environ.get("TZ", "UTC")
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = False
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale
-USE_L10N = False
 
 # Enable Bugs tab on the team pages, pulling data from bugzilla.mozilla.org.
 # See bug 1567402 for details. A Mozilla-specific variable.
