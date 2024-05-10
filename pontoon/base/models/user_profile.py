@@ -11,19 +11,21 @@ class UserProfile(models.Model):
         User, models.CASCADE, related_name="profile", primary_key=True
     )
 
-    # Themes
+    # Personal information
+    username = models.SlugField(unique=True, blank=True, null=True)
+    bio = models.TextField(max_length=160, blank=True, null=True)
+
+    # Email communications
+    contact_email = models.EmailField("Contact email address", blank=True, null=True)
+    contact_email_verified = models.BooleanField(default=False)
+    email_communications_enabled = models.BooleanField(default=False)
+
+    # Theme
     class Themes(models.TextChoices):
         DARK = "dark", "Dark"
         LIGHT = "light", "Light"
         SYSTEM = "system", "System"
 
-    # Personal information
-    username = models.SlugField(unique=True, blank=True, null=True)
-    contact_email = models.EmailField("Contact email address", blank=True, null=True)
-    contact_email_verified = models.BooleanField(default=False)
-    bio = models.TextField(max_length=160, blank=True, null=True)
-
-    # Theme
     theme = models.CharField(
         choices=Themes.choices,
         max_length=20,

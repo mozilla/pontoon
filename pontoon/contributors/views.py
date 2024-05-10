@@ -155,6 +155,7 @@ def toggle_user_profile_attribute(request, username):
     attribute = request.POST.get("attribute", None)
 
     boolean_attributes = [
+        "email_communications_enabled",
         "quality_checks",
         "force_suggestions",
         "new_string_notifications",

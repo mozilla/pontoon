@@ -39,22 +39,6 @@ ADMINS = MANAGERS = (
 # A list of project manager email addresses to send project requests to
 PROJECT_MANAGERS = os.environ.get("PROJECT_MANAGERS", "").split(",")
 
-
-def _get_site_url_netloc():
-    from urllib.parse import urlparse
-    from django.conf import settings
-
-    return urlparse(settings.SITE_URL).netloc
-
-
-def _default_from_email():
-    return os.environ.get(
-        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_url_netloc()}>"
-    )
-
-
-DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
-
 # VCS identity to be used when committing translations.
 VCS_SYNC_NAME = os.environ.get("VCS_SYNC_NAME", "Pontoon")
 VCS_SYNC_EMAIL = os.environ.get("VCS_SYNC_EMAIL", "pontoon@example.com")
@@ -202,7 +186,22 @@ GOOGLE_ANALYTICS_KEY = os.environ.get("GOOGLE_ANALYTICS_KEY", "")
 # Raygun.io configuration
 RAYGUN4PY_CONFIG = {"api_key": os.environ.get("RAYGUN_APIKEY", "")}
 
+
+def _get_site_url_netloc():
+    from urllib.parse import urlparse
+    from django.conf import settings
+
+    return urlparse(settings.SITE_URL).netloc
+
+
+def _default_from_email():
+    return os.environ.get(
+        "DEFAULT_FROM_EMAIL", f"Pontoon <pontoon@{_get_site_url_netloc()}>"
+    )
+
+
 # Email settings
+DEFAULT_FROM_EMAIL = lazy(_default_from_email, str)()
 EMAIL_HOST_USER = os.environ.get(
     "EMAIL_HOST_USER", os.environ.get("SENDGRID_USERNAME", "apikey")
 )
@@ -213,6 +212,7 @@ EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False") != "False"
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
 )
+EMAIL_COMMUNICATION_HELP_TEXT = os.environ.get("EMAIL_COMMUNICATION_HELP_TEXT", "")
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
