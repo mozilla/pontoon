@@ -15,6 +15,15 @@
   background-color: var(--dark-grey-2);
   padding: 0 2px;
   border-radius: 2px;
+  unicode-bidi: isolate;
+}
+
+.comments-list .comment .container .content p {
+  unicode-bidi: plaintext;
+}
+
+.comments-list .comment .container .content .Linkify {
+  display: block;
 }
 
 .comments-list .comment-author {
