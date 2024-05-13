@@ -51,7 +51,7 @@
         <h3>Email</h3>
         <div class="field">
             {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
-            {{ user_profile_form.contact_email }}
+            <input type="email" name="contact_email" maxlength="254" id="id_contact_email" placeholder="{{user.email}}">
             {{ user_profile_form.contact_email.errors }}
             {% if user.profile.contact_email and not user.profile.contact_email_verified %}
                 <p class="verify">Check your inbox to verify your email address</a></p>
