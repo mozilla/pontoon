@@ -60,7 +60,7 @@
             {% endif %}
         </div>
         <ul class="check-list">
-            {{ Checkbox.checkbox('Email communication', class='field email-communications-enabled', attribute='email_communications_enabled', is_enabled=user.profile.email_communications_enabled, title='Receive email updates', help=settings.EMAIL_COMMUNICATION_HELP_TEXT) }}
+            {{ Checkbox.checkbox('Email communications', class='field email-communications-enabled', attribute='email_communications_enabled', is_enabled=user.profile.email_communications_enabled, title='Receive email updates', help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT) }}
         </ul>
     </section>
 

@@ -23,7 +23,7 @@ services:
 
   # Database
   postgresql:
-    image: postgres:15
+    image: postgres:13.4
     environment:
       # Create the superuser account
       - POSTGRES_USER=pontoon
