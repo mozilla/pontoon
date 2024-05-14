@@ -125,6 +125,11 @@ you create:
 ``EMAIL_USE_SSL``
    Use implicit TLS for the SMTP connection (default: ``False``)
 
+``EMAIL_COMMUNICATIONS_HELP_TEXT``
+   Optional. Help text to use under the Email communications checkbox in user settings.
+   It allows to explain what type of communication to expect and to link to
+   deployment-specific privacy notices among other things.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.

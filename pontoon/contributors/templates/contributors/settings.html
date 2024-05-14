@@ -40,31 +40,38 @@
             {{ user_profile_form.username.errors }}
         </div>
         <div class="field">
-            {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
-            {{ user_profile_form.contact_email }}
-            {{ user_profile_form.contact_email.errors }}
-            {% if user.profile.contact_email and not user.profile.contact_email_verified %}
-                <p class="verify">Check your inbox to verify your email address</a></p>
-            {% else %}
-                <p class="help">If provided, used instead of login email address on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a></p>
-            {% endif %}
-        </div>
-        <div class="field">
             {{ user_profile_form.bio.label_tag(label_suffix='') }}
             {{ user_profile_form.bio }}
             {{ user_profile_form.bio.errors }}
             <p class="help">Displayed on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a></p>
         </div>
-      </section>
+    </section>
 
-   <section class="appearance">
+    <section>
+        <h3>Email</h3>
+        <div class="field">
+            {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
+            <input type="email" name="contact_email" maxlength="254" id="id_contact_email" placeholder="{{user.email}}">
+            {{ user_profile_form.contact_email.errors }}
+            {% if user.profile.contact_email and not user.profile.contact_email_verified %}
+                <p class="verify">Check your inbox to verify your email address</a></p>
+            {% else %}
+                <p class="help">If you would like to provide a different email address from your login email for email communications, please do so here. Note, this email will also appear under your <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a>.</p>
+            {% endif %}
+        </div>
+        <ul class="check-list">
+            {{ Checkbox.checkbox('Email communications', class='field email-communications-enabled', attribute='email_communications_enabled', is_enabled=user.profile.email_communications_enabled, title='Receive email updates', help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT) }}
+        </ul>
+    </section>
+
+    <section class="appearance">
         <h3>Appearance</h3>
         <div class="field">
             <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
         </div>
         {{ ThemeToggle.button(user) }}
     </section>
-        
+
     <section>
         <h3>External accounts</h3>
         <div class="field">
@@ -118,7 +125,7 @@
     </section>
 
     <section>
-        <h3>Editor settings</h3>
+        <h3>Editor</h3>
         <ul class="check-list">
             {{ Checkbox.checkbox('Translate Toolkit checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
 

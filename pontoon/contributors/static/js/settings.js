@@ -54,7 +54,7 @@ $(function () {
         const is_enabled = self.is('.enabled');
         const status = is_enabled ? 'enabled' : 'disabled';
 
-        Pontoon.endLoader(self.text() + ' ' + status + '.');
+        Pontoon.endLoader(self.find('.label').text() + ' ' + status + '.');
       },
       error: function (request) {
         if (request.responseText === 'error') {
