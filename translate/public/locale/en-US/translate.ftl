@@ -472,6 +472,15 @@ interactivetour-InteractiveTour--locales-content =
     localization communities. Approved translations of the current
     string to other languages are available in the Locales tab.
 
+interactivetour-InteractiveTour--email-communications-title = Let’s keep in touch
+interactivetour-InteractiveTour--email-communications-content =
+    Want to stay up to date and informed about all localization matters
+    at Mozilla? Enable email communications from your <a>settings</a> to get
+    the latest updates about localization at Mozilla, announcements about
+    new Pontoon features, invitations to contributor events and more.
+interactivetour-InteractiveTour--email-communications-footer =
+    (Make sure that you’re logged in to access your settings.)
+
 interactivetour-InteractiveTour--end-title = That’s (not) all, folks!
 interactivetour-InteractiveTour--end-content =
     There’s a wide variety of tools to help you with translations,

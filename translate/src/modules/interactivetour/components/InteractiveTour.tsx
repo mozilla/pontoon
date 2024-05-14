@@ -280,6 +280,30 @@ export function InteractiveTour(): React.ReactElement | null {
       selector: '',
       content: (
         <div>
+          <Localized id='interactivetour-InteractiveTour--email-communications-title'>
+            <h3>Let’s keep in touch</h3>
+          </Localized>
+          <Localized
+            id='interactivetour-InteractiveTour--email-communications-content'
+            elems={{
+              a: <a href='/settings/' />,
+            }}
+          >
+            <p>{`Want to stay up to date and informed about all localization matters
+              at Mozilla? Enable email communications from your <a>settings</a> to get
+              the latest updates about localization at Mozilla, announcements about
+              new Pontoon features, invitations to contributor events and more.`}</p>
+          </Localized>
+          <Localized id='interactivetour-InteractiveTour--email-communications-footer'>
+            <p>(Make sure that you’re logged in to access your settings.)</p>
+          </Localized>
+        </div>
+      ),
+    },
+    {
+      selector: '',
+      content: (
+        <div>
           <Localized id='interactivetour-InteractiveTour--end-title'>
             <h3>That’s (not) all, folks!</h3>
           </Localized>
