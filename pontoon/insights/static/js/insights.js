@@ -99,33 +99,32 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    source: 'data',
-                    callback: (value) =>
-                      shortMonthFormat.format(new Date(value)),
+              x: {
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  source: 'data',
+                  callback: function (value) {
+                    return shortMonthFormat.format(new Date(value));
                   },
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    max: 100,
-                    precision: 0,
-                    callback: (value) => nf.format(value / 100),
+              },
+              y: {
+                gridLines: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: function (value) {
+                    return nf.format(value / 100);
                   },
                 },
-              ],
+                beginAtZero: true,
+                max: 100,
+              },
             },
           },
         });

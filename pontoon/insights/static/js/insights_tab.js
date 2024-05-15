@@ -123,39 +123,33 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM YYYY',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: function (value) {
-                      return value + ' days';
-                    },
-                  },
+                grid: {
+                  display: false,
                 },
-              ],
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                gridLines: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  beginAtZero: true,
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => value + ' days',
+                },
+              },
             },
           },
         });
@@ -233,38 +227,34 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM YYYY',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: (value) => `${value} days`,
-                  },
+                gridLines: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                gridLines: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => `${value} days`,
+                },
+                beginAtZero: true,
+              },
             },
           },
         });
@@ -339,38 +329,34 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM YYYY',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: (value) => `${value} days`,
-                  },
+                gridLines: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                gridLines: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => `${value} days`,
+                },
+                beginAtZero: true,
+              },
             },
           },
         });
@@ -496,78 +482,90 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
+                  tooltipFormat: 'MMMM YYYY',
+                },
+                gridLines: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              'completion-y-axis': {
+                position: 'right',
+                scaleLabel: {
+                  display: true,
+                  labelString: 'COMPLETION',
+                  fontColor: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  stepSize: 20,
+                  callback: function (value) {
+                    return pf.format(value / 100);
                   },
                 },
-              ],
-              yAxes: [
-                {
-                  id: 'completion-y-axis',
-                  position: 'right',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'COMPLETION',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    max: 100,
-                    stepSize: 20,
-                    callback: function (value) {
-                      return pf.format(value / 100);
-                    },
-                  },
+                max: 100,
+                beginAtZero: true,
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                scaleLabel: {
+                  display: true,
+                  labelString: 'STRINGS',
+                  fontColor: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
                 },
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
+                gridLines: {
+                  display: false,
                 },
-              ],
+                ticks: {
+                  precision: 0,
+                },
+                beginAtZero: true,
+              },
             },
+
+            plugins: [
+              {
+                afterDatasetUpdate: function (chart) {
+                  if (chart.data.labels.length) {
+                    const chartID = chart.canvas.id;
+                    const legendID = chartID + '-legend';
+                    const legend = document.createElement('legend'); // maybe rename?
+                    legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
+                    chart.data.labels.forEach((label, index) => {
+                      legend.innerHTML += `
+                  <li>
+                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
+                      ${label}
+                  </li>
+                  `;
+                    });
+                    // $(`#${legendID}`).delegate('li', 'click', legendClick);
+                    // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
+                    return document
+                      .getElementById(legendID)
+                      .appendChild(legend);
+                  }
+                  return;
+                },
+              },
+            ],
           },
         });
-
-        // Render custom legend
-        $('#translation-activity-chart-legend').html(
-          translationActivityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          translationActivityChart,
-          '#translation-activity-chart-legend .label',
-        );
       },
       renderReviewActivity: function () {
         const chart = $('#review-activity-chart');
@@ -715,57 +713,67 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM YYYY',
                 },
-              ],
-              yAxes: [
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
+                gridLines: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'STRINGS',
+                  fontColor: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  precision: 0,
+                },
+                beginAtZero: true,
+              },
             },
           },
+          plugins: [
+            {
+              afterDatasetUpdate: function (chart) {
+                if (chart.data.labels.length) {
+                  const chartID = chart.canvas.id;
+                  const legendID = chartID + '-legend';
+                  const legend = document.createElement('legend'); // maybe rename?
+                  legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
+                  chart.data.labels.forEach((label, index) => {
+                    legend.innerHTML += `
+                  <li>
+                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
+                      ${label}
+                  </li>
+                  `;
+                  });
+                  // $(`#${legendID}`).delegate('li', 'click', legendClick);
+                  // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
+                  return document.getElementById(legendID).appendChild(legend);
+                }
+                return;
+              },
+            },
+          ],
         });
-
-        // Render custom legend
-        $('#review-activity-chart-legend').html(
-          reviewActivityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          reviewActivityChart,
-          '#review-activity-chart-legend .label',
-        );
       },
       renderPretranslationQuality: function () {
         const chart = $('#pretranslation-quality-chart');
@@ -900,78 +908,87 @@ var Pontoon = (function (my) {
               },
             },
             scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
+                  tooltipFormat: 'MMMM YYYY',
+                },
+                gridLines: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              'approval-rate-y-axis': {
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'APPROVAL RATE',
+                  fontColor: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  stepSize: 20,
+                  callback: function (value) {
+                    return pf.format(value / 100);
                   },
                 },
-              ],
-              yAxes: [
-                {
-                  id: 'approval-rate-y-axis',
-                  position: 'right',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'APPROVAL RATE',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    max: 100,
-                    stepSize: 20,
-                    callback: function (value) {
-                      return pf.format(value / 100);
-                    },
-                  },
+                beginAtZero: true,
+                max: 100,
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'STRINGS',
+                  fontColor: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
                 },
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
+                gridLines: {
+                  display: false,
                 },
-              ],
+                ticks: {
+                  precision: 0,
+                },
+                beginAtZero: true,
+              },
             },
           },
+          plugins: [
+            {
+              afterDatasetUpdate: function (chart) {
+                if (chart.data.labels.length) {
+                  const chartID = chart.canvas.id;
+                  const legendID = chartID + '-legend';
+                  const legend = document.createElement('legend'); // maybe rename?
+                  legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
+                  chart.data.labels.forEach((label, index) => {
+                    legend.innerHTML += `
+                  <li>
+                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
+                      ${label}
+                  </li>
+                  `;
+                  });
+                  // $(`#${legendID}`).delegate('li', 'click', legendClick);
+                  // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
+                  return document.getElementById(legendID).appendChild(legend);
+                }
+                return;
+              },
+            },
+          ],
         });
-
-        // Render custom legend
-        $('#pretranslation-quality-chart-legend').html(
-          pretranslationQualityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          pretranslationQualityChart,
-          '#pretranslation-quality-chart-legend .label',
-        );
       },
       getPercent: function (value, total) {
         const n = value / total;

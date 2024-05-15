@@ -544,7 +544,6 @@ PIPELINE_JS = {
     },
     "insights": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
             "js/insights_charts.js",
             "js/insights.js",
         ),
@@ -552,7 +551,6 @@ PIPELINE_JS = {
     },
     "localization": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/tabs.js",
@@ -564,7 +562,6 @@ PIPELINE_JS = {
     },
     "project": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/request.js",
             "js/progress-chart.js",
@@ -586,7 +583,6 @@ PIPELINE_JS = {
     },
     "team": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -610,7 +606,6 @@ PIPELINE_JS = {
     },
     "profile": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
             "js/insights_charts.js",
             "js/profile.js",
         ),
@@ -813,6 +808,7 @@ CSP_SCRIPT_SRC = (
     # Rules related to Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
+    "https://cdn.jsdelivr.net",
 )
 CSP_STYLE_SRC = (
     "'self'",

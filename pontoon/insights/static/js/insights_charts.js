@@ -36,12 +36,12 @@ var Pontoon = (function (my) {
         });
 
         // Set up default Chart.js configuration
-        Chart.defaults.global.defaultFontColor =
-          style.getPropertyValue('--light-grey-7');
-        Chart.defaults.global.defaultFontFamily = 'Open Sans';
-        Chart.defaults.global.defaultFontStyle = '100';
-        Chart.defaults.global.datasets.bar.barPercentage = 0.7;
-        Chart.defaults.global.datasets.bar.categoryPercentage = 0.7;
+        Chart.defaults.color = style.getPropertyValue('--light-grey-7');
+        Chart.defaults.font.family = 'Open Sans';
+        Chart.defaults.font.weight = '100'; // Chart.js uses 'weight' instead of 'style' for font
+        Chart.defaults.plugins.legend.display = false;
+        Chart.defaults.datasets.bar.barPercentage = 0.7;
+        Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
       // Legend configuration doesn't allow for enough flexibility,
       // so we build our own legend
