@@ -22,7 +22,7 @@ import {
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { serializeEntry } from '~/utils/message';
+import { serializeEntry, getPlainMessage } from '~/utils/message';
 
 /**
  * Return a function to send a translation to the server.
@@ -53,8 +53,9 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
     setEditorBusy(true);
 
     const translation = serializeEntry(entity.format, entry);
+    const normalizedTranslation = getPlainMessage(translation, entity.format);
     const sources =
-      machinery && machinery.translation === translation
+      machinery && machinery.translation === normalizedTranslation
         ? machinery.sources
         : [];
     const content = await createTranslation(

@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
-import type { MachineryTranslation } from '~/api/machinery';
+import type { MachineryTranslation, SourceType } from '~/api/machinery';
 import { logUXAction } from '~/api/uxaction';
 import { EditorActions } from '~/context/Editor';
 import { HelperSelection } from '~/context/HelperSelection';
@@ -45,7 +45,10 @@ export function MachineryTranslationComponent({
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
       const content = llmTranslation || translation.translation;
-      setEditorFromHelpers(content, translation.sources, true);
+      const sources: SourceType[] = llmTranslation
+        ? ['gpt-transform']
+        : translation.sources;
+      setEditorFromHelpers(content, sources, true);
       if (llmTranslation) {
         logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',
