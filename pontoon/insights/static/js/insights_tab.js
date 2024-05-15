@@ -6,6 +6,82 @@ var Pontoon = (function (my) {
     maximumFractionDigits: 2,
   });
   const style = getComputedStyle(document.body);
+  const getOrCreateLegendList = (chart, id) => {
+  const legendContainer = document.getElementById(id);
+  let listContainer = legendContainer.querySelector('ul');
+
+  if (!listContainer) {
+    listContainer = document.createElement('ul');
+    listContainer.style.display = 'flex';
+    listContainer.style.flexDirection = 'row';
+    listContainer.style.margin = 0;
+    listContainer.style.padding = 0;
+
+    legendContainer.appendChild(listContainer);
+  }
+
+  return listContainer;
+  };
+  const htmlLegendPlugin = {
+    id: 'htmlLegend',
+    afterUpdate(chart, args, options) {
+      const ul = getOrCreateLegendList(chart, options.containerID);
+  
+      // Remove old legend items
+      while (ul.firstChild) {
+        ul.firstChild.remove();
+      }
+  
+      // Reuse the built-in legendItems generator
+      const items = chart.options.plugins.legend.labels.generateLabels(chart);
+  
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.style.alignItems = 'center';
+        li.style.cursor = 'pointer';
+        li.style.display = 'flex';
+        li.style.flexDirection = 'row';
+        li.style.marginLeft = '10px';
+  
+        li.onclick = () => {
+          const {type} = chart.config;
+          if (type === 'pie' || type === 'doughnut') {
+            // Pie and doughnut charts only have a single dataset and visibility is per item
+            chart.toggleDataVisibility(item.index);
+          } else {
+            chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+          }
+          chart.update();
+        };
+  
+        // Color box
+        const boxSpan = document.createElement('span');
+        boxSpan.style.background = item.fillStyle;
+        boxSpan.style.borderColor = item.strokeStyle;
+        boxSpan.style.borderWidth = item.lineWidth + 'px';
+        boxSpan.style.display = 'inline-block';
+        boxSpan.style.flexShrink = 0;
+        boxSpan.style.height = '20px';
+        boxSpan.style.marginRight = '10px';
+        boxSpan.style.width = '20px';
+  
+        // Text
+        const textContainer = document.createElement('p');
+        textContainer.style.color = item.fontColor;
+        textContainer.style.margin = 0;
+        textContainer.style.padding = 0;
+        textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
+  
+        const text = document.createTextNode(item.text);
+        textContainer.appendChild(text);
+  
+        li.appendChild(boxSpan);
+        li.appendChild(textContainer);
+        ul.appendChild(li);
+      });
+    }
+  };
+  
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -108,9 +184,6 @@ var Pontoon = (function (my) {
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
             tooltips: {
               borderColor: style.getPropertyValue('--status-unreviewed'),
               borderWidth: 1,
@@ -151,6 +224,11 @@ var Pontoon = (function (my) {
                 },
               },
             },
+            plugins: {
+              legend: {
+                display: true,
+              }
+            }
           },
         });
       },
@@ -208,9 +286,6 @@ var Pontoon = (function (my) {
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -256,6 +331,9 @@ var Pontoon = (function (my) {
                 beginAtZero: true,
               },
             },
+            plugins: {
+              display: true,
+            }
           },
         });
       },
@@ -310,9 +388,6 @@ var Pontoon = (function (my) {
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -358,6 +433,11 @@ var Pontoon = (function (my) {
                 beginAtZero: true,
               },
             },
+            plugins: {
+              legend: {
+                display: true,
+              }
+            }
           },
         });
       },
@@ -435,10 +515,6 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -538,33 +614,16 @@ var Pontoon = (function (my) {
               },
             },
 
-            plugins: [
-              {
-                afterDatasetUpdate: function (chart) {
-                  if (chart.data.labels.length) {
-                    const chartID = chart.canvas.id;
-                    const legendID = chartID + '-legend';
-                    const legend = document.createElement('legend'); // maybe rename?
-                    legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
-                    chart.data.labels.forEach((label, index) => {
-                      legend.innerHTML += `
-                  <li>
-                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
-                      ${label}
-                  </li>
-                  `;
-                    });
-                    // $(`#${legendID}`).delegate('li', 'click', legendClick);
-                    // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
-                    return document
-                      .getElementById(legendID)
-                      .appendChild(legend);
-                  }
-                  return;
-                },
+            plugins: {
+              htmlLegend: {
+                containerID: 'translation-activity-chart-legend',
               },
-            ],
+              legend: {
+                display: false,
+              }
+            }
           },
+          plugins: [htmlLegendPlugin]
         });
       },
       renderReviewActivity: function () {
@@ -652,10 +711,14 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
+            plugins: {
+              htmlLegend: {
+                containerID: 'review-activity-chart-legend',
+              },
+              legend: {
+                display: false,
+              }
             },
-            legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -749,30 +812,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [
-            {
-              afterDatasetUpdate: function (chart) {
-                if (chart.data.labels.length) {
-                  const chartID = chart.canvas.id;
-                  const legendID = chartID + '-legend';
-                  const legend = document.createElement('legend'); // maybe rename?
-                  legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
-                  chart.data.labels.forEach((label, index) => {
-                    legend.innerHTML += `
-                  <li>
-                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
-                      ${label}
-                  </li>
-                  `;
-                  });
-                  // $(`#${legendID}`).delegate('li', 'click', legendClick);
-                  // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
-                  return document.getElementById(legendID).appendChild(legend);
-                }
-                return;
-              },
-            },
-          ],
+          plugins: [htmlLegendPlugin],
         });
       },
       renderPretranslationQuality: function () {
@@ -868,10 +908,14 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
+            plugins: {
+              htmlLegend: {
+                containerID: 'pretranslation-quality-chart-legend'
+              },
+              legend: {
+                display: false,
+              }
             },
-            legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -964,30 +1008,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [
-            {
-              afterDatasetUpdate: function (chart) {
-                if (chart.data.labels.length) {
-                  const chartID = chart.canvas.id;
-                  const legendID = chartID + '-legend';
-                  const legend = document.createElement('legend'); // maybe rename?
-                  legend.setAttribute('data-chart-id', legendID); // why data-chart-id?
-                  chart.data.labels.forEach((label, index) => {
-                    legend.innerHTML += `
-                  <li>
-                  <span style="background-color: ${chart.data.datasets[0].backgroundColor[index]}"></span>
-                      ${label}
-                  </li>
-                  `;
-                  });
-                  // $(`#${legendID}`).delegate('li', 'click', legendClick);
-                  // $(`#${legendId}`).delegate('li', 'mouseenter mouseleave', legendHover)
-                  return document.getElementById(legendID).appendChild(legend);
-                }
-                return;
-              },
-            },
-          ],
+          plugins: [htmlLegendPlugin],
         });
       },
       getPercent: function (value, total) {
