@@ -108,7 +108,7 @@ you create:
    Adds some additional django apps that can be helpful during day to day development.
 
 ``EMAIL_HOST``
-   SMTP host (default: ``'smtp.sendgrid.net'``)
+   SMTP host (default: ``'smtp.sendgrid.net'``).
 
 ``EMAIL_HOST_PASSWORD``
    Password for the SMTP connection.
@@ -117,13 +117,23 @@ you create:
    Username for the SMTP connection (default: ``'apikey'``).
 
 ``EMAIL_PORT``
-   SMTP port (default: ``587``)
+   SMTP port (default: ``587``).
 
 ``EMAIL_USE_TLS``
-   Use explicit TLS for the SMTP connection (default: ``True``)
+   Use explicit TLS for the SMTP connection (default: ``True``).
 
 ``EMAIL_USE_SSL``
-   Use implicit TLS for the SMTP connection (default: ``False``)
+   Use implicit TLS for the SMTP connection (default: ``False``).
+
+``EMAIL_CONSENT_ENABLED``
+   Enables Email consent page (default: ``False``).
+
+``EMAIL_COMMUNICATIONS_MAIN_TEXT``
+   Optional. Main text to use on the Email consent page, possibly explaining what type
+   of communication to expect.
+
+``EMAIL_COMMUNICATIONS_PRIVACY_NOTICE``
+   Optional. Text and link to the privacy notice, used on the Email consent page.
 
 ``EMAIL_COMMUNICATIONS_HELP_TEXT``
    Optional. Help text to use under the Email communications checkbox in user settings.

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Email consent{% endblock %}
+
+{% block class %}email-consent{% endblock %}
+
+{% block middle %}
+<section id="main">
+    <section>
+      <div class="container">
+        <h1>Let’s keep in touch</h1>
+        <p class="main-text">{{ settings.EMAIL_COMMUNICATIONS_MAIN_TEXT|safe }}</p>
+        <div class="buttons">
+          <a class="button enable" href="/">Enable email communications</a>
+          <a class="button disable" href="/">No, thanks</a>
+        </div>
+        <p class="privacy-notice">{{ settings.EMAIL_COMMUNICATIONS_PRIVACY_NOTICE|safe }}</p>
+      </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'email_consent' %}
+{% endblock %}
+
+{% block extend_js %}
+  {% javascript 'email_consent' %}
+{% endblock %}

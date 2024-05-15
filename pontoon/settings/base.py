@@ -212,6 +212,11 @@ EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False") != "False"
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD", os.environ.get("SENDGRID_PASSWORD", "")
 )
+EMAIL_CONSENT_ENABLED = os.environ.get("EMAIL_CONSENT_ENABLED", "False") != "False"
+EMAIL_COMMUNICATIONS_MAIN_TEXT = os.environ.get("EMAIL_COMMUNICATIONS_MAIN_TEXT", "")
+EMAIL_COMMUNICATIONS_PRIVACY_NOTICE = os.environ.get(
+    "EMAIL_COMMUNICATIONS_PRIVACY_NOTICE", ""
+)
 EMAIL_COMMUNICATIONS_HELP_TEXT = os.environ.get("EMAIL_COMMUNICATIONS_HELP_TEXT", "")
 
 # Log emails to console if the SendGrid credentials are missing.
@@ -233,6 +238,7 @@ INSTALLED_APPS = (
     "pontoon.insights",
     "pontoon.localizations",
     "pontoon.machinery",
+    "pontoon.messaging",
     "pontoon.projects",
     "pontoon.sync",
     "pontoon.tags",
@@ -287,6 +293,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
+    "pontoon.base.middleware.EmailConsentMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
@@ -511,6 +518,10 @@ PIPELINE_CSS = {
         "source_filenames": ("css/homepage.css",),
         "output_filename": "css/homepage.min.css",
     },
+    "email_consent": {
+        "source_filenames": ("css/email_consent.css",),
+        "output_filename": "css/email_consent.min.css",
+    },
 }
 
 PIPELINE_JS = {
@@ -644,6 +655,10 @@ PIPELINE_JS = {
     "homepage": {
         "source_filenames": ("js/homepage.js",),
         "output_filename": "js/homepage.min.js",
+    },
+    "email_consent": {
+        "source_filenames": ("js/email_consent.js",),
+        "output_filename": "js/email_consent.min.js",
     },
 }
 
