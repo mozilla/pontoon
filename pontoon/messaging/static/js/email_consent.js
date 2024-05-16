@@ -1,5 +1,4 @@
 $(function () {
-  // Toggle user profile attribute
   $('.buttons .button').click(function (e) {
     e.preventDefault();
     const self = $(this);
