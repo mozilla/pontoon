@@ -8,13 +8,13 @@
 <section id="main">
     <section>
       <div class="container">
-        <h1>Let’s keep in touch</h1>
-        <p class="main-text">{{ settings.EMAIL_COMMUNICATIONS_MAIN_TEXT|safe }}</p>
+        <h1>{{ settings.EMAIL_CONSENT_TITLE }}</h1>
+        <p class="main-text">{{ settings.EMAIL_CONSENT_MAIN_TEXT|safe }}</p>
         <div class="buttons">
           <a class="button enable" href="/">Enable email communications</a>
           <a class="button disable" href="/">No, thanks</a>
         </div>
-        <p class="privacy-notice">{{ settings.EMAIL_COMMUNICATIONS_PRIVACY_NOTICE|safe }}</p>
+        <p class="privacy-notice">{{ settings.EMAIL_CONSENT_PRIVACY_NOTICE|safe }}</p>
       </div>
     </section>
 </section>

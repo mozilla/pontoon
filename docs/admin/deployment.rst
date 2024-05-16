@@ -128,12 +128,16 @@ you create:
 ``EMAIL_CONSENT_ENABLED``
    Enables Email consent page (default: ``False``).
 
-``EMAIL_COMMUNICATIONS_MAIN_TEXT``
-   Optional. Main text to use on the Email consent page, possibly explaining what type
-   of communication to expect.
+``EMAIL_CONSENT_TITLE``
+   Optional. Title of the Email consent page.
 
-``EMAIL_COMMUNICATIONS_PRIVACY_NOTICE``
-   Optional. Text and link to the privacy notice, used on the Email consent page.
+``EMAIL_CONSENT_MAIN_TEXT``
+   Optional. Main text of the Email consent page. You can use that to explain what type
+   of communication to expect among other things.
+
+``EMAIL_CONSENT_PRIVACY_NOTICE``
+   Optional. Privacy notice on the Email consent page. It's possible to use HTML and
+   link to external privacy notice page.
 
 ``EMAIL_COMMUNICATIONS_HELP_TEXT``
    Optional. Help text to use under the Email communications checkbox in user settings.
