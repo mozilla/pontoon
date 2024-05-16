@@ -37,6 +37,7 @@ var Pontoon = (function (my) {
 
         // Set up default Chart.js configuration
         Chart.defaults.color = style.getPropertyValue('--light-grey-7');
+        Chart.defaults.borderColor = style.getPropertyValue('--dark-grey-1');
         Chart.defaults.font.family = 'Open Sans';
         Chart.defaults.font.weight = '100'; // Chart.js uses 'weight' instead of 'style' for font
         Chart.defaults.plugins.legend.display = false;

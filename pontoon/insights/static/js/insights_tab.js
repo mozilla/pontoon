@@ -447,12 +447,14 @@ var Pontoon = (function (my) {
                   '--status-translated',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-translated',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4
               },
               humanData.length > 0 && {
                 type: 'bar',
@@ -631,12 +633,14 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4
               },
               peerApprovedData.length > 0 && {
                 type: 'bar',
@@ -823,11 +827,13 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--lilac'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--lilac'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
+                fill: true,
+                tension: 0.4
               },
               {
                 type: 'line',
@@ -839,11 +845,13 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--purple'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--purple'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
+                fill: true,
+                tension: 0.4
               },
               approvedData.length > 0 && {
                 type: 'bar',
