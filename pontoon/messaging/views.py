@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 
+@login_required(redirect_field_name="", login_url="/403")
 def email_consent(request):
     return render(
         request,
