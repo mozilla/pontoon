@@ -39,23 +39,28 @@ class BlockedIpMiddleware(MiddlewareMixin):
         return None
 
 
-class EmailConsentMiddleware(MiddlewareMixin):
-    def process_request(self, request):
+class EmailConsentMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
         if not settings.EMAIL_CONSENT_ENABLED:
-            return None
+            return response
 
         if not request.user.is_authenticated:
-            return None
+            return response
 
         if request.user.profile.email_consent_dismissed_at is not None:
-            return None
+            return response
 
         if is_ajax(request):
-            return None
+            return response
 
         email_consent_url = "pontoon.messaging.email_consent"
         if request.path == reverse(email_consent_url):
-            return None
+            return response
 
         request.session["next_path"] = request.get_full_path()
         return redirect(email_consent_url)
