@@ -115,7 +115,7 @@ var Pontoon = (function (my) {
                   },
                   tooltipFormat: 'MMMM YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -124,7 +124,7 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {

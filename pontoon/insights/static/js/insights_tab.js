@@ -7,81 +7,55 @@ var Pontoon = (function (my) {
   });
   const style = getComputedStyle(document.body);
   const getOrCreateLegendList = (chart, id) => {
-  const legendContainer = document.getElementById(id);
-  let listContainer = legendContainer.querySelector('ul');
+    const legendContainer = document.getElementById(id);
+    let listContainer = legendContainer.querySelector('ul');
 
-  if (!listContainer) {
-    listContainer = document.createElement('ul');
-    listContainer.style.display = 'flex';
-    listContainer.style.flexDirection = 'row';
-    listContainer.style.margin = 0;
-    listContainer.style.padding = 0;
+    if (!listContainer) {
+      listContainer = document.createElement('ul');
+      legendContainer.appendChild(listContainer);
+    }
 
-    legendContainer.appendChild(listContainer);
-  }
-
-  return listContainer;
+    return listContainer;
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
     afterUpdate(chart, args, options) {
       const ul = getOrCreateLegendList(chart, options.containerID);
-  
+
       // Remove old legend items
       while (ul.firstChild) {
         ul.firstChild.remove();
       }
-  
-      // Reuse the built-in legendItems generator
-      const items = chart.options.plugins.legend.labels.generateLabels(chart);
-  
-      items.forEach(item => {
-        const li = document.createElement('li');
-        li.style.alignItems = 'center';
-        li.style.cursor = 'pointer';
-        li.style.display = 'flex';
-        li.style.flexDirection = 'row';
-        li.style.marginLeft = '10px';
-  
+
+      // Generate custom legend items using the provided logic
+      const labels = chart.data.datasets
+        .map((dataset) => {
+          const disabled = dataset.hidden ? 'disabled' : '';
+          const color = dataset.borderColor || dataset.backgroundColor;
+
+          return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
+        })
+        .join('');
+
+      // Add the generated legend items to the list
+      ul.innerHTML = `<ul>${labels}</ul>`;
+
+      // Add click event listeners for toggling dataset visibility
+      Array.from(ul.getElementsByTagName('li')).forEach((li, index) => {
         li.onclick = () => {
-          const {type} = chart.config;
+          const { type } = chart.config;
           if (type === 'pie' || type === 'doughnut') {
             // Pie and doughnut charts only have a single dataset and visibility is per item
-            chart.toggleDataVisibility(item.index);
+            chart.toggleDataVisibility(index);
           } else {
-            chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
           }
           chart.update();
         };
-  
-        // Color box
-        const boxSpan = document.createElement('span');
-        boxSpan.style.background = item.fillStyle;
-        boxSpan.style.borderColor = item.strokeStyle;
-        boxSpan.style.borderWidth = item.lineWidth + 'px';
-        boxSpan.style.display = 'inline-block';
-        boxSpan.style.flexShrink = 0;
-        boxSpan.style.height = '20px';
-        boxSpan.style.marginRight = '10px';
-        boxSpan.style.width = '20px';
-  
-        // Text
-        const textContainer = document.createElement('p');
-        textContainer.style.color = item.fontColor;
-        textContainer.style.margin = 0;
-        textContainer.style.padding = 0;
-        textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
-  
-        const text = document.createTextNode(item.text);
-        textContainer.appendChild(text);
-  
-        li.appendChild(boxSpan);
-        li.appendChild(textContainer);
-        ul.appendChild(li);
       });
-    }
+    },
   };
-  
+
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -212,7 +186,7 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 position: 'right',
@@ -227,8 +201,8 @@ var Pontoon = (function (my) {
             plugins: {
               legend: {
                 display: true,
-              }
-            }
+              },
+            },
           },
         });
       },
@@ -310,7 +284,7 @@ var Pontoon = (function (my) {
                   },
                   tooltipFormat: 'MMMM YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -319,7 +293,7 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 position: 'right',
@@ -333,7 +307,7 @@ var Pontoon = (function (my) {
             },
             plugins: {
               display: true,
-            }
+            },
           },
         });
       },
@@ -412,7 +386,7 @@ var Pontoon = (function (my) {
                   },
                   tooltipFormat: 'MMMM YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -421,7 +395,7 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 position: 'right',
@@ -436,8 +410,8 @@ var Pontoon = (function (my) {
             plugins: {
               legend: {
                 display: true,
-              }
-            }
+              },
+            },
           },
         });
       },
@@ -524,9 +498,6 @@ var Pontoon = (function (my) {
               xPadding: 10,
               yPadding: 10,
               itemSort: function (a, b) {
-                // Dataset order affects stacking, tooltip and
-                // legend, but it doesn't work intuitively, so
-                // we need to manually sort tooltip items.
                 if (a.datasetIndex === 2 && b.datasetIndex === 1) {
                   return 1;
                 }
@@ -563,11 +534,11 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM',
+                    month: 'MMM D',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM D YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -577,13 +548,13 @@ var Pontoon = (function (my) {
               },
               'completion-y-axis': {
                 position: 'right',
-                scaleLabel: {
+                title: {
                   display: true,
-                  labelString: 'COMPLETION',
-                  fontColor: style.getPropertyValue('--white-1'),
+                  text: 'COMPLETION',
+                  color: style.getPropertyValue('--white-1'),
                   fontStyle: 100,
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {
@@ -598,13 +569,13 @@ var Pontoon = (function (my) {
               'strings-y-axis': {
                 stacked: true,
                 position: 'left',
-                scaleLabel: {
+                title: {
                   display: true,
-                  labelString: 'STRINGS',
-                  fontColor: style.getPropertyValue('--white-1'),
+                  text: 'STRINGS',
+                  color: style.getPropertyValue('--white-1'),
                   fontStyle: 100,
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {
@@ -613,19 +584,19 @@ var Pontoon = (function (my) {
                 beginAtZero: true,
               },
             },
-
             plugins: {
               htmlLegend: {
                 containerID: 'translation-activity-chart-legend',
               },
               legend: {
                 display: false,
-              }
-            }
+              },
+            },
           },
-          plugins: [htmlLegendPlugin]
+          plugins: [htmlLegendPlugin],
         });
       },
+
       renderReviewActivity: function () {
         const chart = $('#review-activity-chart');
         if (chart.length === 0) {
@@ -717,7 +688,7 @@ var Pontoon = (function (my) {
               },
               legend: {
                 display: false,
-              }
+              },
             },
             tooltips: {
               mode: 'index',
@@ -785,7 +756,7 @@ var Pontoon = (function (my) {
                   },
                   tooltipFormat: 'MMMM YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -799,10 +770,10 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'STRINGS',
-                  fontColor: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--white-1'),
                   fontStyle: 100,
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {
@@ -910,11 +881,11 @@ var Pontoon = (function (my) {
           options: {
             plugins: {
               htmlLegend: {
-                containerID: 'pretranslation-quality-chart-legend'
+                containerID: 'pretranslation-quality-chart-legend',
               },
               legend: {
                 display: false,
-              }
+              },
             },
             tooltips: {
               mode: 'index',
@@ -957,11 +928,11 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM',
+                    month: 'MMM D',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMM D YYYY',
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 offset: true,
@@ -974,10 +945,10 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'APPROVAL RATE',
-                  fontColor: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--white-1'),
                   fontStyle: 100,
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {
@@ -995,10 +966,10 @@ var Pontoon = (function (my) {
                 title: {
                   display: true,
                   text: 'STRINGS',
-                  fontColor: style.getPropertyValue('--white-1'),
+                  color: style.getPropertyValue('--white-1'),
                   fontStyle: 100,
                 },
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {

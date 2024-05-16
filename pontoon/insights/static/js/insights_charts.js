@@ -43,21 +43,6 @@ var Pontoon = (function (my) {
         Chart.defaults.datasets.bar.barPercentage = 0.7;
         Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
-      // Legend configuration doesn't allow for enough flexibility,
-      // so we build our own legend
-      // eslint-disable-next-line no-unused-vars
-      customLegend: (chart) => (chart) => {
-        const labels = chart.data.datasets
-          .map((dataset) => {
-            const disabled = dataset.hidden ? 'disabled' : '';
-            const color = dataset.borderColor || dataset.backgroundColor;
-
-            return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
-          })
-          .join('');
-
-        return `<ul>${labels}</ul>`;
-      },
       // Custom legend item event handler
       attachCustomLegendHandler: function (chart, selector) {
         $('body').on('click', selector, function (e) {

@@ -100,7 +100,7 @@ var Pontoon = (function (my) {
             },
             scales: {
               x: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 ticks: {
@@ -111,7 +111,7 @@ var Pontoon = (function (my) {
                 },
               },
               y: {
-                gridLines: {
+                grid: {
                   display: false,
                 },
                 position: 'right',
