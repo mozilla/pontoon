@@ -430,7 +430,7 @@ var Pontoon = (function (my) {
         const machineryData = chart.data('machinery-translations') || [];
         const newSourcesData = chart.data('new-source-strings') || [];
 
-        const translationActivityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -454,7 +454,7 @@ var Pontoon = (function (my) {
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
               },
               humanData.length > 0 && {
                 type: 'bar',
@@ -616,7 +616,7 @@ var Pontoon = (function (my) {
         const rejectedData = chart.data('rejected') || [];
         const newSuggestionsData = chart.data('new-suggestions') || [];
 
-        const reviewActivityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -640,7 +640,7 @@ var Pontoon = (function (my) {
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
               },
               peerApprovedData.length > 0 && {
                 type: 'bar',
@@ -812,7 +812,7 @@ var Pontoon = (function (my) {
         const rejectedData = chart.data('rejected') || [];
         const newData = chart.data('new') || [];
 
-        const pretranslationQualityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -833,7 +833,7 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -851,7 +851,7 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
               },
               approvedData.length > 0 && {
                 type: 'bar',
