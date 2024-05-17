@@ -808,7 +808,6 @@ CSP_SCRIPT_SRC = (
     # Rules related to Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
-    "https://cdn.jsdelivr.net",
 )
 CSP_STYLE_SRC = (
     "'self'",

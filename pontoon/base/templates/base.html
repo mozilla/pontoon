@@ -29,10 +29,12 @@
       {% endblock %}
     {% endblock %}
 
-    <!-- Add Chart.js and Moment CDN link -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@^2.30.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1.0.1"></script>
+    <!-- Import Chart.js and Moment.js from static files -->
+    <script language="javascript" type="text/javascript" src="{{ static('js/lib/chart.umd.min.js') }}"></script>
+    <script language="javascript" type="text/javascript" src="{{ static('js/lib/moment.min.js') }}"></script>
+    <script language="javascript" type="text/javascript" src="{{ static('js/lib/chartjs-adapter-moment.min.js') }}"></script>
+
+
     {% include "tracker.html" %}
   </head>
 
