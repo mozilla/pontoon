@@ -34,20 +34,23 @@ body > header.menu-opened {
   margin-bottom: 10px;
 }
 
-#main .button {
+#main .buttons button {
   background: transparent;
+  border: none;
+  border-radius: 2px;
+  box-sizing: content-box;
   color: var(--white-1);
   display: flex;
   font-size: 16px;
-  border-radius: 2px;
   width: 120px;
   height: 40px;
+  padding: 4px;
   justify-content: center;
   align-items: center;
   font-weight: 400;
 }
 
-#main .button.enable {
+#main .buttons button.enable {
   background-color: var(--status-translated);
   color: var(--homepage-tour-button-color);
   width: 320px;

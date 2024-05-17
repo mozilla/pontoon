@@ -1,5 +1,5 @@
 $(function () {
-  $('.buttons .button').click(function (e) {
+  $('.buttons button').click(function (e) {
     e.preventDefault();
     const self = $(this);
 
