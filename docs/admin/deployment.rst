@@ -126,13 +126,15 @@ you create:
    Use implicit TLS for the SMTP connection (default: ``False``).
 
 ``EMAIL_CONSENT_ENABLED``
-   Enables Email consent page (default: ``False``).
+   Optional. Enables Email consent page (default: ``False``).
 
 ``EMAIL_CONSENT_TITLE``
-   Optional. Title of the Email consent page.
+   Optional, unless ``EMAIL_CONSENT_ENABLED`` is ``True``.
+   Title of the Email consent page.
 
 ``EMAIL_CONSENT_MAIN_TEXT``
-   Optional. Main text of the Email consent page. You can use that to explain what type
+   Optional, unless ``EMAIL_CONSENT_ENABLED`` is ``True``.
+   Main text of the Email consent page. You can use that to explain what type
    of communication to expect among other things.
 
 ``EMAIL_CONSENT_PRIVACY_NOTICE``
