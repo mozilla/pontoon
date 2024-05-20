@@ -36,12 +36,13 @@ gunicorn==19.9.0
 html2text==2024.2.26
 jsonfield==3.1.0
 jsonschema==2.6.0
-lxml==4.9.1
+lxml==5.2.2
 markupsafe==2.0.1
 mercurial==6.4.2
+moz.l10n==0.3.0
 newrelic==9.6.0
 openai==1.12.0
-polib==1.0.6
+polib==1.2.0
 psycopg2==2.9.6
 PyJWT==2.4.0
 python-dateutil==2.9.0
@@ -50,7 +51,7 @@ python-levenshtein==0.12.2
 raygun4py==4.3.0
 sacrebleu==2.3.1
 sacremoses==0.0.43
-translate-toolkit==3.3.2
+translate-toolkit==3.13.1
 whitenoise==5.2.0
 wsgi-sslify==1.0.1
 

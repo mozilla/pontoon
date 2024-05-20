@@ -1,3 +1,6 @@
+from pontoon.sync.vcs.translation import VCSTranslation
+
+
 class ParsedResource:
     """
     Parent class for parsed resources as returned by parse.
@@ -6,8 +9,10 @@ class ParsedResource:
     that inherits from this class.
     """
 
+    entities: dict[str, VCSTranslation]
+
     @property
-    def translations(self):
+    def translations(self) -> list[VCSTranslation]:
         """
         Return a list of VCSTranslation instances or subclasses that
         represent the translations in the resource.

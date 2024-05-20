@@ -1,11 +1,13 @@
 from collections import defaultdict
 from os.path import basename, join, normpath
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Prefetch
+from django.db.models.manager import BaseManager
 from django.utils import timezone
 from django.utils.functional import cached_property
 
@@ -13,6 +15,9 @@ from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
+
+if TYPE_CHECKING:
+    from pontoon.base.models import ProjectLocale, Resource
 
 
 class Priority(models.IntegerChoices):
@@ -101,7 +106,11 @@ class ProjectQuerySet(models.QuerySet):
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
-    locales = models.ManyToManyField(Locale, through="ProjectLocale")
+    locales: models.ManyToManyField[Locale, "ProjectLocale"] = models.ManyToManyField(
+        Locale, through="ProjectLocale"
+    )
+
+    resources: BaseManager["Resource"]
 
     class DataSource(models.TextChoices):
         REPOSITORY = "repository", "Repository"

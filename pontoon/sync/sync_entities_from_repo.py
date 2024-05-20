@@ -1,0 +1,274 @@
+from collections import defaultdict
+import logging
+from datetime import datetime
+from os.path import isfile, join, relpath
+from typing import cast
+
+from django.db import transaction
+from django.db.models import F
+from django.db.models.manager import BaseManager
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
+
+from pontoon.api.schema import ProjectLocale
+from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
+from pontoon.base.models.entity import get_word_count
+from pontoon.sync.checkouts import Checkout
+from pontoon.sync.exceptions import ParseError
+from pontoon.sync.formats import parse
+from pontoon.sync.formats.silme import SilmeEntity, SilmeResource  # Approximate types
+
+log = logging.getLogger(__name__)
+
+
+def sync_entities_from_repo(
+    project: Project,
+    locale_map: dict[str, Locale],
+    checkout: Checkout,
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    now: datetime,
+) -> tuple[int, set[str], set[str]]:
+    """
+    (added_entities_count, changed_source_paths, removed_source_paths)
+    """
+    if not checkout.changed and not checkout.removed:
+        return 0, set(), set()
+    # db_path -> parsed_resource
+    updates: dict[str, SilmeResource | None] = {}
+    source_root = relpath(paths.ref_root, checkout.path)
+    source_paths = set(paths.ref_paths)
+    source_locale = Locale.objects.get(code="en-US")
+    for co_path in checkout.changed:
+        path = join(checkout.path, co_path)
+        if path in source_paths:
+            db_path = relpath(path[:-1] if path.endswith(".pot") else path, source_root)
+            try:
+                res = parse(path, locale=source_locale)
+            except ParseError as error:
+                log.error(
+                    f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
+                )
+                res = None
+            updates[db_path] = res
+
+    with transaction.atomic():
+        removed_paths = remove_resources(project, source_root, checkout.removed)
+        old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
+        new_res_added_ent_count, _ = add_resources(
+            project, locale_map, paths, updates, changed_paths, now
+        )
+
+    return (
+        old_res_added_ent_count + new_res_added_ent_count,
+        changed_paths,
+        removed_paths,
+    )
+
+
+def remove_resources(project: Project, ref_root: str, remove: list[str]) -> set[str]:
+    if not remove:
+        return set()
+    removed_paths = [
+        path[:-1] if path.endswith(".pot") else path
+        for path in (relpath(co_path, ref_root) for co_path in remove)
+        if not path.startswith("..")
+    ]
+    removed_resources = project.resources.filter(path__in=removed_paths)
+    removed_paths = set(removed_resources.values_list("path", flat=True))
+    if removed_paths:
+        log.info(f"[{project.slug}] Removed source files: {', '.join(removed_paths)}")
+        # FIXME: https://github.com/mozilla/pontoon/issues/2133
+        removed_resources.delete()
+    return removed_paths
+
+
+def update_resources(
+    project: Project,
+    updates: dict[str, SilmeResource | None],
+    now: datetime,
+) -> tuple[int, set[str]]:
+    if not updates:
+        return 0, set()
+    changed_resources = project.resources.filter(path__in=updates.keys())
+    for cr in changed_resources:
+        cr.total_strings = len(updates[cr.path].entities)
+    Resource.objects.bulk_update(changed_resources, ("total_strings"))
+
+    prev_entities = {
+        (e.resource.path, e.key or e.string): e
+        for e in Entity.objects.filter(
+            resource__in=changed_resources, obsolete=False
+        ).select_related("resource")
+    }
+    next_entities = {
+        (path, entity.key or entity.string): entity
+        for path, entity in (
+            (cr.path, entity_from_source(cr, now, 0, tx))
+            for cr in changed_resources
+            for tx in updates[cr.path].translations
+        )
+    }
+
+    obsolete_entities = [
+        ent
+        for key, ent in prev_entities.items()
+        if key in prev_entities.keys() - next_entities.keys()
+    ]
+    for ent in obsolete_entities:
+        ent.obsolete = True
+        ent.date_obsoleted = now
+    obs_count = Entity.objects.bulk_update(
+        obsolete_entities, ("obsolete", "date_obsoleted")
+    )
+
+    mod_count = Entity.objects.bulk_update(
+        (
+            ent
+            for key, ent in next_entities.items()
+            if key in prev_entities.keys() & next_entities.keys()
+            and not entities_same(ent, prev_entities[key])
+        ),
+        (
+            "string",
+            "string_plural",
+            "comment",
+            "source",
+            "group_comment",
+            "resource_comment",
+            "context",
+        ),
+    )
+
+    # FIXME: Entity order should be updated on insertion
+    added_entities = Entity.objects.bulk_create(
+        ent
+        for key, ent in next_entities.items()
+        if key in next_entities.keys() - prev_entities.keys()
+    )
+
+    delta = [
+        f"added {len(added_entities)}" if added_entities else "",
+        f"changed {mod_count}" if mod_count else "",
+        f"obsoleted {obs_count}" if obs_count else "",
+    ]
+    if any(delta):
+        ds = ", ".join(d for d in delta if d)
+        log.info(f"[{project.slug}] Source entity updates: {ds}")
+    return len(added_entities), set(changed_resources.values_list("path", flat=True))
+
+
+def add_resources(
+    project: Project,
+    locale_map: dict[str, Locale],
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    updates: dict[str, SilmeResource | None],
+    changed_paths: set[str],
+    now: datetime,
+) -> tuple[int, set[str]]:
+    added_resources = [
+        Resource(
+            project=project,
+            path=db_path,
+            format=Resource.get_path_format(db_path),
+            total_strings=len(res.entities),
+        )
+        for db_path, res in updates.items()
+        if res is not None and db_path not in changed_paths
+    ]
+    if not added_resources:
+        return 0, set()
+
+    added_resources = Resource.objects.bulk_create(added_resources)
+    ordered_resources = cast(BaseManager[Resource], project.resources).order_by("path")
+    for idx, r in enumerate(ordered_resources):
+        r.order = idx
+    Resource.objects.bulk_update(ordered_resources, ["order"])
+
+    added_entities = Entity.objects.bulk_create(
+        (
+            entity_from_source(resource, now, idx, tx)
+            for resource in added_resources
+            for idx, tx in enumerate(updates[resource.path].translations)
+        )
+    )
+
+    def is_translated_resource(resource: Resource, locale_code: str) -> bool:
+        if locale_code not in locale_map:
+            return False
+        if resource.format in {"po", "xliff"}:
+            # For bilingual formats, only create TranslatedResource
+            # if the resource exists for the locale.
+            target = paths.target(resource.path)  # , locale_code)
+            if target is None:
+                return False
+            target_path = paths.format_target_path(target[0], locale_code)
+            return isfile(target_path)
+        return True
+
+    translated_resources = TranslatedResource.objects.bulk_create(
+        TranslatedResource(
+            resource=resource,
+            locale=locale_map[locale_code],
+            total_strings=resource.total_strings,
+        )
+        for resource in added_resources
+        for locale_code in paths.target(resource.path)[1]
+        if is_translated_resource(resource, locale_code)
+    )
+
+    # Update aggregated stats for total_strings
+    strings_by_locale: dict[Locale, int] = defaultdict(int)
+    for tr in translated_resources:
+        strings_by_locale[tr.locale] += tr.total_strings
+    for locale, added_strings in strings_by_locale.items():
+        ProjectLocale.objects.filter(locale=locale, project=project).update(
+            total_strings=F("total_strings") + added_strings
+        )
+        if not project.system_project:
+            Locale.objects.filter(id=locale.pk).update(
+                total_strings=F("total_strings") + added_strings
+            )
+    Project.objects.filter(id=project.pk).update(
+        total_strings=F("total_strings") + added_strings
+    )
+
+    ent_count = len(added_entities)
+    added_paths = {ar.path for ar in added_resources}
+    log.info(
+        f"[{project.slug}] Added source files with ${ent_count} new entities: {', '.join(added_paths)}"
+    )
+    return ent_count, added_paths
+
+
+def entity_from_source(
+    resource: Resource, now: datetime, idx: int, tx: SilmeEntity
+) -> Entity:
+    return Entity(
+        string=tx.source_string,
+        string_plural=tx.source_string_plural,
+        key=tx.key,
+        comment="\n".join(tx.comments),
+        order=tx.order or idx,
+        source=tx.source,
+        resource=resource,
+        date_created=now,
+        group_comment="\n".join(
+            tx.group_comments if hasattr(tx, "group_comments") else None
+        ),
+        resource_comment="\n".join(
+            tx.resource_comments if hasattr(tx, "resource_comments") else None
+        ),
+        context=tx.context,
+        word_count=get_word_count(tx.source_string),
+    )
+
+
+def entities_same(a: Entity, b: Entity) -> bool:
+    return (
+        a.string == b.string
+        and a.string_plural == b.string_plural
+        and a.comment == b.comment
+        and a.source == b.source
+        and a.group_comment == b.group_comment
+        and a.resource_comment == b.resource_comment
+        and a.context == b.context
+    )

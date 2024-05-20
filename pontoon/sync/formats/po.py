@@ -64,6 +64,8 @@ class POEntity(VCSTranslation):
 
 
 class POResource(ParsedResource):
+    entities: list[POEntity]
+
     def __init__(self, pofile):
         self.pofile = pofile
         self.entities = [
