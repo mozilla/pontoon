@@ -19,6 +19,7 @@ class UserProfile(models.Model):
     contact_email = models.EmailField("Contact email address", blank=True, null=True)
     contact_email_verified = models.BooleanField(default=False)
     email_communications_enabled = models.BooleanField(default=False)
+    email_consent_dismissed_at = models.DateTimeField(null=True, blank=True)
 
     # Theme
     class Themes(models.TextChoices):

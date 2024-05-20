@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
+from pontoon.base.utils import is_ajax
 from raygun4py.middleware.django import Provider
 
 
@@ -34,3 +37,30 @@ class BlockedIpMiddleware(MiddlewareMixin):
             return HttpResponseForbidden("<h1>Forbidden</h1>")
 
         return None
+
+
+class EmailConsentMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        if not settings.EMAIL_CONSENT_ENABLED:
+            return response
+
+        if not request.user.is_authenticated:
+            return response
+
+        if request.user.profile.email_consent_dismissed_at is not None:
+            return response
+
+        if is_ajax(request):
+            return response
+
+        email_consent_url = "pontoon.messaging.email_consent"
+        if request.path == reverse(email_consent_url):
+            return response
+
+        request.session["next_path"] = request.get_full_path()
+        return redirect(email_consent_url)
