@@ -28,13 +28,7 @@
       {% block extend_css %}
       {% endblock %}
     {% endblock %}
-
-    <!-- Import Chart.js and Moment.js from static files -->
-    <script language="javascript" type="text/javascript" src="{{ static('js/lib/chart.umd.min.js') }}"></script>
-    <script language="javascript" type="text/javascript" src="{{ static('js/lib/moment.min.js') }}"></script>
-    <script language="javascript" type="text/javascript" src="{{ static('js/lib/chartjs-adapter-moment.min.js') }}"></script>
-
-
+    
     {% include "tracker.html" %}
   </head>
 
