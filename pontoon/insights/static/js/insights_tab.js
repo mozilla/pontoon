@@ -488,6 +488,7 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
+            clip: false,
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -683,6 +684,7 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
+            clip: false,
             plugins: {
               htmlLegend: {
                 containerID: 'review-activity-chart-legend',
@@ -884,6 +886,7 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
+            clip: false,
             plugins: {
               htmlLegend: {
                 containerID: 'pretranslation-quality-chart-legend',

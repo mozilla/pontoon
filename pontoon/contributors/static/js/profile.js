@@ -64,6 +64,8 @@ var Pontoon = (function (my) {
                   style.getPropertyValue('--forest-green-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -82,13 +84,13 @@ var Pontoon = (function (my) {
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
+            clip: false,
             tooltips: {
               mode: 'index',
               intersect: false,
@@ -106,36 +108,38 @@ var Pontoon = (function (my) {
                 },
               },
             },
-            scales: {
+            scales: {              
               x: {
                 type: 'time',
                 time: {
-                  displayFormats: {
-                    month: 'MMM',
+                        displayFormats: {
+                          month: 'MMM',
+                        },
+                        tooltipFormat: 'MMMM YYYY',
+                      },
+                      grid: {
+                        display: false,
+                      },
+                      offset: true,
+                      ticks: {
+                        source: 'data',
+                      },
+                    },
+              y: 
+                {
+                  grid: {
+                    display: false,
                   },
-                  tooltipFormat: 'MMMM YYYY',
-                },
-                grid: {
-                  display: false,
-                },
-                offset: true,
-                ticks: {
-                  source: 'data',
-                },
-              },
-              y: {
-                grid: {
-                  display: false,
-                },
-                ticks: {
+                  position: 'right',
+                  ticks: {
+                    maxTicksLimit: 3,
+                    precision: 0,
+                    callback: (value) => nf.format(value / 100),
+                  },
                   beginAtZero: true,
-                  maxTicksLimit: 3,
-                  precision: 2,
-                  callback: (value) => nf.format(value),
+                  max: 100,
                 },
-                position: 'right',
-                max: 100,
-              },
+
             },
           },
         });
