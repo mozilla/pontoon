@@ -154,6 +154,8 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
@@ -174,9 +176,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM',
+                    month: 'MMM D',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM D YYYY',
                 },
                 grid: {
                   display: false,
@@ -196,11 +198,6 @@ var Pontoon = (function (my) {
                   precision: 0,
                   callback: (value) => value + ' days',
                 },
-              },
-            },
-            plugins: {
-              legend: {
-                display: true,
               },
             },
           },
@@ -237,6 +234,8 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -256,6 +255,8 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
+                fill: true,
+                tension:0.4,
               },
             ],
           },
@@ -280,9 +281,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM',
+                    month: 'MMM D',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM D YYYY',
                 },
                 grid: {
                   display: false,
@@ -304,9 +305,6 @@ var Pontoon = (function (my) {
                 },
                 beginAtZero: true,
               },
-            },
-            plugins: {
-              display: true,
             },
           },
         });
@@ -342,6 +340,8 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -358,6 +358,8 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
@@ -382,9 +384,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM',
+                    month: 'MMM D',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM D YYYY',
                 },
                 grid: {
                   display: false,
@@ -405,11 +407,6 @@ var Pontoon = (function (my) {
                   callback: (value) => `${value} days`,
                 },
                 beginAtZero: true,
-              },
-            },
-            plugins: {
-              legend: {
-                display: true,
               },
             },
           },
