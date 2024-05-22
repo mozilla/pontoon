@@ -108,38 +108,36 @@ var Pontoon = (function (my) {
                 },
               },
             },
-            scales: {              
+            scales: {
               x: {
                 type: 'time',
                 time: {
-                        displayFormats: {
-                          month: 'MMM',
-                        },
-                        tooltipFormat: 'MMMM YYYY',
-                      },
-                      grid: {
-                        display: false,
-                      },
-                      offset: true,
-                      ticks: {
-                        source: 'data',
-                      },
-                    },
-              y: 
-                {
-                  grid: {
-                    display: false,
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  position: 'right',
-                  ticks: {
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: (value) => nf.format(value / 100),
-                  },
-                  beginAtZero: true,
-                  max: 100,
+                  tooltipFormat: 'MMMM YYYY',
                 },
-
+                grid: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => nf.format(value / 100),
+                },
+                beginAtZero: true,
+                max: 100,
+              },
             },
           },
         });
