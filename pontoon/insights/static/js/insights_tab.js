@@ -256,7 +256,7 @@ var Pontoon = (function (my) {
                 order: 1,
                 spanGaps: true,
                 fill: true,
-                tension:0.4,
+                tension: 0.4,
               },
             ],
           },
