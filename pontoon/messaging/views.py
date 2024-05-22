@@ -47,7 +47,7 @@ def dismiss_email_consent(request):
 
 
 def unsubscribe(request, uuid):
-    profile = get_object_or_404(UserProfile, unsubscribe_token=uuid)
+    profile = get_object_or_404(UserProfile, unique_id=uuid)
     profile.email_communications_enabled = False
     profile.save(update_fields=["email_communications_enabled"])
 
@@ -61,7 +61,7 @@ def unsubscribe(request, uuid):
 
 
 def subscribe(request, uuid):
-    profile = get_object_or_404(UserProfile, unsubscribe_token=uuid)
+    profile = get_object_or_404(UserProfile, unique_id=uuid)
     profile.email_communications_enabled = True
     profile.save(update_fields=["email_communications_enabled"])
 

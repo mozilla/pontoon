@@ -13,6 +13,8 @@ class UserProfile(models.Model):
         User, models.CASCADE, related_name="profile", primary_key=True
     )
 
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False)
+
     # Personal information
     username = models.SlugField(unique=True, blank=True, null=True)
     bio = models.TextField(max_length=160, blank=True, null=True)
@@ -22,7 +24,6 @@ class UserProfile(models.Model):
     contact_email_verified = models.BooleanField(default=False)
     email_communications_enabled = models.BooleanField(default=False)
     email_consent_dismissed_at = models.DateTimeField(null=True, blank=True)
-    unsubscribe_token = models.UUIDField(default=uuid.uuid4, editable=False)
 
     # Theme
     class Themes(models.TextChoices):
