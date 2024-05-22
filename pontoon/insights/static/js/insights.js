@@ -2,10 +2,6 @@ const nf = new Intl.NumberFormat('en', {
   style: 'percent',
 });
 
-const shortMonthFormat = new Intl.DateTimeFormat('en', {
-  month: 'short',
-});
-
 const longMonthFormat = new Intl.DateTimeFormat('en', {
   month: 'long',
   year: 'numeric',
@@ -15,9 +11,8 @@ const style = getComputedStyle(document.body);
 
 // eslint-disable-next-line no-var
 var Pontoon = (function (my) {
-
   const getOrCreateLegendList = (id) => {
-    id = id + '-legend'
+    id = id + '-legend';
     const legendContainer = document.getElementById(id);
     let listContainer = legendContainer.querySelector('ul');
 
@@ -30,14 +25,14 @@ var Pontoon = (function (my) {
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
-    afterUpdate(chart, args, options) {
+    afterUpdate(chart) {
       const ul = getOrCreateLegendList(chart.canvas.id);
 
       // Remove old legend items
       while (ul.firstChild) {
         ul.firstChild.remove();
       }
-      
+
       // Generate custom legend items using the provided logic
       const labels = chart.data.datasets
         .map((dataset) => {
@@ -118,7 +113,7 @@ var Pontoon = (function (my) {
           };
         });
 
-        const pretranslationQualityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: chart.data('dates'),
