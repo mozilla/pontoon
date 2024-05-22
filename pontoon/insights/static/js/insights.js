@@ -120,29 +120,6 @@ var Pontoon = (function (my) {
             datasets: datasets,
           },
           options: {
-            tooltips: {
-              position: 'nearest',
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--white-1'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = nf.format(items.yLabel / 100);
-
-                  return `${label}: ${value}`;
-                },
-                title: function (items) {
-                  const date = parseInt(items[0].label);
-                  const title = longMonthFormat.format(new Date(date));
-                  return `${title}`;
-                },
-              },
-            },
             scales: {
               x: {
                 type: 'time',
@@ -181,6 +158,32 @@ var Pontoon = (function (my) {
               },
               legend: {
                 display: false,
+              },
+              tooltip: {
+                position: 'nearest',
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--white-1'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  label: function (context) {
+                    const { chart, datasetIndex, parsed } = context;
+
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = nf.format(parsed.y / 100);
+                    return `${label}: ${value}`;
+                  },
+                  title: function (tooltipItems) {
+                    const date = tooltipItems[0].parsed.x;
+                    const title = longMonthFormat.format(new Date(date));
+                    return title;
+                  },
+                },
               },
             },
           },

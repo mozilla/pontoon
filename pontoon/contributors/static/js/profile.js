@@ -91,20 +91,25 @@ var Pontoon = (function (my) {
           },
           options: {
             clip: false,
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--status-translated'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = nf.format(items.yLabel / 100);
+            plugins: {
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--status-translated'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  label: function (context) {
+                    const { parsed, chart, datasetIndex } = context;
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = nf.format(parsed.y / 100);
 
-                  return `${label}: ${value}`;
+                    return `${label}: ${value}`;
+                  },
                 },
               },
             },
