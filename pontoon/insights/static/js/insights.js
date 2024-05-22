@@ -15,6 +15,58 @@ const style = getComputedStyle(document.body);
 
 // eslint-disable-next-line no-var
 var Pontoon = (function (my) {
+
+  const getOrCreateLegendList = (id) => {
+    id = id + '-legend'
+    const legendContainer = document.getElementById(id);
+    let listContainer = legendContainer.querySelector('ul');
+
+    if (!listContainer) {
+      listContainer = document.createElement('ul');
+      legendContainer.appendChild(listContainer);
+    }
+
+    return listContainer;
+  };
+  const htmlLegendPlugin = {
+    id: 'htmlLegend',
+    afterUpdate(chart, args, options) {
+      const ul = getOrCreateLegendList(chart.canvas.id);
+
+      // Remove old legend items
+      while (ul.firstChild) {
+        ul.firstChild.remove();
+      }
+      
+      // Generate custom legend items using the provided logic
+      const labels = chart.data.datasets
+        .map((dataset) => {
+          const disabled = dataset.hidden ? 'disabled' : '';
+          const color = dataset.borderColor || dataset.backgroundColor;
+
+          return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
+        })
+        .join('');
+
+      // Add the generated legend items to the list
+      ul.innerHTML = `<ul>${labels}</ul>`;
+
+      // Add click event listeners for toggling dataset visibility
+      Array.from(ul.getElementsByTagName('li')).forEach((li, index) => {
+        li.onclick = () => {
+          const { type } = chart.config;
+          if (type === 'pie' || type === 'doughnut') {
+            // Pie and doughnut charts only have a single dataset and visibility is per item
+            chart.toggleDataVisibility(index);
+          } else {
+            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+          }
+          chart.update();
+        };
+      });
+    },
+  };
+
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -61,6 +113,8 @@ var Pontoon = (function (my) {
             pointHoverBackgroundColor: color,
             pointHoverBorderColor: style.getPropertyValue('--white-1'),
             spanGaps: true,
+            fill: true,
+            tension: 0.4,
           };
         });
 
@@ -71,10 +125,6 @@ var Pontoon = (function (my) {
             datasets: datasets,
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
             tooltips: {
               position: 'nearest',
               mode: 'index',
@@ -100,14 +150,18 @@ var Pontoon = (function (my) {
             },
             scales: {
               x: {
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
+                  },
+                  tooltipFormat: 'MMMM YYYY',
+                },
                 grid: {
                   display: false,
                 },
                 ticks: {
                   source: 'data',
-                  callback: function (value) {
-                    return shortMonthFormat.format(new Date(value));
-                  },
                 },
               },
               y: {
@@ -126,19 +180,17 @@ var Pontoon = (function (my) {
                 max: 100,
               },
             },
+            plugins: {
+              htmlLegend: {
+                containerID: chart,
+              },
+              legend: {
+                display: false,
+              },
+            },
           },
+          plugins: [htmlLegendPlugin],
         });
-
-        // Render custom legend
-        const chartId = chart.attr('id');
-        chart
-          .parent()
-          .next('.legend')
-          .html(pretranslationQualityChart.generateLegend());
-        Pontoon.insights.attachCustomLegendHandler(
-          pretranslationQualityChart,
-          `#${chartId}-legend .label`,
-        );
       },
     },
   });
