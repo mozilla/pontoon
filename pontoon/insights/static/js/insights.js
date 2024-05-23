@@ -25,8 +25,8 @@ var Pontoon = (function (my) {
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
-    afterUpdate(chart) {
-      const ul = getOrCreateLegendList(chart.canvas.id);
+    afterUpdate(chart, args, options) {
+      const ul = getOrCreateLegendList(chart, options.containerID);
 
       // Remove old legend items
       while (ul.firstChild) {
@@ -35,8 +35,8 @@ var Pontoon = (function (my) {
 
       // Generate custom legend items using the provided logic
       const labels = chart.data.datasets
-        .map((dataset) => {
-          const disabled = dataset.hidden ? 'disabled' : '';
+        .map((dataset, index) => {
+          const disabled = chart.getDatasetMeta(index).hidden ? 'disabled' : '';
           const color = dataset.borderColor || dataset.backgroundColor;
 
           return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
@@ -44,17 +44,27 @@ var Pontoon = (function (my) {
         .join('');
 
       // Add the generated legend items to the list
-      ul.innerHTML = `<ul>${labels}</ul>`;
+      ul.innerHTML = labels;
 
       // Add click event listeners for toggling dataset visibility
       Array.from(ul.getElementsByTagName('li')).forEach((li, index) => {
-        li.onclick = () => {
-          const { type } = chart.config;
-          if (type === 'pie' || type === 'doughnut') {
-            // Pie and doughnut charts only have a single dataset and visibility is per item
-            chart.toggleDataVisibility(index);
+        li.onclick = (e) => {
+          const meta = chart.getDatasetMeta(index);
+          const dataset = chart.data.datasets[index];
+
+          if (e.altKey || e.metaKey) {
+            // Show clicked and hide the rest
+            chart.data.datasets.forEach((ds, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.hidden = i === index ? null : true;
+            });
+            Array.from(ul.getElementsByTagName('li')).forEach((li, i) => {
+              li.classList.toggle('disabled', i !== index);
+            });
           } else {
-            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+            // Toggle clicked
+            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
+            li.classList.toggle('disabled');
           }
           chart.update();
         };
@@ -171,6 +181,15 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
+                  labelColor: function (context) {
+                    return {
+                      borderColor: '#fff',
+                      backgroundColor:
+                        context.dataset.hoverBackgroundColor ||
+                        context.dataset.pointBackgroundColor,
+                      borderWidth: 0.3,
+                    };
+                  },
                   label: function (context) {
                     const { chart, datasetIndex, parsed } = context;
 

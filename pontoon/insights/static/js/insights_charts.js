@@ -45,29 +45,6 @@ var Pontoon = (function (my) {
         Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
       // Custom legend item event handler
-      attachCustomLegendHandler: function (chart, selector) {
-        $('body').on('click', selector, function (e) {
-          const li = $(this).parent();
-          const index = li.index();
-
-          if (e.altKey || e.metaKey) {
-            // Show clicked and hide the rest
-            chart.data.datasets.forEach((obj, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.hidden = i === index ? null : true;
-            });
-            li.parent().find('li').addClass('disabled');
-          } else {
-            // Toggle clicked
-            const meta = chart.getDatasetMeta(index);
-            const dataset = chart.data.datasets[index];
-            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-          }
-
-          chart.update();
-          li.toggleClass('disabled');
-        });
-      },
     },
   });
 })(Pontoon || {});

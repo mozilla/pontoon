@@ -103,6 +103,15 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
+                  labelColor: function (context) {
+                    return {
+                      borderColor: '#fff',
+                      backgroundColor:
+                        context.dataset.hoverBackgroundColor ||
+                        context.dataset.pointBackgroundColor,
+                      borderWidth: 0.3,
+                    };
+                  },
                   label: function (context) {
                     const { parsed, chart, datasetIndex } = context;
                     const label = chart.data.datasets[datasetIndex].label;
