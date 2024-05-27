@@ -25,7 +25,7 @@ var Pontoon = (function (my) {
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
-    afterUpdate(chart, args, options) {
+    afterUpdate(chart) {
       const ul = getOrCreateLegendList(chart.canvas.id);
 
       // Remove old legend items
