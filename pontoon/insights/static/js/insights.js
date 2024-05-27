@@ -26,7 +26,7 @@ var Pontoon = (function (my) {
   const htmlLegendPlugin = {
     id: 'htmlLegend',
     afterUpdate(chart, args, options) {
-      const ul = getOrCreateLegendList(chart, options.containerID);
+      const ul = getOrCreateLegendList(chart.canvas.id);
 
       // Remove old legend items
       while (ul.firstChild) {
@@ -113,7 +113,7 @@ var Pontoon = (function (my) {
             borderWidth: item.name === 'All' ? 3 : 1,
             pointBackgroundColor: color,
             pointHitRadius: 10,
-            pointRadius: 4,
+            pointRadius: 3.25,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
             pointHoverBorderColor: style.getPropertyValue('--white-1'),
@@ -130,6 +130,7 @@ var Pontoon = (function (my) {
             datasets: datasets,
           },
           options: {
+            clip: false,
             scales: {
               x: {
                 type: 'time',

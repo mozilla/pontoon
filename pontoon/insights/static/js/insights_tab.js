@@ -190,9 +190,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM D',
+                    month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM D YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
@@ -311,9 +311,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM D',
+                    month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM D YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
@@ -430,9 +430,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM D',
+                    month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM D YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
@@ -541,9 +541,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM D',
+                    month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM D YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
@@ -835,7 +835,7 @@ var Pontoon = (function (my) {
                   displayFormats: {
                     month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
@@ -1025,9 +1025,9 @@ var Pontoon = (function (my) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    month: 'MMM D',
+                    month: 'MMM',
                   },
-                  tooltipFormat: 'MMM D YYYY',
+                  tooltipFormat: 'MMM YYYY',
                 },
                 grid: {
                   display: false,
