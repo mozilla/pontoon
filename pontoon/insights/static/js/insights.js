@@ -25,49 +25,36 @@ var Pontoon = (function (my) {
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
-    afterUpdate(chart) {
-      const ul = getOrCreateLegendList(chart.canvas.id);
+    afterUpdate(chart, args, options) {
+      const ul = getOrCreateLegendList(chart, options.containerID);
 
       // Remove old legend items
       while (ul.firstChild) {
         ul.firstChild.remove();
       }
 
-      // Generate custom legend items using the provided logic
-      const labels = chart.data.datasets
-        .map((dataset, index) => {
-          const disabled = chart.getDatasetMeta(index).hidden ? 'disabled' : '';
-          const color = dataset.borderColor || dataset.backgroundColor;
+      const items = chart.options.plugins.legend.labels.generateLabels(chart);
 
-          return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
-        })
-        .join('');
+      items.forEach(item => {
+        const li = document.createElement('li');
 
-      // Add the generated legend items to the list
-      ul.innerHTML = labels;
+        const disabled = item.hidden ? 'disabled' : '';
+        let color;
 
-      // Add click event listeners for toggling dataset visibility
-      Array.from(ul.getElementsByTagName('li')).forEach((li, index) => {
-        li.onclick = (e) => {
-          const meta = chart.getDatasetMeta(index);
-          const dataset = chart.data.datasets[index];
+        if (item.fillStyle && item.fillStyle instanceof CanvasGradient) {
+          color = item.strokeStyle;
+        } else {
+          color = item.fillStyle || item.strokeStyle;
+        }
 
-          if (e.altKey || e.metaKey) {
-            // Show clicked and hide the rest
-            chart.data.datasets.forEach((ds, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.hidden = i === index ? null : true;
-            });
-            Array.from(ul.getElementsByTagName('li')).forEach((li, i) => {
-              li.classList.toggle('disabled', i !== index);
-            });
-          } else {
-            // Toggle clicked
-            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-            li.classList.toggle('disabled');
-          }
+        li.className = disabled;
+        li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
+
+        li.onclick = () => {
+          chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
           chart.update();
         };
+        ul.appendChild(li);
       });
     },
   };
@@ -135,6 +122,7 @@ var Pontoon = (function (my) {
               x: {
                 type: 'time',
                 time: {
+                  unit: 'month',
                   displayFormats: {
                     month: 'MMM',
                   },
