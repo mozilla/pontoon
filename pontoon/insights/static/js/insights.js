@@ -11,8 +11,8 @@ const style = getComputedStyle(document.body);
 
 // eslint-disable-next-line no-var
 var Pontoon = (function (my) {
-  const getOrCreateLegendList = (id) => {
-    id = id + '-legend';
+  const getOrCreateLegendList = (chart) => {
+    const id = chart.canvas.id + '-legend';
     const legendContainer = document.getElementById(id);
     let listContainer = legendContainer.querySelector('ul');
 
@@ -25,8 +25,8 @@ var Pontoon = (function (my) {
   };
   const htmlLegendPlugin = {
     id: 'htmlLegend',
-    afterUpdate(chart, args, options) {
-      const ul = getOrCreateLegendList(chart, options.containerID);
+    afterUpdate(chart) {
+      const ul = getOrCreateLegendList(chart);
 
       // Remove old legend items
       while (ul.firstChild) {
@@ -39,13 +39,7 @@ var Pontoon = (function (my) {
         const li = document.createElement('li');
 
         const disabled = item.hidden ? 'disabled' : '';
-        let color;
-
-        if (item.fillStyle && item.fillStyle instanceof CanvasGradient) {
-          color = item.strokeStyle;
-        } else {
-          color = item.fillStyle || item.strokeStyle;
-        }
+        const color = item.strokeStyle;
 
         li.className = disabled;
         li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
