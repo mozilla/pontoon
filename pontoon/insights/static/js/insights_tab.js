@@ -29,7 +29,7 @@ var Pontoon = (function (my) {
 
       const items = chart.options.plugins.legend.labels.generateLabels(chart);
 
-      items.forEach(item => {
+      items.forEach((item) => {
         const li = document.createElement('li');
 
         const disabled = item.hidden ? 'disabled' : '';
@@ -45,7 +45,10 @@ var Pontoon = (function (my) {
         li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
 
         li.onclick = () => {
-          chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+          chart.setDatasetVisibility(
+            item.datasetIndex,
+            !chart.isDatasetVisible(item.datasetIndex),
+          );
           chart.update();
         };
         ul.appendChild(li);
