@@ -44,11 +44,20 @@ var Pontoon = (function (my) {
         li.className = disabled;
         li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
 
-        li.onclick = () => {
-          chart.setDatasetVisibility(
-            item.datasetIndex,
-            !chart.isDatasetVisible(item.datasetIndex),
-          );
+        li.onclick = (event) => {
+          // Check if Alt or Meta key was pressed
+          if (event.altKey || event.metaKey) {
+            chart.data.datasets.forEach((obj, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.hidden = i === item.datasetIndex ? null : true;
+            });
+            $(li).parent().find('li').addClass('disabled');
+          } else {
+            const meta = chart.getDatasetMeta(item.datasetIndex);
+            const dataset = chart.data.datasets[item.datasetIndex];
+            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
+          }
+
           chart.update();
         };
         ul.appendChild(li);
@@ -123,7 +132,7 @@ var Pontoon = (function (my) {
                   displayFormats: {
                     month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM yyyy',
                 },
                 grid: {
                   display: false,

@@ -129,7 +129,7 @@ var Pontoon = (function (my) {
                   displayFormats: {
                     month: 'MMM',
                   },
-                  tooltipFormat: 'MMMM YYYY',
+                  tooltipFormat: 'MMMM yyyy',
                 },
                 grid: {
                   display: false,
