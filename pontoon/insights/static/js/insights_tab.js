@@ -590,6 +590,9 @@ var Pontoon = (function (my) {
                 },
                 ticks: {
                   precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
+                  },
                 },
                 beginAtZero: true,
               },
@@ -862,6 +865,9 @@ var Pontoon = (function (my) {
                 },
                 ticks: {
                   precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
+                  },
                 },
                 beginAtZero: true,
               },
@@ -1075,6 +1081,9 @@ var Pontoon = (function (my) {
                 },
                 ticks: {
                   precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
+                  },
                 },
                 beginAtZero: true,
               },

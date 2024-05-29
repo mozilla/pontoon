@@ -113,6 +113,7 @@ var Pontoon = (function (my) {
             spanGaps: true,
             fill: true,
             tension: 0.4,
+            order: color.length - index,
           };
         });
 
