@@ -3,9 +3,11 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+
+from pontoon.base.models import UserProfile
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -41,4 +43,32 @@ def dismiss_email_consent(request):
             "status": True,
             "next": request.session.get("next_path", "/"),
         }
+    )
+
+
+def unsubscribe(request, uuid):
+    profile = get_object_or_404(UserProfile, unique_id=uuid)
+    profile.email_communications_enabled = False
+    profile.save(update_fields=["email_communications_enabled"])
+
+    return render(
+        request,
+        "messaging/unsubscribe.html",
+        {
+            "uuid": uuid,
+        },
+    )
+
+
+def subscribe(request, uuid):
+    profile = get_object_or_404(UserProfile, unique_id=uuid)
+    profile.email_communications_enabled = True
+    profile.save(update_fields=["email_communications_enabled"])
+
+    return render(
+        request,
+        "messaging/subscribe.html",
+        {
+            "uuid": uuid,
+        },
     )

@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -10,6 +12,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         User, models.CASCADE, related_name="profile", primary_key=True
     )
+
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     # Personal information
     username = models.SlugField(unique=True, blank=True, null=True)

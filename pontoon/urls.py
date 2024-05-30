@@ -61,6 +61,7 @@ urlpatterns = [
     path("", include("pontoon.sync.urls")),
     path("", include("pontoon.projects.urls")),
     path("", include("pontoon.machinery.urls")),
+    path("", include("pontoon.messaging.urls")),
     path("", include("pontoon.insights.urls")),
     path("", include("pontoon.contributors.urls")),
     path("", include("pontoon.localizations.urls")),
@@ -70,7 +71,6 @@ urlpatterns = [
     path("", include("pontoon.api.urls")),
     path("", include("pontoon.homepage.urls")),
     path("", include("pontoon.uxactionlog.urls")),
-    path("", include("pontoon.messaging.urls")),
     # Team page: Must be at the end
     path("<locale:locale>/", team, name="pontoon.teams.team"),
 ]

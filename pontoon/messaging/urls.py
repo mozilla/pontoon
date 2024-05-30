@@ -14,4 +14,16 @@ urlpatterns = [
         views.dismiss_email_consent,
         name="pontoon.messaging.dismiss_email_consent",
     ),
+    # Unsubscribe
+    path(
+        "unsubscribe/<uuid:uuid>/",
+        views.unsubscribe,
+        name="pontoon.messaging.unsubscribe",
+    ),
+    # Subscribe again
+    path(
+        "subscribe/<uuid:uuid>/",
+        views.subscribe,
+        name="pontoon.messaging.subscribe",
+    ),
 ]
