@@ -6,64 +6,6 @@ var Pontoon = (function (my) {
     maximumFractionDigits: 2,
   });
   const style = getComputedStyle(document.body);
-  const getOrCreateLegendList = (chart, id) => {
-    const legendContainer = document.getElementById(id);
-    let listContainer = legendContainer.querySelector('ul');
-
-    if (!listContainer) {
-      listContainer = document.createElement('ul');
-      legendContainer.appendChild(listContainer);
-    }
-
-    return listContainer;
-  };
-  const htmlLegendPlugin = {
-    id: 'htmlLegend',
-    afterUpdate(chart, args, options) {
-      const ul = getOrCreateLegendList(chart, options.containerID);
-
-      // Remove old legend items
-      while (ul.firstChild) {
-        ul.firstChild.remove();
-      }
-
-      const items = chart.options.plugins.legend.labels.generateLabels(chart);
-
-      items.forEach((item) => {
-        const li = document.createElement('li');
-
-        const disabled = item.hidden ? 'disabled' : '';
-        let color;
-
-        if (item.fillStyle && item.fillStyle instanceof CanvasGradient) {
-          color = item.strokeStyle;
-        } else {
-          color = item.fillStyle || item.strokeStyle;
-        }
-
-        li.className = disabled;
-        li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
-
-        li.onclick = (event) => {
-          // Check if Alt or Meta key was pressed
-          if (event.altKey || event.metaKey) {
-            chart.data.datasets.forEach((obj, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.hidden = i === item.datasetIndex ? null : true;
-            });
-            $(li).parent().find('li').addClass('disabled');
-          } else {
-            const meta = chart.getDatasetMeta(item.datasetIndex);
-            const dataset = chart.data.datasets[item.datasetIndex];
-            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-          }
-
-          chart.update();
-        };
-        ul.appendChild(li);
-      });
-    },
-  };
 
   return $.extend(true, my, {
     insights: {
@@ -649,7 +591,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [htmlLegendPlugin],
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
       },
       renderReviewActivity: function () {
@@ -852,7 +794,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [htmlLegendPlugin],
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
       },
       renderPretranslationQuality: function () {
@@ -1062,7 +1004,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [htmlLegendPlugin],
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
       },
       getPercent: function (value, total) {

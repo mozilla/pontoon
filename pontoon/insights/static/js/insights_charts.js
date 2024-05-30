@@ -44,7 +44,7 @@ var Pontoon = (function (my) {
         Chart.defaults.datasets.bar.barPercentage = 0.7;
         Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
-      // Custom stlying callback for Tooltip labels
+      // Custom styling callback for Tooltip labels
       setLabelColor: function (context) {
         const style = getComputedStyle(document.body);
         return {
@@ -52,6 +52,66 @@ var Pontoon = (function (my) {
           backgroundColor:
             context.dataset.pointBackgroundColor ||
             context.dataset.backgroundColor,
+        };
+      },
+      // Custom legend callback for styling and event handling
+      getOrCreateLegendList: function (id) {
+        const legendContainer = document.getElementById(id);
+        let listContainer = legendContainer.querySelector('ul');
+
+        if (!listContainer) {
+          listContainer = document.createElement('ul');
+          legendContainer.appendChild(listContainer);
+        }
+
+        return listContainer;
+      },
+      htmlLegendPlugin: function () {
+        return {
+          id: 'htmlLegend',
+          afterUpdate(chart) {
+            const containerID = chart.canvas.id + '-legend';
+            const ul = Pontoon.insights.getOrCreateLegendList(containerID);
+
+            // Remove old legend items
+            while (ul.firstChild) {
+              ul.firstChild.remove();
+            }
+
+            const items =
+              chart.options.plugins.legend.labels.generateLabels(chart);
+
+            items.forEach((item) => {
+              const li = document.createElement('li');
+
+              const disabled = item.hidden ? 'disabled' : '';
+              const color =
+                item.strokeStyle == style.getPropertyValue('--dark-grey-1')
+                  ? item.fillStyle
+                  : item.strokeStyle;
+
+              li.className = disabled;
+              li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
+
+              li.onclick = (event) => {
+                // Check if Alt or Meta key was pressed
+                if (event.altKey || event.metaKey) {
+                  chart.data.datasets.forEach((obj, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.hidden = i === item.datasetIndex ? null : true;
+                  });
+                  $(li).parent().find('li').addClass('disabled');
+                } else {
+                  const meta = chart.getDatasetMeta(item.datasetIndex);
+                  const dataset = chart.data.datasets[item.datasetIndex];
+                  meta.hidden = meta.hidden === null ? !dataset.hidden : null;
+                }
+
+                chart.update();
+              };
+              ul.appendChild(li);
+            });
+          },
         };
       },
     },

@@ -11,60 +11,6 @@ const style = getComputedStyle(document.body);
 
 // eslint-disable-next-line no-var
 var Pontoon = (function (my) {
-  const getOrCreateLegendList = (chart) => {
-    const id = chart.canvas.id + '-legend';
-    const legendContainer = document.getElementById(id);
-    let listContainer = legendContainer.querySelector('ul');
-
-    if (!listContainer) {
-      listContainer = document.createElement('ul');
-      legendContainer.appendChild(listContainer);
-    }
-
-    return listContainer;
-  };
-  const htmlLegendPlugin = {
-    id: 'htmlLegend',
-    afterUpdate(chart) {
-      const ul = getOrCreateLegendList(chart);
-
-      // Remove old legend items
-      while (ul.firstChild) {
-        ul.firstChild.remove();
-      }
-
-      const items = chart.options.plugins.legend.labels.generateLabels(chart);
-
-      items.forEach((item) => {
-        const li = document.createElement('li');
-
-        const disabled = item.hidden ? 'disabled' : '';
-        const color = item.strokeStyle;
-
-        li.className = disabled;
-        li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
-
-        li.onclick = (event) => {
-          // Check if Alt or Meta key was pressed
-          if (event.altKey || event.metaKey) {
-            chart.data.datasets.forEach((obj, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.hidden = i === item.datasetIndex ? null : true;
-            });
-            $(li).parent().find('li').addClass('disabled');
-          } else {
-            const meta = chart.getDatasetMeta(item.datasetIndex);
-            const dataset = chart.data.datasets[item.datasetIndex];
-            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-          }
-
-          chart.update();
-        };
-        ul.appendChild(li);
-      });
-    },
-  };
-
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -196,7 +142,7 @@ var Pontoon = (function (my) {
               },
             },
           },
-          plugins: [htmlLegendPlugin],
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
       },
     },
