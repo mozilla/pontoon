@@ -35,14 +35,14 @@ body > header.menu-opened {
 }
 
 #main .buttons button {
-  background: transparent;
+  background-color: var(--homepage-tour-button-background);
   border: none;
   border-radius: 2px;
   box-sizing: content-box;
-  color: var(--white-1);
+  color: var(--homepage-tour-button-color);
   display: flex;
   font-size: 16px;
-  width: 120px;
+  width: 320px;
   height: 40px;
   padding: 4px;
   justify-content: center;
@@ -53,7 +53,7 @@ body > header.menu-opened {
 #main .buttons button.enable {
   background-color: var(--status-translated);
   color: var(--homepage-tour-button-color);
-  width: 320px;
+  margin-right: 30px;
 }
 
 #main h1 {
