@@ -157,7 +157,7 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
@@ -242,7 +242,7 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--blue-1'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--blue-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
@@ -261,7 +261,7 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
@@ -287,15 +287,7 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label(context) {
                     const { chart, datasetIndex, dataIndex } = context;
                     const dataset = chart.data.datasets[datasetIndex];
@@ -365,7 +357,7 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--hot-pink'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--hot-pink'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
@@ -382,7 +374,7 @@ var Pontoon = (function (my) {
                 borderWidth: 1,
                 pointBackgroundColor: style.getPropertyValue('--dark-pink'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
                   style.getPropertyValue('--dark-pink'),
@@ -407,15 +399,7 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label(context) {
                     const { chart, datasetIndex, dataIndex } = context;
                     const dataset = chart.data.datasets[datasetIndex];
@@ -616,20 +600,15 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 itemSort: function (a, b) {
+                  // Dataset order affects stacking, tooltip and
+                  // legend, but it doesn't work intuitively, so
+                  // we need to manually sort tooltip items.
                   if (a.datasetIndex === 2 && b.datasetIndex === 1) {
                     return 1;
                   }
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label: function (context) {
                     const {
                       chart,
@@ -785,15 +764,7 @@ var Pontoon = (function (my) {
                   }
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label: function (context) {
                     const { chart, parsed, datasetIndex, dataIndex } = context;
 
@@ -1002,15 +973,7 @@ var Pontoon = (function (my) {
                   }
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label: function (context) {
                     const { chart, parsed, datasetIndex } = context;
 
@@ -1095,6 +1058,15 @@ var Pontoon = (function (my) {
       getPercent: function (value, total) {
         const n = value / total;
         return pf.format(isFinite(n) ? n : 0);
+      },
+      setLabelValue: function (context) {
+        return {
+          borderColor: style.getPropertyValue('--tooltip-color'),
+          backgroundColor:
+            context.dataset.hoverBackgroundColor ||
+            context.dataset.pointBackgroundColor,
+          borderWidth: 0.3,
+        };
       },
     },
   });

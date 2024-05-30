@@ -58,7 +58,7 @@ var Pontoon = (function (my) {
                 pointBackgroundColor:
                   style.getPropertyValue('--forest-green-1'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
                   style.getPropertyValue('--forest-green-1'),
@@ -103,15 +103,7 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label: function (context) {
                     const { parsed, chart, datasetIndex } = context;
                     const label = chart.data.datasets[datasetIndex].label;
@@ -155,6 +147,15 @@ var Pontoon = (function (my) {
             },
           },
         });
+      },
+      setLabelValue: function (context) {
+        return {
+          borderColor: style.getPropertyValue('--tooltip-color'),
+          backgroundColor:
+            context.dataset.hoverBackgroundColor ||
+            context.dataset.pointBackgroundColor,
+          borderWidth: 0.3,
+        };
       },
     },
     profile: {

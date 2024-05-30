@@ -177,15 +177,7 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: function (context) {
-                    return {
-                      borderColor: '#fff',
-                      backgroundColor:
-                        context.dataset.hoverBackgroundColor ||
-                        context.dataset.pointBackgroundColor,
-                      borderWidth: 0.3,
-                    };
-                  },
+                  labelColor: this.setLabelValue,
                   label: function (context) {
                     const { chart, datasetIndex, parsed } = context;
 
@@ -204,6 +196,15 @@ var Pontoon = (function (my) {
           },
           plugins: [htmlLegendPlugin],
         });
+      },
+      setLabelValue: function (context) {
+        return {
+          borderColor: style.getPropertyValue('--tooltip-color'),
+          backgroundColor:
+            context.dataset.hoverBackgroundColor ||
+            context.dataset.pointBackgroundColor,
+          borderWidth: 0.3,
+        };
       },
     },
   });
