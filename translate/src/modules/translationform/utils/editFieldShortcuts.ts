@@ -9,6 +9,8 @@ import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
 import { useAppSelector } from '~/hooks';
 import { getPlainMessage } from '~/utils/message';
+import { useLLMTranslation } from '~/context/TranslationContext';
+import type { SourceType } from '~/api/machinery';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../../editor/hooks/useSendTranslation';
@@ -109,11 +111,21 @@ export function useHandleCtrlShiftArrow(): (
 
     if (isMachinery) {
       const len = machineryTranslations.length;
-      const { translation, sources } =
+      const translationObj =
         nextIdx < len
           ? machineryTranslations[nextIdx]
           : concordanceSearchResults[nextIdx - len];
-      setEditorFromHelpers(translation, sources, true);
+
+      const { translation, sources } = translationObj;
+      const { llmTranslations, selectedOption } =
+        useLLMTranslation(translationObj);
+
+      // Check if there's an LLM translation available
+      const llmTranslation = llmTranslations[selectedOption];
+      const updatedSources: SourceType[] = llmTranslation
+        ? ['gpt-transform']
+        : sources;
+      setEditorFromHelpers(translation, updatedSources, true);
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
       setEditorFromHelpers(

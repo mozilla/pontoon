@@ -4,7 +4,7 @@ import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
 type SelState = {
   loading: boolean;
   selectedOption: string;
-  llmTranslation: string;
+  llmTranslations: Record<string, string>;
 };
 
 interface LLMTranslationContextType {
@@ -20,7 +20,7 @@ interface LLMTranslationContextType {
 const initSelState = () => ({
   loading: false,
   selectedOption: '',
-  llmTranslation: '',
+  llmTranslations: {},
 });
 
 const LLMTranslationContext = createContext<LLMTranslationContextType>({
@@ -59,7 +59,10 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
       stateRef.current.set(mt, {
         loading: false,
         selectedOption: characteristic,
-        llmTranslation: machineryTranslations[0].translation,
+        llmTranslations: {
+          ...currentState.llmTranslations,
+          [characteristic]: machineryTranslations[0].translation,
+        },
       });
     } else {
       stateRef.current.set(mt, {
@@ -75,7 +78,7 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
     stateRef.current.set(mt, {
       ...currentState,
       selectedOption: '',
-      llmTranslation: '',
+      llmTranslations: {},
     });
     setVersion((v) => v + 1);
   };
