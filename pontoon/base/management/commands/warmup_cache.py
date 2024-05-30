@@ -80,8 +80,8 @@ class Command(BaseCommand):
         path = reverse("pontoon.insights")
         url = urljoin(SITE_URL, path)
         keys = [
-            f"/pontoon.insights.views/team_pretranslation_quality",
-            f"/pontoon.insights.views/project_pretranslation_quality",
+            "/pontoon.insights.views/team_pretranslation_quality",
+            "/pontoon.insights.views/project_pretranslation_quality",
         ]
         self.warmup_url(url, keys=keys)
         self.stdout.write("Insights page warmed up.")

@@ -109,7 +109,7 @@ class JSONKVResource(JSONResource):
             currentKey.append(key)
             if isinstance(value, dict):
                 self.traverse_json(value, function, keys=currentKey)
-            elif type(value) == str:
+            elif isinstance(value, str):
                 internal_key = json.dumps(currentKey)
                 dot_key = ".".join(currentKey)
                 function(internal_key, dot_key, value)
