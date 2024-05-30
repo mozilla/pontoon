@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-translate build-tagadmin build-server server-env setup run clean shell ci test test-translate test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-tagadmin build-server server-env setup run clean shell ci test test-translate test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -40,6 +40,8 @@ help:
 	@echo "  black            Runs the black formatter on all Python code"
 	@echo "  check-black      Runs a check for format issues with the black formatter"
 	@echo "  dropdb           Completely remove the postgres container and its data"
+	@echo "  ruff             Runs the ruff formatter on all Python code"
+	@echo "  check-ruff       Runs a check for format issues with the ruff formatter"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
@@ -99,9 +101,9 @@ test-server: pytest
 pytest:
 	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
-format: prettier pyupgrade black
+format: prettier pyupgrade black ruff
 
-lint: types eslint check-prettier flake8 check-pyupgrade check-black
+lint: types eslint check-prettier flake8 check-pyupgrade check-black check-ruff
 
 types:
 	npm run types -w translate
@@ -129,6 +131,12 @@ black:
 
 check-black:
 	"${DC}" run --rm server black --check pontoon
+
+ruff:
+	"${DC}" run --rm server ruff --fix pontoon/
+
+check-ruff:
+	"${DC}" run --rm server ruff check pontoon
 
 dropdb:
 	"${DC}" down --volumes postgresql
