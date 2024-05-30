@@ -103,9 +103,8 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label: function (context) {
                     const { parsed, chart, datasetIndex } = context;
                     const label = chart.data.datasets[datasetIndex].label;

@@ -229,9 +229,8 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label(context) {
                     const { chart, datasetIndex, dataIndex } = context;
                     const dataset = chart.data.datasets[datasetIndex];
@@ -343,9 +342,8 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label(context) {
                     const { chart, datasetIndex, dataIndex } = context;
                     const dataset = chart.data.datasets[datasetIndex];
@@ -554,9 +552,8 @@ var Pontoon = (function (my) {
                   }
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label: function (context) {
                     const {
                       chart,
@@ -712,9 +709,8 @@ var Pontoon = (function (my) {
                   }
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label: function (context) {
                     const { chart, parsed, datasetIndex, dataIndex } = context;
 
@@ -923,9 +919,8 @@ var Pontoon = (function (my) {
                   }
                 },
                 callbacks: {
-                  labelColor: (context) => {
-                    return Pontoon.insights.setLabelColor(context);
-                  },
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
                   label: function (context) {
                     const { chart, parsed, datasetIndex } = context;
 
