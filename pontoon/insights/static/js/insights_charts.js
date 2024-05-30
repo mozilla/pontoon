@@ -44,7 +44,16 @@ var Pontoon = (function (my) {
         Chart.defaults.datasets.bar.barPercentage = 0.7;
         Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
-      // Custom legend item event handler
+      // Custom stlying callback for Tooltip labels
+      setLabelColor: function (context) {
+        const style = getComputedStyle(document.body);
+        return {
+          borderColor: style.getPropertyValue('--tooltip-color'),
+          backgroundColor:
+            context.dataset.pointBackgroundColor ||
+            context.dataset.backgroundColor,
+        };
+      },
     },
   });
 })(Pontoon || {});

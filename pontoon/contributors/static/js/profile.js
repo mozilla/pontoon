@@ -103,7 +103,9 @@ var Pontoon = (function (my) {
                   y: 10,
                 },
                 callbacks: {
-                  labelColor: this.setLabelValue,
+                  labelColor: (context) => {
+                    return Pontoon.insights.setLabelColor(context);
+                  },
                   label: function (context) {
                     const { parsed, chart, datasetIndex } = context;
                     const label = chart.data.datasets[datasetIndex].label;
@@ -147,15 +149,6 @@ var Pontoon = (function (my) {
             },
           },
         });
-      },
-      setLabelValue: function (context) {
-        return {
-          borderColor: style.getPropertyValue('--tooltip-color'),
-          backgroundColor:
-            context.dataset.hoverBackgroundColor ||
-            context.dataset.pointBackgroundColor,
-          borderWidth: 0.3,
-        };
       },
     },
     profile: {
