@@ -6,6 +6,7 @@ var Pontoon = (function (my) {
     maximumFractionDigits: 2,
   });
   const style = getComputedStyle(document.body);
+
   return $.extend(true, my, {
     insights: {
       renderCharts: function () {
@@ -98,64 +99,62 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
-            tooltips: {
-              borderColor: style.getPropertyValue('--status-unreviewed'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              displayColors: false,
-              callbacks: {
-                label: (item) => nf.format(item.value) + ' days',
+            plugins: {
+              tooltip: {
+                borderColor: style.getPropertyValue('--status-unreviewed'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                displayColors: false,
+                callbacks: {
+                  label: (context) => nf.format(context.parsed.y) + ' days',
+                },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM yyyy',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: function (value) {
-                      return value + ' days';
-                    },
-                  },
+                grid: {
+                  display: false,
                 },
-              ],
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  beginAtZero: true,
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => value + ' days',
+                },
+              },
             },
           },
         });
@@ -185,12 +184,14 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--blue-1'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--blue-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -202,7 +203,7 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
@@ -210,61 +211,66 @@ var Pontoon = (function (my) {
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--status-unreviewed'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label(items, chart) {
-                  const { label } = chart.datasets[items.datasetIndex];
-                  return `${label}: ${items.value} days`;
+            plugins: {
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--status-unreviewed'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label(context) {
+                    const { chart, datasetIndex, dataIndex } = context;
+                    const dataset = chart.data.datasets[datasetIndex];
+                    const value = dataset.data[dataIndex];
+                    const label = dataset.label;
+                    return `${label}: ${value} days`;
+                  },
                 },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM yyyy',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: (value) => `${value} days`,
-                  },
+                grid: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => `${value} days`,
+                },
+                beginAtZero: true,
+              },
             },
           },
         });
@@ -294,12 +300,14 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--hot-pink'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--hot-pink'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -309,68 +317,73 @@ var Pontoon = (function (my) {
                 borderWidth: 1,
                 pointBackgroundColor: style.getPropertyValue('--dark-pink'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
                   style.getPropertyValue('--dark-pink'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--dark-pink'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label(items, chart) {
-                  const { label } = chart.datasets[items.datasetIndex];
-                  return `${label}: ${items.value} days`;
+            plugins: {
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--dark-pink'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label(context) {
+                    const { chart, datasetIndex, dataIndex } = context;
+                    const dataset = chart.data.datasets[datasetIndex];
+                    const value = dataset.data[dataIndex];
+                    const label = dataset.label;
+                    return `${label}: ${value} days`;
+                  },
                 },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM yyyy',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    precision: 0,
-                    callback: (value) => `${value} days`,
-                  },
+                grid: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => `${value} days`,
+                },
+                beginAtZero: true,
+              },
             },
           },
         });
@@ -390,7 +403,7 @@ var Pontoon = (function (my) {
         const machineryData = chart.data('machinery-translations') || [];
         const newSourcesData = chart.data('new-source-strings') || [];
 
-        const translationActivityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -407,12 +420,14 @@ var Pontoon = (function (my) {
                   '--status-translated',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-translated',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4,
               },
               humanData.length > 0 && {
                 type: 'bar',
@@ -449,125 +464,132 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--status-translated'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              itemSort: function (a, b) {
-                // Dataset order affects stacking, tooltip and
-                // legend, but it doesn't work intuitively, so
-                // we need to manually sort tooltip items.
-                if (a.datasetIndex === 2 && b.datasetIndex === 1) {
-                  return 1;
-                }
+            clip: false,
+            scales: {
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
+                  },
+                  tooltipFormat: 'MMMM yyyy',
+                },
+                grid: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
               },
-              callbacks: {
-                label: function (items, chart) {
-                  const human = chart.datasets[1].data[items.index];
-                  const machinery = chart.datasets[2].data[items.index];
-
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = items.yLabel;
-                  const base = label + ': ' + nf.format(value);
-
-                  switch (label) {
-                    case 'Completion':
-                      return label + ': ' + pf.format(value / 100);
-                    case 'Human translations':
-                    case 'Machinery translations': {
-                      const pct = Pontoon.insights.getPercent(
-                        value,
-                        human + machinery,
-                      );
-                      return `${base} (${pct} of all translations)`;
-                    }
-                    default:
-                      return base;
+              'completion-y-axis': {
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'COMPLETION',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  stepSize: 20,
+                  callback: function (value) {
+                    return pf.format(value / 100);
+                  },
+                },
+                max: 100,
+                beginAtZero: true,
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'STRINGS',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
+                  },
+                },
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              htmlLegend: {
+                containerID: 'translation-activity-chart-legend',
+              },
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                position: 'nearest',
+                borderColor: style.getPropertyValue('--status-translated'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                itemSort: function (a, b) {
+                  // Dataset order affects stacking, tooltip and
+                  // legend, but it doesn't work intuitively, so
+                  // we need to manually sort tooltip items.
+                  if (a.datasetIndex === 2 && b.datasetIndex === 1) {
+                    return 1;
                   }
                 },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label: function (context) {
+                    const {
+                      chart,
+                      raw: items,
+                      datasetIndex,
+                      dataIndex: index,
+                    } = context;
+
+                    const human = chart.data.datasets[1].data[index];
+                    const machinery = chart.data.datasets[2].data[index];
+
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = items;
+                    const base = label + ': ' + nf.format(value);
+
+                    switch (label) {
+                      case 'Completion':
+                        return label + ': ' + pf.format(value / 100);
+                      case 'Human translations':
+                      case 'Machinery translations': {
+                        const pct = Pontoon.insights.getPercent(
+                          value,
+                          human + machinery,
+                        );
+                        return `${base} (${pct} of all translations)`;
+                      }
+                      default:
+                        return base;
+                    }
+                  },
+                },
               },
             },
-            scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
-                },
-              ],
-              yAxes: [
-                {
-                  id: 'completion-y-axis',
-                  position: 'right',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'COMPLETION',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    max: 100,
-                    stepSize: 20,
-                    callback: function (value) {
-                      return pf.format(value / 100);
-                    },
-                  },
-                },
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
-                },
-              ],
-            },
           },
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
-
-        // Render custom legend
-        $('#translation-activity-chart-legend').html(
-          translationActivityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          translationActivityChart,
-          '#translation-activity-chart-legend .label',
-        );
       },
       renderReviewActivity: function () {
         const chart = $('#review-activity-chart');
@@ -586,7 +608,7 @@ var Pontoon = (function (my) {
         const rejectedData = chart.data('rejected') || [];
         const newSuggestionsData = chart.data('new-suggestions') || [];
 
-        const reviewActivityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -603,12 +625,14 @@ var Pontoon = (function (my) {
                   '--status-unreviewed',
                 ),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue(
                   '--status-unreviewed',
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
+                fill: true,
+                tension: 0.4,
               },
               peerApprovedData.length > 0 && {
                 type: 'bar',
@@ -654,118 +678,120 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--status-unreviewed'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              itemSort: function (a, b) {
-                // Dataset order affects stacking, tooltip and
-                // legend, but it doesn't work intuitively, so
-                // we need to manually sort tooltip items.
-                if (
-                  (a.datasetIndex === 3 && b.datasetIndex === 2) ||
-                  (a.datasetIndex === 3 && b.datasetIndex === 1) ||
-                  (a.datasetIndex === 2 && b.datasetIndex === 1)
-                ) {
-                  return 1;
-                }
+            clip: false,
+            plugins: {
+              htmlLegend: {
+                containerID: 'review-activity-chart-legend',
               },
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = items.yLabel;
-                  const base = label + ': ' + nf.format(value);
-
-                  if (chart.datasets.length < 4) {
-                    return base;
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--status-unreviewed'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                itemSort: function (a, b) {
+                  // Dataset order affects stacking, tooltip and
+                  // legend, but it doesn't work intuitively, so
+                  // we need to manually sort tooltip items.
+                  if (
+                    (a.datasetIndex === 3 && b.datasetIndex === 2) ||
+                    (a.datasetIndex === 3 && b.datasetIndex === 1) ||
+                    (a.datasetIndex === 2 && b.datasetIndex === 1)
+                  ) {
+                    return 1;
                   }
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label: function (context) {
+                    const { chart, parsed, datasetIndex, dataIndex } = context;
 
-                  const peerApproved = chart.datasets[1].data[items.index];
-                  const selfApproved = chart.datasets[2].data[items.index];
-                  const rejected = chart.datasets[3].data[items.index];
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = parsed.y;
+                    const base = label + ': ' + nf.format(value);
 
-                  switch (label) {
-                    case 'Self-approved': {
-                      const pct = Pontoon.insights.getPercent(
-                        value,
-                        peerApproved + selfApproved,
-                      );
-                      return `${base} (${pct} of all approvals)`;
-                    }
-                    case 'Peer-approved':
-                    case 'Rejected': {
-                      const pct = Pontoon.insights.getPercent(
-                        value,
-                        peerApproved + rejected,
-                      );
-                      return `${base} (${pct} of peer-reviews)`;
-                    }
-                    default:
+                    if (chart.data.datasets.length < 4) {
                       return base;
-                  }
+                    }
+
+                    const peerApproved = chart.data.datasets[1].data[dataIndex];
+                    const selfApproved = chart.data.datasets[2].data[dataIndex];
+                    const rejected = chart.data.datasets[3].data[dataIndex];
+
+                    switch (label) {
+                      case 'Self-approved': {
+                        const pct = Pontoon.insights.getPercent(
+                          value,
+                          peerApproved + selfApproved,
+                        );
+                        return `${base} (${pct} of all approvals)`;
+                      }
+                      case 'Peer-approved':
+                      case 'Rejected': {
+                        const pct = Pontoon.insights.getPercent(
+                          value,
+                          peerApproved + rejected,
+                        );
+                        return `${base} (${pct} of peer-reviews)`;
+                      }
+                      default:
+                        return base;
+                    }
+                  },
                 },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
+                  tooltipFormat: 'MMMM yyyy',
+                },
+                grid: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'STRINGS',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
                   },
                 },
-              ],
-              yAxes: [
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
-                },
-              ],
+                beginAtZero: true,
+              },
             },
           },
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
-
-        // Render custom legend
-        $('#review-activity-chart-legend').html(
-          reviewActivityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          reviewActivityChart,
-          '#review-activity-chart-legend .label',
-        );
       },
       renderPretranslationQuality: function () {
         const chart = $('#pretranslation-quality-chart');
@@ -789,7 +815,7 @@ var Pontoon = (function (my) {
         const rejectedData = chart.data('rejected') || [];
         const newData = chart.data('new') || [];
 
-        const pretranslationQualityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: $('#insights').data('dates'),
@@ -804,11 +830,13 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--lilac'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--lilac'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -820,11 +848,13 @@ var Pontoon = (function (my) {
                 borderWidth: 2,
                 pointBackgroundColor: style.getPropertyValue('--purple'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor: style.getPropertyValue('--purple'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 spanGaps: true,
+                fill: true,
+                tension: 0.4,
               },
               approvedData.length > 0 && {
                 type: 'bar',
@@ -860,118 +890,117 @@ var Pontoon = (function (my) {
             ].filter(Boolean), // Filter out empty values
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--pink-3'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              itemSort: function (a, b) {
-                // Dataset order affects stacking, tooltip and
-                // legend, but it doesn't work intuitively, so
-                // we need to manually sort tooltip items.
-                if (
-                  (a.datasetIndex === 3 && b.datasetIndex === 2) ||
-                  (a.datasetIndex === 3 && b.datasetIndex === 1) ||
-                  (a.datasetIndex === 2 && b.datasetIndex === 1)
-                ) {
-                  return 1;
-                }
+            clip: false,
+            plugins: {
+              htmlLegend: {
+                containerID: 'pretranslation-quality-chart-legend',
               },
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = items.yLabel;
-                  const base = label + ': ' + nf.format(value);
-
-                  switch (label) {
-                    case 'Approval rate':
-                      return label + ': ' + pf.format(value / 100);
-                    default:
-                      return base;
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--pink-3'),
+                borderWidth: 1,
+                caretPadding: 5,
+                xPadding: 10,
+                yPadding: 10,
+                itemSort: function (a, b) {
+                  // Dataset order affects stacking, tooltip and
+                  // legend, but it doesn't work intuitively, so
+                  // we need to manually sort tooltip items.
+                  if (
+                    (a.datasetIndex === 3 && b.datasetIndex === 2) ||
+                    (a.datasetIndex === 3 && b.datasetIndex === 1) ||
+                    (a.datasetIndex === 2 && b.datasetIndex === 1)
+                  ) {
+                    return 1;
                   }
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label: function (context) {
+                    const { chart, parsed, datasetIndex } = context;
+
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = parsed.y;
+                    const base = label + ': ' + nf.format(value);
+
+                    switch (label) {
+                      case 'Approval rate':
+                        return label + ': ' + pf.format(value / 100);
+                      default:
+                        return base;
+                    }
+                  },
                 },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  stacked: true,
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
+                  tooltipFormat: 'MMMM yyyy',
+                },
+                grid: {
+                  display: false,
+                },
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              'approval-rate-y-axis': {
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'APPROVAL RATE',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  stepSize: 20,
+                  callback: function (value) {
+                    return pf.format(value / 100);
                   },
                 },
-              ],
-              yAxes: [
-                {
-                  id: 'approval-rate-y-axis',
-                  position: 'right',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'APPROVAL RATE',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    max: 100,
-                    stepSize: 20,
-                    callback: function (value) {
-                      return pf.format(value / 100);
-                    },
+                beginAtZero: true,
+                max: 100,
+              },
+              'strings-y-axis': {
+                stacked: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'STRINGS',
+                  color: style.getPropertyValue('--white-1'),
+                  fontStyle: 100,
+                },
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  precision: 0,
+                  callback: function (value) {
+                    return nf.format(value);
                   },
                 },
-                {
-                  stacked: true,
-                  id: 'strings-y-axis',
-                  position: 'left',
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'STRINGS',
-                    fontColor: style.getPropertyValue('--white-1'),
-                    fontStyle: 100,
-                  },
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                  },
-                },
-              ],
+                beginAtZero: true,
+              },
             },
           },
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
-
-        // Render custom legend
-        $('#pretranslation-quality-chart-legend').html(
-          pretranslationQualityChart.generateLegend(),
-        );
-        Pontoon.insights.attachCustomLegendHandler(
-          pretranslationQualityChart,
-          '#pretranslation-quality-chart-legend .label',
-        );
       },
       getPercent: function (value, total) {
         const n = value / total;

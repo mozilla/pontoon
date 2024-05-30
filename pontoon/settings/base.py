@@ -558,7 +558,8 @@ PIPELINE_JS = {
     },
     "insights": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
+            "js/lib/chart.umd.min.js",
+            "js/lib/chartjs-adapter-date-fns.bundle.min.js",
             "js/insights_charts.js",
             "js/insights.js",
         ),
@@ -566,7 +567,8 @@ PIPELINE_JS = {
     },
     "localization": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
+            "js/lib/chart.umd.min.js",
+            "js/lib/chartjs-adapter-date-fns.bundle.min.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/tabs.js",
@@ -578,7 +580,8 @@ PIPELINE_JS = {
     },
     "project": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
+            "js/lib/chart.umd.min.js",
+            "js/lib/chartjs-adapter-date-fns.bundle.min.js",
             "js/table.js",
             "js/request.js",
             "js/progress-chart.js",
@@ -600,7 +603,8 @@ PIPELINE_JS = {
     },
     "team": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
+            "js/lib/chart.umd.min.js",
+            "js/lib/chartjs-adapter-date-fns.bundle.min.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -624,7 +628,8 @@ PIPELINE_JS = {
     },
     "profile": {
         "source_filenames": (
-            "js/lib/Chart.bundle.js",
+            "js/lib/chart.umd.min.js",
+            "js/lib/chartjs-adapter-date-fns.bundle.min.js",
             "js/insights_charts.js",
             "js/profile.js",
         ),

@@ -36,51 +36,83 @@ var Pontoon = (function (my) {
         });
 
         // Set up default Chart.js configuration
-        Chart.defaults.global.defaultFontColor =
-          style.getPropertyValue('--light-grey-7');
-        Chart.defaults.global.defaultFontFamily = 'Open Sans';
-        Chart.defaults.global.defaultFontStyle = '100';
-        Chart.defaults.global.datasets.bar.barPercentage = 0.7;
-        Chart.defaults.global.datasets.bar.categoryPercentage = 0.7;
+        Chart.defaults.color = style.getPropertyValue('--light-grey-7');
+        Chart.defaults.borderColor = style.getPropertyValue('--dark-grey-1');
+        Chart.defaults.font.family = 'Open Sans';
+        Chart.defaults.font.weight = '100';
+        Chart.defaults.plugins.legend.display = false;
+        Chart.defaults.datasets.bar.barPercentage = 0.7;
+        Chart.defaults.datasets.bar.categoryPercentage = 0.7;
       },
-      // Legend configuration doesn't allow for enough flexibility,
-      // so we build our own legend
-      // eslint-disable-next-line no-unused-vars
-      customLegend: (chart) => (chart) => {
-        const labels = chart.data.datasets
-          .map((dataset) => {
-            const disabled = dataset.hidden ? 'disabled' : '';
-            const color = dataset.borderColor || dataset.backgroundColor;
-
-            return `<li class="${disabled}"><i class="icon" style="background-color:${color}"></i><span class="label">${dataset.label}</span></li>`;
-          })
-          .join('');
-
-        return `<ul>${labels}</ul>`;
+      // Custom styling callback for Tooltip labels
+      setLabelColor: function (context) {
+        const style = getComputedStyle(document.body);
+        return {
+          borderColor: style.getPropertyValue('--tooltip-color'),
+          backgroundColor:
+            context.dataset.pointBackgroundColor ||
+            context.dataset.backgroundColor,
+        };
       },
-      // Custom legend item event handler
-      attachCustomLegendHandler: function (chart, selector) {
-        $('body').on('click', selector, function (e) {
-          const li = $(this).parent();
-          const index = li.index();
+      // Custom legend callback for styling and event handling
+      getOrCreateLegendList: function (id) {
+        const legendContainer = document.getElementById(id);
+        let listContainer = legendContainer.querySelector('ul');
 
-          if (e.altKey || e.metaKey) {
-            // Show clicked and hide the rest
-            chart.data.datasets.forEach((obj, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.hidden = i === index ? null : true;
+        if (!listContainer) {
+          listContainer = document.createElement('ul');
+          legendContainer.appendChild(listContainer);
+        }
+
+        return listContainer;
+      },
+      htmlLegendPlugin: function () {
+        return {
+          id: 'htmlLegend',
+          afterUpdate(chart) {
+            const containerID = chart.canvas.id + '-legend';
+            const ul = Pontoon.insights.getOrCreateLegendList(containerID);
+
+            // Remove old legend items
+            while (ul.firstChild) {
+              ul.firstChild.remove();
+            }
+
+            const items =
+              chart.options.plugins.legend.labels.generateLabels(chart);
+
+            items.forEach((item) => {
+              const li = document.createElement('li');
+
+              const disabled = item.hidden ? 'disabled' : '';
+              const color =
+                item.strokeStyle == style.getPropertyValue('--dark-grey-1')
+                  ? item.fillStyle
+                  : item.strokeStyle;
+
+              li.className = disabled;
+              li.innerHTML = `<i class="icon" style="background-color:${color}"></i><span class="label">${item.text}</span>`;
+
+              li.onclick = (event) => {
+                // Check if Alt or Meta key was pressed
+                if (event.altKey || event.metaKey) {
+                  chart.data.datasets.forEach((obj, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.hidden = i === item.datasetIndex ? null : true;
+                  });
+                  $(li).parent().find('li').addClass('disabled');
+                } else {
+                  const meta = chart.getDatasetMeta(item.datasetIndex);
+                  const dataset = chart.data.datasets[item.datasetIndex];
+                  meta.hidden = meta.hidden === null ? !dataset.hidden : null;
+                }
+
+                chart.update();
+              };
+              ul.appendChild(li);
             });
-            li.parent().find('li').addClass('disabled');
-          } else {
-            // Toggle clicked
-            const meta = chart.getDatasetMeta(index);
-            const dataset = chart.data.datasets[index];
-            meta.hidden = meta.hidden === null ? !dataset.hidden : null;
-          }
-
-          chart.update();
-          li.toggleClass('disabled');
-        });
+          },
+        };
       },
     },
   });

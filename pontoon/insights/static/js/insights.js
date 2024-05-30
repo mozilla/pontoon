@@ -2,10 +2,6 @@ const nf = new Intl.NumberFormat('en', {
   style: 'percent',
 });
 
-const shortMonthFormat = new Intl.DateTimeFormat('en', {
-  month: 'short',
-});
-
 const longMonthFormat = new Intl.DateTimeFormat('en', {
   month: 'long',
   year: 'numeric',
@@ -56,90 +52,97 @@ var Pontoon = (function (my) {
             borderWidth: item.name === 'All' ? 3 : 1,
             pointBackgroundColor: color,
             pointHitRadius: 10,
-            pointRadius: 4,
+            pointRadius: 3.25,
             pointHoverRadius: 6,
             pointHoverBackgroundColor: color,
             pointHoverBorderColor: style.getPropertyValue('--white-1'),
             spanGaps: true,
+            fill: true,
+            tension: 0.4,
+            order: color.length - index,
           };
         });
 
-        const pretranslationQualityChart = new Chart(chart, {
+        new Chart(chart, {
           type: 'bar',
           data: {
             labels: chart.data('dates'),
             datasets: datasets,
           },
           options: {
-            legend: {
-              display: false,
-            },
-            legendCallback: Pontoon.insights.customLegend(chart),
-            tooltips: {
-              position: 'nearest',
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--white-1'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = nf.format(items.yLabel / 100);
-
-                  return `${label}: ${value}`;
+            clip: false,
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'month',
+                  displayFormats: {
+                    month: 'MMM',
+                  },
+                  tooltipFormat: 'MMMM yyyy',
                 },
-                title: function (items) {
-                  const date = parseInt(items[0].label);
-                  const title = longMonthFormat.format(new Date(date));
-                  return `${title}`;
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: function (value) {
+                    return nf.format(value / 100);
+                  },
+                },
+                beginAtZero: true,
+                max: 100,
+              },
+            },
+            plugins: {
+              htmlLegend: {
+                containerID: chart,
+              },
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                position: 'nearest',
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--white-1'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label: function (context) {
+                    const { chart, datasetIndex, parsed } = context;
+
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = nf.format(parsed.y / 100);
+                    return `${label}: ${value}`;
+                  },
+                  title: function (tooltipItems) {
+                    const date = tooltipItems[0].parsed.x;
+                    const title = longMonthFormat.format(new Date(date));
+                    return title;
+                  },
                 },
               },
             },
-            scales: {
-              xAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  ticks: {
-                    source: 'data',
-                    callback: (value) =>
-                      shortMonthFormat.format(new Date(value)),
-                  },
-                },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    max: 100,
-                    precision: 0,
-                    callback: (value) => nf.format(value / 100),
-                  },
-                },
-              ],
-            },
           },
+          plugins: [Pontoon.insights.htmlLegendPlugin()],
         });
-
-        // Render custom legend
-        const chartId = chart.attr('id');
-        chart
-          .parent()
-          .next('.legend')
-          .html(pretranslationQualityChart.generateLegend());
-        Pontoon.insights.attachCustomLegendHandler(
-          pretranslationQualityChart,
-          `#${chartId}-legend .label`,
-        );
       },
     },
   });

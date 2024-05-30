@@ -58,12 +58,14 @@ var Pontoon = (function (my) {
                 pointBackgroundColor:
                   style.getPropertyValue('--forest-green-1'),
                 pointHitRadius: 10,
-                pointRadius: 4,
+                pointRadius: 3.25,
                 pointHoverRadius: 6,
                 pointHoverBackgroundColor:
                   style.getPropertyValue('--forest-green-1'),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 2,
+                fill: true,
+                tension: 0.4,
               },
               {
                 type: 'line',
@@ -82,64 +84,67 @@ var Pontoon = (function (my) {
                 ),
                 pointHoverBorderColor: style.getPropertyValue('--white-1'),
                 order: 1,
+                fill: true,
+                tension: 0.4,
               },
             ],
           },
           options: {
-            legend: {
-              display: false,
-            },
-            tooltips: {
-              mode: 'index',
-              intersect: false,
-              borderColor: style.getPropertyValue('--status-translated'),
-              borderWidth: 1,
-              caretPadding: 5,
-              xPadding: 10,
-              yPadding: 10,
-              callbacks: {
-                label: function (items, chart) {
-                  const label = chart.datasets[items.datasetIndex].label;
-                  const value = nf.format(items.yLabel / 100);
+            clip: false,
+            plugins: {
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                borderColor: style.getPropertyValue('--status-translated'),
+                borderWidth: 1,
+                caretPadding: 5,
+                padding: {
+                  x: 10,
+                  y: 10,
+                },
+                callbacks: {
+                  labelColor: (context) =>
+                    Pontoon.insights.setLabelColor(context),
+                  label: function (context) {
+                    const { parsed, chart, datasetIndex } = context;
+                    const label = chart.data.datasets[datasetIndex].label;
+                    const value = nf.format(parsed.y / 100);
 
-                  return `${label}: ${value}`;
+                    return `${label}: ${value}`;
+                  },
                 },
               },
             },
             scales: {
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    displayFormats: {
-                      month: 'MMM',
-                    },
-                    tooltipFormat: 'MMMM YYYY',
+              x: {
+                type: 'time',
+                time: {
+                  displayFormats: {
+                    month: 'MMM',
                   },
-                  gridLines: {
-                    display: false,
-                  },
-                  offset: true,
-                  ticks: {
-                    source: 'data',
-                  },
+                  tooltipFormat: 'MMMM yyyy',
                 },
-              ],
-              yAxes: [
-                {
-                  gridLines: {
-                    display: false,
-                  },
-                  position: 'right',
-                  ticks: {
-                    beginAtZero: true,
-                    maxTicksLimit: 3,
-                    max: 100,
-                    precision: 0,
-                    callback: (value) => nf.format(value / 100),
-                  },
+                grid: {
+                  display: false,
                 },
-              ],
+                offset: true,
+                ticks: {
+                  source: 'data',
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                position: 'right',
+                ticks: {
+                  maxTicksLimit: 3,
+                  precision: 0,
+                  callback: (value) => nf.format(value / 100),
+                },
+                beginAtZero: true,
+                max: 100,
+              },
             },
           },
         });
