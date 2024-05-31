@@ -24,7 +24,6 @@ def revert_mark_system_users(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

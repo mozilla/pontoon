@@ -31,7 +31,6 @@ def unescape_strings_xml_apostrophes(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0049_fix_pluralform_data"),
     ]

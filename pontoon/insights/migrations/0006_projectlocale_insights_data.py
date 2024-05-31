@@ -100,7 +100,6 @@ UPDATE insights_projectlocaleinsightssnapshot SET new_source_strings = 0;
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0005_projectlocale_insights"),
     ]

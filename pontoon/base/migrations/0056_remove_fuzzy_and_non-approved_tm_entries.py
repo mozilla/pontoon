@@ -12,7 +12,6 @@ def remove_unused_tm_entries(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0055_populate_resource_order"),
     ]

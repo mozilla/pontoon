@@ -9,7 +9,6 @@ def remove_tm_entries_of_rejected(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0024_fuzzy_to_pretranslated_strings"),
     ]

@@ -60,7 +60,8 @@ def get_time_to_review_12_month_avg(category, query_filters=None):
         .values(
             "month",
             f"time_to_review_{category}_avg",
-        ).order_by("month")
+        )
+        .order_by("month")
     )
 
     times_to_review = [x[f"time_to_review_{category}_avg"] for x in insights]

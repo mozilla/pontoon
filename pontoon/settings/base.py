@@ -1,4 +1,5 @@
 """Django settings for Pontoon."""
+
 import re
 import os
 import socket

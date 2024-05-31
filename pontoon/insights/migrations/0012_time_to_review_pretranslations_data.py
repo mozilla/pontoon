@@ -73,7 +73,6 @@ def reset_time_to_review_pretranslations(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0011_time_to_review_pretranslations"),
     ]

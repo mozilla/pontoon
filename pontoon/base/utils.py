@@ -470,7 +470,7 @@ def sanitize_xml_input_string(string):
     """
 
     illegal_xml_chars_re = re.compile(
-        "[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]"
+        "[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]"
     )
 
     return illegal_xml_chars_re.sub("", string)

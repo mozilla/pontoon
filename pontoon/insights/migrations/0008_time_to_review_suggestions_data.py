@@ -68,7 +68,6 @@ def reset_time_to_review_suggestions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0007_time_to_review_suggestions"),
     ]

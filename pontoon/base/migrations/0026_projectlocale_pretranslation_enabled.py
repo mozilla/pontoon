@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0025_remove_tm_entries_of_rejected"),
     ]

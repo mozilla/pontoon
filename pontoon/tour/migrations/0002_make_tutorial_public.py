@@ -11,7 +11,6 @@ def make_tutorial_public(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tour", "0001_squashed_0001_initial"),
     ]

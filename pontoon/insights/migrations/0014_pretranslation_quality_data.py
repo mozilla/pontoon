@@ -176,7 +176,6 @@ def reset_pretranslation_quality(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0013_pretranslation_quality"),
     ]

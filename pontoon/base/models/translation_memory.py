@@ -109,7 +109,9 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
                 matches_pks.append(pk)
                 quality_sql_map.append(When(pk=pk, then=Value(quality * 100)))
 
-        entries = self.filter(pk__in=matches_pks,).annotate(
+        entries = self.filter(
+            pk__in=matches_pks,
+        ).annotate(
             quality=Case(
                 *quality_sql_map,
                 **dict(

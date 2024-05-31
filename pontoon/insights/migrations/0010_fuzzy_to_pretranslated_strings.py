@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0024_fuzzy_to_pretranslated_strings"),
         ("insights", "0009_fix_projectlocale_insights_data"),

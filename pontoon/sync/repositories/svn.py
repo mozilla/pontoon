@@ -85,9 +85,9 @@ def get_svn_env():
     """Return an environment dict for running SVN in."""
     if settings.SVN_LD_LIBRARY_PATH:
         env = environ.copy()
-        env[
-            "LD_LIBRARY_PATH"
-        ] = f"{settings.SVN_LD_LIBRARY_PATH}:{env['LD_LIBRARY_PATH']}"
+        env["LD_LIBRARY_PATH"] = (
+            f"{settings.SVN_LD_LIBRARY_PATH}:{env['LD_LIBRARY_PATH']}"
+        )
         return env
     else:
         return None

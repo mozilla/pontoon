@@ -131,9 +131,10 @@ def test_repo_url_for_path_no_match(repo_git, locale_a, settings):
 
 @pytest.mark.django_db
 def test_repo_pull(repo_git):
-    with patch("pontoon.sync.repositories.update_from_vcs") as m_update_from_vcs, patch(
-        "pontoon.sync.repositories.get_revision"
-    ) as m_get_revision:
+    with (
+        patch("pontoon.sync.repositories.update_from_vcs") as m_update_from_vcs,
+        patch("pontoon.sync.repositories.get_revision") as m_get_revision,
+    ):
         repo_git.url = "https://example.com"
         m_get_revision.return_value = "asdf"
         assert repo_git.pull() == {"single_locale": "asdf"}

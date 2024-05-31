@@ -13,7 +13,6 @@ def populate_unique_id(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0063_userprofile_unique_id"),
     ]

@@ -28,7 +28,6 @@ def fuzzy_to_missing(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0022_reviewed_suggestions"),
     ]

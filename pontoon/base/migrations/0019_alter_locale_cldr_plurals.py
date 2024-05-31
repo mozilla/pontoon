@@ -5,7 +5,6 @@ import pontoon.base.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0018_populate_entity_context"),
     ]

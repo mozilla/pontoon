@@ -11,7 +11,6 @@ def rename_logged_in_users(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0051_localecodehistory"),
     ]

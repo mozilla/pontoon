@@ -29,7 +29,6 @@ def revert_system_user_email(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

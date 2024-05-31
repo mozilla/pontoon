@@ -10,7 +10,6 @@ def remove_changed_entity_locale_entries_for_repository_projects(apps, schema_ed
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

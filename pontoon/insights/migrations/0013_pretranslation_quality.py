@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0012_time_to_review_pretranslations_data"),
     ]

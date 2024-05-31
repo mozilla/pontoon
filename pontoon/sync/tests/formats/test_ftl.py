@@ -269,9 +269,7 @@ class FTLTests(FormatTestsMixin, TestCase):
             """
             String = Translated String
             {expected_translation}
-        """.format(
-                expected_translation=expected_translation
-            )
+        """.format(expected_translation=expected_translation)
         )
 
         self.run_save_translation_missing(

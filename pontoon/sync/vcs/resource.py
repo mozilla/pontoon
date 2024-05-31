@@ -127,9 +127,9 @@ class VCSResource:
 
             for translation in resource_file.translations:
                 try:
-                    self.entities[translation.key].translations[
-                        locale.code
-                    ] = translation
+                    self.entities[translation.key].translations[locale.code] = (
+                        translation
+                    )
                 except KeyError:
                     # If the source is missing an entity, we consider it
                     # deleted and don't add it.

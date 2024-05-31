@@ -6,7 +6,6 @@ import pontoon.insights.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0002_project_projectlocale"),
     ]

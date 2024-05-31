@@ -8,6 +8,7 @@ Therefore, the format support nested values.
 A key can contain any character.
 Nested keys are internally stored as a JSON array.
 """
+
 import json
 import logging
 

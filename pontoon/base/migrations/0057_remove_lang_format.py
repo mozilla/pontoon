@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0056_remove_fuzzy_and_non-approved_tm_entries"),
     ]

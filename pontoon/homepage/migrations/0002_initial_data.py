@@ -28,7 +28,6 @@ def remove_homepage_entry(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("homepage", "0001_squashed_0002_add_homepage_content"),
     ]

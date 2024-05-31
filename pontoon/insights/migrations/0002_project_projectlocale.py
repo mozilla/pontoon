@@ -6,7 +6,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0012_auto_20201020_1830"),
         ("insights", "0001_initial"),

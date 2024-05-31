@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("actionlog", "0001_squashed_0002_auto_20200123_1843"),
     ]

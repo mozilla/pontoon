@@ -1,6 +1,7 @@
 """
 Parser for to pofile translation format.
 """
+
 from datetime import datetime
 
 from django.utils import timezone
@@ -90,9 +91,9 @@ class POResource(ParsedResource):
                     "%Y-%m-%d %H:%M%z"
                 )
             if latest_translation.last_translator:
-                metadata[
-                    "Last-Translator"
-                ] = latest_translation.last_translator.display_name_and_email
+                metadata["Last-Translator"] = (
+                    latest_translation.last_translator.display_name_and_email
+                )
 
         metadata.update(
             {

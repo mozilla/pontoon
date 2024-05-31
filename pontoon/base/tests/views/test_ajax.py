@@ -9,9 +9,10 @@ from pontoon.base.views import AjaxFormView, AjaxFormPostView
 
 
 def test_view_ajax_form(rf):
-    with patch("pontoon.base.views.AjaxFormView.get_form") as form_m, patch(
-        "pontoon.base.views.AjaxFormView.render_to_response"
-    ) as response_m:
+    with (
+        patch("pontoon.base.views.AjaxFormView.get_form") as form_m,
+        patch("pontoon.base.views.AjaxFormView.render_to_response") as response_m,
+    ):
         form_m.return_value = 7
         response_m.return_value = 23
 
@@ -28,8 +29,9 @@ def test_view_ajax_form(rf):
 
 
 def test_view_ajax_form_post(rf):
-    with patch("pontoon.base.views.AjaxFormPostView.get_form") as form_m, patch(
-        "pontoon.base.views.AjaxFormPostView.render_to_response"
+    with (
+        patch("pontoon.base.views.AjaxFormPostView.get_form") as form_m,
+        patch("pontoon.base.views.AjaxFormPostView.render_to_response"),
     ):
         with pytest.raises(Http404):
             AjaxFormPostView.as_view()(rf.get("/foo/bar"))
@@ -41,9 +43,10 @@ def test_view_ajax_form_post(rf):
 
 
 def test_view_ajax_form_submit_bad(rf):
-    with patch("pontoon.base.views.AjaxFormView.get_form") as form_m, patch(
-        "pontoon.base.views.AjaxFormView.render_to_response"
-    ) as response_m:
+    with (
+        patch("pontoon.base.views.AjaxFormView.get_form") as form_m,
+        patch("pontoon.base.views.AjaxFormView.render_to_response") as response_m,
+    ):
         _form = MagicMock()
         _form.is_valid.return_value = False
         type(_form).errors = PropertyMock(return_value=["BAD", "STUFF"])
@@ -68,8 +71,9 @@ def test_view_ajax_form_submit_bad(rf):
 
 
 def test_view_ajax_form_submit_success(rf):
-    with patch("pontoon.base.views.AjaxFormView.get_form") as form_m, patch(
-        "pontoon.base.views.AjaxFormView.render_to_response"
+    with (
+        patch("pontoon.base.views.AjaxFormView.get_form") as form_m,
+        patch("pontoon.base.views.AjaxFormView.render_to_response"),
     ):
         _form = MagicMock()
         _form.is_valid.return_value = True

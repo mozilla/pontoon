@@ -1,6 +1,7 @@
 """
 Parser for silme-compatible translation formats.
 """
+
 import codecs
 import silme
 
@@ -120,7 +121,6 @@ class SilmeResource(ParsedResource):
         current_order = 0
         for obj in self.structure:
             if isinstance(obj, silme.core.entity.Entity):
-
                 if self.escape_quotes_on:
                     obj.value = unescape_quotes(obj.value)
 

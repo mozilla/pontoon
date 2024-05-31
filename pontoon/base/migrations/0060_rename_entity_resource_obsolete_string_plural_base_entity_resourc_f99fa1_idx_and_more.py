@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0059_alter_translation_machinery_sources"),
     ]

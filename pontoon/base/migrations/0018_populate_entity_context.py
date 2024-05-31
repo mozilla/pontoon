@@ -39,7 +39,6 @@ def remove_entity_context(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0017_entity_context"),
     ]
