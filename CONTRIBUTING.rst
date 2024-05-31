@@ -115,33 +115,22 @@ To run the required linters on the Python and the Javascript code at once you ca
 Python code conventions
 =======================
 
-Our Python code is automatically formatted using `black <https://black.readthedocs.io/en/stable/>`_.
+Our Python code is automatically formatted using `ruff <https://docs.astral.sh/ruff/>`_.
 We enforce that in our Continuous Integration, so you will need to run
-black on your code before sending it for review.
+ruff on your code before sending it for review.
 
-You can run black locally either as an
-`add-on in your code editor <https://black.readthedocs.io/en/stable/editor_integration.html>`_,
-or as a `git pre-hook commit <https://black.readthedocs.io/en/stable/version_control_integration.html>`_.
+You can run ruff locally either as an
+`add-on in your code editor <https://docs.astral.sh/ruff/integrations/#vs-code-official>`_,
+or as a `git pre-hook commit <https://docs.astral.sh/ruff/integrations/#pre-commit>`_.
 Alternatively, you can format your code using:
 
 .. code-block:: shell
 
-    $ make black
+    $ make ruff
 
-We also require Python code to use newer syntax of Python. You can upgrade automatically by running:
-
-.. code-block:: shell
-
-    $ make pyupgrade
-
-Additionally, we use a linter to verify that imports are correct. You can run it with:
-
-.. code-block:: shell
-
-    $ make flake8
-
-In the rare case when you cannot fix a flake8 error, use ``# noqa`` to make the linter
-ignore that error. Note that in most cases, it is better to fix the issues than ignoring them.
+In the rare case when you cannot fix an error, use ``# noqa`` to make the linter
+ignore that error (see `documentation <https://docs.astral.sh/ruff/linter/#error-suppression>`_).
+Note that in most cases, it is better to fix the issues than ignoring them.
 
 
 Javascript code conventions
