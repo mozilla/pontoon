@@ -5,6 +5,7 @@ actively maintained and current codebase is broken between various versions of D
 Because of that I decided to implement our migrations with intent to drop it when django develops
 its own solution.
 """
+
 import copy
 
 from django.db.migrations.operations.base import Operation

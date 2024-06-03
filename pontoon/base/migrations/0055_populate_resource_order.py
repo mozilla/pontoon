@@ -25,7 +25,6 @@ def reset_resource_order(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0054_resource_order"),
     ]

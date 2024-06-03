@@ -2,7 +2,6 @@
 
 import statistics
 
-from datetime import datetime, timedelta
 from django.db import migrations
 from django.db.models import F
 from sacrebleu.metrics import CHRF
@@ -177,7 +176,6 @@ def reset_pretranslation_quality(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("insights", "0013_pretranslation_quality"),
     ]

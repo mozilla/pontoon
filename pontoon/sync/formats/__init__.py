@@ -3,6 +3,7 @@ Parsing resource files.
 
 See base.py for the ParsedResource base class.
 """
+
 import os.path
 import fnmatch
 

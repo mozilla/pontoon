@@ -1437,7 +1437,6 @@ def squashed_run_python(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0001_squashed_0154_auto_20200206_1736"),
         ("guardian", "__first__"),

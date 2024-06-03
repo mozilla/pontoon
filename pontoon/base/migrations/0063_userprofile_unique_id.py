@@ -5,7 +5,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0062_userprofile_email_consent_dismissed_at"),
     ]

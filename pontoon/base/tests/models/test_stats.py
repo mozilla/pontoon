@@ -1,6 +1,7 @@
 """
 Test consistency of calculations between `calculate_stats` and `translation.save()`.
 """
+
 import pytest
 from pontoon.base.models import TranslatedResource
 from pontoon.checks.models import (

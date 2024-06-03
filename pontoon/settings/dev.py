@@ -1,5 +1,5 @@
-"""A various settings that enable additional packages that are helpful in day to day development.
-"""
+"""A various settings that enable additional packages that are helpful in day to day development."""
+
 import copy
 import re
 from . import base

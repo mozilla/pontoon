@@ -1,6 +1,7 @@
 """
 Parser for the xliff translation format.
 """
+
 from lxml import etree
 from translate.storage import xliff
 import copy

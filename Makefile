@@ -9,7 +9,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-translate build-tagadmin build-server server-env setup run clean shell ci test test-translate test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier flake8 pyupgrade check-pyupgrade black check-black dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-tagadmin build-server server-env setup run clean shell ci test test-translate test-tagadmin test-server jest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -34,12 +34,9 @@ help:
 	@echo "  eslint           Runs a code linter on the JavaScript code"
 	@echo "  prettier         Runs the Prettier formatter"
 	@echo "  check-prettier   Runs a check for format issues with the Prettier formatter"
-	@echo "  flake8           Runs the flake8 style guides on all Python code"
-	@echo "  pyupgrade        Upgrades all Python code to newer syntax of Python"
-	@echo "  check-pyupgrade  Runs a check for outdated syntax of Python with the pyupgrade formatter"
-	@echo "  black            Runs the black formatter on all Python code"
-	@echo "  check-black      Runs a check for format issues with the black formatter"
 	@echo "  dropdb           Completely remove the postgres container and its data"
+	@echo "  ruff             Runs the ruff formatter on all Python code"
+	@echo "  check-ruff       Runs a check for format issues with the ruff formatter"
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
@@ -99,9 +96,9 @@ test-server: pytest
 pytest:
 	"${DC}" run ${run_opts} --rm server pytest --cov-report=xml:pontoon/coverage.xml --cov=. $(opts)
 
-format: prettier pyupgrade black
+format: prettier ruff
 
-lint: types eslint check-prettier flake8 check-pyupgrade check-black
+lint: types eslint check-prettier check-ruff
 
 types:
 	npm run types -w translate
@@ -115,20 +112,13 @@ prettier:
 check-prettier:
 	npm run check-prettier
 
-flake8:
-	"${DC}" run --rm server flake8 pontoon/
+ruff:
+	"${DC}" run --rm server ruff check --fix pontoon/
+	"${DC}" run --rm server ruff format pontoon/
 
-pyupgrade:
-	"${DC}" run --rm server pyupgrade --exit-zero-even-if-changed --py311-plus *.py `find pontoon -name \*.py`
-
-check-pyupgrade:
-	"${DC}" run --rm server pyupgrade --py311-plus *.py `find pontoon -name \*.py`
-
-black:
-	"${DC}" run --rm server black pontoon/
-
-check-black:
-	"${DC}" run --rm server black --check pontoon
+check-ruff:
+	"${DC}" run --rm server ruff check pontoon
+	"${DC}" run --rm server ruff format --check pontoon
 
 dropdb:
 	"${DC}" down --volumes postgresql

@@ -13,7 +13,6 @@ def fix_lt_plural_rule(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0046_projectslughistory"),
     ]

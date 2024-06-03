@@ -37,7 +37,6 @@ def delete_action_logs_for_pretranslations(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("actionlog", "0002_auto_20200703_0709"),
     ]

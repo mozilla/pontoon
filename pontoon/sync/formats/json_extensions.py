@@ -5,6 +5,7 @@ https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
 See also:
 https://www.chromium.org/developers/design-documents/extensions/how-the-extension-system-works/i18n
 """
+
 import copy
 import logging
 

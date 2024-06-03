@@ -1,6 +1,7 @@
 """
 Tests related to the utils provided in pontoon.teams.libraries
 """
+
 import pytest
 
 from pontoon.base.models import PermissionChangelog

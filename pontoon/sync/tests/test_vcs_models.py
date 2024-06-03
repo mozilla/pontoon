@@ -230,13 +230,15 @@ class VCSProjectTests(VCSTestCase):
                 return "successful resource"
 
         changed_vcs_resources = {"success": [], "failure": []}
-        with patch("pontoon.sync.vcs.project.VCSResource") as MockVCSResource, patch(
-            "pontoon.sync.vcs.project.log"
-        ) as mock_log, patch.object(
-            VCSProject,
-            "changed_files",
-            new_callable=PropertyMock,
-            return_value=changed_vcs_resources,
+        with (
+            patch("pontoon.sync.vcs.project.VCSResource") as MockVCSResource,
+            patch("pontoon.sync.vcs.project.log") as mock_log,
+            patch.object(
+                VCSProject,
+                "changed_files",
+                new_callable=PropertyMock,
+                return_value=changed_vcs_resources,
+            ),
         ):
             MockVCSResource.side_effect = vcs_resource_constructor
 
@@ -281,8 +283,9 @@ class VCSProjectTests(VCSTestCase):
         self.project.repositories.all().delete()
         self.project.repositories.add(RepositoryFactory.create(url=url))
 
-        with patch("pontoon.sync.vcs.project.os", wraps=os) as mock_os, patch(
-            "pontoon.sync.vcs.project.MOZILLA_REPOS", [url]
+        with (
+            patch("pontoon.sync.vcs.project.os", wraps=os) as mock_os,
+            patch("pontoon.sync.vcs.project.MOZILLA_REPOS", [url]),
         ):
             mock_os.walk.return_value = [
                 ("/root", [], ["foo.pot", "region.properties"])
@@ -580,14 +583,17 @@ class VCSChangedConfigFilesTests(FakeCheckoutTestCase):
     def test_no_config_changes(self):
         changed_source_files = {"file1.po": [], "test.toml": []}
 
-        with patch.object(
-            self.vcs_project, "configuration"
-        ) as changed_config_files_mock, patch.object(
-            self.vcs_project, "changed_source_files", return_value=changed_source_files
-        ) as changed_source_files_mock:
-            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = (
-                set()
-            )
+        with (
+            patch.object(
+                self.vcs_project, "configuration"
+            ) as changed_config_files_mock,
+            patch.object(
+                self.vcs_project,
+                "changed_source_files",
+                return_value=changed_source_files,
+            ) as changed_source_files_mock,
+        ):
+            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = set()
             changed_source_files_mock.__getitem__.return_value = changed_source_files
             self.assertSetEqual(self.vcs_project.changed_config_files, set())
 
@@ -604,14 +610,17 @@ class VCSChangedConfigFilesTests(FakeCheckoutTestCase):
             "test-l10n.toml": [],
         }
 
-        with patch.object(
-            self.vcs_project, "configuration"
-        ) as changed_config_files_mock, patch.object(
-            self.vcs_project, "changed_source_files", return_value=changed_source_files
-        ) as changed_source_files_mock:
-            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = (
-                changed_config_files
-            )
+        with (
+            patch.object(
+                self.vcs_project, "configuration"
+            ) as changed_config_files_mock,
+            patch.object(
+                self.vcs_project,
+                "changed_source_files",
+                return_value=changed_source_files,
+            ) as changed_source_files_mock,
+        ):
+            changed_config_files_mock.parsed_configuration.configs.__iter__.return_value = changed_config_files
             changed_source_files_mock.__getitem__.return_value = changed_source_files
 
             self.assertSetEqual(

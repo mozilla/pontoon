@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0040_remove_changed_entity_locale_entries_for_repository_projects"),
     ]

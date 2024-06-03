@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  flake8:
+  ruff:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,33 +29,7 @@ jobs:
         run: |
           pip install -U pip
           pip install -r requirements/lint.txt
-      - name: flake8
-        run: flake8 pontoon
-
-  black:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install Dependencies
-        run: |
-          pip install -U pip
-          pip install -r requirements/lint.txt
-      - name: black
-        run: black --check pontoon
-
-  pyupgrade:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install Dependencies
-        run: |
-          pip install -U pip
-          pip install -r requirements/lint.txt
-      - name: pyupgrade
-        run: pyupgrade --py311-plus *.py `find pontoon -name \*.py`
+      - name: ruff lint
+        run: ruff check pontoon
+      - name: ruff format
+        run: ruff format --check pontoon

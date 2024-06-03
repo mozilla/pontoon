@@ -177,7 +177,6 @@ def remove_terminology_project(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("base", "0004_make_old_projects_public_again"),
         ("terminology", "0002_term_entity"),

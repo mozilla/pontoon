@@ -1,6 +1,7 @@
 """
 Collation lookups allow a user to set text-collation to search queries.
 """
+
 import pytest
 
 from pontoon.db import IContainsCollate  # noqa
