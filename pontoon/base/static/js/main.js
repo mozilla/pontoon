@@ -85,7 +85,7 @@ var Pontoon = (function (my) {
      * Close notification
      */
     closeNotification: function () {
-      $('.notification').animate(
+      $('body > header > .notification').animate(
         {
           top: '-60px',
         },
@@ -107,7 +107,7 @@ var Pontoon = (function (my) {
      */
     endLoader: function (text, type, duration) {
       if (text) {
-        $('.notification')
+        $('body > header > .notification')
           .html('<li class="' + (type || '') + '">' + text + '</li>')
           .removeClass('hide')
           .animate(

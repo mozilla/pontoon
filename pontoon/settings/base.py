@@ -486,6 +486,7 @@ PIPELINE_CSS = {
             "css/multiple_team_selector.css",
             "css/contributor.css",
             "css/team_selector.css",
+            "css/check-box.css",
             "css/settings.css",
         ),
         "output_filename": "css/settings.min.css",
@@ -526,6 +527,14 @@ PIPELINE_CSS = {
     "unsubscribe": {
         "source_filenames": ("css/unsubscribe.css",),
         "output_filename": "css/unsubscribe.min.css",
+    },
+    "messaging": {
+        "source_filenames": (
+            "css/sidebar_menu.css",
+            "css/check-box.css",
+            "css/messaging.css",
+        ),
+        "output_filename": "css/messaging.min.css",
     },
 }
 
@@ -669,6 +678,13 @@ PIPELINE_JS = {
     "email_consent": {
         "source_filenames": ("js/email_consent.js",),
         "output_filename": "js/email_consent.min.js",
+    },
+    "messaging": {
+        "source_filenames": (
+            "js/sidebar_menu.js",
+            "js/messaging.js",
+        ),
+        "output_filename": "js/messaging.min.js",
     },
 }
 
