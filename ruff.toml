@@ -19,7 +19,10 @@ select = [
 combine-as-imports = true
 lines-after-imports = 2
 lines-between-types = 1
-no-sections = true
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+
+[lint.isort.sections]
+"django" = ["django"]
 
 [format]
 quote-style = "double"
