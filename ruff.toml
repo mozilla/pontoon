@@ -11,8 +11,15 @@ ignore = [
 select = [
     "E",  # pycodestyle errors
     "F",  # pyflakes
+    "I",  # isort
     "W",  # pycodestyle warnings
 ]
+
+[lint.isort]
+combine-as-imports = true
+lines-after-imports = 2
+lines-between-types = 1
+no-sections = true
 
 [format]
 quote-style = "double"
