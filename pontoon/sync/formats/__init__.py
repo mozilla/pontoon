@@ -4,8 +4,8 @@ Parsing resource files.
 See base.py for the ParsedResource base class.
 """
 
-import os.path
 import fnmatch
+import os.path
 
 from pontoon.sync.formats import (
     ftl,
@@ -16,6 +16,7 @@ from pontoon.sync.formats import (
     xliff,
     xml,
 )
+
 
 # To add support for a new resource format, add an entry to this dict
 # where the key is the extension you're parsing and the value is a

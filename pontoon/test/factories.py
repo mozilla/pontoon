@@ -1,24 +1,23 @@
 import factory
-from factory import LazyAttribute, Sequence, SubFactory, SelfAttribute
-from factory.django import DjangoModelFactory
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.template.defaultfilters import slugify
-
+from factory import LazyAttribute, SelfAttribute, Sequence, SubFactory
+from factory.django import DjangoModelFactory
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
     Locale,
+    LocaleCodeHistory,
     Project,
     ProjectLocale,
+    ProjectSlugHistory,
     Repository,
     Resource,
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
-    ProjectSlugHistory,
-    LocaleCodeHistory,
 )
 from pontoon.checks.models import Error, Warning
 from pontoon.tags.models import Tag

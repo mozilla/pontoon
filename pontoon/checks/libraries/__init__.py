@@ -1,6 +1,4 @@
-from . import compare_locales
-from . import translate_toolkit
-from . import pontoon_db, pontoon_non_db
+from . import compare_locales, pontoon_db, pontoon_non_db, translate_toolkit
 
 
 def run_checks(

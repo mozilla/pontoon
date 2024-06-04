@@ -1,4 +1,5 @@
 import uuid
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -6,16 +7,14 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, JsonResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
-
 from guardian.decorators import permission_required_or_403
 from notifications.models import Notification
 from notifications.signals import notify
-
-from pontoon.base.models import Project, Locale
-from pontoon.base.utils import require_AJAX, split_ints, get_project_or_redirect
+from pontoon.base.models import Locale, Project
+from pontoon.base.utils import get_project_or_redirect, require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
 from pontoon.projects import forms

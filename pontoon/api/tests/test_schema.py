@@ -1,9 +1,8 @@
-import sys
-from itertools import product
-
 import pytest
-from pontoon.base.models import Project, ProjectLocale
+import sys
 
+from itertools import product
+from pontoon.base.models import Project, ProjectLocale
 from pontoon.test.factories import ProjectFactory
 
 

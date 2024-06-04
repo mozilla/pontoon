@@ -1,7 +1,6 @@
-from os.path import splitext
-
 from django.db import models
 from django.utils import timezone
+from os.path import splitext
 
 
 class ResourceQuerySet(models.QuerySet):

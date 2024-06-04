@@ -1,6 +1,5 @@
-from unittest.mock import patch, MagicMock, PropertyMock
-
 from pontoon.tags.admin import TagsTool, TagTool
+from unittest.mock import MagicMock, PropertyMock, patch
 
 
 @patch("pontoon.tags.admin.TagTool.resource_tool", new_callable=PropertyMock)

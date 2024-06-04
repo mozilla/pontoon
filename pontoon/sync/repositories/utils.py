@@ -1,5 +1,6 @@
-from logging import Logger
 import subprocess
+
+from logging import Logger
 
 
 class PullFromRepositoryException(Exception):

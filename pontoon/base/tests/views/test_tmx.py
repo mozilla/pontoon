@@ -1,11 +1,9 @@
 import os
-from datetime import datetime
-
 import pytest
-from lxml import etree
 
+from datetime import datetime
 from django.urls import reverse
-
+from lxml import etree
 from pontoon.base.utils import build_translation_memory_file
 
 

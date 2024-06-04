@@ -1,8 +1,7 @@
+from .tags import TagsTool
 from django import forms
 from django.utils.functional import cached_property
-
 from pontoon.base.models import Resource
-from .tags import TagsTool
 
 
 class LinkTagResourcesAdminForm(forms.Form):

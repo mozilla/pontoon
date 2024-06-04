@@ -1,7 +1,5 @@
-from graphene_django.views import GraphQLView
-
 from django.urls import path
-
+from graphene_django.views import GraphQLView
 from pontoon.api.schema import schema
 from pontoon.settings import DEV
 

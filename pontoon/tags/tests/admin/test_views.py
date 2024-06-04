@@ -1,8 +1,7 @@
-from unittest.mock import patch
-
 import pytest
 
 from django.urls import reverse
+from unittest.mock import patch
 
 
 @pytest.mark.django_db

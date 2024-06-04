@@ -3,7 +3,6 @@ import functools
 import io
 import os
 import re
-
 import requests
 import tempfile
 import time
@@ -11,20 +10,20 @@ import zipfile
 
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
-from guardian.decorators import permission_required as guardian_permission_required
-from urllib.parse import urljoin
-from xml.sax.saxutils import escape, quoteattr
-
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest, Http404
-from django.shortcuts import redirect, get_object_or_404
+from django.http import Http404, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.utils.timezone import make_aware, now
 from django.utils.text import slugify
+from django.utils.timezone import make_aware, now
 from django.utils.translation import trans_real
+from guardian.decorators import permission_required as guardian_permission_required
+from urllib.parse import urljoin
+from xml.sax.saxutils import escape, quoteattr
+
 
 UNUSABLE_SEARCH_CHAR = "☠"
 
@@ -197,10 +196,10 @@ def get_download_content(slug, code, part):
     :arg str part: Resource path.
     """
     # Avoid circular import; someday we should refactor to avoid.
+    from pontoon.base.models import Entity, Locale, Project, Resource
     from pontoon.sync import formats
     from pontoon.sync.utils import source_to_locale_path
     from pontoon.sync.vcs.project import VCSProject
-    from pontoon.base.models import Entity, Locale, Project, Resource
 
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)
@@ -321,9 +320,6 @@ def handle_upload_content(slug, code, part, f, user):
     :arg User user: User uploading the file.
     """
     # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.sync import formats
-    from pontoon.sync.changeset import ChangeSet
-    from pontoon.sync.vcs.project import VCSProject
     from pontoon.base.models import (
         Entity,
         Locale,
@@ -332,6 +328,9 @@ def handle_upload_content(slug, code, part, f, user):
         TranslatedResource,
         Translation,
     )
+    from pontoon.sync import formats
+    from pontoon.sync.changeset import ChangeSet
+    from pontoon.sync.vcs.project import VCSProject
 
     project = get_object_or_404(Project, slug=slug)
     locale = get_object_or_404(Locale, code=code)

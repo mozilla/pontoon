@@ -5,21 +5,20 @@ import Levenshtein
 import logging
 import operator
 import os
+import pontoon.base as base
 import requests
 
 from collections import defaultdict
-from functools import reduce
-from html import unescape
-from google.auth.exceptions import DefaultCredentialsError
-from google.cloud import translate
-from google.oauth2 import service_account
-
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
-
-import pontoon.base as base
+from functools import reduce
+from google.auth.exceptions import DefaultCredentialsError
+from google.cloud import translate
+from google.oauth2 import service_account
+from html import unescape
 from pontoon.base.placeables import get_placeables
+
 
 log = logging.getLogger(__name__)
 MAX_RESULTS = 5

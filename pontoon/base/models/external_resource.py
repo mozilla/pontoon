@@ -1,5 +1,4 @@
 from django.db import models
-
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 

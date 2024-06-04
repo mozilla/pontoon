@@ -1,19 +1,18 @@
 import os.path
-import tempfile
-from textwrap import dedent
-
 import pytest
-from silme.format.dtd import FormatParser as DTDParser
+import tempfile
 
 from pontoon.base.tests import (
-    assert_attributes_equal,
-    create_tempfile,
     LocaleFactory,
     TestCase,
+    assert_attributes_equal,
+    create_tempfile,
 )
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import silme
 from pontoon.sync.tests.formats import FormatTestsMixin
+from silme.format.dtd import FormatParser as DTDParser
+from textwrap import dedent
 
 
 class SilmeResourceTests(TestCase):

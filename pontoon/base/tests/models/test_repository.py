@@ -1,13 +1,11 @@
 import os
-from unittest.mock import call, patch, Mock
-from urllib.parse import urlparse
-
 import pytest
 
 from django.core.exceptions import ValidationError
-
 from pontoon.base.models import repository_url_validator
 from pontoon.test.factories import ProjectLocaleFactory
+from unittest.mock import Mock, call, patch
+from urllib.parse import urlparse
 
 
 @pytest.mark.django_db

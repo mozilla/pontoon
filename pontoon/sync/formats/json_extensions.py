@@ -10,8 +10,9 @@ import copy
 import logging
 
 from pontoon.sync.exceptions import SyncError
-from pontoon.sync.vcs.translation import VCSTranslation
 from pontoon.sync.formats.base_json_file import JSONResource, parse as parseJSONResource
+from pontoon.sync.vcs.translation import VCSTranslation
+
 
 log = logging.getLogger(__name__)
 

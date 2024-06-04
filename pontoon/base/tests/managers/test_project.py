@@ -1,6 +1,7 @@
 import pytest
-from pontoon.base.tests import ProjectFactory, ProjectLocaleFactory
+
 from pontoon.base.models import Project, ProjectLocale
+from pontoon.base.tests import ProjectFactory, ProjectLocaleFactory
 
 
 @pytest.fixture

@@ -1,19 +1,17 @@
-from functools import reduce
-from operator import ior
-from re import findall, match
-
 from dirtyfields import DirtyFieldsMixin
 from django.db import models
 from django.db.models import F, Prefetch, Q
 from django.utils import timezone
+from functools import reduce
 from jsonfield import JSONField
-
+from operator import ior
 from pontoon.base import utils
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.sync import KEY_SEPARATOR
+from re import findall, match
 
 
 def get_word_count(string):

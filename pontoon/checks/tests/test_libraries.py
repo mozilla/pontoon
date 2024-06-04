@@ -1,10 +1,9 @@
-from textwrap import dedent
-from unittest.mock import patch, MagicMock, ANY
-
 import pytest
 
 from pontoon.base.models import Resource
 from pontoon.checks.libraries import run_checks
+from textwrap import dedent
+from unittest.mock import ANY, MagicMock, patch
 
 
 @pytest.fixture

@@ -1,11 +1,9 @@
-from unittest.mock import patch
-
 import pytest
 
 from django.http import HttpResponse
 from django.shortcuts import render
-
 from pontoon.test.factories import UserFactory
+from unittest.mock import patch
 
 
 def _get_sorted_users():

@@ -4,7 +4,6 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic import ListView
-
 from pontoon.base.models import Locale
 from pontoon.base.utils import require_AJAX
 from pontoon.terminology import utils

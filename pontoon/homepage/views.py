@@ -1,11 +1,10 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.template import Template, Context
 from django.http import Http404
-
+from django.shortcuts import redirect, render
+from django.template import Context, Template
+from django.urls import reverse
 from pontoon.base.models import Locale
+from pontoon.base.utils import get_locale_or_redirect, get_project_locale_from_request
 from pontoon.homepage.models import Homepage
-from pontoon.base.utils import get_project_locale_from_request, get_locale_or_redirect
 
 
 def homepage(request):

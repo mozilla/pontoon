@@ -1,10 +1,10 @@
 import logging
+
+from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
+from django.conf import settings
 from os import environ, path
 from typing import Any
 
-from django.conf import settings
-
-from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
 
 log = logging.getLogger(__name__)
 

@@ -1,15 +1,13 @@
 import re
 
-from copy import deepcopy
-from typing import cast
 from collections.abc import Callable
-
+from copy import deepcopy
 from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from fluent.syntax.visitor import Transformer
-
 from pontoon.base.fluent import is_plural_expression
 from pontoon.base.models import Locale
+from typing import cast
 
 
 def flatten_select_expressions(pattern: FTL.Pattern):

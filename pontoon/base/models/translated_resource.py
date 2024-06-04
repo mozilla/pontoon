@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import Q, Sum
-
 from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.entity import Entity

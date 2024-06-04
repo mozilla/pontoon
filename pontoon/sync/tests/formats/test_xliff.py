@@ -1,13 +1,12 @@
-from difflib import Differ
-from textwrap import dedent
-
 import pytest
 
+from difflib import Differ
 from pontoon.base.tests import TestCase
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import xliff
 from pontoon.sync.tests.formats import FormatTestsMixin
+from textwrap import dedent
 
 
 BASE_XLIFF_FILE = """

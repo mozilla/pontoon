@@ -1,6 +1,4 @@
 import json
-from unittest.mock import patch
-
 import pytest
 
 from pontoon.base.models import Entity, TranslatedResource
@@ -8,6 +6,7 @@ from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
 )
+from unittest.mock import patch
 
 
 @pytest.mark.django_db

@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from pontoon.uxactionlog.models import UXActionLog
 
 

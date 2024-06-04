@@ -2,12 +2,11 @@ import pytest
 
 from collections import OrderedDict
 from fluent.syntax import FluentParser
-from textwrap import dedent
-
 from pontoon.base.fluent import (
     get_simple_preview,
     is_plural_expression,
 )
+from textwrap import dedent
 
 
 parser = FluentParser()

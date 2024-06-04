@@ -1,21 +1,20 @@
 import json
+import pytest
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from http import HTTPStatus
-from unittest.mock import patch
-
-import pytest
 from dateutil.relativedelta import relativedelta
 from django.core.cache import cache
 from django.shortcuts import render
 from django.urls import reverse
-
+from http import HTTPStatus
 from pontoon.actionlog.models import ActionLog
 from pontoon.insights import views
 from pontoon.test.factories import (
     ResourceFactory,
     TranslationFactory,
 )
+from unittest.mock import patch
 
 
 @pytest.fixture

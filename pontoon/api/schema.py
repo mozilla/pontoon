@@ -1,15 +1,13 @@
 import graphene
+
 from graphene_django import DjangoObjectType
 from graphene_django.debug import DjangoDebug
-
 from pontoon.api.util import get_fields
-
 from pontoon.base.models import (
     Locale as LocaleModel,
     Project as ProjectModel,
     ProjectLocale as ProjectLocaleModel,
 )
-
 from pontoon.tags.models import Tag as TagModel
 
 

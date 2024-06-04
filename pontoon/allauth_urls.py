@@ -6,12 +6,12 @@ views and don't allow user to tamper with the state of an account.
 
 import importlib
 
-from django.urls import path
+from allauth.account import views as account_views
+from allauth.socialaccount import providers, views as socialaccount_views
 from django.conf import settings
 from django.contrib.auth import views
+from django.urls import path
 
-from allauth.account import views as account_views
-from allauth.socialaccount import views as socialaccount_views, providers
 
 if settings.AUTHENTICATION_METHOD == "django":
     urlpatterns = [

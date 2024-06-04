@@ -1,5 +1,4 @@
 from graphql import Source, parse as parse_source
-
 from pontoon.api.util import get_fields
 
 

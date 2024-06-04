@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
 from pontoon.base.utils import require_AJAX
 from pontoon.uxactionlog import forms, utils
 

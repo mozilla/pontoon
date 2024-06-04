@@ -1,9 +1,8 @@
+from . import views
 from django.urls import include, path, re_path
-
 from pontoon.projects import views as projects_views
 from pontoon.teams import views as teams_views
 
-from . import views
 
 urlpatterns = [
     path(

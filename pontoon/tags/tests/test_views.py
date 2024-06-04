@@ -1,7 +1,6 @@
 import pytest
 
 from django.urls import reverse
-
 from pontoon.base.models import Priority
 from pontoon.test.factories import TagFactory, TranslatedResourceFactory
 

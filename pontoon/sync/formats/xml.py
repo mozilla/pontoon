@@ -9,7 +9,6 @@ from compare_locales import (
     parser,
     serializer,
 )
-
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.utils import (

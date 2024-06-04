@@ -2,7 +2,6 @@ import base64
 import hashlib
 
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-
 from django.contrib.auth.models import User
 from django.utils.encoding import smart_bytes, smart_str
 

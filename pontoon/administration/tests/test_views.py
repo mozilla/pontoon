@@ -1,7 +1,6 @@
 import pytest
 
 from django.urls import reverse
-
 from pontoon.administration.forms import ProjectForm
 from pontoon.administration.views import _create_or_update_translated_resources
 from pontoon.base.models import (

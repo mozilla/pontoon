@@ -10,20 +10,19 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.http import (
+    Http404,
     HttpResponse,
     HttpResponseBadRequest,
     JsonResponse,
-    Http404,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
-from django.utils.html import escape
-
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
-from pontoon.base.utils import require_AJAX, get_locale_or_redirect
+from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
 from pontoon.settings import VIEW_CACHE_TIMEOUT
 from pontoon.uxactionlog.utils import log_ux_action

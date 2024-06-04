@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-
 from pontoon.insights.tasks import collect_insights
 
 

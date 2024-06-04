@@ -1,25 +1,25 @@
 import logging
 
-from django.db.models import Q, CharField, Value as V
-from django.db.models.functions import Concat
 from django.conf import settings
+from django.db.models import CharField, Q, Value as V
+from django.db.models.functions import Concat
+from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
-    Project,
     Entity,
+    Project,
     TranslatedResource,
     Translation,
     User,
 )
-from pontoon.actionlog.models import ActionLog
+from pontoon.base.tasks import PontoonTask
+from pontoon.checks.libraries import run_checks
+from pontoon.checks.utils import bulk_run_checks
 from pontoon.pretranslation import AUTHORS
 from pontoon.pretranslation.pretranslate import (
     get_pretranslations,
     update_changed_instances,
 )
-from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import serial_task
-from pontoon.checks.libraries import run_checks
-from pontoon.checks.utils import bulk_run_checks
 
 
 log = logging.getLogger(__name__)

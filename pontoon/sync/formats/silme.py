@@ -7,21 +7,18 @@ import silme
 
 from collections import OrderedDict
 from copy import copy
-
-from silme.format.dtd import FormatParser as DTDParser
-from silme.format.ini import FormatParser as IniParser
-from silme.format.inc import FormatParser as IncParser
-from silme.format.properties import FormatParser as PropertiesParser
-
 from pontoon.sync.exceptions import ParseError, SyncError
+from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.utils import (
     create_parent_directory,
     escape_quotes,
     unescape_quotes,
 )
-
-from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.translation import VCSTranslation
+from silme.format.dtd import FormatParser as DTDParser
+from silme.format.inc import FormatParser as IncParser
+from silme.format.ini import FormatParser as IniParser
+from silme.format.properties import FormatParser as PropertiesParser
 
 
 class SilmeEntity(VCSTranslation):

@@ -5,18 +5,17 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-
 from pontoon.base.models import (
     Entity,
     Locale,
     Project,
-    TranslationMemoryEntry,
-    Translation,
     TranslatedResource,
+    Translation,
+    TranslationMemoryEntry,
 )
 from pontoon.base.utils import (
-    require_AJAX,
     readonly_exists,
+    require_AJAX,
 )
 from pontoon.batch import forms
 from pontoon.batch.actions import ACTIONS_FN_MAP

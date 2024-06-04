@@ -1,8 +1,7 @@
+from . import views
 from django.urls import path, register_converter
 from django.urls.converters import StringConverter
 from django.views.generic import RedirectView
-
-from . import views
 
 
 class EmailConverter(StringConverter):

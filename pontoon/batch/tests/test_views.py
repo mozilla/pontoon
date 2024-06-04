@@ -1,9 +1,8 @@
 import pytest
 
 from django.urls import reverse
-
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.test.factories import TranslationFactory, ProjectLocaleFactory
+from pontoon.test.factories import ProjectLocaleFactory, TranslationFactory
 
 
 @pytest.fixture

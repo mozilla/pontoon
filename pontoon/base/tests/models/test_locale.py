@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 
 from pontoon.base.models import ProjectLocale
@@ -9,6 +7,7 @@ from pontoon.test.factories import (
     ResourceFactory,
     TranslatedResourceFactory,
 )
+from unittest.mock import patch
 
 
 @pytest.fixture

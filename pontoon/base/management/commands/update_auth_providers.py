@@ -13,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
+
 FXA_PROVIDER_ID = FirefoxAccountsProvider.id
 GITHUB_PROVIDER_ID = GitHubProvider.id
 GITLAB_PROVIDER_ID = GitLabProvider.id

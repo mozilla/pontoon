@@ -1,7 +1,7 @@
 import importlib
+import pytest
 import sys
 
-import pytest
 from django.urls import clear_url_caches
 
 

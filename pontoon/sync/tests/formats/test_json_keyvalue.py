@@ -1,10 +1,8 @@
-from textwrap import dedent
-
-from pontoon.base.tests import TestCase
+from pontoon.base.tests import TestCase, assert_attributes_equal
 from pontoon.sync.formats import json_keyvalue
 from pontoon.sync.tests.formats import FormatTestsMixin
+from textwrap import dedent
 
-from pontoon.base.tests import assert_attributes_equal
 
 BASE_JSON_FILE = """
 {

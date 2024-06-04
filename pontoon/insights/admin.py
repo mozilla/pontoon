@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
     ProjectInsightsSnapshot,

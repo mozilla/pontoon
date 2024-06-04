@@ -1,15 +1,15 @@
 import pytest
 
-from pontoon.base.models import Translation, Resource
-from pontoon.checks.utils import (
-    save_failed_checks,
-    get_failed_checks_db_objects,
-    bulk_run_checks,
-)
+from pontoon.base.models import Resource, Translation
 from pontoon.checks.models import (
     Error,
-    Warning,
     FailedCheck,
+    Warning,
+)
+from pontoon.checks.utils import (
+    bulk_run_checks,
+    get_failed_checks_db_objects,
+    save_failed_checks,
 )
 
 

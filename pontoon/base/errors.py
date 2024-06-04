@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-
 from raygun4py import raygunprovider
 
 

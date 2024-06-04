@@ -1,8 +1,7 @@
-from unittest.mock import patch, call
-
 import pytest
 
 from pontoon.base.models import Project, Translation, TranslationMemoryEntry
+from pontoon.base.utils import aware_datetime
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -10,7 +9,7 @@ from pontoon.test.factories import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.base.utils import aware_datetime
+from unittest.mock import call, patch
 
 
 @pytest.mark.django_db

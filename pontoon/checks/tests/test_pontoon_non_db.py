@@ -1,8 +1,7 @@
-from unittest.mock import MagicMock
-
 import pytest
 
 from pontoon.checks.libraries.pontoon_non_db import run_checks
+from unittest.mock import MagicMock
 
 
 @pytest.fixture()

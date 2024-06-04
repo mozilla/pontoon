@@ -1,7 +1,7 @@
 from pontoon.base.tests import (
+    LocaleFactory,
     assert_attributes_equal,
     create_tempfile,
-    LocaleFactory,
 )
 from pontoon.base.utils import match_attr
 

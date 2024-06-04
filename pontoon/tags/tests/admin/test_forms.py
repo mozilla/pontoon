@@ -1,11 +1,9 @@
-from unittest.mock import MagicMock, PropertyMock, patch
-
 import pytest
 
 from django import forms
-
-from pontoon.tags.admin.forms import LinkTagResourcesAdminForm
 from pontoon.base.models import Resource
+from pontoon.tags.admin.forms import LinkTagResourcesAdminForm
+from unittest.mock import MagicMock, PropertyMock, patch
 
 
 @pytest.mark.django_db

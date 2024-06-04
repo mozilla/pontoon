@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
-
 from pontoon.base.models import (
     Locale,
     Project,
@@ -13,9 +12,9 @@ from pontoon.base.models import (
     TranslatedResource,
 )
 from pontoon.base.utils import (
-    require_AJAX,
-    get_project_or_redirect,
     get_locale_or_redirect,
+    get_project_or_redirect,
+    require_AJAX,
 )
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights

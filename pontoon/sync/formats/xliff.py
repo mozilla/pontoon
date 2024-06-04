@@ -2,13 +2,13 @@
 Parser for the xliff translation format.
 """
 
-from lxml import etree
-from translate.storage import xliff
 import copy
 
+from lxml import etree
 from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
 from pontoon.sync.vcs.translation import VCSTranslation
+from translate.storage import xliff
 
 
 class XLIFFEntity(VCSTranslation):

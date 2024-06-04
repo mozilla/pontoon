@@ -1,7 +1,6 @@
 import urllib.parse
 
 from django import forms
-
 from pontoon.base import utils
 from pontoon.batch.actions import ACTIONS_FN_MAP
 

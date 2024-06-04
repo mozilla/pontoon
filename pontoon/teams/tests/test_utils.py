@@ -6,8 +6,8 @@ import pytest
 
 from pontoon.base.models import PermissionChangelog
 from pontoon.teams.utils import (
-    log_user_groups,
     log_group_members,
+    log_user_groups,
 )
 from pontoon.test.factories import (
     GroupFactory,

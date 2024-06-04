@@ -2,12 +2,9 @@ import pytest
 
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from unittest.mock import patch
-
 from django.http import HttpResponse
 from django.urls import reverse
-from django.utils.timezone import now, make_aware
-
+from django.utils.timezone import make_aware, now
 from pontoon.base.models import User
 from pontoon.base.tests import (
     LocaleFactory,
@@ -15,6 +12,7 @@ from pontoon.base.tests import (
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors import views
+from unittest.mock import patch
 
 
 def commajoin(*items):

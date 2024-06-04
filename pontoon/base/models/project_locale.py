@@ -1,7 +1,6 @@
 from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models import Sum
-
 from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale

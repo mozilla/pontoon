@@ -3,8 +3,6 @@ import jwt
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
-from urllib.parse import urlencode
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
@@ -19,7 +17,6 @@ from django.template.defaultfilters import pluralize
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
-
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Locale,
@@ -27,6 +24,7 @@ from pontoon.base.models import (
 )
 from pontoon.base.templatetags.helpers import format_datetime, intcomma
 from pontoon.base.utils import convert_to_unix_time
+from urllib.parse import urlencode
 
 
 def users_with_translations_counts(

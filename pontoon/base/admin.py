@@ -4,17 +4,14 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import User
-from django.forms.models import ModelForm
 from django.forms import ChoiceField
+from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
-
 from pontoon.actionlog.models import ActionLog
-from pontoon.base import models
-from pontoon.base import utils
-from pontoon.terminology.models import Term
-
+from pontoon.base import models, utils
 from pontoon.teams.utils import log_user_groups
+from pontoon.terminology.models import Term
 
 
 AGGREGATED_STATS_FIELDS = (

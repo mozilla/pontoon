@@ -1,6 +1,6 @@
 from .resources import TagsResourcesTool
-from .tags import TagsTool
 from .tag import TagTool
+from .tags import TagsTool
 
 
 __all__ = (

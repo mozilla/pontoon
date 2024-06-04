@@ -3,9 +3,8 @@ import json
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User
-from django.db.models.functions import TruncMonth
 from django.db.models import Avg, Count, Q, Sum
-
+from django.db.models.functions import TruncMonth
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.insights.models import (

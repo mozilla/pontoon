@@ -1,13 +1,12 @@
 import pytest
 
 from datetime import timedelta
-
 from pontoon.base.templatetags.helpers import (
     format_datetime,
     format_timedelta,
+    metric_prefix,
     nospam,
     to_json,
-    metric_prefix,
 )
 from pontoon.base.utils import aware_datetime
 

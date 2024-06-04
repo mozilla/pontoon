@@ -1,9 +1,9 @@
 import tempfile
-from http.client import HTTPException
-from unittest.mock import patch
 
+from http.client import HTTPException
 from pontoon.base.tests import TestCase
 from pontoon.sync.vcs.config import DownloadTOMLParser
+from unittest.mock import patch
 
 
 class DownloadTOMLParserTests(TestCase):

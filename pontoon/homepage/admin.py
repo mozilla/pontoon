@@ -1,8 +1,5 @@
 from django.contrib import admin
-
-
-from pontoon.homepage import models
-from pontoon.homepage import forms
+from pontoon.homepage import forms, models
 
 
 class HomepageAdmin(admin.ModelAdmin):

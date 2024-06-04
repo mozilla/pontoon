@@ -1,14 +1,14 @@
 import json
 import logging
-
 import requests
+
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Prefetch
-
 from pontoon.base.models.aggregated_stats import AggregatedStats
+
 
 log = logging.getLogger(__name__)
 
@@ -399,8 +399,8 @@ class Locale(AggregatedStats):
 
     def parts_stats(self, project):
         """Get locale-project paths with stats."""
-        from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.project_locale import ProjectLocale
+        from pontoon.base.models.translated_resource import TranslatedResource
 
         def get_details(parts):
             return parts.order_by("title").values(

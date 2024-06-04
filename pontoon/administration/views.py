@@ -4,14 +4,13 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import Max
 from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
-
 from pontoon.administration.forms import (
     EntityFormSet,
     ExternalResourceInlineFormSet,
@@ -20,7 +19,6 @@ from pontoon.administration.forms import (
     TagInlineFormSet,
 )
 from pontoon.base import utils
-from pontoon.base.utils import require_AJAX
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -30,9 +28,10 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
+from pontoon.base.utils import require_AJAX
+from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project
-from pontoon.pretranslation.tasks import pretranslate
 
 
 log = logging.getLogger(__name__)

@@ -1,20 +1,18 @@
 import os
+import pytest
 import shutil
 import tempfile
 
-from textwrap import dedent
-
-import pytest
-
 from pontoon.base.tests import (
-    assert_attributes_equal,
-    create_named_tempfile,
     LocaleFactory,
     TestCase,
+    assert_attributes_equal,
+    create_named_tempfile,
 )
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import xml
 from pontoon.sync.tests.formats import FormatTestsMixin
+from textwrap import dedent
 
 
 class XMLResourceTests(TestCase):

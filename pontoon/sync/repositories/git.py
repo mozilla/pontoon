@@ -1,9 +1,9 @@
 import logging
-from typing import Any
-
-from django.conf import settings
 
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
+from django.conf import settings
+from typing import Any
+
 
 log = logging.getLogger(__name__)
 

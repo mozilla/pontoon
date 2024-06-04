@@ -1,34 +1,32 @@
 import logging
-from datetime import datetime
 
+from datetime import datetime
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
-
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
     Locale,
     Project,
 )
-
 from pontoon.base.tasks import PontoonTask
+from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.changeset import ChangeSet
 from pontoon.sync.core import (
     commit_changes,
-    pull_source_repo_changes,
+    get_changed_locales,
     pull_locale_repo_changes,
+    pull_source_repo_changes,
     serial_task,
     update_originals,
     update_translated_resources,
     update_translated_resources_no_files,
     update_translations,
-    get_changed_locales,
 )
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.repositories import CommitToRepositoryException
 from pontoon.sync.vcs.project import MissingSourceDirectoryError, VCSProject
-from pontoon.pretranslation.tasks import pretranslate
 
 
 log = logging.getLogger(__name__)

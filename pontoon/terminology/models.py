@@ -1,7 +1,6 @@
 import re
 
 from django.db import models
-
 from pontoon.base.models import Entity, ProjectLocale, Resource, TranslatedResource
 
 

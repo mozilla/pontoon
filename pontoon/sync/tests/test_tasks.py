@@ -1,11 +1,9 @@
-from unittest.mock import ANY, patch, PropertyMock
-
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, Repository
 from pontoon.base.tests import (
-    ChangedEntityLocaleFactory,
     CONTAINS,
+    ChangedEntityLocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     TestCase,
@@ -21,6 +19,7 @@ from pontoon.sync.tests import (
     ProjectSyncLogFactory,
     SyncLogFactory,
 )
+from unittest.mock import ANY, PropertyMock, patch
 
 
 class SyncProjectTests(TestCase):

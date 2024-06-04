@@ -1,5 +1,4 @@
 from django import forms
-
 from pontoon.base.models import UserProfile
 
 

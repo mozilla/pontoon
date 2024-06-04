@@ -1,17 +1,15 @@
 import os
-
-from textwrap import dedent
-from unittest.mock import MagicMock
-
 import pytest
 
 from pontoon.checks.libraries.compare_locales import (
     CompareDTDEntity,
-    cast_to_compare_locales,
     ComparePropertiesEntity,
     UnsupportedResourceTypeError,
+    cast_to_compare_locales,
     run_checks,
 )
+from textwrap import dedent
+from unittest.mock import MagicMock
 
 
 def mock_quality_check_args(

@@ -4,11 +4,9 @@ import statistics
 from celery import shared_task
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
-
-from django.db.models import Count, F
 from django.contrib.auth.models import User
+from django.db.models import Count, F
 from django.utils import timezone
-
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, ProjectLocale, Translation
 from pontoon.base.utils import group_dict_by
@@ -16,7 +14,6 @@ from pontoon.insights.models import (
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
-
 from sacrebleu.metrics import CHRF
 
 
