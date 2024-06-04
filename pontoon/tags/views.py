@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.views.generic import DetailView
+
 from pontoon.base.models import Project
 from pontoon.base.utils import is_ajax
 from pontoon.tags.utils import Tags

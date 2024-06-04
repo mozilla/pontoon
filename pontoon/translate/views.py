@@ -8,6 +8,7 @@ from django.views.decorators.csrf import (
     csrf_exempt,
     ensure_csrf_cookie,
 )
+
 from pontoon.base.utils import get_locale_or_redirect, get_project_or_redirect
 
 

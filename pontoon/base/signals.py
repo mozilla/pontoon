@@ -3,7 +3,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
+
 from guardian.models import GroupObjectPermission
+
 from pontoon.base import errors
 from pontoon.base.models import (
     Locale,

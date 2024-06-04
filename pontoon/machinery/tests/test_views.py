@@ -1,9 +1,11 @@
 import json
-import pytest
-import requests_mock
 import urllib.parse
 
 from django.urls import reverse
+
+import pytest
+import requests_mock
+
 from pontoon.base.models import (
     Entity,
     Locale,

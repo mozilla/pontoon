@@ -1,6 +1,7 @@
+from datetime import timedelta
+
 import pytest
 
-from datetime import timedelta
 from pontoon.base.templatetags.helpers import (
     format_datetime,
     format_timedelta,

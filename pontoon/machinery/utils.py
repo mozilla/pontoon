@@ -1,22 +1,27 @@
-import google.auth
-import google.auth.transport.requests
 import json
-import Levenshtein
 import logging
 import operator
 import os
-import pontoon.base as base
-import requests
 
 from collections import defaultdict
+from functools import reduce
+from html import unescape
+
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
-from functools import reduce
+
+import google.auth
+import google.auth.transport.requests
+import Levenshtein
+import requests
+
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 from google.oauth2 import service_account
-from html import unescape
+
+import pontoon.base as base
+
 from pontoon.base.placeables import get_placeables
 
 

@@ -1,6 +1,7 @@
-from . import views
 from django.urls import path
 from django.views.generic import RedirectView
+
+from . import views
 
 
 LOCALE_PART = r"(?P<locale>[A-Za-z0-9\-\@\.]+)"

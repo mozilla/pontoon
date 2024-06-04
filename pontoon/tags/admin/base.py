@@ -1,5 +1,7 @@
 from collections import OrderedDict
+
 from django.utils.functional import cached_property
+
 from pontoon.base.models import (
     Locale,
     Project,

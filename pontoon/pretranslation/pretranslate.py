@@ -2,17 +2,21 @@ import logging
 import operator
 import re
 
-from .transformer import ApplyPretranslation
+from functools import reduce
+
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
+
 from fluent.syntax import FluentParser, FluentSerializer
-from functools import reduce
+
 from pontoon.base.models import TranslatedResource, User
 from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
 from pontoon.pretranslation import AUTHORS
+
+from .transformer import ApplyPretranslation
 
 
 log = logging.getLogger(__name__)

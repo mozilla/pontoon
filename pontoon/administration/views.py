@@ -11,6 +11,7 @@ from django.shortcuts import render
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+
 from pontoon.administration.forms import (
     EntityFormSet,
     ExternalResourceInlineFormSet,

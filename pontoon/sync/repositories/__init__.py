@@ -1,8 +1,9 @@
 import os
 
+from typing import Any
+
 from . import git, hg, svn
 from .utils import CommitToRepositoryException, PullFromRepositoryException
-from typing import Any
 
 
 __all__ = [

@@ -3,6 +3,8 @@ import re
 
 from collections import defaultdict
 from datetime import datetime
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -24,7 +26,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
+
 from notifications.signals import notify
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms, utils
@@ -41,7 +45,6 @@ from pontoon.base.models import (
 from pontoon.base.templatetags.helpers import provider_login_url
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
-from urllib.parse import urlparse
 
 
 log = logging.getLogger(__name__)

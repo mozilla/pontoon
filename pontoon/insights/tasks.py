@@ -1,12 +1,16 @@
 import logging
 import statistics
 
-from celery import shared_task
 from datetime import timedelta
-from dateutil.relativedelta import relativedelta
+
 from django.contrib.auth.models import User
 from django.db.models import Count, F
 from django.utils import timezone
+
+from celery import shared_task
+from dateutil.relativedelta import relativedelta
+from sacrebleu.metrics import CHRF
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, ProjectLocale, Translation
 from pontoon.base.utils import group_dict_by
@@ -14,7 +18,6 @@ from pontoon.insights.models import (
     LocaleInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
-from sacrebleu.metrics import CHRF
 
 
 chrfpp = CHRF(word_order=2)

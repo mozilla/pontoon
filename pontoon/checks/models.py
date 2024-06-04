@@ -1,4 +1,5 @@
 from django.db import models
+
 from pontoon.base.models import Translation
 
 

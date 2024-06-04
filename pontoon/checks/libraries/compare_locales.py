@@ -1,4 +1,5 @@
 from collections import namedtuple
+
 from compare_locales.checks import getChecker
 from compare_locales.keyedtuple import KeyedTuple
 from compare_locales.parser.android import AndroidParser
@@ -7,6 +8,7 @@ from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
+
 from pontoon.sync.utils import escape_apostrophes
 
 

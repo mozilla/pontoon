@@ -1,9 +1,10 @@
+from textwrap import dedent
+
 from pontoon.base.tests import TestCase, UserFactory, assert_attributes_equal
 from pontoon.base.utils import aware_datetime
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.formats import po
 from pontoon.sync.tests.formats import FormatTestsMixin
-from textwrap import dedent
 
 
 BASE_POFILE = """

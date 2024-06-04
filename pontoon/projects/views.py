@@ -10,9 +10,11 @@ from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
+
 from guardian.decorators import permission_required_or_403
 from notifications.models import Notification
 from notifications.signals import notify
+
 from pontoon.base.models import Locale, Project
 from pontoon.base.utils import get_project_or_redirect, require_AJAX, split_ints
 from pontoon.contributors.views import ContributorsMixin

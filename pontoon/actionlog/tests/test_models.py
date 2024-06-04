@@ -1,6 +1,7 @@
+from django.core.exceptions import ValidationError
+
 import pytest
 
-from django.core.exceptions import ValidationError
 from pontoon.actionlog import utils
 from pontoon.actionlog.models import ActionLog
 

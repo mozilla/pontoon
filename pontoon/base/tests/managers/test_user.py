@@ -1,6 +1,7 @@
+from django.db.models import Q
+
 import pytest
 
-from django.db.models import Q
 from pontoon.base.utils import aware_datetime
 from pontoon.contributors.utils import users_with_translations_counts
 from pontoon.test.factories import (

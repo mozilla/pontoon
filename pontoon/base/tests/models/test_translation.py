@@ -1,3 +1,5 @@
+from unittest.mock import call, patch
+
 import pytest
 
 from pontoon.base.models import Project, Translation, TranslationMemoryEntry
@@ -9,7 +11,6 @@ from pontoon.test.factories import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from unittest.mock import call, patch
 
 
 @pytest.mark.django_db

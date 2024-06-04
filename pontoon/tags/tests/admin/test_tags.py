@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, PropertyMock, patch
+
 import pytest
 
 from pontoon.tags.admin import (
@@ -7,7 +9,6 @@ from pontoon.tags.admin import (
 )
 from pontoon.tags.admin.base import Clonable
 from pontoon.tags.models import Tag
-from unittest.mock import MagicMock, PropertyMock, patch
 
 
 def test_util_tags_tool():

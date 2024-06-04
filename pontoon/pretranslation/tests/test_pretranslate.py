@@ -1,14 +1,16 @@
+from textwrap import dedent
+from unittest.mock import patch
+
 import pytest
 
 from fluent.syntax import FluentParser, FluentSerializer
+
 from pontoon.pretranslation.pretranslate import get_pretranslations
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
     TranslationMemoryFactory,
 )
-from textwrap import dedent
-from unittest.mock import patch
 
 
 parser = FluentParser()

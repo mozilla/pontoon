@@ -1,13 +1,17 @@
 import functools
-import pytest
 
-from .site import _factory
 from collections import OrderedDict
 from datetime import datetime
+
 from django.db.models import F
 from django.utils import timezone
+
+import pytest
+
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
+
+from .site import _factory
 
 
 def tag_factory():

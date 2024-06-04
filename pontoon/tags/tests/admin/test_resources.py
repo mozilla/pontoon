@@ -1,7 +1,11 @@
 import fnmatch
-import pytest
+
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from django.db.models import QuerySet
+
+import pytest
+
 from pontoon.base.models import Resource
 from pontoon.tags.admin import TagsResourcesTool
 from pontoon.tags.admin.exceptions import InvalidProjectError
@@ -10,7 +14,6 @@ from pontoon.test.factories import (
     ResourceFactory,
     TagFactory,
 )
-from unittest.mock import MagicMock, PropertyMock, patch
 
 
 @pytest.fixture

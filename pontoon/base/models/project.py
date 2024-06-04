@@ -1,16 +1,18 @@
 from collections import defaultdict
+from os.path import basename, join, normpath
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.functional import cached_property
-from os.path import basename, join, normpath
+
 from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
-from urllib.parse import urlparse
 
 
 class Priority(models.IntegerChoices):

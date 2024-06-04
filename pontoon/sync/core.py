@@ -1,17 +1,20 @@
 import logging
-import requests
 
-from .changeset import ChangeSet
-from .vcs.project import VCSProject
-from celery import shared_task
 from collections import Counter
 from datetime import datetime
+from functools import wraps
+from typing import Any
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
-from functools import wraps
+
+import requests
+
+from celery import shared_task
+
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -19,7 +22,9 @@ from pontoon.base.models import (
     Resource,
     TranslatedResource,
 )
-from typing import Any
+
+from .changeset import ChangeSet
+from .vcs.project import VCSProject
 
 
 log = logging.getLogger(__name__)

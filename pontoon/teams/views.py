@@ -1,4 +1,3 @@
-import bleach
 import json
 
 from django.conf import settings
@@ -18,7 +17,11 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
+
+import bleach
+
 from guardian.decorators import permission_required_or_403
+
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, User
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX

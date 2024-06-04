@@ -1,5 +1,8 @@
-import factory
 import os.path
+
+from unittest.mock import PropertyMock, patch
+
+import factory
 
 from pontoon.base.models import Project
 from pontoon.base.tests import (
@@ -17,7 +20,6 @@ from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.vcs.project import VCSProject
 from pontoon.sync.vcs.resource import VCSEntity, VCSResource
 from pontoon.sync.vcs.translation import VCSTranslation
-from unittest.mock import PropertyMock, patch
 
 
 FAKE_CHECKOUT_PATH = os.path.join(

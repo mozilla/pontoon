@@ -1,6 +1,8 @@
 import os
 
 from pathlib import Path
+from unittest.mock import MagicMock, Mock, PropertyMock, patch
+
 from pontoon.base.models import (
     Locale,
     Project,
@@ -24,7 +26,6 @@ from pontoon.sync.tests import (
 from pontoon.sync.vcs.config import VCSConfiguration
 from pontoon.sync.vcs.project import VCSProject
 from pontoon.sync.vcs.resource import VCSResource
-from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 
 TEST_CHECKOUT_PATH = os.path.join(

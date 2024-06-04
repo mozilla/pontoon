@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+
 from pontoon.base.models.locale import Locale
 
 

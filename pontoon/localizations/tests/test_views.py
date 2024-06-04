@@ -1,7 +1,10 @@
-import pytest
+from unittest.mock import patch
 
 from django.shortcuts import render
 from django.urls import reverse
+
+import pytest
+
 from pontoon.base.tests import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -9,7 +12,6 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from unittest.mock import patch
 
 
 @pytest.mark.django_db

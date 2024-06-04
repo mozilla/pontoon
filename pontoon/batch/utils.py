@@ -1,10 +1,13 @@
 from copy import deepcopy
+
 from django.utils import timezone
+
 from fluent.syntax import (
     FluentParser,
     FluentSerializer,
     visitor,
 )
+
 from pontoon.base.models import Entity, Resource
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.libraries import run_checks

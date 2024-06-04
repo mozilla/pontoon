@@ -1,7 +1,10 @@
 import os
-import pytest
 import shutil
 import tempfile
+
+from textwrap import dedent
+
+import pytest
 
 from pontoon.base.tests import (
     LocaleFactory,
@@ -12,7 +15,6 @@ from pontoon.base.tests import (
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import ftl
 from pontoon.sync.tests.formats import FormatTestsMixin
-from textwrap import dedent
 
 
 class FTLResourceTests(FormatTestsMixin, TestCase):

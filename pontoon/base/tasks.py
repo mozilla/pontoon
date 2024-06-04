@@ -1,6 +1,7 @@
 import sys
 
 from celery import Task
+
 from pontoon.base.errors import send_exception
 
 

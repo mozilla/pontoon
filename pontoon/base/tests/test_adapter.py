@@ -1,8 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from allauth.socialaccount.models import SocialAccount, SocialLogin
+
 from pontoon.base.adapter import PontoonSocialAdapter
-from unittest.mock import MagicMock
 
 
 # We have to support customized adapter during the transition of accounts

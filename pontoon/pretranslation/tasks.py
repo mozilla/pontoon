@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.db.models import CharField, Q, Value as V
 from django.db.models.functions import Concat
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Entity,

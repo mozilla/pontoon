@@ -2,14 +2,17 @@ import calendar
 
 from collections import defaultdict
 from datetime import timedelta
+from functools import cached_property
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
 from django.utils import timezone
-from functools import cached_property
+
 from notifications.signals import notify
+
 from pontoon.base.models import Comment, Locale, ProjectLocale, Translation
 
 

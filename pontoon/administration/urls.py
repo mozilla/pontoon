@@ -1,7 +1,8 @@
+from django.urls import include, path
+
 import pontoon.tags.admin.views as tags_admin_views
 
 from . import views
-from django.urls import include, path
 
 
 urlpatterns = [

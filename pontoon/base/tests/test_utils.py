@@ -1,9 +1,10 @@
-import pytest
-
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
+
+import pytest
+
 from pontoon.base.models import Project
 from pontoon.base.utils import (
     aware_datetime,

@@ -1,9 +1,11 @@
 import logging
 
 from datetime import datetime
+
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,

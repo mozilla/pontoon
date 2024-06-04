@@ -1,10 +1,12 @@
-import factory
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.template.defaultfilters import slugify
+
+import factory
+
 from factory import LazyAttribute, SelfAttribute, Sequence, SubFactory
 from factory.django import DjangoModelFactory
+
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,

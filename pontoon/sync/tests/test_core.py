@@ -1,4 +1,7 @@
 import os.path
+
+from unittest.mock import ANY, MagicMock, Mock, PropertyMock, patch
+
 import pytest
 
 from pontoon.base.models import (
@@ -24,7 +27,6 @@ from pontoon.sync.core import (
     update_translations,
 )
 from pontoon.sync.tests import FAKE_CHECKOUT_PATH, FakeCheckoutTestCase
-from unittest.mock import ANY, MagicMock, Mock, PropertyMock, patch
 
 
 class UpdateEntityTests(FakeCheckoutTestCase):

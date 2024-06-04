@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+
 from pontoon.machinery.openai_service import OpenAIService
 
 

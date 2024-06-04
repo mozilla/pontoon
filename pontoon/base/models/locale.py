@@ -1,12 +1,14 @@
 import json
 import logging
-import requests
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Prefetch
+
+import requests
+
 from pontoon.base.models.aggregated_stats import AggregatedStats
 
 

@@ -1,9 +1,9 @@
 import json
 import logging
-import requests
 import xml.etree.ElementTree as ET
 
-from .openai_service import OpenAIService
+from urllib.parse import quote
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
@@ -11,6 +11,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
+
+import requests
+
+from sacremoses import MosesDetokenizer
+
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Project, Translation
 from pontoon.machinery.utils import (
@@ -18,8 +23,8 @@ from pontoon.machinery.utils import (
     get_google_translate_data,
     get_translation_memory_data,
 )
-from sacremoses import MosesDetokenizer
-from urllib.parse import quote
+
+from .openai_service import OpenAIService
 
 
 log = logging.getLogger(__name__)

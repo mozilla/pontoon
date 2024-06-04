@@ -1,11 +1,13 @@
-import requests
+from urllib.parse import urljoin
 
 from django.core.cache import cache
 from django.core.management.base import BaseCommand
 from django.urls import reverse
+
+import requests
+
 from pontoon.base.models import Locale, Project
 from pontoon.settings.base import SITE_URL
-from urllib.parse import urljoin
 
 
 class Command(BaseCommand):

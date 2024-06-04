@@ -1,8 +1,9 @@
+from unittest.mock import patch
+
 import pytest
 
 from pontoon.terminology.models import Term
 from pontoon.test.factories import EntityFactory, TermFactory, TermTranslationFactory
-from unittest.mock import patch
 
 
 @pytest.fixture

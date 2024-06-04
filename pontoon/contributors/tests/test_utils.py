@@ -1,15 +1,18 @@
-import pytest
-
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from unittest.mock import patch
+from urllib.parse import urlencode
+
 from django.test.client import RequestFactory
 from django.utils import timezone
+
+import pytest
+
+from dateutil.relativedelta import relativedelta
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User
 from pontoon.base.utils import convert_to_unix_time
 from pontoon.contributors import utils
-from unittest.mock import patch
-from urllib.parse import urlencode
 
 
 @pytest.fixture

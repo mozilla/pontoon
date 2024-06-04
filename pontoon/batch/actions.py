@@ -1,4 +1,5 @@
 from django.utils import timezone
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
     Translation,

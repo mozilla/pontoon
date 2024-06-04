@@ -1,6 +1,7 @@
+from django.core.management import call_command
+
 import pytest
 
-from django.core.management import call_command
 from pontoon.base.models import User
 
 

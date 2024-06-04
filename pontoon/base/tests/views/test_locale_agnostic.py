@@ -1,9 +1,10 @@
-import pytest
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.http import HttpResponse
 from django.urls import reverse
-from unittest.mock import MagicMock, PropertyMock, patch
+
+import pytest
 
 
 @patch("pontoon.base.views.get_object_or_404")

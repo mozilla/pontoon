@@ -1,8 +1,12 @@
 import functools
 import os
-import pytest
+
+from unittest.mock import patch
 
 from django.contrib.auth.models import AnonymousUser
+
+import pytest
+
 from pontoon.base.models import Project, ProjectLocale, Repository
 from pontoon.test.factories import (
     ChangedEntityLocaleFactory,
@@ -13,7 +17,6 @@ from pontoon.test.factories import (
     RepositoryFactory,
     ResourceFactory,
 )
-from unittest.mock import patch
 
 
 @pytest.mark.django_db

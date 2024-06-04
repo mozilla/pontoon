@@ -1,3 +1,5 @@
+from unittest.mock import call, patch
+
 import pytest
 
 from pontoon.base.models import (
@@ -13,7 +15,6 @@ from pontoon.test.factories import (
     TranslationFactory,
     WarningFactory,
 )
-from unittest.mock import call, patch
 
 
 @pytest.fixture

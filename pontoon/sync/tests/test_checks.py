@@ -1,3 +1,5 @@
+from unittest.mock import PropertyMock, patch
+
 from pontoon.base.tests import EntityFactory, ResourceFactory, TranslationFactory
 from pontoon.base.utils import aware_datetime
 from pontoon.checks.models import (
@@ -6,7 +8,6 @@ from pontoon.checks.models import (
     Warning,
 )
 from pontoon.sync.tests import FakeCheckoutTestCase
-from unittest.mock import PropertyMock, patch
 
 
 class TestChangesetTranslationsChecks(FakeCheckoutTestCase):

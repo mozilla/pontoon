@@ -1,9 +1,11 @@
-import pytest
+from unittest.mock import patch
 
 from django.http import HttpResponse
 from django.shortcuts import render
+
+import pytest
+
 from pontoon.base.tests import TranslationFactory
-from unittest.mock import patch
 
 
 @pytest.mark.no_cover

@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from django.db.models import F, Func, TextField, Value
+
 from pontoon.sync import KEY_SEPARATOR
 
 

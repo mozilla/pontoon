@@ -2,8 +2,10 @@ import logging
 import os
 import shutil
 
-from django.utils.functional import cached_property
 from itertools import chain
+
+from django.utils.functional import cached_property
+
 from pontoon.base import MOZILLA_REPOS
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.repositories import get_changed_files

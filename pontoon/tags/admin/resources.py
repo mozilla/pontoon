@@ -1,6 +1,7 @@
+from django.db.models import Q
+
 from .base import TagsDataTool
 from .exceptions import InvalidProjectError
-from django.db.models import Q
 
 
 class TagsResourcesTool(TagsDataTool):

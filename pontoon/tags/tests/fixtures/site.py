@@ -1,10 +1,13 @@
 import functools
 import math
-import pytest
 
 from datetime import datetime, timedelta
+
 from django.db.models import Max
 from django.utils import timezone
+
+import pytest
+
 from pontoon.base.models import (
     Entity,
     Locale,

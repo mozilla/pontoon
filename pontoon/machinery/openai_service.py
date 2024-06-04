@@ -1,6 +1,7 @@
 import textwrap
 
 from openai import OpenAI
+
 from pontoon.base.models import Locale
 from pontoon.settings.base import OPENAI_API_KEY
 

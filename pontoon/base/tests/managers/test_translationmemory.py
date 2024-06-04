@@ -1,8 +1,9 @@
+from unittest.mock import call, patch
+
 import pytest
 
 from pontoon.base.models import TranslationMemoryEntry
 from pontoon.test.factories import TranslationMemoryFactory
-from unittest.mock import call, patch
 
 
 @pytest.fixture

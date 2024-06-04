@@ -1,9 +1,11 @@
-import Levenshtein
+from math import ceil, floor
 
 from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Value, When
 from django.db.models.functions import Cast, Length, Substr
-from math import ceil, floor
+
+import Levenshtein
+
 from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project

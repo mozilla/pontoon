@@ -2,9 +2,10 @@
 
 import django.db.models.deletion
 import django.utils.timezone
-import pontoon.insights.models
 
 from django.db import migrations, models
+
+import pontoon.insights.models
 
 
 class Migration(migrations.Migration):

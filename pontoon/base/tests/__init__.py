@@ -1,17 +1,22 @@
-import factory
 import json
 import os
 import tempfile
 
 from contextlib import contextmanager
+from unittest.mock import patch
+
 from django.contrib.auth.models import (
     Group,
     User,
 )
 from django.template.defaultfilters import slugify
 from django.test import Client as BaseClient, TestCase as BaseTestCase
+
+import factory
+
 from factory import LazyAttribute, SelfAttribute, Sequence, SubFactory
 from factory.django import DjangoModelFactory
+
 from pontoon.base.models import (
     ChangedEntityLocale,
     Entity,
@@ -24,7 +29,6 @@ from pontoon.base.models import (
     Translation,
     TranslationMemoryEntry,
 )
-from unittest.mock import patch
 
 
 class PontoonClient(BaseClient):

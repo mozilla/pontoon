@@ -8,6 +8,7 @@ from django.forms import ChoiceField
 from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
+
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models, utils
 from pontoon.teams.utils import log_user_groups

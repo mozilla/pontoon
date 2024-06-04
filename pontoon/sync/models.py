@@ -1,14 +1,16 @@
 import logging
 
 from datetime import datetime
+from typing import Literal
+
 from django.db import models
 from django.db.models import F, Max, Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+
 from pontoon.base.models import Project, ProjectLocale, Repository, TranslatedResource
 from pontoon.base.utils import latest_datetime
-from typing import Literal
 
 
 log = logging.getLogger(__name__)

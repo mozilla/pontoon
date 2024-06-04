@@ -1,8 +1,10 @@
+from django.utils.functional import cached_property
+
+from pontoon.tags.models import Tag
+
 from .base import Clonable
 from .resources import TagsResourcesTool
 from .tag import TagTool
-from django.utils.functional import cached_property
-from pontoon.tags.models import Tag
 
 
 class TagsTool(Clonable):

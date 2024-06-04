@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Translation, User
@@ -9,7 +11,6 @@ from pontoon.test.factories import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from unittest.mock import patch
 
 
 @patch("pontoon.pretranslation.tasks.get_pretranslations")

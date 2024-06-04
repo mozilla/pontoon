@@ -1,11 +1,13 @@
 import logging
 
-from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
 from django.utils import timezone
+
+from dateutil.relativedelta import relativedelta
+
 from pontoon.insights.utils import get_global_pretranslation_quality
 
 

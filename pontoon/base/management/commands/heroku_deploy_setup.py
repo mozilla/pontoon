@@ -1,9 +1,11 @@
 import os
 
+from urllib.parse import urlparse
+
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
+
 from pontoon.base.models import User
-from urllib.parse import urlparse
 
 
 class Command(BaseCommand):

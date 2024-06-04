@@ -2,10 +2,12 @@
 Parser for to pofile translation format.
 """
 
+from datetime import datetime
+
+from django.utils import timezone
+
 import polib
 
-from datetime import datetime
-from django.utils import timezone
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource

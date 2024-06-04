@@ -1,9 +1,11 @@
-from .forms import LinkTagResourcesAdminForm
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
+
 from pontoon.base.models import Project
 from pontoon.base.utils import permission_required, require_AJAX
 from pontoon.base.views import AjaxFormPostView
+
+from .forms import LinkTagResourcesAdminForm
 
 
 class ProjectTagAdminAjaxView(AjaxFormPostView):

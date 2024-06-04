@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from pontoon.terminology.models import Term, TermTranslation
 
 

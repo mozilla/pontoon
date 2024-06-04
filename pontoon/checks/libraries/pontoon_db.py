@@ -1,6 +1,8 @@
 from collections import defaultdict
+
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
+
 from pontoon.sync.formats.ftl import localizable_entries
 
 

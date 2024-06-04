@@ -1,10 +1,12 @@
-import requests
-
-from compare_locales.paths import ProjectFiles, TOMLParser
-from django.utils.functional import cached_property
 from os.path import join
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
+
+from django.utils.functional import cached_property
+
+import requests
+
+from compare_locales.paths import ProjectFiles, TOMLParser
 
 
 class DownloadTOMLParser(TOMLParser):
