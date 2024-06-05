@@ -1,9 +1,9 @@
+from dirtyfields import DirtyFieldsMixin
+
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Count, Q
 from django.utils import timezone
-
-from dirtyfields import DirtyFieldsMixin
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action

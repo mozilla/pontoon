@@ -7,11 +7,11 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 
 import os
 
-from django.core.wsgi import get_wsgi_application
-
 import dotenv
 
 from wsgi_sslify import sslify
+
+from django.core.wsgi import get_wsgi_application
 
 
 # Read dotenv file and inject it's values into the environment

@@ -2,11 +2,11 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
+import pytest
+
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.timezone import make_aware, now
-
-import pytest
 
 from pontoon.base.models import User
 from pontoon.base.tests import (

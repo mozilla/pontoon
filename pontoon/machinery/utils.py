@@ -7,10 +7,6 @@ from collections import defaultdict
 from functools import reduce
 from html import unescape
 
-from django.conf import settings
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
-
 import google.auth
 import google.auth.transport.requests
 import Levenshtein
@@ -19,6 +15,10 @@ import requests
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 from google.oauth2 import service_account
+
+from django.conf import settings
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 import pontoon.base as base
 

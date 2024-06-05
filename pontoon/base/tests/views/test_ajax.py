@@ -2,9 +2,9 @@ import json
 
 from unittest.mock import MagicMock, PropertyMock, patch
 
-from django.http import Http404
-
 import pytest
+
+from django.http import Http404
 
 from pontoon.base.views import AjaxFormPostView, AjaxFormView
 

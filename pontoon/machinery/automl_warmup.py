@@ -7,11 +7,11 @@ requests, which is what this script does.
 import logging
 import os
 
-import django
-
 import dotenv
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+
+import django
 
 
 # Read dotenv file and inject its values into the environment

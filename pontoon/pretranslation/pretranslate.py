@@ -4,10 +4,10 @@ import re
 
 from functools import reduce
 
+from fluent.syntax import FluentParser, FluentSerializer
+
 from django.db.models import CharField, Value as V
 from django.db.models.functions import Concat
-
-from fluent.syntax import FluentParser, FluentSerializer
 
 from pontoon.base.models import TranslatedResource, User
 from pontoon.machinery.utils import (

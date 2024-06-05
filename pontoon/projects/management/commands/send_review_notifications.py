@@ -1,12 +1,12 @@
 from collections import defaultdict
 from datetime import timedelta
 
+from notifications.signals import notify
+
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
-
-from notifications.signals import notify
 
 from pontoon.base.models import Translation
 

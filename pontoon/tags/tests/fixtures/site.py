@@ -3,10 +3,10 @@ import math
 
 from datetime import datetime, timedelta
 
+import pytest
+
 from django.db.models import Max
 from django.utils import timezone
-
-import pytest
 
 from pontoon.base.models import (
     Entity,

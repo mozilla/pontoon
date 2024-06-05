@@ -3,12 +3,12 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 
+from notifications.signals import notify
+
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Prefetch, Q
 from django.template.defaultfilters import pluralize
-
-from notifications.signals import notify
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (

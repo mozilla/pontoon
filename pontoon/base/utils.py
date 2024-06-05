@@ -12,6 +12,10 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
 
+import requests
+
+from guardian.decorators import permission_required as guardian_permission_required
+
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db.models import Prefetch, Q
@@ -22,10 +26,6 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import make_aware, now
 from django.utils.translation import trans_real
-
-import requests
-
-from guardian.decorators import permission_required as guardian_permission_required
 
 
 UNUSABLE_SEARCH_CHAR = "☠"

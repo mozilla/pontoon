@@ -4,9 +4,9 @@ import os
 import re
 import socket
 
-from django.utils.functional import lazy
-
 import dj_database_url
+
+from django.utils.functional import lazy
 
 
 _dirname = os.path.dirname

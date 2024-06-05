@@ -2,6 +2,13 @@ import datetime
 import html
 import json
 
+import markupsafe
+
+from allauth.socialaccount import providers
+from allauth.utils import get_request_param
+from bleach.linkifier import Linker
+from django_jinja import library
+
 from django import template
 from django.conf import settings
 from django.contrib.humanize.templatetags import humanize
@@ -9,13 +16,6 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
-
-import markupsafe
-
-from allauth.socialaccount import providers
-from allauth.utils import get_request_param
-from bleach.linkifier import Linker
-from django_jinja import library
 
 from pontoon.base.fluent import get_simple_preview
 

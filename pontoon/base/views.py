@@ -5,6 +5,8 @@ from collections import defaultdict
 from datetime import datetime
 from urllib.parse import urlparse
 
+from notifications.signals import notify
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,8 +28,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import condition, require_POST
 from django.views.generic.edit import FormView
-
-from notifications.signals import notify
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action

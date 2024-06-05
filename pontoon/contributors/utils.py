@@ -3,6 +3,10 @@ import datetime
 from collections import defaultdict
 from urllib.parse import urlencode
 
+import jwt
+
+from dateutil.relativedelta import relativedelta
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
@@ -17,10 +21,6 @@ from django.template.defaultfilters import pluralize
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
-
-import jwt
-
-from dateutil.relativedelta import relativedelta
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (

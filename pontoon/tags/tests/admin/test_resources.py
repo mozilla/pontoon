@@ -2,9 +2,9 @@ import fnmatch
 
 from unittest.mock import MagicMock, PropertyMock, patch
 
-from django.db.models import QuerySet
-
 import pytest
+
+from django.db.models import QuerySet
 
 from pontoon.base.models import Resource
 from pontoon.tags.admin import TagsResourcesTool

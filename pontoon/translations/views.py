@@ -1,3 +1,5 @@
+from notifications.signals import notify
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -6,8 +8,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
-
-from notifications.signals import notify
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action

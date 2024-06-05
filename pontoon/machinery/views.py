@@ -4,6 +4,10 @@ import xml.etree.ElementTree as ET
 
 from urllib.parse import quote
 
+import requests
+
+from sacremoses import MosesDetokenizer
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, Paginator
@@ -11,10 +15,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import get_template
 from django.utils.datastructures import MultiValueDictKeyError
-
-import requests
-
-from sacremoses import MosesDetokenizer
 
 from pontoon.base import utils
 from pontoon.base.models import Entity, Locale, Project, Translation

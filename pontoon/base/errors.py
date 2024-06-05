@@ -1,8 +1,8 @@
 import logging
 
-from django.conf import settings
-
 from raygun4py import raygunprovider
+
+from django.conf import settings
 
 
 log = logging.getLogger(__name__)

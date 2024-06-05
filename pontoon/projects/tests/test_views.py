@@ -1,9 +1,9 @@
 from unittest.mock import patch
 
+import pytest
+
 from django.http import HttpResponse
 from django.shortcuts import render
-
-import pytest
 
 from pontoon.base.tests import TranslationFactory
 

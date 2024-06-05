@@ -1,9 +1,9 @@
 from pathlib import Path
 
+import bleach
+
 from django import forms
 from django.conf import settings
-
-import bleach
 
 from pontoon.base import utils
 from pontoon.base.models import (

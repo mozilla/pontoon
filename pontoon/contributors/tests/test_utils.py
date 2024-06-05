@@ -2,12 +2,12 @@ from datetime import datetime
 from unittest.mock import patch
 from urllib.parse import urlencode
 
-from django.test.client import RequestFactory
-from django.utils import timezone
-
 import pytest
 
 from dateutil.relativedelta import relativedelta
+
+from django.test.client import RequestFactory
+from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import User

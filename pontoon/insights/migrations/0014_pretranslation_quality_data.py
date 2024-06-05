@@ -2,10 +2,10 @@
 
 import statistics
 
+from sacrebleu.metrics import CHRF
+
 from django.db import migrations
 from django.db.models import F
-
-from sacrebleu.metrics import CHRF
 
 
 chrfpp = CHRF(word_order=2)

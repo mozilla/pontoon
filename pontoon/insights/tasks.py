@@ -3,13 +3,13 @@ import statistics
 
 from datetime import timedelta
 
-from django.contrib.auth.models import User
-from django.db.models import Count, F
-from django.utils import timezone
-
 from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from sacrebleu.metrics import CHRF
+
+from django.contrib.auth.models import User
+from django.db.models import Count, F
+from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity, Locale, ProjectLocale, Translation

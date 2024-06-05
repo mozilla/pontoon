@@ -1,10 +1,10 @@
 import json
 import urllib.parse
 
-from django.urls import reverse
-
 import pytest
 import requests_mock
+
+from django.urls import reverse
 
 from pontoon.base.models import (
     Entity,

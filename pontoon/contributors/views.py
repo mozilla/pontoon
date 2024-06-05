@@ -1,6 +1,8 @@
 import json
 import logging
 
+from dateutil.relativedelta import relativedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -19,8 +21,6 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
-
-from dateutil.relativedelta import relativedelta
 
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile

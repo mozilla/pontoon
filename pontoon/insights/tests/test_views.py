@@ -5,13 +5,13 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 from unittest.mock import patch
 
-from django.core.cache import cache
-from django.shortcuts import render
-from django.urls import reverse
-
 import pytest
 
 from dateutil.relativedelta import relativedelta
+
+from django.core.cache import cache
+from django.shortcuts import render
+from django.urls import reverse
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.insights import views

@@ -1,11 +1,11 @@
+from raygun4py.middleware.django import Provider
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
-
-from raygun4py.middleware.django import Provider
 
 from pontoon.base.utils import is_ajax
 

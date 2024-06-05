@@ -5,15 +5,15 @@ from datetime import datetime
 from functools import wraps
 from typing import Any
 
+import requests
+
+from celery import shared_task
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import transaction
 from django.template.loader import render_to_string
-
-import requests
-
-from celery import shared_task
 
 from pontoon.base.models import (
     Entity,

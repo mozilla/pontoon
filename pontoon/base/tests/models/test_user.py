@@ -1,8 +1,8 @@
 from collections import defaultdict
 
-from django.contrib.auth.models import User
-
 import pytest
+
+from django.contrib.auth.models import User
 
 
 @pytest.mark.django_db

@@ -2,12 +2,12 @@ from functools import reduce
 from operator import ior
 from re import findall, match
 
+from dirtyfields import DirtyFieldsMixin
+from jsonfield import JSONField
+
 from django.db import models
 from django.db.models import F, Prefetch, Q
 from django.utils import timezone
-
-from dirtyfields import DirtyFieldsMixin
-from jsonfield import JSONField
 
 from pontoon.base import utils
 from pontoon.base.models.locale import Locale

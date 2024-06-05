@@ -3,10 +3,10 @@ import functools
 from collections import OrderedDict
 from datetime import datetime
 
+import pytest
+
 from django.db.models import F
 from django.utils import timezone
-
-import pytest
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag

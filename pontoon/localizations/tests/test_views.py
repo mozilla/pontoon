@@ -1,9 +1,9 @@
 from unittest.mock import patch
 
+import pytest
+
 from django.shortcuts import render
 from django.urls import reverse
-
-import pytest
 
 from pontoon.base.tests import (
     EntityFactory,

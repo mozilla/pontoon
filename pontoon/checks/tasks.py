@@ -1,8 +1,8 @@
 import logging
 
-from django.db import transaction
-
 from celery import shared_task
+
+from django.db import transaction
 
 from pontoon.base.models import Translation
 from pontoon.checks.utils import bulk_run_checks

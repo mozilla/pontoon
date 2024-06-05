@@ -1,6 +1,6 @@
-from django import forms
-
 from django_ace import AceWidget
+
+from django import forms
 
 from pontoon.homepage import models
 

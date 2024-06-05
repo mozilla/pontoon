@@ -1,9 +1,9 @@
 import importlib
 import sys
 
-from django.urls import clear_url_caches
-
 import pytest
+
+from django.urls import clear_url_caches
 
 
 def reload_urls(settings):

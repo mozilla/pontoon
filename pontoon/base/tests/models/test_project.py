@@ -3,9 +3,9 @@ import os
 
 from unittest.mock import patch
 
-from django.contrib.auth.models import AnonymousUser
-
 import pytest
+
+from django.contrib.auth.models import AnonymousUser
 
 from pontoon.base.models import Project, ProjectLocale, Repository
 from pontoon.test.factories import (
