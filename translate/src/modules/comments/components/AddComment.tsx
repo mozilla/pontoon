@@ -111,7 +111,7 @@ export function AddComment({
       Transforms.select(editor, Editor.end(editor, []));
       Transforms.insertText(editor, ' ');
     },
-    [],
+    [editor],
   );
 
   useEffect(initMentions, []);
