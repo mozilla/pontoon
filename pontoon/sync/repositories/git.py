@@ -1,9 +1,11 @@
 import logging
+
 from typing import Any
 
 from django.conf import settings
 
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
+
 
 log = logging.getLogger(__name__)
 

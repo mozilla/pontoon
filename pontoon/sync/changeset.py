@@ -1,12 +1,14 @@
-from datetime import datetime
 import logging
 
 from collections import defaultdict
+from datetime import datetime
+
+from notifications.signals import notify
+
 from django.contrib.auth.models import User
 from django.db import connection
 from django.db.models import Prefetch, Q
 from django.template.defaultfilters import pluralize
-from notifications.signals import notify
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -19,9 +21,11 @@ from pontoon.base.models import (
 )
 from pontoon.base.utils import match_attr
 from pontoon.checks.utils import bulk_run_checks
-from .vcs.resource import VCSEntity
+
 from .vcs.project import VCSProject
+from .vcs.resource import VCSEntity
 from .vcs.translation import VCSTranslation
+
 
 log = logging.getLogger(__name__)
 

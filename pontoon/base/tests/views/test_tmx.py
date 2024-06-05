@@ -1,7 +1,9 @@
 import os
+
 from datetime import datetime
 
 import pytest
+
 from lxml import etree
 
 from django.urls import reverse

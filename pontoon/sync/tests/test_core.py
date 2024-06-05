@@ -1,5 +1,6 @@
 import os.path
-from unittest.mock import ANY, Mock, patch, PropertyMock, MagicMock
+
+from unittest.mock import ANY, MagicMock, Mock, PropertyMock, patch
 
 import pytest
 

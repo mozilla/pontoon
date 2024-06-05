@@ -3,6 +3,7 @@ import urllib.parse
 
 import pytest
 import requests_mock
+
 from django.urls import reverse
 
 from pontoon.base.models import (

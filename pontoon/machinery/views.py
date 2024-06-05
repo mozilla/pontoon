@@ -1,10 +1,12 @@
 import json
 import logging
-import requests
 import xml.etree.ElementTree as ET
 
-from sacremoses import MosesDetokenizer
 from urllib.parse import quote
+
+import requests
+
+from sacremoses import MosesDetokenizer
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -23,6 +25,7 @@ from pontoon.machinery.utils import (
 )
 
 from .openai_service import OpenAIService
+
 
 log = logging.getLogger(__name__)
 

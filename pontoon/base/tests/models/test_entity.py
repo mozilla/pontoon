@@ -1,13 +1,13 @@
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
+from pontoon.sync import KEY_SEPARATOR
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
     TermFactory,
     TranslationFactory,
 )
-from pontoon.sync import KEY_SEPARATOR
 
 
 @pytest.fixture

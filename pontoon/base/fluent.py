@@ -1,4 +1,4 @@
-from fluent.syntax import ast, FluentParser
+from fluent.syntax import FluentParser, ast
 from fluent.syntax.serializer import serialize_expression
 
 

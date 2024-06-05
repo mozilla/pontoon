@@ -1,8 +1,10 @@
 import os
+
 from typing import Any
 
 from . import git, hg, svn
 from .utils import CommitToRepositoryException, PullFromRepositoryException
+
 
 __all__ = [
     "CommitToRepositoryException",

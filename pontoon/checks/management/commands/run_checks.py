@@ -2,11 +2,11 @@ from celery import (
     group,
     signature,
 )
+
 from django.core.management.base import BaseCommand
 
 from pontoon.base.models import Translation
 from pontoon.checks import DB_FORMATS
-
 from pontoon.checks.tasks import check_translations
 
 

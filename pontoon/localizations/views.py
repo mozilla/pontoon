@@ -13,9 +13,9 @@ from pontoon.base.models import (
     TranslatedResource,
 )
 from pontoon.base.utils import (
-    require_AJAX,
-    get_project_or_redirect,
     get_locale_or_redirect,
+    get_project_or_redirect,
+    require_AJAX,
 )
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights

@@ -5,6 +5,7 @@ from pontoon.teams import views as teams_views
 
 from . import views
 
+
 urlpatterns = [
     path(
         "<locale:code>/<slug:slug>/",

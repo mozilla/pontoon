@@ -1,11 +1,11 @@
-from unittest.mock import ANY, patch, PropertyMock
+from unittest.mock import ANY, PropertyMock, patch
 
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, Repository
 from pontoon.base.tests import (
-    ChangedEntityLocaleFactory,
     CONTAINS,
+    ChangedEntityLocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     TestCase,

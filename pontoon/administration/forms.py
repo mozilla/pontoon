@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.forms.models import inlineformset_factory
 from django.core.exceptions import ValidationError
+from django.forms.models import inlineformset_factory
 
+from pontoon.base.forms import HtmlField
 from pontoon.base.models import (
     Entity,
     ExternalResource,
@@ -10,7 +11,6 @@ from pontoon.base.models import (
     Project,
     Repository,
 )
-from pontoon.base.forms import HtmlField
 from pontoon.tags.models import Tag
 
 

@@ -1,19 +1,21 @@
 import functools
 import os
+
 from unittest.mock import patch
 
 import pytest
+
 from django.contrib.auth.models import AnonymousUser
 
-from pontoon.base.models import ProjectLocale, Project, Repository
+from pontoon.base.models import Project, ProjectLocale, Repository
 from pontoon.test.factories import (
     ChangedEntityLocaleFactory,
     EntityFactory,
+    LocaleFactory,
+    ProjectFactory,
     ProjectLocaleFactory,
     RepositoryFactory,
     ResourceFactory,
-    ProjectFactory,
-    LocaleFactory,
 )
 
 

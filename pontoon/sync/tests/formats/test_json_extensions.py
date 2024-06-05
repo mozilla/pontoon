@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from pontoon.base.tests import assert_attributes_equal, TestCase
+from pontoon.base.tests import TestCase, assert_attributes_equal
 from pontoon.sync.formats import json_extensions
 from pontoon.sync.tests.formats import FormatTestsMixin
 

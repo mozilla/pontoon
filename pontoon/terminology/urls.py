@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+
 urlpatterns = [
     # AJAX: Retrieve terms for given Entity and Locale
     path("get-terms/", views.get_terms, name="pontoon.terms.get"),

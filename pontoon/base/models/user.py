@@ -1,12 +1,13 @@
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
+from guardian.shortcuts import get_objects_for_user
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.urls import reverse
-from guardian.shortcuts import get_objects_for_user
 
 from pontoon.actionlog.models import ActionLog
 

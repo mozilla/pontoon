@@ -1,7 +1,9 @@
 import logging
+
 from typing import Any
 
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
+
 
 log = logging.getLogger(__name__)
 

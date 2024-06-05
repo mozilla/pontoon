@@ -1,4 +1,4 @@
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
@@ -7,9 +7,9 @@ from notifications.signals import notify
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Entity
 from pontoon.base.tests import (
-    assert_attributes_equal,
     TranslationFactory,
     UserFactory,
+    assert_attributes_equal,
 )
 from pontoon.base.utils import aware_datetime
 from pontoon.sync.tests import FakeCheckoutTestCase

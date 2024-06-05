@@ -1,12 +1,12 @@
-from unittest.mock import patch, call
+from unittest.mock import call, patch
 
 import pytest
 
 from pontoon.base.models import (
-    get_word_count,
     Entity,
-    Translation,
     TranslatedResource,
+    Translation,
+    get_word_count,
 )
 from pontoon.test.factories import (
     EntityFactory,

@@ -1,15 +1,17 @@
-import google.auth
-import google.auth.transport.requests
 import json
-import Levenshtein
 import logging
 import operator
 import os
-import requests
 
 from collections import defaultdict
 from functools import reduce
 from html import unescape
+
+import google.auth
+import google.auth.transport.requests
+import Levenshtein
+import requests
+
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 from google.oauth2 import service_account
@@ -19,7 +21,9 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
 
 import pontoon.base as base
+
 from pontoon.base.placeables import get_placeables
+
 
 log = logging.getLogger(__name__)
 MAX_RESULTS = 5

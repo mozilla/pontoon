@@ -7,7 +7,6 @@ from compare_locales.parser.base import Junk
 from compare_locales.parser.dtd import DTDEntityMixin
 from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
-
 from compare_locales.paths import File
 
 from pontoon.sync.utils import escape_apostrophes

@@ -5,6 +5,7 @@ Parser for the strings.xml file format.
 import logging
 
 from collections import OrderedDict
+
 from compare_locales import (
     parser,
     serializer,

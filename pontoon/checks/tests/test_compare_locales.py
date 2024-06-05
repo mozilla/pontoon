@@ -7,9 +7,9 @@ import pytest
 
 from pontoon.checks.libraries.compare_locales import (
     CompareDTDEntity,
-    cast_to_compare_locales,
     ComparePropertiesEntity,
     UnsupportedResourceTypeError,
+    cast_to_compare_locales,
     run_checks,
 )
 

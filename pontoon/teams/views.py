@@ -1,12 +1,16 @@
 import json
 
-from django.contrib.auth.decorators import login_required
+import bleach
+
+from guardian.decorators import permission_required_or_403
+
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.db import transaction
-from django.db.models import Q, Count, Prefetch
+from django.db.models import Count, Prefetch, Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -18,12 +22,9 @@ from django.template.loader import get_template
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
-import bleach
-from guardian.decorators import permission_required_or_403
-
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, User
-from pontoon.base.utils import require_AJAX, get_locale_or_redirect
+from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm

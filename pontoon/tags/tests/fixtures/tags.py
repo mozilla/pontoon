@@ -1,4 +1,5 @@
 import functools
+
 from collections import OrderedDict
 from datetime import datetime
 
@@ -9,6 +10,7 @@ from django.utils import timezone
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
+
 from .site import _factory
 
 

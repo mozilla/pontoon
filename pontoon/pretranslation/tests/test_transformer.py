@@ -1,6 +1,8 @@
-import pytest
-from fluent.syntax import FluentParser, FluentSerializer
 from textwrap import dedent
+
+import pytest
+
+from fluent.syntax import FluentParser, FluentSerializer
 
 from pontoon.pretranslation.transformer import ApplyPretranslation
 from pontoon.test.factories import LocaleFactory

@@ -1,12 +1,12 @@
 """Django settings for Pontoon."""
 
-import re
 import os
+import re
 import socket
 
-from django.utils.functional import lazy
-
 import dj_database_url
+
+from django.utils.functional import lazy
 
 
 _dirname = os.path.dirname
@@ -190,6 +190,7 @@ RAYGUN4PY_CONFIG = {"api_key": os.environ.get("RAYGUN_APIKEY", "")}
 
 def _get_site_url_netloc():
     from urllib.parse import urlparse
+
     from django.conf import settings
 
     return urlparse(settings.SITE_URL).netloc

@@ -1,10 +1,9 @@
 import pytest
 
 from django.contrib.auth import get_user_model
-
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
-from django.http import HttpResponseRedirect
 
 from pontoon.base.models import Project
 from pontoon.base.utils import (
@@ -12,18 +11,17 @@ from pontoon.base.utils import (
     extension_in,
     get_m2m_changes,
     get_object_or_none,
-    latest_datetime,
     get_search_phrases,
     is_email,
+    latest_datetime,
 )
-
 from pontoon.test.factories import (
-    ProjectFactory,
-    ResourceFactory,
-    LocaleFactory,
-    ProjectSlugHistoryFactory,
-    ProjectLocaleFactory,
     LocaleCodeHistoryFactory,
+    LocaleFactory,
+    ProjectFactory,
+    ProjectLocaleFactory,
+    ProjectSlugHistoryFactory,
+    ResourceFactory,
 )
 
 

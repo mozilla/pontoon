@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from . import views
 
+
 urlpatterns = [
     # Machinery Metasearch
     path("machinery/", views.machinery, name="pontoon.machinery"),

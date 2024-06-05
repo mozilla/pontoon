@@ -3,7 +3,9 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import requests
+
 from compare_locales.paths import ProjectFiles, TOMLParser
+
 from django.utils.functional import cached_property
 
 

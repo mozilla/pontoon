@@ -1,6 +1,7 @@
 from math import ceil, floor
 
 import Levenshtein
+
 from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Value, When
 from django.db.models.functions import Cast, Length, Substr

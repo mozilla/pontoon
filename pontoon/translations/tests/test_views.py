@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 
 from pontoon.base.models import Translation
-from pontoon.checks.models import Warning, FailedCheck
+from pontoon.checks.models import FailedCheck, Warning
 from pontoon.test.factories import TranslationFactory
 
 

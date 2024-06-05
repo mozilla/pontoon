@@ -1,5 +1,6 @@
 import os
-from unittest.mock import call, patch, Mock
+
+from unittest.mock import Mock, call, patch
 from urllib.parse import urlparse
 
 import pytest

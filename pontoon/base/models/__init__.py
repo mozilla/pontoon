@@ -16,6 +16,7 @@ from pontoon.base.models.user import User
 from pontoon.base.models.user_profile import UserProfile
 from pontoon.db import IContainsCollate  # noqa
 
+
 __all__ = [
     "AggregatedStats",
     "ChangedEntityLocale",

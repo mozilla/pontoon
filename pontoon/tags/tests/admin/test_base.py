@@ -7,7 +7,6 @@ from pontoon.base.models import (
     TranslatedResource,
     Translation,
 )
-
 from pontoon.tags.admin.base import Clonable, TagsDataTool
 from pontoon.tags.models import Tag
 

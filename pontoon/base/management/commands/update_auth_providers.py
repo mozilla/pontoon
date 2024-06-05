@@ -8,10 +8,12 @@ from allauth.socialaccount.providers.github.provider import GitHubProvider
 from allauth.socialaccount.providers.gitlab.provider import GitLabProvider
 from allauth.socialaccount.providers.google.provider import GoogleProvider
 from allauth.socialaccount.providers.keycloak.provider import KeycloakProvider
+
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
+
 
 FXA_PROVIDER_ID = FirefoxAccountsProvider.id
 GITHUB_PROVIDER_ID = GitHubProvider.id

@@ -1,11 +1,13 @@
+import logging
+
 from collections import Counter
 from datetime import datetime
 from functools import wraps
-import logging
 from typing import Any
 
-from celery import shared_task
 import requests
+
+from celery import shared_task
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -20,6 +22,7 @@ from pontoon.base.models import (
     Resource,
     TranslatedResource,
 )
+
 from .changeset import ChangeSet
 from .vcs.project import VCSProject
 

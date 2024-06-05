@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from pontoon.checks import models
 
 

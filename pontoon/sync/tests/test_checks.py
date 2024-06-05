@@ -1,11 +1,11 @@
-from unittest.mock import patch, PropertyMock
+from unittest.mock import PropertyMock, patch
 
-from pontoon.base.utils import aware_datetime
 from pontoon.base.tests import EntityFactory, ResourceFactory, TranslationFactory
+from pontoon.base.utils import aware_datetime
 from pontoon.checks.models import (
-    Warning,
     Error,
     FailedCheck,
+    Warning,
 )
 from pontoon.sync.tests import FakeCheckoutTestCase
 

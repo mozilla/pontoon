@@ -1,6 +1,7 @@
+from collections import defaultdict
+
 import pytest
 
-from collections import defaultdict
 from django.contrib.auth.models import User
 
 

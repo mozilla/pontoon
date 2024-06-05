@@ -1,9 +1,11 @@
 import datetime
-import jwt
 
 from collections import defaultdict
-from dateutil.relativedelta import relativedelta
 from urllib.parse import urlencode
+
+import jwt
+
+from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User

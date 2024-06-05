@@ -1,5 +1,6 @@
 import os.path
-from unittest.mock import patch, PropertyMock
+
+from unittest.mock import PropertyMock, patch
 
 import factory
 

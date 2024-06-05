@@ -3,6 +3,7 @@ from django.views.generic import RedirectView, TemplateView
 
 from . import views
 
+
 urlpatterns = [
     # Terms
     path(

@@ -1,4 +1,4 @@
-from django.db.models import Q, Max, Sum
+from django.db.models import Max, Q, Sum
 
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag

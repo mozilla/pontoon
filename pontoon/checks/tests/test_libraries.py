@@ -1,5 +1,5 @@
 from textwrap import dedent
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 

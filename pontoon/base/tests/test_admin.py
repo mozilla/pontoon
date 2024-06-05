@@ -1,7 +1,7 @@
 import pytest
 
-from django.contrib.auth.models import User
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.models import User
 from django.test.client import RequestFactory
 
 from pontoon.base.admin import UserAdmin

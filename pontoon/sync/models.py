@@ -1,10 +1,11 @@
-from datetime import datetime
 import logging
+
+from datetime import datetime
 from typing import Literal
 
-from django.urls import reverse
 from django.db import models
 from django.db.models import F, Max, Sum
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 

@@ -1,8 +1,10 @@
 import logging
+
 from os.path import join
 
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.utils import locale_to_source_path
+
 
 log = logging.getLogger(__name__)
 

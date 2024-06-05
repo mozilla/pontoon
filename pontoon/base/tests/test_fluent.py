@@ -1,8 +1,9 @@
+from collections import OrderedDict
+from textwrap import dedent
+
 import pytest
 
-from collections import OrderedDict
 from fluent.syntax import FluentParser
-from textwrap import dedent
 
 from pontoon.base.fluent import (
     get_simple_preview,

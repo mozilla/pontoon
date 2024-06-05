@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from . import views
 
+
 urlpatterns = [
     # Legacy: Redirect to /projects
     path("project/", RedirectView.as_view(url="/projects/", permanent=True)),

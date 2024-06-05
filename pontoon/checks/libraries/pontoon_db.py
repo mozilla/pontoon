@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from fluent.syntax import FluentParser, ast
 from fluent.syntax.visitor import Visitor
 

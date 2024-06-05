@@ -1,8 +1,9 @@
-import html
 import datetime
+import html
 import json
 
 import markupsafe
+
 from allauth.socialaccount import providers
 from allauth.utils import get_request_param
 from bleach.linkifier import Linker
@@ -17,6 +18,7 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from pontoon.base.fluent import get_simple_preview
+
 
 register = template.Library()
 

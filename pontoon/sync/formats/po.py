@@ -4,9 +4,9 @@ Parser for to pofile translation format.
 
 from datetime import datetime
 
-from django.utils import timezone
-
 import polib
+
+from django.utils import timezone
 
 from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError

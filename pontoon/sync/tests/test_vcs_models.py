@@ -1,7 +1,7 @@
 import os
 
 from pathlib import Path
-from unittest.mock import Mock, patch, PropertyMock, MagicMock
+from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 from pontoon.base.models import (
     Locale,
@@ -23,9 +23,10 @@ from pontoon.sync.tests import (
     VCSEntityFactory,
     VCSTranslationFactory,
 )
-from pontoon.sync.vcs.project import VCSProject
 from pontoon.sync.vcs.config import VCSConfiguration
+from pontoon.sync.vcs.project import VCSProject
 from pontoon.sync.vcs.resource import VCSResource
+
 
 TEST_CHECKOUT_PATH = os.path.join(
     os.path.dirname(__file__), "directory_detection_tests"

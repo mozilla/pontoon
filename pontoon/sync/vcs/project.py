@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+
 from itertools import chain
 
 from django.utils.functional import cached_property
@@ -20,6 +21,7 @@ from pontoon.sync.utils import (
 )
 from pontoon.sync.vcs.config import VCSConfiguration
 from pontoon.sync.vcs.resource import VCSResource
+
 
 log = logging.getLogger(__name__)
 

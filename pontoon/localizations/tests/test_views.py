@@ -2,15 +2,15 @@ from unittest.mock import patch
 
 import pytest
 
-from django.urls import reverse
 from django.shortcuts import render
+from django.urls import reverse
 
 from pontoon.base.tests import (
     EntityFactory,
-    ResourceFactory,
-    TranslationFactory,
-    TranslatedResourceFactory,
     ProjectLocaleFactory,
+    ResourceFactory,
+    TranslatedResourceFactory,
+    TranslationFactory,
 )
 
 

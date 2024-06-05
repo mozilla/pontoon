@@ -1,14 +1,17 @@
 import logging
 import re
+
 from os import sep
 from os.path import join
 from urllib.parse import urlparse
+
+from jsonfield import JSONField
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.utils.functional import cached_property
-from jsonfield import JSONField
+
 
 log = logging.getLogger(__name__)
 
