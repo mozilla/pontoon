@@ -108,10 +108,10 @@ export function AddComment({
         children: [{ text: name }],
       };
       Transforms.insertNodes(editor, mention);
-      Transforms.move(editor);
+      Transforms.select(editor, Editor.end(editor, []));
       Transforms.insertText(editor, ' ');
     },
-    [],
+    [editor],
   );
 
   useEffect(initMentions, []);
