@@ -685,6 +685,7 @@ def get_users(request):
                 "gravatar": u.gravatar_url(44),
                 "name": u.name_or_email,
                 "url": u.profile_url,
+                "username": u.profile.username,
             }
         )
 
