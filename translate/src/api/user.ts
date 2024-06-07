@@ -52,6 +52,7 @@ export type MentionUser = {
   gravatar: string;
   name: string;
   url: string;
+  username: string | null;
 };
 
 /** Dismiss Add-On Promotion. */

@@ -676,6 +676,8 @@ def get_users(request):
         .exclude(profile__system_user=True)
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
+        # Prefetch profile for retrieving username
+        .prefetch_related("profile")
     )
     payload = []
 
@@ -685,6 +687,7 @@ def get_users(request):
                 "gravatar": u.gravatar_url(44),
                 "name": u.name_or_email,
                 "url": u.profile_url,
+                "username": u.profile.username,
             }
         )
 

@@ -135,8 +135,10 @@ export function AddComment({
   }, [initFocus]);
 
   const suggestedUsers = mentionUsers
-    .filter((user) =>
-      user.name.toLowerCase().includes(mentionSearch.toLowerCase()),
+    .filter(
+      (user) =>
+        user.username?.toLowerCase().includes(mentionSearch.toLowerCase()) ||
+        user.name.toLowerCase().includes(mentionSearch.toLowerCase()),
     )
     .slice(0, 5);
 
