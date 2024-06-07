@@ -676,6 +676,8 @@ def get_users(request):
         .exclude(profile__system_user=True)
         # Exclude deleted users
         .exclude(email__regex=r"^deleted-user-(\w+)@example.com$")
+        # Prefetch profile for retrieving username
+        .prefetch_related("profile")
     )
     payload = []
 
