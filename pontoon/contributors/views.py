@@ -117,7 +117,7 @@ def update_contribution_timeline(request):
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
         months_shown = request.GET.get("months_shown", None)
-        months_shown = int(months_shown) + 1 if months_shown else None
+        months_shown = int(months_shown) + 1 if months_shown else 1
         day = request.GET.get("day", None)
         day = int(day) / 1000 if day else None
     except (User.DoesNotExist, ValueError) as e:
