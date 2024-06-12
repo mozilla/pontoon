@@ -298,6 +298,7 @@ var Pontoon = (function (my) {
 
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
+          let months_shown = $(this).data('months_shown');
 
           // Update contribution graph
           $.ajax({
@@ -309,6 +310,8 @@ var Pontoon = (function (my) {
             success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
+              months_shown = 1;
+              $('#show-more').data('months_shown', months_shown);
               Pontoon.profile.renderContributionGraph();
             },
             error: function () {
