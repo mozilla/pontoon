@@ -434,7 +434,7 @@ def get_contribution_timeline_data(
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
-    start = end - relativedelta(months=1)
+    start = end - relativedelta(months=months_shown)
     timeline_title = f"Contribution activity in the last {intcomma(months_shown)} month{pluralize(months_shown)}"
 
     if day is not None:
