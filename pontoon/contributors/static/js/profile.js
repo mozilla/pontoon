@@ -359,6 +359,32 @@ var Pontoon = (function (my) {
           });
         });
       },
+      handleShowMoreClick: function () {
+        $('#show-more').click(function () {
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+          let months_shown = $(this).data('months_shown');
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              months_shown: months_shown,
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+              // Re-render timeline with an extra month
+              months_shown += 1;
+              $('#show-more').data('months_shown', months_shown);
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
     },
   });
 })(Pontoon || {});
@@ -370,6 +396,7 @@ Pontoon.insights.renderCharts();
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
 Pontoon.profile.handleContributionGraphClick();
+Pontoon.profile.handleShowMoreClick();
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {
