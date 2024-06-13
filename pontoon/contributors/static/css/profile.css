@@ -128,6 +128,14 @@ h2 {
   text-align: center;
   text-transform: uppercase;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+  margin-top: 5px;
 }
 
 h4 {
