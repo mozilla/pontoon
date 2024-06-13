@@ -296,6 +296,9 @@ var Pontoon = (function (my) {
             .find('.selector .value')
             .html($(this).html());
 
+          // Rerender the show more button in case it was hidden
+          $('#show-more').show();
+
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
           let months_shown = $(this).data('months_shown');
@@ -367,6 +370,14 @@ var Pontoon = (function (my) {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
           let months_shown = $(this).data('months_shown');
+          const date_joined_obj = new Date($(this).data('date_joined'));
+
+          // Limit the amount of months shown to when the user created their account
+          const start_date_obj = new Date();
+          start_date_obj.setMonth(start_date_obj.getMonth() - months_shown);
+          if (start_date_obj < date_joined_obj) {
+            $('#show-more').hide();
+          }
 
           // Update contribution timeline
           $.ajax({
