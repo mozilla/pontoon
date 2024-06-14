@@ -119,24 +119,6 @@ h2 {
   width: 100%;
 }
 
-.right-column .button {
-  background: var(--dark-grey-1);
-  font-size: 16px;
-  font-weight: normal;
-  height: 32px;
-  padding: 8px 12px;
-  text-align: center;
-  text-transform: uppercase;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  border-radius: 3px;
-  color: var(--light-grey-7);
-  margin-top: 5px;
-}
 
 h4 {
   font-size: 14px;
@@ -463,6 +445,23 @@ svg.js-calendar-graph-svg {
 #timeline .localizations li a .contribution-count {
   color: var(--light-grey-2);
   float: right;
+}
+
+#show-more {
+  background: var(--dark-grey-1);
+  font-size: 16px;
+  font-weight: normal;
+  height: 32px;
+  text-transform: uppercase;
+  width: 100%;
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+  margin-top: 5px;
+}
+
+#show-more:hover {
+  color: var(--white-1);
 }
 
 #account-status-form {
