@@ -440,7 +440,7 @@ def get_contribution_timeline_data(
         start = end - relativedelta(months=1, day=1)
 
     month_name = start.strftime("%B")
-    
+
     timeline_title = f"Contribution activity since {month_name} {start.year}: "
 
     if day is not None:
