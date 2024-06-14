@@ -301,7 +301,7 @@ var Pontoon = (function (my) {
 
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
-          let months_shown = $(this).data('months_shown');
+          let monthsShown = $(this).data('months_shown');
 
           // Update contribution graph
           $.ajax({
@@ -313,8 +313,8 @@ var Pontoon = (function (my) {
             success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
-              months_shown = 1;
-              $('#show-more').data('months_shown', months_shown);
+              monthsShown = 1;
+              $('#show-more').data('months_shown', monthsShown);
               Pontoon.profile.renderContributionGraph();
             },
             error: function () {
@@ -369,13 +369,13 @@ var Pontoon = (function (my) {
         $('#show-more').click(function () {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
-          let months_shown = $(this).data('months_shown');
-          const date_joined_obj = new Date($(this).data('date_joined'));
+          let monthsShown = $(this).data('months_shown');
+          const dateJoinedObj = new Date($(this).data('date_joined'));
 
           // Limit the amount of months shown to when the user created their account
-          const start_date_obj = new Date();
-          start_date_obj.setMonth(start_date_obj.getMonth() - months_shown);
-          if (start_date_obj < date_joined_obj) {
+          const startDateObj = new Date();
+          startDateObj.setMonth(startDateObj.getMonth() - monthsShown);
+          if (startDateObj < dateJoinedObj) {
             $('#show-more').hide();
           }
 
@@ -383,15 +383,15 @@ var Pontoon = (function (my) {
           $.ajax({
             url: '/update-contribution-timeline/',
             data: {
-              months_shown: months_shown,
+              months_shown: monthsShown,
               contribution_type: type,
               user: user,
             },
             success: function (data) {
               $('#timeline').html(data);
               // Re-render timeline with an extra month
-              months_shown += 1;
-              $('#show-more').data('months_shown', months_shown);
+              monthsShown += 1;
+              $('#show-more').data('months_shown', monthsShown);
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
