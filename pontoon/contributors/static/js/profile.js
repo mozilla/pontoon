@@ -358,6 +358,7 @@ var Pontoon = (function (my) {
             },
             success: function (data) {
               $('#timeline').html(data);
+              $('#show-more').hide();
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
