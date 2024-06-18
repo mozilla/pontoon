@@ -64,7 +64,7 @@ def contributor(request, user):
         user, "all_contributions"
     )
     timeline_data, timeline_title, timeline_length = (
-        utils.get_contribution_timeline_data(user, 1, "all_contributions")
+        utils.get_contribution_timeline_data(user, False, "all_contributions")
     )
 
     context = {
@@ -83,7 +83,7 @@ def contributor(request, user):
         "contribution_timeline": {
             "contributions": timeline_data,
             "title": timeline_title,
-            "months_shown": timeline_length,
+            "year_shown": timeline_length,
         },
     }
 
@@ -116,8 +116,8 @@ def update_contribution_timeline(request):
     try:
         user = User.objects.get(pk=request.GET["user"])
         contribution_type = request.GET["contribution_type"]
-        months_shown = request.GET.get("months_shown", None)
-        months_shown = int(months_shown) + 1 if months_shown else 1
+        year_shown = request.GET.get("year_shown", None)
+        year_shown = True if year_shown == "true" else False
         day = request.GET.get("day", None)
         day = int(day) / 1000 if day else None
     except (User.DoesNotExist, ValueError) as e:
@@ -126,8 +126,8 @@ def update_contribution_timeline(request):
             status=400,
         )
 
-    contributions, title, months_shown = utils.get_contribution_timeline_data(
-        user, months_shown, contribution_type, day
+    contributions, title, year_shown = utils.get_contribution_timeline_data(
+        user, year_shown, contribution_type, day
     )
 
     return render(
@@ -137,7 +137,7 @@ def update_contribution_timeline(request):
             "contribution_timeline": {
                 "contributions": contributions,
                 "title": title,
-                "months_shown": months_shown,
+                "year_shown": year_shown,
             },
         },
     )
