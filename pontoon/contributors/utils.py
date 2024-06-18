@@ -428,20 +428,21 @@ def get_project_locale_contribution_counts(contributions_qs):
 
 
 def get_contribution_timeline_data(
-    user, months_shown=None, contribution_type=None, day=None
+    user, year_shown=None, contribution_type=None, day=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
-    if months_shown is not None:
-        start = end - relativedelta(months=months_shown, day=1)
+
+    if year_shown == True:
+        start = end - relativedelta(years=1, day=1)
     else:
-        start = end - relativedelta(months=1, day=1)
+        start = end - relativedelta(day=1)
 
     month_name = start.strftime("%B")
 
-    timeline_title = f"Contribution activity since {month_name} {start.year}: "
+    timeline_title = f"Contribution activity since {month_name} {start.day}, {start.year}: "
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
@@ -521,5 +522,5 @@ def get_contribution_timeline_data(
     return (
         contributions,
         timeline_title,
-        months_shown,
+        year_shown,
     )
