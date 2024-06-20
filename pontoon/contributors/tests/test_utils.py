@@ -283,6 +283,8 @@ def test_get_contribution_timeline_data_with_actions(
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
 
+    print(utils.get_contribution_timeline_data(user_a))
+
     assert utils.get_contribution_timeline_data(user_a) == (
         {
             "Reviewed 1 suggestion in 1 project": {
@@ -298,6 +300,7 @@ def test_get_contribution_timeline_data_with_actions(
                         },
                         "action_dates": ["1 approved"],
                         "count": 1,
+                        "date_created": [current_month],
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },
