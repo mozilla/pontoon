@@ -4,7 +4,9 @@ import uuid
 from guardian.decorators import permission_required_or_403
 from notifications.signals import notify
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
@@ -41,8 +43,6 @@ def send_message(request):
             return JsonResponse(dict(form.errors.items()))
 
         # TODO: implement recipient filters
-        from django.contrib.auth.models import User
-
         recipients = User.objects.filter(pk=request.user.pk)
 
         is_notification = form.cleaned_data.get("notification")
@@ -77,7 +77,7 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
                 msg = EmailMultiAlternatives(
                     subject=subject,
                     body=text,
-                    from_email="Mozilla L10n Team <team@pontoon.mozilla.com>",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
                     to=[recipient.contact_email],
                 )
                 msg.attach_alternative(html, "text/html")
