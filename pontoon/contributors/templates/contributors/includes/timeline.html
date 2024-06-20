@@ -47,4 +47,26 @@
 
 {% if contribution_timeline.contributions == {} %}
 <p>No activity in this period.</p>
+{% else %}
+    {% for activity, details in contribution_timeline.contributions.items() %}
+        <h4>{{ activity }}</h4>
+        {% for project, project_details in details.data.items() %}
+            <p><strong>Project Name:</strong> {{ project_details.project.name }}</p>
+            <p><strong>Locale:</strong> {{ project_details.locale.name }} ({{ project_details.locale.code }})</p>
+            <p><strong>Actions:</strong></p>
+            <ul>
+                {% for action in project_details.actions %}
+                    <li>{{ action }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Count:</strong> {{ project_details.count }}</p>
+            <p><strong>Dates:</strong></p>
+            <ul>
+                {% for date in project_details.date_created %}
+                    <li>{{ date }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>URL:</strong> <a href="{{ project_details.url }}">{{ project_details.url }}</a></p>
+        {% endfor %}
+    {% endfor %}
 {% endif %}

@@ -302,6 +302,20 @@ def get_approvals_charts_data(user):
     }
 
 
+def convert_datetime_to_str(d):
+    """
+    Recursively changes all datetime objects in contributions to "MMMM YYYY" format.
+    """
+    if isinstance(d, dict):
+        for key, value in d.items():
+            d[key] = convert_datetime_to_str(value)
+    elif isinstance(d, list):
+        d = [convert_datetime_to_str(item) for item in d]
+    elif isinstance(d, datetime.datetime):
+        d = d.strftime("%B %Y")
+    return d
+
+
 def get_contributions_map(user, contribution_period=None):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
@@ -415,6 +429,7 @@ def get_project_locale_contribution_counts(contributions_qs):
     ):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
+        created_at = item["date_created"]
 
         date = None
         if item["action_type"] == "translation:created":
@@ -458,6 +473,7 @@ def get_project_locale_contribution_counts(contributions_qs):
                     }
                 ],
                 "count": count,
+                "date_created": [created_at],
             }
     return counts
 
