@@ -4,33 +4,33 @@
   margin: 0;
   display: inline-block;
   text-align: left;
-}
 
-#main .check-list .check-box {
-  padding: 8px 0;
-}
+  .check-box {
+    padding: 8px 0;
+  }
 
-#main .check-list .check-box:last-child {
-  padding-bottom: 0;
-}
+  .check-box:last-child {
+    padding-bottom: 0;
+  }
 
-#main .check-list .check-box-wrapper {
-  color: var(--light-grey-7);
-  display: table;
-  font-size: 16px;
-  font-weight: 300;
-  overflow: hidden;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 342px;
-}
+  .check-box-wrapper {
+    color: var(--light-grey-7);
+    display: table;
+    font-size: 16px;
+    font-weight: 300;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 342px;
+  }
 
-#main .check-list .check-box-wrapper:hover {
-  color: var(--white-1);
-}
+  .check-box-wrapper:hover {
+    color: var(--white-1);
+  }
 
-#main .check-list .fa {
-  margin-left: 27px;
-  margin-right: 0;
+  .fa {
+    margin-left: 27px;
+    margin-right: 0;
+  }
 }
