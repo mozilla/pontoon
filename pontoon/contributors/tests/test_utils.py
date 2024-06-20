@@ -268,6 +268,7 @@ def test_get_contribution_timeline_data_without_actions(user_a):
     assert utils.get_contribution_timeline_data(user_a) == (
         {},
         "Contribution activity in the last month",
+        None,
     )
 
 
@@ -276,12 +277,15 @@ def test_get_contribution_timeline_data_with_actions(
     user_a, yesterdays_action_user_a, action_user_b
 ):
     end = timezone.now()
-    start = end - relativedelta(months=1)
+    start = end - relativedelta(day=1)
+    current_month = end.strftime("%B %Y")
 
     params = {
         "reviewer": user_a.email,
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
+
+    print(utils.get_contribution_timeline_data(user_a))
 
     assert utils.get_contribution_timeline_data(user_a) == (
         {
@@ -298,6 +302,7 @@ def test_get_contribution_timeline_data_with_actions(
                         },
                         "actions": ["1 approved"],
                         "count": 1,
+                        "date_created": [current_month],
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },
@@ -305,4 +310,5 @@ def test_get_contribution_timeline_data_with_actions(
             }
         },
         "Contribution activity in the last month",
+        None,
     )
