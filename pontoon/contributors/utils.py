@@ -301,6 +301,7 @@ def get_approvals_charts_data(user):
         "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
     }
 
+
 def get_contributions_map(user, contribution_period=None):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
@@ -387,7 +388,11 @@ def get_project_locale_contribution_counts(contributions_qs):
             actions_month=F("translation__entity__date_created"),
         )
         .values(
-            "project_name", "project_slug", "locale_name", "locale_code", "actions_month"
+            "project_name",
+            "project_slug",
+            "locale_name",
+            "locale_code",
+            "actions_month",
         )
         .annotate(count=Count("id"))
         .values(
@@ -418,7 +423,6 @@ def get_project_locale_contribution_counts(contributions_qs):
 
             counts[key]["actions_month"]["actions"].append(action)
         else:
-
             if item["action_type"] == "translation:created":
                 action = f"{ intcomma(count) } translation{ pluralize(count) }"
             elif item["action_type"] == "translation:approved":
@@ -436,10 +440,7 @@ def get_project_locale_contribution_counts(contributions_qs):
                     "code": item["locale_code"],
                 },
                 "count": count,
-                "actions_month": {
-                    "month": [created_at],
-                    "actions": [action]
-                },
+                "actions_month": {"month": [created_at], "actions": [action]},
             }
 
     return counts
@@ -534,7 +535,6 @@ def get_contribution_timeline_data(
                 }
             }
         )
-
 
     return (
         contributions,
