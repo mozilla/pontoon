@@ -15,10 +15,9 @@
         <a href="{{ project_details.url }}">
             <span class="stress">{{ project_details.project.name }}</span>
             &middot; {{ project_details.locale.name }} <span class="stress">{{ project_details.locale.code }}</span>
-            <p><strong>Actions:</strong></p>
             <ul>
                 {% for index in range(project_details.actions | length) %}
-                <li>{{ project_details.actions[index] }} &middot; {{ project_details.date_created[index] }}</li>
+                    <li>{{ project_details.actions[index] }} &middot; {{ project_details.date_created[index] }}</li>
                 {% endfor %}
             </ul>
         </a>

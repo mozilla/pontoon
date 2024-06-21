@@ -301,21 +301,6 @@ def get_approvals_charts_data(user):
         "self_approval_rates_12_month_avg": self_approval_rates_12_month_avg,
     }
 
-
-def convert_datetime_to_str(d):
-    """
-    Recursively changes all datetime objects in contributions to "MMMM YYYY" format.
-    """
-    if isinstance(d, dict):
-        for key, value in d.items():
-            d[key] = convert_datetime_to_str(value)
-    elif isinstance(d, list):
-        d = [convert_datetime_to_str(item) for item in d]
-    elif isinstance(d, datetime.datetime):
-        d = d.strftime("%B %Y")
-    return d
-
-
 def get_contributions_map(user, contribution_period=None):
     """
     Return a map of contribution types and corresponding QuerySets of contributions.
@@ -399,10 +384,10 @@ def get_project_locale_contribution_counts(contributions_qs):
             project_slug=F("translation__entity__resource__project__slug"),
             locale_name=F("translation__locale__name"),
             locale_code=F("translation__locale__code"),
-            date_created=F("translation__entity__date_created"),
+            actions_month=F("translation__entity__date_created"),
         )
         .values(
-            "project_name", "project_slug", "locale_name", "locale_code", "date_created"
+            "project_name", "project_slug", "locale_name", "locale_code", "actions_month"
         )
         .annotate(count=Count("id"))
         .values(
@@ -410,27 +395,37 @@ def get_project_locale_contribution_counts(contributions_qs):
             "project_slug",
             "locale_name",
             "locale_code",
-            "date_created",
+            "actions_month",
             "action_type",
             "count",
         )
     ):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
-        created_at = item["date_created"]
-
-        if item["action_type"] == "translation:created":
-            action = f"{ intcomma(count) } translation{ pluralize(count) }"
-        elif item["action_type"] == "translation:approved":
-            action = f"{ intcomma(count) } approved"
-        elif item["action_type"] == "translation:rejected":
-            action = f"{ intcomma(count) } rejected"
+        created_at = (item["actions_month"]).strftime("%B %Y")
 
         if key in counts.keys():
-            counts[key]["actions"].append(action)
             counts[key]["count"] += count
-            counts[key]["date_created"].append(created_at)
+            if created_at not in counts[key]["actions_month"]["month"]:
+                counts[key]["actions_month"]["month"].append(created_at)
+
+            if item["action_type"] == "translation:created":
+                action = f"{ intcomma(count) } translation{ pluralize(count) }"
+            elif item["action_type"] == "translation:approved":
+                action = f"{ intcomma(count) } approved"
+            elif item["action_type"] == "translation:rejected":
+                action = f"{ intcomma(count) } rejected"
+
+            counts[key]["actions_month"]["actions"].append(action)
         else:
+
+            if item["action_type"] == "translation:created":
+                action = f"{ intcomma(count) } translation{ pluralize(count) }"
+            elif item["action_type"] == "translation:approved":
+                action = f"{ intcomma(count) } approved"
+            elif item["action_type"] == "translation:rejected":
+                action = f"{ intcomma(count) } rejected"
+
             counts[key] = {
                 "project": {
                     "name": item["project_name"],
@@ -440,9 +435,11 @@ def get_project_locale_contribution_counts(contributions_qs):
                     "name": item["locale_name"],
                     "code": item["locale_code"],
                 },
-                "actions": [action],
                 "count": count,
-                "date_created": [created_at],
+                "actions_month": {
+                    "month": [created_at],
+                    "actions": [action]
+                },
             }
 
     return counts
@@ -458,10 +455,10 @@ def get_contribution_timeline_data(
 
     if year_shown:
         start = end - relativedelta(years=1, day=1)
+        timeline_title = "Contribution activity in the last year"
     else:
         start = end - relativedelta(day=1)
-
-    timeline_title = "Contribution activity in the last month"
+        timeline_title = "Contribution activity in the last month"
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
@@ -538,7 +535,6 @@ def get_contribution_timeline_data(
             }
         )
 
-    contributions = convert_datetime_to_str(contributions)
 
     return (
         contributions,

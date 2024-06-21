@@ -269,6 +269,7 @@ def test_get_contribution_timeline_data_without_actions(user_a):
         {},
         "Contribution activity in the last month",
         None,
+        None,
     )
 
 
@@ -311,4 +312,5 @@ def test_get_contribution_timeline_data_with_actions(
         },
         "Contribution activity in the last month",
         None,
+        [current_month],
     )
