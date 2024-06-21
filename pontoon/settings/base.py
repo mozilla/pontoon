@@ -769,18 +769,48 @@ PASSWORD_HASHERS = (
 )
 
 # Logging
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose" if DEBUG else "simple",
+        },
+        "django_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(path('django_debug.log')),
+            "maxBytes": 1024 * 1024 * 2,  # 2 MB
+            "backupCount": 3,
+            "formatter": "verbose" if DEBUG else "simple",
+        },
+        "pontoon_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(path('pontoon_debug.log')),
+            "maxBytes": 1024 * 1024 * 2,  # 2 MB
+            "backupCount": 3,
+            "formatter": "verbose" if DEBUG else "simple",
+        },
+    },
     "formatters": {
-        "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
+        "verbose": {
+            "format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s",
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s",
+        },
     },
     "loggers": {
-        "django": {"handlers": ["console"]},
-        "pontoon": {
-            "handlers": ["console"],
+        "django": {
+            "handlers": ["console", "django_file"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+            "propagate": True,
+        },
+        "pontoon": {
+            "handlers": ["console", "pontoon_file"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+            "propagate": True,
         },
     },
 }
