@@ -780,14 +780,14 @@ LOGGING = {
         },
         "django_file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(path('django_debug.log')),
+            "filename": os.path.join(path("django_debug.log")),
             "maxBytes": 1024 * 1024 * 2,  # 2 MB
             "backupCount": 3,
             "formatter": "verbose" if DEBUG else "simple",
         },
         "pontoon_file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(path('pontoon_debug.log')),
+            "filename": os.path.join(path("pontoon_debug.log")),
             "maxBytes": 1024 * 1024 * 2,  # 2 MB
             "backupCount": 3,
             "formatter": "verbose" if DEBUG else "simple",
