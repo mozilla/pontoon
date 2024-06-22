@@ -3,28 +3,31 @@
 {% if contribution_timeline.contributions == {} %}
 <p>No activity in this period.</p>
 {% else %}
-{% for title, details in contribution_timeline.contributions.items() %}
-<h4 class="heading">
-    <span class="icon far {{ details.type }}"></span>
-    {{ title }}
-</h4>
-<ul class="localizations">
-    {% for project, project_details in details.data.items() %}
-
-    <li>
-        <a href="{{ project_details.url }}">
-            <span class="stress">{{ project_details.project.name }}</span>
-            &middot; {{ project_details.locale.name }} <span class="stress">{{ project_details.locale.code }}</span>
-            <ul>
-                {% for index in range(project_details.actions | length) %}
-                    <li>{{ project_details.actions[index] }} &middot; {{ project_details.date_created[index] }}</li>
-                {% endfor %}
-            </ul>
-        </a>
-    </li>
-
+    {% for summary, details in contribution_timeline.contributions.items() %}
+    <h4 class="heading">
+        <span class="icon far {{ details.type }}"></span>
+        {{ summary }}
+    </h4>
+    <ul class="localizations">
+        {% for key, project_details in details.data.items() %}
+        <li>
+            <a href="{{ project_details.url }}">
+                <span class="stress">{{ project_details.project.name }}</span>
+                &middot; {{ project_details.locale.name }} <span class="stress">{{ project_details.locale.code }}</span>
+                <ul>
+                    {% for month, actions in project_details.actions_month.items() %}
+                    <li>{{ month }}
+                        <ul>
+                            {% for action in actions %}
+                            <li>{{ action }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
     {% endfor %}
-</ul>
-
-{% endfor %}
 {% endif %}

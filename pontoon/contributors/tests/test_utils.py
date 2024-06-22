@@ -267,8 +267,7 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_
 def test_get_contribution_timeline_data_without_actions(user_a):
     assert utils.get_contribution_timeline_data(user_a) == (
         {},
-        "Contribution activity in the last month",
-        None,
+        "Contribution activity in this month",
         None,
     )
 
@@ -301,16 +300,14 @@ def test_get_contribution_timeline_data_with_actions(
                             "name": "Klingon",
                             "code": "kg",
                         },
-                        "actions": ["1 approved"],
                         "count": 1,
-                        "date_created": [current_month],
+                        "actions_month": {current_month: ["1 approved"]},
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },
                 "type": "user-reviews",
             }
         },
-        "Contribution activity in the last month",
+        "Contribution activity in this month",
         None,
-        [current_month],
     )
