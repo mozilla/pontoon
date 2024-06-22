@@ -376,6 +376,20 @@ def get_contribution_graph_data(user, contribution_type=None):
     )
 
 
+def combine_actions(actions_list):
+    """
+    Combine print statements for identical actions in the same project and month
+    """
+    combined = defaultdict(int)
+    for action in actions_list:
+        parts = action.split()
+        count = int(parts[0])
+        action_type = " ".join(parts[1:])
+        combined[action_type] += count
+
+    return [f"{count} {action}" for action, count in combined.items()]
+
+
 def get_project_locale_contribution_counts(contributions_qs):
     counts = {}
 
@@ -409,27 +423,19 @@ def get_project_locale_contribution_counts(contributions_qs):
         count = item["count"]
         created_at = (item["actions_month"]).strftime("%B %Y")
 
-        if key in counts.keys():
+        if item["action_type"] == "translation:created":
+            action = f"{ intcomma(count) } translation{ pluralize(count) }"
+        elif item["action_type"] == "translation:approved":
+            action = f"{ intcomma(count) } approved"
+        elif item["action_type"] == "translation:rejected":
+            action = f"{ intcomma(count) } rejected"
+
+        if key in counts:
             counts[key]["count"] += count
-            if created_at not in counts[key]["actions_month"]["month"]:
-                counts[key]["actions_month"]["month"].append(created_at)
-
-            if item["action_type"] == "translation:created":
-                action = f"{ intcomma(count) } translation{ pluralize(count) }"
-            elif item["action_type"] == "translation:approved":
-                action = f"{ intcomma(count) } approved"
-            elif item["action_type"] == "translation:rejected":
-                action = f"{ intcomma(count) } rejected"
-
-            counts[key]["actions_month"]["actions"].append(action)
+            if created_at not in counts[key]["actions_month"]:
+                counts[key]["actions_month"][created_at] = []
+            counts[key]["actions_month"][created_at].append(action)
         else:
-            if item["action_type"] == "translation:created":
-                action = f"{ intcomma(count) } translation{ pluralize(count) }"
-            elif item["action_type"] == "translation:approved":
-                action = f"{ intcomma(count) } approved"
-            elif item["action_type"] == "translation:rejected":
-                action = f"{ intcomma(count) } rejected"
-
             counts[key] = {
                 "project": {
                     "name": item["project_name"],
@@ -440,8 +446,12 @@ def get_project_locale_contribution_counts(contributions_qs):
                     "code": item["locale_code"],
                 },
                 "count": count,
-                "actions_month": {"month": [created_at], "actions": [action]},
+                "actions_month": {created_at: [action]},
             }
+
+    for key, value in counts.items():
+        for month, actions in value["actions_month"].items():
+            value["actions_month"][month] = combine_actions(actions)
 
     return counts
 
@@ -459,7 +469,7 @@ def get_contribution_timeline_data(
         timeline_title = "Contribution activity in the last year"
     else:
         start = end - relativedelta(day=1)
-        timeline_title = "Contribution activity in the last month"
+        timeline_title = "Contribution activity in this month"
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
