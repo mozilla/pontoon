@@ -390,6 +390,20 @@ def get_contribution_graph_data(user, contribution_type=None):
     )
 
 
+def combine_actions(actions_list):
+    """
+    Combine print statements for identical actions in the same project and month
+    """
+    combined = defaultdict(int)
+    for action in actions_list:
+        parts = action.split()
+        count = int(parts[0])
+        action_type = " ".join(parts[1:])
+        combined[action_type] += count
+
+    return [f"{count} {action}" for action, count in combined.items()]
+
+
 def get_project_locale_contribution_counts(contributions_qs):
     counts = {}
 
