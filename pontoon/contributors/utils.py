@@ -381,47 +381,100 @@ def combine_actions(actions_list):
     Combine print statements for identical actions in the same project and month
     """
     combined = defaultdict(int)
+
+    # Split string and modify count
     for action in actions_list:
         parts = action.split()
         count = int(parts[0])
         action_type = " ".join(parts[1:])
+        if action_type.endswith("s"):
+            action_type = action_type[:-1]
         combined[action_type] += count
 
-    return [f"{count} {action}" for action, count in combined.items()]
+    # Pluralize the string
+    result = []
+    for action, count in combined.items():
+        if count == 1:
+            result.append(f"{count} {action}")
+        else:
+            if action == "translation":
+                plural_action = "translations"
+            elif action == "approved":
+                plural_action = "approved"
+            elif action == "rejected":
+                plural_action = "rejected"
+            elif action.endswith("y"):
+                plural_action = action[:-1] + "ies"
+            else:
+                plural_action = action + "s"
+            result.append(f"{count} {plural_action}")
+
+    return result
 
 
-def get_project_locale_contribution_counts(contributions_qs):
+def get_project_locale_contribution_counts(contributions_qs, year_shown):
     counts = {}
 
-    for item in (
-        contributions_qs.annotate(
-            project_name=F("translation__entity__resource__project__name"),
-            project_slug=F("translation__entity__resource__project__slug"),
-            locale_name=F("translation__locale__name"),
-            locale_code=F("translation__locale__code"),
-            actions_month=F("translation__entity__date_created"),
+    # Change query fields depending on whether a year or month is being displayed
+    if year_shown:
+        annotated_contributions = (
+            contributions_qs.annotate(
+                project_name=F("translation__entity__resource__project__name"),
+                project_slug=F("translation__entity__resource__project__slug"),
+                locale_name=F("translation__locale__name"),
+                locale_code=F("translation__locale__code"),
+                actions_month=F("translation__entity__date_created"),
+            )
+            .values(
+                "project_name",
+                "project_slug",
+                "locale_name",
+                "locale_code",
+                "actions_month",
+            )
+            .annotate(count=Count("id"))
+            .values(
+                "project_name",
+                "project_slug",
+                "locale_name",
+                "locale_code",
+                "actions_month",
+                "action_type",
+                "count",
+            )
         )
-        .values(
-            "project_name",
-            "project_slug",
-            "locale_name",
-            "locale_code",
-            "actions_month",
+    else:
+        annotated_contributions = (
+            contributions_qs.annotate(
+                project_name=F("translation__entity__resource__project__name"),
+                project_slug=F("translation__entity__resource__project__slug"),
+                locale_name=F("translation__locale__name"),
+                locale_code=F("translation__locale__code"),
+            )
+            .values(
+                "project_name",
+                "project_slug",
+                "locale_name",
+                "locale_code",
+            )
+            .annotate(count=Count("id"))
+            .values(
+                "project_name",
+                "project_slug",
+                "locale_name",
+                "locale_code",
+                "action_type",
+                "count",
+            )
         )
-        .annotate(count=Count("id"))
-        .values(
-            "project_name",
-            "project_slug",
-            "locale_name",
-            "locale_code",
-            "actions_month",
-            "action_type",
-            "count",
-        )
-    ):
+
+    for item in annotated_contributions:
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
-        created_at = (item["actions_month"]).strftime("%B %Y")
+
+        # date_created only displayed in year view
+        if year_shown:
+            created_at = (item["actions_month"]).strftime("%B %Y")
 
         if item["action_type"] == "translation:created":
             action = f"{ intcomma(count) } translation{ pluralize(count) }"
@@ -432,9 +485,10 @@ def get_project_locale_contribution_counts(contributions_qs):
 
         if key in counts:
             counts[key]["count"] += count
-            if created_at not in counts[key]["actions_month"]:
+            if year_shown and created_at not in counts[key]["actions_month"]:
                 counts[key]["actions_month"][created_at] = []
-            counts[key]["actions_month"][created_at].append(action)
+            if year_shown:
+                counts[key]["actions_month"][created_at].append(action)
         else:
             counts[key] = {
                 "project": {
@@ -446,7 +500,7 @@ def get_project_locale_contribution_counts(contributions_qs):
                     "code": item["locale_code"],
                 },
                 "count": count,
-                "actions_month": {created_at: [action]},
+                "actions_month": {created_at: [action]} if year_shown else {},
             }
 
     for key, value in counts.items():
@@ -512,7 +566,9 @@ def get_contribution_timeline_data(
     contributions = {}
     for contribution_type in contribution_types:
         contributions_qs = contributions_map[contribution_type]
-        contribution_data = get_project_locale_contribution_counts(contributions_qs)
+        contribution_data = get_project_locale_contribution_counts(
+            contributions_qs, year_shown
+        )
 
         c_count = sum([value["count"] for _, value in contribution_data.items()])
         p_count = len(contribution_data)
@@ -546,8 +602,43 @@ def get_contribution_timeline_data(
             }
         )
 
-    return (
-        contributions,
-        timeline_title,
-        year_shown,
-    )
+    # We need to change structure of return obj if year is displayed on timeline
+    if year_shown:
+        restructured = {}
+
+        for contribution_title, contribution_data in contributions.items():
+            if contribution_title not in restructured:
+                restructured[contribution_title] = {}
+
+            for key, project_data in contribution_data["data"].items():
+                for month, actions in project_data["actions_month"].items():
+                    if month not in restructured[contribution_title]:
+                        restructured[contribution_title][month] = []
+
+                    restructured[contribution_title][month].append(
+                        {
+                            "project": project_data["project"],
+                            "locale": project_data["locale"],
+                            "actions": actions,
+                            "url": project_data["url"],
+                            "type": contribution_data["type"],
+                        }
+                    )
+
+        # Sort months from newest to oldest
+        for contribution_title in restructured:
+            sorted_months = dict(
+                sorted(
+                    restructured[contribution_title].items(),
+                    key=lambda x: datetime.datetime.strptime(x[0], "%B %Y"),
+                    reverse=True,
+                )
+            )
+            restructured[contribution_title] = sorted_months
+
+        for contribution_title, contribution_data in contributions.items():
+            restructured[contribution_title]["type"] = contribution_data["type"]
+
+        return (restructured, timeline_title, year_shown)
+
+    return (contributions, timeline_title, year_shown)

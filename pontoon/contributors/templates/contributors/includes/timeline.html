@@ -1,33 +1,62 @@
 <h3>{{ contribution_timeline.title }}</h3>
 
 {% if contribution_timeline.contributions == {} %}
-<p>No activity in this period.</p>
-{% else %}
-    {% for summary, details in contribution_timeline.contributions.items() %}
-    <h4 class="heading">
-        <span class="icon far {{ details.type }}"></span>
-        {{ summary }}
-    </h4>
-    <ul class="localizations">
-        {% for key, project_details in details.data.items() %}
-        <li>
-            <a href="{{ project_details.url }}">
-                <span class="stress">{{ project_details.project.name }}</span>
-                &middot; {{ project_details.locale.name }} <span class="stress">{{ project_details.locale.code }}</span>
-                <ul>
-                    {% for month, actions in project_details.actions_month.items() %}
-                    <li>{{ month }}
-                        <ul>
-                            {% for action in actions %}
-                            <li>{{ action }}</li>
+    <p>No activity in this period.</p>
+
+{% elif contribution_timeline.year_shown %}
+    {% for title, months in contribution_timeline.contributions.items() %}
+        <div class="contribution-group">
+            <h4 class="heading">
+                <span class="icon far {{ months.type }}"></span>
+                {{ title }}
+            </h4>
+            <ul class="localizations">
+                {% for month, projects in months.items() %}
+                    {% if month != 'type' %}
+                        <li>
+                            <span class="month">{{ month }}:</span>
+                            {% for project in projects %}
+                                {% if project is mapping %}
+                                    <a href="{{ project.url }}">
+                                        <span class="stress">{{ project.project.name }}</span> &middot; {{
+                                        project.locale.name }} <span class="stress">{{ project.locale.code }}</span>
+                                        <span class="contribution-count">{{ project.actions | join(', ') }}</span>
+                                    </a>
+                                {% else %}
+                                    <span>{{ project }}</span>
+                                {% endif %}
                             {% endfor %}
-                        </ul>
-                    </li>
+                        </li>
+                        <br/>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
+{% else %}
+    {% for title, values in contribution_timeline.contributions.items() %}
+    <div class="contribution-group">
+        <h4 class="heading">
+            <span class="icon far {{ values.type }}"></span>
+            {{ title }}
+        </h4>
+        <ul class="localizations">
+            {% for _, localization in values.data.items() %}
+            <li>
+                <a href="{{ localization.url }}">
+                    <span class="stress">{{ localization.project.name }}</span> &middot; {{
+                    localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
+                    {% for month, actions in localization.actions_month.items() %}
+                        <span class="month">{{ month }}:</span>
+                        {% for action in actions %}
+                        <span class="contribution-count">{{ ", ".join(action) }}</span>
+                        {% endfor %}
                     {% endfor %}
-                </ul>
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endfor %}
 {% endif %}
