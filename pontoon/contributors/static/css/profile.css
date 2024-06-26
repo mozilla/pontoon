@@ -446,6 +446,10 @@ svg.js-calendar-graph-svg {
   float: right;
 }
 
+#timeline .month-label {
+  color: var(--light-grey-2);
+}
+
 #show-more {
   background: var(--dark-grey-1);
   font-size: 16px;
