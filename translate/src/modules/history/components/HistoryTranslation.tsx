@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 import type { Entity } from '~/api/entity';
 import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
@@ -196,7 +196,11 @@ export function HistoryTranslationBase({
   }, [isReadOnlyEditor, setEditorFromHistory, translation.string]);
 
   const customDateString = (dateIso: string) => {
-    return format(new Date(dateIso), "EEEE, MMMM d yyyy 'at' h:mm a");
+    const date = new Date(dateIso);
+    if (!isValid(date)) {
+      return ' ';
+    }
+    return format(date, "EEEE, MMMM d yyyy 'at' h:mm a");
   };
 
   const review = {
