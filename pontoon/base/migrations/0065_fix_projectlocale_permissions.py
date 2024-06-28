@@ -6,7 +6,10 @@ from pontoon.base.signals import assign_group_permissions, create_group
 
 def fix_projectlocale_permissions(apps, schema_editor):
     for project, locale in [
+        ("common-voice", "cdo"),
+        ("common-voice", "dar"),
         ("common-voice", "nqo"),
+        ("common-voice", "shn"),
         ("firefox-bridge", "de"),
         ("firefox-bridge", "fr"),
         ("firefox-bridge", "it"),

@@ -183,6 +183,8 @@ def manage_project(request, slug=None, template="admin_project.html"):
                 )
 
                 for locale in locales:
+                    # The implicit pre_save and post_save signals sent here are required
+                    # to maintain django-guardian permissions.
                     ProjectLocale.objects.get_or_create(project=project, locale=locale)
 
                 project_locales = ProjectLocale.objects.filter(project=project)
