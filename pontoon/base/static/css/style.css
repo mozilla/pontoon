@@ -517,7 +517,7 @@ tfoot td a {
   text-align: left;
 }
 
-.notification {
+body > header > .notification {
   background: var(--tooltip-background);
   color: var(--status-translated);
   cursor: pointer;
@@ -530,14 +530,14 @@ tfoot td a {
   z-index: 100;
 }
 
-.notification li {
+body > header > .notification li {
   font-size: 14px;
   line-height: 60px;
   list-style: none;
   text-align: center;
 }
 
-.notification li.error {
+body > header > .notification li.error {
   color: var(--status-error);
 }
 

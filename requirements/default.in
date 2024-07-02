@@ -33,6 +33,7 @@ django-pipeline==3.0.0
 google-cloud-translate==3.8.4
 graphene-django==3.2.1
 gunicorn==19.9.0
+html2text==2024.2.26
 jsonfield==3.1.0
 jsonschema==2.6.0
 lxml==4.9.1

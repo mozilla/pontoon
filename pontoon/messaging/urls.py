@@ -4,6 +4,17 @@ from . import views
 
 
 urlpatterns = [
+    # Messaging center
+    path(
+        "messaging/",
+        views.messaging,
+        name="pontoon.messaging",
+    ),
+    path(
+        "send-message/",
+        views.send_message,
+        name="pontoon.messaging.send_message",
+    ),
     # Email consent
     path(
         "email-consent/",
