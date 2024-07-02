@@ -427,13 +427,19 @@ def get_project_locale_contribution_counts(contributions_qs):
     return counts
 
 
-def get_contribution_timeline_data(user, contribution_type=None, day=None):
+def get_contribution_timeline_data(
+    user, year_shown=None, contribution_type=None, day=None
+):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
-    start = end - relativedelta(months=1)
-    timeline_title = "Contribution activity in the last month"
+
+    if not year_shown:
+        start = end - relativedelta(day=1)
+        timeline_title = "Contribution activity in this month"
+    else:
+        timeline_title = "Contribution activity in the past year"
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
@@ -441,10 +447,69 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
         date = format_datetime(start, format="date")
         timeline_title = f"Contribution activity on { date }"
 
-    contribution_period = Q(created_at__gte=start, created_at__lte=end)
-    contributions_map = get_contributions_map(user, contribution_period)
+    contributions = {}
 
-    # Get a list of explicit contribution types
+    if year_shown:
+        # Perform query 12 times and append to contributions
+        for i in range(12):
+            month_start = end - relativedelta(months=i, day=1)
+            month_end = end - relativedelta(months=i, day=31)
+            contribution_period = Q(
+                created_at__gte=month_start, created_at__lte=month_end
+            )
+            month_start_name = month_start.strftime("%B %Y")
+            contributions_map = get_contributions_map(user, contribution_period)
+            contributions.update(
+                get_monthly_contributions(
+                    contributions_map,
+                    user,
+                    month_start,
+                    month_end,
+                    contribution_type,
+                    month_start_name,
+                )
+            )
+    else:
+        contribution_period = Q(created_at__gte=start, created_at__lte=end)
+        contributions_map = get_contributions_map(user, contribution_period)
+        contributions.update(
+            get_monthly_contributions(
+                contributions_map, user, start, end, contribution_type
+            )
+        )
+
+    # Sort object by months if displaying a year
+    if year_shown:
+        restructured = {}
+
+        for title, content in contributions.items():
+            month_name = content["month_name"]
+            type_name = content["type"]
+
+            if month_name not in restructured:
+                restructured[month_name] = {}
+
+            if title not in restructured[month_name]:
+                restructured[month_name][title] = {"type": type_name, "data": {}}
+
+            for key, value in content["data"].items():
+                if key not in restructured[month_name][title]["data"]:
+                    restructured[month_name][title]["data"][key] = value
+                else:
+                    restructured[month_name][title]["data"][key]["actions"].extend(
+                        value["actions"]
+                    )
+                    restructured[month_name][title]["data"][key]["count"] += value[
+                        "count"
+                    ]
+        return (restructured, timeline_title, year_shown)
+
+    return (contributions, timeline_title, year_shown)
+
+
+def get_monthly_contributions(
+    contributions_map, user, start, end, contribution_type, month_name=None
+):
     default_contribution_types = ["user_translations", "user_reviews"]
     if contribution_type not in contributions_map.keys():
         contribution_types = default_contribution_types
@@ -473,7 +538,7 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
         },
     }
 
-    contributions = {}
+    monthly_contributions = {}
     for contribution_type in contribution_types:
         contributions_qs = contributions_map[contribution_type]
         contribution_data = get_project_locale_contribution_counts(contributions_qs)
@@ -484,7 +549,7 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
         if c_count == 0:
             continue
 
-        # Generate localizaton URL and add it to the data dict
+        # Generate localization URL and add it to the data dict
         params = params_map[contribution_type]
         for key, val in contribution_data.items():
             url = reverse(
@@ -501,16 +566,14 @@ def get_contribution_timeline_data(user, contribution_type=None, day=None):
         elif contribution_type == "peer_reviews":
             title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
 
-        contributions.update(
+        monthly_contributions.update(
             {
                 title: {
                     "data": contribution_data,
                     "type": contribution_type.replace("_", "-"),
+                    "month_name": month_name,
                 }
             }
         )
 
-    return (
-        contributions,
-        timeline_title,
-    )
+    return monthly_contributions

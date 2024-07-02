@@ -296,8 +296,12 @@ var Pontoon = (function (my) {
             .find('.selector .value')
             .html($(this).html());
 
+          // Rerender the show more button in case it was hidden
+          $('#show-more').show();
+
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
+          let yearShown = $(this).data('year_shown');
 
           // Update contribution graph
           $.ajax({
@@ -309,6 +313,8 @@ var Pontoon = (function (my) {
             success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
+              yearShown = false;
+              $('#show-more').data('year_shown', yearShown);
               Pontoon.profile.renderContributionGraph();
             },
             error: function () {
@@ -352,6 +358,36 @@ var Pontoon = (function (my) {
             },
             success: function (data) {
               $('#timeline').html(data);
+              $('#show-more').hide();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
+      handleShowMoreClick: function () {
+        $('#show-more').click(function () {
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+          let yearShown = $(this).data('year_shown');
+
+          // Toggle year shown
+          yearShown = true;
+          $('#show-more').hide();
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              year_shown: yearShown,
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+              // Re-render timeline to show last year of activity
+              $('#show-more').data('year_shown', yearShown);
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -370,6 +406,7 @@ Pontoon.insights.renderCharts();
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
 Pontoon.profile.handleContributionGraphClick();
+Pontoon.profile.handleShowMoreClick();
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {

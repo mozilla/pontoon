@@ -267,7 +267,8 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_
 def test_get_contribution_timeline_data_without_actions(user_a):
     assert utils.get_contribution_timeline_data(user_a) == (
         {},
-        "Contribution activity in the last month",
+        "Contribution activity in this month",
+        None,
     )
 
 
@@ -276,7 +277,7 @@ def test_get_contribution_timeline_data_with_actions(
     user_a, yesterdays_action_user_a, action_user_b
 ):
     end = timezone.now()
-    start = end - relativedelta(months=1)
+    start = end - relativedelta(day=1)
 
     params = {
         "reviewer": user_a.email,
@@ -302,7 +303,9 @@ def test_get_contribution_timeline_data_with_actions(
                     },
                 },
                 "type": "user-reviews",
+                "month_name": None,
             }
         },
-        "Contribution activity in the last month",
+        "Contribution activity in this month",
+        None,
     )
