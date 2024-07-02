@@ -369,13 +369,13 @@ history-Translation--span-copied =
     .title = Copied ({ $machinerySources })
 
 history-translation--approved =
-    .title = Approved by { $user }
+    .title = Approved by { $user } on { DATETIME($reviewedDate, dateStyle:"long", timeStyle:"medium") }
 history-translation--approved-anonymous =
-    .title = Approved
+    .title = Approved on { DATETIME($reviewedDate, dateStyle:"long", timeStyle:"medium") }
 history-translation--rejected =
-    .title = Rejected by { $user }
+    .title = Rejected by { $user } on { DATETIME($reviewedDate, dateStyle:"long", timeStyle:"medium") }
 history-translation--rejected-anonymous =
-    .title = Rejected
+    .title = Rejected on { DATETIME($reviewedDate, dateStyle:"long", timeStyle:"medium") }
 history-translation--unreviewed =
     .title = Not reviewed yet
 

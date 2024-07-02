@@ -196,7 +196,7 @@ export function HistoryTranslationBase({
 
   const review = {
     id: 'history-translation--unreviewed',
-    vars: { user: '' },
+    vars: { user: '', reviewedDate: new Date(translation.dateIso) },
     attrs: { title: true },
   };
   if (translation.approved) {
