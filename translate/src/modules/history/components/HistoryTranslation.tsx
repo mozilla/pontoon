@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
+import { format } from 'date-fns';
 
 import type { Entity } from '~/api/entity';
 import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
@@ -233,6 +234,17 @@ export function HistoryTranslationBase({
     !isReadOnlyEditor;
   let canComment = user.isAuthenticated;
 
+  const customDateFormat = (date: Date) => {
+    return new Intl.DateTimeFormat('en', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    }).format(date);
+  };
+
   const className = classNames(
     'translation',
     translation.approved
@@ -289,7 +301,8 @@ export function HistoryTranslationBase({
                 <ReactTimeAgo
                   dir='ltr'
                   date={new Date(translation.dateIso)}
-                  title={`${translation.date} UTC`}
+                  title=''
+                  formatVerboseDate={customDateFormat}
                 />
               </div>
               <menu className='toolbar'>
