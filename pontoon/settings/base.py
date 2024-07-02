@@ -769,21 +769,72 @@ PASSWORD_HASHERS = (
 )
 
 # Logging
+# Get environment variables
+LOG_TO_FILE = os.getenv("LOG_TO_FILE", "False") == "True"
+LOGGING_FORMAT = os.getenv("LOGGING_FORMAT", "simple")
+
+# Ensure the logs directory exists
+if LOG_TO_FILE:
+    log_dir = path("logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+# Define handlers
+console_handler = {
+    "class": "logging.StreamHandler",
+    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+}
+
+django_file_handler = {
+    "class": "logging.handlers.RotatingFileHandler",
+    "filename": path("logs", "django_debug.log"),
+    "maxBytes": 1024 * 1024 * 2,  # 2 MB
+    "backupCount": 3,
+    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+}
+
+pontoon_file_handler = {
+    "class": "logging.handlers.RotatingFileHandler",
+    "filename": path("logs", "pontoon_debug.log"),
+    "maxBytes": 1024 * 1024 * 2,  # 2 MB
+    "backupCount": 3,
+    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+}
+
+# Define logging configuration
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "handlers": {
+        "console": console_handler,
+    },
     "formatters": {
-        "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
+        "verbose": {
+            "format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s",
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s",
+        },
     },
     "loggers": {
-        "django": {"handlers": ["console"]},
+        "django": {
+            "handlers": ["console"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+            "propagate": True,
+        },
         "pontoon": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
+            "propagate": True,
         },
     },
 }
+
+# Adding file handlers if logging to file is enabled
+if LOG_TO_FILE:
+    LOGGING["handlers"]["django_file"] = django_file_handler
+    LOGGING["handlers"]["pontoon_file"] = pontoon_file_handler
+    LOGGING["loggers"]["django"]["handlers"].append("django_file")
+    LOGGING["loggers"]["pontoon"]["handlers"].append("pontoon_file")
 
 if DEBUG:
     LOGGING["handlers"]["console"]["formatter"] = "verbose"

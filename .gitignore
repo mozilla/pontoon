@@ -26,6 +26,7 @@ venv
 /media/
 .cache/
 coverage/
+*.log
 
 # Docker
 .server-build
