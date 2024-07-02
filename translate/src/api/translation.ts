@@ -30,12 +30,14 @@ export type EntityTranslation = {
 export type HistoryTranslation = {
   readonly approved: boolean;
   readonly approvedUser: string;
+  readonly approvedDate: string | null;
   readonly pretranslated: boolean;
   readonly date: string;
   readonly dateIso: string;
   readonly fuzzy: boolean;
   readonly pk: number;
   readonly rejected: boolean;
+  readonly rejectedDate: string | null;
   readonly string: string;
   readonly uid: number | null | undefined;
   readonly rejectedUser: string;

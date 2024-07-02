@@ -418,7 +418,13 @@ def get_translation_history(request):
                 "date": t.date.strftime("%b %d, %Y %H:%M"),
                 "date_iso": t.date.isoformat(),
                 "approved_user": User.display_name_or_blank(t.approved_user),
+                "approved_date": t.approved_user.latest_action.created_at
+                if t.approved_user and t.approved_user.latest_action
+                else None,
                 "rejected_user": User.display_name_or_blank(t.rejected_user),
+                "rejected_date": t.rejected_user.latest_action.created_at
+                if t.rejected_user and t.rejected_user.latest_action
+                else None,
                 "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
                 "machinery_sources": t.machinery_sources_values,
             }
