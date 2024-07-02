@@ -1,0 +1,36 @@
+#main .check-list {
+  cursor: pointer;
+  list-style: none;
+  margin: 0;
+  display: inline-block;
+  text-align: left;
+
+  .check-box {
+    padding: 8px 0;
+  }
+
+  .check-box:last-child {
+    padding-bottom: 0;
+  }
+
+  .check-box-wrapper {
+    color: var(--light-grey-7);
+    display: table;
+    font-size: 16px;
+    font-weight: 300;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 342px;
+  }
+
+  .check-box-wrapper:hover {
+    color: var(--white-1);
+  }
+
+  .fa {
+    margin-left: 27px;
+    margin-right: 0;
+  }
+}

@@ -182,12 +182,10 @@ def manage_project(request, slug=None, template="admin_project.html"):
                     .delete()
                 )
 
-                project_locales = [
-                    ProjectLocale(project=project, locale=locale) for locale in locales
-                ]
-                ProjectLocale.objects.bulk_create(
-                    project_locales, ignore_conflicts=True
-                )
+                for locale in locales:
+                    # The implicit pre_save and post_save signals sent here are required
+                    # to maintain django-guardian permissions.
+                    ProjectLocale.objects.get_or_create(project=project, locale=locale)
 
                 project_locales = ProjectLocale.objects.filter(project=project)
 
