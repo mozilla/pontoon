@@ -2,7 +2,6 @@ import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import React, { useCallback, useContext, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
-import { format } from 'date-fns';
 
 import type { Entity } from '~/api/entity';
 import type { ChangeOperation, HistoryTranslation } from '~/api/translation';
