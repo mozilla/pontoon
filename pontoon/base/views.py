@@ -415,10 +415,11 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "date": t.date.strftime("%b %d, %Y %H:%M"),
-                "date_iso": t.date.isoformat(),
+                "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
+                "approved_date": t.approved_date,
                 "rejected_user": User.display_name_or_blank(t.rejected_user),
+                "rejected_date": t.rejected_date,
                 "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
                 "machinery_sources": t.machinery_sources_values,
             }

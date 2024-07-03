@@ -196,10 +196,13 @@ export function HistoryTranslationBase({
 
   const review = {
     id: 'history-translation--unreviewed',
-    vars: { user: '', reviewedDate: new Date(translation.dateIso) },
+    vars: { user: '', reviewedDate: new Date() },
     attrs: { title: true },
   };
   if (translation.approved) {
+    if (translation.approvedDate) {
+      review.vars.reviewedDate = new Date(translation.approvedDate);
+    }
     if (translation.approvedUser) {
       review.vars.user = translation.approvedUser;
       review.id = 'history-translation--approved';
@@ -207,6 +210,9 @@ export function HistoryTranslationBase({
       review.id = 'history-translation--approved-anonymous';
     }
   } else if (translation.rejected) {
+    if (translation.rejectedDate) {
+      review.vars.reviewedDate = new Date(translation.rejectedDate);
+    }
     if (translation.rejectedUser) {
       review.vars.user = translation.rejectedUser;
       review.id = 'history-translation--rejected';
@@ -226,6 +232,13 @@ export function HistoryTranslationBase({
     (isTranslator || (ownTranslation && !translation.approved)) &&
     !isReadOnlyEditor;
   let canComment = user.isAuthenticated;
+
+  const customDateFormat = (date: Date) => {
+    return new Intl.DateTimeFormat('en', {
+      dateStyle: 'long',
+      timeStyle: 'medium',
+    }).format(date);
+  };
 
   const className = classNames(
     'translation',
@@ -282,8 +295,8 @@ export function HistoryTranslationBase({
                 </Localized>
                 <ReactTimeAgo
                   dir='ltr'
-                  date={new Date(translation.dateIso)}
-                  title={`${translation.date} UTC`}
+                  date={new Date(translation.date)}
+                  formatVerboseDate={customDateFormat}
                 />
               </div>
               <menu className='toolbar'>
