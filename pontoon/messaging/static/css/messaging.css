@@ -39,6 +39,16 @@
 
     .message-type {
       .check-list {
+        .check-box.transactional {
+          display: none;
+          padding-left: 20px;
+
+          .help {
+            padding: 5px 0 0 30px;
+            font-style: italic;
+          }
+        }
+
         .check-box-wrapper {
           text-align: left;
         }

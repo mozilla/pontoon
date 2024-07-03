@@ -47,6 +47,7 @@ def send_message(request):
 
         is_notification = form.cleaned_data.get("notification")
         is_email = form.cleaned_data.get("email")
+        is_transactional = form.cleaned_data.get("transactional")
         subject = form.cleaned_data.get("subject")
         body = form.cleaned_data.get("body")
 
@@ -63,9 +64,13 @@ def send_message(request):
                 )
 
         if is_email:
-            footer = """<br><br>
+            footer = (
+                """<br><br>
 You’re receiving this email as a contributor to Mozilla localization on Pontoon. <br>To no longer receive emails like these, unsubscribe here: <a href="https://pontoon.mozilla.org/unsubscribe/{ uuid }">Unsubscribe</a>.
             """
+                if not is_transactional
+                else ""
+            )
             html_template = body + footer
             text_template = utils.html_to_plain_text_with_links(html_template)
 
