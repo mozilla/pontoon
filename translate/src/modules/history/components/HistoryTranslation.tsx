@@ -235,12 +235,8 @@ export function HistoryTranslationBase({
 
   const customDateFormat = (date: Date) => {
     return new Intl.DateTimeFormat('en', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+      dateStyle: 'long',
+      timeStyle: 'medium',
     }).format(date);
   };
 
@@ -299,7 +295,7 @@ export function HistoryTranslationBase({
                 </Localized>
                 <ReactTimeAgo
                   dir='ltr'
-                  date={new Date(translation.dateIso)}
+                  date={new Date(translation.date)}
                   title=''
                   formatVerboseDate={customDateFormat}
                 />

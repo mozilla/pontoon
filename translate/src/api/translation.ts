@@ -33,7 +33,6 @@ export type HistoryTranslation = {
   readonly approvedDate: string | null;
   readonly pretranslated: boolean;
   readonly date: string;
-  readonly dateIso: string;
   readonly fuzzy: boolean;
   readonly pk: number;
   readonly rejected: boolean;

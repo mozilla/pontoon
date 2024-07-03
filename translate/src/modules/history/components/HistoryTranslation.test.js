@@ -19,7 +19,6 @@ describe('<HistoryTranslationComponent>', () => {
     approvedUser: '',
     pretranslated: false,
     date: '',
-    dateIso: '',
     fuzzy: false,
     pk: 1,
     rejected: false,
