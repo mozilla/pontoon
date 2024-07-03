@@ -40,6 +40,7 @@ export function MachineryTranslationComponent({
   const isSelected = element === index;
 
   const { llmTranslation } = useLLMTranslation(translation);
+  const locale = useContext(Locale);
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
@@ -52,6 +53,8 @@ export function MachineryTranslationComponent({
       if (llmTranslation) {
         logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',
+          localeCode: locale.code,
+          targetLanguage: locale.name,
         });
       }
     }
