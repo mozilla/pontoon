@@ -296,7 +296,6 @@ export function HistoryTranslationBase({
                 <ReactTimeAgo
                   dir='ltr'
                   date={new Date(translation.date)}
-                  
                   formatVerboseDate={customDateFormat}
                 />
               </div>
