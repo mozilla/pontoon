@@ -44,7 +44,7 @@ export function GoogleTranslation({
       await transformLLMTranslation(translation, characteristic, locale.name);
       logUXAction('LLM Dropdown Select', 'LLM Feature Adoption', {
         optionSelected: characteristic,
-        targetLanguage: locale.name,
+        localeCode: locale.code,
       });
     }
     setDropdownOpen(false);
