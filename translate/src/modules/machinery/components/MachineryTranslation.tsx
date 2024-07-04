@@ -54,7 +54,6 @@ export function MachineryTranslationComponent({
         logUXAction('LLM Translation Copied', 'LLM Feature Adoption', {
           action: 'Copy LLM Translation',
           localeCode: locale.code,
-          targetLanguage: locale.name,
         });
       }
     }
