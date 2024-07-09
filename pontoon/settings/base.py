@@ -771,7 +771,6 @@ PASSWORD_HASHERS = (
 # Logging
 # Get environment variables
 LOG_TO_FILE = os.getenv("LOG_TO_FILE", "False") == "True"
-LOGGING_FORMAT = os.getenv("LOGGING_FORMAT", "simple")
 
 # Ensure the logs directory exists
 if LOG_TO_FILE:
@@ -781,7 +780,7 @@ if LOG_TO_FILE:
 # Define handlers
 console_handler = {
     "class": "logging.StreamHandler",
-    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+    "formatter": "verbose",
 }
 
 django_file_handler = {
@@ -789,7 +788,7 @@ django_file_handler = {
     "filename": path("logs", "django_debug.log"),
     "maxBytes": 1024 * 1024 * 2,  # 2 MB
     "backupCount": 3,
-    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+    "formatter": "verbose",
 }
 
 pontoon_file_handler = {
@@ -797,7 +796,7 @@ pontoon_file_handler = {
     "filename": path("logs", "pontoon_debug.log"),
     "maxBytes": 1024 * 1024 * 2,  # 2 MB
     "backupCount": 3,
-    "formatter": "verbose" if LOGGING_FORMAT == "verbose" else "simple",
+    "formatter": "verbose",
 }
 
 # Define logging configuration
@@ -810,9 +809,6 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s",
-        },
-        "simple": {
-            "format": "%(levelname)s %(message)s",
         },
     },
     "loggers": {
