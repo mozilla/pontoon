@@ -471,15 +471,17 @@ def combine_actions(actions_list):
     Combine print statements for identical actions in the same project and month
     """
     combined = defaultdict(int)
+    total_count = 0
     for action in actions_list:
         parts = action.split()
         count = int(parts[0])
         action_type = " ".join(parts[1:])
         combined[action_type] += count
+        total_count += count
 
     return [
-        f"{count} {action}{ pluralize(count) }" for action, count in combined.items()
-    ], count
+        f"{count} {action}" for action, count in combined.items()
+    ], total_count
 
 
 def get_contribution_timeline_data(
@@ -573,8 +575,9 @@ def get_contribution_timeline_data(
         )
 
     if year_shown:
-        restructured = defaultdict(lambda: defaultdict(list))
 
+        # Organize return object by month
+        restructured = defaultdict(lambda: defaultdict(list))
         for entry in contributions.values():
             contribution_type = entry["type"]
             for key, value in entry["data"].items():
@@ -587,7 +590,7 @@ def get_contribution_timeline_data(
                         "count": value["count"],
                         "url": value["url"],
                     }
-                    # Search for existing entry, if not found then create new entry
+                    # Search if entry already exists. If not, create new entry
                     found = False
                     for existing_entry in restructured[date][contribution_type]:
                         if (
@@ -606,8 +609,29 @@ def get_contribution_timeline_data(
                     if not found:
                         restructured[date][contribution_type].append(action_entry)
 
+        # Convert back to regular dict for printing
         restructured = {k: dict(v) for k, v in restructured.items()}
-        print(restructured)
+
+        # Re-generate titles for each contribution_type in each month
+        for date, types in restructured.items():
+            for contribution_type, entries in types.items():
+                c_count = sum(entry["count"] for entry in entries)
+                p_count = len(entries)
+                
+                if contribution_type == "user-translations":
+                    title = f"Submitted { intcomma(c_count) } translation{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                elif contribution_type == "user-reviews":
+                    title = f"Reviewed { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                elif contribution_type == "peer-reviews":
+                    title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
+                
+                restructured[date][contribution_type] = {"title": title, "entries": entries}
+                
+        return (
+            restructured,
+            timeline_title,
+            year_shown
+        )
 
     return (
         contributions,

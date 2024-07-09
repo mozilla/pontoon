@@ -1,31 +1,54 @@
-{% macro render_contribution_group(title, project_data) %}
-<div class="contribution-group">
-    <h4 class="heading">
-        <span class="icon far {{ project_data.type }}"></span>
-        {{ title }}
-    </h4>
-    <ul class="localizations">
-        {% for _, localization in project_data.data.items() %}
-        <li>
-            <a href="{{ localization.url }}">
-                <span class="stress">{{ localization.project.name }}</span> &middot; {{
-                localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
-                <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-{% endmacro %}
-
 <h3>{{ contribution_timeline.title }}</h3>
 
 {% if contribution_timeline.show_year %}
-    {{ contribution_timeline.contributions }}
-{% else %}
-    {% for title, project_data in contribution_timeline.contributions.items() %}
-        {{ render_contribution_group(title, project_data) }}
+
+    {% for month, contribution_types in contribution_timeline.contributions.items() %}
+    <div class="month-group">
+        <h4>{{ month }}</h4>
+        {% for contribution_type, details in contribution_types.items() %}
+            <div class="contribution-group">
+                <h4 class="heading">
+                    <span class="icon far {{ contribution_type }}"></span>
+                    {{ details.title }}
+                </h4>
+                <ul class="localizations">
+                    {% for localization in details.entries %}
+                    <li>
+                        <a href="{{ localization.url }}">
+                            <span class="stress">{{ localization.project.name }}</span> &middot; {{
+                            localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
+                            <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
     {% endfor %}
+
+{% else %}
+
+    {% for title, project_data in contribution_timeline.contributions.items() %}
+        <div class="contribution-group">
+            <h4 class="heading">
+                <span class="icon far {{ project_data.type }}"></span>
+                {{ title }}
+            </h4>
+            <ul class="localizations">
+                {% for _, localization in project_data.data.items() %}
+                <li>
+                    <a href="{{ localization.url }}">
+                        <span class="stress">{{ localization.project.name }}</span> &middot; {{
+                        localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
+                        <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
 {% endif %}
 
 {% if contribution_timeline.contributions == {} %}
