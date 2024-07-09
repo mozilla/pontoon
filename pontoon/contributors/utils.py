@@ -479,9 +479,7 @@ def combine_actions(actions_list):
         combined[action_type] += count
         total_count += count
 
-    return [
-        f"{count} {action}" for action, count in combined.items()
-    ], total_count
+    return [f"{count} {action}" for action, count in combined.items()], total_count
 
 
 def get_contribution_timeline_data(
@@ -575,7 +573,6 @@ def get_contribution_timeline_data(
         )
 
     if year_shown:
-
         # Organize return object by month
         restructured = defaultdict(lambda: defaultdict(list))
         for entry in contributions.values():
@@ -617,21 +614,20 @@ def get_contribution_timeline_data(
             for contribution_type, entries in types.items():
                 c_count = sum(entry["count"] for entry in entries)
                 p_count = len(entries)
-                
+
                 if contribution_type == "user-translations":
                     title = f"Submitted { intcomma(c_count) } translation{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
                 elif contribution_type == "user-reviews":
                     title = f"Reviewed { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
                 elif contribution_type == "peer-reviews":
                     title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
-                
-                restructured[date][contribution_type] = {"title": title, "entries": entries}
-                
-        return (
-            restructured,
-            timeline_title,
-            year_shown
-        )
+
+                restructured[date][contribution_type] = {
+                    "title": title,
+                    "entries": entries,
+                }
+
+        return (restructured, timeline_title, year_shown)
 
     return (
         contributions,
