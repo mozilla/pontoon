@@ -21,14 +21,7 @@
 <h3>{{ contribution_timeline.title }}</h3>
 
 {% if contribution_timeline.show_year %}
-    {% for month, month_data in contribution_timeline.contributions.items() %}
-    <div class="contribution-year">
-        <span class="month-label">{{ month }}</span>
-        {% for title, project_data in month_data.items() %}
-            {{ render_contribution_group(title, project_data) }}
-        {% endfor %}
-    </div>
-    {% endfor %}
+    {{ contribution_timeline.contributions }}
 {% else %}
     {% for title, project_data in contribution_timeline.contributions.items() %}
         {{ render_contribution_group(title, project_data) }}

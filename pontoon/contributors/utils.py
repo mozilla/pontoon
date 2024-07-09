@@ -385,14 +385,30 @@ def get_project_locale_contribution_counts(contributions_qs):
             project_slug=F("translation__entity__resource__project__slug"),
             locale_name=F("translation__locale__name"),
             locale_code=F("translation__locale__code"),
+            translation_created_date=F("translation__date"),
+            translation_rejected_date=F("translation__rejected_date"),
+            translation_approved_date=F("translation__approved_date"),
         )
-        .values("project_name", "project_slug", "locale_name", "locale_code")
-        .annotate(count=Count("id"))
         .values(
             "project_name",
             "project_slug",
             "locale_name",
             "locale_code",
+            "translation_created_date",
+            "translation_rejected_date",
+            "translation_approved_date",
+        )
+        .annotate(
+            count=Count("id"),
+        )
+        .values(
+            "project_name",
+            "project_slug",
+            "locale_name",
+            "locale_code",
+            "translation_created_date",
+            "translation_rejected_date",
+            "translation_approved_date",
             "action_type",
             "count",
         )
@@ -400,16 +416,31 @@ def get_project_locale_contribution_counts(contributions_qs):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
 
+        date = None
         if item["action_type"] == "translation:created":
             action = f"{ intcomma(count) } translation{ pluralize(count) }"
+            date = item.get("translation_created_date")
+            if date:
+                date = date.strftime("%B %Y")
         elif item["action_type"] == "translation:approved":
             action = f"{ intcomma(count) } approved"
+            date = item.get("translation_approved_date")
+            if date:
+                date = date.strftime("%B %Y")
+            else:
+                date = "empty for some reason"
         elif item["action_type"] == "translation:rejected":
             action = f"{ intcomma(count) } rejected"
+            date = item.get("translation_rejected_date")
+            if date:
+                date = date.strftime("%B %Y")
+            else:
+                date = "empty for some reason"
 
         if key in counts.keys():
-            counts[key]["actions"].append(action)
+            counts[key]["action_dates"].append({"action": action, "date": date})
             counts[key]["count"] += count
+
         else:
             counts[key] = {
                 "project": {
@@ -420,23 +451,48 @@ def get_project_locale_contribution_counts(contributions_qs):
                     "name": item["locale_name"],
                     "code": item["locale_code"],
                 },
-                "actions": [action],
+                "action_dates": [
+                    {
+                        "action": action,
+                        "date": date,
+                    }
+                ],
                 "count": count,
             }
-
     return counts
 
 
+def get_monthly_timeline_titles(contribution_type, count):
+    return "Baby got that water"
+
+
+def combine_actions(actions_list):
+    """
+    Combine print statements for identical actions in the same project and month
+    """
+    combined = defaultdict(int)
+    for action in actions_list:
+        parts = action.split()
+        count = int(parts[0])
+        action_type = " ".join(parts[1:])
+        combined[action_type] += count
+
+    return [
+        f"{count} {action}{ pluralize(count) }" for action, count in combined.items()
+    ], count
+
+
 def get_contribution_timeline_data(
-    user, show_year=False, contribution_type=None, day=None
+    user, year_shown=False, contribution_type=None, day=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
 
-    if show_year:
-        timeline_title = "Contribution activity in the past year"
+    if year_shown:
+        start = end - relativedelta(years=1, day=1)
+        timeline_title = "Contribution activity in the last year"
     else:
         start = end - relativedelta(day=1)
         timeline_title = "Contribution activity in this month"
@@ -447,69 +503,10 @@ def get_contribution_timeline_data(
         date = format_datetime(start, format="date")
         timeline_title = f"Contribution activity on { date }"
 
-    contributions = {}
+    contribution_period = Q(created_at__gte=start, created_at__lte=end)
+    contributions_map = get_contributions_map(user, contribution_period)
 
-    if show_year:
-        # Perform query 12 times and append to contributions
-        for i in range(12):
-            month_start = end - relativedelta(months=i, day=1)
-            month_end = end - relativedelta(months=i, day=31)
-            contribution_period = Q(
-                created_at__gte=month_start, created_at__lte=month_end
-            )
-            month_start_name = month_start.strftime("%B %Y")
-            contributions_map = get_contributions_map(user, contribution_period)
-            contributions.update(
-                get_monthly_contributions(
-                    contributions_map,
-                    user,
-                    month_start,
-                    month_end,
-                    contribution_type,
-                    month_start_name,
-                )
-            )
-    else:
-        contribution_period = Q(created_at__gte=start, created_at__lte=end)
-        contributions_map = get_contributions_map(user, contribution_period)
-        contributions.update(
-            get_monthly_contributions(
-                contributions_map, user, start, end, contribution_type
-            )
-        )
-
-    # Sort object by months if displaying a year
-    if show_year:
-        restructured = {}
-
-        for title, content in contributions.items():
-            month_name = content["month_name"]
-            type_name = content["type"]
-
-            if month_name not in restructured:
-                restructured[month_name] = {}
-
-            if title not in restructured[month_name]:
-                restructured[month_name][title] = {"type": type_name, "data": {}}
-
-            for key, value in content["data"].items():
-                if key not in restructured[month_name][title]["data"]:
-                    restructured[month_name][title]["data"][key] = value
-                else:
-                    restructured[month_name][title]["data"][key]["actions"].extend(
-                        value["actions"]
-                    )
-                    restructured[month_name][title]["data"][key]["count"] += value[
-                        "count"
-                    ]
-        return (restructured, timeline_title, show_year)
-
-    return (contributions, timeline_title, show_year)
-
-
-def get_monthly_contributions(
-    contributions_map, user, start, end, contribution_type, month_name=None
-):
+    # Get a list of explicit contribution types
     default_contribution_types = ["user_translations", "user_reviews"]
     if contribution_type not in contributions_map.keys():
         contribution_types = default_contribution_types
@@ -538,7 +535,7 @@ def get_monthly_contributions(
         },
     }
 
-    monthly_contributions = {}
+    contributions = {}
     for contribution_type in contribution_types:
         contributions_qs = contributions_map[contribution_type]
         contribution_data = get_project_locale_contribution_counts(contributions_qs)
@@ -549,7 +546,7 @@ def get_monthly_contributions(
         if c_count == 0:
             continue
 
-        # Generate localization URL and add it to the data dict
+        # Generate localizaton URL and add it to the data dict
         params = params_map[contribution_type]
         for key, val in contribution_data.items():
             url = reverse(
@@ -566,14 +563,54 @@ def get_monthly_contributions(
         elif contribution_type == "peer_reviews":
             title = f"Received review for { intcomma(c_count) } suggestion{ pluralize(c_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
 
-        monthly_contributions.update(
+        contributions.update(
             {
                 title: {
                     "data": contribution_data,
                     "type": contribution_type.replace("_", "-"),
-                    "month_name": month_name,
                 }
             }
         )
 
-    return monthly_contributions
+    if year_shown:
+        restructured = defaultdict(lambda: defaultdict(list))
+
+        for entry in contributions.values():
+            contribution_type = entry["type"]
+            for key, value in entry["data"].items():
+                for action_date in value["action_dates"]:
+                    date = action_date["date"]
+                    action_entry = {
+                        "project": value["project"],
+                        "locale": value["locale"],
+                        "actions": [action_date["action"]],
+                        "count": value["count"],
+                        "url": value["url"],
+                    }
+                    # Search for existing entry, if not found then create new entry
+                    found = False
+                    for existing_entry in restructured[date][contribution_type]:
+                        if (
+                            existing_entry["project"] == action_entry["project"]
+                            and existing_entry["locale"] == action_entry["locale"]
+                            and existing_entry["url"] == action_entry["url"]
+                        ):
+                            existing_entry["actions"].extend(action_entry["actions"])
+                            existing_entry["actions"], count = combine_actions(
+                                existing_entry["actions"]
+                            )
+                            existing_entry["count"] = count
+                            found = True
+                            break
+
+                    if not found:
+                        restructured[date][contribution_type].append(action_entry)
+
+        restructured = {k: dict(v) for k, v in restructured.items()}
+        print(restructured)
+
+    return (
+        contributions,
+        timeline_title,
+        year_shown,
+    )
