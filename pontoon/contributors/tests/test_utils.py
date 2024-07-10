@@ -268,7 +268,7 @@ def test_get_contribution_timeline_data_without_actions(user_a):
     assert utils.get_contribution_timeline_data(user_a) == (
         {},
         "Contribution activity in this month",
-        None,
+        False,
     )
 
 
@@ -297,15 +297,14 @@ def test_get_contribution_timeline_data_with_actions(
                             "name": "Klingon",
                             "code": "kg",
                         },
-                        "actions": ["1 approved"],
+                        "action_dates": ["1 approved"],
                         "count": 1,
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },
                 "type": "user-reviews",
-                "month_name": None,
             }
         },
         "Contribution activity in this month",
-        None,
+        False,
     )
