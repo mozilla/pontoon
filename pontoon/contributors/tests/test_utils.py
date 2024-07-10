@@ -268,7 +268,6 @@ def test_get_contribution_timeline_data_without_actions(user_a):
     assert utils.get_contribution_timeline_data(user_a) == (
         {},
         "Contribution activity in this month",
-        False,
     )
 
 
@@ -306,5 +305,4 @@ def test_get_contribution_timeline_data_with_actions(
             }
         },
         "Contribution activity in this month",
-        False,
     )

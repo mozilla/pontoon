@@ -312,7 +312,6 @@ var Pontoon = (function (my) {
             success: function ({ contributions, title }) {
               $('#contribution-graph').data('contributions', contributions);
               $('#contributions .title').html(title);
-              $('#show-more').data('show_year', false);
               Pontoon.profile.renderContributionGraph();
             },
             error: function () {
@@ -383,7 +382,6 @@ var Pontoon = (function (my) {
             success: function (data) {
               $('#timeline').html(data);
               // Re-render timeline to show last year of activity
-              $('#show-more').data('show_year', true);
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');

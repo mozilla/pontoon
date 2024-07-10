@@ -63,8 +63,8 @@ def contributor(request, user):
     graph_data, graph_title = utils.get_contribution_graph_data(
         user, "all_contributions"
     )
-    timeline_data, timeline_title, timeline_length = (
-        utils.get_contribution_timeline_data(user, False, "all_contributions")
+    timeline_data, timeline_title = utils.get_contribution_timeline_data(
+        user, False, "all_contributions"
     )
 
     context = {
@@ -83,7 +83,7 @@ def contributor(request, user):
         "contribution_timeline": {
             "contributions": timeline_data,
             "title": timeline_title,
-            "show_year": timeline_length,
+            "show_year": False,
         },
     }
 
@@ -125,7 +125,7 @@ def update_contribution_timeline(request):
             status=400,
         )
 
-    contributions, title, show_year = utils.get_contribution_timeline_data(
+    contributions, title = utils.get_contribution_timeline_data(
         user, show_year, contribution_type, day
     )
 

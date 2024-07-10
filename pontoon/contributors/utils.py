@@ -646,7 +646,7 @@ def get_contribution_timeline_data(
             )
         )
 
-        return (sorted_restructured, timeline_title, year_shown)
+        return (sorted_restructured, timeline_title)
     else:
         # Combine similar actions for displaying
         for entry in contributions.values():
@@ -656,8 +656,4 @@ def get_contribution_timeline_data(
                     actions_list.append(action_date["action"])
                 value["action_dates"], _ = combine_actions(actions_list)
 
-    return (
-        contributions,
-        timeline_title,
-        year_shown,
-    )
+    return (contributions, timeline_title)
