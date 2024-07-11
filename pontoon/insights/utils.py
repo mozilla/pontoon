@@ -460,6 +460,6 @@ def get_global_pretranslation_quality(category, id):
     ]
 
     return {
-        "dates": list({convert_to_unix_time(x["month"]) for x in actions}),
+        "dates": sorted(list({convert_to_unix_time(x["month"]) for x in actions})),
         "dataset": json.dumps([v for _, v in data.items()]),
     }
