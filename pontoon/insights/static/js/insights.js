@@ -63,10 +63,18 @@ var Pontoon = (function (my) {
           };
         });
 
+        // Sort each timestamp chronologically and reorder the dataset
+        const sortedIndices = chart
+          .data('dates')
+          .map((timestamp, index) => ({ timestamp, index }))
+          .sort((a, b) => a.timestamp - b.timestamp)
+          .map((dateObj) => dateObj.index);
+        const sortedDates = sortedIndices.map((i) => chart.data('dates')[i]);
+
         new Chart(chart, {
           type: 'bar',
           data: {
-            labels: chart.data('dates'),
+            labels: sortedDates,
             datasets: datasets,
           },
           options: {
