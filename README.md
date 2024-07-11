@@ -140,16 +140,25 @@ git push -f origin master
 
 7. Build the image
 
-Copy below chunk to your terminal and hit enter.
+Run below command in terminal
 
 ```sh
-export image_hash=$(git rev-parse --short upstream/main) && \
+# bump the current version 
+bumpversion patch
+
+# build image
+export git_hash=$(git rev-parse --short upstream/main) && \
   export today=$(printf '%(%Y%m%d)T') && \
   nvm use v18 && \
   make build-translate && \
   make build-tagadmin && \
   docker build -f ./docker/Dockerfile --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 \
-    -t 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${image_hash}-${today} .
+    -t 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${git_hash}-${today} .
+
+
+export version=$(awk -F '= ' '/current_version/ {print $2}' .bumpversion.cfg  | head -n 1)
+docker tag 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${git_hash}-${today} \
+    715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${version}
 ```
 
 8. Push the image to AWS ECR
@@ -160,7 +169,8 @@ aws ecr get-login-password | docker login -u AWS --password-stdin \
   715161504141.dkr.ecr.eu-west-1.amazonaws.com
 
 # Push the image
-docker push 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${image_hash}-${today}
+docker push 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${git_hash}-${today}
+docker push 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${version}
 ```
 
 # Todos
@@ -199,6 +209,7 @@ docker push 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:${image_hash}-$
 - [✓] Add project action for exporting project translations
 - [ ] Correlate Keycloak user groups with user groups in Pontoon
 - [✓] Export/import translations in project page
+- [✓] Add versioning using bumpversion 
 
 # References
 
