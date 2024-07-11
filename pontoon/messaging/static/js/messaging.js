@@ -7,6 +7,11 @@ $(function () {
     $(`[type=checkbox][name=${name}]`).click();
 
     self.toggleClass('enabled');
+
+    // Toggle Transactional check box
+    if (self.is('.email')) {
+      $('.check-box.transactional').toggle(self.is('.enabled'));
+    }
   });
 
   const container = $('#main .container');

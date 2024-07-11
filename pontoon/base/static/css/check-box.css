@@ -25,6 +25,7 @@
     width: 342px;
   }
 
+  .check-box.hover .check-box-wrapper,
   .check-box-wrapper:hover {
     color: var(--white-1);
   }

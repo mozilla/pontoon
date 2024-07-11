@@ -39,9 +39,11 @@
             <div class="message-type">
               <ul class="check-list">
                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
-                <input type="checkbox" name="notification">
+                <li><input type="checkbox" name="notification"></li>
                 {{ Checkbox.checkbox('Email', class='email', attribute='email') }}
-                <input type="checkbox" name="email">
+                <li><input type="checkbox" name="email"></li>
+                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional', help='Transactional emails are also sent to users who have not opted in to email communication. They are restricted in the type of content that can be included.') }}
+                <li class="transactional"><input type="checkbox" name="transactional"></li>
               </ul>
 
                 <div class="errors">
