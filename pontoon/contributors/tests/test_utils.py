@@ -298,7 +298,6 @@ def test_get_contribution_timeline_data_with_actions(
                         },
                         "action_dates": ["1 approved"],
                         "count": 1,
-                        "actions_month": {},
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                 },

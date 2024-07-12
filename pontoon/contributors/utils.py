@@ -390,20 +390,6 @@ def get_contribution_graph_data(user, contribution_type=None):
     )
 
 
-def combine_actions(actions_list):
-    """
-    Combine print statements for identical actions in the same project and month
-    """
-    combined = defaultdict(int)
-    for action in actions_list:
-        parts = action.split()
-        count = int(parts[0])
-        action_type = " ".join(parts[1:])
-        combined[action_type] += count
-
-    return [f"{count} {action}" for action, count in combined.items()]
-
-
 def get_project_locale_contribution_counts(contributions_qs):
     counts = {}
 
@@ -443,7 +429,6 @@ def get_project_locale_contribution_counts(contributions_qs):
     ):
         key = (item["project_slug"], item["locale_code"])
         count = item["count"]
-        created_at = item["date_created"]
 
         date = None
         if item["action_type"] == "translation:created":
@@ -487,7 +472,6 @@ def get_project_locale_contribution_counts(contributions_qs):
                     }
                 ],
                 "count": count,
-                "date_created": [created_at],
             }
     return counts
 
@@ -499,7 +483,6 @@ def get_monthly_timeline_titles(contributions):
     for date, types in contributions.items():
         for contribution_type, entries in types.items():
             c_count = sum(entry["count"] for entry in entries)
-            print(entries, c_count)
             p_count = len(entries)
 
             if contribution_type == "user-translations":
@@ -527,13 +510,15 @@ def combine_actions(actions_list):
         parts = action.split()
         count = int(parts[0])
         action_type = " ".join(parts[1:])
+        if "translation" in action_type:
+            action_type = "translation"
         combined[action_type] += count
         total_count += count
 
     combined_actions = []
     for action_type, count in combined.items():
         if "translation" in action_type:
-            action = f"{count} translation{ pluralize(count) }"
+            action = f"{count} translation{pluralize(count)}"
         else:
             action = f"{count} {action_type}"
         combined_actions.append(action)
