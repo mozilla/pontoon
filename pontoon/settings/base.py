@@ -801,7 +801,7 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "formatters": {
         "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
-        },
+    },
     "loggers": {
         "django": {"handlers": ["console"]},
         "pontoon": {
