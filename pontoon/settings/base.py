@@ -777,12 +777,7 @@ if LOG_TO_FILE:
     log_dir = path("logs")
     os.makedirs(log_dir, exist_ok=True)
 
-# Define handlers
-console_handler = {
-    "class": "logging.StreamHandler",
-    "formatter": "verbose",
-}
-
+# Define file handlers
 django_file_handler = {
     "class": "logging.handlers.RotatingFileHandler",
     "filename": path("logs", "django_debug.log"),
@@ -803,24 +798,15 @@ pontoon_file_handler = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "console": console_handler,
-    },
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
     "formatters": {
-        "verbose": {
-            "format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s",
+        "verbose": {"format": "[%(levelname)s:%(name)s] %(asctime)s %(message)s"},
         },
-    },
     "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
-            "propagate": True,
-        },
+        "django": {"handlers": ["console"]},
         "pontoon": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG" if DEBUG else "INFO"),
-            "propagate": True,
         },
     },
 }
