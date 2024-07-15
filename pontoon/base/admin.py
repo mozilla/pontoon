@@ -1,5 +1,7 @@
 import uuid
 
+from guardian.admin import GuardedModelAdmin
+
 from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
@@ -8,11 +10,10 @@ from django.forms import ChoiceField
 from django.forms.models import ModelForm
 from django.urls import reverse
 from django.utils.html import format_html
-from guardian.admin import GuardedModelAdmin
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base import models, utils
-from pontoon.projects.views import generate_translation_stats_csv
+from pontoon.projects.utils import generate_translation_stats_csv
 from pontoon.teams.utils import log_user_groups
 from pontoon.terminology.models import Term
 
