@@ -61,15 +61,9 @@ The badge system will be integrated into the existing Pontoon interface, with ba
    - **Notifications:** Send notifications to users to communicate their badge achievements (e.g., advancing to a new badge level or obtaining a badge).
    
 2. **Frontend Development:**
-   - **Badge Display:** Display badges on user profiles under an "Achievements" section. 
-     - Example: ![Achievements Section](0119/achievements-section.png)
-   - **Status Icons:** Show status icons universally in comments and suggestions.
-     - Example: ![Suggestions](0119/suggestions.png)
-     - Example: ![Comments](0119/comments.png)
-     - **Note:** The exact design of the status icons is not finalized yet. The circle on the user icon represents a placeholder.
-   - **New User Tag:** Within the user profile, display a "New User" tag if the new user criteria are met.
-     - Example: ![New User Tag](0119/new-user-tag.png)
-     - **Note:** Similar tags already exist for team managers, translators, and administrators and are already displayed in the user profile.
+   - **Badge Display:** Display badges on user profiles under an "Achievements" section (see Mockups). 
+   - **Status Icons:** Show status icons universally in the user avatar (see Mockups).
+ 
 
 # Roles
 **Impacts:**
@@ -77,7 +71,10 @@ The badge system will be integrated into the existing Pontoon interface, with ba
 - **Locale Managers:** Encouraged to mentor and promote contributors.
 
 # Mockups
-- To be included in a future version.
+- **Achievements Section and Status Icon:**
+
+  ![Achievements Section](0119/achievements-section.png)
+    - **Note:** The exact design of the status icons is not finalized yet. The circle on the user avatar represents a placeholder.
 
 # Out of Scope
 ### Progress Bar
