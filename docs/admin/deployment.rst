@@ -171,6 +171,10 @@ you create:
    Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
    translation engine by Google.
 
+``LOG_TO_FILE``
+   Optional. Enables logging to a file (default: ``False``).
+   This is useful for retaining log data for later analysis or troubleshooting.
+
 ``MAINTENANCE_PAGE_URL``
    Optional. URL to the page displayed to your users when the application is placed
    in the maintenance state. See `Heroku Reference`_ for more information.
