@@ -172,7 +172,7 @@ you create:
    translation engine by Google.
 
 ``LOG_TO_FILE``
-   Optional. Set to true to enable logging to a file.
+   Optional. Enables logging to a file (default: ``False``).
    This is useful for retaining log data for later analysis or troubleshooting.
 
 ``MAINTENANCE_PAGE_URL``
