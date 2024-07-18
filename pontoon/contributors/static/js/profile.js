@@ -368,20 +368,18 @@ var Pontoon = (function (my) {
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
 
-          // Toggle show more button
-          $('#show-more').hide();
-
           // Update contribution timeline
           $.ajax({
             url: '/update-contribution-timeline/',
             data: {
-              show_year: true,
+              full_year: true,
               contribution_type: type,
               user: user,
             },
             success: function (data) {
               $('#timeline').html(data);
-              // Re-render timeline to show last year of activity
+              // Toggle show more button
+              $('#show-more').hide();
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');

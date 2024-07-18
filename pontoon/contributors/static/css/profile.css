@@ -460,7 +460,7 @@ svg.js-calendar-graph-svg {
   border: none;
   border-radius: 3px;
   color: var(--light-grey-7);
-  margin-top: 5px;
+  margin-top: 20px;
 }
 
 #show-more:hover {

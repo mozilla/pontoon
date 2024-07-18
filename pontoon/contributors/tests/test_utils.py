@@ -265,10 +265,7 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_
 
 @pytest.mark.django_db
 def test_get_contribution_timeline_data_without_actions(user_a):
-    assert utils.get_contribution_timeline_data(user_a) == (
-        {},
-        "Contribution activity in this month",
-    )
+    assert utils.get_contribution_timeline_data(user_a) == ({})
 
 
 @pytest.mark.django_db
@@ -278,15 +275,19 @@ def test_get_contribution_timeline_data_with_actions(
     end = timezone.now()
     start = end - relativedelta(day=1)
 
+    date = end.strftime("%B %Y")
+
     params = {
         "reviewer": user_a.email,
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
 
+    print(utils.get_contribution_timeline_data(user_a))
+
     assert utils.get_contribution_timeline_data(user_a) == (
         {
-            "Reviewed 1 suggestion in 1 project": {
-                "data": {
+            date: {
+                "user_reviews": {
                     ("project_a", "kg"): {
                         "project": {
                             "name": "Project A",
@@ -296,13 +297,13 @@ def test_get_contribution_timeline_data_with_actions(
                             "name": "Klingon",
                             "code": "kg",
                         },
-                        "action_dates": ["1 approved"],
+                        "actions": ["1 approved"],
                         "count": 1,
                         "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
-                },
-                "type": "user-reviews",
+                    "title": "Reviewed 1 suggestion in 1 project",
+                    "type": "user-reviews",
+                }
             }
-        },
-        "Contribution activity in this month",
+        }
     )

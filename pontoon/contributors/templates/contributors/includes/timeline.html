@@ -1,46 +1,30 @@
-{% macro render_contribution_group(title, contribution_type, entries) %}
+<h3>Contribution activity</h3>
+
+{% for month, data in contribution_timeline.contributions.items() %}
+{{month}}
 <div class="contribution-group">
-    <h4 class="heading">
-        <span class="icon far {{ contribution_type }}"></span>
-        {{ title }}
-    </h4>
-    <ul class="localizations">
-        {% for localization in entries %}
-        <li>
-            <a href="{{ localization.url }}">
-                <span class="stress">{{ localization.project.name }}</span> &middot;
-                {{ localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
-                
-                {% if contribution_timeline.show_year %}
+    {% for _, info in data.items() %}
+        <h4 class="heading">
+            <span class="icon far {{ info.type }}"></span>
+            {{ info.title }}
+        </h4>
+        <ul class="localizations">
+            {% for key, localization in info.items() %}
+            {% if key != 'type' and key != 'title' %}
+            <li>
+                <a href="{{ localization.url }}">
+                    <span class="stress">{{ localization.project.name }}</span> &middot; {{
+                    localization.locale.name }} <span class="stress">{{ localization.locale.code }}</span>
                     <span class="contribution-count">{{ ", ".join(localization.actions) }}</span>
-                {% else %}
-                    <span class="contribution-count">{{ ", ".join(localization.action_dates) }}</span>
-                {% endif %}
-
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+                </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
 </div>
-{% endmacro %}
-
-<h3>{{ contribution_timeline.title }}</h3>
+{% endfor %}
 
 {% if contribution_timeline.contributions == {} %}
-    <p>No activity in this period.</p>
-{% endif %}
-
-{% if contribution_timeline.show_year %}
-    {% for month, contribution_types in contribution_timeline.contributions.items() %}
-        <div class="month-group">
-            <h4>{{ month }}</h4>
-            {% for contribution_type, details in contribution_types.items() %}
-                {{ render_contribution_group(details.title, contribution_type, details.entries) }}
-            {% endfor %}
-        </div>
-    {% endfor %}
-{% else %}
-    {% for title, project_data in contribution_timeline.contributions.items() %}
-        {{ render_contribution_group(title, project_data.type, project_data.data.values() | list) }}
-    {% endfor %}
+<p>No activity in this period.</p>
 {% endif %}
