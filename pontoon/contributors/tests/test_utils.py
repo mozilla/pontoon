@@ -282,24 +282,24 @@ def test_get_contribution_timeline_data_with_actions(
         "review_time": f"{start.strftime('%Y%m%d%H%M')}-{end.strftime('%Y%m%d%H%M')}",
     }
 
-    print(utils.get_contribution_timeline_data(user_a))
-
     assert utils.get_contribution_timeline_data(user_a) == (
         {
             date: {
                 "user_reviews": {
-                    ("project_a", "kg"): {
-                        "project": {
-                            "name": "Project A",
-                            "slug": "project_a",
+                    "data": {
+                        ("project_a", "kg"): {
+                            "project": {
+                                "name": "Project A",
+                                "slug": "project_a",
+                            },
+                            "locale": {
+                                "name": "Klingon",
+                                "code": "kg",
+                            },
+                            "actions": ["1 approved"],
+                            "count": 1,
+                            "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                         },
-                        "locale": {
-                            "name": "Klingon",
-                            "code": "kg",
-                        },
-                        "actions": ["1 approved"],
-                        "count": 1,
-                        "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
                     "title": "Reviewed 1 suggestion in 1 project",
                     "type": "user-reviews",

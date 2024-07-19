@@ -398,7 +398,6 @@ def get_project_locale_contribution_counts(contributions_qs):
             "action_type",
             "count",
         )
-        .order_by("month")
     ):
         month = item["month"].strftime("%B %Y")
         key = (item["project_slug"], item["locale_code"])
@@ -429,22 +428,25 @@ def get_project_locale_contribution_counts(contributions_qs):
                 },
                 "actions": [action],
                 "count": count,
+                "url": "",
             }
 
     return counts
 
 
 def get_contribution_timeline_data(
-    user, year_shown=False, contribution_type=None, day=None
+    user, full_year=False, contribution_type=None, day=None
 ):
     """
     Get data required to render the Contribution timeline on the Profile page
     """
     end = timezone.now()
 
-    if year_shown:
+    if full_year:
+        # Get data from the 1st day of the current month, one year ago, to now
         start = end - relativedelta(years=1, day=1)
     else:
+        # Get data from the 1st day of the current month to now
         start = end - relativedelta(day=1)
 
     if day is not None:
@@ -488,17 +490,11 @@ def get_contribution_timeline_data(
         contributions_qs = contributions_map[contribution_type]
         contribution_data = get_project_locale_contribution_counts(contributions_qs)
 
-        title = ""
         for month, data in contribution_data.items():
-            total_count = 0
-            projects = set()
-            for key, info in data.items():
-                total_count += info["count"]
-                # Count number of unique project/locale pairs
-                projects.add(key)
+            total_count = sum([info["count"] for _, info in data.items()])
+            p_count = len(data)
 
             # Generate title for the localizations belonging to the same contribution type
-            p_count = len(projects)
             if contribution_type == "user_translations":
                 title = f"Submitted { intcomma(total_count) } translation{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
             elif contribution_type == "user_reviews":
@@ -506,52 +502,35 @@ def get_contribution_timeline_data(
             elif contribution_type == "peer_reviews":
                 title = f"Received review for { intcomma(total_count) } suggestion{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
 
-            # Add title as a field
-            if month not in contribution_data:
-                contribution_data[month] = {}
-            contribution_data[month]["title"] = title
+            data["title"] = title
 
-        # Generate localization URL and add it to the data dict
-        params = params_map[contribution_type]
-        for key, value in contribution_data.items():
-            for field, data in value.items():
+            # Generate localization URL and add it to the data dict
+            params = params_map[contribution_type]
+            for field, val in data.items():
                 if field != "title":
                     url = reverse(
                         "pontoon.translate",
                         args=[
-                            data["locale"]["code"],
-                            data["project"]["slug"],
+                            val["locale"]["code"],
+                            val["project"]["slug"],
                             "all-resources",
                         ],
                     )
-                    data["url"] = f"{url}?{urlencode(params)}"
+                    val["url"] = f"{url}?{urlencode(params)}"
 
-        contributions.update(
-            {
-                contribution_type: {
-                    "data": contribution_data,
+        for month, data in contribution_data.items():
+            if month not in contributions:
+                contributions[month] = {}
+
+            if contribution_type not in contributions[month]:
+                contributions[month][contribution_type] = {}
+
+            contributions[month][contribution_type].update(
+                {
+                    "data": data,
                     "type": contribution_type.replace("_", "-"),
+                    "title": data.pop("title"),
                 }
-            }
-        )
+            )
 
-    # Restructure contributions to be ordered by month
-    restructured = {}
-    for title, data in contributions.items():
-        contribution_type = data["type"]
-        for month, value in data["data"].items():
-            if month not in restructured:
-                restructured[month] = {}
-            restructured[month][title] = value
-            restructured[month][title]["type"] = contribution_type
-
-    # Sort data in reverse chronological order
-    sorted_restructured = dict(
-        sorted(
-            restructured.items(),
-            key=lambda item: datetime.datetime.strptime(item[0], "%B %Y"),
-            reverse=True,
-        )
-    )
-
-    return sorted_restructured
+    return contributions

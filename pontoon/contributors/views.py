@@ -82,7 +82,6 @@ def contributor(request, user):
         },
         "contribution_timeline": {
             "contributions": timeline_data,
-            "show_year": False,
         },
     }
 
@@ -134,7 +133,6 @@ def update_contribution_timeline(request):
         {
             "contribution_timeline": {
                 "contributions": contributions,
-                "show_year": full_year,
             },
         },
     )

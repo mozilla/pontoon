@@ -367,6 +367,10 @@ svg.js-calendar-graph-svg {
   padding: 20px 0 20px 30px;
 }
 
+#timeline .contribution-type {
+  margin-bottom: 20px;
+}
+
 #timeline .heading {
   background: var(--dark-grey-1);
   border-radius: 6px 6px 0 0;
