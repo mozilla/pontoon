@@ -533,4 +533,12 @@ def get_contribution_timeline_data(
                 }
             )
 
-    return contributions
+    sorted_contributions = dict(
+        sorted(
+            contributions.items(),
+            key=lambda item: datetime.datetime.strptime(item[0], "%B %Y"),
+            reverse=True,
+        )
+    )
+
+    return sorted_contributions
