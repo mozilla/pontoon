@@ -502,37 +502,34 @@ def get_contribution_timeline_data(
             elif contribution_type == "peer_reviews":
                 title = f"Received review for { intcomma(total_count) } suggestion{ pluralize(total_count) } in { intcomma(p_count) } project{ pluralize(p_count) }"
 
-            data["title"] = title
-
             # Generate localization URL and add it to the data dict
             params = params_map[contribution_type]
-            for field, val in data.items():
-                if field != "title":
-                    url = reverse(
-                        "pontoon.translate",
-                        args=[
-                            val["locale"]["code"],
-                            val["project"]["slug"],
-                            "all-resources",
-                        ],
-                    )
-                    val["url"] = f"{url}?{urlencode(params)}"
+            for _, val in data.items():
+                url = reverse(
+                    "pontoon.translate",
+                    args=[
+                        val["locale"]["code"],
+                        val["project"]["slug"],
+                        "all-resources",
+                    ],
+                )
+                val["url"] = f"{url}?{urlencode(params)}"
 
-        for month, data in contribution_data.items():
-            if month not in contributions:
-                contributions[month] = {}
+                if month not in contributions:
+                    contributions[month] = {}
 
-            if contribution_type not in contributions[month]:
-                contributions[month][contribution_type] = {}
+                if contribution_type not in contributions[month]:
+                    contributions[month][contribution_type] = {}
 
-            contributions[month][contribution_type].update(
-                {
-                    "data": data,
-                    "type": contribution_type.replace("_", "-"),
-                    "title": data.pop("title"),
-                }
-            )
+                contributions[month][contribution_type].update(
+                    {
+                        "data": data,
+                        "type": contribution_type.replace("_", "-"),
+                        "title": title,
+                    }
+                )
 
+    # Sort contributions in reverse-chronological order
     sorted_contributions = dict(
         sorted(
             contributions.items(),

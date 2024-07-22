@@ -371,6 +371,14 @@ svg.js-calendar-graph-svg {
   margin-bottom: 20px;
 }
 
+#timeline .contribution-month {
+  margin-left: -50px;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+  background-color: var(--black-3);
+  font-size: 14px;
+}
+
 #timeline .heading {
   background: var(--dark-grey-1);
   border-radius: 6px 6px 0 0;

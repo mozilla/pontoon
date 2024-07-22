@@ -1,16 +1,16 @@
 <h3>Contribution activity</h3>
 
-{% for month, data in contribution_timeline.contributions.items() %}
-{{month}}
+{% for month, contributions in contribution_timeline.contributions.items() %}
 <div class="contribution-group">
-    {% for _, info in data.items() %}
+    <p class="contribution-month">{{month}}</p>
+    {% for _, val in contributions.items() %}
         <div class="contribution-type">
             <h4 class="heading">
-                <span class="icon far {{ info.type }}"></span>
-                {{ info.title }}
+                <span class="icon far {{ val.type }}"></span>
+                {{ val.title }}
             </h4>
             <ul class="localizations">
-                {% for key, localization in info.data.items() %}
+                {% for _, localization in val.data.items() %}
                 <li>
                     <a href="{{ localization.url }}">
                         <span class="stress">{{ localization.project.name }}</span> &middot; {{
