@@ -21,6 +21,7 @@ import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
+import { SearchPanel } from './SearchPanel';
 import './SearchBox.css';
 
 export type TimeRangeType = {
@@ -245,9 +246,6 @@ export function SearchBoxBase({
 
   return (
     <div className='search-box clearfix'>
-      <label htmlFor='search'>
-        <div className='fa fa-search'></div>
-      </label>
       <input
         id='search'
         ref={searchInput}
@@ -278,6 +276,7 @@ export function SearchBoxBase({
         setTimeRange={setTimeRange}
         updateFiltersFromURL={updateFiltersFromURL}
       />
+      <SearchPanel />
     </div>
   );
 }
