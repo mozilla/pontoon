@@ -296,6 +296,9 @@ var Pontoon = (function (my) {
             .find('.selector .value')
             .html($(this).html());
 
+          // Rerender the show more button in case it was hidden
+          $('#show-more').show();
+
           const type = $('#contributions .type-selector span').data('type');
           const user = $('#server').data('user');
 
@@ -352,6 +355,31 @@ var Pontoon = (function (my) {
             },
             success: function (data) {
               $('#timeline').html(data);
+              $('#show-more').hide();
+            },
+            error: function () {
+              Pontoon.endLoader('Oops, something went wrong.', 'error');
+            },
+          });
+        });
+      },
+      handleShowMoreClick: function () {
+        $('#show-more').click(function () {
+          const type = $('#contributions .type-selector span').data('type');
+          const user = $('#server').data('user');
+
+          // Update contribution timeline
+          $.ajax({
+            url: '/update-contribution-timeline/',
+            data: {
+              full_year: true,
+              contribution_type: type,
+              user: user,
+            },
+            success: function (data) {
+              $('#timeline').html(data);
+              // Toggle show more button
+              $('#show-more').hide();
             },
             error: function () {
               Pontoon.endLoader('Oops, something went wrong.', 'error');
@@ -370,6 +398,7 @@ Pontoon.insights.renderCharts();
 Pontoon.profile.renderContributionGraph();
 Pontoon.profile.handleContributionTypeSelector();
 Pontoon.profile.handleContributionGraphClick();
+Pontoon.profile.handleShowMoreClick();
 
 // Set up chart group navigation
 $('body').on('click', '#insights .chart-group-navigation li', function () {

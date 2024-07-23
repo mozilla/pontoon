@@ -364,7 +364,19 @@ svg.js-calendar-graph-svg {
 #timeline .contribution-group {
   border-left: 2px solid var(--dark-grey-1);
   margin-left: 20px;
-  padding: 20px 0 20px 30px;
+  padding: 15px 0 5px 30px;
+}
+
+#timeline .contribution-type {
+  margin-bottom: 20px;
+}
+
+#timeline .contribution-month {
+  margin-left: -45px;
+  margin-bottom: 10px;
+  background-color: var(--black-3);
+  padding: 10px 0 10px;
+  font-weight: bold;
 }
 
 #timeline .heading {
@@ -444,6 +456,27 @@ svg.js-calendar-graph-svg {
 #timeline .localizations li a .contribution-count {
   color: var(--light-grey-2);
   float: right;
+}
+
+#timeline .month-label {
+  color: var(--light-grey-2);
+}
+
+#show-more {
+  background: var(--dark-grey-1);
+  font-size: 16px;
+  font-weight: normal;
+  height: 32px;
+  text-transform: uppercase;
+  width: 100%;
+  border: none;
+  border-radius: 3px;
+  color: var(--light-grey-7);
+  margin-top: 20px;
+}
+
+#show-more:hover {
+  color: var(--white-1);
 }
 
 #account-status-form {
