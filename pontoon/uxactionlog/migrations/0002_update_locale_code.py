@@ -2,9 +2,10 @@
 
 from django.db import migrations
 
+
 def update_locale_code(apps, schema_editor):
     UXActionLog = apps.get_model('uxactionlog', 'UXActionLog')
-    
+
     for log in UXActionLog.objects.filter(action_type='LLM Dropdown Select'):
         data = log.data
         if 'targetLanguage' in data:
