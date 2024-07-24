@@ -4,19 +4,21 @@ from django.db import migrations
 
 
 def update_locale_code(apps, schema_editor):
-    UXActionLog = apps.get_model('uxactionlog', 'UXActionLog')
+    UXActionLog = apps.get_model("uxactionlog", "UXActionLog")
 
-    for log in UXActionLog.objects.filter(action_type='LLM Dropdown Select'):
+    for log in UXActionLog.objects.filter(action_type="LLM Dropdown Select"):
         data = log.data
-        if 'targetLanguage' in data:
-            data['localeCode'] = data.pop('targetLanguage')
+        if "targetLanguage" in data:
+            data["localeCode"] = data.pop("targetLanguage")
             log.data = data
             log.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
         ("uxactionlog", "0001_initial"),
     ]
 
-    operations = [migrations.RunPython(update_locale_code),]
+    operations = [
+        migrations.RunPython(update_locale_code),
+    ]
