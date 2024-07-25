@@ -14,17 +14,6 @@ def update_locale_code(apps, schema_editor):
             log.save()
 
 
-def reverse_update_locale_code(apps, schema_editor):
-    UXActionLog = apps.get_model("uxactionlog", "UXActionLog")
-
-    for log in UXActionLog.objects.filter(action_type="LLM Dropdown Select"):
-        data = log.data
-        if "localeCode" in data:
-            data["targetLanguage"] = data.pop("localeCode")
-            log.data = data
-            log.save()
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ("uxactionlog", "0001_initial"),
@@ -32,6 +21,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=update_locale_code, reverse_code=reverse_update_locale_code
+            code=update_locale_code,
+            reverse_code=migrations.RunPython.noop,
         ),
     ]
