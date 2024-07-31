@@ -1,73 +1,110 @@
 .search-panel {
-    float: left;
-    font-size: 14px;
+  float: left;
+  font-size: 14px;
 }
 
 .search-panel .visibility-switch {
-    color: var(--light-grey-7);
-    cursor: pointer;
-    right: 0;
-    position: absolute;
-    width: 43px;
+  color: var(--light-grey-7);
+  cursor: pointer;
+  right: 0;
+  position: absolute;
+  width: 43px;
 }
 
 .search-panel .visibility-switch:hover :before {
-    color: var(--white-1);
+  color: var(--white-1);
 }
 
 .search-panel .visibility-switch .fa {
-    font-size: 17px;
-    margin-left: 10px;
-    margin-top: 9px;
+  font-size: 17px;
+  margin-left: 10px;
+  margin-top: 9px;
 }
 
 .search-panel .menu {
-    background: var(--black-3);
-    border: 1px solid var(--main-border-1);
-    box-sizing: border-box;
-    position: absolute;
-    top: 44px;
-    width: 350px;
-    z-index: 20;
+  background: var(--black-3);
+  border: 1px solid var(--main-border-1);
+  box-sizing: border-box;
+  position: absolute;
+  top: 44px;
+  width: 350px;
+  z-index: 20;
 }
 
 .search-panel .menu ul {
-    margin: 10px 12px;
-    list-style: none;
+  margin: 10px 12px;
+  list-style: none;
 }
 
 .search-panel .menu li {
-    color: var(--light-grey-7);
-    cursor: pointer;
-    font-weight: 300;
-    padding: 4px 2px;
+  color: var(--light-grey-7);
+  cursor: pointer;
+  font-weight: 300;
+  padding: 4px 2px;
 }
 
 .search-panel .menu li:hover {
-    color: var(--white-1);
+  color: var(--white-1);
 }
 
 .search-panel .menu li.title {
-    color: var(--status-translated-alt);
-    cursor: default;
-    font-size: 13px;
-    font-weight: 300;
-    height: auto;
-    margin: 5px 0;
-    padding: 5px 0 0;
+  color: var(--status-translated-alt);
+  cursor: default;
+  font-size: 13px;
+  font-weight: 300;
+  height: auto;
+  margin: 5px 0;
+  padding: 5px 0 0;
 }
 
 .search-panel .menu li.check-box i {
-    font-size: 16px;
-    padding-right: 10px;
+  font-size: 16px;
+  padding-right: 10px;
 }
 
 .search-panel .menu li.check-box .fa:before {
-    color: var(--status-error);
-    content: '';
+  color: var(--status-error);
+  content: '';
 }
 
 .search-panel .menu li.check-box.enabled .fa:before {
-    color: var(--status-translated);
-    content: '';
+  color: var(--status-translated);
+  content: '';
+}
+
+.search-panel .toolbar {
+  position: sticky;
+  bottom: 0;
+  background: var(--tooltip-background);
+  border-top: 1px solid var(--light-grey-1);
+  box-sizing: border-box;
+  line-height: 23px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.search-panel .toolbar button {
+  background: none;
+  border: none;
+  color: var(--tooltip-color-2);
+  font-weight: 300;
+}
+
+.search-panel .toolbar button .fa {
+  padding-right: 6px;
+}
+
+.search-panel .toolbar .clear-selection {
+  float: left;
+}
+
+.search-panel .toolbar .apply-selected {
+  float: right;
+  text-align: right;
+}
+
+.search-panel .toolbar .clear-selection:hover,
+.search-panel .toolbar .apply-selected:hover,
+.search-panel .toolbar .apply-selected .applied-count {
+  color: var(--status-translated);
 }
