@@ -21,6 +21,7 @@ import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
+import { SearchPanel } from './SearchPanel';
 import './SearchBox.css';
 
 export type TimeRangeType = {
@@ -38,7 +39,12 @@ type InternalProps = Props & {
   dispatch: AppDispatch;
 };
 
-export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
+export type FilterType =
+  | 'authors'
+  | 'extras'
+  | 'statuses'
+  | 'search_filters'
+  | 'tags';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -49,6 +55,7 @@ export type FilterState = {
   authors: string[];
   extras: string[];
   statuses: string[];
+  search_filters: string[];
   tags: string[];
 };
 
@@ -92,7 +99,7 @@ export function SearchBoxBase({
       }
       return next;
     },
-    { authors: [], extras: [], statuses: [], tags: [] },
+    { authors: [], extras: [], statuses: [], search_filters: [], tags: [] },
   );
 
   useEffect(() => {
@@ -108,11 +115,12 @@ export function SearchBoxBase({
   }, []);
 
   const updateFiltersFromURL = useCallback(() => {
-    const { author, extra, status, tag, time } = parameters;
+    const { author, extra, status, search_filters, tag, time } = parameters;
     updateFilters([
       { filter: 'authors', value: author },
       { filter: 'extras', value: extra },
       { filter: 'statuses', value: status },
+      { filter: 'search_filters', value: search_filters },
       { filter: 'tags', value: tag },
     ]);
     setTimeRange(time);
@@ -156,6 +164,7 @@ export function SearchBoxBase({
       { filter: 'authors', value: [] },
       { filter: 'extras', value: [] },
       { filter: 'statuses', value: [] },
+      { filter: 'search_filters', value: [] },
       { filter: 'tags', value: [] },
     ]);
     setTimeRange(null);
@@ -182,7 +191,7 @@ export function SearchBoxBase({
   const applyFilters = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { authors, extras, statuses, tags } = filters;
+        const { authors, extras, statuses, search_filters, tags } = filters;
 
         let status: string | null = statuses.join(',');
         if (status === 'all') {
@@ -195,6 +204,7 @@ export function SearchBoxBase({
           extra: extras.join(','),
           search,
           status,
+          search_filters: search_filters.join(','),
           tag: tags.join(','),
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
@@ -245,9 +255,6 @@ export function SearchBoxBase({
 
   return (
     <div className='search-box clearfix'>
-      <label htmlFor='search'>
-        <div className='fa fa-search'></div>
-      </label>
       <input
         id='search'
         ref={searchInput}
@@ -277,6 +284,13 @@ export function SearchBoxBase({
         toggleFilter={toggleFilter}
         setTimeRange={setTimeRange}
         updateFiltersFromURL={updateFiltersFromURL}
+      />
+      <SearchPanel
+        filters={filters}
+        resetFilters={resetFilters}
+        applyFilters={applyFilters}
+        applySingleFilter={applySingleFilter}
+        toggleFilter={toggleFilter}
       />
     </div>
   );

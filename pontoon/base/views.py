@@ -245,6 +245,7 @@ def entities(request):
         "status",
         "search",
         "extra",
+        "search_filters",
         "time",
         "author",
         "review_time",

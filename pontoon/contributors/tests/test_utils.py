@@ -265,10 +265,7 @@ def test_get_contribution_graph_data_with_actions(user_a, action_user_a, action_
 
 @pytest.mark.django_db
 def test_get_contribution_timeline_data_without_actions(user_a):
-    assert utils.get_contribution_timeline_data(user_a) == (
-        {},
-        "Contribution activity in the last month",
-    )
+    assert utils.get_contribution_timeline_data(user_a) == ({})
 
 
 @pytest.mark.django_db
@@ -276,7 +273,9 @@ def test_get_contribution_timeline_data_with_actions(
     user_a, yesterdays_action_user_a, action_user_b
 ):
     end = timezone.now()
-    start = end - relativedelta(months=1)
+    start = end - relativedelta(day=1)
+
+    date = end.strftime("%B %Y")
 
     params = {
         "reviewer": user_a.email,
@@ -285,24 +284,26 @@ def test_get_contribution_timeline_data_with_actions(
 
     assert utils.get_contribution_timeline_data(user_a) == (
         {
-            "Reviewed 1 suggestion in 1 project": {
-                "data": {
-                    ("project_a", "kg"): {
-                        "project": {
-                            "name": "Project A",
-                            "slug": "project_a",
+            date: {
+                "user_reviews": {
+                    "data": {
+                        ("project_a", "kg"): {
+                            "project": {
+                                "name": "Project A",
+                                "slug": "project_a",
+                            },
+                            "locale": {
+                                "name": "Klingon",
+                                "code": "kg",
+                            },
+                            "actions": ["1 approved"],
+                            "count": 1,
+                            "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                         },
-                        "locale": {
-                            "name": "Klingon",
-                            "code": "kg",
-                        },
-                        "actions": ["1 approved"],
-                        "count": 1,
-                        "url": f"/kg/project_a/all-resources/?{urlencode(params)}",
                     },
-                },
-                "type": "user-reviews",
+                    "title": "Reviewed 1 suggestion in 1 project",
+                    "type": "user-reviews",
+                }
             }
-        },
-        "Contribution activity in the last month",
+        }
     )

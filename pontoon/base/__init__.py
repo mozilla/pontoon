@@ -9,4 +9,5 @@ MOZILLA_REPOS = (
     "ssh://hg.mozilla.org/users/m_owca.info/thunderbird-central/",
     "ssh://hg.mozilla.org/users/m_owca.info/lightning-central/",
     "ssh://hg.mozilla.org/users/m_owca.info/seamonkey-central/",
+    "git@gitlab.com:seamonkey-project/seamonkey-central-l10n.git",
 )
