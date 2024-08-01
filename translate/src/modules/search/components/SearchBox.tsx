@@ -18,7 +18,7 @@ import { SEARCH } from '~/modules/search';
 import type { AppDispatch } from '~/store';
 
 import { getAuthorsAndTimeRangeData } from '../actions';
-import { FILTERS_EXTRA, FILTERS_SEARCH, FILTERS_STATUS } from '../constants';
+import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
 import { SearchPanel } from './SearchPanel';
@@ -222,7 +222,7 @@ export function SearchBoxBase({
   }, [filters, timeRange]);
 
   const placeholder = useMemo(() => {
-    const { authors, extras, statuses, search_filters, tags } = filters;
+    const { authors, extras, statuses, tags } = filters;
 
     const selected: string[] = [];
     for (const { name, slug } of FILTERS_STATUS) {

@@ -1,4 +1,3 @@
-import { Localized } from '@fluent/react';
 import React, { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { FILTERS_SEARCH } from '../constants';
@@ -33,7 +32,6 @@ type SearchPanelProps = {
 const SearchFilter = ({
   filter: { name },
   selected,
-  onSelect,
   onToggle,
 }: {
   filter: (typeof FILTERS_SEARCH)[number];
@@ -49,36 +47,27 @@ const SearchFilter = ({
         onToggle();
       }}
     >
-      <i
-        className='fa fa-w'
-      ></i>
+      <i className='fa fa-w'></i>
       <span className='label'>{name}</span>
     </li>
   );
 };
 
-const FilterToolbar = ({
-  count,
-  onApply,
-}: {
-  count: number;
-  onApply: () => void;
-}) => (
+const FilterToolbar = ({ onApply }: { onApply: () => void }) => (
   <div className='toolbar clearfix'>
-      <button
-        title='Apply Selected Filters'
-        onClick={onApply}
-        className='apply-selected'
-      >
-        {'SEARCH'}
-      </button>
+    <button
+      title='Apply Selected Filters'
+      onClick={onApply}
+      className='apply-selected'
+    >
+      {'SEARCH'}
+    </button>
   </div>
 );
 
 export function SearchPanelDialog({
   filters,
   selectedFiltersCount,
-  onResetFilters,
   onApplyFilter,
   onApplyFilters,
   onToggleFilter,
@@ -104,10 +93,7 @@ export function SearchPanelDialog({
       </ul>
 
       {selectedFiltersCount > 0 ? (
-        <FilterToolbar
-          count={selectedFiltersCount}
-          onApply={onApplyFilters}
-        />
+        <FilterToolbar onApply={onApplyFilters} />
       ) : null}
     </div>
   );
