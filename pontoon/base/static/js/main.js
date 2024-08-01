@@ -244,6 +244,9 @@ $(function () {
         pathname: window.location.pathname,
       },
     );
+
+    // Initialize the timego plugin on the notifications
+    $('#notifications').timego();
   }
 
   // Log clicks on the notifications icon
