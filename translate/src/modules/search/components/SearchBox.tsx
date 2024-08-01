@@ -235,11 +235,6 @@ export function SearchBoxBase({
         selected.push(name);
       }
     }
-    for (const { name, slug } of FILTERS_SEARCH) {
-      if (search_filters.includes(slug)) {
-        selected.push(name);
-      }
-    }
     for (const { name, slug } of project.tags) {
       if (tags.includes(slug)) {
         selected.push(name);

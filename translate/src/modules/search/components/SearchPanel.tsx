@@ -44,14 +44,13 @@ const SearchFilter = ({
   return (
     <li
       className={classNames('check-box', selected && 'enabled')}
-      onClick={onSelect}
+      onClick={(ev) => {
+        ev.stopPropagation();
+        onToggle();
+      }}
     >
       <i
         className='fa fa-w'
-        onClick={(ev) => {
-          ev.stopPropagation();
-          onToggle();
-        }}
       ></i>
       <span className='label'>{name}</span>
     </li>
@@ -61,45 +60,18 @@ const SearchFilter = ({
 const FilterToolbar = ({
   count,
   onApply,
-  onReset,
 }: {
   count: number;
   onApply: () => void;
-  onReset: () => void;
 }) => (
   <div className='toolbar clearfix'>
-    <Localized
-      id='search-FiltersPanel--clear-selection'
-      attrs={{ title: true }}
-      elems={{
-        glyph: <i className='fa fa-times fa-lg' />,
-      }}
-    >
-      <button
-        title='Uncheck selected filters'
-        onClick={onReset}
-        className='clear-selection'
-      >
-        {'<glyph></glyph> CLEAR'}
-      </button>
-    </Localized>
-    <Localized
-      id='search-FiltersPanel--apply-filters'
-      attrs={{ title: true }}
-      elems={{
-        glyph: <i className='fa fa-check fa-lg' />,
-        stress: <span className='applied-count' />,
-      }}
-      vars={{ count }}
-    >
       <button
         title='Apply Selected Filters'
         onClick={onApply}
         className='apply-selected'
       >
-        {'<glyph></glyph>APPLY <stress>{ $count }</stress> FILTERS'}
+        {'SEARCH'}
       </button>
-    </Localized>
   </div>
 );
 
@@ -135,7 +107,6 @@ export function SearchPanelDialog({
         <FilterToolbar
           count={selectedFiltersCount}
           onApply={onApplyFilters}
-          onReset={onResetFilters}
         />
       ) : null}
     </div>

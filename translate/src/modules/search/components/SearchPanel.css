@@ -90,20 +90,11 @@
   font-weight: 300;
 }
 
-.search-panel .toolbar button .fa {
-  padding-right: 6px;
-}
-
-.search-panel .toolbar .clear-selection {
-  float: left;
-}
-
 .search-panel .toolbar .apply-selected {
   float: right;
   text-align: right;
 }
 
-.search-panel .toolbar .clear-selection:hover,
 .search-panel .toolbar .apply-selected:hover,
 .search-panel .toolbar .apply-selected .applied-count {
   color: var(--status-translated);
