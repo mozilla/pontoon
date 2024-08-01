@@ -244,10 +244,10 @@ $(function () {
         pathname: window.location.pathname,
       },
     );
-
-    // Initialize the timego plugin on the notifications
-    $('#notifications').timego();
   }
+
+  // Initialize the timeago plugin on the notifications
+  $('time.timeago').timego();
 
   // Log clicks on the notifications icon
   $('#notifications .button').click(function () {
