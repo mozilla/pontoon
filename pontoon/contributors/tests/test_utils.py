@@ -83,12 +83,18 @@ def action_user_b(translation_a, user_b):
 
 @pytest.fixture
 def yesterdays_action_user_a(translation_a, user_a):
+    current_date = timezone.now()
     action = ActionLog.objects.create(
         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
         performed_by=user_a,
         translation=translation_a,
     )
-    action.created_at = timezone.now() - relativedelta(days=1)
+    if current_date.date == 1:
+        # First day of the month, so we instead set created_at to be earlier today
+        action.created_at = timezone.now() - relativedelta(minutes=1)
+    else:
+        action.created_at = timezone.now() - relativedelta(days=1)
+
     action.save()
     return action
 
@@ -274,6 +280,7 @@ def test_get_contribution_timeline_data_with_actions(
 ):
     end = timezone.now()
     start = end - relativedelta(day=1)
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
 
     date = end.strftime("%B %Y")
 

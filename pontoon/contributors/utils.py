@@ -446,8 +446,11 @@ def get_contribution_timeline_data(
         # Get data from the 1st day of the current month, one year ago, to now
         start = end - relativedelta(years=1, day=1)
     else:
-        # Get data from the 1st day of the current month to now
+        # Get data from the 1st day of the current month to now.
         start = end - relativedelta(day=1)
+
+    # Set start to be 00:00 (midnight)
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
 
     if day is not None:
         start = datetime.datetime.fromtimestamp(day, tz=timezone.get_current_timezone())
