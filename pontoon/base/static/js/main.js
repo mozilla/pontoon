@@ -247,7 +247,7 @@ $(function () {
   }
 
   // Initialize the timeago plugin on the notifications
-  $('time.timeago').timego();
+  $('time.timeago').timeago();
 
   // Log clicks on the notifications icon
   $('#notifications .button').click(function () {

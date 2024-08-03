@@ -47,7 +47,6 @@
 
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions") %}
           <span class="description">{{ description|safe }}</span>
-          
           <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
 
         {% elif target and target.resource %}
@@ -65,7 +64,7 @@
             {{ target.resource.project.name }}
           </span>
 
-          <p class="timeago">{{ notification.timesince() }} ago</p>
+          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
 
           <div class="message trim">{{ description|linkify|safe }}</div>
 
@@ -85,7 +84,7 @@
             </span>
           {% endif %}
 
-          <p class="timeago">{{ notification.timesince() }} ago</p>
+          <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
 
           {% set description = notification.description %}
           {% if description %}
