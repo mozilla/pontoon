@@ -83,11 +83,11 @@ export function SearchPanelDialog({
 
         {FILTERS_SEARCH.map((search, i) => (
           <SearchFilter
-            onSelect={() => onApplyFilter(search.slug, 'search_filters')}
-            onToggle={() => onToggleFilter(search.slug, 'search_filters')}
+            onSelect={() => onApplyFilter(search.slug, 'exclude_identifiers')}
+            onToggle={() => onToggleFilter(search.slug, 'exclude_identifiers')}
             filter={search}
             key={i}
-            selected={filters.search_filters.includes(search.slug)}
+            selected={filters.exclude_identifiers.includes(search.slug)}
           />
         ))}
       </ul>
@@ -131,15 +131,8 @@ export function SearchPanel({
     applyFilters();
   }, [applyFilters]);
 
-  const { selectedCount } = useMemo(() => {
-    const { search_filters } = filters;
-    let selectedCount = 0;
-
-    search_filters.forEach(() => {
-      selectedCount += 1;
-    });
-
-    return { selectedCount };
+  const selectedCount = useMemo(() => {
+    return filters.exclude_identifiers.includes('exclude_identifiers') ? 1 : 0;
   }, [filters]);
 
   return (

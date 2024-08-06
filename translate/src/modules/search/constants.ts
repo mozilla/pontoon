@@ -62,7 +62,7 @@ export const FILTERS_EXTRA = [
 export const FILTERS_SEARCH = [
   {
     name: 'Search context identifiers',
-    slug: 'identifiers',
+    slug: 'exclude_identifiers',
   },
   // {
   //   name: 'Search translations only',

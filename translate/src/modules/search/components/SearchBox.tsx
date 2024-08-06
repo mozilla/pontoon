@@ -43,7 +43,7 @@ export type FilterType =
   | 'authors'
   | 'extras'
   | 'statuses'
-  | 'search_filters'
+  | 'exclude_identifiers'
   | 'tags';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
@@ -55,7 +55,7 @@ export type FilterState = {
   authors: string[];
   extras: string[];
   statuses: string[];
-  search_filters: string[];
+  exclude_identifiers: string[];
   tags: string[];
 };
 
@@ -99,7 +99,13 @@ export function SearchBoxBase({
       }
       return next;
     },
-    { authors: [], extras: [], statuses: [], search_filters: [], tags: [] },
+    {
+      authors: [],
+      extras: [],
+      statuses: [],
+      exclude_identifiers: [],
+      tags: [],
+    },
   );
 
   useEffect(() => {
@@ -115,12 +121,13 @@ export function SearchBoxBase({
   }, []);
 
   const updateFiltersFromURL = useCallback(() => {
-    const { author, extra, status, search_filters, tag, time } = parameters;
+    const { author, extra, status, exclude_identifiers, tag, time } =
+      parameters;
     updateFilters([
       { filter: 'authors', value: author },
       { filter: 'extras', value: extra },
       { filter: 'statuses', value: status },
-      { filter: 'search_filters', value: search_filters },
+      { filter: 'exclude_identifiers', value: exclude_identifiers },
       { filter: 'tags', value: tag },
     ]);
     setTimeRange(time);
@@ -164,7 +171,7 @@ export function SearchBoxBase({
       { filter: 'authors', value: [] },
       { filter: 'extras', value: [] },
       { filter: 'statuses', value: [] },
-      { filter: 'search_filters', value: [] },
+      { filter: 'exclude_identifiers', value: [] },
       { filter: 'tags', value: [] },
     ]);
     setTimeRange(null);
@@ -191,7 +198,8 @@ export function SearchBoxBase({
   const applyFilters = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { authors, extras, statuses, search_filters, tags } = filters;
+        const { authors, extras, statuses, exclude_identifiers, tags } =
+          filters;
 
         let status: string | null = statuses.join(',');
         if (status === 'all') {
@@ -204,7 +212,7 @@ export function SearchBoxBase({
           extra: extras.join(','),
           search,
           status,
-          search_filters: search_filters.join(','),
+          exclude_identifiers: exclude_identifiers.join(','),
           tag: tags.join(','),
           time: timeRange ? `${timeRange.from}-${timeRange.to}` : null,
           entity: 0, // With the new results, the current entity might not be available anymore.
