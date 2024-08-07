@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
-import { FILTERS_SEARCH } from '../constants';
+import { SEARCH_OPTIONS } from '../constants';
 import type { FilterState, FilterType } from './SearchBox';
 
 import { useOnDiscard } from '~/utils';
@@ -17,7 +17,6 @@ type Props = {
 
 type SearchPanelProps = {
   filters: FilterState;
-  selectedFiltersCount: number;
   onResetFilters: () => void;
   onApplyFilters: () => void;
   onApplyFilter: (value: string, filter: FilterType | 'timeRange') => void;
@@ -34,7 +33,7 @@ const SearchFilter = ({
   selected,
   onToggle,
 }: {
-  filter: (typeof FILTERS_SEARCH)[number];
+  filter: (typeof SEARCH_OPTIONS)[number];
   selected: boolean;
   onSelect: () => void;
   onToggle: () => void;
@@ -53,21 +52,8 @@ const SearchFilter = ({
   );
 };
 
-const FilterToolbar = ({ onApply }: { onApply: () => void }) => (
-  <div className='toolbar clearfix'>
-    <button
-      title='Apply Selected Filters'
-      onClick={onApply}
-      className='apply-selected'
-    >
-      {'SEARCH'}
-    </button>
-  </div>
-);
-
 export function SearchPanelDialog({
   filters,
-  selectedFiltersCount,
   onApplyFilter,
   onApplyFilters,
   onToggleFilter,
@@ -81,20 +67,25 @@ export function SearchPanelDialog({
       <ul>
         <li className='title'>SEARCH OPTIONS</li>
 
-        {FILTERS_SEARCH.map((search, i) => (
+        {SEARCH_OPTIONS.map((search, i) => (
           <SearchFilter
-            onSelect={() => onApplyFilter(search.slug, 'exclude_identifiers')}
-            onToggle={() => onToggleFilter(search.slug, 'exclude_identifiers')}
+            onSelect={() => onApplyFilter(search.slug, 'search_identifiers')}
+            onToggle={() => onToggleFilter(search.slug, 'search_identifiers')}
             filter={search}
             key={i}
-            selected={filters.exclude_identifiers.includes(search.slug)}
+            selected={filters.search_identifiers.includes(search.slug)}
           />
         ))}
       </ul>
 
-      {selectedFiltersCount > 0 ? (
-        <FilterToolbar onApply={onApplyFilters} />
-      ) : null}
+      <button
+        title='Apply Selected Filters'
+        onClick={onApplyFilters}
+        className='search-button'
+      >
+        {' '}
+        {'SEARCH'}
+      </button>
     </div>
   );
 }
@@ -131,10 +122,6 @@ export function SearchPanel({
     applyFilters();
   }, [applyFilters]);
 
-  const selectedCount = useMemo(() => {
-    return filters.exclude_identifiers.includes('exclude_identifiers') ? 1 : 0;
-  }, [filters]);
-
   return (
     <div className='search-panel'>
       <div className='visibility-switch' onClick={toggleVisible}>
@@ -143,7 +130,6 @@ export function SearchPanel({
       {visible ? (
         <SearchPanelDialog
           filters={filters}
-          selectedFiltersCount={selectedCount}
           onResetFilters={resetFilters}
           onApplyFilter={applySingleFilter}
           onApplyFilters={handleApplyFilters}

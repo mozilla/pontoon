@@ -245,7 +245,7 @@ def entities(request):
         "status",
         "search",
         "extra",
-        "exclude_identifiers",
+        "search_identifiers",
         "time",
         "author",
         "review_time",

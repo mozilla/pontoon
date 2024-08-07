@@ -731,7 +731,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         tag=None,
         search=None,
         extra=None,
-        exclude_identifiers=None,
+        search_identifiers=None,
         time=None,
         author=None,
         review_time=None,
@@ -854,7 +854,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
 
             # Append search flags to entity_filters
-            q_key = Q(key__icontains=search) if exclude_identifiers else Q()
+            q_key = Q(key__icontains=search) if search_identifiers else Q()
             entity_filters = (
                 Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
                 for search in search_list

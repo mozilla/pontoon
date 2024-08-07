@@ -228,7 +228,7 @@ describe('<SearchBoxBase>', () => {
       push.calledWith({
         author: 'user@example.com',
         extra: 'unchanged',
-        exclude_identifiers: '',
+        search_identifiers: '',
         search: '',
         status: 'missing,warnings',
         tag: 'browser',

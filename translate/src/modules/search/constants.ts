@@ -59,17 +59,17 @@ export const FILTERS_EXTRA = [
   },
 ] as const;
 
-export const FILTERS_SEARCH = [
+export const SEARCH_OPTIONS = [
   {
-    name: 'Search context identifiers',
-    slug: 'exclude_identifiers',
+    name: 'Search in string identifiers',
+    slug: 'search_identifiers',
   },
   // {
-  //   name: 'Search translations only',
+  //   name: 'Search in translations only',
   //   slug: 'translations',
   // },
   // {
-  //   name: 'Search rejected translations',
+  //   name: 'Search in rejected translations',
   //   slug: 'rejected',
   // },
   // {
