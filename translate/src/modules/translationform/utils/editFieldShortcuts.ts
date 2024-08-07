@@ -93,13 +93,19 @@ export function useHandleCtrlShiftArrow(): (
     (state) => state.otherlocales.translations,
   );
 
-  return (key) => {
-    const { tab, element, setElement } = helperSelection;
-    const isMachinery = tab === 0;
-    const numTranslations = isMachinery
-      ? machineryTranslations.length + concordanceSearchResults.length
-      : otherLocaleTranslations.length;
+  const { tab, element, setElement } = helperSelection;
+  const isMachinery = tab === 0;
+  const numTranslations = isMachinery
+    ? machineryTranslations.length + concordanceSearchResults.length
+    : otherLocaleTranslations.length;
 
+  // Precompute LLM state at the top level
+  let llmState = null;
+  if (isMachinery && element < machineryTranslations.length) {
+    llmState = useLLMTranslation(machineryTranslations[element]);
+  }
+
+  return (key) => {
     if (numTranslations === 0) {
       return false;
     }
@@ -116,18 +122,22 @@ export function useHandleCtrlShiftArrow(): (
           ? machineryTranslations[nextIdx]
           : concordanceSearchResults[nextIdx - len];
 
-      const { translation, sources } = translationObj;
-      const { llmTranslations, selectedOption } =
-        useLLMTranslation(translationObj);
+      // If we have a valid LLM state, process it
+      if (llmState) {
+        const { translation, sources } = translationObj;
+        const { llmTranslations, selectedOption } = llmState;
 
-      // Check if there's an LLM translation available
-      const llmTranslation = llmTranslations[selectedOption];
-      const updatedSources: SourceType[] = llmTranslation
-        ? ['gpt-transform']
-        : sources;
-      setEditorFromHelpers(translation, updatedSources, true);
+        // Check if there's an LLM translation available
+        const llmTranslation = llmTranslations[selectedOption];
+        const updatedSources: SourceType[] = llmTranslation
+          ? ['gpt-transform']
+          : sources;
+
+        setEditorFromHelpers(llmTranslation || translation, updatedSources, true);
+      }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
+
       setEditorFromHelpers(
         getPlainMessage(translation, entity.format),
         [],
