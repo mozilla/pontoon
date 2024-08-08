@@ -4,6 +4,7 @@ import { EditorActions } from '~/context/Editor';
 import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { HelperSelection } from '~/context/HelperSelection';
+import type { SelState } from '~/context/TranslationContext';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
@@ -100,7 +101,7 @@ export function useHandleCtrlShiftArrow(): (
     : otherLocaleTranslations.length;
 
   // Precompute LLM state at the top level
-  let llmState = null;
+  let llmState: SelState | null = null;
   if (isMachinery && element < machineryTranslations.length) {
     llmState = useLLMTranslation(machineryTranslations[element]);
   }
@@ -133,7 +134,11 @@ export function useHandleCtrlShiftArrow(): (
           ? ['gpt-transform']
           : sources;
 
-        setEditorFromHelpers(llmTranslation || translation, updatedSources, true);
+        setEditorFromHelpers(
+          llmTranslation || translation,
+          updatedSources,
+          true,
+        );
       }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];

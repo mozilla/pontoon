@@ -41,6 +41,7 @@ export function MachineryTranslationComponent({
 
   // Updated to use the new context structure
   const { llmTranslations, selectedOption } = useLLMTranslation(translation);
+  const locale = useContext(Locale);
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
