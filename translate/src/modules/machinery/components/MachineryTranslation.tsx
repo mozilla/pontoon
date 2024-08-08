@@ -39,12 +39,15 @@ export function MachineryTranslationComponent({
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
-  const { llmTranslation } = useLLMTranslation(translation);
+  // Updated to use the new context structure
+  const { llmTranslations, selectedOption } = useLLMTranslation(translation);
   const locale = useContext(Locale);
 
   const copyTranslationIntoEditor = useCallback(() => {
     if (window.getSelection()?.isCollapsed !== false) {
       setElement(index);
+      // Extract the appropriate LLM translation
+      const llmTranslation = llmTranslations[selectedOption];
       const content = llmTranslation || translation.translation;
       const sources: SourceType[] = llmTranslation
         ? ['gpt-transform']
@@ -57,7 +60,13 @@ export function MachineryTranslationComponent({
         });
       }
     }
-  }, [index, setEditorFromHelpers, translation, llmTranslation]);
+  }, [
+    index,
+    setEditorFromHelpers,
+    translation,
+    llmTranslations,
+    selectedOption,
+  ]);
 
   const className = classNames(
     'translation',
@@ -108,7 +117,13 @@ function MachineryTranslationSuggestion({
   translation: MachineryTranslation;
 }) {
   const { code, direction, script } = useContext(Locale);
-  const { llmTranslation, loading } = useLLMTranslation(translation);
+
+  // Updated to use the new context structure
+  const { llmTranslations, selectedOption, loading } =
+    useLLMTranslation(translation);
+
+  // Extract the appropriate LLM translation
+  const llmTranslation = llmTranslations[selectedOption];
   return (
     <>
       <header>
