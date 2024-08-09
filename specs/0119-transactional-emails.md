@@ -276,7 +276,7 @@ All of the following conditions met:
 
 1. Contributor role   
 2. At least 1 non-ML translation submitted   
-3. No log in for 6 months  
+3. No login for 6 months  
 4. Has not received inactive account reminder in the past
 
 #### Template
