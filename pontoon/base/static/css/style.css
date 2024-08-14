@@ -237,6 +237,10 @@ tfoot td a {
   font-style: normal;
 }
 
+time {
+  display: block;
+}
+
 .count {
   background: var(--button-background-2);
   border-radius: 3px;
