@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import { SEARCH_OPTIONS } from '../constants';
 import type { FilterState, FilterType } from './SearchBox';
@@ -9,17 +10,13 @@ import './SearchPanel.css';
 
 type Props = {
   filters: FilterState;
-  resetFilters: () => void;
   applyFilters: () => void;
-  applySingleFilter: (value: string, filter: FilterType | 'timeRange') => void;
   toggleFilter: (value: string, filter: FilterType) => void;
 };
 
 type SearchPanelProps = {
   filters: FilterState;
-  onResetFilters: () => void;
   onApplyFilters: () => void;
-  onApplyFilter: (value: string, filter: FilterType | 'timeRange') => void;
   onToggleFilter: (
     value: string,
     filter: FilterType,
@@ -29,13 +26,12 @@ type SearchPanelProps = {
 };
 
 const SearchFilter = ({
-  filter: { name },
+  filter: { name, slug },
   selected,
   onToggle,
 }: {
   filter: (typeof SEARCH_OPTIONS)[number];
   selected: boolean;
-  onSelect: () => void;
   onToggle: () => void;
 }) => {
   return (
@@ -47,14 +43,15 @@ const SearchFilter = ({
       }}
     >
       <i className='fa fa-w'></i>
-      <span className='label'>{name}</span>
+      <Localized id={`search-SearchOptionsPanel--option-name-${slug}`}>
+        <span className='label'>{name}</span>
+      </Localized>
     </li>
   );
 };
 
 export function SearchPanelDialog({
   filters,
-  onApplyFilter,
   onApplyFilters,
   onToggleFilter,
   onDiscard,
@@ -64,12 +61,12 @@ export function SearchPanelDialog({
 
   return (
     <div className='menu' ref={ref}>
+      <Localized id='search-SearchOptionsPanel--heading'> 
+        <header className='title'>SEARCH OPTIONS</header>
+      </Localized>
       <ul>
-        <li className='title'>SEARCH OPTIONS</li>
-
         {SEARCH_OPTIONS.map((search, i) => (
           <SearchFilter
-            onSelect={() => onApplyFilter(search.slug, 'search_identifiers')}
             onToggle={() => onToggleFilter(search.slug, 'search_identifiers')}
             filter={search}
             key={i}
@@ -77,24 +74,24 @@ export function SearchPanelDialog({
           />
         ))}
       </ul>
-
-      <button
-        title='Apply Selected Filters'
-        onClick={onApplyFilters}
-        className='search-button'
-      >
-        {' '}
-        {'SEARCH'}
-      </button>
+      
+      <Localized id='search-SearchOptionsPanel--apply-filters'>
+        <button
+          title='Apply Selected Search Options'
+          onClick={onApplyFilters}
+          className='search-button'
+        >
+          {' '}
+          {'SEARCH'}
+        </button>
+      </Localized>
     </div>
   );
 }
 
 export function SearchPanel({
   filters,
-  resetFilters,
   applyFilters,
-  applySingleFilter,
   toggleFilter,
 }: Props): React.ReactElement<'div'> | null {
   const [visible, setVisible] = useState(false);
@@ -130,8 +127,6 @@ export function SearchPanel({
       {visible ? (
         <SearchPanelDialog
           filters={filters}
-          onResetFilters={resetFilters}
-          onApplyFilter={applySingleFilter}
           onApplyFilters={handleApplyFilters}
           onToggleFilter={handleToggleFilter}
           onDiscard={handleDiscard}

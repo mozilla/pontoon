@@ -62,7 +62,7 @@ export const FILTERS_EXTRA = [
 export const SEARCH_OPTIONS = [
   {
     name: 'Search in string identifiers',
-    slug: 'search_identifiers',
+    slug: 'identifiers',
   },
   // {
   //   name: 'Search in translations only',

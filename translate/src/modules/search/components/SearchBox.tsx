@@ -293,9 +293,7 @@ export function SearchBoxBase({
       />
       <SearchPanel
         filters={filters}
-        resetFilters={resetFilters}
         applyFilters={applyFilters}
-        applySingleFilter={applySingleFilter}
         toggleFilter={toggleFilter}
       />
     </div>

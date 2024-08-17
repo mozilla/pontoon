@@ -671,6 +671,19 @@ search-FiltersPanel--apply-filters =
     .title = Apply Selected Filters
 
 
+## Search Options Panel
+
+search-SearchOptionsPanel--option-name-identifiers = Search in string identifiers
+
+search-SearchOptionsPanel--heading = SEARCH OPTIONS
+
+search-SearchOptionsPanel--apply-filters =
+    <glyph></glyph>APPLY <stress>{ $count }</stress> { $count ->
+        [one] SEARCH OPTION
+       *[other] SEARCH OPTIONS
+    }
+    .title = Apply Selected Search Options
+
 ## Time Range Filter
 ## Time Range filter title, input fields and chart.
 

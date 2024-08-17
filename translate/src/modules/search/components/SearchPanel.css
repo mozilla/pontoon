@@ -20,7 +20,7 @@
     }
   }
 
-  .menu {
+  & .menu {
     background: var(--black-3);
     border: 1px solid var(--main-border-1);
     box-sizing: border-box;
@@ -28,10 +28,23 @@
     top: 44px;
     width: 350px;
     z-index: 20;
+    padding: 10px 12px;
 
-    ul {
+    & ul {
       margin: 10px 12px;
       list-style: none;
+      padding: 4px 0;
+      margin-left: 0;
+    }
+
+    & .title {
+      color: var(--status-translated-alt);
+      cursor: default;
+      font-size: 13px;
+      font-weight: 300;
+      height: auto;
+      /* margin: 10px 12px; */
+      /* padding: 5px 0 0; */
     }
 
     li {
@@ -42,16 +55,6 @@
 
       &:hover {
         color: var(--white-1);
-      }
-
-      &.title {
-        color: var(--status-translated-alt);
-        cursor: default;
-        font-size: 13px;
-        font-weight: 300;
-        height: auto;
-        margin: 5px 0;
-        padding: 5px 0 0;
       }
 
       &.check-box {
@@ -81,7 +84,7 @@
     color: var(--light-grey-7);
     font-weight: 300;
     margin: 5px;
-    padding: 5px;
+    /* padding: 5px; */
     border-radius: 3px;
 
     &:hover,
