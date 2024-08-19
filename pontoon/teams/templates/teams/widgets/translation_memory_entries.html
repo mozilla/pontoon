@@ -1,0 +1,46 @@
+{% macro linkify(anchor, entity_ids) %}
+    {% if entity_ids %}
+    <a href="{{ url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?list={{ entity_ids }}">
+        {{ anchor }}
+    </a>
+    {% else %}
+    {{ anchor }}
+    {% endif %}
+{% endmacro %}
+
+{% for entry in tm_entries %}
+<tr>
+    <td class="source text">
+        {{ linkify(entry.source, entry.entity_ids) }}
+    </td>
+    <td class="target text">
+        {{ linkify(entry.target, entry.entity_ids) }}
+    </td>
+    <td class="actions controls">
+        <button class="edit button">
+            <span class="fa fa-pencil-alt"></span>
+            Edit
+        </button>
+        <button class="delete button">
+            <span class="fa fa-trash"></span>
+            Delete
+        </button>
+    </td>
+</tr>
+{% endfor %}
+
+{% if has_next %}
+{% for i in range(3) %}
+<tr class="skeleton-loader">
+    <td class="source">
+        <div class="skeleton">Loading...</div>
+    </td>
+    <td class="target">
+        <div class="skeleton">Loading...</div>
+    </td>
+    <td class="actions controls">
+        <div class="skeleton">Loading...</div>
+    </td>
+</tr>
+{% endfor %}
+{% endif %}

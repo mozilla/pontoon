@@ -6,11 +6,14 @@ from guardian.decorators import permission_required_or_403
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Prefetch, Q, TextField
+from django.db.models.functions import Cast
 from django.http import (
     Http404,
     HttpResponse,
@@ -23,7 +26,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project, User
+from pontoon.base.models import Locale, Project, TranslationMemoryEntry, User
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
@@ -249,6 +252,49 @@ def ajax_permissions(request, locale):
             "project_locale_form": project_locale_form,
             "project_locales": project_locales,
             "hide_project_selector": hide_project_selector,
+        },
+    )
+
+
+@require_AJAX
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory(request, locale):
+    """Translation Memory tab."""
+    locale = get_object_or_404(Locale, code=locale)
+    page_number = request.GET.get("page", 1)
+
+    tm_entries = (
+        TranslationMemoryEntry.objects.filter(locale=locale)
+        # Group by "source" and "target"
+        .values("source", "target")
+        .annotate(
+            count=Count("id"),
+            # Concatenate entity IDs
+            entity_ids=StringAgg(
+                Cast("entity_id", output_field=TextField()), delimiter=","
+            ),
+        )
+    )
+
+    per_page = 100  # Number of entries per page
+    paginator = Paginator(tm_entries, per_page)
+    page = paginator.get_page(page_number)
+
+    # If the subsequent page is requested, return only the entries
+    template = (
+        "teams/widgets/translation_memory_entries.html"
+        if page_number != 1
+        else "teams/includes/translation_memory.html"
+    )
+
+    return render(
+        request,
+        template,
+        {
+            "locale": locale,
+            "tm_entries": page,
+            "has_next": page.has_next(),
         },
     )
 

@@ -56,6 +56,12 @@ urlpatterns = [
                     ),
                     name="pontoon.teams.manage",
                 ),
+                # Team translation memory
+                path(
+                    "translation-memory/",
+                    views.team,
+                    name="pontoon.teams.translation-memory",
+                ),
                 # AJAX views
                 path(
                     "ajax/",
@@ -96,6 +102,12 @@ urlpatterns = [
                                 "permissions/",
                                 views.ajax_permissions,
                                 name="pontoon.teams.ajax.permissions",
+                            ),
+                            # Team translation memory
+                            path(
+                                "translation-memory/",
+                                views.ajax_translation_memory,
+                                name="pontoon.teams.ajax.translation-memory",
                             ),
                         ]
                     ),
