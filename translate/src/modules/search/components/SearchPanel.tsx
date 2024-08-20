@@ -61,7 +61,7 @@ export function SearchPanelDialog({
 
   return (
     <div className='menu' ref={ref}>
-      <Localized id='search-SearchOptionsPanel--heading'> 
+      <Localized id='search-SearchOptionsPanel--heading'>
         <header className='title'>SEARCH OPTIONS</header>
       </Localized>
       <ul>
@@ -74,15 +74,14 @@ export function SearchPanelDialog({
           />
         ))}
       </ul>
-      
-      <Localized id='search-SearchOptionsPanel--apply-filters'>
+
+      <Localized id='search-SearchOptionsPanel--apply-options'>
         <button
           title='Apply Selected Search Options'
           onClick={onApplyFilters}
           className='search-button'
         >
-          {' '}
-          {'SEARCH'}
+          {'APPLY SEARCH OPTIONS'}
         </button>
       </Localized>
     </div>

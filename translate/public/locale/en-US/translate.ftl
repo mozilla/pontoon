@@ -677,11 +677,7 @@ search-SearchOptionsPanel--option-name-identifiers = Search in string identifier
 
 search-SearchOptionsPanel--heading = SEARCH OPTIONS
 
-search-SearchOptionsPanel--apply-filters =
-    <glyph></glyph>APPLY <stress>{ $count }</stress> { $count ->
-        [one] SEARCH OPTION
-       *[other] SEARCH OPTIONS
-    }
+search-SearchOptionsPanel--apply-options =
     .title = Apply Selected Search Options
 
 ## Time Range Filter
