@@ -18,7 +18,7 @@ Finally, some additional transactional emails are intended to complement upcomin
 
 ## Settings changes
 
-### Sending comments as email
+### Sending notifications as email
 
 Users choose what notifications are sent to their email by an “Include in email digest” setting added under the existing “Notification subscriptions” section in settings. No email digest is sent if there are no notifications selected, otherwise an email digest is sent either daily or weekly based on the user’s selection from an “Email digest frequency” dropdown.
 
@@ -30,7 +30,7 @@ This updates the “Notification subscriptions” section to include:
   * Specs / defaults should be preserved from current implementation.  
 * Column 2 label (default value: disabled): “Include in email digest”  
   * When enabled, this type of notification will be included in an email sent to the user’s designated email address (either their login account, or the email address they define in the email preferences section.)  
-* Dropdown list (default value: Daily): “Email digest frequency”  
+* Dropdown list (default value: Weekly): “Email digest frequency”  
   * Options: “Daily”, “Weekly”  
   * Disable list if nothing enabled in the “Include in email digest” column.
 
@@ -48,7 +48,7 @@ Users enable or disable a monthly activity report with the “Monthly activity s
   * Flag is enabled for all current users with global translator or manager permissions at time of implementation.  
   * Flag is automatically enabled for a user who receives new global translator or manager permissions. If a user's translator or manager permissions are removed, the user would have to manually disable these emails from their settings.
 
-## Transactional emails
+## New transactional emails
 
 ### Activity summary
 
@@ -181,7 +181,7 @@ Once
 
 ### Trigger
 
-48 hours after registration
+48 hours after account creation
 
 ### Template
 
@@ -233,10 +233,7 @@ Once
 
 #### Trigger
 
-When both conditions are met: 
-
-1. At least 1 week after account creation  
-2. 5 or more translation suggestions submitted
+1 week after account creation  
 
 ### Template
 
@@ -244,9 +241,9 @@ Subject: More resources for contributors
 Body:  
 Hello,
 
-Thank you so much for contributing translations to Mozilla localization! This is our final introductory email - so from here on out you won’t find us in your inbox (excluding essential account related communications) unless you choose to sign up for the future email updates described below.
+Hello again! This is our final introductory email - so from here on out you won’t find us in your inbox (excluding essential account related communications) unless you choose to sign up for the future email updates described below.
 
-Since you’ve had a chance to make some translation suggestions, we’d like to provide you with some additional resources that might be useful as you continue in your journey as a member of our localization community.
+We’d like to provide you with some additional resources that might be useful as you continue in your journey as a member of our localization community.
 
 **Additional documentation:**  
 For in-depth documentation on Mozilla localization, see our [Documentation for Mozilla localizers](https://mozilla-l10n.github.io/localizer-documentation/index.html) which includes in depth explanations on topics such as:
@@ -262,7 +259,7 @@ You can use the Pontoon Add-on for [Firefox](https://mozilla-l10n.github.io/loca
 As an active member of our community, we’d like you to be aware of the [Mozilla community participation guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) to ensure the wellbeing of all members of the community.
 
 **Email settings:**  
-Finally, if you’re interested in hearing about upcoming events organized for our localization community, be sure to enable email communications in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
+Finally, if you’re interested in latest updates, announcements about new Pontoon features, invitations to contributor events and more, be sure to enable email communications in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
 You can also receive Pontoon notifications in a daily or weekly digest — check out the Notification subscriptions section of your settings.
 
 Thanks,  
@@ -291,7 +288,7 @@ Your contributions have been important in furthering Mozilla’s mission and fos
 
 As part of our efforts to keep our localization community active and engaged, we periodically review account activity. We’ve noticed you haven’t signed in to your Pontoon account in the past 6 months. While we completely understand that circumstances change, we wanted to inform you that we may deactivate dormant accounts in the future to ensure the security and efficiency of our platform.
 
-If you’d like to keep your Pontoon account active (we hope you will!) please sign in to Pontoon within the next 30 days by visiting [https://pontoon.mozilla.org/](https://pontoon.mozilla.org/) and click the “Sign in” button in the top right corner.
+If you’d like to keep your Pontoon account active (we hope you will!) please sign in to Pontoon by visiting [https://pontoon.mozilla.org/](https://pontoon.mozilla.org/) and click the “Sign in” button in the top right corner.
 
 Regardless, we want to express our heartfelt thanks for your commitment to our mission and the positive impact you've made during your time here.
 
