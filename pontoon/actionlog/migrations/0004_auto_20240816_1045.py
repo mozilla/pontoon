@@ -3,6 +3,7 @@
 import datetime
 
 from django.db import migrations
+from django.db.models import Q
 
 
 def migrate_translation_to_actionlog(apps, schema_editor):
@@ -24,15 +25,21 @@ def migrate_translation_to_actionlog(apps, schema_editor):
 
     actions_to_log = []
 
-    for translation in Translation.objects.filter(date__lt=end_date):
+    translations = Translation.objects.filter(
+        Q(date__lt=end_date)
+        | Q(approved_date__lt=end_date)
+        | Q(unapproved_date__lt=end_date)
+        | Q(rejected_date__lt=end_date)
+        | Q(unrejected_date__lt=end_date)
+    )
+
+    for translation in translations:
         for attr, action_type in traslation_info.items():
             if getattr(translation, attr) is not None:
                 actions_to_log.append(
                     ActionLog(
                         action_type=action_type,
                         created_at=translation.date,
-                        entity_id=translation.entity_id,
-                        locale_id=translation.locale_id,
                         performed_by_id=translation.user_id,
                         translation_id=translation.id,
                     )
@@ -45,4 +52,9 @@ class Migration(migrations.Migration):
         ("actionlog", "0003_existing_pretranslation_action"),
     ]
 
-    operations = []
+    operations = [
+        migrations.RunPython(
+            code=migrate_translation_to_actionlog,
+            reverse_code=migrations.RunPython.noop,
+        ),
+    ]
