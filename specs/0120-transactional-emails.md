@@ -34,7 +34,7 @@ This updates the “Notification subscriptions” section to include:
   * Options: “Daily”, “Weekly”  
   * Disable list if nothing enabled in the “Include in email digest” column.
 
-![](./0119/subscription-settings.png)
+![](./0120/subscription-settings.png)
 
 ### Monthly activity summary
 
