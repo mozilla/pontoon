@@ -43,7 +43,7 @@ const SearchFilter = ({
       }}
     >
       <i className='fa fa-w'></i>
-      <Localized id={`search-SearchOptionsPanel--option-name-${slug}`}>
+      <Localized id={`search-SearchPanel--option-name-${slug}`}>
         <span className='label'>{name}</span>
       </Localized>
     </li>
@@ -61,7 +61,7 @@ export function SearchPanelDialog({
 
   return (
     <div className='menu' ref={ref}>
-      <Localized id='search-SearchOptionsPanel--heading'>
+      <Localized id='search-SearchPanel--heading'>
         <header className='title'>SEARCH OPTIONS</header>
       </Localized>
       <ul>
@@ -75,7 +75,7 @@ export function SearchPanelDialog({
         ))}
       </ul>
 
-      <Localized id='search-SearchOptionsPanel--apply-options'>
+      <Localized id='search-SearchPanel--apply-options'>
         <button
           title='Apply Selected Search Options'
           onClick={onApplyFilters}

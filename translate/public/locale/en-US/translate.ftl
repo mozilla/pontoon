@@ -673,11 +673,11 @@ search-FiltersPanel--apply-filters =
 
 ## Search Options Panel
 
-search-SearchOptionsPanel--option-name-identifiers = Search in string identifiers
+search-SearchPanel--option-name-identifiers = Search in string identifiers
 
-search-SearchOptionsPanel--heading = SEARCH OPTIONS
+search-SearchPanel--heading = SEARCH OPTIONS
 
-search-SearchOptionsPanel--apply-options =
+search-SearchPanel--apply-options =
     .title = Apply Selected Search Options
 
 ## Time Range Filter
