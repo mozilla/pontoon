@@ -1,0 +1,38 @@
+- Feature Name: Translation Memory Management
+- Created: 2024-08-28
+- Associated Issue: #3031
+
+# Summary
+
+Add ability to edit, delete and upload Translation Memory (TM) entries.
+
+# Motivation
+
+Translation memory is a fundamental tool for faster and more consistent translations, and has become even more important with pretranslation, since it's used to train custom machine translation engines in Google AutoML Translation.
+
+Support for TM in Pontoon is limited:
+* Localizers cannot edit or delete existing TM entries directly.
+* TM entries can be changed indirectly via translation workspace, but only if the corresponding strings are still available for translation.
+* Localizers cannot upload their own translation memories.
+
+# Feature explanation
+
+A new "Translation Memory" tab is added to the Team pages, which lists all TM entries for the team. For each entry, source string and translation are provided, clicking on which leads to the translation workspace for the corresponding string. Entries are listed in a reverse chronological order (most recent items come first).
+
+Initially, only the first 100 entries are loaded. Additional entries are loaded in batches of 100 using infinite scroll, a UX pattern that is also used in the string list in translation workspace.
+
+TM entries can be searched by the source string and translation using the Search field. Search is triggered by pressing Enter or 500 ms after the user has stopped typing.
+
+The following actions are available to team managers and translators and disabled for other users:
+
+1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes and clicking Cancel stops editing.
+
+1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking on that button deletes the TM entry.
+
+1. **Upload**. After clicking the Upload button above the TM entry list, an Open file dialog pops up. The user then selects the TMX file to upload and afterwards a success or error message appears.
+
+# Mockup
+
+![](0121/translation-memory-management.png)
+
+*Translation Memory Management*
