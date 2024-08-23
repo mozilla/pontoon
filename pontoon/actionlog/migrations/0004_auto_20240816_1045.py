@@ -9,7 +9,7 @@ def migrate_translation_to_actionlog(apps, schema_editor):
     Translation = apps.get_model("base", "Translation")
     ActionLog = apps.get_model("actionlog", "ActionLog")
 
-    traslation_info = {
+    translation_info = {
         "date": ("translation:created", "Translation created"),
         "approved_date": ("translation:approved", "Translation approved"),
         "unapproved_date": ("translation:unapproved", "Translation unapproved"),
