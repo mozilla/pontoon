@@ -25,11 +25,9 @@ def migrate_translation_to_actionlog(apps, schema_editor):
     actions_to_log = []
 
     for translation in Translation.objects.filter(date__lt=end_date):
-        for attr, action_type in traslation_info.items():
-            if (
-                getattr(translation, attr) is not None
-                and translation["attr"] < end_date
-            ):
+        for attr, action_type in translation_info.items():
+            value  = getattr(translation, attr)
+            if value is not None and value < end_date:
                 actions_to_log.append(
                     ActionLog(
                         action_type=action_type,
