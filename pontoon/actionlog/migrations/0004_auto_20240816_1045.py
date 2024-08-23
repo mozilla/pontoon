@@ -31,7 +31,7 @@ def migrate_translation_to_actionlog(apps, schema_editor):
                 actions_to_log.append(
                     ActionLog(
                         action_type=action_type,
-                        created_at=translation["attr"],
+                        created_at=value,
                         performed_by_id=translation.user_id,
                         translation_id=translation.id,
                     )
