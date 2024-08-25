@@ -10,25 +10,21 @@ def migrate_translation_to_actionlog(apps, schema_editor):
     ActionLog = apps.get_model("actionlog", "ActionLog")
 
     translation_info = {
-        "date": ("translation:created", "Translation created", "user"),
+        "date": (("translation:created", "Translation created"), "user"),
         "approved_date": (
-            "translation:approved",
-            "Translation approved",
+            ("translation:approved", "Translation approved"),
             "approved_user",
         ),
         "unapproved_date": (
-            "translation:unapproved",
-            "Translation unapproved",
+            ("translation:unapproved", "Translation unapproved"),
             "unapproved_user",
         ),
         "rejected_date": (
-            "translation:rejected",
-            "Translation rejected",
+            ("translation:rejected", "Translation rejected"),
             "rejected_user",
         ),
         "unrejected_date": (
-            "translation:unrejected",
-            "Translation unrejected",
+            ("translation:unrejected", "Translation unrejected"),
             "unrejected_user",
         ),
     }
@@ -41,16 +37,16 @@ def migrate_translation_to_actionlog(apps, schema_editor):
     actions_to_log = []
 
     for translation in Translation.objects.filter(date__lt=end_date):
-        for attr, action_type, user_field in translation_info.items():
+        for attr, action_user in translation_info.items():
             value = getattr(translation, attr)
-            user_id = getattr(translation, user_field)
+            user_id = getattr(translation, action_user[1])
 
             # Actionlog will only be created if the value is not None and the date is before the end_date
 
             if value is not None and value < end_date and user_id is not None:
                 actions_to_log.append(
                     ActionLog(
-                        action_type=action_type,
+                        action_type=action_user[0],
                         created_at=value,
                         performed_by_id=user_id,
                         translation_id=translation.id,
