@@ -37,7 +37,7 @@ def migrate_translation_to_actionlog(apps, schema_editor):
     actions_to_log = []
 
     for translation in Translation.objects.filter(date__lt=end_date):
-        for attr, action_user in translation_info.items():
+        for attr, (action_type, action_user) in translation_info.items():
             value = getattr(translation, attr)
             user_id = getattr(translation, action_user[1])
 
