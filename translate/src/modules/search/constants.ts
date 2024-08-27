@@ -66,7 +66,7 @@ export const SEARCH_OPTIONS = [
   },
   // {
   //   name: 'Search in translations only',
-  //   slug: 'translations',
+  //   slug: 'translations-only',
   // },
   // {
   //   name: 'Search in rejected translations',

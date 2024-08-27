@@ -31,10 +31,9 @@
     padding: 10px 12px;
 
     & ul {
-      margin: 10px 12px;
+      margin: 10px 12px 0;
       list-style: none;
       padding: 4px 0;
-      margin-left: 0;
     }
 
     & .title {
@@ -43,8 +42,6 @@
       font-size: 13px;
       font-weight: 300;
       height: auto;
-      /* margin: 10px 12px; */
-      /* padding: 5px 0 0; */
     }
 
     li {
@@ -83,8 +80,6 @@
     background: var(--button-background-1);
     color: var(--light-grey-7);
     font-weight: 300;
-    margin: 5px;
-    /* padding: 5px; */
     border-radius: 3px;
 
     &:hover,

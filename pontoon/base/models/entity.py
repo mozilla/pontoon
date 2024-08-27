@@ -6,8 +6,7 @@ from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
 
 from django.db import models
-from django.db.models import F, Prefetch, Q, Value
-from django.db.models.functions import StrIndex, Substr
+from django.db.models import F, Prefetch, Q
 from django.utils import timezone
 
 from pontoon.base import utils
@@ -845,60 +844,25 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             search_list = utils.get_search_phrases(search)
 
-            if search_identifiers:
-                translation_filters = (
-                    Q(
-                        translation__string__icontains_collate=(
-                            search,
-                            locale.db_collation,
-                        )
-                    )
-                    & Q(translation__locale=locale)
-                    for search in search_list
-                )
-                translation_matches = entities.filter(*translation_filters).values_list(
-                    "id", flat=True
-                )
-            else:
-                entities = entities.annotate(
-                    filtered_string=Substr("string", StrIndex("string", Value("=")) + 1)
-                )
-                translation_filters = (
-                    Q(filtered_string__icontains_collate=(search, locale.db_collation))
-                    & Q(translation__locale=locale)
-                    for search in search_list
-                )
-                translation_matches = entities.filter(*translation_filters).values_list(
-                    "id", flat=True
-                )
+            translation_filters = (
+                Q(translation__string__icontains_collate=(search, locale.db_collation))
+                & Q(translation__locale=locale)
+                for search in search_list
+            )
+
+            translation_matches = entities.filter(*translation_filters).values_list(
+                "id", flat=True
+            )
 
             q_key = Q(key__icontains=search) if search_identifiers else Q()
+            entity_filters = (
+                Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
+                for search in search_list
+            )
 
-            if not search_identifiers:
-                entities = entities.annotate(
-                    filtered_string=Substr("string", StrIndex("string", Value("=")) + 1)
-                )
-                entity_filters = (
-                    Q(filtered_string__icontains=search) for search in search_list
-                )
-            else:
-                entity_filters = (
-                    Q(string__icontains=search)
-                    | Q(string_plural__icontains=search)
-                    | q_key
-                    for search in search_list
-                )
-
-            if search_identifiers:
-                entity_matches = entities.filter(*entity_filters).values_list(
-                    "id", flat=True
-                )
-            else:
-                entity_matches = entities.filter(*entity_filters).values_list(
-                    "id", flat=True
-                )
-                print("entity", entity_matches)
-                print("translation", translation_matches)
+            entity_matches = entities.filter(*entity_filters).values_list(
+                "id", flat=True
+            )
 
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
