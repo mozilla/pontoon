@@ -39,7 +39,9 @@ export function MachineryTranslationComponent({
   const { element, setElement } = useContext(HelperSelection);
   const isSelected = element === index;
 
-  const { llmTranslation } = useLLMTranslation(translation);
+  const getLLMTranslationState = useLLMTranslation();
+  const { llmTranslation } = getLLMTranslationState(translation);
+
   const locale = useContext(Locale);
 
   const copyTranslationIntoEditor = useCallback(() => {
@@ -109,8 +111,8 @@ function MachineryTranslationSuggestion({
 }) {
   const { code, direction, script } = useContext(Locale);
 
-  // Updated to use the new context structure
-  const { llmTranslation, loading } = useLLMTranslation(translation);
+  const getLLMTranslationState = useLLMTranslation();
+  const { llmTranslation, loading } = getLLMTranslationState(translation);
 
   return (
     <>

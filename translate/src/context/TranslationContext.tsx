@@ -88,9 +88,14 @@ export const LLMTranslationProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useLLMTranslation = (mt: MachineryTranslation) => {
+export const useLLMTranslation = () => {
   const { getSelState, transformLLMTranslation, restoreOriginal } = useContext(
     LLMTranslationContext,
   );
-  return { ...getSelState(mt), transformLLMTranslation, restoreOriginal };
+
+  return (mt: MachineryTranslation) => ({
+    ...getSelState(mt),
+    transformLLMTranslation,
+    restoreOriginal,
+  });
 };
