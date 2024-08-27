@@ -36,13 +36,25 @@ def migrate_translation_to_actionlog(apps, schema_editor):
 
     actions_to_log = []
 
-    for translation in Translation.objects.filter(date__lt=end_date):
+    # Exclude translations that don't have any user set to improve performance
+    translations = Translation.objects.filter(date__lt=end_date).exclude(
+        user=None,
+        approved_user=None,
+        unapproved_user=None,
+        rejected_user=None,
+        unrejected_user=None,
+    )
+
+    for translation in translations:
         for attr, (action_type, action_user) in translation_info.items():
             date = getattr(translation, attr)
             user_id = getattr(translation, action_user)
 
-            # Actionlog will only be created if the date is not None and the date is before the end_date
+            # Skip logging 'translation:approved' if approved_date is the same as the date
+            if action_type[0] == "translation:approved" and date == translation.date:
+                continue
 
+            # ActionLog will only be created if the date is not None, the date is before the end_date, and user_id is not None
             if date is not None and date < end_date and user_id is not None:
                 actions_to_log.append(
                     ActionLog(
@@ -52,6 +64,7 @@ def migrate_translation_to_actionlog(apps, schema_editor):
                         translation_id=translation.id,
                     )
                 )
+
     ActionLog.objects.bulk_create(actions_to_log)
 
 
