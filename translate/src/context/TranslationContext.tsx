@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
 import { type MachineryTranslation, fetchGPTTransform } from '~/api/machinery';
 
-export type SelState = {
+type SelState = {
   loading: boolean;
   selectedOption: string;
   llmTranslation: string;

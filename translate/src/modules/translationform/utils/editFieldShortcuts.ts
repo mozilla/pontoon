@@ -113,7 +113,6 @@ export function useHandleCtrlShiftArrow(): (
         : (element - 1 + numTranslations) % numTranslations;
     setElement(nextIdx);
 
-    // Use the selected translation, falling back to the original if needed
     if (isMachinery) {
       const len = machineryTranslations.length;
       const translationObj =
