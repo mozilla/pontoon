@@ -17,7 +17,7 @@ Support for TM in Pontoon is limited:
 
 # Feature explanation
 
-A new "Translation Memory" tab is added to the Team pages, which lists all TM entries for the team. For each entry, source string and translation are provided, clicking on which leads to the translation workspace for the corresponding string. Entries are listed in a reverse chronological order (most recent items come first).
+A new "Translation Memory" tab is added to the Team pages, which lists all TM entries for the team. For each entry, source string and translation are provided, clicking on which leads to the translation workspace for the corresponding string. Entries are listed in alphabetic order.
 
 Initially, only the first 100 entries are loaded. Additional entries are loaded in batches of 100 using infinite scroll, a UX pattern that is also used in the string list in translation workspace.
 
@@ -29,7 +29,12 @@ The following actions are available to team managers and translators and disable
 
 1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking on that button deletes the TM entry.
 
-1. **Upload**. After clicking the Upload button above the TM entry list, an Open file dialog pops up. The user then selects the TMX file to upload and afterwards a success or error message appears.
+1. **Upload**. After clicking the Upload button above the TM entry list, an Open file dialog pops up. The user then selects the TMX file to upload, the TM entries from the file start to import into the team's TM, and eventually a success or error message appears. Uploaded strings have `is_personal` flag said to `True` in the DB.
+
+# Out of scope
+
+* Ability to batch delete uploaded TM entries from the "Translation Memory" tab.
+* Ability to show all TM entries with the matching source string.
 
 # Mockup
 
