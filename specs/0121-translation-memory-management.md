@@ -23,7 +23,7 @@ Initially, only the first 100 entries are loaded. Additional entries are loaded 
 
 TM entries can be searched by the source string and translation using the Search field. Search is triggered by pressing Enter.
 
-The following actions are available to team managers and translators and disabled for other users:
+The following actions are available to team managers and translators for their locales and disabled for other users:
 
 1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel cancels the editing action.
 
