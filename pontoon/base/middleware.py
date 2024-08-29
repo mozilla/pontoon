@@ -1,6 +1,6 @@
 import logging
 
-from ipaddress import ip_address, ip_network
+from ipaddress import ip_address
 
 from raygun4py.middleware.django import Provider
 
@@ -12,9 +12,6 @@ from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
 from pontoon.base.utils import is_ajax
-
-
-log = logging.getLogger(__name__)
 
 
 class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
@@ -45,20 +42,18 @@ class BlockedIpMiddleware(MiddlewareMixin):
         if ip in settings.BLOCKED_IPS:
             return HttpResponseForbidden("<h1>Forbidden</h1>")
 
-        # Convert IP string to an IP object, check if it belongs to an IP range
+        # Convert request IP string to an IP object, check if it belongs to an
+        # IP range
         try:
             ip_obj = ip_address(ip)
         except ValueError:
-            log.error(f"Invalid IP in BlockedIpMiddleware: {ip}")
+            log = logging.getLogger(__name__)
+            log.error(f"Invalid IP detected in BlockedIpMiddleware: {ip}")
             return None
 
         for ip_range in settings.BLOCKED_IP_RANGES:
-            try:
-                ip_range_obj = ip_network(ip_range, strict=False)
-                if ip_obj in ip_range_obj:
-                    return HttpResponseForbidden("<h1>Forbidden</h1>")
-            except ValueError:
-                log.error(f"Invalid range in BLOCKED_IPS: {ip_range}")
+            if ip_obj in ip_range:
+                return HttpResponseForbidden("<h1>Forbidden</h1>")
 
         return None
 

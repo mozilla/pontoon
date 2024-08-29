@@ -1,8 +1,11 @@
 """Django settings for Pontoon."""
 
+import logging
 import os
 import re
 import socket
+
+from ipaddress import ip_address, ip_network
 
 import dj_database_url
 
@@ -277,10 +280,27 @@ INSTALLED_APPS = (
     "django_ace",
 )
 
-# A list of IP addresses or ranges to be blocked from accessing the app, because
-# they are DDoS'ing the server
-BLOCKED_IPS = os.environ.get("BLOCKED_IPS", "").split(",")
-BLOCKED_IP_RANGES = [s for s in BLOCKED_IPS if "/" in s]
+# A list of IP addresses or IP ranges to be blocked from accessing the app,
+# as a DDoS countermeasure.
+blocked_ip_settings = os.environ.get("BLOCKED_IPS", "").split(",")
+BLOCKED_IPS = []
+BLOCKED_IP_RANGES = []
+for ip in blocked_ip_settings:
+    ip = ip.strip()
+    if ip == "":
+        continue
+    try:
+        # If the IP is valid, store it directly as string
+        ip_obj = ip_address(ip)
+        BLOCKED_IPS.append(ip)
+    except ValueError:
+        try:
+            # Check if it's a valid IP range (CIDR notation)
+            ip_obj = ip_network(ip, strict=False)
+            BLOCKED_IP_RANGES.append(ip_obj)
+        except ValueError:
+            log = logging.getLogger(__name__)
+            log.error(f"Invalid IP or IP range defined in BLOCKED_IPS: {ip}")
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
