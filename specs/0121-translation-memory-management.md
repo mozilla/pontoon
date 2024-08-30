@@ -25,9 +25,9 @@ TM entries can be searched by the source string and translation using the Search
 
 The following actions are available to team managers and translators for their locales and disabled for other users:
 
-1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel cancels the editing action.
+1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes to all corresponding TM entries and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel cancels the editing action.
 
-1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking on that button deletes the TM entry.
+1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking on that button deletes all corresponding TM entries.
 
 1. **Upload**. After clicking the Upload button above the TM entry list, an Open file dialog pops up. The user then selects the TMX file to upload, the TM entries from the file start to import into the team's TM, and eventually a success or error message appears. A newly introduced `TM_ENTRIES_UPLOADED` action is logged in the `ActionLog` in case of success, referencing all newly created TM entries. Based on the performance of the upload function, a maximum file upload size will be imposed.
 
