@@ -17,15 +17,15 @@ Support for TM in Pontoon is limited:
 
 # Feature explanation
 
-A new "Translation Memory" tab is added to the Team pages, which lists all TM entries for the team. For each entry, source string and translation are provided, clicking on which leads to the translation workspace for the corresponding strings (using the list `query` parameter). Entries are listed in alphabetic order and only shown once for each unique combination of source string and translation.
+A new "Translation Memory" tab is added to the Team pages, which lists all TM entries for the team. For each entry, source string and translation are provided, clicking on which leads to the translation workspace for the corresponding strings (using the `?list=` query parameter). Entries are only shown once for each unique combination of source string and translation.
 
 Initially, only the first 100 entries are loaded. Additional entries are loaded in batches of 100 using infinite scroll, a UX pattern that is also used in the string list in translation workspace.
 
-TM entries can be searched by the source string and translation using the Search field. Search is triggered by pressing Enter or 500 ms after the user has stopped typing.
+TM entries can be searched by the source string and translation using the Search field. Search is triggered by pressing Enter.
 
 The following actions are available to team managers and translators and disabled for other users:
 
-1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel stops editing.
+1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel cancels the editing action.
 
 1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking on that button deletes the TM entry.
 
