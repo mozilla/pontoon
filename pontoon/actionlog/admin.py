@@ -16,7 +16,8 @@ class ActionLogAdmin(admin.ModelAdmin):
         "entity_id",
         "locale_id",
     )
-    raw_id_fields = (
+    autocomplete_fields = (
+        "performed_by",
         "entity",
         "translation",
     )
