@@ -25,7 +25,7 @@ TM entries can be searched by the source string and translation using the Search
 
 The following actions are available to team managers and translators for their locales and disabled for other users:
 
-1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes to all corresponding TM entries and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entry. Clicking Cancel cancels the editing action.
+1. **Edit**. After clicking the Edit button in the Actions column, the translation of the TM entry transforms into a textarea element and becomes editable. Next to it, Save and Cancel buttons appear. Clicking Save saves any changes to all corresponding TM entries and logs the newly introduced `TM_ENTRY_EDITED` action in the `ActionLog`, referencing the edited TM entries. Clicking Cancel cancels the editing action.
 
 1. **Delete**. After clicking the Delete button in the Actions column, the button changes into the Are you sure? button. Clicking that button deletes all corresponding TM entries and logs the newly introduced `TM_ENTRY_DELETED` action in the `ActionLog`, referencing related `Entity` and `Locale` objects.
 
