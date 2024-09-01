@@ -27,6 +27,7 @@ class ProjectSyncLogInline(admin.TabularInline):
 
 
 class SyncLogAdmin(admin.ModelAdmin):
+    search_fields = ("sync_log",)
     list_display = TIMES
     inlines = (ProjectSyncLogInline,)
 
@@ -38,15 +39,18 @@ class RepositorySyncLogInline(admin.TabularInline):
 
 
 class ProjectSyncLogAdmin(admin.ModelAdmin):
+    search_fields = ("project_sync_log",)
     list_display = (
         "project",
         "status",
     ) + TIMES
     inlines = (RepositorySyncLogInline,)
+    autocomplete_fields = ("sync_log",)
 
 
 class RepositorySyncLogAdmin(admin.ModelAdmin):
     list_display = ("repository_url",) + TIMES
+    autocomplete_fields = ("project_sync_log",)
 
     @admin.display
     def repository_url(self, obj):

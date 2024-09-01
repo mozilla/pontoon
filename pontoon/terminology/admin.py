@@ -29,7 +29,7 @@ class TermAdmin(admin.ModelAdmin):
         "do_not_translate",
         "forbidden",
     )
-    raw_id_fields = ("entity",)
+    autocomplete_fields = ("entity", "created_by")
 
     def save_model(self, request, obj, form, change):
         obj.created_by = request.user
