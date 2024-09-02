@@ -89,7 +89,7 @@ def yesterdays_action_user_a(translation_a, user_a):
         performed_by=user_a,
         translation=translation_a,
     )
-    if current_date.date == 1:
+    if current_date.day == 1:
         # First day of the month, so we instead set created_at to be earlier today
         action.created_at = timezone.now() - relativedelta(minutes=1)
     else:
