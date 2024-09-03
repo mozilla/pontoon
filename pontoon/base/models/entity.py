@@ -854,6 +854,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
+            # TODO: remove the comment below to reactivate the feature once
+            #       all search options are implemented
             q_key = Q(key__icontains=search)  # if search_identifiers else Q()
             entity_filters = (
                 Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
