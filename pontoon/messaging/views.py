@@ -1,4 +1,5 @@
 import json
+import logging
 import uuid
 
 from guardian.decorators import permission_required_or_403
@@ -15,9 +16,12 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from pontoon.base.models import UserProfile
-from pontoon.base.utils import require_AJAX
+from pontoon.base.models import Locale, Project, Translation, UserProfile
+from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.messaging import forms, utils
+
+
+log = logging.getLogger(__name__)
 
 
 def messaging(request):
@@ -27,6 +31,10 @@ def messaging(request):
     return render(
         request,
         "messaging/messaging.html",
+        {
+            "available_locales": Locale.objects.available(),
+            "available_projects": Project.objects.available().order_by("name"),
+        },
     )
 
 
@@ -42,7 +50,22 @@ def send_message(request):
         if not form.is_valid():
             return JsonResponse(dict(form.errors.items()))
 
-        # TODO: implement recipient filters
+        locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+        project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
+
+        recipients = (
+            Translation.objects.filter(
+                locale_id__in=locale_ids,
+                entity__resource__project_id__in=project_ids,
+            )
+            .values("user")
+            .distinct()
+        )
+
+        log.info(f"Recipients: {list(recipients)}")
+
+        # While the feature is in development, notifications and emails are sent only to the current user.
+        # TODO: Remove this line when the feature is ready
         recipients = User.objects.filter(pk=request.user.pk)
 
         is_notification = form.cleaned_data.get("notification")
@@ -63,6 +86,10 @@ def send_message(request):
                     identifier=identifier,
                 )
 
+            log.info(
+                f"Notifications sent to the following {recipients.count()} users: {recipients.values_list('email', flat=True)}."
+            )
+
         if is_email:
             footer = (
                 """<br><br>
@@ -74,7 +101,11 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             html_template = body + footer
             text_template = utils.html_to_plain_text_with_links(html_template)
 
-            for recipient in recipients.distinct():
+            email_recipients = recipients.filter(
+                profile__email_communications_enabled=True
+            )
+
+            for recipient in email_recipients.distinct():
                 unique_id = str(recipient.profile.unique_id)
                 text = text_template.replace("{ uuid }", unique_id)
                 html = html_template.replace("{ uuid }", unique_id)
@@ -87,6 +118,10 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
                 )
                 msg.attach_alternative(html, "text/html")
                 msg.send()
+
+            log.info(
+                f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
+            )
 
     return JsonResponse(
         {

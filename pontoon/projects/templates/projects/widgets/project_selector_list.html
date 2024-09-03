@@ -1,0 +1,33 @@
+{% macro list(id, title, projects, left_shortcut=None, right_shortcut=None, sortable=False, form_field=None) %}
+<div class="project select {{ id }}">
+    <label for="{{ id }}">
+        {% if left_shortcut %}
+        <a class="move-all left" href="#move-all">{{ left_shortcut }}</a>
+        {% endif %}
+        {{ title }}
+        {% if right_shortcut %}
+        <a class="move-all right" href="#move-all">{{ right_shortcut }}</a>
+        {% endif %}
+    </label>
+
+    <div class="menu permanent">
+        <div class="search-wrapper clearfix">
+            <div class="icon fa fa-search"></div>
+            <input id="{{ id }}" type="search" autocomplete="off">
+        </div>
+        <ul class="{% if sortable %}sortable{% endif %}">
+            {% for project in projects %}
+            <li class="clearfix" data-id="{{ project.id }}">
+                <span class="arrow fa"></span>
+                <span class="project {{ project.slug }}">{{ project.name }}</span>
+            </li>
+            {% endfor %}
+            <li class="no-match">No results</li>
+        </ul>
+    </div>
+
+    {% if form_field %}
+    <input type="hidden" name="{{ form_field }}">
+    {% endif %}
+</div>
+{% endmacro %}

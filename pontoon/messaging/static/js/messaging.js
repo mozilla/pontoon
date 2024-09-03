@@ -16,10 +16,24 @@ $(function () {
 
   const container = $('#main .container');
 
-  function isValidForm($form, isNotification, isEmail, subject, body) {
+  function isValidForm() {
+    const $form = $('#send-message');
     $form.find('.errors').css('visibility', 'hidden');
 
-    if (!isNotification && !isEmail) {
+    const isValidType =
+      $form.find('.message-type .check-box').filter('.enabled').length > 0;
+
+    const subject = $form.find('[name=subject]').val();
+    const body = $form.find('[name=body]').val();
+
+    const isValidRole =
+      $form.find('.filter-user-role .check-box').filter('.enabled').length > 0;
+
+    const isValidLocale = $form.find('[name=locales]').val();
+
+    const isValidProject = $form.find('[name=projects]').val();
+
+    if (!isValidType) {
       $form.find('.message-type .errors').css('visibility', 'visible');
     }
 
@@ -33,25 +47,38 @@ $(function () {
       $form.find('.message-editor .body .errors').css('visibility', 'visible');
     }
 
-    return (isNotification || isEmail) && subject && body;
+    if (!isValidRole) {
+      $form.find('.filter-user-role .errors').css('visibility', 'visible');
+    }
+
+    if (!isValidLocale) {
+      $form.find('.filter-locale .errors').css('visibility', 'visible');
+    }
+
+    if (!isValidProject) {
+      $form.find('.filter-project .errors').css('visibility', 'visible');
+    }
+
+    return (
+      isValidType &&
+      subject &&
+      body &&
+      isValidRole &&
+      isValidLocale &&
+      isValidProject
+    );
   }
 
   // Send message
   container.on('click', '#send-message .send', function (e) {
     e.preventDefault();
-    const $form = $('#send-message');
-
-    const isNotification = $('.message-type .check-box.notification').is(
-      '.enabled',
-    );
-    const isEmail = $('.message-type .check-box.email').is('.enabled');
-    const subject = $form.find('[name=subject]').val();
-    const body = $form.find('[name=body]').val();
 
     // Validate form
-    if (!isValidForm($form, isNotification, isEmail, subject, body)) {
+    if (!isValidForm()) {
       return;
     }
+
+    const $form = $('#send-message');
 
     // Submit form
     $.ajax({
@@ -66,4 +93,18 @@ $(function () {
       },
     });
   });
+
+  // By default, all locales and all projects are selected
+  $('.multiple-team-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
+  $('.multiple-project-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
 });
