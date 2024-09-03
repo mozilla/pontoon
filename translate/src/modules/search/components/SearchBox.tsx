@@ -21,6 +21,7 @@ import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
+import { SearchPanel } from './SearchPanel';
 import './SearchBox.css';
 
 export type TimeRangeType = {
@@ -40,6 +41,8 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
+export type SearchType = 'search_identifiers';
+
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
   return { from: parseInt(from), to: parseInt(to) };
@@ -54,6 +57,15 @@ export type FilterState = {
 
 export type FilterAction = {
   filter: FilterType;
+  value: string | string[] | null | undefined;
+};
+
+export type SearchState = {
+  search_identifiers: string[];
+};
+
+export type SearchAction = {
+  searchOption: SearchType;
   value: string | string[] | null | undefined;
 };
 
@@ -92,7 +104,29 @@ export function SearchBoxBase({
       }
       return next;
     },
-    { authors: [], extras: [], statuses: [], tags: [] },
+    {
+      authors: [],
+      extras: [],
+      statuses: [],
+      tags: [],
+    },
+  );
+
+  const [searchOptions, updateSearchOptions] = useReducer(
+    (state: SearchState, action: SearchAction[]) => {
+      const next = { ...state };
+      for (const { searchOption, value } of action) {
+        next[searchOption] = Array.isArray(value)
+          ? value
+          : typeof value === 'string'
+          ? value.split(',')
+          : [];
+      }
+      return next;
+    },
+    {
+      search_identifiers: [],
+    },
   );
 
   useEffect(() => {
@@ -118,9 +152,18 @@ export function SearchBoxBase({
     setTimeRange(time);
   }, [parameters]);
 
+  const updateOptionsFromURL = useCallback(() => {
+    const { search_identifiers, time } = parameters;
+    updateSearchOptions([
+      { searchOption: 'search_identifiers', value: search_identifiers },
+    ]);
+    setTimeRange(time);
+  }, [parameters]);
+
   // When the URL changes, for example from links in the ResourceProgress
-  // component, reload the filters from the URL parameters.
+  // component, reload the filters and search options from the URL parameters.
   useEffect(updateFiltersFromURL, [parameters]);
+  useEffect(updateOptionsFromURL, [parameters]);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -151,6 +194,20 @@ export function SearchBoxBase({
     [filters],
   );
 
+  const toggleOption = useCallback(
+    (value: string, searchOption: SearchType) => {
+      const next = [...searchOptions[searchOption]];
+      const prev = next.indexOf(value);
+      if (prev == -1) {
+        next.push(value);
+      } else {
+        next.splice(prev, 1);
+      }
+      updateSearchOptions([{ searchOption, value: next }]);
+    },
+    [searchOptions],
+  );
+
   const resetFilters = useCallback(() => {
     updateFilters([
       { filter: 'authors', value: [] },
@@ -178,6 +235,20 @@ export function SearchBoxBase({
     const { locale, project, resource } = parameters;
     dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
   }, [parameters]);
+
+  const applyOptions = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
+        const { search_identifiers } = searchOptions;
+        dispatch(resetEntities());
+        parameters.push({
+          ...parameters, // Persist all other variables to next state
+          search_identifiers: search_identifiers.join(','),
+          entity: 0, // With the new results, the current entity might not be available anymore.
+        });
+      }),
+    [dispatch, parameters, search, searchOptions],
+  );
 
   const applyFilters = useCallback(
     () =>
@@ -245,9 +316,6 @@ export function SearchBoxBase({
 
   return (
     <div className='search-box clearfix'>
-      <label htmlFor='search'>
-        <div className='fa fa-search'></div>
-      </label>
       <input
         id='search'
         ref={searchInput}
@@ -277,6 +345,12 @@ export function SearchBoxBase({
         toggleFilter={toggleFilter}
         setTimeRange={setTimeRange}
         updateFiltersFromURL={updateFiltersFromURL}
+      />
+      <SearchPanel
+        searchOptions={searchOptions}
+        applyOptions={applyOptions}
+        toggleOption={toggleOption}
+        updateOptionsFromURL={updateOptionsFromURL}
       />
     </div>
   );

@@ -124,6 +124,7 @@ function buildFetchPayload(
     for (const key of [
       'search',
       'status',
+      'search_identifiers',
       'extra',
       'tag',
       'author',

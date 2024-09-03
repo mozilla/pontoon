@@ -671,6 +671,15 @@ search-FiltersPanel--apply-filters =
     .title = Apply Selected Filters
 
 
+## Search Options Panel
+
+search-SearchPanel--option-name-identifiers = Search in string identifiers
+
+search-SearchPanel--heading = SEARCH OPTIONS
+
+search-SearchPanel--apply-options = APPLY SEARCH OPTIONS
+    .title = Apply Selected Search Options
+
 ## Time Range Filter
 ## Time Range filter title, input fields and chart.
 

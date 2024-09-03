@@ -58,3 +58,26 @@ export const FILTERS_EXTRA = [
     slug: 'missing-without-unreviewed',
   },
 ] as const;
+
+export const SEARCH_OPTIONS = [
+  {
+    name: 'Search in string identifiers',
+    slug: 'identifiers',
+  },
+  // {
+  //   name: 'Search in translations only',
+  //   slug: 'translations-only',
+  // },
+  // {
+  //   name: 'Search in rejected translations',
+  //   slug: 'rejected',
+  // },
+  // {
+  //   name: 'Match whole words',
+  //   slug: 'matchWords',
+  // },
+  // {
+  //   name: 'Match case',
+  //   slug: 'matchCase',
+  // },
+] as const;
