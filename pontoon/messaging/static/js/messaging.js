@@ -16,15 +16,14 @@ $(function () {
 
   const container = $('#main .container');
 
-  function isValidForm() {
+  function validateForm() {
     const $form = $('#send-message');
-    $form.find('.errors').css('visibility', 'hidden');
 
     const isValidType =
       $form.find('.message-type .check-box').filter('.enabled').length > 0;
 
-    const subject = $form.find('[name=subject]').val();
-    const body = $form.find('[name=body]').val();
+    const isValidSubject = $form.find('[name=subject]').val();
+    const isValidBody = $form.find('[name=body]').val();
 
     const isValidRole =
       $form.find('.filter-user-role .check-box').filter('.enabled').length > 0;
@@ -33,36 +32,25 @@ $(function () {
 
     const isValidProject = $form.find('[name=projects]').val();
 
-    if (!isValidType) {
-      $form.find('.message-type .errors').css('visibility', 'visible');
+    $form.find('.errors').css('visibility', 'hidden');
+
+    function showErrorIfNotValid(isValid, selector) {
+      if (!isValid) {
+        $form.find(selector).find('.errors').css('visibility', 'visible');
+      }
     }
 
-    if (!subject) {
-      $form
-        .find('.message-editor .subject .errors')
-        .css('visibility', 'visible');
-    }
-
-    if (!body) {
-      $form.find('.message-editor .body .errors').css('visibility', 'visible');
-    }
-
-    if (!isValidRole) {
-      $form.find('.filter-user-role .errors').css('visibility', 'visible');
-    }
-
-    if (!isValidLocale) {
-      $form.find('.filter-locale .errors').css('visibility', 'visible');
-    }
-
-    if (!isValidProject) {
-      $form.find('.filter-project .errors').css('visibility', 'visible');
-    }
+    showErrorIfNotValid(isValidType, '.message-type');
+    showErrorIfNotValid(isValidSubject, '.subject');
+    showErrorIfNotValid(isValidBody, '.body');
+    showErrorIfNotValid(isValidRole, '.filter-user-role');
+    showErrorIfNotValid(isValidLocale, '.filter-locale');
+    showErrorIfNotValid(isValidProject, '.filter-project');
 
     return (
       isValidType &&
-      subject &&
-      body &&
+      isValidSubject &&
+      isValidBody &&
       isValidRole &&
       isValidLocale &&
       isValidProject
@@ -74,7 +62,8 @@ $(function () {
     e.preventDefault();
 
     // Validate form
-    if (!isValidForm()) {
+    const isValidForm = validateForm();
+    if (!isValidForm) {
       return;
     }
 
