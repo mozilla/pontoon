@@ -9,29 +9,29 @@ import { useOnDiscard } from '~/utils';
 import './SearchPanel.css';
 
 type Props = {
-  options: SearchState;
+  searchOptions: SearchState;
   applyOptions: () => void;
-  toggleOption: (value: string, filter: SearchType) => void;
+  toggleOption: (value: string, searchOption: SearchType) => void;
   updateOptionsFromURL: () => void;
 };
 
 type SearchPanelProps = {
-  options: SearchState;
+  searchOptions: SearchState;
   onApplyOptions: () => void;
   onToggleOption: (
     value: string,
-    option: SearchType,
+    searchOption: SearchType,
     event?: React.MouseEvent,
   ) => void;
   onDiscard: () => void;
 };
 
-const SearchFilter = ({
-  filter: { name, slug },
+const SearchOption = ({
+  searchOption: { name, slug },
   selected,
   onToggle,
 }: {
-  filter: (typeof SEARCH_OPTIONS)[number];
+  searchOption: (typeof SEARCH_OPTIONS)[number];
   selected: boolean;
   onToggle: () => void;
 }) => {
@@ -52,7 +52,7 @@ const SearchFilter = ({
 };
 
 export function SearchPanelDialog({
-  options,
+  searchOptions,
   onApplyOptions,
   onToggleOption,
   onDiscard,
@@ -63,20 +63,20 @@ export function SearchPanelDialog({
   return (
     <div className='menu' ref={ref}>
       <Localized id='search-SearchPanel--heading'>
-        <header className='title'>SEARCH OPTIONS</header>
+        <header className='title'>SEARCH searchOptions</header>
       </Localized>
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
-          <SearchFilter
+          <SearchOption
             onToggle={() => onToggleOption(search.slug, 'search_identifiers')}
-            filter={search}
+            searchOption={search}
             key={i}
-            selected={options.search_identifiers.includes(search.slug)}
+            selected={searchOptions.search_identifiers.includes(search.slug)}
           />
         ))}
       </ul>
 
-      <Localized id='search-SearchPanel--apply-options'>
+      <Localized id='search-SearchPanel--apply-searchOptions'>
         <button
           title='Apply Selected Search Options'
           onClick={onApplyOptions}
@@ -90,7 +90,7 @@ export function SearchPanelDialog({
 }
 
 export function SearchPanel({
-  options,
+  searchOptions,
   applyOptions,
   toggleOption,
   updateOptionsFromURL,
@@ -108,10 +108,10 @@ export function SearchPanel({
   }, [updateOptionsFromURL]);
 
   const handleToggleOption = useCallback(
-    (value: string, option: SearchType, ev?: React.MouseEvent) => {
+    (value: string, searchOption: SearchType, ev?: React.MouseEvent) => {
       if (value !== 'all') {
         ev?.stopPropagation();
-        toggleOption(value, option);
+        toggleOption(value, searchOption);
       }
     },
     [toggleOption],
@@ -129,7 +129,7 @@ export function SearchPanel({
       </div>
       {visible ? (
         <SearchPanelDialog
-          options={options}
+          searchOptions={searchOptions}
           onApplyOptions={handleApplyOptions}
           onToggleOption={handleToggleOption}
           onDiscard={handleDiscard}

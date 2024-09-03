@@ -65,7 +65,7 @@ export type SearchState = {
 };
 
 export type SearchAction = {
-  option: SearchType;
+  searchOption: SearchType;
   value: string | string[] | null | undefined;
 };
 
@@ -112,11 +112,11 @@ export function SearchBoxBase({
     },
   );
 
-  const [options, updateOptions] = useReducer(
+  const [searchOptions, updateSearchOptions] = useReducer(
     (state: SearchState, action: SearchAction[]) => {
       const next = { ...state };
-      for (const { option, value } of action) {
-        next[option] = Array.isArray(value)
+      for (const { searchOption, value } of action) {
+        next[searchOption] = Array.isArray(value)
           ? value
           : typeof value === 'string'
           ? value.split(',')
@@ -154,14 +154,14 @@ export function SearchBoxBase({
 
   const updateOptionsFromURL = useCallback(() => {
     const { search_identifiers, time } = parameters;
-    updateOptions([
-      { option: 'search_identifiers', value: search_identifiers },
+    updateSearchOptions([
+      { searchOption: 'search_identifiers', value: search_identifiers },
     ]);
     setTimeRange(time);
   }, [parameters]);
 
   // When the URL changes, for example from links in the ResourceProgress
-  // component, reload the filters from the URL parameters.
+  // component, reload the filters and search options from the URL parameters.
   useEffect(updateFiltersFromURL, [parameters]);
   useEffect(updateOptionsFromURL, [parameters]);
 
@@ -195,17 +195,17 @@ export function SearchBoxBase({
   );
 
   const toggleOption = useCallback(
-    (value: string, option: SearchType) => {
-      const next = [...options[option]];
+    (value: string, searchOption: SearchType) => {
+      const next = [...searchOptions[searchOption]];
       const prev = next.indexOf(value);
       if (prev == -1) {
         next.push(value);
       } else {
         next.splice(prev, 1);
       }
-      updateOptions([{ option, value: next }]);
+      updateSearchOptions([{ searchOption, value: next }]);
     },
-    [options],
+    [searchOptions],
   );
 
   const resetFilters = useCallback(() => {
@@ -239,7 +239,7 @@ export function SearchBoxBase({
   const applyOptions = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { search_identifiers } = options;
+        const { search_identifiers } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
@@ -247,7 +247,7 @@ export function SearchBoxBase({
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),
-    [dispatch, parameters, search, options],
+    [dispatch, parameters, search, searchOptions],
   );
 
   const applyFilters = useCallback(
@@ -347,7 +347,7 @@ export function SearchBoxBase({
         updateFiltersFromURL={updateFiltersFromURL}
       />
       <SearchPanel
-        options={options}
+        searchOptions={searchOptions}
         applyOptions={applyOptions}
         toggleOption={toggleOption}
         updateOptionsFromURL={updateOptionsFromURL}
