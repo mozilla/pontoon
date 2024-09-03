@@ -8,6 +8,9 @@ import { useOnDiscard } from '~/utils';
 
 import './SearchPanel.css';
 
+// Disable SearchPanel component until fully complete
+const disable: Boolean = true;
+
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
@@ -124,10 +127,14 @@ export function SearchPanel({
 
   return (
     <div className='search-panel'>
-      <div className='visibility-switch' onClick={toggleVisible}>
+      <div
+        className='visibility-switch'
+        style={{ cursor: disable ? 'default' : 'pointer' }}
+        onClick={toggleVisible}
+      >
         <span className='fa fa-search'></span>
       </div>
-      {visible ? (
+      {visible && !disable ? (
         <SearchPanelDialog
           searchOptions={searchOptions}
           onApplyOptions={handleApplyOptions}
