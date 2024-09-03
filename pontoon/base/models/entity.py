@@ -854,7 +854,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
-            q_key = Q(key__icontains=search) if search_identifiers else Q()
+            q_key = Q(key__icontains=search)  # if search_identifiers else Q()
             entity_filters = (
                 Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
                 for search in search_list
