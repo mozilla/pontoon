@@ -41,7 +41,7 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
-export type SearchType = 'search_identifiers';
+export type SearchType = 'search_identifiers' | 'translations_only';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -62,6 +62,7 @@ export type FilterAction = {
 
 export type SearchState = {
   search_identifiers: string[];
+  translations_only: string[];
 };
 
 export type SearchAction = {
@@ -126,6 +127,7 @@ export function SearchBoxBase({
     },
     {
       search_identifiers: [],
+      translations_only: [],
     },
   );
 
@@ -153,9 +155,10 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const updateOptionsFromURL = useCallback(() => {
-    const { search_identifiers, time } = parameters;
+    const { search_identifiers, translations_only, time } = parameters;
     updateSearchOptions([
       { searchOption: 'search_identifiers', value: search_identifiers },
+      { searchOption: 'translations_only', value: translations_only },
     ]);
     setTimeRange(time);
   }, [parameters]);
@@ -239,11 +242,12 @@ export function SearchBoxBase({
   const applyOptions = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { search_identifiers } = searchOptions;
+        const { search_identifiers, translations_only } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search_identifiers: search_identifiers.join(','),
+          translations_only: translations_only.join(','),
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),

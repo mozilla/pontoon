@@ -11,7 +11,7 @@ import './SearchPanel.css';
 // TODO: Remove the variable below to reactivate the feature once
 //       all search options are implemented
 // Disable SearchPanel component until fully complete
-const disable: Boolean = true;
+const disable: Boolean = false;
 
 type Props = {
   searchOptions: SearchState;
@@ -68,15 +68,22 @@ export function SearchPanelDialog({
   return (
     <div className='menu' ref={ref}>
       <Localized id='search-SearchPanel--heading'>
-        <header className='title'>SEARCH searchOptions</header>
+        <header className='title'>SEARCH OPTIONS</header>
       </Localized>
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
           <SearchOption
-            onToggle={() => onToggleOption(search.slug, 'search_identifiers')}
+            onToggle={() =>
+              onToggleOption(
+                search.slug,
+                search.slug
+              )
+            }
             searchOption={search}
             key={i}
-            selected={searchOptions.search_identifiers.includes(search.slug)}
+            selected={
+             searchOptions[search.slug].includes(search.slug)
+            }
           />
         ))}
       </ul>
@@ -114,10 +121,8 @@ export function SearchPanel({
 
   const handleToggleOption = useCallback(
     (value: string, searchOption: SearchType, ev?: React.MouseEvent) => {
-      if (value !== 'all') {
-        ev?.stopPropagation();
-        toggleOption(value, searchOption);
-      }
+      ev?.stopPropagation();
+      toggleOption(value, searchOption);
     },
     [toggleOption],
   );

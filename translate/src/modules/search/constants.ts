@@ -62,12 +62,12 @@ export const FILTERS_EXTRA = [
 export const SEARCH_OPTIONS = [
   {
     name: 'Search in string identifiers',
-    slug: 'identifiers',
+    slug: 'search_identifiers',
   },
-  // {
-  //   name: 'Search in translations only',
-  //   slug: 'translations-only',
-  // },
+  {
+    name: 'Search in translations only',
+    slug: 'translations_only',
+  },
   // {
   //   name: 'Search in rejected translations',
   //   slug: 'rejected',

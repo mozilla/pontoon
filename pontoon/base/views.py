@@ -246,6 +246,7 @@ def entities(request):
         "search",
         "extra",
         "search_identifiers",
+        "translations_only",
         "time",
         "author",
         "review_time",

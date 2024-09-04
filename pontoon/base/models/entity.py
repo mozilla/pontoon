@@ -732,6 +732,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search=None,
         extra=None,
         search_identifiers=None,
+        translations_only=None,
         time=None,
         author=None,
         review_time=None,
@@ -854,21 +855,26 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
-            # TODO: remove the comment below to reactivate the feature once
-            #       all search options are implemented
-            q_key = Q(key__icontains=search)  # if search_identifiers else Q()
-            entity_filters = (
-                Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
-                for search in search_list
-            )
+            if not translations_only:
+                # TODO: remove the comment below to reactivate the feature once
+                #       all search options are implemented
+                q_key = Q(key__icontains=search) if search_identifiers else Q()
+                entity_filters = (
+                    Q(string__icontains=search)
+                    | Q(string_plural__icontains=search)
+                    | q_key
+                    for search in search_list
+                )
 
-            entity_matches = entities.filter(*entity_filters).values_list(
-                "id", flat=True
-            )
+                entity_matches = entities.filter(*entity_filters).values_list(
+                    "id", flat=True
+                )
 
-            entities = Entity.objects.filter(
-                pk__in=set(list(translation_matches) + list(entity_matches))
-            )
+                entities = Entity.objects.filter(
+                    pk__in=set(list(translation_matches) + list(entity_matches))
+                )
+            else:
+                entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":
