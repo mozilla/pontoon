@@ -61,13 +61,25 @@ $(function () {
   container.on('click', '#send-message .send', function (e) {
     e.preventDefault();
 
+    const $form = $('#send-message');
+
     // Validate form
     const isValidForm = validateForm();
     if (!isValidForm) {
+      // Scroll to the first visible error
+      const visibleErrors = $form.find('.errors').filter(function () {
+        return $(this).css('visibility') === 'visible';
+      });
+      if (visibleErrors.length) {
+        $([document.documentElement, document.body]).animate(
+          {
+            scrollTop: visibleErrors.first().parent().offset().top,
+          },
+          400,
+        );
+      }
       return;
     }
-
-    const $form = $('#send-message');
 
     // Submit form
     $.ajax({
