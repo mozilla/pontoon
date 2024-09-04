@@ -61,13 +61,13 @@ export type FilterAction = {
 };
 
 export type SearchState = {
-  search_identifiers: string[];
-  translations_only: string[];
+  search_identifiers: boolean;
+  translations_only: boolean;
 };
 
 export type SearchAction = {
   searchOption: SearchType;
-  value: string | string[] | null | undefined;
+  value: boolean | null | undefined;
 };
 
 /** If SearchBox has focus, translation form updates should not grab focus for themselves.  */
@@ -117,17 +117,13 @@ export function SearchBoxBase({
     (state: SearchState, action: SearchAction[]) => {
       const next = { ...state };
       for (const { searchOption, value } of action) {
-        next[searchOption] = Array.isArray(value)
-          ? value
-          : typeof value === 'string'
-          ? value.split(',')
-          : [];
+        next[searchOption] = value ?? false;
       }
       return next;
     },
     {
-      search_identifiers: [],
-      translations_only: [],
+      search_identifiers: false,
+      translations_only: false,
     },
   );
 
@@ -198,14 +194,8 @@ export function SearchBoxBase({
   );
 
   const toggleOption = useCallback(
-    (value: string, searchOption: SearchType) => {
-      const next = [...searchOptions[searchOption]];
-      const prev = next.indexOf(value);
-      if (prev == -1) {
-        next.push(value);
-      } else {
-        next.splice(prev, 1);
-      }
+    (searchOption: SearchType) => {
+      const next = !searchOptions[searchOption];
       updateSearchOptions([{ searchOption, value: next }]);
     },
     [searchOptions],
@@ -246,8 +236,8 @@ export function SearchBoxBase({
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
-          search_identifiers: search_identifiers.join(','),
-          translations_only: translations_only.join(','),
+          search_identifiers: search_identifiers,
+          translations_only: translations_only,
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),

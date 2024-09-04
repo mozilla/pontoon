@@ -16,18 +16,14 @@ const disable: Boolean = false;
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
-  toggleOption: (value: string, searchOption: SearchType) => void;
+  toggleOption: (searchOption: SearchType) => void;
   updateOptionsFromURL: () => void;
 };
 
 type SearchPanelProps = {
   searchOptions: SearchState;
   onApplyOptions: () => void;
-  onToggleOption: (
-    value: string,
-    searchOption: SearchType,
-    event?: React.MouseEvent,
-  ) => void;
+  onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
   onDiscard: () => void;
 };
 
@@ -73,17 +69,10 @@ export function SearchPanelDialog({
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
           <SearchOption
-            onToggle={() =>
-              onToggleOption(
-                search.slug,
-                search.slug
-              )
-            }
+            onToggle={() => onToggleOption(search.slug)}
             searchOption={search}
             key={i}
-            selected={
-             searchOptions[search.slug].includes(search.slug)
-            }
+            selected={searchOptions[search.slug] ?? false}
           />
         ))}
       </ul>
@@ -120,9 +109,9 @@ export function SearchPanel({
   }, [updateOptionsFromURL]);
 
   const handleToggleOption = useCallback(
-    (value: string, searchOption: SearchType, ev?: React.MouseEvent) => {
+    (searchOption: SearchType, ev?: React.MouseEvent) => {
       ev?.stopPropagation();
-      toggleOption(value, searchOption);
+      toggleOption(searchOption);
     },
     [toggleOption],
   );

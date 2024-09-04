@@ -20,8 +20,8 @@ export type Location = {
   search: string | null;
   status: string | null;
   extra: string | null;
-  search_identifiers: string | null;
-  translations_only: string | null;
+  search_identifiers: boolean;
+  translations_only: boolean;
   tag: string | null;
   author: string | null;
   time: string | null;
@@ -35,8 +35,8 @@ const emptyParams = {
   search: null,
   status: null,
   extra: null,
-  search_identifiers: null,
-  translations_only: null,
+  search_identifiers: false,
+  translations_only: false,
   tag: null,
   author: null,
   time: null,
@@ -96,8 +96,8 @@ function parse(
         search: params.get('search'),
         status: params.get('status'),
         extra: params.get('extra'),
-        search_identifiers: params.get('search_identifiers'),
-        translations_only: params.get('translations_only'),
+        search_identifiers: params.has('search_identifiers'),
+        translations_only: params.has('translations_only'),
         tag: params.get('tag'),
         author: params.get('author'),
         time: params.get('time'),
