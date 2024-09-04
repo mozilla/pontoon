@@ -12,9 +12,9 @@ class MessageForm(forms.Form):
     subject = forms.CharField()
     body = HtmlField()
 
-    manager = forms.BooleanField(required=False)
-    translator = forms.BooleanField(required=False)
-    contributor = forms.BooleanField(required=False)
+    managers = forms.BooleanField(required=False)
+    translators = forms.BooleanField(required=False)
+    contributors = forms.BooleanField(required=False)
 
     locales = forms.CharField(
         validators=[validators.validate_comma_separated_integer_list]

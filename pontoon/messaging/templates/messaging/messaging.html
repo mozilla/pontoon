@@ -78,12 +78,12 @@
             <h3><span class="stress">#3</span> Filter by User Role</h3>
             <section class="filter-user-role">
               <ul class="check-list">
-                {{ Checkbox.checkbox('Manager', class='manager', attribute='manager', is_enabled=True) }}
-                <li><input type="checkbox" name="manager" checked></li>
-                {{ Checkbox.checkbox('Translator', class='translator', attribute='translator', is_enabled=True) }}
-                <li><input type="checkbox" name="translator" checked></li>
-                {{ Checkbox.checkbox('Contributor', class='contributor', attribute='contributor', is_enabled=True) }}
-                <li><input type="checkbox" name="contributor" checked></li>
+                {{ Checkbox.checkbox('Managers', class='managers', attribute='managers', is_enabled=True) }}
+                <li><input type="checkbox" name="managers" checked="checked"></li>
+                {{ Checkbox.checkbox('Translators', class='translators', attribute='translators', is_enabled=True) }}
+                <li><input type="checkbox" name="translators" checked="checked"></li>
+                {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors', is_enabled=True) }}
+                <li><input type="checkbox" name="contributors" checked="checked"></li>
               </ul>
 
                 <div class="errors">

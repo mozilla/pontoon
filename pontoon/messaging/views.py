@@ -53,16 +53,34 @@ def send_message(request):
         locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
         project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
 
-        recipients = (
-            Translation.objects.filter(
-                locale_id__in=locale_ids,
-                entity__resource__project_id__in=project_ids,
-            )
-            .values("user")
-            .distinct()
-        )
+        recipients = User.objects.none()
 
-        log.info(f"Recipients: {list(recipients)}")
+        if form.cleaned_data.get("contributors"):
+            contributors = (
+                Translation.objects.filter(
+                    locale_id__in=locale_ids,
+                    entity__resource__project_id__in=project_ids,
+                )
+                .values("user")
+                .distinct()
+            )
+            recipients = recipients | User.objects.filter(pk__in=contributors)
+
+        if form.cleaned_data.get("managers"):
+            managers = Locale.objects.filter(pk__in=locale_ids).values(
+                "managers_group__user"
+            )
+            recipients = recipients | User.objects.filter(pk__in=managers)
+
+        if form.cleaned_data.get("translators"):
+            translators = Locale.objects.filter(pk__in=locale_ids).values(
+                "translators_group__user"
+            )
+            recipients = recipients | User.objects.filter(pk__in=translators)
+
+        log.info(
+            f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
+        )
 
         # While the feature is in development, notifications and emails are sent only to the current user.
         # TODO: Remove this line when the feature is ready
