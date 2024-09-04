@@ -554,7 +554,7 @@ PIPELINE_CSS = {
         "source_filenames": (
             "css/sidebar_menu.css",
             "css/multiple_team_selector.css",
-            "css/multiple_project_selector.css",
+            "css/multiple_item_selector.css",
             "css/check-box.css",
             "css/messaging.css",
         ),
@@ -707,7 +707,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
-            "js/multiple_project_selector.js",
+            "js/multiple_item_selector.js",
             "js/messaging.js",
         ),
         "output_filename": "js/messaging.min.js",

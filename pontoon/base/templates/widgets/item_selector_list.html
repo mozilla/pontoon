@@ -1,5 +1,5 @@
-{% macro list(id, title, projects, left_shortcut=None, right_shortcut=None, sortable=False, form_field=None) %}
-<div class="project select {{ id }}">
+{% macro list(id, title, items, left_shortcut=None, right_shortcut=None, sortable=False, form_field=None) %}
+<div class="item select {{ id }}">
     <label for="{{ id }}">
         {% if left_shortcut %}
         <a class="move-all left" href="#move-all">{{ left_shortcut }}</a>
@@ -16,10 +16,10 @@
             <input id="{{ id }}" type="search" autocomplete="off">
         </div>
         <ul class="{% if sortable %}sortable{% endif %}">
-            {% for project in projects %}
-            <li class="clearfix" data-id="{{ project.id }}">
+            {% for item in items %}
+            <li class="clearfix" data-id="{{ item.id }}">
                 <span class="arrow fa"></span>
-                <span class="project {{ project.slug }}">{{ project.name }}</span>
+                <span class="item">{{ item.name }}</span>
             </li>
             {% endfor %}
             <li class="no-match">No results</li>

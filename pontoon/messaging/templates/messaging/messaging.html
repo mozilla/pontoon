@@ -3,7 +3,7 @@
 {% import 'heading.html' as Heading %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 {% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
-{% import 'projects/widgets/multiple_project_selector.html' as multiple_project_selector %}
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
 {% block title %}Messaging Center{% endblock %}
 
@@ -107,7 +107,7 @@
             <section class="filter-project">
                 <div class="multi-selector project-selector">
                     <div class="clearfix">
-                      {{ multiple_project_selector.render(available_projects, [], form_field='projects') }}
+                      {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
                     </div>
                 </div>
                 <div class="errors">

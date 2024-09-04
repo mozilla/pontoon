@@ -102,7 +102,7 @@ $(function () {
     .end()
     .find('.selected ul')
     .scrollTop(0);
-  $('.multiple-project-selector')
+  $('.multiple-item-selector')
     .find('.available .move-all')
     .click()
     .end()
