@@ -15,6 +15,7 @@ form {
 
   .item.select {
     float: left;
+    padding-left: 0;
     width: auto;
 
     .menu {
