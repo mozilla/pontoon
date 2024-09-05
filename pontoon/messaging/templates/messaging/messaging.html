@@ -115,6 +115,70 @@
                 </div>
             </section>
 
+            <h3><span class="stress">#6</span> Filter by submitted translations</h3>
+            <section class="filter-translation clearfix">
+                <div class="field clearfix minimum half">
+                    <label for="translation-minimum">Minimum</label>
+                    <input type="number" min="0" name="translation_minimum" id="translation-minimum">
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix maximum half">
+                    <label for="translation-maximum">Maximum</label>
+                    <input type="number" min="0" name="translation_maximum" id="translation-maximum">
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix from half">
+                    <label for="translation-from">From</label>
+                    <input type="date" name="translation_from" id="translation-from">
+                </div>
+                <div class="field clearfix to half">
+                    <label for="translation-to">To</label>
+                    <input type="date" name="translation_to" id="translation-to">
+                </div>
+            </section>
+
+            <h3><span class="stress">#7</span> Filter by performed reviews</h3>
+            <section class="filter-review clearfix">
+                <div class="field clearfix minimum half">
+                    <label for="review-minimum">Minimum</label>
+                    <input type="number" min="0" name="review_minimum" id="review-minimum">
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix maximum half">
+                    <label for="review-maximum">Maximum</label>
+                    <input type="number" min="0" name="review_maximum" id="review-maximum">
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix from half">
+                    <label for="review-from">From</label>
+                    <input type="date" name="review_from" id="review-from">
+                </div>
+                <div class="field clearfix to half">
+                    <label for="review-to">To</label>
+                    <input type="date" name="review_to" id="review-to">
+                </div>
+            </section>
+
+            <h3><span class="stress">#8</span> Filter by last login</h3>
+            <section class="filter-last-login clearfix">
+                <div class="field clearfix from half">
+                    <label for="login-from">From</label>
+                    <input type="date" name="login_from" id="login-from">
+                </div>
+                <div class="field clearfix to half">
+                    <label for="login-to">To</label>
+                    <input type="date" name="login_to" id="login-to">
+                </div>
+            </section>
+
             <menu class="controls">
               <button class="button active send">Send</button>
             </menu>

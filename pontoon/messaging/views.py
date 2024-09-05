@@ -43,16 +43,15 @@ def messaging(request):
 @require_POST
 @transaction.atomic
 def send_message(request):
-    # Send notifications
     form = forms.MessageForm(request.POST)
 
     if not form.is_valid():
         return JsonResponse(dict(form.errors.items()))
 
+    recipients = User.objects.none()
+
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
-
-    recipients = User.objects.none()
 
     if form.cleaned_data.get("contributors"):
         contributors = (

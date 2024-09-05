@@ -68,12 +68,23 @@
       text-align: left;
     }
 
+    .field.half {
+      float: left;
+      width: 285px;
+    }
+
+    .field.half:nth-child(2n) {
+      float: right;
+    }
+
     label {
       display: block;
       margin-bottom: 5px;
     }
 
     input[type='text'],
+    input[type='date'],
+    input[type='number'],
     textarea {
       background: var(--black-3);
       float: none;

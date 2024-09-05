@@ -32,6 +32,11 @@ $(function () {
 
     const isValidProject = $form.find('[name=projects]').val();
 
+    const isValidTranslationMinimum = $form.find('#translation-minimum')[0].checkValidity();
+    const isValidTranslationMaximum = $form.find('#translation-maximum')[0].checkValidity();
+    const isValidReviewMinimum = $form.find('#review-minimum')[0].checkValidity();
+    const isValidReviewMaximum = $form.find('#review-maximum')[0].checkValidity();
+
     $form.find('.errors').css('visibility', 'hidden');
 
     function showErrorIfNotValid(isValid, selector) {
@@ -46,6 +51,10 @@ $(function () {
     showErrorIfNotValid(isValidRole, '.filter-user-role');
     showErrorIfNotValid(isValidLocale, '.filter-locale');
     showErrorIfNotValid(isValidProject, '.filter-project');
+    showErrorIfNotValid(isValidTranslationMinimum, '.filter-translation > .minimum');
+    showErrorIfNotValid(isValidTranslationMaximum, '.filter-translation > .maximum');
+    showErrorIfNotValid(isValidReviewMinimum, '.filter-review > .minimum');
+    showErrorIfNotValid(isValidReviewMaximum, '.filter-review > .maximum');
 
     return (
       isValidType &&
@@ -53,7 +62,11 @@ $(function () {
       isValidBody &&
       isValidRole &&
       isValidLocale &&
-      isValidProject
+      isValidProject &&
+      isValidTranslationMinimum &&
+      isValidTranslationMaximum &&
+      isValidReviewMinimum &&
+      isValidReviewMaximum
     );
   }
 
