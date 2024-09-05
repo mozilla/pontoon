@@ -125,7 +125,7 @@ function buildFetchPayload(
       'search',
       'status',
       'search_identifiers',
-      'translations_only',
+      'search_translations_only',
       'extra',
       'tag',
       'author',

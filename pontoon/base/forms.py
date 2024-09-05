@@ -298,7 +298,7 @@ class GetEntitiesForm(forms.Form):
     status = forms.CharField(required=False)
     extra = forms.CharField(required=False)
     search_identifiers = forms.BooleanField(required=False)
-    translations_only = forms.BooleanField(required=False)
+    search_translations_only = forms.BooleanField(required=False)
     tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
     author = forms.CharField(required=False)

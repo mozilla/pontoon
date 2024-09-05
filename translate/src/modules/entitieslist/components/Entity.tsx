@@ -135,6 +135,7 @@ export function Entity({
             content={entity.original}
             format={entity.format}
             search={parameters.search}
+            translations_only={parameters.search_translations_only}
           />
         </p>
         <p

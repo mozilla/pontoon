@@ -11,7 +11,7 @@ import './SearchPanel.css';
 // TODO: Remove the variable below to reactivate the feature once
 //       all search options are implemented
 // Disable SearchPanel component until fully complete
-const disable: Boolean = false;
+const disable: Boolean = true;
 
 type Props = {
   searchOptions: SearchState;

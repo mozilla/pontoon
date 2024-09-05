@@ -21,7 +21,7 @@ export type Location = {
   status: string | null;
   extra: string | null;
   search_identifiers: boolean;
-  translations_only: boolean;
+  search_translations_only: boolean;
   tag: string | null;
   author: string | null;
   time: string | null;
@@ -36,7 +36,7 @@ const emptyParams = {
   status: null,
   extra: null,
   search_identifiers: false,
-  translations_only: false,
+  search_translations_only: false,
   tag: null,
   author: null,
   time: null,
@@ -97,7 +97,7 @@ function parse(
         status: params.get('status'),
         extra: params.get('extra'),
         search_identifiers: params.has('search_identifiers'),
-        translations_only: params.has('translations_only'),
+        search_translations_only: params.has('search_translations_only'),
         tag: params.get('tag'),
         author: params.get('author'),
         time: params.get('time'),
@@ -129,7 +129,7 @@ function stringify(prev: Location, next: string | Partial<Location>) {
       'status',
       'extra',
       'search_identifiers',
-      'translations_only',
+      'search_translations_only',
       'tag',
       'author',
       'time',
