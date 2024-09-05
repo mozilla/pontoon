@@ -44,102 +44,101 @@ def messaging(request):
 @transaction.atomic
 def send_message(request):
     # Send notifications
-    if request.method == "POST":
-        form = forms.MessageForm(request.POST)
+    form = forms.MessageForm(request.POST)
 
-        if not form.is_valid():
-            return JsonResponse(dict(form.errors.items()))
+    if not form.is_valid():
+        return JsonResponse(dict(form.errors.items()))
 
-        locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
-        project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
+    locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+    project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
 
-        recipients = User.objects.none()
+    recipients = User.objects.none()
 
-        if form.cleaned_data.get("contributors"):
-            contributors = (
-                Translation.objects.filter(
-                    locale_id__in=locale_ids,
-                    entity__resource__project_id__in=project_ids,
-                )
-                .values("user")
-                .distinct()
+    if form.cleaned_data.get("contributors"):
+        contributors = (
+            Translation.objects.filter(
+                locale_id__in=locale_ids,
+                entity__resource__project_id__in=project_ids,
             )
-            recipients = recipients | User.objects.filter(pk__in=contributors)
+            .values("user")
+            .distinct()
+        )
+        recipients = recipients | User.objects.filter(pk__in=contributors)
 
-        if form.cleaned_data.get("managers"):
-            managers = Locale.objects.filter(pk__in=locale_ids).values(
-                "managers_group__user"
-            )
-            recipients = recipients | User.objects.filter(pk__in=managers)
+    if form.cleaned_data.get("managers"):
+        managers = Locale.objects.filter(pk__in=locale_ids).values(
+            "managers_group__user"
+        )
+        recipients = recipients | User.objects.filter(pk__in=managers)
 
-        if form.cleaned_data.get("translators"):
-            translators = Locale.objects.filter(pk__in=locale_ids).values(
-                "translators_group__user"
+    if form.cleaned_data.get("translators"):
+        translators = Locale.objects.filter(pk__in=locale_ids).values(
+            "translators_group__user"
+        )
+        recipients = recipients | User.objects.filter(pk__in=translators)
+
+    log.info(
+        f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
+    )
+
+    # While the feature is in development, notifications and emails are sent only to the current user.
+    # TODO: Remove this line when the feature is ready
+    recipients = User.objects.filter(pk=request.user.pk)
+
+    is_notification = form.cleaned_data.get("notification")
+    is_email = form.cleaned_data.get("email")
+    is_transactional = form.cleaned_data.get("transactional")
+    subject = form.cleaned_data.get("subject")
+    body = form.cleaned_data.get("body")
+
+    if is_notification:
+        identifier = uuid.uuid4().hex
+        for recipient in recipients.distinct():
+            notify.send(
+                request.user,
+                recipient=recipient,
+                verb="has sent you a message",
+                target=None,
+                description=f"{subject}<br/><br/>{body}",
+                identifier=identifier,
             )
-            recipients = recipients | User.objects.filter(pk__in=translators)
 
         log.info(
-            f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
+            f"Notifications sent to the following {recipients.count()} users: {recipients.values_list('email', flat=True)}."
         )
 
-        # While the feature is in development, notifications and emails are sent only to the current user.
-        # TODO: Remove this line when the feature is ready
-        recipients = User.objects.filter(pk=request.user.pk)
-
-        is_notification = form.cleaned_data.get("notification")
-        is_email = form.cleaned_data.get("email")
-        is_transactional = form.cleaned_data.get("transactional")
-        subject = form.cleaned_data.get("subject")
-        body = form.cleaned_data.get("body")
-
-        if is_notification:
-            identifier = uuid.uuid4().hex
-            for recipient in recipients.distinct():
-                notify.send(
-                    request.user,
-                    recipient=recipient,
-                    verb="has sent you a message",
-                    target=None,
-                    description=f"{subject}<br/><br/>{body}",
-                    identifier=identifier,
-                )
-
-            log.info(
-                f"Notifications sent to the following {recipients.count()} users: {recipients.values_list('email', flat=True)}."
-            )
-
-        if is_email:
-            footer = (
-                """<br><br>
+    if is_email:
+        footer = (
+            """<br><br>
 You’re receiving this email as a contributor to Mozilla localization on Pontoon. <br>To no longer receive emails like these, unsubscribe here: <a href="https://pontoon.mozilla.org/unsubscribe/{ uuid }">Unsubscribe</a>.
-            """
-                if not is_transactional
-                else ""
+        """
+            if not is_transactional
+            else ""
+        )
+        html_template = body + footer
+        text_template = utils.html_to_plain_text_with_links(html_template)
+
+        email_recipients = recipients.filter(
+            profile__email_communications_enabled=True
+        )
+
+        for recipient in email_recipients.distinct():
+            unique_id = str(recipient.profile.unique_id)
+            text = text_template.replace("{ uuid }", unique_id)
+            html = html_template.replace("{ uuid }", unique_id)
+
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                body=text,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[recipient.contact_email],
             )
-            html_template = body + footer
-            text_template = utils.html_to_plain_text_with_links(html_template)
+            msg.attach_alternative(html, "text/html")
+            msg.send()
 
-            email_recipients = recipients.filter(
-                profile__email_communications_enabled=True
-            )
-
-            for recipient in email_recipients.distinct():
-                unique_id = str(recipient.profile.unique_id)
-                text = text_template.replace("{ uuid }", unique_id)
-                html = html_template.replace("{ uuid }", unique_id)
-
-                msg = EmailMultiAlternatives(
-                    subject=subject,
-                    body=text,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[recipient.contact_email],
-                )
-                msg.attach_alternative(html, "text/html")
-                msg.send()
-
-            log.info(
-                f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
-            )
+        log.info(
+            f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
+        )
 
     return JsonResponse(
         {
