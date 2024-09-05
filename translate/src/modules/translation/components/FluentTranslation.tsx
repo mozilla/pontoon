@@ -10,7 +10,6 @@ export function FluentTranslation({
   content,
   diffTarget,
   search,
-  translations_only,
 }: TranslationProps): React.ReactElement<React.ElementType> {
   const preview = getSimplePreview(content);
 
@@ -19,8 +18,5 @@ export function FluentTranslation({
     return <TranslationDiff base={fluentTarget} target={preview} />;
   }
 
-  if (translations_only) {
-    return <Highlight>{preview}</Highlight>;
-  }
   return <Highlight search={search}>{preview}</Highlight>;
 }

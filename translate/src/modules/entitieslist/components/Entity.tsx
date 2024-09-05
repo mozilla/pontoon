@@ -134,8 +134,9 @@ export function Entity({
           <Translation
             content={entity.original}
             format={entity.format}
-            search={parameters.search}
-            translations_only={parameters.search_translations_only}
+            search={
+              parameters.search_translations_only ? null : parameters.search
+            }
           />
         </p>
         <p

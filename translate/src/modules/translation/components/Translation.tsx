@@ -8,7 +8,6 @@ type Props = {
   format: string;
   diffTarget?: string;
   search?: string | null;
-  translations_only?: boolean | null;
 };
 
 export function Translation({
