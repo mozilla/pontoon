@@ -41,7 +41,7 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
-export type SearchType = 'search_identifiers';
+export type SearchType = 'search_identifiers' | 'search_translations_only';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -61,12 +61,13 @@ export type FilterAction = {
 };
 
 export type SearchState = {
-  search_identifiers: string[];
+  search_identifiers: boolean;
+  search_translations_only: boolean;
 };
 
 export type SearchAction = {
   searchOption: SearchType;
-  value: string | string[] | null | undefined;
+  value: boolean | null | undefined;
 };
 
 /** If SearchBox has focus, translation form updates should not grab focus for themselves.  */
@@ -116,16 +117,13 @@ export function SearchBoxBase({
     (state: SearchState, action: SearchAction[]) => {
       const next = { ...state };
       for (const { searchOption, value } of action) {
-        next[searchOption] = Array.isArray(value)
-          ? value
-          : typeof value === 'string'
-          ? value.split(',')
-          : [];
+        next[searchOption] = value ?? false;
       }
       return next;
     },
     {
-      search_identifiers: [],
+      search_identifiers: false,
+      search_translations_only: false,
     },
   );
 
@@ -153,9 +151,13 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const updateOptionsFromURL = useCallback(() => {
-    const { search_identifiers, time } = parameters;
+    const { search_identifiers, search_translations_only, time } = parameters;
     updateSearchOptions([
       { searchOption: 'search_identifiers', value: search_identifiers },
+      {
+        searchOption: 'search_translations_only',
+        value: search_translations_only,
+      },
     ]);
     setTimeRange(time);
   }, [parameters]);
@@ -195,14 +197,8 @@ export function SearchBoxBase({
   );
 
   const toggleOption = useCallback(
-    (value: string, searchOption: SearchType) => {
-      const next = [...searchOptions[searchOption]];
-      const prev = next.indexOf(value);
-      if (prev == -1) {
-        next.push(value);
-      } else {
-        next.splice(prev, 1);
-      }
+    (searchOption: SearchType) => {
+      const next = !searchOptions[searchOption];
       updateSearchOptions([{ searchOption, value: next }]);
     },
     [searchOptions],
@@ -239,11 +235,12 @@ export function SearchBoxBase({
   const applyOptions = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { search_identifiers } = searchOptions;
+        const { search_identifiers, search_translations_only } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
-          search_identifiers: search_identifiers.join(','),
+          search_identifiers: search_identifiers,
+          search_translations_only: search_translations_only,
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),

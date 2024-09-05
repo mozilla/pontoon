@@ -16,18 +16,14 @@ const disable: Boolean = true;
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
-  toggleOption: (value: string, searchOption: SearchType) => void;
+  toggleOption: (searchOption: SearchType) => void;
   updateOptionsFromURL: () => void;
 };
 
 type SearchPanelProps = {
   searchOptions: SearchState;
   onApplyOptions: () => void;
-  onToggleOption: (
-    value: string,
-    searchOption: SearchType,
-    event?: React.MouseEvent,
-  ) => void;
+  onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
   onDiscard: () => void;
 };
 
@@ -68,15 +64,15 @@ export function SearchPanelDialog({
   return (
     <div className='menu' ref={ref}>
       <Localized id='search-SearchPanel--heading'>
-        <header className='title'>SEARCH searchOptions</header>
+        <header className='title'>SEARCH OPTIONS</header>
       </Localized>
       <ul>
         {SEARCH_OPTIONS.map((search, i) => (
           <SearchOption
-            onToggle={() => onToggleOption(search.slug, 'search_identifiers')}
+            onToggle={() => onToggleOption(search.slug)}
             searchOption={search}
             key={i}
-            selected={searchOptions.search_identifiers.includes(search.slug)}
+            selected={searchOptions[search.slug] ?? false}
           />
         ))}
       </ul>
@@ -113,11 +109,9 @@ export function SearchPanel({
   }, [updateOptionsFromURL]);
 
   const handleToggleOption = useCallback(
-    (value: string, searchOption: SearchType, ev?: React.MouseEvent) => {
-      if (value !== 'all') {
-        ev?.stopPropagation();
-        toggleOption(value, searchOption);
-      }
+    (searchOption: SearchType, ev?: React.MouseEvent) => {
+      ev?.stopPropagation();
+      toggleOption(searchOption);
     },
     [toggleOption],
   );
