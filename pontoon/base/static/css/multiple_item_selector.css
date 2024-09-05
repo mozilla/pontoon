@@ -1,0 +1,68 @@
+/**
+ * CSS classes related to the multiple item selector widget.
+ */
+form {
+  .item {
+    li {
+      cursor: pointer;
+    }
+
+    .sortable li {
+      cursor: grab;
+      cursor: -webkit-grab;
+    }
+  }
+
+  .item.select {
+    float: left;
+    padding-left: 0;
+    width: auto;
+
+    .menu {
+      background: transparent;
+      border-bottom: 1px solid var(--main-border-1);
+      bottom: auto;
+      display: inline-block;
+      margin: 2px 0 -4px -1px;
+      overflow: auto;
+      padding: 10px 0;
+      position: relative;
+      width: 295px;
+
+      ul {
+        height: 170px;
+        margin-bottom: 0;
+
+        li span.code {
+          float: right;
+          width: auto;
+        }
+      }
+    }
+  }
+
+  .item.select.selected {
+    float: right;
+  }
+
+  > div {
+    margin: 20px 0;
+  }
+
+  .select {
+    text-align: left;
+  }
+
+  label {
+    display: block;
+    padding-bottom: 3px;
+    text-align: left;
+  }
+
+  a:link,
+  a:visited {
+    color: var(--status-translated-alt);
+    float: right;
+    text-transform: uppercase;
+  }
+}

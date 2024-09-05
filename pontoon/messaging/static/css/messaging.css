@@ -32,31 +32,28 @@
       }
     }
 
-    .message-type,
-    .message-editor {
+    #send-message > section {
       margin: 20px 0;
     }
 
-    .message-type {
-      .check-list {
-        .check-box.transactional {
-          display: none;
-          padding-left: 20px;
+    .check-list {
+      .check-box.transactional {
+        display: none;
+        padding-left: 20px;
 
-          .help {
-            padding: 5px 0 0 30px;
-            font-style: italic;
-          }
+        .help {
+          padding: 5px 0 0 30px;
+          font-style: italic;
         }
+      }
 
-        .check-box-wrapper {
-          text-align: left;
-        }
+      .check-box-wrapper {
+        text-align: left;
+      }
 
-        .fa {
-          margin: 2px 10px 0 0;
-          float: left;
-        }
+      .fa {
+        margin: 2px 10px 0 0;
+        float: left;
       }
 
       [type='checkbox'] {
@@ -76,7 +73,7 @@
       margin-bottom: 5px;
     }
 
-    input,
+    input[type='text'],
     textarea {
       background: var(--black-3);
       float: none;
@@ -97,6 +94,10 @@
       font-size: 13px;
       padding-top: 5px;
       text-transform: uppercase;
+    }
+
+    .multi-selector .menu {
+      width: 285px;
     }
   }
 }

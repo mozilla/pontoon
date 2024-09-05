@@ -2,6 +2,8 @@
 {% import "widgets/checkbox.html" as Checkbox %}
 {% import 'heading.html' as Heading %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
 
 {% block title %}Messaging Center{% endblock %}
 
@@ -36,7 +38,7 @@
             {% csrf_token %}
 
             <h3><span class="stress">#1</span> Message type</h3>
-            <div class="message-type">
+            <section class="message-type">
               <ul class="check-list">
                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
                 <li><input type="checkbox" name="notification"></li>
@@ -49,10 +51,10 @@
                 <div class="errors">
                   <p>You must select at least one message type</p>
                 </div>
-            </div>
+            </section>
 
             <h3><span class="stress">#2</span> Message editor</h3>
-            <div class="message-editor">
+            <section class="message-editor">
               <div class="field clearfix subject">
                 <label for="subject">Subject</label>
                 <input type="text" name="subject" required="" id="subject">
@@ -71,7 +73,47 @@
                   <p>Your message must include a body</p>
                 </div>
               </div>
-            </div>
+            </section>
+
+            <h3><span class="stress">#3</span> Filter by user role</h3>
+            <section class="filter-user-role">
+              <ul class="check-list">
+                {{ Checkbox.checkbox('Managers', class='managers', attribute='managers', is_enabled=True) }}
+                <li><input type="checkbox" name="managers" checked="checked"></li>
+                {{ Checkbox.checkbox('Translators', class='translators', attribute='translators', is_enabled=True) }}
+                <li><input type="checkbox" name="translators" checked="checked"></li>
+                {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors', is_enabled=True) }}
+                <li><input type="checkbox" name="contributors" checked="checked"></li>
+              </ul>
+
+                <div class="errors">
+                  <p>You must select at least one user role</p>
+                </div>
+            </section>
+
+            <h3><span class="stress">#4</span> Filter by locale</h3>
+            <section class="filter-locale">
+                <div class="multi-selector locale-selector">
+                    <div class="clearfix">
+                      {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
+                    </div>
+                </div>
+                <div class="errors">
+                    <p>You must select at least one locale</p>
+                </div>
+            </section>
+
+            <h3><span class="stress">#5</span> Filter by project</h3>
+            <section class="filter-project">
+                <div class="multi-selector project-selector">
+                    <div class="clearfix">
+                      {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
+                    </div>
+                </div>
+                <div class="errors">
+                    <p>You must select at least one project</p>
+                </div>
+            </section>
 
             <menu class="controls">
               <button class="button active send">Send</button>
