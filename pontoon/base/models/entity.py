@@ -733,6 +733,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         extra=None,
         search_identifiers=None,
         search_translations_only=None,
+        search_rejected_translations=None,
         time=None,
         author=None,
         review_time=None,
@@ -845,9 +846,13 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             search_list = utils.get_search_phrases(search)
 
+            q_rejected = (
+                Q()
+            )  # if search_rejected_translations else Q(translation__approved=True)
             translation_filters = (
                 Q(translation__string__icontains_collate=(search, locale.db_collation))
                 & Q(translation__locale=locale)
+                & q_rejected
                 for search in search_list
             )
 
