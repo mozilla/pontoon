@@ -23,6 +23,7 @@ export type Location = {
   search_identifiers: boolean;
   search_translations_only: boolean;
   search_rejected_translations: boolean;
+  search_match_case: boolean;
   tag: string | null;
   author: string | null;
   time: string | null;
@@ -39,6 +40,7 @@ const emptyParams = {
   search_identifiers: false,
   search_translations_only: false,
   search_rejected_translations: false,
+  search_match_case: false,
   tag: null,
   author: null,
   time: null,
@@ -103,6 +105,7 @@ function parse(
         search_rejected_translations: params.has(
           'search_rejected_translations',
         ),
+        search_match_case: params.has('search_match_case'),
         tag: params.get('tag'),
         author: params.get('author'),
         time: params.get('time'),
@@ -136,6 +139,7 @@ function stringify(prev: Location, next: string | Partial<Location>) {
       'search_identifiers',
       'search_translations_only',
       'search_rejected_translations',
+      'search_match_case',
       'tag',
       'author',
       'time',

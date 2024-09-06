@@ -76,8 +76,8 @@ export const SEARCH_OPTIONS = [
   //   name: 'Match whole words',
   //   slug: 'matchWords',
   // },
-  // {
-  //   name: 'Match case',
-  //   slug: 'matchCase',
-  // },
+  {
+    name: 'Match case',
+    slug: 'search_match_case',
+  },
 ] as const;

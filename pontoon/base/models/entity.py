@@ -734,6 +734,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search_identifiers=None,
         search_translations_only=None,
         search_rejected_translations=None,
+        search_match_case=None,
         time=None,
         author=None,
         review_time=None,
@@ -852,11 +853,22 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             search_list = utils.get_search_phrases(search)
 
+            # Include rejected translations
             q_rejected = (
-                Q()
-            )  # if search_rejected_translations else Q(translation__rejected=False)
+                Q() if search_rejected_translations else Q(translation__rejected=False)
+            )
+
             translation_filters = (
-                Q(translation__string__icontains_collate=(search, locale.db_collation))
+                (
+                    Q(translation__string__contains=(search, locale.db_collation))
+                    if search_match_case
+                    else Q(
+                        translation__string__icontains_collate=(
+                            search,
+                            locale.db_collation,
+                        )
+                    )
+                )
                 & Q(translation__locale=locale)
                 & q_rejected
                 for search in search_list
@@ -866,22 +878,39 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
-            # if not search_translations_only:
-            q_key = Q(key__icontains=search)  # if search_identifiers else Q()
-            entity_filters = (
-                Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
-                for search in search_list
-            )
+            # Search in source strings
+            if not search_translations_only:
+                # Search in string (context) identifiers
+                q_key = Q()
+                if search_identifiers:
+                    q_key = (
+                        Q(key__contains=search)
+                        if search_match_case
+                        else Q(key__icontains=search)
+                    )
 
-            entity_matches = entities.filter(*entity_filters).values_list(
-                "id", flat=True
-            )
+                entity_filters = (
+                    (
+                        Q(string__contains=search)
+                        | Q(string_plural__contains=search)
+                        | q_key
+                        if search_match_case
+                        else Q(string__icontains=search)
+                        | Q(string_plural__icontains=search)
+                        | q_key
+                    )
+                    for search in search_list
+                )
 
-            entities = Entity.objects.filter(
-                pk__in=set(list(translation_matches) + list(entity_matches))
-            )
-            # else:
-            #     entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
+                entity_matches = entities.filter(*entity_filters).values_list(
+                    "id", flat=True
+                )
+
+                entities = Entity.objects.filter(
+                    pk__in=set(list(translation_matches) + list(entity_matches))
+                )
+            else:
+                entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":
