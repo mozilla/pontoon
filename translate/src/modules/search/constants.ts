@@ -68,10 +68,10 @@ export const SEARCH_OPTIONS = [
     name: 'Search in translations only',
     slug: 'search_translations_only',
   },
-  // {
-  //   name: 'Search in rejected translations',
-  //   slug: 'rejected',
-  // },
+  {
+    name: 'Search in rejected translations',
+    slug: 'search_rejected_translations',
+  },
   // {
   //   name: 'Match whole words',
   //   slug: 'matchWords',

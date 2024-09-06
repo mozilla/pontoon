@@ -41,7 +41,10 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
-export type SearchType = 'search_identifiers' | 'search_translations_only';
+export type SearchType =
+  | 'search_identifiers'
+  | 'search_translations_only'
+  | 'search_rejected_translations';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -63,6 +66,7 @@ export type FilterAction = {
 export type SearchState = {
   search_identifiers: boolean;
   search_translations_only: boolean;
+  search_rejected_translations: boolean;
 };
 
 export type SearchAction = {
@@ -124,6 +128,7 @@ export function SearchBoxBase({
     {
       search_identifiers: false,
       search_translations_only: false,
+      search_rejected_translations: false,
     },
   );
 
@@ -151,12 +156,21 @@ export function SearchBoxBase({
   }, [parameters]);
 
   const updateOptionsFromURL = useCallback(() => {
-    const { search_identifiers, search_translations_only, time } = parameters;
+    const {
+      search_identifiers,
+      search_translations_only,
+      search_rejected_translations,
+      time,
+    } = parameters;
     updateSearchOptions([
       { searchOption: 'search_identifiers', value: search_identifiers },
       {
         searchOption: 'search_translations_only',
         value: search_translations_only,
+      },
+      {
+        searchOption: 'search_rejected_translations',
+        value: search_rejected_translations,
       },
     ]);
     setTimeRange(time);
@@ -235,12 +249,17 @@ export function SearchBoxBase({
   const applyOptions = useCallback(
     () =>
       checkUnsavedChanges(() => {
-        const { search_identifiers, search_translations_only } = searchOptions;
+        const {
+          search_identifiers,
+          search_translations_only,
+          search_rejected_translations,
+        } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search_identifiers: search_identifiers,
           search_translations_only: search_translations_only,
+          search_rejected_translations: search_rejected_translations,
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),

@@ -733,6 +733,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         extra=None,
         search_identifiers=None,
         search_translations_only=None,
+        search_rejected_translations=None,
         time=None,
         author=None,
         review_time=None,
@@ -841,13 +842,23 @@ class Entity(DirtyFieldsMixin, models.Model):
                 # only tag needs `distinct` as it traverses m2m fields
                 entities = entities.distinct()
 
+        # TODO: Uncomment the following lines to reactivate the
+        #       feature once all search options are implemented:
+        #       - 857 (rejected translations)
+        #       - 869-870 (context identifiers)
+        #       - 883-884 (translations only)
+
         # Filter by search parameters
         if search:
             search_list = utils.get_search_phrases(search)
 
+            q_rejected = (
+                Q()
+            )  # if search_rejected_translations else Q(translation__rejected=False)
             translation_filters = (
                 Q(translation__string__icontains_collate=(search, locale.db_collation))
                 & Q(translation__locale=locale)
+                & q_rejected
                 for search in search_list
             )
 
@@ -856,9 +867,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
 
             # if not search_translations_only:
-
-            # TODO: remove the comments above and below to reactivate the feature once
-            #       all search options are implemented
             q_key = Q(key__icontains=search)  # if search_identifiers else Q()
             entity_filters = (
                 Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
