@@ -844,10 +844,8 @@ class Entity(DirtyFieldsMixin, models.Model):
                 entities = entities.distinct()
 
         # TODO: Uncomment the following lines to reactivate the
-        #       feature once all search options are implemented:
-        #       - 857 (rejected translations)
-        #       - 869-870 (context identifiers)
-        #       - 883-884 (translations only)
+        #       context identifiers filter once .ftl bug is fixed (issue #3284):
+        #       - 883-888
 
         # Filter by search parameters
         if search:
@@ -882,12 +880,12 @@ class Entity(DirtyFieldsMixin, models.Model):
             if not search_translations_only:
                 # Search in string (context) identifiers
                 q_key = Q()
-                if search_identifiers:
-                    q_key = (
-                        Q(key__contains=search)
-                        if search_match_case
-                        else Q(key__icontains=search)
-                    )
+                # if search_identifiers:
+                #     q_key = (
+                #         Q(key__contains=search)
+                #         if search_match_case
+                #         else Q(key__icontains=search)
+                #     )
 
                 entity_filters = (
                     (
