@@ -2,11 +2,9 @@ from collections import defaultdict
 import logging
 from datetime import datetime
 from os.path import isfile, join, relpath
-from typing import cast
 
 from django.db import transaction
 from django.db.models import F
-from django.db.models.manager import BaseManager
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from pontoon.api.schema import ProjectLocale
@@ -73,6 +71,18 @@ def remove_resources(project: Project, ref_root: str, remove: list[str]) -> set[
         if not path.startswith("..")
     ]
     removed_resources = project.resources.filter(path__in=removed_paths)
+
+    # Update aggregated stats
+    for tr in TranslatedResource.objects.filter(resource__in=removed_resources):
+        tr.adjust_all_stats(
+            -tr.total_strings,
+            -tr.approved_strings,
+            -tr.pretranslated_strings,
+            -tr.strings_with_errors,
+            -tr.strings_with_warnings,
+            -tr.unreviewed_strings,
+        )
+
     removed_paths = set(removed_resources.values_list("path", flat=True))
     if removed_paths:
         log.info(f"[{project.slug}] Removed source files: {', '.join(removed_paths)}")
@@ -139,21 +149,30 @@ def update_resources(
     )
 
     # FIXME: Entity order should be updated on insertion
+    # https://github.com/mozilla/pontoon/issues/2115
     added_entities = Entity.objects.bulk_create(
         ent
         for key, ent in next_entities.items()
         if key in next_entities.keys() - prev_entities.keys()
     )
+    add_count = len(added_entities)
+
+    # Update aggregated stats
+    if add_count or obs_count:
+        for tr in TranslatedResource.objects.filter(
+            resource__in=(ent.resource_id for ent in obsolete_entities + added_entities)
+        ):
+            tr.calculate_stats()
 
     delta = [
-        f"added {len(added_entities)}" if added_entities else "",
+        f"added {add_count}" if add_count else "",
         f"changed {mod_count}" if mod_count else "",
         f"obsoleted {obs_count}" if obs_count else "",
     ]
     if any(delta):
         ds = ", ".join(d for d in delta if d)
         log.info(f"[{project.slug}] Source entity updates: {ds}")
-    return len(added_entities), set(changed_resources.values_list("path", flat=True))
+    return add_count, set(changed_resources.values_list("path", flat=True))
 
 
 def add_resources(
@@ -178,7 +197,7 @@ def add_resources(
         return 0, set()
 
     added_resources = Resource.objects.bulk_create(added_resources)
-    ordered_resources = cast(BaseManager[Resource], project.resources).order_by("path")
+    ordered_resources = project.resources.order_by("path")
     for idx, r in enumerate(ordered_resources):
         r.order = idx
     Resource.objects.bulk_update(ordered_resources, ["order"])

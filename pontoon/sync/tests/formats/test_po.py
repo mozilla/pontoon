@@ -61,7 +61,7 @@ msgstr[0] ""
 msgstr[1] "Translated Plural %(count)s strings with missing translations"
 """
 
-HEADER_TEMPLATE = """#\x20
+HEADER_TEMPLATE = """#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\\n"

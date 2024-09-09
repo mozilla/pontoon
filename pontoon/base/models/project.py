@@ -17,7 +17,7 @@ from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
 
 if TYPE_CHECKING:
-    from pontoon.base.models import ProjectLocale, Resource
+    from pontoon.base.models import Resource
 
 
 class Priority(models.IntegerChoices):
@@ -106,9 +106,7 @@ class ProjectQuerySet(models.QuerySet):
 class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
-    locales: models.ManyToManyField[Locale, "ProjectLocale"] = models.ManyToManyField(
-        Locale, through="ProjectLocale"
-    )
+    locales = models.ManyToManyField(Locale, through="ProjectLocale")
 
     resources: BaseManager["Resource"]
 
