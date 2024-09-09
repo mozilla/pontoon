@@ -843,10 +843,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                 # only tag needs `distinct` as it traverses m2m fields
                 entities = entities.distinct()
 
-        # TODO: Uncomment the following lines to reactivate the
-        #       context identifiers filter once .ftl bug is fixed (issue #3284):
-        #       - 883-888
-
         # Filter by search parameters
         if search:
             search_list = utils.get_search_phrases(search)
@@ -856,16 +852,19 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q() if search_rejected_translations else Q(translation__rejected=False)
             )
 
+            # Modify query based on case sensitivity filter
+            translation_case_lookup = (
+                "contains" if search_match_case else "icontains_collate"
+            )
+
             translation_filters = (
-                (
-                    Q(translation__string__contains=(search, locale.db_collation))
-                    if search_match_case
-                    else Q(
-                        translation__string__icontains_collate=(
+                Q(
+                    **{
+                        f"translation__string__{translation_case_lookup}": (
                             search,
                             locale.db_collation,
                         )
-                    )
+                    }
                 )
                 & Q(translation__locale=locale)
                 & q_rejected
@@ -879,24 +878,21 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Search in source strings
             if not search_translations_only:
                 # Search in string (context) identifiers
+
+                case_lookup = "contains" if search_match_case else "icontains"
                 q_key = Q()
-                # if search_identifiers:
-                #     q_key = (
-                #         Q(key__contains=search)
-                #         if search_match_case
-                #         else Q(key__icontains=search)
-                #     )
+                # TODO: Uncomment the 5 lines below to reactivate the
+                #       context identifiers filter once .ftl bug is fixed (issue #3284):
+                # q_key = (
+                #     Q(**{f"key__{case_lookup}": (search)})
+                #     if search_identifiers
+                #     else Q()
+                # )
 
                 entity_filters = (
-                    (
-                        Q(string__contains=search)
-                        | Q(string_plural__contains=search)
-                        | q_key
-                        if search_match_case
-                        else Q(string__icontains=search)
-                        | Q(string_plural__icontains=search)
-                        | q_key
-                    )
+                    Q(**{f"string__{case_lookup}": (search)})
+                    | Q(**{f"string_plural__{case_lookup}": (search)})
+                    | q_key
                     for search in search_list
                 )
 

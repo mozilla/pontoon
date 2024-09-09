@@ -8,10 +8,6 @@ import { useOnDiscard } from '~/utils';
 
 import './SearchPanel.css';
 
-// TODO: Remove the variable below to reactivate the feature once
-//       all search options are implemented
-// Disable SearchPanel component until fully complete
-
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;

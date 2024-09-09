@@ -1,7 +1,8 @@
 import { Localized } from '@fluent/react';
 import escapeRegExp from 'lodash.escaperegexp';
-import React from 'react';
+import React, { useContext } from 'react';
 import { TermState } from '~/modules/terms';
+import { Location } from '~/context/Location';
 
 import './Highlight.css';
 import { ReactElement } from 'react';
@@ -63,6 +64,7 @@ export function Highlight({
     length: number;
     mark: ReactElement;
   }> = [];
+  const location = useContext(Location);
 
   for (const match of source.matchAll(placeholder)) {
     let l10nId: string;
@@ -171,10 +173,13 @@ export function Highlight({
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);
       }
-      let lcTerm = term.toLowerCase();
+      const highlightTerm = location.search_match_case
+        ? term
+        : term.toLowerCase();
+      const highlightSource = location.search_match_case ? source : lcSource;
       let pos = 0;
       let next: number;
-      while ((next = lcSource.indexOf(lcTerm, pos)) !== -1) {
+      while ((next = highlightSource.indexOf(highlightTerm, pos)) !== -1) {
         let i = marks.findIndex((m) => m.index + m.length > next);
         if (i === -1) {
           i = marks.length;
