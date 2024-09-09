@@ -127,6 +127,7 @@ function buildFetchPayload(
       'search_identifiers',
       'search_translations_only',
       'search_rejected_translations',
+      'search_match_case',
       'extra',
       'tag',
       'author',

@@ -734,6 +734,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search_identifiers=None,
         search_translations_only=None,
         search_rejected_translations=None,
+        search_match_case=None,
         time=None,
         author=None,
         review_time=None,
@@ -842,21 +843,29 @@ class Entity(DirtyFieldsMixin, models.Model):
                 # only tag needs `distinct` as it traverses m2m fields
                 entities = entities.distinct()
 
-        # TODO: Uncomment the following lines to reactivate the
-        #       feature once all search options are implemented:
-        #       - 857 (rejected translations)
-        #       - 869-870 (context identifiers)
-        #       - 883-884 (translations only)
-
         # Filter by search parameters
         if search:
             search_list = utils.get_search_phrases(search)
 
+            # Include rejected translations
             q_rejected = (
-                Q()
-            )  # if search_rejected_translations else Q(translation__rejected=False)
+                Q() if search_rejected_translations else Q(translation__rejected=False)
+            )
+
+            # Modify query based on case sensitivity filter
+            translation_case_lookup = (
+                "contains" if search_match_case else "icontains_collate"
+            )
+
             translation_filters = (
-                Q(translation__string__icontains_collate=(search, locale.db_collation))
+                Q(
+                    **{
+                        f"translation__string__{translation_case_lookup}": (
+                            search,
+                            locale.db_collation,
+                        )
+                    }
+                )
                 & Q(translation__locale=locale)
                 & q_rejected
                 for search in search_list
@@ -866,22 +875,36 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
-            # if not search_translations_only:
-            q_key = Q(key__icontains=search)  # if search_identifiers else Q()
-            entity_filters = (
-                Q(string__icontains=search) | Q(string_plural__icontains=search) | q_key
-                for search in search_list
-            )
+            # Search in source strings
+            if not search_translations_only:
+                # Search in string (context) identifiers
 
-            entity_matches = entities.filter(*entity_filters).values_list(
-                "id", flat=True
-            )
+                case_lookup = "contains" if search_match_case else "icontains"
+                q_key = Q()
+                # TODO: Uncomment the 5 lines below to reactivate the
+                #       context identifiers filter once .ftl bug is fixed (issue #3284):
+                # q_key = (
+                #     Q(**{f"key__{case_lookup}": (search)})
+                #     if search_identifiers
+                #     else Q()
+                # )
 
-            entities = Entity.objects.filter(
-                pk__in=set(list(translation_matches) + list(entity_matches))
-            )
-            # else:
-            #     entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
+                entity_filters = (
+                    Q(**{f"string__{case_lookup}": (search)})
+                    | Q(**{f"string_plural__{case_lookup}": (search)})
+                    | q_key
+                    for search in search_list
+                )
+
+                entity_matches = entities.filter(*entity_filters).values_list(
+                    "id", flat=True
+                )
+
+                entities = Entity.objects.filter(
+                    pk__in=set(list(translation_matches) + list(entity_matches))
+                )
+            else:
+                entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":

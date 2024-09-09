@@ -60,10 +60,10 @@ export const FILTERS_EXTRA = [
 ] as const;
 
 export const SEARCH_OPTIONS = [
-  {
-    name: 'Search in string identifiers',
-    slug: 'search_identifiers',
-  },
+  // {
+  //   name: 'Search in string identifiers',
+  //   slug: 'search_identifiers',
+  // },
   {
     name: 'Search in translations only',
     slug: 'search_translations_only',
@@ -76,8 +76,8 @@ export const SEARCH_OPTIONS = [
   //   name: 'Match whole words',
   //   slug: 'matchWords',
   // },
-  // {
-  //   name: 'Match case',
-  //   slug: 'matchCase',
-  // },
+  {
+    name: 'Match case',
+    slug: 'search_match_case',
+  },
 ] as const;

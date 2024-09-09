@@ -8,11 +8,6 @@ import { useOnDiscard } from '~/utils';
 
 import './SearchPanel.css';
 
-// TODO: Remove the variable below to reactivate the feature once
-//       all search options are implemented
-// Disable SearchPanel component until fully complete
-const disable: Boolean = true;
-
 type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
@@ -123,16 +118,10 @@ export function SearchPanel({
 
   return (
     <div className='search-panel'>
-      {/* {TODO: Remove the style attribute for the div below} */}
-      <div
-        className='visibility-switch'
-        style={{ cursor: disable ? 'default' : 'pointer' }}
-        onClick={toggleVisible}
-      >
+      <div className='visibility-switch' onClick={toggleVisible}>
         <span className='fa fa-search'></span>
       </div>
-      {/* {TODO: Remove the second condition below} */}
-      {visible && !disable ? (
+      {visible ? (
         <SearchPanelDialog
           searchOptions={searchOptions}
           onApplyOptions={handleApplyOptions}

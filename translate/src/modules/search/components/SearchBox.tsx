@@ -44,7 +44,8 @@ export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 export type SearchType =
   | 'search_identifiers'
   | 'search_translations_only'
-  | 'search_rejected_translations';
+  | 'search_rejected_translations'
+  | 'search_match_case';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -67,6 +68,7 @@ export type SearchState = {
   search_identifiers: boolean;
   search_translations_only: boolean;
   search_rejected_translations: boolean;
+  search_match_case: boolean;
 };
 
 export type SearchAction = {
@@ -129,6 +131,7 @@ export function SearchBoxBase({
       search_identifiers: false,
       search_translations_only: false,
       search_rejected_translations: false,
+      search_match_case: false,
     },
   );
 
@@ -160,6 +163,7 @@ export function SearchBoxBase({
       search_identifiers,
       search_translations_only,
       search_rejected_translations,
+      search_match_case,
       time,
     } = parameters;
     updateSearchOptions([
@@ -171,6 +175,10 @@ export function SearchBoxBase({
       {
         searchOption: 'search_rejected_translations',
         value: search_rejected_translations,
+      },
+      {
+        searchOption: 'search_match_case',
+        value: search_match_case,
       },
     ]);
     setTimeRange(time);
@@ -253,6 +261,7 @@ export function SearchBoxBase({
           search_identifiers,
           search_translations_only,
           search_rejected_translations,
+          search_match_case,
         } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
@@ -260,6 +269,7 @@ export function SearchBoxBase({
           search_identifiers: search_identifiers,
           search_translations_only: search_translations_only,
           search_rejected_translations: search_rejected_translations,
+          search_match_case: search_match_case,
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),
