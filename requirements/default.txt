@@ -651,9 +651,6 @@ markupsafe==2.0.1 \
     # via
     #   -r requirements/default.in
     #   jinja2
-mercurial==6.4.2 \
-    --hash=sha256:5b9f6a3c35f4e4695c854ef71428cf9461ca1a529f691c06dc6f7b48e7bb3335
-    # via -r requirements/default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
