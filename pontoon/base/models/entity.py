@@ -854,9 +854,13 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             # Modify query based on case sensitivity filter
             translation_filters = (
-                Q(translation__string__contains=s)
-                if search_match_case
-                else Q(translation__string__icontains_collate=(s, locale.db_collation))
+                (
+                    Q(translation__string__contains=s)
+                    if search_match_case
+                    else Q(
+                        translation__string__icontains_collate=(s, locale.db_collation)
+                    )
+                )
                 & Q(translation__locale=locale)
                 & q_rejected
                 for s in search_list
