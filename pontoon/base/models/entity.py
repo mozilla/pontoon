@@ -864,7 +864,7 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             translation_filters = (
                 q_match_case & Q(translation__locale=locale) & q_rejected
-                for search in search_list
+                for s in search_list
             )
 
             translation_matches = entities.filter(*translation_filters).values_list(
