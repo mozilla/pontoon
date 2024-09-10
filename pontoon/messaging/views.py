@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import Count, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
@@ -52,18 +53,21 @@ def send_message(request):
 
     recipients = User.objects.none()
 
+    """
+    Filter recipients by user role:
+    - Contributors of selected Locales and Projects
+    - Managers of selected Locales
+    - Translators of selected Locales
+    """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
+    translations = Translation.objects.filter(
+        locale_id__in=locale_ids,
+        entity__resource__project_id__in=project_ids,
+    )
 
     if form.cleaned_data.get("contributors"):
-        contributors = (
-            Translation.objects.filter(
-                locale_id__in=locale_ids,
-                entity__resource__project_id__in=project_ids,
-            )
-            .values("user")
-            .distinct()
-        )
+        contributors = translations.values("user").distinct()
         recipients = recipients | User.objects.filter(pk__in=contributors)
 
     if form.cleaned_data.get("managers"):
@@ -77,6 +81,92 @@ def send_message(request):
             "translators_group__user"
         )
         recipients = recipients | User.objects.filter(pk__in=translators)
+
+    """
+    Filter recipients by login date:
+    - Logged in after provided From date
+    - Logged in before provided To date
+    """
+    login_from = form.cleaned_data.get("login_from")
+    login_to = form.cleaned_data.get("login_to")
+
+    if login_from:
+        recipients = recipients.filter(last_login__gte=login_from)
+
+    if login_to:
+        recipients = recipients.filter(last_login__lte=login_to)
+
+    """
+    Filter recipients by translation submissions:
+    - Submitted more than provided Minimum translations
+    - Submitted less than provided Maximum translations
+    - Submitted translations after provided From date
+    - Submitted translations before provided To date
+    """
+    translation_minimum = form.cleaned_data.get("translation_minimum")
+    translation_maximum = form.cleaned_data.get("translation_maximum")
+    translation_from = form.cleaned_data.get("translation_from")
+    translation_to = form.cleaned_data.get("translation_to")
+
+    submitted = translations
+
+    if translation_from:
+        submitted = submitted.filter(date__gte=translation_from)
+
+    if translation_to:
+        submitted = submitted.filter(date__lte=translation_to)
+
+    submitted = submitted.values("user").annotate(count=Count("user"))
+
+    if translation_minimum:
+        submitted = submitted.filter(count__gte=translation_minimum)
+
+    if translation_maximum:
+        submitted = submitted.filter(count__lte=translation_maximum)
+
+    """
+    Filter recipients by reviews performed:
+    - Reviewed more than provided Minimum translations
+    - Reviewed less than provided Maximum translations
+    - Reviewed translations after provided From date
+    - Reviewed translations before provided To date
+    """
+    review_minimum = form.cleaned_data.get("review_minimum")
+    review_maximum = form.cleaned_data.get("review_maximum")
+    review_from = form.cleaned_data.get("review_from")
+    review_to = form.cleaned_data.get("review_to")
+
+    approved = translations.filter(approved_user__isnull=False).exclude(
+        user=F("approved_user")
+    )
+    rejected = translations.filter(rejected_user__isnull=False).exclude(
+        user=F("rejected_user")
+    )
+
+    if review_from:
+        approved = approved.filter(approved_date__gte=review_from)
+        rejected = rejected.filter(rejected_date__gte=review_from)
+
+    if review_to:
+        approved = approved.filter(approved_date__lte=review_to)
+        rejected = rejected.filter(rejected_date__lte=review_to)
+
+    approved = approved.values("approved_user").annotate(count=Count("approved_user"))
+    rejected = rejected.values("rejected_user").annotate(count=Count("rejected_user"))
+
+    if review_minimum:
+        approved = approved.filter(count__gte=review_minimum)
+        rejected = rejected.filter(count__gte=review_minimum)
+
+    if review_maximum:
+        approved = approved.filter(count__lte=review_maximum)
+        rejected = rejected.filter(count__lte=review_maximum)
+
+    recipients = recipients.filter(
+        pk__in=list(submitted.values_list("user", flat=True).distinct())
+        + list(approved.values_list("approved_user", flat=True).distinct())
+        + list(rejected.values_list("rejected_user", flat=True).distinct())
+    )
 
     log.info(
         f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
@@ -119,9 +209,7 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
         html_template = body + footer
         text_template = utils.html_to_plain_text_with_links(html_template)
 
-        email_recipients = recipients.filter(
-            profile__email_communications_enabled=True
-        )
+        email_recipients = recipients.filter(profile__email_communications_enabled=True)
 
         for recipient in email_recipients.distinct():
             unique_id = str(recipient.profile.unique_id)
