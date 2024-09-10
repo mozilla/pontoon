@@ -1,7 +1,6 @@
 *.py[co]
 *.sw[po]
 /pontoon/coverage.xml
-pip-log.txt
 docs/_gh-pages
 build.py
 build

@@ -225,10 +225,12 @@ Direct dependencies for Pontoon are distributed across four files:
 3. ``requirements/test.in``: Testing
 4. ``requirements/lint.in``:  Linting
 
-In order to pin and hash the direct and indirect dependencies, we use `pip-compile <https://pypi.org/project/pip-tools/>`_,
-which yields corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and indirect dependencies,
-and can be used for installation with ``pip``. After any change to the ``*.in`` files,
-you should run the following command to update all ``requirements/*.txt`` files.
+In order to pin and hash the direct and indirect dependencies, we use
+`uv pip compile <https://docs.astral.sh/uv/#the-pip-interface>`_, which yields
+corresponding ``*.txt`` files. These ``*.txt`` files contain all direct and
+indirect dependencies, and can be used for installation with ``uv pip``. After any
+change to the ``*.in`` files, you should run the following command to update all
+``requirements/*.txt`` files.
 
 .. code-block:: shell
 
@@ -247,7 +249,7 @@ Once you are done adding, removing or updating requirements, rebuild your docker
 If there are problems, it'll tell you.
 
 To upgrade existing dependencies within the given constraints of the input
-files, you can pass options through to the ``pip-compile`` invocations, i.e.
+files, you can pass options through to the ``uv pip compile`` invocations, i.e.
 
 .. code-block:: shell
 
@@ -265,9 +267,9 @@ a virtualenv to build docs, do this:
 .. code-block:: shell
 
     $ cd docs/
-    $ virtualenv venv
-    $ source venv/bin/activate
-    $ pip install --require-hashes -r requirements.txt
+    $ uv venv
+    $ source .venv/bin/activate
+    $ uv pip install -r requirements.txt
 
 Then, to build the docs, run this:
 
@@ -378,7 +380,7 @@ steps, as they don't affect your setup if nothing has changed:
    git pull origin main
 
    # Install new dependencies or update existing ones.
-   pip install -U --force --require-hashes -r requirements/default.txt
+   uv pip install -U --force -r requirements/default.txt
 
    # Run database migrations.
    python manage.py migrate

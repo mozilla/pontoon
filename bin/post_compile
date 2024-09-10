@@ -3,7 +3,7 @@
 # Install requirements/dev.txt on staging
 if [ "$DJANGO_STAGE" = True ]; then
     echo "Installing dev requirements..."
-    pip install --require-hashes -r requirements/dev.txt
+    uv pip install requirements/dev.txt
 fi
 
 # Compile static assets

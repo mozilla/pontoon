@@ -22,13 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v2
         with:
-          python-version: '3.11'
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.11
       - name: Install Dependencies
         run: |
-          pip install -U pip
-          pip install -r requirements/lint.txt
+          uv pip install -U pip
+          uv pip install -r requirements/lint.txt
       - name: ruff lint
         run: ruff check pontoon
       - name: ruff format
