@@ -40,7 +40,7 @@ help:
 	@echo "  dumpdb           Create a postgres database dump with timestamp used as file name"
 	@echo "  loaddb           Load a database dump into postgres, file name in DB_DUMP_FILE"
 	@echo "  sync-projects    Runs the synchronization task on all projects"
-	@echo "  requirements     Compiles all requirements files with pip-compile\n"
+	@echo "  requirements     Compiles all requirements files with uv pip compile\n"
 
 translate/dist:
 	make build-translate
@@ -143,5 +143,5 @@ sync-projects:
 
 requirements:
 	# Pass --upgrade to upgrade all dependencies
-	# The arguments are passed through to pip-compile
+	# The arguments are passed through to `uv pip compile`
 	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}
