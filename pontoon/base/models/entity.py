@@ -735,6 +735,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search_translations_only=None,
         search_rejected_translations=None,
         search_match_case=None,
+        search_match_word=None,
         time=None,
         author=None,
         review_time=None,
@@ -855,10 +856,19 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Modify query based on case sensitivity filter
             translation_filters = (
                 (
-                    Q(translation__string__contains=s)
-                    if search_match_case
-                    else Q(
-                        translation__string__icontains_collate=(s, locale.db_collation)
+                    Q(translation__string__regex=rf"\y{s}\y")
+                    if search_match_word and search_match_case
+                    else Q(translation__string__iregex=rf"\y{s}\y")
+                    if search_match_word
+                    else (
+                        Q(translation__string__contains=s)
+                        if search_match_case
+                        else Q(
+                            translation__string__icontains_collate=(
+                                s,
+                                locale.db_collation,
+                            )
+                        )
                     )
                 )
                 & Q(translation__locale=locale)
@@ -884,12 +894,28 @@ class Entity(DirtyFieldsMixin, models.Model):
                 #     else Q()
                 # )
 
-                entity_filters = (
-                    Q(**{f"string__{case_lookup}": (search)})
-                    | Q(**{f"string_plural__{case_lookup}": (search)})
-                    | q_key
-                    for search in search_list
-                )
+                if search_match_word:
+                    entity_filters = (
+                        (
+                            Q(string__iregex=rf"\y{s}\y")
+                            if search_match_case
+                            else Q(string__regex=rf"\y{s}\y")
+                        )
+                        | (
+                            Q(string_plural__iregex=rf"\y{s}\y")
+                            if search_match_case
+                            else Q(string_plural__regex=rf"\y{s}\y")
+                        )
+                        | q_key
+                        for s in search_list
+                    )
+                else:
+                    entity_filters = (
+                        Q(**{f"string__{case_lookup}": (s)})
+                        | Q(**{f"string_plural__{case_lookup}": (s)})
+                        | q_key
+                        for s in search_list
+                    )
 
                 entity_matches = entities.filter(*entity_filters).values_list(
                     "id", flat=True

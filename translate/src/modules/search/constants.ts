@@ -72,12 +72,12 @@ export const SEARCH_OPTIONS = [
     name: 'Search in rejected translations',
     slug: 'search_rejected_translations',
   },
-  // {
-  //   name: 'Match whole words',
-  //   slug: 'matchWords',
-  // },
   {
     name: 'Match case',
     slug: 'search_match_case',
+  },
+  {
+    name: 'Match whole words',
+    slug: 'search_match_word',
   },
 ] as const;
