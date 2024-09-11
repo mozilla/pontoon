@@ -115,6 +115,9 @@ $(function () {
   container.on('click', '.controls .send.button', function (e) {
     e.preventDefault();
 
+    // Distinguish between Send and Send to myself
+    $('.send-to-myself').prop('checked', $(this).is('.to-myself'));
+
     const $form = $('#send-message');
 
     // Submit form
