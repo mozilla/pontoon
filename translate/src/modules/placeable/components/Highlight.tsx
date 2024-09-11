@@ -184,15 +184,32 @@ export function Highlight({
         if (i === -1) {
           i = marks.length;
         }
-        marks.splice(i, 0, {
-          index: next,
-          length: term.length,
-          mark: (
-            <mark className='search' key={++keyCounter}>
-              {source.substring(next, next + term.length)}
-            </mark>
-          ),
-        });
+
+        // Lookahead by one character to see if the current mark is an exact match to the search term
+        let lookahead = source.substring(next, next + term.length + 1).trim();
+
+        // Handle when Match case and Match word are both active
+        lookahead = location.search_match_case
+          ? lookahead
+          : lookahead.toLowerCase();
+
+        // Handle any punctuation at the end of the lookahead
+        const punctuationMarks = ['.', ',', '!', '?', ';', ':'];
+        if (punctuationMarks.includes(lookahead.slice(-1))) {
+          lookahead = lookahead.slice(0, -1);
+        }
+
+        if (!location.search_match_word || lookahead == highlightTerm) {
+          marks.splice(i, 0, {
+            index: next,
+            length: term.length,
+            mark: (
+              <mark className='search' key={++keyCounter}>
+                {source.substring(next, next + term.length)}
+              </mark>
+            ),
+          });
+        }
         pos = next + term.length;
       }
     }
