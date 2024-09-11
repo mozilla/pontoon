@@ -46,7 +46,7 @@ export type SearchType =
   | 'search_translations_only'
   | 'search_rejected_translations'
   | 'search_match_case'
-  | 'search_match_word';
+  | 'search_match_whole_word';
 
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
@@ -70,7 +70,7 @@ export type SearchState = {
   search_translations_only: boolean;
   search_rejected_translations: boolean;
   search_match_case: boolean;
-  search_match_word: boolean;
+  search_match_whole_word: boolean;
 };
 
 export type SearchAction = {
@@ -134,7 +134,7 @@ export function SearchBoxBase({
       search_translations_only: false,
       search_rejected_translations: false,
       search_match_case: false,
-      search_match_word: false,
+      search_match_whole_word: false,
     },
   );
 
@@ -167,7 +167,7 @@ export function SearchBoxBase({
       search_translations_only,
       search_rejected_translations,
       search_match_case,
-      search_match_word,
+      search_match_whole_word,
       time,
     } = parameters;
     updateSearchOptions([
@@ -185,8 +185,8 @@ export function SearchBoxBase({
         value: search_match_case,
       },
       {
-        searchOption: 'search_match_word',
-        value: search_match_word,
+        searchOption: 'search_match_whole_word',
+        value: search_match_whole_word,
       },
     ]);
     setTimeRange(time);
@@ -270,7 +270,7 @@ export function SearchBoxBase({
           search_translations_only,
           search_rejected_translations,
           search_match_case,
-          search_match_word,
+          search_match_whole_word,
         } = searchOptions;
         dispatch(resetEntities());
         parameters.push({
@@ -279,7 +279,7 @@ export function SearchBoxBase({
           search_translations_only: search_translations_only,
           search_rejected_translations: search_rejected_translations,
           search_match_case: search_match_case,
-          search_match_word: search_match_word,
+          search_match_whole_word: search_match_whole_word,
           entity: 0, // With the new results, the current entity might not be available anymore.
         });
       }),

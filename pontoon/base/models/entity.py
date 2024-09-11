@@ -735,7 +735,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search_translations_only=None,
         search_rejected_translations=None,
         search_match_case=None,
-        search_match_word=None,
+        search_match_whole_word=None,
         time=None,
         author=None,
         review_time=None,
@@ -853,24 +853,12 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q() if search_rejected_translations else Q(translation__rejected=False)
             )
 
+            i = "" if search_match_case else "i"
+            y = r"\y" if search_match_whole_word else ""
+
             # Modify query based on case sensitivity filter
             translation_filters = (
-                (
-                    Q(translation__string__regex=rf"\y{s}\y")
-                    if search_match_word and search_match_case
-                    else Q(translation__string__iregex=rf"\y{s}\y")
-                    if search_match_word
-                    else (
-                        Q(translation__string__contains=s)
-                        if search_match_case
-                        else Q(
-                            translation__string__icontains_collate=(
-                                s,
-                                locale.db_collation,
-                            )
-                        )
-                    )
-                )
+                Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
                 & Q(translation__locale=locale)
                 & q_rejected
                 for s in search_list
@@ -884,7 +872,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             if not search_translations_only:
                 # Search in string (context) identifiers
 
-                case_lookup = "contains" if search_match_case else "icontains"
                 q_key = Q()
                 # TODO: Uncomment the 5 lines below to reactivate the
                 #       context identifiers filter once .ftl bug is fixed (issue #3284):
@@ -894,28 +881,12 @@ class Entity(DirtyFieldsMixin, models.Model):
                 #     else Q()
                 # )
 
-                if search_match_word:
-                    entity_filters = (
-                        (
-                            Q(string__iregex=rf"\y{s}\y")
-                            if search_match_case
-                            else Q(string__regex=rf"\y{s}\y")
-                        )
-                        | (
-                            Q(string_plural__iregex=rf"\y{s}\y")
-                            if search_match_case
-                            else Q(string_plural__regex=rf"\y{s}\y")
-                        )
-                        | q_key
-                        for s in search_list
-                    )
-                else:
-                    entity_filters = (
-                        Q(**{f"string__{case_lookup}": (s)})
-                        | Q(**{f"string_plural__{case_lookup}": (s)})
-                        | q_key
-                        for s in search_list
-                    )
+                entity_filters = (
+                    Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
+                    | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
+                    | q_key
+                    for s in search_list
+                )
 
                 entity_matches = entities.filter(*entity_filters).values_list(
                     "id", flat=True

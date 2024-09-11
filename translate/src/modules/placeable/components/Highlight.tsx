@@ -176,7 +176,7 @@ export function Highlight({
       const highlightSource = location.search_match_case ? source : lcSource;
       let next: number;
       const regexFlags = location.search_match_case ? 'g' : 'gi';
-      const re = location.search_match_word
+      const re = location.search_match_whole_word
         ? new RegExp(`\\b${escapeRegExp(term)}\\b`, regexFlags)
         : new RegExp(`${escapeRegExp(term)}`, regexFlags);
       let match;

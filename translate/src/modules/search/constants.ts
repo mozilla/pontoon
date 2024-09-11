@@ -77,7 +77,7 @@ export const SEARCH_OPTIONS = [
     slug: 'search_match_case',
   },
   {
-    name: 'Match whole words',
-    slug: 'search_match_word',
+    name: 'Match whole word',
+    slug: 'search_match_whole_word',
   },
 ] as const;
