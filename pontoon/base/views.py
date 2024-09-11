@@ -249,6 +249,7 @@ def entities(request):
         "search_translations_only",
         "search_rejected_translations",
         "search_match_case",
+        "search_match_whole_word",
         "time",
         "author",
         "review_time",

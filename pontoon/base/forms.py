@@ -301,6 +301,7 @@ class GetEntitiesForm(forms.Form):
     search_translations_only = forms.BooleanField(required=False)
     search_rejected_translations = forms.BooleanField(required=False)
     search_match_case = forms.BooleanField(required=False)
+    search_match_whole_word = forms.BooleanField(required=False)
     tag = forms.CharField(required=False)
     time = forms.CharField(required=False)
     author = forms.CharField(required=False)

@@ -173,13 +173,16 @@ export function Highlight({
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);
       }
-      const highlightTerm = location.search_match_case
-        ? term
-        : term.toLowerCase();
       const highlightSource = location.search_match_case ? source : lcSource;
-      let pos = 0;
       let next: number;
-      while ((next = highlightSource.indexOf(highlightTerm, pos)) !== -1) {
+      const regexFlags = location.search_match_case ? 'g' : 'gi';
+      const re = location.search_match_whole_word
+        ? new RegExp(`\\b${escapeRegExp(term)}\\b`, regexFlags)
+        : new RegExp(`${escapeRegExp(term)}`, regexFlags);
+      let match;
+
+      while ((match = re.exec(highlightSource)) !== null) {
+        next = match.index;
         let i = marks.findIndex((m) => m.index + m.length > next);
         if (i === -1) {
           i = marks.length;
@@ -193,7 +196,6 @@ export function Highlight({
             </mark>
           ),
         });
-        pos = next + term.length;
       }
     }
   }
