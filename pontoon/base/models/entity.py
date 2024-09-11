@@ -853,10 +853,10 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q() if search_rejected_translations else Q(translation__rejected=False)
             )
 
+            # Modify query based on case sensitivity filter
             i = "" if search_match_case else "i"
             y = r"\y" if search_match_whole_word else ""
 
-            # Modify query based on case sensitivity filter
             translation_filters = (
                 Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
                 & Q(translation__locale=locale)
