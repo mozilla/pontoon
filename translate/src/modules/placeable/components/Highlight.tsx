@@ -173,44 +173,29 @@ export function Highlight({
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);
       }
-      const highlightTerm = location.search_match_case
-        ? term
-        : term.toLowerCase();
       const highlightSource = location.search_match_case ? source : lcSource;
-      let pos = 0;
       let next: number;
-      while ((next = highlightSource.indexOf(highlightTerm, pos)) !== -1) {
+      const regexFlags = location.search_match_case ? 'g' : 'gi';
+      const re = location.search_match_word
+        ? new RegExp(`\\b${escapeRegExp(term)}\\b`, regexFlags)
+        : new RegExp(`${escapeRegExp(term)}`, regexFlags);
+      let match;
+
+      while ((match = re.exec(highlightSource)) !== null) {
+        next = match.index;
         let i = marks.findIndex((m) => m.index + m.length > next);
         if (i === -1) {
           i = marks.length;
         }
-
-        // Lookahead by one character to see if the current mark is an exact match to the search term
-        let lookahead = source.substring(next, next + term.length + 1).trim();
-
-        // Handle when Match case and Match word are both active
-        lookahead = location.search_match_case
-          ? lookahead
-          : lookahead.toLowerCase();
-
-        // Handle any punctuation at the end of the lookahead
-        const punctuationMarks = ['.', ',', '!', '?', ';', ':'];
-        if (punctuationMarks.includes(lookahead.slice(-1))) {
-          lookahead = lookahead.slice(0, -1);
-        }
-
-        if (!location.search_match_word || lookahead == highlightTerm) {
-          marks.splice(i, 0, {
-            index: next,
-            length: term.length,
-            mark: (
-              <mark className='search' key={++keyCounter}>
-                {source.substring(next, next + term.length)}
-              </mark>
-            ),
-          });
-        }
-        pos = next + term.length;
+        marks.splice(i, 0, {
+          index: next,
+          length: term.length,
+          mark: (
+            <mark className='search' key={++keyCounter}>
+              {source.substring(next, next + term.length)}
+            </mark>
+          ),
+        });
       }
     }
   }
