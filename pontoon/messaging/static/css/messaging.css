@@ -1,6 +1,42 @@
 .messaging {
-  .menu #compose li:hover {
-    background: inherit;
+  .right-column {
+    > div:not(.selected) {
+      display: none;
+    }
+
+    section {
+      padding: 20px;
+    }
+  }
+
+  .controls {
+    margin: 0;
+
+    .button {
+      width: 160px;
+      .fa-chevron-left {
+        margin-right: 5px;
+      }
+      .fa-chevron-right {
+        margin-left: 5px;
+      }
+    }
+
+    .button:hover {
+      color: inherit;
+    }
+
+    .button:not(.active) {
+      background: var(--button-background-2);
+    }
+
+    .right {
+      float: right;
+
+      .button {
+        margin-left: 10px;
+      }
+    }
   }
 
   #compose {
@@ -14,9 +50,8 @@
       }
     }
 
-    .controls {
-      margin: 0;
-      text-align: right;
+    li:hover {
+      background: inherit;
     }
 
     .errors {
@@ -28,10 +63,6 @@
         padding-top: 5px;
         text-transform: uppercase;
       }
-    }
-
-    #send-message > section {
-      padding: 20px;
     }
 
     .check-list {

@@ -84,29 +84,38 @@ $(function () {
     );
   }
 
+  // Toggle between Edit and Review mode
+  container.on('click', '.controls .toggle.button', function (e) {
+    e.preventDefault();
+
+    // Validate form
+    if ($(this).is('.review')) {
+      const isValidForm = validateForm();
+
+      if (!isValidForm) {
+        // Scroll to the first visible error
+        const visibleErrors = $('#send-message .errors').filter(function () {
+          return $(this).css('visibility') === 'visible';
+        });
+        if (visibleErrors.length) {
+          $([document.documentElement, document.body]).animate(
+            {
+              scrollTop: visibleErrors.first().parent().offset().top,
+            },
+            400,
+          );
+        }
+        return;
+      }
+    }
+    $($(this).data('target')).show().siblings().hide();
+  });
+
   // Send message
-  container.on('click', '#send-message .send', function (e) {
+  container.on('click', '.controls .send.button', function (e) {
     e.preventDefault();
 
     const $form = $('#send-message');
-
-    // Validate form
-    const isValidForm = validateForm();
-    if (!isValidForm) {
-      // Scroll to the first visible error
-      const visibleErrors = $form.find('.errors').filter(function () {
-        return $(this).css('visibility') === 'visible';
-      });
-      if (visibleErrors.length) {
-        $([document.documentElement, document.body]).animate(
-          {
-            scrollTop: visibleErrors.first().parent().offset().top,
-          },
-          400,
-        );
-      }
-      return;
-    }
 
     // Submit form
     $.ajax({

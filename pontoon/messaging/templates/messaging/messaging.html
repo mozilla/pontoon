@@ -33,12 +33,12 @@
             </div>
 
             <div class="menu permanent right-column">
-                <section id="compose" class="selected">
+                <div id="compose" class="selected">
                     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.send_message') }}">
                         {% csrf_token %}
 
                         <section class="message-type">
-                            <h3><span class="stress"></span> Message type</h3>
+                            <h3>Message type</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
                                 <li><input type="checkbox" name="notification"></li>
@@ -55,7 +55,7 @@
                         </section>
 
                         <section class="message-content">
-                            <h3><span class="stress"></span> Message content</h3>
+                            <h3>Message content</h3>
                             <div class="field clearfix subject">
                                 <label for="subject">Subject</label>
                                 <input type="text" name="subject" required="" id="subject">
@@ -76,7 +76,7 @@
                         </section>
 
                         <section class="filter-user-role">
-                            <h3><span class="stress"></span> Filter by user role</h3>
+                            <h3>Filter by user role</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
                                 is_enabled=True) }}
@@ -94,7 +94,7 @@
                         </section>
 
                         <section class="filter-locale">
-                            <h3><span class="stress"></span> Filter by locale</h3>
+                            <h3>Filter by locale</h3>
                             <div class="multi-selector locale-selector">
                                 <div class="clearfix">
                                     {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
@@ -106,7 +106,7 @@
                         </section>
 
                         <section class="filter-project">
-                            <h3><span class="stress"></span> Filter by project</h3>
+                            <h3>Filter by project</h3>
                             <div class="multi-selector project-selector">
                                 <div class="clearfix">
                                     {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
@@ -118,7 +118,7 @@
                         </section>
 
                         <section class="filter-translation clearfix">
-                            <h3><span class="stress"></span> Filter by submitted translations</h3>
+                            <h3>Filter by submitted translations</h3>
                             <div>
                                 <div class="field clearfix minimum half">
                                     <label for="translation-minimum">Minimum</label>
@@ -148,7 +148,7 @@
                         </section>
 
                         <section class="filter-review clearfix">
-                            <h3><span class="stress"></span> Filter by performed reviews</h3>
+                            <h3>Filter by performed reviews</h3>
                             <div>
                                 <div class="field clearfix minimum half">
                                     <label for="review-minimum">Minimum</label>
@@ -178,7 +178,7 @@
                         </section>
 
                         <section class="filter-last-login clearfix">
-                            <h3><span class="stress"></span> Filter by last login</h3>
+                            <h3>Filter by last login</h3>
                             <div>
 
                                 <div class="field clearfix from half">
@@ -194,13 +194,29 @@
 
                         <section class="filter-last-login clearfix">
                             <menu class="controls">
-                                <button class="button active send">Send</button>
+                                <button class="button toggle review" data-target="#review">Review message<span
+                                        class="fa fa-chevron-right"></span></button>
                             </menu>
                         </section>
                     </form>
-                </section>
-                <section id="sent">
-                </section>
+                </div>
+                <div id="review">
+                    <section class="clearfix">
+                        <h3>Message review</h3>
+                    </section>
+                    <section class="clearfix">
+                        <menu class="controls">
+                            <button class="button toggle edit" data-target="#compose"><span
+                                    class="fa fa-chevron-left"></span>Back to editing</button>
+                            <div class="right">
+                                <button class="button send to-myself">Send to myself</button>
+                                <button class="button active send">Send</button>
+                            </div>
+                        </menu>
+                    </section>
+                </div>
+                <div id="sent">
+                </div>
             </div>
         </section>
     </div>
