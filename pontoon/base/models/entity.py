@@ -858,7 +858,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             y = r"\y" if search_match_whole_word else ""
 
             translation_filters = (
-                Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
+                Q(**{f"translation__string__{i}regex": rf"=.*{y}{s}{y}.*"})
                 & Q(translation__locale=locale)
                 & q_rejected
                 for s in search_list
@@ -871,19 +871,16 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Search in source strings
             if not search_translations_only:
                 # Search in string (context) identifiers
-
-                q_key = Q()
-                # TODO: Uncomment the 5 lines below to reactivate the
-                #       context identifiers filter once .ftl bug is fixed (issue #3284):
-                # q_key = (
-                #     Q(**{f"key__{case_lookup}": (search)})
-                #     if search_identifiers
-                #     else Q()
-                # )
+                case_lookup = "contains" if search_match_case else "icontains"
+                q_key = (
+                    Q(**{f"key__{case_lookup}": (search)})
+                    if search_identifiers
+                    else Q()
+                )
 
                 entity_filters = (
-                    Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
-                    | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
+                    Q(**{f"string__{i}regex": rf"=.*{y}{s}{y}.*"})
+                    | Q(**{f"string_plural__{i}regex": rf"=.*{y}{s}{y}.*"})
                     | q_key
                     for s in search_list
                 )
