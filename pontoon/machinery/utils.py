@@ -249,7 +249,7 @@ def get_concordance_search_data(text, locale):
         """Sort the results by their best Levenshtein distance from the search query"""
 
         def levenshtein_distance(s1, s2):
-            return int(round((1 - normalized_distance(s1.lower(), s2.lower())) * 100))
+            return round((1 - normalized_distance(s1.lower(), s2.lower())) * 100)
 
         return (
             max(
