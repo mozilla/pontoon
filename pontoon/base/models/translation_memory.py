@@ -1,6 +1,6 @@
 from math import ceil, floor
 
-import Levenshtein
+from rapidfuzz.distance.Indel import normalized_distance
 
 from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Value, When
@@ -104,11 +104,11 @@ class TranslationMemoryEntryQuerySet(models.QuerySet):
         quality_sql_map = []
 
         for pk, source in possible_matches:
-            quality = Levenshtein.ratio(text, source)
+            quality = (1 - normalized_distance(text, source)) * 100
 
             if quality > min_quality:
                 matches_pks.append(pk)
-                quality_sql_map.append(When(pk=pk, then=Value(quality * 100)))
+                quality_sql_map.append(When(pk=pk, then=Value(quality)))
 
         entries = self.filter(
             pk__in=matches_pks,

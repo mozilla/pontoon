@@ -45,7 +45,7 @@ psycopg2==2.9.6
 PyJWT==2.4.0
 python-dateutil==2.9.0
 python-dotenv==0.17.0
-python-levenshtein==0.12.2
+rapidfuzz==3.9.7
 raygun4py==4.3.0
 sacrebleu==2.3.1
 sacremoses==0.0.43
