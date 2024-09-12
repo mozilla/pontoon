@@ -35,8 +35,6 @@ def messaging(request):
         {
             "available_locales": Locale.objects.available(),
             "available_projects": Project.objects.available().order_by("name"),
-            "today": timezone.now().date(),
-            "year_ago": timezone.now().date() - timezone.timedelta(days=365),
         },
     )
 
