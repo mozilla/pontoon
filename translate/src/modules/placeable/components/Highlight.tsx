@@ -13,7 +13,7 @@ const placeholder = (() => {
   // HTML/XML <tags>
   const html = '<(?:(?:"[^"]*")|(?:\'[^\']*\')|[^>])*>';
   // Fluent & other similar {placeholders}
-  const curly = '{(?:(?:"[^"]*")|[^}])*}';
+  const curly = '{(?:(?:"[^"]*")|[^}])*}}?';
   // All printf-ish formats, including Python's.
   // Excludes Python's ` ` conversion flag, due to false positives -- https://github.com/mozilla/pontoon/issues/2988
   const printf =

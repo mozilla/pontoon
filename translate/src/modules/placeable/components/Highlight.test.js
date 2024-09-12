@@ -285,6 +285,13 @@ describe('specific marker', () => {
     ["hello, <user name='John'>", "<user name='John'>"],
     ["hello, <user data-name='John'>", "<user data-name='John'>"],
     ['Happy <User.Birthday>!', '<User.Birthday>'],
+    // i18next interpolations
+    ['Hello, {{firstName}}', '{{firstName}}'],
+    [
+      'You currently have {{balance, money}} on your account!',
+      '{{balance, money}}',
+    ],
+    ['Hi {{0}}. You will now be connected to {{1}}', '{{0}}', '{{1}}'],
   ];
   for (const [source, ...exp] of tests) {
     test(source, () => {
