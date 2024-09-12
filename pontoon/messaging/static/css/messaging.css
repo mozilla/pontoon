@@ -1,4 +1,8 @@
 .messaging {
+  h3 {
+    margin-bottom: 20px;
+  }
+
   .right-column {
     > div:not(.selected) {
       display: none;
@@ -41,14 +45,6 @@
 
   #compose {
     box-sizing: border-box;
-
-    h3 {
-      margin-bottom: 20px;
-
-      .stress {
-        color: var(--status-translated);
-      }
-    }
 
     li:hover {
       background: inherit;
@@ -138,6 +134,60 @@
 
     .multi-selector .menu {
       width: 285px;
+    }
+  }
+
+  #review {
+    p {
+      color: var(--light-grey-6);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    p.transactional {
+      margin-top: 20px;
+      font-style: italic;
+      padding: 20px;
+      background: var(--background-1);
+      border-radius: 5px;
+
+      i {
+        color: var(--status-translated);
+      }
+    }
+
+    .body p a {
+      color: var(--status-translated);
+      font-weight: inherit;
+    }
+
+    .recipients {
+      > div:not(:last-child) {
+        margin-bottom: 20px;
+      }
+
+      h5 {
+        color: var(--light-grey-6);
+        font-size: 16px;
+      }
+
+      .value {
+        font-weight: 100;
+      }
+
+      .locales .value,
+      .projects .value {
+        cursor: help;
+        text-decoration: underline;
+        text-decoration-color: var(--status-translated);
+        text-decoration-thickness: 1px;
+      }
+
+      .submitted-translations,
+      .performed-reviews,
+      .last-login {
+        display: none;
+      }
     }
   }
 }

@@ -11,6 +11,11 @@ $(function () {
     // Toggle Transactional check box
     if (self.is('.email')) {
       $('.check-box.transactional').toggle(self.is('.enabled'));
+
+      // Disable Transactional check box if Email gets disabled
+      if (!self.is('.enabled')) {
+        $('.check-box.transactional.enabled').click();
+      }
     }
   });
 
@@ -26,7 +31,7 @@ $(function () {
     const isValidBody = $form.find('[name=body]').val();
 
     const isValidRole =
-      $form.find('.filter-user-role .check-box').filter('.enabled').length > 0;
+      $form.find('.user-roles .check-box').filter('.enabled').length > 0;
 
     const isValidLocale = $form.find('[name=locales]').val();
 
@@ -56,19 +61,19 @@ $(function () {
     showErrorIfNotValid(isValidType, '.message-type');
     showErrorIfNotValid(isValidSubject, '.subject');
     showErrorIfNotValid(isValidBody, '.body');
-    showErrorIfNotValid(isValidRole, '.filter-user-role');
-    showErrorIfNotValid(isValidLocale, '.filter-locale');
-    showErrorIfNotValid(isValidProject, '.filter-project');
+    showErrorIfNotValid(isValidRole, '.user-roles');
+    showErrorIfNotValid(isValidLocale, '.locale');
+    showErrorIfNotValid(isValidProject, '.project');
     showErrorIfNotValid(
       isValidTranslationMinimum,
-      '.filter-translation > .minimum',
+      '.submitted-translations .minimum',
     );
     showErrorIfNotValid(
       isValidTranslationMaximum,
-      '.filter-translation > .maximum',
+      '.submitted-translations .maximum',
     );
-    showErrorIfNotValid(isValidReviewMinimum, '.filter-review > .minimum');
-    showErrorIfNotValid(isValidReviewMaximum, '.filter-review > .maximum');
+    showErrorIfNotValid(isValidReviewMinimum, '.preformed-reviews .minimum');
+    showErrorIfNotValid(isValidReviewMaximum, '.preformed-reviews .maximum');
 
     return (
       isValidType &&
@@ -82,6 +87,101 @@ $(function () {
       isValidReviewMinimum &&
       isValidReviewMaximum
     );
+  }
+
+  function updateReviewPanel() {
+    function updateFields(filter) {
+      let show = false;
+      $(`#compose .${filter} > div`).each(function () {
+        const className = $(this).attr('class');
+        const values = [];
+
+        $(this)
+          .find('.field')
+          .each(function () {
+            const label = $(this).find('label').text();
+            let value = $(this).find('input').val().trim();
+            if (value) {
+              if (className === 'date') {
+                value = new Date(value).toLocaleDateString();
+              }
+              values.push(`${label}: ${value}`);
+              show = true;
+            }
+          });
+
+        $(`#review .${filter} .${className}`).html(values.join(', '));
+      });
+      $(`#review .${filter}`).toggle(show);
+    }
+
+    // Subject and body
+    $('#review .subject p').html($('#subject').val());
+    $('#review .body p').html($('#body').val());
+
+    // User roles
+    const userRoles = $('#compose .user-roles .enabled')
+      .map(function () {
+        return $(this).find('.label').text();
+      })
+      .get();
+    $('#review .user-roles .value').html(userRoles.join(', '));
+
+    // Locales
+    const allLocalesSelected = !$('.locale.available li:not(.no-match)').length;
+    const localesSelected = $('.locale.selected li:not(.no-match)')
+      .map(function () {
+        return $(this).find('.code').text();
+      })
+      .get();
+    const localesDisplay = allLocalesSelected ? 'All' : localesSelected.length;
+    const localesTitle = localesSelected.join(', ');
+    $('#review .locales .value')
+      .html(localesDisplay)
+      .attr('title', localesTitle);
+
+    // Projects
+    const allProjectsSelected = !$('.project .item.available li:not(.no-match)')
+      .length;
+    const projectsSelected = $('.project .item.selected li:not(.no-match)')
+      .map(function () {
+        return $(this).find('.item').text();
+      })
+      .get();
+    const projectsDisplay = allProjectsSelected
+      ? 'All'
+      : projectsSelected.length;
+    const projectsTitle = projectsSelected.join(', ');
+    $('#review .projects .value')
+      .html(projectsDisplay)
+      .attr('title', projectsTitle);
+
+    // Submitted translations
+    updateFields('submitted-translations');
+
+    // Performed reviews
+    updateFields('performed-reviews');
+
+    // Last login
+    updateFields('last-login');
+
+    // Message types
+    let messageTypes = $('.message-type .enabled')
+      .map(function () {
+        return $(this).find('.label').text();
+      })
+      .get();
+    const isTransactional = messageTypes.includes('Transactional');
+    if (isTransactional) {
+      messageTypes.push('Transactional Email');
+      messageTypes = messageTypes.filter(
+        (item) => item !== 'Email' && item !== 'Transactional',
+      );
+    }
+    $('#review .message-type .value').html(
+      `The message will be sent as ${messageTypes.join(' and ')}.`,
+    );
+    $('#review .message-type .transactional').toggle(isTransactional);
   }
 
   // Toggle between Edit and Review mode
@@ -107,7 +207,10 @@ $(function () {
         }
         return;
       }
+
+      updateReviewPanel();
     }
+
     $($(this).data('target')).show().siblings().hide();
   });
 

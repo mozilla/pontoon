@@ -76,7 +76,7 @@
                             </div>
                         </section>
 
-                        <section class="filter-user-role">
+                        <section class="user-roles">
                             <h3>Filter by user role</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
@@ -94,7 +94,7 @@
                             </div>
                         </section>
 
-                        <section class="filter-locale">
+                        <section class="locale">
                             <h3>Filter by locale</h3>
                             <div class="multi-selector locale-selector">
                                 <div class="clearfix">
@@ -106,7 +106,7 @@
                             </div>
                         </section>
 
-                        <section class="filter-project">
+                        <section class="project">
                             <h3>Filter by project</h3>
                             <div class="multi-selector project-selector">
                                 <div class="clearfix">
@@ -118,9 +118,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-translation clearfix">
+                        <section class="submitted-translations clearfix">
                             <h3>Filter by submitted translations</h3>
-                            <div>
+                            <div class="amount">
                                 <div class="field clearfix minimum half">
                                     <label for="translation-minimum">Minimum</label>
                                     <input type="number" min="0" name="translation_minimum" id="translation-minimum">
@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="date">
                                 <div class="field clearfix from half">
                                     <label for="translation-from">From</label>
                                     <input type="date" name="translation_from" id="translation-from">
@@ -148,9 +148,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-review clearfix">
+                        <section class="performed-reviews clearfix">
                             <h3>Filter by performed reviews</h3>
-                            <div>
+                            <div class="amount">
                                 <div class="field clearfix minimum half">
                                     <label for="review-minimum">Minimum</label>
                                     <input type="number" min="0" name="review_minimum" id="review-minimum">
@@ -166,7 +166,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="date">
                                 <div class="field clearfix from half">
                                     <label for="review-from">From</label>
                                     <input type="date" name="review_from" id="review-from">
@@ -178,9 +178,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-last-login clearfix">
+                        <section class="last-login clearfix">
                             <h3>Filter by last login</h3>
-                            <div>
+                            <div class="date">
 
                                 <div class="field clearfix from half">
                                     <label for="login-from">From</label>
@@ -193,7 +193,7 @@
                             </div>
                         </section>
 
-                        <section class="filter-last-login clearfix">
+                        <section class="clearfix">
                             <menu class="controls">
                                 <button class="button toggle review" data-target="#review">Review message<span
                                         class="fa fa-chevron-right"></span></button>
@@ -202,8 +202,47 @@
                     </form>
                 </div>
                 <div id="review">
-                    <section class="clearfix">
-                        <h3>Message review</h3>
+                    <section class="subject clearfix">
+                        <h3>Subject</h3>
+                        <p></p>
+                    </section>
+                    <section class="body clearfix">
+                        <h3>Body</h3>
+                        <p></p>
+                    </section>
+                    <section class="recipients clearfix">
+                        <h3>Recipients</h3>
+                        <div class="user-roles">
+                            <h5>User roles</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="locales">
+                            <h5>Locales</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="projects">
+                            <h5>Projects</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="submitted-translations">
+                            <h5>Submitted translations</h5>
+                            <p class="value amount"></p>
+                            <p class="value date"></p>
+                        </div>
+                        <div class="performed-reviews">
+                            <h5>Performed reviews</h5>
+                            <p class="value amount"></p>
+                            <p class="value date"></p>
+                        </div>
+                        <div class="last-login">
+                            <h5>Last login</h5>
+                            <p class="value date"></p>
+                        </div>
+                    </section>
+                    <section class="message-type clearfix">
+                        <h3>Message type</h3>
+                        <p class="value"></p>
+                        <p class="transactional"><i>Warning:</i> Transactional emails are also sent to users who have not opted in to email communication. They are restricted in the type of content that can be included. When in doubt, please review with legal.</p>
                     </section>
                     <section class="clearfix">
                         <menu class="controls">
