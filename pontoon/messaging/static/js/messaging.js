@@ -11,7 +11,7 @@ $(function () {
       $form.find('.message-type .check-box').filter('.enabled').length > 0;
 
     const isValidSubject = $form.find('[name=subject]').val();
-    const isValidBody = $form.find('[name=body]').val();
+    const isValidBody = $form.find('#body').val();
 
     const isValidRole =
       $form.find('.user-roles .check-box').filter('.enabled').length > 0;
@@ -105,6 +105,9 @@ $(function () {
     const bodyValue = $('#body').val();
     const html = converter.makeHtml(bodyValue);
     $('#review .body .value').html(html);
+
+    // Update hidden textarea with the HTML content to be sent to backend
+    $('#compose [name=body]').val(html);
 
     // User roles
     const userRoles = $('#compose .user-roles .enabled')
