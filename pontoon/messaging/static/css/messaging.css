@@ -4,13 +4,10 @@
   }
 
   #compose {
-    padding: 20px;
     box-sizing: border-box;
 
     h3 {
-      color: var(--white-1);
-      font-size: 22px;
-      letter-spacing: 0;
+      margin-bottom: 20px;
 
       .stress {
         color: var(--status-translated);
@@ -19,6 +16,7 @@
 
     .controls {
       margin: 0;
+      text-align: right;
     }
 
     .errors {
@@ -33,7 +31,7 @@
     }
 
     #send-message > section {
-      margin: 20px 0;
+      padding: 20px;
     }
 
     .check-list {
@@ -64,8 +62,17 @@
     .field {
       color: var(--light-grey-7);
       font-size: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       text-align: left;
+    }
+
+    .field.half {
+      float: left;
+      width: 285px;
+    }
+
+    .field.half:nth-child(2n) {
+      float: right;
     }
 
     label {
@@ -74,6 +81,8 @@
     }
 
     input[type='text'],
+    input[type='date'],
+    input[type='number'],
     textarea {
       background: var(--black-3);
       float: none;
@@ -88,7 +97,7 @@
       height: 150px;
     }
 
-    .message-editor .subtitle {
+    .message-content .subtitle {
       color: var(--light-grey-7);
       float: right;
       font-size: 13px;

@@ -15,116 +15,195 @@
 
 {% block bottom %}
 <section id="main">
-  <div class="container">
-    <section class="clearfix">
-      <div class="menu permanent left-column">
-        <ul>
-          <li class="selected">
-            <a href="#compose" data-target="#compose">Compose</a>
-          </li>
-          <li class="horizontal-separator"></li>
-          <li>
-            <a href="#sent" data-target="#sent">
-              <span class="name">Sent</span>
-              <span class="count">{{ messages|length }}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div class="container">
+        <section class="clearfix">
+            <div class="menu permanent left-column">
+                <ul>
+                    <li class="selected">
+                        <a href="#compose" data-target="#compose">Compose</a>
+                    </li>
+                    <li class="horizontal-separator"></li>
+                    <li>
+                        <a href="#sent" data-target="#sent">
+                            <span class="name">Sent</span>
+                            <span class="count">{{ messages|length }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-      <div class="menu permanent right-column">
-        <section id="compose" class="selected">
-          <form id="send-message" method="POST" action="{{ url('pontoon.messaging.send_message') }}">
-            {% csrf_token %}
+            <div class="menu permanent right-column">
+                <section id="compose" class="selected">
+                    <form id="send-message" method="POST" action="{{ url('pontoon.messaging.send_message') }}">
+                        {% csrf_token %}
 
-            <h3><span class="stress">#1</span> Message type</h3>
-            <section class="message-type">
-              <ul class="check-list">
-                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
-                <li><input type="checkbox" name="notification"></li>
-                {{ Checkbox.checkbox('Email', class='email', attribute='email') }}
-                <li><input type="checkbox" name="email"></li>
-                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional', help='Transactional emails are also sent to users who have not opted in to email communication. They are restricted in the type of content that can be included.') }}
-                <li class="transactional"><input type="checkbox" name="transactional"></li>
-              </ul>
+                        <section class="message-type">
+                            <h3><span class="stress"></span> Message type</h3>
+                            <ul class="check-list">
+                                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
+                                <li><input type="checkbox" name="notification"></li>
+                                {{ Checkbox.checkbox('Email', class='email', attribute='email') }}
+                                <li><input type="checkbox" name="email"></li>
+                                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional',
+                                help='Transactional emails are also sent to users who have not opted in to email
+                                communication. They are restricted in the type of content that can be included.') }}
+                                <li class="transactional"><input type="checkbox" name="transactional"></li>
+                            </ul>
+                            <div class="errors">
+                                <p>You must select at least one message type</p>
+                            </div>
+                        </section>
 
-                <div class="errors">
-                  <p>You must select at least one message type</p>
-                </div>
-            </section>
+                        <section class="message-content">
+                            <h3><span class="stress"></span> Message content</h3>
+                            <div class="field clearfix subject">
+                                <label for="subject">Subject</label>
+                                <input type="text" name="subject" required="" id="subject">
+                                <div class="errors">
+                                    <p>Your message must include a subject</p>
+                                </div>
+                            </div>
+                            <div class="field clearfix body">
+                                <label for="body">Body</label>
+                                <textarea name="body" cols="40" rows="10" required="" id="body"></textarea>
+                                <div class="subtitle">
+                                    <p>Supports html</p>
+                                </div>
+                                <div class="errors">
+                                    <p>Your message must include a body</p>
+                                </div>
+                            </div>
+                        </section>
 
-            <h3><span class="stress">#2</span> Message editor</h3>
-            <section class="message-editor">
-              <div class="field clearfix subject">
-                <label for="subject">Subject</label>
-                <input type="text" name="subject" required="" id="subject">
-                <div class="errors">
-                  <p>Your message must include a subject</p>
-                </div>
-              </div>
+                        <section class="filter-user-role">
+                            <h3><span class="stress"></span> Filter by user role</h3>
+                            <ul class="check-list">
+                                {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
+                                is_enabled=True) }}
+                                <li><input type="checkbox" name="managers" checked="checked"></li>
+                                {{ Checkbox.checkbox('Translators', class='translators', attribute='translators',
+                                is_enabled=True) }}
+                                <li><input type="checkbox" name="translators" checked="checked"></li>
+                                {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors',
+                                is_enabled=True) }}
+                                <li><input type="checkbox" name="contributors" checked="checked"></li>
+                            </ul>
+                            <div class="errors">
+                                <p>You must select at least one user role</p>
+                            </div>
+                        </section>
 
-              <div class="field clearfix body">
-                <label for="body">Body</label>
-                <textarea name="body" cols="40" rows="10" required="" id="body"></textarea>
-                <div class="subtitle">
-                  <p>Supports html</p>
-                </div>
-                <div class="errors">
-                  <p>Your message must include a body</p>
-                </div>
-              </div>
-            </section>
+                        <section class="filter-locale">
+                            <h3><span class="stress"></span> Filter by locale</h3>
+                            <div class="multi-selector locale-selector">
+                                <div class="clearfix">
+                                    {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
+                                </div>
+                            </div>
+                            <div class="errors">
+                                <p>You must select at least one locale</p>
+                            </div>
+                        </section>
 
-            <h3><span class="stress">#3</span> Filter by user role</h3>
-            <section class="filter-user-role">
-              <ul class="check-list">
-                {{ Checkbox.checkbox('Managers', class='managers', attribute='managers', is_enabled=True) }}
-                <li><input type="checkbox" name="managers" checked="checked"></li>
-                {{ Checkbox.checkbox('Translators', class='translators', attribute='translators', is_enabled=True) }}
-                <li><input type="checkbox" name="translators" checked="checked"></li>
-                {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors', is_enabled=True) }}
-                <li><input type="checkbox" name="contributors" checked="checked"></li>
-              </ul>
+                        <section class="filter-project">
+                            <h3><span class="stress"></span> Filter by project</h3>
+                            <div class="multi-selector project-selector">
+                                <div class="clearfix">
+                                    {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
+                                </div>
+                            </div>
+                            <div class="errors">
+                                <p>You must select at least one project</p>
+                            </div>
+                        </section>
 
-                <div class="errors">
-                  <p>You must select at least one user role</p>
-                </div>
-            </section>
+                        <section class="filter-translation clearfix">
+                            <h3><span class="stress"></span> Filter by submitted translations</h3>
+                            <div>
+                                <div class="field clearfix minimum half">
+                                    <label for="translation-minimum">Minimum</label>
+                                    <input type="number" min="0" name="translation_minimum" id="translation-minimum">
+                                    <div class="errors">
+                                        <p>The value must be an integer</p>
+                                    </div>
+                                </div>
+                                <div class="field clearfix maximum half">
+                                    <label for="translation-maximum">Maximum</label>
+                                    <input type="number" min="0" name="translation_maximum" id="translation-maximum">
+                                    <div class="errors">
+                                        <p>The value must be an integer</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="field clearfix from half">
+                                    <label for="translation-from">From</label>
+                                    <input type="date" name="translation_from" id="translation-from">
+                                </div>
+                                <div class="field clearfix to half">
+                                    <label for="translation-to">To</label>
+                                    <input type="date" name="translation_to" id="translation-to">
+                                </div>
+                            </div>
+                        </section>
 
-            <h3><span class="stress">#4</span> Filter by locale</h3>
-            <section class="filter-locale">
-                <div class="multi-selector locale-selector">
-                    <div class="clearfix">
-                      {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
-                    </div>
-                </div>
-                <div class="errors">
-                    <p>You must select at least one locale</p>
-                </div>
-            </section>
+                        <section class="filter-review clearfix">
+                            <h3><span class="stress"></span> Filter by performed reviews</h3>
+                            <div>
+                                <div class="field clearfix minimum half">
+                                    <label for="review-minimum">Minimum</label>
+                                    <input type="number" min="0" name="review_minimum" id="review-minimum">
+                                    <div class="errors">
+                                        <p>The value must be an integer</p>
+                                    </div>
+                                </div>
+                                <div class="field clearfix maximum half">
+                                    <label for="review-maximum">Maximum</label>
+                                    <input type="number" min="0" name="review_maximum" id="review-maximum">
+                                    <div class="errors">
+                                        <p>The value must be an integer</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="field clearfix from half">
+                                    <label for="review-from">From</label>
+                                    <input type="date" name="review_from" id="review-from">
+                                </div>
+                                <div class="field clearfix to half">
+                                    <label for="review-to">To</label>
+                                    <input type="date" name="review_to" id="review-to">
+                                </div>
+                            </div>
+                        </section>
 
-            <h3><span class="stress">#5</span> Filter by project</h3>
-            <section class="filter-project">
-                <div class="multi-selector project-selector">
-                    <div class="clearfix">
-                      {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
-                    </div>
-                </div>
-                <div class="errors">
-                    <p>You must select at least one project</p>
-                </div>
-            </section>
+                        <section class="filter-last-login clearfix">
+                            <h3><span class="stress"></span> Filter by last login</h3>
+                            <div>
 
-            <menu class="controls">
-              <button class="button active send">Send</button>
-            </menu>
-          </form>
+                                <div class="field clearfix from half">
+                                    <label for="login-from">From</label>
+                                    <input type="date" name="login_from" id="login-from">
+                                </div>
+                                <div class="field clearfix to half">
+                                    <label for="login-to">To</label>
+                                    <input type="date" name="login_to" id="login-to">
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="filter-last-login clearfix">
+                            <menu class="controls">
+                                <button class="button active send">Send</button>
+                            </menu>
+                        </section>
+                    </form>
+                </section>
+                <section id="sent">
+                </section>
+            </div>
         </section>
-        <section id="sent">
-        </section>
-      </div>
-    </section>
-  </div>
+    </div>
 </section>
 {% endblock %}
 
