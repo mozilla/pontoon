@@ -121,7 +121,7 @@
 
     textarea {
       border-radius: 3px;
-      height: 150px;
+      height: 300px;
     }
 
     .message-content .subtitle {
@@ -144,10 +144,6 @@
       line-height: 1.5;
     }
 
-    .body .value p {
-      padding-bottom: 1.5em;
-    }
-
     p.transactional {
       margin-top: 20px;
       font-style: italic;
@@ -160,9 +156,74 @@
       }
     }
 
-    .body p a {
-      color: var(--status-translated);
-      font-weight: inherit;
+    .body {
+      .value {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          color: inherit;
+          font-size: inherit;
+          font-style: inherit;
+          font-weight: bold;
+          letter-spacing: inherit;
+          margin: inherit;
+          padding-bottom: 1em;
+          text-transform: inherit;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        h2 {
+          font-size: 1.8em;
+        }
+
+        h3 {
+          font-size: 1.5em;
+        }
+
+        h4 {
+          font-size: 1.3em;
+        }
+
+        h5 {
+          font-size: 1.15em;
+        }
+
+        p {
+          padding-bottom: 1em;
+
+          a {
+            color: var(--status-translated);
+            font-weight: inherit;
+          }
+        }
+
+        ol,
+        ul {
+          color: var(--light-grey-6);
+          font-size: 16px;
+          margin-left: 1.5em;
+          padding-bottom: 1em;
+        }
+
+        ul {
+          overflow: inherit;
+          list-style: disc;
+        }
+
+        li {
+          color: var(--light-grey-6);
+        }
+
+        li:hover {
+          background: inherit;
+        }
+      }
     }
 
     .recipients {
