@@ -179,14 +179,6 @@
         font-weight: 100;
       }
 
-      .locales .value,
-      .projects .value {
-        cursor: help;
-        text-decoration: underline;
-        text-decoration-color: var(--status-translated);
-        text-decoration-thickness: 1px;
-      }
-
       .submitted-translations,
       .performed-reviews,
       .last-login {

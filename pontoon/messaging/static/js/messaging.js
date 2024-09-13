@@ -73,6 +73,17 @@ $(function () {
   }
 
   function updateReviewPanel() {
+    function updateMultipleItemSelector(source, target, item) {
+      const allProjects = !$(`${source}.available li:not(.no-match)`).length;
+      const projectsSelected = $(`${source}.selected li:not(.no-match)`)
+        .map(function () {
+          return $(this).find(item).text();
+        })
+        .get();
+      const projectsDisplay = allProjects ? 'All' : projectsSelected.join(', ');
+      $(`#review ${target} .value`).html(projectsDisplay);
+    }
+
     function updateFields(filter) {
       let show = false;
       $(`#compose .${filter} > div`).each(function () {
@@ -118,33 +129,10 @@ $(function () {
     $('#review .user-roles .value').html(userRoles.join(', '));
 
     // Locales
-    const allLocalesSelected = !$('.locale.available li:not(.no-match)').length;
-    const localesSelected = $('.locale.selected li:not(.no-match)')
-      .map(function () {
-        return $(this).find('.code').text();
-      })
-      .get();
-    const localesDisplay = allLocalesSelected ? 'All' : localesSelected.length;
-    const localesTitle = localesSelected.join(', ');
-    $('#review .locales .value')
-      .html(localesDisplay)
-      .attr('title', localesTitle);
+    updateMultipleItemSelector('.locale', '.locales', '.code');
 
     // Projects
-    const allProjectsSelected = !$('.project .item.available li:not(.no-match)')
-      .length;
-    const projectsSelected = $('.project .item.selected li:not(.no-match)')
-      .map(function () {
-        return $(this).find('.item').text();
-      })
-      .get();
-    const projectsDisplay = allProjectsSelected
-      ? 'All'
-      : projectsSelected.length;
-    const projectsTitle = projectsSelected.join(', ');
-    $('#review .projects .value')
-      .html(projectsDisplay)
-      .attr('title', projectsTitle);
+    updateMultipleItemSelector('.project .item', '.projects', '.item');
 
     // Submitted translations
     updateFields('submitted-translations');
