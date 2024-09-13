@@ -233,6 +233,9 @@ $(function () {
     }
 
     $($(this).data('target')).show().siblings().hide();
+
+    // Scroll to the top
+    window.scrollTo(0, 0);
   });
 
   // Send message
