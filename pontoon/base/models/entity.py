@@ -863,7 +863,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         Q(resource__format="ftl")
                         & (
                             Q(**{f"translation__string__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if search_identifiers
+                            if not search_identifiers
                             else Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
                         )
                     )
@@ -896,7 +896,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         Q(resource__format="ftl")
                         & (
                             Q(**{f"string__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if search_identifiers
+                            if not search_identifiers
                             else Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
                         )
                     )
@@ -908,7 +908,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                         Q(resource__format="ftl")
                         & (
                             Q(**{f"string_plural__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if search_identifiers
+                            if not search_identifiers
                             else Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
                         )
                     )
