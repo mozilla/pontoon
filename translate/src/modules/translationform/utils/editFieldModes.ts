@@ -88,12 +88,15 @@ const printf =
 
 const pythonFormat = /^{[\w.[\]]*(![rsa])?(:.*?)?}/;
 
+// https://www.i18next.com/translation-function/interpolation
+const i18nextFormat = /{{\s*[\w.[\]]*\s*(?:,\s*\w+(?:\([^)]*\))?)*\s*(?:![rsa])?(?::.*?)?\s*}}/;
+
 export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   name: 'common',
   languageData: { closeBrackets: { brackets: ['(', '[', '{', '"', '<'] } },
   startState: () => [],
   token(stream, state) {
-    if (stream.match(printf) || stream.match(pythonFormat)) {
+    if (stream.match(printf) || stream.match(pythonFormat) || stream.match(i18nextFormat)) {
       return 'keyword';
     }
 
