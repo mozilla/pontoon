@@ -196,11 +196,11 @@
 
         p {
           padding-bottom: 1em;
+        }
 
-          a {
-            color: var(--status-translated);
-            font-weight: inherit;
-          }
+        a {
+          color: var(--status-translated);
+          font-weight: inherit;
         }
 
         ol,
