@@ -20,6 +20,9 @@ $(function () {
   });
 
   const container = $('#main .container');
+  const converter = new showdown.Converter({
+    simpleLineBreaks: true,
+  });
 
   function validateForm() {
     const $form = $('#send-message');
@@ -115,9 +118,13 @@ $(function () {
       $(`#review .${filter}`).toggle(show);
     }
 
-    // Subject and body
+    // Subject
     $('#review .subject p').html($('#subject').val());
-    $('#review .body p').html($('#body').val());
+
+    // Body
+    const bodyValue = $('#body').val();
+    const html = converter.makeHtml(bodyValue);
+    $('#review .body .value').html(html);
 
     // User roles
     const userRoles = $('#compose .user-roles .enabled')

@@ -144,6 +144,10 @@
       line-height: 1.5;
     }
 
+    .body .value p {
+      padding-bottom: 1.5em;
+    }
+
     p.transactional {
       margin-top: 20px;
       font-style: italic;
