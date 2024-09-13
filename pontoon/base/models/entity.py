@@ -890,11 +890,10 @@ class Entity(DirtyFieldsMixin, models.Model):
                     )
                     | Q(
                         ~Q(resource__format="ftl")
-                        & Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
-                    )
-                    | Q(
-                        ~Q(resource__format="ftl")
-                        & Q(**{f"string_plural__{i}regex": rf"{r}{y}{s}{y}{o}"})
+                        & (
+                            Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
+                            | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
+                        )
                     )
                     | (
                         Q(**{f"key__{i}regex": rf"{y}{s}{y}"})
