@@ -1,24 +1,4 @@
 $(function () {
-  // Toggle check box
-  $('.check-box').click(function () {
-    const self = $(this);
-
-    const name = self.data('attribute');
-    $(`[type=checkbox][name=${name}]`).click();
-
-    self.toggleClass('enabled');
-
-    // Toggle Transactional check box
-    if (self.is('.email')) {
-      $('.check-box.transactional').toggle(self.is('.enabled'));
-
-      // Disable Transactional check box if Email gets disabled
-      if (!self.is('.enabled')) {
-        $('.check-box.transactional.enabled').click();
-      }
-    }
-  });
-
   const container = $('#main .container');
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
@@ -191,6 +171,40 @@ $(function () {
     $('#review .message-type .transactional').toggle(isTransactional);
   }
 
+  // By default, all locales and all projects are selected
+  $('.multiple-team-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
+  $('.multiple-item-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
+
+  // Toggle check box
+  $('.check-box').click(function () {
+    const self = $(this);
+
+    const name = self.data('attribute');
+    $(`[type=checkbox][name=${name}]`).click();
+
+    self.toggleClass('enabled');
+
+    // Toggle Transactional check box
+    if (self.is('.email')) {
+      $('.check-box.transactional').toggle(self.is('.enabled'));
+
+      // Disable Transactional check box if Email gets disabled
+      if (!self.is('.enabled')) {
+        $('.check-box.transactional.enabled').click();
+      }
+    }
+  });
+
   // Toggle between Edit and Review mode
   container.on('click', '.controls .toggle.button', function (e) {
     e.preventDefault();
@@ -243,18 +257,4 @@ $(function () {
       },
     });
   });
-
-  // By default, all locales and all projects are selected
-  $('.multiple-team-selector')
-    .find('.available .move-all')
-    .click()
-    .end()
-    .find('.selected ul')
-    .scrollTop(0);
-  $('.multiple-item-selector')
-    .find('.available .move-all')
-    .click()
-    .end()
-    .find('.selected ul')
-    .scrollTop(0);
 });
