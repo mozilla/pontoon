@@ -70,6 +70,11 @@
           color: var(--status-translated);
           content: '';
         }
+
+        &:hover {
+          color: var(--white-1);
+          background-color: var(--dark-grey-2);
+        }
       }
     }
   }

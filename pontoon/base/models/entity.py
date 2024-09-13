@@ -856,16 +856,14 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Modify query based on case sensitivity filter
             i = "" if search_match_case else "i"
             y = r"\y" if search_match_whole_word else ""
+            r = "" if search_identifiers else "=.*"
+            o = "" if search_identifiers else ".*"
 
             translation_filters = (
                 (
                     Q(
                         Q(resource__format="ftl")
-                        & (
-                            Q(**{f"translation__string__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if not search_identifiers
-                            else Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
-                        )
+                        & (Q(**{f"translation__string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
                     )
                     | Q(
                         ~Q(resource__format="ftl")
@@ -894,27 +892,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                 entity_filters = (
                     Q(
                         Q(resource__format="ftl")
-                        & (
-                            Q(**{f"string__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if not search_identifiers
-                            else Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
-                        )
+                        & (Q(**{f"string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
                     )
                     | Q(
                         ~Q(resource__format="ftl")
                         & Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
-                    )
-                    | Q(
-                        Q(resource__format="ftl")
-                        & (
-                            Q(**{f"string_plural__{i}regex": rf"=.*{y}{s}{y}.*"})
-                            if not search_identifiers
-                            else Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
-                        )
-                    )
-                    | Q(
-                        ~Q(resource__format="ftl")
-                        & Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
                     )
                     | q_key
                     for s in search_list
