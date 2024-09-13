@@ -853,12 +853,25 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q() if search_rejected_translations else Q(translation__rejected=False)
             )
 
-            # Modify query based on case sensitivity filter
+            # Modify query based on case & match sensitivity filters
             i = "" if search_match_case else "i"
             y = r"\y" if search_match_whole_word else ""
 
+            # Use regex to ignore context identifiers by default
+            r = "" if search_identifiers else "=.*"
+            o = "" if search_identifiers else ".*"
+
             translation_filters = (
-                Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
+                (
+                    Q(
+                        Q(resource__format="ftl")
+                        & (Q(**{f"translation__string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
+                    )
+                    | Q(
+                        ~Q(resource__format="ftl")
+                        & Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
+                    )
+                )
                 & Q(translation__locale=locale)
                 & q_rejected
                 for s in search_list
@@ -870,21 +883,23 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             # Search in source strings
             if not search_translations_only:
-                # Search in string (context) identifiers
-
-                q_key = Q()
-                # TODO: Uncomment the 5 lines below to reactivate the
-                #       context identifiers filter once .ftl bug is fixed (issue #3284):
-                # q_key = (
-                #     Q(**{f"key__{case_lookup}": (search)})
-                #     if search_identifiers
-                #     else Q()
-                # )
-
                 entity_filters = (
-                    Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
-                    | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
-                    | q_key
+                    Q(
+                        Q(resource__format="ftl")
+                        & (Q(**{f"string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
+                    )
+                    | Q(
+                        ~Q(resource__format="ftl")
+                        & (
+                            Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
+                            | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
+                        )
+                    )
+                    | (
+                        Q(**{f"key__{i}regex": rf"{y}{s}{y}"})
+                        if search_identifiers
+                        else Q()
+                    )
                     for s in search_list
                 )
 
