@@ -66,13 +66,18 @@ describe('keyword', () => {
       const balanceEl = getAncestorWith(view2.domAtPos(1).node, 'dir');
       expect(balanceEl?.textContent).toBe('{{balance, money}}');
 
-      const view3 = tempView('{{num, number(minimumFractionDigits: 2)}} foo', 'common');
+      const view3 = tempView(
+        '{{num, number(minimumFractionDigits: 2)}} foo',
+        'common',
+      );
       const numEl = getAncestorWith(view3.domAtPos(1).node, 'dir');
-      expect(numEl?.textContent).toBe('{{num, number(minimumFractionDigits: 2)}}');
-      
+      expect(numEl?.textContent).toBe(
+        '{{num, number(minimumFractionDigits: 2)}}',
+      );
+
       const view4 = tempView('{{value, formatter1, formatter2}} foo', 'common');
       const valueEl = getAncestorWith(view4.domAtPos(1).node, 'dir');
       expect(valueEl?.textContent).toBe('{{value, formatter1, formatter2}}');
     });
-  })
-})
+  });
+});
