@@ -853,9 +853,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                 Q() if search_rejected_translations else Q(translation__rejected=False)
             )
 
-            # Modify query based on case sensitivity filter
+            # Modify query based on case & match sensitivity filters
             i = "" if search_match_case else "i"
             y = r"\y" if search_match_whole_word else ""
+
+            # Use regex to ignore context identifiers by default
             r = "" if search_identifiers else "=.*"
             o = "" if search_identifiers else ".*"
 
@@ -881,14 +883,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
             # Search in source strings
             if not search_translations_only:
-                # Search in string (context) identifiers
-                case_lookup = "contains" if search_match_case else "icontains"
-                q_key = (
-                    Q(**{f"key__{case_lookup}": (search)})
-                    if search_identifiers
-                    else Q()
-                )
-
                 entity_filters = (
                     Q(
                         Q(resource__format="ftl")
@@ -898,7 +892,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                         ~Q(resource__format="ftl")
                         & Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
                     )
-                    | q_key
+                    | (
+                        Q(**{f"key__{i}regex": rf"{y}{s}{y}"})
+                        if search_identifiers
+                        else Q()
+                    )
                     for s in search_list
                 )
 
