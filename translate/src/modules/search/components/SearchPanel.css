@@ -26,8 +26,9 @@
     box-sizing: border-box;
     position: absolute;
     top: 44px;
+    left: 5px;
     right: 5px;
-    width: 350px;
+    min-width: 300px;
     z-index: 20;
     padding: 10px 12px;
 
