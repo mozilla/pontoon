@@ -1,13 +1,12 @@
-from os import mkdir
-from os.path import join
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Union
+from typing import Any
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
 
 from pontoon.base.models import Project, Repository
 from pontoon.sync.checkouts import Checkout, get_checkouts
+from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 
 class MockVersionControl:
@@ -28,21 +27,6 @@ class MockVersionControl:
     def changed_files(self, *args):
         self._calls.append(("changed_files", args))
         return self._changes
-
-
-Tree = Dict[str, Union[str, "Tree"]]
-
-
-def build_file_tree(root: str, tree: Tree) -> None:
-    for name, value in tree.items():
-        path = join(root, name)
-        if isinstance(value, str):
-            with open(path, "x") as file:
-                if value:
-                    file.write(value)
-        else:
-            mkdir(path)
-            build_file_tree(path, value)
 
 
 class CheckoutsTests(TestCase):
@@ -81,19 +65,10 @@ class CheckoutsTests(TestCase):
             ]
 
     def test_no_changes_with_no_prev_commit(self):
-        tree: Tree = {
-            "en-US": {
-                "bar.ftl": "",
-                "foo.ftl": "",
-                ".other.ftl": "",
-            },
-            "fr": {
-                "bar.ftl": "",
-                "foo.ftl": "",
-            },
-            ".ignore": {
-                "other.ftl": "",
-            },
+        tree: FileTree = {
+            "en-US": {"bar.ftl": "", "foo.ftl": "", ".other.ftl": ""},
+            "fr": {"bar.ftl": "", "foo.ftl": ""},
+            ".ignore": {"other.ftl": ""},
         }
         with TemporaryDirectory() as root:
             build_file_tree(root, tree)

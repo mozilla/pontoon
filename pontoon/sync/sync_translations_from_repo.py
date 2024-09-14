@@ -1,9 +1,10 @@
-from collections.abc import Iterable
 import logging
+from collections.abc import Iterable
 from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.manager import BaseManager
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
@@ -51,7 +52,7 @@ def sync_translations_from_repo(
     add_errors(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
     if repo_translations:
-        update_stats(project, repo_translations.keys())
+        update_stats(repo_translations.keys())
 
 
 def delete_removed_bilingual_resources(
@@ -59,8 +60,9 @@ def delete_removed_bilingual_resources(
     target: Checkout,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     source_paths: set[str],
-) -> int:
-    del_q = Q()
+) -> None:
+    rm_t = Q()
+    rm_tr = Q()
     removed_target_paths = (
         path
         for path in (join(target.path, co_path) for co_path in target.removed)
@@ -75,15 +77,26 @@ def delete_removed_bilingual_resources(
                 db_path = relpath(ref_path, paths.ref_root)
                 if db_path.endswith(".pot"):
                     db_path = db_path[:-1]
-                del_q |= Q(resource__path=db_path, locale__code=locale_code)
-    if del_q:
-        count, _ = (
-            TranslatedResource.objects.filter(resource__project=project)
-            .filter(del_q)
-            .delete()
-        )
-        return count
-    return 0
+                rm_t |= Q(entity__resource__path=db_path, locale__code=locale_code)
+                rm_tr |= Q(resource__path=db_path, locale__code=locale_code)
+    if rm_t and rm_tr:
+        with transaction.atomic():
+            Translation.objects.filter(entity__resource__project=project).filter(
+                rm_t
+            ).delete()
+            trans_res = TranslatedResource.objects.filter(
+                resource__project=project
+            ).filter(rm_tr)
+            for tr in trans_res:
+                tr.adjust_all_stats(
+                    0,
+                    -tr.approved_strings,
+                    -tr.pretranslated_strings,
+                    -tr.strings_with_errors,
+                    -tr.strings_with_warnings,
+                    -tr.unreviewed_strings,
+                )
+            trans_res.delete()
 
 
 def find_updates_from_repo_to_db(
@@ -217,7 +230,7 @@ def update_db_translations(
     now: datetime,
 ) -> tuple[list[Translation], list[Translation]]:
     if not repo_translations:
-        return []
+        return [], []
 
     sync_user = User.objects.get(username="pontoon-sync")
     translations_to_reject = Q()
@@ -278,7 +291,11 @@ def update_db_translations(
             )
             approve_count += 1
         dirty_fields.update(tx.get_dirty_fields())
-    update_count = Translation.objects.bulk_update(suggestions, list(dirty_fields))
+    update_count = (
+        Translation.objects.bulk_update(suggestions, list(dirty_fields))
+        if dirty_fields
+        else 0
+    )
     if update_count:
         count = (
             str(approve_count)

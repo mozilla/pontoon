@@ -1,14 +1,20 @@
-from collections import defaultdict
 import logging
+from collections import defaultdict
 from datetime import datetime
-from os.path import isfile, join, relpath
+from os.path import exists, isfile, join, relpath
 
 from django.db import transaction
 from django.db.models import F
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
-from pontoon.api.schema import ProjectLocale
-from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    Project,
+    ProjectLocale,
+    Resource,
+    TranslatedResource,
+)
 from pontoon.base.models.entity import get_word_count
 from pontoon.sync.checkouts import Checkout
 from pontoon.sync.exceptions import ParseError
@@ -32,13 +38,14 @@ def sync_entities_from_repo(
         return 0, set(), set()
     # db_path -> parsed_resource
     updates: dict[str, SilmeResource | None] = {}
-    source_root = relpath(paths.ref_root, checkout.path)
     source_paths = set(paths.ref_paths)
     source_locale = Locale.objects.get(code="en-US")
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
-        if path in source_paths:
-            db_path = relpath(path[:-1] if path.endswith(".pot") else path, source_root)
+        if path in source_paths and exists(path):
+            db_path = relpath(
+                path[:-1] if path.endswith(".pot") else path, paths.ref_root
+            )
             try:
                 res = parse(path, locale=source_locale)
             except ParseError as error:
@@ -49,7 +56,7 @@ def sync_entities_from_repo(
             updates[db_path] = res
 
     with transaction.atomic():
-        removed_paths = remove_resources(project, source_root, checkout.removed)
+        removed_paths = remove_resources(project, paths.ref_root, checkout)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, _ = add_resources(
             project, locale_map, paths, updates, changed_paths, now
@@ -62,33 +69,40 @@ def sync_entities_from_repo(
     )
 
 
-def remove_resources(project: Project, ref_root: str, remove: list[str]) -> set[str]:
-    if not remove:
+def remove_resources(project: Project, ref_root: str, checkout: Checkout) -> set[str]:
+    if not checkout.removed:
         return set()
-    removed_paths = [
+    removed_db_paths = [
         path[:-1] if path.endswith(".pot") else path
-        for path in (relpath(co_path, ref_root) for co_path in remove)
+        for path in (
+            relpath(join(checkout.path, co_path), ref_root)
+            for co_path in checkout.removed
+        )
         if not path.startswith("..")
     ]
-    removed_resources = project.resources.filter(path__in=removed_paths)
+    removed_resources = project.resources.filter(path__in=removed_db_paths)
 
     # Update aggregated stats
+    rm_res_id: set[int] = set()
     for tr in TranslatedResource.objects.filter(resource__in=removed_resources):
         tr.adjust_all_stats(
-            -tr.total_strings,
+            0 if tr.resource_id in rm_res_id else -tr.total_strings,
             -tr.approved_strings,
             -tr.pretranslated_strings,
             -tr.strings_with_errors,
             -tr.strings_with_warnings,
             -tr.unreviewed_strings,
         )
+        rm_res_id.add(tr.resource_id)
 
-    removed_paths = set(removed_resources.values_list("path", flat=True))
-    if removed_paths:
-        log.info(f"[{project.slug}] Removed source files: {', '.join(removed_paths)}")
+    removed_db_paths = set(removed_resources.values_list("path", flat=True))
+    if removed_db_paths:
+        log.info(
+            f"[{project.slug}] Removed source files: {', '.join(removed_db_paths)}"
+        )
         # FIXME: https://github.com/mozilla/pontoon/issues/2133
         removed_resources.delete()
-    return removed_paths
+    return removed_db_paths
 
 
 def update_resources(
@@ -96,12 +110,14 @@ def update_resources(
     updates: dict[str, SilmeResource | None],
     now: datetime,
 ) -> tuple[int, set[str]]:
-    if not updates:
+    changed_resources = (
+        project.resources.filter(path__in=updates.keys()) if updates else None
+    )
+    if not changed_resources:
         return 0, set()
-    changed_resources = project.resources.filter(path__in=updates.keys())
     for cr in changed_resources:
         cr.total_strings = len(updates[cr.path].entities)
-    Resource.objects.bulk_update(changed_resources, ("total_strings"))
+    Resource.objects.bulk_update(changed_resources, ["total_strings"])
 
     prev_entities = {
         (e.resource.path, e.key or e.string): e
@@ -127,7 +143,7 @@ def update_resources(
         ent.obsolete = True
         ent.date_obsoleted = now
     obs_count = Entity.objects.bulk_update(
-        obsolete_entities, ("obsolete", "date_obsoleted")
+        obsolete_entities, ["obsolete", "date_obsoleted"]
     )
 
     mod_count = Entity.objects.bulk_update(
@@ -137,7 +153,7 @@ def update_resources(
             if key in prev_entities.keys() & next_entities.keys()
             and not entities_same(ent, prev_entities[key])
         ),
-        (
+        [
             "string",
             "string_plural",
             "comment",
@@ -145,7 +161,7 @@ def update_resources(
             "group_comment",
             "resource_comment",
             "context",
-        ),
+        ],
     )
 
     # FIXME: Entity order should be updated on insertion
@@ -246,14 +262,14 @@ def add_resources(
             Locale.objects.filter(id=locale.pk).update(
                 total_strings=F("total_strings") + added_strings
             )
-    Project.objects.filter(id=project.pk).update(
-        total_strings=F("total_strings") + added_strings
-    )
+        Project.objects.filter(id=project.pk).update(
+            total_strings=F("total_strings") + added_strings
+        )
 
     ent_count = len(added_entities)
     added_paths = {ar.path for ar in added_resources}
     log.info(
-        f"[{project.slug}] Added source files with ${ent_count} new entities: {', '.join(added_paths)}"
+        f"[{project.slug}] Added source files with {ent_count} new entities: {', '.join(added_paths)}"
     )
     return ent_count, added_paths
 

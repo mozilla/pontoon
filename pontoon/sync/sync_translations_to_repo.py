@@ -30,16 +30,24 @@ def sync_translations_to_repo(
     removed_source_paths: set[str],
     now: datetime,
 ) -> None:
-    lc_readonly = set(
-        locale.code for locale in project.locales.filter(project_locale__readonly=True)
-    )
+    readonly_locales = project.locales.filter(project_locale__readonly=True)
     removed = delete_removed_resources(
-        project, paths, lc_readonly, removed_source_paths
+        project, paths, locale_map, readonly_locales, removed_source_paths
     )
     updated, updated_locales, translators = update_changed_resources(
-        project, paths, locale_map, lc_readonly, db_changes, changed_source_paths, now
+        project,
+        paths,
+        locale_map,
+        readonly_locales,
+        db_changes,
+        changed_source_paths,
+        now,
     )
     if not removed and not updated:
+        return
+
+    if not commit:
+        log.info(f"[{project.slug}] Skipping commit & push")
         return
 
     if removed:
@@ -63,19 +71,16 @@ def sync_translations_to_repo(
     )
 
     co = checkouts.target
-    if commit:
-        commit_to_vcs(
-            co.repo.type, co.path, commit_msg, commit_author, co.repo.branch, co.url
-        )
-    else:
-        log.info(f"[{project.slug}] Skipping commit & push")
+    commit_to_vcs(
+        co.repo.type, co.path, commit_msg, commit_author, co.repo.branch, co.url
+    )
 
 
 def delete_removed_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     locale_map: dict[str, Locale],
-    readonly_locales: set[Locale],
+    readonly_locales: BaseManager[Locale],
     removed_source_paths: set[str],
 ) -> int:
     count = 0
@@ -102,7 +107,7 @@ def update_changed_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     locale_map: dict[str, Locale],
-    readonly_locales: set[Locale],
+    readonly_locales: BaseManager[Locale],
     db_changes: BaseManager[ChangedEntityLocale],
     changed_source_paths: set[str],
     now: datetime,
@@ -168,7 +173,7 @@ def update_changed_resources(
         )
         for locale in locales:
             lc_scope = f"[{project.slug}:{path}, {locale.code}]"
-            target_path = paths.format_target_path(target, locale)
+            target_path = paths.format_target_path(target, locale.code)
             try:
                 res = parse(target_path, ref_path, locale)
                 lc_translations = [
