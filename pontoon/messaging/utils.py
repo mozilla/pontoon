@@ -1,10 +1,20 @@
-import html2text
+from bs4 import BeautifulSoup
 
 
 def html_to_plain_text_with_links(html):
-    h = html2text.HTML2Text()
+    soup = BeautifulSoup(html, "html.parser")
 
-    h.wrap_links = False
-    h.body_width = 0
+    # Replace links with `link_text (url)`
+    for tag in soup.find_all("a"):
+        tag.replace_with(f"{tag.text} ({tag.get('href')})")
 
-    return h.handle(html)
+    # Add empty lines after <p>, </div>, and <br>. Not using the `separator`
+    # parameter, as it would apply to other inline tags like <span>.
+    for tag in soup.find_all(["p", "div", "br"]):
+        tag.insert_after("\n")
+
+    text = soup.get_text()
+    # Remove empty spaces at the beginning of lines
+    text = "\n".join([line.lstrip() for line in text.split("\n")])
+
+    return text

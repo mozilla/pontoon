@@ -25,8 +25,10 @@ export function GoogleTranslation({
   const dropdownRef = useRef<HTMLLIElement>(null);
   const locale = useContext(Locale);
 
+  const getLLMTranslationState = useLLMTranslation();
+
   const { transformLLMTranslation, selectedOption, restoreOriginal } =
-    useLLMTranslation(translation);
+    getLLMTranslationState(translation);
 
   const toggleDropdown = (ev: React.MouseEvent) => {
     ev.stopPropagation();

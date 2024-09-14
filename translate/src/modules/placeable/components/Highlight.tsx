@@ -1,7 +1,8 @@
 import { Localized } from '@fluent/react';
 import escapeRegExp from 'lodash.escaperegexp';
-import React from 'react';
+import React, { useContext } from 'react';
 import { TermState } from '~/modules/terms';
+import { Location } from '~/context/Location';
 
 import './Highlight.css';
 import { ReactElement } from 'react';
@@ -12,7 +13,7 @@ const placeholder = (() => {
   // HTML/XML <tags>
   const html = '<(?:(?:"[^"]*")|(?:\'[^\']*\')|[^>])*>';
   // Fluent & other similar {placeholders}
-  const curly = '{(?:(?:"[^"]*")|[^}])*}';
+  const curly = '{(?:(?:"[^"]*")|[^}])*}}?';
   // All printf-ish formats, including Python's.
   // Excludes Python's ` ` conversion flag, due to false positives -- https://github.com/mozilla/pontoon/issues/2988
   const printf =
@@ -63,6 +64,7 @@ export function Highlight({
     length: number;
     mark: ReactElement;
   }> = [];
+  const location = useContext(Location);
 
   for (const match of source.matchAll(placeholder)) {
     let l10nId: string;
@@ -171,10 +173,16 @@ export function Highlight({
       if (term.startsWith('"') && term.length >= 3 && term.endsWith('"')) {
         term = term.slice(1, -1);
       }
-      let lcTerm = term.toLowerCase();
-      let pos = 0;
+      const highlightSource = location.search_match_case ? source : lcSource;
       let next: number;
-      while ((next = lcSource.indexOf(lcTerm, pos)) !== -1) {
+      const regexFlags = location.search_match_case ? 'g' : 'gi';
+      const re = location.search_match_whole_word
+        ? new RegExp(`\\b${escapeRegExp(term)}\\b`, regexFlags)
+        : new RegExp(`${escapeRegExp(term)}`, regexFlags);
+      let match;
+
+      while ((match = re.exec(highlightSource)) !== null) {
+        next = match.index;
         let i = marks.findIndex((m) => m.index + m.length > next);
         if (i === -1) {
           i = marks.length;
@@ -188,7 +196,6 @@ export function Highlight({
             </mark>
           ),
         });
-        pos = next + term.length;
       }
     }
   }

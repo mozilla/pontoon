@@ -1,46 +1,52 @@
 Developer Setup with virtualenv
 ===============================
 
-The following describes how to set up an instance of the site on your
+The following document describes how to set up an instance of the site on your
 computer for development.
 
    .. Note::
 
     Installation with virtualenv is not recommended. If possible, please use
-    Developer Setup with Docker, which is simpler and makes it easier for us
-    to reproduce potential issues.
+    Developer Setup with Docker, which is simpler and makes it easier to
+    reproduce potential issues.
 
 Prerequisites
 -------------
 This guide assumes you have already installed and set up the following:
 
-1. Git_
-2. `Python 2.7`_, pip_, and virtualenv_
-3. `Node.js 14`_ and npm_ v7 or later
-4. `Postgres 9.4 or 9.5`_
+1. `Git <https://git-scm.com>`__
+2. `Python 3.11 <https://www.python.org>`__, `pip`_, and `virtualenv`_
+3. `Node.js 18 <https://nodejs.org>`__ and `npm 9 <https://www.npmjs.com>`__ or
+   later
+4. `PostgreSQL 15 <http://www.postgresql.org>`__
 
 These docs assume a Unix-like operating system, although the site should, in
 theory, run on Windows as well. All the example commands given below are
-intended to be run in a terminal.  If you're on Ubuntu 16.04, you can install
-all the prerequisites using the following command:
+intended to be run in a terminal.
+
+If you're on Ubuntu 24.04 LTS, you can install all the prerequisites using the
+following commands:
 
    .. code-block:: bash
 
-      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.5 postgresql-contrib-9.5 libxml2-dev libxslt1-dev python-dev libmemcached-dev virtualenv
+      # These steps are required to install PostgreSQL 15 (default is 16)
+      sudo apt install -y dirmngr ca-certificates software-properties-common apt-transport-https lsb-release curl
+      curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /usr/share/keyrings/postgresql.gpg > /dev/null
+      echo deb [arch=amd64,arm64,ppc64el signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main | sudo tee /etc/apt/sources.list.d/postgresql.list
+      # This is needed to install Python 3.11 (default is 3.12)
+      sudo add-apt-repository -y ppa:deadsnakes/ppa
 
-If you're on Ubuntu 17.04, you can install all the prerequisites using the following command:
+      sudo apt update
 
-   .. code-block:: bash
+      sudo apt install -y git python3-pip python3.11-dev python-is-python3 virtualenv postgresql-client-15 postgresql-15 libxml2-dev libxslt1-dev libmemcached-dev libpq-dev nodejs npm
+      # Set Python 3.11 as default
+      update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
-      sudo apt install git python-pip nodejs-legacy npm postgresql postgresql-server-dev-9.6 postgresql-contrib-9.6 libxml2-dev libxslt1-dev python-dev libmemcached-dev virtualenv
+      # Start PostgreSQL server
+      /etc/init.d/postgresql start
 
-.. _Git: https://git-scm.com/
-.. _Python 2.7: https://www.python.org/
 .. _pip: https://pip.pypa.io/en/stable/
-.. _virtualenv: https://virtualenv.pypa.io/en/latest/
-.. _Node.js: https://nodejs.org/
-.. _npm: https://www.npmjs.com/
-.. _Postgres 9.4 or 9.5: http://www.postgresql.org/
+.. _virtualenv: https://virtualenv.pypa.io/en/latest
 
 Installation
 ------------
@@ -56,7 +62,7 @@ Installation
    .. code-block:: bash
 
       virtualenv venv
-      source ./venv/bin/activate
+      source venv/bin/activate
 
    .. note::
 
@@ -70,11 +76,25 @@ Installation
 
       pip install --require-hashes -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt
 
-4. Create your database, using the following set of commands:
+   On Ubuntu 24.04, you will need to install ``setuptools`` within the
+   virtualenv if the command above fails.
+
+   .. code-block:: bash
+
+      pip install -U setuptools
+
+4. Create your database, using the following set of commands.
+
+   First connect to Postgres:
 
    .. code-block:: bash
 
       sudo -u postgres psql
+
+   Then run the following commands in the console:
+
+   .. code-block:: bash
+
       CREATE USER pontoon WITH PASSWORD 'asdf' SUPERUSER;
       CREATE DATABASE pontoon;
       GRANT ALL PRIVILEGES ON DATABASE pontoon to pontoon;
@@ -164,9 +184,8 @@ running:
 The site should be available at http://localhost:8000.
 
 .. _repository: https://github.com/mozilla/pontoon
-.. _fork: http://help.github.com/fork-a-repo/
-.. _issue: https://bugs.python.org/issue18378
-.. _request: https://developer.mozilla.org/docs/Mozilla/Tech/Firefox_Accounts/Introduction
+.. _fork: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo
+.. _request: https://mozilla.github.io/ecosystem-platform/
 
 Extra settings
 --------------

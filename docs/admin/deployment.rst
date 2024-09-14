@@ -73,8 +73,11 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BLOCKED_IPS``
-   A comma-separated list of IP addresses to be blocked from accessing the app,
-   for example because they are DDoS'ing the server.
+   A comma-separated list of IP addresses or IP ranges (expressed using the
+   `CIDR notation`_, e.g. `192.168.1.0/24`) to be blocked from accessing the app, for
+   example because they are DDoS'ing the server.
+
+   .. _CIDR notation: https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation
 
 ``CELERY_ALWAYS_EAGER``
    Controls whether asynchronous tasks (mainly used during sync) are sent to

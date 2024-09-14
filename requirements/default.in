@@ -15,6 +15,7 @@
 # Dependencies that do not come from pypi (eg. eggs from github) are listed at the end of the list.
 # -------------------------------------------------------------------------------------------------
 APScheduler==3.9.1.post1
+beautifulsoup4==4.12.3
 bleach==6.1.0
 celery==5.4.0
 compare-locales==9.0.4
@@ -33,12 +34,10 @@ django-pipeline==3.0.0
 google-cloud-translate==3.8.4
 graphene-django==3.2.1
 gunicorn==19.9.0
-html2text==2024.2.26
 jsonfield==3.1.0
 jsonschema==2.6.0
-lxml==5.2.2
+lxml==5.3.0
 markupsafe==2.0.1
-mercurial==6.4.2
 moz.l10n==0.3.0
 newrelic==9.6.0
 openai==1.12.0
@@ -47,7 +46,7 @@ psycopg2==2.9.6
 PyJWT==2.4.0
 python-dateutil==2.9.0
 python-dotenv==0.17.0
-python-levenshtein==0.12.2
+rapidfuzz==3.9.7
 raygun4py==4.3.0
 sacrebleu==2.3.1
 sacremoses==0.0.43

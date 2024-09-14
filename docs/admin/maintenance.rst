@@ -48,8 +48,9 @@ flooding the victim originates from many different sources. This stops everyone
 else from accessing the website as there is too much traffic flowing to it.
 
 One way to mitigate DDoS attacks is to identify the IP addresses of the
-attackers and block them. Find the attacking IP addresses in the Log
-Management Add-On (Papertrail) and add them to the BLOCKED_IPs config variable
-in Heroku Settings.
+attackers (see the handy `IP detection script`_ to help with that) and block them.
+Find the attacking IP addresses in the Log Management Add-On (Papertrail)
+and add them to the BLOCKED_IPs config variable in Heroku Settings.
 
 .. _DDoS: https://en.wikipedia.org/wiki/Denial-of-service_attack
+.. _IP detection script: https://github.com/mozilla-l10n/pontoon-scripts/blob/main/dev/check_ips_heroku_log.py

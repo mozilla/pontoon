@@ -9,12 +9,12 @@ from html import unescape
 
 import google.auth
 import google.auth.transport.requests
-import Levenshtein
 import requests
 
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import translate
 from google.oauth2 import service_account
+from rapidfuzz.distance.Indel import normalized_distance
 
 from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -247,18 +247,14 @@ def get_concordance_search_data(text, locale):
 
     def sort_by_quality(entity):
         """Sort the results by their best Levenshtein distance from the search query"""
+
+        def levenshtein_distance(s1, s2):
+            return round((1 - normalized_distance(s1.lower(), s2.lower())) * 100)
+
         return (
             max(
-                int(
-                    round(
-                        Levenshtein.ratio(text.lower(), entity["target"].lower()) * 100
-                    )
-                ),
-                int(
-                    round(
-                        Levenshtein.ratio(text.lower(), entity["source"].lower()) * 100
-                    )
-                ),
+                levenshtein_distance(text, entity["target"]),
+                levenshtein_distance(text, entity["source"]),
             ),
             len(entity["project_names"]),
         )

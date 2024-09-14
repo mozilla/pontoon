@@ -7,8 +7,11 @@ import { HelperSelection } from '~/context/HelperSelection';
 import { MachineryTranslations } from '~/context/MachineryTranslations';
 import { SearchData } from '~/context/SearchData';
 import { UnsavedActions, UnsavedChanges } from '~/context/UnsavedChanges';
+import { useLLMTranslation } from '~/context/TranslationContext';
+import { Locale } from '~/context/Locale';
 import { useAppSelector } from '~/hooks';
 import { getPlainMessage } from '~/utils/message';
+import { logUXAction } from '~/api/uxaction';
 
 import { useExistingTranslationGetter } from '../../editor/hooks/useExistingTranslationGetter';
 import { useSendTranslation } from '../../editor/hooks/useSendTranslation';
@@ -91,6 +94,9 @@ export function useHandleCtrlShiftArrow(): (
     (state) => state.otherlocales.translations,
   );
 
+  const getLLMTranslationState = useLLMTranslation();
+  const locale = useContext(Locale);
+
   return (key) => {
     const { tab, element, setElement } = helperSelection;
     const isMachinery = tab === 0;
@@ -109,11 +115,26 @@ export function useHandleCtrlShiftArrow(): (
 
     if (isMachinery) {
       const len = machineryTranslations.length;
-      const { translation, sources } =
+      const translationObj =
         nextIdx < len
           ? machineryTranslations[nextIdx]
           : concordanceSearchResults[nextIdx - len];
-      setEditorFromHelpers(translation, sources, true);
+
+      const llmState = getLLMTranslationState(machineryTranslations[nextIdx]);
+      const updatedTranslation =
+        llmState.llmTranslation || translationObj.translation;
+      setEditorFromHelpers(updatedTranslation, translationObj.sources, true);
+
+      if (llmState.llmTranslation) {
+        logUXAction(
+          'LLM Translation Copied via Shortcut',
+          'LLM Feature Adoption',
+          {
+            action: 'Copy LLM Translation via Shortcut',
+            localeCode: locale.code,
+          },
+        );
+      }
     } else {
       const { translation } = otherLocaleTranslations[nextIdx];
       setEditorFromHelpers(

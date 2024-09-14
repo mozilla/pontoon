@@ -222,6 +222,7 @@ class ProjectAdmin(admin.ModelAdmin):
         "enabled",
     )
     ordering = ("disabled",)
+    autocomplete_fields = ["contact"]
 
     @admin.display(ordering="contact__first_name")
     def contact_person(self, obj):
@@ -268,6 +269,7 @@ class ProjectLocaleAdmin(admin.ModelAdmin):
     search_fields = ["project__name", "project__slug", "locale__name", "locale__code"]
     list_display = ("pk", "project", "locale", "readonly", "pretranslation_enabled")
     ordering = ("-pk",)
+    autocomplete_fields = ["translators_group", "latest_translation"]
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -279,17 +281,24 @@ class TranslatedResourceAdmin(admin.ModelAdmin):
     search_fields = ["resource__path", "locale__name", "locale__code"]
     list_display = ("pk", "resource", "locale")
     readonly_fields = AGGREGATED_STATS_FIELDS + ("latest_translation",)
-    raw_id_fields = ("resource",)
+    autocomplete_fields = ("resource",)
 
 
 class EntityAdmin(admin.ModelAdmin):
     search_fields = ["string", "string_plural"]
-    raw_id_fields = ("resource",)
+    autocomplete_fields = ("resource",)
 
 
 class TranslationAdmin(admin.ModelAdmin):
     search_fields = ["string"]
-    raw_id_fields = ("entity",)
+    autocomplete_fields = [
+        "entity",
+        "user",
+        "approved_user",
+        "unapproved_user",
+        "rejected_user",
+        "unrejected_user",
+    ]
 
 
 class ProjectSlugHistoryAdmin(admin.ModelAdmin):
@@ -302,13 +311,13 @@ class LocaleCodeHistoryAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     search_fields = ["content"]
-    raw_id_fields = ("translation", "entity")
+    autocomplete_fields = ("author", "translation", "entity")
 
 
 class TranslationMemoryEntryAdmin(admin.ModelAdmin):
     search_fields = ["source", "target", "locale__name", "locale__code"]
     list_display = ("pk", "source", "target", "locale")
-    raw_id_fields = (
+    autocomplete_fields = (
         "entity",
         "translation",
     )
@@ -318,7 +327,7 @@ class ChangedEntityLocaleAdmin(admin.ModelAdmin):
     search_fields = ["entity__string", "locale__name", "locale__code"]
     # Entity column should come last, for it can be looong
     list_display = ("pk", "when", "locale", "entity")
-    raw_id_fields = ("entity",)
+    autocomplete_fields = ("entity",)
 
 
 class UserRoleLogActionAdmin(admin.ModelAdmin):
@@ -336,6 +345,11 @@ class UserRoleLogActionAdmin(admin.ModelAdmin):
         "created_at",
     )
     ordering = ("-created_at",)
+    autocomplete_fields = (
+        "performed_by",
+        "performed_on",
+        "group",
+    )
 
     def get_user_edit_url(self, user_pk):
         return reverse(

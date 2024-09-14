@@ -1,3 +1,7 @@
+import logging
+
+from ipaddress import ip_address
+
 from raygun4py.middleware.django import Provider
 
 from django.conf import settings
@@ -37,6 +41,19 @@ class BlockedIpMiddleware(MiddlewareMixin):
         # Block client IP addresses via settings variable BLOCKED_IPS
         if ip in settings.BLOCKED_IPS:
             return HttpResponseForbidden("<h1>Forbidden</h1>")
+
+        # Convert request IP string to an IP object, check if it belongs to an
+        # IP range
+        try:
+            ip_obj = ip_address(ip)
+        except ValueError:
+            log = logging.getLogger(__name__)
+            log.error(f"Invalid IP detected in BlockedIpMiddleware: {ip}")
+            return None
+
+        for ip_range in settings.BLOCKED_IP_RANGES:
+            if ip_obj in ip_range:
+                return HttpResponseForbidden("<h1>Forbidden</h1>")
 
         return None
 

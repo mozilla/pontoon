@@ -124,6 +124,11 @@ function buildFetchPayload(
     for (const key of [
       'search',
       'status',
+      'search_identifiers',
+      'search_translations_only',
+      'search_rejected_translations',
+      'search_match_case',
+      'search_match_whole_word',
       'extra',
       'tag',
       'author',

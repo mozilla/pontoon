@@ -21,6 +21,7 @@ import { getAuthorsAndTimeRangeData } from '../actions';
 import { FILTERS_EXTRA, FILTERS_STATUS } from '../constants';
 
 import { FiltersPanel } from './FiltersPanel';
+import { SearchPanel } from './SearchPanel';
 import './SearchBox.css';
 
 export type TimeRangeType = {
@@ -40,6 +41,13 @@ type InternalProps = Props & {
 
 export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
+export type SearchType =
+  | 'search_identifiers'
+  | 'search_translations_only'
+  | 'search_rejected_translations'
+  | 'search_match_case'
+  | 'search_match_whole_word';
+
 function getTimeRangeFromURL(timeParameter: string): TimeRangeType {
   const [from, to] = timeParameter.split('-');
   return { from: parseInt(from), to: parseInt(to) };
@@ -55,6 +63,19 @@ export type FilterState = {
 export type FilterAction = {
   filter: FilterType;
   value: string | string[] | null | undefined;
+};
+
+export type SearchState = {
+  search_identifiers: boolean;
+  search_translations_only: boolean;
+  search_rejected_translations: boolean;
+  search_match_case: boolean;
+  search_match_whole_word: boolean;
+};
+
+export type SearchAction = {
+  searchOption: SearchType;
+  value: boolean | null | undefined;
 };
 
 /** If SearchBox has focus, translation form updates should not grab focus for themselves.  */
@@ -92,7 +113,29 @@ export function SearchBoxBase({
       }
       return next;
     },
-    { authors: [], extras: [], statuses: [], tags: [] },
+    {
+      authors: [],
+      extras: [],
+      statuses: [],
+      tags: [],
+    },
+  );
+
+  const [searchOptions, updateSearchOptions] = useReducer(
+    (state: SearchState, action: SearchAction[]) => {
+      const next = { ...state };
+      for (const { searchOption, value } of action) {
+        next[searchOption] = value ?? false;
+      }
+      return next;
+    },
+    {
+      search_identifiers: false,
+      search_translations_only: false,
+      search_rejected_translations: false,
+      search_match_case: false,
+      search_match_whole_word: false,
+    },
   );
 
   useEffect(() => {
@@ -118,9 +161,41 @@ export function SearchBoxBase({
     setTimeRange(time);
   }, [parameters]);
 
+  const updateOptionsFromURL = useCallback(() => {
+    const {
+      search_identifiers,
+      search_translations_only,
+      search_rejected_translations,
+      search_match_case,
+      search_match_whole_word,
+      time,
+    } = parameters;
+    updateSearchOptions([
+      { searchOption: 'search_identifiers', value: search_identifiers },
+      {
+        searchOption: 'search_translations_only',
+        value: search_translations_only,
+      },
+      {
+        searchOption: 'search_rejected_translations',
+        value: search_rejected_translations,
+      },
+      {
+        searchOption: 'search_match_case',
+        value: search_match_case,
+      },
+      {
+        searchOption: 'search_match_whole_word',
+        value: search_match_whole_word,
+      },
+    ]);
+    setTimeRange(time);
+  }, [parameters]);
+
   // When the URL changes, for example from links in the ResourceProgress
-  // component, reload the filters from the URL parameters.
+  // component, reload the filters and search options from the URL parameters.
   useEffect(updateFiltersFromURL, [parameters]);
+  useEffect(updateOptionsFromURL, [parameters]);
 
   const mounted = useRef(false);
   useEffect(() => {
@@ -151,6 +226,14 @@ export function SearchBoxBase({
     [filters],
   );
 
+  const toggleOption = useCallback(
+    (searchOption: SearchType) => {
+      const next = !searchOptions[searchOption];
+      updateSearchOptions([{ searchOption, value: next }]);
+    },
+    [searchOptions],
+  );
+
   const resetFilters = useCallback(() => {
     updateFilters([
       { filter: 'authors', value: [] },
@@ -178,6 +261,30 @@ export function SearchBoxBase({
     const { locale, project, resource } = parameters;
     dispatch(getAuthorsAndTimeRangeData(locale, project, resource));
   }, [parameters]);
+
+  const applyOptions = useCallback(
+    () =>
+      checkUnsavedChanges(() => {
+        const {
+          search_identifiers,
+          search_translations_only,
+          search_rejected_translations,
+          search_match_case,
+          search_match_whole_word,
+        } = searchOptions;
+        dispatch(resetEntities());
+        parameters.push({
+          ...parameters, // Persist all other variables to next state
+          search_identifiers: search_identifiers,
+          search_translations_only: search_translations_only,
+          search_rejected_translations: search_rejected_translations,
+          search_match_case: search_match_case,
+          search_match_whole_word: search_match_whole_word,
+          entity: 0, // With the new results, the current entity might not be available anymore.
+        });
+      }),
+    [dispatch, parameters, search, searchOptions],
+  );
 
   const applyFilters = useCallback(
     () =>
@@ -245,9 +352,6 @@ export function SearchBoxBase({
 
   return (
     <div className='search-box clearfix'>
-      <label htmlFor='search'>
-        <div className='fa fa-search'></div>
-      </label>
       <input
         id='search'
         ref={searchInput}
@@ -277,6 +381,12 @@ export function SearchBoxBase({
         toggleFilter={toggleFilter}
         setTimeRange={setTimeRange}
         updateFiltersFromURL={updateFiltersFromURL}
+      />
+      <SearchPanel
+        searchOptions={searchOptions}
+        applyOptions={applyOptions}
+        toggleOption={toggleOption}
+        updateOptionsFromURL={updateOptionsFromURL}
       />
     </div>
   );

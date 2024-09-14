@@ -16,40 +16,95 @@ $(function () {
 
   const container = $('#main .container');
 
-  function isValidForm($form, isNotification, isEmail, subject, body) {
+  function validateForm() {
+    const $form = $('#send-message');
+
+    const isValidType =
+      $form.find('.message-type .check-box').filter('.enabled').length > 0;
+
+    const isValidSubject = $form.find('[name=subject]').val();
+    const isValidBody = $form.find('[name=body]').val();
+
+    const isValidRole =
+      $form.find('.filter-user-role .check-box').filter('.enabled').length > 0;
+
+    const isValidLocale = $form.find('[name=locales]').val();
+
+    const isValidProject = $form.find('[name=projects]').val();
+
+    const isValidTranslationMinimum = $form
+      .find('#translation-minimum')[0]
+      .checkValidity();
+    const isValidTranslationMaximum = $form
+      .find('#translation-maximum')[0]
+      .checkValidity();
+    const isValidReviewMinimum = $form
+      .find('#review-minimum')[0]
+      .checkValidity();
+    const isValidReviewMaximum = $form
+      .find('#review-maximum')[0]
+      .checkValidity();
+
     $form.find('.errors').css('visibility', 'hidden');
 
-    if (!isNotification && !isEmail) {
-      $form.find('.message-type .errors').css('visibility', 'visible');
+    function showErrorIfNotValid(isValid, selector) {
+      if (!isValid) {
+        $form.find(selector).find('.errors').css('visibility', 'visible');
+      }
     }
 
-    if (!subject) {
-      $form
-        .find('.message-editor .subject .errors')
-        .css('visibility', 'visible');
-    }
+    showErrorIfNotValid(isValidType, '.message-type');
+    showErrorIfNotValid(isValidSubject, '.subject');
+    showErrorIfNotValid(isValidBody, '.body');
+    showErrorIfNotValid(isValidRole, '.filter-user-role');
+    showErrorIfNotValid(isValidLocale, '.filter-locale');
+    showErrorIfNotValid(isValidProject, '.filter-project');
+    showErrorIfNotValid(
+      isValidTranslationMinimum,
+      '.filter-translation > .minimum',
+    );
+    showErrorIfNotValid(
+      isValidTranslationMaximum,
+      '.filter-translation > .maximum',
+    );
+    showErrorIfNotValid(isValidReviewMinimum, '.filter-review > .minimum');
+    showErrorIfNotValid(isValidReviewMaximum, '.filter-review > .maximum');
 
-    if (!body) {
-      $form.find('.message-editor .body .errors').css('visibility', 'visible');
-    }
-
-    return (isNotification || isEmail) && subject && body;
+    return (
+      isValidType &&
+      isValidSubject &&
+      isValidBody &&
+      isValidRole &&
+      isValidLocale &&
+      isValidProject &&
+      isValidTranslationMinimum &&
+      isValidTranslationMaximum &&
+      isValidReviewMinimum &&
+      isValidReviewMaximum
+    );
   }
 
   // Send message
   container.on('click', '#send-message .send', function (e) {
     e.preventDefault();
+
     const $form = $('#send-message');
 
-    const isNotification = $('.message-type .check-box.notification').is(
-      '.enabled',
-    );
-    const isEmail = $('.message-type .check-box.email').is('.enabled');
-    const subject = $form.find('[name=subject]').val();
-    const body = $form.find('[name=body]').val();
-
     // Validate form
-    if (!isValidForm($form, isNotification, isEmail, subject, body)) {
+    const isValidForm = validateForm();
+    if (!isValidForm) {
+      // Scroll to the first visible error
+      const visibleErrors = $form.find('.errors').filter(function () {
+        return $(this).css('visibility') === 'visible';
+      });
+      if (visibleErrors.length) {
+        $([document.documentElement, document.body]).animate(
+          {
+            scrollTop: visibleErrors.first().parent().offset().top,
+          },
+          400,
+        );
+      }
       return;
     }
 
@@ -66,4 +121,18 @@ $(function () {
       },
     });
   });
+
+  // By default, all locales and all projects are selected
+  $('.multiple-team-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
+  $('.multiple-item-selector')
+    .find('.available .move-all')
+    .click()
+    .end()
+    .find('.selected ul')
+    .scrollTop(0);
 });

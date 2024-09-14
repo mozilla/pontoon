@@ -1,0 +1,21 @@
+{# Multiple item selector allows user to select multiple items at once and (optionally) sort them. #}
+{% import 'widgets/item_selector_list.html' as item_selector_list %}
+
+{% macro render(items_available, items_selected, form_field='selected_items', sortable=False) %}
+<div class="multiple-item-selector clearfix">
+    {{ item_selector_list.list(
+        id='available',
+        title='Available',
+        items=items_available,
+        right_shortcut='Move all →',
+    )}}
+    {{ item_selector_list.list(
+        id='selected',
+        title='Chosen',
+        items=items_selected,
+        right_shortcut='← Move all',
+        sortable=sortable,
+        form_field=form_field,
+    )}}
+</div>
+{% endmacro %}
