@@ -1,6 +1,6 @@
 from functools import reduce
 from operator import ior
-from re import findall, match
+from re import escape, findall, match
 
 from dirtyfields import DirtyFieldsMixin
 from jsonfield import JSONField
@@ -865,11 +865,17 @@ class Entity(DirtyFieldsMixin, models.Model):
                 (
                     Q(
                         Q(resource__format="ftl")
-                        & (Q(**{f"translation__string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
+                        & (
+                            Q(
+                                **{
+                                    f"translation__string__{i}regex": rf"{r}{y}{escape(s)}{y}{o}"
+                                }
+                            )
+                        )
                     )
                     | Q(
                         ~Q(resource__format="ftl")
-                        & Q(**{f"translation__string__{i}regex": rf"{y}{s}{y}"})
+                        & Q(**{f"translation__string__{i}regex": rf"{y}{escape(s)}{y}"})
                     )
                 )
                 & Q(translation__locale=locale)
@@ -886,17 +892,17 @@ class Entity(DirtyFieldsMixin, models.Model):
                 entity_filters = (
                     Q(
                         Q(resource__format="ftl")
-                        & (Q(**{f"string__{i}regex": rf"{r}{y}{s}{y}{o}"}))
+                        & (Q(**{f"string__{i}regex": rf"{r}{y}{escape(s)}{y}{o}"}))
                     )
                     | Q(
                         ~Q(resource__format="ftl")
                         & (
-                            Q(**{f"string__{i}regex": rf"{y}{s}{y}"})
-                            | Q(**{f"string_plural__{i}regex": rf"{y}{s}{y}"})
+                            Q(**{f"string__{i}regex": rf"{y}{escape(s)}{y}"})
+                            | Q(**{f"string_plural__{i}regex": rf"{y}{escape(s)}{y}"})
                         )
                     )
                     | (
-                        Q(**{f"key__{i}regex": rf"{y}{s}{y}"})
+                        Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
                         if search_identifiers
                         else Q()
                     )
