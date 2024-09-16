@@ -162,20 +162,6 @@ $(function () {
     $('#review .message-type .transactional').toggle(isTransactional);
   }
 
-  // By default, all locales and all projects are selected
-  $('.multiple-team-selector')
-    .find('.available .move-all')
-    .click()
-    .end()
-    .find('.selected ul')
-    .scrollTop(0);
-  $('.multiple-item-selector')
-    .find('.available .move-all')
-    .click()
-    .end()
-    .find('.selected ul')
-    .scrollTop(0);
-
   // Toggle check box
   $('.check-box').click(function () {
     const self = $(this);

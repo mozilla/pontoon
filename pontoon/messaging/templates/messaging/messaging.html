@@ -99,7 +99,7 @@
                             <h3>Filter by locale</h3>
                             <div class="multi-selector locale-selector">
                                 <div class="clearfix">
-                                    {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
+                                    {{ multiple_team_selector.render([], available_locales, form_field='locales') }}
                                 </div>
                             </div>
                             <div class="errors">
@@ -111,7 +111,7 @@
                             <h3>Filter by project</h3>
                             <div class="multi-selector project-selector">
                                 <div class="clearfix">
-                                    {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
+                                    {{ multiple_item_selector.render([], available_projects, form_field='projects') }}
                                 </div>
                             </div>
                             <div class="errors">
