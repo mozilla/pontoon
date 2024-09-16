@@ -89,8 +89,7 @@ const printf =
 const pythonFormat = /^{[\w.[\]]*(![rsa])?(:.*?)?}/;
 
 // https://www.i18next.com/translation-function/interpolation
-const i18nextFormat =
-  /{{\s*[\w.[\]]*\s*(?:,\s*\w+(?:\([^)]*\))?)*\s*(?:![rsa])?(?::.*?)?\s*}}/;
+const i18nextFormat = /{{.*?}}/;
 
 export const commonMode: StreamParser<Array<'literal' | 'tag'>> = {
   name: 'common',
