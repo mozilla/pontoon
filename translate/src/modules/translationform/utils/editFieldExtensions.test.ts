@@ -54,3 +54,30 @@ describe('spellcheck', () => {
     expect(ph?.getAttribute('spellcheck')).toBe('false');
   });
 });
+
+describe('keyword', () => {
+  describe('common mode', () => {
+    test('i18next format', () => {
+      const view1 = tempView('{{name}} foo', 'common');
+      const nameEl = getAncestorWith(view1.domAtPos(1).node, 'dir');
+      expect(nameEl?.textContent).toBe('{{name}}');
+
+      const view2 = tempView('{{balance, money}} foo', 'common');
+      const balanceEl = getAncestorWith(view2.domAtPos(1).node, 'dir');
+      expect(balanceEl?.textContent).toBe('{{balance, money}}');
+
+      const view3 = tempView(
+        '{{num, number(minimumFractionDigits: 2)}} foo',
+        'common',
+      );
+      const numEl = getAncestorWith(view3.domAtPos(1).node, 'dir');
+      expect(numEl?.textContent).toBe(
+        '{{num, number(minimumFractionDigits: 2)}}',
+      );
+
+      const view4 = tempView('{{value, formatter1, formatter2}} foo', 'common');
+      const valueEl = getAncestorWith(view4.domAtPos(1).node, 'dir');
+      expect(valueEl?.textContent).toBe('{{value, formatter1, formatter2}}');
+    });
+  });
+});
