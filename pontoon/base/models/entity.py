@@ -879,11 +879,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                     if search_rejected_translations
                     else Q(translation__rejected=False)
                 )
-                | (
-                    Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
-                    if search_identifiers
-                    else Q()
-                )
                 for s in search_list
             )
 
@@ -892,36 +887,43 @@ class Entity(DirtyFieldsMixin, models.Model):
             )
 
             # Search in source strings
-            if not search_translations_only:
-                entity_filters = (
-                    Q(
-                        Q(resource__format="ftl")
-                        & (Q(**{f"string__{i}regex": rf"{r}{y}{escape(s)}{y}{o}"}))
-                    )
-                    | Q(
-                        ~Q(resource__format="ftl")
-                        & (
-                            Q(**{f"string__{i}regex": rf"{y}{escape(s)}{y}"})
-                            | Q(**{f"string_plural__{i}regex": rf"{y}{escape(s)}{y}"})
+            entity_filters = (
+                (
+                    Q(pk=None)
+                    if search_translations_only
+                    else (
+                        Q(
+                            Q(resource__format="ftl")
+                            & (Q(**{f"string__{i}regex": rf"{r}{y}{escape(s)}{y}{o}"}))
+                        )
+                        | Q(
+                            ~Q(resource__format="ftl")
+                            & (
+                                Q(**{f"string__{i}regex": rf"{y}{escape(s)}{y}"})
+                                | Q(
+                                    **{
+                                        f"string_plural__{i}regex": rf"{y}{escape(s)}{y}"
+                                    }
+                                )
+                            )
                         )
                     )
-                    | (
-                        Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
-                        if search_identifiers
-                        else Q()
-                    )
-                    for s in search_list
                 )
+                | (
+                    Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
+                    if search_identifiers
+                    else Q()
+                )
+                for s in search_list
+            )
 
-                entity_matches = entities.filter(*entity_filters).values_list(
-                    "id", flat=True
-                )
+            entity_matches = entities.filter(*entity_filters).values_list(
+                "id", flat=True
+            )
 
-                entities = Entity.objects.filter(
-                    pk__in=set(list(translation_matches) + list(entity_matches))
-                )
-            else:
-                entities = Entity.objects.filter(pk__in=set(list(translation_matches)))
+            entities = Entity.objects.filter(
+                pk__in=set(list(translation_matches) + list(entity_matches))
+            )
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":
