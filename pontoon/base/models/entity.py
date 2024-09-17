@@ -889,7 +889,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Search in source strings
             entity_filters = (
                 (
-                    Q(pk=None) # Ensures that no source strings are returned 
+                    Q(pk=None)  # Ensures that no source strings are returned
                     if search_translations_only
                     else (
                         Q(
