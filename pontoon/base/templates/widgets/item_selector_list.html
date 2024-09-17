@@ -27,7 +27,7 @@
     </div>
 
     {% if form_field %}
-    <input type="hidden" name="{{ form_field }}">
+    <input type="hidden" name="{{ form_field }}" value="{{ items|map(attribute='pk')|join(',') }}">
     {% endif %}
 </div>
 {% endmacro %}

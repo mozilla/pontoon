@@ -33,12 +33,13 @@
             </div>
 
             <div class="menu permanent right-column">
-                <section id="compose" class="selected">
+                <div id="compose" class="selected">
                     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.send_message') }}">
                         {% csrf_token %}
+                        <input type="checkbox" class="send-to-myself" name="send_to_myself">
 
                         <section class="message-type">
-                            <h3><span class="stress"></span> Message type</h3>
+                            <h3>Message type</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
                                 <li><input type="checkbox" name="notification"></li>
@@ -55,7 +56,7 @@
                         </section>
 
                         <section class="message-content">
-                            <h3><span class="stress"></span> Message content</h3>
+                            <h3>Message content</h3>
                             <div class="field clearfix subject">
                                 <label for="subject">Subject</label>
                                 <input type="text" name="subject" required="" id="subject">
@@ -65,9 +66,10 @@
                             </div>
                             <div class="field clearfix body">
                                 <label for="body">Body</label>
-                                <textarea name="body" cols="40" rows="10" required="" id="body"></textarea>
+                                <textarea cols="40" rows="10" required="" id="body"></textarea>
+                                <textarea name="body" class="hidden"></textarea>
                                 <div class="subtitle">
-                                    <p>Supports html</p>
+                                    <p>Supports Markdown</p>
                                 </div>
                                 <div class="errors">
                                     <p>Your message must include a body</p>
@@ -75,8 +77,8 @@
                             </div>
                         </section>
 
-                        <section class="filter-user-role">
-                            <h3><span class="stress"></span> Filter by user role</h3>
+                        <section class="user-roles">
+                            <h3>Filter by user role</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
                                 is_enabled=True) }}
@@ -93,11 +95,11 @@
                             </div>
                         </section>
 
-                        <section class="filter-locale">
-                            <h3><span class="stress"></span> Filter by locale</h3>
+                        <section class="locale">
+                            <h3>Filter by locale</h3>
                             <div class="multi-selector locale-selector">
                                 <div class="clearfix">
-                                    {{ multiple_team_selector.render(available_locales, [], form_field='locales') }}
+                                    {{ multiple_team_selector.render([], available_locales, form_field='locales') }}
                                 </div>
                             </div>
                             <div class="errors">
@@ -105,11 +107,11 @@
                             </div>
                         </section>
 
-                        <section class="filter-project">
-                            <h3><span class="stress"></span> Filter by project</h3>
+                        <section class="project">
+                            <h3>Filter by project</h3>
                             <div class="multi-selector project-selector">
                                 <div class="clearfix">
-                                    {{ multiple_item_selector.render(available_projects, [], form_field='projects') }}
+                                    {{ multiple_item_selector.render([], available_projects, form_field='projects') }}
                                 </div>
                             </div>
                             <div class="errors">
@@ -117,9 +119,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-translation clearfix">
-                            <h3><span class="stress"></span> Filter by submitted translations</h3>
-                            <div>
+                        <section class="submitted-translations clearfix">
+                            <h3>Filter by submitted translations</h3>
+                            <div class="amount">
                                 <div class="field clearfix minimum half">
                                     <label for="translation-minimum">Minimum</label>
                                     <input type="number" min="0" name="translation_minimum" id="translation-minimum">
@@ -135,7 +137,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="date">
                                 <div class="field clearfix from half">
                                     <label for="translation-from">From</label>
                                     <input type="date" name="translation_from" id="translation-from">
@@ -147,9 +149,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-review clearfix">
-                            <h3><span class="stress"></span> Filter by performed reviews</h3>
-                            <div>
+                        <section class="performed-reviews clearfix">
+                            <h3>Filter by performed reviews</h3>
+                            <div class="amount">
                                 <div class="field clearfix minimum half">
                                     <label for="review-minimum">Minimum</label>
                                     <input type="number" min="0" name="review_minimum" id="review-minimum">
@@ -165,7 +167,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="date">
                                 <div class="field clearfix from half">
                                     <label for="review-from">From</label>
                                     <input type="date" name="review_from" id="review-from">
@@ -177,9 +179,9 @@
                             </div>
                         </section>
 
-                        <section class="filter-last-login clearfix">
-                            <h3><span class="stress"></span> Filter by last login</h3>
-                            <div>
+                        <section class="last-login clearfix">
+                            <h3>Filter by last login</h3>
+                            <div class="date">
 
                                 <div class="field clearfix from half">
                                     <label for="login-from">From</label>
@@ -192,15 +194,72 @@
                             </div>
                         </section>
 
-                        <section class="filter-last-login clearfix">
+                        <section class="clearfix">
                             <menu class="controls">
-                                <button class="button active send">Send</button>
+                                <button class="button toggle review" data-target="#review">Review message<span
+                                        class="fa fa-chevron-right"></span></button>
                             </menu>
                         </section>
                     </form>
-                </section>
-                <section id="sent">
-                </section>
+                </div>
+                <div id="review">
+                    <section class="subject clearfix">
+                        <h3>Subject</h3>
+                        <p></p>
+                    </section>
+                    <section class="body clearfix">
+                        <h3>Body</h3>
+                        <div class="value"></div>
+                    </section>
+                    <section class="recipients clearfix">
+                        <h3>Recipients</h3>
+                        <div class="user-roles">
+                            <h5>User roles</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="locales">
+                            <h5>Locales</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="projects">
+                            <h5>Projects</h5>
+                            <p class="value"></p>
+                        </div>
+                        <div class="submitted-translations">
+                            <h5>Submitted translations</h5>
+                            <p class="value amount"></p>
+                            <p class="value date"></p>
+                        </div>
+                        <div class="performed-reviews">
+                            <h5>Performed reviews</h5>
+                            <p class="value amount"></p>
+                            <p class="value date"></p>
+                        </div>
+                        <div class="last-login">
+                            <h5>Last login</h5>
+                            <p class="value date"></p>
+                        </div>
+                    </section>
+                    <section class="message-type clearfix">
+                        <h3>Message type</h3>
+                        <p class="value"></p>
+                        <p class="transactional"><i>Warning:</i> Transactional emails are also sent to users who have
+                            not opted in to email communication. They are restricted in the type of content that can be
+                            included. When in doubt, please review with legal.</p>
+                    </section>
+                    <section class="clearfix">
+                        <menu class="controls">
+                            <button class="button toggle edit" data-target="#compose"><span
+                                    class="fa fa-chevron-left"></span>Back to editing</button>
+                            <div class="right">
+                                <button class="button send to-myself">Send to myself</button>
+                                <button class="button active send">Send</button>
+                            </div>
+                        </menu>
+                    </section>
+                </div>
+                <div id="sent">
+                </div>
             </div>
         </section>
     </div>
