@@ -5,6 +5,7 @@ from textwrap import dedent
 from unittest.mock import Mock
 
 import pytest
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -22,6 +23,7 @@ from pontoon.sync.checkouts import Checkout, Checkouts
 from pontoon.sync.paths import get_paths
 from pontoon.sync.sync_translations_from_repo import sync_translations_from_repo
 from pontoon.sync.tests.utils import build_file_tree
+
 
 now = timezone.now()
 

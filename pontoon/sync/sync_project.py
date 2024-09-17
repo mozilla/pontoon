@@ -1,7 +1,8 @@
 import logging
 
-from django.utils import timezone
 from notifications.signals import notify
+
+from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.sync.checkouts import get_checkouts
@@ -10,6 +11,7 @@ from pontoon.sync.paths import get_paths
 from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
 from pontoon.sync.sync_translations_from_repo import sync_translations_from_repo
 from pontoon.sync.sync_translations_to_repo import sync_translations_to_repo
+
 
 log = logging.getLogger(__name__)
 

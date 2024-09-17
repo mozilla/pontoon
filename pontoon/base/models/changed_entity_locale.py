@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from django.db import models
 from django.utils import timezone
 
+
 if TYPE_CHECKING:
     from pontoon.base.models import Entity, Locale
 

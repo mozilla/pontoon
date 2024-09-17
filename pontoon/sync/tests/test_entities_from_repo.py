@@ -5,9 +5,11 @@ from textwrap import dedent
 from unittest.mock import Mock
 
 import pytest
+
+from moz.l10n.paths import L10nDiscoverPaths
+
 from django.conf import settings
 from django.utils import timezone
-from moz.l10n.paths import L10nDiscoverPaths
 
 from pontoon.base.models import Entity, Project, TranslatedResource
 from pontoon.base.tests import (
@@ -23,6 +25,7 @@ from pontoon.sync.checkouts import Checkout, Checkouts
 from pontoon.sync.paths import get_paths
 from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
 from pontoon.sync.tests.utils import build_file_tree
+
 
 now = timezone.now()
 

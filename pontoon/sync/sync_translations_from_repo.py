@@ -1,14 +1,16 @@
 import logging
+
 from collections.abc import Iterable
 from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
+from moz.l10n.resource import bilingual_extensions
+
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.manager import BaseManager
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -27,6 +29,7 @@ from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.checkouts import Checkout, Checkouts
 from pontoon.sync.formats import parse
 from pontoon.sync.vcs.translation import VCSTranslation
+
 
 log = logging.getLogger(__name__)
 
@@ -432,7 +435,7 @@ def add_translation_memory_entries(
 
 
 def update_stats(
-    changed_entity_locales: Iterable[tuple[int, int]]  # [(entity.id, locale.id)]
+    changed_entity_locales: Iterable[tuple[int, int]],  # [(entity.id, locale.id)]
 ):
     query = Q()
     for entity_id, locale_id in changed_entity_locales:

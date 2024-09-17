@@ -16,6 +16,7 @@ from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
 
+
 if TYPE_CHECKING:
     from pontoon.base.models import Resource
 

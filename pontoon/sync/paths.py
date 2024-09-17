@@ -1,4 +1,5 @@
 import logging
+
 from os.path import join
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
@@ -6,6 +7,7 @@ from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_local
 from pontoon.base.models import Project
 from pontoon.sync.checkouts import Checkouts
 from pontoon.sync.vcs.project import MissingLocaleDirectoryError
+
 
 log = logging.getLogger(__name__)
 
