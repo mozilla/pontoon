@@ -8,13 +8,13 @@ $(function () {
     const $form = $('#send-message');
 
     const isValidType =
-      $form.find('.message-type .check-box').filter('.enabled').length > 0;
+      $form.find('.message-type [type=checkbox]:checked').length > 0;
 
     const isValidSubject = $form.find('[name=subject]').val();
     const isValidBody = $form.find('#body').val();
 
     const isValidRole =
-      $form.find('.user-roles .check-box').filter('.enabled').length > 0;
+      $form.find('.user-roles [type=checkbox]:checked').length > 0;
 
     const isValidLocale = $form.find('[name=locales]').val();
 
