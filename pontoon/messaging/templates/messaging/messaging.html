@@ -48,7 +48,7 @@
                                 help='Transactional emails are also sent to users who have not opted in to email
                                 communication. They are restricted in the type of content that can be included.') }}
                                 <li class="transactional"><input type="checkbox" name="transactional"></li>
-                                <input type="checkbox" class="send-to-myself" name="send_to_myself">
+                                <li><input type="checkbox" class="send-to-myself" name="send_to_myself"></li>
                             </ul>
                             <div class="errors">
                                 <p>You must select at least one message type</p>
@@ -243,7 +243,9 @@
                     <section class="message-type clearfix">
                         <h3>Message type</h3>
                         <p class="value"></p>
-                        <p class="transactional"><i>Warning:</i> Transactional emails are also sent to users who have not opted in to email communication. They are restricted in the type of content that can be included. When in doubt, please review with legal.</p>
+                        <p class="transactional"><i>Warning:</i> Transactional emails are also sent to users who have
+                            not opted in to email communication. They are restricted in the type of content that can be
+                            included. When in doubt, please review with legal.</p>
                     </section>
                     <section class="clearfix">
                         <menu class="controls">
