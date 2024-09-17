@@ -30,6 +30,7 @@ def get_paths(
             project.checkout_path,
             ref_root=checkouts.source.path,
             force_paths=force_paths,
+            source_locale=["templates", "en-US", "en"],
         )
         if paths.base is None:
             raise MissingLocaleDirectoryError("Base localization directory not found")

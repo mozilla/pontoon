@@ -20,12 +20,15 @@ def test_no_config_one_repo():
     with TemporaryDirectory() as root:
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file=None)
-        mock_checkout = Mock(Checkout, path=join(root, "repo"))
+        mock_checkout = Mock(
+            Checkout, path=join(root, "repo"), removed=[join("en-US", "missing.ftl")]
+        )
         paths = get_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo", "en-US")
         assert paths.base == join(root, "repo")
         assert set(paths.ref_paths) == set(
-            join(root, "repo", "en-US", file) for file in ["bar.ftl", "foo.pot"]
+            join(root, "repo", "en-US", file)
+            for file in ["bar.ftl", "foo.pot", "missing.ftl"]
         )
         assert paths.find_reference("fr/bar.ftl") == (
             join(root, "repo", "en-US", "bar.ftl"),
@@ -33,6 +36,10 @@ def test_no_config_one_repo():
         )
         assert paths.find_reference("fr/foo.po") == (
             join(root, "repo", "en-US", "foo.pot"),
+            {"locale": "fr"},
+        )
+        assert paths.find_reference("fr/missing.ftl") == (
+            join(root, "repo", "en-US", "missing.ftl"),
             {"locale": "fr"},
         )
         assert paths.find_reference("fr/.other.ftl") is None
@@ -51,7 +58,7 @@ def test_no_config_two_repos():
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file=None)
         checkouts = Checkouts(
-            Mock(Checkout, path=join(root, "source")),
+            Mock(Checkout, path=join(root, "source"), removed=[]),
             Mock(Checkout, path=join(root, "target")),
         )
         paths = get_paths(mock_project, checkouts)
@@ -90,7 +97,7 @@ def test_config_one_repo():
     with TemporaryDirectory() as root:
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file="l10n.toml")
-        mock_checkout = Mock(Checkout, path=join(root, "repo"))
+        mock_checkout = Mock(Checkout, path=join(root, "repo"), removed=[])
         paths = get_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo")
         assert paths.base == join(root, "repo")
@@ -131,7 +138,7 @@ def test_config_two_repos():
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file="l10n.toml")
         checkouts = Checkouts(
-            Mock(Checkout, path=join(root, "source")),
+            Mock(Checkout, path=join(root, "source"), removed=[]),
             Mock(
                 Checkout,
                 path=join(root, "target"),
