@@ -119,6 +119,10 @@
       box-sizing: border-box;
     }
 
+    input.send-to-myself {
+      display: none;
+    }
+
     textarea {
       border-radius: 3px;
       height: 300px;
