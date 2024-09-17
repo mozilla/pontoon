@@ -848,11 +848,6 @@ class Entity(DirtyFieldsMixin, models.Model):
         if search:
             search_list = utils.get_search_phrases(search)
 
-            # Include rejected translations
-            q_rejected = (
-                Q() if search_rejected_translations else Q(translation__rejected=False)
-            )
-
             # Modify query based on case & match sensitivity filters
             i = "" if search_match_case else "i"
             y = r"\y" if search_match_whole_word else ""
@@ -879,7 +874,16 @@ class Entity(DirtyFieldsMixin, models.Model):
                     )
                 )
                 & Q(translation__locale=locale)
-                & q_rejected
+                & (
+                    Q()
+                    if search_rejected_translations
+                    else Q(translation__rejected=False)
+                )
+                | (
+                    Q(**{f"key__{i}regex": rf"{y}{escape(s)}{y}"})
+                    if search_identifiers
+                    else Q()
+                )
                 for s in search_list
             )
 
