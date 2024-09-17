@@ -182,6 +182,14 @@ $(function () {
     }
   });
 
+  // Make sure custom checkboxes reflect the state of the HTML checkboxes
+  // TODO: Replace checkboxes with native HTML checkboxes and style them with CSS
+  $(`[type=checkbox]`).each(function () {
+    const name = $(this).attr('name');
+    const isChecked = $(this)[0].checked;
+    $(`.check-box[data-attribute=${name}]`).toggleClass('enabled', isChecked);
+  });
+
   // Toggle between Edit and Review mode
   container.on('click', '.controls .toggle.button', function (e) {
     e.preventDefault();
