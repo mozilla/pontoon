@@ -168,7 +168,7 @@ def send_message(request):
     form = forms.MessageForm(request.POST)
 
     if not form.is_valid():
-        return JsonResponse(dict(form.errors.items()))
+        return JsonResponse(dict(form.errors.items()), status=400)
 
     if form.cleaned_data.get("send_to_myself"):
         recipients = User.objects.filter(pk=request.user.pk)
