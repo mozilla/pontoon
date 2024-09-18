@@ -33,6 +33,7 @@ def messaging(request):
         request,
         "messaging/messaging.html",
         {
+            "form": forms.MessageForm(),
             "available_locales": Locale.objects.available(),
             "available_projects": Project.objects.available().order_by("name"),
         },
@@ -49,7 +50,7 @@ def get_recipients(form):
     - Translators of selected Locales
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
-    project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
+    project_ids = form.cleaned_data.get("projects")
     translations = Translation.objects.filter(
         locale_id__in=locale_ids,
         entity__resource__project_id__in=project_ids,
