@@ -43,7 +43,7 @@ export type FilterType = 'authors' | 'extras' | 'statuses' | 'tags';
 
 export type SearchType =
   | 'search_identifiers'
-  | 'search_translations_only'
+  | 'search_exclude_source_strings'
   | 'search_rejected_translations'
   | 'search_match_case'
   | 'search_match_whole_word';
@@ -67,7 +67,7 @@ export type FilterAction = {
 
 export type SearchState = {
   search_identifiers: boolean;
-  search_translations_only: boolean;
+  search_exclude_source_strings: boolean;
   search_rejected_translations: boolean;
   search_match_case: boolean;
   search_match_whole_word: boolean;
@@ -131,7 +131,7 @@ export function SearchBoxBase({
     },
     {
       search_identifiers: false,
-      search_translations_only: false,
+      search_exclude_source_strings: false,
       search_rejected_translations: false,
       search_match_case: false,
       search_match_whole_word: false,
@@ -164,7 +164,7 @@ export function SearchBoxBase({
   const updateOptionsFromURL = useCallback(() => {
     const {
       search_identifiers,
-      search_translations_only,
+      search_exclude_source_strings,
       search_rejected_translations,
       search_match_case,
       search_match_whole_word,
@@ -173,8 +173,8 @@ export function SearchBoxBase({
     updateSearchOptions([
       { searchOption: 'search_identifiers', value: search_identifiers },
       {
-        searchOption: 'search_translations_only',
-        value: search_translations_only,
+        searchOption: 'search_exclude_source_strings',
+        value: search_exclude_source_strings,
       },
       {
         searchOption: 'search_rejected_translations',
@@ -267,7 +267,7 @@ export function SearchBoxBase({
       checkUnsavedChanges(() => {
         const {
           search_identifiers,
-          search_translations_only,
+          search_exclude_source_strings,
           search_rejected_translations,
           search_match_case,
           search_match_whole_word,
@@ -276,7 +276,7 @@ export function SearchBoxBase({
         parameters.push({
           ...parameters, // Persist all other variables to next state
           search_identifiers: search_identifiers,
-          search_translations_only: search_translations_only,
+          search_exclude_source_strings: search_exclude_source_strings,
           search_rejected_translations: search_rejected_translations,
           search_match_case: search_match_case,
           search_match_whole_word: search_match_whole_word,

@@ -21,7 +21,7 @@ export type Location = {
   status: string | null;
   extra: string | null;
   search_identifiers: boolean;
-  search_translations_only: boolean;
+  search_exclude_source_strings: boolean;
   search_rejected_translations: boolean;
   search_match_case: boolean;
   search_match_whole_word: boolean;
@@ -39,7 +39,7 @@ const emptyParams = {
   status: null,
   extra: null,
   search_identifiers: false,
-  search_translations_only: false,
+  search_exclude_source_strings: false,
   search_rejected_translations: false,
   search_match_case: false,
   search_match_whole_word: false,
@@ -103,7 +103,9 @@ function parse(
         status: params.get('status'),
         extra: params.get('extra'),
         search_identifiers: params.has('search_identifiers'),
-        search_translations_only: params.has('search_translations_only'),
+        search_exclude_source_strings: params.has(
+          'search_exclude_source_strings',
+        ),
         search_rejected_translations: params.has(
           'search_rejected_translations',
         ),
@@ -140,7 +142,7 @@ function stringify(prev: Location, next: string | Partial<Location>) {
       'status',
       'extra',
       'search_identifiers',
-      'search_translations_only',
+      'search_exclude_source_strings',
       'search_rejected_translations',
       'search_match_case',
       'search_match_whole_word',

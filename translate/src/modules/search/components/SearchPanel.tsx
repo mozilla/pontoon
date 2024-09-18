@@ -33,7 +33,7 @@ const SearchOption = ({
 }) => {
   return (
     <li
-      className={classNames('check-box', selected && 'enabled')}
+      className={classNames(`check-box ${slug}`, selected && 'enabled')}
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();

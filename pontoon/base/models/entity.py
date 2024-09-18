@@ -732,7 +732,7 @@ class Entity(DirtyFieldsMixin, models.Model):
         search=None,
         extra=None,
         search_identifiers=None,
-        search_translations_only=None,
+        search_exclude_source_strings=None,
         search_rejected_translations=None,
         search_match_case=None,
         search_match_whole_word=None,
@@ -889,8 +889,8 @@ class Entity(DirtyFieldsMixin, models.Model):
             # Search in source strings
             entity_filters = (
                 (
-                    Q(pk=None)  # Ensures that no source strings are returned
-                    if search_translations_only
+                    Q(pk__in=[])  # Ensures that no source strings are returned
+                    if search_exclude_source_strings
                     else (
                         Q(
                             Q(resource__format="ftl")
