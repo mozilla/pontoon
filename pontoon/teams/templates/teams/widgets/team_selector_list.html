@@ -28,7 +28,7 @@
     </div>
 
     {% if form_field %}
-    <input type="hidden" name="{{ form_field }}">
+    <input type="hidden" name="{{ form_field }}" value="{{ locales|map(attribute='pk')|join(',') }}">
     {% endif %}
 </div>
 {% endmacro %}

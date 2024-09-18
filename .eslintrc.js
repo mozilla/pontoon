@@ -54,6 +54,7 @@ module.exports = {
     generalShortcutsHandler: true,
     traversalShortcutsHandler: true,
     editorShortcutsHandler: true,
+    showdown: true,
   },
   plugins: ['react'],
   rules: {

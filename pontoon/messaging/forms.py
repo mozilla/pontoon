@@ -35,3 +35,5 @@ class MessageForm(forms.Form):
 
     login_from = forms.DateField(required=False)
     login_to = forms.DateField(required=False)
+
+    send_to_myself = forms.BooleanField(required=False)

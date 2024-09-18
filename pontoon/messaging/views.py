@@ -39,16 +39,7 @@ def messaging(request):
     )
 
 
-@permission_required_or_403("base.can_manage_project")
-@require_AJAX
-@require_POST
-@transaction.atomic
-def send_message(request):
-    form = forms.MessageForm(request.POST)
-
-    if not form.is_valid():
-        return JsonResponse(dict(form.errors.items()))
-
+def get_recipients(form):
     recipients = User.objects.none()
 
     """
@@ -165,6 +156,24 @@ def send_message(request):
         + list(approved.values_list("approved_user", flat=True).distinct())
         + list(rejected.values_list("rejected_user", flat=True).distinct())
     )
+
+    return recipients
+
+
+@permission_required_or_403("base.can_manage_project")
+@require_AJAX
+@require_POST
+@transaction.atomic
+def send_message(request):
+    form = forms.MessageForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(dict(form.errors.items()))
+
+    if form.cleaned_data.get("send_to_myself"):
+        recipients = User.objects.filter(pk=request.user.pk)
+    else:
+        recipients = get_recipients(form)
 
     log.info(
         f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
