@@ -56,7 +56,7 @@
         color: var(--white-1);
       }
 
-      &.option-separator {
+      &.search_identifiers {
         margin-top: 10px;
       }
 
