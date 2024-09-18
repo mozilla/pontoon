@@ -36,19 +36,15 @@
                 <div id="compose" class="selected">
                     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.send_message') }}">
                         {% csrf_token %}
-                        <input type="checkbox" class="send-to-myself" name="send_to_myself">
+                        {{ form.send_to_myself }}
 
                         <section class="message-type">
                             <h3>Message type</h3>
                             <ul class="check-list">
-                                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification') }}
-                                <li><input type="checkbox" name="notification"></li>
-                                {{ Checkbox.checkbox('Email', class='email', attribute='email') }}
-                                <li><input type="checkbox" name="email"></li>
-                                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional',
-                                help='Transactional emails are also sent to users who have not opted in to email
+                                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification', form_field=form.notification) }}
+                                {{ Checkbox.checkbox('Email', class='email', attribute='email', form_field=form.email) }}
+                                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional', form_field=form.transactional, help='Transactional emails are also sent to users who have not opted in to email
                                 communication. They are restricted in the type of content that can be included.') }}
-                                <li class="transactional"><input type="checkbox" name="transactional"></li>
                             </ul>
                             <div class="errors">
                                 <p>You must select at least one message type</p>
@@ -58,8 +54,8 @@
                         <section class="message-content">
                             <h3>Message content</h3>
                             <div class="field clearfix subject">
-                                <label for="subject">Subject</label>
-                                <input type="text" name="subject" required="" id="subject">
+                                {{ form.subject.label_tag() }}
+                                {{ form.subject }}
                                 <div class="errors">
                                     <p>Your message must include a subject</p>
                                 </div>
@@ -67,7 +63,7 @@
                             <div class="field clearfix body">
                                 <label for="body">Body</label>
                                 <textarea cols="40" rows="10" required="" id="body"></textarea>
-                                <textarea name="body" class="hidden"></textarea>
+                                {{ form.body }}
                                 <div class="subtitle">
                                     <p>Supports Markdown</p>
                                 </div>
@@ -81,14 +77,11 @@
                             <h3>Filter by user role</h3>
                             <ul class="check-list">
                                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
-                                is_enabled=True) }}
-                                <li><input type="checkbox" name="managers" checked="checked"></li>
+                                is_enabled=True, form_field=form.managers) }}
                                 {{ Checkbox.checkbox('Translators', class='translators', attribute='translators',
-                                is_enabled=True) }}
-                                <li><input type="checkbox" name="translators" checked="checked"></li>
+                                is_enabled=True, form_field=form.translators) }}
                                 {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors',
-                                is_enabled=True) }}
-                                <li><input type="checkbox" name="contributors" checked="checked"></li>
+                                is_enabled=True, form_field=form.contributors) }}
                             </ul>
                             <div class="errors">
                                 <p>You must select at least one user role</p>
@@ -123,15 +116,15 @@
                             <h3>Filter by submitted translations</h3>
                             <div class="amount">
                                 <div class="field clearfix minimum half">
-                                    <label for="translation-minimum">Minimum</label>
-                                    <input type="number" min="0" name="translation_minimum" id="translation-minimum">
+                                    {{ form.translation_minimum.label_tag() }}
+                                    {{ form.translation_minimum }}
                                     <div class="errors">
                                         <p>The value must be an integer</p>
                                     </div>
                                 </div>
                                 <div class="field clearfix maximum half">
-                                    <label for="translation-maximum">Maximum</label>
-                                    <input type="number" min="0" name="translation_maximum" id="translation-maximum">
+                                    {{ form.translation_maximum.label_tag() }}
+                                    {{ form.translation_maximum }}
                                     <div class="errors">
                                         <p>The value must be an integer</p>
                                     </div>
@@ -139,12 +132,12 @@
                             </div>
                             <div class="date">
                                 <div class="field clearfix from half">
-                                    <label for="translation-from">From</label>
-                                    <input type="date" name="translation_from" id="translation-from">
+                                    {{ form.translation_from.label_tag() }}
+                                    {{ form.translation_from }}
                                 </div>
                                 <div class="field clearfix to half">
-                                    <label for="translation-to">To</label>
-                                    <input type="date" name="translation_to" id="translation-to">
+                                    {{ form.translation_to.label_tag() }}
+                                    {{ form.translation_to }}
                                 </div>
                             </div>
                         </section>
@@ -153,15 +146,15 @@
                             <h3>Filter by performed reviews</h3>
                             <div class="amount">
                                 <div class="field clearfix minimum half">
-                                    <label for="review-minimum">Minimum</label>
-                                    <input type="number" min="0" name="review_minimum" id="review-minimum">
+                                    {{ form.review_minimum.label_tag() }}
+                                    {{ form.review_minimum }}
                                     <div class="errors">
                                         <p>The value must be an integer</p>
                                     </div>
                                 </div>
                                 <div class="field clearfix maximum half">
-                                    <label for="review-maximum">Maximum</label>
-                                    <input type="number" min="0" name="review_maximum" id="review-maximum">
+                                    {{ form.review_maximum.label_tag() }}
+                                    {{ form.review_maximum }}
                                     <div class="errors">
                                         <p>The value must be an integer</p>
                                     </div>
@@ -169,12 +162,12 @@
                             </div>
                             <div class="date">
                                 <div class="field clearfix from half">
-                                    <label for="review-from">From</label>
-                                    <input type="date" name="review_from" id="review-from">
+                                    {{ form.review_from.label_tag() }}
+                                    {{ form.review_from }}
                                 </div>
                                 <div class="field clearfix to half">
-                                    <label for="review-to">To</label>
-                                    <input type="date" name="review_to" id="review-to">
+                                    {{ form.review_to.label_tag() }}
+                                    {{ form.review_to }}
                                 </div>
                             </div>
                         </section>
@@ -184,12 +177,12 @@
                             <div class="date">
 
                                 <div class="field clearfix from half">
-                                    <label for="login-from">From</label>
-                                    <input type="date" name="login_from" id="login-from">
+                                    {{ form.login_from.label_tag() }}
+                                    {{ form.login_from }}
                                 </div>
                                 <div class="field clearfix to half">
-                                    <label for="login-to">To</label>
-                                    <input type="date" name="login_to" id="login-to">
+                                    {{ form.login_to.label_tag() }}
+                                    {{ form.login_to }}
                                 </div>
                             </div>
                         </section>

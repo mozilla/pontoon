@@ -41,8 +41,33 @@ class MessageForm(forms.ModelForm):
             "login_to",
             "send_to_myself",
         ]
+        widgets = {
+            "translation_from": forms.DateInput(attrs={"type": "date"}),
+            "translation_to": forms.DateInput(attrs={"type": "date"}),
+            "review_from": forms.DateInput(attrs={"type": "date"}),
+            "review_to": forms.DateInput(attrs={"type": "date"}),
+            "login_from": forms.DateInput(attrs={"type": "date"}),
+            "login_to": forms.DateInput(attrs={"type": "date"}),
+        }
+        labels = {
+            "translation_minimum": "Minimum",
+            "translation_maximum": "Maximum",
+            "translation_from": "From",
+            "translation_to": "To",
+            "review_minimum": "Minimum",
+            "review_maximum": "Maximum",
+            "review_from": "From",
+            "review_to": "To",
+            "login_from": "From",
+            "login_to": "To",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # Set all available Projects as selected
         self.fields["projects"].initial = Project.objects.available()
+
+        # Remove the colon from all field labels
+        for field in self.fields.values():
+            field.label_suffix = ""
