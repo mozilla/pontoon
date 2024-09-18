@@ -237,6 +237,21 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
         )
 
+    # TODO: When the feature is ready, don't save the message to the database if it's sent to the current user only.
+    message = form.save(commit=False)
+    message.sender = request.user
+    message.save()
+
+    message.recipients.set(recipients)
+
+    locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+    locales = Locale.objects.filter(pk__in=locale_ids)
+    message.locales.set(locales)
+
+    project_ids = form.cleaned_data.get("projects")
+    projects = Project.objects.filter(pk__in=project_ids)
+    message.projects.set(projects)
+
     return JsonResponse(
         {
             "status": True,
