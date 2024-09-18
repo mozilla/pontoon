@@ -157,76 +157,6 @@
       }
     }
 
-    .body {
-      .value {
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          color: inherit;
-          font-size: inherit;
-          font-style: inherit;
-          font-weight: bold;
-          letter-spacing: inherit;
-          margin: inherit;
-          padding-bottom: 1em;
-          text-transform: inherit;
-        }
-
-        h1 {
-          font-size: 2em;
-        }
-
-        h2 {
-          font-size: 1.8em;
-        }
-
-        h3 {
-          font-size: 1.5em;
-        }
-
-        h4 {
-          font-size: 1.3em;
-        }
-
-        h5 {
-          font-size: 1.15em;
-        }
-
-        p {
-          padding-bottom: 1em;
-        }
-
-        a {
-          color: var(--status-translated);
-          font-weight: inherit;
-        }
-
-        ol,
-        ul {
-          color: var(--light-grey-6);
-          font-size: 16px;
-          margin-left: 1.5em;
-          padding-bottom: 1em;
-        }
-
-        ul {
-          overflow: inherit;
-          list-style: disc;
-        }
-
-        li {
-          color: var(--light-grey-6);
-        }
-
-        li:hover {
-          background: inherit;
-        }
-      }
-    }
-
     .recipients {
       > div:not(:last-child) {
         margin-bottom: 20px;
@@ -245,6 +175,182 @@
       .performed-reviews,
       .last-login {
         display: none;
+      }
+    }
+  }
+
+  #sent {
+    background: var(--black-3);
+
+    .no {
+      padding: 20px;
+      text-align: center;
+
+      .icon {
+        color: var(--light-grey-1);
+        font-size: 100px;
+      }
+
+      .title {
+        color: var(--light-grey-7);
+        font-size: 20px;
+        font-weight: 100;
+      }
+    }
+
+    ul {
+      max-height: none;
+
+      .message {
+        background: var(--dark-grey-1);
+        border-radius: 10px;
+        color: var(--light-grey-7);
+        margin-bottom: 60px;
+        padding: 20px;
+        position: relative;
+
+        > div {
+          display: inline-block;
+        }
+
+        .user-avatar {
+          float: left;
+          width: 68px;
+        }
+
+        .details {
+          width: 532px;
+          font-size: 16px;
+
+          .info {
+            margin-bottom: 10px;
+            font-size: 14px;
+
+            .sender {
+              color: var(--status-translated-alt);
+              width: 50%;
+            }
+
+            .types {
+              float: right;
+              text-align: right;
+              width: 50%;
+
+              i {
+                color: var(--status-translated);
+                font-size: 18px;
+                margin-left: 5px;
+              }
+            }
+          }
+
+          .subject {
+            color: var(--light-grey-6);
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+        }
+
+        .footer {
+          position: absolute;
+          bottom: -25px;
+          left: 5px;
+          right: 5px;
+
+          .edit {
+            color: inherit;
+            float: left;
+            text-transform: uppercase;
+
+            .fa {
+              color: var(--status-translated);
+              margin-right: 5px;
+            }
+          }
+
+          .edit:hover {
+            color: var(--white-1);
+          }
+
+          time {
+            float: right;
+          }
+        }
+      }
+    }
+  }
+
+  .body {
+    .value {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: inherit;
+        font-size: inherit;
+        font-style: inherit;
+        font-weight: bold;
+        letter-spacing: inherit;
+        margin: inherit;
+        padding-bottom: 1em;
+        text-transform: inherit;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.8em;
+      }
+
+      h3 {
+        font-size: 1.5em;
+      }
+
+      h4 {
+        font-size: 1.3em;
+      }
+
+      h5 {
+        font-size: 1.15em;
+      }
+
+      p {
+        font-weight: normal;
+        padding-bottom: 1em;
+      }
+
+      a {
+        color: var(--status-translated);
+        font-weight: inherit;
+      }
+
+      ol,
+      ul {
+        color: var(--light-grey-6);
+        font-size: 16px;
+        margin-left: 1.5em;
+        padding-bottom: 1em;
+      }
+
+      ul {
+        overflow: inherit;
+        list-style: disc;
+      }
+
+      li {
+        color: var(--light-grey-6);
+      }
+
+      li:hover {
+        background: inherit;
       }
     }
   }

@@ -20,6 +20,7 @@ from django.views.decorators.http import require_POST
 from pontoon.base.models import Locale, Project, Translation, UserProfile
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.messaging import forms, utils
+from pontoon.messaging.models import Message
 
 
 log = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ def messaging(request):
         request,
         "messaging/messaging.html",
         {
+            "sent_messages": Message.objects.order_by("-sent_at"),
             "form": forms.MessageForm(),
             "available_locales": Locale.objects.available(),
             "available_projects": Project.objects.available().order_by("name"),
