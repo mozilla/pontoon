@@ -69,15 +69,15 @@ export const SEARCH_OPTIONS = [
     slug: 'search_match_whole_word',
   },
   {
-    name: 'Search in string identifiers',
+    name: 'Include string identifiers',
     slug: 'search_identifiers',
   },
   {
-    name: 'Search in translations only',
-    slug: 'search_translations_only',
+    name: 'Include rejected translations',
+    slug: 'search_rejected_translations',
   },
   {
-    name: 'Search in rejected translations',
-    slug: 'search_rejected_translations',
+    name: 'Exclude source strings',
+    slug: 'search_exclude_source_strings',
   },
 ] as const;

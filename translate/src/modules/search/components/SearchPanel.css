@@ -56,6 +56,10 @@
         color: var(--white-1);
       }
 
+      &.option-seperator {
+        margin-top: 10px;
+      }
+
       &.check-box {
         i {
           font-size: 16px;

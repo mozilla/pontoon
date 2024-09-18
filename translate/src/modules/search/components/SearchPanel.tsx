@@ -31,9 +31,18 @@ const SearchOption = ({
   selected: boolean;
   onToggle: () => void;
 }) => {
+  // Find the first option that doesn't have "Match" in the name, and apply top margin for visual seperation
+  const seperator = SEARCH_OPTIONS.find(
+    (option) => !option.name.includes('Match'),
+  )?.name;
+
   return (
     <li
-      className={classNames('check-box', selected && 'enabled')}
+      className={classNames(
+        'check-box',
+        selected && 'enabled',
+        name === seperator && 'option-seperator',
+      )}
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
