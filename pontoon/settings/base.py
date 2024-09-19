@@ -705,7 +705,6 @@ PIPELINE_JS = {
     "messaging": {
         "source_filenames": (
             "js/lib/showdown.js",
-            "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
             "js/multiple_item_selector.js",
             "js/messaging.js",

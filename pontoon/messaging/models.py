@@ -50,3 +50,6 @@ class Message(models.Model):
                 name="at_least_one_user_role",
             ),
         ]
+
+    def is_new(self):
+        return self.sent_at > timezone.now() - timezone.timedelta(minutes=1)

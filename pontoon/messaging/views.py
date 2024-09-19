@@ -34,10 +34,37 @@ def messaging(request):
         request,
         "messaging/messaging.html",
         {
-            "sent_messages": Message.objects.order_by("-sent_at"),
+            "count": Message.objects.count(),
+        },
+    )
+
+
+@require_AJAX
+def ajax_compose(request):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    return render(
+        request,
+        "messaging/includes/compose.html",
+        {
             "form": forms.MessageForm(),
             "available_locales": Locale.objects.available(),
             "available_projects": Project.objects.available().order_by("name"),
+        },
+    )
+
+
+@require_AJAX
+def ajax_sent(request):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    return render(
+        request,
+        "messaging/includes/sent.html",
+        {
+            "sent_messages": Message.objects.order_by("-sent_at"),
         },
     )
 

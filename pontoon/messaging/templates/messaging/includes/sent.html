@@ -1,0 +1,39 @@
+<div id="sent">
+    {% if sent_messages|length == 0 %}
+    <div class="no">
+        <i class="icon fa fa-envelope fa-fw"></i>
+        <p class="title">No messages sent yet.</p>
+    </div>
+    {% endif %}
+    <ul>
+        {% for message in sent_messages %}
+        <li class="message{% if message.is_new() %} new{% endif %}">
+            <div class="user-avatar">
+                <a href="{{ url('pontoon.contributors.contributor.username', message.sender.username) }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ message.sender.gravatar_url(88) }}" height="44" width="44" class="rounded">
+                </a>
+            </div>
+            <div class="details">
+                <div class="info">
+                    <a class="sender" href="{{ url('pontoon.contributors.contributor.username', message.sender.username) }}" target="_blank" rel="noopener noreferrer">{{ message.sender.name_or_email }}</a>
+                    <span class="recipients">
+                    {% with count=message.recipients.count() %}
+                    to {{ count }} recipient{{ count|pluralize }}
+                    {% endwith %}
+                    </span>
+                    <span class="types">
+                    {% if message.notification %}<i class="type far fa-bell" title="Sent as Notification"></i>{% endif %}
+                    {% if message.email %}<i class="type far fa-envelope" title="Sent as Email"></i>{% endif %}
+                    </span>
+                </div>
+                <p class="subject">{{ message.subject }}</p>
+                <div class="body"><div class="value">{{ message.body|safe }}</div></div>
+            </div>
+            <div class="footer">
+                <a href="#" class="edit"><i class="fa fa-pencil-alt"></i>Edit as new</a>
+                <time>{{ message.sent_at|format_for_inbox }}</time>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

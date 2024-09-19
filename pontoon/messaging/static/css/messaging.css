@@ -4,10 +4,6 @@
   }
 
   .right-column {
-    > div:not(.selected) {
-      display: none;
-    }
-
     section {
       padding: 20px;
     }
@@ -41,6 +37,10 @@
         margin-left: 10px;
       }
     }
+  }
+
+  .no-results {
+    padding: 26px;
   }
 
   #compose {
@@ -139,6 +139,8 @@
   }
 
   #review {
+    display: none;
+
     p {
       color: var(--light-grey-6);
       font-size: 16px;
@@ -208,6 +210,7 @@
         margin-bottom: 60px;
         padding: 20px;
         position: relative;
+        transition: background-color 2s ease-out;
 
         > div {
           display: inline-block;
@@ -280,6 +283,10 @@
             float: right;
           }
         }
+      }
+
+      .message.new {
+        background: var(--light-grey-1);
       }
     }
   }

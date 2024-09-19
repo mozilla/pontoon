@@ -3,6 +3,7 @@ $(function () {
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
   });
+  let inProgress = false;
 
   function validateForm() {
     const $form = $('#send-message');
@@ -162,8 +163,73 @@ $(function () {
     $('#review .message-type .transactional').toggle(isTransactional);
   }
 
+  function loadPanelContent(path) {
+    if (inProgress) {
+      inProgress.abort();
+    }
+
+    const panel = container.find('.right-column');
+    const relative_path = path.split('/messaging/')[1];
+
+    // Update menu selected state
+    container
+      .find(`.left-column a[href="${path}"]`)
+      .parents('li')
+      .addClass('selected')
+      .siblings()
+      .removeClass('selected');
+
+    panel.empty();
+
+    inProgress = $.ajax({
+      url: `/messaging/ajax/${relative_path}`,
+      success: function (data) {
+        panel.append(data);
+
+        if (relative_path === 'sent/') {
+          // Dissolve new message state
+          setTimeout(function () {
+            container.find('.message.new').removeClass('new');
+          }, 1000);
+        }
+      },
+      error: function (error) {
+        if (error.status === 0 && error.statusText !== 'abort') {
+          const message = $('<p>', {
+            class: 'no-results',
+            html: 'Oops, something went wrong.',
+          });
+
+          panel.append(message);
+        }
+      },
+    });
+  }
+
+  // Load panel conent on page load
+  loadPanelContent(window.location.pathname);
+
+  // Load panel conent on history change
+  window.onpopstate = function () {
+    loadPanelContent(window.location.pathname);
+  };
+
+  // Load panel conent on menu click
+  container.on('click', '.left-column a', function (e) {
+    // Keep default middle-, control- and command-click behaviour (open in new tab)
+    if (e.which === 2 || e.metaKey || e.ctrlKey) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const path = $(this).attr('href');
+    loadPanelContent(path);
+    window.history.pushState({}, '', path);
+  });
+
   // Toggle check box
-  $('.check-box').click(function () {
+  container.on('click', '.check-box', function () {
     const self = $(this);
     const checkbox = self.find('[type=checkbox]')[0];
 
@@ -179,14 +245,6 @@ $(function () {
         $('.check-box.transactional.enabled').click();
       }
     }
-  });
-
-  // Make sure custom checkboxes reflect the state of the HTML checkboxes
-  // TODO: Replace checkboxes with native HTML checkboxes and style them with CSS
-  $(`[type=checkbox]`).each(function () {
-    const name = $(this).attr('name');
-    const isChecked = $(this)[0].checked;
-    $(`.check-box[data-attribute=${name}]`).toggleClass('enabled', isChecked);
   });
 
   // Toggle between Edit and Review mode
@@ -238,6 +296,7 @@ $(function () {
       data: $form.serialize(),
       success: function () {
         Pontoon.endLoader('Message sent.');
+        container.find('.left-column .sent a').click();
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
