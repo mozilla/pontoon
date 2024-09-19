@@ -26,7 +26,7 @@ from pontoon.messaging.models import Message
 log = logging.getLogger(__name__)
 
 
-def messaging(request):
+def messaging(request, pk=None):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 
@@ -49,8 +49,34 @@ def ajax_compose(request):
         "messaging/includes/compose.html",
         {
             "form": forms.MessageForm(),
-            "available_locales": Locale.objects.available(),
-            "available_projects": Project.objects.available().order_by("name"),
+            "available_locales": [],
+            "selected_locales": Locale.objects.available(),
+            "available_projects": [],
+            "selected_projects": Project.objects.available().order_by("name"),
+        },
+    )
+
+
+@require_AJAX
+def ajax_edit_as_new(request, pk):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    message = get_object_or_404(Message, pk=pk)
+
+    return render(
+        request,
+        "messaging/includes/compose.html",
+        {
+            "form": forms.MessageForm(instance=message),
+            "available_locales": Locale.objects.available().exclude(
+                pk__in=message.locales.all()
+            ),
+            "selected_locales": message.locales.all(),
+            "available_projects": Project.objects.available().exclude(
+                pk__in=message.projects.all()
+            ),
+            "selected_projects": message.projects.all().order_by("name"),
         },
     )
 

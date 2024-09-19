@@ -15,6 +15,12 @@ urlpatterns = [
                     views.messaging,
                     name="pontoon.messaging.compose",
                 ),
+                # Edit as new
+                path(
+                    "<int:pk>/",
+                    views.messaging,
+                    name="pontoon.messaging.edit_as_new",
+                ),
                 # Sent
                 path(
                     "sent/",
@@ -31,6 +37,12 @@ urlpatterns = [
                                 "",
                                 views.ajax_compose,
                                 name="pontoon.messaging.ajax.compose",
+                            ),
+                            # Edit as new
+                            path(
+                                "<int:pk>/",
+                                views.ajax_edit_as_new,
+                                name="pontoon.messaging.ajax.edit_as_new",
                             ),
                             # Sent
                             path(

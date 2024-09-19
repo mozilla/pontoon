@@ -210,7 +210,7 @@
         margin-bottom: 60px;
         padding: 20px;
         position: relative;
-        transition: background-color 2s ease-out;
+        transition: background-color 2s ease-in;
 
         > div {
           display: inline-block;
@@ -264,7 +264,7 @@
           left: 5px;
           right: 5px;
 
-          .edit {
+          .edit-as-new {
             color: inherit;
             float: left;
             text-transform: uppercase;
@@ -275,7 +275,7 @@
             }
           }
 
-          .edit:hover {
+          .edit-as-new:hover {
             color: var(--white-1);
           }
 

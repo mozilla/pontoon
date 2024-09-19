@@ -170,10 +170,11 @@ $(function () {
 
     const panel = container.find('.right-column');
     const relative_path = path.split('/messaging/')[1];
+    const menu_path = path === '/messaging/sent/' ? path : '/messaging/';
 
     // Update menu selected state
     container
-      .find(`.left-column a[href="${path}"]`)
+      .find(`.left-column a[href="${menu_path}"]`)
       .parents('li')
       .addClass('selected')
       .siblings()
@@ -191,6 +192,11 @@ $(function () {
           setTimeout(function () {
             container.find('.message.new').removeClass('new');
           }, 1000);
+        } else if (relative_path) {
+          // Convert body content from HTML to markdown
+          const html = $('#compose [name=body]').val();
+          const markdown = converter.makeMarkdown(html);
+          $('#body').val(markdown);
         }
       },
       error: function (error) {
@@ -215,18 +221,22 @@ $(function () {
   };
 
   // Load panel conent on menu click
-  container.on('click', '.left-column a', function (e) {
-    // Keep default middle-, control- and command-click behaviour (open in new tab)
-    if (e.which === 2 || e.metaKey || e.ctrlKey) {
-      return;
-    }
+  container.on(
+    'click',
+    '.left-column a, .right-column .edit-as-new',
+    function (e) {
+      // Keep default middle-, control- and command-click behaviour (open in new tab)
+      if (e.which === 2 || e.metaKey || e.ctrlKey) {
+        return;
+      }
 
-    e.preventDefault();
+      e.preventDefault();
 
-    const path = $(this).attr('href');
-    loadPanelContent(path);
-    window.history.pushState({}, '', path);
-  });
+      const path = $(this).attr('href');
+      loadPanelContent(path);
+      window.history.pushState({}, '', path);
+    },
+  );
 
   // Toggle check box
   container.on('click', '.check-box', function () {

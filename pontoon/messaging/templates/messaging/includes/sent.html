@@ -30,7 +30,7 @@
                 <div class="body"><div class="value">{{ message.body|safe }}</div></div>
             </div>
             <div class="footer">
-                <a href="#" class="edit"><i class="fa fa-pencil-alt"></i>Edit as new</a>
+                <a href="{{ url('pontoon.messaging.edit_as_new', message.pk) }}" class="edit-as-new"><i class="fa fa-pencil-alt"></i>Edit as new</a>
                 <time>{{ message.sent_at|format_for_inbox }}</time>
             </div>
         </li>
