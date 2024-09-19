@@ -294,10 +294,11 @@ $(function () {
   container.on('click', '.controls .send.button', function (e) {
     e.preventDefault();
 
-    // Distinguish between Send and Send to myself
-    $('#id_send_to_myself').prop('checked', $(this).is('.to-myself'));
-
     const $form = $('#send-message');
+    const sendToMyself = $(this).is('.to-myself');
+
+    // Distinguish between Send and Send to myself
+    $('#id_send_to_myself').prop('checked', sendToMyself);
 
     // Submit form
     $.ajax({
@@ -306,7 +307,9 @@ $(function () {
       data: $form.serialize(),
       success: function () {
         Pontoon.endLoader('Message sent.');
-        container.find('.left-column .sent a').click();
+        if (!sendToMyself) {
+          container.find('.left-column .sent a').click();
+        }
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');

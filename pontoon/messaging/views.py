@@ -226,18 +226,19 @@ def send_message(request):
     if not form.is_valid():
         return JsonResponse(dict(form.errors.items()), status=400)
 
-    if form.cleaned_data.get("send_to_myself"):
-        recipients = User.objects.filter(pk=request.user.pk)
-    else:
+    send_to_myself = form.cleaned_data.get("send_to_myself")
+    recipients = User.objects.filter(pk=request.user.pk)
+
+    """
+    While the feature is in development, messages are sent only to the current user.
+    TODO: Uncomment lines below when the feature is ready.
+    if not send_to_myself:
         recipients = get_recipients(form)
+    """
 
     log.info(
         f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
     )
-
-    # While the feature is in development, notifications and emails are sent only to the current user.
-    # TODO: Remove this line when the feature is ready
-    recipients = User.objects.filter(pk=request.user.pk)
 
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
@@ -292,20 +293,20 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
         )
 
-    # TODO: When the feature is ready, don't save the message to the database if it's sent to the current user only.
-    message = form.save(commit=False)
-    message.sender = request.user
-    message.save()
+    if not send_to_myself:
+        message = form.save(commit=False)
+        message.sender = request.user
+        message.save()
 
-    message.recipients.set(recipients)
+        message.recipients.set(recipients)
 
-    locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
-    locales = Locale.objects.filter(pk__in=locale_ids)
-    message.locales.set(locales)
+        locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+        locales = Locale.objects.filter(pk__in=locale_ids)
+        message.locales.set(locales)
 
-    project_ids = form.cleaned_data.get("projects")
-    projects = Project.objects.filter(pk__in=project_ids)
-    message.projects.set(projects)
+        project_ids = form.cleaned_data.get("projects")
+        projects = Project.objects.filter(pk__in=project_ids)
+        message.projects.set(projects)
 
     return JsonResponse(
         {
