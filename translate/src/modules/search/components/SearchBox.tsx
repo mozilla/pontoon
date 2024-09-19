@@ -275,6 +275,7 @@ export function SearchBoxBase({
         dispatch(resetEntities());
         parameters.push({
           ...parameters, // Persist all other variables to next state
+          search,
           search_identifiers: search_identifiers,
           search_exclude_source_strings: search_exclude_source_strings,
           search_rejected_translations: search_rejected_translations,
@@ -386,7 +387,6 @@ export function SearchBoxBase({
         searchOptions={searchOptions}
         applyOptions={applyOptions}
         toggleOption={toggleOption}
-        updateOptionsFromURL={updateOptionsFromURL}
       />
     </div>
   );
