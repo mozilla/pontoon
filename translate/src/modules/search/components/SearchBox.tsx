@@ -365,6 +365,7 @@ export function SearchBoxBase({
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
             applyFilters();
+            applyOptions();
           }
         }}
       />
