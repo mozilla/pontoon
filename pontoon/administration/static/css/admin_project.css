@@ -85,6 +85,7 @@ input[type='text'],
 input[type='password'],
 input[type='url'],
 input[type='number'],
+input[type='date'],
 textarea {
   display: block;
   height: 24px;
