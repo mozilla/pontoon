@@ -3,7 +3,7 @@ tag-admin/dist/
 translate/dist/
 coverage/
 docs/_build/
-docs/venv/
+docs/*venv/
 package-lock.json
 specs/
 
