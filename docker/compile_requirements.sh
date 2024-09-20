@@ -5,7 +5,7 @@
 
 export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 
-uv pip compile --generate-hashes $@ requirements/default.in
-uv pip compile --generate-hashes $@ requirements/dev.in
-uv pip compile --generate-hashes $@ requirements/lint.in
-uv pip compile --generate-hashes $@ requirements/test.in
+uv pip compile --generate-hashes $@ requirements/default.in -o requirements/default.txt
+uv pip compile --generate-hashes $@ requirements/dev.in -o requirements/dev.txt
+uv pip compile --generate-hashes $@ requirements/lint.in -o requirements/lint.txt
+uv pip compile --generate-hashes $@ requirements/test.in -o requirements/test.txt
