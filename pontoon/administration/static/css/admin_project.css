@@ -9,7 +9,11 @@ body {
 }
 
 select {
-  margin-top: 4px;
+  background: var(--input-background-1);
+  border: none;
+  border-radius: 3px;
+  color: var(--input-color-1);
+  height: 33px;
 }
 
 h1 {
