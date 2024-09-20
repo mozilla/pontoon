@@ -1,3 +1,5 @@
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
+
 {% macro render(title, type, formset, project) %}
 <h4>
     <span>{{ title }}</span>
@@ -8,15 +10,25 @@
 {% for form in formset %}
 {{ form.id }}
 <div class="{{ type }} inline controls clearfix">
-  {{ form.name.label_tag(label_suffix='') }}
-  {{ form.slug.label_tag(label_suffix='') }}
-  {{ form.priority.label_tag(label_suffix='') }}
-  {{ form.name }}
-  {{ form.slug }}
-  {{ form.priority }}
+  <div class="clearfix">
+    {{ form.name.label_tag(label_suffix='') }}
+    {{ form.slug.label_tag(label_suffix='') }}
+    {{ form.priority.label_tag(label_suffix='') }}
 
-  <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
-  {{ form.DELETE }}
+    {{ form.name }}
+    {{ form.slug }}
+    {{ form.priority }}
+
+    <button class="button manage-resources" {% if not form.slug.value() %}disabled{% endif %}>Manage resources</button>
+
+    <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
+    {{ form.DELETE }}
+  </div>
+
+  {% set selected_resources = form.instance.resources.all() if form.instance.pk else [] %}
+  {% set available_resources = form.fields['resources'].queryset.exclude(pk__in=selected_resources) %}
+  {{ multiple_item_selector.render(available_resources, selected_resources) }}
+  {{ form.resources }}
 
   {% if form.name.errors or form.slug.errors %}
   <div class="form-errors">
@@ -29,32 +41,37 @@
     <div class="priority-errors">
       {{ form.priority.errors }}
     </div>
-  </div>
+    <div class="resources-errors">
+      {{ form.resources.errors }}
+    </div>
+</div>
   {% endif %}
 
-  {% if form.slug.value() %}
-  <div class="js-tag-resources tag-resources"
-       data-api="{{ url('pontoon.admin.project.ajax.tag', project=project.slug, tag=form.slug.value()) }}"
-       data-project="{{ project.slug }}"
-       data-tag="{{ form.slug.value() }}"
-       translate="no">
-  </div>
-  {% endif %}
 </div>
 {% endfor %}
 
 <div class="{{ type }} inline controls clearfix" data-count="{{ formset.total_form_count() }}">
+  <div class="clearfix">
     {{ formset.empty_form.name.label_tag(label_suffix='') }}
     {{ formset.empty_form.slug.label_tag(label_suffix='') }}
     {{ formset.empty_form.priority.label_tag(label_suffix='') }}
-    <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
 
     {{ formset.empty_form.name }}
     {{ formset.empty_form.slug }}
     {{ formset.empty_form.priority }}
-    {{ formset.empty_form.DELETE }}
 
-    {% if formset.empty_form.name.errors or formset.empty_form.slug.errors %}
+    <button class="button manage-resources" disabled>Manage resources</button>
+
+    <button title="Delete" class="button delete-inline far fa-trash-alt" tabindex="-1"></button>
+    {{ formset.empty_form.DELETE }}
+  </div>
+
+  {% set selected_resources = [] %}
+  {% set available_resources = formset.empty_form.fields['resources'].queryset %}
+  {{ multiple_item_selector.render(selected_resources, available_resources, form_field='resources') }}
+  {{ formset.empty_form.resources }}
+
+  {% if formset.empty_form.name.errors or formset.empty_form.slug.errors %}
     <div class="form-errors">
       <div class="name-errors">
         {{ formset.empty_form.name.errors }}
@@ -65,7 +82,10 @@
       <div class="priority-errors">
         {{ formset.empty_form.priority.errors }}
       </div>
+      <div class="priority-resources">
+        {{ formset.empty_form.resources.errors }}
+      </div>
     </div>
-    {% endif %}
+  {% endif %}
 </div>
 {% endmacro %}

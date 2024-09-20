@@ -422,9 +422,9 @@ PIPELINE_CSS = {
     "admin_project": {
         "source_filenames": (
             "css/double_list_selector.css",
+            "css/multiple_item_selector.css",
             "css/multiple_team_selector.css",
             "css/admin_project.css",
-            "tag_admin.css",
         ),
         "output_filename": "css/admin_project.min.css",
     },
@@ -585,9 +585,9 @@ PIPELINE_JS = {
     "admin_project": {
         "source_filenames": (
             "js/double_list_selector.js",
+            "js/multiple_item_selector.js",
             "js/multiple_team_selector.js",
             "js/admin_project.js",
-            "tag_admin.js",
         ),
         "output_filename": "js/admin_project.min.js",
     },

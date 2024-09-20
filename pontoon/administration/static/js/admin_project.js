@@ -3,24 +3,33 @@ $(function () {
 
   // Before submitting the form
   $('#admin-form').submit(function () {
-    // Update locales
+    // Update locales and tags
     const locales = [
       {
-        selector: '.admin-team-selector .locale.selected',
+        list: $('.admin-team-selector .locale.selected'),
         input: $('#id_locales'),
       },
       {
-        selector: '.admin-team-selector .locale.readonly',
+        list: $('.admin-team-selector .locale.readonly'),
         input: $('#id_locales_readonly'),
       },
       {
-        selector: '.multiple-team-selector .locale.selected',
+        list: $('.multiple-team-selector .locale.selected'),
         input: $('#id_locales_pretranslate'),
       },
     ];
 
-    locales.forEach(function (type) {
-      const ids = $(type.selector)
+    const tags = $('.tag.inline')
+      .map(function () {
+        return {
+          list: $(this).find('.multiple-item-selector .selected'),
+          input: $(this).find('[id^=id_tag_set-][id$=-resources]'),
+        };
+      })
+      .get();
+
+    locales.concat(tags).forEach(function (type) {
+      const ids = type.list
         .find('li[data-id]')
         .map(function () {
           return $(this).data('id');
@@ -244,7 +253,7 @@ $(function () {
   // Delete inline form item (e.g. external resource)
   $('body').on('click.pontoon', '.delete-inline', function (e) {
     e.preventDefault();
-    $(this).parent().toggleClass('delete');
+    $(this).parents('.inline').toggleClass('delete');
     $(this).next().prop('checked', !$(this).next().prop('checked'));
   });
   $('.inline [checked]').click().prev().click();
@@ -303,5 +312,13 @@ $(function () {
     toggleBranchInput($('.repository:last').find('.type-wrapper select'));
 
     $totalForms.val(count + 1);
+  });
+
+  // Toggle tag resource selector
+  $('body').on('click', '.button.manage-resources', function (e) {
+    e.preventDefault();
+
+    $(this).toggleClass('active');
+    $(this).parents('.tag.inline').find('.multiple-item-selector').toggle();
   });
 });
