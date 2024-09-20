@@ -5,7 +5,7 @@
 
 export CUSTOM_COMPILE_COMMAND="./docker/compile_requirements.sh"
 
-uv pip compile --generate-hashes --resolver=backtracking $@ requirements/default.in
-uv pip compile --generate-hashes --resolver=backtracking $@ requirements/dev.in
-uv pip compile --generate-hashes --resolver=backtracking $@ requirements/lint.in
-uv pip compile --generate-hashes --resolver=backtracking $@ requirements/test.in
+uv pip compile --generate-hashes $@ requirements/default.in
+uv pip compile --generate-hashes $@ requirements/dev.in
+uv pip compile --generate-hashes $@ requirements/lint.in
+uv pip compile --generate-hashes $@ requirements/test.in
