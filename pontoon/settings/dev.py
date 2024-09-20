@@ -11,8 +11,6 @@ INSTALLED_APPS = base.INSTALLED_APPS + (
     "debug_toolbar",
     # Adds various commands like e.g. shell which has all models loaded by default.
     "django_extensions",
-    # sslserver helps to develop features that require HTTPS.
-    "sslserver",
 )
 
 # In development, we want to remove the WhiteNoise middleware, because we need
