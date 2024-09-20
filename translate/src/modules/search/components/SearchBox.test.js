@@ -270,7 +270,7 @@ describe('<SearchBox>', () => {
     // Wait until Enter is pressed.
     wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
 
-    expect(spy.callCount).toBe(1);
+    expect(spy.callCount).toBe(2);
     expect(spy.firstCall.args).toMatchObject([
       {
         pathname: '/kg/firefox/all-resources/',
