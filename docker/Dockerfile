@@ -29,12 +29,14 @@ RUN apt-get update \
     # Clean up what can be cleaned up.
     && apt-get autoremove -y
 
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:0.4.13 /uv /bin/uv
+
 WORKDIR /app
 
 # Install Pontoon Python requirements
 COPY requirements/* /app/requirements/
-RUN pip install -U 'pip>=8' && \
-    pip install --no-cache-dir --require-hashes -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt -r requirements/lint.txt
+RUN uv pip install --system -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt -r requirements/lint.txt
 
 # Create the app user
 RUN groupadd -r --gid=${GROUP_ID} pontoon && useradd --uid=${USER_ID} --no-log-init -r -m -g pontoon pontoon

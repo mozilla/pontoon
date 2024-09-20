@@ -22,6 +22,8 @@ on:
 jobs:
   test:
     name: pytest
+    env:
+      UV_SYSTEM_PYTHON: 1
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -35,24 +37,24 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: pip
-          cache-dependency-path: |
-            requirements/default.txt
-            requirements/dev.txt
-            requirements/lint.txt
-            requirements/test.txt
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          version: "0.4.13"
       - run: >
-          pip install
+          uv pip install
           -r requirements/default.txt
           -r requirements/dev.txt
           -r requirements/test.txt
           -r requirements/lint.txt
 
       # Set environment variables
-      - run: pip install pytest-dotenv
+      - run: uv pip install pytest-dotenv
       - run: >
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
