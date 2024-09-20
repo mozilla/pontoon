@@ -49,7 +49,7 @@ form > div {
   text-align: right;
 }
 
-form > div.controls {
+form > div.controls:last-child {
   margin-top: 70px;
 }
 
