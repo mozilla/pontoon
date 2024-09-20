@@ -67,7 +67,7 @@ jobs:
       - run: mkdir -p tag-admin/dist translate/dist translate/public
       - run: python manage.py collectstatic
 
-      - run: pytest
+      - run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
       - uses: codecov/codecov-action@v4
         with:
           flags: backend
