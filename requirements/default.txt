@@ -354,19 +354,21 @@ google-auth==2.29.0 \
     # via
     #   google-api-core
     #   google-cloud-core
+    #   google-cloud-translate
 google-cloud-core==2.4.1 \
     --hash=sha256:9b7749272a812bde58fff28868d0c5e2f585b82f37e09a1f6ed2d4d10f134073 \
     --hash=sha256:a9e6a4422b9ac5c29f79a0ede9485473338e2ce78d91f2370c01e730eab22e61
     # via google-cloud-translate
-google-cloud-translate==3.8.4 \
-    --hash=sha256:729b52172001c99459ec3afddec9153de0af528874fcf3000a9ddd98e1107ee7 \
-    --hash=sha256:e1099ef7b288d7e8e4ea9c47be50129459890fdaa590c754ef848de74b7cd9ec
+google-cloud-translate==3.16.0 \
+    --hash=sha256:0797d954c4f6ea073229e950012ba083a4cc9752b431dc0624e2594e287469ef \
+    --hash=sha256:26de33b011da3ec3046625c855c0159a73ff7ed7e0a489cf582aa4d82b8f1201
     # via -r requirements/default.in
 googleapis-common-protos==1.63.0 \
     --hash=sha256:17ad01b11d5f1d0171c06d3ba5c04c54474e883b66b949722b4938ee2694ef4e \
     --hash=sha256:ae45f75702f7c08b541f750854a678bd8f534a1a6bace6afe975f1d0a82d6632
     # via
     #   google-api-core
+    #   grpc-google-iam-v1
     #   grpcio-status
 graphene==3.3 \
     --hash=sha256:529bf40c2a698954217d3713c6041d69d3f719ad0080857d7ee31327112446b0 \
@@ -389,6 +391,10 @@ graphql-relay==3.2.0 \
     # via
     #   graphene
     #   graphene-django
+grpc-google-iam-v1==0.13.1 \
+    --hash=sha256:3ff4b2fd9d990965e410965253c0da6f66205d5a8291c4c31c6ebecca18a9001 \
+    --hash=sha256:c3e86151a981811f30d5e7330f271cee53e73bb87755e88cc3b6f0c7b5fe374e
+    # via google-cloud-translate
 grpcio==1.62.1 \
     --hash=sha256:12859468e8918d3bd243d213cd6fd6ab07208195dc140763c00dfe901ce1e1b4 \
     --hash=sha256:1714e7bc935780bc3de1b3fcbc7674209adf5208ff825799d579ffd6cd0bd505 \
@@ -446,6 +452,8 @@ grpcio==1.62.1 \
     --hash=sha256:fbe80577c7880911d3ad65e5ecc997416c98f354efeba2f8d0f9112a67ed65a5
     # via
     #   google-api-core
+    #   googleapis-common-protos
+    #   grpc-google-iam-v1
     #   grpcio-status
 grpcio-status==1.62.1 \
     --hash=sha256:3431c8abbab0054912c41df5c72f03ddf3b7a67be8a287bb3c18a3456f96ff77 \
@@ -830,6 +838,7 @@ protobuf==4.25.3 \
     #   google-api-core
     #   google-cloud-translate
     #   googleapis-common-protos
+    #   grpc-google-iam-v1
     #   grpcio-status
     #   proto-plus
 psycopg2==2.9.6 \
