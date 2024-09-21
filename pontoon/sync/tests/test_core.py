@@ -336,7 +336,7 @@ class CommitChangesTests(FakeCheckoutTestCase):
                 first_author.display_name_and_email,
                 second_author.display_name_and_email,
             ),
-            first_author,
+            first_author.display_name_and_email,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
         )
 
@@ -355,7 +355,7 @@ class CommitChangesTests(FakeCheckoutTestCase):
         )
         self.repository.commit.assert_called_with(
             CONTAINS(author.display_name_and_email),
-            author,
+            author.display_name_and_email,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
         )
         commit_message = self.repository.commit.mock_calls[0][1][0]
@@ -377,9 +377,8 @@ class CommitChangesTests(FakeCheckoutTestCase):
             ANY,
             os.path.join(FAKE_CHECKOUT_PATH, self.translated_locale.code),
         )
-        user = self.mock_repo_commit.call_args[0][1]
-        assert user.first_name == "Pontoon"
-        assert user.email == "pontoon@example.com"
+        author = self.mock_repo_commit.call_args[0][1]
+        assert author == "Pontoon <pontoon@example.com>"
 
 
 class PullChangesTests(FakeCheckoutTestCase):

@@ -43,15 +43,14 @@ def test_repo_checkout_path_multi_locale(settings, repo_git):
 @pytest.mark.django_db
 def test_repo_checkout_path_source_repo(settings, repo_git):
     """
-    The checkout_path for a source repo should end with a templates
+    The checkout_path for a source repo should not end with a templates
     directory.
     """
     repo_git.source_repo = True
     repo_git.url = "https://example.com/path/to/locale/"
     repo_git.save()
     assert repo_git.checkout_path == (
-        "%s/projects/%s/path/to/locale/templates"
-        % (settings.MEDIA_ROOT, repo_git.project.slug)
+        "%s/projects/%s/path/to/locale" % (settings.MEDIA_ROOT, repo_git.project.slug)
     )
 
 

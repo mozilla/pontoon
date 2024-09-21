@@ -1,8 +1,7 @@
 import logging
 import re
 
-from os import sep
-from os.path import join
+from os.path import join, normpath
 from urllib.parse import urlparse
 
 from jsonfield import JSONField
@@ -115,21 +114,20 @@ class Repository(models.Model):
         Path where the checkout for this repo is located. Does not
         include a trailing path separator.
         """
-        path_components = [self.project.checkout_path]
 
         # Include path components from the URL in case it has locale
         # information, like https://hg.mozilla.org/gaia-l10n/fr/.
         # No worry about overlap between repos, any overlap of locale
         # directories is an error already.
-        path_components += urlparse(self.url).path.split("/")
+        path_components = [
+            self.project.checkout_path,
+            *urlparse(self.url).path.split("/"),
+        ]
         if self.multi_locale:
             path_components = [c for c in path_components if c != "{locale_code}"]
 
-        if self.source_repo:
-            path_components.append("templates")
-
-        # Remove trailing separator for consistency.
-        return join(*path_components).rstrip(sep)
+        # Normalize path for consistency.
+        return normpath(join(*path_components))
 
     @cached_property
     def api_config(self):
@@ -234,7 +232,7 @@ class Repository(models.Model):
 
             return current_revisions
 
-    def commit(self, message, author, path):
+    def commit(self, message: str, author: str, path: str):
         """Commit changes to VCS."""
         # For multi-locale repos, figure out which sub-repo corresponds
         # to the given path.

@@ -65,13 +65,11 @@ def sync_translations_to_repo(
     if translators:
         commit_msg += "\n"
         for translator, lc_set in translators.items():
-            tr_str = translator.display_name_and_email()
+            tr_str = translator.display_name_and_email
             lc_str = ", ".join(sorted(lc_set))
             commit_msg += f"\nCo-authored-by: {tr_str} ({lc_str})"
 
-    commit_author = User(
-        first_name=settings.VCS_SYNC_NAME, email=settings.VCS_SYNC_EMAIL
-    )
+    commit_author = f"{settings.VCS_SYNC_NAME} <{settings.VCS_SYNC_EMAIL}>"
 
     co = checkouts.target
     commit_to_vcs(

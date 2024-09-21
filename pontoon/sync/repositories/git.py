@@ -1,7 +1,5 @@
 import logging
 
-from typing import Any
-
 from django.conf import settings
 
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
@@ -45,7 +43,7 @@ def update(source: str, target: str, branch: str | None) -> None:
         log.debug(f"Git: Branch {branch} checked out.")
 
 
-def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> None:
+def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
     log.debug("Git: Commit to repository.")
 
     # Embed git identity info into commands
@@ -61,13 +59,7 @@ def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> 
     execute(git_cmd + ["add", "-A", "--", path], path)
 
     # Commit
-    commit = git_cmd + [
-        "commit",
-        "-m",
-        message,
-        "--author",
-        user.display_name_and_email,
-    ]
+    commit = git_cmd + ["commit", "-m", message, "--author", author]
     code, _output, error = execute(commit, path)
     if code != 0 and error:
         raise CommitToRepositoryException(error)

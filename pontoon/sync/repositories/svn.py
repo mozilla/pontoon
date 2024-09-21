@@ -1,7 +1,6 @@
 import logging
 
 from os import environ, path
-from typing import Any
 
 from django.conf import settings
 
@@ -37,7 +36,7 @@ def update(source: str, target: str, branch: str | None) -> None:
     log.debug(f"Subversion: Repository at {source} {status}.")
 
 
-def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> None:
+def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
     log.debug("Subversion: Commit to repository.")
 
     # Commit
@@ -47,7 +46,7 @@ def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> 
         "-m",
         message,
         "--with-revprop",
-        f"author={user.display_name_and_email}",
+        f"author={author}",
         path,
     ]
     code, output, error = execute(commit, env=get_svn_env())

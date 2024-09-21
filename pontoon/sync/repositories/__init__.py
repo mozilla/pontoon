@@ -1,7 +1,5 @@
 import os
 
-from typing import Any
-
 from . import git, hg, svn
 from .utils import CommitToRepositoryException, PullFromRepositoryException
 
@@ -21,11 +19,11 @@ def update_from_vcs(repo_type: str, url: str, path: str, branch: str | None) -> 
 
 
 def commit_to_vcs(
-    repo_type: str, path: str, message: str, user: Any, branch: str | None, url: str
+    repo_type: str, path: str, message: str, author: str, branch: str | None, url: str
 ) -> None:
     repo = get_repo(repo_type)
     try:
-        repo.commit(path, message, user, branch, url)
+        repo.commit(path, message, author, branch, url)
     except CommitToRepositoryException as e:
         repo.log.debug(f"{repo_type.upper()} Commit Error for {path}: {e}")
         raise e

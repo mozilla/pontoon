@@ -372,7 +372,7 @@ def commit_changes(
 
     locale_path = vcs_project.locale_directory_paths[locale.code]
     repo = db_project.repository_for_path(locale_path)
-    repo.commit(commit_message, commit_author, locale_path)
+    repo.commit(commit_message, commit_author.display_name_and_email, locale_path)
 
 
 def get_changed_locales(db_project: Project, locales, now: datetime):

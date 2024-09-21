@@ -131,7 +131,7 @@ class VCSConfiguration:
             email=settings.VCS_SYNC_EMAIL,
         )
         repo = self.vcs_project.db_project.source_repository
-        repo.commit(commit_message, commit_author, repo.checkout_path)
+        repo.commit(commit_message, commit_author.display_name_and_email, repo.checkout_path)
         """
 
     def get_or_set_project_files(self, locale_code):
