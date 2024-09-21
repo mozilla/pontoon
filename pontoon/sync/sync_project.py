@@ -2,10 +2,13 @@ import logging
 
 from notifications.signals import notify
 
+from django.conf import settings
 from django.utils import timezone
 
+from pontoon.base.tasks import PontoonTask
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.sync.checkouts import get_checkouts
+from pontoon.sync.core import serial_task
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.paths import get_paths
 from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
@@ -46,7 +49,7 @@ def sync_project(
     )
 
     try:
-        checkouts = get_checkouts(project, pull)
+        checkouts = get_checkouts(project, pull, force)
         paths = get_paths(project, checkouts)
     except Exception as e:
         log.error(f"{log_prefix} {e}")
@@ -100,3 +103,21 @@ def notify_users(project: Project, count: int) -> None:
     log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")
     for user in users:
         notify.send(project, recipient=user, verb=f"updated with {new_strings}")
+
+
+def sync_project_error(error, *args, **kwargs):
+    ProjectSyncLog.objects.create(
+        project=Project.objects.get(pk=args[0]),
+        sync_log=SyncLog.objects.get(pk=args[1]),
+        start_time=timezone.now(),
+    ).skip()
+
+
+@serial_task(
+    settings.SYNC_TASK_TIMEOUT,
+    base=PontoonTask,
+    lock_key="project={0}",
+    on_error=sync_project_error,
+)
+def sync_project_task(*args, **kwargs):
+    sync_project(*args, **kwargs)

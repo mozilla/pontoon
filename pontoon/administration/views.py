@@ -32,7 +32,7 @@ from pontoon.base.models import (
 from pontoon.base.utils import require_AJAX
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.models import SyncLog
-from pontoon.sync.tasks import sync_project
+from pontoon.sync.sync_project import sync_project_task
 
 
 log = logging.getLogger(__name__)
@@ -542,9 +542,9 @@ def manually_sync_project(request, slug):
             "Forbidden: You don't have permission for syncing projects"
         )
 
-    sync_log = SyncLog.objects.create(start_time=timezone.now())
     project = Project.objects.get(slug=slug)
-    sync_project.delay(project.pk, sync_log.pk)
+    sync_log = SyncLog.objects.create(start_time=timezone.now())
+    sync_project_task.delay(project.pk, sync_log.pk)
 
     return HttpResponse("ok")
 

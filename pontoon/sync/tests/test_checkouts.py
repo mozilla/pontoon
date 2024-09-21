@@ -42,7 +42,7 @@ class CheckoutsTests(TestCase):
             type=Repository.Type.GIT,
         )
         with patch("pontoon.sync.checkouts.get_repo", return_value=mock_vcs):
-            co = Checkout("SLUG", mock_repo, True)
+            co = Checkout("SLUG", mock_repo, True, False)
             assert co.repo == mock_repo
             assert co.is_source
             assert co.url == "URL"
@@ -58,7 +58,7 @@ class CheckoutsTests(TestCase):
             ]
 
             mock_vcs._calls.clear()
-            co = Checkout("SLUG", mock_repo, False)
+            co = Checkout("SLUG", mock_repo, False, False)
             assert mock_vcs._calls == [
                 ("revision", ("/foo/bar",)),
                 ("changed_files", ("/foo/bar", "def456")),
@@ -83,7 +83,7 @@ class CheckoutsTests(TestCase):
                 type=Repository.Type.GIT,
             )
             with patch("pontoon.sync.checkouts.get_repo", return_value=mock_vcs):
-                co = Checkout("SLUG", mock_repo, True)
+                co = Checkout("SLUG", mock_repo, True, False)
                 assert co.path == root
                 assert co.prev_commit is None
                 assert not co.removed

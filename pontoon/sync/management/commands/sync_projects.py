@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from pontoon.base.models import Project
 from pontoon.sync.models import SyncLog
-from pontoon.sync.tasks import sync_project
+from pontoon.sync.sync_project import sync_project_task
 
 
 class Command(BaseCommand):
@@ -77,10 +77,10 @@ class Command(BaseCommand):
 
         for project in projects:
             self.stdout.write(f"Scheduling sync for project {project.name}.")
-            sync_project.delay(
+            sync_project_task.delay(
                 project.pk,
                 sync_log.pk,
-                no_pull=options["no_pull"],
-                no_commit=options["no_commit"],
+                pull=not options["no_pull"],
+                commit=not options["no_commit"],
                 force=options["force"],
             )

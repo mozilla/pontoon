@@ -25,7 +25,7 @@ class Checkout:
     removed: list[str]
     """Relative paths from the checkout base"""
 
-    def __init__(self, slug: str, db_repo: Repository, pull: bool) -> None:
+    def __init__(self, slug: str, db_repo: Repository, pull: bool, force: bool) -> None:
         self.repo = db_repo
         self.is_source = db_repo.source_repo
         self.url = db_repo.url
@@ -51,10 +51,10 @@ class Checkout:
             if isinstance(self.prev_commit, str)
             else None
         )
-        if delta is not None:
+        if delta is not None and not force:
             self.changed, self.removed = delta
         else:
-            # Initially and on error, consider all files changed
+            # Initially and on error & when forced, consider all files changed
             self.changed = []
             for root, dirnames, filenames in walk(self.path):
                 dirnames[:] = (dn for dn in dirnames if not dn.startswith("."))
@@ -62,7 +62,7 @@ class Checkout:
                 self.changed.extend(
                     join(rel_root, fn) for fn in filenames if not fn.startswith(".")
                 )
-            self.removed = []
+            self.removed = delta[1] if delta else []
 
 
 class Checkouts(NamedTuple):
@@ -70,7 +70,9 @@ class Checkouts(NamedTuple):
     target: Checkout
 
 
-def get_checkouts(project: Project, pull: bool = True) -> Checkouts:
+def get_checkouts(
+    project: Project, pull: bool = True, force: bool = False
+) -> Checkouts:
     """
     For each project repository including all multi-locale repositories,
     update its local checkout (unless `pull` is false),
@@ -82,11 +84,11 @@ def get_checkouts(project: Project, pull: bool = True) -> Checkouts:
         if repo.source_repo:
             if source:
                 raise Exception("Multiple source repositories")
-            source = Checkout(project.slug, repo, pull)
+            source = Checkout(project.slug, repo, pull, force)
         elif target:
             raise Exception("Multiple target repositories")
         else:
-            target = Checkout(project.slug, repo, pull)
+            target = Checkout(project.slug, repo, pull, force)
     if source is None and target is None:
         raise Exception("No repository found")
     return Checkouts(source or target, target or source)
