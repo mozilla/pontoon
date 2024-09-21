@@ -272,7 +272,7 @@ def add_resources(
     ent_count = len(added_entities)
     added_paths = {ar.path for ar in added_resources}
     log.info(
-        f"[{project.slug}] Added source files with {ent_count} new entities: {', '.join(added_paths)}"
+        f"[{project.slug}] New source files with {ent_count} entities: {', '.join(added_paths)}"
     )
     return ent_count, added_paths
 

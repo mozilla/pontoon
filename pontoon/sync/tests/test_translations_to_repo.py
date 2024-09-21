@@ -21,7 +21,6 @@ from pontoon.base.tests import (
 )
 from pontoon.sync.checkouts import Checkout, Checkouts
 from pontoon.sync.paths import get_paths
-from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
 from pontoon.sync.sync_translations_to_repo import sync_translations_to_repo
 from pontoon.sync.tests.utils import build_file_tree
 
@@ -99,15 +98,16 @@ def test_remove_entity():
         TranslatedResourceFactory.create(locale=locale, resource=res_b)
         TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
         for i in range(3):
-            entity = EntityFactory.create(
-                resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
-            )
-            TranslationFactory.create(
-                entity=entity,
-                locale=locale,
-                string=f"key-{i} = Translation {i}\n",
-                approved=True,
-            )
+            if i != 1:
+                entity = EntityFactory.create(
+                    resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
+                )
+                TranslationFactory.create(
+                    entity=entity,
+                    locale=locale,
+                    string=f"key-{i} = Translation {i}\n",
+                    approved=True,
+                )
 
         # Filesystem setup
         c_ftl_src = dedent(
@@ -143,9 +143,6 @@ def test_remove_entity():
         paths = get_paths(project, checkouts)
 
         # Test
-        assert sync_entities_from_repo(
-            project, locale_map, mock_checkout, paths, now
-        ) == (0, {"c.ftl"}, set())
         sync_translations_to_repo(
             project, False, locale_map, checkouts, paths, [], {"c.ftl"}, set(), now
         )
