@@ -11,11 +11,13 @@ export PATH=/app/.heroku/node/bin:$PATH
 npm install --global npm@8
 npm ci
 
-echo "Building translate & tag-admin..."
+echo "Building translate..."
 npm run build:prod
 
-echo "Collecting static files..."
+echo "Running migrations..."
 ./manage.py migrate --noinput
+
+echo "Collecting static files..."
 ./manage.py collectstatic --noinput
 
 # Create a file with the current git HEAD revision.

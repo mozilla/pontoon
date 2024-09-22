@@ -26,7 +26,6 @@
   },
   "workspaces": [
     "translate",
-    "tag-admin",
     "pontoon"
   ],
   "devDependencies": {

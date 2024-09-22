@@ -57,7 +57,6 @@ if not DEV and not DEBUG:
         DATABASES["default"]["OPTIONS"] = {}
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
-TAGADMIN_DIR = os.path.join(ROOT, "tag-admin")
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
 # Absolute path to the directory static files should be collected to.
@@ -778,7 +777,6 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
-    os.path.join(TAGADMIN_DIR, "dist"),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")

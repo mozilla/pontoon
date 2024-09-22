@@ -13,6 +13,5 @@ flags:
 
   non-frontend-js:
     paths:
-      - tag-admin/src/**.js
       - pontoon/static/js/
     carryforward: true
