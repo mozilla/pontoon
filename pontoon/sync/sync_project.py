@@ -1,22 +1,53 @@
 import logging
-
-from notifications.signals import notify
+from os.path import basename, join
+from tempfile import TemporaryDirectory
 
 from django.conf import settings
+from django.core.files import File
 from django.utils import timezone
+from notifications.signals import notify
 
-from pontoon.base.tasks import PontoonTask
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
+from pontoon.base.tasks import PontoonTask
 from pontoon.sync.checkouts import get_checkouts
 from pontoon.sync.core import serial_task
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
-from pontoon.sync.paths import get_paths
+from pontoon.sync.paths import UploadPaths, get_paths
 from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
-from pontoon.sync.sync_translations_from_repo import sync_translations_from_repo
+from pontoon.sync.sync_translations_from_repo import (
+    find_db_updates,
+    sync_translations_from_repo,
+    write_db_updates,
+)
 from pontoon.sync.sync_translations_to_repo import sync_translations_to_repo
 
-
 log = logging.getLogger(__name__)
+
+
+def sync_uploaded_file(
+    project: Project, locale: Locale, res_path: str, upload: File, user: User
+):
+    """Update translations in the database from an uploaded file."""
+
+    with TemporaryDirectory() as root:
+        file_path = join(root, basename(res_path))
+        with open(file_path, "wb") as file:
+            for chunk in upload.chunks():
+                file.write(chunk)
+        paths = UploadPaths(res_path, locale.code, file_path)
+        updates = find_db_updates(
+            project, {locale.code: locale}, [file_path], paths, []
+        )
+    if updates:
+        now = timezone.now()
+        write_db_updates(project, updates, user, now)
+        ChangedEntityLocale.objects.bulk_create(
+            (
+                ChangedEntityLocale(entity_id=entity_id, locale_id=locale_id, when=now)
+                for entity_id, locale_id in updates
+            ),
+            ignore_conflicts=True,
+        )
 
 
 def sync_project(

@@ -18,13 +18,13 @@ from guardian.decorators import permission_required as guardian_permission_requi
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Prefetch, Q
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.text import slugify
-from django.utils.timezone import make_aware, now
+from django.utils.timezone import make_aware
 from django.utils.translation import trans_real
 
 
@@ -310,116 +310,6 @@ def get_download_content(slug, code, part):
         filename = project.slug + ".zip"
 
     return content, filename
-
-
-def handle_upload_content(slug, code, part, f, user):
-    """
-    Update translations in the database from uploaded file.
-
-    :arg str slug: Project slug.
-    :arg str code: Locale code.
-    :arg str part: Resource path.
-    :arg UploadedFile f: UploadedFile instance.
-    :arg User user: User uploading the file.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import (
-        Entity,
-        Locale,
-        Project,
-        Resource,
-        TranslatedResource,
-        Translation,
-    )
-    from pontoon.sync import formats
-    from pontoon.sync.changeset import ChangeSet
-    from pontoon.sync.vcs.project import VCSProject
-
-    project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code=code)
-    resource = get_object_or_404(Resource, project__slug=slug, path=part)
-    # Store uploaded file to a temporary file and parse it
-    extension = os.path.splitext(f.name)[1]
-    is_messages_json = f.name.endswith("messages.json")
-
-    with tempfile.NamedTemporaryFile(
-        prefix="strings" if extension == ".xml" else "",
-        suffix=".messages.json" if is_messages_json else extension,
-    ) as temp:
-        for chunk in f.chunks():
-            temp.write(chunk)
-        temp.flush()
-        resource_file = formats.parse(temp.name)
-
-    # Update database objects from file
-    changeset = ChangeSet(project, VCSProject(project, locales=[locale]), now())
-    entities_qs = (
-        Entity.objects.filter(
-            resource__project=project, resource__path=part, obsolete=False
-        )
-        .prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(locale=locale),
-                to_attr="db_translations",
-            )
-        )
-        .prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(
-                    locale=locale, approved_date__lte=now()
-                ),
-                to_attr="db_translations_approved_before_sync",
-            )
-        )
-    )
-    entities_dict = {entity.key: entity for entity in entities_qs}
-
-    for vcs_translation in resource_file.translations:
-        key = vcs_translation.key
-        if key in entities_dict:
-            entity = entities_dict[key]
-            changeset.update_entity_translations_from_vcs(
-                entity,
-                locale.code,
-                vcs_translation,
-                user,
-                entity.db_translations,
-                entity.db_translations_approved_before_sync,
-            )
-
-    changeset.bulk_create_translations()
-    changeset.bulk_update_translations()
-    changeset.bulk_log_actions()
-
-    if changeset.changed_translations:
-        # Update 'active' status of all changed translations and their siblings,
-        # i.e. translations of the same entity to the same locale.
-        changed_pks = {t.pk for t in changeset.changed_translations}
-        (
-            Entity.objects.filter(
-                translation__pk__in=changed_pks
-            ).reset_active_translations(locale=locale)
-        )
-
-        # Run checks and create TM entries for translations that pass them
-        valid_translations = changeset.bulk_check_translations()
-        changeset.bulk_create_translation_memory_entries(valid_translations)
-
-        # Remove any TM entries of translations that got rejected
-        changeset.bulk_remove_translation_memory_entries()
-
-    TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
-
-    # Mark translations as changed
-    changed_translations_pks = [t.pk for t in changeset.changed_translations]
-    changed_translations = Translation.objects.filter(pk__in=changed_translations_pks)
-    changed_translations.bulk_mark_changed()
-
-    # Update latest translation
-    if changeset.translations_to_create:
-        changeset.translations_to_create[-1].update_latest_translation()
 
 
 def aware_datetime(*args, **kwargs):

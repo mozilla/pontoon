@@ -1,16 +1,14 @@
 import logging
-
 from collections.abc import Iterable
 from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions
-
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.manager import BaseManager
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
+from moz.l10n.resource import bilingual_extensions
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -28,10 +26,13 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.checkouts import Checkout, Checkouts
 from pontoon.sync.formats import parse
+from pontoon.sync.paths import UploadPaths
 from pontoon.sync.vcs.translation import VCSTranslation
 
-
 log = logging.getLogger(__name__)
+
+Updates = dict[tuple[int, int], tuple[dict[int | None, str], bool]]
+""" (entity.id, locale.id) -> (plural_form -> string, fuzzy) """
 
 
 def sync_translations_from_repo(
@@ -42,20 +43,32 @@ def sync_translations_from_repo(
     db_changes: BaseManager[ChangedEntityLocale],
     now: datetime,
 ) -> None:
-    source_paths: set[str] = (
-        set(paths.ref_paths) if checkouts.source == checkouts.target else set()
+    co = checkouts.target
+    source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
+    delete_removed_bilingual_resources(project, co, paths, source_paths)
+
+    changed_target_paths = (
+        path
+        for path in (join(co.path, co_rel_path) for co_rel_path in co.changed)
+        if path not in source_paths
     )
-    delete_removed_bilingual_resources(project, checkouts.target, paths, source_paths)
-    repo_translations = find_updates_from_repo_to_db(
-        project, locale_map, checkouts.target, paths, db_changes, source_paths
+    updates = find_db_updates(
+        project, locale_map, changed_target_paths, paths, db_changes
     )
+    if updates:
+        user = User.objects.get(username="pontoon-sync")
+        write_db_updates(project, updates, user, now)
+
+
+def write_db_updates(
+    project: Project, updates: Updates, user: User, now: datetime
+) -> None:
     updated_translations, new_translations = update_db_translations(
-        project, repo_translations, now
+        project, updates, user, now
     )
     add_errors(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
-    if repo_translations:
-        update_stats(repo_translations.keys())
+    update_stats(updates.keys())
 
 
 def delete_removed_bilingual_resources(
@@ -102,14 +115,13 @@ def delete_removed_bilingual_resources(
             trans_res.delete()
 
 
-def find_updates_from_repo_to_db(
+def find_db_updates(
     project: Project,
     locale_map: dict[str, Locale],
-    target: Checkout,
-    paths: L10nConfigPaths | L10nDiscoverPaths,
-    db_changes: BaseManager[ChangedEntityLocale],
-    source_paths: set[str],
-) -> dict[tuple[int, int], tuple[dict[int | None, str], bool]] | None:
+    changed_target_paths: Iterable[str],
+    paths: L10nConfigPaths | L10nDiscoverPaths | UploadPaths,
+    db_changes: Iterable[ChangedEntityLocale],
+) -> Updates | None:
     """
     `(entity.id, locale.id) -> (plural_form -> string, fuzzy)`
 
@@ -123,11 +135,6 @@ def find_updates_from_repo_to_db(
     translated_resources: set[tuple[str, int, int]] = set()
     # (db_path, tx.key, locale.id) -> (plural_form -> string, fuzzy)
     translations: dict[tuple[str, str, int], tuple[dict[int | None, str], bool]] = {}
-    changed_target_paths = (
-        path
-        for path in (join(target.path, co_path) for co_path in target.changed)
-        if path not in source_paths
-    )
     for target_path in changed_target_paths:
         ref = paths.find_reference(target_path)
         if ref:
@@ -218,8 +225,7 @@ def find_updates_from_repo_to_db(
             "id", "key", "string", "resource__path"
         )
     }
-    # (entity.id, locale.id) -> (plural_form -> string, fuzzy)
-    res: dict[tuple[int, int], tuple[dict[int | None, str], bool]] = {}
+    res: Updates = {}
     for (db_path, ent_key, locale_id), tx in translations.items():
         entity_id = entities.get((db_path, ent_key), None)
         if entity_id is not None:
@@ -229,13 +235,13 @@ def find_updates_from_repo_to_db(
 
 def update_db_translations(
     project: Project,
-    repo_translations: dict[tuple[int, int], tuple[dict[int | None, str], bool]],
+    repo_translations: Updates,
+    user: User,
     now: datetime,
 ) -> tuple[list[Translation], list[Translation]]:
     if not repo_translations:
         return [], []
 
-    sync_user = User.objects.get(username="pontoon-sync")
     translations_to_reject = Q()
     actions: list[ActionLog] = []
 
@@ -268,7 +274,7 @@ def update_db_translations(
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
-                    performed_by=sync_user,
+                    performed_by=user,
                     translation=tx,
                 )
             )
@@ -288,7 +294,7 @@ def update_db_translations(
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-                    performed_by=sync_user,
+                    performed_by=user,
                     translation=tx,
                 )
             )
@@ -331,7 +337,7 @@ def update_db_translations(
                     ActionLog(
                         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
                         created_at=now,
-                        performed_by=sync_user,
+                        performed_by=user,
                         translation=tx,
                     )
                 )
@@ -354,7 +360,7 @@ def update_db_translations(
         actions.extend(
             ActionLog(
                 action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
-                performed_by=sync_user,
+                performed_by=user,
                 translation=tx,
             )
             for tx in rejected
