@@ -1,19 +1,11 @@
 from django.urls import include, path
 
-import pontoon.tags.admin.views as tags_admin_views
-
 from . import views
 
 
 urlpatterns = [
     # Admin Home
     path("", views.admin, name="pontoon.admin"),
-    # AJAX view: Project tags
-    path(
-        "projects/<slug:project>/ajax/tag/<slug:tag>/",
-        tags_admin_views.ProjectTagAdminAjaxView.as_view(),
-        name="pontoon.admin.project.ajax.tag",
-    ),
     # Add new project
     path("projects/", views.manage_project, name="pontoon.admin.project.new"),
     # Project-related views
