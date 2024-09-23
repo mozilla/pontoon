@@ -1,5 +1,9 @@
 .menu.left-column {
+  background: var(--background-hover-1);
+  border-radius: 6px;
+  box-sizing: border-box;
   float: left;
+  padding: 10px;
   width: 300px;
 }
 
@@ -8,7 +12,8 @@
 }
 
 .menu.left-column li.selected {
-  background: var(--background-hover-1);
+  background: var(--background-hover-2);
+  border-radius: 6px;
 }
 
 .menu.left-column li.selected a {
@@ -21,8 +26,8 @@
 
 .menu.left-column li a {
   display: block;
-  font-size: 15px;
-  padding: 5px;
+  font-size: 16px;
+  padding: 10px;
 }
 
 .menu.left-column .count {

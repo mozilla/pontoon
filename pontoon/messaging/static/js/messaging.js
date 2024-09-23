@@ -111,7 +111,7 @@ $(function () {
     }
 
     // Subject
-    $('#review .subject p').html($('#id_subject').val());
+    $('#review .subject .value').html($('#id_subject').val());
 
     // Body
     const bodyValue = $('#body').val();

@@ -10,9 +10,13 @@
         <section class="message-type">
             <h3>Message type</h3>
             <ul class="check-list">
-                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification', is_enabled=form.notification.value(), form_field=form.notification) }}
-                {{ Checkbox.checkbox('Email', class='email', attribute='email', is_enabled=form.email.value(), form_field=form.email) }}
-                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional', is_enabled=form.transactional.value(), form_field=form.transactional, help='Transactional emails are also sent to users who have not opted in to email
+                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification',
+                is_enabled=form.notification.value(), form_field=form.notification) }}
+                {{ Checkbox.checkbox('Email', class='email', attribute='email', is_enabled=form.email.value(),
+                form_field=form.email) }}
+                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional',
+                is_enabled=form.transactional.value(), form_field=form.transactional, help='Transactional emails are
+                also sent to users who have not opted in to email
                 communication. They are restricted in the type of content that can be included.') }}
             </ul>
             <div class="errors">
@@ -155,23 +159,23 @@
                 </div>
             </div>
         </section>
-
-        <section class="clearfix">
-            <menu class="controls">
-                <button class="button toggle review" data-target="#review">Review message<span
-                        class="fa fa-chevron-right"></span></button>
-            </menu>
-        </section>
     </form>
+    <menu class="controls">
+        <button class="button toggle review" data-target="#review">Review message<span
+                class="fa fa-chevron-right"></span></button>
+    </menu>
 </div>
 <div id="review">
-    <section class="subject clearfix">
-        <h3>Subject</h3>
-        <p></p>
-    </section>
-    <section class="body clearfix">
-        <h3>Body</h3>
-        <div class="value"></div>
+    <section class="message-content clearfix">
+        <h3>Review message</h3>
+        <div class="content-wrapper">
+            <div class="subject">
+                <p class="value"></p>
+            </div>
+            <div class="body">
+                <div class="value"></div>
+            </div>
+        </div>
     </section>
     <section class="recipients clearfix">
         <h3>Recipients</h3>
@@ -209,14 +213,12 @@
             not opted in to email communication. They are restricted in the type of content that can be
             included. When in doubt, please review with legal.</p>
     </section>
-    <section class="clearfix">
-        <menu class="controls">
-            <button class="button toggle edit" data-target="#compose"><span
-                    class="fa fa-chevron-left"></span>Back to editing</button>
-            <div class="right">
-                <button class="button send to-myself">Send to myself</button>
-                <button class="button active send">Send</button>
-            </div>
-        </menu>
-    </section>
+    <menu class="controls">
+        <button class="button toggle edit" data-target="#compose"><span class="fa fa-chevron-left"></span>Back to
+            editing</button>
+        <div class="right">
+            <button class="button send to-myself">Send to myself</button>
+            <button class="button active send">Send</button>
+        </div>
+    </menu>
 </div>

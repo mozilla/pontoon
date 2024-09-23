@@ -4,16 +4,19 @@
   }
 
   .right-column {
+    background: transparent;
+
     section {
       padding: 20px;
     }
   }
 
   .controls {
-    margin: 0;
+    margin: 40px 0 20px;
 
     .button {
-      width: 160px;
+      font-size: 15px;
+      padding: 10px 20px;
       .fa-chevron-left {
         margin-right: 5px;
       }
@@ -24,10 +27,6 @@
 
     .button:hover {
       color: inherit;
-    }
-
-    .button:not(.active) {
-      background: var(--button-background-2);
     }
 
     .right {
@@ -46,6 +45,11 @@
   #compose {
     box-sizing: border-box;
 
+    form {
+      background: var(--dark-grey-1);
+      border-radius: 6px;
+    }
+
     li:hover {
       background: inherit;
     }
@@ -62,6 +66,8 @@
     }
 
     .check-list {
+      overflow: visible;
+
       .check-box.transactional {
         display: none;
         padding-left: 20px;
@@ -116,7 +122,6 @@
     }
 
     textarea {
-      border-radius: 3px;
       height: 300px;
     }
 
@@ -150,12 +155,28 @@
     p.transactional {
       margin-top: 20px;
       font-style: italic;
-      padding: 20px;
-      background: var(--background-1);
-      border-radius: 5px;
 
       i {
-        color: var(--status-translated);
+        color: var(--status-error);
+      }
+    }
+
+    > section {
+      background: var(--dark-grey-1);
+      border-radius: 6px;
+      margin-bottom: 40px;
+    }
+
+    > section:last-child {
+      margin-bottom: 0;
+    }
+
+    .subject {
+      .value {
+        color: var(--white-1);
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 14px;
       }
     }
 
@@ -194,7 +215,7 @@
       }
 
       .title {
-        color: var(--light-grey-7);
+        color: var(--light-grey-6);
         font-size: 20px;
         font-weight: 100;
       }
@@ -205,8 +226,8 @@
 
       .message {
         background: var(--dark-grey-1);
-        border-radius: 10px;
-        color: var(--light-grey-7);
+        border-radius: 6px;
+        color: var(--light-grey-6);
         margin-bottom: 60px;
         padding: 20px;
         position: relative;
@@ -248,10 +269,10 @@
           }
 
           .subject {
-            color: var(--light-grey-6);
-            font-size: 18px;
+            color: var(--white-1);
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -331,6 +352,10 @@
 
       p {
         font-weight: normal;
+        line-height: 1.5em;
+      }
+
+      p:not(:last-child) {
         padding-bottom: 1em;
       }
 
@@ -341,7 +366,6 @@
 
       ol,
       ul {
-        color: var(--light-grey-6);
         font-size: 16px;
         margin-left: 1.5em;
         padding-bottom: 1em;
