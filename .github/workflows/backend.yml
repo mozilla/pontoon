@@ -46,7 +46,8 @@ jobs:
         with:
           enable-cache: true
           version: "0.4.13"
-      - run: >
+      - name: Install requirements
+        run: >
           uv pip install
           -r requirements/default.txt
           -r requirements/dev.txt
@@ -67,7 +68,12 @@ jobs:
       - run: mkdir -p tag-admin/dist translate/dist translate/public
       - run: python manage.py collectstatic
 
-      - run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
+      # Check if there are missing migrations
+      - name: Verify missing migrations
+        run: python manage.py makemigrations --check
+
+      - name: Run tests
+        run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
       - uses: codecov/codecov-action@v4
         with:
           flags: backend
