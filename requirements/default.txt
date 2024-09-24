@@ -18,9 +18,9 @@ anyio==4.3.0 \
     # via
     #   httpx
     #   openai
-apscheduler==3.9.1.post1 \
-    --hash=sha256:b2bea0309569da53a7261bfa0ce19c67ddbfe151bda776a6a907579fdbd3eb2a \
-    --hash=sha256:c8c618241dbb2785ed5a687504b14cb1851d6f7b5a4edf3a51e39cc6a069967a
+apscheduler==3.10.4 \
+    --hash=sha256:e6df071b27d9be898e486bc7940a7be50b4af2e9da7c08f0744a96d4bd4cef4a \
+    --hash=sha256:fb91e8a768632a4756a585f79ec834e0e27aad5860bac7eaa523d9ccefd87661
     # via -r requirements/default.in
 asgiref==3.8.1 \
     --hash=sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47 \
@@ -1218,10 +1218,6 @@ sacrebleu==2.3.1 \
 sacremoses==0.0.43 \
     --hash=sha256:123c1bf2664351fb05e16f87d3786dbe44a050cfd7b85161c09ad9a63a8e2948
     # via -r requirements/default.in
-setuptools==75.1.0 \
-    --hash=sha256:35ab7fd3bcd95e6b7fd704e4a1539513edad446c097797f2985e0e4b960772f2 \
-    --hash=sha256:d59a21b17a275fb872a9c3dae73963160ae079f1049ed956880cd7c09b120538
-    # via apscheduler
 silme @ https://github.com/mozilla/silme/archive/v0.11.2.zip \
     --hash=sha256:74a098a9a3b05d0c262e7231225f9200b02342e552eda997d2e8ec07d00d1371
     # via -r requirements/default.in
