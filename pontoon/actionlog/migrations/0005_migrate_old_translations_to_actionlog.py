@@ -95,7 +95,7 @@ def migrate_translations_to_actionlog(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('actionlog', '0004_alter_actionlog_created_at'),
+        ("actionlog", "0004_alter_actionlog_created_at"),
     ]
 
     operations = [
