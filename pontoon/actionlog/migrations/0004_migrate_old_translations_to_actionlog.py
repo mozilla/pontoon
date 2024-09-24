@@ -90,12 +90,6 @@ def migrate_translations_to_actionlog(apps, schema_editor):
                     )
                 )
 
-    print("Loop complete")
-    print("Loop complete")
-    print("Loop complete")
-    print("Loop complete")
-    print("Loop complete")
-
     ActionLog.objects.bulk_create(actions_to_log, batch_size=BATCH_SIZE)
 
 
