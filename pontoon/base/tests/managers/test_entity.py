@@ -1081,6 +1081,113 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 
 
 @pytest.mark.django_db
+def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
+    """
+    Tests search options.
+    """
+    entities = [
+        EntityFactory.create(
+            key="key %s" % i,
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        string="TestEntity0",
+        rejected=True,
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        user=user_a,
+    )
+
+    # Base case
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="",
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test search_match_case
+    assert (
+        list(
+            Entity.for_project_locale(
+                admin,
+                resource_a.project,
+                locale_a,
+                search="testentity",
+                search_match_case=True,
+                author=user_a.email,
+            )
+        )
+        == []
+    )
+
+    # Test search_match_whole_word
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="TestEntity1",
+            search_match_whole_word=True,
+            author=user_a.email,
+        )
+    ) == [entities[1]]
+
+    # Test search_identifiers
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="key",
+            search_identifiers=True,
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test search_rejected_translations
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="TestEntity0",
+            search_exclude_source_strings=True,
+            search_rejected_translations=True,
+            author=user_a.email,
+        )
+    ) == [entities[0]]
+
+    # Test search_exclude_source_strings
+    assert (
+        list(
+            Entity.for_project_locale(
+                admin,
+                resource_a.project,
+                locale_a,
+                search="TestEntity1",
+                search_exclude_source_strings=True,
+                author=user_a.email,
+            )
+        )
+        == []
+    )
+
+
+@pytest.mark.django_db
 def test_mgr_entity_search_invalid_query(entity_test_search):
     """
     We shouldn't return any records if there aren't any matching rows.
