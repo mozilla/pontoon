@@ -1081,10 +1081,7 @@ def test_mgr_entity_filter_combined(admin, resource_a, locale_a, user_a):
 
 
 @pytest.mark.django_db
-def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
-    """
-    Tests search options.
-    """
+def test_mgr_entity_option_match_case(admin, resource_a, locale_a, user_a):
     entities = [
         EntityFactory.create(
             key="key %s" % i,
@@ -1097,7 +1094,6 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
     TranslationFactory.create(
         locale=locale_a,
         entity=entities[0],
-        string="TestEntity0",
         rejected=True,
         user=user_a,
     )
@@ -1114,7 +1110,7 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
             admin,
             resource_a.project,
             locale_a,
-            search="",
+            search="testentity",
             author=user_a.email,
         )
     ) == [entities[i] for i in range(0, 2)]
@@ -1134,17 +1130,94 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         == []
     )
 
-    # Test search_match_whole_word
+
+@pytest.mark.django_db
+def test_mgr_entity_option_match_whole_word(admin, resource_a, locale_a, user_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        rejected=True,
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        user=user_a,
+    )
+
+    # Base case
     assert list(
         Entity.for_project_locale(
             admin,
             resource_a.project,
             locale_a,
-            search="TestEntity1",
-            search_match_whole_word=True,
+            search="TestEntity",
             author=user_a.email,
         )
-    ) == [entities[1]]
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test search_match_whole_word
+    assert (
+        list(
+            Entity.for_project_locale(
+                admin,
+                resource_a.project,
+                locale_a,
+                search="TestEntity",
+                search_match_whole_word=True,
+                author=user_a.email,
+            )
+        )
+        == []
+    )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_option_identifiers(admin, resource_a, locale_a, user_a):
+    entities = [
+        EntityFactory.create(
+            key="key %s" % i,
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        rejected=True,
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        user=user_a,
+    )
+
+    # Base case
+    assert (
+        list(
+            Entity.for_project_locale(
+                admin,
+                resource_a.project,
+                locale_a,
+                search="key",
+                author=user_a.email,
+            )
+        )
+        == []
+    )
 
     # Test search_identifiers
     assert list(
@@ -1158,18 +1231,89 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
         )
     ) == [entities[i] for i in range(0, 2)]
 
+
+@pytest.mark.django_db
+def test_mgr_entity_option_rejected_translations(admin, resource_a, locale_a, user_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        rejected=True,
+        string="TestString",
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        string="TestString",
+        user=user_a,
+    )
+
+    # Base case
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="TestString",
+            author=user_a.email,
+        )
+    ) == [entities[1]]
+
     # Test search_rejected_translations
     assert list(
         Entity.for_project_locale(
             admin,
             resource_a.project,
             locale_a,
-            search="TestEntity0",
-            search_exclude_source_strings=True,
+            search="TestString",
             search_rejected_translations=True,
             author=user_a.email,
         )
-    ) == [entities[0]]
+    ) == [entities[i] for i in range(0, 2)]
+
+
+@pytest.mark.django_db
+def test_mgr_entity_option_exclude_source_strings(admin, resource_a, locale_a, user_a):
+    entities = [
+        EntityFactory.create(
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        rejected=True,
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        user=user_a,
+    )
+
+    # Base case
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="TestEntity",
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
 
     # Test search_exclude_source_strings
     assert (
@@ -1178,13 +1322,113 @@ def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
                 admin,
                 resource_a.project,
                 locale_a,
-                search="TestEntity1",
+                search="TestEntity",
                 search_exclude_source_strings=True,
                 author=user_a.email,
             )
         )
         == []
     )
+
+
+@pytest.mark.django_db
+def test_mgr_entity_option_combined(admin, resource_a, locale_a, user_a):
+    """
+    Test combinations of filters
+    """
+
+    entities = [
+        EntityFactory.create(
+            key="key %s" % i,
+            resource=resource_a,
+            string="TestEntity%s" % i,
+        )
+        for i in range(0, 2)
+    ]
+
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[0],
+        rejected=True,
+        string="Translation 0",
+        user=user_a,
+    )
+    TranslationFactory.create(
+        locale=locale_a,
+        entity=entities[1],
+        approved=True,
+        string="Translation 1",
+        user=user_a,
+    )
+
+    # Base case
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="",
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test exclude_source_strings with identifiers
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="key",
+            search_exclude_source_strings=True,
+            search_identifiers=True,
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test identifiers with match_whole_word
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="key",
+            search_match_whole_word=True,
+            search_identifiers=True,
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
+
+    # Test match_case with match_whole_word
+    assert (
+        list(
+            Entity.for_project_locale(
+                admin,
+                resource_a.project,
+                locale_a,
+                search="translation",
+                search_match_case=True,
+                search_match_whole_word=True,
+                author=user_a.email,
+            )
+        )
+        == []
+    )
+
+    # Test all options at once
+    assert list(
+        Entity.for_project_locale(
+            admin,
+            resource_a.project,
+            locale_a,
+            search="Translation",
+            search_match_case=True,
+            search_match_whole_word=True,
+            search_identifiers=True,
+            search_rejected_translations=True,
+            search_exclude_source_strings=True,
+            author=user_a.email,
+        )
+    ) == [entities[i] for i in range(0, 2)]
 
 
 @pytest.mark.django_db
