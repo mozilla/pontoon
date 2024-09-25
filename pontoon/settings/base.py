@@ -873,9 +873,9 @@ X_FRAME_OPTIONS = "DENY"
 # Use correct header for detecting HTTPS on Heroku.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Do not set SECURE_HSTS_SECONDS.
-# HSTS is being taken care of in pontoon/wsgi.py.
-# SECURE_HSTS_SECONDS = 63072000
+# If set to a non-zero integer value, the SecurityMiddleware sets the
+# HTTP Strict Transport Security header on all responses that do not already have it.
+SECURE_HSTS_SECONDS = 31536000
 
 # X-Content-Type-Options: nosniff
 # Disables browser MIME type sniffing

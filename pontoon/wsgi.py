@@ -6,11 +6,7 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import os
-
 import dotenv
-
-from wsgi_sslify import sslify
-
 from django.core.wsgi import get_wsgi_application
 
 
@@ -23,4 +19,4 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pontoon.settings")
 
 # sslify sets a Strict-Transport-Security header,
 # which instructs browsers to always use HTTPS.
-application = sslify(get_wsgi_application())
+application = get_wsgi_application()
