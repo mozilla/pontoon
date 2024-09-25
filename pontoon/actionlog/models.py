@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class ActionLog(models.Model):
@@ -20,7 +21,7 @@ class ActionLog(models.Model):
         COMMENT_ADDED = "comment:added", "Comment added"
 
     action_type = models.CharField(max_length=50, choices=ActionType.choices)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     performed_by = models.ForeignKey(
         "auth.User", models.SET_NULL, related_name="actions", null=True
     )
