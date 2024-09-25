@@ -875,7 +875,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # If set to a non-zero integer value, the SecurityMiddleware sets the
 # HTTP Strict Transport Security header on all responses that do not already have it.
-SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_SECONDS = 31536000  # 1 year
 
 # X-Content-Type-Options: nosniff
 # Disables browser MIME type sniffing
