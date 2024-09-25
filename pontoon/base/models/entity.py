@@ -921,13 +921,6 @@ class Entity(DirtyFieldsMixin, models.Model):
                 "id", flat=True
             )
 
-            # for t in translation_matches:
-            #     print(t.string)
-            # # print("woman")
-            # # print(search)
-            # for e in entity_matches:
-            #     print(e)
-
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
