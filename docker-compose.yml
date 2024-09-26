@@ -17,7 +17,6 @@ services:
     volumes:
       - ./pontoon:/app/pontoon
       - ./requirements:/app/requirements
-      - ./tag-admin:/app/tag-admin
       - ./translate:/app/translate
       - ~/.ssh:/home/pontoon/.ssh
 

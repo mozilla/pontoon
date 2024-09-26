@@ -65,7 +65,7 @@ jobs:
       # Run collectstatic with minimal dependencies, skipping the actual front-end build
       - run: npm install
         working-directory: pontoon
-      - run: mkdir -p tag-admin/dist translate/dist translate/public
+      - run: mkdir -p translate/dist translate/public
       - run: python manage.py collectstatic
 
       # Check if there are missing migrations

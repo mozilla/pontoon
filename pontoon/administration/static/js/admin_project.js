@@ -244,7 +244,7 @@ $(function () {
   // Delete inline form item (e.g. external resource)
   $('body').on('click.pontoon', '.delete-inline', function (e) {
     e.preventDefault();
-    $(this).parent().toggleClass('delete');
+    $(this).parents('.inline').toggleClass('delete');
     $(this).next().prop('checked', !$(this).next().prop('checked'));
   });
   $('.inline [checked]').click().prev().click();
@@ -303,5 +303,13 @@ $(function () {
     toggleBranchInput($('.repository:last').find('.type-wrapper select'));
 
     $totalForms.val(count + 1);
+  });
+
+  // Toggle tag resource selector
+  $('body').on('click', '.button.manage-resources', function (e) {
+    e.preventDefault();
+
+    $(this).toggleClass('active');
+    $(this).parents('.tag.inline').find('.multiple-item-selector').toggle();
   });
 });

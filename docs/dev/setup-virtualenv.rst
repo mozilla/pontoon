@@ -161,7 +161,7 @@ Installation
 
       npm install
 
-11. Build the tag-admin client:
+11. Build the client:
 
    .. code-block:: bash
 

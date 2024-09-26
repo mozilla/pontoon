@@ -7,8 +7,7 @@
 sigint_handler() { exit 0; }
 trap sigint_handler INT
 
-npx concurrently -n translate,tagadmin,server,pg -c cyan,magenta,green,red \
+npx concurrently -n translate,server,pg -c cyan,magenta,green,red \
   'npm start -w translate' \
-  'npm start -w tag-admin' \
   'docker-compose logs --tail=0 --follow --no-log-prefix server' \
   'docker-compose logs --tail=0 --follow --no-log-prefix postgresql' \

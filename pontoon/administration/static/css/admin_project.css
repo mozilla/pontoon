@@ -9,7 +9,11 @@ body {
 }
 
 select {
-  margin-top: 4px;
+  background: var(--input-background-1);
+  border: none;
+  border-radius: 3px;
+  color: var(--input-color-1);
+  height: 33px;
 }
 
 h1 {
@@ -45,7 +49,7 @@ form > div {
   text-align: right;
 }
 
-form > div.controls {
+form > div.controls:last-child {
   margin-top: 70px;
 }
 
@@ -81,6 +85,7 @@ input[type='text'],
 input[type='password'],
 input[type='url'],
 input[type='number'],
+input[type='date'],
 textarea {
   display: block;
   height: 24px;
@@ -124,6 +129,15 @@ form .controls .button.delete-inline {
   height: 33px;
   width: 33px;
   padding: 4px;
+}
+
+form .controls .button.manage-resources[disabled] {
+  color: var(--toggle-color-1);
+  cursor: auto;
+}
+
+form .controls .button.manage-resources[disabled]:hover {
+  background: var(--button-background-1);
 }
 
 .controls .button,
@@ -484,62 +498,59 @@ textarea.strings-source {
 }
 
 /* Code specific to the manage tags widget */
-
-.tag.inline label[for*='name'] {
+.tag.inline label[for*='name'],
+.tag.inline label[for*='slug'],
+.tag.inline label[for*='priority'] {
+  box-sizing: border-box;
   float: left;
-  width: 330px;
-}
-
-.tag.inline input[id*='name'] {
-  float: left;
-  width: 324px;
-  margin-right: 6px;
-}
-
-.tag.inline label[for*='slug'] {
-  float: left;
-  width: 331px;
-}
-
-.tag.inline input[id*='slug'] {
-  float: left;
-  width: 321px;
+  width: 242px;
   margin-right: 6px;
 }
 
 .tag.inline label[for*='priority'] {
-  float: left;
-  width: 311px;
+  margin-right: 0;
 }
 
-.tag.inline input[id*='priority'] {
+.tag.inline input[id*='name'],
+.tag.inline input[id*='slug'],
+.tag.inline select[id*='priority'] {
+  box-sizing: border-box;
   float: left;
-  width: 270px;
+  height: 33px;
+  width: 242px;
   margin-right: 6px;
+}
+
+.tag.inline .button.manage-resources {
+  float: left;
+  width: 199px;
+  height: 33px;
+}
+
+.tag.inline .multiple-item-selector {
+  display: none;
+  margin: 40px 0;
+}
+
+.tag.inline .multiple-item-selector .item.select .menu {
+  width: 466px;
+}
+
+.tag.inline .multiple-item-selector .item.select .menu input[type='search'] {
+  width: 100%;
 }
 
 .tag.inline .form-errors {
   clear: both;
 }
 
-.tag.inline .form-errors .name-errors {
+.tag.inline .form-errors > div {
   float: left;
-  width: 324px;
+  width: 242px;
+  clear: both;
   margin-right: 5px;
-  min-height: 1px;
 }
 
-.tag.inline .form-errors .slug-errors {
-  float: left;
-  width: 321px;
-}
-
-.tag.inline .form-errors .priority-errors {
-  float: left;
-  width: 311px;
-}
-
-.tag.inline select[name^='tag_set-'][name$='-priority'] {
-  width: 272px;
-  margin-top: 0;
+.tag.inline .form-errors > div:last-child {
+  margin-right: 0;
 }
