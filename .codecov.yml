@@ -1,4 +1,8 @@
-comment: off
+comment:
+  layout: "condensed_header, condensed_files, condensed_footer"
+  behavior: default            # post new comment, edit if it already exists
+  require_changes: true        # comment only if the coverage changes
+  hide_project_coverage: false # show coverage only for the diff
 
 flags:
   backend:
