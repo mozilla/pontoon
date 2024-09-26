@@ -924,8 +924,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             entities = Entity.objects.filter(
                 pk__in=set(list(translation_matches) + list(entity_matches))
             )
-            for e in entities:
-                print(e.string)
 
         order_fields = ("resource__order", "order")
         if project.slug == "all-projects":

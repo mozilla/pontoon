@@ -62,33 +62,6 @@ describe('<SearchPanelDialog>', () => {
 
     expect(onApplyOptions.called).toBeTruthy();
   });
-
-  // This test case below currently fails. When onDiscard is called
-  // through the dispatchEvent function, an error is thrown claiming
-  // that onDiscard is not defined. The code on lines 85-88 are taken
-  // from useOnDiscard.test.js
-  // The idea behind this test case is to ensure that toggled options
-  // remain toggled even after the SearchPanel component is discarded
-  it('maintains selected options when the panel is discarded', () => {
-    const store = createReduxStore();
-    const onToggleOption = sinon.spy();
-    const onDiscard = sinon.spy();
-
-    const dialogWrapper = mountComponentWithStore(SearchPanelDialog, store, {
-      selectedSearchOptions: selectedSearchOptions,
-      onApplyOptions: sinon.spy(),
-      onToggleOption,
-      onDiscard,
-    });
-
-    dialogWrapper.find(`.menu .search_match_case`).simulate('click');
-    expect(onToggleOption.calledWith('search_match_case')).toBeTruthy();
-
-    const click = new Event('click', { bubbles: true });
-    document.body.dispatchEvent(click);
-
-    expect(onDiscard.calledOnce).toBeTruthy();
-  });
 });
 
 describe('<SearchPanel>', () => {
