@@ -19,7 +19,7 @@ $(function () {
 
     const isValidLocale = $form.find('[name=locales]').val();
 
-    const isValidProject = $form.find('[name=projects]').val();
+    const isValidProject = $form.find('[name=projects]').val().length;
 
     const isValidTranslationMinimum = $form
       .find('[name=translation_minimum]')[0]
