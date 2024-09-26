@@ -1,7 +1,7 @@
 /**
  * CSS classes related to the multiple item selector widget.
  */
-form {
+.multiple-item-selector {
   .item {
     li {
       cursor: pointer;
@@ -45,10 +45,6 @@ form {
     float: right;
   }
 
-  > div {
-    margin: 20px 0;
-  }
-
   .select {
     text-align: left;
   }
@@ -64,5 +60,9 @@ form {
     color: var(--status-translated-alt);
     float: right;
     text-transform: uppercase;
+  }
+
+  select {
+    display: none;
   }
 }

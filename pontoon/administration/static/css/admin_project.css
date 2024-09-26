@@ -554,7 +554,3 @@ textarea.strings-source {
 .tag.inline .form-errors > div:last-child {
   margin-right: 0;
 }
-
-.tag.inline select[id^='id_tag_set-'][id$='-resources'] {
-  display: none;
-}
