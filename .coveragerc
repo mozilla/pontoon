@@ -1,7 +1,7 @@
-[coverage:run]
+[run]
 omit =
     setup.py
     *migrations*
-include =
+source =
     *pontoon*
     *tests*
