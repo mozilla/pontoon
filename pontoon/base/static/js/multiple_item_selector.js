@@ -3,17 +3,19 @@ $(function () {
   /**
    * Function keeps track of inputs that contain information about the order of selected items.
    */
-  function updateSelectedItems() {
-    const $selectedList = $('.multiple-item-selector .item.selected'),
-      $selectedItemsField = $selectedList.find('input[type=hidden]'),
-      selectedItems = $selectedList
-        .find('li[data-id]')
-        .map(function () {
-          return $(this).data('id');
-        })
-        .get();
+  function updateSelectedItems(element) {
+    const widget = $(element).parents('.multiple-item-selector');
+    const selectElement = widget.find('select');
+    const selectedItems = widget
+      .find('.item.selected li[data-id]')
+      .map(function () {
+        return $(this).data('id');
+      })
+      .get();
 
-    $selectedItemsField.val(selectedItems.join());
+    for (const option of selectElement[0].options) {
+      option.selected = selectedItems.includes(parseInt(option.value));
+    }
   }
 
   // Choose items
@@ -24,7 +26,7 @@ $(function () {
 
     target.append(item);
     target.scrollTop(target[0].scrollHeight);
-    updateSelectedItems();
+    updateSelectedItems(this);
   });
 
   // Choose/remove all items
@@ -36,7 +38,7 @@ $(function () {
 
     target.append(items);
     target.scrollTop(target[0].scrollHeight);
-    updateSelectedItems();
+    updateSelectedItems(this);
   });
 
   if ($.ui && $.ui.sortable) {

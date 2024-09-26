@@ -27,8 +27,7 @@
 
   {% set selected_resources = form.instance.resources.all() if form.instance.pk else [] %}
   {% set available_resources = form.fields['resources'].queryset.exclude(pk__in=selected_resources) %}
-  {{ multiple_item_selector.render(available_resources, selected_resources) }}
-  {{ form.resources }}
+  {{ multiple_item_selector.render(available_resources, selected_resources, form_field=form.resources) }}
 
   {% if form.name.errors or form.slug.errors %}
   <div class="form-errors">
@@ -68,8 +67,7 @@
 
   {% set selected_resources = [] %}
   {% set available_resources = formset.empty_form.fields['resources'].queryset %}
-  {{ multiple_item_selector.render(selected_resources, available_resources, form_field='resources') }}
-  {{ formset.empty_form.resources }}
+  {{ multiple_item_selector.render(selected_resources, available_resources, form_field=formset.empty_form.resources) }}
 
   {% if formset.empty_form.name.errors or formset.empty_form.slug.errors %}
     <div class="form-errors">

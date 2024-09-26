@@ -3,33 +3,24 @@ $(function () {
 
   // Before submitting the form
   $('#admin-form').submit(function () {
-    // Update locales and tags
+    // Update locales
     const locales = [
       {
-        list: $('.admin-team-selector .locale.selected'),
+        selector: '.admin-team-selector .locale.selected',
         input: $('#id_locales'),
       },
       {
-        list: $('.admin-team-selector .locale.readonly'),
+        selector: '.admin-team-selector .locale.readonly',
         input: $('#id_locales_readonly'),
       },
       {
-        list: $('.multiple-team-selector .locale.selected'),
+        selector: '.multiple-team-selector .locale.selected',
         input: $('#id_locales_pretranslate'),
       },
     ];
 
-    const tags = $('.tag.inline')
-      .map(function () {
-        return {
-          list: $(this).find('.multiple-item-selector .selected'),
-          input: $(this).find('[id^=id_tag_set-][id$=-resources]'),
-        };
-      })
-      .get();
-
-    locales.concat(tags).forEach(function (type) {
-      const ids = type.list
+    locales.forEach(function (type) {
+      const ids = $(type.selector)
         .find('li[data-id]')
         .map(function () {
           return $(this).data('id');
