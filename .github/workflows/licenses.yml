@@ -1,4 +1,4 @@
-name: Check license of Python dependencies
+name: Check license of dependencies
 
 on:
   push:
@@ -34,18 +34,19 @@ jobs:
         with:
           enable-cache: true
           version: "0.4.13"
-      - name: Install licensecheck
-        # Installing here instead of using requirements, as this package
-        # has a lot of dependencies that are not relevant for Pontoon.
-        run: uv pip install 'licensecheck==2024.3'
-      - name: Check licenses
-        # For MPL see https://github.com/FHPythonUtils/LicenseCheck/issues/86
+      - name: Install requirements
         run: >
-          licensecheck
-          -u 'requirements:requirements/default.txt;requirements/dev.txt;requirements/lint.txt;requirements/test.txt;docs/requirements.txt'
-          --zero
-          --ignore-license mpl
-          --ignore-packages text-unidecode translate-toolkit
+          uv pip install
+          -r requirements/default.txt
+          -r requirements/dev.txt
+          -r requirements/test.txt
+          -r requirements/lint.txt
+      - name: Install pip-licenses
+        run: uv pip install 'pip-licenses==5.0.0'
+      - name: Check licenses
+        run: |
+          pip-licenses
+          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit silme
   npm-licenses:
     name: Check npm licenses
     runs-on: ubuntu-latest
@@ -57,6 +58,8 @@ jobs:
         run: npm install --global license-checker-rseidelsohn@4.4.2
       - name: Check licenses
         run: |
-          # --failOn doesn't print the licenses. Use jq to print only minimal info
+          # --failOn doesn't print the licenses on failure.
+          # Use jq to print only minimal info, then print a summary when
+          # checking for GPL packages.
           license-checker-rseidelsohn --json | jq -r 'to_entries[] | "\(.key): \(.value.licenses)"'
-          license-checker-rseidelsohn --failOn 'GPL'
+          license-checker-rseidelsohn --summary --failOn 'GPL'
