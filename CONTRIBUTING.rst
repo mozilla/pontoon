@@ -269,7 +269,7 @@ a virtualenv to build docs, do this:
     $ cd docs/
     $ uv venv
     $ source .venv/bin/activate
-    $ uv pip install -r requirements.txt
+    $ uv pip install -r requirements/default.txt
 
 Then, to build the docs, run this:
 
