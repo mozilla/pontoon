@@ -1,0 +1,62 @@
+name: Check license of Python dependencies
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/licenses.yml
+      - package.json
+      - requirements/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/licenses.yml
+      - package.json
+      - requirements/**
+  workflow_dispatch:
+
+jobs:
+  py-licenses:
+    name: Check Python licenses
+    env:
+      UV_SYSTEM_PYTHON: 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          version: "0.4.13"
+      - name: Install licensecheck
+        # Installing here instead of using requirements, as this package
+        # has a lot of dependencies that are not relevant for Pontoon.
+        run: uv pip install 'licensecheck==2024.3'
+      - name: Check licenses
+        # For MPL see https://github.com/FHPythonUtils/LicenseCheck/issues/86
+        run: >
+          licensecheck
+          -u 'requirements:requirements/default.txt;requirements/dev.txt;requirements/lint.txt;requirements/test.txt;docs/requirements.txt'
+          --zero
+          --ignore-license mpl
+          --ignore-packages text-unidecode translate-toolkit
+  npm-licenses:
+    name: Check npm licenses
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '18' }
+      - name: Install license-checker
+        run: npm install --global license-checker-rseidelsohn@4.4.2
+      - name: Check licenses
+        run: |
+          # --failOn doesn't print the licenses. Use jq to print only minimal info
+          license-checker-rseidelsohn --json | jq -r 'to_entries[] | "\(.key): \(.value.licenses)"'
+          license-checker-rseidelsohn --failOn 'GPL'
