@@ -2,6 +2,10 @@
 
 module.exports = {
   root: true,
+  ignorePatterns: [
+    '/dist/',
+    '/public/translate.html',
+  ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],

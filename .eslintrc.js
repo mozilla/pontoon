@@ -2,6 +2,26 @@
 
 module.exports = {
   extends: ['eslint:recommended', 'plugin:react/recommended'],
+  ignorePatterns: [
+    '.vscode/',
+    '/.github/',
+    '/media/',
+    '/static/',
+    'coverage/',
+    'docs/_build/',
+    'docs/*venv/',
+    'package-lock.json',
+    'specs/',
+    // Jinja templates
+    '**/templates/**/*.html',
+    // Vendored code
+    'error_pages/css/blockrain.css',
+    'error_pages/js/',
+    'pontoon/base/static/css/boilerplate.css',
+    'pontoon/base/static/css/fontawesome-all.css',
+    'pontoon/base/static/css/nprogress.css',
+    'pontoon/base/static/js/lib/',
+  ],
   env: {
     es6: true,
     browser: true,
