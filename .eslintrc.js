@@ -9,9 +9,10 @@ module.exports = {
     '/static/',
     'coverage/',
     'docs/_build/',
-    'docs/*venv/',
     'package-lock.json',
     'specs/',
+    '.venv/',
+    'venv/',
     // Jinja templates
     '**/templates/**/*.html',
     // Vendored code
