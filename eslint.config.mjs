@@ -1,3 +1,4 @@
+import importPlugin from 'eslint-plugin-import';
 import react from 'eslint-plugin-react';
 import globals from 'globals';
 import babelParser from '@babel/eslint-parser';
@@ -20,7 +21,7 @@ export default [
       '**/.vscode/',
       '.github/',
       'media/',
-      'static/',
+      '**/static/',
       '**/coverage/',
       'docs/_build/',
       '**/package-lock.json',
@@ -44,6 +45,7 @@ export default [
   {
     plugins: {
       react,
+      import: importPlugin,
     },
 
     languageOptions: {

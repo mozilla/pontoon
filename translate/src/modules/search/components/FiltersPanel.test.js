@@ -20,20 +20,20 @@ describe('<FiltersPanelDialog>', () => {
       timeRangeData: [],
     });
 
-    for (let filter of FILTERS_STATUS) {
+    for (const filter of FILTERS_STATUS) {
       expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
         statuses.includes(filter.slug),
       );
     }
 
-    for (let filter of FILTERS_EXTRA) {
+    for (const filter of FILTERS_EXTRA) {
       expect(wrapper.find(`.menu .${filter.slug}`).hasClass('selected')).toBe(
         extras.includes(filter.slug),
       );
     }
   });
 
-  for (let { slug } of FILTERS_STATUS) {
+  for (const { slug } of FILTERS_STATUS) {
     describe(`status: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = sinon.spy();
@@ -70,7 +70,7 @@ describe('<FiltersPanelDialog>', () => {
     });
   }
 
-  for (let { slug } of FILTERS_EXTRA) {
+  for (const { slug } of FILTERS_EXTRA) {
     describe(`extra: ${slug}`, () => {
       it('applies a single filter on click on a filter title', () => {
         const onApplyFilter = sinon.spy();
@@ -188,7 +188,7 @@ describe('<FiltersPanel>', () => {
   });
 
   it('has the correct icon based on parameters', () => {
-    for (let { slug } of FILTERS_STATUS) {
+    for (const { slug } of FILTERS_STATUS) {
       const wrapper = shallow(
         <FiltersPanel
           filters={{ authors: [], extras: [], statuses: [slug], tags: [] }}
@@ -203,7 +203,7 @@ describe('<FiltersPanel>', () => {
       expect(wrapper.find('.visibility-switch').hasClass(slug)).toBeTruthy();
     }
 
-    for (let { slug } of FILTERS_EXTRA) {
+    for (const { slug } of FILTERS_EXTRA) {
       const wrapper = shallow(
         <FiltersPanel
           filters={{ authors: [], extras: [slug], statuses: [], tags: [] }}

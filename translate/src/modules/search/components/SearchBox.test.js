@@ -35,7 +35,7 @@ describe('<SearchBoxBase>', () => {
   });
 
   it('has the correct placeholder based on parameters', () => {
-    for (let { name, slug } of FILTERS_STATUS) {
+    for (const { name, slug } of FILTERS_STATUS) {
       const wrapper = mount(
         <SearchBoxBase
           parameters={{ status: slug }}
@@ -46,7 +46,7 @@ describe('<SearchBoxBase>', () => {
       expect(wrapper.find('input#search').prop('placeholder')).toContain(name);
     }
 
-    for (let { name, slug } of FILTERS_EXTRA) {
+    for (const { name, slug } of FILTERS_EXTRA) {
       const wrapper = mount(
         <SearchBoxBase
           parameters={{ extra: slug }}

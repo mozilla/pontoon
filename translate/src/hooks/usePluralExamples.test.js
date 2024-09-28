@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import React from 'react';
 import sinon from 'sinon';
 import { usePluralExamples } from './usePluralExamples';

@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* global global */
 
 import { createMemoryHistory } from 'history';
 import React from 'react';
