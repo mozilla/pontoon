@@ -202,7 +202,7 @@ you create:
    New Relic.
 
 ``OPENAI_API_KEY``
-   Optional. Set your `OpenAI API`_ key to add the ability to refine machine
+   Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.
 
 ``PROJECT_MANAGERS``
@@ -281,7 +281,7 @@ you create:
    The default value is 3600 seconds (1 hour).
 
 ``SYSTRAN_TRANSLATE_API_KEY``
-   Optional. Set your `SYSTRAN Translate API key`_ to use machine translation
+   Optional. Set your `SYSTRAN Translate API key` to use machine translation
    by SYSTRAN.
 
 ``TZ``
@@ -444,6 +444,7 @@ these pages often hit the cold cache. We use this job to refresh data in the
 cache every day, because it changes often. The command is designed to run daily.
 
 .. code-block:: bash
+
    ./manage.py warmup_cache
 
 Clearing the session store
