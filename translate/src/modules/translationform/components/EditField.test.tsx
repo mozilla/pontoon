@@ -68,7 +68,7 @@ describe('<EditField>', () => {
         setStart() {},
         getBoundingClientRect: () => ({ right: 0 }),
         getClientRects: () => ({ length: 0, left: 0, right: 0 }),
-      } as unknown as Range);
+      }) as unknown as Range;
   });
 
   afterAll(() => {

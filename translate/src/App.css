@@ -55,7 +55,8 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px var(--status-translated),
+  box-shadow:
+    0 0 10px var(--status-translated),
     0 0 5px var(--status-translated);
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);

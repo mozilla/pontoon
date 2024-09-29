@@ -108,8 +108,8 @@ export function SearchBoxBase({
         next[filter] = Array.isArray(value)
           ? value
           : typeof value === 'string'
-          ? value.split(',')
-          : [];
+            ? value.split(',')
+            : [];
       }
       return next;
     },
