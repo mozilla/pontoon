@@ -32,7 +32,7 @@ django-jinja==2.11.0
 django-notifications-hq==1.8.3
 django-pipeline==3.0.0
 google-cloud-translate==3.16.0
-graphene-django==3.2.1
+graphene-django==3.2.2
 gunicorn==23.0.0
 jsonfield==3.1.0
 jsonschema==4.23.0
