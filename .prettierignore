@@ -2,9 +2,9 @@
 translate/dist/
 coverage/
 docs/_build/
-docs/venv/
 package-lock.json
 specs/
+?venv/
 
 /.github/
 /media/
