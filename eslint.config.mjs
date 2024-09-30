@@ -2,7 +2,7 @@ import importPlugin from 'eslint-plugin-import-x';
 import react from 'eslint-plugin-react';
 import globals from 'globals';
 import babelParser from '@babel/eslint-parser';
-import js from '@eslint/js';
+import eslint from '@eslint/js';
 
 export default [
   {
@@ -29,7 +29,7 @@ export default [
       'pontoon/base/static/js/lib/',
     ],
   },
-  js.configs.recommended,
+  eslint.configs.recommended,
   react.configs.flat.recommended,
   {
     plugins: {
