@@ -329,7 +329,11 @@ function serialize(node: Descendant, users: MentionUser[]): string {
   }
 }
 
-const RenderElement = ({ attributes, children, element }: RenderElementProps) =>
+const RenderElement = ({
+  attributes,
+  children,
+  element,
+}: RenderElementProps) =>
   element.type === 'mention' ? (
     <span {...attributes} contentEditable={false} className='mention-element'>
       @{element.character}

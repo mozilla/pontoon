@@ -245,12 +245,12 @@ export function HistoryTranslationBase({
     translation.approved
       ? 'approved'
       : translation.pretranslated
-      ? 'pretranslated'
-      : translation.fuzzy
-      ? 'fuzzy'
-      : translation.rejected
-      ? 'rejected'
-      : 'unreviewed',
+        ? 'pretranslated'
+        : translation.fuzzy
+          ? 'fuzzy'
+          : translation.rejected
+            ? 'rejected'
+            : 'unreviewed',
     isReadOnlyEditor
       ? 'cannot-copy'
       : { 'can-approve': isTranslator, 'can-reject': canReject },

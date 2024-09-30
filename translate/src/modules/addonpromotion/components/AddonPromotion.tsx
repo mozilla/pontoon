@@ -55,8 +55,8 @@ export function AddonPromotion(): React.ReactElement<'div'> | null {
   const downloadHref = isFirefox
     ? 'https://addons.mozilla.org/firefox/addon/pontoon-tools/'
     : isChrome
-    ? 'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb'
-    : '';
+      ? 'https://chrome.google.com/webstore/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb'
+      : '';
 
   // User not authenticated or promotion dismissed or add-on installed or
   // page not loaded in Firefox or Chrome (add-on not available for other browsers)
