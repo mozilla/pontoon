@@ -194,7 +194,7 @@ $(function () {
 
     try {
       projectLocales = JSON.parse($(this).val());
-    } catch (error) {
+    } catch {
       // No project selected
       return;
     }

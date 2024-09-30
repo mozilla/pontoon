@@ -221,7 +221,7 @@ $(function () {
         // and convert this switch into a condition
         try {
           data = JSON.parse(event.data);
-        } catch (_) {
+        } catch {
           return;
         }
         break;

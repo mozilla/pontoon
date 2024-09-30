@@ -21,7 +21,7 @@ export default [
       '**/.vscode/',
       '.github/',
       'media/',
-      '**/static/',
+      'static/',
       '**/coverage/',
       'docs/_build/',
       '**/package-lock.json',
