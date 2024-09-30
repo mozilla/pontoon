@@ -33,7 +33,7 @@ a production one, returning JSON responses.
 The following query in the CLI will return a JSON response:
 
 ```bash
-$ curl --globoff http://localhost:8000/graphql/?query={projects{name}}
+$ curl --globoff "http://localhost:8000/graphql/?query={projects{name}}"
 ```
 
 If however a request is sent with `Accept: text/html` such as is the case when
