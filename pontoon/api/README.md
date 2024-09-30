@@ -1,7 +1,7 @@
 # GraphQL API
 
 Pontoon exposes some of its data via a public API endpoint. The API is
-[GraphQL](http://graphql.org/)-based and available at `/graphql`.
+[GraphQL](http://graphql.org/)-based and available at `/graphql/`.
 
 ## Production Deployments
 
@@ -12,13 +12,13 @@ the query must be escaped.
 An example GET requests may look like this:
 
 ```bash
-$ curl --globoff https://example.com/graphql?query={projects{name}}
+$ curl --globoff "https://example.com/graphql/?query={projects{name}}"
 ```
 
 An example POST requests may look like this:
 
 ```bash
-$ curl -X POST -d "query={ projects { name } }" https://example.com/graphql
+$ curl -X POST -d "query={ projects { name } }" https://example.com/graphql/
 ```
 
 ## Local Development
@@ -33,23 +33,23 @@ a production one, returning JSON responses.
 The following query in the CLI will return a JSON response:
 
 ```bash
-$ curl --globoff http://localhost:8000/graphql?query={projects{name}}
+$ curl --globoff "http://localhost:8000/graphql/?query={projects{name}}"
 ```
 
 If however a request is sent with `Accept: text/html` such as is the case when
 accessing the endpoint in a browser, a GUI query editor and explorer,
 [GraphiQL](https://github.com/graphql/graphiql), will be served::
 
-    http://localhost:8000/graphql?query={projects{name}}
+    http://localhost:8000/graphql/?query={projects{name}}
 
 To preview the JSON response in the browser, pass in the `raw` query argument::
 
-    http://localhost:8000/graphql?query={projects{name}}&raw
+    http://localhost:8000/graphql/?query={projects{name}}&raw
 
 ## Query IDE
 
 The [GraphiQL](https://github.com/graphql/graphiql) query IDE is available at
-`http://localhost:8000/graphql` when running Pontoon locally and the URL is
+`http://localhost:8000/graphql/` when running Pontoon locally and the URL is
 accessed with the `Accept: text/html` header, e.g. using a browser.
 
 It offers a query editor with:
