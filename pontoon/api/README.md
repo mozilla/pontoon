@@ -12,7 +12,7 @@ the query must be escaped.
 An example GET requests may look like this:
 
 ```bash
-$ curl --globoff https://example.com/graphql/?query={projects{name}}
+$ curl --globoff "https://example.com/graphql/?query={projects{name}}"
 ```
 
 An example POST requests may look like this:
