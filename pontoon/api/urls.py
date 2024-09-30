@@ -9,7 +9,7 @@ from pontoon.settings import DEV
 urlpatterns = [
     # GraphQL endpoint. In DEV mode it serves the GraphiQL IDE if accessed with Accept: text/html
     path(
-        "graphql",
+        "graphql/",
         GraphQLView.as_view(schema=schema, graphiql=DEV),
     ),
 ]
