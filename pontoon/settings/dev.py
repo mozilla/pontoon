@@ -41,6 +41,7 @@ TEMPLATES[0]["OPTIONS"]["match_regex"] = re.compile(
     re.VERBOSE,
 )
 
+CSP_FONT_SRC = base.CSP_FONT_SRC + ("data:",)
 CSP_IMG_SRC = base.CSP_IMG_SRC + ("data:",)
 CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + (
     "http://ajax.googleapis.com",
