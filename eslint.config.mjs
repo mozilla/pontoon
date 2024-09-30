@@ -1,6 +1,5 @@
 import react from 'eslint-plugin-react';
 import globals from 'globals';
-import babelParser from '@babel/eslint-parser';
 import eslint from '@eslint/js';
 
 export default [
@@ -75,21 +74,10 @@ export default [
         showdown: 'writable',
       },
 
-      parser: babelParser,
-      ecmaVersion: 2017,
-      sourceType: 'module',
-
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
-          experimentalObjectRestSpread: true,
         },
-
-        babelOptions: {
-          presets: ['@babel/preset-react'],
-        },
-
-        requireConfigFile: false,
       },
     },
 
