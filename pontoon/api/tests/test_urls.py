@@ -47,7 +47,7 @@ def test_graphql_prod_get(settings, projects_query, client):
 def test_graphql_prod_post(settings, projects_query, client):
     settings.DEV = False
 
-    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="appication/json")
+    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
 
