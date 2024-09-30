@@ -21,7 +21,8 @@ tmp/*
 /static/
 /.env
 docs/_build
-?venv/
+.venv/
+venv/
 /media/
 .cache/
 coverage/

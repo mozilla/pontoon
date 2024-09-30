@@ -13,7 +13,8 @@ export default [
       'docs/_build/',
       '**/package-lock.json',
       '**/specs/',
-      '**/?venv/',
+      '**/.venv/',
+      '**/venv/',
       'translate/dist/',
       // Jinja templates
       'translate/public/translate.html',
