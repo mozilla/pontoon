@@ -741,27 +741,32 @@ def perform_checks(request):
 @transaction.atomic
 def download_translations(request):
     """Download translated resource."""
+
+    # FIXME: zip downloads should only be for projects with 2..10 resources
+    from pontoon.sync.download import download_translations_zip
+
     try:
         slug = request.GET["slug"]
         code = request.GET["code"]
-        part = request.GET["part"]
+        # res_path = request.GET["part"]
     except MultiValueDictKeyError:
         raise Http404
 
-    content, filename = utils.get_download_content(slug, code, part)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
+    locale = get_object_or_404(Locale, code=code)
+    content, filename = download_translations_zip(project, locale)
 
     if content is None:
         raise Http404
 
-    response = HttpResponse()
-    response.content = content
-    if filename.endswith(".zip"):
-        response["Content-Type"] = "application/zip"
-    else:
-        response["Content-Type"] = "text/plain"
-    response["Content-Disposition"] = "attachment; filename=" + filename
-
-    return response
+    content_type = "application/zip" if filename.endswith(".zip") else "text/plain"
+    return HttpResponse(
+        content,
+        headers={
+            "Content-Type": content_type,
+            "Content-Disposition": f"attachment; filename={filename}",
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

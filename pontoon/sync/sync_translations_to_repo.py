@@ -1,3 +1,4 @@
+from collections.abc import Container
 import logging
 
 from collections import defaultdict
@@ -108,7 +109,7 @@ def update_changed_resources(
     project: Project,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     locale_map: dict[str, Locale],
-    readonly_locales: BaseManager[Locale],
+    readonly_locales: Container[Locale],
     db_changes: BaseManager[ChangedEntityLocale],
     changed_source_paths: set[str],
     now: datetime,

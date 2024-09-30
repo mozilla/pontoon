@@ -1,27 +1,19 @@
-import codecs
 import functools
-import io
 import os
 import re
-import tempfile
 import time
-import zipfile
 
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
-
-import requests
 
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import Http404, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import make_aware
@@ -151,165 +143,6 @@ def permission_required(perm, *args, **kwargs):
         return wrap
 
     return wrapper
-
-
-def _download_file(prefixes, dirnames, vcs_project, relative_path):
-    for prefix in prefixes:
-        for dirname in dirnames:
-            if vcs_project.configuration:
-                locale = vcs_project.locales[0]
-                absolute_path = os.path.join(
-                    vcs_project.source_directory_path, relative_path
-                )
-                absolute_l10n_path = vcs_project.configuration.l10n_path(
-                    locale, absolute_path
-                )
-                relative_l10n_path = os.path.relpath(
-                    absolute_l10n_path,
-                    vcs_project.locale_directory_paths[locale.code],
-                )
-                url = urljoin(prefix, relative_l10n_path)
-            else:
-                url = os.path.join(prefix.format(locale_code=dirname), relative_path)
-
-            r = requests.get(url, stream=True)
-            if not r.ok:
-                continue
-
-            extension = os.path.splitext(relative_path)[1]
-            with tempfile.NamedTemporaryFile(
-                prefix="strings" if extension == ".xml" else "",
-                suffix=extension,
-                delete=False,
-            ) as temp:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        temp.write(chunk)
-                temp.flush()
-
-            return temp.name
-
-
-def get_download_content(slug, code, part):
-    """
-    Get content of the file to be downloaded.
-
-    :arg str slug: Project slug.
-    :arg str code: Locale code.
-    :arg str part: Resource path.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import Entity, Locale, Project, Resource
-    from pontoon.sync import formats
-    from pontoon.sync.utils import source_to_locale_path
-    from pontoon.sync.vcs.project import VCSProject
-
-    project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code=code)
-    vcs_project = VCSProject(project, locales=[locale])
-
-    # Download a ZIP of all files if project has > 1 and < 10 resources
-    resources = Resource.objects.filter(
-        project=project, translatedresources__locale=locale
-    )
-    isZipable = 1 < len(resources) < 10
-    if isZipable:
-        s = io.BytesIO()
-        zf = zipfile.ZipFile(s, "w")
-
-    # Download a single file if project has 1 or >= 10 resources
-    else:
-        resources = [get_object_or_404(Resource, project__slug=slug, path=part)]
-
-    locale_prefixes = project.repositories
-
-    if not project.configuration_file:
-        locale_prefixes = locale_prefixes.filter(
-            permalink_prefix__contains="{locale_code}"
-        )
-
-    locale_prefixes = locale_prefixes.values_list(
-        "permalink_prefix", flat=True
-    ).distinct()
-
-    source_prefixes = project.repositories.values_list(
-        "permalink_prefix", flat=True
-    ).distinct()
-
-    for resource in resources:
-        # Get locale file
-        dirnames = {locale.code, locale.code.replace("-", "_")}
-        locale_path = _download_file(
-            locale_prefixes, dirnames, vcs_project, resource.path
-        )
-        if not locale_path and not resource.is_asymmetric:
-            return None, None
-
-        # Get source file if needed
-        source_path = None
-        if resource.is_asymmetric or resource.format == "xliff":
-            dirnames = VCSProject.SOURCE_DIR_NAMES
-            source_path = _download_file(
-                source_prefixes, dirnames, vcs_project, resource.path
-            )
-            if not source_path:
-                return None, None
-
-            # If locale file doesn't exist, create it
-            if not locale_path:
-                extension = os.path.splitext(resource.path)[1]
-                with tempfile.NamedTemporaryFile(
-                    prefix="strings" if extension == ".xml" else "",
-                    suffix=extension,
-                    delete=False,
-                ) as temp:
-                    temp.flush()
-                locale_path = temp.name
-
-        # Update file from database
-        resource_file = formats.parse(locale_path, source_path)
-        entities_dict = {}
-        entities_qs = Entity.objects.filter(
-            changedentitylocale__locale=locale,
-            resource__project=project,
-            resource__path=resource.path,
-            obsolete=False,
-        )
-
-        for e in entities_qs:
-            entities_dict[e.key] = e.translation_set.filter(
-                Q(approved=True) | Q(pretranslated=True)
-            ).filter(locale=locale)
-
-        for vcs_translation in resource_file.translations:
-            key = vcs_translation.key
-            if key in entities_dict:
-                entity = entities_dict[key]
-                vcs_translation.update_from_db(entity)
-
-        resource_file.save(locale)
-
-        if not locale_path:
-            return None, None
-
-        if isZipable:
-            zf.write(locale_path, source_to_locale_path(resource.path))
-        else:
-            with codecs.open(locale_path, "r", "utf-8") as f:
-                content = f.read()
-            filename = os.path.basename(source_to_locale_path(resource.path))
-
-        # Remove temporary files
-        os.remove(locale_path)
-        if source_path:
-            os.remove(source_path)
-
-    if isZipable:
-        zf.close()
-        content = s.getvalue()
-        filename = project.slug + ".zip"
-
-    return content, filename
 
 
 def aware_datetime(*args, **kwargs):
