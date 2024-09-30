@@ -32,6 +32,24 @@ jobs:
         run: npm run build
         working-directory: translate
 
+  licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '18' }
+      - name: Install globals
+        run: npm install --global license-checker-rseidelsohn@4.4.2
+      - name: Install dependencies
+        run: npm ci
+      - name: Check licenses
+        run: |
+          # --failOn doesn't print the licenses on failure.
+          # Use jq to print only minimal info, then print a summary when
+          # checking for GPL packages.
+          license-checker-rseidelsohn --json | jq -r 'to_entries[] | "\(.key): \(.value.licenses)"'
+          license-checker-rseidelsohn --summary --failOn 'GPL'
+
   jest:
     runs-on: ubuntu-latest
     steps:
