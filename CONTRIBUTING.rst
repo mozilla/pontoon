@@ -150,7 +150,7 @@ Alternatively, you can format your code using:
     $ make prettier
 
 Additionally, there are linting rules that are defined in our
-``.eslintrc.js`` file. To run the linter, do:
+``eslint.config.mjs`` file. To run the linter, do:
 
 .. code-block:: shell
 

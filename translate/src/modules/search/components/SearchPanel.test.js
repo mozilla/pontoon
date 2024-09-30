@@ -23,14 +23,14 @@ describe('<SearchPanelDialog>', () => {
       selectedSearchOptions,
     });
 
-    for (let { slug } of SEARCH_OPTIONS) {
+    for (const { slug } of SEARCH_OPTIONS) {
       expect(wrapper.find(`.menu .${slug}`).hasClass('enabled')).toBe(
         selectedSearchOptions[slug],
       );
     }
   });
 
-  for (let { slug } of SEARCH_OPTIONS) {
+  for (const { slug } of SEARCH_OPTIONS) {
     describe(`option: ${slug}`, () => {
       it('toggles a search option on click on the option icon', () => {
         const onToggleOption = sinon.spy();

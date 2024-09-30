@@ -4,7 +4,8 @@ coverage/
 docs/_build/
 package-lock.json
 specs/
-?venv/
+.venv/
+venv/
 
 /.github/
 /media/
