@@ -1,6 +1,4 @@
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import _import from 'eslint-plugin-import';
-import { fixupPluginRules } from '@eslint/compat';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
 import eslint from '@eslint/js';
@@ -12,7 +10,6 @@ export default [
   {
     plugins: {
       '@typescript-eslint': typescriptEslint,
-      import: fixupPluginRules(_import),
     },
 
     languageOptions: {
@@ -43,7 +40,13 @@ export default [
       ],
 
       '@typescript-eslint/prefer-as-const': 0,
-      'import/no-default-export': 'error',
+
+      'no-restricted-exports': [
+        'error',
+        {
+          restrictedNamedExports: ['default'],
+        },
+      ],
     },
   },
 ];
