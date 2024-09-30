@@ -353,7 +353,7 @@ Put your tests in the ``tests/`` directory of the appropriate app in
 Mock usage
 ----------
 
-`Mock <http://www.voidspace.org.uk/python/mock/>`_ is a python library for mocks
+`Mock <https://docs.python.org/dev/library/unittest.mock.html>`_ is a python library for mocks
 objects. This allows us to write isolated tests by simulating services besides
 using the real ones. Best examples are existing tests which admittedly do mocking
 different depending on the context.
