@@ -31,7 +31,7 @@ def test_end_to_end():
     with (
         TemporaryDirectory() as root,
         patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.repositories.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
     ):
         # Database setup
         settings.MEDIA_ROOT = root
@@ -130,7 +130,7 @@ def test_end_to_end():
                 file.read()
                 == "key-0 = New translation fr 0\n# New entry comment\nkey-2 = New translation fr 2\n"
             )
-        commit_msg: str = mock_vcs._calls[-1][1][1]
+        commit_msg: str = mock_vcs._calls[4][1][1]
         assert mock_vcs._calls == [
             ("update", ("http://example.com/src-repo", src_root, "")),
             ("revision", (src_root,)),
@@ -146,6 +146,7 @@ def test_end_to_end():
                     "http://example.com/tgt-repo",
                 ),
             ),
+            ("revision", (tgt_root,)),
         ]
         assert fullmatch(
             dedent(

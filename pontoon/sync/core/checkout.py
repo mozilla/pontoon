@@ -30,12 +30,7 @@ class Checkout:
         self.is_source = db_repo.source_repo
         self.url = db_repo.url
         self.path = normpath(db_repo.checkout_path)
-
-        if db_repo.last_synced_revisions is None:
-            self.prev_commit = None
-        else:
-            pc = db_repo.last_synced_revisions.get("single_locale", None)
-            self.prev_commit = pc if isinstance(pc, str) else None
+        self.prev_commit = db_repo.last_synced_revision
 
         versioncontrol = get_repo(db_repo.type)
         if pull:
@@ -74,7 +69,7 @@ def checkout_repos(
     project: Project, pull: bool = True, force: bool = False
 ) -> Checkouts:
     """
-    For each project repository including all multi-locale repositories,
+    For each project repository,
     update its local checkout (unless `pull` is false),
     and provide a `Checkout` representing their current state.
     """

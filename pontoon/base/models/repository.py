@@ -54,20 +54,16 @@ class Repository(models.Model):
         blank=True,
         max_length=2000,
         help_text="""
-        A URL prefix for downloading localized files. For GitHub repositories,
-        select any localized file on GitHub, click Raw and replace locale code
-        and the following bits in the URL with `{locale_code}`. If you use a
+        A URL prefix for downloading localized files. If you use a
         project configuration file, you need to provide the path to the raw TOML
         file on GitHub.
     """,
     )
 
-    """
-    Mapping of locale codes to VCS revisions of each repo at the last
-    sync. If this isn't a multi-locale repo, the mapping has a single
-    key named "single_locale" with the revision.
-    """
     last_synced_revisions = JSONField(blank=True, default=dict)
+    """
+    Mapping with a single key named "single_locale" with the VCS revision of its last sync.
+    """
 
     source_repo = models.BooleanField(
         default=False,
@@ -84,15 +80,6 @@ class Repository(models.Model):
         if self.source_repo:
             repo_kind = "SourceRepository"
         return f"<{repo_kind}[{self.pk}:{self.type}:{self.url}]"
-
-    @property
-    def multi_locale(self):
-        """
-        Checks if url contains locale code variable. System will replace
-        this variable by the locale codes of all enabled locales for the
-        project during pulls and commits.
-        """
-        return "{locale_code}" in self.url
 
     @property
     def is_source_repository(self):
@@ -123,8 +110,6 @@ class Repository(models.Model):
             self.project.checkout_path,
             *urlparse(self.url).path.split("/"),
         ]
-        if self.multi_locale:
-            path_components = [c for c in path_components if c != "{locale_code}"]
 
         # Normalize path for consistency.
         return normpath(join(*path_components))
@@ -162,126 +147,18 @@ class Repository(models.Model):
 
         return None
 
-    def locale_checkout_path(self, locale):
-        """
-        Path where the checkout for the given locale for this repo is
-        located. If this repo is not a multi-locale repo, a ValueError
-        is raised.
-        """
-        if not self.multi_locale:
-            raise ValueError(
-                "Cannot get locale_checkout_path for non-multi-locale repos."
-            )
-
-        return join(self.checkout_path, locale.code)
-
-    def locale_url(self, locale):
-        """
-        URL for the repo for the given locale. If this repo is not a
-        multi-locale repo, a ValueError is raised.
-        """
-        if not self.multi_locale:
-            raise ValueError("Cannot get locale_url for non-multi-locale repos.")
-
-        return self.url.format(locale_code=locale.code)
-
-    def url_for_path(self, path):
-        """
-        Determine the locale-specific repo URL for the given path.
-
-        If this is not a multi-locale repo, raise a ValueError. If no
-        repo is found for the given path, also raise a ValueError.
-        """
-        for locale in self.project.locales.all():
-            if path.startswith(self.locale_checkout_path(locale)):
-                return self.locale_url(locale)
-
-        raise ValueError(f"No repo found for path: {path}")
-
-    def pull(self, locales=None):
-        """
-        Pull changes from VCS. Returns the revision(s) of the repo after
-        pulling.
-        """
-        from pontoon.sync.repositories import (
-            PullFromRepositoryException,
-            get_revision,
-            update_from_vcs,
+    @property
+    def last_synced_revision(self) -> str | None:
+        return (
+            self.last_synced_revisions.get("single_locale", None)
+            if self.last_synced_revisions
+            else None
         )
 
-        if not self.multi_locale:
-            update_from_vcs(self.type, self.url, self.checkout_path, self.branch)
-            return {"single_locale": get_revision(self.type, self.checkout_path)}
-        else:
-            current_revisions = {}
-            locales = locales or self.project.locales.all()
-
-            for locale in locales:
-                repo_type = self.type
-                url = self.locale_url(locale)
-                checkout_path = self.locale_checkout_path(locale)
-                repo_branch = self.branch
-
-                try:
-                    update_from_vcs(repo_type, url, checkout_path, repo_branch)
-                    current_revisions[locale.code] = get_revision(
-                        repo_type, checkout_path
-                    )
-                except PullFromRepositoryException as e:
-                    log.error(f"{repo_type.upper()} Pull Error for {url}: {e}")
-
-            return current_revisions
-
-    def commit(self, message: str, author: str, path: str):
-        """Commit changes to VCS."""
-        # For multi-locale repos, figure out which sub-repo corresponds
-        # to the given path.
-        url = self.url
-        if self.multi_locale:
-            url = self.url_for_path(path)
-
-        from pontoon.sync.repositories import commit_to_vcs
-
-        return commit_to_vcs(self.type, path, message, author, self.branch, url)
-
-    def set_last_synced_revisions(self, locales=None):
-        """
-        Set last_synced_revisions to a dictionary of revisions
-        that are currently downloaded on the disk.
-        """
-        from pontoon.sync.repositories import get_revision
-
-        current_revisions = {}
-
-        if self.multi_locale:
-            for locale in self.project.locales.all():
-                if locales is not None and locale not in locales:
-                    revision = self.last_synced_revisions.get(locale.code)
-                else:
-                    revision = get_revision(
-                        self.type, self.locale_checkout_path(locale)
-                    )
-
-                if revision:
-                    current_revisions[locale.code] = revision
-
-        else:
-            current_revisions["single_locale"] = get_revision(
-                self.type, self.checkout_path
-            )
-
-        self.last_synced_revisions = current_revisions
+    @last_synced_revision.setter
+    def last_synced_revision(self, revision: str) -> None:
+        self.last_synced_revisions = {"single_locale": revision}
         self.save(update_fields=["last_synced_revisions"])
-
-    def get_last_synced_revisions(self, locale=None):
-        """
-        Get revision from the last_synced_revisions dictionary if exists.
-        """
-        if self.last_synced_revisions:
-            key = locale or "single_locale"
-            return self.last_synced_revisions.get(key)
-        else:
-            return None
 
     class Meta:
         unique_together = ("project", "url")

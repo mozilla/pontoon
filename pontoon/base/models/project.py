@@ -342,14 +342,6 @@ class Project(AggregatedStats):
             raise ValueError(f"Could not find repo matching path {path}.")
 
     @property
-    def has_multi_locale_repositories(self):
-        for repo in self.repositories.all():
-            if repo.multi_locale:
-                return True
-
-        return False
-
-    @property
     def has_single_repo(self):
         return self.repositories.count() == 1
 

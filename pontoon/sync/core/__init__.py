@@ -74,11 +74,13 @@ def sync_project(
         removed_paths,
         now,
     )
+
     db_changes.delete()
-    # have_repos_changed = any(co.commit is None or co.commit != co.prev_commit for co in checkouts)
-    # pulled_revisions = {co.locale_code or "single_locale": co.commit for co in checkouts}
-    log.info(f"{log_prefix} Sync done")
+    checkouts.source.repo.last_synced_revision = checkouts.source.commit
+    if checkouts.target != checkouts.source:
+        checkouts.target.repo.last_synced_revision = checkouts.target.commit
     repo_sync_log.end()
+    log.info(f"{log_prefix} Sync done")
 
     if project.pretranslation_enabled and changed_paths:
         # Pretranslate changed and added resources for all locales

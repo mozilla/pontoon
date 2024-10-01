@@ -17,7 +17,7 @@ from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.sync.core.checkout import Checkouts
 from pontoon.sync.formats import parse
 from pontoon.sync.formats.po import POResource
-from pontoon.sync.repositories import commit_to_vcs
+from pontoon.sync.repositories import CommitToRepositoryException, get_repo
 
 
 log = logging.getLogger(__name__)
@@ -73,9 +73,13 @@ def sync_translations_to_repo(
     commit_author = f"{settings.VCS_SYNC_NAME} <{settings.VCS_SYNC_EMAIL}>"
 
     co = checkouts.target
-    commit_to_vcs(
-        co.repo.type, co.path, commit_msg, commit_author, co.repo.branch, co.url
-    )
+    repo = get_repo(co.repo.type)
+    try:
+        repo.commit(co.path, commit_msg, commit_author, co.repo.branch, co.url)
+        co.commit = repo.revision(co.path)
+    except CommitToRepositoryException as error:
+        log.debug(f"[{project.slug}] {co.repo.type} commit failed: {error}")
+        raise error
 
 
 def delete_removed_resources(
