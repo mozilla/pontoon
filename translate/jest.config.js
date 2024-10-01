@@ -1,10 +1,12 @@
 /* eslint-env commonjs */
+/* global module */
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
   verbose: true,
   roots: ['<rootDir>/src'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules/'],
   testMatch: [

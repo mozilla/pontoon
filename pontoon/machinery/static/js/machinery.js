@@ -165,12 +165,12 @@ $(function () {
         return valA < valB
           ? 1
           : valA > valB
-          ? -1
-          : sourceA > sourceB
-          ? 1
-          : sourceA < sourceB
-          ? -1
-          : 0;
+            ? -1
+            : sourceA > sourceB
+              ? 1
+              : sourceA < sourceB
+                ? -1
+                : 0;
       });
 
       ul.html(listitems);

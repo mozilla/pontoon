@@ -1,11 +1,11 @@
 .vscode/
-tag-admin/dist/
 translate/dist/
 coverage/
 docs/_build/
-docs/venv/
 package-lock.json
 specs/
+.venv/
+venv/
 
 /.github/
 /media/

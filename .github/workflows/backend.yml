@@ -22,6 +22,8 @@ on:
 jobs:
   test:
     name: pytest
+    env:
+      UV_SYSTEM_PYTHON: 1
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -35,37 +37,47 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: pip
-          cache-dependency-path: |
-            requirements/default.txt
-            requirements/dev.txt
-            requirements/lint.txt
-            requirements/test.txt
-      - run: >
-          pip install
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          version: "0.4.13"
+      - name: Install requirements
+        run: >
+          uv pip install
           -r requirements/default.txt
           -r requirements/dev.txt
           -r requirements/test.txt
           -r requirements/lint.txt
-
+      - name: Install pip-licenses
+        run: uv pip install 'pip-licenses==5.0.0'
+      - name: Check licenses
+        run: |
+          pip-licenses
+          pip-licenses --fail-on="GNU General Public License (GPL)" --ignore-packages text-unidecode translate-toolkit silme
       # Set environment variables
-      - run: pip install pytest-dotenv
+      - run: uv pip install pytest-dotenv
       - run: >
           sed
           -e 's#^DATABASE_URL=.*#DATABASE_URL=postgres://pontoon:pontoon@localhost/pontoon#'
           -e '/^SITE_URL=/d'
           docker/config/server.env.template > .env
-
       # Run collectstatic with minimal dependencies, skipping the actual front-end build
       - run: npm install
         working-directory: pontoon
-      - run: mkdir -p tag-admin/dist translate/dist translate/public
+      - run: mkdir -p translate/dist translate/public
       - run: python manage.py collectstatic
 
-      - run: pytest
+      # Check if there are missing migrations
+      - name: Verify missing migrations
+        run: python manage.py makemigrations --check
+
+      - name: Run tests
+        run: pytest --cov-report=xml:pontoon/coverage.xml --cov=.
       - uses: codecov/codecov-action@v4
         with:
           flags: backend

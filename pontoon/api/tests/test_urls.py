@@ -21,7 +21,7 @@ def projects_query():
 def test_graphql_dev_get(settings, projects_query, client):
     settings.DEV = True
 
-    response = client.get("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", projects_query, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
 
@@ -29,7 +29,7 @@ def test_graphql_dev_get(settings, projects_query, client):
 def test_graphql_dev_post(settings, projects_query, client):
     settings.DEV = True
 
-    response = client.post("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
 
@@ -38,7 +38,7 @@ def test_graphql_dev_post(settings, projects_query, client):
 def test_graphql_prod_get(settings, projects_query, client):
     settings.DEV = True
 
-    response = client.get("/graphql", projects_query, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", projects_query, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
 
@@ -47,7 +47,7 @@ def test_graphql_prod_get(settings, projects_query, client):
 def test_graphql_prod_post(settings, projects_query, client):
     settings.DEV = False
 
-    response = client.post("/graphql", projects_query, HTTP_ACCEPT="appication/json")
+    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
 
 
@@ -55,14 +55,14 @@ def test_graphql_prod_post(settings, projects_query, client):
 def test_graphiql_dev_get(settings, projects_query, client):
     settings.DEV = True
 
-    response = client.get("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    response = client.get("/graphql/", projects_query, HTTP_ACCEPT="text/html")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_graphiql_dev_post(settings, projects_query, client):
     settings.DEV = True
-    response = client.post("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="text/html")
     assert response.status_code == 200
 
 
@@ -71,7 +71,7 @@ def test_graphiql_dev_post(settings, projects_query, client):
 def test_graphiql_prod_get(settings, projects_query, client):
     settings.DEV = False
     reload_urls(settings)
-    response = client.get("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    response = client.get("/graphql/", projects_query, HTTP_ACCEPT="text/html")
     assert response.status_code == 400
 
 
@@ -80,5 +80,5 @@ def test_graphiql_prod_get(settings, projects_query, client):
 def test_graphiql_prod_post(projects_query, client, settings):
     settings.DEV = False
     reload_urls(settings)
-    response = client.post("/graphql", projects_query, HTTP_ACCEPT="text/html")
+    response = client.post("/graphql/", projects_query, HTTP_ACCEPT="text/html")
     assert response.status_code == 400

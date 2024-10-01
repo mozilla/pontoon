@@ -63,6 +63,10 @@ class Resource(models.Model):
         """Return True if this resource allows empty translations."""
         return self.format in self.EMPTY_TRANSLATION_FORMATS
 
+    @property
+    def name(self):
+        return self.path
+
     def __str__(self):
         return "{project}: {resource}".format(
             project=self.project.name,

@@ -34,7 +34,7 @@ def test_projects(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     ProjectFactory.create(visibility=Project.Visibility.PRIVATE)
     assert response.status_code == 200
@@ -111,7 +111,7 @@ def test_project_filters(
     }
     if is_admin:
         client.force_login(admin)
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -143,7 +143,7 @@ def test_project_localizations(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -205,7 +205,7 @@ def test_localization_filters(
     if is_admin:
         client.force_login(admin)
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -246,7 +246,7 @@ def test_projects_localizations_cyclic(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert b"Cyclic queries are forbidden" in response.content
@@ -268,7 +268,7 @@ def test_project_localizations_cyclic(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert b"Cyclic queries are forbidden" in response.content
@@ -290,7 +290,7 @@ def test_locales_localizations_cyclic(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert b"Cyclic queries are forbidden" in response.content
@@ -312,7 +312,7 @@ def test_locale_localizations_cyclic(client):
         }"""
     }
 
-    response = client.get("/graphql", body, HTTP_ACCEPT="application/json")
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
 
     assert response.status_code == 200
     assert b"Cyclic queries are forbidden" in response.content

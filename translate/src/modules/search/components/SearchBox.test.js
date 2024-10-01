@@ -35,7 +35,7 @@ describe('<SearchBoxBase>', () => {
   });
 
   it('has the correct placeholder based on parameters', () => {
-    for (let { name, slug } of FILTERS_STATUS) {
+    for (const { name, slug } of FILTERS_STATUS) {
       const wrapper = mount(
         <SearchBoxBase
           parameters={{ status: slug }}
@@ -46,7 +46,7 @@ describe('<SearchBoxBase>', () => {
       expect(wrapper.find('input#search').prop('placeholder')).toContain(name);
     }
 
-    for (let { name, slug } of FILTERS_EXTRA) {
+    for (const { name, slug } of FILTERS_EXTRA) {
       const wrapper = mount(
         <SearchBoxBase
           parameters={{ extra: slug }}
@@ -270,7 +270,7 @@ describe('<SearchBox>', () => {
     // Wait until Enter is pressed.
     wrapper.find('input#search').simulate('keydown', { key: 'Enter' });
 
-    expect(spy.callCount).toBe(1);
+    expect(spy.callCount).toBe(2);
     expect(spy.firstCall.args).toMatchObject([
       {
         pathname: '/kg/firefox/all-resources/',

@@ -57,7 +57,6 @@ if not DEV and not DEBUG:
         DATABASES["default"]["OPTIONS"] = {}
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 
-TAGADMIN_DIR = os.path.join(ROOT, "tag-admin")
 TRANSLATE_DIR = os.path.join(ROOT, "translate")
 
 # Absolute path to the directory static files should be collected to.
@@ -422,9 +421,9 @@ PIPELINE_CSS = {
     "admin_project": {
         "source_filenames": (
             "css/double_list_selector.css",
+            "css/multiple_item_selector.css",
             "css/multiple_team_selector.css",
             "css/admin_project.css",
-            "tag_admin.css",
         ),
         "output_filename": "css/admin_project.min.css",
     },
@@ -585,9 +584,9 @@ PIPELINE_JS = {
     "admin_project": {
         "source_filenames": (
             "js/double_list_selector.js",
+            "js/multiple_item_selector.js",
             "js/multiple_team_selector.js",
             "js/admin_project.js",
-            "tag_admin.js",
         ),
         "output_filename": "js/admin_project.min.js",
     },
@@ -705,6 +704,7 @@ PIPELINE_JS = {
     },
     "messaging": {
         "source_filenames": (
+            "js/lib/showdown.js",
             "js/sidebar_menu.js",
             "js/multiple_team_selector.js",
             "js/multiple_item_selector.js",
@@ -777,7 +777,6 @@ STATICFILES_FINDERS = (
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
-    os.path.join(TAGADMIN_DIR, "dist"),
 ]
 
 allowed_hosts = os.environ.get("ALLOWED_HOSTS")
@@ -872,9 +871,9 @@ X_FRAME_OPTIONS = "DENY"
 # Use correct header for detecting HTTPS on Heroku.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Do not set SECURE_HSTS_SECONDS.
-# HSTS is being taken care of in pontoon/wsgi.py.
-# SECURE_HSTS_SECONDS = 63072000
+# If set to a non-zero integer value, the SecurityMiddleware sets the
+# HTTP Strict Transport Security header on all responses that do not already have it.
+SECURE_HSTS_SECONDS = 31536000  # 1 year
 
 # X-Content-Type-Options: nosniff
 # Disables browser MIME type sniffing

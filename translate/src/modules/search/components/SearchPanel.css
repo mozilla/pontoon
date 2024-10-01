@@ -33,9 +33,8 @@
     padding: 10px 12px;
 
     & ul {
-      margin: 10px 0;
       list-style: none;
-      padding: 4px 0;
+      margin: 0;
     }
 
     & .title {
@@ -44,6 +43,7 @@
       font-size: 13px;
       font-weight: 300;
       height: auto;
+      margin: 5px 0;
     }
 
     li {
@@ -54,6 +54,10 @@
 
       &:hover {
         color: var(--white-1);
+      }
+
+      &.search_identifiers {
+        margin-top: 10px;
       }
 
       &.check-box {
@@ -88,10 +92,13 @@
     color: var(--light-grey-7);
     font-weight: 300;
     border-radius: 3px;
+    margin-bottom: 5px;
+    margin-top: 8px;
 
     &:hover,
     .applied-count {
       color: var(--status-translated);
+      margin-top: 35px;
     }
   }
 }

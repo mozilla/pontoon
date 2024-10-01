@@ -15,10 +15,11 @@ Prerequisites
 This guide assumes you have already installed and set up the following:
 
 1. `Git <https://git-scm.com>`__
-2. `Python 3.11 <https://www.python.org>`__, `pip`_, and `virtualenv`_
-3. `Node.js 18 <https://nodejs.org>`__ and `npm 9 <https://www.npmjs.com>`__ or
+2. `Python 3.11 <https://www.python.org>`__
+3. `uv <https://docs.astral.sh/uv/getting-started/installation/#standalone-installer>`_
+4. `Node.js 18 <https://nodejs.org>`__ and `npm 9 <https://www.npmjs.com>`__ or
    later
-4. `PostgreSQL 15 <http://www.postgresql.org>`__
+5. `PostgreSQL 15 <http://www.postgresql.org>`__
 
 These docs assume a Unix-like operating system, although the site should, in
 theory, run on Windows as well. All the example commands given below are
@@ -33,20 +34,18 @@ following commands:
       sudo apt install -y dirmngr ca-certificates software-properties-common apt-transport-https lsb-release curl
       curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /usr/share/keyrings/postgresql.gpg > /dev/null
       echo deb [arch=amd64,arm64,ppc64el signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main | sudo tee /etc/apt/sources.list.d/postgresql.list
-      # This is needed to install Python 3.11 (default is 3.12)
-      sudo add-apt-repository -y ppa:deadsnakes/ppa
-
       sudo apt update
 
-      sudo apt install -y git python3-pip python3.11-dev python-is-python3 virtualenv postgresql-client-15 postgresql-15 libxml2-dev libxslt1-dev libmemcached-dev libpq-dev nodejs npm
+      sudo apt install -y git python3-dev python-is-python3 virtualenv postgresql-client-15 postgresql-15 libxml2-dev libxslt1-dev libmemcached-dev libpq-dev nodejs npm
       # Set Python 3.11 as default
       update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
+      # Install uv
+      curl -LsSf https://astral.sh/uv/install.sh | sh
+      source $HOME/.cargo/env
+
       # Start PostgreSQL server
       /etc/init.d/postgresql start
-
-.. _pip: https://pip.pypa.io/en/stable/
-.. _virtualenv: https://virtualenv.pypa.io/en/latest
 
 Installation
 ------------
@@ -57,31 +56,25 @@ Installation
       git clone https://github.com/mozilla/pontoon.git
       cd pontoon
 
-2. Create a virtualenv for Pontoon and activate it:
+2. Create a virtualenv for Pontoon with Python 3.11 and activate it:
 
    .. code-block:: bash
 
-      virtualenv venv
-      source venv/bin/activate
+      uv python install 3.11
+      uv venv --python 3.11
+      # Activate virtualenv
+      source .venv/bin/activate
 
    .. note::
 
       Whenever you want to work on Pontoon in a new terminal you'll have to
-      re-activate the virtualenv. Read the virtualenv_ documentation to learn
-      more about how virtualenv works.
+      re-activate the virtualenv.
 
-3. Install the dependencies using the latest version of pip_:
-
-   .. code-block:: bash
-
-      pip install --require-hashes -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt
-
-   On Ubuntu 24.04, you will need to install ``setuptools`` within the
-   virtualenv if the command above fails.
+3. Install the dependencies:
 
    .. code-block:: bash
 
-      pip install -U setuptools
+      uv pip install -r requirements/default.txt -r requirements/dev.txt -r requirements/test.txt
 
 4. Create your database, using the following set of commands.
 
@@ -168,7 +161,7 @@ Installation
 
       npm install
 
-11. Build the tag-admin client:
+11. Build the client:
 
    .. code-block:: bash
 

@@ -10,6 +10,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     Repository,
+    Resource,
 )
 from pontoon.tags.models import Tag
 
@@ -107,9 +108,24 @@ EntityFormSet = forms.modelformset_factory(
 
 
 class TagInlineForm(forms.ModelForm):
+    resources = forms.ModelMultipleChoiceField(
+        queryset=Resource.objects.none(),
+        required=False,
+    )
+
     class Meta:
         model = Tag
-        fields = ("project", "slug", "name", "priority")
+        fields = ("project", "slug", "name", "priority", "resources")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # If the project instance is available, filter resources for this project
+        if kwargs.get("instance") and kwargs["instance"].project:
+            project = kwargs["instance"].project
+            self.fields["resources"].queryset = Resource.objects.filter(
+                project=project
+            ).select_related()
 
 
 TagInlineFormSet = inlineformset_factory(Project, Tag, form=TagInlineForm, extra=1)

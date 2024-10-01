@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Localized } from '@fluent/react';
 import classNames from 'classnames';
 import { SEARCH_OPTIONS } from '../constants';
@@ -12,11 +12,10 @@ type Props = {
   searchOptions: SearchState;
   applyOptions: () => void;
   toggleOption: (searchOption: SearchType) => void;
-  updateOptionsFromURL: () => void;
 };
 
 type SearchPanelProps = {
-  searchOptions: SearchState;
+  selectedSearchOptions: SearchState;
   onApplyOptions: () => void;
   onToggleOption: (searchOption: SearchType, event?: React.MouseEvent) => void;
   onDiscard: () => void;
@@ -33,7 +32,7 @@ const SearchOption = ({
 }) => {
   return (
     <li
-      className={classNames('check-box', selected && 'enabled')}
+      className={classNames(`check-box ${slug}`, selected && 'enabled')}
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
@@ -48,7 +47,7 @@ const SearchOption = ({
 };
 
 export function SearchPanelDialog({
-  searchOptions,
+  selectedSearchOptions,
   onApplyOptions,
   onToggleOption,
   onDiscard,
@@ -67,7 +66,7 @@ export function SearchPanelDialog({
             onToggle={() => onToggleOption(search.slug)}
             searchOption={search}
             key={i}
-            selected={searchOptions[search.slug] ?? false}
+            selected={selectedSearchOptions[search.slug] ?? false}
           />
         ))}
       </ul>
@@ -89,23 +88,33 @@ export function SearchPanel({
   searchOptions,
   applyOptions,
   toggleOption,
-  updateOptionsFromURL,
 }: Props): React.ReactElement<'div'> | null {
   const [visible, setVisible] = useState(false);
+  // selectedSearchOptions maintains the visual state of the checkboxes, even on discard
+  const [selectedSearchOptions, setSelectedSearchOptions] =
+    useState(searchOptions);
+
+  useEffect(() => {
+    if (visible) {
+      setSelectedSearchOptions(searchOptions);
+    }
+  }, [visible, searchOptions]);
 
   const toggleVisible = useCallback(() => {
     setVisible((prev) => !prev);
-    updateOptionsFromURL();
-  }, [updateOptionsFromURL]);
+  }, []);
 
   const handleDiscard = useCallback(() => {
     setVisible(false);
-    updateOptionsFromURL();
-  }, [updateOptionsFromURL]);
+  }, []);
 
   const handleToggleOption = useCallback(
     (searchOption: SearchType, ev?: React.MouseEvent) => {
       ev?.stopPropagation();
+      setSelectedSearchOptions((prev) => ({
+        ...prev,
+        [searchOption]: !prev[searchOption],
+      }));
       toggleOption(searchOption);
     },
     [toggleOption],
@@ -123,7 +132,7 @@ export function SearchPanel({
       </div>
       {visible ? (
         <SearchPanelDialog
-          searchOptions={searchOptions}
+          selectedSearchOptions={selectedSearchOptions}
           onApplyOptions={handleApplyOptions}
           onToggleOption={handleToggleOption}
           onDiscard={handleDiscard}

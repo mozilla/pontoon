@@ -4,7 +4,7 @@ Deployment
 Pontoon is designed to be deployed on Heroku. To deploy an instance of Pontoon
 on Heroku, you must first create an app on your Heroku dashboard. The steps
 below assume you've already created an app and have installed the
-`Heroku Toolbelt`_.
+`Heroku CLI`_.
 
 For quick and easy deployment without leaving your web browser, click this button:
 
@@ -14,7 +14,7 @@ For quick and easy deployment without leaving your web browser, click this butto
       <img src="https://www.herokucdn.com/deploy/button.svg">
    </a>
 
-.. _Heroku Toolbelt: https://toolbelt.heroku.com/
+.. _Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
 
 Buildpack
 ---------
@@ -202,7 +202,7 @@ you create:
    New Relic.
 
 ``OPENAI_API_KEY``
-   Optional. Set your `OpenAI API`_ key to add the ability to refine machine
+   Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.
 
 ``PROJECT_MANAGERS``
@@ -281,7 +281,7 @@ you create:
    The default value is 3600 seconds (1 hour).
 
 ``SYSTRAN_TRANSLATE_API_KEY``
-   Optional. Set your `SYSTRAN Translate API key`_ to use machine translation
+   Optional. Set your `SYSTRAN Translate API key` to use machine translation
    by SYSTRAN.
 
 ``TZ``
@@ -369,7 +369,7 @@ RabbitMQ add-on:
    Again, you must attach the resource for RabbitMQ as ``RABBITMQ``. See the
    note in the Cache Add-ons section for details.
 
-.. _BROKER_URL: http://celery.readthedocs.io/en/latest/configuration.html#broker-url
+.. _BROKER_URL: https://docs.celeryq.dev/en/stable/userguide/configuration.html#broker-url
 
 Scheduled Jobs
 --------------
@@ -444,6 +444,7 @@ these pages often hit the cold cache. We use this job to refresh data in the
 cache every day, because it changes often. The command is designed to run daily.
 
 .. code-block:: bash
+
    ./manage.py warmup_cache
 
 Clearing the session store
