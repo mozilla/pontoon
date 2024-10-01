@@ -82,20 +82,6 @@ class Repository(models.Model):
         return f"<{repo_kind}[{self.pk}:{self.type}:{self.url}]"
 
     @property
-    def is_source_repository(self):
-        """
-        Returns true if repository contains source strings.
-        """
-        return self == self.project.source_repository
-
-    @property
-    def is_translation_repository(self):
-        """
-        Returns true if repository contains translations.
-        """
-        return self.project.has_single_repo or not self.is_source_repository
-
-    @property
     def checkout_path(self):
         """
         Path where the checkout for this repo is located. Does not
