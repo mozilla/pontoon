@@ -743,7 +743,7 @@ def download_translations(request):
     """Download translated resource."""
 
     # FIXME: zip downloads should only be for projects with 2..10 resources
-    from pontoon.sync.download import download_translations_zip
+    from pontoon.sync.utils import download_translations_zip
 
     try:
         slug = request.GET["slug"]
@@ -791,7 +791,7 @@ def upload(request):
 
     form = forms.UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        from pontoon.sync.upload import sync_uploaded_file
+        from pontoon.sync.utils import sync_uploaded_file
 
         upload = request.FILES["uploadfile"]
         sync_uploaded_file(project, locale, res_path, upload, request.user)
