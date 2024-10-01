@@ -1,5 +1,3 @@
-from os.path import splitext
-
 from django.db import models
 from django.utils import timezone
 
@@ -72,16 +70,3 @@ class Resource(models.Model):
             project=self.project.name,
             resource=self.path,
         )
-
-    @classmethod
-    def get_path_format(self, path):
-        filename, extension = splitext(path)
-        path_format = extension[1:].lower()
-
-        # Special case: pot files are considered the po format
-        if path_format == "pot":
-            return "po"
-        elif path_format == "xlf":
-            return "xliff"
-        else:
-            return path_format

@@ -2,7 +2,7 @@ import logging
 
 from collections import defaultdict
 from datetime import datetime
-from os.path import exists, isfile, join, relpath
+from os.path import exists, isfile, join, relpath, splitext
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
@@ -25,6 +25,8 @@ from pontoon.sync.formats.silme import SilmeEntity, SilmeResource  # Approximate
 
 
 log = logging.getLogger(__name__)
+
+BILINGUAL_FORMATS = {"po", "xliff"}
 
 
 def sync_entities_from_repo(
@@ -206,7 +208,7 @@ def add_resources(
         Resource(
             project=project,
             path=db_path,
-            format=Resource.get_path_format(db_path),
+            format=get_path_format(db_path),
             total_strings=len(res.entities),
         )
         for db_path, res in updates.items()
@@ -232,7 +234,7 @@ def add_resources(
     def is_translated_resource(resource: Resource, locale_code: str) -> bool:
         if locale_code not in locale_map:
             return False
-        if resource.format in {"po", "xliff"}:
+        if resource.format in BILINGUAL_FORMATS:
             # For bilingual formats, only create TranslatedResource
             # if the resource exists for the locale.
             target = paths.target(resource.path)  # , locale_code)
@@ -310,3 +312,16 @@ def entities_same(a: Entity, b: Entity) -> bool:
         and a.resource_comment == b.resource_comment
         and a.context == b.context
     )
+
+
+def get_path_format(path: str) -> str:
+    _, extension = splitext(path)
+    path_format = extension[1:].lower()
+
+    # Special case: pot files are considered the po format
+    if path_format == "pot":
+        return "po"
+    elif path_format == "xlf":
+        return "xliff"
+    else:
+        return path_format
