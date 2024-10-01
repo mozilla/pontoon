@@ -4,10 +4,9 @@ from textwrap import dedent
 import pytest
 
 from pontoon.base.tests import TestCase
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import xliff
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
-
 
 BASE_XLIFF_FILE = """
 <xliff>

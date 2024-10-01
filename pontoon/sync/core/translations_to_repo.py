@@ -1,24 +1,21 @@
-from collections.abc import Container
 import logging
-
 from collections import defaultdict
+from collections.abc import Container
 from datetime import datetime
 from os import remove
 from os.path import commonpath, isfile, join, normpath
 
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
-
 from django.conf import settings
 from django.db.models import Q
 from django.db.models.manager import BaseManager
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from pontoon.base.models import Locale, Project, Translation, User
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
-from pontoon.sync.checkouts import Checkouts
+from pontoon.sync.core.checkout import Checkouts
 from pontoon.sync.formats import parse
 from pontoon.sync.formats.po import POResource
 from pontoon.sync.repositories import commit_to_vcs
-
 
 log = logging.getLogger(__name__)
 

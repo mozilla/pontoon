@@ -32,7 +32,7 @@ from pontoon.base.models import (
 from pontoon.base.utils import require_AJAX
 from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.models import SyncLog
-from pontoon.sync.sync_project import sync_project_task
+from pontoon.sync.tasks import sync_project_task
 
 
 log = logging.getLogger(__name__)

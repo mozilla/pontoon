@@ -3,23 +3,18 @@ Parser for the strings.xml file format.
 """
 
 import logging
-
 from collections import OrderedDict
 
-from compare_locales import (
-    parser,
-    serializer,
-)
+from compare_locales import parser, serializer
 
-from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import (
+from pontoon.sync.formats.exceptions import ParseError, SyncError
+from pontoon.sync.formats.utils import (
     create_parent_directory,
     escape_apostrophes,
     unescape_apostrophes,
 )
 from pontoon.sync.vcs.translation import VCSTranslation
-
 
 log = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from pontoon.base.models import Project
 from pontoon.sync.models import SyncLog
-from pontoon.sync.sync_project import sync_project_task
+from pontoon.sync.tasks import sync_project_task
 
 
 class Command(BaseCommand):

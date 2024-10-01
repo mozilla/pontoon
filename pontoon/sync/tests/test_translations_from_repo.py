@@ -19,9 +19,9 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.checkouts import Checkout, Checkouts
-from pontoon.sync.paths import get_paths
-from pontoon.sync.sync_translations_from_repo import sync_translations_from_repo
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.tests.utils import build_file_tree
 
 
@@ -92,7 +92,7 @@ def test_add_ftl_translation():
             removed=[],
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
-        paths = get_paths(project, checkouts)
+        paths = find_paths(project, checkouts)
 
         # Test
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
@@ -165,7 +165,7 @@ def test_remove_po_target_resource():
             removed=[join("fr-Test", "b.po")],
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
-        paths = get_paths(project, checkouts)
+        paths = find_paths(project, checkouts)
 
         # Test
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)

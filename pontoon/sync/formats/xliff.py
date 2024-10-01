@@ -5,11 +5,11 @@ Parser for the xliff translation format.
 import copy
 
 from lxml import etree
-
-from pontoon.sync.exceptions import ParseError, SyncError
-from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.vcs.translation import VCSTranslation
 from translate.storage import xliff
+
+from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.formats.exceptions import ParseError, SyncError
+from pontoon.sync.vcs.translation import VCSTranslation
 
 
 class XLIFFEntity(VCSTranslation):

@@ -24,9 +24,9 @@ from pontoon.base.models import (
 )
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
-from pontoon.sync.checkouts import Checkout, Checkouts
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import UploadPaths
 from pontoon.sync.formats import parse
-from pontoon.sync.paths import UploadPaths
 from pontoon.sync.vcs.translation import VCSTranslation
 
 log = logging.getLogger(__name__)

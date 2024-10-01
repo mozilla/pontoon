@@ -19,9 +19,9 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.checkouts import Checkout, Checkouts
-from pontoon.sync.paths import get_paths
-from pontoon.sync.sync_translations_to_repo import sync_translations_to_repo
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
 from pontoon.sync.tests.utils import build_file_tree
 
 
@@ -67,7 +67,7 @@ def test_remove_resource():
             removed=[join("en-US", "c.ftl")],
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
-        paths = get_paths(project, checkouts)
+        paths = find_paths(project, checkouts)
 
         # Test
         sync_translations_to_repo(
@@ -140,7 +140,7 @@ def test_remove_entity():
             removed=[],
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
-        paths = get_paths(project, checkouts)
+        paths = find_paths(project, checkouts)
 
         # Test
         sync_translations_to_repo(
@@ -216,7 +216,7 @@ def test_add_translation():
             removed=[],
         )
         checkouts = Checkouts(mock_checkout, mock_checkout)
-        paths = get_paths(project, checkouts)
+        paths = find_paths(project, checkouts)
 
         # Test
         db_changes = ChangedEntityLocale.objects.filter(

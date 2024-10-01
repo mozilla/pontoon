@@ -1,5 +1,4 @@
 import logging
-
 from os import walk
 from os.path import join, normpath, relpath
 from typing import NamedTuple, cast
@@ -8,7 +7,6 @@ from django.db.models.manager import BaseManager
 
 from pontoon.base.models import Project, Repository
 from pontoon.sync.repositories import get_repo
-
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +68,7 @@ class Checkouts(NamedTuple):
     target: Checkout
 
 
-def get_checkouts(
+def checkout_repos(
     project: Project, pull: bool = True, force: bool = False
 ) -> Checkouts:
     """

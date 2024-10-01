@@ -5,11 +5,9 @@ from textwrap import dedent
 from unittest.mock import Mock
 
 import pytest
-
-from moz.l10n.paths import L10nDiscoverPaths
-
 from django.conf import settings
 from django.utils import timezone
+from moz.l10n.paths import L10nDiscoverPaths
 
 from pontoon.base.models import Entity, Project, TranslatedResource
 from pontoon.base.tests import (
@@ -21,11 +19,10 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.checkouts import Checkout, Checkouts
-from pontoon.sync.paths import get_paths
-from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.entities import sync_entities_from_repo
+from pontoon.sync.core.paths import find_paths
 from pontoon.sync.tests.utils import build_file_tree
-
 
 now = timezone.now()
 
@@ -78,7 +75,7 @@ def test_remove_resource():
             changed=[],
             removed=[join("en-US", "c.ftl")],
         )
-        paths = get_paths(project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
         assert sync_entities_from_repo(
@@ -136,7 +133,7 @@ def test_add_resource():
             changed=[join("en-US", "c.ftl")],
             removed=[],
         )
-        paths = get_paths(project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
         assert sync_entities_from_repo(
@@ -209,7 +206,7 @@ def test_update_resource():
             changed=[join("en-US", "c.ftl")],
             removed=[],
         )
-        paths = get_paths(project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
         # Test
         assert sync_entities_from_repo(

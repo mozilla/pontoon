@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from django.test import TestCase
 
 from pontoon.base.models import Project, Repository
-from pontoon.sync.checkouts import Checkout, get_checkouts
+from pontoon.sync.core.checkout import Checkout, checkout_repos
 from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 
@@ -41,7 +41,7 @@ class CheckoutsTests(TestCase):
             url="URL",
             type=Repository.Type.GIT,
         )
-        with patch("pontoon.sync.checkouts.get_repo", return_value=mock_vcs):
+        with patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs):
             co = Checkout("SLUG", mock_repo, True, False)
             assert co.repo == mock_repo
             assert co.is_source
@@ -82,7 +82,7 @@ class CheckoutsTests(TestCase):
                 url="URL",
                 type=Repository.Type.GIT,
             )
-            with patch("pontoon.sync.checkouts.get_repo", return_value=mock_vcs):
+            with patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs):
                 co = Checkout("SLUG", mock_repo, True, False)
                 assert co.path == root
                 assert co.prev_commit is None
@@ -98,11 +98,11 @@ class CheckoutsTests(TestCase):
                     ("revision", (root,)),
                 ]
 
-    @patch("pontoon.sync.checkouts.Checkout")
+    @patch("pontoon.sync.core.checkout.Checkout")
     def test_get_checkouts(self, _):
         with self.assertRaises(Exception) as cm:
             two_sources = Mock(**{"all.return_value": []})
-            get_checkouts(Mock(Project, repositories=two_sources))
+            checkout_repos(Mock(Project, repositories=two_sources))
         assert str(cm.exception) == "No repository found"
 
         with self.assertRaises(Exception) as cm:
@@ -114,7 +114,7 @@ class CheckoutsTests(TestCase):
                     ]
                 }
             )
-            get_checkouts(Mock(Project, repositories=two_sources))
+            checkout_repos(Mock(Project, repositories=two_sources))
         assert str(cm.exception) == "Multiple source repositories"
 
         with self.assertRaises(Exception) as cm:
@@ -126,15 +126,15 @@ class CheckoutsTests(TestCase):
                     ]
                 }
             )
-            get_checkouts(Mock(Project, repositories=two_targets))
+            checkout_repos(Mock(Project, repositories=two_targets))
         assert str(cm.exception) == "Multiple target repositories"
 
         one_source = Mock(**{"all.return_value": [Mock(Repository, source_repo=True)]})
-        result = get_checkouts(Mock(Project, repositories=one_source))
+        result = checkout_repos(Mock(Project, repositories=one_source))
         assert result.source is not None
         assert result.source == result.target
 
         one_target = Mock(**{"all.return_value": [Mock(Repository, source_repo=False)]})
-        result = get_checkouts(Mock(Project, repositories=one_target))
+        result = checkout_repos(Mock(Project, repositories=one_target))
         assert result.source is not None
         assert result.source == result.target

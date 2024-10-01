@@ -5,11 +5,10 @@ Parser for to pofile translation format.
 from datetime import datetime
 
 import polib
-
 from django.utils import timezone
 
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 

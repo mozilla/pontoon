@@ -4,8 +4,8 @@ from textwrap import dedent
 from unittest.mock import Mock
 
 from pontoon.base.models import Project, Repository
-from pontoon.sync.checkouts import Checkout, Checkouts
-from pontoon.sync.paths import get_paths
+from pontoon.sync.core.checkout import Checkout, Checkouts
+from pontoon.sync.core.paths import find_paths
 from pontoon.sync.tests.utils import FileTree, build_file_tree
 
 
@@ -23,7 +23,7 @@ def test_no_config_one_repo():
         mock_checkout = Mock(
             Checkout, path=join(root, "repo"), removed=[join("en-US", "missing.ftl")]
         )
-        paths = get_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo", "en-US")
         assert paths.base == join(root, "repo")
         assert set(paths.ref_paths) == set(
@@ -61,7 +61,7 @@ def test_no_config_two_repos():
             Mock(Checkout, path=join(root, "source"), removed=[]),
             Mock(Checkout, path=join(root, "target")),
         )
-        paths = get_paths(mock_project, checkouts)
+        paths = find_paths(mock_project, checkouts)
         assert paths.ref_root == join(root, "source")
         assert paths.base == join(root, "target")
         assert set(paths.ref_paths) == set(
@@ -98,7 +98,7 @@ def test_config_one_repo():
         build_file_tree(root, tree)
         mock_project = Mock(Project, checkout_path=root, configuration_file="l10n.toml")
         mock_checkout = Mock(Checkout, path=join(root, "repo"), removed=[])
-        paths = get_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
+        paths = find_paths(mock_project, Checkouts(mock_checkout, mock_checkout))
         assert paths.ref_root == join(root, "repo")
         assert paths.base == join(root, "repo")
         assert set(paths.ref_paths) == set(
@@ -145,7 +145,7 @@ def test_config_two_repos():
                 repo=Mock(Repository, checkout_path=join(root, "target")),
             ),
         )
-        paths = get_paths(mock_project, checkouts)
+        paths = find_paths(mock_project, checkouts)
         assert paths.ref_root == join(root, "source")
         assert paths.base == join(root, "target")
         assert set(paths.ref_paths) == set(

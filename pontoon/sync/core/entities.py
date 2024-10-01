@@ -1,13 +1,11 @@
 import logging
-
 from collections import defaultdict
 from datetime import datetime
 from os.path import exists, isfile, join, relpath
 
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
-
 from django.db import transaction
 from django.db.models import F
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from pontoon.base.models import (
     Entity,
@@ -18,11 +16,10 @@ from pontoon.base.models import (
     TranslatedResource,
 )
 from pontoon.base.models.entity import get_word_count
-from pontoon.sync.checkouts import Checkout
-from pontoon.sync.exceptions import ParseError
+from pontoon.sync.core.checkout import Checkout
 from pontoon.sync.formats import parse
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.formats.silme import SilmeEntity, SilmeResource  # Approximate types
-
 
 log = logging.getLogger(__name__)
 

@@ -18,7 +18,7 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.sync_project import sync_project_task
+from pontoon.sync.tasks import sync_project_task
 from pontoon.sync.tests import SyncLogFactory
 from pontoon.sync.tests.test_checkouts import MockVersionControl
 from pontoon.sync.tests.utils import build_file_tree
@@ -29,7 +29,7 @@ def test_end_to_end():
     mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], []))
     with (
         TemporaryDirectory() as root,
-        patch("pontoon.sync.checkouts.get_repo", return_value=mock_vcs),
+        patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
         patch("pontoon.sync.repositories.get_repo", return_value=mock_vcs),
     ):
         # Database setup

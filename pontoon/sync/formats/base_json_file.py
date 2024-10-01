@@ -1,16 +1,14 @@
 import codecs
 import json
 import logging
-
 from collections import OrderedDict
 
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
-
+from pontoon.sync.formats.exceptions import ParseError
+from pontoon.sync.formats.utils import create_parent_directory
 
 log = logging.getLogger(__name__)
 
