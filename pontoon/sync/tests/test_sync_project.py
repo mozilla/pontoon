@@ -1,11 +1,11 @@
 from os import makedirs
 from os.path import join
+from re import fullmatch
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import patch
 
 import pytest
-
 from django.conf import settings
 
 from pontoon.base.models import ChangedEntityLocale
@@ -18,7 +18,7 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
-from pontoon.sync.sync_project import sync_project
+from pontoon.sync.sync_project import sync_project_task
 from pontoon.sync.tests import SyncLogFactory
 from pontoon.sync.tests.test_checkouts import MockVersionControl
 from pontoon.sync.tests.utils import build_file_tree
@@ -35,8 +35,12 @@ def test_end_to_end():
         # Database setup
         settings.MEDIA_ROOT = root
         synclog = SyncLogFactory.create()
-        locale_de = LocaleFactory.create(code="de-Test", total_strings=100)
-        locale_fr = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale_de = LocaleFactory.create(
+            code="de-Test", name="Test German", total_strings=100
+        )
+        locale_fr = LocaleFactory.create(
+            code="fr-Test", name="Test French", total_strings=100
+        )
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
         )
@@ -113,7 +117,7 @@ def test_end_to_end():
 
         # Test
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 6
-        sync_project(project.id, synclog.id)
+        sync_project_task(project.id, synclog.id)
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 0
         with open(join(repo_tgt.checkout_path, "de-Test", "c.ftl")) as file:
             assert (
@@ -125,6 +129,7 @@ def test_end_to_end():
                 file.read()
                 == "key-0 = New translation fr 0\n# New entry comment\nkey-2 = New translation fr 2\n"
             )
+        commit_msg: str = mock_vcs._calls[-1][1][1]
         assert mock_vcs._calls == [
             ("update", ("http://example.com/src-repo", src_root, "")),
             ("revision", (src_root,)),
@@ -134,19 +139,23 @@ def test_end_to_end():
                 "commit",
                 (
                     tgt_root,
-                    dedent(
-                        """
-                        Pontoon/test-project: Update English #0 (de-Test), English #1 (fr-Test)
-
-                        Co-authored-by: test0 <test0@example.com> (de-Test)
-                        Co-authored-by: test4 <test4@example.com> (de-Test)
-                        Co-authored-by: test1 <test1@example.com> (fr-Test)
-                        Co-authored-by: test5 <test5@example.com> (fr-Test)
-                        """
-                    ).strip(),
+                    commit_msg,
                     f"{settings.VCS_SYNC_NAME} <{settings.VCS_SYNC_EMAIL}>",
                     "",
                     "http://example.com/tgt-repo",
                 ),
             ),
         ]
+        assert fullmatch(
+            dedent(
+                r"""
+                Pontoon/test-project: Update Test German \(de-Test\), Test French \(fr-Test\)
+
+                Co-authored-by: test\d+ <test\d+@example.com> \(de-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \(de-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \(fr-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \(fr-Test\)
+                """
+            ).strip(),
+            commit_msg,
+        )

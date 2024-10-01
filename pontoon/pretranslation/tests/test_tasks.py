@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Translation, User
-from pontoon.pretranslation.tasks import pretranslate
+from pontoon.pretranslation.tasks import pretranslate_task
 from pontoon.test.factories import (
     EntityFactory,
     ProjectLocaleFactory,
@@ -48,7 +48,7 @@ def test_pretranslate(gt_mock, project_a, locale_a, resource_a, locale_b):
     gt_user = User.objects.get(email="pontoon-gt@example.com")
     gt_mock.return_value = [("pretranslation", None, gt_user)]
 
-    pretranslate(project_a.pk)
+    pretranslate_task(project_a.pk)
     project_a.refresh_from_db()
     translations = Translation.objects.filter(user=gt_user)
 
@@ -103,7 +103,7 @@ def test_which_strings_to_pretranslate(gt_mock, project_a, locale_a, resource_a)
         user=gt_user,
     )
 
-    pretranslate(project_a.pk)
+    pretranslate_task(project_a.pk)
     project_a.refresh_from_db()
 
     assert len(no_translations.translation_set.filter(string="pretranslation")) == 1

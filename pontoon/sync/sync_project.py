@@ -2,15 +2,17 @@ import logging
 from os.path import basename, join
 from tempfile import TemporaryDirectory
 
+from celery import shared_task
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files import File
 from django.utils import timezone
 from notifications.signals import notify
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.base.tasks import PontoonTask
+from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.checkouts import get_checkouts
-from pontoon.sync.core import serial_task
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 from pontoon.sync.paths import UploadPaths, get_paths
 from pontoon.sync.sync_entities_from_repo import sync_entities_from_repo
@@ -51,24 +53,13 @@ def sync_uploaded_file(
 
 
 def sync_project(
-    project_pk: int,
-    sync_log_pk: int,
+    project: Project,
+    sync_log: SyncLog,
+    *,
     pull: bool = True,
     commit: bool = True,
     force: bool = False,
 ):
-    try:
-        project = Project.objects.get(pk=project_pk)
-        sync_log = SyncLog.objects.get(pk=sync_log_pk)
-    except Project.DoesNotExist:
-        log.error(f"Could not sync project with pk={project_pk}, not found.")
-        raise
-    except SyncLog.DoesNotExist:
-        log.error(
-            f"Could not sync project {project.slug}, log with pk={sync_log_pk} not found."
-        )
-        raise
-
     # Mark "now" at the start of sync to avoid messing with
     # translations submitted during sync.
     now = timezone.now()
@@ -124,6 +115,10 @@ def sync_project(
     log.info(f"{log_prefix} Sync done")
     repo_sync_log.end()
 
+    if project.pretranslation_enabled and changed_paths:
+        # Pretranslate changed and added resources for all locales
+        pretranslate(project, changed_paths)
+
 
 def notify_users(project: Project, count: int) -> None:
     users = User.objects.filter(
@@ -136,19 +131,34 @@ def notify_users(project: Project, count: int) -> None:
         notify.send(project, recipient=user, verb=f"updated with {new_strings}")
 
 
-def sync_project_error(error, *args, **kwargs):
-    ProjectSyncLog.objects.create(
-        project=Project.objects.get(pk=args[0]),
-        sync_log=SyncLog.objects.get(pk=args[1]),
-        start_time=timezone.now(),
-    ).skip()
+@shared_task(base=PontoonTask, name="sync_project")
+def sync_project_task(
+    project_pk: int,
+    sync_log_pk: int,
+    pull: bool = True,
+    commit: bool = True,
+    force: bool = False,
+):
+    try:
+        project = Project.objects.get(pk=project_pk)
+        sync_log = SyncLog.objects.get(pk=sync_log_pk)
+    except Project.DoesNotExist:
+        log.error(f"[id={project.slug}] Sync aborted: Project not found.")
+        raise
+    except SyncLog.DoesNotExist:
+        log.error(
+            f"[{project.slug}] Sync aborted: Log with id={sync_log_pk} not found."
+        )
+        raise
 
-
-@serial_task(
-    settings.SYNC_TASK_TIMEOUT,
-    base=PontoonTask,
-    lock_key="project={0}",
-    on_error=sync_project_error,
-)
-def sync_project_task(*args, **kwargs):
-    sync_project(*args, **kwargs)
+    lock_name = f"sync {project.slug} [id={project_pk}]"
+    if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
+        ProjectSyncLog.objects.create(project=project, sync_log=sync_log).skip()
+        raise RuntimeError(
+            f"[{project.slug}] Sync aborted: Previous sync still running."
+        )
+    try:
+        sync_project(project, sync_log, pull=pull, commit=commit, force=force)
+    finally:
+        # release the lock
+        cache.delete(lock_name)

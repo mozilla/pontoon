@@ -1,7 +1,10 @@
 import logging
 
+from celery import shared_task
 from django.conf import settings
-from django.db.models import CharField, Q, Value as V
+from django.core.cache import cache
+from django.db.models import CharField, Q
+from django.db.models import Value as V
 from django.db.models.functions import Concat
 
 from pontoon.actionlog.models import ActionLog
@@ -20,38 +23,27 @@ from pontoon.pretranslation.pretranslate import (
     get_pretranslations,
     update_changed_instances,
 )
-from pontoon.sync.core import serial_task
-
 
 log = logging.getLogger(__name__)
 
 
-@serial_task(settings.SYNC_TASK_TIMEOUT, base=PontoonTask, lock_key="project={0}")
-def pretranslate(self, project_pk, locales=None, entities=None):
+def pretranslate(project: Project, paths: set[str] | None):
     """
     Identifies strings without any translations and any suggestions.
     Engages TheAlgorithm (bug 1552796) to gather pretranslations.
     Stores pretranslations as suggestions (approved=False) to DB.
 
-    :arg project_pk: the pk of the project to be pretranslated
-    :arg Queryset locales: the locales for the project to be pretranslated
-    :arg Queryset entites: the entities for the project to be pretranslated
+    :arg project: The project to be pretranslated
+    :arg paths: Paths of the project resources to be pretranslated,
+      or None to pretranslate all resources.
 
     :returns: None
     """
-    project = Project.objects.get(pk=project_pk)
-
     if not project.pretranslation_enabled:
         log.info(f"Pretranslation not enabled for project {project.name}")
         return
 
-    if locales:
-        locales = project.locales.filter(pk__in=locales)
-    else:
-        locales = project.locales
-
-    locales = locales.filter(
-        project_locale__project=project,
+    locales = project.locales.filter(
         project_locale__pretranslation_enabled=True,
         project_locale__readonly=False,
     )
@@ -64,12 +56,9 @@ def pretranslate(self, project_pk, locales=None, entities=None):
 
     log.info(f"Fetching pretranslations for project {project.name} started")
 
-    if not entities:
-        entities = Entity.objects.filter(
-            resource__project=project,
-            obsolete=False,
-        )
-
+    entities = Entity.objects.filter(resource__project=project, obsolete=False)
+    if paths:
+        entities = entities.filter(resource__path__in=paths)
     entities = entities.prefetch_related("resource")
 
     # Fetch all available locale-resource pairs (TranslatedResource objects)
@@ -205,3 +194,18 @@ def pretranslate(self, project_pk, locales=None, entities=None):
         log.info(f"Fetching pretranslations for locale {locale.code} done")
 
     log.info(f"Fetching pretranslations for project {project.name} done")
+
+
+@shared_task(base=PontoonTask, name="pretranslate")
+def pretranslate_task(project_pk):
+    project = Project.objects.get(pk=project_pk)
+    lock_name = f"pretranslate {project.slug} [id={project_pk}]"
+    if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
+        raise RuntimeError(
+            f"Cannot pretranslate {project.slug} because its previous pretranslation is still running."
+        )
+    try:
+        pretranslate(project, None)
+    finally:
+        # release the lock
+        cache.delete(lock_name)
