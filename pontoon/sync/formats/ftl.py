@@ -9,6 +9,7 @@ from pontoon.sync.formats.exceptions import ParseError, SyncError
 from pontoon.sync.formats.utils import create_parent_directory
 from pontoon.sync.vcs.translation import VCSTranslation
 
+
 log = logging.getLogger(__name__)
 
 

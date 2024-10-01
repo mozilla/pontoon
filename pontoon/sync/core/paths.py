@@ -1,10 +1,12 @@
 import logging
+
 from os.path import join
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
 
 from pontoon.base.models import Project
 from pontoon.sync.core.checkout import Checkouts
+
 
 log = logging.getLogger(__name__)
 

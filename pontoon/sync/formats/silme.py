@@ -3,10 +3,12 @@ Parser for silme-compatible translation formats.
 """
 
 import codecs
+
 from collections import OrderedDict
 from copy import copy
 
 import silme
+
 from silme.format.dtd import FormatParser as DTDParser
 from silme.format.inc import FormatParser as IncParser
 from silme.format.ini import FormatParser as IniParser

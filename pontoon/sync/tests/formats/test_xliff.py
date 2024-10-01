@@ -8,6 +8,7 @@ from pontoon.sync.formats import xliff
 from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
+
 BASE_XLIFF_FILE = """
 <xliff>
     <file original="filename" source-language="en" datatype="plaintext" target-language="en">

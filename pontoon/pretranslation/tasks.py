@@ -1,10 +1,10 @@
 import logging
 
 from celery import shared_task
+
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import CharField, Q
-from django.db.models import Value as V
+from django.db.models import CharField, Q, Value as V
 from django.db.models.functions import Concat
 
 from pontoon.actionlog.models import ActionLog
@@ -23,6 +23,7 @@ from pontoon.pretranslation.pretranslate import (
     get_pretranslations,
     update_changed_instances,
 )
+
 
 log = logging.getLogger(__name__)
 

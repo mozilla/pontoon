@@ -3,6 +3,7 @@ Parser for the strings.xml file format.
 """
 
 import logging
+
 from collections import OrderedDict
 
 from compare_locales import parser, serializer
@@ -15,6 +16,7 @@ from pontoon.sync.formats.utils import (
     unescape_apostrophes,
 )
 from pontoon.sync.vcs.translation import VCSTranslation
+
 
 log = logging.getLogger(__name__)
 

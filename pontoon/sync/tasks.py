@@ -1,6 +1,7 @@
 import logging
 
 from celery import shared_task
+
 from django.conf import settings
 from django.core.cache import cache
 
@@ -8,6 +9,7 @@ from pontoon.base.models import Project
 from pontoon.base.tasks import PontoonTask
 from pontoon.sync.core import sync_project
 from pontoon.sync.models import ProjectSyncLog, SyncLog
+
 
 log = logging.getLogger(__name__)
 

@@ -6,6 +6,7 @@ from textwrap import dedent
 from unittest.mock import patch
 
 import pytest
+
 from django.conf import settings
 
 from pontoon.base.models import ChangedEntityLocale

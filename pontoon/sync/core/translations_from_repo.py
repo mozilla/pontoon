@@ -1,14 +1,16 @@
 import logging
+
 from collections.abc import Iterable
 from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
+from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
+from moz.l10n.resource import bilingual_extensions
+
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.manager import BaseManager
-from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions
 
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import (
@@ -28,6 +30,7 @@ from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
 from pontoon.sync.formats import parse
 from pontoon.sync.vcs.translation import VCSTranslation
+
 
 log = logging.getLogger(__name__)
 
