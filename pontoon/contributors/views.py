@@ -3,7 +3,6 @@ import logging
 
 from dateutil.relativedelta import relativedelta
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -27,7 +26,7 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
-from pontoon.settings import VIEW_CACHE_TIMEOUT
+from pontoon.settings import DEFAULT_FROM_EMAIL, VIEW_CACHE_TIMEOUT
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -475,7 +474,7 @@ def mark_all_notifications_as_read(request):
 
 def account_disabled(request):
     context = {
-        "support_email": settings.DEFAULT_FROM_EMAIL,
+        "support_email": DEFAULT_FROM_EMAIL,
     }
     return render(request, "account_disabled.html", context)
 
