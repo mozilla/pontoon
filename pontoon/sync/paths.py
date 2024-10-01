@@ -6,10 +6,13 @@ from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_local
 
 from pontoon.base.models import Project
 from pontoon.sync.checkouts import Checkouts
-from pontoon.sync.vcs.project import MissingLocaleDirectoryError
 
 
 log = logging.getLogger(__name__)
+
+
+class MissingLocaleDirectoryError(IOError):
+    """Raised when sync can't find the locale directory."""
 
 
 def get_paths(

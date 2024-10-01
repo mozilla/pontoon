@@ -11,7 +11,6 @@ from django.db.models.manager import BaseManager
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
@@ -333,14 +332,14 @@ class Project(AggregatedStats):
         Return the repository instance whose checkout contains the given
         path. If no matching repo is found, raise a ValueError.
         """
-        repo = utils.first(
-            self.repositories.all(), lambda r: path.startswith(r.checkout_path)
-        )
-
-        if repo is None:
+        try:
+            return next(
+                repo
+                for repo in self.repositories.all()
+                if path.startswith(repo.checkout_path)
+            )
+        except StopIteration:
             raise ValueError(f"Could not find repo matching path {path}.")
-        else:
-            return repo
 
     @property
     def has_multi_locale_repositories(self):
@@ -360,10 +359,7 @@ class Project(AggregatedStats):
         Returns an instance of repository which contains the path to source files.
         """
         if not self.has_single_repo:
-            from pontoon.sync.vcs.project import VCSProject
-
-            source_directories = VCSProject.SOURCE_DIR_SCORES.keys()
-
+            source_directories = {"templates", "en-US", "en-us", "en_US", "en_us", "en"}
             for repo in self.repositories.all():
                 last_directory = basename(normpath(urlparse(repo.url).path))
                 if repo.source_repo or last_directory in source_directories:

@@ -4,7 +4,6 @@ from textwrap import dedent
 import pytest
 
 from pontoon.base.tests import TestCase
-from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import xliff
 from pontoon.sync.tests.formats import FormatTestsMixin
@@ -57,7 +56,7 @@ class XLIFFTests(FormatTestsMixin, TestCase):
 
     def key(self, source_string):
         """XLIFF keys are prefixed with the file name."""
-        return "filename" + KEY_SEPARATOR + super().key(source_string)
+        return "filename\x04" + super().key(source_string)
 
     def assert_file_content(self, file_path, expected_content):
         """

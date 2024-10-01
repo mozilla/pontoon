@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from functools import reduce
 from operator import ior
 from re import findall, match
@@ -14,7 +15,6 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
-from pontoon.sync import KEY_SEPARATOR
 
 
 def get_word_count(string):
@@ -532,18 +532,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             models.Index(fields=["resource", "obsolete", "string_plural"]),
         ]
 
-    @property
-    def cleaned_key(self):
-        """
-        Get cleaned key, without the source string and Translate Toolkit
-        separator.
-        """
-        key = self.key.split(KEY_SEPARATOR)[0]
-        if key == self.string:
-            key = ""
-
-        return key
-
     def __str__(self):
         return self.string
 
@@ -930,7 +918,9 @@ class Entity(DirtyFieldsMixin, models.Model):
     ):
         entities_array = []
 
-        entities = entities.prefetch_entities_data(locale, preferred_source_locale)
+        entities: Iterable[Entity] = entities.prefetch_entities_data(
+            locale, preferred_source_locale
+        )
 
         # If requested entity not in the current page
         if requested_entity and requested_entity not in [e.pk for e in entities]:
@@ -959,13 +949,18 @@ class Entity(DirtyFieldsMixin, models.Model):
                 if original_plural != "":
                     original_plural = entity.alternative_originals[-1].string
 
+            key_separator = "\x04"
+            cleaned_key = entity.key.split(key_separator)[0]
+            if cleaned_key == entity.string:
+                cleaned_key = ""
+
             entities_array.append(
                 {
                     "pk": entity.pk,
                     "original": original,
                     "original_plural": original_plural,
                     "machinery_original": entity.string,
-                    "key": entity.cleaned_key,
+                    "key": cleaned_key,
                     "context": entity.context,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),

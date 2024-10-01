@@ -1,5 +1,3 @@
-import os
-
 from . import git, hg, svn
 from .utils import CommitToRepositoryException, PullFromRepositoryException
 
@@ -8,7 +6,6 @@ __all__ = [
     "CommitToRepositoryException",
     "PullFromRepositoryException",
     "commit_to_vcs",
-    "get_changed_files",
     "get_revision",
     "update_from_vcs",
 ]
@@ -31,29 +28,6 @@ def commit_to_vcs(
 
 def get_revision(repo_type: str, path: str) -> str | None:
     return get_repo(repo_type).revision(path)
-
-
-def get_changed_files(
-    repo_type: str, path: str, revision: str | None
-) -> tuple[list[str], list[str]]:
-    """Return a list of changed files for the repository."""
-    repo = get_repo(repo_type)
-    repo.log.info(f"Retrieving changed files for: {path}:{revision}")
-
-    if revision is not None:
-        delta = repo.changed_files(path, revision)
-        if delta is not None:
-            return delta
-
-    # If there's no latest revision we should return all the files in the latest
-    # version of repository
-    paths = []
-    for root, _, files in os.walk(path):
-        for f in files:
-            if root[0] == "." or "/." in root:
-                continue
-            paths.append(os.path.join(root, f).replace(path + "/", ""))
-    return paths, []
 
 
 def get_repo(type: str):

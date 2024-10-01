@@ -41,28 +41,6 @@ def get_project_locale_from_request(request, locales):
             continue
 
 
-def first(collection, test, default=None):
-    """
-    Return the first item that, when passed to the given test function,
-    returns True. If no item passes the test, return the default value.
-    """
-    return next((c for c in collection if test(c)), default)
-
-
-def match_attr(collection, **attributes):
-    """
-    Return the first item that has matching values for the given
-    attributes, or None if no item is found to match.
-    """
-    return first(
-        collection,
-        lambda i: all(
-            getattr(i, attrib) == value for attrib, value in attributes.items()
-        ),
-        default=None,
-    )
-
-
 def group_dict_by(list_of_dicts, key):
     """
     Group dicts in a list by the given key. Return a defaultdict instance with
@@ -74,19 +52,6 @@ def group_dict_by(list_of_dicts, key):
         group[dictionary[key]].append(dictionary)
 
     return group
-
-
-def extension_in(filename, extensions):
-    """
-    Check if the extension for the given filename is in the list of
-    allowed extensions. Uses os.path.splitext rules for getting the
-    extension.
-    """
-    filename, extension = os.path.splitext(filename)
-    if extension and extension[1:] in extensions:
-        return True
-    else:
-        return False
 
 
 def get_object_or_none(model, *args, **kwargs):
