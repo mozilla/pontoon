@@ -3,6 +3,7 @@ import logging
 
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -470,6 +471,13 @@ def mark_all_notifications_as_read(request):
     )
 
     return JsonResponse({"status": True})
+
+
+def account_disabled(request):
+    context = {
+        "support_email": settings.DEFAULT_FROM_EMAIL,
+    }
+    return render(request, "account_disabled.html", context)
 
 
 @login_required(redirect_field_name="", login_url="/403")
