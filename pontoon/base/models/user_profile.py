@@ -54,24 +54,24 @@ class UserProfile(models.Model):
     # Translation Champion
     translation_champion_level = models.IntegerField(
         default=0,
-        choices={
+        choices=[
             (0, "No Badge"),
             (1, "Translator Level 1"),  # Submit 5 translations
             (2, "Translator Level 2"),  # 50 translations
             (3, "Translator Level 3"),  # 250 translations
             (4, "Translator Level 4"),  # 1000 translations
-        },
+        ],
     )
 
     # Community Builder
     community_builder_level = models.IntegerField(
         default=0,
-        choices={
+        choices=[
             (0, "No Badge"),
             (1, "Mentor Level 1"),  # Successfully promote 1 contributor to a new role
             (2, "Mentor Level 2"),  # 2 contributors
             (3, "Mentor Level 3"),  # 5 contributors
-        },
+        ],
     )
 
     # External accounts
