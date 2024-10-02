@@ -44,10 +44,10 @@ class UserProfile(models.Model):
         default=0,
         choices=[
             (0, "No Badge"),
-            (1, "Reviewer Level 1"),  # Review 5 translations
-            (2, "Reviewer Level 2"),  # 50 translations
-            (3, "Reviewer Level 3"),  # 250 translations
-            (4, "Reviewer Level 4"),  # 1000 translations
+            (1, "Review Master Level 1"),  # Review 5 translations
+            (2, "Review Master Level 2"),  # 50 translations
+            (3, "Review Master Level 3"),  # 250 translations
+            (4, "Review Master Level 4"),  # 1000 translations
         ],
     )
 
@@ -56,10 +56,10 @@ class UserProfile(models.Model):
         default=0,
         choices=[
             (0, "No Badge"),
-            (1, "Translator Level 1"),  # Submit 5 translations
-            (2, "Translator Level 2"),  # 50 translations
-            (3, "Translator Level 3"),  # 250 translations
-            (4, "Translator Level 4"),  # 1000 translations
+            (1, "Translation Champion Level 1"),  # Submit 5 translations
+            (2, "Translation Champion Level 2"),  # 50 translations
+            (3, "Translation Champion Level 3"),  # 250 translations
+            (4, "Translation Champion Level 4"),  # 1000 translations
         ],
     )
 
@@ -68,9 +68,12 @@ class UserProfile(models.Model):
         default=0,
         choices=[
             (0, "No Badge"),
-            (1, "Mentor Level 1"),  # Successfully promote 1 contributor to a new role
-            (2, "Mentor Level 2"),  # 2 contributors
-            (3, "Mentor Level 3"),  # 5 contributors
+            (
+                1,
+                "Community Builder Level 1",
+            ),  # Successfully promote 1 contributor to a new role
+            (2, "Community Builder Level 2"),  # 2 contributors
+            (3, "Community Builder Level 3"),  # 5 contributors
         ],
     )
 
