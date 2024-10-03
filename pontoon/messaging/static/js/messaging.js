@@ -212,15 +212,15 @@ $(function () {
     });
   }
 
-  // Load panel conent on page load
+  // Load panel content on page load
   loadPanelContent(window.location.pathname);
 
-  // Load panel conent on history change
+  // Load panel content on history change
   window.onpopstate = function () {
     loadPanelContent(window.location.pathname);
   };
 
-  // Load panel conent on menu click
+  // Load panel content on menu click
   container.on(
     'click',
     '.left-column a, .right-column .edit-as-new',
