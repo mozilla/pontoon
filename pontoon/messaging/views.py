@@ -20,12 +20,13 @@ from django.views.decorators.http import require_POST
 from pontoon.base.models import Locale, Project, Translation, UserProfile
 from pontoon.base.utils import require_AJAX, split_ints
 from pontoon.messaging import forms, utils
+from pontoon.messaging.models import Message
 
 
 log = logging.getLogger(__name__)
 
 
-def messaging(request):
+def messaging(request, pk=None):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 
@@ -33,8 +34,63 @@ def messaging(request):
         request,
         "messaging/messaging.html",
         {
-            "available_locales": Locale.objects.available(),
-            "available_projects": Project.objects.available().order_by("name"),
+            "count": Message.objects.count(),
+        },
+    )
+
+
+@require_AJAX
+def ajax_compose(request):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    return render(
+        request,
+        "messaging/includes/compose.html",
+        {
+            "form": forms.MessageForm(),
+            "available_locales": [],
+            "selected_locales": Locale.objects.available(),
+            "available_projects": [],
+            "selected_projects": Project.objects.available().order_by("name"),
+        },
+    )
+
+
+@require_AJAX
+def ajax_use_as_template(request, pk):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    message = get_object_or_404(Message, pk=pk)
+
+    return render(
+        request,
+        "messaging/includes/compose.html",
+        {
+            "form": forms.MessageForm(instance=message),
+            "available_locales": Locale.objects.available().exclude(
+                pk__in=message.locales.all()
+            ),
+            "selected_locales": message.locales.all(),
+            "available_projects": Project.objects.available().exclude(
+                pk__in=message.projects.all()
+            ),
+            "selected_projects": message.projects.all().order_by("name"),
+        },
+    )
+
+
+@require_AJAX
+def ajax_sent(request):
+    if not request.user.has_perm("base.can_manage_project"):
+        raise PermissionDenied
+
+    return render(
+        request,
+        "messaging/includes/sent.html",
+        {
+            "sent_messages": Message.objects.order_by("-sent_at"),
         },
     )
 
@@ -49,7 +105,7 @@ def get_recipients(form):
     - Translators of selected Locales
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
-    project_ids = sorted(split_ints(form.cleaned_data.get("projects")))
+    project_ids = form.cleaned_data.get("projects")
     translations = Translation.objects.filter(
         locale_id__in=locale_ids,
         entity__resource__project_id__in=project_ids,
@@ -168,20 +224,21 @@ def send_message(request):
     form = forms.MessageForm(request.POST)
 
     if not form.is_valid():
-        return JsonResponse(dict(form.errors.items()))
+        return JsonResponse(dict(form.errors.items()), status=400)
 
-    if form.cleaned_data.get("send_to_myself"):
-        recipients = User.objects.filter(pk=request.user.pk)
-    else:
+    send_to_myself = form.cleaned_data.get("send_to_myself")
+    recipients = User.objects.filter(pk=request.user.pk)
+
+    """
+    While the feature is in development, messages are sent only to the current user.
+    TODO: Uncomment lines below when the feature is ready.
+    if not send_to_myself:
         recipients = get_recipients(form)
+    """
 
     log.info(
         f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
     )
-
-    # While the feature is in development, notifications and emails are sent only to the current user.
-    # TODO: Remove this line when the feature is ready
-    recipients = User.objects.filter(pk=request.user.pk)
 
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
@@ -235,6 +292,21 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
         log.info(
             f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
         )
+
+    if not send_to_myself:
+        message = form.save(commit=False)
+        message.sender = request.user
+        message.save()
+
+        message.recipients.set(recipients)
+
+        locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
+        locales = Locale.objects.filter(pk__in=locale_ids)
+        message.locales.set(locales)
+
+        project_ids = form.cleaned_data.get("projects")
+        projects = Project.objects.filter(pk__in=project_ids)
+        message.projects.set(projects)
 
     return JsonResponse(
         {

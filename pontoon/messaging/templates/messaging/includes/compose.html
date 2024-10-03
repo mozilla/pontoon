@@ -1,0 +1,224 @@
+{% import "widgets/checkbox.html" as Checkbox %}
+{% import 'teams/widgets/multiple_team_selector.html' as multiple_team_selector %}
+{% import 'widgets/multiple_item_selector.html' as multiple_item_selector %}
+
+<div id="compose" class="selected">
+    <form id="send-message" method="POST" action="{{ url('pontoon.messaging.ajax.send_message') }}">
+        {% csrf_token %}
+        {{ form.send_to_myself }}
+
+        <section class="message-type">
+            <h3>Message type</h3>
+            <ul class="check-list">
+                {{ Checkbox.checkbox('Notification', class='notification', attribute='notification',
+                is_enabled=form.notification.value(), form_field=form.notification) }}
+                {{ Checkbox.checkbox('Email', class='email', attribute='email', is_enabled=form.email.value(),
+                form_field=form.email) }}
+                {{ Checkbox.checkbox('Transactional', class='transactional', attribute='transactional',
+                is_enabled=form.transactional.value(), form_field=form.transactional, help='Transactional emails are
+                also sent to users who have not opted in to email
+                communication. They are restricted in the type of content that can be included.') }}
+            </ul>
+            <div class="errors">
+                <p>You must select at least one message type</p>
+            </div>
+        </section>
+
+        <section class="message-content">
+            <h3>Message content</h3>
+            <div class="field clearfix subject">
+                {{ form.subject.label_tag() }}
+                {{ form.subject }}
+                <div class="errors">
+                    <p>Your message must include a subject</p>
+                </div>
+            </div>
+            <div class="field clearfix body">
+                <label for="body">Body</label>
+                <textarea cols="40" rows="10" required="" id="body"></textarea>
+                {{ form.body }}
+                <div class="subtitle">
+                    <p>Supports Markdown</p>
+                </div>
+                <div class="errors">
+                    <p>Your message must include a body</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="user-roles">
+            <h3>Filter by user role</h3>
+            <ul class="check-list">
+                {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
+                is_enabled=form.managers.value(), form_field=form.managers) }}
+                {{ Checkbox.checkbox('Translators', class='translators', attribute='translators',
+                is_enabled=form.translators.value(), form_field=form.translators) }}
+                {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors',
+                is_enabled=form.contributors.value(), form_field=form.contributors) }}
+            </ul>
+            <div class="errors">
+                <p>You must select at least one user role</p>
+            </div>
+        </section>
+
+        <section class="locale">
+            <h3>Filter by locale</h3>
+            <div class="multi-selector locale-selector">
+                <div class="clearfix">
+                    {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales') }}
+                </div>
+            </div>
+            <div class="errors">
+                <p>You must select at least one locale</p>
+            </div>
+        </section>
+
+        <section class="project">
+            <h3>Filter by project</h3>
+            <div class="multi-selector project-selector">
+                <div class="clearfix">
+                    {{ multiple_item_selector.render(available_projects, selected_projects, form_field=form.projects) }}
+                </div>
+            </div>
+            <div class="errors">
+                <p>You must select at least one project</p>
+            </div>
+        </section>
+
+        <section class="submitted-translations clearfix">
+            <h3>Filter by submitted translations</h3>
+            <div class="amount">
+                <div class="field clearfix minimum half">
+                    {{ form.translation_minimum.label_tag() }}
+                    {{ form.translation_minimum }}
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix maximum half">
+                    {{ form.translation_maximum.label_tag() }}
+                    {{ form.translation_maximum }}
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="date">
+                <div class="field clearfix from half">
+                    {{ form.translation_from.label_tag() }}
+                    {{ form.translation_from }}
+                </div>
+                <div class="field clearfix to half">
+                    {{ form.translation_to.label_tag() }}
+                    {{ form.translation_to }}
+                </div>
+            </div>
+        </section>
+
+        <section class="performed-reviews clearfix">
+            <h3>Filter by performed reviews</h3>
+            <div class="amount">
+                <div class="field clearfix minimum half">
+                    {{ form.review_minimum.label_tag() }}
+                    {{ form.review_minimum }}
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+                <div class="field clearfix maximum half">
+                    {{ form.review_maximum.label_tag() }}
+                    {{ form.review_maximum }}
+                    <div class="errors">
+                        <p>The value must be an integer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="date">
+                <div class="field clearfix from half">
+                    {{ form.review_from.label_tag() }}
+                    {{ form.review_from }}
+                </div>
+                <div class="field clearfix to half">
+                    {{ form.review_to.label_tag() }}
+                    {{ form.review_to }}
+                </div>
+            </div>
+        </section>
+
+        <section class="last-login clearfix">
+            <h3>Filter by last login</h3>
+            <div class="date">
+
+                <div class="field clearfix from half">
+                    {{ form.login_from.label_tag() }}
+                    {{ form.login_from }}
+                </div>
+                <div class="field clearfix to half">
+                    {{ form.login_to.label_tag() }}
+                    {{ form.login_to }}
+                </div>
+            </div>
+        </section>
+    </form>
+    <menu class="controls">
+        <button class="button toggle review" data-target="#review">Review message<span
+                class="fa fa-chevron-right"></span></button>
+    </menu>
+</div>
+<div id="review">
+    <section class="message-content clearfix">
+        <h3>Review message</h3>
+        <div class="content-wrapper">
+            <div class="subject">
+                <p class="value"></p>
+            </div>
+            <div class="body">
+                <div class="value"></div>
+            </div>
+        </div>
+    </section>
+    <section class="recipients clearfix">
+        <h3>Recipients</h3>
+        <div class="user-roles">
+            <h5>User roles</h5>
+            <p class="value"></p>
+        </div>
+        <div class="locales">
+            <h5>Locales</h5>
+            <p class="value"></p>
+        </div>
+        <div class="projects">
+            <h5>Projects</h5>
+            <p class="value"></p>
+        </div>
+        <div class="submitted-translations">
+            <h5>Submitted translations</h5>
+            <p class="value amount"></p>
+            <p class="value date"></p>
+        </div>
+        <div class="performed-reviews">
+            <h5>Performed reviews</h5>
+            <p class="value amount"></p>
+            <p class="value date"></p>
+        </div>
+        <div class="last-login">
+            <h5>Last login</h5>
+            <p class="value date"></p>
+        </div>
+    </section>
+    <section class="message-type clearfix">
+        <h3>Message type</h3>
+        <p class="value"></p>
+        <p class="transactional"><i>Warning:</i> Transactional emails are also sent to users who have
+            not opted in to email communication. They are restricted in the type of content that can be
+            included. When in doubt, please review with legal.</p>
+    </section>
+    <menu class="controls">
+        <button class="button toggle edit" data-target="#compose"><span class="fa fa-chevron-left"></span>Back to
+            editing</button>
+        <div class="right">
+            <button class="button send to-myself">Send test to myself</button>
+            <button class="button active send">Send</button>
+        </div>
+    </menu>
+</div>
