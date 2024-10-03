@@ -170,7 +170,8 @@ $(function () {
 
     const panel = container.find('.right-column');
     const relative_path = path.split('/messaging/')[1];
-    const menu_path = path === '/messaging/sent/' ? path : '/messaging/';
+    const isSentPage = relative_path === 'sent/';
+    const menu_path = isSentPage ? '/messaging/sent/' : '/messaging/';
 
     // Update menu selected state
     container
@@ -187,7 +188,7 @@ $(function () {
       success: function (data) {
         panel.append(data);
 
-        if (relative_path === 'sent/') {
+        if (isSentPage) {
           // Dissolve new message state
           setTimeout(function () {
             container.find('.message.new').removeClass('new');
