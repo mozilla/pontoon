@@ -19,7 +19,7 @@ urlpatterns = [
                 path(
                     "<int:pk>/",
                     views.messaging,
-                    name="pontoon.messaging.edit_as_new",
+                    name="pontoon.messaging.use_as_template",
                 ),
                 # Sent
                 path(
@@ -41,8 +41,8 @@ urlpatterns = [
                             # Edit as new
                             path(
                                 "<int:pk>/",
-                                views.ajax_edit_as_new,
-                                name="pontoon.messaging.ajax.edit_as_new",
+                                views.ajax_use_as_template,
+                                name="pontoon.messaging.ajax.use_as_template",
                             ),
                             # Sent
                             path(

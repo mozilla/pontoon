@@ -58,7 +58,7 @@ def ajax_compose(request):
 
 
 @require_AJAX
-def ajax_edit_as_new(request, pk):
+def ajax_use_as_template(request, pk):
     if not request.user.has_perm("base.can_manage_project"):
         raise PermissionDenied
 

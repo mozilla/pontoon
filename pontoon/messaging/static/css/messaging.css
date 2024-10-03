@@ -285,7 +285,7 @@
           left: 5px;
           right: 5px;
 
-          .edit-as-new {
+          .use-as-template {
             color: inherit;
             float: left;
             text-transform: uppercase;
@@ -296,7 +296,7 @@
             }
           }
 
-          .edit-as-new:hover {
+          .use-as-template:hover {
             color: var(--white-1);
           }
 

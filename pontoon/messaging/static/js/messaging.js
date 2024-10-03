@@ -224,7 +224,7 @@ $(function () {
   // Load panel content on menu click
   container.on(
     'click',
-    '.left-column a, .right-column .edit-as-new',
+    '.left-column a, .right-column .use-as-template',
     function (e) {
       // Keep default middle-, shift-, control- and command-click behaviour
       if (e.which === 2 || e.metaKey || e.shiftKey || e.ctrlKey) {
