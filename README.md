@@ -3,7 +3,7 @@
 Pontoon is a translation management system used and developed by the
 [Mozilla localization community](https://pontoon.mozilla.org/). It
 specializes in open source localization that is driven by the community and
-uses version-control systems for storing translations.
+uses version control systems for storing translations.
 
 [📚 **Documentation**](https://mozilla-pontoon.readthedocs.io/)
 
@@ -50,7 +50,7 @@ If you want to go further, you can:
 
 This software is licensed under the
 [New BSD License](https://creativecommons.org/licenses/BSD/). For more
-information, read [LICENSE](https://github.com/mozilla/pontoon/blob/HEAD/LICENSE).
+information, read the [LICENSE](https://github.com/mozilla/pontoon/blob/HEAD/LICENSE).
 
 ## Screenshots
 
