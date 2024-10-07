@@ -22,6 +22,23 @@
   top: 3px;
 }
 
+.history .translation .user-avatar .avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.history .translation .user-avatar .user-role-banner {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 30%);
+  background-color: var(--icon-border-1);
+  color: white;
+  font-size: 8px;
+  padding: 0 8px;
+  border-radius: 4px;
+}
+
 .history .translation .user-avatar img {
   border-radius: 6px;
   border: 2px solid var(--icon-border-1);
