@@ -32,10 +32,13 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
 
   return (
     <li className='comment'>
-      <UserAvatar
-        username={comment.username}
-        imageUrl={comment.userGravatarUrlSmall}
-      />
+      <div className='avatar-container'>
+        <UserAvatar
+          username={comment.username}
+          imageUrl={comment.userGravatarUrlSmall}
+          userStatus={comment.userStatus}
+        />
+      </div>
       <div className='container'>
         <div className='content'>
           <div>

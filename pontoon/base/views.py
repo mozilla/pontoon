@@ -414,17 +414,13 @@ def get_translation_history(request):
     for t in translations:
         u = t.user or User(username="Imported", first_name="Imported", email="imported")
         translation_dict = t.serialize()
-        if t.user:
-            user_role = User.locale_role(t.user, locale)
-        else:
-            user_role = ""
         translation_dict.update(
             {
                 "user": u.name_or_email,
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "user_role": user_role,
+                "user_status": User.locale_status(t.user, locale),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,

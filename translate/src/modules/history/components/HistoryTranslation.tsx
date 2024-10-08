@@ -129,7 +129,7 @@ const User = ({
       {user}
     </a>
   ) : (
-    <span title={title}> {user} </span>
+    <span title={title}>{user}</span>
   );
 
 /**
@@ -270,7 +270,7 @@ export function HistoryTranslationBase({
                 username={translation.username}
                 title=''
                 imageUrl={translation.userGravatarUrlSmall}
-                userRole={translation.userRole}
+                userStatus={translation.userStatus}
               />
             </Localized>
             {translation.machinerySources ? (

@@ -704,8 +704,8 @@ user-UserAvatar--anon-alt-text =
     .alt = Anonymous User
 user-UserAvatar--alt-text = 
     .alt = User Profile
-user-UserAvatar--userRole =
-    { $userRole }
+user-UserAvatar--userStatus =
+    .title {$userStatus}
 
 ## User Menu
 ## Shows user menu entries and options to sign in or out.

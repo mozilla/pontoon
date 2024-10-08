@@ -30,6 +30,7 @@ class Comment(models.Model):
         return {
             "author": self.author.name_or_email,
             "username": self.author.username,
+            "user_status": self.author.locale_status(self.locale),
             "user_gravatar_url_small": self.author.gravatar_url(88),
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),

@@ -1,6 +1,7 @@
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
+from dateutil.relativedelta import relativedelta
 from guardian.shortcuts import get_objects_for_user
 
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.urls import reverse
+from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
 
@@ -190,6 +192,21 @@ def user_locale_role(self, locale):
         return "System User"
     else:
         return "Contributor"
+
+
+def user_locale_status(self, locale):
+    if self is None:
+        return ""
+    if self.is_superuser:
+        return "Admin"
+    if self in locale.managers_group.user_set.all():
+        return "Manager"
+    if self in locale.translators_group.user_set.all():
+        return "Translator"
+    if self.date_joined >= timezone.now() - relativedelta(months=1):
+        return "New User"
+    else:
+        return ""
 
 
 @property
@@ -423,6 +440,7 @@ User.add_to_class("managed_locales", user_managed_locales)
 User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
+User.add_to_class("locale_status", user_locale_status)
 User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
