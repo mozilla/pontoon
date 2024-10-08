@@ -203,7 +203,7 @@ def user_locale_status(self, locale):
         return "Manager"
     if self in locale.translators_group.user_set.all():
         return "Translator"
-    if self.date_joined >= timezone.now() - relativedelta(months=1):
+    if self.date_joined >= timezone.now() - relativedelta(months=3):
         return "New User"
     else:
         return ""
