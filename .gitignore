@@ -18,7 +18,6 @@ tmp/
 venv/
 
 /docker/config/server.env
-/docker/config/server.env-e
 /docs/_build
 /docs/_gh-pages
 /env/
