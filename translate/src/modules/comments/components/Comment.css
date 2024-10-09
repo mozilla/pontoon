@@ -2,24 +2,6 @@
   padding-bottom: 10px;
 }
 
-.comments-list ul .comment .avatar-container {
-  position: relative;
-  display: inline-block;
-}
-
-.comments-list ul .comment .user-status-banner {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 30%);
-  background-color: var(--icon-border-1);
-  color: white;
-  font-size: 8px;
-  padding: 0 6px;
-  border-radius: 0 0 4px 4px;
-  white-space: nowrap;
-}
-
 .comments-list .comment a {
   color: var(--status-translated);
   font-weight: 400;

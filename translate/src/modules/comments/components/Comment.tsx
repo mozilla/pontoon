@@ -9,6 +9,7 @@ import type { TranslationComment } from '~/api/comment';
 import { UserAvatar } from '~/modules/user';
 
 import './Comment.css';
+import '../../history/components/HistoryTranslation.css';
 
 type Props = {
   comment: TranslationComment;
