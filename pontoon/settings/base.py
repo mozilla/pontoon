@@ -301,11 +301,16 @@ for ip in blocked_ip_settings:
             log = logging.getLogger(__name__)
             log.error(f"Invalid IP or IP range defined in BLOCKED_IPS: {ip}")
 
+THROTTLE_MAX_COUNT = 100  # A maximum of 100 requests
+THROTTLE_PERIOD = 60  # allowed in 1 minute.
+THROTTLE_BLOCK_DURATION = 600  # Subsequent requests are blocked for 10 minutes.
+
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "pontoon.base.middleware.RaygunExceptionMiddleware",
+    "pontoon.base.middleware.ThrottleIpMiddleware",
     "pontoon.base.middleware.BlockedIpMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
