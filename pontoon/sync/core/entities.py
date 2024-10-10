@@ -48,9 +48,7 @@ def sync_entities_from_repo(
     for co_path in checkout.changed:
         path = join(checkout.path, co_path)
         if path in source_paths and exists(path):
-            db_path = relpath(
-                path[:-1] if path.endswith(".pot") else path, paths.ref_root
-            )
+            db_path = get_db_path(paths, path)
             try:
                 res = parse(path, locale=source_locale)
             except ParseError as error:
@@ -62,7 +60,7 @@ def sync_entities_from_repo(
 
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
-        removed_paths = remove_resources(project, paths.ref_root, checkout)
+        removed_paths = remove_resources(project, paths, checkout)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, _ = add_resources(
             project, locale_map, paths, updates, changed_paths, now
@@ -95,22 +93,21 @@ def rename_resources(
     return set(renamed_db_paths.values())
 
 
-def remove_resources(project: Project, ref_root: str, checkout: Checkout) -> set[str]:
+def remove_resources(
+    project: Project, paths: L10nConfigPaths | L10nDiscoverPaths, checkout: Checkout
+) -> set[str]:
     if not checkout.removed:
         return set()
     removed_db_paths = [
-        path[:-1] if path.endswith(".pot") else path
-        for path in (
-            relpath(join(checkout.path, co_path), ref_root)
-            for co_path in checkout.removed
-        )
-        if not path.startswith("..")
+        get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed
     ]
     removed_resources = project.resources.filter(path__in=removed_db_paths)
 
     # Update aggregated stats
     rm_res_id: set[int] = set()
-    for tr in TranslatedResource.objects.filter(resource__in=removed_resources):
+    for tr in TranslatedResource.objects.filter(
+        resource__in=removed_resources
+    ).iterator():
         tr.adjust_all_stats(
             0 if tr.resource_id in rm_res_id else -tr.total_strings,
             -tr.approved_strings,
@@ -147,9 +144,9 @@ def update_resources(
 
     prev_entities = {
         (e.resource.path, e.key or e.string): e
-        for e in Entity.objects.filter(
-            resource__in=changed_resources, obsolete=False
-        ).select_related("resource")
+        for e in Entity.objects.filter(resource__in=changed_resources, obsolete=False)
+        .select_related("resource")
+        .iterator()
     }
     next_entities = {
         (path, entity.key or entity.string): entity
@@ -203,7 +200,7 @@ def update_resources(
     if add_count or obs_count:
         for tr in TranslatedResource.objects.filter(
             resource__in=(ent.resource_id for ent in obsolete_entities + added_entities)
-        ):
+        ).iterator():
             tr.calculate_stats()
 
     delta = [
@@ -303,21 +300,20 @@ def add_resources(
 def entity_from_source(
     resource: Resource, now: datetime, idx: int, tx: SilmeEntity
 ) -> Entity:
+    comments = getattr(tx, "comments", None)
+    group_comments = getattr(tx, "group_comments", None)
+    resource_comments = getattr(tx, "resource_comments", None)
     return Entity(
         string=tx.source_string,
         string_plural=tx.source_string_plural,
         key=tx.key,
-        comment="\n".join(tx.comments),
+        comment="\n".join(comments) if comments else "",
         order=tx.order or idx,
         source=tx.source,
         resource=resource,
         date_created=now,
-        group_comment="\n".join(
-            tx.group_comments if hasattr(tx, "group_comments") else None
-        ),
-        resource_comment="\n".join(
-            tx.resource_comments if hasattr(tx, "resource_comments") else None
-        ),
+        group_comment="\n".join(group_comments) if group_comments else "",
+        resource_comment="\n".join(resource_comments) if resource_comments else "",
         context=tx.context,
         word_count=get_word_count(tx.source_string),
     )
@@ -332,6 +328,15 @@ def entities_same(a: Entity, b: Entity) -> bool:
         and a.group_comment == b.group_comment
         and a.resource_comment == b.resource_comment
         and a.context == b.context
+    )
+
+
+def get_db_path(paths: L10nConfigPaths | L10nDiscoverPaths, file_path: str) -> str:
+    rel_path = relpath(file_path, paths.ref_root)
+    return (
+        rel_path[:-1]
+        if isinstance(paths, L10nDiscoverPaths) and rel_path.endswith(".pot")
+        else rel_path
     )
 
 

@@ -83,7 +83,7 @@ def commit(path: str, message: str, author: str, branch: str | None, url: str) -
 
 
 def revision(path: str) -> str | None:
-    cmd = ["git", "rev-parse", "HEAD"]
+    cmd = ["git", "rev-parse", "--short", "HEAD"]
     code, output, _error = execute(cmd, path, log=log)
     return output.decode().strip() if code == 0 else None
 

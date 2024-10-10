@@ -33,54 +33,53 @@ def test_add_ftl_translation():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(
-            code="fr-Test", total_strings=100, approved_strings=99
-        )
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-add-ftl",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
-            approved_strings=9,
+            total_strings=9,
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(
-            project=project, path="c.ftl", format="ftl", total_strings=3
-        )
-        TranslatedResourceFactory.create(locale=locale, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b)
-        TranslatedResourceFactory.create(
-            locale=locale, resource=res_c, total_strings=3, approved_strings=2
-        )
-        for i in range(3):
-            entity = EntityFactory.create(
-                resource=res_c, string=f"key-{i} = Message {i}\n", key=f"key-{i}"
+        res = {}
+        for id in ["a", "b", "c"]:
+            res[id] = ResourceFactory.create(
+                project=project, path=f"{id}.ftl", format="ftl", total_strings=3
             )
-            if i != 2:
-                TranslationFactory.create(
-                    entity=entity,
-                    locale=locale,
-                    string=f"key-{i} = Translation {i}\n",
-                    approved=True,
-                )
+            TranslatedResourceFactory.create(
+                locale=locale, resource=res[id], total_strings=3
+            )
+            for i in range(3):
+                key = f"key-{id}-{i}"
+                string = f"{key} = Message {id} {i}\n"
+                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                if id != "c" or i != 2:
+                    TranslationFactory.create(
+                        entity=entity,
+                        locale=locale,
+                        string=string.replace("Message", "Translation"),
+                        approved=True,
+                    )
+
+        project.refresh_from_db()
+        assert project.total_strings == 9
+        assert project.approved_strings == 8
 
         # Filesystem setup
         c_ftl = dedent(
             """
-            key-0 = Translation 0
-            key-1 = Translation 1
-            key-2 = Translation 2
+            key-c-0 = Translation c 0
+            key-c-1 = Translation c 1
+            key-c-2 = Translation c 2
             """
         )
         makedirs(repo.checkout_path)
         build_file_tree(
             repo.checkout_path,
             {
-                "en-US": {"a.ftl": "", "b.pot": "", "c.ftl": ""},
-                "fr-Test": {"a.ftl": "", "b.po": "", "c.ftl": c_ftl},
+                "en-US": {"a.ftl": "", "b.ftl": "", "c.ftl": ""},
+                "fr-Test": {"a.ftl": "", "b.ftl": "", "c.ftl": c_ftl},
             },
         )
 
@@ -99,15 +98,14 @@ def test_add_ftl_translation():
         assert set(
             trans.entity.key
             for trans in Translation.objects.filter(
-                entity__resource=res_c, locale=locale
+                entity__resource=res["c"], locale=locale
             )
-        ) == {"key-0", "key-1", "key-2"}
+        ) == {"key-c-0", "key-c-1", "key-c-2"}
         project.refresh_from_db()
-        locale.refresh_from_db()
-        assert project.approved_strings == 10
-        assert locale.approved_strings == 100
+        assert project.total_strings == 9
+        assert project.approved_strings == 9
         tm = TranslationMemoryEntry.objects.filter(
-            entity__resource=res_c, translation__isnull=False
+            entity__resource=res["c"], translation__isnull=False
         )
         assert len(tm) == 3
 
@@ -126,34 +124,38 @@ def test_remove_po_target_resource():
             name="test-rm-po",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
-            approved_strings=7,
+            total_strings=9,
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(
-            project=project, path="b.po", format="po", total_strings=3
-        )
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=3)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c)
-        for i in range(3):
-            entity = EntityFactory.create(
-                resource=res_b, key=f"key-{i}", string=f"Message {i}"
+        res = {}
+        for id in ["a", "b", "c"]:
+            res[id] = ResourceFactory.create(
+                project=project, path=f"{id}.po", format="po", total_strings=3
             )
-            TranslationFactory.create(
-                entity=entity, locale=locale, string=f"Translation {i}", approved=True
+            TranslatedResourceFactory.create(
+                locale=locale, resource=res[id], total_strings=3
             )
+            for i in range(3):
+                key = f"key-{id}-{i}"
+                string = f"Message {id} {i}"
+                entity = EntityFactory.create(resource=res[id], string=string, key=key)
+                TranslationFactory.create(
+                    entity=entity,
+                    locale=locale,
+                    string=string.replace("Message", "Translation"),
+                    approved=True,
+                )
+
         project.refresh_from_db()
-        assert project.approved_strings == 10
+        assert project.total_strings == 9
+        assert project.approved_strings == 9
 
         # Filesystem setup
         makedirs(repo.checkout_path)
         build_file_tree(
             repo.checkout_path,
             {
-                "en-US": {"a.ftl": "", "b.pot": "", "c.ftl": ""},
-                "fr-Test": {"a.ftl": "", "c.ftl": ""},
+                "en-US": {"a.pot": "", "b.pot": "", "c.pot": ""},
+                "fr-Test": {"a.po": "", "c.po": ""},
             },
         )
 
@@ -169,12 +171,12 @@ def test_remove_po_target_resource():
 
         # Test
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
-        assert not TranslatedResource.objects.filter(locale=locale, resource=res_b)
-        assert not Translation.objects.filter(entity__resource=res_b, locale=locale)
+        assert not TranslatedResource.objects.filter(locale=locale, resource=res["b"])
+        assert not Translation.objects.filter(entity__resource=res["b"], locale=locale)
         project.refresh_from_db()
-        assert project.total_strings == 10
-        assert project.approved_strings == 7
+        assert project.total_strings == 9
+        assert project.approved_strings == 6
         tm = TranslationMemoryEntry.objects.filter(
-            entity__resource=res_b, translation__isnull=True
+            entity__resource=res["b"], translation__isnull=True
         )
         assert len(tm) == 3

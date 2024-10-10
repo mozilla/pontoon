@@ -151,12 +151,12 @@ def test_end_to_end():
         assert fullmatch(
             dedent(
                 r"""
-                Pontoon/test-project: Update Test German \(de-Test\), Test French \(fr-Test\)
+                Pontoon/test-project: Update Test (German|French) \((de|fr)-Test\), Test (German|French) \((de|fr)-Test\)
 
-                Co-authored-by: test\d+ <test\d+@example.com> \(de-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \(de-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \(fr-Test\)
-                Co-authored-by: test\d+ <test\d+@example.com> \(fr-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
+                Co-authored-by: test\d+ <test\d+@example.com> \((de|fr)-Test\)
                 """
             ).strip(),
             commit_msg,

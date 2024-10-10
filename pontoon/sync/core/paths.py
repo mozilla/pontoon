@@ -18,28 +18,28 @@ class MissingLocaleDirectoryError(IOError):
 def find_paths(
     project: Project, checkouts: Checkouts
 ) -> L10nConfigPaths | L10nDiscoverPaths:
-    force_paths = [
-        join(checkouts.source.path, path) for path in checkouts.source.removed
-    ]
+    src_root = checkouts.source.path
+
+    force_paths = [join(src_root, path) for path in checkouts.source.removed]
     if project.configuration_file:
         paths = L10nConfigPaths(
-            join(checkouts.source.path, project.configuration_file),
+            join(src_root, project.configuration_file),
             locale_map={"android_locale": get_android_locale},
             force_paths=force_paths,
         )
         if checkouts.target != checkouts.source:
-            paths.base = checkouts.target.repo.checkout_path
-        return paths
+            paths.base = checkouts.target.path
     else:
         paths = L10nDiscoverPaths(
             project.checkout_path,
-            ref_root=checkouts.source.path,
+            ref_root=src_root,
             force_paths=force_paths,
             source_locale=["templates", "en-US", "en"],
         )
         if paths.base is None:
             raise MissingLocaleDirectoryError("Base localization directory not found")
-        return paths
+
+    return paths
 
 
 class UploadPaths:

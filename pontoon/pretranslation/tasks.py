@@ -200,7 +200,7 @@ def pretranslate(project: Project, paths: set[str] | None):
 @shared_task(base=PontoonTask, name="pretranslate")
 def pretranslate_task(project_pk):
     project = Project.objects.get(pk=project_pk)
-    lock_name = f"pretranslate {project.slug} [id={project_pk}]"
+    lock_name = f"pretranslate_{project_pk}"
     if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
         raise RuntimeError(
             f"Cannot pretranslate {project.slug} because its previous pretranslation is still running."

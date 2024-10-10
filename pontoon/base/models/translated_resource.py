@@ -73,44 +73,56 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Update stats on a list of TranslatedResource.
         """
+
+
+        fields = [
+            "total_strings",
+            "approved_strings",
+            "pretranslated_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
+        ]
+
         self = self.prefetch_related("resource__project", "locale")
-
-        locales = Locale.objects.filter(
-            translatedresources__in=self,
-        ).distinct()
-
-        projects = Project.objects.filter(
-            resources__translatedresources__in=self,
-        ).distinct()
-
-        projectlocales = ProjectLocale.objects.filter(
-            project__resources__translatedresources__in=self,
-            locale__translatedresources__in=self,
-        ).distinct()
-
         for translated_resource in self:
             translated_resource.calculate_stats(save=False)
+        TranslatedResource.objects.bulk_update(self, fields=fields)
 
-        TranslatedResource.objects.bulk_update(
-            list(self),
-            fields=[
-                "total_strings",
-                "approved_strings",
-                "pretranslated_strings",
-                "strings_with_errors",
-                "strings_with_warnings",
-                "unreviewed_strings",
-            ],
-        )
-
-        for project in projects:
-            project.aggregate_stats()
-
-        for locale in locales:
-            locale.aggregate_stats()
-
-        for projectlocale in projectlocales:
+        for projectlocale in ProjectLocale.objects.filter(
+            project__resources__translatedresources__in=self,
+            locale__translatedresources__in=self,
+        ).distinct():
             projectlocale.aggregate_stats()
+
+        for project in Project.objects.filter(
+            resources__translatedresources__in=self,
+        ).distinct():
+            stats: dict[str, Any] = ProjectLocale.objects.filter(
+                project=project
+            ).aggregated_stats()
+            project.total_strings = stats["total_strings"] or 0
+            project.approved_strings = stats["approved_strings"] or 0
+            project.pretranslated_strings = stats["pretranslated_strings"] or 0
+            project.strings_with_errors = stats["strings_with_errors"] or 0
+            project.strings_with_warnings = stats["strings_with_warnings"] or 0
+            project.unreviewed_strings = stats["unreviewed_strings"] or 0
+            project.save(update_fields=fields)
+
+        locales = Locale.objects.filter(translatedresources__in=self).distinct()
+        for locale in locales:
+            stats: dict[str, Any] = ProjectLocale.objects.filter(
+                locale=locale,
+                project__system_project=False,
+                project__visibility=Project.Visibility.PUBLIC,
+            ).aggregated_stats()
+            locale.total_strings = stats["total_strings"] or 0
+            locale.approved_strings = stats["approved_strings"] or 0
+            locale.pretranslated_strings = stats["pretranslated_strings"] or 0
+            locale.strings_with_errors = stats["strings_with_errors"] or 0
+            locale.strings_with_warnings = stats["strings_with_warnings"] or 0
+            locale.unreviewed_strings = stats["unreviewed_strings"] or 0
+        Locale.objects.bulk_update(locales, fields=fields)
 
 
 class TranslatedResource(AggregatedStats):

@@ -94,7 +94,7 @@ def delete_removed_bilingual_resources(
             locale_code = get_path_locale(path_vars)
             if locale_code is not None:
                 db_path = relpath(ref_path, paths.ref_root)
-                if db_path.endswith(".pot"):
+                if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
                 rm_t |= Q(entity__resource__path=db_path, locale__code=locale_code)
                 rm_tr |= Q(resource__path=db_path, locale__code=locale_code)
@@ -106,15 +106,7 @@ def delete_removed_bilingual_resources(
             trans_res = TranslatedResource.objects.filter(
                 resource__project=project
             ).filter(rm_tr)
-            for tr in trans_res:
-                tr.adjust_all_stats(
-                    0,
-                    -tr.approved_strings,
-                    -tr.pretranslated_strings,
-                    -tr.strings_with_errors,
-                    -tr.strings_with_warnings,
-                    -tr.unreviewed_strings,
-                )
+            trans_res.update_stats()
             trans_res.delete()
 
 
@@ -139,7 +131,11 @@ def find_db_updates(
     # (db_path, tx.key, locale.id) -> (plural_form -> string, fuzzy)
     translations: dict[tuple[str, str, int], tuple[dict[int | None, str], bool]] = {}
     for target_path in changed_target_paths:
-        ref = paths.find_reference(target_path)
+        ref = (
+            paths.find_reference(target_path)
+            if not target_path.startswith("..")
+            else None
+        )
         if ref:
             ref_path, path_vars = ref
             lc = get_path_locale(path_vars)
@@ -153,20 +149,23 @@ def find_db_updates(
                         f"[{project.slug}:{db_path}, {locale.code}] Skipping resource with parse error: {error}"
                     )
                     continue
-                if db_path.endswith(".pot"):
+                if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
                 resource_paths.add(db_path)
                 translated_resources.add((db_path, locale.id, len(res.entities)))
                 translations.update(
                     ((db_path, tx.key, locale.id), (tx.strings, tx.fuzzy))
                     for tx in cast(list[VCSTranslation], res.translations)
+                    if tx.strings
                 )
     if not translations:
         return None
 
     resources: dict[str, Resource] = {
         res.path: res
-        for res in Resource.objects.filter(project=project, path__in=resource_paths)
+        for res in Resource.objects.filter(
+            project=project, path__in=resource_paths
+        ).iterator()
     }
 
     # Exclude translations for which DB & repo already match
@@ -188,6 +187,7 @@ def find_db_updates(
                 "plural_form",
                 "string",
             )
+            .iterator()
         ):
             key = (
                 tx["entity__resource__path"],
@@ -224,9 +224,9 @@ def find_db_updates(
         )
     entities: dict[tuple[str, str], int] = {
         (e["resource__path"], e["key"] or e["string"]): e["id"]
-        for e in Entity.objects.filter(entity_q).values(
-            "id", "key", "string", "resource__path"
-        )
+        for e in Entity.objects.filter(entity_q)
+        .values("id", "key", "string", "resource__path")
+        .iterator()
     }
     res: Updates = {}
     for (db_path, ent_key, locale_id), tx in translations.items():
@@ -258,17 +258,24 @@ def update_db_translations(
                 plural_form=plural_form,
                 string=string,
             )
-    suggestions = list(
-        Translation.objects.filter(matching_suggestions_q).filter(
-            approved=False, pretranslated=False
+    if matching_suggestions_q:
+        suggestions = list(
+            Translation.objects.filter(matching_suggestions_q).filter(
+                approved=False, pretranslated=False
+            )
         )
-    )
-    dirty_fields: set[str] = set()
+    else:
+        suggestions = []
+    activated_translations: set[tuple[int, int, int]] = set()
+    update_fields: set[str] = set()
     approve_count = 0
     for tx in suggestions:
-        key = (tx.entity_id, tx.locale_id)
-        _, fuzzy = repo_translations[key]
-        del repo_translations[key]
+        key = (tx.entity_id, tx.locale_id, tx.plural_form)
+        if key in activated_translations:
+            # Avoid double-approving multiple matching suggestions
+            continue
+        activated_translations.add(key)
+        _, fuzzy = repo_translations[(tx.entity_id, tx.locale_id)]
 
         if tx.rejected:
             tx.rejected = False
@@ -291,9 +298,6 @@ def update_db_translations(
             tx.pretranslated = False
             tx.unapproved_user = None
             tx.unapproved_date = None
-            translations_to_reject |= Q(
-                entity=tx.entity, locale=tx.locale, plural_form=tx.plural_form
-            ) & ~Q(id=tx.id)
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
@@ -302,23 +306,19 @@ def update_db_translations(
                 )
             )
             approve_count += 1
-        dirty_fields.update(tx.get_dirty_fields())
-    update_count = (
-        Translation.objects.bulk_update(suggestions, list(dirty_fields))
-        if dirty_fields
-        else 0
-    )
-    if update_count:
-        count = (
-            str(approve_count)
-            if approve_count == update_count
-            else f"{approve_count}/{update_count}"
+        translations_to_reject |= Q(
+            entity=tx.entity, locale=tx.locale, plural_form=tx.plural_form
         )
-        log.info(f"[{project.slug}] Approved {count} translation(s) from repo changes")
+        update_fields.update(tx.get_dirty_fields())
+    for entity_id, locale_id, _ in activated_translations:
+        try:
+            del repo_translations[(entity_id, locale_id)]
+        except KeyError:
+            pass
 
+    new_translations: list[Translation] = []
     if repo_translations:
         # Add new approved translations for the remainder
-        new_translations: list[Translation] = []
         for (entity_id, locale_id), (strings, fuzzy) in repo_translations.items():
             for plural_form, string in strings.items():
                 # Note: no tx.entity.resource, which would be required by tx.save()
@@ -344,17 +344,9 @@ def update_db_translations(
                         translation=tx,
                     )
                 )
-        created = Translation.objects.bulk_create(new_translations)
-        for tx in created:
-            translations_to_reject |= Q(
-                entity_id=tx.entity_id,
-                locale_id=tx.locale_id,
-                plural_form=tx.plural_form,
-            ) & ~Q(id=tx.id)
-        if created:
-            log.info(
-                f"[{project.slug}] Created {len(created)} translation(s) from repo changes"
-            )
+                translations_to_reject |= Q(
+                    entity_id=entity_id, locale_id=locale_id, plural_form=plural_form
+                )
 
     if translations_to_reject:
         rejected = Translation.objects.filter(rejected=False).filter(
@@ -387,10 +379,37 @@ def update_db_translations(
                 f"[{project.slug}] Rejected {reject_count} translation(s) from repo changes"
             )
 
+    update_count = (
+        Translation.objects.bulk_update(suggestions, list(update_fields))
+        if update_fields
+        else 0
+    )
+    if update_count:
+        count = (
+            str(approve_count)
+            if approve_count == update_count
+            else f"{approve_count}/{update_count}"
+        )
+        log.info(
+            f"[{project.slug}] Approved {str_n_translations(count)} from repo changes"
+        )
+
+    created = Translation.objects.bulk_create(new_translations)
+    if created:
+        log.info(
+            f"[{project.slug}] Created {str_n_translations(created)} from repo changes"
+        )
+
     if actions:
         ActionLog.objects.bulk_create(actions)
 
     return created, suggestions
+
+
+def str_n_translations(n: int | Sized) -> str:
+    if not isinstance(n, int):
+        n = len(n)
+    return "1 translation" if n == 1 else f"{n} translations"
 
 
 def get_path_locale(path_vars: dict[str, str]) -> str | None:
@@ -439,7 +458,7 @@ def add_translation_memory_entries(
                 approved=True,
                 errors__isnull=True,
                 memory_entries__isnull=True,
-            )
+            ).iterator()
         )
 
 
@@ -449,5 +468,4 @@ def update_stats(
     query = Q()
     for entity_id, locale_id in changed_entity_locales:
         query |= Q(resource__entities__id=entity_id, locale_id=locale_id)
-    for tr in TranslatedResource.objects.filter(query):
-        tr.calculate_stats()
+    TranslatedResource.objects.filter(query).distinct().update_stats()

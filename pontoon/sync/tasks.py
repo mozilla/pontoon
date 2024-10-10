@@ -34,7 +34,7 @@ def sync_project_task(
         )
         raise
 
-    lock_name = f"sync {project.slug} [id={project_pk}]"
+    lock_name = f"sync_{project_pk}"
     if not cache.add(lock_name, True, timeout=settings.SYNC_TASK_TIMEOUT):
         ProjectSyncLog.objects.create(project=project, sync_log=sync_log).skip()
         raise RuntimeError(

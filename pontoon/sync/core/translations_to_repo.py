@@ -179,12 +179,12 @@ def update_changed_resources(
         )
         for locale in locales:
             lc_scope = f"[{project.slug}:{path}, {locale.code}]"
+            lc_translations = [tx for tx in translations if tx.locale_id == locale.pk]
             target_path = paths.format_target_path(target, locale.code)
+            if not lc_translations and not isfile(target_path):
+                continue
             try:
                 res = parse(target_path, ref_path, locale)
-                lc_translations = [
-                    tx for tx in translations if tx.locale_id == locale.pk
-                ]
                 if isinstance(res, POResource):
                     for po_ent in res.entities:
                         po_tx = [
