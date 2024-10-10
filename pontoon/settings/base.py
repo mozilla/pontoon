@@ -301,6 +301,7 @@ for ip in blocked_ip_settings:
             log = logging.getLogger(__name__)
             log.error(f"Invalid IP or IP range defined in BLOCKED_IPS: {ip}")
 
+# Enable traffic throttling based on IP address
 THROTTLE_ENABLED = os.environ.get("THROTTLE_ENABLED", "False") != "False"
 
 # Maximum number of requests allowed in THROTTLE_OBSERVATION_PERIOD
