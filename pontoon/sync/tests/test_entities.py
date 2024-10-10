@@ -34,7 +34,7 @@ def test_no_changes():
     assert sync_entities_from_repo(
         Mock(Project),
         {},
-        Mock(Checkout, changed=[], removed=[]),
+        Mock(Checkout, changed=[], removed=[], renamed=[]),
         Mock(L10nDiscoverPaths),
         now,
     ) == (0, set(), set())
@@ -77,6 +77,7 @@ def test_remove_resource():
             path=repo.checkout_path,
             changed=[],
             removed=[join("en-US", "c.ftl")],
+            renamed=[],
         )
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
@@ -91,6 +92,64 @@ def test_remove_resource():
         locale.refresh_from_db()
         assert project.total_strings == 7
         assert locale.total_strings == 97
+
+
+@pytest.mark.django_db
+def test_rename_resource():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-rm",
+            locales=[locale],
+            repositories=[repo],
+            total_strings=10,
+        )
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
+        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
+        TranslatedResourceFactory.create(locale=locale, resource=res_a, total_strings=1)
+        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=2)
+        TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
+
+        # Filesystem setup
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"a.ftl": "", "b.pot": "", "d.ftl": ""},
+                "fr-Test": {"a.ftl": "", "b.po": "", "c.ftl": ""},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[],
+            removed=[],
+            renamed=[(join("en-US", "c.ftl"), join("en-US", "d.ftl"))],
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        # Test
+        assert sync_entities_from_repo(
+            project, locale_map, mock_checkout, paths, now
+        ) == (0, {"d.ftl"}, set())
+        assert {res.path for res in project.resources.all()} == {
+            "a.ftl",
+            "b.po",
+            "d.ftl",
+        }
+        res_c.refresh_from_db()
+        assert res_c.path == "d.ftl"
+        project.refresh_from_db()
+        locale.refresh_from_db()
+        assert project.total_strings == 10
+        assert locale.total_strings == 100
 
 
 @pytest.mark.django_db
@@ -135,6 +194,7 @@ def test_add_resource():
             path=repo.checkout_path,
             changed=[join("en-US", "c.ftl")],
             removed=[],
+            renamed=[],
         )
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
@@ -208,6 +268,7 @@ def test_update_resource():
             path=repo.checkout_path,
             changed=[join("en-US", "c.ftl")],
             removed=[],
+            renamed=[],
         )
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 

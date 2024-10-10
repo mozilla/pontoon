@@ -27,7 +27,7 @@ from pontoon.sync.tests.utils import build_file_tree
 
 @pytest.mark.django_db
 def test_end_to_end():
-    mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], []))
+    mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], [], []))
     with (
         TemporaryDirectory() as root,
         patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),

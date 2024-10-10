@@ -53,7 +53,9 @@ def revision(path: str) -> str | None:
     return output.decode().strip() if code == 0 else None
 
 
-def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] | None:
+def changed_files(
+    path: str, from_revision: str
+) -> tuple[list[str], list[str], list[tuple[str, str]]] | None:
     # Ignore trailing + in revision number. It marks local changes.
     rev = from_revision.rstrip("+")
     cmd = ["hg", "status", "-a", "-m", "-r", f"--rev={rev}", "--rev=default"]
@@ -68,4 +70,4 @@ def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] 
                 changed.append(line.split(None, 2)[1])
             elif line.startswith("R"):
                 removed.append(line.split(None, 2)[1])
-    return changed, removed
+    return changed, removed, []

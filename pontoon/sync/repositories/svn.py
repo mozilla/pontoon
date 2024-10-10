@@ -65,7 +65,9 @@ def revision(path: str) -> str | None:
     return output.decode().strip() if code == 0 else None
 
 
-def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] | None:
+def changed_files(
+    path: str, from_revision: str
+) -> tuple[list[str], list[str], list[tuple[str, str]]] | None:
     # Remove all non digit characters from the revision number.
     rev = "".join(filter(lambda c: c.isdigit(), from_revision))
     cmd = ["svn", "diff", "-r", f"{rev}:HEAD", "--summarize"]
@@ -79,7 +81,7 @@ def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] 
             changed.append(line.split(None, 2)[1])
         elif line.startswith("D"):
             removed.append(line.split(None, 2)[1])
-    return changed, removed
+    return changed, removed, []
 
 
 def get_svn_env():

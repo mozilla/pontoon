@@ -51,6 +51,7 @@ class VCSChangedFilesTests:
         assert delta == (
             ["changed_file1.properties", "changed_file2.properties"],
             ["removed_file1.properties", "removed_file2.properties"],
+            [],
         )
 
     @patch("subprocess.Popen")

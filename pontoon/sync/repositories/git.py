@@ -88,17 +88,37 @@ def revision(path: str) -> str | None:
     return output.decode().strip() if code == 0 else None
 
 
-def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] | None:
-    cmd = ["git", "diff", "--name-status", f"{from_revision}..HEAD", "--", path]
+def changed_files(
+    path: str, from_revision: str
+) -> tuple[list[str], list[str], list[tuple[str, str]]] | None:
+    cmd = [
+        "git",
+        "diff",
+        "--name-status",
+        "--find-renames=100%",
+        f"{from_revision}..HEAD",
+        "--",
+        path,
+    ]
     code, output, _error = execute(cmd, path, log=log)
     if code != 0:
         return None
-    changed = []
-    removed = []
-    for line in output.decode().split("\n"):
-        if line:
-            if line.startswith(("A", "M")):
-                changed.append(line.split(None, 2)[1])
-            elif line.startswith("D"):
-                removed.append(line.split(None, 2)[1])
-    return changed, removed
+    changed: list[str] = []
+    removed: list[str] = []
+    renamed: list[tuple[str, str]] = []  # [(from, to)]
+    for line in output.decode().strip().split("\n"):
+        if line.startswith(("A", "M")):
+            changed.append(line.split(None, 2)[1])
+        elif line.startswith("D"):
+            removed.append(line.split(None, 2)[1])
+        elif line.startswith("R"):
+            parts = line.split()
+            if len(parts) == 3:
+                renamed.append((parts[1], parts[2]))
+            else:
+                log.warning(f"Git: Failed to parse diff line: {line}")
+                return None
+        else:
+            log.warning(f"Git: Failed to parse diff line: {line}")
+            return None
+    return changed, removed, renamed

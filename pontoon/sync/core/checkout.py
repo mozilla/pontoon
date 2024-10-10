@@ -24,6 +24,8 @@ class Checkout:
     """Relative paths from the checkout base"""
     removed: list[str]
     """Relative paths from the checkout base"""
+    renamed: list[tuple[str, str]]
+    """Relative paths (old, new) from the checkout base"""
 
     def __init__(self, slug: str, db_repo: Repository, pull: bool, force: bool) -> None:
         self.repo = db_repo
@@ -47,7 +49,7 @@ class Checkout:
             else None
         )
         if delta is not None and not force:
-            self.changed, self.removed = delta
+            self.changed, self.removed, self.renamed = delta
         else:
             # Initially and on error & when forced, consider all files changed
             self.changed = []
@@ -58,6 +60,7 @@ class Checkout:
                     join(rel_root, fn) for fn in filenames if not fn.startswith(".")
                 )
             self.removed = delta[1] if delta else []
+            self.renamed = []
 
 
 class Checkouts(NamedTuple):

@@ -39,7 +39,7 @@ def sync_entities_from_repo(
     """
     (added_entities_count, changed_source_paths, removed_source_paths)
     """
-    if not checkout.changed and not checkout.removed:
+    if not checkout.changed and not checkout.removed and not checkout.renamed:
         return 0, set(), set()
     # db_path -> parsed_resource
     updates: dict[str, SilmeResource | None] = {}
@@ -61,6 +61,7 @@ def sync_entities_from_repo(
             updates[db_path] = res
 
     with transaction.atomic():
+        renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths.ref_root, checkout)
         old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
         new_res_added_ent_count, _ = add_resources(
@@ -69,9 +70,29 @@ def sync_entities_from_repo(
 
     return (
         old_res_added_ent_count + new_res_added_ent_count,
-        changed_paths,
+        renamed_paths | changed_paths,
         removed_paths,
     )
+
+
+def rename_resources(
+    project: Project, paths: L10nConfigPaths | L10nDiscoverPaths, checkout: Checkout
+) -> set[str]:
+    if not checkout.renamed:
+        return set()
+    renamed_db_paths = {
+        get_db_path(paths, join(checkout.path, old_path)): get_db_path(
+            paths, join(checkout.path, new_path)
+        )
+        for old_path, new_path in checkout.renamed
+    }
+    renamed_resources = project.resources.filter(path__in=renamed_db_paths.keys())
+    for res in renamed_resources:
+        new_db_path = renamed_db_paths[res.path]
+        log.info(f"[{project.slug}:{res.path}] Rename as {new_db_path}")
+        res.path = new_db_path
+    Resource.objects.bulk_update(renamed_resources, ["path"])
+    return set(renamed_db_paths.values())
 
 
 def remove_resources(project: Project, ref_root: str, checkout: Checkout) -> set[str]:
