@@ -305,7 +305,7 @@ for ip in blocked_ip_settings:
 THROTTLE_ENABLED = os.environ.get("THROTTLE_ENABLED", "False") != "False"
 
 # Maximum number of requests allowed in THROTTLE_OBSERVATION_PERIOD
-THROTTLE_MAX_COUNT = int(os.environ.get("THROTTLE_MAX_COUNT", "100"))
+THROTTLE_MAX_COUNT = int(os.environ.get("THROTTLE_MAX_COUNT", "300"))
 
 # A period (in seconds) in which THROTTLE_MAX_COUNT requests are allowed.
 # If longer than THROTTLE_BLOCK_DURATION, THROTTLE_BLOCK_DURATION will be used.
