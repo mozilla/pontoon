@@ -404,7 +404,13 @@ def get_translation_history(request):
         entity=entity,
         locale=locale,
     ).prefetch_related(
-        Prefetch("comments", queryset=Comment.objects.order_by("timestamp")),
+        Prefetch(
+            "comments",
+            queryset=Comment.objects.prefetch_related("author").order_by("timestamp"),
+        ),
+        "user",
+        "approved_user",
+        "rejected_user",
         "errors",
         "warnings",
     )
