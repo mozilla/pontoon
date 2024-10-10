@@ -284,6 +284,21 @@ you create:
    Optional. Set your `SYSTRAN Translate API key` to use machine translation
    by SYSTRAN.
 
+``THROTTLE_ENABLED``
+   Optional. Enables traffic throttling based on IP address (default: ``False``).
+
+``THROTTLE_MAX_COUNT``
+   Optional. Maximum number of requests allowed in ``THROTTLE_OBSERVATION_PERIOD``
+   (default: ``300``).
+
+``THROTTLE_OBSERVATION_PERIOD``
+   Optional. A period (in seconds) in which ``THROTTLE_MAX_COUNT`` requests are
+   allowed. (default: ``60``). If longer than ``THROTTLE_BLOCK_DURATION``,
+   ``THROTTLE_BLOCK_DURATION`` will be used.
+
+``THROTTLE_BLOCK_DURATION``
+   Optional. A duration (in seconds) for which IPs are blocked (default: ``600``).
+
 ``TZ``
    Timezone for the dynos that will run the app. Pontoon operates in UTC, so set
    this to ``UTC``.

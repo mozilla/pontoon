@@ -15,6 +15,7 @@ register_converter(LocaleConverter, "locale")
 
 permission_denied_view = TemplateView.as_view(template_name="403.html")
 page_not_found_view = TemplateView.as_view(template_name="404.html")
+too_many_requests_view = TemplateView.as_view(template_name="429.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
 
 urlpatterns = [
@@ -31,6 +32,7 @@ urlpatterns = [
     # Error pages
     path("403/", permission_denied_view),
     path("404/", page_not_found_view),
+    path("429/", too_many_requests_view),
     path("500/", server_error_view),
     # Robots.txt
     path(
