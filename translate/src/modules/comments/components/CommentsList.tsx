@@ -18,7 +18,6 @@ export function CommentsList({
   user,
 }: Props): React.ReactElement<'div'> {
   const onAddComment = useAddCommentAndRefresh(translation);
-
   return (
     <div className='comments-list'>
       <section className='all-comments'>
