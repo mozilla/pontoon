@@ -36,6 +36,18 @@ def split_ints(s):
     return [int(part) for part in (s or "").split(",") if part]
 
 
+def get_ip(request):
+    try:
+        ip = request.META["HTTP_X_FORWARDED_FOR"]
+        # If comma-separated list of IPs, take just the last one
+        # http://stackoverflow.com/a/18517550
+        ip = ip.split(",")[-1]
+    except KeyError:
+        ip = request.META["REMOTE_ADDR"]
+
+    return ip.strip()
+
+
 def get_project_locale_from_request(request, locales):
     """Get Pontoon locale from Accept-language request header."""
 

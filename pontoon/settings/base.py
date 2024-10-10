@@ -301,9 +301,17 @@ for ip in blocked_ip_settings:
             log = logging.getLogger(__name__)
             log.error(f"Invalid IP or IP range defined in BLOCKED_IPS: {ip}")
 
-THROTTLE_MAX_COUNT = 100  # A maximum of 100 requests
-THROTTLE_PERIOD = 60  # allowed in 1 minute.
-THROTTLE_BLOCK_DURATION = 600  # Subsequent requests are blocked for 10 minutes.
+THROTTLE_ENABLED = os.environ.get("THROTTLE_ENABLED", "False") != "False"
+
+# Maximum number of requests allowed in THROTTLE_OBSERVATION_PERIOD
+THROTTLE_MAX_COUNT = int(os.environ.get("THROTTLE_MAX_COUNT", "100"))
+
+# A period (in seconds) in which THROTTLE_MAX_COUNT requests are allowed.
+# If longer than THROTTLE_BLOCK_DURATION, THROTTLE_BLOCK_DURATION will be used.
+THROTTLE_OBSERVATION_PERIOD = int(os.environ.get("THROTTLE_OBSERVATION_PERIOD", "60"))
+
+# A duration (in seconds) for which IPs are blocked
+THROTTLE_BLOCK_DURATION = int(os.environ.get("THROTTLE_BLOCK_DURATION", "600"))
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",

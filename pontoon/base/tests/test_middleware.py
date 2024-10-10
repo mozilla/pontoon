@@ -2,7 +2,6 @@ import time
 
 import pytest
 
-from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -34,67 +33,38 @@ def test_EmailConsentMiddleware(client, member, settings):
     assert response.status_code == 200
 
 
-class ThrottleIpMiddlewareTest(TestCase):
-    def setUp(self):
-        self.client = Client()
+@pytest.mark.django_db
+def test_throttle(client, settings):
+    """Test that requests are throttled after the limit is reached."""
+    settings.THROTTLE_ENABLED = True
+    settings.THROTTLE_MAX_COUNT = 5
+    settings.THROTTLE_BLOCK_DURATION = 2
 
-    @override_settings(THROTTLE_MAX_COUNT=5)
-    @override_settings(THROTTLE_BLOCK_DURATION=60)
-    def test_throttle_limit_reached(self):
-        """Test that requests are throttled after the limit is reached."""
-        url = "/"
+    url = reverse("pontoon.homepage")
+    ip_address = "192.168.0.1"
+    ip_address_2 = "192.168.0.2"
 
-        # Make 5 requests within the limit
-        for _ in range(5):
-            response = self.client.get(url, REMOTE_ADDR="192.168.0.1")
-            self.assertEqual(response.status_code, 200)
+    # Make 5 requests within the limit
+    for _ in range(5):
+        response = client.get(url, REMOTE_ADDR=ip_address)
+        assert response.status_code == 200
 
-        # 6th request should be throttled
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.1")
-        self.assertEqual(response.status_code, 429)
-        self.assertEqual(response.json(), {"detail": "Too Many Requests"})
+    # 6th request should be throttled
+    response = client.get(url, REMOTE_ADDR=ip_address)
+    assert response.status_code == 429
+    assert response.json() == {"detail": "Too Many Requests"}
 
-        # Check that the IP remains blocked for the block duration
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.1")
-        self.assertEqual(response.status_code, 429)
+    # Check that the IP remains blocked for the block duration
+    response = client.get(url, REMOTE_ADDR=ip_address)
+    assert response.status_code == 429
 
-    @override_settings(THROTTLE_MAX_COUNT=5)
-    @override_settings(THROTTLE_BLOCK_DURATION=2)
-    def test_throttle_reset_after_block_duration(self):
-        """Test that requests are allowed after the block duration expires."""
-        url = "/"
+    # Requests from another IP should not be throttled
+    response = client.get(url, REMOTE_ADDR=ip_address_2)
+    assert response.status_code == 200
 
-        # Make 5 requests within the limit
-        for _ in range(5):
-            response = self.client.get(url, REMOTE_ADDR="192.168.0.2")
-            self.assertEqual(response.status_code, 200)
+    # Wait for block duration to pass
+    time.sleep(settings.THROTTLE_BLOCK_DURATION)
 
-        # 6th request should be throttled
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.2")
-        self.assertEqual(response.status_code, 429)
-
-        # Wait for block duration to pass
-        time.sleep(3)
-
-        # Make another request after block duration
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.2")
-        self.assertEqual(response.status_code, 200)
-
-    @override_settings(THROTTLE_MAX_COUNT=5)
-    @override_settings(THROTTLE_BLOCK_DURATION=60)
-    def test_throttle_with_different_ips(self):
-        """Test that throttling is applied separately for different IPs."""
-        url = "/"
-
-        # Make 5 requests from IP1
-        for _ in range(5):
-            response = self.client.get(url, REMOTE_ADDR="192.168.0.3")
-            self.assertEqual(response.status_code, 200)
-
-        # 6th request from IP1 should be throttled
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.3")
-        self.assertEqual(response.status_code, 429)
-
-        # Requests from IP2 should not be throttled
-        response = self.client.get(url, REMOTE_ADDR="192.168.0.4")
-        self.assertEqual(response.status_code, 200)
+    # Make another request after block duration
+    response = client.get(url, REMOTE_ADDR=ip_address)
+    assert response.status_code == 200

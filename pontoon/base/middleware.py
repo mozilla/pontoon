@@ -13,7 +13,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
-from pontoon.base.utils import is_ajax
+from pontoon.base.utils import get_ip, is_ajax
 
 
 class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
@@ -30,15 +30,7 @@ class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
 
 class BlockedIpMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        try:
-            ip = request.META["HTTP_X_FORWARDED_FOR"]
-            # If comma-separated list of IPs, take just the last one
-            # http://stackoverflow.com/a/18517550
-            ip = ip.split(",")[-1]
-        except KeyError:
-            ip = request.META["REMOTE_ADDR"]
-
-        ip = ip.strip()
+        ip = get_ip(request)
 
         # Block client IP addresses via settings variable BLOCKED_IPS
         if ip in settings.BLOCKED_IPS:
@@ -91,20 +83,19 @@ class ThrottleIpMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         self.max_count = settings.THROTTLE_MAX_COUNT
-        self.period = settings.THROTTLE_PERIOD
+        self.observation_period = settings.THROTTLE_OBSERVATION_PERIOD
         self.block_duration = settings.THROTTLE_BLOCK_DURATION
 
-    def __call__(self, request):
-        # Get the client's IP address
-        try:
-            ip = request.META["HTTP_X_FORWARDED_FOR"]
-            # If comma-separated list of IPs, take just the last one
-            # http://stackoverflow.com/a/18517550
-            ip = ip.split(",")[-1]
-        except KeyError:
-            ip = request.META["REMOTE_ADDR"]
+        # Set to block_duration if longer, otherwise requests will be blocked until
+        # the observation_period expires rather than when the block_duration expires
+        if self.observation_period > self.block_duration:
+            self.observation_period = self.block_duration
 
-        ip = ip.strip()
+    def __call__(self, request):
+        if settings.THROTTLE_ENABLED is False:
+            return self.get_response(request)
+
+        ip = get_ip(request)
 
         # Generate cache keys
         throttle_key = f"throttle_ip_{ip}"
@@ -127,11 +118,13 @@ class ThrottleIpMiddleware:
             else:
                 # Increment the request count and update cache
                 cache.set(
-                    throttle_key, (request_count + 1, first_request_time), self.period
+                    throttle_key,
+                    (request_count + 1, first_request_time),
+                    self.observation_period,
                 )
         else:
             # Reset the count and timestamp if first request in the period
-            cache.set(throttle_key, (1, now), self.period)
+            cache.set(throttle_key, (1, now), self.observation_period)
 
         response = self.get_response(request)
         return response
