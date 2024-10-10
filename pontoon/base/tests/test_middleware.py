@@ -52,7 +52,6 @@ def test_throttle(client, settings):
     # 6th request should be throttled
     response = client.get(url, REMOTE_ADDR=ip_address)
     assert response.status_code == 429
-    assert response.json() == {"detail": "Too Many Requests"}
 
     # Check that the IP remains blocked for the block duration
     response = client.get(url, REMOTE_ADDR=ip_address)

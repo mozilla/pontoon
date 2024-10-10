@@ -8,8 +8,8 @@ from raygun4py.middleware.django import Provider
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseForbidden, JsonResponse
-from django.shortcuts import redirect
+from django.http import Http404, HttpResponseForbidden
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
 
@@ -105,7 +105,7 @@ class ThrottleIpMiddleware:
 
         # Check if IP is currently blocked
         if cache.get(blocked_key):
-            return JsonResponse({"detail": "Too Many Requests"}, status=429)
+            return render(request, "429.html", status=429)
 
         # Fetch current request count and timestamp
         request_data = cache.get(throttle_key)
@@ -117,7 +117,7 @@ class ThrottleIpMiddleware:
                 # Block further requests for block_duration seconds
                 cache.set(blocked_key, True, self.block_duration)
                 log.error(f"Blocked IP {ip} for {self.block_duration} seconds")
-                return JsonResponse({"detail": "Too Many Requests"}, status=429)
+                return render(request, "429.html", status=429)
             else:
                 # Increment the request count and update cache
                 cache.set(
