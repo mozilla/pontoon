@@ -16,6 +16,9 @@ from django.utils.deprecation import MiddlewareMixin
 from pontoon.base.utils import get_ip, is_ajax
 
 
+log = logging.getLogger(__name__)
+
+
 class RaygunExceptionMiddleware(Provider, MiddlewareMixin):
     def __init__(self, get_response):
         super().__init__(get_response)
@@ -41,7 +44,6 @@ class BlockedIpMiddleware(MiddlewareMixin):
         try:
             ip_obj = ip_address(ip)
         except ValueError:
-            log = logging.getLogger(__name__)
             log.error(f"Invalid IP detected in BlockedIpMiddleware: {ip}")
             return None
 
@@ -114,6 +116,7 @@ class ThrottleIpMiddleware:
             if request_count >= self.max_count:
                 # Block further requests for block_duration seconds
                 cache.set(blocked_key, True, self.block_duration)
+                log.error(f"Blocked IP {ip} for {self.block_duration} seconds")
                 return JsonResponse({"detail": "Too Many Requests"}, status=429)
             else:
                 # Increment the request count and update cache
