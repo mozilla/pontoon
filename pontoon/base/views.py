@@ -424,7 +424,6 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "user_status": u.locale_status(locale),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,
