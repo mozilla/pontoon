@@ -9,7 +9,7 @@ import type { TranslationComment } from '~/api/comment';
 import { UserAvatar } from '~/modules/user';
 
 import './Comment.css';
-import '../../history/components/HistoryTranslation.css';
+import '../../user/components/UserAvatar.css';
 
 type Props = {
   comment: TranslationComment;
@@ -33,13 +33,11 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
 
   return (
     <li className='comment'>
-      <div className='avatar-container'>
-        <UserAvatar
-          username={comment.username}
-          imageUrl={comment.userGravatarUrlSmall}
-          userStatus={comment.userStatus}
-        />
-      </div>
+      <UserAvatar
+        username={comment.username}
+        imageUrl={comment.userGravatarUrlSmall}
+        userStatus={comment.userStatus}
+      />
       <div className='container'>
         <div className='content'>
           <div>

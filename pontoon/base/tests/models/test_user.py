@@ -70,7 +70,7 @@ def test_user_locale_status(user_a, user_b, user_c, locale_a):
 
     # Fake user object
     imported = User(username="Imported")
-    assert imported.locale_status(locale_a)[1] == "Imported"
+    assert imported.locale_status(locale_a)[1] == ""
 
     # Admin
     user_a.is_superuser = True

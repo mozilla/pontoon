@@ -196,11 +196,11 @@ def user_locale_role(self, locale):
 
 def user_locale_status(self, locale):
     if self.username == "Imported":
-        return ("", "Imported")
+        return ("", "")
     if self.is_superuser:
         return ("ADMIN", "Admin")
     if self in locale.managers_group.user_set.all():
-        return ("MGNR", "Manager")
+        return ("MNGR", "Manager")
     if self in locale.translators_group.user_set.all():
         return ("TRNSL", "Translator")
     if self.date_joined >= timezone.now() - relativedelta(months=3):

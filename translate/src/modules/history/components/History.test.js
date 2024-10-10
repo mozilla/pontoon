@@ -24,7 +24,11 @@ function mountHistory(fetching, translations) {
 
 describe('<History>', () => {
   it('shows the correct number of translations', () => {
-    const wrapper = mountHistory(false, [{ pk: 1 }, { pk: 2 }, { pk: 3 }]);
+    const wrapper = mountHistory(false, [
+      { pk: 1, userStatus: '' },
+      { pk: 2, userStatus: '' },
+      { pk: 3, userStatus: '' },
+    ]);
 
     expect(wrapper.find('ul > *')).toHaveLength(3);
   });
