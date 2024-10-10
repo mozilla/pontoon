@@ -38,6 +38,7 @@ from pontoon.base.models import (
     Locale,
     Project,
     ProjectLocale,
+    Resource,
     TranslatedResource,
     Translation,
     TranslationMemoryEntry,
@@ -750,27 +751,32 @@ def perform_checks(request):
 @transaction.atomic
 def download_translations(request):
     """Download translated resource."""
+
+    # FIXME: zip downloads should only be for projects with 2..10 resources
+    from pontoon.sync.utils import download_translations_zip
+
     try:
         slug = request.GET["slug"]
         code = request.GET["code"]
-        part = request.GET["part"]
+        # res_path = request.GET["part"]
     except MultiValueDictKeyError:
         raise Http404
 
-    content, filename = utils.get_download_content(slug, code, part)
+    project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
+    locale = get_object_or_404(Locale, code=code)
+    content, filename = download_translations_zip(project, locale)
 
     if content is None:
         raise Http404
 
-    response = HttpResponse()
-    response.content = content
-    if filename.endswith(".zip"):
-        response["Content-Type"] = "application/zip"
-    else:
-        response["Content-Type"] = "text/plain"
-    response["Content-Disposition"] = "attachment; filename=" + filename
-
-    return response
+    content_type = "application/zip" if filename.endswith(".zip") else "text/plain"
+    return HttpResponse(
+        content,
+        headers={
+            "Content-Type": content_type,
+            "Content-Disposition": f"attachment; filename={filename}",
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")
@@ -781,33 +787,34 @@ def upload(request):
     try:
         slug = request.POST["slug"]
         code = request.POST["code"]
-        part = request.POST["part"]
+        res_path = request.POST["part"]
     except MultiValueDictKeyError:
         raise Http404
 
     locale = get_object_or_404(Locale, code=code)
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
-
     if not request.user.can_translate(
         project=project, locale=locale
     ) or utils.readonly_exists(project, locale):
         return HttpResponseForbidden("You don't have permission to upload files.")
+    get_object_or_404(Resource, project=project, path=res_path)
 
     form = forms.UploadFileForm(request.POST, request.FILES)
-
     if form.is_valid():
-        f = request.FILES["uploadfile"]
-        utils.handle_upload_content(slug, code, part, f, request.user)
+        from pontoon.sync.utils import sync_uploaded_file
+
+        upload = request.FILES["uploadfile"]
+        sync_uploaded_file(project, locale, res_path, upload, request.user)
         messages.success(request, "Translations updated from uploaded file.")
     else:
-        for field, errors in form.errors.items():
+        for errors in form.errors.values():
             for error in errors:
                 messages.error(request, error)
 
     response = HttpResponse(content="", status=303)
     response["Location"] = reverse(
         "pontoon.translate",
-        kwargs={"locale": code, "project": slug, "resource": part},
+        kwargs={"locale": code, "project": slug, "resource": res_path},
     )
     return response
 

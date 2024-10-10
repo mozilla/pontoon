@@ -1,7 +1,5 @@
 import logging
 
-from typing import Any
-
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
 
 
@@ -25,14 +23,14 @@ def update(source: str, target: str, branch: str | None) -> None:
         raise PullFromRepositoryException(error)
 
 
-def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> None:
+def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
     log.debug("Mercurial: Commit to repository.")
 
     # Add new and remove missing paths
     execute(["hg", "addremove"], path)
 
     # Commit
-    commit = ["hg", "commit", "-m", message, "-u", user.display_name_and_email]
+    commit = ["hg", "commit", "-m", message, "-u", author]
     code, output, error = execute(commit, path)
     if code != 0 and error:
         raise CommitToRepositoryException(error)

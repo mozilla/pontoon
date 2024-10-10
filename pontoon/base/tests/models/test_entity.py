@@ -1,7 +1,6 @@
 import pytest
 
 from pontoon.base.models import ChangedEntityLocale, Entity, Project
-from pontoon.sync import KEY_SEPARATOR
 from pontoon.test.factories import (
     EntityFactory,
     ResourceFactory,
@@ -40,7 +39,7 @@ def entity_test_models(translation_a, locale_b):
     entity_b = EntityFactory(
         resource=resourceX,
         string="entity_b",
-        key="Key%sentity_b" % KEY_SEPARATOR,
+        key="Key\x04entity_b",
         order=0,
     )
     translation_a_pl = TranslationFactory(
