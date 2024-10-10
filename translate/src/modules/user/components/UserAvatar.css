@@ -1,0 +1,55 @@
+.history .translation .user-avatar {
+  padding-right: 8px;
+  position: relative;
+  top: 3px;
+}
+
+.history .translation .user-avatar img {
+  border-radius: 6px;
+  border: 2px solid var(--icon-border-1);
+}
+
+.history .translation:hover .user-avatar img {
+  border-color: var(--translation-border);
+}
+
+.user-avatar .avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar .avatar-container .user-status-banner {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 20%);
+  background-color: var(--background-1);
+  opacity: 0.8;
+  color: var(--tooltip-color);
+  font-size: 9px;
+  line-height: 2;
+  font-weight: bold;
+  padding: 0 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.comment .user-avatar .avatar-container .user-status-banner {
+  font-size: 7px;
+}
+
+.user-avatar .avatar-container .user-status-banner.admin {
+  color: var(--status-error);
+}
+
+.user-avatar .avatar-container .user-status-banner.manager {
+  color: var(--status-unreviewed);
+}
+
+.user-avatar .avatar-container .user-status-banner.translator {
+  color: var(--status-translated);
+}
+
+.user-avatar .avatar-container .user-status-banner.new-user {
+  color: var(--status-fuzzy);
+}

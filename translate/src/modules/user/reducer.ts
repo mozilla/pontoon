@@ -72,6 +72,7 @@ export type UserState = {
   readonly nameOrEmail: string;
   readonly email: string;
   readonly username: string;
+  readonly dateJoined: string;
   readonly contributorForLocales: Array<string>;
   readonly managerForLocales: Array<string>;
   readonly translatorForLocales: Array<string>;
@@ -95,6 +96,7 @@ const initial: UserState = {
   nameOrEmail: '',
   email: '',
   username: '',
+  dateJoined: '',
   contributorForLocales: [],
   managerForLocales: [],
   translatorForLocales: [],
@@ -125,6 +127,7 @@ export function reducer(state: UserState = initial, action: Action): UserState {
         nameOrEmail: action.data.name_or_email ?? '',
         email: action.data.email ?? '',
         username: action.data.username ?? '',
+        dateJoined: action.data.date_joined ?? '',
         contributorForLocales: action.data.contributor_for_locales ?? [],
         managerForLocales: action.data.manager_for_locales ?? [],
         translatorForLocales: action.data.translator_for_locales ?? [],

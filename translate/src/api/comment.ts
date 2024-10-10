@@ -9,6 +9,7 @@ import { keysToCamelCase } from './utils/keysToCamelCase';
 export type TranslationComment = {
   readonly author: string;
   readonly username: string;
+  readonly userStatus: string[];
   readonly userGravatarUrlSmall: string;
   readonly createdAt: string;
   readonly dateIso: string;

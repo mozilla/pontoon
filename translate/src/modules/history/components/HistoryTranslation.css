@@ -16,21 +16,6 @@
   background: var(--dark-grey-1);
 }
 
-.history .translation .user-avatar {
-  padding-right: 8px;
-  position: relative;
-  top: 3px;
-}
-
-.history .translation .user-avatar img {
-  border-radius: 6px;
-  border: 2px solid var(--icon-border-1);
-}
-
-.history .translation:hover .user-avatar img {
-  border-color: var(--translation-border);
-}
-
 .history .translation .content {
   flex-grow: 1;
 }
