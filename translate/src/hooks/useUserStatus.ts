@@ -7,7 +7,7 @@ import { useAppSelector } from '~/hooks';
 /**
  * Return the user's status within the given locale, to display on the user banner
  */
-export function useLocaleRole(): Array<string> {
+export function useUserStatus(): Array<string> {
   const { code } = useContext(Locale);
   const {
     isAuthenticated,
@@ -25,19 +25,19 @@ export function useLocaleRole(): Array<string> {
     return ['ADMIN', 'Admin'];
   }
 
-  if (Object.hasOwnProperty.call(managerForLocales, code)) {
-    return ['MNGR', 'Manger'];
+  if (managerForLocales.includes(code)) {
+    return ['MNGR', 'Manager'];
   }
 
-  if (Object.hasOwnProperty.call(translatorForLocales, code)) {
+  if (translatorForLocales.includes(code)) {
     return ['TRNSL', 'Translator'];
   }
 
   const dateJoinedObj = new Date(dateJoined);
-  let newUserDate = dateJoinedObj;
-  newUserDate.setMonth(dateJoinedObj.getMonth() - 3);
-  if (dateJoinedObj < newUserDate) {
-    return ['NEW USER', 'New User'];
+  let threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  if (dateJoinedObj > threeMonthsAgo) {
+    return ['NEW', 'New User'];
   }
 
   return ['', ''];

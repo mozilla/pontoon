@@ -9,7 +9,6 @@ import type { TranslationComment } from '~/api/comment';
 import { UserAvatar } from '~/modules/user';
 
 import './Comment.css';
-import '../../user/components/UserAvatar.css';
 
 type Props = {
   comment: TranslationComment;

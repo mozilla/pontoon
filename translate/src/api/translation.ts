@@ -44,7 +44,7 @@ export type HistoryTranslation = {
   readonly user: string;
   readonly username: string;
   readonly userGravatarUrlSmall: string;
-  readonly userStatus: string;
+  readonly userStatus: string[];
   readonly comments: Array<TranslationComment>;
 };
 

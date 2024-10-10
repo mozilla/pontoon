@@ -4,6 +4,15 @@
   top: 3px;
 }
 
+.history .translation .user-avatar img {
+  border-radius: 6px;
+  border: 2px solid var(--icon-border-1);
+}
+
+.history .translation:hover .user-avatar img {
+  border-color: var(--translation-border);
+}
+
 .user-avatar .avatar-container {
   position: relative;
   display: inline-block;
@@ -43,17 +52,4 @@
 
 .user-avatar .avatar-container .user-status-banner.new-user {
   color: var(--status-fuzzy);
-}
-
-.history .translation:hover .user-status-banner {
-  border-color: var(--translation-border);
-}
-
-.history .translation .user-avatar img {
-  border-radius: 6px;
-  border: 2px solid var(--icon-border-1);
-}
-
-.history .translation:hover .user-avatar img {
-  border-color: var(--translation-border);
 }

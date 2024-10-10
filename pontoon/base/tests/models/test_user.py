@@ -64,22 +64,22 @@ def test_user_locale_role(user_a, user_b, user_c, locale_a):
 
 
 @pytest.mark.django_db
-def test_user_locale_status(user_a, user_b, user_c, locale_a):
+def test_user_status(user_a, user_b, user_c, locale_a):
     # New User
-    assert user_a.locale_status(locale_a)[1] == "New User"
+    assert user_a.status(locale_a)[1] == "New User"
 
     # Fake user object
     imported = User(username="Imported")
-    assert imported.locale_status(locale_a)[1] == ""
+    assert imported.status(locale_a)[1] == ""
 
     # Admin
     user_a.is_superuser = True
-    assert user_a.locale_status(locale_a)[1] == "Admin"
+    assert user_a.status(locale_a)[1] == "Admin"
 
     # Manager
     locale_a.managers_group.user_set.add(user_b)
-    assert user_b.locale_status(locale_a)[1] == "Manager"
+    assert user_b.status(locale_a)[1] == "Manager"
 
     # Translator
     locale_a.translators_group.user_set.add(user_c)
-    assert user_c.locale_status(locale_a)[1] == "Translator"
+    assert user_c.status(locale_a)[1] == "Translator"

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Localized } from '@fluent/react';
 
+import './UserAvatar.css';
+
 type Props = {
   username: string;
   title?: string;
   imageUrl: string;
-  userStatus: string | string[];
+  userStatus: string[];
 };
 
 export function UserAvatar(props: Props): React.ReactElement<'div'> {
@@ -25,7 +27,7 @@ export function UserAvatar(props: Props): React.ReactElement<'div'> {
           <Localized id='user-UserAvatar--alt-text' attrs={{ alt: true }}>
             <img src={imageUrl} alt='User Profile' height='44' width='44' />
           </Localized>
-          {userStatus && (
+          {role && (
             <span
               className={`user-status-banner ${tooltip.toLowerCase().split(' ').join('-')}`}
               title={tooltip}

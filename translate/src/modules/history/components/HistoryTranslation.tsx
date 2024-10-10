@@ -14,7 +14,6 @@ import { withActionsDisabled } from '~/utils';
 import { useTranslator } from '~/hooks/useTranslator';
 
 import './HistoryTranslation.css';
-import '../../user/components/UserAvatar.css';
 
 type Props = {
   entity: Entity;

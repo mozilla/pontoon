@@ -7,7 +7,6 @@ import { useAddCommentAndRefresh } from '../hooks';
 import { AddComment } from './AddComment';
 import { Comment } from './Comment';
 import './CommentsList.css';
-import { useLocaleRole } from '~/hooks/useLocaleRole';
 
 type Props = {
   translation: HistoryTranslation;
@@ -19,7 +18,6 @@ export function CommentsList({
   user,
 }: Props): React.ReactElement<'div'> {
   const onAddComment = useAddCommentAndRefresh(translation);
-  const role = useLocaleRole();
 
   return (
     <div className='comments-list'>

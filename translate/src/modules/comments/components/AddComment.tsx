@@ -30,7 +30,7 @@ import type { MentionUser } from '~/api/user';
 import { MentionUsers } from '~/context/MentionUsers';
 import type { UserState } from '~/modules/user';
 import { UserAvatar } from '~/modules/user';
-import { useLocaleRole } from '~/hooks/useLocaleRole';
+import { useUserStatus } from '~/hooks/useUserStatus';
 
 import './AddComment.css';
 import { MentionList } from './MentionList';
@@ -87,7 +87,7 @@ export function AddComment({
   const [mentionIndex, setMentionIndex] = useState(0);
   const [mentionSearch, setMentionSearch] = useState('');
   const [requireUsers, setRequireUsers] = useState(false);
-  const role = useLocaleRole();
+  const role = useUserStatus();
 
   const { initMentions, mentionUsers } = useContext(MentionUsers);
   const [slateKey, resetValue] = useReducer((key) => key + 1, 0);
