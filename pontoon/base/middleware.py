@@ -100,7 +100,7 @@ class ThrottleIpMiddleware:
         ip = get_ip(request)
 
         # Generate cache keys
-        throttle_key = f"throttle_ip_{ip}"
+        observed_key = f"observed_ip_{ip}"
         blocked_key = f"blocked_ip_{ip}"
 
         # Check if IP is currently blocked
@@ -108,7 +108,7 @@ class ThrottleIpMiddleware:
             return render(request, "429.html", status=429)
 
         # Fetch current request count and timestamp
-        request_data = cache.get(throttle_key)
+        request_data = cache.get(observed_key)
         now = time.time()
 
         if request_data:
@@ -121,13 +121,13 @@ class ThrottleIpMiddleware:
             else:
                 # Increment the request count and update cache
                 cache.set(
-                    throttle_key,
+                    observed_key,
                     (request_count + 1, first_request_time),
                     self.observation_period,
                 )
         else:
             # Reset the count and timestamp if first request in the period
-            cache.set(throttle_key, (1, now), self.observation_period)
+            cache.set(observed_key, (1, now), self.observation_period)
 
         response = self.get_response(request)
         return response
