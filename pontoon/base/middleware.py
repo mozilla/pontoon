@@ -93,6 +93,11 @@ class ThrottleIpMiddleware:
         if self.observation_period > self.block_duration:
             self.observation_period = self.block_duration
 
+    def _throttle(self, request):
+        response = render(request, "429.html", status=429)
+        response["Retry-After"] = self.block_duration
+        return response
+
     def __call__(self, request):
         if settings.THROTTLE_ENABLED is False:
             return self.get_response(request)
@@ -105,7 +110,7 @@ class ThrottleIpMiddleware:
 
         # Check if IP is currently blocked
         if cache.get(blocked_key):
-            return render(request, "429.html", status=429)
+            return self._throttle(request)
 
         # Fetch current request count and timestamp
         request_data = cache.get(observed_key)
@@ -117,7 +122,7 @@ class ThrottleIpMiddleware:
                 # Block further requests for block_duration seconds
                 cache.set(blocked_key, True, self.block_duration)
                 log.error(f"Blocked IP {ip} for {self.block_duration} seconds")
-                return render(request, "429.html", status=429)
+                return self._throttle(request)
             else:
                 # Increment the request count and update cache
                 cache.set(
