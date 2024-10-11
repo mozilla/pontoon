@@ -11,9 +11,9 @@
     <meta name="author" content="Mozilla">
     <meta name="color-scheme" content="only light">
 
-    <!-- Defining a type is a workaround for bug 1422289. -->
+    <link rel="icon" href="{{ static('img/favicon.ico') }}" sizes="32x32">
     <link rel="icon" href="{{ static('img/logo.svg') }}" type="image/svg+xml">
-    <link rel="icon" href="{{ static('img/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ static('img/apple-touch-icon.png') }}">
 
     {% block site_css %}
     <!-- Inlining CSS mitigates/prevents fouc. -->
