@@ -38,7 +38,7 @@ export function Navigation(): React.ReactElement<'nav'> {
           <a href='/'>
             <img
               src='/static/img/logo.svg'
-              width='32'
+              width='26'
               height='32'
               alt='Pontoon logo'
             />
