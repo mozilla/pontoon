@@ -1,12 +1,12 @@
 import logging
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sized
 from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
-from moz.l10n.resource import bilingual_extensions
+from moz.l10n.resource import bilingual_extensions, l10n_extensions
 
 from django.db import transaction
 from django.db.models import Q
@@ -50,11 +50,17 @@ def sync_translations_from_repo(
     source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
     delete_removed_bilingual_resources(project, co, paths, source_paths)
 
-    changed_target_paths = (
+    changed_target_paths = [
         path
         for path in (join(co.path, co_rel_path) for co_rel_path in co.changed)
         if path not in source_paths
-    )
+    ]
+    if changed_target_paths:
+        n = len(changed_target_paths)
+        str_files = "file" if n == 1 else "files"
+        log.info(
+            f"[{project.slug}] Reading changes from {n} changed target {str_files}"
+        )
     updates = find_db_updates(
         project, locale_map, changed_target_paths, paths, db_changes
     )
@@ -71,6 +77,7 @@ def write_db_updates(
     )
     add_errors(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
+    log.info(f"[{project.slug}] Updating stats for {len(updates)} changes")
     update_stats(updates.keys())
 
 
@@ -82,6 +89,7 @@ def delete_removed_bilingual_resources(
 ) -> None:
     rm_t = Q()
     rm_tr = Q()
+    count = 0
     removed_target_paths = (
         path
         for path in (join(target.path, co_path) for co_path in target.removed)
@@ -98,7 +106,12 @@ def delete_removed_bilingual_resources(
                     db_path = db_path[:-1]
                 rm_t |= Q(entity__resource__path=db_path, locale__code=locale_code)
                 rm_tr |= Q(resource__path=db_path, locale__code=locale_code)
+                count += 1
     if rm_t and rm_tr:
+        str_del_resources = (
+            "1 deleted resource" if count == 1 else f"{count} deleted resources"
+        )
+        log.info(f"[{project.slug}] Removing {str_del_resources}")
         with transaction.atomic():
             Translation.objects.filter(entity__resource__project=project).filter(
                 rm_t
@@ -125,6 +138,7 @@ def find_db_updates(
     - Entity/Locale combos for which Pontoon has changes since the last sync
     - Translations for which no matching entity is found
     """
+    log.debug(f"[{project.slug}] Scanning for translation updates...")
     resource_paths: set[str] = set()
     # {(db_path, locale.id, total_strings)}
     translated_resources: set[tuple[str, int, int]] = set()
@@ -142,12 +156,11 @@ def find_db_updates(
             if lc in locale_map:
                 locale = locale_map[lc]
                 db_path = relpath(ref_path, paths.ref_root)
+                lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
                     res = parse(target_path, ref_path, locale)
                 except Exception as error:
-                    log.error(
-                        f"[{project.slug}:{db_path}, {locale.code}] Skipping resource with parse error: {error}"
-                    )
+                    log.error(f"{lc_scope} Skipping resource with parse error: {error}")
                     continue
                 if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
@@ -158,6 +171,10 @@ def find_db_updates(
                     for tx in cast(list[VCSTranslation], res.translations)
                     if tx.strings
                 )
+        elif splitext(target_path)[1] in l10n_extensions:
+            log.debug(
+                f"[{project.slug}:{relpath(target_path, paths.base)}] Not an L10n target path"
+            )
     if not translations:
         return None
 
@@ -176,6 +193,7 @@ def find_db_updates(
         if res is not None:
             tr_q |= Q(entity__resource=res, locale_id=locale_id)
     if tr_q:
+        log.debug(f"[{project.slug}] Filtering matches from translations...")
         for tx in (
             Translation.objects.filter(tr_q)
             .filter(Q(approved=True) | Q(pretranslated=True))
@@ -206,6 +224,7 @@ def find_db_updates(
         return None
 
     # If repo and database both have changes, database wins.
+    log.debug(f"[{project.slug}] Filtering db changes from translations...")
     for change in db_changes:
         key = (
             change.entity.resource.path,
@@ -217,6 +236,7 @@ def find_db_updates(
     if not translations:
         return None
 
+    log.debug(f"[{project.slug}] Compiling updates...")
     entity_q = Q()
     for db_path, ent_key, _ in translations:
         entity_q |= Q(resource=resources[db_path]) & (
@@ -244,6 +264,7 @@ def update_db_translations(
 ) -> tuple[list[Translation], list[Translation]]:
     if not repo_translations:
         return [], []
+    log.debug(f"[{project.slug}] Syncing translations from repo...")
 
     translations_to_reject = Q()
     actions: list[ActionLog] = []
@@ -265,6 +286,9 @@ def update_db_translations(
             )
         )
     else:
+        log.warning(
+            f"[{project.slug}] Empty strings in repo_translations!? {repo_translations}"
+        )
         suggestions = []
     activated_translations: set[tuple[int, int, int]] = set()
     update_fields: set[str] = set()
@@ -376,7 +400,7 @@ def update_db_translations(
                 translation__in=[tx.pk for tx in rejected]
             ).delete()
             log.info(
-                f"[{project.slug}] Rejected {reject_count} translation(s) from repo changes"
+                f"[{project.slug}] Rejected {str_n_translations(reject_count)} from repo changes"
             )
 
     update_count = (

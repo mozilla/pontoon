@@ -1,3 +1,7 @@
+import logging
+
+from typing import Any
+
 from django.db import models
 from django.db.models import Q, Sum
 
@@ -9,6 +13,9 @@ from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
+
+
+log = logging.getLogger(__name__)
 
 
 class TranslatedResourceQuerySet(models.QuerySet):
@@ -74,6 +81,9 @@ class TranslatedResourceQuerySet(models.QuerySet):
         Update stats on a list of TranslatedResource.
         """
 
+        def _log(n: int, thing: str):
+            things = thing if n == 1 else f"{thing}s"
+            log.debug(f"update_stats: {n} {things}")
 
         fields = [
             "total_strings",
@@ -88,13 +98,18 @@ class TranslatedResourceQuerySet(models.QuerySet):
         for translated_resource in self:
             translated_resource.calculate_stats(save=False)
         TranslatedResource.objects.bulk_update(self, fields=fields)
+        _log(len(self), "translated resource")
 
+        projectlocale_count = 0
         for projectlocale in ProjectLocale.objects.filter(
             project__resources__translatedresources__in=self,
             locale__translatedresources__in=self,
         ).distinct():
             projectlocale.aggregate_stats()
+            projectlocale_count += 1
+        _log(projectlocale_count, "projectlocale")
 
+        project_count = 0
         for project in Project.objects.filter(
             resources__translatedresources__in=self,
         ).distinct():
@@ -108,6 +123,8 @@ class TranslatedResourceQuerySet(models.QuerySet):
             project.strings_with_warnings = stats["strings_with_warnings"] or 0
             project.unreviewed_strings = stats["unreviewed_strings"] or 0
             project.save(update_fields=fields)
+            project_count += 1
+        _log(project_count, "project")
 
         locales = Locale.objects.filter(translatedresources__in=self).distinct()
         for locale in locales:
@@ -123,6 +140,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
             locale.strings_with_warnings = stats["strings_with_warnings"] or 0
             locale.unreviewed_strings = stats["unreviewed_strings"] or 0
         Locale.objects.bulk_update(locales, fields=fields)
+        _log(len(locales), "locale")
 
 
 class TranslatedResource(AggregatedStats):

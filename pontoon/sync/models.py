@@ -116,8 +116,6 @@ class SyncLog(BaseLog):
             )
             t.calculate_stats()
 
-        log.info("Sync complete.")
-
 
 class ProjectSyncLog(BaseLog):
     sync_log = models.ForeignKey(

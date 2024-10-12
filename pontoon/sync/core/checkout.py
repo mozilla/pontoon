@@ -36,12 +36,16 @@ class Checkout:
 
         versioncontrol = get_repo(db_repo.type)
         if pull:
-            log.info(f"[{slug}] Pulling updates from {self.url}")
             versioncontrol.update(self.url, self.path, db_repo.branch)
         else:
             log.info(f"[{slug}] Skipping pull")
         self.commit = versioncontrol.revision(self.path)
-        log.info(f"[{slug}] Repo {self.url} now at {self.commit}")
+        str_updated = (
+            f"updated from {self.prev_commit} to {self.commit}"
+            if self.prev_commit
+            else f"now at {self.commit}"
+        )
+        log.info(f"[{slug}] Repo {str_updated}")
 
         delta = (
             versioncontrol.changed_files(self.path, self.prev_commit)
@@ -83,10 +87,12 @@ def checkout_repos(
             if source:
                 raise Exception("Multiple source repositories")
             source = Checkout(project.slug, repo, pull, force)
+            log.debug(f"[{project.slug}] source root: {source.path}")
         elif target:
             raise Exception("Multiple target repositories")
         else:
             target = Checkout(project.slug, repo, pull, force)
+            log.debug(f"[{project.slug}] target root: {target.path}")
     if source is None and target is None:
         raise Exception("No repository found")
     return Checkouts(source or target, target or source)

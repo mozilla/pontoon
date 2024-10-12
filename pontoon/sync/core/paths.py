@@ -1,6 +1,6 @@
 import logging
 
-from os.path import join
+from os.path import join, relpath
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, get_android_locale
 
@@ -29,6 +29,7 @@ def find_paths(
         )
         if checkouts.target != checkouts.source:
             paths.base = checkouts.target.path
+        name = f"cfg={project.configuration_file}"
     else:
         paths = L10nDiscoverPaths(
             project.checkout_path,
@@ -38,6 +39,11 @@ def find_paths(
         )
         if paths.base is None:
             raise MissingLocaleDirectoryError("Base localization directory not found")
+        name = "auto"
+
+    rel_root = relpath(paths.ref_root, src_root)
+    rel_base = relpath(paths.base, src_root)
+    log.debug(f"[{project.slug}] Paths({name}): ref_root={rel_root} base={rel_base}")
 
     return paths
 

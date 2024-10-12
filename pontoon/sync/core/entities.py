@@ -41,6 +41,7 @@ def sync_entities_from_repo(
     """
     if not checkout.changed and not checkout.removed and not checkout.renamed:
         return 0, set(), set()
+    log.info(f"[{project.slug}] Syncing entities from repo...")
     # db_path -> parsed_resource
     updates: dict[str, SilmeResource | None] = {}
     source_paths = set(paths.ref_paths)

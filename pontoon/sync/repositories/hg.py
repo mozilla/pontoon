@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 
 def update(source: str, target: str, branch: str | None) -> None:
-    log.debug("Mercurial: Update repository.")
+    log.debug(f"Mercurial: Updating repo {source}")
 
     # Undo local changes: Mercurial doesn't offer anything more elegant
     command = ["rm", "-rf", target]

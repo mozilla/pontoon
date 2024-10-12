@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 def update(source: str, target: str, branch: str | None) -> None:
-    log.debug("Git: Update repository.")
+    log.debug(f"Git: Updating repo {source}")
 
     command = ["git", "fetch", "--all"]
     execute(command, target)
@@ -18,26 +18,30 @@ def update(source: str, target: str, branch: str | None) -> None:
     remote = f"origin/{branch}" if branch else "origin"
 
     command = ["git", "reset", "--hard", remote]
-    code, _output, error = execute(command, target)
+    code, output, error = execute(command, target)
 
     if code != 0:
-        log.info(f"Git: {error}")
-        log.debug("Git: Clone instead.")
+        if error != "No such file or directory":
+            log.debug(output)
+            log.warning(f"Git: {error}")
+        log.debug("Git: Cloning repo...")
         command = ["git", "clone", source, target]
-        code, _output, error = execute(command)
+        code, output, error = execute(command)
 
         if code != 0:
+            log.debug(output)
             raise PullFromRepositoryException(error)
 
-        log.debug(f"Git: Repository at {source} cloned.")
+        log.debug("Git: Repo cloned.")
     else:
-        log.debug(f"Git: Repository at {source} updated.")
+        log.debug("Git: Repo updated.")
 
     if branch:
         command = ["git", "checkout", branch]
-        code, _output, error = execute(command, target)
+        code, output, error = execute(command, target)
 
         if code != 0:
+            log.debug(output)
             raise PullFromRepositoryException(error)
 
         log.debug(f"Git: Branch {branch} checked out.")

@@ -78,7 +78,7 @@ def sync_translations_to_repo(
         repo.commit(co.path, commit_msg, commit_author, co.repo.branch, co.url)
         co.commit = repo.revision(co.path)
     except CommitToRepositoryException as error:
-        log.debug(f"[{project.slug}] {co.repo.type} commit failed: {error}")
+        log.warning(f"[{project.slug}] {co.repo.type} commit failed: {error}")
         raise error
 
 
@@ -134,6 +134,10 @@ def update_changed_resources(
             if prev:
                 prev.append(change.locale)
     changed_entities = set(change.entity for change in db_changes)
+    if changed_resources:
+        n = len(changed_resources)
+        str_resources = "resource" if n == 1 else "resources"
+        log.info(f"[{project.slug}] Updating {n} changed {str_resources}")
 
     updated_locales: set[Locale] = set()
     translators: dict[User, set[str]] = defaultdict(set)
