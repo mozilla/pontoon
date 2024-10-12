@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -404,7 +404,17 @@ def get_translation_history(request):
     translations = Translation.objects.filter(
         entity=entity,
         locale=locale,
-    ).prefetch_related("comments")
+    ).prefetch_related(
+        Prefetch(
+            "comments",
+            queryset=Comment.objects.prefetch_related("author").order_by("timestamp"),
+        ),
+        "user",
+        "approved_user",
+        "rejected_user",
+        "errors",
+        "warnings",
+    )
 
     if plural_form != -1:
         translations = translations.filter(plural_form=plural_form)
@@ -426,7 +436,7 @@ def get_translation_history(request):
                 "approved_date": t.approved_date,
                 "rejected_user": User.display_name_or_blank(t.rejected_user),
                 "rejected_date": t.rejected_date,
-                "comments": [c.serialize() for c in t.comments.order_by("timestamp")],
+                "comments": [c.serialize() for c in t.comments.all()],
                 "machinery_sources": t.machinery_sources_values,
             }
         )

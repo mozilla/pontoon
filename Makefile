@@ -57,8 +57,13 @@ build-server: server-env translate/dist
 	touch .server-build
 
 server-env:
-	sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
-	./docker/config/server.env.template > ./docker/config/server.env
+	@if [ ! -f ./docker/config/server.env ]; then \
+		echo "Generating server.env..."; \
+		sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
+		./docker/config/server.env.template > ./docker/config/server.env; \
+	else \
+		echo "server.env already exists, skipping."; \
+	fi
 
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh

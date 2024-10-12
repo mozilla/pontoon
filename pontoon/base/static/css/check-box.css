@@ -7,6 +7,10 @@
 
   .check-box {
     padding: 4px 0;
+
+    [type='checkbox'] {
+      display: none;
+    }
   }
 
   .check-box:last-child {

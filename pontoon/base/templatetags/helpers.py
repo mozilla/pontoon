@@ -2,6 +2,8 @@ import datetime
 import html
 import json
 
+from datetime import timedelta
+
 import markupsafe
 
 from allauth.socialaccount import providers
@@ -15,6 +17,7 @@ from django.contrib.humanize.templatetags import humanize
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from pontoon.base.fluent import get_simple_preview
@@ -175,6 +178,26 @@ def format_timedelta(value):
             return "0 seconds"
     else:
         return "---"
+
+
+@library.filter
+def format_for_inbox(date):
+    # Localize the date to the current timezone
+    date = timezone.localtime(date)
+    now = timezone.now()
+
+    if date.date() == now.date():
+        # Same day: Only show time, e.g., "13:34"
+        return date.strftime("%H:%M")
+    elif date.date() == (now - timedelta(days=1)).date():
+        # Yesterday: Yesterday and time, e.g., "Yesterday, 13:34"
+        return date.strftime("Yesterday, %H:%M")
+    elif (now - date).days < 7:
+        # Within a week: Day and time, e.g., "Monday, 13:34"
+        return date.strftime("%A, %H:%M")
+    else:
+        # Older than a week: Full date and time, e.g., "Sep 12, 13:34"
+        return date.strftime("%b %d, %H:%M")
 
 
 @register.filter
