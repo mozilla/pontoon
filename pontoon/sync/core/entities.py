@@ -57,6 +57,14 @@ def sync_entities_from_repo(
                     f"[{project.slug}:{db_path}] Skipping resource with parse error: {error}"
                 )
                 res = None
+            except ValueError as error:
+                if str(error).startswith("Translation format"):
+                    log.warning(
+                        f"[{project.slug}:{db_path}] Skipping resource with unsupported format"
+                    )
+                    res = None
+                else:
+                    raise error
             updates[db_path] = res
 
     with transaction.atomic():

@@ -41,9 +41,9 @@ class Checkout:
             log.info(f"[{slug}] Skipping pull")
         self.commit = versioncontrol.revision(self.path)
         str_updated = (
-            f"updated from {self.prev_commit} to {self.commit}"
-            if self.prev_commit
-            else f"now at {self.commit}"
+            f"at {self.commit}"
+            if not self.prev_commit or self.prev_commit == self.commit
+            else f"updated from {self.prev_commit} to {self.commit}"
         )
         log.info(f"[{slug}] Repo {str_updated}")
 
@@ -56,6 +56,7 @@ class Checkout:
             self.changed, self.removed, self.renamed = delta
         else:
             # Initially and on error & when forced, consider all files changed
+            log.warning(f"[{slug}] Considering all files as changed")
             self.changed = []
             for root, dirnames, filenames in walk(self.path):
                 dirnames[:] = (dn for dn in dirnames if not dn.startswith("."))

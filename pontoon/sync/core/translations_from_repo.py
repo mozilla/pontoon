@@ -1,5 +1,6 @@
 import logging
 
+from collections import defaultdict
 from collections.abc import Iterable, Sized
 from datetime import datetime
 from os.path import join, relpath, splitext
@@ -8,6 +9,7 @@ from typing import cast
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 from moz.l10n.resource import bilingual_extensions, l10n_extensions
 
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.manager import BaseManager
@@ -65,20 +67,19 @@ def sync_translations_from_repo(
         project, locale_map, changed_target_paths, paths, db_changes
     )
     if updates:
+        update_keys = list(updates.keys())
         user = User.objects.get(username="pontoon-sync")
-        write_db_updates(project, updates, user, now)
+        updated_translations, new_translations = update_db_translations(
+            project, updates, user, now
+        )
+        add_errors(new_translations)
+        add_translation_memory_entries(project, new_translations + updated_translations)
 
-
-def write_db_updates(
-    project: Project, updates: Updates, user: User, now: datetime
-) -> None:
-    updated_translations, new_translations = update_db_translations(
-        project, updates, user, now
-    )
-    add_errors(new_translations)
-    add_translation_memory_entries(project, new_translations + updated_translations)
-    log.info(f"[{project.slug}] Updating stats for {len(updates)} changes")
-    update_stats(updates.keys())
+        log.info(f"[{project.slug}] Updating stats for {len(update_keys)} changes")
+        q_updates = Q()
+        for entity_id, locale_id in update_keys:
+            q_updates |= Q(resource__entities__id=entity_id, locale_id=locale_id)
+        TranslatedResource.objects.filter(q_updates).distinct().update_stats()
 
 
 def delete_removed_bilingual_resources(
@@ -140,16 +141,12 @@ def find_db_updates(
     """
     log.debug(f"[{project.slug}] Scanning for translation updates...")
     resource_paths: set[str] = set()
-    # {(db_path, locale.id, total_strings)}
-    translated_resources: set[tuple[str, int, int]] = set()
+    # db_path -> {locale.id}
+    translated_resources: dict[str, set[int]] = defaultdict(set)
     # (db_path, tx.key, locale.id) -> (plural_form -> string, fuzzy)
     translations: dict[tuple[str, str, int], tuple[dict[int | None, str], bool]] = {}
     for target_path in changed_target_paths:
-        ref = (
-            paths.find_reference(target_path)
-            if not target_path.startswith("..")
-            else None
-        )
+        ref = paths.find_reference(target_path)
         if ref:
             ref_path, path_vars = ref
             lc = get_path_locale(path_vars)
@@ -165,7 +162,7 @@ def find_db_updates(
                 if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
                 resource_paths.add(db_path)
-                translated_resources.add((db_path, locale.id, len(res.entities)))
+                translated_resources[db_path].add(locale.id)
                 translations.update(
                     ((db_path, tx.key, locale.id), (tx.strings, tx.fuzzy))
                     for tx in cast(list[VCSTranslation], res.translations)
@@ -188,15 +185,16 @@ def find_db_updates(
     # Exclude translations for which DB & repo already match
     # TODO: Should be able to use repo diff to identify changed entities and refactor this.
     tr_q = Q()
-    for db_path, locale_id, _ in translated_resources:
+    for db_path, locale_ids in translated_resources.items():
         res = resources.get(db_path, None)
         if res is not None:
-            tr_q |= Q(entity__resource=res, locale_id=locale_id)
+            tr_q |= Q(entity__resource=res, locale_id__in=locale_ids)
     if tr_q:
         log.debug(f"[{project.slug}] Filtering matches from translations...")
-        for tx in (
+        tr_query = (
             Translation.objects.filter(tr_q)
             .filter(Q(approved=True) | Q(pretranslated=True))
+            .order_by("id")
             .values(
                 "entity__resource__path",
                 "entity__key",
@@ -205,21 +203,28 @@ def find_db_updates(
                 "plural_form",
                 "string",
             )
-            .iterator()
-        ):
-            key = (
-                tx["entity__resource__path"],
-                tx["entity__key"] or tx["entity__string"],
-                tx["locale_id"],
-            )
-            if key in translations:
-                plural_form = tx["plural_form"]
-                strings, _ = translations[key]
-                if strings.get(plural_form, None) == tx["string"]:
-                    if len(strings) > 1:
-                        del strings[plural_form]
-                    else:
-                        del translations[key]
+        )
+        paginator = Paginator(tr_query, per_page=10000, allow_empty_first_page=True)
+        for page_number in paginator.page_range:
+            page = paginator.page(page_number)
+            for tr_values in page:
+                key = (
+                    tr_values["entity__resource__path"],
+                    tr_values["entity__key"] or tr_values["entity__string"],
+                    tr_values["locale_id"],
+                )
+                if key in translations:
+                    plural_form = tr_values["plural_form"]
+                    strings, _ = translations[key]
+                    if strings.get(plural_form, None) == tr_values["string"]:
+                        if len(strings) > 1:
+                            del strings[plural_form]
+                        else:
+                            del translations[key]
+            if paginator.num_pages > 3:
+                log.debug(
+                    f"[{project.slug}] Filtering matches from translations... {page_number}/{paginator.num_pages}"
+                )
     if not translations:
         return None
 
@@ -280,25 +285,21 @@ def update_db_translations(
                 string=string,
             )
     if matching_suggestions_q:
-        suggestions = list(
-            Translation.objects.filter(matching_suggestions_q).filter(
-                approved=False, pretranslated=False
-            )
-        )
+        # (entity_id, locale_id, plural_form) => translation
+        suggestions: dict[tuple[int, int, int], Translation] = {
+            (tx.entity_id, tx.locale_id, tx.plural_form): tx
+            for tx in Translation.objects.filter(matching_suggestions_q)
+            .filter(approved=False, pretranslated=False)
+            .iterator()
+        }
     else:
         log.warning(
             f"[{project.slug}] Empty strings in repo_translations!? {repo_translations}"
         )
-        suggestions = []
-    activated_translations: set[tuple[int, int, int]] = set()
+        suggestions = {}
     update_fields: set[str] = set()
     approve_count = 0
-    for tx in suggestions:
-        key = (tx.entity_id, tx.locale_id, tx.plural_form)
-        if key in activated_translations:
-            # Avoid double-approving multiple matching suggestions
-            continue
-        activated_translations.add(key)
+    for tx in suggestions.values():
         _, fuzzy = repo_translations[(tx.entity_id, tx.locale_id)]
 
         if tx.rejected:
@@ -334,7 +335,7 @@ def update_db_translations(
             entity=tx.entity, locale=tx.locale, plural_form=tx.plural_form
         )
         update_fields.update(tx.get_dirty_fields())
-    for entity_id, locale_id, _ in activated_translations:
+    for entity_id, locale_id, _ in suggestions:
         try:
             del repo_translations[(entity_id, locale_id)]
         except KeyError:
@@ -404,7 +405,7 @@ def update_db_translations(
             )
 
     update_count = (
-        Translation.objects.bulk_update(suggestions, list(update_fields))
+        Translation.objects.bulk_update(suggestions.values(), list(update_fields))
         if update_fields
         else 0
     )
@@ -427,7 +428,7 @@ def update_db_translations(
     if actions:
         ActionLog.objects.bulk_create(actions)
 
-    return created, suggestions
+    return created, list(suggestions.values())
 
 
 def str_n_translations(n: int | Sized) -> str:
@@ -484,12 +485,3 @@ def add_translation_memory_entries(
                 memory_entries__isnull=True,
             ).iterator()
         )
-
-
-def update_stats(
-    changed_entity_locales: Iterable[tuple[int, int]],  # [(entity.id, locale.id)]
-):
-    query = Q()
-    for entity_id, locale_id in changed_entity_locales:
-        query |= Q(resource__entities__id=entity_id, locale_id=locale_id)
-    TranslatedResource.objects.filter(query).distinct().update_stats()

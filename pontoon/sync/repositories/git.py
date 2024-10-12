@@ -122,7 +122,7 @@ def changed_files(
             else:
                 log.warning(f"Git: Failed to parse diff line: {line}")
                 return None
-        else:
+        elif line.strip():
             log.warning(f"Git: Failed to parse diff line: {line}")
             return None
     return changed, removed, renamed
