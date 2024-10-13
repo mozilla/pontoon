@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from django.urls import reverse
@@ -28,4 +30,40 @@ def test_EmailConsentMiddleware(client, member, settings):
     profile.email_consent_dismissed_at = timezone.now()
     profile.save()
     response = member.client.get("/")
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_throttle(client, settings):
+    """Test that requests are throttled after the limit is reached."""
+    settings.THROTTLE_ENABLED = True
+    settings.THROTTLE_MAX_COUNT = 5
+    settings.THROTTLE_BLOCK_DURATION = 2
+
+    url = reverse("pontoon.homepage")
+    ip_address = "192.168.0.1"
+    ip_address_2 = "192.168.0.2"
+
+    # Make 5 requests within the limit
+    for _ in range(5):
+        response = client.get(url, REMOTE_ADDR=ip_address)
+        assert response.status_code == 200
+
+    # 6th request should be throttled
+    response = client.get(url, REMOTE_ADDR=ip_address)
+    assert response.status_code == 429
+
+    # Check that the IP remains blocked for the block duration
+    response = client.get(url, REMOTE_ADDR=ip_address)
+    assert response.status_code == 429
+
+    # Requests from another IP should not be throttled
+    response = client.get(url, REMOTE_ADDR=ip_address_2)
+    assert response.status_code == 200
+
+    # Wait for block duration to pass
+    time.sleep(settings.THROTTLE_BLOCK_DURATION)
+
+    # Make another request after block duration
+    response = client.get(url, REMOTE_ADDR=ip_address)
     assert response.status_code == 200
