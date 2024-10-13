@@ -476,7 +476,7 @@ def account_disabled(request):
     context = {
         "support_email": DEFAULT_FROM_EMAIL,
     }
-    return render(request, "account_disabled.html", context)
+    return render(request, "contributors/account_disabled.html", context)
 
 
 @login_required(redirect_field_name="", login_url="/403")
