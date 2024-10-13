@@ -67,19 +67,25 @@ def sync_translations_from_repo(
         project, locale_map, changed_target_paths, paths, db_changes
     )
     if updates:
-        update_keys = list(updates.keys())
         user = User.objects.get(username="pontoon-sync")
-        updated_translations, new_translations = update_db_translations(
-            project, updates, user, now
-        )
-        add_errors(new_translations)
-        add_translation_memory_entries(project, new_translations + updated_translations)
+        write_db_updates(project, updates, user, now)
 
-        log.info(f"[{project.slug}] Updating stats for {len(update_keys)} changes")
-        q_updates = Q()
-        for entity_id, locale_id in update_keys:
-            q_updates |= Q(resource__entities__id=entity_id, locale_id=locale_id)
-        TranslatedResource.objects.filter(q_updates).distinct().update_stats()
+
+def write_db_updates(
+    project: Project, updates: Updates, user: User, now: datetime
+) -> None:
+    update_keys = list(updates.keys())
+    updated_translations, new_translations = update_db_translations(
+        project, updates, user, now
+    )
+    add_errors(new_translations)
+    add_translation_memory_entries(project, new_translations + updated_translations)
+
+    log.info(f"[{project.slug}] Updating stats for {len(update_keys)} changes")
+    q_updates = Q()
+    for entity_id, locale_id in update_keys:
+        q_updates |= Q(resource__entities__id=entity_id, locale_id=locale_id)
+    TranslatedResource.objects.filter(q_updates).distinct().update_stats()
 
 
 def delete_removed_bilingual_resources(
