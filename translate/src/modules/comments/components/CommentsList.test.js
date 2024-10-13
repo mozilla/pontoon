@@ -19,9 +19,9 @@ describe('<CommentsList>', () => {
       translation: {
         ...DEFAULT_TRANSLATION,
         comments: [
-          { id: 1, content: '11' },
-          { id: 2, content: '22' },
-          { id: 3, content: '33' },
+          { id: 1, content: '11', userStatus: '' },
+          { id: 2, content: '22', userStatus: '' },
+          { id: 3, content: '33', userStatus: '' },
         ],
       },
       user: DEFAULT_USER,
