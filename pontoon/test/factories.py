@@ -9,6 +9,7 @@ from django.template.defaultfilters import slugify
 
 from pontoon.base.models import (
     ChangedEntityLocale,
+    Comment,
     Entity,
     Locale,
     LocaleCodeHistory,
@@ -140,6 +141,25 @@ class TranslationFactory(DjangoModelFactory):
 
 class IdenticalTranslationFactory(TranslationFactory):
     entity = SubFactory(EntityFactory, string=SelfAttribute("..string"))
+
+
+class TranslationCommentFactory(DjangoModelFactory):
+    content = Sequence(lambda n: f"Comment {n}")
+    author = SubFactory(UserFactory)
+    translation = SubFactory(TranslationFactory)
+
+    class Meta:
+        model = Comment
+
+
+class TeamCommentFactory(DjangoModelFactory):
+    content = Sequence(lambda n: f"Comment {n}")
+    author = SubFactory(UserFactory)
+    entity = SubFactory(EntityFactory)
+    locale = SubFactory(LocaleFactory)
+
+    class Meta:
+        model = Comment
 
 
 class TranslationMemoryFactory(DjangoModelFactory):
