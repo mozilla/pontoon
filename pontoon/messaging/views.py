@@ -99,13 +99,14 @@ def get_recipients(form):
     recipients = User.objects.none()
 
     """
-    Filter recipients by user role:
+    Filter recipients by user role, locale and project:
     - Contributors of selected Locales and Projects
     - Managers of selected Locales
     - Translators of selected Locales
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
+
     translations = Translation.objects.filter(
         locale_id__in=locale_ids,
         entity__resource__project_id__in=project_ids,
@@ -161,7 +162,8 @@ def get_recipients(form):
     if translation_to:
         submitted = submitted.filter(date__lte=translation_to)
 
-    submitted = submitted.values("user").annotate(count=Count("user"))
+    if translation_minimum or translation_maximum:
+        submitted = submitted.values("user").annotate(count=Count("user"))
 
     if translation_minimum:
         submitted = submitted.filter(count__gte=translation_minimum)
@@ -196,8 +198,9 @@ def get_recipients(form):
         approved = approved.filter(approved_date__lte=review_to)
         rejected = rejected.filter(rejected_date__lte=review_to)
 
-    approved = approved.values("approved_user").annotate(count=Count("approved_user"))
-    rejected = rejected.values("rejected_user").annotate(count=Count("rejected_user"))
+    if review_minimum or review_maximum:
+        approved = approved.values("approved_user").annotate(count=Count("approved_user"))
+        rejected = rejected.values("rejected_user").annotate(count=Count("rejected_user"))
 
     if review_minimum:
         approved = approved.filter(count__gte=review_minimum)
