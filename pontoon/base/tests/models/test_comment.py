@@ -1,6 +1,5 @@
 import pytest
 
-from pontoon.base.models import Comment
 from pontoon.test.factories import TeamCommentFactory, TranslationCommentFactory
 
 
