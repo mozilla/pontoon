@@ -227,18 +227,13 @@ def send_message(request):
         return JsonResponse(dict(form.errors.items()), status=400)
 
     send_to_myself = form.cleaned_data.get("send_to_myself")
-    recipients = User.objects.filter(pk=request.user.pk)
 
-    """
-    While the feature is in development, messages are sent only to the current user.
-    TODO: Uncomment lines below when the feature is ready.
-    if not send_to_myself:
-        recipients = get_recipients(form)
-    """
+    if send_to_myself:
+        recipients = User.objects.filter(pk=request.user.pk)
+    else:
+        recipients = get_recipients(form).distinct()
 
-    log.info(
-        f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
-    )
+    log.info(f"Total recipients count: {len(recipients)}.")
 
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
@@ -248,7 +243,9 @@ def send_message(request):
 
     if is_notification:
         identifier = uuid.uuid4().hex
-        for recipient in recipients.distinct():
+        notification_recipients_count = 0
+
+        for recipient in recipients:
             notify.send(
                 request.user,
                 recipient=recipient,
@@ -257,10 +254,9 @@ def send_message(request):
                 description=f"{subject}<br/><br/>{body}",
                 identifier=identifier,
             )
+            notification_recipients_count += 1
 
-        log.info(
-            f"Notifications sent to the following {recipients.count()} users: {recipients.values_list('email', flat=True)}."
-        )
+        log.info(f"Notifications sent to {notification_recipients_count} users.")
 
     if is_email:
         footer = (
@@ -272,10 +268,12 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
         )
         html_template = body + footer
         text_template = utils.html_to_plain_text_with_links(html_template)
+        email_recipients_count = 0
 
-        email_recipients = recipients.filter(profile__email_communications_enabled=True)
+        for recipient in recipients:
+            if not recipient.profile.email_communications_enabled:
+                continue
 
-        for recipient in email_recipients.distinct():
             unique_id = str(recipient.profile.unique_id)
             text = text_template.replace("{ uuid }", unique_id)
             html = html_template.replace("{ uuid }", unique_id)
@@ -288,10 +286,9 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             )
             msg.attach_alternative(html, "text/html")
             msg.send()
+            email_recipients_count += 1
 
-        log.info(
-            f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
-        )
+        log.info(f"Emails sent to {email_recipients_count} users.")
 
     if not send_to_myself:
         message = form.save(commit=False)
