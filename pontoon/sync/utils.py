@@ -25,7 +25,7 @@ def download_translations_zip(
 
     bytes_io = BytesIO()
     zipfile = ZipFile(bytes_io, "w")
-    for tgt_path in paths.all():
+    for _, tgt_path in paths.all():
         lc_path = paths.format_target_path(tgt_path, locale.code)
         zipfile.write(lc_path, basename(tgt_path))
     zipfile.close()
