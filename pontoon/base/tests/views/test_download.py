@@ -1,6 +1,5 @@
 from io import BytesIO
 from os import makedirs
-from os.path import join
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import patch
@@ -28,12 +27,11 @@ from pontoon.sync.tests.utils import build_file_tree
 
 
 @pytest.mark.django_db
-def test_end_to_end():
-    mock_vcs = MockVersionControl(changes=([join("en-US", "c.ftl")], [], []))
+def test_download():
+    mock_vcs = MockVersionControl(changes=None)
     with (
         TemporaryDirectory() as root,
         patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
-        patch("pontoon.sync.core.translations_to_repo.get_repo", return_value=mock_vcs),
     ):
         # Database setup
         settings.MEDIA_ROOT = root
