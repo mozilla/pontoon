@@ -210,14 +210,14 @@
       text-align: center;
 
       .icon {
-        color: var(--light-grey-1);
+        color: var(--background-hover-2);
         font-size: 100px;
       }
 
       .title {
-        color: var(--light-grey-6);
-        font-size: 20px;
-        font-weight: 100;
+        color: var(--light-grey-7);
+        font-size: 18px;
+        font-weight: bold;
       }
     }
 
