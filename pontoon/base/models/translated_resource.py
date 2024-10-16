@@ -7,7 +7,6 @@ from django.db.models import Q, Sum
 
 from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
-from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -191,18 +190,11 @@ class TranslatedResource(AggregatedStats):
 
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
-        resource = self.resource
-        locale = self.locale
 
-        entity_ids = Translation.objects.filter(locale=locale).values("entity")
-        translated_entities = Entity.objects.filter(
-            pk__in=entity_ids, resource=resource, obsolete=False
-        )
-
-        # Singular
         translations = Translation.objects.filter(
-            entity__in=translated_entities.filter(string_plural=""),
-            locale=locale,
+            entity__resource=self.resource,
+            entity__obsolete=False,
+            locale=self.locale,
         )
 
         approved = translations.filter(
@@ -246,66 +238,8 @@ class TranslatedResource(AggregatedStats):
             fuzzy=False,
         ).count()
 
-        # Plural
-        nplurals = locale.nplurals or 1
-        for e in translated_entities.exclude(string_plural="").values_list("pk"):
-            translations = Translation.objects.filter(
-                entity_id=e,
-                locale=locale,
-            )
-
-            plural_approved_count = translations.filter(
-                approved=True,
-                errors__isnull=True,
-                warnings__isnull=True,
-            ).count()
-
-            plural_pretranslated_count = translations.filter(
-                pretranslated=True,
-                errors__isnull=True,
-                warnings__isnull=True,
-            ).count()
-
-            if plural_approved_count == nplurals:
-                approved += 1
-            elif plural_pretranslated_count == nplurals:
-                pretranslated += 1
-            else:
-                plural_errors_count = (
-                    translations.filter(
-                        Q(
-                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                            & Q(errors__isnull=False)
-                        ),
-                    )
-                    .distinct()
-                    .count()
-                )
-
-                plural_warnings_count = (
-                    translations.filter(
-                        Q(
-                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                            & Q(warnings__isnull=False)
-                        ),
-                    )
-                    .distinct()
-                    .count()
-                )
-
-                if plural_errors_count:
-                    errors += 1
-                elif plural_warnings_count:
-                    warnings += 1
-
-            plural_unreviewed_count = translations.filter(
-                approved=False, pretranslated=False, fuzzy=False, rejected=False
-            ).count()
-            if plural_unreviewed_count:
-                unreviewed += plural_unreviewed_count
-
         if not save:
-            self.total_strings = resource.total_strings
+            self.total_strings = self.resource.total_strings
             self.approved_strings = approved
             self.pretranslated_strings = pretranslated
             self.strings_with_errors = errors
@@ -315,7 +249,7 @@ class TranslatedResource(AggregatedStats):
             return False
 
         # Calculate diffs to reduce DB queries
-        total_strings_diff = resource.total_strings - self.total_strings
+        total_strings_diff = self.resource.total_strings - self.total_strings
         approved_strings_diff = approved - self.approved_strings
         pretranslated_strings_diff = pretranslated - self.pretranslated_strings
         strings_with_errors_diff = errors - self.strings_with_errors

@@ -30,6 +30,7 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
+from pontoon.sync.core.stats import update_stats
 from pontoon.sync.formats import parse
 from pontoon.sync.vcs.translation import VCSTranslation
 
@@ -74,18 +75,12 @@ def sync_translations_from_repo(
 def write_db_updates(
     project: Project, updates: Updates, user: User, now: datetime
 ) -> None:
-    update_keys = list(updates.keys())
     updated_translations, new_translations = update_db_translations(
         project, updates, user, now
     )
     add_errors(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
-
-    log.info(f"[{project.slug}] Updating stats for {len(update_keys)} changes")
-    q_updates = Q()
-    for entity_id, locale_id in update_keys:
-        q_updates |= Q(resource__entities__id=entity_id, locale_id=locale_id)
-    TranslatedResource.objects.filter(q_updates).distinct().update_stats()
+    update_stats(project)
 
 
 def delete_removed_bilingual_resources(
@@ -123,11 +118,10 @@ def delete_removed_bilingual_resources(
             Translation.objects.filter(entity__resource__project=project).filter(
                 rm_t
             ).delete()
-            trans_res = TranslatedResource.objects.filter(
-                resource__project=project
-            ).filter(rm_tr)
-            trans_res.update_stats()
-            trans_res.delete()
+            TranslatedResource.objects.filter(resource__project=project).filter(
+                rm_tr
+            ).delete()
+        update_stats(project)
 
 
 def find_db_updates(
