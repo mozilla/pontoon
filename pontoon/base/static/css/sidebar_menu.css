@@ -35,6 +35,11 @@
   float: right;
 }
 
+.menu.left-column li.selected .count {
+  background: var(--button-background-1);
+  float: right;
+}
+
 .menu.right-column {
   background: var(--dark-grey-1);
   float: right;
