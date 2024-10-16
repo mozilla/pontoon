@@ -182,15 +182,15 @@ def find_db_updates(
 
     # Exclude translations for which DB & repo already match
     # TODO: Should be able to use repo diff to identify changed entities and refactor this.
-    tr_q = Q()
+    trans_q = Q()
     for db_path, locale_ids in translated_resources.items():
         res = resources.get(db_path, None)
         if res is not None:
-            tr_q |= Q(entity__resource=res, locale_id__in=locale_ids)
-    if tr_q:
+            trans_q |= Q(entity__resource=res, locale_id__in=locale_ids)
+    if trans_q:
         log.debug(f"[{project.slug}] Filtering matches from translations...")
-        tr_query = (
-            Translation.objects.filter(tr_q)
+        trans_query = (
+            Translation.objects.filter(trans_q)
             .filter(Q(approved=True) | Q(pretranslated=True))
             .order_by("id")
             .values(
@@ -202,19 +202,19 @@ def find_db_updates(
                 "string",
             )
         )
-        paginator = Paginator(tr_query, per_page=10000, allow_empty_first_page=True)
+        paginator = Paginator(trans_query, per_page=10000, allow_empty_first_page=True)
         for page_number in paginator.page_range:
             page = paginator.page(page_number)
-            for tr_values in page:
+            for trans_values in page:
                 key = (
-                    tr_values["entity__resource__path"],
-                    tr_values["entity__key"] or tr_values["entity__string"],
-                    tr_values["locale_id"],
+                    trans_values["entity__resource__path"],
+                    trans_values["entity__key"] or trans_values["entity__string"],
+                    trans_values["locale_id"],
                 )
                 if key in translations:
-                    plural_form = tr_values["plural_form"]
+                    plural_form = trans_values["plural_form"]
                     strings, _ = translations[key]
-                    if strings.get(plural_form, None) == tr_values["string"]:
+                    if strings.get(plural_form, None) == trans_values["string"]:
                         if len(strings) > 1:
                             del strings[plural_form]
                         else:
@@ -240,14 +240,10 @@ def find_db_updates(
         return None
 
     log.debug(f"[{project.slug}] Compiling updates...")
-    entity_q = Q()
-    for db_path, ent_key, _ in translations:
-        entity_q |= Q(resource=resources[db_path]) & (
-            Q(key=ent_key) | Q(key="", string=ent_key)
-        )
+    trans_res = {resources[db_path] for db_path, _, _ in translations}
     entities: dict[tuple[str, str], int] = {
         (e["resource__path"], e["key"] or e["string"]): e["id"]
-        for e in Entity.objects.filter(entity_q)
+        for e in Entity.objects.filter(resource__in=trans_res, obsolete=False)
         .values("id", "key", "string", "resource__path")
         .iterator()
     }
@@ -256,6 +252,7 @@ def find_db_updates(
         entity_id = entities.get((db_path, ent_key), None)
         if entity_id is not None:
             res[(entity_id, locale_id)] = tx
+    log.debug(f"[{project.slug}] Compiling updates... Found {len(res)}")
     return res
 
 

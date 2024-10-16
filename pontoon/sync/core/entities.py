@@ -96,19 +96,22 @@ def remove_resources(
 ) -> set[str]:
     if not checkout.removed:
         return set()
-    removed_db_paths = {
-        get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed
-    }
-    # FIXME: https://github.com/mozilla/pontoon/issues/2133
-    rm_count, _ = project.resources.filter(path__in=removed_db_paths).delete()
-    if rm_count:
+    removed_resources = project.resources.filter(
+        path__in={
+            get_db_path(paths, join(checkout.path, co_path))
+            for co_path in checkout.removed
+        }
+    )
+    removed_db_paths = {res.path for res in removed_resources}
+    if removed_db_paths:
+        # FIXME: https://github.com/mozilla/pontoon/issues/2133
+        removed_resources.delete()
+        rm_count = len(removed_db_paths)
         str_source_files = "source file" if rm_count == 1 else "source files"
         log.info(
             f"[{project.slug}] Removed {rm_count} {str_source_files}: {', '.join(removed_db_paths)}"
         )
-        return removed_db_paths
-    else:
-        return set()
+    return removed_db_paths
 
 
 def update_resources(
