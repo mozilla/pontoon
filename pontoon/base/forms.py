@@ -100,6 +100,15 @@ class UserPermissionLogFormMixin:
         if users:
             group.user_set.add(*users)
 
+        badge_thresholds = [1, 2, 5]
+        for level, threshold in enumerate(badge_thresholds, start=1):
+            if (
+                self.user.profile.community_builder_level < level
+                and len(self.user.badges_promoted_users) >= threshold
+            ):
+                self.user.profile.community_builder_level = level
+                # TODO: Send a notification to the user
+
         log_group_members(self.user, group, (add_users, remove_users))
 
 

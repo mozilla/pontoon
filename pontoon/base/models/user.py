@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.base.utils import aware_datetime
 
 
 @property
@@ -214,6 +215,47 @@ def contributed_translations(self):
     from pontoon.base.models.translation import Translation
 
     return Translation.objects.filter(user=self)
+
+
+@property
+def badges_translations_count(self):
+    """Contributions provided by user that count towards their badges."""
+    from pontoon.base.models.translation import Translation
+
+    badges_inception = aware_datetime(2024, 10, 16)
+
+    return Translation.objects.filter(user=self, date__gte=badges_inception)
+
+
+@property
+def badges_reviewed_translations(self):
+    """Translation reviews provided by user that count towards their badges."""
+    from pontoon.base.models.translation import Translation
+
+    badges_inception = aware_datetime(2024, 10, 16)
+
+    approvals = Translation.objects.filter(
+        approved_user=self, date__gte=badges_inception
+    )
+    rejections = Translation.objects.filter(
+        rejected_user=self, date__gte=badges_inception
+    )
+
+    return list(approvals) + list(rejections)
+
+
+@property
+def badges_promoted_users(self):
+    """Role promotions performed by user that count towards their badges"""
+    from pontoon.base.models import PermissionChangelog
+
+    badges_inception = aware_datetime(2024, 10, 16)
+
+    return PermissionChangelog.objects.filter(
+        performed_by=self,
+        action_type=PermissionChangelog.ActionType.ADDED,
+        created_at__gte=badges_inception,
+    )
 
 
 @property
@@ -441,6 +483,9 @@ User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
+User.add_to_class("badges_translations_count", badges_translations_count)
+User.add_to_class("badges_reviewed_translations", badges_reviewed_translations)
+User.add_to_class("badges_promoted_users", badges_promoted_users)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("is_new_contributor", is_new_contributor)
