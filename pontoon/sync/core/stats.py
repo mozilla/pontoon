@@ -13,8 +13,26 @@ log = logging.getLogger(__name__)
 def update_stats(project: Project) -> None:
     """Uses raw SQL queries for performance."""
 
-    log.info(f"[{project.slug}] Updating stats...")
     with connection.cursor() as cursor:
+        # Resources, counted from entities
+        cursor.execute(
+            dedent(
+                """
+                UPDATE base_resource res
+                SET total_strings = agg.total
+                FROM (
+                    SELECT ent.resource_id AS "resource_id", COUNT(*) AS "total"
+                    FROM "base_entity" ent
+                    LEFT OUTER JOIN "base_resource" res ON (ent.resource_id = res.id)
+                    WHERE NOT ent.obsolete AND res.project_id = %s
+                    GROUP BY ent.resource_id
+                ) AS agg
+                WHERE res.id = agg.resource_id AND res.project_id = %s
+                """
+            ),
+            [project.id, project.id],
+        )
+
         # Translated resources, counted directly from translations
         cursor.execute(
             dedent(

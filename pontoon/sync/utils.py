@@ -9,6 +9,7 @@ from django.utils import timezone
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.paths import UploadPaths, find_paths
+from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import find_db_updates, write_db_updates
 from pontoon.sync.core.translations_to_repo import update_changed_resources
 
@@ -50,6 +51,7 @@ def sync_uploaded_file(
     if updates:
         now = timezone.now()
         write_db_updates(project, updates, user, now)
+        update_stats(project)
         ChangedEntityLocale.objects.bulk_create(
             (
                 ChangedEntityLocale(entity_id=entity_id, locale_id=locale_id, when=now)

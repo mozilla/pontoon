@@ -1,22 +1,13 @@
 import logging
 
-from collections import defaultdict
 from datetime import datetime
 from os.path import exists, isfile, join, relpath, splitext
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from django.db import transaction
-from django.db.models import F
 
-from pontoon.base.models import (
-    Entity,
-    Locale,
-    Project,
-    ProjectLocale,
-    Resource,
-    TranslatedResource,
-)
+from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
 from pontoon.base.models.entity import get_word_count
 from pontoon.sync.core.checkout import Checkout
 from pontoon.sync.formats import parse
@@ -36,9 +27,7 @@ def sync_entities_from_repo(
     paths: L10nConfigPaths | L10nDiscoverPaths,
     now: datetime,
 ) -> tuple[int, set[str], set[str]]:
-    """
-    (added_entities_count, changed_source_paths, removed_source_paths)
-    """
+    """(added_entities_count, changed_source_paths, removed_source_paths"""
     if not checkout.changed and not checkout.removed and not checkout.renamed:
         return 0, set(), set()
     log.info(f"[{project.slug}] Syncing entities from repo...")
@@ -107,34 +96,19 @@ def remove_resources(
 ) -> set[str]:
     if not checkout.removed:
         return set()
-    removed_db_paths = [
+    removed_db_paths = {
         get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed
-    ]
-    removed_resources = project.resources.filter(path__in=removed_db_paths)
-
-    # Update aggregated stats
-    rm_res_id: set[int] = set()
-    for tr in TranslatedResource.objects.filter(
-        resource__in=removed_resources
-    ).iterator():
-        tr.adjust_all_stats(
-            0 if tr.resource_id in rm_res_id else -tr.total_strings,
-            -tr.approved_strings,
-            -tr.pretranslated_strings,
-            -tr.strings_with_errors,
-            -tr.strings_with_warnings,
-            -tr.unreviewed_strings,
-        )
-        rm_res_id.add(tr.resource_id)
-
-    removed_db_paths = set(removed_resources.values_list("path", flat=True))
-    if removed_db_paths:
+    }
+    # FIXME: https://github.com/mozilla/pontoon/issues/2133
+    rm_count, _ = project.resources.filter(path__in=removed_db_paths).delete()
+    if rm_count:
+        str_source_files = "source file" if rm_count == 1 else "source files"
         log.info(
-            f"[{project.slug}] Removed source files: {', '.join(removed_db_paths)}"
+            f"[{project.slug}] Removed {rm_count} {str_source_files}: {', '.join(removed_db_paths)}"
         )
-        # FIXME: https://github.com/mozilla/pontoon/issues/2133
-        removed_resources.delete()
-    return removed_db_paths
+        return removed_db_paths
+    else:
+        return set()
 
 
 def update_resources(
@@ -147,9 +121,6 @@ def update_resources(
     )
     if not changed_resources:
         return 0, set()
-    for cr in changed_resources:
-        cr.total_strings = len(updates[cr.path].entities)
-    Resource.objects.bulk_update(changed_resources, ["total_strings"])
 
     prev_entities = {
         (e.resource.path, e.key or e.string): e
@@ -205,13 +176,6 @@ def update_resources(
     )
     add_count = len(added_entities)
 
-    # Update aggregated stats
-    if add_count or obs_count:
-        for tr in TranslatedResource.objects.filter(
-            resource__in=(ent.resource_id for ent in obsolete_entities + added_entities)
-        ).iterator():
-            tr.calculate_stats()
-
     delta = [
         f"added {add_count}" if add_count else "",
         f"changed {mod_count}" if mod_count else "",
@@ -232,12 +196,7 @@ def add_resources(
     now: datetime,
 ) -> tuple[int, set[str]]:
     added_resources = [
-        Resource(
-            project=project,
-            path=db_path,
-            format=get_path_format(db_path),
-            total_strings=len(res.entities),
-        )
+        Resource(project=project, path=db_path, format=get_path_format(db_path))
         for db_path, res in updates.items()
         if res is not None and db_path not in changed_paths
     ]
@@ -271,32 +230,12 @@ def add_resources(
             return isfile(target_path)
         return True
 
-    translated_resources = TranslatedResource.objects.bulk_create(
-        TranslatedResource(
-            resource=resource,
-            locale=locale_map[locale_code],
-            total_strings=resource.total_strings,
-        )
+    TranslatedResource.objects.bulk_create(
+        TranslatedResource(resource=resource, locale=locale_map[locale_code])
         for resource in added_resources
         for locale_code in paths.target(resource.path)[1]
         if is_translated_resource(resource, locale_code)
     )
-
-    # Update aggregated stats for total_strings
-    strings_by_locale: dict[Locale, int] = defaultdict(int)
-    for tr in translated_resources:
-        strings_by_locale[tr.locale] += tr.total_strings
-    for locale, added_strings in strings_by_locale.items():
-        ProjectLocale.objects.filter(locale=locale, project=project).update(
-            total_strings=F("total_strings") + added_strings
-        )
-        if not project.system_project:
-            Locale.objects.filter(id=locale.pk).update(
-                total_strings=F("total_strings") + added_strings
-            )
-        Project.objects.filter(id=project.pk).update(
-            total_strings=F("total_strings") + added_strings
-        )
 
     ent_count = len(added_entities)
     added_paths = {ar.path for ar in added_resources}

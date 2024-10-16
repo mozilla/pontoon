@@ -24,6 +24,7 @@ from pontoon.base.tests import (
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.entities import sync_entities_from_repo
 from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.stats import update_stats
 from pontoon.sync.tests.utils import build_file_tree
 
 
@@ -45,21 +46,18 @@ def test_remove_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm",
-            locales=[locale],
-            repositories=[repo],
-            total_strings=10,
+            name="test-rm", locales=[locale], repositories=[repo]
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a, total_strings=1)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=2)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
+        TranslatedResourceFactory.create(locale=locale, resource=res_a)
+        TranslatedResourceFactory.create(locale=locale, resource=res_b)
+        TranslatedResourceFactory.create(locale=locale, resource=res_c)
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -88,10 +86,6 @@ def test_remove_resource():
         assert {res.path for res in project.resources.all()} == {"a.ftl", "b.po"}
         with pytest.raises(TranslatedResource.DoesNotExist):
             TranslatedResource.objects.get(resource=res_c)
-        project.refresh_from_db()
-        locale.refresh_from_db()
-        assert project.total_strings == 7
-        assert locale.total_strings == 97
 
 
 @pytest.mark.django_db
@@ -99,21 +93,18 @@ def test_rename_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm",
-            locales=[locale],
-            repositories=[repo],
-            total_strings=10,
+            name="test-mv", locales=[locale], repositories=[repo]
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a, total_strings=1)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=2)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
+        TranslatedResourceFactory.create(locale=locale, resource=res_a)
+        TranslatedResourceFactory.create(locale=locale, resource=res_b)
+        TranslatedResourceFactory.create(locale=locale, resource=res_c)
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -146,10 +137,6 @@ def test_rename_resource():
         }
         res_c.refresh_from_db()
         assert res_c.path == "d.ftl"
-        project.refresh_from_db()
-        locale.refresh_from_db()
-        assert project.total_strings == 10
-        assert locale.total_strings == 100
 
 
 @pytest.mark.django_db
@@ -157,19 +144,16 @@ def test_add_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-add",
-            locales=[locale],
-            repositories=[repo],
-            total_strings=10,
+            name="test-add", locales=[locale], repositories=[repo]
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a, total_strings=1)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=2)
+        TranslatedResourceFactory.create(locale=locale, resource=res_a)
+        TranslatedResourceFactory.create(locale=locale, resource=res_b)
 
         # Filesystem setup
         c_ftl = dedent(
@@ -209,10 +193,6 @@ def test_add_resource():
             "key-2",
             "key-3",
         }
-        project.refresh_from_db()
-        locale.refresh_from_db()
-        assert project.total_strings == 13
-        assert locale.total_strings == 103
 
 
 @pytest.mark.django_db
@@ -220,45 +200,44 @@ def test_update_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-update",
-            locales=[locale],
-            repositories=[repo],
-            total_strings=10,
+            name="test-up", locales=[locale], repositories=[repo]
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a, total_strings=1)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b, total_strings=2)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c, total_strings=3)
-        for i in range(1, 4):
-            entity = EntityFactory.create(
-                resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
+        res = {}
+        for n in ("a", "b", "c"):
+            res[n] = ResourceFactory.create(
+                project=project, path=f"{n}.ftl", format="ftl", total_strings=3
             )
-            TranslationFactory.create(
-                entity=entity,
-                locale=locale,
-                string=f"key-{i} = Translation {i}\n",
-                approved=True,
-            )
+            TranslatedResourceFactory.create(locale=locale, resource=res[n])
+            for i in (1, 2, 3):
+                entity = EntityFactory.create(
+                    resource=res[n],
+                    key=f"key-{n}-{i}",
+                    string=f"key-{n}-{i} = Message {i}\n",
+                )
+                TranslationFactory.create(
+                    entity=entity,
+                    locale=locale,
+                    string=f"key-{n}-{i} = Translation {i}\n",
+                    approved=True,
+                )
 
         # Filesystem setup
         c_ftl = dedent(
             """
-            key-2 = Message 2
-            key-4 = Message 4
+            key-c-2 = Message 2
+            key-c-4 = Message 4
             """
         )
         makedirs(repo.checkout_path)
         build_file_tree(
             repo.checkout_path,
             {
-                "en-US": {"a.ftl": "", "b.pot": "", "c.ftl": c_ftl},
-                "fr-Test": {"a.ftl": "", "b.po": ""},
+                "en-US": {"a.ftl": "", "b.ftl": "", "c.ftl": c_ftl},
+                "fr-Test": {"a.ftl": "", "b.ftl": ""},
             },
         )
 
@@ -272,19 +251,20 @@ def test_update_resource():
         )
         paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
 
-        # Test
+        # Test sync
         assert sync_entities_from_repo(
             project, locale_map, mock_checkout, paths, now
         ) == (1, {"c.ftl"}, set())
         assert set(
-            (ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res_c)
+            (ent.key, ent.obsolete) for ent in Entity.objects.filter(resource=res["c"])
         ) == {
-            ("key-1", True),
-            ("key-2", False),
-            ("key-3", True),
-            ("key-4", False),
+            ("key-c-1", True),
+            ("key-c-2", False),
+            ("key-c-3", True),
+            ("key-c-4", False),
         }
+
+        # Test stats
+        update_stats(project)
         project.refresh_from_db()
-        locale.refresh_from_db()
-        assert project.total_strings == 9
-        assert locale.total_strings == 99
+        assert (project.total_strings, project.approved_strings) == (8, 7)

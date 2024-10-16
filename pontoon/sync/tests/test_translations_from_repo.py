@@ -21,6 +21,7 @@ from pontoon.base.tests import (
 )
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.tests.utils import build_file_tree
 
@@ -93,7 +94,7 @@ def test_add_ftl_translation():
         checkouts = Checkouts(mock_checkout, mock_checkout)
         paths = find_paths(project, checkouts)
 
-        # Test
+        # Test sync
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
         assert set(
             trans.entity.key
@@ -101,6 +102,9 @@ def test_add_ftl_translation():
                 entity__resource=res["c"], locale=locale
             )
         ) == {"key-c-0", "key-c-1", "key-c-2"}
+
+        # Test stats
+        update_stats(project)
         project.refresh_from_db()
         assert project.total_strings == 9
         assert project.approved_strings == 9
@@ -115,25 +119,18 @@ def test_remove_po_target_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(
-            code="fr-Test", total_strings=100, approved_strings=99
-        )
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm-po",
-            locales=[locale],
-            repositories=[repo],
-            total_strings=9,
+            name="test-rm-po", locales=[locale], repositories=[repo]
         )
         res = {}
         for id in ["a", "b", "c"]:
             res[id] = ResourceFactory.create(
                 project=project, path=f"{id}.po", format="po", total_strings=3
             )
-            TranslatedResourceFactory.create(
-                locale=locale, resource=res[id], total_strings=3
-            )
+            TranslatedResourceFactory.create(locale=locale, resource=res[id])
             for i in range(3):
                 key = f"key-{id}-{i}"
                 string = f"Message {id} {i}"
@@ -144,10 +141,6 @@ def test_remove_po_target_resource():
                     string=string.replace("Message", "Translation"),
                     approved=True,
                 )
-
-        project.refresh_from_db()
-        assert project.total_strings == 9
-        assert project.approved_strings == 9
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -169,14 +162,16 @@ def test_remove_po_target_resource():
         checkouts = Checkouts(mock_checkout, mock_checkout)
         paths = find_paths(project, checkouts)
 
-        # Test
+        # Test sync
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
         assert not TranslatedResource.objects.filter(locale=locale, resource=res["b"])
         assert not Translation.objects.filter(entity__resource=res["b"], locale=locale)
-        project.refresh_from_db()
-        assert project.total_strings == 9
-        assert project.approved_strings == 6
         tm = TranslationMemoryEntry.objects.filter(
             entity__resource=res["b"], translation__isnull=True
         )
         assert len(tm) == 3
+
+        # Test stats
+        update_stats(project)
+        project.refresh_from_db()
+        assert (project.total_strings, project.approved_strings) == (9, 6)

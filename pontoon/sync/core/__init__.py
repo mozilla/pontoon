@@ -9,6 +9,7 @@ from pontoon.pretranslation.tasks import pretranslate
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.entities import sync_entities_from_repo
 from pontoon.sync.core.paths import find_paths
+from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
 from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
@@ -60,7 +61,9 @@ def sync_project(
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
     ).select_related("entity__resource", "locale")
-    sync_translations_from_repo(project, locale_map, checkouts, paths, db_changes, now)
+    del_trans_count, updated_trans_count = sync_translations_from_repo(
+        project, locale_map, checkouts, paths, db_changes, now
+    )
     if added_entities_count > 0:
         notify_users(project, added_entities_count)
     sync_translations_to_repo(
@@ -79,6 +82,14 @@ def sync_project(
     checkouts.source.repo.last_synced_revision = checkouts.source.commit
     if checkouts.target != checkouts.source:
         checkouts.target.repo.last_synced_revision = checkouts.target.commit
+    if (
+        added_entities_count
+        or changed_paths
+        or removed_paths
+        or del_trans_count
+        or updated_trans_count
+    ):
+        update_stats(project)
     repo_sync_log.end()
     log.info(f"{log_prefix} Sync done")
 

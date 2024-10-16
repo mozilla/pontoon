@@ -30,7 +30,6 @@ from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
-from pontoon.sync.core.stats import update_stats
 from pontoon.sync.formats import parse
 from pontoon.sync.vcs.translation import VCSTranslation
 
@@ -48,10 +47,11 @@ def sync_translations_from_repo(
     paths: L10nConfigPaths | L10nDiscoverPaths,
     db_changes: BaseManager[ChangedEntityLocale],
     now: datetime,
-) -> None:
+) -> tuple[int, int]:
+    """(removed_count, updated_count)"""
     co = checkouts.target
     source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
-    delete_removed_bilingual_resources(project, co, paths, source_paths)
+    del_count = delete_removed_bilingual_resources(project, co, paths, source_paths)
 
     changed_target_paths = [
         path
@@ -70,6 +70,7 @@ def sync_translations_from_repo(
     if updates:
         user = User.objects.get(username="pontoon-sync")
         write_db_updates(project, updates, user, now)
+    return del_count, 0 if updates is None else len(updates)
 
 
 def write_db_updates(
@@ -80,7 +81,6 @@ def write_db_updates(
     )
     add_errors(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
-    update_stats(project)
 
 
 def delete_removed_bilingual_resources(
@@ -88,7 +88,7 @@ def delete_removed_bilingual_resources(
     target: Checkout,
     paths: L10nConfigPaths | L10nDiscoverPaths,
     source_paths: set[str],
-) -> None:
+) -> int:
     rm_t = Q()
     rm_tr = Q()
     count = 0
@@ -110,10 +110,8 @@ def delete_removed_bilingual_resources(
                 rm_tr |= Q(resource__path=db_path, locale__code=locale_code)
                 count += 1
     if rm_t and rm_tr:
-        str_del_resources = (
-            "1 deleted resource" if count == 1 else f"{count} deleted resources"
-        )
-        log.info(f"[{project.slug}] Removing {str_del_resources}")
+        str_del_resources = "deleted resource" if count == 1 else "deleted resources"
+        log.info(f"[{project.slug}] Removing {count} {str_del_resources}")
         with transaction.atomic():
             Translation.objects.filter(entity__resource__project=project).filter(
                 rm_t
@@ -121,7 +119,7 @@ def delete_removed_bilingual_resources(
             TranslatedResource.objects.filter(resource__project=project).filter(
                 rm_tr
             ).delete()
-        update_stats(project)
+    return count
 
 
 def find_db_updates(
