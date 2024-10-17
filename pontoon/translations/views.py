@@ -169,6 +169,16 @@ def create_translation(request):
                 description=desc,
             )
 
+    # Update Translation Champion Badge stats
+    badge_thresholds = [5, 50, 250, 1000]
+    for level, threshold in enumerate(badge_thresholds, start=1):
+        if (
+            user.profile.translation_champion_level < level
+            and len(user.badges_translations_count) >= threshold
+        ):
+            user.profile.translation_champion_level = level
+            # TODO: Send a notification to the user
+
     return JsonResponse(
         {
             "status": True,
@@ -309,6 +319,16 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
+    # Update Review Master Badge stats
+    badge_thresholds = [5, 50, 250, 1000]
+    for level, threshold in enumerate(badge_thresholds, start=1):
+        if (
+            user.profile.review_master_level < level
+            and len(user.badges_reviewed_translations) >= threshold
+        ):
+            user.profile.review_master_level = level
+            # TODO: Send a notification to the user
+
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
@@ -438,6 +458,17 @@ def reject_translation(request):
         locale=locale,
         plural_form=translation.plural_form,
     )
+
+    # Update Review Master Badge stats
+    user = request.user
+    badge_thresholds = [5, 50, 250, 1000]
+    for level, threshold in enumerate(badge_thresholds, start=1):
+        if (
+            user.profile.review_master_level < level
+            and len(user.badges_reviewed_translations) >= threshold
+        ):
+            user.profile.review_master_level = level
+            # TODO: Send a notification to the user
 
     return JsonResponse(
         {
