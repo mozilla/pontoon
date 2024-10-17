@@ -12,8 +12,8 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     create_named_tempfile,
 )
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import xml
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
