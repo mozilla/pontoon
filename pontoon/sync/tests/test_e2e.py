@@ -10,13 +10,13 @@ import pytest
 from django.conf import settings
 
 from pontoon.base.models import ChangedEntityLocale
+from pontoon.base.models.translated_resource import TranslatedResource
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
-    TranslatedResourceFactory,
     TranslationFactory,
 )
 from pontoon.sync.tasks import sync_project_task
@@ -52,19 +52,9 @@ def test_end_to_end():
             repositories=[repo_src, repo_tgt],
             total_strings=10,
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
+        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="b.po", format="po")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale_de, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale_de, resource=res_b)
-        TranslatedResourceFactory.create(
-            locale=locale_de, resource=res_c, total_strings=3
-        )
-        TranslatedResourceFactory.create(locale=locale_fr, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale_fr, resource=res_b)
-        TranslatedResourceFactory.create(
-            locale=locale_fr, resource=res_c, total_strings=3
-        )
         for i in range(3):
             entity = EntityFactory.create(
                 resource=res_c, key=f"key-{i}", string=f"key-{i} = Message {i}\n"
@@ -161,3 +151,4 @@ def test_end_to_end():
             ).strip(),
             commit_msg,
         )
+        assert TranslatedResource.objects.filter(resource__project=project).count() == 6

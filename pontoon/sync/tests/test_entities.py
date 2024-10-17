@@ -18,7 +18,6 @@ from pontoon.base.tests import (
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
-    TranslatedResourceFactory,
     TranslationFactory,
 )
 from pontoon.sync.core.checkout import Checkout, Checkouts
@@ -52,12 +51,9 @@ def test_remove_resource():
         project = ProjectFactory.create(
             name="test-rm", locales=[locale], repositories=[repo]
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
+        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="b.po", format="po")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c)
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -99,12 +95,9 @@ def test_rename_resource():
         project = ProjectFactory.create(
             name="test-mv", locales=[locale], repositories=[repo]
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
+        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="b.po", format="po")
         res_c = ResourceFactory.create(project=project, path="c.ftl", format="ftl")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b)
-        TranslatedResourceFactory.create(locale=locale, resource=res_c)
 
         # Filesystem setup
         makedirs(repo.checkout_path)
@@ -150,10 +143,8 @@ def test_add_resource():
         project = ProjectFactory.create(
             name="test-add", locales=[locale], repositories=[repo]
         )
-        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
-        res_b = ResourceFactory.create(project=project, path="b.po", format="po")
-        TranslatedResourceFactory.create(locale=locale, resource=res_a)
-        TranslatedResourceFactory.create(locale=locale, resource=res_b)
+        ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        ResourceFactory.create(project=project, path="b.po", format="po")
 
         # Filesystem setup
         c_ftl = dedent(
@@ -211,7 +202,6 @@ def test_update_resource():
             res[n] = ResourceFactory.create(
                 project=project, path=f"{n}.ftl", format="ftl", total_strings=3
             )
-            TranslatedResourceFactory.create(locale=locale, resource=res[n])
             for i in (1, 2, 3):
                 entity = EntityFactory.create(
                     resource=res[n],

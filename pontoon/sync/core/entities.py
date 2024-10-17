@@ -1,11 +1,13 @@
 import logging
 
+from collections import defaultdict
 from datetime import datetime
 from os.path import exists, isfile, join, relpath, splitext
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
 from django.db import transaction
+from django.db.models import Q
 
 from pontoon.base.models import Entity, Locale, Project, Resource, TranslatedResource
 from pontoon.base.models.entity import get_word_count
@@ -59,7 +61,9 @@ def sync_entities_from_repo(
     with transaction.atomic():
         renamed_paths = rename_resources(project, paths, checkout)
         removed_paths = remove_resources(project, paths, checkout)
-        old_res_added_ent_count, changed_paths = update_resources(project, updates, now)
+        old_res_added_ent_count, changed_paths = update_resources(
+            project, locale_map, paths, updates, now
+        )
         new_res_added_ent_count, _ = add_resources(
             project, locale_map, paths, updates, changed_paths, now
         )
@@ -116,14 +120,53 @@ def remove_resources(
 
 def update_resources(
     project: Project,
+    locale_map: dict[str, Locale],
+    paths: L10nConfigPaths | L10nDiscoverPaths,
     updates: dict[str, SilmeResource | None],
     now: datetime,
 ) -> tuple[int, set[str]]:
     changed_resources = (
-        project.resources.filter(path__in=updates.keys()) if updates else None
+        list(project.resources.filter(path__in=updates.keys())) if updates else None
     )
     if not changed_resources:
         return 0, set()
+
+    prev_tr_keys: set[tuple[int, int]] = set(
+        (tr["resource_id"], tr["locale_id"])
+        for tr in TranslatedResource.objects.filter(resource__in=changed_resources)
+        .values("resource_id", "locale_id")
+        .iterator()
+    )
+    add_tr: list[TranslatedResource] = []
+    for resource in changed_resources:
+        _, locales = paths.target(resource.path)
+        for lc in locales:
+            locale = locale_map.get(lc, None)
+            if is_translated_resource(paths, resource, locale):
+                assert locale is not None
+                key = (resource.pk, locale.pk)
+                if key in prev_tr_keys:
+                    prev_tr_keys.remove(key)
+                else:
+                    add_tr.append(TranslatedResource(resource=resource, locale=locale))
+    if add_tr:
+        add_tr = TranslatedResource.objects.bulk_create(add_tr)
+        add_by_res: dict[str, list[str]] = defaultdict(list)
+        for tr in add_tr:
+            add_by_res[tr.resource.path].append(tr.locale.code)
+        for res_path, locale_codes in add_by_res.items():
+            locale_codes.sort()
+            log.info(
+                f"[{project.slug}:{res_path}] Added for translation in: {', '.join(locale_codes)}"
+            )
+    if prev_tr_keys:
+        del_tr_q = Q()
+        for resource_id, locale_id in prev_tr_keys:
+            del_tr_q |= Q(resource_id=resource_id, locale_id=locale_id)
+        _, del_dict = TranslatedResource.objects.filter(del_tr_q).delete()
+        del_count = del_dict.get("base.translatedresource", 0)
+        str_tr = "translated resource" if del_count == 1 else "translated resources"
+        log.info(f"[{project.slug}] Removed {del_count} {str_tr}")
 
     prev_entities = {
         (e.resource.path, e.key or e.string): e
@@ -187,7 +230,7 @@ def update_resources(
     if any(delta):
         ds = ", ".join(d for d in delta if d)
         log.info(f"[{project.slug}] Source entity updates: {ds}")
-    return add_count, set(changed_resources.values_list("path", flat=True))
+    return add_count, set(res.path for res in changed_resources)
 
 
 def add_resources(
@@ -220,24 +263,11 @@ def add_resources(
         )
     )
 
-    def is_translated_resource(resource: Resource, locale_code: str) -> bool:
-        if locale_code not in locale_map:
-            return False
-        if resource.format in BILINGUAL_FORMATS:
-            # For bilingual formats, only create TranslatedResource
-            # if the resource exists for the locale.
-            target = paths.target(resource.path)  # , locale_code)
-            if target is None:
-                return False
-            target_path = paths.format_target_path(target[0], locale_code)
-            return isfile(target_path)
-        return True
-
     TranslatedResource.objects.bulk_create(
-        TranslatedResource(resource=resource, locale=locale_map[locale_code])
+        TranslatedResource(resource=resource, locale=locale)
         for resource in added_resources
-        for locale_code in paths.target(resource.path)[1]
-        if is_translated_resource(resource, locale_code)
+        for lc in paths.target(resource.path)[1]
+        if is_translated_resource(paths, resource, locale := locale_map.get(lc, None))
     )
 
     ent_count = len(added_entities)
@@ -246,6 +276,24 @@ def add_resources(
         f"[{project.slug}] New source files with {ent_count} entities: {', '.join(added_paths)}"
     )
     return ent_count, added_paths
+
+
+def is_translated_resource(
+    paths: L10nConfigPaths | L10nDiscoverPaths,
+    resource: Resource,
+    locale: Locale | None,
+) -> bool:
+    if locale is None:
+        return False
+    if resource.format in BILINGUAL_FORMATS:
+        # For bilingual formats, only create TranslatedResource
+        # if the resource exists for the locale.
+        target = paths.target(resource.path)  # , locale_code)
+        if target is None:
+            return False
+        target_path = paths.format_target_path(target[0], locale.code)
+        return isfile(target_path)
+    return True
 
 
 def entity_from_source(
