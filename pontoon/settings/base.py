@@ -573,6 +573,10 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/messaging.min.css",
     },
+    "account_disabled": {
+        "source_filenames": ("css/account_disabled.css",),
+        "output_filename": "css/account_disabled.min.css",
+    },
 }
 
 PIPELINE_JS = {
