@@ -21,6 +21,9 @@ from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations import forms
 
 
+badge_thresholds = [5, 50, 250, 1000]
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -169,6 +172,11 @@ def create_translation(request):
                 description=desc,
             )
 
+    # Award Translation Champion Badge stats
+    if user.badges_translations_count in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
+
     return JsonResponse(
         {
             "status": True,
@@ -309,6 +317,11 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
+    # Reward Review Master Badge stats
+    if user.badges_reviewed_translations in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
+
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
@@ -438,6 +451,11 @@ def reject_translation(request):
         locale=locale,
         plural_form=translation.plural_form,
     )
+
+    # Reward Review Master Badge stats
+    if request.user.badges_reviewed_translations in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
 
     return JsonResponse(
         {

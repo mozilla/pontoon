@@ -12,6 +12,10 @@ from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
+from pontoon.base.utils import aware_datetime
+
+
+badges_inception = aware_datetime(2024, 10, 18)
 
 
 @property
@@ -218,6 +222,49 @@ def contributed_translations(self):
 def has_approved_translations(self):
     """Return True if the user has approved translations."""
     return self.translation_set.filter(approved=True).exists()
+
+
+@property
+def badges_translations_count(self):
+    """Contributions provided by user that count towards their badges."""
+    from pontoon.actionlog.models import ActionLog
+
+    return ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:created",
+        created_at__gte=badges_inception,
+    ).count()
+
+
+@property
+def badges_reviewed_translations(self):
+    """Translation reviews provided by user that count towards their badges."""
+    from pontoon.actionlog.models import ActionLog
+
+    approvals = ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:created",
+        created_at__gte=badges_inception,
+    ).count()
+    rejections = ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:rejected",
+        created_at__gte=badges_inception,
+    ).count()
+
+    return approvals + rejections
+
+
+@property
+def badges_promoted_users(self):
+    """Role promotions performed by user that count towards their badges"""
+    from pontoon.base.models import PermissionChangelog
+
+    return PermissionChangelog.objects.filter(
+        performed_by=self,
+        action_type=PermissionChangelog.ActionType.ADDED,
+        created_at__gte=badges_inception,
+    ).count()
 
 
 @property
@@ -445,6 +492,9 @@ User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
+User.add_to_class("badges_translations_count", badges_translations_count)
+User.add_to_class("badges_reviewed_translations", badges_reviewed_translations)
+User.add_to_class("badges_promoted_users", badges_promoted_users)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
