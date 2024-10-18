@@ -131,7 +131,7 @@
 }
 
 .filters-panel .menu li:hover .count {
-  background: var(--translation-background);
+  background: var(--button-background-1);
   color: var(--light-grey-6);
 }
 

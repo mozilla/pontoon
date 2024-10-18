@@ -431,6 +431,7 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
+                "user_status": u.status(locale),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,
@@ -885,6 +886,7 @@ def user_data(request):
             "display_name": user.display_name,
             "name_or_email": user.name_or_email,
             "username": user.username,
+            "date_joined": user.date_joined,
             "contributor_for_locales": list(
                 user.translation_set.values_list("locale__code", flat=True).distinct()
             ),
