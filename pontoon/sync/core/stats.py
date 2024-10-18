@@ -112,27 +112,13 @@ def update_stats(project: Project, *, update_locales: bool = True) -> None:
         )
         pl_count = cursor.rowcount
 
-        # Project, counted from translated resources
-        cursor.execute(
-            dedent(
-                """
-                UPDATE base_project proj
-                SET total_strings = GREATEST(agg.total, 0)
-                FROM (
-                    SELECT SUM(total_strings) AS "total"
-                    FROM "base_resource"
-                    WHERE project_id = %s
-                ) AS agg
-                WHERE proj.id = %s
-                """
-            ),
-            [project.id, project.id],
-        )
+        # Project, counted from project locales
         cursor.execute(
             dedent(
                 """
                 UPDATE base_project proj
                 SET
+                    total_strings = GREATEST(agg.total, 0),
                     approved_strings = GREATEST(agg.approved, 0),
                     pretranslated_strings = GREATEST(agg.pretranslated, 0),
                     strings_with_errors = GREATEST(agg.errors, 0),
@@ -140,14 +126,14 @@ def update_stats(project: Project, *, update_locales: bool = True) -> None:
                     unreviewed_strings = GREATEST(agg.unreviewed, 0)
                 FROM (
                     SELECT
-                        SUM(tr.approved_strings) AS "approved",
-                        SUM(tr.pretranslated_strings) AS "pretranslated",
-                        SUM(tr.strings_with_errors) AS "errors",
-                        SUM(tr.strings_with_warnings) AS "warnings",
-                        SUM(tr.unreviewed_strings) AS "unreviewed"
-                    FROM "base_translatedresource" tr
-                    INNER JOIN "base_resource" res ON (tr.resource_id = res.id)
-                    WHERE res.project_id = %s
+                        SUM(pl.total_strings) AS "total",
+                        SUM(pl.approved_strings) AS "approved",
+                        SUM(pl.pretranslated_strings) AS "pretranslated",
+                        SUM(pl.strings_with_errors) AS "errors",
+                        SUM(pl.strings_with_warnings) AS "warnings",
+                        SUM(pl.unreviewed_strings) AS "unreviewed"
+                    FROM "base_projectlocale" pl
+                    WHERE pl.project_id = %s
                 ) AS agg
                 WHERE proj.id = %s
                 """
