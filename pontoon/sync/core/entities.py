@@ -130,6 +130,9 @@ def update_resources(
     )
     if not changed_resources:
         return 0, set()
+    log.info(
+        f"[{project.slug}] Changed source files: {', '.join(res.path for res in changed_resources)}"
+    )
 
     prev_tr_keys: set[tuple[int, int]] = set(
         (tr["resource_id"], tr["locale_id"])
