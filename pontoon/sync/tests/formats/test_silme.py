@@ -13,8 +13,8 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
 )
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats import silme
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.tests.formats import FormatTestsMixin
 
 
