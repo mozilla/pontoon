@@ -174,4 +174,4 @@ def test_remove_po_target_resource():
         # Test stats
         update_stats(project)
         project.refresh_from_db()
-        assert (project.total_strings, project.approved_strings) == (9, 6)
+        assert (project.total_strings, project.approved_strings) == (6, 6)
