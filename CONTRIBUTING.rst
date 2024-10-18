@@ -75,6 +75,8 @@ you can start an interactive shell inside a Pontoon container:
 
     $ make shell
 
+`make shell-root` is also available to log in as `root`, instead of the
+default `pontoon` user.
 
 Browser Support
 ===============

@@ -77,6 +77,37 @@ The app should now be available at http://localhost:8000 or the custom SITE_URL.
 
 And with that, you're ready to start :doc:`contributing`!
 
+Writing to external repositories
+++++++++++++++++++++++++++++++++
+
+:doc:`Environment variables <../admin/deployment>` like ``SSH_KEY`` and ``SSH_CONFIG``
+have no effect in a Docker setup.
+
+The `~/.ssh` folder of the host system is mapped automatically to the home
+folder within the container. In order to connect to a remote repository via SSH,
+you need to create a passwordless SSH key, and configure `~/.ssh/config`
+accordingly.
+
+Here's an example for GitHub, assuming the private key file is called
+`id_ed25519` (see also `GitHub's instructions
+<https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`_
+to generate a new key):
+
+.. code-block::
+
+   Host github.com
+      User YOUR_USERNAME
+      IdentityFile ~/.ssh/id_ed25519
+      StrictHostKeyChecking no
+
+The project's repository will use the format
+``git@github.com:{ORGANIZATION}/{REPOSITORY}.git`` for the ``URL`` field.
+
+An alternative approach for GitHub is to use a `Personal Access Token (PAT)
+<https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_,
+and set up the project's ``URL`` as `https://` instead of `git@`. In this case,
+the ``URL`` will need to include both the PAT and username, e.g.
+``https://{USER}:{TOKEN}@github.com/{REPOSITORY}``.
 
 Installing Docker on Windows Pro/Enterprise/Education
 -----------------------------------------------------
