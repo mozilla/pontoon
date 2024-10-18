@@ -210,10 +210,14 @@ def user_status(self, locale):
 
 @property
 def contributed_translations(self):
-    """Filtered contributions provided by user."""
-    from pontoon.base.models.translation import Translation
+    """Contributions provided by user."""
+    return self.translation_set.all()
 
-    return Translation.objects.filter(user=self)
+
+@property
+def has_approved_translations(self):
+    """Return True if the user has approved translations."""
+    return self.translation_set.filter(approved=True).exists()
 
 
 @property
@@ -441,6 +445,7 @@ User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
+User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("is_new_contributor", is_new_contributor)

@@ -99,8 +99,10 @@ class ThrottleIpMiddleware:
         return response
 
     def __call__(self, request):
+        response = self.get_response(request)
+
         if settings.THROTTLE_ENABLED is False:
-            return self.get_response(request)
+            return response
 
         ip = get_ip(request)
 
@@ -119,9 +121,21 @@ class ThrottleIpMiddleware:
         if request_data:
             request_count, first_request_time = request_data
             if request_count >= self.max_count:
+                user = request.user
+
+                # Do not block IPs of legitimate users
+                if user.is_authenticated and user.has_approved_translations:
+                    log.info(f"Not blocking IP {ip} of user {user.username}")
+                    return response
+
                 # Block further requests for block_duration seconds
                 cache.set(blocked_key, True, self.block_duration)
-                log.error(f"Blocked IP {ip} for {self.block_duration} seconds")
+                username = (
+                    user.username if user.is_authenticated else "unauthenticated user"
+                )
+                log.error(
+                    f"Blocking IP {ip} of {username} for {self.block_duration} seconds"
+                )
                 return self._throttle(request)
             else:
                 # Increment the request count and update cache
@@ -134,5 +148,4 @@ class ThrottleIpMiddleware:
             # Reset the count and timestamp if first request in the period
             cache.set(observed_key, (1, now), self.observation_period)
 
-        response = self.get_response(request)
         return response
