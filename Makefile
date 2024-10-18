@@ -77,23 +77,26 @@ run: translate/dist .server-build
 clean:
 	rm -rf translate/dist .server-build
 
-shell:
+.run-container:
 	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
 	if [ -z "$$container" ]; then \
-  		echo "Error: No container found based on local/pontoon" >&2; \
-  		exit 1; \
-	else \
-  		DOCKER_CLI_HINTS="false" ${DOCKER} exec -it $$container /bin/bash; \
-	fi
+  		echo "Trying to start the container" >&2; \
+		"${DC}" up --detach; \
+  		container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
+		if [ -z "$$container" ]; then \
+			echo "Error: No container running based on local/pontoon. Try running 'make build'." >&2; \
+			exit 1; \
+		fi; \
+	fi; \
+	echo $$container > .container_id;
 
-shell-root:
-	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
-	if [ -z "$$container" ]; then \
-  		echo "Error: No container found based on local/pontoon" >&2; \
-  		exit 1; \
-	else \
-  		DOCKER_CLI_HINTS="false" ${DOCKER} exec -u 0 -it $$container /bin/bash; \
-	fi
+shell: .run-container
+	@container=$$(cat .container_id); \
+	DOCKER_CLI_HINTS="false" ${DOCKER} exec -it $$container /bin/bash;
+
+shell-root: .run-container
+	@container=$$(cat .container_id); \
+  	DOCKER_CLI_HINTS="false" ${DOCKER} exec -u 0 -it $$container /bin/bash;
 
 ci: test lint
 
