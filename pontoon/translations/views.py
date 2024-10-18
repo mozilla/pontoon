@@ -21,6 +21,9 @@ from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations import forms
 
 
+badge_thresholds = [5, 50, 250, 1000]
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -114,11 +117,7 @@ def create_translation(request):
         translation.approved_user = user
         translation.approved_date = now
 
-    before_count = user.badges_translations_count
-
     translation.save(failed_checks=failed_checks)
-
-    after_count = user.badges_translations_count
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
@@ -173,13 +172,10 @@ def create_translation(request):
                 description=desc,
             )
 
-    # Update Translation Champion Badge stats
-    if after_count < before_count:
-        badge_thresholds = [5, 50, 250, 1000]
-        for level, threshold in enumerate(badge_thresholds, start=1):
-            if after_count >= threshold and before_count < threshold:
-                # TODO: Send a notification to the user
-                print(f"New level achieved: Level {level}")
+    # Award Translation Champion Badge stats
+    if user.badges_translations_count in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
 
     return JsonResponse(
         {
@@ -312,11 +308,7 @@ def approve_translation(request):
                 {"string": translation.string, "failedChecks": failed_checks}
             )
 
-    before_count = user.badges_reviewed_translations
-
     translation.approve(user)
-
-    after_count = user.badges_reviewed_translations
 
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
@@ -325,13 +317,10 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Update Review Master Badge stats
-    if after_count < before_count:
-        badge_thresholds = [5, 50, 250, 1000]
-        for level, threshold in enumerate(badge_thresholds, start=1):
-            if after_count >= threshold and before_count < threshold:
-                # TODO: Send a notification to the user
-                print(f"New level achieved: Level {level}")
+    # Reward Review Master Badge stats
+    if user.badges_reviewed_translations in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
 
     return JsonResponse(
         {
@@ -452,11 +441,7 @@ def reject_translation(request):
                 status=403,
             )
 
-    before_count = request.user.badges_reviewed_translations
-
     translation.reject(request.user)
-
-    after_count = request.user.badges_reviewed_translations
 
     log_action(
         ActionLog.ActionType.TRANSLATION_REJECTED, request.user, translation=translation
@@ -467,13 +452,10 @@ def reject_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Update Review Master Badge stats
-    if after_count < before_count:
-        badge_thresholds = [5, 50, 250, 1000]
-        for level, threshold in enumerate(badge_thresholds, start=1):
-            if after_count >= threshold and before_count < threshold:
-                # TODO: Send a notification to the user
-                print(f"New level achieved: Level {level}")
+    # Reward Review Master Badge stats
+    if request.user.badges_reviewed_translations in badge_thresholds:
+        # TODO: Send a notification to the user
+        pass
 
     return JsonResponse(
         {

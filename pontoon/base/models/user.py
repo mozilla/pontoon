@@ -15,6 +15,9 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import aware_datetime
 
 
+badges_inception = aware_datetime(2024, 10, 18)
+
+
 @property
 def user_profile_url(self):
     return reverse(
@@ -220,25 +223,29 @@ def contributed_translations(self):
 @property
 def badges_translations_count(self):
     """Contributions provided by user that count towards their badges."""
-    from pontoon.base.models.translation import Translation
+    from pontoon.actionlog.models import ActionLog
 
-    badges_inception = aware_datetime(2024, 10, 18)
-
-    return Translation.objects.filter(user=self, date__gte=badges_inception).count()
+    return ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:created",
+        created_at__gte=badges_inception,
+    ).count()
 
 
 @property
 def badges_reviewed_translations(self):
     """Translation reviews provided by user that count towards their badges."""
-    from pontoon.base.models.translation import Translation
+    from pontoon.actionlog.models import ActionLog
 
-    badges_inception = aware_datetime(2024, 10, 18)
-
-    approvals = Translation.objects.filter(
-        approved_user=self, approved_date__gte=badges_inception
+    approvals = ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:created",
+        created_at__gte=badges_inception,
     ).count()
-    rejections = Translation.objects.filter(
-        rejected_user=self, rejected_date__gte=badges_inception
+    rejections = ActionLog.objects.filter(
+        performed_by=self,
+        action_type="translation:rejected",
+        created_at__gte=badges_inception,
     ).count()
 
     return approvals + rejections
@@ -248,8 +255,6 @@ def badges_reviewed_translations(self):
 def badges_promoted_users(self):
     """Role promotions performed by user that count towards their badges"""
     from pontoon.base.models import PermissionChangelog
-
-    badges_inception = aware_datetime(2024, 10, 18)
 
     return PermissionChangelog.objects.filter(
         performed_by=self,

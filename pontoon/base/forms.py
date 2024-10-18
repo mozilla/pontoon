@@ -109,6 +109,13 @@ class UserPermissionLogFormMixin:
 
         after_count = self.user.badges_promoted_users
 
+        print(before_count, after_count)
+
+        # TODO:
+        # This code is the only consumer of the PermissionChangelog
+        # model, so we should refactor in the future to simplify
+        # how promotions are retrieved. (see #2195)
+
         # Check if user was demoted from Manager to Translator
         # In this case, it doesn't count as a promotion
         if group_name == "managers":
@@ -122,12 +129,10 @@ class UserPermissionLogFormMixin:
                     if "managers" in item.group.name:
                         after_count -= 1
 
-        if before_count < after_count:
-            badge_thresholds = [1, 2, 5]
-            for level, threshold in enumerate(badge_thresholds, start=1):
-                if after_count >= threshold and before_count < threshold:
-                    # TODO: Send a notification to the user
-                    print(f"New level achieved: Level {level}")
+        # Award Community Builder badge
+        if after_count > before_count and after_count in [1, 2, 5]:
+            # TODO: Send a notification to the user
+            pass
 
 
 class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
