@@ -114,7 +114,11 @@ def create_translation(request):
         translation.approved_user = user
         translation.approved_date = now
 
+    before_count = user.badges_translations_count
+
     translation.save(failed_checks=failed_checks)
+
+    after_count = user.badges_translations_count
 
     log_action(ActionLog.ActionType.TRANSLATION_CREATED, user, translation=translation)
 
@@ -170,14 +174,12 @@ def create_translation(request):
             )
 
     # Update Translation Champion Badge stats
-    badge_thresholds = [5, 50, 250, 1000]
-    for level, threshold in enumerate(badge_thresholds, start=1):
-        if (
-            user.profile.translation_champion_level < level
-            and len(user.badges_translations_count) >= threshold
-        ):
-            user.profile.translation_champion_level = level
-            # TODO: Send a notification to the user
+    if after_count < before_count:
+        badge_thresholds = [5, 50, 250, 1000]
+        for level, threshold in enumerate(badge_thresholds, start=1):
+            if after_count >= threshold and before_count < threshold:
+                # TODO: Send a notification to the user
+                print(f"New level achieved: Level {level}")
 
     return JsonResponse(
         {
@@ -310,7 +312,11 @@ def approve_translation(request):
                 {"string": translation.string, "failedChecks": failed_checks}
             )
 
+    before_count = user.badges_reviewed_translations
+
     translation.approve(user)
+
+    after_count = user.badges_reviewed_translations
 
     log_action(ActionLog.ActionType.TRANSLATION_APPROVED, user, translation=translation)
 
@@ -320,14 +326,12 @@ def approve_translation(request):
     )
 
     # Update Review Master Badge stats
-    badge_thresholds = [5, 50, 250, 1000]
-    for level, threshold in enumerate(badge_thresholds, start=1):
-        if (
-            user.profile.review_master_level < level
-            and len(user.badges_reviewed_translations) >= threshold
-        ):
-            user.profile.review_master_level = level
-            # TODO: Send a notification to the user
+    if after_count < before_count:
+        badge_thresholds = [5, 50, 250, 1000]
+        for level, threshold in enumerate(badge_thresholds, start=1):
+            if after_count >= threshold and before_count < threshold:
+                # TODO: Send a notification to the user
+                print(f"New level achieved: Level {level}")
 
     return JsonResponse(
         {
@@ -448,7 +452,11 @@ def reject_translation(request):
                 status=403,
             )
 
+    before_count = request.user.badges_reviewed_translations
+
     translation.reject(request.user)
+
+    after_count = request.user.badges_reviewed_translations
 
     log_action(
         ActionLog.ActionType.TRANSLATION_REJECTED, request.user, translation=translation
@@ -460,15 +468,12 @@ def reject_translation(request):
     )
 
     # Update Review Master Badge stats
-    user = request.user
-    badge_thresholds = [5, 50, 250, 1000]
-    for level, threshold in enumerate(badge_thresholds, start=1):
-        if (
-            user.profile.review_master_level < level
-            and len(user.badges_reviewed_translations) >= threshold
-        ):
-            user.profile.review_master_level = level
-            # TODO: Send a notification to the user
+    if after_count < before_count:
+        badge_thresholds = [5, 50, 250, 1000]
+        for level, threshold in enumerate(badge_thresholds, start=1):
+            if after_count >= threshold and before_count < threshold:
+                # TODO: Send a notification to the user
+                print(f"New level achieved: Level {level}")
 
     return JsonResponse(
         {

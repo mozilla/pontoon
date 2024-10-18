@@ -222,9 +222,9 @@ def badges_translations_count(self):
     """Contributions provided by user that count towards their badges."""
     from pontoon.base.models.translation import Translation
 
-    badges_inception = aware_datetime(2024, 10, 16)
+    badges_inception = aware_datetime(2024, 10, 18)
 
-    return Translation.objects.filter(user=self, date__gte=badges_inception)
+    return Translation.objects.filter(user=self, date__gte=badges_inception).count()
 
 
 @property
@@ -232,16 +232,16 @@ def badges_reviewed_translations(self):
     """Translation reviews provided by user that count towards their badges."""
     from pontoon.base.models.translation import Translation
 
-    badges_inception = aware_datetime(2024, 10, 16)
+    badges_inception = aware_datetime(2024, 10, 18)
 
     approvals = Translation.objects.filter(
-        approved_user=self, date__gte=badges_inception
-    )
+        approved_user=self, approved_date__gte=badges_inception
+    ).count()
     rejections = Translation.objects.filter(
-        rejected_user=self, date__gte=badges_inception
-    )
+        rejected_user=self, rejected_date__gte=badges_inception
+    ).count()
 
-    return list(approvals) + list(rejections)
+    return approvals + rejections
 
 
 @property
@@ -249,13 +249,13 @@ def badges_promoted_users(self):
     """Role promotions performed by user that count towards their badges"""
     from pontoon.base.models import PermissionChangelog
 
-    badges_inception = aware_datetime(2024, 10, 16)
+    badges_inception = aware_datetime(2024, 10, 18)
 
     return PermissionChangelog.objects.filter(
         performed_by=self,
         action_type=PermissionChangelog.ActionType.ADDED,
         created_at__gte=badges_inception,
-    )
+    ).count()
 
 
 @property
