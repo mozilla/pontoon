@@ -21,7 +21,8 @@ help:
 	@echo "  setup            Configures a local instance after a fresh build"
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
-	@echo "  shell            Opens a Bash shell in a server docker container"
+	@echo "  shell            Opens a Bash shell in the server docker container"
+	@echo "  shell-root       Opens a Bash shell as root in the server docker container"
 	@echo "  ci               Test and lint all code"
 	@echo "  test             Runs all test suites"
 	@echo "  test-translate   Runs the translate frontend test suite (Jest)"
@@ -77,7 +78,22 @@ clean:
 	rm -rf translate/dist .server-build
 
 shell:
-	"${DC}" run --rm server //bin/bash
+	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
+	if [ -z "$$container" ]; then \
+  		echo "Error: No container found based on local/pontoon" >&2; \
+  		exit 1; \
+	else \
+  		${DOCKER} exec -it $$container /bin/bash; \
+	fi
+
+shell-root:
+	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
+	if [ -z "$$container" ]; then \
+  		echo "Error: No container found based on local/pontoon" >&2; \
+  		exit 1; \
+	else \
+  		${DOCKER} exec -u 0 -it $$container /bin/bash; \
+	fi
 
 ci: test lint
 
