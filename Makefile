@@ -83,7 +83,7 @@ shell:
   		echo "Error: No container found based on local/pontoon" >&2; \
   		exit 1; \
 	else \
-  		${DOCKER} exec -it $$container /bin/bash; \
+  		DOCKER_CLI_HINTS="false" ${DOCKER} exec -it $$container /bin/bash; \
 	fi
 
 shell-root:
@@ -92,7 +92,7 @@ shell-root:
   		echo "Error: No container found based on local/pontoon" >&2; \
   		exit 1; \
 	else \
-  		${DOCKER} exec -u 0 -it $$container /bin/bash; \
+  		DOCKER_CLI_HINTS="false" ${DOCKER} exec -u 0 -it $$container /bin/bash; \
 	fi
 
 ci: test lint
