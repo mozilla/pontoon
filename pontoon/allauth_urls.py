@@ -11,15 +11,39 @@ from allauth.socialaccount import providers, views as socialaccount_views
 
 from django.conf import settings
 from django.contrib.auth import views
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 from django.urls import path
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            # Raise a ValidationError to trigger the redirect logic
+            raise ValidationError("Account is disabled", code="account_disabled")
+
+
+class CustomLoginView(views.LoginView):
+    authentication_form = CustomAuthenticationForm
+
+    def form_invalid(self, form):
+        return redirect("/account_disabled")
+
+
+LoginView = CustomLoginView.as_view()
 
 
 if settings.AUTHENTICATION_METHOD == "django":
     urlpatterns = [
-        path("standalone-login/", views.LoginView.as_view(), name="standalone_login"),
+        path(
+            "standalone-login/",
+            LoginView,
+            name="standalone_login",
+        ),
         path(
             "standalone-logout/",
-            views.LogoutView.as_view(),
+            LoginView,
             name="standalone_logout",
         ),
     ]
