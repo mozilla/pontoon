@@ -201,12 +201,12 @@ def user_locale_role(self, locale):
 def user_status(self, locale):
     if self.username == "Imported":
         return ("", "")
-    if self.is_superuser:
-        return ("ADMIN", "Admin")
     if self in locale.managers_group.user_set.all():
         return ("MNGR", "Manager")
     if self in locale.translators_group.user_set.all():
         return ("TRNSL", "Translator")
+    if self.is_superuser:
+        return ("ADMIN", "Admin")
     if self.date_joined >= timezone.now() - relativedelta(months=3):
         return ("NEW", "New User")
     return ("", "")
@@ -214,10 +214,14 @@ def user_status(self, locale):
 
 @property
 def contributed_translations(self):
-    """Filtered contributions provided by user."""
-    from pontoon.base.models.translation import Translation
+    """Contributions provided by user."""
+    return self.translation_set.all()
 
-    return Translation.objects.filter(user=self)
+
+@property
+def has_approved_translations(self):
+    """Return True if the user has approved translations."""
+    return self.translation_set.filter(approved=True).exists()
 
 
 @property
@@ -491,6 +495,7 @@ User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("badges_translations_count", badges_translations_count)
 User.add_to_class("badges_reviewed_translations", badges_reviewed_translations)
 User.add_to_class("badges_promoted_users", badges_promoted_users)
+User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("is_new_contributor", is_new_contributor)
