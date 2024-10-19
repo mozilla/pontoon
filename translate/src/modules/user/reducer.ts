@@ -75,6 +75,7 @@ export type UserState = {
   readonly dateJoined: string;
   readonly contributorForLocales: Array<string>;
   readonly managerForLocales: Array<string>;
+  readonly pmForProjects: Array<string>;
   readonly translatorForLocales: Array<string>;
   readonly translatorForProjects: Record<string, boolean>;
   readonly settings: SettingsState;
@@ -99,6 +100,7 @@ const initial: UserState = {
   dateJoined: '',
   contributorForLocales: [],
   managerForLocales: [],
+  pmForProjects: [],
   translatorForLocales: [],
   translatorForProjects: {},
   settings: initialSettings,
@@ -130,6 +132,7 @@ export function reducer(state: UserState = initial, action: Action): UserState {
         dateJoined: action.data.date_joined ?? '',
         contributorForLocales: action.data.contributor_for_locales ?? [],
         managerForLocales: action.data.manager_for_locales ?? [],
+        pmForProjects: action.data.pm_for_projects ?? [],
         translatorForLocales: action.data.translator_for_locales ?? [],
         translatorForProjects: action.data.translator_for_projects ?? {},
         settings: settings(state.settings, action),

@@ -39,17 +39,21 @@
 }
 
 .user-avatar .avatar-container .user-status-banner.admin {
-  color: var(--status-error);
+  color: var(--user-admin);
+}
+
+.user-avatar .avatar-container .user-status-banner.project-manager {
+  color: var(--user-pm);
 }
 
 .user-avatar .avatar-container .user-status-banner.manager {
-  color: var(--status-unreviewed);
+  color: var(--user-manager);
 }
 
 .user-avatar .avatar-container .user-status-banner.translator {
-  color: var(--status-translated);
+  color: var(--user-translator);
 }
 
 .user-avatar .avatar-container .user-status-banner.new-user {
-  color: var(--status-fuzzy);
+  color: var(--user-new);
 }

@@ -53,6 +53,11 @@ def user_c():
 
 
 @pytest.fixture
+def user_d():
+    return factories.UserFactory(username="user_d")
+
+
+@pytest.fixture
 def member(client, user_a):
     """Provides a `LoggedInMember` with the attributes `user` and `client`
     the `client` is authenticated

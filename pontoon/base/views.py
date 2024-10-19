@@ -430,7 +430,7 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "user_status": u.status(locale),
+                "user_status": u.status(locale, t.entity.resource.project),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,
@@ -886,6 +886,7 @@ def user_data(request):
             "manager_for_locales": list(
                 user.managed_locales.values_list("code", flat=True)
             ),
+            "pm_for_projects": user.pm_for_projects,
             "translator_for_locales": list(
                 user.translated_locales.values_list("code", flat=True)
             ),
