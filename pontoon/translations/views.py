@@ -21,7 +21,7 @@ from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations import forms
 
 
-badge_thresholds = [5, 50, 250, 1000]
+BADGE_THRESHOLDS = [5, 50, 250, 1000]
 
 
 @require_POST
@@ -173,7 +173,7 @@ def create_translation(request):
             )
 
     # Award Translation Champion Badge stats
-    if user.badges_translations_count in badge_thresholds:
+    if user.badges_translation_count in BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -318,7 +318,7 @@ def approve_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if user.badges_reviewed_translations in badge_thresholds:
+    if user.badges_review_count in BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -453,7 +453,7 @@ def reject_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if request.user.badges_reviewed_translations in badge_thresholds:
+    if request.user.badges_review_count in BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 

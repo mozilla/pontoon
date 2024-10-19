@@ -7,7 +7,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -15,7 +15,7 @@ from pontoon.actionlog.models import ActionLog
 from pontoon.base.utils import aware_datetime
 
 
-badges_inception = aware_datetime(2024, 10, 18)
+BADGE_START_DATE = aware_datetime(2024, 10, 18)
 
 
 @property
@@ -225,45 +225,36 @@ def has_approved_translations(self):
 
 
 @property
-def badges_translations_count(self):
+def badges_translation_count(self):
     """Contributions provided by user that count towards their badges."""
-    from pontoon.actionlog.models import ActionLog
 
-    return ActionLog.objects.filter(
+    return self.actions.filter(
         performed_by=self,
         action_type="translation:created",
-        created_at__gte=badges_inception,
+        created_at__gte=BADGE_START_DATE,
     ).count()
 
 
 @property
-def badges_reviewed_translations(self):
+def badges_review_count(self):
     """Translation reviews provided by user that count towards their badges."""
-    from pontoon.actionlog.models import ActionLog
 
-    approvals = ActionLog.objects.filter(
+    return self.actions.filter(
+        Q(action_type="translation:created") | Q(action_type="translation:rejected"),
         performed_by=self,
-        action_type="translation:created",
-        created_at__gte=badges_inception,
+        created_at__gte=BADGE_START_DATE,
     ).count()
-    rejections = ActionLog.objects.filter(
-        performed_by=self,
-        action_type="translation:rejected",
-        created_at__gte=badges_inception,
-    ).count()
-
-    return approvals + rejections
 
 
 @property
-def badges_promoted_users(self):
+def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
     from pontoon.base.models import PermissionChangelog
 
-    return PermissionChangelog.objects.filter(
+    return self.changed_permissions_log.filter(
         performed_by=self,
         action_type=PermissionChangelog.ActionType.ADDED,
-        created_at__gte=badges_inception,
+        created_at__gte=BADGE_START_DATE,
     ).count()
 
 
@@ -492,9 +483,9 @@ User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
-User.add_to_class("badges_translations_count", badges_translations_count)
-User.add_to_class("badges_reviewed_translations", badges_reviewed_translations)
-User.add_to_class("badges_promoted_users", badges_promoted_users)
+User.add_to_class("badges_translation_count", badges_translation_count)
+User.add_to_class("badges_review_count", badges_review_count)
+User.add_to_class("badges_promotion_count", badges_promotion_count)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)

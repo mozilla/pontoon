@@ -99,7 +99,7 @@ class UserPermissionLogFormMixin:
 
         group.user_set.clear()
 
-        before_count = self.user.badges_promoted_users
+        before_count = self.user.badges_promotion_count
         now = timezone.now()
 
         if users:
@@ -107,9 +107,7 @@ class UserPermissionLogFormMixin:
 
         log_group_members(self.user, group, (add_users, remove_users))
 
-        after_count = self.user.badges_promoted_users
-
-        print(before_count, after_count)
+        after_count = self.user.badges_promotion_count
 
         # TODO:
         # This code is the only consumer of the PermissionChangelog
