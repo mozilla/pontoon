@@ -3,6 +3,7 @@ $(function () {
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
   });
+  let inProgress = false;
 
   function validateForm() {
     const $form = $('#send-message');
@@ -18,19 +19,19 @@ $(function () {
 
     const isValidLocale = $form.find('[name=locales]').val();
 
-    const isValidProject = $form.find('[name=projects]').val();
+    const isValidProject = $form.find('[name=projects]').val().length;
 
     const isValidTranslationMinimum = $form
-      .find('#translation-minimum')[0]
+      .find('[name=translation_minimum]')[0]
       .checkValidity();
     const isValidTranslationMaximum = $form
-      .find('#translation-maximum')[0]
+      .find('[name=translation_maximum]')[0]
       .checkValidity();
     const isValidReviewMinimum = $form
-      .find('#review-minimum')[0]
+      .find('[name=review_minimum]')[0]
       .checkValidity();
     const isValidReviewMaximum = $form
-      .find('#review-maximum')[0]
+      .find('[name=review_maximum]')[0]
       .checkValidity();
 
     $form.find('.errors').css('visibility', 'hidden');
@@ -110,7 +111,7 @@ $(function () {
     }
 
     // Subject
-    $('#review .subject p').html($('#subject').val());
+    $('#review .subject .value').html($('#id_subject').val());
 
     // Body
     const bodyValue = $('#body').val();
@@ -162,13 +163,88 @@ $(function () {
     $('#review .message-type .transactional').toggle(isTransactional);
   }
 
+  function loadPanelContent(path) {
+    if (inProgress) {
+      inProgress.abort();
+    }
+
+    const panel = container.find('.right-column');
+    const relative_path = path.split('/messaging/')[1];
+    const isSentPage = relative_path === 'sent/';
+    const menu_path = isSentPage ? '/messaging/sent/' : '/messaging/';
+
+    // Update menu selected state
+    container
+      .find(`.left-column a[href="${menu_path}"]`)
+      .parents('li')
+      .addClass('selected')
+      .siblings()
+      .removeClass('selected');
+
+    panel.empty();
+
+    inProgress = $.ajax({
+      url: `/messaging/ajax/${relative_path}`,
+      success: function (data) {
+        panel.append(data);
+
+        if (isSentPage) {
+          // Dissolve new message state
+          setTimeout(function () {
+            container.find('.message.new').removeClass('new');
+          }, 1000);
+        } else if (relative_path) {
+          // Convert body content from HTML to markdown
+          const html = $('#compose [name=body]').val();
+          const markdown = converter.makeMarkdown(html);
+          $('#body').val(markdown);
+        }
+      },
+      error: function (error) {
+        if (error.status === 0 && error.statusText !== 'abort') {
+          const message = $('<p>', {
+            class: 'no-results',
+            html: 'Oops, something went wrong.',
+          });
+
+          panel.append(message);
+        }
+      },
+    });
+  }
+
+  // Load panel content on page load
+  loadPanelContent(window.location.pathname);
+
+  // Load panel content on history change
+  window.onpopstate = function () {
+    loadPanelContent(window.location.pathname);
+  };
+
+  // Load panel content on menu click
+  container.on(
+    'click',
+    '.left-column a, .right-column .use-as-template',
+    function (e) {
+      // Keep default middle-, shift-, control- and command-click behaviour
+      if (e.which === 2 || e.metaKey || e.shiftKey || e.ctrlKey) {
+        return;
+      }
+
+      e.preventDefault();
+
+      const path = $(this).attr('href');
+      loadPanelContent(path);
+      window.history.pushState({}, '', path);
+    },
+  );
+
   // Toggle check box
-  $('.check-box').click(function () {
+  container.on('click', '.check-box', function () {
     const self = $(this);
+    const checkbox = self.find('[type=checkbox]')[0];
 
-    const name = self.data('attribute');
-    $(`[type=checkbox][name=${name}]`).click();
-
+    checkbox.checked = !checkbox.checked;
     self.toggleClass('enabled');
 
     // Toggle Transactional check box
@@ -180,14 +256,6 @@ $(function () {
         $('.check-box.transactional.enabled').click();
       }
     }
-  });
-
-  // Make sure custom checkboxes reflect the state of the HTML checkboxes
-  // TODO: Replace checkboxes with native HTML checkboxes and style them with CSS
-  $(`[type=checkbox]`).each(function () {
-    const name = $(this).attr('name');
-    const isChecked = $(this)[0].checked;
-    $(`.check-box[data-attribute=${name}]`).toggleClass('enabled', isChecked);
   });
 
   // Toggle between Edit and Review mode
@@ -227,10 +295,11 @@ $(function () {
   container.on('click', '.controls .send.button', function (e) {
     e.preventDefault();
 
-    // Distinguish between Send and Send to myself
-    $('.send-to-myself').prop('checked', $(this).is('.to-myself'));
-
     const $form = $('#send-message');
+    const sendToMyself = $(this).is('.to-myself');
+
+    // Distinguish between Send and Send to myself
+    $('#id_send_to_myself').prop('checked', sendToMyself);
 
     // Submit form
     $.ajax({
@@ -239,6 +308,9 @@ $(function () {
       data: $form.serialize(),
       success: function () {
         Pontoon.endLoader('Message sent.');
+        if (!sendToMyself) {
+          container.find('.left-column .sent a').click();
+        }
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');

@@ -1,4 +1,3 @@
-import { shallow } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -15,16 +14,22 @@ const USER = {
 
 describe('<AddComment>', () => {
   it('calls submitComment function', () => {
+    const store = createReduxStore();
     const submitCommentFn = sinon.spy();
-    const wrapper = shallow(
-      <AddComment submitComment={submitCommentFn} user={USER} />,
+    const Wrapper = () => (
+      <MentionUsers.Provider
+        value={{ initMentions: sinon.spy(), mentionUsers: [] }}
+      >
+        <AddComment onAddComment={submitCommentFn} user={USER} />
+      </MentionUsers.Provider>
     );
+    const wrapper = mountComponentWithStore(Wrapper, store);
 
     const event = {
       preventDefault: sinon.spy(),
     };
 
-    wrapper.find('button').simulate('onClick', event);
+    wrapper.find('button').simulate('click', event);
     expect(submitCommentFn.calledOnce).toBeTruthy;
   });
 

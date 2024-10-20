@@ -30,6 +30,7 @@ import type { MentionUser } from '~/api/user';
 import { MentionUsers } from '~/context/MentionUsers';
 import type { UserState } from '~/modules/user';
 import { UserAvatar } from '~/modules/user';
+import { useUserStatus } from '~/hooks/useUserStatus';
 
 import './AddComment.css';
 import { MentionList } from './MentionList';
@@ -86,6 +87,7 @@ export function AddComment({
   const [mentionIndex, setMentionIndex] = useState(0);
   const [mentionSearch, setMentionSearch] = useState('');
   const [requireUsers, setRequireUsers] = useState(false);
+  const role = useUserStatus();
 
   const { initMentions, mentionUsers } = useContext(MentionUsers);
   const [slateKey, resetValue] = useReducer((key) => key + 1, 0);
@@ -244,7 +246,11 @@ export function AddComment({
 
   return (
     <div className='comment add-comment'>
-      <UserAvatar username={username} imageUrl={gravatarURLSmall} />
+      <UserAvatar
+        username={username}
+        imageUrl={gravatarURLSmall}
+        userStatus={role}
+      />
       <div className='container'>
         <Slate
           editor={editor}

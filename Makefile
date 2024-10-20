@@ -21,7 +21,8 @@ help:
 	@echo "  setup            Configures a local instance after a fresh build"
 	@echo "  run              Runs the whole stack, served on http://localhost:8000/"
 	@echo "  clean            Forces a rebuild of docker containers"
-	@echo "  shell            Opens a Bash shell in a server docker container"
+	@echo "  shell            Opens a Bash shell in the server docker container"
+	@echo "  shell-root       Opens a Bash shell as root in the server docker container"
 	@echo "  ci               Test and lint all code"
 	@echo "  test             Runs all test suites"
 	@echo "  test-translate   Runs the translate frontend test suite (Jest)"
@@ -57,8 +58,13 @@ build-server: server-env translate/dist
 	touch .server-build
 
 server-env:
-	sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
-	./docker/config/server.env.template > ./docker/config/server.env
+	@if [ ! -f ./docker/config/server.env ]; then \
+		echo "Generating server.env..."; \
+		sed -e 's/#SITE_URL#/$(subst /,\/,${SITE_URL})/g' \
+		./docker/config/server.env.template > ./docker/config/server.env; \
+	else \
+		echo "server.env already exists, skipping."; \
+	fi
 
 setup: .server-build
 	"${DC}" run server //app/docker/server_setup.sh
@@ -71,8 +77,26 @@ run: translate/dist .server-build
 clean:
 	rm -rf translate/dist .server-build
 
-shell:
-	"${DC}" run --rm server //bin/bash
+.run-container:
+	@container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
+	if [ -z "$$container" ]; then \
+  		echo "Trying to start the container" >&2; \
+		"${DC}" up --detach; \
+  		container=$$(${DOCKER} ps -q --filter ancestor=local/pontoon | head -n 1); \
+		if [ -z "$$container" ]; then \
+			echo "Error: No container running based on local/pontoon. Try running 'make build'." >&2; \
+			exit 1; \
+		fi; \
+	fi; \
+	echo $$container > .container_id;
+
+shell: .run-container
+	@container=$$(cat .container_id); \
+	DOCKER_CLI_HINTS="false" ${DOCKER} exec -it $$container /bin/bash;
+
+shell-root: .run-container
+	@container=$$(cat .container_id); \
+  	DOCKER_CLI_HINTS="false" ${DOCKER} exec -u 0 -it $$container /bin/bash;
 
 ci: test lint
 

@@ -13,6 +13,11 @@
     <meta name="description" content="Mozilla’s Localization Platform">
     <meta name="author" content="Mozilla">
     <meta name="color-scheme" content="only light">
+
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32">
+    <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/nprogress.css' %}" title="" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}" title="" type="text/css" />
@@ -44,7 +49,7 @@
 
       <div class="container">
         <nav>
-          <a href="{% url 'pontoon.homepage' %}" class="logo"><img src="{% static 'img/logo.svg' %}" width="32" height="32"></a>
+          <a href="{% url 'pontoon.homepage' %}" class="logo"><img src="{% static 'img/logo.svg' %}" width="26" height="32"></a>
 
           <ul class="links">
             <li><a href="{% url 'pontoon.teams' %}">Teams</a></li>

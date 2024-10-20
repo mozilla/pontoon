@@ -19,8 +19,8 @@ $(function () {
     'click',
     '#middle .links a, #main .contributors .links a',
     function (e) {
-      // Keep default middle-, control- and command-click behaviour (open in new tab)
-      if (e.which === 2 || e.metaKey || e.ctrlKey) {
+      // Keep default middle-, shift-, control- and command-click behaviour
+      if (e.which === 2 || e.metaKey || e.shiftKey || e.ctrlKey) {
         return;
       }
 

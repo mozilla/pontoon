@@ -30,6 +30,7 @@ export type ApiUserData = {
   name_or_email?: string;
   email?: string;
   username?: string;
+  date_joined?: string;
   manager_for_locales?: string[];
   translator_for_locales?: string[];
   translator_for_projects?: Record<string, boolean>;
