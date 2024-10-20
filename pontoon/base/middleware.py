@@ -149,3 +149,14 @@ class ThrottleIpMiddleware:
             cache.set(observed_key, (1, now), self.observation_period)
 
         return response
+
+
+class AccountDisabledMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        print("User is authenticated: ", request.user.is_authenticated)
+        print("User is active: ", request.user.is_active)
+        if request.user.is_authenticated and not request.user.is_active:
+            print("Account is disabled")
+            logging.info("Account is disabled")
+            return render(request, "contributors/account_disabled.html", status=403)
+        return None

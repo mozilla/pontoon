@@ -330,6 +330,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "pontoon.base.middleware.EmailConsentMiddleware",
+    "pontoon.base.middleware.AccountDisabledMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
