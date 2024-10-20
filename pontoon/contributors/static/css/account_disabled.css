@@ -1,43 +1,43 @@
 /* account_disabled.css */
 
-*{
-    color: #ddd;
+* {
+  color: #ddd;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    /* background-color: #f9f9f9; */
-    color: #333;
-    margin: 0;
-    padding: 0;
+  font-family: Arial, sans-serif;
+  /* background-color: #f9f9f9; */
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
 div {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    /* background-color: #fff; */
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  /* background-color: #fff; */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    font-size: 24px;
-    color: #d9534f;
-    margin-bottom: 20px;
+  font-size: 24px;
+  color: #d9534f;
+  margin-bottom: 20px;
 }
 
 p {
-    font-size: 16px;
-    line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 a {
-    color: #337ab7;
-    text-decoration: none;
+  color: #337ab7;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
