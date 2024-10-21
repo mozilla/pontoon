@@ -112,21 +112,30 @@ def get_recipients(form):
         entity__resource__project_id__in=project_ids,
     )
 
+    log.info("-- translations --")
+    log.info(len(translations.values("user").distinct()))
+
     if form.cleaned_data.get("contributors"):
         contributors = translations.values("user").distinct()
         recipients = recipients | User.objects.filter(pk__in=contributors)
+        log.info("-- contributors --")
+        log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("managers"):
         managers = Locale.objects.filter(pk__in=locale_ids).values(
             "managers_group__user"
         )
         recipients = recipients | User.objects.filter(pk__in=managers)
+        log.info("-- managers --")
+        log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("translators"):
         translators = Locale.objects.filter(pk__in=locale_ids).values(
             "translators_group__user"
         )
         recipients = recipients | User.objects.filter(pk__in=translators)
+        log.info("-- translators --")
+        log.info(len(recipients.values("pk").distinct()))
 
     """
     Filter recipients by login date:
@@ -138,9 +147,13 @@ def get_recipients(form):
 
     if login_from:
         recipients = recipients.filter(last_login__gte=login_from)
+        log.info("-- login_from --")
+        log.info(len(recipients.values("pk").distinct()))
 
     if login_to:
         recipients = recipients.filter(last_login__lte=login_to)
+        log.info("-- login_to --")
+        log.info(len(recipients.values("pk").distinct()))
 
     """
     Filter recipients by translation submissions:
@@ -149,6 +162,7 @@ def get_recipients(form):
     - Submitted translations after provided From date
     - Submitted translations before provided To date
     """
+    log.info("-- submissions --")
     translation_minimum = form.cleaned_data.get("translation_minimum")
     translation_maximum = form.cleaned_data.get("translation_maximum")
     translation_from = form.cleaned_data.get("translation_from")
@@ -178,6 +192,7 @@ def get_recipients(form):
     - Reviewed translations after provided From date
     - Reviewed translations before provided To date
     """
+    log.info("-- reviews --")
     review_minimum = form.cleaned_data.get("review_minimum")
     review_maximum = form.cleaned_data.get("review_maximum")
     review_from = form.cleaned_data.get("review_from")
@@ -210,6 +225,8 @@ def get_recipients(form):
         approved = approved.filter(count__lte=review_maximum)
         rejected = rejected.filter(count__lte=review_maximum)
 
+    log.info("-- almost therer --")
+
     recipients = recipients.filter(
         pk__in=list(submitted.values_list("user", flat=True).distinct())
         + list(approved.values_list("approved_user", flat=True).distinct())
@@ -235,6 +252,10 @@ def send_message(request):
         recipients = User.objects.filter(pk=request.user.pk)
     else:
         recipients = get_recipients(form).distinct()
+
+    return JsonResponse({
+        "status": True,
+    })
 
     log.info(f"Total recipients count: {len(recipients)}.")
 
