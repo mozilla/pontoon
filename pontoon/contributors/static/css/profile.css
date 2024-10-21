@@ -119,6 +119,31 @@ h2 {
   width: 100%;
 }
 
+.achievements .badge-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.achievements img.badge {
+  max-width: 70px;
+  border: 2px solid var(--main-border-1);
+  border-radius: 6px;
+  margin-left: 0.125rem;
+}
+
+.achievements .badge-level {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translate(10%, -25%);
+  background: var(--background-1);
+  color: var(--light-grey-6);
+  padding: 2px 4px;
+  margin-left: 0.125rem;
+  border-radius: 0 4px;
+  font-size: 12px;
+}
+
 h4 {
   font-size: 14px;
 }

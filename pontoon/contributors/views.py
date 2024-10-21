@@ -44,6 +44,13 @@ def contributor_email(request, email):
     return contributor(request, user)
 
 
+def get_badge_level(thresholds, count):
+    for level, threshold in enumerate(thresholds):
+        if count < threshold:
+            return level
+    return len(thresholds)
+
+
 def contributor_username(request, username):
     try:
         user = User.objects.get(username=username)
@@ -67,11 +74,25 @@ def contributor(request, user):
         user, False, "all_contributions"
     )
 
+    TRANSLATION_BADGE_THRESHOLDS = [5, 50, 250, 1000]
+    COMMUNITY_BADGE_THRESHOLDS = [1, 2, 5]
+
     context = {
         "contributor": user,
         "contact_for": user.contact_for.filter(
             disabled=False, system_project=False, visibility="public"
         ).order_by("-priority"),
+        "badges": {
+            "review_master_badge": get_badge_level(
+                TRANSLATION_BADGE_THRESHOLDS, user.badges_review_count
+            ),
+            "translation_champion_badge": get_badge_level(
+                TRANSLATION_BADGE_THRESHOLDS, user.badges_translation_count
+            ),
+            "community_builder_badge": get_badge_level(
+                COMMUNITY_BADGE_THRESHOLDS, user.badges_promotion_count
+            ),
+        },
         "all_time_stats": {
             "translations": user.contributed_translations,
         },
