@@ -31,7 +31,7 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         isAdmin: true,
-        managerForLocales: ['mylocale'],
+        managerForLocales: [],
         translatorForLocales: [],
       }),
     );
