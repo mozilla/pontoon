@@ -21,16 +21,16 @@ export function useUserStatus(): Array<string> {
     return ['', ''];
   }
 
-  if (isAdmin) {
-    return ['ADMIN', 'Admin'];
-  }
-
   if (managerForLocales.includes(code)) {
     return ['MNGR', 'Manager'];
   }
 
   if (translatorForLocales.includes(code)) {
     return ['TRNSL', 'Translator'];
+  }
+
+  if (isAdmin) {
+    return ['ADMIN', 'Admin'];
   }
 
   const dateJoinedObj = new Date(dateJoined);
