@@ -229,7 +229,6 @@ def badges_translation_count(self):
     """Contributions provided by user that count towards their badges."""
 
     return self.actions.filter(
-        performed_by=self,
         action_type="translation:created",
         created_at__gte=BADGE_START_DATE,
     ).count()
@@ -241,7 +240,6 @@ def badges_review_count(self):
 
     return self.actions.filter(
         Q(action_type="translation:created") | Q(action_type="translation:rejected"),
-        performed_by=self,
         created_at__gte=BADGE_START_DATE,
     ).count()
 
@@ -249,11 +247,9 @@ def badges_review_count(self):
 @property
 def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
-    from pontoon.base.models import PermissionChangelog
 
     return self.changed_permissions_log.filter(
-        performed_by=self,
-        action_type=PermissionChangelog.ActionType.ADDED,
+        action_type="added",
         created_at__gte=BADGE_START_DATE,
     ).count()
 
