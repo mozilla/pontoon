@@ -113,7 +113,7 @@ def get_recipients(form):
     )
 
     log.info("-- translation authors --")
-    log.info(len(translations.values("user").distinct()))
+    # log.info(len(translations.values("user").distinct()))
 
     locales = Locale.objects.filter(pk__in=locale_ids)
     manager_ids = (
@@ -131,29 +131,18 @@ def get_recipients(form):
         contributors = translations.values("user").distinct()
         recipients = recipients | User.objects.filter(pk__in=contributors)
 
-        log.info("-- all contributors --")
-        log.info(len(recipients.values("pk").distinct()))
-
-        recipients = recipients.exclude(pk__in=manager_ids)
-        log.info("-- without managers --")
-        log.info(len(recipients.values("pk").distinct()))
-
-        recipients = recipients.exclude(pk__in=translator_ids)
-        log.info("-- without translators --")
-        log.info(len(recipients.values("pk").distinct()))
-
         log.info("-- contributors only --")
-        log.info(len(recipients.values("pk").distinct()))
+        # log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("managers"):
         recipients = recipients | User.objects.filter(pk__in=manager_ids)
         log.info("-- add managers --")
-        log.info(len(recipients.values("pk").distinct()))
+        # log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("translators"):
         recipients = recipients | User.objects.filter(pk__in=translator_ids)
         log.info("-- add translators --")
-        log.info(len(recipients.values("pk").distinct()))
+        # log.info(len(recipients.values("pk").distinct()))
 
     """
     Filter recipients by login date:
@@ -166,12 +155,12 @@ def get_recipients(form):
     if login_from:
         recipients = recipients.filter(last_login__gte=login_from)
         log.info("-- login_from --")
-        log.info(len(recipients.values("pk").distinct()))
+        # log.info(len(recipients.values("pk").distinct()))
 
     if login_to:
         recipients = recipients.filter(last_login__lte=login_to)
         log.info("-- login_to --")
-        log.info(len(recipients.values("pk").distinct()))
+        # log.info(len(recipients.values("pk").distinct()))
 
     """
     Filter recipients by translation submissions:
@@ -249,11 +238,19 @@ def get_recipients(form):
 
     log.info("-- almost therer --")
 
-    recipients = recipients.filter(
-        pk__in=list(submitted.values_list("user", flat=True).distinct())
-        + list(approved.values_list("approved_user", flat=True).distinct())
-        + list(rejected.values_list("rejected_user", flat=True).distinct())
-    )
+    action_filters = []
+
+    if translation_from or translation_to or translation_minimum or translation_maximum:
+        action_filters = list(submitted.values_list("user", flat=True).distinct())
+
+    if review_from or review_to or review_minimum or review_maximum:
+        action_filters = action_filters + list(
+            approved.values_list("approved_user", flat=True).distinct()
+        )
+        +list(rejected.values_list("rejected_user", flat=True).distinct())
+
+    if action_filters != []:
+        recipients = recipients.filter(pk__in=action_filters)
 
     return recipients
 
