@@ -112,29 +112,47 @@ def get_recipients(form):
         entity__resource__project_id__in=project_ids,
     )
 
-    log.info("-- translations --")
+    log.info("-- translation authors --")
     log.info(len(translations.values("user").distinct()))
+
+    locales = Locale.objects.filter(pk__in=locale_ids)
+    manager_ids = (
+        locales.exclude(managers_group__user__isnull=True)
+        .values("managers_group__user")
+        .distinct()
+    )
+    translator_ids = (
+        locales.exclude(translators_group__user__isnull=True)
+        .values("translators_group__user")
+        .distinct()
+    )
 
     if form.cleaned_data.get("contributors"):
         contributors = translations.values("user").distinct()
         recipients = recipients | User.objects.filter(pk__in=contributors)
-        log.info("-- contributors --")
+
+        log.info("-- all contributors --")
+        log.info(len(recipients.values("pk").distinct()))
+
+        recipients = recipients.exclude(pk__in=manager_ids)
+        log.info("-- without managers --")
+        log.info(len(recipients.values("pk").distinct()))
+
+        recipients = recipients.exclude(pk__in=translator_ids)
+        log.info("-- without translators --")
+        log.info(len(recipients.values("pk").distinct()))
+
+        log.info("-- contributors only --")
         log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("managers"):
-        managers = Locale.objects.filter(pk__in=locale_ids).values(
-            "managers_group__user"
-        )
-        recipients = recipients | User.objects.filter(pk__in=managers)
-        log.info("-- managers --")
+        recipients = recipients | User.objects.filter(pk__in=manager_ids)
+        log.info("-- add managers --")
         log.info(len(recipients.values("pk").distinct()))
 
     if form.cleaned_data.get("translators"):
-        translators = Locale.objects.filter(pk__in=locale_ids).values(
-            "translators_group__user"
-        )
-        recipients = recipients | User.objects.filter(pk__in=translators)
-        log.info("-- translators --")
+        recipients = recipients | User.objects.filter(pk__in=translator_ids)
+        log.info("-- add translators --")
         log.info(len(recipients.values("pk").distinct()))
 
     """
@@ -214,8 +232,12 @@ def get_recipients(form):
         rejected = rejected.filter(rejected_date__lte=review_to)
 
     if review_minimum or review_maximum:
-        approved = approved.values("approved_user").annotate(count=Count("approved_user"))
-        rejected = rejected.values("rejected_user").annotate(count=Count("rejected_user"))
+        approved = approved.values("approved_user").annotate(
+            count=Count("approved_user")
+        )
+        rejected = rejected.values("rejected_user").annotate(
+            count=Count("rejected_user")
+        )
 
     if review_minimum:
         approved = approved.filter(count__gte=review_minimum)
@@ -253,11 +275,13 @@ def send_message(request):
     else:
         recipients = get_recipients(form).distinct()
 
-    return JsonResponse({
-        "status": True,
-    })
-
     log.info(f"Total recipients count: {len(recipients)}.")
+
+    return JsonResponse(
+        {
+            "status": True,
+        }
+    )
 
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
