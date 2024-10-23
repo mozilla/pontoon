@@ -247,6 +247,9 @@ def send_message(request):
     if not form.is_valid():
         return JsonResponse(dict(form.errors.items()), status=400)
 
+    is_notification = form.cleaned_data.get("notification")
+    is_email = form.cleaned_data.get("email")
+    is_transactional = form.cleaned_data.get("transactional")
     send_to_myself = form.cleaned_data.get("send_to_myself")
 
     if send_to_myself:
@@ -254,11 +257,11 @@ def send_message(request):
     else:
         recipients = get_recipients(form).distinct()
 
+    if is_email:
+        recipients = recipients.prefetch_related("profile")
+
     log.info(f"Total recipients count: {len(recipients)}.")
 
-    is_notification = form.cleaned_data.get("notification")
-    is_email = form.cleaned_data.get("email")
-    is_transactional = form.cleaned_data.get("transactional")
     subject = form.cleaned_data.get("subject")
     body = form.cleaned_data.get("body")
 
