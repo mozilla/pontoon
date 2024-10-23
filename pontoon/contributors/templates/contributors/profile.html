@@ -131,7 +131,8 @@
                     {% for badge, level in badges.items() %}
                     <div class="badge-wrapper">
                         {% if level %}
-                        <img class="badge" src="../../static/img/{{ badge }}.svg" />
+                        {% set badge_name = badge.split('_')|map('capitalize')|join(' ') %}
+                        <img class="badge" src="../../static/img/{{ badge }}.svg" title="{{ badge_name }}: Level {{ level }}" />
                         {% if level > 1 %}
                             <div class="badge-level">{{ level }}x</div>
                         {% endif %}

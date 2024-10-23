@@ -10,6 +10,7 @@ from ipaddress import ip_address, ip_network
 
 import dj_database_url
 
+from django.utils import timezone
 from django.utils.functional import lazy
 
 
@@ -962,11 +963,12 @@ USE_TZ = True
 # system time zone.
 TIME_ZONE = os.environ.get("TZ", "UTC")
 
-# Information regarding badges threshold and data collection
+# Information regarding badge thresholds and data collection
 badges_start_date = os.environ.get("BADGES_START_DATE", "2024-10-18")
 try:
-    # BADGES_START_DATE = timezone.make_aware(datetime.strptime(badges_start_date, "%Y-%m-%d"))
-    BADGES_START_DATE = datetime.strptime(badges_start_date, "%Y-%m-%d")
+    BADGES_START_DATE = timezone.make_aware(
+        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
+    )
 except ValueError as e:
     raise ValueError(f"Error: {e}")
 
