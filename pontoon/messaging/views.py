@@ -256,12 +256,6 @@ def send_message(request):
 
     log.info(f"Total recipients count: {len(recipients)}.")
 
-    return JsonResponse(
-        {
-            "status": True,
-        }
-    )
-
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
     is_transactional = form.cleaned_data.get("transactional")
