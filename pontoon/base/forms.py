@@ -128,7 +128,10 @@ class UserPermissionLogFormMixin:
                         after_count -= 1
 
         # Award Community Builder badge
-        if after_count > before_count and after_count in [1, 2, 5]:
+        if (
+            after_count > before_count
+            and after_count in settings.COMMUNITY_BADGE_THRESHOLDS
+        ):
             # TODO: Send a notification to the user
             pass
 

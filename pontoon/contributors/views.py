@@ -3,6 +3,7 @@ import logging
 
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -74,9 +75,6 @@ def contributor(request, user):
         user, False, "all_contributions"
     )
 
-    TRANSLATION_BADGE_THRESHOLDS = [5, 50, 250, 1000]
-    COMMUNITY_BADGE_THRESHOLDS = [1, 2, 5]
-
     context = {
         "contributor": user,
         "contact_for": user.contact_for.filter(
@@ -84,13 +82,14 @@ def contributor(request, user):
         ).order_by("-priority"),
         "badges": {
             "review_master_badge": get_badge_level(
-                TRANSLATION_BADGE_THRESHOLDS, user.badges_review_count
+                django_settings.TRANSLATION_BADGE_THRESHOLDS, user.badges_review_count
             ),
             "translation_champion_badge": get_badge_level(
-                TRANSLATION_BADGE_THRESHOLDS, user.badges_translation_count
+                django_settings.TRANSLATION_BADGE_THRESHOLDS,
+                user.badges_translation_count,
             ),
             "community_builder_badge": get_badge_level(
-                COMMUNITY_BADGE_THRESHOLDS, user.badges_promotion_count
+                django_settings.COMMUNITY_BADGE_THRESHOLDS, user.badges_promotion_count
             ),
         },
         "all_time_stats": {

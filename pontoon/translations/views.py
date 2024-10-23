@@ -1,5 +1,6 @@
 from notifications.signals import notify
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -19,9 +20,6 @@ from pontoon.base.models import (
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations import forms
-
-
-BADGE_THRESHOLDS = [5, 50, 250, 1000]
 
 
 @require_POST
@@ -173,7 +171,7 @@ def create_translation(request):
             )
 
     # Award Translation Champion Badge stats
-    if user.badges_translation_count in BADGE_THRESHOLDS:
+    if user.badges_translation_count in settings.TRANSLATION_BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -318,7 +316,7 @@ def approve_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if user.badges_review_count in BADGE_THRESHOLDS:
+    if user.badges_review_count in settings.TRANSLATION_BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -453,7 +451,7 @@ def reject_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if request.user.badges_review_count in BADGE_THRESHOLDS:
+    if request.user.badges_review_count in settings.TRANSLATION_BADGE_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 

@@ -12,10 +12,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.utils import aware_datetime
-
-
-BADGE_START_DATE = aware_datetime(2024, 10, 18)
 
 
 @property
@@ -230,27 +226,25 @@ def badges_translation_count(self):
 
     return self.actions.filter(
         action_type="translation:created",
-        created_at__gte=BADGE_START_DATE,
+        created_at__gte=settings.BADGES_START_DATE,
     ).count()
 
 
 @property
 def badges_review_count(self):
     """Translation reviews provided by user that count towards their badges."""
-
     return self.actions.filter(
-        Q(action_type="translation:created") | Q(action_type="translation:rejected"),
-        created_at__gte=BADGE_START_DATE,
+        Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
+        created_at__gte=settings.BADGES_START_DATE,
     ).count()
 
 
 @property
 def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
-
     return self.changed_permissions_log.filter(
         action_type="added",
-        created_at__gte=BADGE_START_DATE,
+        created_at__gte=settings.BADGES_START_DATE,
     ).count()
 
 

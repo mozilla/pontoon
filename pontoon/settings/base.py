@@ -5,6 +5,7 @@ import os
 import re
 import socket
 
+from datetime import datetime
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
@@ -960,6 +961,44 @@ USE_TZ = True
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 TIME_ZONE = os.environ.get("TZ", "UTC")
+
+# Information regarding badges threshold and data collection
+badges_start_date = os.environ.get("BADGES_START_DATE", "2024-10-18")
+try:
+    # BADGES_START_DATE = timezone.make_aware(datetime.strptime(badges_start_date, "%Y-%m-%d"))
+    BADGES_START_DATE = datetime.strptime(badges_start_date, "%Y-%m-%d")
+except ValueError as e:
+    raise ValueError(f"Error: {e}")
+
+translation_badge_thresholds = os.environ.get(
+    "COMMUNITY_BADGE_THRESHOLDS", "5, 50, 250, 1000"
+).split(",")
+TRANSLATION_BADGE_THRESHOLDS = []
+for threshold in translation_badge_thresholds:
+    threshold = threshold.strip()
+    if threshold == "":
+        continue
+    try:
+        # If the threshold is valid, store it directly as int
+        int_threshold = int(threshold)
+        TRANSLATION_BADGE_THRESHOLDS.append(int_threshold)
+    except ValueError as e:
+        raise ValueError(f"Error: {e}")
+
+community_badge_thresholds = os.environ.get(
+    "TRANSLATION_BADGE_THRESHOLDS", "1, 2, 5"
+).split(",")
+COMMUNITY_BADGE_THRESHOLDS = []
+for threshold in community_badge_thresholds:
+    threshold = threshold.strip()
+    if threshold == "":
+        continue
+    try:
+        # If the threshold is valid, store it directly as int
+        int_threshold = int(threshold)
+        COMMUNITY_BADGE_THRESHOLDS.append(int_threshold)
+    except ValueError as e:
+        raise ValueError(f"Error: {e}")
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
