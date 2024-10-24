@@ -126,17 +126,15 @@
             <div class="achievements">
                 <div class="block">
                     <h4 class="subtitle">Achievements</h4>
-                </div>
-                <div class="block">
                     {% for path, badge in badges.items() %}
+                    {% if badge.level %}
                     <div class="badge-wrapper">
-                        {% if badge.level %}
                         <img class="badge" src="{{ static('img/' ~ path ~ '.svg') }}" title="{{ badge.name }}: Level {{ badge.level }}" />
                         {% if badge.level > 1 %}
                             <div class="badge-level">{{ badge.level }}x</div>
                         {% endif %}
-                        {% endif %}
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>

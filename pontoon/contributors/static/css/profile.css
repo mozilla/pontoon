@@ -119,27 +119,31 @@ h2 {
   width: 100%;
 }
 
+.achievements .block {
+  font-size: 0;
+}
+
 .achievements .badge-wrapper {
   position: relative;
   display: inline-block;
+  margin: 10px 7px 0 0;
+}
+
+.achievements .badge-wrapper:last-child {
+  margin-right: 0;
 }
 
 .achievements img.badge {
-  max-width: 70px;
-  border: 3px solid var(--main-border-1);
-  border-radius: 6px;
-  margin-left: 0.125rem;
+  border: 2px solid var(--main-border-1);
+  border-radius: 50%;
 }
 
 .achievements .badge-level {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  transform: translate(10%, -30%);
-  background: var(--background-1);
-  color: var(--light-grey-6);
+  bottom: 5px;
+  left: 2px;
+  background: var(--icon-background-1);
   padding: 2px 4px;
-  margin-left: 0.125rem;
   border-radius: 4px;
   font-size: 12px;
 }

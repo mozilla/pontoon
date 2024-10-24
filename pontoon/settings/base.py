@@ -1114,7 +1114,7 @@ NOTIFICATIONS_MAX_COUNT = 7
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
 
 # Date from which badge data collection starts
-badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
+badges_start_date = os.environ.get("BADGES_START_DATE", "2024-10-01")
 try:
     BADGES_START_DATE = timezone.make_aware(
         datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
@@ -1125,7 +1125,8 @@ except ValueError as e:
 # Used for Review Master and Translation Champion
 BADGES_TRANSLATION_THRESHOLDS = list(
     map(
-        int, os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5,50,250,1000").split(",")
+        int,
+        os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5, 50, 250, 1000").split(","),
     )
 )
 # Used for Community Builder
