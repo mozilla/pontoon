@@ -330,6 +330,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "pontoon.base.middleware.EmailConsentMiddleware",
+    "pontoon.base.middleware.AccountDisabledMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
@@ -572,6 +573,10 @@ PIPELINE_CSS = {
             "css/messaging.css",
         ),
         "output_filename": "css/messaging.min.css",
+    },
+    "account_disabled": {
+        "source_filenames": ("css/account_disabled.css",),
+        "output_filename": "css/account_disabled.min.css",
     },
 }
 

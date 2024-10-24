@@ -110,4 +110,6 @@ urlpatterns = [
         views.toggle_active_user_status,
         name="pontoon.contributors.toggle_active_user_status",
     ),
+    # Account disabled page
+    path("account_disabled/", views.account_disabled, name="account_disabled"),
 ]
