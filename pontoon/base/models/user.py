@@ -223,7 +223,6 @@ def has_approved_translations(self):
 @property
 def badges_translation_count(self):
     """Contributions provided by user that count towards their badges."""
-
     return self.actions.filter(
         action_type="translation:created",
         created_at__gte=settings.BADGES_START_DATE,

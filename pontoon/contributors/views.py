@@ -3,7 +3,6 @@ import logging
 
 from dateutil.relativedelta import relativedelta
 
-from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -27,7 +26,11 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
-from pontoon.settings import VIEW_CACHE_TIMEOUT
+from pontoon.settings import (
+    BADGES_PROMOTION_THRESHOLDS,
+    BADGES_TRANSLATION_THRESHOLDS,
+    VIEW_CACHE_TIMEOUT,
+)
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -81,16 +84,24 @@ def contributor(request, user):
             disabled=False, system_project=False, visibility="public"
         ).order_by("-priority"),
         "badges": {
-            "review_master_badge": get_badge_level(
-                django_settings.TRANSLATION_BADGE_THRESHOLDS, user.badges_review_count
-            ),
-            "translation_champion_badge": get_badge_level(
-                django_settings.TRANSLATION_BADGE_THRESHOLDS,
-                user.badges_translation_count,
-            ),
-            "community_builder_badge": get_badge_level(
-                django_settings.COMMUNITY_BADGE_THRESHOLDS, user.badges_promotion_count
-            ),
+            "review_master_badge": {
+                "level": get_badge_level(
+                    BADGES_TRANSLATION_THRESHOLDS, user.badges_review_count
+                ),
+                "name": "Review Master",
+            },
+            "translation_champion_badge": {
+                "level": get_badge_level(
+                    BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
+                ),
+                "name": "Translation Champion",
+            },
+            "community_builder_badge": {
+                "level": get_badge_level(
+                    BADGES_PROMOTION_THRESHOLDS, user.badges_promotion_count
+                ),
+                "name": "Community Builder",
+            },
         },
         "all_time_stats": {
             "translations": user.contributed_translations,

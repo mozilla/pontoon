@@ -963,45 +963,6 @@ USE_TZ = True
 # system time zone.
 TIME_ZONE = os.environ.get("TZ", "UTC")
 
-# Information regarding badge thresholds and data collection
-badges_start_date = os.environ.get("BADGES_START_DATE", "2024-10-18")
-try:
-    BADGES_START_DATE = timezone.make_aware(
-        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
-    )
-except ValueError as e:
-    raise ValueError(f"Error: {e}")
-
-translation_badge_thresholds = os.environ.get(
-    "COMMUNITY_BADGE_THRESHOLDS", "5, 50, 250, 1000"
-).split(",")
-TRANSLATION_BADGE_THRESHOLDS = []
-for threshold in translation_badge_thresholds:
-    threshold = threshold.strip()
-    if threshold == "":
-        continue
-    try:
-        # If the threshold is valid, store it directly as int
-        int_threshold = int(threshold)
-        TRANSLATION_BADGE_THRESHOLDS.append(int_threshold)
-    except ValueError as e:
-        raise ValueError(f"Error: {e}")
-
-community_badge_thresholds = os.environ.get(
-    "TRANSLATION_BADGE_THRESHOLDS", "1, 2, 5"
-).split(",")
-COMMUNITY_BADGE_THRESHOLDS = []
-for threshold in community_badge_thresholds:
-    threshold = threshold.strip()
-    if threshold == "":
-        continue
-    try:
-        # If the threshold is valid, store it directly as int
-        int_threshold = int(threshold)
-        COMMUNITY_BADGE_THRESHOLDS.append(int_threshold)
-    except ValueError as e:
-        raise ValueError(f"Error: {e}")
-
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = False
@@ -1151,5 +1112,25 @@ NOTIFICATIONS_MAX_COUNT = 7
 # Integer representing a day of the week on which the `send_suggestion_notifications`
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+
+# Date from which badge data collection starts
+badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
+try:
+    BADGES_START_DATE = timezone.make_aware(
+        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
+    )
+except ValueError as e:
+    raise ValueError(f"Error: {e}")
+
+# Used for Review Master and Translation Champion
+BADGES_TRANSLATION_THRESHOLDS = list(
+    map(
+        int, os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5,50,250,1000").split(",")
+    )
+)
+# Used for Community Builder
+BADGES_PROMOTION_THRESHOLDS = list(
+    map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
