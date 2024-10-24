@@ -130,7 +130,7 @@ class UserPermissionLogFormMixin:
         # Award Community Builder badge
         if (
             after_count > before_count
-            and after_count in settings.COMMUNITY_BADGE_THRESHOLDS
+            and after_count in settings.BADGES_PROMOTION_THRESHOLDS
         ):
             # TODO: Send a notification to the user
             pass

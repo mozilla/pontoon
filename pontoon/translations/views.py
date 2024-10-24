@@ -171,7 +171,7 @@ def create_translation(request):
             )
 
     # Award Translation Champion Badge stats
-    if user.badges_translation_count in settings.TRANSLATION_BADGE_THRESHOLDS:
+    if user.badges_translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -316,7 +316,7 @@ def approve_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if user.badges_review_count in settings.TRANSLATION_BADGE_THRESHOLDS:
+    if user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
@@ -451,7 +451,7 @@ def reject_translation(request):
     )
 
     # Reward Review Master Badge stats
-    if request.user.badges_review_count in settings.TRANSLATION_BADGE_THRESHOLDS:
+    if request.user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         # TODO: Send a notification to the user
         pass
 
