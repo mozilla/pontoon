@@ -1114,7 +1114,7 @@ NOTIFICATIONS_MAX_COUNT = 7
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
 
 # Date from which badge data collection starts
-badges_start_date = os.environ.get("BADGES_START_DATE", "2024-10-01")
+badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:
     BADGES_START_DATE = timezone.make_aware(
         datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
