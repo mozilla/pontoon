@@ -12,7 +12,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Project
 
 
 @property
@@ -101,13 +100,6 @@ def user_manager_for_locales(self):
             locales.append(locale)
 
     return locales
-
-
-@property
-def user_pm_for_projects(self):
-    """A list of project slugs for which the user is the assigned Project Manager."""
-
-    return [p.slug for p in Project.objects.filter(contact=self)]
 
 
 @property
@@ -203,7 +195,7 @@ def user_locale_role(self, locale):
 
 
 def user_status(self, locale, project):
-    if self.role() == "System User":
+    if self.pk is None or self.profile.system_user:
         return ("", "")
     if self in locale.managers_group.user_set.all():
         return ("MNGR", "Team Manager")
@@ -475,7 +467,6 @@ User.add_to_class("display_name_and_email", user_display_name_and_email)
 User.add_to_class("display_name_or_blank", user_display_name_or_blank)
 User.add_to_class("translator_for_locales", user_translator_for_locales)
 User.add_to_class("manager_for_locales", user_manager_for_locales)
-User.add_to_class("pm_for_projects", user_pm_for_projects)
 User.add_to_class("translated_locales", user_translated_locales)
 User.add_to_class("managed_locales", user_managed_locales)
 User.add_to_class("translated_projects", user_translated_projects)

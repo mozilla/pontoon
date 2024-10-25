@@ -886,7 +886,7 @@ def user_data(request):
             "manager_for_locales": list(
                 user.managed_locales.values_list("code", flat=True)
             ),
-            "pm_for_projects": user.pm_for_projects,
+            "pm_for_projects": user.contact_for.all(),
             "translator_for_locales": list(
                 user.translated_locales.values_list("code", flat=True)
             ),

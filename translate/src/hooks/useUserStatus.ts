@@ -24,7 +24,7 @@ export function useUserStatus(): Array<string> {
     return ['', ''];
   }
 
-  // Check for roles within the locale before checking for Project Manager or Admin
+  // Check status within the locale before checking for Project Manager or Admin
   if (managerForLocales.includes(code)) {
     return ['MNGR', 'Team Manager'];
   }
