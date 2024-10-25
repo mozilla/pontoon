@@ -73,15 +73,15 @@ you create:
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
 ``BADGES_PROMOTION_THRESHOLDS``
-   A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
    Community Builder badge.
 
 ``BADGES_START_DATE``
-   Specifies the start date from which user activities count towards badge achievements. 
+   Optional. Specifies the start date from which user activities count towards badge achievements. 
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
-   A comma-separated list of numeric thresholds for different levels of the 
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
    Review Master and Translation Champion badges.
 
 ``BLOCKED_IPS``
