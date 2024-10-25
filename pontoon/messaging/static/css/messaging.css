@@ -29,6 +29,24 @@
       color: inherit;
     }
 
+    .button.fetching {
+      pointer-events: none;
+      .fa-spin {
+        font-size: 16px;
+      }
+    }
+
+    .button.error {
+      display: none;
+      background-color: var(--status-error);
+      color: var(--translation-main-button-color);
+    }
+
+    .button.active {
+      display: none;
+      width: auto;
+    }
+
     .right {
       float: right;
 

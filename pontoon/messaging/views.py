@@ -241,6 +241,25 @@ def get_recipients(form):
 @require_AJAX
 @require_POST
 @transaction.atomic
+def fetch_recipients(request):
+    form = forms.MessageForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(dict(form.errors.items()), status=400)
+
+    recipients = get_recipients(form).distinct().values_list("pk", flat=True)
+
+    return JsonResponse(
+        {
+            "recipients": list(recipients),
+        }
+    )
+
+
+@permission_required_or_403("base.can_manage_project")
+@require_AJAX
+@require_POST
+@transaction.atomic
 def send_message(request):
     form = forms.MessageForm(request.POST)
 

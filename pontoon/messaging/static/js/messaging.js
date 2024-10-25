@@ -3,6 +3,7 @@ $(function () {
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
   });
+  const nf = new Intl.NumberFormat('en');
   let inProgress = false;
 
   function validateForm() {
@@ -109,6 +110,27 @@ $(function () {
       });
       $(`#review .${filter}`).toggle(show);
     }
+
+    // Fetch recipients
+    $('#review .controls .fetching').show();
+    $('#review .controls .error').hide();
+    $('#review .controls .send.active').hide().find('.value').html('');
+
+    $.ajax({
+      url: '/messaging/ajax/fetch-recipients/',
+      type: 'POST',
+      data: $('#send-message').serialize(),
+      success: function (data) {
+        const count = nf.format(data.recipients.length);
+        $('#review .controls .send.active').show().find('.value').html(count);
+      },
+      error: function () {
+        $('#review .controls .error').show();
+      },
+      complete: function () {
+        $('#review .controls .fetching').hide();
+      },
+    });
 
     // Subject
     $('#review .subject .value').html($('#id_subject').val());
