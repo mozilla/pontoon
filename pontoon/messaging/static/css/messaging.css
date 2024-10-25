@@ -181,8 +181,8 @@
     }
 
     .recipients {
-      > div:not(:last-child) {
-        margin-bottom: 20px;
+      > div {
+        margin-top: 20px;
       }
 
       h5 {
