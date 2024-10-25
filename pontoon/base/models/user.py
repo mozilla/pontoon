@@ -203,7 +203,7 @@ def user_locale_role(self, locale):
 
 
 def user_status(self, locale, project):
-    if self.username == "Imported":
+    if self.role() == "System User":
         return ("", "")
     if self in locale.managers_group.user_set.all():
         return ("MNGR", "Team Manager")

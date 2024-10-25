@@ -64,7 +64,7 @@ def test_user_locale_role(user_a, user_b, user_c, locale_a):
 
 
 @pytest.mark.django_db
-def test_user_status(user_a, user_b, user_c, user_d, locale_a, project_a):
+def test_user_status(user_a, user_b, user_c, user_d, gt_user, locale_a, project_a):
     # New User
     assert user_a.status(locale_a, project_a)[1] == "New User"
 
@@ -87,3 +87,7 @@ def test_user_status(user_a, user_b, user_c, user_d, locale_a, project_a):
     # PM
     project_a.contact = user_d
     assert user_d.status(locale_a, project_a)[1] == "Project Manager"
+
+    # System user (Google Translate)
+    project_a.contact = gt_user
+    assert gt_user.status(locale_a, project_a)[1] == ""
