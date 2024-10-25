@@ -1,5 +1,6 @@
 from notifications.signals import notify
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -169,6 +170,11 @@ def create_translation(request):
                 description=desc,
             )
 
+    # Award Translation Champion Badge stats
+    if user.badges_translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        # TODO: Send a notification to the user
+        pass
+
     return JsonResponse(
         {
             "status": True,
@@ -309,6 +315,11 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
+    # Reward Review Master Badge stats
+    if user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        # TODO: Send a notification to the user
+        pass
+
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
@@ -438,6 +449,11 @@ def reject_translation(request):
         locale=locale,
         plural_form=translation.plural_form,
     )
+
+    # Reward Review Master Badge stats
+    if request.user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        # TODO: Send a notification to the user
+        pass
 
     return JsonResponse(
         {

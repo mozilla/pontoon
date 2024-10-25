@@ -4,10 +4,12 @@ import bleach
 
 from django import forms
 from django.conf import settings
+from django.utils import timezone
 
 from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
+    PermissionChangelog,
     ProjectLocale,
     User,
     UserProfile,
@@ -97,10 +99,41 @@ class UserPermissionLogFormMixin:
 
         group.user_set.clear()
 
+        before_count = self.user.badges_promotion_count
+        now = timezone.now()
+
         if users:
             group.user_set.add(*users)
 
         log_group_members(self.user, group, (add_users, remove_users))
+
+        after_count = self.user.badges_promotion_count
+
+        # TODO:
+        # This code is the only consumer of the PermissionChangelog
+        # model, so we should refactor in the future to simplify
+        # how promotions are retrieved. (see #2195)
+
+        # Check if user was demoted from Manager to Translator
+        # In this case, it doesn't count as a promotion
+        if group_name == "managers":
+            removal = PermissionChangelog.objects.filter(
+                performed_by=self.user,
+                action_type=PermissionChangelog.ActionType.REMOVED,
+                created_at__gte=now,
+            )
+            if removal:
+                for item in removal:
+                    if "managers" in item.group.name:
+                        after_count -= 1
+
+        # Award Community Builder badge
+        if (
+            after_count > before_count
+            and after_count in settings.BADGES_PROMOTION_THRESHOLDS
+        ):
+            # TODO: Send a notification to the user
+            pass
 
 
 class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):

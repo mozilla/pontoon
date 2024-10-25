@@ -5,10 +5,12 @@ import os
 import re
 import socket
 
+from datetime import datetime
 from ipaddress import ip_address, ip_network
 
 import dj_database_url
 
+from django.utils import timezone
 from django.utils.functional import lazy
 
 
@@ -1110,5 +1112,26 @@ NOTIFICATIONS_MAX_COUNT = 7
 # Integer representing a day of the week on which the `send_suggestion_notifications`
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+
+# Date from which badge data collection starts
+badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
+try:
+    BADGES_START_DATE = timezone.make_aware(
+        datetime.strptime(badges_start_date, "%Y-%m-%d"), timezone=timezone.utc
+    )
+except ValueError as e:
+    raise ValueError(f"Error: {e}")
+
+# Used for Review Master and Translation Champion
+BADGES_TRANSLATION_THRESHOLDS = list(
+    map(
+        int,
+        os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5, 50, 250, 1000").split(","),
+    )
+)
+# Used for Community Builder
+BADGES_PROMOTION_THRESHOLDS = list(
+    map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

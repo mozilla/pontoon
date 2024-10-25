@@ -7,7 +7,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -218,6 +218,33 @@ def contributed_translations(self):
 def has_approved_translations(self):
     """Return True if the user has approved translations."""
     return self.translation_set.filter(approved=True).exists()
+
+
+@property
+def badges_translation_count(self):
+    """Contributions provided by user that count towards their badges."""
+    return self.actions.filter(
+        action_type="translation:created",
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
+
+
+@property
+def badges_review_count(self):
+    """Translation reviews provided by user that count towards their badges."""
+    return self.actions.filter(
+        Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
+
+
+@property
+def badges_promotion_count(self):
+    """Role promotions performed by user that count towards their badges"""
+    return self.changed_permissions_log.filter(
+        action_type="added",
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
 
 
 @property
@@ -445,6 +472,9 @@ User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
+User.add_to_class("badges_translation_count", badges_translation_count)
+User.add_to_class("badges_review_count", badges_review_count)
+User.add_to_class("badges_promotion_count", badges_promotion_count)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)

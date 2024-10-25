@@ -22,6 +22,7 @@
 
             {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
             {% set profile = contributor.profile %}
+            {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
             {% set translator_for_locales = contributor.translator_for_locales %}
             {% set manager_for_locales = contributor.manager_for_locales %}
             {% set user_is_translator = user.translated_locales %}
@@ -118,6 +119,25 @@
             </div>
 
             {% if is_name_visible or profile.bio or is_email_visible or are_external_accounts_visible or is_my_profile %}
+            <hr>
+            {% endif %}
+
+            {% if has_badges %}
+            <div class="achievements">
+                <div class="block">
+                    <h4 class="subtitle">Achievements</h4>
+                    {% for path, badge in badges.items() %}
+                    {% if badge.level %}
+                    <div class="badge-wrapper">
+                        <img class="badge" src="{{ static('img/' ~ path ~ '.svg') }}" title="{{ badge.name }}: Level {{ badge.level }}" />
+                        {% if badge.level > 1 %}
+                            <div class="badge-level">{{ badge.level }}x</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
             <hr>
             {% endif %}
 
