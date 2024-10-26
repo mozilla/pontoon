@@ -123,6 +123,7 @@ $(function () {
       success: function (data) {
         const count = nf.format(data.recipients.length);
         $('#review .controls .send.active').show().find('.value').html(count);
+        $('#compose [name=recipient_ids]').val(data.recipients);
       },
       error: function () {
         $('#review .controls .error').show();

@@ -270,11 +270,12 @@ def send_message(request):
     is_email = form.cleaned_data.get("email")
     is_transactional = form.cleaned_data.get("transactional")
     send_to_myself = form.cleaned_data.get("send_to_myself")
+    recipient_ids = split_ints(form.cleaned_data.get("recipient_ids"))
 
     if send_to_myself:
         recipients = User.objects.filter(pk=request.user.pk)
     else:
-        recipients = get_recipients(form).distinct()
+        recipients = User.objects.filter(pk__in=recipient_ids)
 
     if is_email:
         recipients = recipients.prefetch_related("profile")

@@ -144,6 +144,7 @@
     }
 
     input#id_send_to_myself,
+    textarea#id_recipient_ids,
     textarea#id_body {
       display: none;
     }

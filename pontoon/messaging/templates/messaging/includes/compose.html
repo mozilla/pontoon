@@ -6,6 +6,7 @@
     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.ajax.send_message') }}">
         {% csrf_token %}
         {{ form.send_to_myself }}
+        {{ form.recipient_ids }}
 
         <section class="message-type">
             <h3>Message type</h3>
