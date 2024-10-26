@@ -74,6 +74,30 @@ $(function () {
     );
   }
 
+  function fetchRecipients() {
+    $('#review .controls .fetching').show();
+    $('#review .controls .fetch-again').hide();
+    $('#review .controls .send.active').hide().find('.value').html('');
+
+    $.ajax({
+      url: '/messaging/ajax/fetch-recipients/',
+      type: 'POST',
+      data: $('#send-message').serialize(),
+      success: function (data) {
+        const count = nf.format(data.recipients.length);
+        $('#review .controls .send.active').show().find('.value').html(count);
+        $('#compose [name=recipient_ids]').val(data.recipients);
+      },
+      error: function () {
+        Pontoon.endLoader('Fetching recipients failed.', 'error');
+        $('#review .controls .fetch-again').show();
+      },
+      complete: function () {
+        $('#review .controls .fetching').hide();
+      },
+    });
+  }
+
   function updateReviewPanel() {
     function updateMultipleItemSelector(source, target, item) {
       const allProjects = !$(`${source}.available li:not(.no-match)`).length;
@@ -116,27 +140,7 @@ $(function () {
     const html = converter.makeHtml(bodyValue);
     $('#compose [name=body]').val(html);
 
-    // Fetch recipients
-    $('#review .controls .fetching').show();
-    $('#review .controls .error').hide();
-    $('#review .controls .send.active').hide().find('.value').html('');
-
-    $.ajax({
-      url: '/messaging/ajax/fetch-recipients/',
-      type: 'POST',
-      data: $('#send-message').serialize(),
-      success: function (data) {
-        const count = nf.format(data.recipients.length);
-        $('#review .controls .send.active').show().find('.value').html(count);
-        $('#compose [name=recipient_ids]').val(data.recipients);
-      },
-      error: function () {
-        $('#review .controls .error').show();
-      },
-      complete: function () {
-        $('#review .controls .fetching').hide();
-      },
-    });
+    fetchRecipients();
 
     // Subject
     $('#review .subject .value').html($('#id_subject').val());
@@ -312,6 +316,12 @@ $(function () {
 
     // Scroll to the top
     window.scrollTo(0, 0);
+  });
+
+  // Fetch recipients again
+  container.on('click', '.controls .fetch-again', function (e) {
+    e.preventDefault();
+    fetchRecipients();
   });
 
   // Send message
