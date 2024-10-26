@@ -349,7 +349,11 @@ $(function () {
       success: function () {
         Pontoon.endLoader('Message sent.');
         if (!sendToMyself) {
-          container.find('.left-column .sent a').click();
+          const count = container.find('.left-column .sent .count');
+          // Update count in the menu
+          count.html(parseInt(count.html(), 10) + 1);
+          // Load Sent panel
+          count.parents('a').click();
         }
       },
       error: function () {
