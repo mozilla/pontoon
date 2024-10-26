@@ -111,6 +111,11 @@ $(function () {
       $(`#review .${filter}`).toggle(show);
     }
 
+    // Update hidden textarea with the HTML content to be sent to backend
+    const bodyValue = $('#body').val();
+    const html = converter.makeHtml(bodyValue);
+    $('#compose [name=body]').val(html);
+
     // Fetch recipients
     $('#review .controls .fetching').show();
     $('#review .controls .error').hide();
@@ -137,12 +142,7 @@ $(function () {
     $('#review .subject .value').html($('#id_subject').val());
 
     // Body
-    const bodyValue = $('#body').val();
-    const html = converter.makeHtml(bodyValue);
     $('#review .body .value').html(html);
-
-    // Update hidden textarea with the HTML content to be sent to backend
-    $('#compose [name=body]').val(html);
 
     // User roles
     const userRoles = $('#compose .user-roles .enabled')
