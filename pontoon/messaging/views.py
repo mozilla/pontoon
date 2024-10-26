@@ -226,10 +226,11 @@ def get_recipients(form):
         action_filters = list(submitted.values_list("user", flat=True).distinct())
 
     if review_from or review_to or review_minimum or review_maximum:
-        action_filters = action_filters + list(
-            approved.values_list("approved_user", flat=True).distinct()
+        action_filters = (
+            action_filters
+            + list(approved.values_list("approved_user", flat=True).distinct())
+            + list(rejected.values_list("rejected_user", flat=True).distinct())
         )
-        +list(rejected.values_list("rejected_user", flat=True).distinct())
 
     if action_filters != []:
         recipients = recipients.filter(pk__in=action_filters)
