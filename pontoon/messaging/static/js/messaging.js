@@ -330,6 +330,13 @@ $(function () {
 
     const $form = $('#send-message');
     const sendToMyself = $(this).is('.to-myself');
+    const button = $(this);
+
+    if (button.is('.sending')) {
+      return;
+    }
+
+    button.addClass('sending');
 
     // Distinguish between Send and Send to myself
     $('#id_send_to_myself').prop('checked', sendToMyself);
@@ -347,6 +354,9 @@ $(function () {
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
+      complete: function () {
+        button.removeClass('sending');
       },
     });
   });

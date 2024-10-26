@@ -23,6 +23,9 @@
       .fa-chevron-right {
         margin-left: 5px;
       }
+      .fa-spin {
+        font-size: 16px;
+      }
     }
 
     .button:hover {
@@ -31,9 +34,6 @@
 
     .button.fetching {
       pointer-events: none;
-      .fa-spin {
-        font-size: 16px;
-      }
     }
 
     .button.fetch-again {
@@ -45,6 +45,17 @@
     .button.active {
       display: none;
       width: auto;
+
+      .fa-spin {
+        display: none;
+      }
+    }
+
+    .button.active.sending {
+      pointer-events: none;
+      .fa-spin {
+        display: inline;
+      }
     }
 
     .right {
