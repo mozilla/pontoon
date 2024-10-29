@@ -220,20 +220,15 @@ def get_recipients(form):
         approved = approved.filter(count__lte=review_maximum)
         rejected = rejected.filter(count__lte=review_maximum)
 
-    action_filters = []
-
     if translation_from or translation_to or translation_minimum or translation_maximum:
-        action_filters = list(submitted.values_list("user", flat=True).distinct())
+        submission_filters = list(submitted.values_list("user", flat=True).distinct())
+        recipients = recipients.filter(pk__in=submission_filters)
 
     if review_from or review_to or review_minimum or review_maximum:
-        action_filters = (
-            action_filters
-            + list(approved.values_list("approved_user", flat=True).distinct())
-            + list(rejected.values_list("rejected_user", flat=True).distinct())
-        )
-
-    if action_filters != []:
-        recipients = recipients.filter(pk__in=action_filters)
+        review_filters = list(
+            approved.values_list("approved_user", flat=True).distinct()
+        ) + list(rejected.values_list("rejected_user", flat=True).distinct())
+        recipients = recipients.filter(pk__in=review_filters)
 
     return recipients
 
