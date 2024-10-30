@@ -77,7 +77,11 @@ $(function () {
   function fetchRecipients() {
     $('#review .controls .fetching').show();
     $('#review .controls .fetch-again').hide();
-    $('#review .controls .send.active').hide().find('.value').html('');
+    $('#review .controls .send.active')
+      .hide()
+      .removeClass('disabled')
+      .find('.value')
+      .html('');
 
     $.ajax({
       url: '/messaging/ajax/fetch-recipients/',
@@ -85,7 +89,11 @@ $(function () {
       data: $('#send-message').serialize(),
       success: function (data) {
         const count = nf.format(data.recipients.length);
-        $('#review .controls .send.active').show().find('.value').html(count);
+        $('#review .controls .send.active')
+          .show()
+          .addClass('disabled', count === 0)
+          .find('.value')
+          .html(count);
         $('#compose [name=recipient_ids]').val(data.recipients);
       },
       error: function () {

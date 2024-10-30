@@ -51,6 +51,10 @@
       }
     }
 
+    .button.disabled {
+      pointer-events: none;
+    }
+
     .button.active.sending {
       pointer-events: none;
       .fa-spin {
