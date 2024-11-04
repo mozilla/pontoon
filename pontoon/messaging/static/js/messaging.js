@@ -131,7 +131,12 @@ $(function () {
             let value = $(this).find('input').val().trim();
             if (value) {
               if (className === 'date') {
-                value = new Date(value).toLocaleDateString();
+                // Convert date to the format used in the input field
+                // and set timezone to UTC to prevent shifts by a day
+                // when using the local timezone.
+                value = new Date(value).toLocaleDateString(undefined, {
+                  timeZone: 'UTC',
+                });
               }
               values.push(`${label}: ${value}`);
               show = true;
