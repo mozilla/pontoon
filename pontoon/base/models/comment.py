@@ -26,17 +26,12 @@ class Comment(models.Model):
     def __str__(self):
         return self.content
 
-    def serialize(self):
+    def serialize(self, project_contact):
         locale = self.locale or self.translation.locale
-        project = (
-            self.translation.entity.resource.project
-            if self.translation
-            else self.entity.resource.project
-        )
         return {
             "author": self.author.name_or_email,
             "username": self.author.username,
-            "user_status": self.author.status(locale, project),
+            "user_status": self.author.status(locale, project_contact),
             "user_gravatar_url_small": self.author.gravatar_url(88),
             "created_at": self.timestamp.strftime("%b %d, %Y %H:%M"),
             "date_iso": self.timestamp.isoformat(),

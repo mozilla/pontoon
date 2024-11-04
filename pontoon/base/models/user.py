@@ -194,14 +194,14 @@ def user_locale_role(self, locale):
         return "Contributor"
 
 
-def user_status(self, locale, project):
+def user_status(self, locale, project_contact):
     if self.pk is None or self.profile.system_user:
         return ("", "")
     if self in locale.managers_group.user_set.all():
         return ("MNGR", "Team Manager")
     if self in locale.translators_group.user_set.all():
         return ("TRNSL", "Translator")
-    if project.contact and self.username == project.contact.username:
+    if project_contact and self.pk == project_contact.pk:
         return ("PM", "Project Manager")
     if self.is_superuser:
         return ("ADMIN", "Admin")

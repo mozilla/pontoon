@@ -399,6 +399,7 @@ def get_translation_history(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
+    project_contact = entity.resource.project.contact
 
     translations = Translation.objects.filter(
         entity=entity,
@@ -430,13 +431,13 @@ def get_translation_history(request):
                 "uid": u.id,
                 "username": u.username,
                 "user_gravatar_url_small": u.gravatar_url(88),
-                "user_status": u.status(locale, t.entity.resource.project),
+                "user_status": u.status(locale, project_contact),
                 "date": t.date,
                 "approved_user": User.display_name_or_blank(t.approved_user),
                 "approved_date": t.approved_date,
                 "rejected_user": User.display_name_or_blank(t.rejected_user),
                 "rejected_date": t.rejected_date,
-                "comments": [c.serialize() for c in t.comments.all()],
+                "comments": [c.serialize(project_contact) for c in t.comments.all()],
                 "machinery_sources": t.machinery_sources_values,
             }
         )
@@ -459,13 +460,15 @@ def get_team_comments(request):
 
     entity = get_object_or_404(Entity, pk=entity)
     locale = get_object_or_404(Locale, code=locale)
+    project_contact = entity.resource.project.contact
+
     comments = (
         Comment.objects.filter(entity=entity)
         .filter(Q(locale=locale) | Q(pinned=True))
         .order_by("timestamp")
     )
 
-    payload = [c.serialize() for c in comments]
+    payload = [c.serialize(project_contact) for c in comments]
 
     return JsonResponse(payload, safe=False)
 
