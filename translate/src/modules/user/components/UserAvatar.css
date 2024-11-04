@@ -42,18 +42,18 @@
   color: var(--user-admin);
 }
 
-.user-avatar .avatar-container .user-status-banner.project-manager {
+.user-avatar .avatar-container .user-status-banner.pm {
   color: var(--user-pm);
 }
 
-.user-avatar .avatar-container .user-status-banner.manager {
+.user-avatar .avatar-container .user-status-banner.mngr {
   color: var(--user-manager);
 }
 
-.user-avatar .avatar-container .user-status-banner.translator {
+.user-avatar .avatar-container .user-status-banner.trnsl {
   color: var(--user-translator);
 }
 
-.user-avatar .avatar-container .user-status-banner.new-user {
+.user-avatar .avatar-container .user-status-banner.new {
   color: var(--user-new);
 }

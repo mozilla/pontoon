@@ -29,7 +29,7 @@ export function UserAvatar(props: Props): React.ReactElement<'div'> {
           </Localized>
           {role && (
             <span
-              className={`user-status-banner ${tooltip.toLowerCase().split(' ').join('-')}`}
+              className={`user-status-banner ${role}`}
               title={tooltip}
             >
               {role}
