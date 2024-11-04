@@ -38,22 +38,22 @@
   font-size: 7px;
 }
 
-.user-avatar .avatar-container .user-status-banner.admin {
+.user-avatar .avatar-container .user-status-banner.ADMIN {
   color: var(--user-admin);
 }
 
-.user-avatar .avatar-container .user-status-banner.pm {
+.user-avatar .avatar-container .user-status-banner.PM {
   color: var(--user-pm);
 }
 
-.user-avatar .avatar-container .user-status-banner.mngr {
+.user-avatar .avatar-container .user-status-banner.MNGR {
   color: var(--user-manager);
 }
 
-.user-avatar .avatar-container .user-status-banner.trnsl {
+.user-avatar .avatar-container .user-status-banner.TRNSL {
   color: var(--user-translator);
 }
 
-.user-avatar .avatar-container .user-status-banner.new {
+.user-avatar .avatar-container .user-status-banner.NEW {
   color: var(--user-new);
 }
