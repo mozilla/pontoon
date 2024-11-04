@@ -91,7 +91,7 @@ $(function () {
         const count = nf.format(data.recipients.length);
         $('#review .controls .send.active')
           .show()
-          .addClass('disabled', count === 0)
+          .toggleClass('disabled', !data.recipients.length)
           .find('.value')
           .html(count);
         $('#compose [name=recipient_ids]').val(data.recipients);
