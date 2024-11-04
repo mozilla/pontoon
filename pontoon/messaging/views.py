@@ -168,13 +168,15 @@ def get_recipients(form):
     if translation_to:
         submitted = submitted.filter(date__lte=translation_to)
 
-    if translation_minimum or translation_maximum:
+    # For the Minimum count, no value is the same as 0
+    # For the Maximum count, distinguish between no value and 0
+    if translation_minimum or translation_maximum is not None:
         submitted = submitted.values("user").annotate(count=Count("user"))
 
     if translation_minimum:
         submitted = submitted.filter(count__gte=translation_minimum)
 
-    if translation_maximum:
+    if translation_maximum is not None:
         submitted = submitted.filter(count__lte=translation_maximum)
 
     """
@@ -204,7 +206,9 @@ def get_recipients(form):
         approved = approved.filter(approved_date__lte=review_to)
         rejected = rejected.filter(rejected_date__lte=review_to)
 
-    if review_minimum or review_maximum:
+    # For the Minimum count, no value is the same as 0
+    # For the Maximum count, distinguish between no value and 0
+    if review_minimum or review_maximum is not None:
         approved = approved.values("approved_user").annotate(
             count=Count("approved_user")
         )
@@ -216,15 +220,20 @@ def get_recipients(form):
         approved = approved.filter(count__gte=review_minimum)
         rejected = rejected.filter(count__gte=review_minimum)
 
-    if review_maximum:
+    if review_maximum is not None:
         approved = approved.filter(count__lte=review_maximum)
         rejected = rejected.filter(count__lte=review_maximum)
 
-    if translation_from or translation_to or translation_minimum or translation_maximum:
+    if (
+        translation_from
+        or translation_to
+        or translation_minimum
+        or translation_maximum is not None
+    ):
         submission_filters = list(submitted.values_list("user", flat=True).distinct())
         recipients = recipients.filter(pk__in=submission_filters)
 
-    if review_from or review_to or review_minimum or review_maximum:
+    if review_from or review_to or review_minimum or review_maximum is not None:
         review_filters = list(
             approved.values_list("approved_user", flat=True).distinct()
         ) + list(rejected.values_list("rejected_user", flat=True).distinct())
