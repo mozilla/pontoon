@@ -27,9 +27,9 @@ export type ApiUserData = {
   is_admin?: boolean;
   is_pm?: boolean;
   id?: string;
+  email?: string;
   display_name?: string;
   name_or_email?: string;
-  email?: string;
   username?: string;
   date_joined?: string;
   can_manage_locales?: string[];
