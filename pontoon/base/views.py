@@ -893,8 +893,8 @@ def user_data(request):
             "can_translate_locales": list(
                 user.can_translate_locales.values_list("code", flat=True)
             ),
-            "manager_for_locales": [l.code for l in user.manager_for_locales],
-            "translator_for_locales": [l.code for l in user.translator_for_locales],
+            "manager_for_locales": [loc.code for loc in user.manager_for_locales],
+            "translator_for_locales": [loc.code for loc in user.translator_for_locales],
             "pm_for_projects": list(user.contact_for.values_list("slug", flat=True)),
             "translator_for_projects": user.translated_projects,
             "settings": {
