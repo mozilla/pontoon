@@ -876,7 +876,7 @@ def user_data(request):
     return JsonResponse(
         {
             "is_authenticated": True,
-            "is_admin": user.has_perm("base.can_manage_project"),
+            "is_admin": user.is_superuser,
             "id": user.id,
             "email": user.email,
             "display_name": user.display_name,
