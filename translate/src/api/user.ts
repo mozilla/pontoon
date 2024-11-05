@@ -51,6 +51,7 @@ export type ApiUserData = {
     notifications: Notification[];
     unread_count: string;
   };
+  theme?: string;
 };
 
 /** All users for use in mentions suggestions within comments */
