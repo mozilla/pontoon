@@ -14,9 +14,9 @@ export function useUserStatus(): Array<string> {
   const {
     isAuthenticated,
     isAdmin,
-    managerForLocales,
+    canManageLocales,
+    canTranslateLocales,
     pmForProjects,
-    translatorForLocales,
     dateJoined,
   } = useAppSelector((state) => state[USER]);
 
@@ -25,11 +25,11 @@ export function useUserStatus(): Array<string> {
   }
 
   // Check status within the locale before checking for Project Manager or Admin
-  if (managerForLocales.includes(code)) {
+  if (canManageLocales.includes(code)) {
     return ['MNGR', 'Team Manager'];
   }
 
-  if (translatorForLocales.includes(code)) {
+  if (canTranslateLocales.includes(code)) {
     return ['TRNSL', 'Translator'];
   }
 

@@ -74,11 +74,11 @@ export type UserState = {
   readonly email: string;
   readonly username: string;
   readonly dateJoined: string;
+  readonly canManageLocales: Array<string>;
+  readonly canTranslateLocales: Array<string>;
   readonly contributorForLocales: Array<string>;
-  readonly managerForLocales: Array<string>;
-  readonly pmForProjects: Array<string>;
-  readonly translatorForLocales: Array<string>;
   readonly translatorForProjects: Record<string, boolean>;
+  readonly pmForProjects: Array<string>;
   readonly settings: SettingsState;
   readonly tourStatus: number | null | undefined;
   readonly hasDismissedAddonPromotion: boolean;
@@ -100,11 +100,11 @@ const initial: UserState = {
   email: '',
   username: '',
   dateJoined: '',
+  canManageLocales: [],
+  canTranslateLocales: [],
   contributorForLocales: [],
-  managerForLocales: [],
-  pmForProjects: [],
-  translatorForLocales: [],
   translatorForProjects: {},
+  pmForProjects: [],
   settings: initialSettings,
   tourStatus: null,
   hasDismissedAddonPromotion: false,
@@ -128,16 +128,16 @@ export function reducer(state: UserState = initial, action: Action): UserState {
         isAdmin: action.data.is_admin ?? false,
         isPM: action.data.is_pm ?? false,
         id: action.data.id ?? '',
+        email: action.data.email ?? '',
         displayName: action.data.display_name ?? '',
         nameOrEmail: action.data.name_or_email ?? '',
-        email: action.data.email ?? '',
         username: action.data.username ?? '',
         dateJoined: action.data.date_joined ?? '',
+        canManageLocales: action.data.can_manage_locales ?? [],
+        canTranslateLocales: action.data.can_translate_locales ?? [],
         contributorForLocales: action.data.contributor_for_locales ?? [],
-        managerForLocales: action.data.manager_for_locales ?? [],
-        pmForProjects: action.data.pm_for_projects ?? [],
-        translatorForLocales: action.data.translator_for_locales ?? [],
         translatorForProjects: action.data.translator_for_projects ?? {},
+        pmForProjects: action.data.pm_for_projects ?? [],
         settings: settings(state.settings, action),
         tourStatus: action.data.tour_status ?? null,
         hasDismissedAddonPromotion:

@@ -67,7 +67,7 @@ describe('<FailedChecks>', () => {
   it('renders suggest anyway button if user does not have sufficient permissions', () => {
     const wrapper = mountFailedChecks(
       { errors: [], warnings: ['a warning'], source: 'submitted' },
-      { manager_for_locales: [] },
+      { can_manage_locales: [] },
     );
 
     expect(wrapper.find('.suggest.anyway')).toHaveLength(1);

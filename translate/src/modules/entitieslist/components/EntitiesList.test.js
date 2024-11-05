@@ -141,7 +141,7 @@ describe('<EntitiesList>', () => {
     });
 
     // HACK to get isTranslator === true in Entity
-    createDefaultUser(store, { translator_for_locales: [''] });
+    createDefaultUser(store, { can_translate_locales: [''] });
 
     const wrapper = mountComponentWithStore(EntitiesList, store);
 

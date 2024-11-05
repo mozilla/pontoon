@@ -32,9 +32,11 @@ export type ApiUserData = {
   email?: string;
   username?: string;
   date_joined?: string;
-  manager_for_locales?: string[];
-  translator_for_locales?: string[];
+  can_manage_locales?: string[];
+  can_translate_locales?: string[];
+  contributor_for_locales?: string[];
   translator_for_projects?: Record<string, boolean>;
+  pm_for_projects?: string[];
   settings?: { quality_checks: boolean; force_suggestions: boolean };
   tour_status?: number;
   has_dismissed_addon_promotion?: boolean;

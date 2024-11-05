@@ -34,8 +34,8 @@ describe('useUserStatus', () => {
         isAuthenticated: true,
         isAdmin: true,
         pmForProjects: [],
-        managerForLocales: [],
-        translatorForLocales: [],
+        canManageLocales: [],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['ADMIN', 'Admin']);
@@ -46,8 +46,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: ['myproject'],
-        managerForLocales: [],
-        translatorForLocales: [],
+        canManageLocales: [],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['PM', 'Project Manager']);
@@ -59,8 +59,8 @@ describe('useUserStatus', () => {
         isAuthenticated: true,
         isAdmin: true,
         pmForProjects: ['myproject'],
-        managerForLocales: [],
-        translatorForLocales: [],
+        canManageLocales: [],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['PM', 'Project Manager']);
@@ -71,8 +71,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
-        managerForLocales: ['mylocale'],
-        translatorForLocales: [],
+        canManageLocales: ['mylocale'],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
@@ -84,8 +84,8 @@ describe('useUserStatus', () => {
         isAuthenticated: true,
         isAdmin: true,
         pmForProjects: [],
-        managerForLocales: ['mylocale'],
-        translatorForLocales: [],
+        canManageLocales: ['mylocale'],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
@@ -96,8 +96,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: ['myproject'],
-        managerForLocales: ['mylocale'],
-        translatorForLocales: [],
+        canManageLocales: ['mylocale'],
+        canTranslateLocales: [],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
@@ -108,8 +108,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
-        managerForLocales: [],
-        translatorForLocales: ['mylocale'],
+        canManageLocales: [],
+        canTranslateLocales: ['mylocale'],
       }),
     );
     expect(useUserStatus()).toStrictEqual(['TRNSL', 'Translator']);
@@ -122,8 +122,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
-        managerForLocales: [],
-        translatorForLocales: [],
+        canManageLocales: [],
+        canTranslateLocales: [],
         dateJoined: dateJoined,
       }),
     );
@@ -135,8 +135,8 @@ describe('useUserStatus', () => {
       fakeSelector({
         isAuthenticated: true,
         pmForProjects: [],
-        managerForLocales: [],
-        translatorForLocales: [],
+        canManageLocales: [],
+        canTranslateLocales: [],
         dateJoined: dateJoined,
       }),
     );

@@ -887,13 +887,13 @@ def user_data(request):
             "contributor_for_locales": list(
                 user.translation_set.values_list("locale__code", flat=True).distinct()
             ),
-            "manager_for_locales": list(
-                user.managed_locales.values_list("code", flat=True)
+            "can_manage_locales": list(
+                user.can_manage_locales.values_list("code", flat=True)
+            ),
+            "can_translate_locales": list(
+                user.can_translate_locales.values_list("code", flat=True)
             ),
             "pm_for_projects": list(user.contact_for.values_list("slug", flat=True)),
-            "translator_for_locales": list(
-                user.translated_locales.values_list("code", flat=True)
-            ),
             "translator_for_projects": user.translated_projects,
             "settings": {
                 "quality_checks": user.profile.quality_checks,
