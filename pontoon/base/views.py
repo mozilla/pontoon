@@ -877,6 +877,7 @@ def user_data(request):
         {
             "is_authenticated": True,
             "is_admin": user.is_superuser,
+            "is_pm": user.has_perm("base.can_manage_project"),
             "id": user.id,
             "email": user.email,
             "display_name": user.display_name,

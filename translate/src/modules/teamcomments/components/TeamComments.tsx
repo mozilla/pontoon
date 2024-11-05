@@ -47,7 +47,7 @@ export function TeamComments({
   const renderComment = (comment: TranslationComment) => (
     <Comment
       comment={comment}
-      canPin={user.isAdmin}
+      canPin={user.isPM}
       key={comment.id}
       togglePinnedStatus={togglePinnedStatus}
     />

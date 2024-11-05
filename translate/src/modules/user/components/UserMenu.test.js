@@ -33,7 +33,7 @@ describe('<UserMenuDialog>', () => {
   };
 
   function createUserMenu({
-    isAdmin = false,
+    isPM = false,
     isReadOnly = false,
     isTranslator = true,
     isAuthenticated = true,
@@ -46,7 +46,7 @@ describe('<UserMenuDialog>', () => {
           <EntityView.Provider
             value={{ entity: { pk: 42, readonly: isReadOnly } }}
           >
-            <UserMenuDialog user={{ isAuthenticated, isAdmin }} />
+            <UserMenuDialog user={{ isAuthenticated, isPM }} />
           </EntityView.Provider>
         </MockLocalizationProvider>
       </Location.Provider>,
@@ -92,7 +92,7 @@ describe('<UserMenuDialog>', () => {
   it('hides admin · current project menu item when translating all projects', () => {
     const wrapper = createUserMenu({
       location: { ...LOCATION, project: 'all-projects' },
-      isAdmin: true,
+      isPM: true,
     });
 
     expect(
@@ -101,7 +101,7 @@ describe('<UserMenuDialog>', () => {
   });
 
   it('shows admin · current project menu item when translating a project', () => {
-    const wrapper = createUserMenu({ isAdmin: true });
+    const wrapper = createUserMenu({ isPM: true });
 
     expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(1);
   });
@@ -130,7 +130,7 @@ describe('<UserMenuDialog>', () => {
   });
 
   it('shows the admin menu items when the user is an admin', () => {
-    const wrapper = createUserMenu({ isAdmin: true });
+    const wrapper = createUserMenu({ isPM: true });
 
     expect(wrapper.find('a[href="/admin/"]')).toHaveLength(1);
     expect(wrapper.find('a[href="/admin/projects/proj/"]')).toHaveLength(1);

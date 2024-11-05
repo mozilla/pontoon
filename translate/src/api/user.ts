@@ -25,6 +25,7 @@ export type Notification = {
 export type ApiUserData = {
   is_authenticated?: boolean;
   is_admin?: boolean;
+  is_pm?: boolean;
   id?: string;
   display_name?: string;
   name_or_email?: string;
