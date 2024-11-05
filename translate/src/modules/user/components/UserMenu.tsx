@@ -230,7 +230,7 @@ export function UserMenuDialog({
 
       {user.isAuthenticated && <li className='horizontal-separator'></li>}
 
-      {user.isAdmin && (
+      {user.isPM && (
         <>
           <li>
             <Localized

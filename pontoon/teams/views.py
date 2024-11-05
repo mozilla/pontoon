@@ -95,7 +95,7 @@ def ajax_projects(request, locale):
 
     pretranslation_request_enabled = (
         request.user.is_authenticated
-        and locale in request.user.translated_locales
+        and locale in request.user.can_translate_locales
         and locale.code in settings.GOOGLE_AUTOML_SUPPORTED_LOCALES
         and pretranslated_projects.count() < enabled_projects.count()
     )
@@ -347,7 +347,7 @@ def request_pretranslation(request, locale):
     locale = get_object_or_404(Locale, code=locale)
 
     # Validate user
-    if locale not in user.translated_locales:
+    if locale not in user.can_translate_locales:
         return HttpResponseBadRequest(
             "Bad Request: Requester is not a translator or manager for the locale"
         )

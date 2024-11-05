@@ -25,15 +25,20 @@ export type Notification = {
 export type ApiUserData = {
   is_authenticated?: boolean;
   is_admin?: boolean;
+  is_pm?: boolean;
   id?: string;
   display_name?: string;
   name_or_email?: string;
   email?: string;
   username?: string;
   date_joined?: string;
+  can_manage_locales?: string[];
+  can_translate_locales?: string[];
   manager_for_locales?: string[];
   translator_for_locales?: string[];
+  contributor_for_locales?: string[];
   translator_for_projects?: Record<string, boolean>;
+  pm_for_projects?: string[];
   settings?: { quality_checks: boolean; force_suggestions: boolean };
   tour_status?: number;
   has_dismissed_addon_promotion?: boolean;

@@ -32,8 +32,8 @@ describe('useTranslator', () => {
     Hooks.useAppSelector.callsFake(
       fakeSelector({
         isAuthenticated: true,
-        managerForLocales: ['mylocale'],
-        translatorForLocales: [],
+        canManageLocales: ['mylocale'],
+        canTranslateLocales: [],
         translatorForProjects: {},
       }),
     );
@@ -44,8 +44,8 @@ describe('useTranslator', () => {
     Hooks.useAppSelector.callsFake(
       fakeSelector({
         isAuthenticated: true,
-        managerForLocales: [],
-        translatorForLocales: ['mylocale'],
+        canManageLocales: [],
+        canTranslateLocales: ['mylocale'],
         translatorForProjects: {},
       }),
     );
@@ -56,8 +56,8 @@ describe('useTranslator', () => {
     Hooks.useAppSelector.callsFake(
       fakeSelector({
         isAuthenticated: true,
-        managerForLocales: ['localeA'],
-        translatorForLocales: ['localeB'],
+        canManageLocales: ['localeA'],
+        canTranslateLocales: ['localeB'],
         translatorForProjects: { 'mylocale-myproject': true },
       }),
     );

@@ -25,7 +25,7 @@
             {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
             {% set translator_for_locales = contributor.translator_for_locales %}
             {% set manager_for_locales = contributor.manager_for_locales %}
-            {% set user_is_translator = user.translated_locales %}
+            {% set user_is_translator = user.can_translate_locales %}
             {% set profile_is_disabled = contributor.is_active == False %}
 
             <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
@@ -227,7 +227,7 @@
         <div class="right-column">
 
             {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
-            {% set contributor_is_translator = contributor.translated_locales %}
+            {% set contributor_is_translator = contributor.can_translate_locales %}
             {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
 
             <div class="clearfix">

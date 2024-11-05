@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { Locale } from '~/context/Locale';
+import { Location } from '~/context/Location';
 import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 
@@ -9,11 +10,13 @@ import { useAppSelector } from '~/hooks';
  */
 export function useUserStatus(): Array<string> {
   const { code } = useContext(Locale);
+  const { project } = useContext(Location);
   const {
     isAuthenticated,
     isAdmin,
     managerForLocales,
     translatorForLocales,
+    pmForProjects,
     dateJoined,
   } = useAppSelector((state) => state[USER]);
 
@@ -21,16 +24,21 @@ export function useUserStatus(): Array<string> {
     return ['', ''];
   }
 
-  if (isAdmin) {
-    return ['ADMIN', 'Admin'];
-  }
-
+  // Check status within the locale before checking for Project Manager or Admin
   if (managerForLocales.includes(code)) {
-    return ['MNGR', 'Manager'];
+    return ['MNGR', 'Team Manager'];
   }
 
   if (translatorForLocales.includes(code)) {
     return ['TRNSL', 'Translator'];
+  }
+
+  if (pmForProjects.includes(project)) {
+    return ['PM', 'Project Manager'];
+  }
+
+  if (isAdmin) {
+    return ['ADMIN', 'Admin'];
   }
 
   const dateJoinedObj = new Date(dateJoined);
