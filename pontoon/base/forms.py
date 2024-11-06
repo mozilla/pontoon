@@ -263,10 +263,12 @@ class UserProfileForm(forms.ModelForm):
         github_username = self.cleaned_data.get("github")
 
         # Define GitHub's username pattern
-        github_username_pattern = r"^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$"
+        github_username_pattern = r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$"
 
         # Validate using the pattern
-        if github_username and not re.match(github_username_pattern, github_username):
+        if github_username and not re.match(
+            github_username_pattern, github_username, re.IGNORECASE
+        ):
             raise ValidationError(
                 """
                 GitHub username may only contain alphanumeric characters and single hyphens,
