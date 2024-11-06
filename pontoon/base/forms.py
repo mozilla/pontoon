@@ -1,9 +1,12 @@
+import re
+
 from pathlib import Path
 
 import bleach
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from pontoon.base import utils
@@ -255,6 +258,23 @@ class UserProfileForm(forms.ModelForm):
             "github",
             "bugzilla",
         )
+
+    def clean_github(self):
+        github_username = self.cleaned_data.get("github")
+
+        # Define GitHub's username pattern
+        github_username_pattern = r"^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$"
+
+        # Validate using the pattern
+        if github_username and not re.match(github_username_pattern, github_username):
+            raise ValidationError(
+                """
+                Github username may only contain alphanumeric characters or single hyphens,
+                and cannot begin or end with a hyphen. Maximum is 39 characters.
+                """
+            )
+
+        return github_username
 
 
 class UserProfileVisibilityForm(forms.ModelForm):
