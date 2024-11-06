@@ -269,8 +269,8 @@ class UserProfileForm(forms.ModelForm):
         if github_username and not re.match(github_username_pattern, github_username):
             raise ValidationError(
                 """
-                Github username may only contain alphanumeric characters or single hyphens,
-                and cannot begin or end with a hyphen. Maximum is 39 characters.
+                GitHub username may only contain alphanumeric characters and single hyphens,
+                and cannot begin or end with a hyphen. Maximum length is 39 characters.
                 """
             )
 
