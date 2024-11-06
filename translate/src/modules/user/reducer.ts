@@ -69,9 +69,9 @@ export type UserState = {
   readonly isAdmin: boolean;
   readonly isPM: boolean;
   readonly id: string;
+  readonly email: string;
   readonly displayName: string;
   readonly nameOrEmail: string;
-  readonly email: string;
   readonly username: string;
   readonly dateJoined: string;
   readonly canManageLocales: Array<string>;
@@ -97,9 +97,9 @@ const initial: UserState = {
   isAdmin: false,
   isPM: false,
   id: '',
+  email: '',
   displayName: '',
   nameOrEmail: '',
-  email: '',
   username: '',
   dateJoined: '',
   canManageLocales: [],
