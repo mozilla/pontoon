@@ -1,6 +1,7 @@
 import datetime
 import html
 import json
+import re
 
 from datetime import timedelta
 
@@ -18,7 +19,9 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.safestring import mark_safe
 
 from pontoon.base.fluent import get_simple_preview
 
@@ -288,3 +291,24 @@ def linkify(source):
     linker = Linker(callbacks=[set_attrs])
 
     return linker.linkify(source)
+
+
+@library.filter
+def highlight_matches(text, search_query):
+    """Highlight all occurrences of the search query in the text."""
+    if not search_query:
+        return text
+
+    # First, escape the text to prevent HTML rendering
+    escaped_text = escape(text)
+
+    # Then apply highlighting to the escaped text
+    highlighted_text = re.sub(
+        f"({re.escape(search_query)})",
+        r"<mark>\1</mark>",
+        escaped_text,
+        flags=re.IGNORECASE,
+    )
+
+    # Mark as safe to include <mark> tags only
+    return mark_safe(highlighted_text)

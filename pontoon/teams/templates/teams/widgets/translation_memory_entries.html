@@ -11,10 +11,10 @@
 {% for entry in tm_entries %}
 <tr>
     <td class="source text">
-        {{ linkify(entry.source, entry.entity_ids) }}
+        {{ linkify(entry.source|highlight_matches(search_query), entry.entity_ids) }}
     </td>
     <td class="target text">
-        {{ linkify(entry.target, entry.entity_ids) }}
+        {{ linkify(entry.target|highlight_matches(search_query), entry.entity_ids) }}
     </td>
     <td class="actions controls">
         <button class="edit button">
@@ -28,6 +28,10 @@
     </td>
 </tr>
 {% endfor %}
+
+{% if tm_entries|length == 0 %}
+<tr><td colspan="3" class="no-results">No matches found.</td></tr>
+{% endif %}
 
 {% if has_next %}
 {% for i in range(3) %}

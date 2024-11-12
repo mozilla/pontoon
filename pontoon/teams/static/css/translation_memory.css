@@ -52,6 +52,10 @@
         padding: 10px;
       }
 
+      td.no-results {
+        text-align: left;
+      }
+
       .text {
         color: var(--light-grey-7);
         font-size: 15px;
@@ -60,6 +64,14 @@
         a {
           color: var(--white-1);
           display: inline-block;
+        }
+
+        mark {
+          background: var(--search-background);
+          color: var(--search-color);
+          font-weight: inherit;
+          font-style: inherit;
+          border-radius: 3px;
         }
       }
 

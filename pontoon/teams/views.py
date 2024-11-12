@@ -262,13 +262,20 @@ def ajax_permissions(request, locale):
 def ajax_translation_memory(request, locale):
     """Translation Memory tab."""
     locale = get_object_or_404(Locale, code=locale)
+    search_query = request.GET.get("search", "").strip()
     page_number = request.GET.get("page", 1)
 
+    tm_entries = TranslationMemoryEntry.objects.filter(locale=locale)
+
+    # Apply search filter if a search query is provided
+    if search_query:
+        tm_entries = tm_entries.filter(
+            Q(source__icontains=search_query) | Q(target__icontains=search_query)
+        )
+
     tm_entries = (
-        TranslationMemoryEntry.objects.filter(locale=locale)
         # Group by "source" and "target"
-        .values("source", "target")
-        .annotate(
+        tm_entries.values("source", "target").annotate(
             count=Count("id"),
             # Concatenate entity IDs
             entity_ids=StringAgg(
@@ -293,6 +300,7 @@ def ajax_translation_memory(request, locale):
         template,
         {
             "locale": locale,
+            "search_query": search_query,
             "tm_entries": page,
             "has_next": page.has_next(),
         },
