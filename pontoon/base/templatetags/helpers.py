@@ -312,3 +312,11 @@ def highlight_matches(text, search_query):
 
     # Mark as safe to include <mark> tags only
     return mark_safe(highlighted_text)
+
+
+@library.filter
+def default_if_empty(value, default=""):
+    """Return the original value if it's not empty or None, else use the default"""
+
+    # Mark as safe to include HTML tags
+    return value if value else mark_safe(default)

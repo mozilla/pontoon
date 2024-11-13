@@ -1,10 +1,10 @@
-{% macro linkify(anchor, entity_ids) %}
+{% macro linkify(text, entity_ids) %}
     {% if entity_ids %}
     <a href="{{ url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?list={{ entity_ids }}">
-        {{ anchor }}
+        {{ text | default_if_empty('<span class="empty">Empty string</span>') }}
     </a>
     {% else %}
-    {{ anchor }}
+    {{ text | default_if_empty('<span class="empty">Empty string</span>') }}
     {% endif %}
 {% endmacro %}
 

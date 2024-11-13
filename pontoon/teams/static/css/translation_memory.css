@@ -73,6 +73,18 @@
           font-style: inherit;
           border-radius: 3px;
         }
+
+        .empty {
+          background: var(--button-background-1);
+          border: 1px solid var(--main-border-1);
+          border-radius: 3px;
+          color: var(--light-grey-7);
+          padding: 0 4px;
+        }
+
+        a:hover .empty {
+          color: var(--status-translated);
+        }
       }
 
       .text {
