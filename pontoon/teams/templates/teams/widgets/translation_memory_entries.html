@@ -14,12 +14,17 @@
         {{ linkify(entry.source|highlight_matches(search_query), entry.entity_ids) }}
     </td>
     <td class="target text">
-        {{ linkify(entry.target|highlight_matches(search_query), entry.entity_ids) }}
+        <div class="content-wrapper">{{ linkify(entry.target|highlight_matches(search_query), entry.entity_ids) }}</div>
+        <textarea>{{ entry.target }}</textarea>
     </td>
     <td class="actions controls">
         <button class="edit button">
             <span class="fa fa-pencil-alt"></span>
             Edit
+        </button>
+        <button class="save button">
+            <span class="fa fa-check"></span>
+            Save
         </button>
         <button class="delete button">
             <span class="fa fa-trash"></span>

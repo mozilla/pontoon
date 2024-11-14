@@ -19,9 +19,11 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
@@ -308,6 +310,34 @@ def ajax_translation_memory(request, locale):
             "has_next": page.has_next(),
         },
     )
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_edit(request, locale):
+    """Edit Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+
+    try:
+        target = request.POST["target"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+    tm_entries.update(target=target)
+
+    log_action(
+        ActionLog.ActionType.TM_ENTRIES_EDITED,
+        request.user,
+        tm_entries=tm_entries,
+    )
+
+    return HttpResponse("ok")
 
 
 @require_AJAX

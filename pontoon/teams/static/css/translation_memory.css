@@ -8,7 +8,11 @@
   }
 
   table {
+    height: 100%;
+
     tr {
+      height: 100%;
+
       border-top: 1px solid var(--main-border-1);
 
       .text {
@@ -62,11 +66,6 @@
           font-size: 15px;
           line-height: 1.8em;
 
-          a {
-            color: var(--white-1);
-            display: inline-block;
-          }
-
           mark {
             background: var(--search-background);
             color: var(--search-color);
@@ -83,14 +82,29 @@
             padding: 0 4px;
           }
 
-          a:hover .empty {
+          a {
+            color: var(--white-1);
+            display: inline-block;
+          }
+
+          a:hover {
             color: var(--status-translated);
+
+            .empty {
+              color: var(--status-translated);
+            }
           }
         }
 
-        .text {
-          a:hover {
-            color: var(--status-translated);
+        .target {
+          textarea {
+            display: none;
+            box-sizing: border-box;
+            color: var(--white-1);
+            font-size: 15px;
+            font-weight: 100;
+            height: 100%;
+            width: 100%;
           }
         }
 
@@ -108,6 +122,14 @@
           }
 
           .button.edit:hover {
+            background: var(--status-translated);
+          }
+
+          .button.save {
+            display: none;
+          }
+
+          .button.save:hover {
             background: var(--status-translated);
           }
 
@@ -136,6 +158,30 @@
               color: var(--white-1);
             }
           }
+        }
+      }
+
+      tr.editing {
+        .target {
+          .content-wrapper {
+            display: none;
+          }
+
+          textarea {
+            display: block;
+          }
+        }
+
+        .button {
+          display: none;
+        }
+
+        .button.save {
+          display: inline-block;
+        }
+
+        .button.cancel {
+          display: inline-block;
         }
       }
 

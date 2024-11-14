@@ -65,7 +65,50 @@ $(function () {
   // Cancel action
   $('body').on('click', '.button.cancel', function () {
     const row = $(this).parents('tr');
-    row.removeClass('deleting');
+    row.removeClass('deleting editing');
+  });
+
+  // Edit TM entries
+  $('body').on('click', '.button.edit', function () {
+    const row = $(this).parents('tr');
+    row.addClass('editing');
+    row.find('.target textarea').focus();
+  });
+  $('body').on('click', '.button.save', function () {
+    const row = $(this).parents('tr');
+    const ids = row.data('ids');
+    const target = row.find('.target textarea').val();
+
+    $.ajax({
+      url: `/${locale}/ajax/translation-memory/edit/`,
+      method: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        ids: ids,
+        target: target,
+      },
+      success: function () {
+        Pontoon.endLoader('TM entries edited.');
+
+        let node = row.find('.target .content-wrapper');
+        if (node.find('a').length) {
+          node = node.find('a');
+        }
+
+        let new_target = target;
+        if (target === '') {
+          new_target = '<span class="empty">Empty string</span>';
+        }
+
+        node.html(new_target);
+      },
+      error: function () {
+        Pontoon.endLoader('Error editing TM entries.');
+      },
+      complete: function () {
+        row.removeClass('editing');
+      },
+    });
   });
 
   // Delete TM entries
