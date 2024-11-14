@@ -230,13 +230,13 @@ def get_recipients(form):
         or translation_minimum
         or translation_maximum is not None
     ):
-        submission_filters = list(submitted.values_list("user", flat=True).distinct())
+        submission_filters = submitted.values_list("user", flat=True).distinct()
         recipients = recipients.filter(pk__in=submission_filters)
 
     if review_from or review_to or review_minimum or review_maximum is not None:
-        review_filters = list(
-            approved.values_list("approved_user", flat=True).distinct()
-        ) + list(rejected.values_list("rejected_user", flat=True).distinct())
+        approved_filters = approved.values_list("approved_user", flat=True).distinct()
+        rejected_filters = rejected.values_list("rejected_user", flat=True).distinct()
+        review_filters = approved_filters.union(rejected_filters)
         recipients = recipients.filter(pk__in=review_filters)
 
     return recipients
