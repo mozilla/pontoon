@@ -9,7 +9,7 @@
 {% endmacro %}
 
 {% for entry in tm_entries %}
-<tr>
+<tr data-ids="{{ entry.ids }}">
     <td class="source text">
         {{ linkify(entry.source|highlight_matches(search_query), entry.entity_ids) }}
     </td>
@@ -24,6 +24,13 @@
         <button class="delete button">
             <span class="fa fa-trash"></span>
             Delete
+        </button>
+        <button class="are-you-sure button">
+            <span class="fa fa-trash"></span>
+            Delete {{ entry.ids|length }} TM entr{{ entry.ids|length|pluralize("y, ies") }}?
+        </button>
+        <button class="cancel button">
+            <span class="fa fa-times"></span>
         </button>
     </td>
 </tr>

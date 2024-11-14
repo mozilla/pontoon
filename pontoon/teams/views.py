@@ -6,7 +6,7 @@ from guardian.decorators import permission_required_or_403
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
@@ -25,6 +25,8 @@ from django.template.loader import get_template
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
+from pontoon.actionlog.models import ActionLog
+from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
 from pontoon.base.models import Locale, Project, TranslationMemoryEntry, User
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
@@ -277,6 +279,7 @@ def ajax_translation_memory(request, locale):
         # Group by "source" and "target"
         tm_entries.values("source", "target").annotate(
             count=Count("id"),
+            ids=ArrayAgg("id"),
             # Concatenate entity IDs
             entity_ids=StringAgg(
                 Cast("entity_id", output_field=TextField()), delimiter=","
@@ -305,6 +308,29 @@ def ajax_translation_memory(request, locale):
             "has_next": page.has_next(),
         },
     )
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_delete(request, locale):
+    """Delete Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+
+    for tm_entry in tm_entries:
+        if tm_entry.entity and tm_entry.locale:
+            log_action(
+                ActionLog.ActionType.TM_ENTRY_DELETED,
+                request.user,
+                entity=tm_entry.entity,
+                locale=tm_entry.locale,
+            )
+
+    tm_entries.delete()
+
+    return HttpResponse("ok")
 
 
 @login_required(redirect_field_name="", login_url="/403")

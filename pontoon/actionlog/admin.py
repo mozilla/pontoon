@@ -20,6 +20,7 @@ class ActionLogAdmin(admin.ModelAdmin):
         "performed_by",
         "entity",
         "translation",
+        "tm_entries",
     )
     readonly_fields = ("created_at",)
 

@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 
 from pontoon.actionlog import utils
 from pontoon.actionlog.models import ActionLog
+from pontoon.test.factories import TranslationMemoryFactory
 
 
 @pytest.mark.django_db
@@ -88,3 +89,44 @@ def test_log_action_valid_with_entity_locale(user_a, entity_a, locale_a):
     )
     assert len(log) == 1
     assert log[0].action_type == ActionLog.ActionType.TRANSLATION_DELETED
+
+
+@pytest.mark.django_db
+def test_log_action_valid_with_tm_entry_deleted(user_a, entity_a, locale_a):
+    utils.log_action(
+        ActionLog.ActionType.TM_ENTRY_DELETED,
+        user_a,
+        entity=entity_a,
+        locale=locale_a,
+    )
+
+    log = ActionLog.objects.filter(
+        performed_by=user_a,
+        entity=entity_a,
+        locale=locale_a,
+    )
+    assert len(log) == 1
+    assert log[0].action_type == ActionLog.ActionType.TM_ENTRY_DELETED
+
+
+@pytest.mark.django_db
+def test_log_action_valid_with_tm_entries_edited(user_a, entity_a, locale_a):
+    tm_entry = TranslationMemoryFactory.create(
+        entity=entity_a,
+        source=entity_a.string,
+        target="tm_translation",
+        locale=locale_a,
+    )
+
+    utils.log_action(
+        ActionLog.ActionType.TM_ENTRIES_EDITED,
+        user_a,
+        tm_entries=[tm_entry],
+    )
+
+    log = ActionLog.objects.filter(
+        performed_by=user_a,
+        tm_entries=tm_entry.pk,
+    )
+    assert len(log) == 1
+    assert log[0].action_type == ActionLog.ActionType.TM_ENTRIES_EDITED

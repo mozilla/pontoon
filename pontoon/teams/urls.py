@@ -109,6 +109,12 @@ urlpatterns = [
                                 views.ajax_translation_memory,
                                 name="pontoon.teams.ajax.translation-memory",
                             ),
+                            # Delete translation memory entries
+                            path(
+                                "translation-memory/delete/",
+                                views.ajax_translation_memory_delete,
+                                name="pontoon.teams.ajax.translation-memory.delete",
+                            ),
                         ]
                     ),
                 ),

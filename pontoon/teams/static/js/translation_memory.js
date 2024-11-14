@@ -61,4 +61,42 @@ $(function () {
       loadMoreEntries();
     }
   });
+
+  // Cancel action
+  $('body').on('click', '.button.cancel', function () {
+    const row = $(this).parents('tr');
+    row.removeClass('deleting');
+  });
+
+  // Delete TM entries
+  $('body').on('click', '.button.delete', function () {
+    const row = $(this).parents('tr');
+    row.addClass('deleting');
+  });
+  $('body').on('click', '.button.are-you-sure', function () {
+    const row = $(this).parents('tr');
+    const ids = row.data('ids');
+
+    $.ajax({
+      url: `/${locale}/ajax/translation-memory/delete/`,
+      method: 'POST',
+      data: {
+        csrfmiddlewaretoken: $('body').data('csrf'),
+        ids: ids,
+      },
+      success: function () {
+        row.addClass('fade-out');
+        setTimeout(function () {
+          row.remove();
+          Pontoon.endLoader('TM entries deleted.');
+        }, 500);
+      },
+      error: function () {
+        Pontoon.endLoader('Error deleting TM entries.');
+      },
+      complete: function () {
+        row.removeClass('deleting');
+      },
+    });
+  });
 });
