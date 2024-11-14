@@ -292,7 +292,6 @@ def send_message(request):
 
     if is_notification:
         identifier = uuid.uuid4().hex
-        notification_recipients_count = 0
 
         for recipient in recipients:
             notify.send(
@@ -303,9 +302,8 @@ def send_message(request):
                 description=f"{subject}<br/><br/>{body}",
                 identifier=identifier,
             )
-            notification_recipients_count += 1
 
-        log.info(f"Notifications sent to {notification_recipients_count} users.")
+        log.info(f"Notifications sent to {len(recipients)} users.")
 
     if is_email:
         footer = (
@@ -317,7 +315,6 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
         )
         html_template = body + footer
         text_template = utils.html_to_plain_text_with_links(html_template)
-        email_recipients_count = 0
 
         for recipient in recipients:
             if not recipient.profile.email_communications_enabled:
@@ -335,9 +332,8 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             )
             msg.attach_alternative(html, "text/html")
             msg.send()
-            email_recipients_count += 1
 
-        log.info(f"Emails sent to {email_recipients_count} users.")
+        log.info(f"Emails sent to {len(recipients)} users.")
 
     if not send_to_myself:
         message = form.save(commit=False)
