@@ -180,3 +180,35 @@ export const COMMENT_ADDED: NotificationMessage = {
   ),
   type: 'info',
 };
+
+export const TRANSLATION_CHAMPION_BADGE = (
+  badgeLevel: number,
+): NotificationMessage => {
+  return {
+    content: (
+      <Localized
+        id='notification--translation-champion-badge'
+        vars={{ badgeLevel: badgeLevel }}
+      >
+        {'Translation Champion Badge level gained: Level {badgeLevel}'}
+      </Localized>
+    ),
+    type: 'badge',
+  };
+};
+
+export const REVIEW_MASTER_BADGE = (
+  badgeLevel: number,
+): NotificationMessage => {
+  return {
+    content: (
+      <Localized
+        id='notification--review-master-badge'
+        vars={{ badgeLevel: badgeLevel }}
+      >
+        {'Review Master Badge level gained: Level {badgeLevel}'}
+      </Localized>
+    ),
+    type: 'badge',
+  };
+};

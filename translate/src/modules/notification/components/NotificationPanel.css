@@ -16,7 +16,8 @@
 }
 
 .notification-panel .info,
-.notification-panel .success {
+.notification-panel .success,
+.notification-panel .badge {
   color: var(--status-translated);
 }
 

@@ -18,6 +18,7 @@ import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
   SAME_TRANSLATION,
   TRANSLATION_SAVED,
+  TRANSLATION_CHAMPION_BADGE,
 } from '~/modules/notification/messages';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
@@ -83,6 +84,11 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, content.translation),
       );
+
+      const badgeLevel = content.badge_update?.level;
+      if (badgeLevel) {
+        showNotification(TRANSLATION_CHAMPION_BADGE(badgeLevel));
+      }
 
       // Update stats in the filter panel and resource menu if possible.
       if (content.stats) {

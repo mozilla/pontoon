@@ -170,18 +170,43 @@ def create_translation(request):
                 description=desc,
             )
 
-    # Award Translation Champion Badge stats
-    if user.badges_translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    # Send Translation Champion Badge notification information
+    response_data = {
+        "status": True,
+        "translation": translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "status": True,
-            "translation": translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+    translation_count = user.badges_translation_count
+    if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        response_data["badge_update"] = {
+            "name": "Translation Champion Badge",
+            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count)
+            + 1,
         }
-    )
+        desc = """
+        You have gained a new badge level!
+        <br>
+        Translation Champion Badge: Level {level}
+        <br>
+        You can view this badge on your <a href={profile_href}> profile page </a>.
+        """.format(
+            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1,
+            profile_href=reverse(
+                "pontoon.contributors.contributor.username",
+                kwargs={
+                    "username": user.username,
+                },
+            ),
+        )
+        notify.send(
+            sender=user,
+            recipient=user,
+            verb="",  # Triggers render of description only
+            description=desc,
+        )
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
@@ -315,17 +340,41 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Reward Review Master Badge stats
-    if user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    # Send Review Master Badge notification information
+    response_data = {
+        "translation": active_translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+    review_count = user.badges_review_count
+    if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        response_data["badge_update"] = {
+            "name": "Review Master Badge",
+            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         }
-    )
+        desc = """
+        You have gained a new badge level!
+        <br>
+        Review Master Badge: Level {level}
+        <br>
+        You can view this badge on your <a href={profile_href}> profile page </a>.
+        """.format(
+            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
+            profile_href=reverse(
+                "pontoon.contributors.contributor.username",
+                kwargs={
+                    "username": user.username,
+                },
+            ),
+        )
+        notify.send(
+            sender=user,
+            recipient=user,
+            verb="",  # Triggers render of description only
+            description=desc,
+        )
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
@@ -450,17 +499,41 @@ def reject_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Reward Review Master Badge stats
-    if request.user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    # Send Review Master Badge notification information
+    response_data = {
+        "translation": active_translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+    review_count = request.user.badges_review_count
+    if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        response_data["badge_update"] = {
+            "name": "Review Master Badge",
+            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         }
-    )
+        desc = """
+        You have gained a new badge level!
+        <br>
+        Review Master Badge: Level {level}
+        <br>
+        You can view this badge on your <a href={profile_href}> profile page </a>.
+        """.format(
+            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
+            profile_href=reverse(
+                "pontoon.contributors.contributor.username",
+                kwargs={
+                    "username": request.user.username,
+                },
+            ),
+        )
+        notify.send(
+            sender=request.user,
+            recipient=request.user,
+            verb="",  # Triggers render of description only
+            description=desc,
+        )
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX

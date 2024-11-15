@@ -3,6 +3,10 @@
 <form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
+    {% if community_builder_badge %}
+        <input type="hidden" id="community-builder-level" value="{{ community_builder_badge }}">
+    {% endif %}
+
     <div class="permissions-groups general clearfix">
         <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
         <div class="selector-wrapper double-list-selector clearfix">

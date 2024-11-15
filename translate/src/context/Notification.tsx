@@ -1,6 +1,12 @@
 import { createContext, useEffect, useState } from 'react';
 
-type NotificationType = 'debug' | 'error' | 'info' | 'success' | 'warning';
+type NotificationType =
+  | 'debug'
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'badge';
 
 export type NotificationMessage = Readonly<{
   type: NotificationType;

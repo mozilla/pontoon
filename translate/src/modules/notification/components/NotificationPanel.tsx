@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 
 import { NotificationMessage, ShowNotification } from '~/context/Notification';
 
@@ -32,8 +33,13 @@ export function NotificationPanel(): React.ReactElement<'div'> {
   const className = classNames('notification-panel', message && 'showing');
 
   return (
-    <div className={className} onClick={hide}>
-      <span className={message?.type}>{message?.content}</span>
-    </div>
+    <>
+      <div className={className} onClick={hide}>
+        <span className={message?.type}>{message?.content}</span>
+      </div>
+      {message?.type == 'badge' && (
+        <Fireworks autorun={{ speed: 1, duration: 2000 }} />
+      )}
+    </>
   );
 }

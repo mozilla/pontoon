@@ -2,8 +2,11 @@ from pathlib import Path
 
 import bleach
 
+from notifications.signals import notify
+
 from django import forms
 from django.conf import settings
+from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.base import utils
@@ -88,6 +91,8 @@ class UserPermissionLogFormMixin:
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
+        # Track if user reached new level for Community Builder Badge
+        self.community_builder_level = 0
 
     def assign_users_to_groups(self, group_name, users):
         """
@@ -132,8 +137,30 @@ class UserPermissionLogFormMixin:
             after_count > before_count
             and after_count in settings.BADGES_PROMOTION_THRESHOLDS
         ):
-            # TODO: Send a notification to the user
-            pass
+            self.community_builder_level = (
+                settings.BADGES_PROMOTION_THRESHOLDS.index(after_count) + 1
+            )
+            desc = """
+            You have gained a new badge level!
+            <br>
+            Community Builder Badge: Level {level}
+            <br>
+            You can view this badge on your <a href={profile_href}> profile page </a>.
+            """.format(
+                level=self.community_builder_level,
+                profile_href=reverse(
+                    "pontoon.contributors.contributor.username",
+                    kwargs={
+                        "username": self.user.username,
+                    },
+                ),
+            )
+            notify.send(
+                sender=self.user,
+                recipient=self.user,
+                verb="",  # Triggers render of description only
+                description=desc,
+            )
 
 
 class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
@@ -157,6 +184,8 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
 
         self.assign_users_to_groups("translators", translators)
         self.assign_users_to_groups("managers", managers)
+
+        return self.community_builder_level
 
 
 class ProjectLocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):

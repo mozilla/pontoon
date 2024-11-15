@@ -655,6 +655,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/lib/confetti.browser.min.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -936,7 +937,7 @@ CSP_STYLE_SRC = (
 # Needed if site not hosted on HTTPS domains (like local setup)
 if not (HEROKU_DEMO or SITE_URL.startswith("https")):
     CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
-    CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
+    CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",) + ("blob:",)
 
 # For absolute urls
 try:

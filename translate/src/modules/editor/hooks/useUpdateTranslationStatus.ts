@@ -19,6 +19,7 @@ import {
   UNABLE_TO_REJECT_TRANSLATION,
   UNABLE_TO_UNAPPROVE_TRANSLATION,
   UNABLE_TO_UNREJECT_TRANSLATION,
+  REVIEW_MASTER_BADGE,
 } from '~/modules/notification/messages';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
@@ -88,6 +89,12 @@ export function useUpdateTranslationStatus(
       if (results.stats) {
         // Update stats in the progress chart and the filter panel.
         dispatch(updateStats(results.stats));
+
+        // Check for update in badge level
+        const badgeLevel = results.badge_update?.level;
+        if (badgeLevel) {
+          showNotification(REVIEW_MASTER_BADGE(badgeLevel));
+        }
 
         // Update stats in the resource menu.
         dispatch(

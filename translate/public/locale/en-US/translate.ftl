@@ -577,6 +577,8 @@ notification--ftl-not-supported-rich-editor = Translation not supported in rich 
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
+notification--translation-champion-badge = Translation Champion Badge level gained: Level { $badgeLevel }
+notification--review-master-badge = Review Master Badge level gained: Level { $badgeLevel }
 
 
 ## OtherLocales Translation
