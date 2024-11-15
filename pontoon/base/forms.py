@@ -8,8 +8,8 @@ from notifications.signals import notify
 
 from django import forms
 from django.conf import settings
-from django.urls import reverse
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 from django.utils import timezone
 
 from pontoon.base import utils
