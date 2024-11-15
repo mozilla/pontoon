@@ -955,6 +955,16 @@ class Entity(DirtyFieldsMixin, models.Model):
         for entity in entities:
             translation_array = []
 
+            try:
+                readonly = entity.resource.project.projectlocale[0].readonly
+            except IndexError:
+                # Entities explicitly requested using `string` or `list` URL parameters
+                # might not be enabled for localization for the given locale. If the
+                # project is given in the URL, the 404 page shows up, but if the All
+                # Projects view is used, we hit the IndexError here, because the
+                # `projectlocale` list is empty. In this case, we skip the entity.
+                continue
+
             original = entity.string
             original_plural = entity.string_plural
 
@@ -989,7 +999,7 @@ class Entity(DirtyFieldsMixin, models.Model):
                     "source": entity.source,
                     "obsolete": entity.obsolete,
                     "translation": translation_array,
-                    "readonly": entity.resource.project.projectlocale[0].readonly,
+                    "readonly": readonly,
                     "is_sibling": is_sibling,
                     "date_created": entity.date_created,
                 }
