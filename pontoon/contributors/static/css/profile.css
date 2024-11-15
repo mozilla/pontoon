@@ -153,11 +153,11 @@ h4 {
 }
 
 h4.superuser {
-  border: 1px solid var(--status-error);
+  border: 1px solid var(--user-admin);
   border-radius: 16px;
   line-height: 30px;
   text-align: center;
-  color: var(--status-error);
+  color: var(--user-admin);
 }
 
 /* Approval Ratio */

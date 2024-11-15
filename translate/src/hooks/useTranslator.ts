@@ -14,8 +14,8 @@ export function useTranslator(): boolean {
   const { slug } = useProject();
   const {
     isAuthenticated,
-    managerForLocales,
-    translatorForLocales,
+    canManageLocales,
+    canTranslateLocales,
     translatorForProjects,
   } = useAppSelector((state) => state[USER]);
 
@@ -23,7 +23,7 @@ export function useTranslator(): boolean {
     return false;
   }
 
-  if (managerForLocales.includes(code)) {
+  if (canManageLocales.includes(code)) {
     return true;
   }
 
@@ -32,5 +32,5 @@ export function useTranslator(): boolean {
     return translatorForProjects[localeProject];
   }
 
-  return translatorForLocales.includes(code);
+  return canTranslateLocales.includes(code);
 }
