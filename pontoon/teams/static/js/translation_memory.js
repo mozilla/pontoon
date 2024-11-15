@@ -1,7 +1,22 @@
 $(function () {
   let currentPage = 1; // First page is loaded on page load
-  let search = '';
   const locale = $('#server').data('locale');
+
+  // Update state from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  let search = urlParams.get('search') || '';
+
+  function updateURL() {
+    const url = new URL(window.location);
+
+    if (search) {
+      url.searchParams.set('search', search);
+    } else {
+      url.searchParams.delete('search');
+    }
+
+    history.replaceState(null, '', url);
+  }
 
   function loadMoreEntries() {
     const tmList = $('#main .translation-memory-list');
@@ -25,11 +40,12 @@ $(function () {
         });
         const tbody = tmList.find('tbody');
         if (currentPage === 0) {
-          // Clear the table if it's a new search
+          // Clear the table for a new search
           tbody.empty();
         }
         tbody.append(data);
         currentPage += 1;
+        updateURL(); // Update the URL with the search query
       },
       error: function () {
         Pontoon.endLoader('Error loading more TM entries.');
