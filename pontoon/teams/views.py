@@ -6,24 +6,31 @@ from guardian.decorators import permission_required_or_403
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Prefetch, Q, TextField
+from django.db.models.functions import Cast
 from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
+from pontoon.actionlog.models import ActionLog
+from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project, User
+from pontoon.base.models import Locale, Project, TranslationMemoryEntry, User
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
@@ -251,6 +258,109 @@ def ajax_permissions(request, locale):
             "hide_project_selector": hide_project_selector,
         },
     )
+
+
+@require_AJAX
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory(request, locale):
+    """Translation Memory tab."""
+    locale = get_object_or_404(Locale, code=locale)
+    search_query = request.GET.get("search", "").strip()
+    page_number = request.GET.get("page", 1)
+
+    tm_entries = TranslationMemoryEntry.objects.filter(locale=locale)
+
+    # Apply search filter if a search query is provided
+    if search_query:
+        tm_entries = tm_entries.filter(
+            Q(source__icontains=search_query) | Q(target__icontains=search_query)
+        )
+
+    tm_entries = (
+        # Group by "source" and "target"
+        tm_entries.values("source", "target").annotate(
+            count=Count("id"),
+            ids=ArrayAgg("id"),
+            # Concatenate entity IDs
+            entity_ids=StringAgg(
+                Cast("entity_id", output_field=TextField()), delimiter=","
+            ),
+        )
+    )
+
+    per_page = 100  # Number of entries per page
+    paginator = Paginator(tm_entries, per_page)
+    page = paginator.get_page(page_number)
+
+    # If the subsequent page is requested, return only the entries
+    template = (
+        "teams/widgets/translation_memory_entries.html"
+        if page_number != 1
+        else "teams/includes/translation_memory.html"
+    )
+
+    return render(
+        request,
+        template,
+        {
+            "locale": locale,
+            "search_query": search_query,
+            "tm_entries": page,
+            "has_next": page.has_next(),
+        },
+    )
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_edit(request, locale):
+    """Edit Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+
+    try:
+        target = request.POST["target"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+    tm_entries.update(target=target)
+
+    log_action(
+        ActionLog.ActionType.TM_ENTRIES_EDITED,
+        request.user,
+        tm_entries=tm_entries,
+    )
+
+    return HttpResponse("ok")
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_delete(request, locale):
+    """Delete Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+
+    for tm_entry in tm_entries:
+        if tm_entry.entity and tm_entry.locale:
+            log_action(
+                ActionLog.ActionType.TM_ENTRY_DELETED,
+                request.user,
+                entity=tm_entry.entity,
+                locale=tm_entry.locale,
+            )
+
+    tm_entries.delete()
+
+    return HttpResponse("ok")
 
 
 @login_required(redirect_field_name="", login_url="/403")

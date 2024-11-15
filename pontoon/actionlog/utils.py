@@ -7,6 +7,7 @@ def log_action(
     translation=None,
     entity=None,
     locale=None,
+    tm_entries=None,
 ):
     """Save a new action in the database.
 
@@ -17,10 +18,11 @@ def log_action(
     :arg Translation translation: The Translation the action was performed on.
     :arg Entity entity:
         The Entity the action was performed on.
-        Only used for the "translation:deleted" action.
+        Only used for the "translation:deleted", "tm_entries:deleted" and "comment:added" actions.
     :arg Locale locale:
         The Locale the action was performed on.
-        Only used for the "translation:deleted" action.
+        Only used for the "translation:deleted", "tm_entries:deleted" and "comment:added" actions.
+    :arg list tm_entries: A list of TranslationMemoryEntries the action was performed on.
 
     :returns: None
     """
@@ -32,3 +34,6 @@ def log_action(
         locale=locale,
     )
     action.save()
+
+    if tm_entries:
+        action.tm_entries.set(tm_entries)
