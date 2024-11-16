@@ -23,10 +23,43 @@
       .fa-chevron-right {
         margin-left: 5px;
       }
+      .fa-spin {
+        font-size: 16px;
+      }
     }
 
     .button:hover {
       color: inherit;
+    }
+
+    .button.fetching {
+      pointer-events: none;
+    }
+
+    .button.fetch-again {
+      display: none;
+      background-color: var(--status-error);
+      color: var(--translation-main-button-color);
+    }
+
+    .button.active {
+      display: none;
+      width: auto;
+
+      .fa-spin {
+        display: none;
+      }
+    }
+
+    .button.disabled {
+      pointer-events: none;
+    }
+
+    .button.active.sending {
+      pointer-events: none;
+      .fa-spin {
+        display: inline;
+      }
     }
 
     .right {
@@ -126,6 +159,7 @@
     }
 
     input#id_send_to_myself,
+    textarea#id_recipient_ids,
     textarea#id_body {
       display: none;
     }
@@ -181,8 +215,8 @@
     }
 
     .recipients {
-      > div:not(:last-child) {
-        margin-bottom: 20px;
+      > div {
+        margin-top: 20px;
       }
 
       h5 {
@@ -210,14 +244,14 @@
       text-align: center;
 
       .icon {
-        color: var(--light-grey-1);
+        color: var(--background-hover-2);
         font-size: 100px;
       }
 
       .title {
-        color: var(--light-grey-6);
-        font-size: 20px;
-        font-weight: 100;
+        color: var(--light-grey-7);
+        font-size: 18px;
+        font-weight: bold;
       }
     }
 

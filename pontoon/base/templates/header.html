@@ -19,6 +19,9 @@
         <li><a href="{{ url('pontoon.teams') }}">Teams</a></li>
         <li><a href="{{ url('pontoon.projects') }}">Projects</a></li>
         <li><a href="{{ url('pontoon.contributors') }}">Contributors</a></li>
+        {% if user.is_authenticated and user.is_superuser %}
+        <li><a href="{{ url('pontoon.messaging.compose') }}">Messaging</a></li>
+        {% endif %}
         <li><a href="{{ url('pontoon.machinery') }}">Machinery</a></li>
       </ul>
 
