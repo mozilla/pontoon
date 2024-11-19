@@ -1,13 +1,19 @@
 $(function () {
-  let currentPage = 1; // First page is loaded on page load
   const locale = $('#server').data('locale');
 
   // Update state from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
+  let currentPage = parseInt(urlParams.get('pages')) || 1;
   let search = urlParams.get('search') || '';
 
   function updateURL() {
     const url = new URL(window.location);
+
+    if (currentPage > 1) {
+      url.searchParams.set('pages', currentPage);
+    } else {
+      url.searchParams.delete('pages');
+    }
 
     if (search) {
       url.searchParams.set('search', search);
@@ -45,7 +51,7 @@ $(function () {
         }
         tbody.append(data);
         currentPage += 1;
-        updateURL(); // Update the URL with the search query
+        updateURL(); // Update the URL with the new pages count and search query
       },
       error: function () {
         Pontoon.endLoader('Error loading more TM entries.');
