@@ -261,7 +261,7 @@ def ajax_permissions(request, locale):
 
 
 @require_AJAX
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory(request, locale):
     """Translation Memory tab."""
@@ -314,7 +314,7 @@ def ajax_translation_memory(request, locale):
 
 @require_AJAX
 @require_POST
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory_edit(request, locale):
     """Edit Translation Memory entries."""
@@ -342,7 +342,7 @@ def ajax_translation_memory_edit(request, locale):
 
 @require_AJAX
 @require_POST
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory_delete(request, locale):
     """Delete Translation Memory entries."""

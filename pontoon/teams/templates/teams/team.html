@@ -128,7 +128,7 @@
           )
         }}
       {% endif %}
-      {% if request.user.has_perm('base.can_manage_locale', locale) %}
+      {% if request.user.has_perm('base.can_translate_locale', locale) %}
         {{ Menu.item(
             'TM',
             url('pontoon.teams.translation-memory', locale.code),
