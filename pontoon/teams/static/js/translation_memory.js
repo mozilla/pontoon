@@ -1,10 +1,31 @@
 $(function () {
-  let currentPage = 1; // First page is loaded on page load
-  let search = '';
   const locale = $('#server').data('locale');
 
+  // Update state from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  let currentPage = parseInt(urlParams.get('pages')) || 1;
+  let search = urlParams.get('search') || '';
+
+  function updateURL() {
+    const url = new URL(window.location);
+
+    if (currentPage > 1) {
+      url.searchParams.set('pages', currentPage);
+    } else {
+      url.searchParams.delete('pages');
+    }
+
+    if (search) {
+      url.searchParams.set('search', search);
+    } else {
+      url.searchParams.delete('search');
+    }
+
+    history.replaceState(null, '', url);
+  }
+
   function loadMoreEntries() {
-    const tmList = $('#main .container .translation-memory-list');
+    const tmList = $('#main .translation-memory-list');
     const loader = tmList.find('.skeleton-loader');
 
     // If the loader is already loading, don't load more entries
@@ -25,11 +46,12 @@ $(function () {
         });
         const tbody = tmList.find('tbody');
         if (currentPage === 0) {
-          // Clear the table if it's a new search
+          // Clear the table for a new search
           tbody.empty();
         }
         tbody.append(data);
         currentPage += 1;
+        updateURL(); // Update the URL with the new pages count and search query
       },
       error: function () {
         Pontoon.endLoader('Error loading more TM entries.');
@@ -54,7 +76,7 @@ $(function () {
   });
 
   // Listen for search on Enter key press
-  $('body').on('keypress', '.table-filter', function (e) {
+  $('body').on('keypress', '.translation-memory .table-filter', function (e) {
     if (e.key === 'Enter') {
       currentPage = 0; // Reset page count for a new search
       search = $(this).val();
@@ -63,18 +85,18 @@ $(function () {
   });
 
   // Cancel action
-  $('body').on('click', '.button.cancel', function () {
+  $('body').on('click', '.translation-memory .button.cancel', function () {
     const row = $(this).parents('tr');
     row.removeClass('deleting editing');
   });
 
   // Edit TM entries
-  $('body').on('click', '.button.edit', function () {
+  $('body').on('click', '.translation-memory .button.edit', function () {
     const row = $(this).parents('tr');
     row.addClass('editing');
     row.find('.target textarea').focus();
   });
-  $('body').on('click', '.button.save', function () {
+  $('body').on('click', '.translation-memory .button.save', function () {
     const row = $(this).parents('tr');
     const ids = row.data('ids');
     const target = row.find('.target textarea').val();
@@ -112,34 +134,38 @@ $(function () {
   });
 
   // Delete TM entries
-  $('body').on('click', '.button.delete', function () {
+  $('body').on('click', '.translation-memory .button.delete', function () {
     const row = $(this).parents('tr');
     row.addClass('deleting');
   });
-  $('body').on('click', '.button.are-you-sure', function () {
-    const row = $(this).parents('tr');
-    const ids = row.data('ids');
+  $('body').on(
+    'click',
+    '.translation-memory .button.are-you-sure',
+    function () {
+      const row = $(this).parents('tr');
+      const ids = row.data('ids');
 
-    $.ajax({
-      url: `/${locale}/ajax/translation-memory/delete/`,
-      method: 'POST',
-      data: {
-        csrfmiddlewaretoken: $('body').data('csrf'),
-        ids: ids,
-      },
-      success: function () {
-        row.addClass('fade-out');
-        setTimeout(function () {
-          row.remove();
-          Pontoon.endLoader('TM entries deleted.');
-        }, 500);
-      },
-      error: function () {
-        Pontoon.endLoader('Error deleting TM entries.');
-      },
-      complete: function () {
-        row.removeClass('deleting');
-      },
-    });
-  });
+      $.ajax({
+        url: `/${locale}/ajax/translation-memory/delete/`,
+        method: 'POST',
+        data: {
+          csrfmiddlewaretoken: $('body').data('csrf'),
+          ids: ids,
+        },
+        success: function () {
+          row.addClass('fade-out');
+          setTimeout(function () {
+            row.remove();
+            Pontoon.endLoader('TM entries deleted.');
+          }, 500);
+        },
+        error: function () {
+          Pontoon.endLoader('Error deleting TM entries.');
+        },
+        complete: function () {
+          row.removeClass('deleting');
+        },
+      });
+    },
+  );
 });

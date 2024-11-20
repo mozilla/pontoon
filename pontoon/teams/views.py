@@ -261,13 +261,21 @@ def ajax_permissions(request, locale):
 
 
 @require_AJAX
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory(request, locale):
     """Translation Memory tab."""
     locale = get_object_or_404(Locale, code=locale)
     search_query = request.GET.get("search", "").strip()
-    page_number = request.GET.get("page", 1)
+
+    try:
+        first_page_number = int(request.GET.get("page", 1))
+        page_count = int(request.GET.get("pages", 1))
+    except ValueError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
 
     tm_entries = TranslationMemoryEntry.objects.filter(locale=locale)
 
@@ -289,14 +297,22 @@ def ajax_translation_memory(request, locale):
         )
     )
 
-    per_page = 100  # Number of entries per page
-    paginator = Paginator(tm_entries, per_page)
-    page = paginator.get_page(page_number)
+    entries_per_page = 100
+    paginator = Paginator(tm_entries, entries_per_page)
 
-    # If the subsequent page is requested, return only the entries
+    combined_entries = []
+
+    for page_number in range(first_page_number, first_page_number + page_count):
+        if page_number > paginator.num_pages:
+            break
+        page = paginator.get_page(page_number)
+        combined_entries.extend(page.object_list)
+
+    # For the inital load, render the entire tab. For subsequent requests
+    # (determined by the "page" attribute), only render the entries.
     template = (
         "teams/widgets/translation_memory_entries.html"
-        if page_number != 1
+        if "page" in request.GET
         else "teams/includes/translation_memory.html"
     )
 
@@ -306,15 +322,15 @@ def ajax_translation_memory(request, locale):
         {
             "locale": locale,
             "search_query": search_query,
-            "tm_entries": page,
-            "has_next": page.has_next(),
+            "tm_entries": combined_entries,
+            "has_next": paginator.num_pages > page_number,
         },
     )
 
 
 @require_AJAX
 @require_POST
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory_edit(request, locale):
     """Edit Translation Memory entries."""
@@ -342,7 +358,7 @@ def ajax_translation_memory_edit(request, locale):
 
 @require_AJAX
 @require_POST
-@permission_required_or_403("base.can_manage_locale", (Locale, "code", "locale"))
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
 @transaction.atomic
 def ajax_translation_memory_delete(request, locale):
     """Delete Translation Memory entries."""
