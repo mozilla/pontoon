@@ -322,7 +322,7 @@ def ajax_translation_memory(request, locale):
         {
             "locale": locale,
             "search_query": search_query,
-            "tm_entries": list(combined_entries),
+            "tm_entries": combined_entries,
             "has_next": paginator.num_pages > page_number,
         },
     )
