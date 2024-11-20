@@ -55,6 +55,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
         if project.slug == "all-projects":
             translated_resources = translated_resources.filter(
                 resource__project__system_project=False,
+                resource__project__visibility=Project.Visibility.PUBLIC,
             )
         else:
             translated_resources = translated_resources.filter(
