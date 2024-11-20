@@ -1,4 +1,6 @@
 import json
+import logging
+import xml.etree.ElementTree as ET
 
 import bleach
 
@@ -35,6 +37,9 @@ from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
+
+
+log = logging.getLogger(__name__)
 
 
 def teams(request):
@@ -377,6 +382,90 @@ def ajax_translation_memory_delete(request, locale):
     tm_entries.delete()
 
     return HttpResponse("ok")
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_upload(request, locale):
+    """Upload Translation Memory entries from a .TMX file."""
+    try:
+        file = request.FILES["tmx_file"]
+    except MultiValueDictKeyError:
+        return JsonResponse(
+            {"status": False, "message": "No file uploaded."},
+            status=400,
+        )
+
+    if not file.name.endswith(".tmx"):
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Invalid file format. Only .TMX files are supported.",
+            },
+            status=400,
+        )
+
+    locale = get_object_or_404(Locale, code=locale)
+    code = locale.code
+
+    # Parse the TMX file
+    try:
+        tree = ET.parse(file)
+        root = tree.getroot()
+    except ET.ParseError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Invalid XML file: {e}"}, status=400
+        )
+
+    # Extract TM entries
+    file_entries = []
+    ns = {"xml": "http://www.w3.org/XML/1998/namespace"}
+    for tu in root.findall(".//tu"):
+        try:
+            source = tu.find("./tuv[@xml:lang='en-US']/seg", namespaces=ns).text.strip()
+            target = tu.find(
+                f"./tuv[@xml:lang='{code}']/seg", namespaces=ns
+            ).text.strip()
+
+            if source and target:
+                file_entries.append({"source": source, "target": target})
+        except Exception as e:
+            log.info(f"Error processing <tu>: {e}")
+
+    if not file_entries:
+        return JsonResponse(
+            {"status": False, "message": "No valid translation entries found."},
+            status=400,
+        )
+
+    # Create TranslationMemoryEntry objects
+    tm_entries = [
+        TranslationMemoryEntry(
+            source=entry["source"],
+            target=entry["target"],
+            locale=locale,
+        )
+        for entry in file_entries
+    ]
+
+    created_entries = TranslationMemoryEntry.objects.bulk_create(
+        tm_entries, batch_size=1000
+    )
+
+    log_action(
+        ActionLog.ActionType.TM_ENTRIES_UPLOADED,
+        request.user,
+        tm_entries=created_entries,
+    )
+
+    return JsonResponse(
+        {
+            "status": True,
+            "message": f"Successfully uploaded {len(created_entries)} TM entries.",
+        }
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

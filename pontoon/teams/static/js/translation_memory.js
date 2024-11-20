@@ -168,4 +168,40 @@ $(function () {
       });
     },
   );
+
+  // Upload TM entries
+  $('body').on('click', '.translation-memory .upload-button', function () {
+    const fileInput = $('<input type="file" accept=".tmx">');
+    fileInput.on('change', function () {
+      const file = this.files[0];
+      if (!file) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('tmx_file', file);
+      formData.append('csrfmiddlewaretoken', $('body').data('csrf'));
+
+      $.ajax({
+        url: `/${locale}/ajax/translation-memory/upload/`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          Pontoon.endLoader(response.message);
+        },
+        error: function (xhr) {
+          Pontoon.endLoader(
+            xhr.responseJSON
+              ? xhr.responseJSON.message
+              : 'Error uploading TMX file.',
+            'error',
+          );
+        },
+      });
+    });
+
+    fileInput.click();
+  });
 });
