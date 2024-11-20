@@ -54,7 +54,7 @@ $(function () {
         updateURL(); // Update the URL with the new pages count and search query
       },
       error: function () {
-        Pontoon.endLoader('Error loading more TM entries.');
+        Pontoon.endLoader('Error loading more TM entries.', 'error');
         loader.each(function () {
           $(this).removeClass('loading');
         });
@@ -125,7 +125,7 @@ $(function () {
         node.html(new_target);
       },
       error: function () {
-        Pontoon.endLoader('Error editing TM entries.');
+        Pontoon.endLoader('Error editing TM entries.', 'error');
       },
       complete: function () {
         row.removeClass('editing');
@@ -160,7 +160,7 @@ $(function () {
           }, 500);
         },
         error: function () {
-          Pontoon.endLoader('Error deleting TM entries.');
+          Pontoon.endLoader('Error deleting TM entries.', 'error');
         },
         complete: function () {
           row.removeClass('deleting');
