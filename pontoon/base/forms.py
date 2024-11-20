@@ -107,33 +107,55 @@ class UserPermissionLogFormMixin:
 
         group.user_set.clear()
 
-        before_count = self.user.badges_promotion_count
-        now = timezone.now()
-
         if users:
             group.user_set.add(*users)
 
         log_group_members(self.user, group, (add_users, remove_users))
 
+
+class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
+    translators = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(), required=False
+    )
+    managers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(), required=False
+    )
+
+    class Meta:
+        model = Locale
+        fields = ("translators", "managers")
+
+    def save(self, *args, **kwargs):
+        """
+        Locale perms logs
+        """
+        translators = self.cleaned_data.get("translators", User.objects.none())
+        managers = self.cleaned_data.get("managers", User.objects.none())
+
+        before_count = self.user.badges_promotion_count
+
+        now = timezone.now()
+        self.assign_users_to_groups("translators", translators)
+        removal = PermissionChangelog.objects.filter(
+            performed_by=self.user,
+            action_type=PermissionChangelog.ActionType.REMOVED,
+            created_at__gte=now,
+        )
+        self.assign_users_to_groups("managers", managers)
+
         after_count = self.user.badges_promotion_count
 
+        # Check if user was demoted from Manager to Translator
+        # In this case, it doesn't count as a promotion
+        #
         # TODO:
         # This code is the only consumer of the PermissionChangelog
         # model, so we should refactor in the future to simplify
         # how promotions are retrieved. (see #2195)
 
-        # Check if user was demoted from Manager to Translator
-        # In this case, it doesn't count as a promotion
-        if group_name == "managers":
-            removal = PermissionChangelog.objects.filter(
-                performed_by=self.user,
-                action_type=PermissionChangelog.ActionType.REMOVED,
-                created_at__gte=now,
-            )
-            if removal:
-                for item in removal:
-                    if "managers" in item.group.name:
-                        after_count -= 1
+        for item in removal:
+            if "managers" in item.group.name:
+                after_count -= 1
 
         # Award Community Builder badge
         if (
@@ -164,29 +186,6 @@ class UserPermissionLogFormMixin:
                 verb="",  # Triggers render of description only
                 description=desc,
             )
-
-
-class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
-    translators = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(), required=False
-    )
-    managers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(), required=False
-    )
-
-    class Meta:
-        model = Locale
-        fields = ("translators", "managers")
-
-    def save(self, *args, **kwargs):
-        """
-        Locale perms logs
-        """
-        translators = self.cleaned_data.get("translators", User.objects.none())
-        managers = self.cleaned_data.get("managers", User.objects.none())
-
-        self.assign_users_to_groups("translators", translators)
-        self.assign_users_to_groups("managers", managers)
 
         return self.community_builder_level
 

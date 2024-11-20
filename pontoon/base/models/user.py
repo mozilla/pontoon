@@ -243,10 +243,26 @@ def badges_review_count(self):
 @property
 def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
-    return self.changed_permissions_log.filter(
+    added_logs = self.changed_permissions_log.filter(
         action_type="added",
         created_at__gte=settings.BADGES_START_DATE,
-    ).count()
+    ).order_by("created_at")
+
+    unmatched_added = []
+
+    # Don't count any 'added' logs that have a corresponding
+    # 'removed' log within the same group
+    for added in added_logs:
+        removed_exists = self.changed_permissions_log.filter(
+            action_type="removed",
+            created_at__gte=settings.BADGES_START_DATE,
+            group=added.group,
+        ).exists()
+
+        if not removed_exists:
+            unmatched_added.append(added)
+
+    return len(unmatched_added)
 
 
 @property

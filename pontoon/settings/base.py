@@ -655,7 +655,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
-            "js/lib/confetti.browser.min.js",
+            "js/lib/confetti.browser.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
