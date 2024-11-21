@@ -68,9 +68,9 @@ urlpatterns = [
     path("", include("pontoon.contributors.urls")),
     path("", include("pontoon.localizations.urls")),
     path("", include("pontoon.base.urls")),
+    path("", include("pontoon.api.urls")),
     path("", include("pontoon.translate.urls")),
     path("", include("pontoon.batch.urls")),
-    path("", include("pontoon.api.urls")),
     path("", include("pontoon.homepage.urls")),
     path("", include("pontoon.uxactionlog.urls")),
     # Team page: Must be at the end
