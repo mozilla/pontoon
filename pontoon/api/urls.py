@@ -21,7 +21,7 @@ urlpatterns = [
             [
                 path(
                     # User actions
-                    "get-user-actions/",
+                    "user-actions/",
                     include(
                         [
                             # General
