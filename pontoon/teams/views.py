@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import xml.etree.ElementTree as ET
 
 import bleach
@@ -421,16 +422,34 @@ def ajax_translation_memory_upload(request, locale):
 
     # Extract TM entries
     file_entries = []
+    srclang_pattern = re.compile(r"^en([-_].+)?$", re.IGNORECASE)
     ns = {"xml": "http://www.w3.org/XML/1998/namespace"}
+
+    header = root.find("header")
+    header_srclang = header.attrib.get("srclang", "") if header else ""
+
+    def get_seg_text(tu, lang, ns):
+        seg = tu.find(f"./tuv[@xml:lang='{lang}']/seg", namespaces=ns)
+        return seg.text.strip() if seg is not None and seg.text else None
+
     for tu in root.findall(".//tu"):
         try:
-            source = tu.find("./tuv[@xml:lang='en-US']/seg", namespaces=ns).text.strip()
-            target = tu.find(
-                f"./tuv[@xml:lang='{code}']/seg", namespaces=ns
-            ).text.strip()
+            srclang = tu.attrib.get("srclang", header_srclang)
+
+            if not srclang_pattern.match(srclang):
+                log.info(f"Skipping <tu> with unsupported srclang: {srclang}")
+                continue
+
+            source = get_seg_text(tu, srclang, ns)
+            target = get_seg_text(tu, code, ns)
 
             if source and target:
                 file_entries.append({"source": source, "target": target})
+            else:
+                log.info(
+                    f"Skipping <tu> with missing or empty segment: {ET.tostring(tu, encoding='unicode')}"
+                )
+
         except Exception as e:
             log.info(f"Error processing <tu>: {e}")
 
