@@ -11,7 +11,7 @@ from pontoon.base.models import Project
 
 @require_GET
 @login_required(redirect_field_name="", login_url="/403")
-def get_user_actions(request, date, slug=None):
+def get_user_actions(request, date, slug):
     try:
         start_date = make_aware(datetime.strptime(date, "%Y-%m-%d"))
     except ValueError:
@@ -24,31 +24,30 @@ def get_user_actions(request, date, slug=None):
 
     end_date = start_date + timedelta(days=1)
 
+    try:
+        project = Project.objects.get(slug=slug)
+    except Project.DoesNotExist:
+        return JsonResponse(
+            {
+                "error": "Project not found. Please use a valid project slug.",
+            },
+            status=404,
+        )
+
     actions = ActionLog.objects.filter(
+        action_type__startswith="translation:",
         created_at__gte=start_date,
         created_at__lt=end_date,
-        action_type__startswith="translation:",
+        translation__entity__resource__project=project,
     )
-
-    if slug:
-        try:
-            project = Project.objects.get(slug=slug)
-        except Project.DoesNotExist:
-            return JsonResponse(
-                {
-                    "error": "Project not found. Please use a valid project slug.",
-                },
-                status=404,
-            )
-        actions = actions.filter(translation__entity__resource__project=project)
 
     actions = actions.prefetch_related(
         "performed_by__profile",
-        "translation__entity__resource__project",
+        "translation__entity__resource",
         "translation__errors",
         "translation__warnings",
         "translation__locale",
-        "entity__resource__project",
+        "entity__resource",
         "locale",
     )
 
@@ -59,7 +58,6 @@ def get_user_actions(request, date, slug=None):
         locale = action.locale or action.translation.locale
         entity = action.entity or action.translation.entity
         resource = entity.resource
-        project = resource.project
 
         data = {
             "type": action.action_type,
@@ -83,11 +81,6 @@ def get_user_actions(request, date, slug=None):
                 "path": resource.path,
                 "format": resource.format,
             },
-            "project": {
-                "pk": project.pk,
-                "slug": project.slug,
-                "name": project.name,
-            },
         }
 
         if action.translation:
@@ -98,5 +91,10 @@ def get_user_actions(request, date, slug=None):
     return JsonResponse(
         {
             "actions": output,
+            "project": {
+                "pk": project.pk,
+                "slug": project.slug,
+                "name": project.name,
+            },
         }
     )

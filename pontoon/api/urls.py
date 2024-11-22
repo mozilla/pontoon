@@ -24,13 +24,7 @@ urlpatterns = [
                     "user-actions/",
                     include(
                         [
-                            # General
-                            path(
-                                "<str:date>/",
-                                views.get_user_actions,
-                                name="pontoon.api.get_user_actions",
-                            ),
-                            # Project-specific
+                            # In a given project
                             path(
                                 "<str:date>/project/<slug:slug>/",
                                 views.get_user_actions,
