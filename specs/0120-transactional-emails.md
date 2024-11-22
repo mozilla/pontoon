@@ -179,11 +179,11 @@ Once
 
 ### Onboarding: Follow up 2 days later - more tips for getting started
 
-### Trigger
+#### Trigger
 
 48 hours after account creation
 
-### Template
+#### Template
 
 Subject: Translating on Pontoon  
 Body:  
@@ -209,7 +209,6 @@ Speaking of team managers, teams can have up to 3 different roles. While all rol
 1. Team Manager - Team managers are responsible for managing and growing their language community, including: mentoring new contributors, providing feedback on their translation submissions, and creating language resources. Each locale will have at least one team manager.   
 2. Translator - Translators are responsible for reviewing translation submissions and providing feedback to team contributors. Community members that have been evaluated by the team manager and other translators can be assigned the translator role.  
 3. Contributor - Contributors submit translation suggestions in Pontoon for their target language. New members of a language community start as a contributor.   
-   
 
 We’ve found that the best way for new contributors to learn and grow within their community is to network with other team members and proactively request feedback from translators and managers on their submissions. If you have trouble reaching other team members or getting feedback, let us or the project manager know (see below).
 
@@ -235,7 +234,7 @@ Once
 
 1 week after account creation  
 
-### Template
+#### Template
 
 Subject: More resources for contributors  
 Body:  
@@ -264,6 +263,10 @@ You can also receive Pontoon notifications in a daily or weekly digest — check
 
 Thanks,  
 Pontoon Team
+
+#### Frequency
+
+Once
 
 ### Inactive account: Contributor
 
