@@ -438,7 +438,8 @@ def ajax_translation_memory_upload(request, locale):
 
         return seg.text.strip() if seg is not None and seg.text else None
 
-    for tu in root.findall(".//tu"):
+    tu_elements = root.findall(".//tu")
+    for tu in tu_elements:
         try:
             srclang = tu.attrib.get("srclang", header_srclang)
 
@@ -475,8 +476,20 @@ def ajax_translation_memory_upload(request, locale):
         for entry in file_entries
     ]
 
+    # Filter out entries that already exist in the database
+    existing_combinations = set(
+        TranslationMemoryEntry.objects.filter(locale=locale).values_list(
+            "source", "target"
+        )
+    )
+    tm_entries_to_create = [
+        entry
+        for entry in tm_entries
+        if (entry.source, entry.target) not in existing_combinations
+    ]
+
     created_entries = TranslationMemoryEntry.objects.bulk_create(
-        tm_entries, batch_size=1000
+        tm_entries_to_create, batch_size=1000
     )
 
     log_action(
@@ -485,10 +498,26 @@ def ajax_translation_memory_upload(request, locale):
         tm_entries=created_entries,
     )
 
+    parsed = len(file_entries)
+    skipped_on_parse = len(tu_elements) - parsed
+    imported = len(created_entries)
+    duplicates = parsed - len(tm_entries_to_create)
+
+    message = f"Importing TM entries complete. Imported: {imported}."
+    if imported == 0:
+        message = "No TM entries imported."
+
+    if duplicates:
+        message += f" Skipped duplicates: {duplicates}."
+
     return JsonResponse(
         {
             "status": True,
-            "message": f"Successfully uploaded {len(created_entries)} TM entries.",
+            "message": message,
+            "parsed": parsed,
+            "skipped_on_parse": skipped_on_parse,
+            "imported": imported,
+            "duplicates": duplicates,
         }
     )
 
