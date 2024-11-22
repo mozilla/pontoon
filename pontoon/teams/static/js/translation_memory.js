@@ -193,9 +193,7 @@ $(function () {
         },
         error: function (xhr) {
           Pontoon.endLoader(
-            xhr.responseJSON
-              ? xhr.responseJSON.message
-              : 'Error uploading TMX file.',
+            xhr.responseJSON?.message ?? 'Error uploading TMX file.',
             'error',
           );
         },
