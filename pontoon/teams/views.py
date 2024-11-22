@@ -422,7 +422,7 @@ def ajax_translation_memory_upload(request, locale):
 
     # Extract TM entries
     file_entries = []
-    srclang_pattern = re.compile(r"^en([-_].+)?$", re.IGNORECASE)
+    srclang_pattern = re.compile(r"^en(?:[-_].+)?$", re.IGNORECASE)
     ns = {"xml": "http://www.w3.org/XML/1998/namespace"}
 
     header = root.find("header")
