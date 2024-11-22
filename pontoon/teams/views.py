@@ -429,7 +429,13 @@ def ajax_translation_memory_upload(request, locale):
     header_srclang = header.attrib.get("srclang", "") if header else ""
 
     def get_seg_text(tu, lang, ns):
+        # Try to find <tuv> with the xml:lang attribute
         seg = tu.find(f"./tuv[@xml:lang='{lang}']/seg", namespaces=ns)
+
+        # If not found, try the lang attribute
+        if seg is None:
+            seg = tu.find(f"./tuv[@lang='{lang}']/seg")
+
         return seg.text.strip() if seg is not None and seg.text else None
 
     for tu in root.findall(".//tu"):
