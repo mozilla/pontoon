@@ -7,14 +7,12 @@ from typing import Iterable
 from django.contrib.auth.models import User
 from django.db import connection, transaction
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from pontoon.base.models import Entity, Locale, Project, Resource, Translation
+from pontoon.base.models import Project, Translation
 
 
 def generate_translation_stats_csv(project: Project, user: User) -> HttpResponse:
-
     project_locales = project.project_locale.all()
     pl_names = [pl.locale.name for pl in project_locales]
     response = HttpResponse(content_type="text/csv")
@@ -102,32 +100,30 @@ def upload_translations(csv_file, project: Project, user: User):
             status=400,
         )
     locale_names = headers[3:]
-    locales = []
-    for name in locale_names:
-        if lang_locales := Locale.objects.filter(name=name):
-            if valid_code := set([locale.code for locale in lang_locales]) & set(
-                [locale.code for locale in project.locales.all()]
-            ):
-                locales.append(lang_locales.filter(code=valid_code.pop()).first())
-                continue
+    project_locale_names = [loc.name for loc in project.locales.all()]
+    if wrong_locales := set(locale_names) - set(project_locale_names):
         return JsonResponse(
-            data={"error": f"Wrong CSV headers - Not recognizable locale name: {name}."},
+            data={
+                "error": f"Wrong CSV headers - Not recognizable locale names: {list(wrong_locales)}."
+            },
             status=400,
         )
 
+    locales = project.locales.filter(
+        name__in=set(project_locale_names) & set(locale_names)
+    )
     translations = [row for row in reader if any(cell for cell in row)]
-
     for tr in translations:
-        resource = Resource.objects.filter(path=tr["Resource"]).first()
-        if not resource:
+        if qs := project.resources.filter(path=tr["Resource"]):
+            resource = qs.first()
+        else:
             return JsonResponse(data={"error": f"Resource not found: {tr['Resource']}"})
 
-        key = tr["Translation Key"]
-        if resource.format == "json":
-            key = str(key.split(".")).replace("'", '"')
-        elif resource.format in ("po", "xml"):
-            pass
-        else:
+        if (
+            key := get_translation_key(
+                key=tr["Translation Key"], format=resource.format
+            )
+        ) is None:
             return JsonResponse(
                 data={
                     "error": f'"{resource.format}" formated strings are not supported for '
@@ -136,14 +132,7 @@ def upload_translations(csv_file, project: Project, user: User):
                 status=400,
             )
 
-        try:
-            entity = get_object_or_404(
-                Entity,
-                key=key,
-                resource__project__id=project.id,
-                resource__id=resource.id,
-            )
-        except Exception:
+        if not (qs := resource.entities.filter(key=key, obsolete=False)):
             return JsonResponse(
                 data={
                     "error": f"Wrong data: translation key {key} does not exist in "
@@ -151,12 +140,15 @@ def upload_translations(csv_file, project: Project, user: User):
                 },
                 status=400,
             )
+
+        entity = qs.first()
+
         for locale in locales:
-            if tr[locale.name] == "" or tr[locale.name] in UNTRANSLATED_MARKS:
+            if tr[locale.name].strip() == "" or tr[locale.name] in UNTRANSLATED_MARKS:
                 continue
             # if same translation exists for the entity, skip creating translation
-            trans_string = tr[locale.name]
-            if entity.translation_set.filter(locale=locale, string=trans_string):
+            tr_string = tr[locale.name]
+            if entity.translation_set.filter(locale=locale, string=tr_string):
                 continue
 
             activate_new_translation = False
@@ -165,7 +157,7 @@ def upload_translations(csv_file, project: Project, user: User):
 
             # Create new translation for the entity
             new_trans = Translation(
-                string=trans_string,
+                string=tr_string,
                 user=user,
                 locale=locale,
                 entity=entity,
@@ -195,3 +187,13 @@ def upload_translations(csv_file, project: Project, user: User):
                     new_trans.save()
             else:
                 new_trans.save()
+
+
+def get_translation_key(key: str, format: str) -> str | None:
+    match format:
+        case "json":
+            return str(key.split(".")).replace("'", '"')
+        case "po" | "xml":
+            return key
+        case _:
+            return None
