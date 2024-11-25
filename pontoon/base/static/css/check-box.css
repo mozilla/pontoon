@@ -1,11 +1,11 @@
 #main .check-list {
-  cursor: pointer;
   list-style: none;
   margin: 0;
   display: inline-block;
   text-align: left;
 
   .check-box {
+    cursor: pointer;
     padding: 4px 0;
 
     [type='checkbox'] {
@@ -35,7 +35,7 @@
   }
 
   .fa {
-    margin-left: 27px;
+    margin-left: 23px;
     margin-right: 0;
   }
 }

@@ -1,9 +1,14 @@
 $(function () {
-  // Toggle visibility
-  $('.data-visibility .toggle-button button').click(function (e) {
+  // Handle toggle buttons
+  $('.toggle-button button').click(function (e) {
     e.preventDefault();
 
     const self = $(this);
+
+    // Theme toggle is handled separately
+    if (self.parents('.appearance').length) {
+      return;
+    }
 
     if (self.is('.active')) {
       return;
@@ -25,7 +30,12 @@ $(function () {
         self.siblings().removeClass('active');
 
         const label = self.parents('.field').find('.toggle-label').text();
-        Pontoon.endLoader(`${label} visibility set to ${value}.`);
+
+        let message = `${label} set to ${value}.`;
+        if (self.parents('section.data-visibility').length) {
+          message = `${label} visibility set to ${value}.`;
+        }
+        Pontoon.endLoader(message);
       },
       error: function (request) {
         if (request.responseText === 'error') {
@@ -37,7 +47,7 @@ $(function () {
     });
   });
 
-  // Toggle user profile attribute
+  // Handle checkboxes
   $('.check-box').click(function () {
     const self = $(this);
 
@@ -51,10 +61,16 @@ $(function () {
       },
       success: function () {
         self.toggleClass('enabled');
-        const is_enabled = self.is('.enabled');
-        const status = is_enabled ? 'enabled' : 'disabled';
 
-        Pontoon.endLoader(self.find('.label').text() + ' ' + status + '.');
+        // If notification type disabled, uncheck email checkbox
+        if (!self.is('.enabled')) {
+          const emailChecbox = self.next('.check-box');
+          if (emailChecbox.length) {
+            emailChecbox.removeClass('enabled');
+          }
+        }
+
+        Pontoon.endLoader('Settings saved.');
       },
       error: function (request) {
         if (request.responseText === 'error') {
