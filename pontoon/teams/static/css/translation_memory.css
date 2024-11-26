@@ -113,7 +113,6 @@
 
           .button {
             background: var(--button-background-1);
-            margin-left: 5px;
 
             .fa {
               margin-right: 2px;
@@ -130,6 +129,10 @@
 
           .button.save:hover {
             background: var(--status-translated);
+          }
+
+          .button.delete {
+            margin-left: 5px;
           }
 
           .button.delete:hover {

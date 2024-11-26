@@ -18,6 +18,9 @@
         <textarea>{{ entry.target }}</textarea>
     </td>
     <td class="actions controls">
+        <button class="cancel button">
+            <span class="fa fa-times"></span>
+        </button>
         <button class="edit button">
             <span class="fa fa-pencil-alt"></span>
             Edit
@@ -33,9 +36,6 @@
         <button class="are-you-sure button">
             <span class="fa fa-trash"></span>
             Delete {{ entry.ids|length }} TM entr{{ entry.ids|length|pluralize("y,ies") }}?
-        </button>
-        <button class="cancel button">
-            <span class="fa fa-times"></span>
         </button>
     </td>
 </tr>
