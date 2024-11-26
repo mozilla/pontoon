@@ -37,46 +37,6 @@ class UserProfile(models.Model):
         default=Themes.DARK,
     )
 
-    ## Badges ##
-
-    # Review Master
-    review_master_level = models.IntegerField(
-        default=0,
-        choices=[
-            (0, "No Badge"),
-            (1, "Review Master Level 1"),  # Review 5 translations
-            (2, "Review Master Level 2"),  # 50 translations
-            (3, "Review Master Level 3"),  # 250 translations
-            (4, "Review Master Level 4"),  # 1000 translations
-        ],
-    )
-
-    # Translation Champion
-    translation_champion_level = models.IntegerField(
-        default=0,
-        choices=[
-            (0, "No Badge"),
-            (1, "Translation Champion Level 1"),  # Submit 5 translations
-            (2, "Translation Champion Level 2"),  # 50 translations
-            (3, "Translation Champion Level 3"),  # 250 translations
-            (4, "Translation Champion Level 4"),  # 1000 translations
-        ],
-    )
-
-    # Community Builder
-    community_builder_level = models.IntegerField(
-        default=0,
-        choices=[
-            (0, "No Badge"),
-            (
-                1,
-                "Community Builder Level 1",
-            ),  # Successfully promote 1 contributor to a new role
-            (2, "Community Builder Level 2"),  # 2 contributors
-            (3, "Community Builder Level 3"),  # 5 contributors
-        ],
-    )
-
     # External accounts
     chat = models.CharField("Chat username", max_length=255, blank=True, null=True)
     github = models.CharField("GitHub username", max_length=255, blank=True, null=True)

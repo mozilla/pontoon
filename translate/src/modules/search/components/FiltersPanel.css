@@ -145,6 +145,10 @@
   float: left;
 }
 
+.filters-panel .menu li:hover .priority .fa-star {
+  color: var(--button-background-1);
+}
+
 .filters-panel .menu li .priority .fa-star.active {
   color: var(--status-translated);
 }

@@ -128,6 +128,16 @@
           )
         }}
       {% endif %}
+      {% if request.user.has_perm('base.can_translate_locale', locale) %}
+        {{ Menu.item(
+            'TM',
+            url('pontoon.teams.translation-memory', locale.code),
+            is_active = (current_page == 'translation-memory'),
+            count = False,
+            icon = 'database',
+          )
+        }}
+      {% endif %}
     {% endcall %}
   </div>
 </section>

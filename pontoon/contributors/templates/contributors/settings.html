@@ -51,7 +51,7 @@
         <h3>Email</h3>
         <div class="field">
             {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
-            <input type="email" name="contact_email" maxlength="254" id="id_contact_email" placeholder="{{user.email}}">
+            <input type="email" name="contact_email" maxlength="254" id="id_contact_email" placeholder="{{ user.email }}" value="{{ user.profile.contact_email or '' }}">
             {{ user_profile_form.contact_email.errors }}
             {% if user.profile.contact_email and not user.profile.contact_email_verified %}
                 <p class="verify">Check your inbox to verify your email address</a></p>
@@ -129,7 +129,7 @@
         <ul class="check-list">
             {{ Checkbox.checkbox('Translate Toolkit checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
 
-            {% if user.translated_locales %}
+            {% if user.can_translate_locales %}
                 {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
             {% endif %}
         </ul>

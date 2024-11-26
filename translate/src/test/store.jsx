@@ -53,8 +53,8 @@ export function createDefaultUser(store, initial = {}) {
     settings: { force_suggestions: false },
     username: 'Franck',
     is_authenticated: true,
-    manager_for_locales: ['kg'],
-    translator_for_locales: [],
+    can_manage_locales: ['kg'],
+    can_translate_locales: [],
     translator_for_projects: {},
     ...initial,
   };

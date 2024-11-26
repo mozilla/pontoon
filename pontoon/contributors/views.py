@@ -26,7 +26,11 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
-from pontoon.settings import VIEW_CACHE_TIMEOUT
+from pontoon.settings import (
+    BADGES_PROMOTION_THRESHOLDS,
+    BADGES_TRANSLATION_THRESHOLDS,
+    VIEW_CACHE_TIMEOUT,
+)
 from pontoon.uxactionlog.utils import log_ux_action
 
 
@@ -42,6 +46,13 @@ def profile(request):
 def contributor_email(request, email):
     user = get_object_or_404(User, email=email)
     return contributor(request, user)
+
+
+def get_badge_level(thresholds, count):
+    for level, threshold in enumerate(thresholds):
+        if count < threshold:
+            return level
+    return len(thresholds)
 
 
 def contributor_username(request, username):
@@ -72,6 +83,26 @@ def contributor(request, user):
         "contact_for": user.contact_for.filter(
             disabled=False, system_project=False, visibility="public"
         ).order_by("-priority"),
+        "badges": {
+            "review_master_badge": {
+                "level": get_badge_level(
+                    BADGES_TRANSLATION_THRESHOLDS, user.badges_review_count
+                ),
+                "name": "Review Master",
+            },
+            "translation_champion_badge": {
+                "level": get_badge_level(
+                    BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
+                ),
+                "name": "Translation Champion",
+            },
+            "community_builder_badge": {
+                "level": get_badge_level(
+                    BADGES_PROMOTION_THRESHOLDS, user.badges_promotion_count
+                ),
+                "name": "Community Builder",
+            },
+        },
         "all_time_stats": {
             "translations": user.contributed_translations,
         },

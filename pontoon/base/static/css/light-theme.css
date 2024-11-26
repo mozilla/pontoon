@@ -4,6 +4,13 @@
   --main-border-1: #d8d8d8;
   --moz-logo: url(../img/moz-logo.svg);
 
+  /* User banner and details */
+  --user-admin: #ff3366;
+  --user-pm: #ffa10f;
+  --user-manager: #4fc4f6;
+  --user-translator: #7bc876;
+  --user-new: #fed271;
+
   /* Primary (darker) background */
   --background-1: #f6f6f6;
   --background-hover-1: #ffffff;
@@ -11,6 +18,7 @@
   --popup-background-1: #ffffff;
   --input-background-1: #ffffff;
   --input-color-1: #000000;
+  --input-color-2: #000000;
   --toggle-color-1: #888888;
   --icon-background-1: #d0d0d0;
   --icon-border-1: #bbbbbb;

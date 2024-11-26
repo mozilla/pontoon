@@ -72,6 +72,18 @@ you create:
    Set to 'gitlab' if you want to use 'GitLab' (corresponding GITLAB_* settings must be set if required).
    Set to 'google' if you want to use 'Google' (corresponding GOOGLE_* settings must be set).
 
+``BADGES_PROMOTION_THRESHOLDS``
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Community Builder badge.
+
+``BADGES_START_DATE``
+   Optional. Specifies the start date from which user activities count towards badge achievements. 
+   This variable should be in YYYY-MM-DD format.
+
+``BADGES_TRANSLATION_THRESHOLDS``
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Review Master and Translation Champion badges.
+
 ``BLOCKED_IPS``
    A comma-separated list of IP addresses or IP ranges (expressed using the
    `CIDR notation`_, e.g. `192.168.1.0/24`) to be blocked from accessing the app, for

@@ -45,7 +45,8 @@ The badge system consists of various badges awarded based on user activities, su
 **Icons:**
 - **New User Icon:** For users who joined less than 3 months ago.
 - **Translator Icon:** For users contributing as translators.
-- **Manager Icon:** For users serving as locale managers.
+- **Team Manager Icon:** For users serving as locale managers.
+- **Project Manager Icon:** For users serving as project managers.
 - **Admin Icon:** For users holding administrative roles.
 
 # Technical Specification

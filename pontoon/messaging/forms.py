@@ -11,6 +11,12 @@ class MessageForm(forms.ModelForm):
     body = HtmlField()
     send_to_myself = forms.BooleanField(required=False)
 
+    recipient_ids = forms.CharField(
+        required=False,
+        widget=forms.Textarea(),
+        validators=[validators.validate_comma_separated_integer_list],
+    )
+
     locales = forms.CharField(
         widget=forms.Textarea(),
         validators=[validators.validate_comma_separated_integer_list],
@@ -19,6 +25,7 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = [
+            "recipient_ids",
             "notification",
             "email",
             "transactional",

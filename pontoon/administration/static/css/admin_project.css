@@ -461,7 +461,7 @@ textarea.strings-source {
   color: var(--status-error);
   display: inline-block;
   font-size: 12px;
-  line-height: 14px; /* Strange, but needed to keep controls in line when error occures */
+  line-height: 14px; /* Strange, but needed to keep controls in line when error occurs */
   list-style: none;
   margin-left: 0;
   margin-top: 2px;

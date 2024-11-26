@@ -19,7 +19,7 @@ jest.mock('react-redux', () => ({
     selector({
       user: {
         isAuthenticated: true,
-        managerForLocales: ['en'],
+        canManageLocales: ['en'],
       },
     }),
 }));

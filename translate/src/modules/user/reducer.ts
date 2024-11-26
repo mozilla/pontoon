@@ -67,16 +67,20 @@ export type Notifications = {
 export type UserState = {
   readonly isAuthenticated: boolean | null; // null while loading
   readonly isAdmin: boolean;
+  readonly isPM: boolean;
   readonly id: string;
+  readonly email: string;
   readonly displayName: string;
   readonly nameOrEmail: string;
-  readonly email: string;
   readonly username: string;
   readonly dateJoined: string;
-  readonly contributorForLocales: Array<string>;
+  readonly canManageLocales: Array<string>;
+  readonly canTranslateLocales: Array<string>;
   readonly managerForLocales: Array<string>;
   readonly translatorForLocales: Array<string>;
+  readonly contributorForLocales: Array<string>;
   readonly translatorForProjects: Record<string, boolean>;
+  readonly pmForProjects: Array<string>;
   readonly settings: SettingsState;
   readonly tourStatus: number | null | undefined;
   readonly hasDismissedAddonPromotion: boolean;
@@ -91,16 +95,20 @@ export type UserState = {
 const initial: UserState = {
   isAuthenticated: null,
   isAdmin: false,
+  isPM: false,
   id: '',
+  email: '',
   displayName: '',
   nameOrEmail: '',
-  email: '',
   username: '',
   dateJoined: '',
-  contributorForLocales: [],
+  canManageLocales: [],
+  canTranslateLocales: [],
   managerForLocales: [],
   translatorForLocales: [],
+  contributorForLocales: [],
   translatorForProjects: {},
+  pmForProjects: [],
   settings: initialSettings,
   tourStatus: null,
   hasDismissedAddonPromotion: false,
@@ -122,16 +130,20 @@ export function reducer(state: UserState = initial, action: Action): UserState {
       return {
         isAuthenticated: action.data.is_authenticated ?? null,
         isAdmin: action.data.is_admin ?? false,
+        isPM: action.data.is_pm ?? false,
         id: action.data.id ?? '',
+        email: action.data.email ?? '',
         displayName: action.data.display_name ?? '',
         nameOrEmail: action.data.name_or_email ?? '',
-        email: action.data.email ?? '',
         username: action.data.username ?? '',
         dateJoined: action.data.date_joined ?? '',
-        contributorForLocales: action.data.contributor_for_locales ?? [],
+        canManageLocales: action.data.can_manage_locales ?? [],
+        canTranslateLocales: action.data.can_translate_locales ?? [],
         managerForLocales: action.data.manager_for_locales ?? [],
         translatorForLocales: action.data.translator_for_locales ?? [],
+        contributorForLocales: action.data.contributor_for_locales ?? [],
         translatorForProjects: action.data.translator_for_projects ?? {},
+        pmForProjects: action.data.pm_for_projects ?? [],
         settings: settings(state.settings, action),
         tourStatus: action.data.tour_status ?? null,
         hasDismissedAddonPromotion:

@@ -1,13 +1,18 @@
+import re
+
 from pathlib import Path
 
 import bleach
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
+    PermissionChangelog,
     ProjectLocale,
     User,
     UserProfile,
@@ -97,10 +102,41 @@ class UserPermissionLogFormMixin:
 
         group.user_set.clear()
 
+        before_count = self.user.badges_promotion_count
+        now = timezone.now()
+
         if users:
             group.user_set.add(*users)
 
         log_group_members(self.user, group, (add_users, remove_users))
+
+        after_count = self.user.badges_promotion_count
+
+        # TODO:
+        # This code is the only consumer of the PermissionChangelog
+        # model, so we should refactor in the future to simplify
+        # how promotions are retrieved. (see #2195)
+
+        # Check if user was demoted from Manager to Translator
+        # In this case, it doesn't count as a promotion
+        if group_name == "managers":
+            removal = PermissionChangelog.objects.filter(
+                performed_by=self.user,
+                action_type=PermissionChangelog.ActionType.REMOVED,
+                created_at__gte=now,
+            )
+            if removal:
+                for item in removal:
+                    if "managers" in item.group.name:
+                        after_count -= 1
+
+        # Award Community Builder badge
+        if (
+            after_count > before_count
+            and after_count in settings.BADGES_PROMOTION_THRESHOLDS
+        ):
+            # TODO: Send a notification to the user
+            pass
 
 
 class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
@@ -222,6 +258,25 @@ class UserProfileForm(forms.ModelForm):
             "github",
             "bugzilla",
         )
+
+    def clean_github(self):
+        github_username = self.cleaned_data.get("github")
+
+        # Define GitHub's username pattern
+        github_username_pattern = r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$"
+
+        # Validate using the pattern
+        if github_username and not re.match(
+            github_username_pattern, github_username, re.IGNORECASE
+        ):
+            raise ValidationError(
+                """
+                GitHub username may only contain alphanumeric characters and single hyphens,
+                and cannot begin or end with a hyphen. Maximum length is 39 characters.
+                """
+            )
+
+        return github_username
 
 
 class UserProfileVisibilityForm(forms.ModelForm):

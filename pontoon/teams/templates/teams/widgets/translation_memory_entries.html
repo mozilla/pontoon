@@ -1,0 +1,62 @@
+{% macro linkify(text, entity_ids) %}
+    {% if entity_ids %}
+    <a href="{{ url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?list={{ entity_ids }}">
+        {{ text | default_if_empty('<span class="empty">Empty string</span>') }}
+    </a>
+    {% else %}
+    {{ text | default_if_empty('<span class="empty">Empty string</span>') }}
+    {% endif %}
+{% endmacro %}
+
+{% for entry in tm_entries %}
+<tr data-ids="{{ entry.ids }}">
+    <td class="source text">
+        {{ linkify(entry.source|highlight_matches(search_query), entry.entity_ids) }}
+    </td>
+    <td class="target text">
+        <div class="content-wrapper">{{ linkify(entry.target|highlight_matches(search_query), entry.entity_ids) }}</div>
+        <textarea>{{ entry.target }}</textarea>
+    </td>
+    <td class="actions controls">
+        <button class="edit button">
+            <span class="fa fa-pencil-alt"></span>
+            Edit
+        </button>
+        <button class="save button">
+            <span class="fa fa-check"></span>
+            Save
+        </button>
+        <button class="delete button">
+            <span class="fa fa-trash"></span>
+            Delete
+        </button>
+        <button class="are-you-sure button">
+            <span class="fa fa-trash"></span>
+            Delete {{ entry.ids|length }} TM entr{{ entry.ids|length|pluralize("y,ies") }}?
+        </button>
+        <button class="cancel button">
+            <span class="fa fa-times"></span>
+        </button>
+    </td>
+</tr>
+{% endfor %}
+
+{% if tm_entries|length == 0 %}
+<tr><td colspan="3" class="no-results">No matches found.</td></tr>
+{% endif %}
+
+{% if has_next %}
+{% for i in range(3) %}
+<tr class="skeleton-loader">
+    <td class="source">
+        <div class="skeleton">Loading...</div>
+    </td>
+    <td class="target">
+        <div class="skeleton">Loading...</div>
+    </td>
+    <td class="actions controls">
+        <div class="skeleton">Loading...</div>
+    </td>
+</tr>
+{% endfor %}
+{% endif %}

@@ -7,7 +7,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -103,7 +103,7 @@ def user_manager_for_locales(self):
 
 
 @property
-def user_translated_locales(self):
+def user_can_translate_locales(self):
     """A list of locale codes the user has permission to translate.
 
     Includes all locales for superusers.
@@ -114,7 +114,7 @@ def user_translated_locales(self):
 
 
 @property
-def user_managed_locales(self):
+def user_can_manage_locales(self):
     """A list of locale codes the user has permission to manage.
 
     Includes all locales for superusers.
@@ -164,18 +164,18 @@ def user_role(self, managers=None, translators=None):
         if self in managers:
             return "Manager for " + ", ".join(managers[self])
     else:
-        if self.managed_locales:
+        if self.can_manage_locales:
             return "Manager for " + ", ".join(
-                self.managed_locales.values_list("code", flat=True)
+                self.can_manage_locales.values_list("code", flat=True)
             )
 
     if translators is not None:
         if self in translators:
             return "Translator for " + ", ".join(translators[self])
     else:
-        if self.translated_locales:
+        if self.can_translate_locales:
             return "Translator for " + ", ".join(
-                self.translated_locales.values_list("code", flat=True)
+                self.can_translate_locales.values_list("code", flat=True)
             )
 
     return "Contributor"
@@ -194,13 +194,15 @@ def user_locale_role(self, locale):
         return "Contributor"
 
 
-def user_status(self, locale):
-    if self.username == "Imported":
+def user_status(self, locale, project_contact):
+    if self.pk is None or self.profile.system_user:
         return ("", "")
     if self in locale.managers_group.user_set.all():
-        return ("MNGR", "Manager")
+        return ("MNGR", "Team Manager")
     if self in locale.translators_group.user_set.all():
         return ("TRNSL", "Translator")
+    if project_contact and self.pk == project_contact.pk:
+        return ("PM", "Project Manager")
     if self.is_superuser:
         return ("ADMIN", "Admin")
     if self.date_joined >= timezone.now() - relativedelta(months=3):
@@ -210,10 +212,41 @@ def user_status(self, locale):
 
 @property
 def contributed_translations(self):
-    """Filtered contributions provided by user."""
-    from pontoon.base.models.translation import Translation
+    """Contributions provided by user."""
+    return self.translation_set.all()
 
-    return Translation.objects.filter(user=self)
+
+@property
+def has_approved_translations(self):
+    """Return True if the user has approved translations."""
+    return self.translation_set.filter(approved=True).exists()
+
+
+@property
+def badges_translation_count(self):
+    """Contributions provided by user that count towards their badges."""
+    return self.actions.filter(
+        action_type="translation:created",
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
+
+
+@property
+def badges_review_count(self):
+    """Translation reviews provided by user that count towards their badges."""
+    return self.actions.filter(
+        Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
+
+
+@property
+def badges_promotion_count(self):
+    """Role promotions performed by user that count towards their badges"""
+    return self.changed_permissions_log.filter(
+        action_type="added",
+        created_at__gte=settings.BADGES_START_DATE,
+    ).count()
 
 
 @property
@@ -238,7 +271,7 @@ def can_translate(self, locale, project):
     from pontoon.base.models.project_locale import ProjectLocale
 
     # Locale managers can translate all projects
-    if locale in self.managed_locales:
+    if locale in self.can_manage_locales:
         return True
 
     project_locale = ProjectLocale.objects.get(project=project, locale=locale)
@@ -434,13 +467,17 @@ User.add_to_class("display_name_and_email", user_display_name_and_email)
 User.add_to_class("display_name_or_blank", user_display_name_or_blank)
 User.add_to_class("translator_for_locales", user_translator_for_locales)
 User.add_to_class("manager_for_locales", user_manager_for_locales)
-User.add_to_class("translated_locales", user_translated_locales)
-User.add_to_class("managed_locales", user_managed_locales)
+User.add_to_class("can_translate_locales", user_can_translate_locales)
+User.add_to_class("can_manage_locales", user_can_manage_locales)
 User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
 User.add_to_class("status", user_status)
 User.add_to_class("contributed_translations", contributed_translations)
+User.add_to_class("badges_translation_count", badges_translation_count)
+User.add_to_class("badges_review_count", badges_review_count)
+User.add_to_class("badges_promotion_count", badges_promotion_count)
+User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
 User.add_to_class("is_new_contributor", is_new_contributor)

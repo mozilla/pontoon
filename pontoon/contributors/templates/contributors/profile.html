@@ -3,7 +3,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}{{ contributor.name_or_email }}{% endblock %}
+{% block title %}{{ contributor.display_name }}{% endblock %}
 
 {% block before %}
 <!-- Server data -->
@@ -22,9 +22,10 @@
 
             {% set is_my_profile = (user.is_authenticated and user.email == contributor.email) %}
             {% set profile = contributor.profile %}
+            {% set has_badges = badges.review_master_badge.level or badges.translation_champion_badge.level or badges.community_builder_badge.level %}
             {% set translator_for_locales = contributor.translator_for_locales %}
             {% set manager_for_locales = contributor.manager_for_locales %}
-            {% set user_is_translator = user.translated_locales %}
+            {% set user_is_translator = user.can_translate_locales %}
             {% set profile_is_disabled = contributor.is_active == False %}
 
             <a class="avatar" href="{% if is_my_profile %}https://gravatar.com/{% endif %}">
@@ -121,6 +122,25 @@
             <hr>
             {% endif %}
 
+            {% if has_badges %}
+            <div class="achievements">
+                <div class="block">
+                    <h4 class="subtitle">Achievements</h4>
+                    {% for path, badge in badges.items() %}
+                    {% if badge.level %}
+                    <div class="badge-wrapper">
+                        <img class="badge" src="{{ static('img/' ~ path ~ '.svg') }}" title="{{ badge.name }}: Level {{ badge.level }}" />
+                        {% if badge.level > 1 %}
+                            <div class="badge-level">{{ badge.level }}x</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            {% endif %}
+
             <div class="dates">
                 <div class="block">
                     <h4 class="subtitle">Latest activity</h4>
@@ -207,7 +227,7 @@
         <div class="right-column">
 
             {% set approval_rate_visibile = profile.visibility_approval == "Public" or user_is_translator %}
-            {% set contributor_is_translator = contributor.translated_locales %}
+            {% set contributor_is_translator = contributor.can_translate_locales %}
             {% set self_approval_rate_visibile = contributor_is_translator and (profile.visibility_self_approval == "Public" or user_is_translator) %}
 
             <div class="clearfix">
