@@ -399,6 +399,15 @@ def ajax_translation_memory_upload(request, locale):
             status=400,
         )
 
+    if file.size > 20 * 1024 * 1024:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "File size limit exceeded. The maximum allowed size is 20 MB.",
+            },
+            status=400,
+        )
+
     if not file.name.endswith(".tmx"):
         return JsonResponse(
             {
