@@ -1,3 +1,4 @@
+from datetime import timedelta
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
@@ -7,7 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -243,26 +244,28 @@ def badges_review_count(self):
 @property
 def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
-    added_logs = self.changed_permissions_log.filter(
+    added_entries = self.changed_permissions_log.filter(
         action_type="added",
         created_at__gte=settings.BADGES_START_DATE,
-    ).order_by("created_at")
+    )
 
-    unmatched_added = []
-
-    # Don't count any 'added' logs that have a corresponding
-    # 'removed' log within the same group
-    for added in added_logs:
-        removed_exists = self.changed_permissions_log.filter(
-            action_type="removed",
-            created_at__gte=settings.BADGES_START_DATE,
-            group=added.group,
-        ).exists()
-
-        if not removed_exists:
-            unmatched_added.append(added)
-
-    return len(unmatched_added)
+    # Check if user was demoted from Manager to Translator.
+    # In this case, it doesn't count as a promotion.
+    #
+    # TODO:
+    # This code is the only consumer of the PermissionChangelog model, so we should
+    # refactor to simplify how promotions are retrieved. (see #2195)
+    return added_entries.exclude(
+        Exists(
+            self.changed_permissions_log.filter(
+                performed_by=OuterRef("performed_by"),
+                performed_on=OuterRef("performed_on"),
+                action_type="removed",
+                created_at__gt=OuterRef("created_at"),
+                created_at__lte=OuterRef("created_at") + timedelta(milliseconds=10),
+            )
+        )
+    ).count()
 
 
 @property

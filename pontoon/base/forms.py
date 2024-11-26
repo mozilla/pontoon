@@ -10,12 +10,10 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from django.utils import timezone
 
 from pontoon.base import utils
 from pontoon.base.models import (
     Locale,
-    PermissionChangelog,
     ProjectLocale,
     User,
     UserProfile,
@@ -134,28 +132,10 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
 
         before_count = self.user.badges_promotion_count
 
-        now = timezone.now()
         self.assign_users_to_groups("translators", translators)
-        removal = PermissionChangelog.objects.filter(
-            performed_by=self.user,
-            action_type=PermissionChangelog.ActionType.REMOVED,
-            created_at__gte=now,
-        )
         self.assign_users_to_groups("managers", managers)
 
         after_count = self.user.badges_promotion_count
-
-        # Check if user was demoted from Manager to Translator
-        # In this case, it doesn't count as a promotion
-        #
-        # TODO:
-        # This code is the only consumer of the PermissionChangelog
-        # model, so we should refactor in the future to simplify
-        # how promotions are retrieved. (see #2195)
-
-        for item in removal:
-            if "managers" in item.group.name:
-                after_count -= 1
 
         # Award Community Builder badge
         if (
