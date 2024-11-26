@@ -108,10 +108,7 @@ def remove_resources(
     if not checkout.removed:
         return set()
     removed_resources = project.resources.filter(
-        path__in={
-            get_db_path(paths, join(checkout.path, co_path))
-            for co_path in checkout.removed
-        }
+        path__in={get_db_path(paths, join(checkout.path, co_path)) for co_path in checkout.removed}
     )
     removed_db_paths = {res.path for res in removed_resources}
     if removed_db_paths:

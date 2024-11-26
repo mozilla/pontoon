@@ -101,7 +101,7 @@ class ProjectLocale(models.Model, AggregatedStats):
 
     # Defines if locale has a translators group for the specific project.
     has_custom_translators = models.BooleanField(
-        default=False,
+        default=True,
     )
 
     objects = ProjectLocaleQuerySet.as_manager()

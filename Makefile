@@ -1,5 +1,6 @@
 DC := "docker compose"
 DOCKER := "docker"
+CURRENT_VERSION := $(shell awk -F '= ' '/^current_version/ {print $1}' .bumpversion.cfg | cut -d " " -f 3)
 
 # *IMPORTANT*
 # Don't use this instance in a production setting. More info at:
@@ -9,7 +10,7 @@ SITE_URL ?= http://localhost:8000
 USER_ID?=1000
 GROUP_ID?=1000
 
-.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server jest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements
+.PHONY: build build-translate build-server server-env setup run clean shell ci test test-translate test-server jest pytest format lint types eslint prettier check-prettier ruff check-ruff dropdb dumpdb loaddb sync-projects requirements build-pontoon
 
 help:
 	@echo "Welcome to Pontoon!\n"
@@ -159,3 +160,7 @@ requirements:
 	# Pass --upgrade to upgrade all dependencies
 	# The arguments are passed through to `uv pip compile`
 	"${DC}" run --rm server //app/docker/compile_requirements.sh ${opts}
+
+version:
+	@echo "${CURRENT_VERSION}"
+

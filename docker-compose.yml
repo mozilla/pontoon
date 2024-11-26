@@ -3,7 +3,7 @@
 # Note: Requires docker-compose 1.27+.
 services:
   server:
-    image: 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:1.1.1
+    image: 715161504141.dkr.ecr.eu-west-1.amazonaws.com/pontoon:1.1.5
     env_file:
       - docker/config/server.env
     depends_on:
