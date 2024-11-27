@@ -300,6 +300,12 @@ you create:
    Optional. Set your `SYSTRAN Translate API key` to use machine translation
    by SYSTRAN.
 
+``TBX_DESCRIPTION``
+   Optional. Description to be used in the header of the Terminology (.TBX) files.
+
+``TBX_TITLE``
+   Optional. Title to be used in the header of the Terminology (.TBX) files.
+
 ``THROTTLE_ENABLED``
    Optional. Enables traffic throttling based on IP address (default: ``False``).
 

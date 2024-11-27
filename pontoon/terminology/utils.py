@@ -1,5 +1,7 @@
 from xml.sax.saxutils import escape, quoteattr
 
+from django.conf import settings
+
 
 def build_tbx_v2_file(term_translations, locale):
     """
@@ -15,10 +17,10 @@ def build_tbx_v2_file(term_translations, locale):
         "\n\t<martifHeader>"
         "\n\t\t<fileDesc>"
         "\n\t\t\t<titleStmt>"
-        "\n\t\t\t\t<title>Mozilla Terms</title>"
+        "\n\t\t\t\t<title>%(title)s</title>"
         "\n\t\t\t</titleStmt>"
         "\n\t\t\t<sourceDesc>"
-        "\n\t\t\t\t<p>from a Mozilla termbase</p>"
+        "\n\t\t\t\t<p>%(description)s</p>"
         "\n\t\t\t</sourceDesc>"
         "\n\t\t</fileDesc>"
         "\n\t\t<encodingDesc>"
@@ -27,7 +29,10 @@ def build_tbx_v2_file(term_translations, locale):
         "\n\t</martifHeader>"
         "\n\t<text>"
         "\n\t\t<body>"
-    )
+    ) % {
+        "title": escape(settings.TBX_TITLE),
+        "description": escape(settings.TBX_DESCRIPTION),
+    }
 
     for translation in term_translations:
         term = translation.term
@@ -82,10 +87,10 @@ def build_tbx_v3_file(term_translations, locale):
         "\n\t<tbxHeader>"
         "\n\t\t<fileDesc>"
         "\n\t\t\t<titleStmt>"
-        "\n\t\t\t\t<title>Mozilla Terms</title>"
+        "\n\t\t\t\t<title>%(title)s</title>"
         "\n\t\t\t</titleStmt>"
         "\n\t\t\t<sourceDesc>"
-        "\n\t\t\t\t<p>from a Mozilla termbase</p>"
+        "\n\t\t\t\t<p>%(description)s</p>"
         "\n\t\t\t</sourceDesc>"
         "\n\t\t</fileDesc>"
         "\n\t\t<encodingDesc>"
@@ -94,7 +99,10 @@ def build_tbx_v3_file(term_translations, locale):
         "\n\t</tbxHeader>"
         "\n\t<text>"
         "\n\t\t<body>"
-    )
+    ) % {
+        "title": escape(settings.TBX_TITLE),
+        "description": escape(settings.TBX_DESCRIPTION),
+    }
 
     for translation in term_translations:
         term = translation.term

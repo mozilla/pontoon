@@ -1140,3 +1140,7 @@ BADGES_PROMOTION_THRESHOLDS = list(
 )
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Used in the header of the Terminology (.TBX) files.
+TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
+TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")
