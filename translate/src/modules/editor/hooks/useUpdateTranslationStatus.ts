@@ -8,6 +8,7 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
+import { ShowBadgeTooltip } from '~/context/BadgeNotification';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
@@ -19,7 +20,6 @@ import {
   UNABLE_TO_REJECT_TRANSLATION,
   UNABLE_TO_UNAPPROVE_TRANSLATION,
   UNABLE_TO_UNREJECT_TRANSLATION,
-  REVIEW_MASTER_BADGE,
 } from '~/modules/notification/messages';
 import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
@@ -39,6 +39,7 @@ export function useUpdateTranslationStatus(
 
   const { resource } = useContext(Location);
   const showNotification = useContext(ShowNotification);
+  const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
   const pushNextTranslatable = usePushNextTranslatable();
   const { updateHistory } = useContext(HistoryData);
@@ -93,7 +94,10 @@ export function useUpdateTranslationStatus(
         // Check for update in badge level
         const badgeLevel = results.badge_update?.level;
         if (badgeLevel) {
-          showNotification(REVIEW_MASTER_BADGE(badgeLevel));
+          showBadgeTooltip({
+            badgeName: 'Review Master',
+            badgeLevel: badgeLevel,
+          });
         }
 
         // Update stats in the resource menu.

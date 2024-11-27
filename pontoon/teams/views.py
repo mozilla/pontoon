@@ -251,6 +251,7 @@ def ajax_permissions(request, locale):
             "project_locales": project_locales,
             "hide_project_selector": hide_project_selector,
             "community_builder_badge": community_builder_level,
+            "username": request.user,
         },
     )
 

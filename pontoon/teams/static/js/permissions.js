@@ -55,10 +55,25 @@ $(function () {
         const badgeLevel = $(response).find('#community-builder-level').val();
 
         // Check for new badge notification
-        if (badgeLevel) {
-          Pontoon.endLoader(
-            `Community Builder Badge level gained: ${badgeLevel}`,
-          );
+        if (badgeLevel > 0) {
+          const tooltip = document.getElementById('badge-tooltip-container');
+
+          if (tooltip) {
+            tooltip.style.display = 'block';
+
+            // Force a re-render of the text with the proper badge level
+            $(tooltip)
+              .find('.controls:nth-child(2)')
+              .text(
+                `Community Builder Badge level gained: Level ${badgeLevel}`,
+              );
+
+            tooltip.addEventListener('click', function hideTooltip() {
+              tooltip.style.display = 'none';
+              tooltip.removeEventListener('click', hideTooltip);
+            });
+          }
+
           const duration = 2000;
           const animationEnd = Date.now() + duration;
           const defaults = {

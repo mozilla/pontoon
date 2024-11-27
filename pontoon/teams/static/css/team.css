@@ -72,6 +72,22 @@
   display: none;
 }
 
+.badge-tooltip {
+  background: var(--black-3);
+  border: 1px solid var(--dark-grey-1);
+  border-radius: 10px;
+  box-shadow: 0 0 20px -2px var(--tooltip-background);
+  box-sizing: border-box;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  position: absolute;
+  bottom: 350px;
+  left: 575px;
+  width: 350px;
+  z-index: 100;
+}
+
 #permissions-form .selector-wrapper {
   white-space: nowrap;
 }

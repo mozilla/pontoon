@@ -215,6 +215,14 @@ editor-NewContributorTooltip--team-info = Check the <a>team information</a> befo
 editor-NewContributorTooltip--team-managers = Reach out to <a>team managers</a> if you have questions or want to learn more about contributing.
 
 
+## Editor Badge Tooltip
+## Popup notification when users gain a new badge level
+
+editor-BadgeTooltip--intro = New badge level gained!
+editor-BadgeTooltip--info = { $badgeName } Badge level gained: Level { $badgeLevel }
+editor-BadgeTooltip--profile = You can view your new badge on your <a>profile page</a>.
+
+
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
 
@@ -577,8 +585,6 @@ notification--ftl-not-supported-rich-editor = Translation not supported in rich 
 notification--entity-not-found = Can’t load specified string
 notification--string-link-copied = Link copied to clipboard
 notification--comment-added = Comment added
-notification--translation-champion-badge = Translation Champion Badge level gained: Level { $badgeLevel }
-notification--review-master-badge = Review Master Badge level gained: Level { $badgeLevel }
 
 
 ## OtherLocales Translation

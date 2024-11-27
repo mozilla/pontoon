@@ -3,9 +3,15 @@
 <form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
-    {% if community_builder_badge %}
-        <input type="hidden" id="community-builder-level" value="{{ community_builder_badge }}">
-    {% endif %}
+    <input type="hidden" id="community-builder-level" value="{{ community_builder_badge }}">
+    <div id="badge-tooltip-container" class="badge-tooltip" style="display: none;">
+        <p class="controls">New badge level gained!</p>
+        <p class="controls">
+            Community Builder Badge level gained: Level {{ community_builder_badge }}
+        </p>
+        <p class="controls">You can view your new badge on your <a href="{{ url('pontoon.contributors.contributor.username', username) }}">profile page</a>.</p>
+    </div>
+    
 
     <div class="permissions-groups general clearfix">
         <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
