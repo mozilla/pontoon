@@ -353,7 +353,7 @@ def update_db_translations(
                     plural_form=plural_form,
                     date=now,
                     active=True,
-                    user=user
+                    user=user,
                 )
                 if fuzzy:
                     tx.fuzzy = True
