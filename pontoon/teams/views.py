@@ -451,9 +451,10 @@ def ajax_translation_memory_upload(request, locale):
     for tu in tu_elements:
         try:
             srclang = tu.attrib.get("srclang", header_srclang)
+            tu_str = ET.tostring(tu, encoding="unicode")
 
             if not srclang_pattern.match(srclang):
-                log.info(f"Skipping <tu> with unsupported srclang: {srclang}")
+                log.info(f"Skipping <tu> with unsupported srclang: {tu_str}")
                 continue
 
             source = get_seg_text(tu, srclang, ns)
@@ -462,9 +463,7 @@ def ajax_translation_memory_upload(request, locale):
             if source and target:
                 file_entries.append({"source": source, "target": target})
             else:
-                log.info(
-                    f"Skipping <tu> with missing or empty segment: {ET.tostring(tu, encoding='unicode')}"
-                )
+                log.info(f"Skipping <tu> with missing or empty segment: {tu_str}")
 
         except Exception as e:
             log.info(f"Error processing <tu>: {e}")
