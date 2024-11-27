@@ -163,6 +163,7 @@ def send_verification_email(request, token):
     EmailMessage(
         subject=mail_subject,
         body=mail_body,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         to=[request.user.profile.contact_email],
     ).send()
 
