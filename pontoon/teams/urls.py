@@ -121,6 +121,12 @@ urlpatterns = [
                                 views.ajax_translation_memory_delete,
                                 name="pontoon.teams.ajax.translation-memory.delete",
                             ),
+                            # Upload .TMX file
+                            path(
+                                "translation-memory/upload/",
+                                views.ajax_translation_memory_upload,
+                                name="pontoon.teams.ajax.translation-memory.upload",
+                            ),
                         ]
                     ),
                 ),
