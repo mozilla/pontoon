@@ -1,15 +1,38 @@
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 
 from pontoon.base.templatetags.helpers import (
     format_datetime,
     format_timedelta,
+    full_static,
+    full_url,
     metric_prefix,
     nospam,
     to_json,
 )
 from pontoon.base.utils import aware_datetime
+
+
+@patch("pontoon.base.templatetags.helpers.reverse")
+def test_full_url(mock_reverse, settings):
+    mock_reverse.return_value = "/some/path"
+    settings.SITE_URL = "https://example.com"
+
+    result = full_url("some_view_name", arg1="value1")
+
+    assert result == "https://example.com/some/path"
+
+
+@patch("pontoon.base.templatetags.helpers.staticfiles_storage.url")
+def test_full_static(mock_static, settings):
+    mock_static.return_value = "/static/assets/image.png"
+    settings.SITE_URL = "https://example.com"
+
+    result = full_static("assets/image.png")
+
+    assert result == "https://example.com/static/assets/image.png"
 
 
 def test_helper_to_json():

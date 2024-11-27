@@ -1,3 +1,5 @@
+import re
+
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
@@ -433,6 +435,42 @@ def serialized_notifications(self):
     }
 
 
+def is_subscribed_to_notification(self, notification):
+    """
+    Determines if the user has email subscription to the given notification.
+    """
+    profile = self.profile
+    verb = notification.verb
+    desc = notification.description
+
+    # New strings notifications
+    if re.match(r"updated with \d+ new strings", verb):
+        return profile.new_string_notifications_email
+
+    # Project target dates notifications
+    if re.match(r"due in \d+ days", verb):
+        return profile.project_deadline_notifications_email
+
+    # Comments notifications
+    if re.match(r"has (pinned|added) a comment in", verb):
+        return profile.comment_notifications_email
+
+    # New suggestions ready for review notifications
+    if verb == "":
+        return profile.unreviewed_suggestion_notifications_email
+
+    if re.match(r"has reviewed suggestions", verb):
+        # Review actions on own suggestions notifications
+        if desc.startswith("Your suggestions have been reviewed"):
+            return profile.review_notifications_email
+
+        # New team contributors notifications
+        elif desc.startswith("<a href="):
+            return profile.new_contributor_notifications_email
+
+    return False
+
+
 def user_serialize(self):
     """Serialize Project contact"""
 
@@ -485,5 +523,6 @@ User.add_to_class("notification_list", notification_list)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("is_subscribed_to_notification", is_subscribed_to_notification)
 User.add_to_class("serialize", user_serialize)
 User.add_to_class("latest_action", latest_action)
