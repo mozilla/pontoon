@@ -161,6 +161,10 @@ you create:
    It allows to explain what type of communication to expect and to link to
    deployment-specific privacy notices among other things.
 
+``EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT``
+   Optional. Text to be shown in the footer of the non-transactional emails sent
+   using the Messaging Center, just above the unsubscribe text.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
