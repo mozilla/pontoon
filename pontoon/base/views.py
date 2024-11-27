@@ -808,8 +808,12 @@ def upload(request):
         from pontoon.sync.utils import sync_uploaded_file
 
         upload = request.FILES["uploadfile"]
-        sync_uploaded_file(project, locale, res_path, upload, request.user)
-        messages.success(request, "Translations updated from uploaded file.")
+        try:
+            print(request.user)
+            sync_uploaded_file(project, locale, res_path, upload, request.user)
+            messages.success(request, "Translations updated from uploaded file.")
+        except Exception as error:
+            messages.error(request, str(error))
     else:
         for errors in form.errors.values():
             for error in errors:

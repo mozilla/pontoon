@@ -96,12 +96,16 @@ def test_add_ftl_translation():
 
         # Test sync
         sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
-        assert set(
-            trans.entity.key
-            for trans in Translation.objects.filter(
-                entity__resource=res["c"], locale=locale
-            )
-        ) == {"key-c-0", "key-c-1", "key-c-2"}
+        translations = Translation.objects.filter(
+            entity__resource=res["c"], locale=locale
+        )
+        assert set(trans.entity.key for trans in translations) == {
+            "key-c-0",
+            "key-c-1",
+            "key-c-2",
+        }
+        tr_c2 = next(trans for trans in translations if trans.entity.key == "key-c-2")
+        assert not tr_c2.user
 
         # Test stats
         update_stats(project)

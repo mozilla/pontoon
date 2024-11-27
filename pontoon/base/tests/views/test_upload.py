@@ -166,5 +166,6 @@ def test_upload_file(
         assert translation.entity.key == "test_key"
         assert translation.entity.resource.path == "resource_a.po"
         assert translation.approved
+        assert translation.user
         assert not translation.warnings.exists()
         assert not translation.errors.exists()

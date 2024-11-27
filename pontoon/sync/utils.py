@@ -59,3 +59,5 @@ def sync_uploaded_file(
             ),
             ignore_conflicts=True,
         )
+    else:
+        raise Exception("Upload failed.")

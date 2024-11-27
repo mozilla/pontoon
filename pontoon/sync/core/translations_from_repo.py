@@ -68,13 +68,12 @@ def sync_translations_from_repo(
         project, locale_map, changed_target_paths, paths, db_changes
     )
     if updates:
-        user = User.objects.get(username="pontoon-sync")
-        write_db_updates(project, updates, user, now)
+        write_db_updates(project, updates, None, now)
     return del_count, 0 if updates is None else len(updates)
 
 
 def write_db_updates(
-    project: Project, updates: Updates, user: User, now: datetime
+    project: Project, updates: Updates, user: User | None, now: datetime
 ) -> None:
     updated_translations, new_translations = update_db_translations(
         project, updates, user, now
@@ -153,7 +152,11 @@ def find_db_updates(
                 db_path = relpath(ref_path, paths.ref_root)
                 lc_scope = f"[{project.slug}:{db_path}, {locale.code}]"
                 try:
-                    res = parse(target_path, ref_path, locale)
+                    res = parse(
+                        target_path,
+                        None if isinstance(paths, UploadPaths) else ref_path,
+                        locale,
+                    )
                 except Exception as error:
                     log.error(f"{lc_scope} Skipping resource with parse error: {error}")
                     continue
@@ -259,13 +262,14 @@ def find_db_updates(
 def update_db_translations(
     project: Project,
     repo_translations: Updates,
-    user: User,
+    user: User | None,
     now: datetime,
 ) -> tuple[list[Translation], list[Translation]]:
     if not repo_translations:
         return [], []
     log.debug(f"[{project.slug}] Syncing translations from repo...")
 
+    log_user = user or User.objects.get(username="pontoon-sync")
     translations_to_reject = Q()
     actions: list[ActionLog] = []
 
@@ -304,7 +308,7 @@ def update_db_translations(
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_UNREJECTED,
-                    performed_by=user,
+                    performed_by=log_user,
                     translation=tx,
                 )
             )
@@ -321,7 +325,7 @@ def update_db_translations(
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
-                    performed_by=user,
+                    performed_by=log_user,
                     translation=tx,
                 )
             )
@@ -349,6 +353,7 @@ def update_db_translations(
                     plural_form=plural_form,
                     date=now,
                     active=True,
+                    user=user
                 )
                 if fuzzy:
                     tx.fuzzy = True
@@ -360,7 +365,7 @@ def update_db_translations(
                     ActionLog(
                         action_type=ActionLog.ActionType.TRANSLATION_CREATED,
                         created_at=now,
-                        performed_by=user,
+                        performed_by=log_user,
                         translation=tx,
                     )
                 )
@@ -375,7 +380,7 @@ def update_db_translations(
         actions.extend(
             ActionLog(
                 action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
-                performed_by=user,
+                performed_by=log_user,
                 translation=tx,
             )
             for tx in rejected
