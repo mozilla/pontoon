@@ -811,9 +811,9 @@ markupsafe==2.0.1 \
     # via
     #   -r requirements/default.in
     #   jinja2
-moz-l10n[xml]==0.5.2 \
-    --hash=sha256:85f754b95f689bb1f597b281f19991fa09179d98a2258df0bdf5afbacdfcb3a8 \
-    --hash=sha256:c9af23b74dce53a26661ced73ddd5f32155eb5e23979257c930f69e63f03c002
+moz-l10n[xml]==0.5.5 \
+    --hash=sha256:30b0475f79a2a3c6118e63e5a769b8587bd623399ebb5a0b5f9940261e4df566 \
+    --hash=sha256:7d524ff31ca42d72904f479b86cb3cb296c39dd8182b79ee34de7a32d7cb328f
     # via -r requirements/default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
