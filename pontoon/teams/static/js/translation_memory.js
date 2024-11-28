@@ -169,10 +169,24 @@ $(function () {
     },
   );
 
+  const uploadWrapper = '.translation-memory .upload-wrapper';
+
   // Upload TM entries
-  $('body').on('click', '.translation-memory .upload-button', function () {
+  $('body').on('click', `${uploadWrapper} .upload`, function () {
+    const controls = $(this).parents('.controls');
+    controls.addClass('uploading');
+  });
+  // Cancel action
+  $('body').on('click', `${uploadWrapper} .cancel`, function () {
+    const controls = $(this).parents('.controls');
+    controls.removeClass('uploading');
+  });
+  $('body').on('click', `${uploadWrapper} .confirm`, function () {
+    const controls = $(this).parents('.controls');
     const fileInput = $('<input type="file" accept=".tmx">');
     fileInput.on('change', function () {
+      controls.removeClass('uploading');
+
       const file = this.files[0];
       if (!file) {
         return;
