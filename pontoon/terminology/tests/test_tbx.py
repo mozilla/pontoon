@@ -1,3 +1,5 @@
+import xml.etree.ElementTree as ET
+
 from unittest.mock import MagicMock
 
 import pytest
@@ -28,16 +30,58 @@ def test_build_tbx_v2_file(settings, mock_term_translations):
 
     result = "".join(build_tbx_v2_file(mock_term_translations, locale))
 
-    # Check for expected parts of the XML
-    assert '<?xml version="1.0" encoding="UTF-8"?>' in result
-    assert "Sample Title" in result
-    assert "Sample Description" in result
-    assert '<termEntry id="c1">' in result
-    assert "Sample Term" in result
-    assert "Sample Definition" in result
-    assert "Sample Usage" in result
-    assert "Translation" in result
-    assert "fr-FR" in result
+    # Fail if the result is not a valid XML
+    try:
+        ET.fromstring(result)
+    except ET.ParseError as e:
+        pytest.fail(f"XML parsing failed for TBX v2: {e}")
+
+    # Construct the expected XML
+    expected = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE martif SYSTEM "TBXcoreStructV02.dtd">
+<martif type="TBX" xml:lang="en-US">
+    <martifHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Sample Title</title>
+            </titleStmt>
+            <sourceDesc>
+                <p>Sample Description</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type="XCSURI">TBXXCSV02.xcs</p>
+        </encodingDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id="c1">
+                <descrip type="context">Sample Usage</descrip>
+                <langSet xml:lang="en-US">
+                    <ntig>
+                        <termGrp>
+                            <term>Sample Term</term>
+                            <termNote type="partOfSpeech">noun</termNote>
+                        </termGrp>
+                    </ntig>
+                    <descripGrp>
+                        <descrip type="definition">Sample Definition</descrip>
+                    </descripGrp>
+                </langSet>
+                <langSet xml:lang="fr-FR">
+                    <ntig>
+                        <termGrp>
+                            <term>Translation</term>
+                        </termGrp>
+                    </ntig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>"""
+
+    # Assert that the generated result matches the expected XML
+    assert result.strip() == expected.strip()
 
 
 def test_build_tbx_v3_file(settings, mock_term_translations):
@@ -47,39 +91,52 @@ def test_build_tbx_v3_file(settings, mock_term_translations):
 
     result = "".join(build_tbx_v3_file(mock_term_translations, locale))
 
-    # Check for expected parts of the XML
-    assert '<?xml version="1.0" encoding="UTF-8"?>' in result
-    assert "Sample Title" in result
-    assert "Sample Description" in result
-    assert '<conceptEntry id="c1">' in result
-    assert "Sample Term" in result
-    assert "Sample Definition" in result
-    assert "Sample Usage" in result
-    assert "Translation" in result
-    assert "fr-FR" in result
+    # Fail if the result is not a valid XML
+    try:
+        ET.fromstring(result)
+    except ET.ParseError as e:
+        pytest.fail(f"XML parsing failed for TBX v3: {e}")
 
+    # Construct the expected XML
+    expected = """<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBXcoreStructV03_TBX-Basic_integrated.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://raw.githubusercontent.com/LTAC-Global/TBX-Basic_dialect/master/DCA/TBX-Basic_DCA.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<tbx style="dca" type="TBX-Basic" xml:lang="en" xmlns="urn:iso:std:iso:30042:ed-2">
+    <tbxHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Sample Title</title>
+            </titleStmt>
+            <sourceDesc>
+                <p>Sample Description</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type="XCSURI">TBXXCSV02.xcs</p>
+        </encodingDesc>
+    </tbxHeader>
+    <text>
+        <body>
+            <conceptEntry id="c1">
+                <langSec xml:lang="en-US">
+                    <termSec>
+                        <term>Sample Term</term>
+                        <termNote type="partOfSpeech">noun</termNote>
+                        <descripGrp>
+                            <descrip type="definition">Sample Definition</descrip>
+                            <descrip type="context">Sample Usage</descrip>
+                        </descripGrp>
+                    </termSec>
+                </langSec>
+                <langSec xml:lang="fr-FR">
+                    <termSec>
+                        <term>Translation</term>
+                    </termSec>
+                </langSec>
+            </conceptEntry>
+        </body>
+    </text>
+</tbx>"""
 
-def test_xml_format_v2(mock_term_translations):
-    locale = "fr-FR"
-
-    result = "".join(build_tbx_v2_file(mock_term_translations, locale))
-
-    # Ensure the XML is correctly formatted for TBX v2
-    assert result.startswith('<?xml version="1.0" encoding="UTF-8"?>')
-    assert '<martif type="TBX"' in result
-    assert '<termEntry id="c1">' in result
-    assert '<langSet xml:lang="fr-FR">' in result
-    assert "</martif>" in result
-
-
-def test_xml_format_v3(mock_term_translations):
-    locale = "fr-FR"
-
-    result = "".join(build_tbx_v3_file(mock_term_translations, locale))
-
-    # Ensure the XML is correctly formatted for TBX v3
-    assert result.startswith('<?xml version="1.0" encoding="UTF-8"?>')
-    assert '<tbx style="dca" type="TBX-Basic"' in result
-    assert '<conceptEntry id="c1">' in result
-    assert '<langSec xml:lang="fr-FR">' in result
-    assert "</tbx>" in result
+    # Assert that the generated result matches the expected XML
+    assert result.strip() == expected.strip()
