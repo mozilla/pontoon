@@ -31,10 +31,7 @@ def test_build_tbx_v2_file(settings, mock_term_translations):
     result = "".join(build_tbx_v2_file(mock_term_translations, locale))
 
     # Fail if the result is not a valid XML
-    try:
-        ET.fromstring(result)
-    except ET.ParseError as e:
-        pytest.fail(f"XML parsing failed for TBX v2: {e}")
+    ET.fromstring(result)
 
     # Construct the expected XML
     expected = """<?xml version="1.0" encoding="UTF-8"?>
@@ -92,10 +89,7 @@ def test_build_tbx_v3_file(settings, mock_term_translations):
     result = "".join(build_tbx_v3_file(mock_term_translations, locale))
 
     # Fail if the result is not a valid XML
-    try:
-        ET.fromstring(result)
-    except ET.ParseError as e:
-        pytest.fail(f"XML parsing failed for TBX v3: {e}")
+    ET.fromstring(result)
 
     # Construct the expected XML
     expected = """<?xml version="1.0" encoding="UTF-8"?>
