@@ -64,22 +64,33 @@
                 {% endif %}
             </div>
             <div class="check-list">
-                {{ Checkbox.checkbox('Email communications', class='field email-communications-enabled',
-                attribute='email_communications_enabled', is_enabled=user.profile.email_communications_enabled,
-                title='Receive email updates', help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT) }}
-                {{ Checkbox.checkbox('Monthly activity summary', class='field monthly-activity-summary',
-                attribute='monthly_activity_summary', is_enabled=user.profile.monthly_activity_summary, title='Receive
-                monthly activity summary email', help="Get a summary of your personal activity and the activity within
-                your teams in the last month.") }}
+                {{ Checkbox.checkbox(
+                'Email communications',
+                class='field email-communications-enabled',
+                attribute='email_communications_enabled',
+                is_enabled=user.profile.email_communications_enabled,
+                title='Receive email updates',
+                help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT)
+                }}
+                {{ Checkbox.checkbox(
+                'Monthly activity summary',
+                class='field monthly-activity-summary',
+                attribute='monthly_activity_summary',
+                is_enabled=user.profile.monthly_activity_summary,
+                title='Receive monthly activity summary email',
+                help="Get a summary of your personal activity and the activity within your teams in the last month.")
+                }}
             </div>
         </section>
 
         <section class="notifications">
             <h3>Notification subscriptions</h3>
             <div class="field">
-                <p class="help">Stay updated and choose which notifications to include in the daily or weekly email digest</p>
+                <p class="help">
+                    Stay updated and choose which notifications to include in the daily or weekly email digest
+                </p>
             </div>
-            <div class="check-list">
+            <div class="check-list">pontoon/base/templatetags/helpers.py
                 <div class="header">
                     <span class="title">Enable</span>
                     <span class="title">Include in email</span>
@@ -87,77 +98,115 @@
                 <div class="double-check-box">
                     <span class="label">New strings</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='new-string-notifications',
-                        attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications,
-                        title='Get notified when new strings are added to your projects') }}
-                        {{ Checkbox.checkbox('', class='new-string-notifications-email',
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-string-notifications',
+                        attribute='new_string_notifications',
+                        is_enabled=user.profile.new_string_notifications,
+                        title='Get notified when new strings are added to your projects')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-string-notifications-email',
                         attribute='new_string_notifications_email',
                         is_enabled=user.profile.new_string_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div class="double-check-box">
                     <span class="label">Project target dates</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='project-deadline-notifications',
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='project-deadline-notifications',
                         attribute='project_deadline_notifications',
                         is_enabled=user.profile.project_deadline_notifications,
-                        title='Get notified when project target date approaches') }}
-                        {{ Checkbox.checkbox('', class='project-deadline-notifications-email',
+                        title='Get notified when project target date approaches')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='project-deadline-notifications-email',
                         attribute='project_deadline_notifications_email',
                         is_enabled=user.profile.project_deadline_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div class="double-check-box">
                     <span class="label">Comments</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='comment-notifications',
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='comment-notifications',
                         attribute='comment_notifications',
-                        is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted
-                        to
-                        your strings') }}
-                        {{ Checkbox.checkbox('', class='comment-notifications-email',
-                        attribute='comment_notifications_email', is_enabled=user.profile.comment_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        is_enabled=user.profile.comment_notifications,
+                        title='Get notified when comments are submitted to your strings')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='comment-notifications-email',
+                        attribute='comment_notifications_email',
+                        is_enabled=user.profile.comment_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div class="double-check-box">
                     <span class="label">New suggestions ready for review</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='unreviewed-suggestion-notifications',
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='unreviewed-suggestion-notifications',
                         attribute='unreviewed_suggestion_notifications',
-                        is_enabled=user.profile.unreviewed_suggestion_notifications, title='Get notified when new
-                        suggestions are ready for review') }}
-                        {{ Checkbox.checkbox('', class='unreviewed-suggestion-notifications-email',
+                        is_enabled=user.profile.unreviewed_suggestion_notifications,
+                        title='Get notified when new suggestions are ready for review')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='unreviewed-suggestion-notifications-email',
                         attribute='unreviewed_suggestion_notifications_email',
                         is_enabled=user.profile.unreviewed_suggestion_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div class="double-check-box">
                     <span class="label">Review actions on own suggestions</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='review-notifications', attribute='review_notifications',
-                        is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are
-                        approved
-                        or rejected') }}
-                        {{ Checkbox.checkbox('', class='review-notifications-email',
-                        attribute='review_notifications_email', is_enabled=user.profile.review_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='review-notifications',
+                        attribute='review_notifications',
+                        is_enabled=user.profile.review_notifications,
+                        title='Get notified when your suggestions are approved or rejected')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='review-notifications-email',
+                        attribute='review_notifications_email',
+                        is_enabled=user.profile.review_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div class="double-check-box">
                     <span class="label">New team contributors</span>
                     <span class="check-boxes">
-                        {{ Checkbox.checkbox('', class='new-contributor-notifications',
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-contributor-notifications',
                         attribute='new_contributor_notifications',
                         is_enabled=user.profile.new_contributor_notifications,
-                        title='Get notified when new contributors make their first contributions to the team') }}
-                        {{ Checkbox.checkbox('', class='new-contributor-notifications-email',
+                        title='Get notified when new contributors make their first contributions to the team')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-contributor-notifications-email',
                         attribute='new_contributor_notifications_email',
                         is_enabled=user.profile.new_contributor_notifications_email,
-                        title='Include notification in weekly or monthly email') }}
+                        title='Include notification in weekly or monthly email')
+                        }}
                     </span>
                 </div>
                 <div id="notification-email-frequency" class="field">
@@ -218,13 +267,22 @@
         <section>
             <h3>Editor</h3>
             <div class="check-list">
-                {{ Checkbox.checkbox('Translate Toolkit checks', class='quality-checks', attribute='quality_checks',
-                is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting
-                translations') }}
+                {{ Checkbox.checkbox(
+                'Translate Toolkit checks',
+                class='quality-checks',
+                attribute='quality_checks',
+                is_enabled=user.profile.quality_checks,
+                title='Run Translate Toolkit checks before submitting translations')
+                }}
 
                 {% if user.can_translate_locales %}
-                {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions',
-                is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
+                {{ Checkbox.checkbox(
+                'Make suggestions',
+                class='force-suggestions',
+                attribute='force_suggestions',
+                is_enabled=user.profile.force_suggestions,
+                title='Save suggestions instead of translations')
+                }}
                 {% endif %}
             </div>
         </section>
