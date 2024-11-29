@@ -65,11 +65,11 @@
             </div>
             <div class="check-list">
                 {{ Checkbox.checkbox(
-                'Email communications',
+                'News and updates',
                 class='field email-communications-enabled',
                 attribute='email_communications_enabled',
                 is_enabled=user.profile.email_communications_enabled,
-                title='Receive email updates',
+                title='Receive news and updates via email',
                 help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT)
                 }}
                 {{ Checkbox.checkbox(
