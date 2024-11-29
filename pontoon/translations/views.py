@@ -202,7 +202,7 @@ def create_translation(request):
         notify.send(
             sender=user,
             recipient=user,
-            verb="",  # Triggers render of description only
+            verb="ignore",  # Triggers render of description only
             description=desc,
         )
 
@@ -370,7 +370,7 @@ def approve_translation(request):
         notify.send(
             sender=user,
             recipient=user,
-            verb="",  # Triggers render of description only
+            verb="ignore",  # Triggers render of description only
             description=desc,
         )
 
@@ -529,7 +529,7 @@ def reject_translation(request):
         notify.send(
             sender=request.user,
             recipient=request.user,
-            verb="",  # Triggers render of description only
+            verb="ignore",  # Triggers render of description only
             description=desc,
         )
 

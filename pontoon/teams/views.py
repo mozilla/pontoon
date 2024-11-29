@@ -168,7 +168,7 @@ def ajax_permissions(request, locale):
     locale = get_object_or_404(Locale, code=locale)
     project_locales = locale.project_locale.visible().visible_for(request.user)
 
-    community_builder_level = 0
+    community_builder_level_reached = 0
     if request.method == "POST":
         locale_form = forms.LocalePermsForm(
             request.POST, instance=locale, prefix="general", user=request.user
@@ -181,7 +181,7 @@ def ajax_permissions(request, locale):
         )
 
         if locale_form.is_valid() and project_locale_form.is_valid():
-            community_builder_level = locale_form.save()
+            community_builder_level_reached = locale_form.save()
             project_locale_form.save()
 
         else:
@@ -250,7 +250,7 @@ def ajax_permissions(request, locale):
             "project_locale_form": project_locale_form,
             "project_locales": project_locales,
             "hide_project_selector": hide_project_selector,
-            "community_builder_badge": community_builder_level,
+            "community_builder_level_reached": community_builder_level_reached,
         },
     )
 

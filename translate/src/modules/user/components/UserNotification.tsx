@@ -39,7 +39,7 @@ const Comment = ({
     <span className='actor'>{actor.anchor}</span>
 
     <span className='verb'>
-      <a href={target.url}>{verb}</a>
+      {verb !== 'ignore' && <a href={target.url}>{verb}</a>}
     </span>
 
     <span className='target'>{target.anchor}</span>
@@ -79,7 +79,8 @@ const Other = ({
     </span>
 
     <span className='verb'>
-      {verb.replace('has added a comment in', 'has added a comment')}
+      {verb !== 'ignore' &&
+        verb.replace('has added a comment in', 'has added a comment')}
     </span>
 
     {!target ? null : (

@@ -76,7 +76,9 @@
           </span>
 
           <span class="verb">
+            {% if notification.verb != 'ignore' %}
             {{ notification.verb.replace("has added a comment in", "has added a comment") }}
+            {% endif %}
           </span>
 
           {% if target %}

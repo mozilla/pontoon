@@ -93,7 +93,7 @@ class UserPermissionLogFormMixin:
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         # Track if user reached new level for Community Builder Badge
-        self.community_builder_level = 0
+        self.community_builder_level_reached = 0
 
     def assign_users_to_groups(self, group_name, users):
         """
@@ -142,7 +142,7 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
             after_count > before_count
             and after_count in settings.BADGES_PROMOTION_THRESHOLDS
         ):
-            self.community_builder_level = (
+            self.community_builder_level_reached = (
                 settings.BADGES_PROMOTION_THRESHOLDS.index(after_count) + 1
             )
             desc = """
@@ -152,7 +152,7 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
             <br>
             You can view this badge on your <a href={profile_href}> profile page </a>.
             """.format(
-                level=self.community_builder_level,
+                level=self.community_builder_level_reached,
                 profile_href=reverse(
                     "pontoon.contributors.contributor.username",
                     kwargs={
@@ -163,11 +163,11 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
             notify.send(
                 sender=self.user,
                 recipient=self.user,
-                verb="",  # Triggers render of description only
+                verb="ignore",  # Triggers render of description only
                 description=desc,
             )
 
-        return self.community_builder_level
+        return self.community_builder_level_reached
 
 
 class ProjectLocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):

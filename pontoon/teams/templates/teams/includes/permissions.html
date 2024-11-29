@@ -3,11 +3,10 @@
 <form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
-    <input type="hidden" id="community-builder-level" value="{{ community_builder_badge }}">
-    <div id="badge-tooltip-container" class="badge-tooltip" >
-        <p >New badge level gained!</p>
-        <p >
-        </p>
+    <input type="hidden" id="community-builder-level" value="{{ community_builder_level_reached }}">
+    <div id="badge-tooltip-container" class="badge-tooltip">
+        <p>New badge level gained!</p>
+        <p class="badge-tooltip-info"></p>
         <img class="badge" src="{{ static('badges/community_builder_badge.svg') }}" title="Community Builder Badge" />
         <p>You can view your new badge on your <a href="{{ url('pontoon.contributors.contributor.username', request.user) }}">profile page</a>.</p>
         <button>Dismiss</button>

@@ -46,6 +46,8 @@ $(function () {
       });
     });
 
+    const $tooltip = $('#badge-tooltip-container');
+
     $.ajax({
       url: $('#permissions-form').prop('action'),
       type: $('#permissions-form').prop('method'),
@@ -56,23 +58,12 @@ $(function () {
 
         // Check for new badge notification
         if (badgeLevel > 0) {
-          const $tooltip = $('#badge-tooltip-container');
+          $tooltip.show();
 
-          if ($tooltip.length) {
-            $tooltip.show();
-
-            // Force a re-render of the text with the proper badge level
-            $tooltip
-              .find('p:nth-of-type(2)')
-              .text(
-                `Community Builder Badge level gained: Level ${badgeLevel}`,
-              );
-
-            $tooltip.find('button').one('click', function (e) {
-              e.preventDefault();
-              $tooltip.hide();
-            });
-          }
+          // Force a re-render of the text with the proper badge level
+          $tooltip
+            .find('.badge-tooltip-info')
+            .text(`Community Builder Badge level gained: Level ${badgeLevel}`);
 
           const duration = 2000;
           const animationEnd = Date.now() + duration;
@@ -112,6 +103,11 @@ $(function () {
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
       },
+    });
+
+    $tooltip.find('button').one('click', function (e) {
+      e.preventDefault();
+      $tooltip.hide();
     });
   });
 
