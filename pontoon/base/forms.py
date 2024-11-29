@@ -4,12 +4,9 @@ from pathlib import Path
 
 import bleach
 
-from notifications.signals import notify
-
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.urls import reverse
 
 from pontoon.base import utils
 from pontoon.base.models import (
@@ -20,6 +17,7 @@ from pontoon.base.models import (
 )
 from pontoon.sync.formats import are_compatible_files
 from pontoon.teams.utils import log_group_members
+from pontoon.translations.views import _send_badge_notification
 
 
 class HtmlField(forms.CharField):
@@ -145,26 +143,10 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
             self.community_builder_level_reached = (
                 settings.BADGES_PROMOTION_THRESHOLDS.index(after_count) + 1
             )
-            desc = """
-            You have gained a new badge level!
-            <br>
-            Community Builder Badge: Level {level}
-            <br>
-            You can view this badge on your <a href={profile_href}> profile page </a>.
-            """.format(
-                level=self.community_builder_level_reached,
-                profile_href=reverse(
-                    "pontoon.contributors.contributor.username",
-                    kwargs={
-                        "username": self.user.username,
-                    },
-                ),
-            )
-            notify.send(
-                sender=self.user,
-                recipient=self.user,
-                verb="ignore",  # Triggers render of description only
-                description=desc,
+            _send_badge_notification(
+                self.user,
+                "Community Builder Badge",
+                self.community_builder_level_reached,
             )
 
         return self.community_builder_level_reached

@@ -22,6 +22,31 @@ from pontoon.checks.utils import are_blocking_checks
 from pontoon.translations import forms
 
 
+def _send_badge_notification(user, badge, level):
+    desc = """
+        You have gained a new badge level!
+        <br>
+        {badge}: Level {level}
+        <br>
+        You can view this badge on your <a href={profile_href}> profile page </a>.
+        """.format(
+        badge=badge,
+        level=level,
+        profile_href=reverse(
+            "pontoon.contributors.contributor.username",
+            kwargs={
+                "username": user,
+            },
+        ),
+    )
+    notify.send(
+        sender=user,
+        recipient=user,
+        verb="ignore",  # Triggers render of description only
+        description=desc,
+    )
+
+
 @require_POST
 @utils.require_AJAX
 @login_required(redirect_field_name="", login_url="/403")
@@ -184,26 +209,10 @@ def create_translation(request):
             "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count)
             + 1,
         }
-        desc = """
-        You have gained a new badge level!
-        <br>
-        Translation Champion Badge: Level {level}
-        <br>
-        You can view this badge on your <a href={profile_href}> profile page </a>.
-        """.format(
-            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1,
-            profile_href=reverse(
-                "pontoon.contributors.contributor.username",
-                kwargs={
-                    "username": user.username,
-                },
-            ),
-        )
-        notify.send(
-            sender=user,
-            recipient=user,
-            verb="ignore",  # Triggers render of description only
-            description=desc,
+        _send_badge_notification(
+            user,
+            "Translation Champion Badge",
+            settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1,
         )
 
     return JsonResponse(response_data)
@@ -352,26 +361,10 @@ def approve_translation(request):
             "name": "Review Master Badge",
             "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         }
-        desc = """
-        You have gained a new badge level!
-        <br>
-        Review Master Badge: Level {level}
-        <br>
-        You can view this badge on your <a href={profile_href}> profile page </a>.
-        """.format(
-            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-            profile_href=reverse(
-                "pontoon.contributors.contributor.username",
-                kwargs={
-                    "username": user.username,
-                },
-            ),
-        )
-        notify.send(
-            sender=user,
-            recipient=user,
-            verb="ignore",  # Triggers render of description only
-            description=desc,
+        _send_badge_notification(
+            user,
+            "Review Master Badge",
+            settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         )
 
     return JsonResponse(response_data)
@@ -511,26 +504,10 @@ def reject_translation(request):
             "name": "Review Master Badge",
             "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         }
-        desc = """
-        You have gained a new badge level!
-        <br>
-        Review Master Badge: Level {level}
-        <br>
-        You can view this badge on your <a href={profile_href}> profile page </a>.
-        """.format(
-            level=settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-            profile_href=reverse(
-                "pontoon.contributors.contributor.username",
-                kwargs={
-                    "username": request.user.username,
-                },
-            ),
-        )
-        notify.send(
-            sender=request.user,
-            recipient=request.user,
-            verb="ignore",  # Triggers render of description only
-            description=desc,
+        _send_badge_notification(
+            request.user,
+            "Review Master Badge",
+            settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
         )
 
     return JsonResponse(response_data)
