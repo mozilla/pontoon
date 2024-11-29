@@ -56,21 +56,21 @@ $(function () {
 
         // Check for new badge notification
         if (badgeLevel > 0) {
-          const tooltip = document.getElementById('badge-tooltip-container');
+          const $tooltip = $('#badge-tooltip-container');
 
-          if (tooltip) {
-            tooltip.style.display = 'block';
+          if ($tooltip.length) {
+            $tooltip.show();
 
             // Force a re-render of the text with the proper badge level
-            $(tooltip)
-              .find('.controls:nth-child(2)')
+            $tooltip
+              .find('p:nth-of-type(2)')
               .text(
                 `Community Builder Badge level gained: Level ${badgeLevel}`,
               );
 
-            tooltip.addEventListener('click', function hideTooltip() {
-              tooltip.style.display = 'none';
-              tooltip.removeEventListener('click', hideTooltip);
+            $tooltip.find('button').one('click', function (e) {
+              e.preventDefault();
+              $tooltip.hide();
             });
           }
 

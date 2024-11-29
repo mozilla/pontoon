@@ -80,12 +80,32 @@
   box-sizing: border-box;
   text-align: center;
   margin: 0;
-  padding: 20px;
+  padding: 35px;
   position: absolute;
+  display: none;
   bottom: 350px;
   left: 575px;
-  width: 350px;
+  width: 375px;
   z-index: 100;
+
+  img.badge {
+    border: 2px solid var(--main-border-1);
+    border-radius: 50%;
+    margin-bottom: 4px;
+  }
+
+  button {
+    position: absolute;
+    background: none;
+    border: none;
+    background: var(--button-background-1);
+    color: var(--light-grey-7);
+    padding: 2px 4px;
+    font-weight: 300;
+    border-radius: 3px;
+    top: 5px;
+    right: 5px;
+  }
 }
 
 #permissions-form .selector-wrapper {

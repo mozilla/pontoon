@@ -4,6 +4,7 @@ import {
   BadgeTooltipMessage,
   ShowBadgeTooltip,
 } from '~/context/BadgeNotification';
+import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 import { Localized } from '@fluent/react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
@@ -11,36 +12,35 @@ import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import './BadgeTooltip.css';
 
 export function BadgeTooltip(): React.ReactElement<'div'> {
+  const user = useAppSelector((state) => state.user.username);
   const tooltip = useContext(BadgeTooltipMessage);
-  if (!tooltip) return <></>;
-  const { badgeName, badgeLevel } = tooltip;
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
-
   const hide = useCallback(() => {
     showBadgeTooltip(null);
-  }, []);
+  }, [showBadgeTooltip]);
 
+  if (!tooltip) return <></>;
+
+  const { badgeName, badgeLevel } = tooltip;
   const className = classNames('badge-tooltip', tooltip && 'showing');
 
   let imagePath;
   switch (badgeName) {
     case 'Review Master':
-      imagePath = '../images/review_master_badge.svg';
+      imagePath = '/static/badges/review_master_badge.svg';
       break;
     case 'Translation Champion':
-      imagePath = '../images/translation_champion_badge.svg';
+      imagePath = '/static/badges/translation_champion_badge.svg';
       break;
     default:
       imagePath = '';
   }
 
-  const user = useAppSelector((state) => state.user);
-
   return (
     <>
       <Fireworks autorun={{ speed: 1, duration: 3000 }} />
       <div className={className}>
-        <button onClick={hide}> X </button>
+        <button onClick={hide}> Dismiss </button>
 
         <Localized id='editor-BadgeTooltip--intro'>
           <p>New badge level gained!</p>
@@ -55,7 +55,7 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
           </p>
         </Localized>
 
-        <img className='badge' src={imagePath}></img>
+        <img className='badge' src={imagePath} />
 
         <Localized
           id='editor-BadgeTooltip--profile'
