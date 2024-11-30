@@ -12,6 +12,14 @@ def get_default_variant(variants):
             return variant
 
 
+def get_variant_key(variant):
+    """Return the key of the variant as represented in the syntax."""
+    if isinstance(variant.key, ast.NumberLiteral):
+        return variant.key.value
+
+    return variant.key.name
+
+
 def serialize_value(value):
     """Serialize AST value into a simple string.
 
