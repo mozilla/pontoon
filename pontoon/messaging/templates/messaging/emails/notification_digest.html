@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
 
     <title>{{ subject }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
@@ -15,16 +16,13 @@
         body {
             margin: 0;
             padding: 0;
-            padding-top: 70px;
-            background-color: #f6f6f6;
-            font-family: 'Open Sans', sans-serif;
-            color: #444444;
         }
 
         table {
             border-spacing: 0;
+            color: #444444;
+            font-family: 'Open Sans', sans-serif;
             font-weight: 300;
-            max-width: 600px;
             margin: 0 auto;
             width: 100%;
         }
@@ -35,7 +33,6 @@
 
         a {
             text-decoration: none;
-            color: #F36;
         }
 
         img {
@@ -43,8 +40,21 @@
             height: auto;
         }
 
+        table.outer {
+            background-color: #f6f6f6;
+        }
+
+        table.inner {
+            max-width: 600px;
+            padding: 70px 0;
+        }
+
+        table.inner a {
+            color: #F36;
+        }
+
         .logo {
-            padding-bottom: 40px;
+            padding-bottom: 30px;
         }
 
         .title {
@@ -63,7 +73,6 @@
             font-size: 12px;
             color: #888888;
             margin-top: 20px;
-            padding-bottom: 40px;
             padding-top: 10px;
         }
 
@@ -81,6 +90,10 @@
             padding: 0;
         }
 
+        .notifications li {
+            margin: 0;
+        }
+
         .notifications li.horizontal-separator {
             border-top: 1px solid #f6f6f6;
         }
@@ -91,6 +104,11 @@
 
         .notifications li .item-content .message {
             color: #888888;
+            padding: 10px;
+        }
+
+        .notifications li .item-content .message p {
+            margin: 0;
         }
 
         .notifications li .item-content .description ul {
@@ -99,6 +117,7 @@
         }
 
         .notifications li .item-content .description ul li {
+            margin: 0;
             padding: 2px 4px;
         }
 
@@ -115,34 +134,35 @@
 </head>
 
 <body>
-    <table>
-        <!-- Logo -->
+    <table class="outer">
         <tr>
-            <td class="logo">
-                <a href="{{ full_url('pontoon.homepage') }}">
-                    <img src="{{ full_static('img/logo.png') }}" alt="Pontoon logo" width="52" height="64">
-                </a>
-            </td>
-        </tr>
-        <!-- Title -->
-        <tr>
-            <td class="title">Hello.</td>
-        </tr>
-        <!-- Subtitle -->
-        <tr>
-            <td class="subtitle">Here's a summary of the Pontoon notifications you've subscribed to.</td>
-        </tr>
-        <!-- Notifications List -->
-        <tr>
-            <td class="notifications">
-                {{ Notifications.list(notifications=notifications, no_title="No notifications.") }}
-            </td>
-        </tr>
-        <!-- Footer -->
-        <tr>
-            <td class="footer">
-                You can adjust your notifications subscriptions at any time from your
-                <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+            <td>
+                <table class="inner">
+                    <tr>
+                        <td class="logo">
+                            <a href="{{ full_url('pontoon.homepage') }}">
+                                <img src="{{ full_static('img/logo.png') }}" alt="Pontoon logo" width="52" height="64">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="title">Hello.</td>
+                    </tr>
+                    <tr>
+                        <td class="subtitle">Here's a summary of the Pontoon notifications you've subscribed to.</td>
+                    </tr>
+                    <tr>
+                        <td class="notifications">
+                            {{ Notifications.list(notifications=notifications, no_title="No notifications.") }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer">
+                            You can adjust your notifications subscriptions at any time from your
+                            <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
