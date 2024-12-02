@@ -84,17 +84,17 @@ def contributor(request, user):
             disabled=False, system_project=False, visibility="public"
         ).order_by("-priority"),
         "badges": {
-            "review_master_badge": {
-                "level": get_badge_level(
-                    BADGES_TRANSLATION_THRESHOLDS, user.badges_review_count
-                ),
-                "name": "Review Master",
-            },
             "translation_champion_badge": {
                 "level": get_badge_level(
                     BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
                 ),
                 "name": "Translation Champion",
+            },
+            "review_master_badge": {
+                "level": get_badge_level(
+                    BADGES_TRANSLATION_THRESHOLDS, user.badges_review_count
+                ),
+                "name": "Review Master",
             },
             "community_builder_badge": {
                 "level": get_badge_level(

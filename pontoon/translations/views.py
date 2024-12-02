@@ -26,16 +26,7 @@ from pontoon.translations import forms
 def _send_badge_notification(user, badge, level):
     desc = render_to_string(
         "messaging/badge_notification.jinja",
-        {
-            "badge": badge,
-            "level": level,
-            "profile_href": reverse(
-                "pontoon.contributors.contributor.username",
-                kwargs={
-                    "username": user,
-                },
-            ),
-        },
+        {"badge": badge, "level": level, "user": user},
     )
     notify.send(
         sender=user,
