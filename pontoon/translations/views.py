@@ -33,6 +33,7 @@ def _send_badge_notification(user, badge, level):
         recipient=user,
         verb="ignore",  # Triggers render of description only
         description=desc,
+        category="badge",
     )
 
 
