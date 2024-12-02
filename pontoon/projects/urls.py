@@ -45,12 +45,6 @@ urlpatterns = [
                     views.project,
                     name="pontoon.projects.info",
                 ),
-                # Project notifications
-                path(
-                    "notifications/",
-                    views.project,
-                    name="pontoon.projects.notifications",
-                ),
                 # AJAX views
                 path(
                     "ajax/",
@@ -85,12 +79,6 @@ urlpatterns = [
                                 "info/",
                                 views.ajax_info,
                                 name="pontoon.projects.ajax.info",
-                            ),
-                            # Project notifications
-                            path(
-                                "notifications/",
-                                views.ajax_notifications,
-                                name="pontoon.projects.ajax.notifications",
                             ),
                         ]
                     ),
