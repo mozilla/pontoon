@@ -16,8 +16,6 @@ def get_variant_key(variant):
     """Return the key of the variant as represented in the syntax."""
     key = variant.key
     return key.value if isinstance(key, ast.NumberLiteral) else key.name
-
-
 def serialize_value(value):
     """Serialize AST value into a simple string.
 
