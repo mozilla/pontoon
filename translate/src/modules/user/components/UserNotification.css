@@ -70,12 +70,6 @@
   white-space: nowrap;
 }
 
-.user-notification .item-content:hover .message,
-.user-notification .item-content:hover .message.trim p,
-.user-notification .item-content:hover .message.trim a {
-  color: var(--white-1);
-}
-
 .user-notification .message.trim a {
   color: var(--light-grey-7);
 }
