@@ -140,3 +140,21 @@ def test_is_subscribed_to_notification(user_with_subscriptions, category, expect
     assert (
         user_with_subscriptions.is_subscribed_to_notification(notification) == expected
     )
+
+
+@pytest.mark.django_db
+def test_is_subscribed_to_notification_no_data(user_with_subscriptions):
+    # Create a notification object without a data attribute
+    notification = Notification()
+
+    # Call the function and assert the result
+    assert user_with_subscriptions.is_subscribed_to_notification(notification) is False
+
+
+@pytest.mark.django_db
+def test_is_subscribed_to_notification_no_category(user_with_subscriptions):
+    # Create a notification object without a category key in data
+    notification = Notification(data={"something": None})
+
+    # Call the function and assert the result
+    assert user_with_subscriptions.is_subscribed_to_notification(notification) is False

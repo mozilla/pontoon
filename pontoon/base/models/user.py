@@ -438,7 +438,7 @@ def is_subscribed_to_notification(self, notification):
     Determines if the user has email subscription to the given notification.
     """
     profile = self.profile
-    category = notification.data.get("category")
+    category = notification.data.get("category") if notification.data else None
 
     CATEGORY_TO_FIELD = {
         "new_string": profile.new_string_notifications_email,
