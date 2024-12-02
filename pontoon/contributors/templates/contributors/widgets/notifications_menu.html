@@ -45,7 +45,7 @@
           {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% endif %}
 
-        {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions") %}
+        {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions" or notification.verb == "ignore") %}
           <span class="description">{{ description|safe }}</span>
 
           <time class="timeago" datetime="{{ notification.timestamp }}">{{ notification.timesince() }} ago</time>
@@ -76,9 +76,7 @@
           </span>
 
           <span class="verb">
-            {% if notification.verb != 'ignore' %}
             {{ notification.verb.replace("has added a comment in", "has added a comment") }}
-            {% endif %}
           </span>
 
           {% if target %}

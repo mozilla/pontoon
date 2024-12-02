@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -23,27 +24,38 @@ from pontoon.translations import forms
 
 
 def _send_badge_notification(user, badge, level):
-    desc = """
-        You have gained a new badge level!
-        <br>
-        {badge}: Level {level}
-        <br>
-        You can view this badge on your <a href={profile_href}> profile page </a>.
-        """.format(
-        badge=badge,
-        level=level,
-        profile_href=reverse(
-            "pontoon.contributors.contributor.username",
-            kwargs={
-                "username": user,
-            },
-        ),
+    desc = render_to_string(
+        "messaging/badge_notification.jinja",
+        {
+            "badge": badge,
+            "level": level,
+            "profile_href": reverse(
+                "pontoon.contributors.contributor.username",
+                kwargs={
+                    "username": user,
+                },
+            ),
+        },
     )
     notify.send(
         sender=user,
         recipient=user,
         verb="ignore",  # Triggers render of description only
         description=desc,
+    )
+
+
+def _add_badge_data(response_data, user, badge_name, stat_count):
+    badge_level = settings.BADGES_TRANSLATION_THRESHOLDS.index(stat_count) + 1
+
+    response_data["badge_update"] = {
+        "name": badge_name,
+        "level": badge_level,
+    }
+    _send_badge_notification(
+        user,
+        badge_name,
+        badge_level,
     )
 
 
@@ -195,25 +207,17 @@ def create_translation(request):
                 description=desc,
             )
 
-    # Send Translation Champion Badge notification information
     response_data = {
         "status": True,
         "translation": translation.serialize(),
         "stats": TranslatedResource.objects.stats(project, paths, locale),
     }
 
+    # Send Translation Champion Badge notification information
     translation_count = user.badges_translation_count
     if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        response_data["badge_update"] = {
-            "name": "Translation Champion Badge",
-            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count)
-            + 1,
-        }
-        _send_badge_notification(
-            user,
-            "Translation Champion Badge",
-            settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1,
-        )
+        badge_name = "Translation Champion Badge"
+        _add_badge_data(response_data, user, badge_name, translation_count)
 
     return JsonResponse(response_data)
 
@@ -349,23 +353,16 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Send Review Master Badge notification information
     response_data = {
         "translation": active_translation.serialize(),
         "stats": TranslatedResource.objects.stats(project, paths, locale),
     }
 
+    # Send Review Master Badge notification information
     review_count = user.badges_review_count
     if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        response_data["badge_update"] = {
-            "name": "Review Master Badge",
-            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-        }
-        _send_badge_notification(
-            user,
-            "Review Master Badge",
-            settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-        )
+        badge_name = "Review Master Badge"
+        _add_badge_data(response_data, user, badge_name, review_count)
 
     return JsonResponse(response_data)
 
@@ -492,23 +489,16 @@ def reject_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Send Review Master Badge notification information
     response_data = {
         "translation": active_translation.serialize(),
         "stats": TranslatedResource.objects.stats(project, paths, locale),
     }
 
+    # Send Review Master Badge notification information
     review_count = request.user.badges_review_count
     if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        response_data["badge_update"] = {
-            "name": "Review Master Badge",
-            "level": settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-        }
-        _send_badge_notification(
-            request.user,
-            "Review Master Badge",
-            settings.BADGES_TRANSLATION_THRESHOLDS.index(review_count) + 1,
-        )
+        badge_name = "Review Master Badge"
+        _add_badge_data(response_data, request.user, badge_name, review_count)
 
     return JsonResponse(response_data)
 

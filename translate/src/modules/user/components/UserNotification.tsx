@@ -39,7 +39,7 @@ const Comment = ({
     <span className='actor'>{actor.anchor}</span>
 
     <span className='verb'>
-      {verb !== 'ignore' && <a href={target.url}>{verb}</a>}
+      <a href={target.url}>{verb}</a>
     </span>
 
     <span className='target'>{target.anchor}</span>
@@ -79,8 +79,7 @@ const Other = ({
     </span>
 
     <span className='verb'>
-      {verb !== 'ignore' &&
-        verb.replace('has added a comment in', 'has added a comment')}
+      {verb.replace('has added a comment in', 'has added a comment')}
     </span>
 
     {!target ? null : (
@@ -129,9 +128,10 @@ export function UserNotification({
 
   const content = description?.content;
   const isSuggestion =
-    (typeof content === 'string' &&
-      content.startsWith('Unreviewed suggestions')) ||
-    verb === 'has reviewed suggestions';
+    typeof content === 'string' &&
+    (content.startsWith('Unreviewed suggestions') ||
+      verb === 'has reviewed suggestions' ||
+      verb === 'ignore');
   const isComment: boolean = description?.is_comment ?? false;
 
   const className = classNames(

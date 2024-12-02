@@ -27,10 +27,10 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
   let imagePath;
   switch (badgeName) {
     case 'Review Master':
-      imagePath = '/static/badges/review_master_badge.svg';
+      imagePath = '/static/img/review_master_badge.svg';
       break;
     case 'Translation Champion':
-      imagePath = '/static/badges/translation_champion_badge.svg';
+      imagePath = '/static/img/translation_champion_badge.svg';
       break;
     default:
       imagePath = '';

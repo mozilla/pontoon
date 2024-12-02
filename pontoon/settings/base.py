@@ -792,7 +792,6 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = (
-    ("badges", "pontoon/contributors/static/img"),
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
 )
@@ -937,6 +936,7 @@ CSP_STYLE_SRC = (
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
+# 'blob:' is needed for confetti.browser.js, which is used in permissions.js
 if not (HEROKU_DEMO or SITE_URL.startswith("https")):
     CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
     CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",) + ("blob:",)
