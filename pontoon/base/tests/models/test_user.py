@@ -112,36 +112,29 @@ def user_with_subscriptions():
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "verb, description, expected",
+    "category, expected",
     [
         # New strings notifications
-        ("updated with 5 new strings", "", True),
-        ("updated with 0 new strings", "", True),
+        ("new_string", True),
         # Project target dates notifications
-        ("due in 7 days", "", True),
-        ("due in 14 days", "", True),
+        ("project_deadline", True),
         # Comments notifications
-        ("has pinned a comment in", "", False),
-        ("has added a comment in", "", False),
+        ("comment", False),
         # New suggestions ready for review notifications
-        ("", "", True),
+        ("unreviewed_suggestion", True),
         # Review actions on own suggestions notifications
-        ("has reviewed suggestions", "Your suggestions have been reviewed", False),
+        ("review", False),
         # New team contributors notifications
-        (
-            "has reviewed suggestions",
-            '<a href="https://example.com">New Contributor</a>',
-            True,
-        ),
+        ("new_contributor", True),
+        # Notification send directly from the Messaging Center
+        ("direct-message", False),
         # Fallback case
-        ("unknown notification type", "Unknown description", False),
+        ("unknown", False),
     ],
 )
-def test_is_subscribed_to_notification(
-    user_with_subscriptions, verb, description, expected
-):
+def test_is_subscribed_to_notification(user_with_subscriptions, category, expected):
     # Create a notification object
-    notification = Notification(verb=verb, description=description)
+    notification = Notification(data={"category": category})
 
     # Call the function and assert the result
     assert (

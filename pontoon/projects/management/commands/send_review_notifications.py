@@ -77,6 +77,7 @@ class Command(BaseCommand):
                 recipient=author,
                 verb="has reviewed suggestions",
                 description=desc,
+                category="review",
             )
 
         self.stdout.write(f"Sent {len(data)} review notifications.")

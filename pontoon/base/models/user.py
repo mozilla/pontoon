@@ -1,5 +1,3 @@
-import re
-
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
@@ -440,35 +438,18 @@ def is_subscribed_to_notification(self, notification):
     Determines if the user has email subscription to the given notification.
     """
     profile = self.profile
-    verb = notification.verb
-    desc = notification.description
+    category = notification.data.get("category")
 
-    # New strings notifications
-    if re.match(r"updated with \d+ new strings", verb):
-        return profile.new_string_notifications_email
+    CATEGORY_TO_FIELD = {
+        "new_string": profile.new_string_notifications_email,
+        "project_deadline": profile.project_deadline_notifications_email,
+        "comment": profile.comment_notifications_email,
+        "unreviewed_suggestion": profile.unreviewed_suggestion_notifications_email,
+        "review": profile.review_notifications_email,
+        "new_contributor": profile.new_contributor_notifications_email,
+    }
 
-    # Project target dates notifications
-    if re.match(r"due in \d+ days", verb):
-        return profile.project_deadline_notifications_email
-
-    # Comments notifications
-    if re.match(r"has (pinned|added) a comment in", verb):
-        return profile.comment_notifications_email
-
-    # New suggestions ready for review notifications
-    if verb == "":
-        return profile.unreviewed_suggestion_notifications_email
-
-    if re.match(r"has reviewed suggestions", verb):
-        # Review actions on own suggestions notifications
-        if desc.startswith("Your suggestions have been reviewed"):
-            return profile.review_notifications_email
-
-        # New team contributors notifications
-        elif desc.startswith("<a href="):
-            return profile.new_contributor_notifications_email
-
-    return False
+    return CATEGORY_TO_FIELD.get(category, False)
 
 
 def user_serialize(self):

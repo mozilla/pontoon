@@ -239,7 +239,12 @@ class ChangeSet:
             ).distinct()
 
             for contributor in contributors:
-                notify.send(self.db_project, recipient=contributor, verb=verb)
+                notify.send(
+                    self.db_project,
+                    recipient=contributor,
+                    verb=verb,
+                    category="new_string",
+                )
 
             log.info(f"New string notifications for project {self.db_project} sent.")
 

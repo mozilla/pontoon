@@ -168,6 +168,7 @@ def create_translation(request):
                 recipient=manager,
                 verb="has reviewed suggestions",  # Triggers render of description only
                 description=desc,
+                category="new_contributor",
             )
 
     # Award Translation Champion Badge stats

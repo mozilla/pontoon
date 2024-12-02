@@ -121,7 +121,11 @@ class Command(BaseCommand):
             )
 
             notify.send(
-                recipient, recipient=recipient, verb="", description=description
+                recipient,
+                recipient=recipient,
+                verb="",
+                description=description,
+                category="unreviewed_suggestion",
             )
 
         self.stdout.write(f"Suggestion notifications sent to {len(recipients)} users.")
