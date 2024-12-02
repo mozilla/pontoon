@@ -7,6 +7,7 @@ from fluent.syntax import FluentParser
 
 from pontoon.base.fluent import (
     get_simple_preview,
+    get_variant_key,
     is_plural_expression,
 )
 
@@ -78,6 +79,28 @@ SIMPLE_TRANSLATION_TESTS = OrderedDict(
 def test_get_simple_preview(k):
     string, expected = SIMPLE_TRANSLATION_TESTS[k]
     assert get_simple_preview(string) == expected
+
+
+def test_get_variant_key():
+    # Return the key of the variant as represented in the syntax.
+    input = dedent(
+        """
+        my-entry =
+            { $num ->
+                [1] Hello!
+               *[other] World!
+            }`
+    """
+    )
+
+    message = parser.parse_entry(input)
+    element = message.value.elements[0]
+
+    variant = element.expression.variants[0]
+    assert get_variant_key(variant) == "1"
+
+    variant = element.expression.variants[1]
+    assert get_variant_key(variant) == "other"
 
 
 def test_is_plural_expression_not_select_expression():

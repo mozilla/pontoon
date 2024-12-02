@@ -580,6 +580,52 @@ def test_get_pretranslations_fluent_accesskeys_select_expression_source_and_acce
     assert response == [(pretranslated_string, None, tm_user)]
 
 
+@patch("pontoon.pretranslation.pretranslate.get_google_translate_data")
+@pytest.mark.django_db
+def test_get_pretranslations_fluent_accesskeys_number_literal_source(
+    gt_mock, fluent_resource, google_translate_locale, gt_user
+):
+    # Generate accesskeys from SelectExpression source with variant keys of type NumberLiteral
+    input_string = dedent(
+        """
+        title = Title
+            .label =
+                { $tabCount ->
+                    [1] Add Tab to New Group
+                   *[other] Add Tabs to New Group
+                }
+            .accesskey = G
+    """
+    )
+    fluent_entity = EntityFactory(resource=fluent_resource, string=input_string)
+
+    gt_mock.return_value = {
+        "status": True,
+        "translation": "gt_translation",
+    }
+
+    google_translate_locale.cldr_plurals = "1,5"
+
+    expected = dedent(
+        """
+        title = gt_translation
+            .label =
+                { $tabCount ->
+                    [1] gt_translation
+                    [one] gt_translation
+                   *[other] gt_translation
+                }
+            .accesskey = g
+    """
+    )
+
+    # Re-serialize to match whitespace
+    pretranslated_string = serializer.serialize_entry(parser.parse_entry(expected))
+
+    response = get_pretranslations(fluent_entity, google_translate_locale)
+    assert response == [(pretranslated_string, None, gt_user)]
+
+
 @pytest.mark.django_db
 def test_get_pretranslations_fluent_multiline(
     fluent_resource, entity_b, locale_b, tm_user
