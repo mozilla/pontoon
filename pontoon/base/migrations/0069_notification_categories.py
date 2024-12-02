@@ -49,6 +49,7 @@ def store_notification_categories(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("base", "0068_userprofile_notification_emails"),
+        ("notifications", "0009_alter_notification_options_and_more"),
     ]
 
     operations = [
