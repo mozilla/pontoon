@@ -8,7 +8,7 @@ def get_category(notification):
     desc = notification.description
 
     # New strings notifications
-    if re.match(r"updated with \d+ new strings", verb):
+    if re.match(r"updated with \d+ new string", verb):
         return "new_string"
 
     # Project target dates notifications
