@@ -8,7 +8,7 @@ from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from fluent.syntax.visitor import Transformer
 
-from pontoon.base.fluent import is_plural_expression, get_variant_key
+from pontoon.base.fluent import get_variant_key, is_plural_expression
 from pontoon.base.models import Locale
 
 
@@ -107,7 +107,8 @@ def extract_accesskey_candidates(message: FTL.Message, label: str, variant_key=N
                 elif isinstance(element.expression, FTL.SelectExpression):
                     variants = element.expression.variants
                     variant = next(
-                        (v for v in variants if get_variant_key(v) == variant_key), variants[0]
+                        (v for v in variants if get_variant_key(v) == variant_key),
+                        variants[0],
                     )
                     variant_element = variant.value.elements[0]
 
@@ -191,9 +192,7 @@ class ApplyPretranslation(Transformer):
 
         def set_accesskey(element, variant_key=None):
             if isinstance(element, FTL.TextElement) and len(element.value) <= 1:
-                candidates = extract_accesskey_candidates(
-                    self.entry, name, variant_key
-                )
+                candidates = extract_accesskey_candidates(self.entry, name, variant_key)
                 if candidates:
                     element.value = candidates[0]
                     return True
