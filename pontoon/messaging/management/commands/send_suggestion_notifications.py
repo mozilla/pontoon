@@ -116,7 +116,7 @@ class Command(BaseCommand):
             project_locales = data[recipient]
 
             description = render_to_string(
-                "projects/suggestion_notification.jinja",
+                "messaging/notifications/suggestions_submitted.html",
                 {"project_locales": project_locales},
             )
 

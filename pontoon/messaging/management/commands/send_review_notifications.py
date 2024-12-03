@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 )
 
             description = render_to_string(
-                "projects/review_notification.jinja",
+                "messaging/notifications/suggestions_reviewed.html",
                 {
                     "notifications": notifications,
                 },
