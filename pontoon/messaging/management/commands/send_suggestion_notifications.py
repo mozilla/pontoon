@@ -116,12 +116,16 @@ class Command(BaseCommand):
             project_locales = data[recipient]
 
             description = render_to_string(
-                "projects/suggestion_notification.jinja",
+                "messaging/notifications/suggestions_submitted.html",
                 {"project_locales": project_locales},
             )
 
             notify.send(
-                recipient, recipient=recipient, verb="", description=description
+                recipient,
+                recipient=recipient,
+                verb="",
+                description=description,
+                category="unreviewed_suggestion",
             )
 
         self.stdout.write(f"Suggestion notifications sent to {len(recipients)} users.")

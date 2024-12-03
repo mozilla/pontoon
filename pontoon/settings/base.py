@@ -223,6 +223,9 @@ EMAIL_CONSENT_TITLE = os.environ.get("EMAIL_CONSENT_TITLE", "")
 EMAIL_CONSENT_MAIN_TEXT = os.environ.get("EMAIL_CONSENT_MAIN_TEXT", "")
 EMAIL_CONSENT_PRIVACY_NOTICE = os.environ.get("EMAIL_CONSENT_PRIVACY_NOTICE", "")
 EMAIL_COMMUNICATIONS_HELP_TEXT = os.environ.get("EMAIL_COMMUNICATIONS_HELP_TEXT", "")
+EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT = os.environ.get(
+    "EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT", ""
+)
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
@@ -495,6 +498,7 @@ PIPELINE_CSS = {
             "css/insights_charts.css",
             "css/insights_tab.css",
             "css/info.css",
+            "css/translation_memory.css",
         ),
         "output_filename": "css/team.min.css",
     },
@@ -666,6 +670,7 @@ PIPELINE_JS = {
             "js/insights_charts.js",
             "js/insights_tab.js",
             "js/info.js",
+            "js/translation_memory.js",
         ),
         "output_filename": "js/team.min.js",
     },
@@ -1138,3 +1143,7 @@ BADGES_PROMOTION_THRESHOLDS = list(
 )
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Used in the header of the Terminology (.TBX) files.
+TBX_TITLE = os.environ.get("TBX_TITLE", "Pontoon Terminology")
+TBX_DESCRIPTION = os.environ.get("TBX_DESCRIPTION", "Terms localized in Pontoon")

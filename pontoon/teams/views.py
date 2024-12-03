@@ -1,4 +1,7 @@
 import json
+import logging
+import re
+import xml.etree.ElementTree as ET
 
 import bleach
 
@@ -6,28 +9,38 @@ from guardian.decorators import permission_required_or_403
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Prefetch, Q, TextField
+from django.db.models.functions import Cast
 from django.http import (
     Http404,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
 from django.views.generic.detail import DetailView
 
+from pontoon.actionlog.models import ActionLog
+from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project, User
+from pontoon.base.models import Locale, Project, TranslationMemoryEntry, User
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
 from pontoon.teams.forms import LocaleRequestForm
+
+
+log = logging.getLogger(__name__)
 
 
 def teams(request):
@@ -252,6 +265,270 @@ def ajax_permissions(request, locale):
             "hide_project_selector": hide_project_selector,
             "community_builder_level_reached": community_builder_level_reached,
         },
+    )
+
+
+@require_AJAX
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory(request, locale):
+    """Translation Memory tab."""
+    locale = get_object_or_404(Locale, code=locale)
+    search_query = request.GET.get("search", "").strip()
+
+    try:
+        first_page_number = int(request.GET.get("page", 1))
+        page_count = int(request.GET.get("pages", 1))
+    except ValueError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    tm_entries = TranslationMemoryEntry.objects.filter(locale=locale)
+
+    # Apply search filter if a search query is provided
+    if search_query:
+        tm_entries = tm_entries.filter(
+            Q(source__icontains=search_query) | Q(target__icontains=search_query)
+        )
+
+    tm_entries = (
+        # Group by "source" and "target"
+        tm_entries.values("source", "target").annotate(
+            count=Count("id"),
+            ids=ArrayAgg("id"),
+            # Concatenate entity IDs
+            entity_ids=StringAgg(
+                Cast("entity_id", output_field=TextField()), delimiter=","
+            ),
+        )
+    )
+
+    entries_per_page = 100
+    paginator = Paginator(tm_entries, entries_per_page)
+
+    combined_entries = []
+
+    for page_number in range(first_page_number, first_page_number + page_count):
+        if page_number > paginator.num_pages:
+            break
+        page = paginator.get_page(page_number)
+        combined_entries.extend(page.object_list)
+
+    # For the inital load, render the entire tab. For subsequent requests
+    # (determined by the "page" attribute), only render the entries.
+    template = (
+        "teams/widgets/translation_memory_entries.html"
+        if "page" in request.GET
+        else "teams/includes/translation_memory.html"
+    )
+
+    return render(
+        request,
+        template,
+        {
+            "locale": locale,
+            "search_query": search_query,
+            "tm_entries": combined_entries,
+            "has_next": paginator.num_pages > page_number,
+        },
+    )
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_edit(request, locale):
+    """Edit Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+
+    try:
+        target = request.POST["target"]
+    except MultiValueDictKeyError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Bad Request: {e}"},
+            status=400,
+        )
+
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+    tm_entries.update(target=target)
+
+    log_action(
+        ActionLog.ActionType.TM_ENTRIES_EDITED,
+        request.user,
+        tm_entries=tm_entries,
+    )
+
+    return HttpResponse("ok")
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_delete(request, locale):
+    """Delete Translation Memory entries."""
+    ids = request.POST.getlist("ids[]")
+    tm_entries = TranslationMemoryEntry.objects.filter(id__in=ids)
+
+    for tm_entry in tm_entries:
+        if tm_entry.entity and tm_entry.locale:
+            log_action(
+                ActionLog.ActionType.TM_ENTRY_DELETED,
+                request.user,
+                entity=tm_entry.entity,
+                locale=tm_entry.locale,
+            )
+
+    tm_entries.delete()
+
+    return HttpResponse("ok")
+
+
+@require_AJAX
+@require_POST
+@permission_required_or_403("base.can_translate_locale", (Locale, "code", "locale"))
+@transaction.atomic
+def ajax_translation_memory_upload(request, locale):
+    """Upload Translation Memory entries from a .TMX file."""
+    try:
+        file = request.FILES["tmx_file"]
+    except MultiValueDictKeyError:
+        return JsonResponse(
+            {"status": False, "message": "No file uploaded."},
+            status=400,
+        )
+
+    if file.size > 20 * 1024 * 1024:
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "File size limit exceeded. The maximum allowed size is 20 MB.",
+            },
+            status=400,
+        )
+
+    if not file.name.endswith(".tmx"):
+        return JsonResponse(
+            {
+                "status": False,
+                "message": "Invalid file format. Only .TMX files are supported.",
+            },
+            status=400,
+        )
+
+    locale = get_object_or_404(Locale, code=locale)
+    code = locale.code
+
+    # Parse the TMX file
+    try:
+        tree = ET.parse(file)
+        root = tree.getroot()
+    except ET.ParseError as e:
+        return JsonResponse(
+            {"status": False, "message": f"Invalid XML file: {e}"}, status=400
+        )
+
+    # Extract TM entries
+    file_entries = []
+    srclang_pattern = re.compile(r"^en(?:[-_](us))?$", re.IGNORECASE)
+    ns = {"xml": "http://www.w3.org/XML/1998/namespace"}
+
+    header = root.find("header")
+    header_srclang = header.attrib.get("srclang", "") if header else ""
+
+    def get_seg_text(tu, lang, ns):
+        # Try to find <tuv> with the xml:lang attribute
+        seg = tu.find(f"./tuv[@xml:lang='{lang}']/seg", namespaces=ns)
+
+        # If not found, try the lang attribute
+        if seg is None:
+            seg = tu.find(f"./tuv[@lang='{lang}']/seg")
+
+        return seg.text.strip() if seg is not None and seg.text else None
+
+    tu_elements = root.findall(".//tu")
+    for tu in tu_elements:
+        try:
+            srclang = tu.attrib.get("srclang", header_srclang)
+            tu_str = ET.tostring(tu, encoding="unicode")
+
+            if not srclang_pattern.match(srclang):
+                log.info(f"Skipping <tu> with unsupported srclang: {tu_str}")
+                continue
+
+            source = get_seg_text(tu, srclang, ns)
+            target = get_seg_text(tu, code, ns)
+
+            if source and target:
+                file_entries.append({"source": source, "target": target})
+            else:
+                log.info(f"Skipping <tu> with missing or empty segment: {tu_str}")
+
+        except Exception as e:
+            log.info(f"Error processing <tu>: {e}")
+
+    if not file_entries:
+        return JsonResponse(
+            {"status": False, "message": "No valid translation entries found."},
+            status=400,
+        )
+
+    # Create TranslationMemoryEntry objects
+    tm_entries = [
+        TranslationMemoryEntry(
+            source=entry["source"],
+            target=entry["target"],
+            locale=locale,
+        )
+        for entry in file_entries
+    ]
+
+    # Filter out entries that already exist in the database
+    existing_combinations = set(
+        TranslationMemoryEntry.objects.filter(locale=locale).values_list(
+            "source", "target"
+        )
+    )
+    tm_entries_to_create = [
+        entry
+        for entry in tm_entries
+        if (entry.source, entry.target) not in existing_combinations
+    ]
+
+    created_entries = TranslationMemoryEntry.objects.bulk_create(
+        tm_entries_to_create, batch_size=1000
+    )
+
+    log_action(
+        ActionLog.ActionType.TM_ENTRIES_UPLOADED,
+        request.user,
+        tm_entries=created_entries,
+    )
+
+    parsed = len(file_entries)
+    skipped_on_parse = len(tu_elements) - parsed
+    imported = len(created_entries)
+    duplicates = parsed - len(tm_entries_to_create)
+
+    message = f"Importing TM entries complete. Imported: {imported}."
+    if imported == 0:
+        message = "No TM entries imported."
+
+    if duplicates:
+        message += f" Skipped duplicates: {duplicates}."
+
+    return JsonResponse(
+        {
+            "status": True,
+            "message": message,
+            "parsed": parsed,
+            "skipped_on_parse": skipped_on_parse,
+            "imported": imported,
+            "duplicates": duplicates,
+        }
     )
 
 

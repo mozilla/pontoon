@@ -2,6 +2,8 @@ import json
 import logging
 import uuid
 
+from urllib.parse import urljoin
+
 from guardian.decorators import permission_required_or_403
 from notifications.signals import notify
 
@@ -99,16 +101,29 @@ def get_recipients(form):
     recipients = User.objects.none()
 
     """
-    Filter recipients by user role:
+    Filter recipients by user role, locale and project:
     - Contributors of selected Locales and Projects
     - Managers of selected Locales
     - Translators of selected Locales
     """
     locale_ids = sorted(split_ints(form.cleaned_data.get("locales")))
     project_ids = form.cleaned_data.get("projects")
+
     translations = Translation.objects.filter(
         locale_id__in=locale_ids,
         entity__resource__project_id__in=project_ids,
+    )
+
+    locales = Locale.objects.filter(pk__in=locale_ids)
+    manager_ids = (
+        locales.exclude(managers_group__user__isnull=True)
+        .values("managers_group__user")
+        .distinct()
+    )
+    translator_ids = (
+        locales.exclude(translators_group__user__isnull=True)
+        .values("translators_group__user")
+        .distinct()
     )
 
     if form.cleaned_data.get("contributors"):
@@ -116,16 +131,10 @@ def get_recipients(form):
         recipients = recipients | User.objects.filter(pk__in=contributors)
 
     if form.cleaned_data.get("managers"):
-        managers = Locale.objects.filter(pk__in=locale_ids).values(
-            "managers_group__user"
-        )
-        recipients = recipients | User.objects.filter(pk__in=managers)
+        recipients = recipients | User.objects.filter(pk__in=manager_ids)
 
     if form.cleaned_data.get("translators"):
-        translators = Locale.objects.filter(pk__in=locale_ids).values(
-            "translators_group__user"
-        )
-        recipients = recipients | User.objects.filter(pk__in=translators)
+        recipients = recipients | User.objects.filter(pk__in=translator_ids)
 
     """
     Filter recipients by login date:
@@ -161,12 +170,15 @@ def get_recipients(form):
     if translation_to:
         submitted = submitted.filter(date__lte=translation_to)
 
-    submitted = submitted.values("user").annotate(count=Count("user"))
+    # For the Minimum count, no value is the same as 0
+    # For the Maximum count, distinguish between no value and 0
+    if translation_minimum or translation_maximum is not None:
+        submitted = submitted.values("user").annotate(count=Count("user"))
 
     if translation_minimum:
         submitted = submitted.filter(count__gte=translation_minimum)
 
-    if translation_maximum:
+    if translation_maximum is not None:
         submitted = submitted.filter(count__lte=translation_maximum)
 
     """
@@ -196,24 +208,59 @@ def get_recipients(form):
         approved = approved.filter(approved_date__lte=review_to)
         rejected = rejected.filter(rejected_date__lte=review_to)
 
-    approved = approved.values("approved_user").annotate(count=Count("approved_user"))
-    rejected = rejected.values("rejected_user").annotate(count=Count("rejected_user"))
+    # For the Minimum count, no value is the same as 0
+    # For the Maximum count, distinguish between no value and 0
+    if review_minimum or review_maximum is not None:
+        approved = approved.values("approved_user").annotate(
+            count=Count("approved_user")
+        )
+        rejected = rejected.values("rejected_user").annotate(
+            count=Count("rejected_user")
+        )
 
     if review_minimum:
         approved = approved.filter(count__gte=review_minimum)
         rejected = rejected.filter(count__gte=review_minimum)
 
-    if review_maximum:
+    if review_maximum is not None:
         approved = approved.filter(count__lte=review_maximum)
         rejected = rejected.filter(count__lte=review_maximum)
 
-    recipients = recipients.filter(
-        pk__in=list(submitted.values_list("user", flat=True).distinct())
-        + list(approved.values_list("approved_user", flat=True).distinct())
-        + list(rejected.values_list("rejected_user", flat=True).distinct())
-    )
+    if (
+        translation_from
+        or translation_to
+        or translation_minimum
+        or translation_maximum is not None
+    ):
+        submission_filters = submitted.values_list("user", flat=True).distinct()
+        recipients = recipients.filter(pk__in=submission_filters)
+
+    if review_from or review_to or review_minimum or review_maximum is not None:
+        approved_filters = approved.values_list("approved_user", flat=True).distinct()
+        rejected_filters = rejected.values_list("rejected_user", flat=True).distinct()
+        review_filters = approved_filters.union(rejected_filters)
+        recipients = recipients.filter(pk__in=review_filters)
 
     return recipients
+
+
+@permission_required_or_403("base.can_manage_project")
+@require_AJAX
+@require_POST
+@transaction.atomic
+def fetch_recipients(request):
+    form = forms.MessageForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse(dict(form.errors.items()), status=400)
+
+    recipients = get_recipients(form).distinct().values_list("pk", flat=True)
+
+    return JsonResponse(
+        {
+            "recipients": list(recipients),
+        }
+    )
 
 
 @permission_required_or_403("base.can_manage_project")
@@ -226,29 +273,29 @@ def send_message(request):
     if not form.is_valid():
         return JsonResponse(dict(form.errors.items()), status=400)
 
-    send_to_myself = form.cleaned_data.get("send_to_myself")
-    recipients = User.objects.filter(pk=request.user.pk)
-
-    """
-    While the feature is in development, messages are sent only to the current user.
-    TODO: Uncomment lines below when the feature is ready.
-    if not send_to_myself:
-        recipients = get_recipients(form)
-    """
-
-    log.info(
-        f"{recipients.count()} Recipients: {list(recipients.values_list('email', flat=True))}"
-    )
-
     is_notification = form.cleaned_data.get("notification")
     is_email = form.cleaned_data.get("email")
     is_transactional = form.cleaned_data.get("transactional")
+    send_to_myself = form.cleaned_data.get("send_to_myself")
+    recipient_ids = split_ints(form.cleaned_data.get("recipient_ids"))
+
+    if send_to_myself:
+        recipients = User.objects.filter(pk=request.user.pk)
+    else:
+        recipients = User.objects.filter(pk__in=recipient_ids)
+
+    if is_email:
+        recipients = recipients.prefetch_related("profile")
+
+    log.info(f"Total recipients count: {len(recipients)}.")
+
     subject = form.cleaned_data.get("subject")
     body = form.cleaned_data.get("body")
 
     if is_notification:
         identifier = uuid.uuid4().hex
-        for recipient in recipients.distinct():
+
+        for recipient in recipients:
             notify.send(
                 request.user,
                 recipient=recipient,
@@ -256,16 +303,16 @@ def send_message(request):
                 target=None,
                 description=f"{subject}<br/><br/>{body}",
                 identifier=identifier,
+                category="direct_message",
             )
 
-        log.info(
-            f"Notifications sent to the following {recipients.count()} users: {recipients.values_list('email', flat=True)}."
-        )
+        log.info(f"Notifications sent to {len(recipients)} users.")
 
     if is_email:
+        unsubscribe_url = urljoin(settings.SITE_URL, f"unsubscribe/{uuid}")
         footer = (
-            """<br><br>
-You’re receiving this email as a contributor to Mozilla localization on Pontoon. <br>To no longer receive emails like these, unsubscribe here: <a href="https://pontoon.mozilla.org/unsubscribe/{ uuid }">Unsubscribe</a>.
+            f"""<br><br>
+{ settings.EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT }<br>To no longer receive emails like these, unsubscribe here: <a href="{ unsubscribe_url }">Unsubscribe</a>.
         """
             if not is_transactional
             else ""
@@ -273,9 +320,10 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
         html_template = body + footer
         text_template = utils.html_to_plain_text_with_links(html_template)
 
-        email_recipients = recipients.filter(profile__email_communications_enabled=True)
+        for recipient in recipients:
+            if not recipient.profile.email_communications_enabled:
+                continue
 
-        for recipient in email_recipients.distinct():
             unique_id = str(recipient.profile.unique_id)
             text = text_template.replace("{ uuid }", unique_id)
             html = html_template.replace("{ uuid }", unique_id)
@@ -289,9 +337,7 @@ You’re receiving this email as a contributor to Mozilla localization on Pontoo
             msg.attach_alternative(html, "text/html")
             msg.send()
 
-        log.info(
-            f"Email sent to the following {email_recipients.count()} users: {email_recipients.values_list('email', flat=True)}."
-        )
+        log.info(f"Emails sent to {len(recipients)} users.")
 
     if not send_to_myself:
         message = form.save(commit=False)

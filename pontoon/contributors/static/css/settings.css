@@ -11,13 +11,13 @@
 }
 
 #locale-settings .label,
+.double-check-box > .label,
 .toggle-label {
   color: var(--light-grey-7);
   float: left;
   font-size: 16px;
   font-weight: 300;
-  margin: 6px 10px 0 0;
-  padding-right: 20px;
+  padding: 6px 30px 6px 0;
   text-align: right;
   width: 295px;
 }
@@ -95,7 +95,7 @@
 #main .field label {
   display: inline-block;
   margin-right: 25px;
-  padding-top: 5px;
+  padding-top: 6px;
   text-align: right;
   vertical-align: top;
   width: 295px;
@@ -129,8 +129,62 @@
   font-style: italic;
 }
 
-#main .check-list .check-box {
+#main .check-list .header .title {
+  color: var(--light-grey-7);
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 300;
   padding: 8px 0;
+  text-align: center;
+  width: 147.5px;
+}
+
+#main .check-list .check-box {
+  display: inline-block;
+  padding: 8px 0;
+}
+
+#main .check-list .check-box.field {
+  padding: 0;
+}
+
+#main .check-list .double-check-box {
+  font-size: 0;
+
+  > .label {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+
+  > .check-boxes {
+    display: inline-block;
+    font-size: 0;
+  }
+
+  .check-box {
+    width: 147.5px;
+
+    .check-box-wrapper {
+      text-align: center;
+      width: 100%;
+
+      .fa {
+        margin: 0;
+      }
+    }
+  }
+
+  .check-box:first-child:not(.enabled) + .check-box {
+    pointer-events: none;
+
+    .fa:before {
+      color: var(--toggle-color-2);
+    }
+  }
+
+  .check-box:last-child {
+    padding-bottom: 8px;
+  }
 }
 
 #main .appearance .field .help {
@@ -153,6 +207,10 @@
   margin-right: 10px;
 }
 
+#main .notifications .field .help {
+  margin: 0;
+}
+
 #main .field .verify {
   color: var(--status-translated);
   font-style: italic;
@@ -162,4 +220,8 @@
   color: var(--status-error);
   font-style: italic;
   list-style: none;
+}
+
+#notification-email-frequency {
+  margin-top: 20px;
 }

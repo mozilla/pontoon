@@ -1,8 +1,10 @@
 import datetime
 import html
 import json
+import re
 
 from datetime import timedelta
+from urllib.parse import urljoin
 
 import markupsafe
 
@@ -18,7 +20,9 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.safestring import mark_safe
 
 from pontoon.base.fluent import get_simple_preview
 
@@ -30,6 +34,13 @@ register = template.Library()
 def url(viewname, *args, **kwargs):
     """Helper for Django's ``reverse`` in templates."""
     return reverse(viewname, args=args, kwargs=kwargs)
+
+
+@library.global_function
+def full_url(viewname, *args, **kwargs):
+    """Generate an absolute URL."""
+    path = reverse(viewname, args=args, kwargs=kwargs)
+    return urljoin(settings.SITE_URL, path)
 
 
 @library.global_function
@@ -67,6 +78,12 @@ def theme_class(request):
 @library.global_function
 def static(path):
     return staticfiles_storage.url(path)
+
+
+@library.global_function
+def full_static(path):
+    """Generate an absolute URL for a static file."""
+    return urljoin(settings.SITE_URL, static(path))
 
 
 @library.filter
@@ -288,3 +305,32 @@ def linkify(source):
     linker = Linker(callbacks=[set_attrs])
 
     return linker.linkify(source)
+
+
+@library.filter
+def highlight_matches(text, search_query):
+    """Highlight all occurrences of the search query in the text."""
+    if not search_query:
+        return text
+
+    # First, escape the text to prevent HTML rendering
+    escaped_text = escape(text)
+
+    # Then apply highlighting to the escaped text
+    highlighted_text = re.sub(
+        f"({re.escape(search_query)})",
+        r"<mark>\1</mark>",
+        escaped_text,
+        flags=re.IGNORECASE,
+    )
+
+    # Mark as safe to include <mark> tags only
+    return mark_safe(highlighted_text)
+
+
+@library.filter
+def default_if_empty(value, default=""):
+    """Return the original value if it's not empty or None, else use the default"""
+
+    # Mark as safe to include HTML tags
+    return value if value else mark_safe(default)

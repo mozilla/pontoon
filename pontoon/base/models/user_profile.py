@@ -24,6 +24,7 @@ class UserProfile(models.Model):
     contact_email_verified = models.BooleanField(default=False)
     email_communications_enabled = models.BooleanField(default=False)
     email_consent_dismissed_at = models.DateTimeField(null=True, blank=True)
+    monthly_activity_summary = models.BooleanField(default=False)
 
     # Theme
     class Themes(models.TextChoices):
@@ -79,13 +80,32 @@ class UserProfile(models.Model):
         choices=Visibility.choices,
     )
 
-    # Notification subscriptions
+    # In-app Notification subscriptions
     new_string_notifications = models.BooleanField(default=True)
     project_deadline_notifications = models.BooleanField(default=True)
     comment_notifications = models.BooleanField(default=True)
     unreviewed_suggestion_notifications = models.BooleanField(default=True)
     review_notifications = models.BooleanField(default=True)
     new_contributor_notifications = models.BooleanField(default=True)
+
+    # Email Notification subscriptions
+    new_string_notifications_email = models.BooleanField(default=False)
+    project_deadline_notifications_email = models.BooleanField(default=False)
+    comment_notifications_email = models.BooleanField(default=False)
+    unreviewed_suggestion_notifications_email = models.BooleanField(default=False)
+    review_notifications_email = models.BooleanField(default=False)
+    new_contributor_notifications_email = models.BooleanField(default=False)
+
+    # Email Notification frequencies
+    class EmailFrequencies(models.TextChoices):
+        DAILY = "Daily", "Daily"
+        WEEKLY = "Weekly", "Weekly"
+
+    notification_email_frequency = models.CharField(
+        max_length=10,
+        choices=EmailFrequencies.choices,
+        default=EmailFrequencies.WEEKLY,
+    )
 
     # Translation settings
     quality_checks = models.BooleanField(default=True)
@@ -122,3 +142,38 @@ class UserProfile(models.Model):
     def sorted_locales(self):
         locales = self.preferred_locales
         return sorted(locales, key=lambda locale: self.locales_order.index(locale.pk))
+
+    def save(self, *args, **kwargs):
+        notification_fields = [
+            (
+                "new_string_notifications",
+                "new_string_notifications_email",
+            ),
+            (
+                "project_deadline_notifications",
+                "project_deadline_notifications_email",
+            ),
+            (
+                "comment_notifications",
+                "comment_notifications_email",
+            ),
+            (
+                "unreviewed_suggestion_notifications",
+                "unreviewed_suggestion_notifications_email",
+            ),
+            (
+                "review_notifications",
+                "review_notifications_email",
+            ),
+            (
+                "new_contributor_notifications",
+                "new_contributor_notifications_email",
+            ),
+        ]
+
+        # Ensure notification email fields are False if the corresponding non-email notification field is False
+        for non_email_field, email_field in notification_fields:
+            if not getattr(self, non_email_field):
+                setattr(self, email_field, False)
+
+        super().save(*args, **kwargs)

@@ -50,6 +50,12 @@ urlpatterns = [
                                 views.ajax_sent,
                                 name="pontoon.messaging.ajax.sent",
                             ),
+                            # Fetch recipients
+                            path(
+                                "fetch-recipients/",
+                                views.fetch_recipients,
+                                name="pontoon.messaging.ajax.fetch_recipients",
+                            ),
                             # Send message
                             path(
                                 "send/",

@@ -3,6 +3,7 @@ $(function () {
   const converter = new showdown.Converter({
     simpleLineBreaks: true,
   });
+  const nf = new Intl.NumberFormat('en');
   let inProgress = false;
 
   function validateForm() {
@@ -73,6 +74,38 @@ $(function () {
     );
   }
 
+  function fetchRecipients() {
+    $('#review .controls .fetching').show();
+    $('#review .controls .fetch-again').hide();
+    $('#review .controls .send.active')
+      .hide()
+      .removeClass('disabled')
+      .find('.value')
+      .html('');
+
+    $.ajax({
+      url: '/messaging/ajax/fetch-recipients/',
+      type: 'POST',
+      data: $('#send-message').serialize(),
+      success: function (data) {
+        const count = nf.format(data.recipients.length);
+        $('#review .controls .send.active')
+          .show()
+          .toggleClass('disabled', !data.recipients.length)
+          .find('.value')
+          .html(count);
+        $('#compose [name=recipient_ids]').val(data.recipients);
+      },
+      error: function () {
+        Pontoon.endLoader('Fetching recipients failed.', 'error');
+        $('#review .controls .fetch-again').show();
+      },
+      complete: function () {
+        $('#review .controls .fetching').hide();
+      },
+    });
+  }
+
   function updateReviewPanel() {
     function updateMultipleItemSelector(source, target, item) {
       const allProjects = !$(`${source}.available li:not(.no-match)`).length;
@@ -98,7 +131,12 @@ $(function () {
             let value = $(this).find('input').val().trim();
             if (value) {
               if (className === 'date') {
-                value = new Date(value).toLocaleDateString();
+                // Convert date to the format used in the input field
+                // and set timezone to UTC to prevent shifts by a day
+                // when using the local timezone.
+                value = new Date(value).toLocaleDateString(undefined, {
+                  timeZone: 'UTC',
+                });
               }
               values.push(`${label}: ${value}`);
               show = true;
@@ -110,16 +148,18 @@ $(function () {
       $(`#review .${filter}`).toggle(show);
     }
 
+    // Update hidden textarea with the HTML content to be sent to backend
+    const bodyValue = $('#body').val();
+    const html = converter.makeHtml(bodyValue);
+    $('#compose [name=body]').val(html);
+
+    fetchRecipients();
+
     // Subject
     $('#review .subject .value').html($('#id_subject').val());
 
     // Body
-    const bodyValue = $('#body').val();
-    const html = converter.makeHtml(bodyValue);
     $('#review .body .value').html(html);
-
-    // Update hidden textarea with the HTML content to be sent to backend
-    $('#compose [name=body]').val(html);
 
     // User roles
     const userRoles = $('#compose .user-roles .enabled')
@@ -291,12 +331,25 @@ $(function () {
     window.scrollTo(0, 0);
   });
 
+  // Fetch recipients again
+  container.on('click', '.controls .fetch-again', function (e) {
+    e.preventDefault();
+    fetchRecipients();
+  });
+
   // Send message
   container.on('click', '.controls .send.button', function (e) {
     e.preventDefault();
 
     const $form = $('#send-message');
     const sendToMyself = $(this).is('.to-myself');
+    const button = $(this);
+
+    if (button.is('.sending')) {
+      return;
+    }
+
+    button.addClass('sending');
 
     // Distinguish between Send and Send to myself
     $('#id_send_to_myself').prop('checked', sendToMyself);
@@ -309,11 +362,18 @@ $(function () {
       success: function () {
         Pontoon.endLoader('Message sent.');
         if (!sendToMyself) {
-          container.find('.left-column .sent a').click();
+          const count = container.find('.left-column .sent .count');
+          // Update count in the menu
+          count.html(parseInt(count.html(), 10) + 1);
+          // Load Sent panel
+          count.parents('a').click();
         }
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
+      },
+      complete: function () {
+        button.removeClass('sending');
       },
     });
   });

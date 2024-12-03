@@ -1,6 +1,0 @@
-Unreviewed suggestions have been submitted for the following projects:
-<ul>
-{% for project_locale in project_locales %}
-<li><a href="{{ url('pontoon.translate', project_locale.locale.code, project_locale.project.slug, 'all-resources') }}?status=unreviewed">{{ project_locale.project.name }}</a></li>
-{% endfor %}
-</ul>

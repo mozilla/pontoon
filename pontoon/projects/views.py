@@ -1,25 +1,15 @@
-import uuid
-
-from guardian.decorators import permission_required_or_403
-from notifications.models import Notification
-from notifications.signals import notify
-
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.db import transaction
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
 from pontoon.base.models import Locale, Project
-from pontoon.base.utils import get_project_or_redirect, require_AJAX, split_ints
+from pontoon.base.utils import get_project_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
-from pontoon.projects import forms
 from pontoon.tags.utils import Tags
 
 
@@ -148,98 +138,6 @@ def ajax_info(request, slug):
     )
 
     return render(request, "projects/includes/info.html", {"project": project})
-
-
-@permission_required_or_403("base.can_manage_project")
-@transaction.atomic
-@require_AJAX
-def ajax_notifications(request, slug):
-    """Notifications tab."""
-    project = get_object_or_404(
-        Project.objects.visible_for(request.user).available(), slug=slug
-    )
-    available_locales = project.locales.prefetch_project_locale(project).order_by(
-        "name"
-    )
-
-    # Send notifications
-    if request.method == "POST":
-        form = forms.NotificationsForm(request.POST)
-
-        if not form.is_valid():
-            return JsonResponse(dict(form.errors.items()))
-
-        contributors = User.objects.filter(
-            translation__entity__resource__project=project,
-        )
-
-        # For performance reasons, only filter contributors for selected
-        # locales if different from all project locales
-        available_ids = sorted(list(available_locales.values_list("id", flat=True)))
-        selected_ids = sorted(split_ints(form.cleaned_data.get("selected_locales")))
-
-        if available_ids != selected_ids:
-            contributors = User.objects.filter(
-                translation__entity__resource__project=project,
-                translation__locale__in=available_locales.filter(id__in=selected_ids),
-            )
-
-        identifier = uuid.uuid4().hex
-        for contributor in contributors.distinct():
-            notify.send(
-                request.user,
-                recipient=contributor,
-                verb="has sent a message in",
-                target=project,
-                description=form.cleaned_data.get("message"),
-                identifier=identifier,
-            )
-
-    notifications = list(
-        Notification.objects.filter(
-            description__isnull=False,
-            target_content_type=ContentType.objects.get_for_model(project),
-            target_object_id=project.id,
-        )
-        # Each project notification is stored in one Notification instance per user. To
-        # identify unique project Notifications, we use the identifier stored in the
-        # Notification.data field.
-        #
-        # PostgreSQL allows us to retrieve Notifications with unique Notification.data
-        # fields by combining .order_by(*fields) and .distinct(*fields) calls. Read more:
-        # https://docs.djangoproject.com/en/3.2/ref/models/querysets/#distinct
-        #
-        # That approach doesn't allow us to order Notifications by their timestamp, so
-        # we have to do that in python below.
-        .order_by("data")
-        .distinct("data")
-        .prefetch_related("actor", "target")
-    )
-
-    notifications.sort(key=lambda x: x.timestamp, reverse=True)
-
-    # Recipient shortcuts
-    incomplete = []
-    complete = []
-    for available_locale in available_locales:
-        completion_percent = available_locale.get_chart(project)["completion_percent"]
-        if completion_percent == 100:
-            complete.append(available_locale.pk)
-        else:
-            incomplete.append(available_locale.pk)
-
-    return render(
-        request,
-        "projects/includes/manual_notifications.html",
-        {
-            "form": forms.NotificationsForm(),
-            "project": project,
-            "available_locales": available_locales,
-            "notifications": notifications,
-            "incomplete": incomplete,
-            "complete": complete,
-        },
-    )
 
 
 class ProjectContributorsView(ContributorsMixin, DetailView):

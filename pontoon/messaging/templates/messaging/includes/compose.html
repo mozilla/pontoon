@@ -6,10 +6,11 @@
     <form id="send-message" method="POST" action="{{ url('pontoon.messaging.ajax.send_message') }}">
         {% csrf_token %}
         {{ form.send_to_myself }}
+        {{ form.recipient_ids }}
 
         <section class="message-type">
             <h3>Message type</h3>
-            <ul class="check-list">
+            <div class="check-list">
                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification',
                 is_enabled=form.notification.value(), form_field=form.notification) }}
                 {{ Checkbox.checkbox('Email', class='email', attribute='email', is_enabled=form.email.value(),
@@ -18,7 +19,7 @@
                 is_enabled=form.transactional.value(), form_field=form.transactional, help='Transactional emails are
                 also sent to users who have not opted in to email
                 communication. They are restricted in the type of content that can be included.') }}
-            </ul>
+            </div>
             <div class="errors">
                 <p>You must select at least one message type</p>
             </div>
@@ -48,14 +49,14 @@
 
         <section class="user-roles">
             <h3>Filter by user role</h3>
-            <ul class="check-list">
+            <div class="check-list">
                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
                 is_enabled=form.managers.value(), form_field=form.managers) }}
                 {{ Checkbox.checkbox('Translators', class='translators', attribute='translators',
                 is_enabled=form.translators.value(), form_field=form.translators) }}
                 {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors',
                 is_enabled=form.contributors.value(), form_field=form.contributors) }}
-            </ul>
+            </div>
             <div class="errors">
                 <p>You must select at least one user role</p>
             </div>
@@ -217,8 +218,10 @@
         <button class="button toggle edit" data-target="#compose"><span class="fa fa-chevron-left"></span>Back to
             editing</button>
         <div class="right">
-            <button class="button send to-myself">Send test to myself</button>
-            <button class="button active send">Send</button>
+            <button class="button send to-myself">Send to myself</button>
+            <button class="button fetching">Fetching recipients… <i class="fa fa-circle-notch fa-spin"></i></button>
+            <button class="button fetch-again">Fetch recipients again?</button>
+            <button class="button active send">Send to <span class="value"></span> recipients <i class="fa fa-circle-notch fa-spin"></i></button>
         </div>
     </menu>
 </div>
