@@ -1,0 +1,3 @@
+<a href="{{ full_url('pontoon.contributors.contributor.username', user.username) }}">{user.name_or_email}</a> has made their first contribution to <a href="{{ full_url('pontoon.teams.team', locale.code) }}">{locale.name} ({locale.code})</a>.
+
+Please welcome them to the team, and make sure to <a href="{{ full_url('pontoon.translate', locale.code, project.slug, entity.resource.path) }}?string={{ entity.pk }}">review their suggestions</a>.
