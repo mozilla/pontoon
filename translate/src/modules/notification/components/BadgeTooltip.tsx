@@ -1,13 +1,14 @@
 import classNames from 'classnames';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
+import { Localized } from '@fluent/react';
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
+
 import {
   BadgeTooltipMessage,
   ShowBadgeTooltip,
 } from '~/context/BadgeNotification';
-import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
-import { Localized } from '@fluent/react';
-import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
+import { useOnDiscard } from '~/utils';
 
 import './BadgeTooltip.css';
 
@@ -15,9 +16,13 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
   const user = useAppSelector((state) => state.user.username);
   const tooltip = useContext(BadgeTooltipMessage);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
+  const ref = useRef<HTMLDivElement>(null);
+
   const hide = useCallback(() => {
     showBadgeTooltip(null);
   }, [showBadgeTooltip]);
+
+  useOnDiscard(ref, hide);
 
   if (!tooltip) return <></>;
 
@@ -39,7 +44,7 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
   return (
     <>
       <Fireworks autorun={{ speed: 1, duration: 3000 }} />
-      <div className={className}>
+      <div ref={ref} className={className}>
         <button onClick={hide}> Dismiss </button>
 
         <Localized id='editor-BadgeTooltip--intro'>

@@ -60,6 +60,13 @@ $(function () {
         if (badgeLevel > 0) {
           $tooltip.show();
 
+          // Handle discard
+          $(document).on('click', function (e) {
+            if (!$tooltip.is(e.target) && $tooltip.has(e.target).length === 0) {
+              $tooltip.hide();
+            }
+          });
+
           // Force a re-render of the text with the proper badge level
           $tooltip
             .find('.badge-tooltip-info')
