@@ -303,6 +303,7 @@ def send_message(request):
                 target=None,
                 description=f"{subject}<br/><br/>{body}",
                 identifier=identifier,
+                category="direct_message",
             )
 
         log.info(f"Notifications sent to {len(recipients)} users.")

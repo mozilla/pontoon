@@ -433,6 +433,25 @@ def serialized_notifications(self):
     }
 
 
+def is_subscribed_to_notification(self, notification):
+    """
+    Determines if the user has email subscription to the given notification.
+    """
+    profile = self.profile
+    category = notification.data.get("category") if notification.data else None
+
+    CATEGORY_TO_FIELD = {
+        "new_string": profile.new_string_notifications_email,
+        "project_deadline": profile.project_deadline_notifications_email,
+        "comment": profile.comment_notifications_email,
+        "unreviewed_suggestion": profile.unreviewed_suggestion_notifications_email,
+        "review": profile.review_notifications_email,
+        "new_contributor": profile.new_contributor_notifications_email,
+    }
+
+    return CATEGORY_TO_FIELD.get(category, False)
+
+
 def user_serialize(self):
     """Serialize Project contact"""
 
@@ -485,5 +504,6 @@ User.add_to_class("notification_list", notification_list)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)
 User.add_to_class("serialized_notifications", serialized_notifications)
+User.add_to_class("is_subscribed_to_notification", is_subscribed_to_notification)
 User.add_to_class("serialize", user_serialize)
 User.add_to_class("latest_action", latest_action)

@@ -14,7 +14,7 @@
 
     <ul>
       <li class="horizontal-separator"></li>
-      <li class="see-all"><a href="{{ url('pontoon.contributors.notifications') }}?referrer=ui">See all Notifications</a></li>
+      <li class="see-all"><a href="{{ full_url('pontoon.contributors.notifications') }}?referrer=ui">See all Notifications</a></li>
     </ul>
   </div>
 
@@ -35,14 +35,14 @@
         {% if notification.actor.slug %}
           {% set actor_anchor = notification.actor %}
           {% if "new string" in notification.verb %}
-            {% set actor_url = url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,pretranslated' %}
+            {% set actor_url = full_url('pontoon.translate.locale.agnostic', notification.actor.slug, "all-resources") + '?status=missing,pretranslated' %}
           {% else %}
-            {% set actor_url = url('pontoon.projects.project', notification.actor.slug) %}
+            {% set actor_url = full_url('pontoon.projects.project', notification.actor.slug) %}
           {% endif %}
 
         {% elif notification.actor.email %}
           {% set actor_anchor = notification.actor.name_or_email|nospam %}
-          {% set actor_url = url('pontoon.contributors.contributor.username', notification.actor.username) %}
+          {% set actor_url = full_url('pontoon.contributors.contributor.username', notification.actor.username) %}
         {% endif %}
 
         {% if description and (description.startswith("Unreviewed suggestions") or notification.verb == "has reviewed suggestions") %}
@@ -57,7 +57,7 @@
           </span>
 
           <span class="verb">
-            {% set link = url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
+            {% set link = full_url('pontoon.translate', notification.action_object.code, target.resource.project.slug, target.resource.path) %}
             <a href="{{ link + '?string=' + target.pk|string }}">{{ notification.verb }}</a>
           </span>
 
@@ -81,7 +81,7 @@
 
           {% if target %}
             <span class="target">
-              <a href="{{ url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
+              <a href="{{ full_url('pontoon.projects.project', target.slug) }}">{{ target }}</a>
             </span>
           {% endif %}
 

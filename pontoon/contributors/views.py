@@ -186,25 +186,37 @@ def toggle_user_profile_attribute(request, username):
     attribute = request.POST.get("attribute", None)
 
     boolean_attributes = [
+        # Email settings
         "email_communications_enabled",
+        "monthly_activity_summary",
+        # Editor settings
         "quality_checks",
         "force_suggestions",
+        # In-app notifications
         "new_string_notifications",
         "project_deadline_notifications",
         "comment_notifications",
         "unreviewed_suggestion_notifications",
         "review_notifications",
         "new_contributor_notifications",
+        # Email notifications
+        "new_string_notifications_email",
+        "project_deadline_notifications_email",
+        "comment_notifications_email",
+        "unreviewed_suggestion_notifications_email",
+        "review_notifications_email",
+        "new_contributor_notifications_email",
     ]
 
-    visibility_attributes = [
+    toggle_attributes = [
         "visibility_email",
         "visibility_external_accounts",
         "visibility_self_approval",
         "visibility_approval",
+        "notification_email_frequency",
     ]
 
-    if attribute not in (boolean_attributes + visibility_attributes):
+    if attribute not in (boolean_attributes + toggle_attributes):
         return JsonResponse(
             {"status": False, "message": "Forbidden: Attribute not allowed"},
             status=403,
@@ -220,7 +232,7 @@ def toggle_user_profile_attribute(request, username):
     if attribute in boolean_attributes:
         # Convert JS Boolean to Python
         setattr(profile, attribute, json.loads(value))
-    elif attribute in visibility_attributes:
+    elif attribute in toggle_attributes:
         setattr(profile, attribute, value)
     profile.save()
 
@@ -395,9 +407,7 @@ def settings(request):
             "preferred_locale": preferred_source_locale,
             "user_form": user_form,
             "user_profile_form": user_profile_form,
-            "user_profile_visibility_form": forms.UserProfileVisibilityForm(
-                instance=profile
-            ),
+            "user_profile_toggle_form": forms.UserProfileToggleForm(instance=profile),
         },
     )
 

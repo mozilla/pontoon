@@ -11,161 +11,314 @@
 
 {% block heading %}
 <section id="heading">
-  <a class="avatar" href="http://gravatar.com/">
-    <div class="desc">Update profile picture</div>
-    <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
-  </a>
+    <a class="avatar" href="http://gravatar.com/">
+        <div class="desc">Update profile picture</div>
+        <img class="rounded" src="{{ user.gravatar_url(400) }}" width="200" height="200">
+    </a>
 
-  <h2 id="display-name">{{ user.first_name }}</h2>
+    <h2 id="display-name">{{ user.first_name }}</h2>
 
 </section>
 {% endblock %}
 
 {% block bottom %}
 <section id="main">
-  <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
-    {% csrf_token %}
-    <input type="hidden" name="return_url" value="{{ return_url(request) }}">
+    <form method="POST" action="{{ url('pontoon.contributors.settings') }}" class="user-locales-settings">
+        {% csrf_token %}
+        <input type="hidden" name="return_url" value="{{ return_url(request) }}">
 
-    <section>
-        <h3>Personal information</h3>
-        <div class="field">
-            {{ user_form.first_name.label_tag(label_suffix='') }}
-            {{ user_form.first_name }}
-            {{ user_form.first_name.errors }}
-        </div>
-        <div class="field">
-            {{ user_profile_form.username.label_tag(label_suffix='') }}
-            {{ user_profile_form.username }}
-            {{ user_profile_form.username.errors }}
-        </div>
-        <div class="field">
-            {{ user_profile_form.bio.label_tag(label_suffix='') }}
-            {{ user_profile_form.bio }}
-            {{ user_profile_form.bio.errors }}
-            <p class="help">Displayed on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a></p>
-        </div>
-    </section>
+        <section>
+            <h3>Personal information</h3>
+            <div class="field">
+                {{ user_form.first_name.label_tag(label_suffix='') }}
+                {{ user_form.first_name }}
+                {{ user_form.first_name.errors }}
+            </div>
+            <div class="field">
+                {{ user_profile_form.username.label_tag(label_suffix='') }}
+                {{ user_profile_form.username }}
+                {{ user_profile_form.username.errors }}
+            </div>
+            <div class="field">
+                {{ user_profile_form.bio.label_tag(label_suffix='') }}
+                {{ user_profile_form.bio }}
+                {{ user_profile_form.bio.errors }}
+                <p class="help">Displayed on the <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a>
+                </p>
+            </div>
+        </section>
 
-    <section>
-        <h3>Email</h3>
-        <div class="field">
-            {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
-            <input type="email" name="contact_email" maxlength="254" id="id_contact_email" placeholder="{{ user.email }}" value="{{ user.profile.contact_email or '' }}">
-            {{ user_profile_form.contact_email.errors }}
-            {% if user.profile.contact_email and not user.profile.contact_email_verified %}
+        <section>
+            <h3>Email</h3>
+            <div class="field">
+                {{ user_profile_form.contact_email.label_tag(label_suffix='') }}
+                <input type="email" name="contact_email" maxlength="254" id="id_contact_email"
+                    placeholder="{{ user.email }}" value="{{ user.profile.contact_email or '' }}">
+                {{ user_profile_form.contact_email.errors }}
+                {% if user.profile.contact_email and not user.profile.contact_email_verified %}
                 <p class="verify">Check your inbox to verify your email address</a></p>
-            {% else %}
-                <p class="help">If you would like to provide a different email address from your login email for email communications, please do so here. Note, this email will also appear under your <a href="{{ url('pontoon.contributors.profile') }}">Profile page</a>.</p>
-            {% endif %}
-        </div>
-        <ul class="check-list">
-            {{ Checkbox.checkbox('Email communications', class='field email-communications-enabled', attribute='email_communications_enabled', is_enabled=user.profile.email_communications_enabled, title='Receive email updates', help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT) }}
-        </ul>
-    </section>
-
-    <section class="appearance">
-        <h3>Appearance</h3>
-        <div class="field">
-            <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</a></p>
-        </div>
-        {{ ThemeToggle.button(user) }}
-    </section>
-
-    <section>
-        <h3>External accounts</h3>
-        <div class="field">
-            {{ user_profile_form.chat.label_tag(label_suffix='') }}
-            {{ user_profile_form.chat }}
-            {{ user_profile_form.chat.errors }}
-        </div>
-        <div class="field">
-            {{ user_profile_form.github.label_tag(label_suffix='') }}
-            {{ user_profile_form.github }}
-            {{ user_profile_form.github.errors }}
-        </div>
-        <div class="field">
-            {{ user_profile_form.bugzilla.label_tag(label_suffix='') }}
-            {{ user_profile_form.bugzilla }}
-            {{ user_profile_form.bugzilla.errors }}
-        </div>
-    </section>
-
-    <section class="data-visibility">
-        <h3>Visibility of data on the Profile page</h3>
-        <div class="field">
-            <span class="toggle-label">{{ user_profile_visibility_form.visibility_email.label }}</span>
-            {{ Toggle.button(field=user_profile_visibility_form.visibility_email) }}
-            <p class="help">Email addresses of team and project managers are visible to all logged-in users</p>
-        </div>
-        <div class="field">
-            <span class="toggle-label">{{ user_profile_visibility_form.visibility_external_accounts.label }}</span>
-            {{ Toggle.button(field=user_profile_visibility_form.visibility_external_accounts) }}
-        </div>
-        <div class="field">
-            <span class="toggle-label">{{ user_profile_visibility_form.visibility_approval.label }}</span>
-            {{ Toggle.button(field=user_profile_visibility_form.visibility_approval) }}
-        </div>
-        <div class="field">
-            <span class="toggle-label">{{ user_profile_visibility_form.visibility_self_approval.label }}</span>
-            {{ Toggle.button(field=user_profile_visibility_form.visibility_self_approval) }}
-        </div>
-    </section>
-
-    <section>
-        <h3>Notification subscriptions</h3>
-        <ul class="check-list">
-            {{ Checkbox.checkbox('New strings', class='new-string-notifications', attribute='new_string_notifications', is_enabled=user.profile.new_string_notifications, title='Get notified when new strings are added to your projects') }}
-            {{ Checkbox.checkbox('Project target dates', class='project-deadline-notifications', attribute='project_deadline_notifications', is_enabled=user.profile.project_deadline_notifications, title='Get notified when project target date approaches') }}
-            {{ Checkbox.checkbox('Comments', class='comment-notifications', attribute='comment_notifications', is_enabled=user.profile.comment_notifications, title='Get notified when comments are submitted to your strings') }}
-            {{ Checkbox.checkbox('New suggestions ready for review', class='unreviewed-suggestion-notifications', attribute='unreviewed_suggestion_notifications', is_enabled=user.profile.unreviewed_suggestion_notifications, title='Get notified when new suggestions are ready for review') }}
-            {{ Checkbox.checkbox('Review actions on own suggestions', class='review-notifications', attribute='review_notifications', is_enabled=user.profile.review_notifications, title='Get notified when your suggestions are approved or rejected') }}
-            {{ Checkbox.checkbox('New team contributors', class='new-contributor-notifications', attribute='new_contributor_notifications', is_enabled=user.profile.new_contributor_notifications, title='Get notified when new contributors make their first contributions to the team') }}
-        </ul>
-    </section>
-
-    <section>
-        <h3>Editor</h3>
-        <ul class="check-list">
-            {{ Checkbox.checkbox('Translate Toolkit checks', class='quality-checks', attribute='quality_checks', is_enabled=user.profile.quality_checks, title='Run Translate Toolkit checks before submitting translations') }}
-
-            {% if user.can_translate_locales %}
-                {{ Checkbox.checkbox('Make suggestions', class='force-suggestions', attribute='force_suggestions', is_enabled=user.profile.force_suggestions, title='Save suggestions instead of translations') }}
-            {% endif %}
-        </ul>
-    </section>
-
-    <section>
-        <h3>Default locales</h3>
-        <div id="locale-settings" class="clearfix">
-            <div id="homepage">
-                <span class="label">Homepage</span>
-                {{ team_selector.locale(locales, locale) }}
+                {% else %}
+                <p class="help">If you would like to provide a different email address from your login email for email
+                    communications, please do so here. Note, this email will also appear under your <a
+                        href="{{ url('pontoon.contributors.profile') }}">Profile page</a>.</p>
+                {% endif %}
             </div>
-            <div id="preferred-locale">
-                <span class="label">Preferred source locale</span>
-                {{ team_selector.locale(preferred_locales, preferred_locale) }}
+            <div class="check-list">
+                {{ Checkbox.checkbox(
+                'News and updates',
+                class='field email-communications-enabled',
+                attribute='email_communications_enabled',
+                is_enabled=user.profile.email_communications_enabled,
+                title='Receive news and updates via email',
+                help=settings.EMAIL_COMMUNICATIONS_HELP_TEXT)
+                }}
+                {{ Checkbox.checkbox(
+                'Monthly activity summary',
+                class='field monthly-activity-summary',
+                attribute='monthly_activity_summary',
+                is_enabled=user.profile.monthly_activity_summary,
+                title='Receive monthly activity summary email',
+                help="Get an email summary of your personal activity and the activity within your teams in the last month.")
+                }}
             </div>
+        </section>
+
+        <section class="notifications">
+            <h3>Notification subscriptions</h3>
+            <div class="field">
+                <p class="help">
+                    Stay updated and choose which notifications to include in the daily or weekly email digest
+                </p>
+            </div>
+            <div class="check-list">
+                <div class="header">
+                    <span class="title">Enable</span>
+                    <span class="title">Include in email</span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">New strings</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-string-notifications',
+                        attribute='new_string_notifications',
+                        is_enabled=user.profile.new_string_notifications,
+                        title='Get notified when new strings are added to your projects')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-string-notifications-email',
+                        attribute='new_string_notifications_email',
+                        is_enabled=user.profile.new_string_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">Project target dates</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='project-deadline-notifications',
+                        attribute='project_deadline_notifications',
+                        is_enabled=user.profile.project_deadline_notifications,
+                        title='Get notified when project target date approaches')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='project-deadline-notifications-email',
+                        attribute='project_deadline_notifications_email',
+                        is_enabled=user.profile.project_deadline_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">Comments</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='comment-notifications',
+                        attribute='comment_notifications',
+                        is_enabled=user.profile.comment_notifications,
+                        title='Get notified when comments are submitted to your strings')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='comment-notifications-email',
+                        attribute='comment_notifications_email',
+                        is_enabled=user.profile.comment_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">New suggestions ready for review</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='unreviewed-suggestion-notifications',
+                        attribute='unreviewed_suggestion_notifications',
+                        is_enabled=user.profile.unreviewed_suggestion_notifications,
+                        title='Get notified when new suggestions are ready for review')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='unreviewed-suggestion-notifications-email',
+                        attribute='unreviewed_suggestion_notifications_email',
+                        is_enabled=user.profile.unreviewed_suggestion_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">Review actions on own suggestions</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='review-notifications',
+                        attribute='review_notifications',
+                        is_enabled=user.profile.review_notifications,
+                        title='Get notified when your suggestions are approved or rejected')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='review-notifications-email',
+                        attribute='review_notifications_email',
+                        is_enabled=user.profile.review_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div class="double-check-box">
+                    <span class="label">New team contributors</span>
+                    <span class="check-boxes">
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-contributor-notifications',
+                        attribute='new_contributor_notifications',
+                        is_enabled=user.profile.new_contributor_notifications,
+                        title='Get notified when new contributors make their first contributions to the team')
+                        }}
+                        {{ Checkbox.checkbox(
+                        '',
+                        class='new-contributor-notifications-email',
+                        attribute='new_contributor_notifications_email',
+                        is_enabled=user.profile.new_contributor_notifications_email,
+                        title='Include notification in weekly or monthly email')
+                        }}
+                    </span>
+                </div>
+                <div id="notification-email-frequency" class="field">
+                    <span class="toggle-label">Email digest frequency</span>
+                    {{ Toggle.button(field=user_profile_toggle_form.notification_email_frequency) }}
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>External accounts</h3>
+            <div class="field">
+                {{ user_profile_form.chat.label_tag(label_suffix='') }}
+                {{ user_profile_form.chat }}
+                {{ user_profile_form.chat.errors }}
+            </div>
+            <div class="field">
+                {{ user_profile_form.github.label_tag(label_suffix='') }}
+                {{ user_profile_form.github }}
+                {{ user_profile_form.github.errors }}
+            </div>
+            <div class="field">
+                {{ user_profile_form.bugzilla.label_tag(label_suffix='') }}
+                {{ user_profile_form.bugzilla }}
+                {{ user_profile_form.bugzilla.errors }}
+            </div>
+        </section>
+
+        <section class="data-visibility">
+            <h3>Visibility of data on the Profile page</h3>
+            <div class="field">
+                <span class="toggle-label">{{ user_profile_toggle_form.visibility_email.label }}</span>
+                {{ Toggle.button(field=user_profile_toggle_form.visibility_email) }}
+                <p class="help">Email addresses of team and project managers are visible to all logged-in users</p>
+            </div>
+            <div class="field">
+                <span class="toggle-label">{{ user_profile_toggle_form.visibility_external_accounts.label }}</span>
+                {{ Toggle.button(field=user_profile_toggle_form.visibility_external_accounts) }}
+            </div>
+            <div class="field">
+                <span class="toggle-label">{{ user_profile_toggle_form.visibility_approval.label }}</span>
+                {{ Toggle.button(field=user_profile_toggle_form.visibility_approval) }}
+            </div>
+            <div class="field">
+                <span class="toggle-label">{{ user_profile_toggle_form.visibility_self_approval.label }}</span>
+                {{ Toggle.button(field=user_profile_toggle_form.visibility_self_approval) }}
+            </div>
+        </section>
+
+        <section class="appearance">
+            <h3>Appearance</h3>
+            <div class="field">
+                <p class="help">Choose if appearance should be dark, light, or follow your system’s settings</p>
+            </div>
+            {{ ThemeToggle.button(user) }}
+        </section>
+
+        <section>
+            <h3>Editor</h3>
+            <div class="check-list">
+                {{ Checkbox.checkbox(
+                'Translate Toolkit checks',
+                class='quality-checks',
+                attribute='quality_checks',
+                is_enabled=user.profile.quality_checks,
+                title='Run Translate Toolkit checks before submitting translations')
+                }}
+
+                {% if user.can_translate_locales %}
+                {{ Checkbox.checkbox(
+                'Make suggestions',
+                class='force-suggestions',
+                attribute='force_suggestions',
+                is_enabled=user.profile.force_suggestions,
+                title='Save suggestions instead of translations')
+                }}
+                {% endif %}
+            </div>
+        </section>
+
+        <section>
+            <h3>Default locales</h3>
+            <div id="locale-settings" class="clearfix">
+                <div id="homepage">
+                    <span class="label">Homepage</span>
+                    {{ team_selector.locale(locales, locale) }}
+                </div>
+                <div id="preferred-locale">
+                    <span class="label">Preferred source locale</span>
+                    {{ team_selector.locale(preferred_locales, preferred_locale) }}
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Preferred locales to get suggestions from</h3>
+            {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order',
+            sortable=True) }}
+        </section>
+
+        <div class="controls">
+            <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
+            <button class="submit button active">Save</button>
         </div>
-    </section>
-
-    <section>
-        <h3>Preferred locales to get suggestions from</h3>
-        {{ multiple_team_selector.render(available_locales, selected_locales, form_field='locales_order', sortable=True) }}
-    </section>
-
-    <div class="controls">
-      <a class="cancel" href="{{ return_url(request) }}">Cancel</a>
-      <button class="submit button active">Save</button>
-    </div>
-  </form>
+    </form>
 </section>
 {% endblock %}
 
 {% block extend_css %}
-  {% stylesheet 'settings' %}
+{% stylesheet 'settings' %}
 {% endblock %}
 
 {% block extend_js %}
-  {% javascript 'settings' %}
+{% javascript 'settings' %}
 {% endblock %}

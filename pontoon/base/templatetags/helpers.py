@@ -4,6 +4,7 @@ import json
 import re
 
 from datetime import timedelta
+from urllib.parse import urljoin
 
 import markupsafe
 
@@ -33,6 +34,13 @@ register = template.Library()
 def url(viewname, *args, **kwargs):
     """Helper for Django's ``reverse`` in templates."""
     return reverse(viewname, args=args, kwargs=kwargs)
+
+
+@library.global_function
+def full_url(viewname, *args, **kwargs):
+    """Generate an absolute URL."""
+    path = reverse(viewname, args=args, kwargs=kwargs)
+    return urljoin(settings.SITE_URL, path)
 
 
 @library.global_function
@@ -70,6 +78,12 @@ def theme_class(request):
 @library.global_function
 def static(path):
     return staticfiles_storage.url(path)
+
+
+@library.global_function
+def full_static(path):
+    """Generate an absolute URL for a static file."""
+    return urljoin(settings.SITE_URL, static(path))
 
 
 @library.filter

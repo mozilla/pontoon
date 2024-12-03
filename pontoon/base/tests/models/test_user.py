@@ -2,6 +2,8 @@ from collections import defaultdict
 
 import pytest
 
+from notifications.models import Notification
+
 from django.contrib.auth.models import User
 
 
@@ -92,3 +94,67 @@ def test_user_status(user_a, user_b, user_c, user_d, gt_user, locale_a, project_
     # System user (Google Translate)
     project_contact = gt_user
     assert gt_user.status(locale_a, project_contact)[1] == ""
+
+
+@pytest.fixture
+def user_with_subscriptions():
+    """Fixture for a User with notification subscriptions."""
+    user = User.objects.create(username="subscriber")
+    user.profile.new_string_notifications_email = True
+    user.profile.project_deadline_notifications_email = True
+    user.profile.comment_notifications_email = False
+    user.profile.unreviewed_suggestion_notifications_email = True
+    user.profile.review_notifications_email = False
+    user.profile.new_contributor_notifications_email = True
+    user.profile.save()
+    return user
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "category, expected",
+    [
+        # New strings notifications
+        ("new_string", True),
+        # Project target dates notifications
+        ("project_deadline", True),
+        # Comments notifications
+        ("comment", False),
+        # New suggestions ready for review notifications
+        ("unreviewed_suggestion", True),
+        # Review actions on own suggestions notifications
+        ("review", False),
+        # New team contributors notifications
+        ("new_contributor", True),
+        # Notification send directly from the Messaging Center
+        ("direct_message", False),
+        # Fallback case
+        ("unknown", False),
+    ],
+)
+def test_is_subscribed_to_notification(user_with_subscriptions, category, expected):
+    # Create a notification object
+    notification = Notification(data={"category": category})
+
+    # Call the function and assert the result
+    assert (
+        user_with_subscriptions.is_subscribed_to_notification(notification) == expected
+    )
+
+
+@pytest.mark.django_db
+def test_is_subscribed_to_notification_no_data(user_with_subscriptions):
+    # Create a notification object without a data attribute
+    notification = Notification()
+
+    # Call the function and assert the result
+    assert user_with_subscriptions.is_subscribed_to_notification(notification) is False
+
+
+@pytest.mark.django_db
+def test_is_subscribed_to_notification_no_category(user_with_subscriptions):
+    # Create a notification object without a category key in data
+    notification = Notification(data={"something": None})
+
+    # Call the function and assert the result
+    assert user_with_subscriptions.is_subscribed_to_notification(notification) is False
