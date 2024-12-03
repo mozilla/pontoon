@@ -33,7 +33,7 @@ def get_category(notification):
             return "review"
 
         # New team contributors notifications
-        if desc.startswith("<a href="):
+        if "has made their first contribution to" in desc:
             return "new_contributor"
 
     if verb == "has sent a message in" or verb == "has sent you a message":
