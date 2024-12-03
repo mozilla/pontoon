@@ -4,10 +4,11 @@
   border-radius: 10px;
   box-shadow: 0 0 20px -2px var(--tooltip-background);
   box-sizing: border-box;
-  margin: -20px auto;
+  left: 0;
+  margin: -50px auto;
   padding: 20px;
-  position: absolute;
-  right: -280px;
+  position: fixed;
+  right: 0;
   width: 250px;
   z-index: 20;
 }
