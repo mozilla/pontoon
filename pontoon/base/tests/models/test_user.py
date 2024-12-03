@@ -127,7 +127,7 @@ def user_with_subscriptions():
         # New team contributors notifications
         ("new_contributor", True),
         # Notification send directly from the Messaging Center
-        ("direct-message", False),
+        ("direct_message", False),
         # Fallback case
         ("unknown", False),
     ],
