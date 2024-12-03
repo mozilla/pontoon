@@ -1,6 +1,10 @@
+import logging
 import re
 
 from django.db import migrations
+
+
+log = logging.getLogger(__name__)
 
 
 def get_category(notification):
@@ -23,7 +27,7 @@ def get_category(notification):
     if verb == "":
         return "unreviewed_suggestion"
 
-    if re.match(r"has reviewed suggestions", verb):
+    if verb == "has reviewed suggestions":
         # Review actions on own suggestions notifications
         if desc.startswith("Your suggestions have been reviewed"):
             return "review"
@@ -32,18 +36,31 @@ def get_category(notification):
         if desc.startswith("<a href="):
             return "new_contributor"
 
+    if verb == "has sent a message in" or verb == "has sent you a message":
+        return "direct_message"
+
+    return None
+
 
 def store_notification_categories(apps, schema_editor):
     Notification = apps.get_model("notifications", "Notification")
-    notifications = Notification.objects.filter(data__isnull=True)
+    notifications = Notification.objects.all()
+    unchanged = []
 
     for notification in notifications:
         category = get_category(notification)
 
-        if category:
+        if category == "direct_message":
+            notification.data["category"] = category
+        elif category:
             notification.data = {"category": category}
+        else:
+            unchanged.append(notification)
 
     Notification.objects.bulk_update(notifications, ["data"], batch_size=2000)
+
+    log.info(f"Notifications categorized: {len(notifications) - len(unchanged)}.")
+    log.info(f"Notifications left unchanged: {len(unchanged)}.")
 
 
 class Migration(migrations.Migration):
