@@ -42,18 +42,13 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
     <>
       <Fireworks autorun={{ speed: 1, duration: 3000 }} />
       <div ref={ref} className={className}>
-        <button onClick={hide}> Dismiss </button>
-
         <Localized id='editor-BadgeTooltip--intro'>
           <p className='title'>Achievement unlocked</p>
         </Localized>
 
-        <Localized
-          id='editor-BadgeTooltip--name'
-          vars={{ badgeName: badgeName ?? '' }}
-        >
-          <p className='badge-name'>{badgeName}</p>
-        </Localized>
+        <img className='badge' src={imagePath} />
+
+        <p className='badge-name'>{badgeName}</p>
 
         <Localized
           id='editor-BadgeTooltip--level'
@@ -61,8 +56,6 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
         >
           <p className='badge-level'>Level {badgeLevel}</p>
         </Localized>
-
-        <img className='badge' src={imagePath} />
 
         <Localized
           id='editor-BadgeTooltip--profile'
@@ -74,7 +67,9 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
         </Localized>
 
         <Localized id='editor-BadgeTooltip--continue'>
-          <button className='continue'>Continue</button>
+          <button className='continue' onClick={hide}>
+            Continue
+          </button>
         </Localized>
       </div>
     </>
