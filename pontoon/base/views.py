@@ -756,7 +756,7 @@ def perform_checks(request):
 def download_translations(request):
     """Download translated resource."""
 
-    # FIXME: zip downloads should only be for projects with 2..10 resources
+    # FIXME: Zip downloads and single-file downloads should be separate.
     from pontoon.sync.utils import download_translations_zip
 
     try:
@@ -805,12 +805,11 @@ def upload(request):
 
     form = forms.UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        from pontoon.sync.utils import sync_uploaded_file
+        from pontoon.sync.utils import import_uploaded_file
 
         upload = request.FILES["uploadfile"]
         try:
-            print(request.user)
-            sync_uploaded_file(project, locale, res_path, upload, request.user)
+            import_uploaded_file(project, locale, res_path, upload, request.user)
             messages.success(request, "Translations updated from uploaded file.")
         except Exception as error:
             messages.error(request, str(error))

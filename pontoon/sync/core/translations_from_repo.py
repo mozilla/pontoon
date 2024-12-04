@@ -194,6 +194,7 @@ def find_db_updates(
         log.debug(f"[{project.slug}] Filtering matches from translations...")
         trans_query = (
             Translation.objects.filter(trans_q)
+            .filter(Q(entity__obsolete=False))
             .filter(Q(approved=True) | Q(pretranslated=True))
             .order_by("id")
             .values(

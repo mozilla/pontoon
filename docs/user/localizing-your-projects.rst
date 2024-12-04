@@ -69,8 +69,6 @@ following required fields:
 #. **Repository URL**: enter your repository's SSH URL of the form
    ``git@github.com:user/repo.git``.
 #. **Download prefix or path to TOML file**: a URL prefix for downloading localized files.
-   If you use one, you need to select the `project configuration file`_ instead
-   of a localized file.
 #. Click **SAVE PROJECT** at the bottom of the page.
 #. After the page reloads, click **SYNC** and wait for Pontoon to import
    strings. You can monitor the progress in the Sync log (``/sync/log/``).

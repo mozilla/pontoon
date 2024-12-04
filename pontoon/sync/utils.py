@@ -34,7 +34,7 @@ def download_translations_zip(
     return bytes_io.getvalue(), f"{project.slug}.zip"
 
 
-def sync_uploaded_file(
+def import_uploaded_file(
     project: Project, locale: Locale, res_path: str, upload: File, user: User
 ):
     """Update translations in the database from an uploaded file."""
