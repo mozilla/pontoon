@@ -119,20 +119,20 @@ def update_changed_resources(
     now: datetime,
 ) -> tuple[int, set[Locale], dict[User, set[str]]]:
     count = 0
-    # db_path -> [Locale], empty list stands for "all locales"
-    changed_resources: dict[str, list[Locale]] = {
-        path: [] for path in changed_source_paths
+    # db_path -> {Locale}, empty set stands for "all locales"
+    changed_resources: dict[str, set[Locale]] = {
+        path: set() for path in changed_source_paths
     }
     for change in db_changes:
         if change.locale in readonly_locales:
             continue
         path = str(change.entity.resource.path)
         if path not in changed_resources:
-            changed_resources[path] = [change.locale]
+            changed_resources[path] = {change.locale}
         else:
             prev = changed_resources[path]
             if prev:
-                prev.append(change.locale)
+                prev.add(change.locale)
     changed_entities = set(change.entity for change in db_changes)
     if changed_resources:
         n = len(changed_resources)
@@ -149,13 +149,13 @@ def update_changed_resources(
         if commonpath((paths.base, target)) != paths.base:
             log.error(f"{log_scope} Invalid resource path")
             continue
-        locales = locales_ or [
+        locales = locales_ or {
             locale
             for locale in (
                 locale_map[lc] for lc in sorted(locale_codes) if lc in locale_map
             )
             if locale not in readonly_locales
-        ]
+        }
         if not locales:
             continue
         ref_path = normpath(join(paths.ref_root, path))
