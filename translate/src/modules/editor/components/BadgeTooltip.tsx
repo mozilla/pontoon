@@ -3,10 +3,7 @@ import React, { useCallback, useContext, useRef } from 'react';
 import { Localized } from '@fluent/react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 
-import {
-  BadgeTooltipMessage,
-  ShowBadgeTooltip,
-} from '~/context/BadgeNotification';
+import { BadgeTooltipMessage, ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { useAppSelector } from '~/hooks';
 import { useOnDiscard } from '~/utils';
 
@@ -48,16 +45,21 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
         <button onClick={hide}> Dismiss </button>
 
         <Localized id='editor-BadgeTooltip--intro'>
-          <p>New badge level gained!</p>
+          <p className='title'>Achievement unlocked</p>
         </Localized>
 
         <Localized
-          id='editor-BadgeTooltip--info'
-          vars={{ badgeLevel: badgeLevel ?? 0, badgeName: badgeName ?? '' }}
+          id='editor-BadgeTooltip--name'
+          vars={{ badgeName: badgeName ?? '' }}
         >
-          <p>
-            {badgeName} Badge level gained: Level {badgeLevel}
-          </p>
+          <p className='badge-name'>{badgeName}</p>
+        </Localized>
+
+        <Localized
+          id='editor-BadgeTooltip--level'
+          vars={{ badgeLevel: badgeLevel ?? 0 }}
+        >
+          <p className='badge-level'>Level {badgeLevel}</p>
         </Localized>
 
         <img className='badge' src={imagePath} />
@@ -66,7 +68,13 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
           id='editor-BadgeTooltip--profile'
           elems={{ a: <a href={`/contributors/${user}`} /> }}
         >
-          <p>{'You can view your new badge on your <a>profile page</a>.'}</p>
+          <p className='notice'>
+            {'View your new badge in your <a>profile</a>.'}
+          </p>
+        </Localized>
+
+        <Localized id='editor-BadgeTooltip--continue'>
+          <button className='continue'>Continue</button>
         </Localized>
       </div>
     </>

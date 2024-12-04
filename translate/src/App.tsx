@@ -10,7 +10,7 @@ import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';
 import { NotificationProvider } from './context/Notification';
-import { BadgeTooltipProvider } from './context/BadgeNotification';
+import { BadgeTooltipProvider } from './context/BadgeTooltip';
 import { ThemeProvider } from './context/Theme';
 
 import { WaveLoader } from './modules/loaders';
@@ -31,7 +31,7 @@ import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search/components/SearchBox';
-import { BadgeTooltip } from './modules/notification/components/BadgeTooltip';
+import { BadgeTooltip } from './modules/editor/components/BadgeTooltip';
 
 /**
  * Main entry point to the application. Will render the structure of the page.

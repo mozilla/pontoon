@@ -15,9 +15,9 @@ from pontoon.base.models import (
     User,
     UserProfile,
 )
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.formats import are_compatible_files
 from pontoon.teams.utils import log_group_members
-from pontoon.translations.views import _send_badge_notification
 
 
 class HtmlField(forms.CharField):
@@ -143,7 +143,7 @@ class LocalePermsForm(UserPermissionLogFormMixin, forms.ModelForm):
             self.community_builder_level_reached = (
                 settings.BADGES_PROMOTION_THRESHOLDS.index(after_count) + 1
             )
-            _send_badge_notification(
+            send_badge_notification(
                 self.user,
                 "Community Builder Badge",
                 self.community_builder_level_reached,

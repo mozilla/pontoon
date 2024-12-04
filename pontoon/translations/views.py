@@ -19,21 +19,8 @@ from pontoon.base.models import (
 )
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations import forms
-
-
-def _send_badge_notification(user, badge, level):
-    desc = render_to_string(
-        "messaging/badge_notification.jinja",
-        {"badge": badge, "level": level, "user": user},
-    )
-    notify.send(
-        sender=user,
-        recipient=user,
-        verb="ignore",  # Triggers render of description only
-        description=desc,
-        category="badge",
-    )
 
 
 def _add_badge_data(response_data, user, badge_name, stat_count):
@@ -43,7 +30,7 @@ def _add_badge_data(response_data, user, badge_name, stat_count):
         "name": badge_name,
         "level": badge_level,
     }
-    _send_badge_notification(
+    send_badge_notification(
         user,
         badge_name,
         badge_level,

@@ -32,10 +32,8 @@ export function NotificationPanel(): React.ReactElement<'div'> {
   const className = classNames('notification-panel', message && 'showing');
 
   return (
-    <>
-      <div className={className} onClick={hide}>
-        <span className={message?.type}>{message?.content}</span>
-      </div>
-    </>
+    <div className={className} onClick={hide}>
+      <span className={message?.type}>{message?.content}</span>
+    </div>
   );
 }

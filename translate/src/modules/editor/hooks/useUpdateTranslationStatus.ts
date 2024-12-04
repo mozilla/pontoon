@@ -8,7 +8,7 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
-import { ShowBadgeTooltip } from '~/context/BadgeNotification';
+import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {

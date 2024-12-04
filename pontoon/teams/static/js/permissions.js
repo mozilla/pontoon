@@ -1,5 +1,6 @@
 $(function () {
   const container = $('#main .container');
+  const style = getComputedStyle(document.body);
 
   function inputHidden(name, value, cssClass) {
     return $(
@@ -11,6 +12,48 @@ $(function () {
         value +
         '">',
     );
+  }
+
+  function awardBadge(badgeLevel) {
+    // Update and show badge tooltip
+    container
+      .find('.badge-tooltip')
+      .show()
+      .find('.badge-name')
+      .html('Community Builder')
+      .end()
+      .find('.level')
+      .html(badgeLevel);
+
+    // Throw confetti!
+    const end = Date.now() + 5 * 1000;
+
+    const config = {
+      disableForReducedMotion: true,
+      colors: [
+        style.getPropertyValue('--status-error'),
+        style.getPropertyValue('--white-1'),
+      ],
+      particleCount: 2,
+      spread: 55,
+    };
+
+    (function frame() {
+      confetti({
+        ...config,
+        angle: 60,
+        origin: { x: 0 },
+      });
+      confetti({
+        ...config,
+        angle: 120,
+        origin: { x: 1 },
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
   }
 
   container.on('click', '#permissions-form .save', function (e) {
@@ -46,75 +89,21 @@ $(function () {
       });
     });
 
-    const $tooltip = $('#badge-tooltip-container');
-
     $.ajax({
       url: $('#permissions-form').prop('action'),
       type: $('#permissions-form').prop('method'),
       data: $('#permissions-form').serialize(),
       success: function (response) {
         Pontoon.endLoader('Permissions saved.');
+
         const badgeLevel = $(response).find('#community-builder-level').val();
-
-        // Check for new badge notification
         if (badgeLevel > 0) {
-          $tooltip.show();
-
-          // Handle discard
-          $(document).on('click', function (e) {
-            if (!$tooltip.is(e.target) && $tooltip.has(e.target).length === 0) {
-              $tooltip.hide();
-            }
-          });
-
-          // Force a re-render of the text with the proper badge level
-          $tooltip
-            .find('.badge-tooltip-info')
-            .text(`Community Builder Badge level gained: Level ${badgeLevel}`);
-
-          const duration = 2000;
-          const animationEnd = Date.now() + duration;
-          const defaults = {
-            startVelocity: 30,
-            spread: 360,
-            ticks: 60,
-            zIndex: 0,
-          };
-
-          function randomInRange(min, max) {
-            return Math.random() * (max - min) + min;
-          }
-
-          const interval = setInterval(function () {
-            const timeLeft = animationEnd - Date.now();
-
-            if (timeLeft <= 0) {
-              return clearInterval(interval);
-            }
-
-            const particleCount = 50 * (timeLeft / duration);
-            // since particles fall down, start a bit higher than random
-            confetti({
-              ...defaults,
-              particleCount,
-              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-            });
-            confetti({
-              ...defaults,
-              particleCount,
-              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-            });
-          }, 250);
+          awardBadge(badgeLevel);
         }
       },
       error: function () {
         Pontoon.endLoader('Oops, something went wrong.', 'error');
       },
-    });
-
-    $tooltip.find('button').one('click', function (e) {
-      e.preventDefault();
-      $tooltip.hide();
     });
   });
 
@@ -220,5 +209,27 @@ $(function () {
     $permsForm.find('.select.translators li').each(function () {
       $permsForm.find('.select.available ul').append($(this).remove());
     });
+  });
+
+  // Hide badge tooltip on click on the Continue button or outside of the tooltip
+  $(document).on('click', function (e) {
+    const tooltip = container.find('.badge-tooltip');
+
+    // Tooltip not visible
+    if (!tooltip.is(':visible')) {
+      return;
+    }
+
+    // Click inside the tooltip
+    if (tooltip.is(e.target) || tooltip.has(e.target).length) {
+      // Click on the Continue button
+      if (e.target.className === 'continue') {
+        e.preventDefault();
+      } else {
+        return;
+      }
+    }
+
+    tooltip.hide();
   });
 });

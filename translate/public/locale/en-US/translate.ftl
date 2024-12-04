@@ -218,9 +218,11 @@ editor-NewContributorTooltip--team-managers = Reach out to <a>team managers</a> 
 ## Editor Badge Tooltip
 ## Popup notification when users gain a new badge level
 
-editor-BadgeTooltip--intro = New badge level gained!
-editor-BadgeTooltip--info = { $badgeName } Badge level gained: Level { $badgeLevel }
-editor-BadgeTooltip--profile = You can view your new badge on your <a>profile page</a>.
+editor-BadgeTooltip--intro = Achievement unlocked
+editor-BadgeTooltip--name = {{ badge }}
+editor-BadgeTooltip--level = Level {{ level }}
+editor-BadgeTooltip--profile = View your new badge in your <a>profile</a>.
+editor-BadgeTooltip--continue = Continue
 
 
 ## Editor Unsaved Changes
