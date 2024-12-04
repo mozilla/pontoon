@@ -54,7 +54,7 @@ $(function () {
         updateURL(); // Update the URL with the new pages count and search query
       },
       error: function () {
-        Pontoon.endLoader('Error loading more TM entries.');
+        Pontoon.endLoader('Error loading more TM entries.', 'error');
         loader.each(function () {
           $(this).removeClass('loading');
         });
@@ -125,7 +125,7 @@ $(function () {
         node.html(new_target);
       },
       error: function () {
-        Pontoon.endLoader('Error editing TM entries.');
+        Pontoon.endLoader('Error editing TM entries.', 'error');
       },
       complete: function () {
         row.removeClass('editing');
@@ -160,7 +160,7 @@ $(function () {
           }, 500);
         },
         error: function () {
-          Pontoon.endLoader('Error deleting TM entries.');
+          Pontoon.endLoader('Error deleting TM entries.', 'error');
         },
         complete: function () {
           row.removeClass('deleting');
@@ -168,4 +168,52 @@ $(function () {
       });
     },
   );
+
+  const uploadWrapper = '.translation-memory .upload-wrapper';
+
+  // Upload TM entries
+  $('body').on('click', `${uploadWrapper} .upload`, function () {
+    const controls = $(this).parents('.controls');
+    controls.addClass('uploading');
+  });
+  // Cancel action
+  $('body').on('click', `${uploadWrapper} .cancel`, function () {
+    const controls = $(this).parents('.controls');
+    controls.removeClass('uploading');
+  });
+  $('body').on('click', `${uploadWrapper} .confirm`, function () {
+    const controls = $(this).parents('.controls');
+    const fileInput = $('<input type="file" accept=".tmx">');
+    fileInput.on('change', function () {
+      controls.removeClass('uploading');
+
+      const file = this.files[0];
+      if (!file) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('tmx_file', file);
+      formData.append('csrfmiddlewaretoken', $('body').data('csrf'));
+
+      $.ajax({
+        url: `/${locale}/ajax/translation-memory/upload/`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          Pontoon.endLoader(response.message);
+        },
+        error: function (xhr) {
+          Pontoon.endLoader(
+            xhr.responseJSON?.message ?? 'Error uploading TMX file.',
+            'error',
+          );
+        },
+      });
+    });
+
+    fileInput.click();
+  });
 });

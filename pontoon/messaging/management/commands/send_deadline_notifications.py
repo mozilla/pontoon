@@ -49,6 +49,11 @@ class Command(BaseCommand):
 
             for contributor in contributors:
                 if is_project_public or contributor.is_superuser:
-                    notify.send(project, recipient=contributor, verb=verb)
+                    notify.send(
+                        project,
+                        recipient=contributor,
+                        verb=verb,
+                        category="project_deadline",
+                    )
 
             self.stdout.write(f"Target date notifications for project {project} sent.")

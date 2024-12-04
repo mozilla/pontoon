@@ -161,6 +161,10 @@ you create:
    It allows to explain what type of communication to expect and to link to
    deployment-specific privacy notices among other things.
 
+``EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT``
+   Optional. Text to be shown in the footer of the non-transactional emails sent
+   using the Messaging Center, just above the unsubscribe text.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
@@ -295,6 +299,12 @@ you create:
 ``SYSTRAN_TRANSLATE_API_KEY``
    Optional. Set your `SYSTRAN Translate API key` to use machine translation
    by SYSTRAN.
+
+``TBX_DESCRIPTION``
+   Optional. Description to be used in the header of the Terminology (.TBX) files.
+
+``TBX_TITLE``
+   Optional. Title to be used in the header of the Terminology (.TBX) files.
 
 ``THROTTLE_ENABLED``
    Optional. Enables traffic throttling based on IP address (default: ``False``).

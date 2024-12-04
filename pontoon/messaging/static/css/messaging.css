@@ -412,6 +412,7 @@
 
       li {
         color: var(--light-grey-6);
+        font-weight: normal;
       }
 
       li:hover {

@@ -566,6 +566,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
             action_object=locale,
             target=entity,
             description=comment,
+            category="comment",
         )
 
 
@@ -600,6 +601,7 @@ def _send_pin_comment_notifications(user, comment):
                 action_object=locale,
                 target=entity,
                 description=comment.content,
+                category="comment",
             )
 
 

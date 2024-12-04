@@ -1,9 +1,58 @@
 .translation-memory {
-  .upload-button {
+  .upload-wrapper {
     float: right;
 
-    .fa {
-      padding-right: 2px;
+    .button.upload {
+      .fa {
+        padding-right: 2px;
+      }
+    }
+
+    .button.cancel {
+      display: none;
+      background-color: transparent;
+      margin-left: 0;
+
+      .fa {
+        margin-right: 0;
+      }
+    }
+
+    .button.cancel:hover {
+      .fa {
+        color: var(--white-1);
+      }
+    }
+
+    .button.confirm {
+      display: none;
+    }
+  }
+
+  .upload-terms {
+    display: none;
+    color: var(--light-grey-7);
+    font-style: italic;
+    line-height: 1.5em;
+    padding-top: 10px;
+    text-align: right;
+  }
+
+  .controls.uploading {
+    .button.upload {
+      display: none;
+    }
+
+    .button.cancel {
+      display: inline-block;
+    }
+
+    .button.confirm {
+      display: inline-block;
+    }
+
+    .upload-terms {
+      display: block;
     }
   }
 
@@ -113,7 +162,6 @@
 
           .button {
             background: var(--button-background-1);
-            margin-left: 5px;
 
             .fa {
               margin-right: 2px;
@@ -130,6 +178,10 @@
 
           .button.save:hover {
             background: var(--status-translated);
+          }
+
+          .button.delete {
+            margin-left: 5px;
           }
 
           .button.delete:hover {

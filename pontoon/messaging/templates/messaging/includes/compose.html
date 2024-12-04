@@ -10,7 +10,7 @@
 
         <section class="message-type">
             <h3>Message type</h3>
-            <ul class="check-list">
+            <div class="check-list">
                 {{ Checkbox.checkbox('Notification', class='notification', attribute='notification',
                 is_enabled=form.notification.value(), form_field=form.notification) }}
                 {{ Checkbox.checkbox('Email', class='email', attribute='email', is_enabled=form.email.value(),
@@ -19,7 +19,7 @@
                 is_enabled=form.transactional.value(), form_field=form.transactional, help='Transactional emails are
                 also sent to users who have not opted in to email
                 communication. They are restricted in the type of content that can be included.') }}
-            </ul>
+            </div>
             <div class="errors">
                 <p>You must select at least one message type</p>
             </div>
@@ -49,14 +49,14 @@
 
         <section class="user-roles">
             <h3>Filter by user role</h3>
-            <ul class="check-list">
+            <div class="check-list">
                 {{ Checkbox.checkbox('Managers', class='managers', attribute='managers',
                 is_enabled=form.managers.value(), form_field=form.managers) }}
                 {{ Checkbox.checkbox('Translators', class='translators', attribute='translators',
                 is_enabled=form.translators.value(), form_field=form.translators) }}
                 {{ Checkbox.checkbox('Contributors', class='contributors', attribute='contributors',
                 is_enabled=form.contributors.value(), form_field=form.contributors) }}
-            </ul>
+            </div>
             <div class="errors">
                 <p>You must select at least one user role</p>
             </div>

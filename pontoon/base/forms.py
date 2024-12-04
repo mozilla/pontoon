@@ -279,7 +279,7 @@ class UserProfileForm(forms.ModelForm):
         return github_username
 
 
-class UserProfileVisibilityForm(forms.ModelForm):
+class UserProfileToggleForm(forms.ModelForm):
     """
     Form is responsible for controlling user profile visibility.
     """
@@ -291,6 +291,7 @@ class UserProfileVisibilityForm(forms.ModelForm):
             "visibility_external_accounts",
             "visibility_self_approval",
             "visibility_approval",
+            "notification_email_frequency",
         )
 
 

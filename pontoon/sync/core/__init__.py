@@ -106,4 +106,9 @@ def notify_users(project: Project, count: int) -> None:
     new_strings = f"{count} new {'string' if count == 1 else 'strings'}"
     log.info(f"[{project.slug}] Notifying {len(users)} users about {new_strings}")
     for user in users:
-        notify.send(project, recipient=user, verb=f"updated with {new_strings}")
+        notify.send(
+            project,
+            recipient=user,
+            verb=f"updated with {new_strings}",
+            category="new_string",
+        )

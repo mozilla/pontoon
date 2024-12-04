@@ -2,6 +2,8 @@ import json
 import logging
 import uuid
 
+from urllib.parse import urljoin
+
 from guardian.decorators import permission_required_or_403
 from notifications.signals import notify
 
@@ -301,14 +303,16 @@ def send_message(request):
                 target=None,
                 description=f"{subject}<br/><br/>{body}",
                 identifier=identifier,
+                category="direct_message",
             )
 
         log.info(f"Notifications sent to {len(recipients)} users.")
 
     if is_email:
+        unsubscribe_url = urljoin(settings.SITE_URL, f"unsubscribe/{uuid}")
         footer = (
-            """<br><br>
-You’re receiving this email as a contributor to Mozilla localization on Pontoon. <br>To no longer receive emails like these, unsubscribe here: <a href="https://pontoon.mozilla.org/unsubscribe/{ uuid }">Unsubscribe</a>.
+            f"""<br><br>
+{ settings.EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT }<br>To no longer receive emails like these, unsubscribe here: <a href="{ unsubscribe_url }">Unsubscribe</a>.
         """
             if not is_transactional
             else ""

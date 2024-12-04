@@ -751,6 +751,7 @@ header .right .select .menu {
 }
 
 .notifications .menu ul.notification-list li.notification-item {
+  color: var(--light-grey-7);
   cursor: default;
   padding: 0;
 }

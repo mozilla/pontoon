@@ -8,7 +8,7 @@ from fluent.syntax import ast as FTL
 from fluent.syntax.serializer import serialize_expression
 from fluent.syntax.visitor import Transformer
 
-from pontoon.base.fluent import is_plural_expression
+from pontoon.base.fluent import get_variant_key, is_plural_expression
 from pontoon.base.models import Locale
 
 
@@ -96,7 +96,7 @@ def create_locale_plural_variants(node: FTL.SelectExpression, locale: Locale):
     node.variants = variants
 
 
-def extract_accesskey_candidates(message: FTL.Message, label: str, variant_name=None):
+def extract_accesskey_candidates(message: FTL.Message, label: str, variant_key=None):
     def get_source(names):
         for attribute in message.attributes:
             if attribute.id.name in names:
@@ -107,7 +107,8 @@ def extract_accesskey_candidates(message: FTL.Message, label: str, variant_name=
                 elif isinstance(element.expression, FTL.SelectExpression):
                     variants = element.expression.variants
                     variant = next(
-                        (v for v in variants if v.key.name == variant_name), variants[0]
+                        (v for v in variants if get_variant_key(v) == variant_key),
+                        variants[0],
                     )
                     variant_element = variant.value.elements[0]
 
@@ -189,11 +190,9 @@ class ApplyPretranslation(Transformer):
     def visit_Attribute(self, node: FTL.Pattern):
         name = node.id.name
 
-        def set_accesskey(element, variant_name=None):
+        def set_accesskey(element, variant_key=None):
             if isinstance(element, FTL.TextElement) and len(element.value) <= 1:
-                candidates = extract_accesskey_candidates(
-                    self.entry, name, variant_name
-                )
+                candidates = extract_accesskey_candidates(self.entry, name, variant_key)
                 if candidates:
                     element.value = candidates[0]
                     return True
@@ -202,8 +201,11 @@ class ApplyPretranslation(Transformer):
             if self.locale.accesskey_localization:
                 element = node.value.elements[0]
 
+                # If the attribute is a simple text element, set accesskey
                 if set_accesskey(element):
                     return node
+
+                # If the attribute is a select expression, set accesskey for each variant
                 elif isinstance(element, FTL.Placeable) and isinstance(
                     element.expression, FTL.SelectExpression
                 ):
@@ -211,7 +213,8 @@ class ApplyPretranslation(Transformer):
                     processed_variants = 0
                     for variant in variants:
                         variant_element = variant.value.elements[0]
-                        if set_accesskey(variant_element, variant.key.name):
+
+                        if set_accesskey(variant_element, get_variant_key(variant)):
                             processed_variants += 1
                     if processed_variants == len(variants):
                         return node
