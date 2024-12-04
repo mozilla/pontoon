@@ -443,50 +443,6 @@ class EntityQuerySet(models.QuerySet):
 
         return entities
 
-    def reset_active_translations(self, locale):
-        """
-        Reset active translation for given set of entities and locale.
-        """
-        from pontoon.base.models.translation import Translation
-
-        translations = Translation.objects.filter(
-            entity__in=self,
-            locale=locale,
-        )
-
-        # First, deactivate all translations
-        translations.update(active=False)
-
-        # Mark all approved, pretranslated and fuzzy translations as active.
-        translations.filter(
-            Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True)
-        ).update(active=True)
-
-        # Mark most recent unreviewed suggestions without active siblings
-        # for any given combination of (locale, entity, plural_form) as active.
-        unreviewed_pks = set()
-        unreviewed = translations.filter(
-            approved=False,
-            pretranslated=False,
-            fuzzy=False,
-            rejected=False,
-        ).values_list("entity", "plural_form")
-
-        for entity, plural_form in unreviewed:
-            siblings = (
-                Translation.objects.filter(
-                    entity=entity,
-                    locale=locale,
-                    plural_form=plural_form,
-                )
-                .exclude(rejected=True)
-                .order_by("-active", "-date")
-            )
-            if siblings and not siblings[0].active:
-                unreviewed_pks.add(siblings[0].pk)
-
-        translations.filter(pk__in=unreviewed_pks).update(active=True)
-
     def get_or_create(self, defaults=None, **kwargs):
         kwargs["word_count"] = get_word_count(kwargs["string"])
         return super().get_or_create(defaults=defaults, **kwargs)
@@ -653,6 +609,35 @@ class Entity(DirtyFieldsMixin, models.Model):
             translations = [t for t in translations if t.plural_form == plural_form]
 
         return translations[0] if translations else Translation()
+
+    def reset_active_translation(self, locale, plural_form=None):
+        """
+        Reset active translation for given entity, locale and plural form.
+        Return active translation if exists or empty Translation instance.
+        """
+        from pontoon.base.models.translation import Translation
+
+        translations = self.translation_set.filter(locale=locale)
+
+        if plural_form is not None:
+            translations = translations.filter(plural_form=plural_form)
+
+        translations.update(active=False)
+
+        candidates = translations.filter(rejected=False).order_by(
+            "-approved", "-pretranslated", "-fuzzy", "-date"
+        )
+
+        if candidates:
+            active_translation = candidates[0]
+            active_translation.active = True
+
+            # Do not trigger the overridden Translation.save() method
+            super(Translation, active_translation).save(update_fields=["active"])
+
+            return active_translation
+        else:
+            return Translation()
 
     def reset_term_translation(self, locale):
         """
