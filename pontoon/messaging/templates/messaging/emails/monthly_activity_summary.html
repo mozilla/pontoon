@@ -1,0 +1,19 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block extend_css %}
+{% endblock %}
+
+{% block header %}Hello.{% endblock %}
+
+{% block subheader %}Here's your monthly activity summary for the month of {{ month }}.{% endblock %}
+
+{% block content_class %}monthly-activity-summary{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block footer %}
+If you no longer want to receive these activity summaries, you can turn off the “Monthly activity summary“ feature in your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+{% endblock %}

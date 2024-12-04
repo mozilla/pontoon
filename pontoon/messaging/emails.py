@@ -18,6 +18,40 @@ from pontoon.messaging.utils import html_to_plain_text_with_links
 log = logging.getLogger(__name__)
 
 
+def send_monthly_activity_summary():
+    """
+    Sends Monthly activity summary emails.
+    """
+    log.info("Start sending Monthly activity summary emails.")
+
+    subject = "Monthly activity summary"
+    template = get_template("messaging/emails/monthly_activity_summary.html")
+
+    users = User.objects.filter(profile__monthly_activity_summary=True)
+
+    # Process and send email for each user
+    for user in users:
+        body_html = template.render(
+            {
+                "subject": subject,
+            }
+        )
+        body_text = html_to_plain_text_with_links(body_html)
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    recipient_count = len(users)
+
+    log.info(f"Monthly activity summary emails sent to {recipient_count} users.")
+
+
 def send_notification_digest(frequency="Daily"):
     """
     Sends notification email digests to users based on the specified frequency (Daily or Weekly).
