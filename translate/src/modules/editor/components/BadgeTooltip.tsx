@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useContext, useRef } from 'react';
 import { Localized } from '@fluent/react';
-import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
+import Pride from 'react-canvas-confetti/dist/presets/pride';
 
 import { BadgeTooltipMessage, ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { useAppSelector } from '~/hooks';
@@ -14,6 +14,7 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
   const tooltip = useContext(BadgeTooltipMessage);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const ref = useRef<HTMLDivElement>(null);
+  const style = getComputedStyle(document.body);
 
   const hide = useCallback(() => {
     showBadgeTooltip(null);
@@ -38,9 +39,25 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
       imagePath = '';
   }
 
+  const decorateOptions = (defaultOptions: any) => {
+    return {
+      ...defaultOptions,
+      disableForReducedMotion: true,
+      colors: [
+        style.getPropertyValue('--status-error'),
+        style.getPropertyValue('--white-1'),
+      ],
+      particleCount: 10,
+      spread: 55,
+    };
+  };
+
   return (
     <>
-      <Fireworks autorun={{ speed: 1, duration: 3000 }} />
+      <Pride
+        autorun={{ speed: 30, duration: 5000 }}
+        decorateOptions={decorateOptions}
+      />
       <div ref={ref} className={className}>
         <Localized id='editor-BadgeTooltip--intro'>
           <p className='title'>Achievement unlocked</p>
