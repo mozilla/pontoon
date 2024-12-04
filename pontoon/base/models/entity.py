@@ -654,35 +654,6 @@ class Entity(DirtyFieldsMixin, models.Model):
 
         return translations[0] if translations else Translation()
 
-    def reset_active_translation(self, locale, plural_form=None):
-        """
-        Reset active translation for given entity, locale and plural form.
-        Return active translation if exists or empty Translation instance.
-        """
-        from pontoon.base.models.translation import Translation
-
-        translations = self.translation_set.filter(locale=locale)
-
-        if plural_form is not None:
-            translations = translations.filter(plural_form=plural_form)
-
-        translations.update(active=False)
-
-        candidates = translations.filter(rejected=False).order_by(
-            "-approved", "-pretranslated", "-fuzzy", "-date"
-        )
-
-        if candidates:
-            active_translation = candidates[0]
-            active_translation.active = True
-
-            # Do not trigger the overridden Translation.save() method
-            super(Translation, active_translation).save(update_fields=["active"])
-
-            return active_translation
-        else:
-            return Translation()
-
     def reset_term_translation(self, locale):
         """
         When translation in the "Terminology" project changes, update the corresponding
