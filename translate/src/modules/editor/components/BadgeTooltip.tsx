@@ -9,7 +9,7 @@ import { useOnDiscard } from '~/utils';
 
 import './BadgeTooltip.css';
 
-export function BadgeTooltip(): React.ReactElement<'div'> {
+export function BadgeTooltip(): React.ReactElement<'div'> | null {
   const user = useAppSelector((state) => state.user.username);
   const tooltip = useContext(BadgeTooltipMessage);
   const showBadgeTooltip = useContext(ShowBadgeTooltip);
@@ -22,31 +22,31 @@ export function BadgeTooltip(): React.ReactElement<'div'> {
 
   useOnDiscard(ref, hide);
 
-  if (!tooltip) return <></>;
+  if (!tooltip) return null;
 
   const { badgeName, badgeLevel } = tooltip;
   const className = classNames('badge-tooltip', tooltip && 'showing');
 
-  let imagePath;
+  let imagePath: string;
+  let confettiColor: string;
   switch (badgeName) {
     case 'Review Master':
       imagePath = '/static/img/review_master_badge.svg';
+      confettiColor = style.getPropertyValue('--status-unreviewed');
       break;
     case 'Translation Champion':
       imagePath = '/static/img/translation_champion_badge.svg';
+      confettiColor = style.getPropertyValue('--status-translated');
       break;
     default:
-      imagePath = '';
+      return null;
   }
 
   const decorateOptions = (defaultOptions: any) => {
     return {
       ...defaultOptions,
       disableForReducedMotion: true,
-      colors: [
-        style.getPropertyValue('--status-error'),
-        style.getPropertyValue('--white-1'),
-      ],
+      colors: [confettiColor, style.getPropertyValue('--tooltip-background')],
       particleCount: 10,
       spread: 55,
     };
