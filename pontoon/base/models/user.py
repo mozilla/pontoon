@@ -8,7 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef
 from django.urls import reverse
 from django.utils import timezone
 
