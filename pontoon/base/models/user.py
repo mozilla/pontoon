@@ -245,12 +245,12 @@ def badges_review_count(self):
         created_at__gte=settings.BADGES_START_DATE,
     )
 
-    # Exclude auto-rejections caused by creating a new translation
+    # Exclude auto-rejections caused by creating a new translation or approving an existing one
     rejected_reviews = rejected_reviews.exclude(
         Exists(
             self.actions.filter(
                 performed_by=OuterRef("performed_by"),
-                action_type="translation:created",
+                action_type__in=["translation:created", "translation:approved"],
                 created_at__gt=OuterRef("created_at"),
                 created_at__lte=OuterRef("created_at") + timedelta(milliseconds=100),
             )
