@@ -4,12 +4,12 @@ from datetime import datetime
 from typing import Literal
 
 from django.db import models
-from django.db.models import F, Max, Sum
+from django.db.models import Max
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from pontoon.base.models import Project, ProjectLocale, Repository, TranslatedResource
+from pontoon.base.models import Project, Repository
 from pontoon.base.utils import latest_datetime
 
 
@@ -54,69 +54,6 @@ class SyncLog(BaseLog):
 
     def get_absolute_url(self) -> str:
         return reverse("pontoon.sync.logs.details", kwargs={"sync_log_pk": self.pk})
-
-    def fix_stats(self) -> None:
-        """
-        Recalculate any broken stats when sync task is finished. This is a
-        temporary fix for https://github.com/mozilla/pontoon/issues/2040.
-        """
-        if not self.finished:
-            return
-
-        # total_strings missmatch between TranslatedResource & Resource
-        translated_resources = []
-        tr_source = TranslatedResource.objects.exclude(
-            total_strings=F("resource__total_strings")
-        ).select_related("resource")
-        for t in tr_source:
-            t.total_strings = t.resource.total_strings
-            translated_resources.append(t)
-            log.info(
-                "Fix stats: total_strings mismatch for {resource}, {locale}.".format(
-                    resource=t.resource, locale=t.locale.code
-                )
-            )
-
-        TranslatedResource.objects.bulk_update(
-            translated_resources, fields=["total_strings"]
-        )
-
-        # total_strings missmatch in ProjectLocales within the same project
-        for p in Project.objects.available():
-            count = (
-                ProjectLocale.objects.filter(project=p)
-                .values("total_strings")
-                .distinct()
-                .count()
-            )
-            if count > 1:
-                for pl in ProjectLocale.objects.filter(project=p):
-                    pl.aggregate_stats()
-
-        # approved + pretranslated + errors + warnings > total in TranslatedResource
-        for t in (
-            TranslatedResource.objects.filter(
-                resource__project__disabled=False,
-                resource__project__sync_disabled=False,
-            )
-            .annotate(
-                total=Sum(
-                    F("approved_strings")
-                    + F("pretranslated_strings")
-                    + F("strings_with_errors")
-                    + F("strings_with_warnings")
-                )
-            )
-            .filter(total__gt=F("total_strings"))
-        ):
-            log.info(
-                "Fix stats: total_strings overflow for {resource}, {locale}.".format(
-                    resource=t.resource, locale=t.locale.code
-                )
-            )
-            t.calculate_stats()
-
-        log.info("Sync complete.")
 
 
 class ProjectSyncLog(BaseLog):
@@ -171,7 +108,6 @@ class ProjectSyncLog(BaseLog):
         self.skipped = True
         self.skipped_end_time = end_time or timezone.now()
         self.save(update_fields=("skipped", "skipped_end_time"))
-        self.sync_log.fix_stats()
 
 
 class RepositorySyncLog(BaseLog):
@@ -190,4 +126,3 @@ class RepositorySyncLog(BaseLog):
     def end(self) -> None:
         self.end_time = timezone.now()
         self.save(update_fields=["end_time"])
-        self.project_sync_log.sync_log.fix_stats()

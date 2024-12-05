@@ -8,7 +8,6 @@ from django.urls.exceptions import NoReverseMatch
 from pontoon.base.models import Project
 from pontoon.base.utils import (
     aware_datetime,
-    extension_in,
     get_m2m_changes,
     get_object_or_none,
     get_search_phrases,
@@ -576,18 +575,6 @@ def test_get_m2m_mixed(user_a, user_b, user_c):
     assert user_a in changes[0]
     assert user_c in changes[0]
     assert [user_b] == changes[1]
-
-
-def test_util_base_extension_in():
-    assert extension_in("filename.txt", ["bat", "txt"])
-    assert extension_in("filename.biff", ["biff"])
-    assert extension_in("filename.tar.gz", ["gz"])
-
-    assert not extension_in("filename.txt", ["png", "jpg"])
-    assert not extension_in(".dotfile", ["bat", "txt"])
-
-    # Unintuitive, but that's how splitext works.
-    assert not extension_in("filename.tar.gz", ["tar.gz"])
 
 
 @pytest.mark.django_db

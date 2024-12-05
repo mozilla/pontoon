@@ -8,9 +8,8 @@ import polib
 
 from django.utils import timezone
 
-from pontoon.sync import KEY_SEPARATOR
-from pontoon.sync.exceptions import ParseError
 from pontoon.sync.formats.base import ParsedResource
+from pontoon.sync.formats.exceptions import ParseError
 from pontoon.sync.vcs.translation import VCSTranslation
 
 
@@ -30,7 +29,7 @@ class POEntity(VCSTranslation):
         key = po_entry.msgid
         context = po_entry.msgctxt or ""
         if context:
-            key = context + KEY_SEPARATOR + key
+            key = context + "\x04" + key
 
         super().__init__(
             key=key,
@@ -64,6 +63,8 @@ class POEntity(VCSTranslation):
 
 
 class POResource(ParsedResource):
+    entities: list[POEntity]
+
     def __init__(self, pofile):
         self.pofile = pofile
         self.entities = [
