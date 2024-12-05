@@ -12,8 +12,12 @@
 {% block content_class %}monthly-activity-summary{% endblock %}
 
 {% block content %}
+<h2>Personal activity</h2>
+<p>Translations submitted: {{ user_data.submitted }} (vs. {{ previous_user_data.submitted }} month before)</p>
+<p>Suggestions reviewed: {{ user_data.reviewed }} (vs. {{ previous_user_data.reviewed }} month before)</p>
 {% endblock %}
 
 {% block footer %}
-If you no longer want to receive these activity summaries, you can turn off the “Monthly activity summary“ feature in your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+If you no longer want to receive these activity summaries, you can turn off the “Monthly activity summary“ feature in
+your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}

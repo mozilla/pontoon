@@ -1,21 +1,49 @@
+import calendar
 import datetime
 import logging
 
 from collections import defaultdict
 
+from dateutil.relativedelta import relativedelta
 from notifications.models import Notification
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Q
+from django.db.models import Count, Prefetch, Q
 from django.template.loader import get_template
 from django.utils import timezone
 
+from pontoon.actionlog.models import ActionLog
+from pontoon.base.models import Locale
 from pontoon.messaging.utils import html_to_plain_text_with_links
 
 
 log = logging.getLogger(__name__)
+
+
+def _get_monthly_user_data(users, months_ago):
+    month_date = timezone.now() - relativedelta(months=months_ago)
+
+    actions = (
+        ActionLog.objects.filter(
+            performed_by__in=users,
+            created_at__month=month_date.month,
+            created_at__year=month_date.year,
+        )
+        .values("performed_by")
+        .annotate(
+            submitted=Count("id", filter=Q(action_type="translation:created")),
+            reviewed=Count(
+                "id",
+                filter=Q(
+                    action_type__in=["translation:approved", "translation:rejected"]
+                ),
+            ),
+        )
+    )
+
+    return { action["performed_by"]: action for action in actions }
 
 
 def send_monthly_activity_summary():
@@ -24,16 +52,25 @@ def send_monthly_activity_summary():
     """
     log.info("Start sending Monthly activity summary emails.")
 
-    subject = "Monthly activity summary"
-    template = get_template("messaging/emails/monthly_activity_summary.html")
-
+    # Get user activity data
     users = User.objects.filter(profile__monthly_activity_summary=True)
 
+    user_data = _get_monthly_user_data(users, months_ago=1)
+    previous_user_data = _get_monthly_user_data(users, months_ago=2)
+
     # Process and send email for each user
+    subject = "Monthly activity summary"
+    template = get_template("messaging/emails/monthly_activity_summary.html")
+    month = calendar.month_name[(timezone.now().month - 1) or 12]
+
     for user in users:
+        no_data = {"submitted": 0, "reviewed": 0}
         body_html = template.render(
             {
                 "subject": subject,
+                "month": month,
+                "user_data": user_data.get(user.pk, no_data),
+                "previous_user_data": previous_user_data.get(user.pk, no_data),
             }
         )
         body_text = html_to_plain_text_with_links(body_html)
