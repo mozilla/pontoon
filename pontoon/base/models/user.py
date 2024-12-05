@@ -235,10 +235,29 @@ def badges_translation_count(self):
 @property
 def badges_review_count(self):
     """Translation reviews provided by user that count towards their badges."""
-    return self.actions.filter(
-        Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
+    approved_reviews = self.actions.filter(
+        action_type="translation:approved",
         created_at__gte=settings.BADGES_START_DATE,
-    ).count()
+    )
+
+    rejected_reviews = self.actions.filter(
+        action_type="translation:rejected",
+        created_at__gte=settings.BADGES_START_DATE,
+    )
+
+    # Exclude auto-rejections caused by creating a new translation
+    rejected_reviews = rejected_reviews.exclude(
+        Exists(
+            self.actions.filter(
+                performed_by=OuterRef("performed_by"),
+                action_type="translation:created",
+                created_at__gt=OuterRef("created_at"),
+                created_at__lte=OuterRef("created_at") + timedelta(milliseconds=100),
+            )
+        )
+    )
+
+    return approved_reviews.count() + rejected_reviews.count()
 
 
 @property
