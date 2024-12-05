@@ -255,17 +255,23 @@ def badges_promotion_count(self):
     # TODO:
     # This code is the only consumer of the PermissionChangelog model, so we should
     # refactor to simplify how promotions are retrieved. (see #2195)
-    return added_entries.exclude(
-        Exists(
-            self.changed_permissions_log.filter(
-                performed_by=OuterRef("performed_by"),
-                performed_on=OuterRef("performed_on"),
-                action_type="removed",
-                created_at__gt=OuterRef("created_at"),
-                created_at__lte=OuterRef("created_at") + timedelta(milliseconds=10),
+    return (
+        added_entries.exclude(
+            Exists(
+                self.changed_permissions_log.filter(
+                    performed_by=OuterRef("performed_by"),
+                    performed_on=OuterRef("performed_on"),
+                    action_type="removed",
+                    created_at__gt=OuterRef("created_at"),
+                    created_at__lte=OuterRef("created_at") + timedelta(milliseconds=10),
+                )
             )
         )
-    ).count()
+        .order_by("performed_on", "group")
+        # Only count promotion of each user to the same group once
+        .distinct("performed_on", "group")
+        .count()
+    )
 
 
 @property
