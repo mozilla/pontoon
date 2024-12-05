@@ -152,3 +152,82 @@ def test_end_to_end():
             commit_msg,
         )
         assert TranslatedResource.objects.filter(resource__project=project).count() == 6
+
+
+@pytest.mark.django_db
+def test_translation_before_source():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        synclog = SyncLogFactory.create()
+        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
+        repo_src = RepositoryFactory(
+            url="http://example.com/src-repo", source_repo=True
+        )
+        repo_tgt = RepositoryFactory(url="http://example.com/tgt-repo")
+        project = ProjectFactory.create(
+            name="trans-before-source",
+            locales=[locale_de],
+            repositories=[repo_src, repo_tgt],
+        )
+        res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
+        TranslationFactory.create(
+            entity=EntityFactory.create(
+                resource=res_a, key="a0", string="a0 = Message 0\n"
+            ),
+            locale=locale_de,
+            string="a0 = Translation 0\n",
+            approved=True,
+        )
+
+        res_b = ResourceFactory.create(project=project, path="b.ftl", format="ftl")
+        TranslationFactory.create(
+            entity=EntityFactory.create(
+                resource=res_b, key="b0", string="b0 = Message 0\n"
+            ),
+            locale=locale_de,
+            string="b0 = Translation 0\n",
+            approved=True,
+        )
+
+        ChangedEntityLocale.objects.filter(entity__resource__project=project).delete()
+
+        # Filesystem setup
+        src_root = repo_src.checkout_path
+        makedirs(src_root)
+        build_file_tree(
+            src_root,
+            {
+                "en-US": {
+                    "a.ftl": "a0 = Message 0\n",
+                    "b.ftl": "b0 = Message 0\n",
+                }
+            },
+        )
+
+        tgt_root = repo_tgt.checkout_path
+        makedirs(tgt_root)
+        build_file_tree(
+            tgt_root,
+            {
+                "de-Test": {
+                    "a.ftl": ("a0 = New translation 0\n" "a1 = New translation 1\n"),
+                    "b.ftl": "b0 = Translation 0\n",
+                }
+            },
+        )
+
+        # Sync
+        mock_vcs = MockVersionControl(changes=([join("de-Test", "a.ftl")], [], []))
+        with (
+            patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+            patch(
+                "pontoon.sync.core.translations_to_repo.get_repo",
+                return_value=mock_vcs,
+            ),
+        ):
+            sync_project_task(project.id, synclog.id)
+
+        # Test -- New a0 translation is picked up, added a1 is dropped
+        with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
+            assert file.read() == "a0 = New translation 0\n"
