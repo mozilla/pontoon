@@ -3,6 +3,17 @@
 <form id="permissions-form" method="POST" action="{{ url('pontoon.teams.ajax.permissions', locale.code) }}">
     <input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
 
+    <input type="hidden" id="community-builder-level" value="{{ community_builder_level_reached }}">
+    <div class="badge-tooltip">
+        <p class="title">Achievement unlocked</p>
+        <img class="badge" src="{{ static('img/community_builder_badge.svg') }}" title="Community Builder Badge" />
+        <p class="badge-name"></p>
+        <p class="badge-level">Level <span class="level"></span></p>
+        <p class="notice">View your new badge in your <a href="{{ url('pontoon.contributors.contributor.username', request.user) }}">profile</a>.</p>
+        <button class="continue">Continue</button>
+    </div>
+    
+
     <div class="permissions-groups general clearfix">
         <h3 class="controls">General <span class="small stress">(default team permissions for all projects)</span></h3>
         <div class="selector-wrapper double-list-selector clearfix">

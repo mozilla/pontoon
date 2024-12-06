@@ -659,6 +659,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/lib/confetti.browser.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -794,6 +795,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
@@ -907,9 +909,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
+# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = ("https:",)
+CSP_WORKER_SRC = ("https:",) + ("blob:",)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",

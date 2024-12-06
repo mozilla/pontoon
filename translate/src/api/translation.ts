@@ -57,10 +57,20 @@ export type APIStats = {
   total: number;
 };
 
+export type BadgeInfo = {
+  name: string;
+  level: number;
+};
+
 type CreateTranslationResponse =
   | { status: false; same: true; failedChecks?: never }
   | { status: false; failedChecks: ApiFailedChecks; same?: never }
-  | { status: true; translation: EntityTranslation; stats: APIStats };
+  | {
+      status: true;
+      translation: EntityTranslation;
+      badge_update?: BadgeInfo;
+      stats: APIStats;
+    };
 
 /**
  * Create a new translation.
@@ -110,7 +120,12 @@ export function createTranslation(
 
 type SetTranslationResponse =
   | { failedChecks: ApiFailedChecks; string: string } // indicates failed approve
-  | { translation: EntityTranslation; stats: APIStats; failedChecks?: never };
+  | {
+      translation: EntityTranslation;
+      stats: APIStats;
+      badge_update?: BadgeInfo;
+      failedChecks?: never;
+    };
 
 export function setTranslationStatus(
   change: ChangeOperation,

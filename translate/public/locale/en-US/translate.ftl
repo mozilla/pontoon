@@ -215,6 +215,15 @@ editor-NewContributorTooltip--team-info = Check the <a>team information</a> befo
 editor-NewContributorTooltip--team-managers = Reach out to <a>team managers</a> if you have questions or want to learn more about contributing.
 
 
+## Editor Badge Tooltip
+## Popup notification when users gain a new badge level
+
+editor-BadgeTooltip--intro = Achievement unlocked
+editor-BadgeTooltip--level = Level { $badgeLevel }
+editor-BadgeTooltip--profile = View your new badge in your <a>profile</a>.
+editor-BadgeTooltip--continue = Continue
+
+
 ## Editor Unsaved Changes
 ## Renders the unsaved changes popup
 
