@@ -909,6 +909,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
+# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
 CSP_WORKER_SRC = ("https:",) + ("blob:",)
@@ -941,7 +942,6 @@ CSP_STYLE_SRC = (
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
-# 'blob:' is needed for confetti.browser.js
 if not (HEROKU_DEMO or SITE_URL.startswith("https")):
     CSP_IMG_SRC = CSP_IMG_SRC + ("http://www.gravatar.com/avatar/",)
     CSP_WORKER_SRC = CSP_FRAME_SRC = CSP_FRAME_SRC + ("http:",)
