@@ -165,6 +165,10 @@ you create:
    Optional. Text to be shown in the footer of the non-transactional emails sent
    using the Messaging Center, just above the unsubscribe text.
 
+``+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO``
+   Optional. Custom text to be shown in the Monthly activity summary emails after the
+   greeting and before the stats.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
