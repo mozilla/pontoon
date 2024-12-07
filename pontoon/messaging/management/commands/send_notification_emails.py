@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils.timezone import now
+from django.utils.timezone import datetime
 
 from pontoon.messaging.emails import send_notification_digest
 
@@ -11,5 +12,5 @@ class Command(BaseCommand):
         send_notification_digest(frequency="Daily")
 
         # Only send weekly digests on Saturdays
-        if now().isoweekday() == 6:
+        if datetime.today().weekday() == settings.NOTIFICATION_DIGEST_DAY:
             send_notification_digest(frequency="Weekly")
