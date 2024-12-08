@@ -209,6 +209,11 @@ you create:
    Optional. Set your `Microsoft Translator API`_ key to use machine translation
    by Microsoft.
 
+``MONTHLY_ACTIVITY_SUMMARY_DAY``
+   Optional. Integer representing a day of the month on which the Monthly
+   activity summary emails will be sent. 1 represents the first day of the month.
+   The default value is 1.
+
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
    on New Relic.

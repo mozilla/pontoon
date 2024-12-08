@@ -1118,6 +1118,10 @@ NOTIFICATIONS_MAX_COUNT = 7
 # management command will run.
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
 
+# Integer representing a day of the month on which the Monthly activity summary
+# email will be sent.
+MONTHLY_ACTIVITY_SUMMARY_DAY = os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1)
+
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:
