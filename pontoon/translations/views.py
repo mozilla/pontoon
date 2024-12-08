@@ -126,7 +126,11 @@ def create_translation(request):
         )
 
     # When user makes their first contribution to the team, notify team managers
-    first_contribution = not project.system_project and user.is_new_contributor(locale)
+    first_contribution = (
+        not project.system_project
+        and user.is_new_contributor(locale)
+        and user != project.contact
+    )
     if first_contribution:
         description = render_to_string(
             "messaging/notifications/new_contributor.html",
