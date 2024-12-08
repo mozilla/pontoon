@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from django.urls import reverse
@@ -208,6 +210,54 @@ def test_run_checks_during_translation_update(
     assert warning.translation_id == translation_pk
     assert warning.library == FailedCheck.Library.COMPARE_LOCALES
     assert warning.message == "trailing argument 1 `s` missing"
+
+
+@patch("notifications.signals.notify.send")
+@pytest.mark.django_db
+def test_notify_managers_on_first_contribution(
+    mock_notify,
+    member,
+    entity_a,
+    locale_a,
+    user_a,
+    user_b,
+    project_locale_a,
+    request_create_translation,
+):
+    """
+    Test that managers are notified when a user makes their first contribution
+    to a locale.
+    """
+    translation = TranslationFactory(
+        entity=entity_a,
+        locale=locale_a,
+        user=user_b,  # user_b has no contributions to locale_a yet
+        approved=True,
+        active=True,
+    )
+
+    # Set user_a as a manager for locale_a and subscribe it to new contributor notifications
+    translation.locale.managers_group.user_set.add(user_a)
+    user_a.profile.new_contributor_notifications = True
+    user_a.profile.save()
+
+    response = request_create_translation(
+        member.client,
+        entity=translation.entity.pk,
+        original=translation.entity.string,
+        locale=translation.locale.code,
+        translation="First translation",
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"]
+
+    mock_notify.assert_called_once()
+
+    # Check that the new contributor notification was sent to the correct manager
+    notify_args = mock_notify.call_args[1]
+    assert notify_args["recipient"] == user_a
+    assert notify_args["category"] == "new_contributor"
 
 
 @pytest.fixture
