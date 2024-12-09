@@ -281,7 +281,7 @@ def can_translate(self, locale, project):
     return self.has_perm("base.can_translate_locale", locale)
 
 
-def is_new_contributor(self, locale):
+def has_one_contribution(self, locale):
     """Return True if the user has made just 1 contribution to the locale."""
     return (
         self.translation_set.filter(locale=locale)
@@ -500,7 +500,7 @@ User.add_to_class("badges_promotion_count", badges_promotion_count)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
-User.add_to_class("is_new_contributor", is_new_contributor)
+User.add_to_class("has_one_contribution", has_one_contribution)
 User.add_to_class("notification_list", notification_list)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)

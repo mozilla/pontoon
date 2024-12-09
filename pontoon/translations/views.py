@@ -129,7 +129,7 @@ def create_translation(request):
     first_contribution = (
         not project.system_project
         and user != project.contact
-        and user.is_new_contributor(locale)
+        and user.has_one_contribution(locale)
     )
     if first_contribution:
         description = render_to_string(
