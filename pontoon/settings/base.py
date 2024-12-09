@@ -226,6 +226,9 @@ EMAIL_COMMUNICATIONS_HELP_TEXT = os.environ.get("EMAIL_COMMUNICATIONS_HELP_TEXT"
 EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT = os.environ.get(
     "EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT", ""
 )
+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO = os.environ.get(
+    "EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO", ""
+)
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
@@ -1123,6 +1126,10 @@ SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
 # email will be sent. 0 represents Monday, 6 represents Sunday. The default value
 # is 4 (Friday).
 NOTIFICATION_DIGEST_DAY = os.environ.get("NOTIFICATION_DIGEST_DAY", 4)
+
+# Integer representing a day of the month on which the Monthly activity summary
+# email will be sent.
+MONTHLY_ACTIVITY_SUMMARY_DAY = os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1)
 
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")

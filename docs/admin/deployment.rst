@@ -165,6 +165,10 @@ you create:
    Optional. Text to be shown in the footer of the non-transactional emails sent
    using the Messaging Center, just above the unsubscribe text.
 
+``+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO``
+   Optional. Custom text to be shown in the Monthly activity summary emails after the
+   greeting and before the stats.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
@@ -208,6 +212,11 @@ you create:
 ``MICROSOFT_TRANSLATOR_API_KEY``
    Optional. Set your `Microsoft Translator API`_ key to use machine translation
    by Microsoft.
+
+``MONTHLY_ACTIVITY_SUMMARY_DAY``
+   Optional. Integer representing a day of the month on which the Monthly
+   activity summary emails will be sent. 1 represents the first day of the month.
+   The default value is 1.
 
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
