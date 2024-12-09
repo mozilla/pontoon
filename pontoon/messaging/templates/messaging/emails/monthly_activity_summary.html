@@ -57,7 +57,7 @@ p.completion {
 {% block header %}Hello.{% endblock %}
 
 {% block subheader %}
-<p>Here's your monthly activity summary for the month of {{ month }}.</p>
+<p>Here's your monthly activity summary for {{ month }} {{ year }}.</p>
 
 {% if settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO %}
 <p>{{ settings.EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO }}</p>

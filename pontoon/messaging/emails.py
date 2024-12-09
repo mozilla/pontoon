@@ -213,13 +213,20 @@ def send_monthly_activity_summary():
     # Process and send email for each user
     subject = "Monthly activity summary"
     template = get_template("messaging/emails/monthly_activity_summary.html")
-    month = calendar.month_name[(timezone.now().month - 1) or 12]
+
+    now = timezone.now()
+    current_month = now.month
+    report_month = calendar.month_name[(current_month - 1) or 12]
+
+    current_year = now.year
+    report_year = current_year if current_month > 1 else current_year - 1
 
     for user in users:
         body_html = template.render(
             {
                 "subject": subject,
-                "month": month,
+                "month": report_month,
+                "year": report_year,
                 "user": user,
                 "locales": user_locales.get(user, []),
                 "settings": settings,
