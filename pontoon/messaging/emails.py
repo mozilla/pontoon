@@ -89,15 +89,18 @@ def _get_monthly_locale_contributors(locales, months_ago):
     )
 
     # Get contributors that started contributing to the locale in the given month
-    first_contributions = actions.values(
-        "performed_by", "translation__locale"
-    ).annotate(first_contribution_date=Min("created_at"))
+    first_contributions = (
+        actions.values("performed_by", "translation__locale")
+        .annotate(first_contribution_date=Min("created_at"))
+        .filter(
+            first_contribution_date__month=month_date.month,
+            first_contribution_date__year=month_date.year,
+        )
+    )
 
     new_locale_contributors = {
         (entry["translation__locale"], entry["performed_by"])
         for entry in first_contributions
-        if entry["first_contribution_date"].month == month_date.month
-        and entry["first_contribution_date"].year == month_date.year
     }
 
     # Get all contributors in the given month,
