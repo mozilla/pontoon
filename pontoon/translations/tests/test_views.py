@@ -218,6 +218,7 @@ def test_notify_managers_on_first_contribution(
     mock_notify,
     member,
     entity_a,
+    entity_b,
     locale_a,
     user_a,
     user_b,
@@ -241,6 +242,7 @@ def test_notify_managers_on_first_contribution(
     user_a.profile.new_contributor_notifications = True
     user_a.profile.save()
 
+    mock_notify.reset_mock()
     response = request_create_translation(
         member.client,
         entity=translation.entity.pk,
@@ -258,6 +260,26 @@ def test_notify_managers_on_first_contribution(
     notify_args = mock_notify.call_args[1]
     assert notify_args["recipient"] == user_a
     assert notify_args["category"] == "new_contributor"
+
+    # Check that the new contributor notification is only sent for the first contribution
+    second_translation = TranslationFactory(
+        entity=entity_b,
+        locale=locale_a,
+        user=user_b,
+        approved=True,
+        active=True,
+    )
+
+    mock_notify.reset_mock()
+    response = request_create_translation(
+        member.client,
+        entity=second_translation.entity.pk,
+        original=second_translation.entity.string,
+        locale=second_translation.locale.code,
+        translation="Second translation",
+    )
+
+    mock_notify.assert_not_called()
 
 
 @pytest.fixture
