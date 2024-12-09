@@ -23,7 +23,7 @@ from pontoon.messaging.utils import html_to_plain_text_with_links
 log = logging.getLogger(__name__)
 
 
-def _get_monthly_user_data(users, months_ago):
+def _get_monthly_user_actions(users, months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
 
     actions = (
@@ -47,7 +47,7 @@ def _get_monthly_user_data(users, months_ago):
     return {action["performed_by"]: action for action in actions}
 
 
-def _get_monthly_locale_data(months_ago):
+def _get_monthly_locale_actions(months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
 
     snapshots = (
@@ -66,7 +66,7 @@ def _get_monthly_locale_data(months_ago):
     return {snapshot["locale"]: snapshot for snapshot in snapshots}
 
 
-def _get_monthly_locale_state(months_ago):
+def _get_monthly_locale_stats(months_ago):
     month_date = timezone.now() - relativedelta(months=months_ago)
     last_day = calendar.monthrange(month_date.year, month_date.month)[1]
 
@@ -166,45 +166,40 @@ def send_monthly_activity_summary():
     """
     log.info("Start sending Monthly activity summary emails.")
 
-    # Get user activity data
+    # Get user monthly actions
     users = User.objects.filter(profile__monthly_activity_summary=True)
-    user_data = _get_monthly_user_data(users, months_ago=1)
-    previous_user_data = _get_monthly_user_data(users, months_ago=2)
+    user_month_actions = _get_monthly_user_actions(users, months_ago=1)
+    previous_user_month_actions = _get_monthly_user_actions(users, months_ago=2)
 
-    no_data = {"submitted": 0, "reviewed": 0}
     for user in users:
-        user.data = user_data.get(user.pk, no_data)
-        user.previous_data = previous_user_data.get(user.pk, no_data)
+        user.month_actions = user_month_actions.get(user.pk, {})
+        user.previous_month_actions = previous_user_month_actions.get(user.pk, {})
 
-    # Get locale activity data
+    # Get locale monthly actions
     locales = Locale.objects.prefetch_related(
         Prefetch("managers_group__user_set", to_attr="fetched_managers"),
         Prefetch("translators_group__user_set", to_attr="fetched_translators"),
     )
 
-    locale_data = _get_monthly_locale_data(months_ago=1)
-    previous_locale_data = _get_monthly_locale_data(months_ago=2)
+    locale_month_actions = _get_monthly_locale_actions(months_ago=1)
+    locale_previous_month_actions = _get_monthly_locale_actions(months_ago=2)
 
-    locale_state = _get_monthly_locale_state(months_ago=1)
-    previous_locale_state = _get_monthly_locale_state(months_ago=2)
+    locale_month_stats = _get_monthly_locale_stats(months_ago=1)
+    locale_previous_month_stats = _get_monthly_locale_stats(months_ago=2)
 
     locale_contributors = _get_monthly_locale_contributors(locales, months_ago=1)
 
     for locale in locales:
-        locale.data = locale_data.get(locale.pk, {})
-        locale.previous_data = previous_locale_data.get(locale.pk, {})
-        locale.state = locale_state.get(locale.pk, {})
-        locale.previous_state = previous_locale_state.get(locale.pk, {})
+        locale.month_actions = locale_month_actions.get(locale.pk, {})
+        locale.previous_month_actions = locale_previous_month_actions.get(locale.pk, {})
+        locale.month_stats = locale_month_stats.get(locale.pk, {})
+        locale.previous_month_stats = locale_previous_month_stats.get(locale.pk, {})
         locale.contributors = locale_contributors.get(locale.pk, {})
 
     # Create a map of users to locales in which they are managers or translators,
     # which determines if the user should receive the Team activity section of the email
     user_locales = defaultdict(set)
     for locale in locales:
-        # Skip locales without data
-        if not locale.data or not locale.previous_data:
-            log.error(f"Locale {locale} has no Monthly activity data.")
-            continue
         for user in locale.managers_group.fetched_managers:
             user_locales[user].add(locale)
         for user in locale.translators_group.fetched_translators:

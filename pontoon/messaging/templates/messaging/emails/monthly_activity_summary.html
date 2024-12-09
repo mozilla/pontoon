@@ -68,25 +68,25 @@ p.completion {
 
 {% block content %}
 <h2>You personal activity</h2>
-<p><span class="bullet"></span> Translations submitted: {{ user.data.submitted }} (vs. {{ user.previous_data.submitted }} month before)</p>
-<p><span class="bullet"></span> Suggestions reviewed: {{ user.data.reviewed }} (vs. {{ user.previous_data.reviewed }} month before)</p>
+{{ actions_item("Translations submitted", user, "submitted") }}
+{{ actions_item("Suggestions reviewed", user, "reviewed") }}
 
 {% for locale in locales %}
 <h2 class="team-activity">Team activity for {{ locale.name }} ({{ locale.code }})</h2>
 
-<p><span class="bullet"></span> New source strings added: {{ locale.data.added_source_strings }} (vs. {{ locale.previous_data.added_source_strings }} month before)</p>
-<p><span class="bullet"></span> Translations submitted: {{ locale.data.submitted }} (vs. {{ locale.previous_data.submitted }} month before)</p>
-<p><span class="bullet"></span> Suggestions reviewed: {{ locale.data.reviewed }} (vs. {{ locale.previous_data.reviewed }} month before)</p>
+{{ actions_item("New source strings added", locale, "added_source_strings") }}
+{{ actions_item("Translations submitted", locale, "submitted") }}
+{{ actions_item("Suggestions reviewed", locale, "reviewed") }}
 
-{{ list_contributors("New contributors", locale.contributors.new_contributors) }}
-{{ list_contributors("Recently active managers", locale.contributors.active_managers) }}
-{{ list_contributors("Recently active translators", locale.contributors.active_translators) }}
-{{ list_contributors("Recently active contributors", locale.contributors.active_contributors) }}
+{{ contributors_item("New contributors", locale.contributors.new_contributors) }}
+{{ contributors_item("Recently active managers", locale.contributors.active_managers) }}
+{{ contributors_item("Recently active translators", locale.contributors.active_translators) }}
+{{ contributors_item("Recently active contributors", locale.contributors.active_contributors) }}
 
-<p class="completion"><span class="bullet"></span> Completion: {{ locale.state.completion }}% (vs. {{ locale.previous_state.completion }}% month before)</p>
-<p><span class="bullet missing"></span> Strings with missing translations: <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status=missing">{{ locale.state.missing_strings }}</a> (vs. {{ locale.previous_state.missing_strings }} month before)</p>
-<p><span class="bullet unreviewed"></span> Unreviewed suggestions: <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status=unreviewed">{{ locale.state.unreviewed_strings }}</a> (vs. {{ locale.previous_state.unreviewed_strings }} month before)</p>
-<p><span class="bullet pretranslated"></span> Unreviewed pretranslations: <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status=pretranslated">{{ locale.state.pretranslated_strings }}</a> (vs. {{ locale.previous_state.pretranslated_strings }} month before)</p>
+{{ status_item("Completion", locale, "completion", "completion", "", "%") }}
+{{ status_item("Strings with missing translations", locale, "missing_strings", "", "missing") }}
+{{ status_item("Unreviewed suggestions", locale, "unreviewed_strings", "", "unreviewed") }}
+{{ status_item("Unreviewed pretranslations", locale, "pretranslated_strings", "", "pretranslated") }}
 {% endfor %}
 {% endblock %}
 
@@ -95,7 +95,15 @@ If you no longer want to receive these activity summaries, you can turn off the 
 your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 {% endblock %}
 
-{% macro list_contributors(label, contributors) %}
+{% macro actions_item(label, actions_object, attribute) %}
+<p>
+    <span class="bullet"></span>
+    {{ label }}:
+    {{ actions_object.month_actions[attribute] or 0 }} (vs. {{ actions_object.previous_month_actions[attribute] or 0 }} month before)
+</p>
+{% endmacro %}
+
+{% macro contributors_item(label, contributors) %}
 {% if contributors %}
 <p>
     <span class="bullet"></span>
@@ -106,4 +114,16 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
     {% endfor %}
 </p>
 {% endif %}
+{% endmacro %}
+
+{% macro status_item(label, locale, attribute, cls="", url_parameter="", unit="") %}
+<p class="{{ cls }}">
+    <span class="bullet {{ url_parameter }}"></span>
+    {{ label }}:
+    {% if url_parameter %}
+    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ locale.month_stats[attribute] }}{{ unit }}</a> (vs. {{ locale.previous_month_stats[attribute] }}{{ unit }} month before)</p>
+    {% else %}
+    {{ locale.month_stats[attribute] or 0 }}{{ unit }} (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)
+    {% endif %}
+</p>
 {% endmacro %}
