@@ -1,7 +1,5 @@
 import logging
 
-from typing import Any
-
 from .utils import CommitToRepositoryException, PullFromRepositoryException, execute
 
 
@@ -9,7 +7,7 @@ log = logging.getLogger(__name__)
 
 
 def update(source: str, target: str, branch: str | None) -> None:
-    log.debug("Mercurial: Update repository.")
+    log.debug(f"Mercurial: Updating repo {source}")
 
     # Undo local changes: Mercurial doesn't offer anything more elegant
     command = ["rm", "-rf", target]
@@ -25,14 +23,14 @@ def update(source: str, target: str, branch: str | None) -> None:
         raise PullFromRepositoryException(error)
 
 
-def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> None:
+def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
     log.debug("Mercurial: Commit to repository.")
 
     # Add new and remove missing paths
     execute(["hg", "addremove"], path)
 
     # Commit
-    commit = ["hg", "commit", "-m", message, "-u", user.display_name_and_email]
+    commit = ["hg", "commit", "-m", message, "-u", author]
     code, output, error = execute(commit, path)
     if code != 0 and error:
         raise CommitToRepositoryException(error)
@@ -55,7 +53,9 @@ def revision(path: str) -> str | None:
     return output.decode().strip() if code == 0 else None
 
 
-def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] | None:
+def changed_files(
+    path: str, from_revision: str
+) -> tuple[list[str], list[str], list[tuple[str, str]]] | None:
     # Ignore trailing + in revision number. It marks local changes.
     rev = from_revision.rstrip("+")
     cmd = ["hg", "status", "-a", "-m", "-r", f"--rev={rev}", "--rev=default"]
@@ -70,4 +70,4 @@ def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] 
                 changed.append(line.split(None, 2)[1])
             elif line.startswith("R"):
                 removed.append(line.split(None, 2)[1])
-    return changed, removed
+    return changed, removed, []

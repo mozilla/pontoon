@@ -1,12 +1,9 @@
-from os.path import splitext
-
 from django.db import models
 from django.utils import timezone
 
 
 class ResourceQuerySet(models.QuerySet):
-    def asymmetric(self):
-        return self.filter(format__in=Resource.ASYMMETRIC_FORMATS)
+    pass
 
 
 class Resource(models.Model):
@@ -46,19 +43,6 @@ class Resource(models.Model):
 
     deadline = models.DateField(blank=True, null=True)
 
-    SOURCE_EXTENSIONS = ["pot"]  # Extensions of source-only formats.
-    ALLOWED_EXTENSIONS = Format.values + SOURCE_EXTENSIONS
-
-    ASYMMETRIC_FORMATS = {
-        Format.DTD,
-        Format.FTL,
-        Format.INC,
-        Format.INI,
-        Format.JSON,
-        Format.PROPERTIES,
-        Format.XML,
-    }
-
     # Formats that allow empty translations
     EMPTY_TRANSLATION_FORMATS = {
         Format.DTD,
@@ -71,11 +55,6 @@ class Resource(models.Model):
 
     class Meta:
         unique_together = (("project", "path"),)
-
-    @property
-    def is_asymmetric(self):
-        """Return True if this resource is in an asymmetric format."""
-        return self.format in self.ASYMMETRIC_FORMATS
 
     @property
     def allows_empty_translations(self):
@@ -91,16 +70,3 @@ class Resource(models.Model):
             project=self.project.name,
             resource=self.path,
         )
-
-    @classmethod
-    def get_path_format(self, path):
-        filename, extension = splitext(path)
-        path_format = extension[1:].lower()
-
-        # Special case: pot files are considered the po format
-        if path_format == "pot":
-            return "po"
-        elif path_format == "xlf":
-            return "xliff"
-        else:
-            return path_format

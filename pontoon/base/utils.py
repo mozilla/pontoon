@@ -1,30 +1,21 @@
-import codecs
 import functools
-import io
-import os
 import re
-import tempfile
 import time
-import zipfile
 
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urljoin
 from xml.sax.saxutils import escape, quoteattr
-
-import requests
 
 from guardian.decorators import permission_required as guardian_permission_required
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Prefetch, Q
 from django.db.models.query import QuerySet
 from django.http import Http404, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.text import slugify
-from django.utils.timezone import make_aware, now
+from django.utils.timezone import make_aware
 from django.utils.translation import trans_real
 
 
@@ -61,28 +52,6 @@ def get_project_locale_from_request(request, locales):
             continue
 
 
-def first(collection, test, default=None):
-    """
-    Return the first item that, when passed to the given test function,
-    returns True. If no item passes the test, return the default value.
-    """
-    return next((c for c in collection if test(c)), default)
-
-
-def match_attr(collection, **attributes):
-    """
-    Return the first item that has matching values for the given
-    attributes, or None if no item is found to match.
-    """
-    return first(
-        collection,
-        lambda i: all(
-            getattr(i, attrib) == value for attrib, value in attributes.items()
-        ),
-        default=None,
-    )
-
-
 def group_dict_by(list_of_dicts, key):
     """
     Group dicts in a list by the given key. Return a defaultdict instance with
@@ -94,19 +63,6 @@ def group_dict_by(list_of_dicts, key):
         group[dictionary[key]].append(dictionary)
 
     return group
-
-
-def extension_in(filename, extensions):
-    """
-    Check if the extension for the given filename is in the list of
-    allowed extensions. Uses os.path.splitext rules for getting the
-    extension.
-    """
-    filename, extension = os.path.splitext(filename)
-    if extension and extension[1:] in extensions:
-        return True
-    else:
-        return False
 
 
 def get_object_or_none(model, *args, **kwargs):
@@ -163,275 +119,6 @@ def permission_required(perm, *args, **kwargs):
         return wrap
 
     return wrapper
-
-
-def _download_file(prefixes, dirnames, vcs_project, relative_path):
-    for prefix in prefixes:
-        for dirname in dirnames:
-            if vcs_project.configuration:
-                locale = vcs_project.locales[0]
-                absolute_path = os.path.join(
-                    vcs_project.source_directory_path, relative_path
-                )
-                absolute_l10n_path = vcs_project.configuration.l10n_path(
-                    locale, absolute_path
-                )
-                relative_l10n_path = os.path.relpath(
-                    absolute_l10n_path,
-                    vcs_project.locale_directory_paths[locale.code],
-                )
-                url = urljoin(prefix, relative_l10n_path)
-            else:
-                url = os.path.join(prefix.format(locale_code=dirname), relative_path)
-
-            r = requests.get(url, stream=True)
-            if not r.ok:
-                continue
-
-            extension = os.path.splitext(relative_path)[1]
-            with tempfile.NamedTemporaryFile(
-                prefix="strings" if extension == ".xml" else "",
-                suffix=extension,
-                delete=False,
-            ) as temp:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        temp.write(chunk)
-                temp.flush()
-
-            return temp.name
-
-
-def get_download_content(slug, code, part):
-    """
-    Get content of the file to be downloaded.
-
-    :arg str slug: Project slug.
-    :arg str code: Locale code.
-    :arg str part: Resource path.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import Entity, Locale, Project, Resource
-    from pontoon.sync import formats
-    from pontoon.sync.utils import source_to_locale_path
-    from pontoon.sync.vcs.project import VCSProject
-
-    project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code=code)
-    vcs_project = VCSProject(project, locales=[locale])
-
-    # Download a ZIP of all files if project has > 1 and < 10 resources
-    resources = Resource.objects.filter(
-        project=project, translatedresources__locale=locale
-    )
-    isZipable = 1 < len(resources) < 10
-    if isZipable:
-        s = io.BytesIO()
-        zf = zipfile.ZipFile(s, "w")
-
-    # Download a single file if project has 1 or >= 10 resources
-    else:
-        resources = [get_object_or_404(Resource, project__slug=slug, path=part)]
-
-    locale_prefixes = project.repositories
-
-    if not project.configuration_file:
-        locale_prefixes = locale_prefixes.filter(
-            permalink_prefix__contains="{locale_code}"
-        )
-
-    locale_prefixes = locale_prefixes.values_list(
-        "permalink_prefix", flat=True
-    ).distinct()
-
-    source_prefixes = project.repositories.values_list(
-        "permalink_prefix", flat=True
-    ).distinct()
-
-    for resource in resources:
-        # Get locale file
-        dirnames = {locale.code, locale.code.replace("-", "_")}
-        locale_path = _download_file(
-            locale_prefixes, dirnames, vcs_project, resource.path
-        )
-        if not locale_path and not resource.is_asymmetric:
-            return None, None
-
-        # Get source file if needed
-        source_path = None
-        if resource.is_asymmetric or resource.format == "xliff":
-            dirnames = VCSProject.SOURCE_DIR_NAMES
-            source_path = _download_file(
-                source_prefixes, dirnames, vcs_project, resource.path
-            )
-            if not source_path:
-                return None, None
-
-            # If locale file doesn't exist, create it
-            if not locale_path:
-                extension = os.path.splitext(resource.path)[1]
-                with tempfile.NamedTemporaryFile(
-                    prefix="strings" if extension == ".xml" else "",
-                    suffix=extension,
-                    delete=False,
-                ) as temp:
-                    temp.flush()
-                locale_path = temp.name
-
-        # Update file from database
-        resource_file = formats.parse(locale_path, source_path)
-        entities_dict = {}
-        entities_qs = Entity.objects.filter(
-            changedentitylocale__locale=locale,
-            resource__project=project,
-            resource__path=resource.path,
-            obsolete=False,
-        )
-
-        for e in entities_qs:
-            entities_dict[e.key] = e.translation_set.filter(
-                Q(approved=True) | Q(pretranslated=True)
-            ).filter(locale=locale)
-
-        for vcs_translation in resource_file.translations:
-            key = vcs_translation.key
-            if key in entities_dict:
-                entity = entities_dict[key]
-                vcs_translation.update_from_db(entity)
-
-        resource_file.save(locale)
-
-        if not locale_path:
-            return None, None
-
-        if isZipable:
-            zf.write(locale_path, source_to_locale_path(resource.path))
-        else:
-            with codecs.open(locale_path, "r", "utf-8") as f:
-                content = f.read()
-            filename = os.path.basename(source_to_locale_path(resource.path))
-
-        # Remove temporary files
-        os.remove(locale_path)
-        if source_path:
-            os.remove(source_path)
-
-    if isZipable:
-        zf.close()
-        content = s.getvalue()
-        filename = project.slug + ".zip"
-
-    return content, filename
-
-
-def handle_upload_content(slug, code, part, f, user):
-    """
-    Update translations in the database from uploaded file.
-
-    :arg str slug: Project slug.
-    :arg str code: Locale code.
-    :arg str part: Resource path.
-    :arg UploadedFile f: UploadedFile instance.
-    :arg User user: User uploading the file.
-    """
-    # Avoid circular import; someday we should refactor to avoid.
-    from pontoon.base.models import (
-        Entity,
-        Locale,
-        Project,
-        Resource,
-        TranslatedResource,
-        Translation,
-    )
-    from pontoon.sync import formats
-    from pontoon.sync.changeset import ChangeSet
-    from pontoon.sync.vcs.project import VCSProject
-
-    project = get_object_or_404(Project, slug=slug)
-    locale = get_object_or_404(Locale, code=code)
-    resource = get_object_or_404(Resource, project__slug=slug, path=part)
-    # Store uploaded file to a temporary file and parse it
-    extension = os.path.splitext(f.name)[1]
-    is_messages_json = f.name.endswith("messages.json")
-
-    with tempfile.NamedTemporaryFile(
-        prefix="strings" if extension == ".xml" else "",
-        suffix=".messages.json" if is_messages_json else extension,
-    ) as temp:
-        for chunk in f.chunks():
-            temp.write(chunk)
-        temp.flush()
-        resource_file = formats.parse(temp.name)
-
-    # Update database objects from file
-    changeset = ChangeSet(project, VCSProject(project, locales=[locale]), now())
-    entities_qs = (
-        Entity.objects.filter(
-            resource__project=project, resource__path=part, obsolete=False
-        )
-        .prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(locale=locale),
-                to_attr="db_translations",
-            )
-        )
-        .prefetch_related(
-            Prefetch(
-                "translation_set",
-                queryset=Translation.objects.filter(
-                    locale=locale, approved_date__lte=now()
-                ),
-                to_attr="db_translations_approved_before_sync",
-            )
-        )
-    )
-    entities_dict = {entity.key: entity for entity in entities_qs}
-
-    for vcs_translation in resource_file.translations:
-        key = vcs_translation.key
-        if key in entities_dict:
-            entity = entities_dict[key]
-            changeset.update_entity_translations_from_vcs(
-                entity,
-                locale.code,
-                vcs_translation,
-                user,
-                entity.db_translations,
-                entity.db_translations_approved_before_sync,
-            )
-
-    changeset.bulk_create_translations()
-    changeset.bulk_update_translations()
-    changeset.bulk_log_actions()
-
-    if changeset.changed_translations:
-        # Update 'active' status of all changed translations and their siblings,
-        # i.e. translations of the same entity to the same locale.
-        changed_pks = {t.pk for t in changeset.changed_translations}
-        (
-            Entity.objects.filter(
-                translation__pk__in=changed_pks
-            ).reset_active_translations(locale=locale)
-        )
-
-        # Run checks and create TM entries for translations that pass them
-        valid_translations = changeset.bulk_check_translations()
-        changeset.bulk_create_translation_memory_entries(valid_translations)
-
-        # Remove any TM entries of translations that got rejected
-        changeset.bulk_remove_translation_memory_entries()
-
-    TranslatedResource.objects.get(resource=resource, locale=locale).calculate_stats()
-
-    # Mark translations as changed
-    changed_translations_pks = [t.pk for t in changeset.changed_translations]
-    changed_translations = Translation.objects.filter(pk__in=changed_translations_pks)
-    changed_translations.bulk_mark_changed()
-
-    # Update latest translation
-    if changeset.translations_to_create:
-        changeset.translations_to_create[-1].update_latest_translation()
 
 
 def aware_datetime(*args, **kwargs):
