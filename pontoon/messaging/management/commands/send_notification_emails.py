@@ -11,6 +11,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         send_notification_digest(frequency="Daily")
 
-        # Only send weekly digests on Saturdays
+        # Send the weekly notification digest only on the configured day (e.g. Friday)
         if datetime.today().weekday() == settings.NOTIFICATION_DIGEST_DAY:
             send_notification_digest(frequency="Weekly")
