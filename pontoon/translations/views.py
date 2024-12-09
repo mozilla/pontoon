@@ -24,7 +24,10 @@ from pontoon.translations import forms
 
 
 def _add_badge_data(response_data, user, badge_name, stat_count):
-    badge_level = settings.BADGES_TRANSLATION_THRESHOLDS.index(stat_count) + 1
+    if badge_name == "Review Master Badge":
+        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(stat_count) + 1
+    else:
+        badge_level = settings.BADGES_TRANSLATION_THRESHOLDS.index(stat_count) + 1
 
     response_data["badge_update"] = {
         "name": badge_name,
@@ -317,7 +320,7 @@ def approve_translation(request):
 
     # Send Review Master Badge notification information
     review_count = user.badges_review_count
-    if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master Badge"
         _add_badge_data(response_data, user, badge_name, review_count)
 
@@ -453,7 +456,7 @@ def reject_translation(request):
 
     # Send Review Master Badge notification information
     review_count = request.user.badges_review_count
-    if review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master Badge"
         _add_badge_data(response_data, request.user, badge_name, review_count)
 
