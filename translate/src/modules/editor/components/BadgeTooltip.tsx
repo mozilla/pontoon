@@ -49,46 +49,46 @@ export function BadgeTooltip(): React.ReactElement<'div'> | null {
       colors: [confettiColor, style.getPropertyValue('--tooltip-background')],
       particleCount: 10,
       spread: 55,
+      zIndex: 100,
     };
   };
 
   return (
-    <>
+    <div ref={ref} className={className}>
       <Pride
         autorun={{ speed: 30, duration: 5000 }}
         decorateOptions={decorateOptions}
       />
-      <div ref={ref} className={className}>
-        <Localized id='editor-BadgeTooltip--intro'>
-          <p className='title'>Achievement unlocked</p>
-        </Localized>
 
-        <img className='badge' src={imagePath} />
+      <Localized id='editor-BadgeTooltip--intro'>
+        <p className='title'>Achievement unlocked</p>
+      </Localized>
 
-        <p className='badge-name'>{badgeName}</p>
+      <img className='badge' src={imagePath} />
 
-        <Localized
-          id='editor-BadgeTooltip--level'
-          vars={{ badgeLevel: badgeLevel ?? 0 }}
-        >
-          <p className='badge-level'>Level {badgeLevel}</p>
-        </Localized>
+      <p className='badge-name'>{badgeName}</p>
 
-        <Localized
-          id='editor-BadgeTooltip--profile'
-          elems={{ a: <a href={`/contributors/${user}`} /> }}
-        >
-          <p className='notice'>
-            {'View your new badge in your <a>profile</a>.'}
-          </p>
-        </Localized>
+      <Localized
+        id='editor-BadgeTooltip--level'
+        vars={{ badgeLevel: badgeLevel ?? 0 }}
+      >
+        <p className='badge-level'>Level {badgeLevel}</p>
+      </Localized>
 
-        <Localized id='editor-BadgeTooltip--continue'>
-          <button className='continue' onClick={hide}>
-            Continue
-          </button>
-        </Localized>
-      </div>
-    </>
+      <Localized
+        id='editor-BadgeTooltip--profile'
+        elems={{ a: <a href={`/contributors/${user}`} /> }}
+      >
+        <p className='notice'>
+          {'View your new badge in your <a>profile</a>.'}
+        </p>
+      </Localized>
+
+      <Localized id='editor-BadgeTooltip--continue'>
+        <button className='continue' onClick={hide}>
+          Continue
+        </button>
+      </Localized>
+    </div>
   );
 }
