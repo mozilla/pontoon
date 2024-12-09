@@ -21,5 +21,5 @@ class Command(BaseCommand):
             send_monthly_activity_summary()
         else:
             self.stdout.write(
-                "This command can only be run on the first day of the month. Use --force to bypass."
+                f"This command can only be run on day {settings.MONTHLY_ACTIVITY_SUMMARY_DAY} of the month. Use --force to bypass."
             )
