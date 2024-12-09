@@ -1115,8 +1115,14 @@ DJANGO_NOTIFICATIONS_CONFIG = {
 NOTIFICATIONS_MAX_COUNT = 7
 
 # Integer representing a day of the week on which the `send_suggestion_notifications`
-# management command will run.
+# management command will run. 0 represents Monday, 6 represents Sunday. The default
+# value is 4 (Friday).
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+
+# Integer representing a day of the week on which the weekly notification digest
+# email will be sent. 0 represents Monday, 6 represents Sunday. The default value
+# is 4 (Friday).
+NOTIFICATION_DIGEST_DAY = os.environ.get("NOTIFICATION_DIGEST_DAY", 4)
 
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")

@@ -217,6 +217,11 @@ you create:
    Optional. Name to give to this app on New Relic. Required if you're using
    New Relic.
 
+``NOTIFICATION_DIGEST_DAY``
+   Optional. Integer representing a day of the week on which the weekly notification
+   digest email will be sent. 0 represents Monday, 6 represents Sunday. The default
+   value is 4 (Friday).
+
 ``OPENAI_API_KEY``
    Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.
