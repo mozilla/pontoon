@@ -1130,21 +1130,23 @@ try:
 except ValueError as e:
     raise ValueError(f"Error: {e}")
 
-# Used for Translation Champion
+# Used for Translation Champion badge
 BADGES_TRANSLATION_THRESHOLDS = list(
     map(
         int,
         os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5, 50, 250, 1000").split(","),
     )
 )
-# Used for Review Master
+# Used for Review Master badge
+# Thresholds are higher than Translation Champion to minimize
+# the chances that both badges are awarded at the same exact time.
 BADGES_REVIEW_THRESHOLDS = list(
     map(
         int,
         os.environ.get("BADGES_REVIEW_THRESHOLDS", "7, 75, 375, 1500").split(","),
     )
 )
-# Used for Community Builder
+# Used for Community Builder badge
 BADGES_PROMOTION_THRESHOLDS = list(
     map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )

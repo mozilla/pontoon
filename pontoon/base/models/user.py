@@ -238,7 +238,7 @@ def badges_review_count(self):
     # Exclude auto-rejections caused by creating a new translation or approving an existing one
     closely_preceded_action = ActionLog.objects.filter(
         performed_by=OuterRef("performed_by"),
-        action_type="translation:approved",
+        action_type__in=["translation:created", "translation:approved"],
         created_at__gt=OuterRef("created_at"),
         created_at__lte=OuterRef("created_at") + timedelta(milliseconds=100),
     )

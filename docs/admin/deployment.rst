@@ -76,7 +76,7 @@ you create:
    Optional. A comma-separated list of numeric thresholds for different levels of the 
    Community Builder badge.
 
-``BADGES_TRANSLATION_THRESHOLDS``
+``BADGES_REVIEW_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the 
    Review Master badge.
 

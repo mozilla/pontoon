@@ -23,12 +23,7 @@ from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations import forms
 
 
-def _add_badge_data(response_data, user, badge_name, stat_count):
-    if badge_name == "Review Master Badge":
-        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(stat_count) + 1
-    else:
-        badge_level = settings.BADGES_TRANSLATION_THRESHOLDS.index(stat_count) + 1
-
+def _add_badge_data(response_data, user, badge_name, badge_level):
     response_data["badge_update"] = {
         "name": badge_name,
         "level": badge_level,
@@ -177,7 +172,10 @@ def create_translation(request):
     translation_count = user.badges_translation_count
     if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
         badge_name = "Translation Champion Badge"
-        _add_badge_data(response_data, user, badge_name, translation_count)
+        badge_level = (
+            settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1
+        )
+        _add_badge_data(response_data, user, badge_name, badge_level)
 
     return JsonResponse(response_data)
 
@@ -322,7 +320,8 @@ def approve_translation(request):
     review_count = user.badges_review_count
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master Badge"
-        _add_badge_data(response_data, user, badge_name, review_count)
+        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+        _add_badge_data(response_data, user, badge_name, badge_level)
 
     return JsonResponse(response_data)
 
@@ -458,7 +457,8 @@ def reject_translation(request):
     review_count = request.user.badges_review_count
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
         badge_name = "Review Master Badge"
-        _add_badge_data(response_data, request.user, badge_name, review_count)
+        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+        _add_badge_data(response_data, request.user, badge_name, badge_level)
 
     return JsonResponse(response_data)
 
