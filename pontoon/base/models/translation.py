@@ -292,7 +292,7 @@ class Translation(DirtyFieldsMixin, models.Model):
                     ActionLog.ActionType.TRANSLATION_REJECTED,
                     self.approved_user or self.user,
                     translation=t,
-                    is_explicit_action=False,
+                    is_implicit_action=True,
                 )
 
             # Remove any TM entries of old translations that will get rejected.

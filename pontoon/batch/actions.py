@@ -75,7 +75,6 @@ def approve_translations(form, user, translations, locale):
             action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
             performed_by=user,
             translation=t,
-            is_explicit_action=False,
         )
         for t in translations
     ]
@@ -131,7 +130,6 @@ def reject_translations(form, user, translations, locale):
             action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
             performed_by=user,
             translation=t,
-            is_explicit_action=False,
         )
         for t in translations
     ]
@@ -190,7 +188,7 @@ def replace_translations(form, user, translations, locale):
             action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
             performed_by=user,
             translation=t,
-            is_explicit_action=False,
+            is_implicit_action=True,
         )
         for t in old_translations
     ]
@@ -224,7 +222,6 @@ def replace_translations(form, user, translations, locale):
             action_type=ActionLog.ActionType.TRANSLATION_CREATED,
             performed_by=user,
             translation=t,
-            is_explicit_action=False,
         )
         for t in changed_translations
     ]

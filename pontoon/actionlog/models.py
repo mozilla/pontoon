@@ -60,8 +60,10 @@ class ActionLog(models.Model):
         blank=True,
     )
 
-    # Used to distinguish actions for Review Master badge
-    is_explicit_action = models.BooleanField(default=True)
+    # Some action types (e.g. TRANSLATION_CREATED) may trigger other actions
+    # (e.g. TRANSLATION_REJECTED) without direct user intervention.
+    # The latter actions should have `is_implicit_action` set to `True`.
+    is_implicit_action = models.BooleanField(default=False)
 
     def validate_action_type_choice(self):
         valid_types = self.ActionType.values
@@ -74,12 +76,10 @@ class ActionLog(models.Model):
 
     def validate_explicit_action_type_choice(self):
         valid_types = [
-            self.ActionType.TRANSLATION_CREATED,
-            self.ActionType.TRANSLATION_APPROVED,
             self.ActionType.TRANSLATION_UNAPPROVED,
             self.ActionType.TRANSLATION_REJECTED,
         ]
-        if not self.is_explicit_action and self.action_type not in valid_types:
+        if self.is_implicit_action and self.action_type not in valid_types:
             raise ValidationError(
                 'Action type "{}" is not one of the permitted values for an implicit action: {}'.format(
                     self.action_type, ", ".join(valid_types)

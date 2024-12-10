@@ -1138,12 +1138,10 @@ BADGES_TRANSLATION_THRESHOLDS = list(
     )
 )
 # Used for Review Master badge
-# Thresholds are higher than Translation Champion because implicit rejections
-# on translations submissions and approvals also count against the Review Master badge.
 BADGES_REVIEW_THRESHOLDS = list(
     map(
         int,
-        os.environ.get("BADGES_REVIEW_THRESHOLDS", "7, 75, 375, 1500").split(","),
+        os.environ.get("BADGES_REVIEW_THRESHOLDS", "5, 50, 250, 1000").split(","),
     )
 )
 # Used for Community Builder badge

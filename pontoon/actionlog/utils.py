@@ -4,7 +4,7 @@ from pontoon.actionlog.models import ActionLog
 def log_action(
     action_type,
     user,
-    is_explicit_action=True,
+    is_implicit_action=False,
     translation=None,
     entity=None,
     locale=None,
@@ -33,7 +33,7 @@ def log_action(
         translation=translation,
         entity=entity,
         locale=locale,
-        is_explicit_action=is_explicit_action,
+        is_implicit_action=is_implicit_action,
     )
     action.save()
 
