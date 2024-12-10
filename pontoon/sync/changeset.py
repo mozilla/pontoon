@@ -318,6 +318,7 @@ class ChangeSet:
                         action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
                         performed_by=user or self.sync_user,
                         translation=db_translation,
+                        is_explicit_action=False,
                     )
                     db_translation.approved = True
                     db_translation.approved_user = user
@@ -371,6 +372,7 @@ class ChangeSet:
                         action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
                         performed_by=user or self.sync_user,
                         translation=translation,
+                        is_explicit_action=False,
                     )
                     translation.rejected = True
                     translation.rejected_user = user
@@ -380,6 +382,7 @@ class ChangeSet:
                         action_type=ActionLog.ActionType.TRANSLATION_UNAPPROVED,
                         performed_by=user or self.sync_user,
                         translation=translation,
+                        is_explicit_action=False,
                     )
 
                 if translation.is_dirty():
@@ -494,6 +497,7 @@ class ChangeSet:
                     created_at=translation.date,
                     performed_by=translation.user or self.sync_user,
                     translation=translation,
+                    is_explicit_action=False,
                 )
             )
 

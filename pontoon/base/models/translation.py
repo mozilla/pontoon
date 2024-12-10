@@ -1,6 +1,5 @@
 from dirtyfields import DirtyFieldsMixin
 
-from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Count, Q
@@ -19,7 +18,6 @@ from pontoon.base.models.resource import Resource
 from pontoon.base.models.user import User
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import save_failed_checks
-from pontoon.messaging.notifications import send_badge_notification
 
 
 class TranslationQuerySet(models.QuerySet):
@@ -290,22 +288,12 @@ class Translation(DirtyFieldsMixin, models.Model):
 
             # Log that all those translations are rejected.
             for t in approved_translations:
-                action_user = self.approved_user or self.user
                 log_action(
                     ActionLog.ActionType.TRANSLATION_REJECTED,
-                    action_user,
+                    self.approved_user or self.user,
                     translation=t,
+                    is_explicit_action=False,
                 )
-
-                # Check if auto-rejections lead to a new badge level
-                review_count = action_user.badges_review_count
-                if review_count in settings.BADGES_REVIEW_THRESHOLDS:
-                    badge_level = (
-                        settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
-                    )
-                    send_badge_notification(
-                        action_user, "Review Master badge", badge_level
-                    )
 
             # Remove any TM entries of old translations that will get rejected.
             # Must be executed before translations set changes.

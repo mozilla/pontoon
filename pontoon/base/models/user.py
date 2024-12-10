@@ -238,6 +238,7 @@ def badges_review_count(self):
     return self.actions.filter(
         Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
         created_at__gte=settings.BADGES_START_DATE,
+        is_explicit_action=True,
     ).count()
 
 
