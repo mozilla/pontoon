@@ -8,6 +8,7 @@ import { FailedChecksData } from '~/context/FailedChecksData';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
 import { ShowNotification } from '~/context/Notification';
+import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
@@ -38,6 +39,7 @@ export function useUpdateTranslationStatus(
 
   const { resource } = useContext(Location);
   const showNotification = useContext(ShowNotification);
+  const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const { entity, hasPluralForms, pluralForm } = useContext(EntityView);
   const pushNextTranslatable = usePushNextTranslatable();
   const { updateHistory } = useContext(HistoryData);
@@ -88,6 +90,15 @@ export function useUpdateTranslationStatus(
       if (results.stats) {
         // Update stats in the progress chart and the filter panel.
         dispatch(updateStats(results.stats));
+
+        // Check for update in badge level
+        const badgeLevel = results.badge_update?.level;
+        if (badgeLevel) {
+          showBadgeTooltip({
+            badgeName: 'Review Master',
+            badgeLevel: badgeLevel,
+          });
+        }
 
         // Update stats in the resource menu.
         dispatch(

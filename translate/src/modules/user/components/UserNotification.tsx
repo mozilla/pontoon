@@ -128,9 +128,10 @@ export function UserNotification({
 
   const content = description?.content;
   const isSuggestion =
-    (typeof content === 'string' &&
-      content.startsWith('Unreviewed suggestions')) ||
-    verb === 'has reviewed suggestions';
+    typeof content === 'string' &&
+    (content.startsWith('Unreviewed suggestions') ||
+      verb === 'has reviewed suggestions' ||
+      verb === 'ignore');
   const isComment: boolean = description?.is_comment ?? false;
 
   const className = classNames(

@@ -19,7 +19,20 @@ from pontoon.base.models import (
 )
 from pontoon.checks.libraries import run_checks
 from pontoon.checks.utils import are_blocking_checks
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.translations import forms
+
+
+def _add_badge_data(response_data, user, badge_name, badge_level):
+    response_data["badge_update"] = {
+        "name": badge_name,
+        "level": badge_level,
+    }
+    send_badge_notification(
+        user,
+        badge_name,
+        badge_level,
+    )
 
 
 @require_POST
@@ -153,18 +166,22 @@ def create_translation(request):
                 category="new_contributor",
             )
 
-    # Award Translation Champion Badge stats
-    if user.badges_translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    response_data = {
+        "status": True,
+        "translation": translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "status": True,
-            "translation": translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
-        }
-    )
+    # Send Translation Champion Badge notification information
+    translation_count = user.badges_translation_count
+    if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
+        badge_name = "Translation Champion Badge"
+        badge_level = (
+            settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1
+        )
+        _add_badge_data(response_data, user, badge_name, badge_level)
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
@@ -298,17 +315,19 @@ def approve_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Reward Review Master Badge stats
-    if user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    response_data = {
+        "translation": active_translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
-        }
-    )
+    # Send Review Master Badge notification information
+    review_count = user.badges_review_count
+    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
+        badge_name = "Review Master Badge"
+        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+        _add_badge_data(response_data, user, badge_name, badge_level)
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
@@ -433,17 +452,19 @@ def reject_translation(request):
         plural_form=translation.plural_form,
     )
 
-    # Reward Review Master Badge stats
-    if request.user.badges_review_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        # TODO: Send a notification to the user
-        pass
+    response_data = {
+        "translation": active_translation.serialize(),
+        "stats": TranslatedResource.objects.stats(project, paths, locale),
+    }
 
-    return JsonResponse(
-        {
-            "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
-        }
-    )
+    # Send Review Master Badge notification information
+    review_count = request.user.badges_review_count
+    if review_count in settings.BADGES_REVIEW_THRESHOLDS:
+        badge_name = "Review Master Badge"
+        badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
+        _add_badge_data(response_data, request.user, badge_name, badge_level)
+
+    return JsonResponse(response_data)
 
 
 @utils.require_AJAX
