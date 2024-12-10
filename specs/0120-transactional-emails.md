@@ -252,7 +252,7 @@ For in-depth documentation on Mozilla localization, see our [Documentation for M
 * Tools such as [Pontoon](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/index.html) and [Fluent](https://mozilla-l10n.github.io/localizer-documentation/tools/fluent/index.html) (the advanced translation format used by Mozilla)
 
 **Pontoon Add-on**   
-You can use the Pontoon Add-on for [Firefox]([https://mozilla-l10n.github.io/localizer-documentation/index.html](https://addons.mozilla.org/firefox/addon/pontoon-tools/)) or [Chrome](https://chromewebstore.google.com/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb) to be instantly notified of any Pontoon notifications right in your browser, as well as some helpful tools to help with proofreading, bug reporting, and fixing. 
+You can use the Pontoon Add-on for [Firefox](https://addons.mozilla.org/firefox/addon/pontoon-tools/) or [Chrome](https://chromewebstore.google.com/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb) to be instantly notified of any Pontoon notifications right in your browser, as well as some helpful tools to help with proofreading, bug reporting, and fixing. 
 
 **Mozilla community participation guidelines**  
 As an active member of our community, we’d like you to be aware of the [Mozilla community participation guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) to ensure the wellbeing of all members of the community.
