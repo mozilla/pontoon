@@ -311,6 +311,7 @@ All of the following conditions met:
 1. Translator role (global permission)  
 2. User has 0 submissions in last 2 months  
 3. User has 0 reviews in last 2 months
+4. Has not received inactive account reminder in the past
 
 #### Template
 
@@ -352,6 +353,7 @@ All of the following conditions met:
 1. Team Manager role  
 2. User has 0 submissions in last 2 months  
 3. User has 0 reviews in last 2 months
+4. Has not received inactive account reminder in the past
 
 #### Template
 
