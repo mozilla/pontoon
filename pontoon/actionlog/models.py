@@ -74,7 +74,7 @@ class ActionLog(models.Model):
                 )
             )
 
-    def validate_explicit_action_type_choice(self):
+    def validate_implicit_action_type_choice(self):
         valid_types = [
             self.ActionType.TRANSLATION_UNAPPROVED,
             self.ActionType.TRANSLATION_REJECTED,
@@ -138,7 +138,7 @@ class ActionLog(models.Model):
 
     def save(self, *args, **kwargs):
         self.validate_action_type_choice()
-        self.validate_explicit_action_type_choice()
+        self.validate_implicit_action_type_choice()
         self.validate_foreign_keys_per_action()
 
         super().save(*args, **kwargs)
