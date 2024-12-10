@@ -235,20 +235,8 @@ def badges_translation_count(self):
 @property
 def badges_review_count(self):
     """Translation reviews provided by user that count towards their badges."""
-    # Exclude auto-rejections caused by creating a new translation or approving an existing one
-    closely_preceded_action = ActionLog.objects.filter(
-        performed_by=OuterRef("performed_by"),
-        action_type__in=["translation:created", "translation:approved"],
-        created_at__gt=OuterRef("created_at"),
-        created_at__lte=OuterRef("created_at") + timedelta(milliseconds=100),
-    )
-
     return self.actions.filter(
-        Q(action_type="translation:approved")
-        | Q(
-            ~Exists(closely_preceded_action),
-            action_type="translation:rejected",
-        ),
+        Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
         created_at__gte=settings.BADGES_START_DATE,
     ).count()
 

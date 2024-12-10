@@ -1138,8 +1138,8 @@ BADGES_TRANSLATION_THRESHOLDS = list(
     )
 )
 # Used for Review Master badge
-# Thresholds are higher than Translation Champion to minimize
-# the chances that both badges are awarded at the same exact time.
+# Thresholds are higher than Translation Champion because implicit rejections
+# on translations submissions and approvals also count against the Review Master badge.
 BADGES_REVIEW_THRESHOLDS = list(
     map(
         int,
