@@ -121,9 +121,10 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
     <span class="bullet {{ url_parameter }}"></span>
     {{ label }}:
     {% if url_parameter %}
-    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ locale.month_stats[attribute] }}{{ unit }}</a> (vs. {{ locale.previous_month_stats[attribute] }}{{ unit }} month before)</p>
+    <a href="{{ full_url('pontoon.translate', locale.code, 'all-projects', 'all-resources') }}?status={{ url_parameter }}">{{ locale.month_stats[attribute] }}{{ unit }}</a>
     {% else %}
-    {{ locale.month_stats[attribute] or 0 }}{{ unit }} (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)
+    {{ locale.month_stats[attribute] or 0 }}{{ unit }}
     {% endif %}
+    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)</p>
 </p>
 {% endmacro %}
