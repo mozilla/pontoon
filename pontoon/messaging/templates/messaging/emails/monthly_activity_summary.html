@@ -99,7 +99,7 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
 <p>
     <span class="bullet"></span>
     {{ label }}:
-    {{ actions_object.month_actions[attribute] or 0 }} (vs. {{ actions_object.previous_month_actions[attribute] or 0 }} month before)
+    {{ actions_object.month_actions[attribute] or 0 }} (vs. {{ actions_object.previous_month_actions[attribute] or 0 }} in the previous month)
 </p>
 {% endmacro %}
 
@@ -125,6 +125,6 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
     {% else %}
     {{ locale.month_stats[attribute] or 0 }}{{ unit }}
     {% endif %}
-    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)
+    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} in the previous month)
 </p>
 {% endmacro %}
