@@ -243,7 +243,7 @@ def send_monthly_activity_summary():
 
     recipient_count = len(users)
 
-    log.info(f"Monthly activity summary emails sent to {recipient_count} users.")
+    log.info(f"Monthly activity summary emails sent to { recipient_count } users.")
 
 
 def send_notification_digest(frequency="Daily"):
@@ -286,7 +286,7 @@ def send_notification_digest(frequency="Daily"):
         if recipient.is_subscribed_to_notification(notification):
             notifications_map[recipient].append(notification)
 
-    subject = f"{frequency} notifications summary"
+    subject = f"{ frequency } notifications summary"
     template = get_template("messaging/emails/notification_digest.html")
 
     # Process and send email for each user
@@ -310,7 +310,7 @@ def send_notification_digest(frequency="Daily"):
 
     recipient_count = len(notifications_map.keys())
 
-    log.info(f"Notification email digests sent to {recipient_count} users.")
+    log.info(f"Notification email digests sent to { recipient_count } users.")
 
 
 def send_verification_email(user, link):
