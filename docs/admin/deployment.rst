@@ -488,13 +488,53 @@ designed to run on a weekly basis.
 Send Review Notifications
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 This job sends notifications about newly reviewed (approved or rejected)
-suggestions to the authors of those suggestions.
-
-The command is designed to run on a daily basis.
+suggestions to the authors of those suggestions. The command is designed to
+run on a daily basis.
 
 .. code-block:: bash
 
    ./manage.py send_review_notifications
+
+Send Notification Emails
+~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends notifications in daily and weekly email digests. Daily
+notifications are sent every time the command runs, while weekly notifications
+are sent only on the configured day (e.g., Friday).
+
+.. code-block:: bash
+
+   ./manage.py send_notification_emails
+
+Send Monthly Activity Emails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends a summary of monthly activity to users via email. It is designed
+to run on a specific day of the month but can be forced to run at any time
+using the --force argument.
+
+.. code-block:: bash
+
+   ./manage.py send_monthly_activity_emails
+
+Send Onboarding Emails
+~~~~~~~~~~~~~~~~~~~~~~
+Pontoon sends onboarding emails to new users. The first one is sent upon
+registration, while this job sends the 2nd and 3rd email. You can configure
+the number of days to wait before sending the 2nd and 3rd emails. The command
+is designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_oboarding_emails
+
+Send Inactive Account Emails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This command sends reminder emails to inactive users. Users in different roles
+get different emails based on different activity criteria, which can be
+configured in settings. The command is designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_inactive_account_emails
 
 .. _collect-insights:
 
