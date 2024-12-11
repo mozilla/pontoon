@@ -258,7 +258,7 @@ You can use the Pontoon Add-on for [Firefox](https://addons.mozilla.org/firefox/
 As an active member of our community, we’d like you to be aware of the [Mozilla community participation guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) to ensure the wellbeing of all members of the community.
 
 **Email settings**  
-Finally, if you’re interested in latest updates, announcements about new Pontoon features, invitations to contributor events and more, be sure to enable email communications in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
+Finally, if you’re interested in the latest updates, announcements about new Pontoon features, invitations to contributor events and more, be sure to enable “News and updates“ in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
 You can also receive Pontoon notifications in a daily or weekly digest — check out the Notification subscriptions section of your settings.
 
 Thanks,  
