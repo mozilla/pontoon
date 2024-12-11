@@ -125,6 +125,6 @@ your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
     {% else %}
     {{ locale.month_stats[attribute] or 0 }}{{ unit }}
     {% endif %}
-    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)</p>
+    (vs. {{ locale.previous_month_stats[attribute] or 0 }}{{ unit }} month before)
 </p>
 {% endmacro %}
