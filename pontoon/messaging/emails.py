@@ -376,7 +376,7 @@ def send_onboarding_emails_2(users):
 
 def send_onboarding_emails_3(users):
     """
-    Sends 3rd onboarding emails to new user.
+    Sends 3rd onboarding emails to new users.
     """
     log.info("Start sending 3rd onboarding emails.")
 
@@ -403,6 +403,115 @@ def send_onboarding_emails_3(users):
     users.update(userprofile__onboarding_email_status=3)
 
     log.info(f"3rd onboarding emails sent to { len(users) } users.")
+
+
+def send_inactive_contributor_emails(users):
+    """
+    Sends an email to an inactive contributor.
+    """
+    log.info("Start sending inactive contributor emails.")
+
+    subject = "Mozilla Pontoon account status"
+    template = get_template("messaging/emails/inactive_contributor.html")
+
+    body_html = template.render(
+        {
+            "subject": subject,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    for user in users:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+
+    log.info(f"Inactive contributor emails sent to { len(users) } users.")
+
+
+def send_inactive_translator_emails(users, translator_map):
+    """
+    Sends an email to an inactive translator.
+    """
+    log.info("Start sending inactive translator emails.")
+
+    subject = "Reminder: Contributing to Mozilla Pontoon as a Translator"
+    template = get_template("messaging/emails/inactive_translator.html")
+
+    for user in users:
+        try:
+            locale = list(translator_map[user.pk])[0]
+        except IndexError:
+            log.error(f"User { user } is not a translator of any locale.")
+            continue
+
+        body_html = template.render(
+            {
+                "subject": subject,
+                "locale": locale,
+                "user": user,
+            }
+        )
+        body_text = html_to_plain_text_with_links(body_html)
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+
+    log.info(f"Inactive translator emails sent to { len(users) } users.")
+
+
+def send_inactive_manager_emails(users, manager_map):
+    """
+    Sends an email to an inactive manager.
+    """
+    log.info("Start sending inactive manager emails.")
+
+    subject = "Reminder: Contributing to Mozilla Pontoon as a Team Manager"
+    template = get_template("messaging/emails/inactive_manager.html")
+
+    for user in users:
+        try:
+            locale = list(manager_map[user.pk])[0]
+        except IndexError:
+            log.error(f"User { user } is not a manager of any locale.")
+            continue
+
+        body_html = template.render(
+            {
+                "subject": subject,
+                "locale": locale,
+                "user": user,
+            }
+        )
+        body_text = html_to_plain_text_with_links(body_html)
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+
+    log.info(f"Inactive manager emails sent to { len(users) } users.")
 
 
 def send_verification_email(user, link):

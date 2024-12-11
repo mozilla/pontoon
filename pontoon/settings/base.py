@@ -1137,6 +1137,12 @@ ONBOARDING_EMAIL_2_DELAY = os.environ.get("ONBOARDING_EMAIL_2_DELAY", 2)
 # Number of days after user registration to send the 3rd onboarding email
 ONBOARDING_EMAIL_3_DELAY = os.environ.get("ONBOARDING_EMAIL_3_DELAY", 7)
 
+# Number of days in which the user has to be inactive to receive
+# the inactive account email
+INACTIVE_CONTRIBUTOR_PERIOD = os.environ.get("INACTIVE_CONTRIBUTOR_PERIOD", 6 * 30)
+INACTIVE_TRANSLATOR_PERIOD = os.environ.get("INACTIVE_TRANSLATOR_PERIOD", 2 * 30)
+INACTIVE_MANAGER_PERIOD = os.environ.get("INACTIVE_MANAGER_PERIOD", 2 * 30)
+
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
 try:

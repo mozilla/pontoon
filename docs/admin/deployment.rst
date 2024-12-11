@@ -194,6 +194,20 @@ you create:
    Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
    translation engine by Google.
 
+``INACTIVE_CONTRIBUTOR_PERIOD``
+   Optional. Number of days in which the contributor needs to log in in order not to
+   receive the inactive account email. The default value is 180 (6 months).
+
+``INACTIVE_TRANSLATOR_PERIOD``
+   Optional. Number of days in which the locale translator needs to submit or review at
+   least one translations in order not to receive the inactive account email.
+   The default value is 60 (2 months).
+
+``INACTIVE_MANAGER_PERIOD``
+   Optional. Number of days in which the locale manager needs to submit or review at
+   least one translations in order not to receive the inactive account email.
+   The default value is 60 (2 months).
+
 ``LOG_TO_FILE``
    Optional. Enables logging to a file (default: ``False``).
    This is useful for retaining log data for later analysis or troubleshooting.

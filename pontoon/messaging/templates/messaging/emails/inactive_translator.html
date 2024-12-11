@@ -1,0 +1,38 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block extend_css %}{% endblock %}
+
+{% block header %}Dear {{ user.display_name }}.{% endblock %}
+
+{% block subheader %}{% endblock %}
+
+{% block content_class %}{% endblock %}
+
+{% block content %}
+<p>On behalf of Mozilla, thank you for your commitment and dedication to Mozilla’s mission by taking on the responsibilities of a Translator for your locale. Your contributions have been instrumental in fostering an open and accessible internet for readers in your language. Translators play a critical role in ensuring the health of their community by reviewing and providing timely feedback to contributors’ translation suggestions.</p>
+
+<p>As part of our efforts to keep our localization community active and engaged, we periodically review account activity. We’ve noticed that in the past 2 months you have not submitted any translations or reviewed any translation submissions for your locale. We understand that life can get busy, and finding time to contribute to projects isn't always easy. We get it.</p>
+
+<p>One of the key <a href="https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#translator">expectations</a> for Translators is to ensure the timely review of suggestions and to contribute translations for new source language content. In addition to ensuring users in your language receive a fully localized experience, timely review of submissions prevents discouragement among new and existing Pontoon contributors, fostering ongoing participation in our localization community.</p>
+
+<p>Please take a moment to act by:</p>
+
+<ul>
+    <li>Reviewing some outstanding translation submissions.</li>
+    <li>Submitting translations for projects with missing translations.</li>
+    <li>Responding to any outstanding feedback from your fellow team members.</li>
+</ul>
+
+<p><a href="{{ full_url('pontoon.teams.team', locale.code) }}">{{ full_url('pontoon.teams.team', locale.code) }}</a></p>
+
+<p>You can find more information on responsibilities and expectations for our localization community roles <a href="https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#translator">here</a>.</p>
+
+<p>Thank you again for your dedication. Together we can continue to make the internet open and accessible to all.</p>
+
+<p>Thanks,<br>
+Pontoon Team</p>
+{% endblock %}
+
+{% block footer %}{% endblock %}
