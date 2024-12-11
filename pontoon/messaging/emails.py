@@ -311,3 +311,31 @@ def send_notification_digest(frequency="Daily"):
     recipient_count = len(notifications_map.keys())
 
     log.info(f"Notification email digests sent to {recipient_count} users.")
+
+
+def send_verification_email(user, link):
+    """
+    Sends a contact email address verification email.
+    """
+    template = get_template("messaging/emails/verification_email.html")
+    subject = "Verify email address for Pontoon"
+
+    body_html = template.render(
+        {
+            "subject": subject,
+            "display_name": user.display_name,
+            "link": link,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=body_text,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.contact_email],
+    )
+    msg.attach_alternative(body_html, "text/html")
+    msg.send()
+
+    log.info(f"Verification email sent to { user.contact_email }.")

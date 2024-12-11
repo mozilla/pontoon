@@ -9,7 +9,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMessage
 from django.db.models import (
     Count,
     F,
@@ -18,7 +17,6 @@ from django.db.models import (
 )
 from django.db.models.functions import TruncDay, TruncMonth
 from django.template.defaultfilters import pluralize
-from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
 
@@ -144,28 +142,6 @@ def generate_verification_token(user):
     }
 
     return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-
-
-def send_verification_email(request, token):
-    template = get_template("contributors/verification_email.jinja")
-    mail_subject = "Verify Email Address for Pontoon"
-
-    link = request.build_absolute_uri(
-        reverse("pontoon.contributors.verify.email", args=(token,))
-    )
-    mail_body = template.render(
-        {
-            "display_name": request.user.display_name,
-            "link": link,
-        }
-    )
-
-    EmailMessage(
-        subject=mail_subject,
-        body=mail_body,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[request.user.profile.contact_email],
-    ).send()
 
 
 def check_verification_token(user, token):
