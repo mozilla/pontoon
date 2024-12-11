@@ -275,7 +275,7 @@ Once
 All of the following conditions met:
 
 1. Contributor role   
-2. At least 1 non-ML translation submitted   
+2. At least 1 non-ML translation submitted to non-system projects
 3. No login for 6 months  
 4. Has not received inactive account reminder in the past
 
