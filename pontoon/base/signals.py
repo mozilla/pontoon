@@ -16,6 +16,7 @@ from pontoon.base.models import (
     TranslatedResource,
     UserProfile,
 )
+from pontoon.messaging.emails import send_onboarding_email_1
 
 
 @receiver(post_delete, sender=ProjectLocale)
@@ -208,6 +209,12 @@ def assign_project_locale_group_permissions(sender, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def send_welcome_email(sender, instance, created, **kwargs):
+    if created:
+        send_onboarding_email_1(instance)
 
 
 @receiver(pre_save, sender=Project)

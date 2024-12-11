@@ -1,0 +1,43 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block extend_css %}{% endblock %}
+
+{% block header %}Hello.{% endblock %}
+
+{% block subheader %}{% endblock %}
+
+{% block content_class %}{% endblock %}
+
+{% block content %}
+<p>Welcome to Pontoon!</p>
+
+<p>Thank you for becoming part of our localization community! Your translations contribute directly to the Mozilla mission of making the internet open and accessible to all.</p>
+
+<p>Pontoon is our primary tool for enabling contributors from around the world to easily submit translations for all of Mozilla’s products and initiatives. Here are some tips to help get you started.</p>
+
+<ol>
+    <li>Take a <a href="{{ full_url('pontoon.translate', 'projects', 'tutorial', 'playground') }}">tour</a> of Pontoon to get familiar with its workflow and features, then play around in the sandbox to try it out for yourself.</li>
+    <li>Update your <a href="{{ full_url('pontoon.contributors.settings') }}">settings</a> to personalize your Pontoon profile by adding an avatar and username, select between a dark and light theme, and choose your default locale.</li>
+    <li>Check out your <a href="{{ full_url('pontoon.teams') }}">team</a> page to find more information and resources about your locale.
+        <ul>
+            <li>On the contributors tab you can find your locale’s team managers. If you have questions or want to introduce yourself, you can find their contact information in their profile (while logged in).</li>
+            <li>The info tab may also contain other links, resources, and information created by your team for new contributors.</li>
+        </ul>
+    </li>
+    <li>Start translating. One of the best ways to get used to translating for Mozilla is to dive right in! Check the <a href="{{ full_url('pontoon.teams') }}">team</a> page for your locale and find a project to work on: look for a project with progress under 100% and click the “Missing” number that appears when you hover over it - this will show you anything that still needs a translation.</li>
+</ol>
+
+<p>Hopefully you find these tips helpful. We’ll follow up again in a couple of days with some more info about translating on Pontoon.</p>
+
+<p>Finally, as an active member of our community, we’d like you to be aware of the <a href="https://www.mozilla.org/en-US/about/governance/policies/participation/">Mozilla community participation guidelines</a> to ensure the wellbeing of all members of the community.</p>
+
+<p>If you have any questions in the meantime, you can reach out any time to the Mozilla localization team on <a href="https://matrix.to/#/#l10n-community:mozilla.org">Matrix chat</a> or <a href="https://discourse.mozilla.org/c/l10n/547">Discourse</a>.</p>
+
+<p>Thanks,<br>
+Pontoon Team</p>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

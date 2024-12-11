@@ -231,6 +231,14 @@ you create:
    digest email will be sent. 0 represents Monday, 6 represents Sunday. The default
    value is 4 (Friday).
 
+``ONBOARDING_EMAIL_2_DELAY``
+   Optional. The number of days to wait after user registration before sending the
+   2nd onboarding email. The default value is 2.
+
+``ONBOARDING_EMAIL_3_DELAY``
+   Optional. The number of days to wait after user registration before sending the
+   3rd onboarding email. The default value is 7.
+
 ``OPENAI_API_KEY``
    Optional. Set your `OpenAI API` key to add the ability to refine machine
    translations using ChatGPT.

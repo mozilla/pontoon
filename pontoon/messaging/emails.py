@@ -313,6 +313,98 @@ def send_notification_digest(frequency="Daily"):
     log.info(f"Notification email digests sent to { recipient_count } users.")
 
 
+def send_onboarding_email_1(user):
+    """
+    Sends 1st onboarding email to a new user.
+    """
+    subject = "Welcome to Pontoon!"
+    template = get_template("messaging/emails/onboarding_1.html")
+
+    body_html = template.render(
+        {
+            "subject": subject,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=body_text,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.contact_email],
+    )
+    msg.attach_alternative(body_html, "text/html")
+    msg.send()
+
+    profile = user.profile
+    profile.onboarding_email_status = 1
+    profile.save(update_fields=["onboarding_email_status"])
+
+    log.info(f"1st onboarding email sent to { user.contact_email }.")
+
+
+def send_onboarding_emails_2(users):
+    """
+    Sends 2nd onboarding emails to new users.
+    """
+    log.info("Start sending 2nd onboarding emails.")
+
+    subject = "Translating on Pontoon"
+    template = get_template("messaging/emails/onboarding_2.html")
+
+    body_html = template.render(
+        {
+            "subject": subject,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    for user in users:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    users.update(userprofile__onboarding_email_status=2)
+
+    log.info(f"2nd onboarding emails sent to { len(users) } users.")
+
+
+def send_onboarding_emails_3(users):
+    """
+    Sends 3rd onboarding emails to new user.
+    """
+    log.info("Start sending 3rd onboarding emails.")
+
+    subject = "More resources for contributors"
+    template = get_template("messaging/emails/onboarding_3.html")
+
+    body_html = template.render(
+        {
+            "subject": subject,
+        }
+    )
+    body_text = html_to_plain_text_with_links(body_html)
+
+    for user in users:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    users.update(userprofile__onboarding_email_status=3)
+
+    log.info(f"3rd onboarding emails sent to { len(users) } users.")
+
+
 def send_verification_email(user, link):
     """
     Sends a contact email address verification email.
