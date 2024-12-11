@@ -662,6 +662,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/lib/confetti.browser.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -797,6 +798,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
@@ -910,9 +912,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
+# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = ("https:",)
+CSP_WORKER_SRC = ("https:",) + ("blob:",)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
@@ -1140,14 +1143,21 @@ try:
 except ValueError as e:
     raise ValueError(f"Error: {e}")
 
-# Used for Review Master and Translation Champion
+# Used for Translation Champion badge
 BADGES_TRANSLATION_THRESHOLDS = list(
     map(
         int,
         os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5, 50, 250, 1000").split(","),
     )
 )
-# Used for Community Builder
+# Used for Review Master badge
+BADGES_REVIEW_THRESHOLDS = list(
+    map(
+        int,
+        os.environ.get("BADGES_REVIEW_THRESHOLDS", "5, 50, 250, 1000").split(","),
+    )
+)
+# Used for Community Builder badge
 BADGES_PROMOTION_THRESHOLDS = list(
     map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )

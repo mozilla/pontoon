@@ -23,6 +23,7 @@ import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { serializeEntry, getPlainMessage } from '~/utils/message';
+import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 
 /**
  * Return a function to send a translation to the server.
@@ -33,6 +34,7 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
   const location = useContext(Location);
   const locale = useContext(Locale);
   const showNotification = useContext(ShowNotification);
+  const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const forceSuggestions = useAppSelector(
     (state) => state.user.settings.forceSuggestions,
   );
@@ -83,6 +85,14 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       dispatch(
         updateEntityTranslation(entity.pk, pluralForm, content.translation),
       );
+
+      const badgeLevel = content.badge_update?.level;
+      if (badgeLevel) {
+        showBadgeTooltip({
+          badgeName: 'Translation Champion',
+          badgeLevel: badgeLevel,
+        });
+      }
 
       // Update stats in the filter panel and resource menu if possible.
       if (content.stats) {

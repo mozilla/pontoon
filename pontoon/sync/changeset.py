@@ -371,6 +371,7 @@ class ChangeSet:
                         action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
                         performed_by=user or self.sync_user,
                         translation=translation,
+                        is_implicit_action=True,
                     )
                     translation.rejected = True
                     translation.rejected_user = user
@@ -380,6 +381,7 @@ class ChangeSet:
                         action_type=ActionLog.ActionType.TRANSLATION_UNAPPROVED,
                         performed_by=user or self.sync_user,
                         translation=translation,
+                        is_implicit_action=True,
                     )
 
                 if translation.is_dirty():

@@ -76,13 +76,17 @@ you create:
    Optional. A comma-separated list of numeric thresholds for different levels of the 
    Community Builder badge.
 
+``BADGES_REVIEW_THRESHOLDS``
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Review Master badge.
+
 ``BADGES_START_DATE``
    Optional. Specifies the start date from which user activities count towards badge achievements. 
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the 
-   Review Master and Translation Champion badges.
+   Translation Champion badge.
 
 ``BLOCKED_IPS``
    A comma-separated list of IP addresses or IP ranges (expressed using the

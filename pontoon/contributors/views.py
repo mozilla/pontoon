@@ -28,6 +28,7 @@ from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
 from pontoon.settings import (
     BADGES_PROMOTION_THRESHOLDS,
+    BADGES_REVIEW_THRESHOLDS,
     BADGES_TRANSLATION_THRESHOLDS,
     VIEW_CACHE_TIMEOUT,
 )
@@ -84,17 +85,17 @@ def contributor(request, user):
             disabled=False, system_project=False, visibility="public"
         ).order_by("-priority"),
         "badges": {
-            "review_master_badge": {
-                "level": get_badge_level(
-                    BADGES_TRANSLATION_THRESHOLDS, user.badges_review_count
-                ),
-                "name": "Review Master",
-            },
             "translation_champion_badge": {
                 "level": get_badge_level(
                     BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
                 ),
                 "name": "Translation Champion",
+            },
+            "review_master_badge": {
+                "level": get_badge_level(
+                    BADGES_REVIEW_THRESHOLDS, user.badges_review_count
+                ),
+                "name": "Review Master",
             },
             "community_builder_badge": {
                 "level": get_badge_level(
