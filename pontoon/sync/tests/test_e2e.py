@@ -122,9 +122,9 @@ def test_end_to_end():
             )
         commit_msg: str = mock_vcs._calls[4][1][1]
         assert mock_vcs._calls == [
-            ("update", ("http://example.com/src-repo", src_root, "")),
+            ("update", ("http://example.com/src-repo", src_root, "", False)),
             ("revision", (src_root,)),
-            ("update", ("http://example.com/tgt-repo", tgt_root, "")),
+            ("update", ("http://example.com/tgt-repo", tgt_root, "", False)),
             ("revision", (tgt_root,)),
             (
                 "commit",

@@ -10,7 +10,7 @@ from .utils import CommitToRepositoryException, PullFromRepositoryException, exe
 log = logging.getLogger(__name__)
 
 
-def update(source: str, target: str, branch: str | None) -> None:
+def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     log.debug("Subversion: Checkout or update repository.")
 
     if path.exists(target):
@@ -28,7 +28,7 @@ def update(source: str, target: str, branch: str | None) -> None:
             target,
         ]
 
-    code, _output, error = execute(command, env=get_svn_env())
+    code, _, error = execute(command, env=get_svn_env())
 
     if code != 0:
         raise PullFromRepositoryException(error)
@@ -61,7 +61,7 @@ def commit(path: str, message: str, author: str, branch: str | None, url: str) -
 
 def revision(path: str) -> str | None:
     cmd = ["svnversion", path]
-    code, output, _error = execute(cmd, env=get_svn_env(), log=log)
+    code, output, _ = execute(cmd, env=get_svn_env(), log=log)
     return output.decode().strip() if code == 0 else None
 
 
@@ -71,7 +71,7 @@ def changed_files(
     # Remove all non digit characters from the revision number.
     rev = "".join(filter(lambda c: c.isdigit(), from_revision))
     cmd = ["svn", "diff", "-r", f"{rev}:HEAD", "--summarize"]
-    code, output, _error = execute(cmd, path, env=get_svn_env(), log=log)
+    code, output, _ = execute(cmd, path, env=get_svn_env(), log=log)
     if code != 0:
         return None
     changed = []

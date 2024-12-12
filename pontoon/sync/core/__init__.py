@@ -37,7 +37,7 @@ def sync_project(
     )
 
     try:
-        checkouts = checkout_repos(project, pull, force)
+        checkouts = checkout_repos(project, force=force, pull=pull)
         paths = find_paths(project, checkouts)
     except Exception as e:
         log.error(f"{log_prefix} {e}")

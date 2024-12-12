@@ -6,15 +6,15 @@ from .utils import CommitToRepositoryException, PullFromRepositoryException, exe
 log = logging.getLogger(__name__)
 
 
-def update(source: str, target: str, branch: str | None) -> None:
+def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     log.debug(f"Mercurial: Updating repo {source}")
 
     # Undo local changes: Mercurial doesn't offer anything more elegant
     command = ["rm", "-rf", target]
-    code, _output, error = execute(command)
+    code, _, error = execute(command)
 
     command = ["hg", "clone", source, target]
-    code, _output, error = execute(command)
+    code, _, error = execute(command)
 
     if code == 0:
         log.debug(f"Mercurial: Repository at {source} cloned.")
@@ -49,7 +49,7 @@ def commit(path: str, message: str, author: str, branch: str | None, url: str) -
 
 def revision(path: str) -> str | None:
     cmd = ["hg", "identify", "--id", "--rev=default"]
-    code, output, _error = execute(cmd, path, log=log)
+    code, output, _ = execute(cmd, path, log=log)
     return output.decode().strip() if code == 0 else None
 
 
@@ -59,7 +59,7 @@ def changed_files(
     # Ignore trailing + in revision number. It marks local changes.
     rev = from_revision.rstrip("+")
     cmd = ["hg", "status", "-a", "-m", "-r", f"--rev={rev}", "--rev=default"]
-    code, output, _error = execute(cmd, path, log=log)
+    code, output, _ = execute(cmd, path, log=log)
     if code != 0:
         return None
     changed = []

@@ -44,7 +44,7 @@ class CheckoutsTests(TestCase):
             type=Repository.Type.GIT,
         )
         with patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs):
-            co = Checkout("SLUG", mock_repo, True, False)
+            co = Checkout("SLUG", mock_repo)
             assert co.repo == mock_repo
             assert co.is_source
             assert co.url == "URL"
@@ -54,16 +54,23 @@ class CheckoutsTests(TestCase):
             assert not co.changed
             assert not co.removed
             assert mock_vcs._calls == [
-                ("update", ("URL", "/foo/bar", "BRANCH")),
+                ("update", ("URL", "/foo/bar", "BRANCH", False)),
                 ("revision", ("/foo/bar",)),
                 ("changed_files", ("/foo/bar", "def456")),
             ]
 
             mock_vcs._calls.clear()
-            co = Checkout("SLUG", mock_repo, False, False)
+            co = Checkout("SLUG", mock_repo, pull=False)
             assert mock_vcs._calls == [
                 ("revision", ("/foo/bar",)),
                 ("changed_files", ("/foo/bar", "def456")),
+            ]
+
+            mock_vcs._calls.clear()
+            co = Checkout("SLUG", mock_repo, shallow=True)
+            assert mock_vcs._calls == [
+                ("update", ("URL", "/foo/bar", "BRANCH", True)),
+                ("revision", ("/foo/bar",)),
             ]
 
     def test_no_changes_with_no_prev_commit(self):
@@ -85,7 +92,7 @@ class CheckoutsTests(TestCase):
                 type=Repository.Type.GIT,
             )
             with patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs):
-                co = Checkout("SLUG", mock_repo, True, False)
+                co = Checkout("SLUG", mock_repo)
                 assert co.path == root
                 assert co.prev_commit is None
                 assert not co.removed
@@ -96,7 +103,7 @@ class CheckoutsTests(TestCase):
                     "fr/foo.ftl",
                 ]
                 assert mock_vcs._calls == [
-                    ("update", ("URL", root, "BRANCH")),
+                    ("update", ("URL", root, "BRANCH", False)),
                     ("revision", (root,)),
                 ]
 

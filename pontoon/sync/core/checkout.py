@@ -27,7 +27,15 @@ class Checkout:
     renamed: list[tuple[str, str]]
     """Relative paths (old, new) from the checkout base"""
 
-    def __init__(self, slug: str, db_repo: Repository, pull: bool, force: bool) -> None:
+    def __init__(
+        self,
+        slug: str,
+        db_repo: Repository,
+        *,
+        pull: bool = True,
+        force: bool = False,
+        shallow: bool = False,
+    ) -> None:
         self.repo = db_repo
         self.is_source = db_repo.source_repo
         self.url = db_repo.url
@@ -36,7 +44,7 @@ class Checkout:
 
         versioncontrol = get_repo(db_repo.type)
         if pull:
-            versioncontrol.update(self.url, self.path, db_repo.branch)
+            versioncontrol.update(self.url, self.path, db_repo.branch, shallow)
         else:
             log.info(f"[{slug}] Skipping pull")
         self.commit = versioncontrol.revision(self.path)
@@ -49,10 +57,14 @@ class Checkout:
 
         delta = (
             versioncontrol.changed_files(self.path, self.prev_commit)
-            if isinstance(self.prev_commit, str)
+            if not shallow and isinstance(self.prev_commit, str)
             else None
         )
-        if delta is not None and not force:
+        if shallow:
+            self.changed = []
+            self.removed = []
+            self.renamed = []
+        elif delta is not None and not force:
             self.changed, self.removed, self.renamed = delta
         else:
             # Initially and on error & when forced, consider all files changed
@@ -74,7 +86,11 @@ class Checkouts(NamedTuple):
 
 
 def checkout_repos(
-    project: Project, pull: bool = True, force: bool = False
+    project: Project,
+    *,
+    pull: bool = True,
+    force: bool = False,
+    shallow: bool = False,
 ) -> Checkouts:
     """
     For each project repository,
@@ -87,12 +103,16 @@ def checkout_repos(
         if repo.source_repo:
             if source:
                 raise Exception("Multiple source repositories")
-            source = Checkout(project.slug, repo, pull, force)
+            source = Checkout(
+                project.slug, repo, force=force, pull=pull, shallow=shallow
+            )
             log.debug(f"[{project.slug}] source root: {source.path}")
         elif target:
             raise Exception("Multiple target repositories")
         else:
-            target = Checkout(project.slug, repo, pull, force)
+            target = Checkout(
+                project.slug, repo, force=force, pull=pull, shallow=shallow
+            )
             log.debug(f"[{project.slug}] target root: {target.path}")
     if source is None and target is None:
         raise Exception("No repository found")

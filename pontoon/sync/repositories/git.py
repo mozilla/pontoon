@@ -8,24 +8,36 @@ from .utils import CommitToRepositoryException, PullFromRepositoryException, exe
 log = logging.getLogger(__name__)
 
 
-def update(source: str, target: str, branch: str | None) -> None:
+def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     log.debug(f"Git: Updating repo {source}")
 
-    command = ["git", "fetch", "--all"]
-    execute(command, target)
-
-    # Undo local changes
-    remote = f"origin/{branch}" if branch else "origin"
-
-    command = ["git", "reset", "--hard", remote]
+    command = ["git", "rev-parse", "--is-shallow-repository"]
     code, output, error = execute(command, target)
+
+    if code == 0:
+        command = (
+            ["git", "fetch", "origin"]
+            if shallow or output.strip() == "false"
+            else ["git", "fetch", "--unshallow", "origin"]
+        )
+        execute(command, target)
+
+        # Undo any local changes
+        remote = f"origin/{branch}" if branch else "origin"
+
+        command = ["git", "reset", "--hard", remote]
+        code, output, error = execute(command, target)
 
     if code != 0:
         if error != "No such file or directory":
             log.debug(output)
             log.warning(f"Git: {error}")
         log.debug("Git: Cloning repo...")
-        command = ["git", "clone", source, target]
+        command = (
+            ["git", "clone", "--depth", "1", source, target]
+            if shallow
+            else ["git", "clone", source, target]
+        )
         code, output, error = execute(command)
 
         if code != 0:
@@ -64,13 +76,13 @@ def commit(path: str, message: str, author: str, branch: str | None, url: str) -
 
     # Commit
     commit = git_cmd + ["commit", "-m", message, "--author", author]
-    code, _output, error = execute(commit, path)
+    code, _, error = execute(commit, path)
     if code != 0 and error:
         raise CommitToRepositoryException(error)
 
     # Push
     push = ["git", "push", url, branch or "HEAD"]
-    code, _output, error = execute(push, path)
+    code, _, error = execute(push, path)
 
     if code != 0:
         if (
@@ -88,7 +100,7 @@ def commit(path: str, message: str, author: str, branch: str | None, url: str) -
 
 def revision(path: str) -> str | None:
     cmd = ["git", "rev-parse", "--short", "HEAD"]
-    code, output, _error = execute(cmd, path, log=log)
+    code, output, _ = execute(cmd, path, log=log)
     return output.decode().strip() if code == 0 else None
 
 

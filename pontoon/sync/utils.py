@@ -17,7 +17,7 @@ from pontoon.sync.core.translations_to_repo import update_changed_resources
 def download_translations_zip(
     project: Project, locale: Locale
 ) -> tuple[bytes, str] | tuple[None, None]:
-    checkouts = checkout_repos(project)
+    checkouts = checkout_repos(project, shallow=True)
     paths = find_paths(project, checkouts)
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, locale=locale
