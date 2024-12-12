@@ -17,6 +17,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape
 from django.views.decorators.http import require_POST
@@ -26,6 +27,7 @@ from pontoon.base import forms
 from pontoon.base.models import Locale, Project, UserProfile
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors import utils
+from pontoon.messaging.emails import send_verification_email
 from pontoon.settings import (
     BADGES_PROMOTION_THRESHOLDS,
     BADGES_REVIEW_THRESHOLDS,
@@ -349,7 +351,10 @@ def settings(request):
                 profile.save(update_fields=["contact_email_verified"])
 
                 token = utils.generate_verification_token(request.user)
-                utils.send_verification_email(request, token)
+                link = request.build_absolute_uri(
+                    reverse("pontoon.contributors.verify.email", args=(token,))
+                )
+                send_verification_email(request.user, link)
 
             messages.success(request, "Settings saved.")
     else:

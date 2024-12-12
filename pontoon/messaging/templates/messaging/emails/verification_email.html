@@ -1,0 +1,18 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block header %}Hi {{ display_name }}.{% endblock %}
+
+{% block content %}
+<p>Please click on the link below within the next hour to verify your contact email address.</p>
+
+<p><a href="{{ link }}">Verify my email address</a></p>
+
+<p>You’re receiving this email because you recently changed a contact email address on Pontoon. If this wasn’t you, please ignore this email.</p>
+
+<p>Thanks,<br>
+Pontoon Team</p>
+{% endblock %}
+
+{% block footer %}{% endblock %}

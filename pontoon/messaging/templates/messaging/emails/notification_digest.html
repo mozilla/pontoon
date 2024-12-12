@@ -4,9 +4,12 @@
 {% block title %}{{ subject }}{% endblock %}
 
 {% block extend_css %}
+.introduction {
+    margin-bottom: 30px;
+}
+
 .notifications {
     font-size: 15px;
-    padding: 0;
     text-align: left;
 }
 
@@ -62,11 +65,12 @@
 
 {% block header %}Hello.{% endblock %}
 
-{% block subheader %}Here's a summary of the Pontoon notifications you've subscribed to.{% endblock %}
+{% block subheader %}{% endblock %}
 
 {% block content_class %}notifications{% endblock %}
 
 {% block content %}
+<p class="introduction">Here's a summary of the Pontoon notifications you've subscribed to.</p>
 {{ Notifications.list(notifications=notifications) }}
 {% endblock %}
 

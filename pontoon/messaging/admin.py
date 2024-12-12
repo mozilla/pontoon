@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from pontoon.messaging import models
+from pontoon.messaging import forms, models
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -8,4 +8,10 @@ class MessageAdmin(admin.ModelAdmin):
     autocomplete_fields = ["sender", "recipients"]
 
 
+class EmailContentAdmin(admin.ModelAdmin):
+    list_display = ("email", "subject", "created_at", "updated_at")
+    form = forms.EmailContentForm
+
+
 admin.site.register(models.Message, MessageAdmin)
+admin.site.register(models.EmailContent, EmailContentAdmin)

@@ -53,3 +53,12 @@ class Message(models.Model):
 
     def is_new(self):
         return self.sent_at > timezone.now() - timezone.timedelta(minutes=1)
+
+
+class EmailContent(models.Model):
+    email = models.CharField(max_length=255, unique=True)
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
