@@ -357,7 +357,13 @@ django-pipeline==3.0.0 \
 fluent-syntax==0.19.0 \
     --hash=sha256:920326d7f46864b9758f0044e9968e3112198bc826acee16ddd8f11d359004fd \
     --hash=sha256:b352b3475fac6c6ed5f06527921f432aac073d764445508ee5218aeccc7cc5c4
-    # via compare-locales
+    # via
+    #   compare-locales
+    #   moz-l10n
+gitignorant==0.3.1 \
+    --hash=sha256:d2b96ffe90eaf4fa2e1d68ad4e3f807213c8ec1e54a943a9e7105a9f7aaa4232 \
+    --hash=sha256:eb51b3421761e41f594758ef1f93aa438f94856da8beea44ccd043f9c2373442
+    # via moz-l10n
 google-api-core[grpc]==2.20.0 \
     --hash=sha256:ef0591ef03c30bb83f79b3d0575c3f31219001fc9c5cf37024d08310aeffed8a \
     --hash=sha256:f74dff1889ba291a4b76c5079df0711810e2d9da81abfdc99957bc961c1eb28f
@@ -490,6 +496,11 @@ idna==3.10 \
     #   anyio
     #   httpx
     #   requests
+iniparse==0.5 \
+    --hash=sha256:88ca60473b1637055a937933d48840be1b1b6835f381a6158ef118a532583675 \
+    --hash=sha256:932e5239d526e7acb504017bb707be67019ac428a6932368e6851691093aa842 \
+    --hash=sha256:db6ef1d8a02395448e0e7b17ac0aa28b8d338b632bbd1ffca08c02ddae32cf97
+    # via moz-l10n
 jinja2==3.1.4 \
     --hash=sha256:4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369 \
     --hash=sha256:bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d
@@ -724,6 +735,7 @@ lxml==5.3.0 \
     --hash=sha256:fb66442c2546446944437df74379e9cf9e9db353e61301d1a0e26482f43f0dd8
     # via
     #   -r requirements/default.in
+    #   moz-l10n
     #   sacrebleu
     #   translate-toolkit
 markupsafe==2.0.1 \
@@ -799,6 +811,10 @@ markupsafe==2.0.1 \
     # via
     #   -r requirements/default.in
     #   jinja2
+moz-l10n[xml]==0.5.6 \
+    --hash=sha256:07b4d88df540e5facc2c9483b44cf33da3ea5c2ce45e5ccb72418680c62e42bb \
+    --hash=sha256:13dbf9fc56b38ef78ccfd1e188308912bf9125bb4898e0de2ee35b65be5ea25c
+    # via -r requirements/default.in
 newrelic==9.6.0 \
     --hash=sha256:01c0eb630bb18261241a37aa0a70cb6f706079a1f58f59f2bb64f26fda54ffc5 \
     --hash=sha256:09dad0db993402e166e37d99302c2ad5588b4ff1e5b814819540ca5ec2bd3cea \
@@ -897,10 +913,12 @@ packaging==24.1 \
     --hash=sha256:026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002 \
     --hash=sha256:5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124
     # via gunicorn
-polib==1.0.6 \
-    --hash=sha256:20d2a0d589a692c11df549bd7cda83c665eef2a83e017b843fecdf956edbad74 \
-    --hash=sha256:b1ea141d58ed5e48aed2674f7c894dfb83f639c3286d7b32b2e19fa032a5b400
-    # via -r requirements/default.in
+polib==1.2.0 \
+    --hash=sha256:1c77ee1b81feb31df9bca258cbc58db1bbb32d10214b173882452c73af06d62d \
+    --hash=sha256:f3ef94aefed6e183e342a8a269ae1fc4742ba193186ad76f175938621dbfc26b
+    # via
+    #   -r requirements/default.in
+    #   moz-l10n
 portalocker==2.10.1 \
     --hash=sha256:53a5984ebc86a025552264b459b46a2086e269b21823cb572f8f28ee759e45bf \
     --hash=sha256:ef1bf844e878ab08aee7e40184156e1151f228f103aa5c6bd0724cc330960f8f
@@ -1449,6 +1467,7 @@ six==1.16.0 \
     #   apscheduler
     #   bleach
     #   compare-locales
+    #   iniparse
     #   promise
     #   python-binary-memcached
     #   python-dateutil
@@ -1489,8 +1508,9 @@ tqdm==4.66.5 \
     # via
     #   openai
     #   sacremoses
-translate-toolkit==3.3.2 \
-    --hash=sha256:0795bd3c8668213199550ae4ed8938874083139ec1f8c473dcca1524a206b108
+translate-toolkit==3.14.1 \
+    --hash=sha256:2148c437c529d4eaf89c5a3bd5690376eabee97c3c39b7d4824001a7cf333e86 \
+    --hash=sha256:74dd963f770ec1d18e44895d8a9f86d47a0d73b270b22a69a5652f30ae2dca79
     # via -r requirements/default.in
 typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
@@ -1529,7 +1549,9 @@ vine==5.1.0 \
 wcwidth==0.2.13 \
     --hash=sha256:3da69048e4540d84af32131829ff948f1e022c1c6bdb8d6102117aac784f6859 \
     --hash=sha256:72ea0c06399eb286d978fdedb6923a9eb47e1c486ce63e9b4e64fc18303972b5
-    # via prompt-toolkit
+    # via
+    #   prompt-toolkit
+    #   translate-toolkit
 webencodings==0.5.1 \
     --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78 \
     --hash=sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923

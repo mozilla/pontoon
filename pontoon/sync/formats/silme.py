@@ -14,9 +14,9 @@ from silme.format.inc import FormatParser as IncParser
 from silme.format.ini import FormatParser as IniParser
 from silme.format.properties import FormatParser as PropertiesParser
 
-from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import (
+from pontoon.sync.formats.exceptions import ParseError, SyncError
+from pontoon.sync.formats.utils import (
     create_parent_directory,
     escape_quotes,
     unescape_quotes,
