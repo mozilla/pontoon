@@ -1,5 +1,5 @@
 from io import BytesIO
-from os.path import basename, join
+from os.path import basename, exists, join, relpath
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
@@ -27,8 +27,10 @@ def download_translations_zip(
     bytes_io = BytesIO()
     zipfile = ZipFile(bytes_io, "w")
     for _, tgt_path in paths.all():
-        lc_path = paths.format_target_path(tgt_path, locale.code)
-        zipfile.write(lc_path, basename(tgt_path))
+        filename = paths.format_target_path(tgt_path, locale.code)
+        if exists(filename):
+            arcname = relpath(filename, checkouts.target.path)
+            zipfile.write(filename, arcname)
     zipfile.close()
 
     return bytes_io.getvalue(), f"{project.slug}.zip"
