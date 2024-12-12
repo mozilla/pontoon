@@ -1,19 +1,6 @@
-{% extends 'messaging/emails/base.html' %}
+<p>Thank you again for joining translation community on Pontoon. As always, you can continue contributing translations at <a href="{{ full_url('pontoon.homepage') }}">{{ full_url('pontoon.homepage') }}</a>.</p>
 
-{% block title %}{{ subject }}{% endblock %}
-
-{% block extend_css %}{% endblock %}
-
-{% block header %}Hello.{% endblock %}
-
-{% block subheader %}{% endblock %}
-
-{% block content_class %}{% endblock %}
-
-{% block content %}
-<p>Thank you again for joining Mozilla’s translation community on Pontoon. As always, you can continue contributing translations to Mozilla products and initiatives at <a href="{{ full_url('pontoon.homepage') }}">{{ full_url('pontoon.homepage') }}</a>.</p>
-
-<p>Following up on our welcome email, which had some quick tips to help get you started, we’d like to provide a brief introduction to how localization works at Mozilla.</p>
+<p>Following up on our welcome email, which had some quick tips to help get you started, we’d like to provide a brief introduction to how localization works in Pontoon.</p>
 
 <h2>Translation phases</h2>
 
@@ -46,12 +33,7 @@
 
 <p>If you have a question or issue related to a particular string, you can click the “REQUEST CONTEXT or REPORT ISSUE” button from the translation view in Pontoon. That will create a comment you can fill in with the details and it will notify the project manager. You can also find the project manager’s contact information in their profile by clicking on their name in the field at the top of the project page.</p>
 
-<p>We hope this gives you a better understanding of how localization works at Mozilla.</p>
-
-<p>If you have any questions, reach out any time to the Mozilla localization team on <a href="https://matrix.to/#/#l10n-community:mozilla.org">Matrix chat</a> or <a href="https://discourse.mozilla.org/c/l10n/547">Discourse</a>.</p>
+<p>We hope this gives you a better understanding of how localization works in Pontoon.</p>
 
 <p>Thanks,<br>
 Pontoon Team</p>
-{% endblock %}
-
-{% block footer %}{% endblock %}

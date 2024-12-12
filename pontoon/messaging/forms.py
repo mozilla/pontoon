@@ -1,10 +1,12 @@
+from django_ace import AceWidget
+
 from django import forms
 from django.core import validators
 
 from pontoon.base.forms import HtmlField
 from pontoon.base.models import Project
 
-from .models import Message
+from .models import EmailContent, Message
 
 
 class MessageForm(forms.ModelForm):
@@ -78,3 +80,12 @@ class MessageForm(forms.ModelForm):
         # Remove the colon from all field labels
         for field in self.fields.values():
             field.label_suffix = ""
+
+
+class EmailContentForm(forms.ModelForm):
+    class Meta:
+        model = EmailContent
+        fields = "__all__"
+        widgets = {
+            "body": AceWidget(mode="html", width="100%"),
+        }

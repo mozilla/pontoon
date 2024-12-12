@@ -5,6 +5,7 @@ import logging
 from collections import defaultdict
 
 from dateutil.relativedelta import relativedelta
+from django_jinja.backend import Jinja2
 from notifications.models import Notification
 
 from django.conf import settings
@@ -17,9 +18,11 @@ from django.utils import timezone
 from pontoon.actionlog.models import ActionLog
 from pontoon.base.models import Locale
 from pontoon.insights.models import LocaleInsightsSnapshot
+from pontoon.messaging.models import EmailContent
 from pontoon.messaging.utils import html_to_plain_text_with_links
 
 
+jinja_env = Jinja2.get_default().env
 log = logging.getLogger(__name__)
 
 
@@ -317,11 +320,15 @@ def send_onboarding_email_1(user):
     """
     Sends 1st onboarding email to a new user.
     """
-    subject = "Welcome to Pontoon!"
-    template = get_template("messaging/emails/onboarding_1.html")
+    email_content = EmailContent.objects.get(email="onboarding_1")
+    content = jinja_env.from_string(email_content.body).render()
+
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     body_html = template.render(
         {
+            "content": content,
             "subject": subject,
         }
     )
@@ -349,11 +356,15 @@ def send_onboarding_emails_2(users):
     """
     log.info("Start sending 2nd onboarding emails.")
 
-    subject = "Translating on Pontoon"
-    template = get_template("messaging/emails/onboarding_2.html")
+    email_content = EmailContent.objects.get(email="onboarding_2")
+    content = jinja_env.from_string(email_content.body).render()
+
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     body_html = template.render(
         {
+            "content": content,
             "subject": subject,
         }
     )
@@ -380,11 +391,15 @@ def send_onboarding_emails_3(users):
     """
     log.info("Start sending 3rd onboarding emails.")
 
-    subject = "More resources for contributors"
-    template = get_template("messaging/emails/onboarding_3.html")
+    email_content = EmailContent.objects.get(email="onboarding_3")
+    content = jinja_env.from_string(email_content.body).render()
+
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     body_html = template.render(
         {
+            "content": content,
             "subject": subject,
         }
     )
@@ -411,11 +426,15 @@ def send_inactive_contributor_emails(users):
     """
     log.info("Start sending inactive contributor emails.")
 
-    subject = "Mozilla Pontoon account status"
-    template = get_template("messaging/emails/inactive_contributor.html")
+    email_content = EmailContent.objects.get(email="inactive_contributor")
+    content = jinja_env.from_string(email_content.body).render()
+
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     body_html = template.render(
         {
+            "content": content,
             "subject": subject,
         }
     )
@@ -442,8 +461,9 @@ def send_inactive_translator_emails(users, translator_map):
     """
     log.info("Start sending inactive translator emails.")
 
-    subject = "Reminder: Contributing to Mozilla Pontoon as a Translator"
-    template = get_template("messaging/emails/inactive_translator.html")
+    email_content = EmailContent.objects.get(email="inactive_translator")
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     for user in users:
         try:
@@ -452,11 +472,11 @@ def send_inactive_translator_emails(users, translator_map):
             log.error(f"User { user } is not a translator of any locale.")
             continue
 
+        content = jinja_env.from_string(email_content.body).render({"locale": locale})
         body_html = template.render(
             {
+                "content": content,
                 "subject": subject,
-                "locale": locale,
-                "user": user,
             }
         )
         body_text = html_to_plain_text_with_links(body_html)
@@ -481,8 +501,9 @@ def send_inactive_manager_emails(users, manager_map):
     """
     log.info("Start sending inactive manager emails.")
 
-    subject = "Reminder: Contributing to Mozilla Pontoon as a Team Manager"
-    template = get_template("messaging/emails/inactive_manager.html")
+    email_content = EmailContent.objects.get(email="inactive_translator")
+    subject = email_content.subject
+    template = get_template("messaging/emails/transactional.html")
 
     for user in users:
         try:
@@ -491,11 +512,11 @@ def send_inactive_manager_emails(users, manager_map):
             log.error(f"User { user } is not a manager of any locale.")
             continue
 
+        content = jinja_env.from_string(email_content.body).render({"locale": locale})
         body_html = template.render(
             {
+                "content": content,
                 "subject": subject,
-                "locale": locale,
-                "user": user,
             }
         )
         body_text = html_to_plain_text_with_links(body_html)
