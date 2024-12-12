@@ -16,7 +16,7 @@ from django.template.loader import get_template
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Locale
+from pontoon.base.models import Locale, UserProfile
 from pontoon.insights.models import LocaleInsightsSnapshot
 from pontoon.messaging.models import EmailContent
 from pontoon.messaging.utils import html_to_plain_text_with_links
@@ -380,7 +380,8 @@ def send_onboarding_emails_2(users):
         msg.attach_alternative(body_html, "text/html")
         msg.send()
 
-    users.update(userprofile__onboarding_email_status=2)
+    pks = users.values_list("pk", flat=True)
+    UserProfile.objects.filter(user__in=pks).update(onboarding_email_status=2)
 
     log.info(f"2nd onboarding emails sent to { len(users) } users.")
 
@@ -415,7 +416,8 @@ def send_onboarding_emails_3(users):
         msg.attach_alternative(body_html, "text/html")
         msg.send()
 
-    users.update(userprofile__onboarding_email_status=3)
+    pks = users.values_list("pk", flat=True)
+    UserProfile.objects.filter(user__in=pks).update(onboarding_email_status=3)
 
     log.info(f"3rd onboarding emails sent to { len(users) } users.")
 
@@ -450,7 +452,9 @@ def send_inactive_contributor_emails(users):
         msg.attach_alternative(body_html, "text/html")
         msg.send()
 
-    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+    pks = users.values_list("pk", flat=True)
+    now = timezone.now()
+    UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
     log.info(f"Inactive contributor emails sent to { len(users) } users.")
 
@@ -490,7 +494,9 @@ def send_inactive_translator_emails(users, translator_map):
         msg.attach_alternative(body_html, "text/html")
         msg.send()
 
-    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+    pks = users.values_list("pk", flat=True)
+    now = timezone.now()
+    UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
     log.info(f"Inactive translator emails sent to { len(users) } users.")
 
@@ -501,7 +507,7 @@ def send_inactive_manager_emails(users, manager_map):
     """
     log.info("Start sending inactive manager emails.")
 
-    email_content = EmailContent.objects.get(email="inactive_translator")
+    email_content = EmailContent.objects.get(email="inactive_manager")
     subject = email_content.subject
     template = get_template("messaging/emails/transactional.html")
 
@@ -530,7 +536,9 @@ def send_inactive_manager_emails(users, manager_map):
         msg.attach_alternative(body_html, "text/html")
         msg.send()
 
-    users.update(userprofile__last_inactive_reminder_sent=timezone.now())
+    pks = users.values_list("pk", flat=True)
+    now = timezone.now()
+    UserProfile.objects.filter(user__in=pks).update(last_inactive_reminder_sent=now)
 
     log.info(f"Inactive manager emails sent to { len(users) } users.")
 
