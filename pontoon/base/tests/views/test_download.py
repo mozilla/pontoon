@@ -98,8 +98,12 @@ def test_download():
         assert response.status_code == 200
         assert response.get("Content-Type") == "application/zip"
         zipfile = ZipFile(BytesIO(response.content), "r")
-        assert set(zipfile.namelist()) == {"a.ftl", "b.po", "c.ftl"}
+        assert set(zipfile.namelist()) == {
+            "de-Test/a.ftl",
+            "de-Test/b.po",
+            "de-Test/c.ftl",
+        }
         assert (
-            zipfile.read("c.ftl")
+            zipfile.read("de-Test/c.ftl")
             == b"key-0 = New translation de 0\n# New entry comment\nkey-2 = New translation de 2\n"
         )
