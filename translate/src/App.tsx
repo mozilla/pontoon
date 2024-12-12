@@ -10,6 +10,7 @@ import { initLocale, Locale, updateLocale } from './context/Locale';
 import { Location } from './context/Location';
 import { MentionUsersProvider } from './context/MentionUsers';
 import { NotificationProvider } from './context/Notification';
+import { BadgeTooltipProvider } from './context/BadgeTooltip';
 import { ThemeProvider } from './context/Theme';
 
 import { WaveLoader } from './modules/loaders';
@@ -30,6 +31,7 @@ import { Navigation } from './modules/navbar/components/Navigation';
 import { ProjectInfo } from './modules/projectinfo/components/ProjectInfo';
 import { ResourceProgress } from './modules/resourceprogress';
 import { SearchBox } from './modules/search/components/SearchBox';
+import { BadgeTooltip } from './modules/editor/components/BadgeTooltip';
 
 /**
  * Main entry point to the application. Will render the structure of the page.
@@ -64,41 +66,44 @@ export function App() {
   return (
     <Locale.Provider value={locale}>
       <NotificationProvider>
-        <ThemeProvider>
-          <MentionUsersProvider>
-            <EntityViewProvider>
-              <div id='app'>
-                <AddonPromotion />
-                <header>
-                  <Navigation />
-                  <ResourceProgress />
-                  {allProjects ? null : <ProjectInfo />}
-                  <NotificationPanel />
-                  <UserControls />
-                </header>
-                <section
-                  className={classNames(
-                    'main-content',
-                    visible ? 'entities-list' : '',
-                  )}
-                >
-                  <section className='panel-list'>
-                    <SearchBox />
-                    <EntitiesList />
-                  </section>
-                  <section className='panel-content'>
-                    {batchactions.entities.length === 0 ? (
-                      <Entity />
-                    ) : (
-                      <BatchActions />
+        <BadgeTooltipProvider>
+          <ThemeProvider>
+            <MentionUsersProvider>
+              <EntityViewProvider>
+                <div id='app'>
+                  <AddonPromotion />
+                  <header>
+                    <Navigation />
+                    <ResourceProgress />
+                    {allProjects ? null : <ProjectInfo />}
+                    <NotificationPanel />
+                    <UserControls />
+                  </header>
+                  <section
+                    className={classNames(
+                      'main-content',
+                      visible ? 'entities-list' : '',
                     )}
+                  >
+                    <section className='panel-list'>
+                      <SearchBox />
+                      <EntitiesList />
+                    </section>
+                    <section className='panel-content'>
+                      <BadgeTooltip />
+                      {batchactions.entities.length === 0 ? (
+                        <Entity />
+                      ) : (
+                        <BatchActions />
+                      )}
+                    </section>
                   </section>
-                </section>
-                <InteractiveTour />
-              </div>
-            </EntityViewProvider>
-          </MentionUsersProvider>
-        </ThemeProvider>
+                  <InteractiveTour />
+                </div>
+              </EntityViewProvider>
+            </MentionUsersProvider>
+          </ThemeProvider>
+        </BadgeTooltipProvider>
       </NotificationProvider>
     </Locale.Provider>
   );

@@ -76,13 +76,17 @@ you create:
    Optional. A comma-separated list of numeric thresholds for different levels of the 
    Community Builder badge.
 
+``BADGES_REVIEW_THRESHOLDS``
+   Optional. A comma-separated list of numeric thresholds for different levels of the 
+   Review Master badge.
+
 ``BADGES_START_DATE``
    Optional. Specifies the start date from which user activities count towards badge achievements. 
    This variable should be in YYYY-MM-DD format.
 
 ``BADGES_TRANSLATION_THRESHOLDS``
    Optional. A comma-separated list of numeric thresholds for different levels of the 
-   Review Master and Translation Champion badges.
+   Translation Champion badge.
 
 ``BLOCKED_IPS``
    A comma-separated list of IP addresses or IP ranges (expressed using the
@@ -165,6 +169,10 @@ you create:
    Optional. Text to be shown in the footer of the non-transactional emails sent
    using the Messaging Center, just above the unsubscribe text.
 
+``+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO``
+   Optional. Custom text to be shown in the Monthly activity summary emails after the
+   greeting and before the stats.
+
 ``ENABLE_BUGS_TAB``
    Optional. Enables Bugs tab on team pages, which pulls team data from
    bugzilla.mozilla.org. Specific for Mozilla deployments.
@@ -209,6 +217,11 @@ you create:
    Optional. Set your `Microsoft Translator API`_ key to use machine translation
    by Microsoft.
 
+``MONTHLY_ACTIVITY_SUMMARY_DAY``
+   Optional. Integer representing a day of the month on which the Monthly
+   activity summary emails will be sent. 1 represents the first day of the month.
+   The default value is 1.
+
 ``NEW_RELIC_API_KEY``
    Optional. API key for accessing the New Relic REST API. Used to mark deploys
    on New Relic.
@@ -216,6 +229,11 @@ you create:
 ``NEW_RELIC_APP_NAME``
    Optional. Name to give to this app on New Relic. Required if you're using
    New Relic.
+
+``NOTIFICATION_DIGEST_DAY``
+   Optional. Integer representing a day of the week on which the weekly notification
+   digest email will be sent. 0 represents Monday, 6 represents Sunday. The default
+   value is 4 (Friday).
 
 ``OPENAI_API_KEY``
    Optional. Set your `OpenAI API` key to add the ability to refine machine

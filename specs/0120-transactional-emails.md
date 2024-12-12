@@ -196,19 +196,19 @@ Following up on our welcome email, which had some quick tips to help get you sta
 **Translation phases**  
 Translation goes through roughly four phases:
 
-1. New source strings added: When new strings (individual pieces of text or content that need to be translated) are added, they appear in Pontoon as “Missing” status.  
+1. New source strings added: When new strings (individual pieces of text or content that need to be translated) are added, they appear in Pontoon as “Missing”.  
 2. Translation suggestion submitted: When a contributor like you submits a translation suggestion, the status of the translation is set to “Unreviewed”. This alerts translators and team managers (see below) that translations are ready for their review.  
 3. Translation review: After a string is reviewed, it will either be approved and appear in Pontoon as “Translated” or receive feedback — possibly in the form of a comment. After outstanding feedback is addressed the strings will be approved.  
-4. Translated: Once the new strings are translated, they are ready to be included into the product. The timing depends on the project, but often strings will be implemented at the time of the next build and ready to check in product. Be sure to check the deadlines in the [project](https://pontoon.mozilla.org/projects/) view to understand which strings need translations soon.
+4. Translated: Once the new strings are translated, they are ready to be included into the product. The timing depends on the project, but often strings will be integrated at the time of the next build and ready to check in product. Be sure to check the deadlines in the [project](https://pontoon.mozilla.org/projects/) page to understand which strings need translations soon.
 
-Each localization community has its own specific workflows, so do reach out to your [Team Managers](https://pontoon.mozilla.org/*/contributors/) to learn more. 
+Each localization community has its own specific workflows, so do reach out to your [Team Managers](https://pontoon.mozilla.org/teams/) to learn more. 
 
 **Team roles**  
 Speaking of team managers, teams can have up to 3 different roles. While all roles contribute translations for their language, some roles have additional responsibilities:
 
-1. Team Manager - Team managers are responsible for managing and growing their language community, including: mentoring new contributors, providing feedback on their translation submissions, and creating language resources. Each locale will have at least one team manager.   
-2. Translator - Translators are responsible for reviewing translation submissions and providing feedback to team contributors. Community members that have been evaluated by the team manager and other translators can be assigned the translator role.  
-3. Contributor - Contributors submit translation suggestions in Pontoon for their target language. New members of a language community start as a contributor.   
+1. Team Manager: Team managers are responsible for managing and growing their language community, including: mentoring new contributors, providing feedback on their translation submissions, and creating language resources. Each locale will have at least one team manager.   
+2. Translator: Translators are responsible for reviewing translation submissions and providing feedback to team contributors. Community members that have been evaluated by the team manager and other translators can be assigned the translator role.  
+3. Contributor: Contributors submit translation suggestions in Pontoon for their target language. New members of a language community start as a contributor.   
 
 We’ve found that the best way for new contributors to learn and grow within their community is to network with other team members and proactively request feedback from translators and managers on their submissions. If you have trouble reaching other team members or getting feedback, let us or the project manager know (see below).
 
@@ -244,21 +244,21 @@ Hello again! This is our final introductory email - so from here on out you won�
 
 We’d like to provide you with some additional resources that might be useful as you continue in your journey as a member of our localization community.
 
-**Additional documentation:**  
+**Additional documentation**  
 For in-depth documentation on Mozilla localization, see our [Documentation for Mozilla localizers](https://mozilla-l10n.github.io/localizer-documentation/index.html) which includes in depth explanations on topics such as:
 
 * [Community roles](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html)  
-* Specific [Mozilla product](https://mozilla-l10n.github.io/localizer-documentation/products/index.html) localization (such as Firefox, Firefox for Android, etc.)  
-* Tools such [Pontoon](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/index.html) and [Fluent](https://mozilla-l10n.github.io/localizer-documentation/tools/fluent/index.html) (the advanced translation format used by Mozilla)
+* Specific [Mozilla product localization](https://mozilla-l10n.github.io/localizer-documentation/products/index.html) (such as Firefox, Firefox for Android, etc.)  
+* Tools such as [Pontoon](https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/index.html) and [Fluent](https://mozilla-l10n.github.io/localizer-documentation/tools/fluent/index.html) (the advanced translation format used by Mozilla)
 
-**Pontoon Add-on:**   
-You can use the Pontoon Add-on for [Firefox](https://mozilla-l10n.github.io/localizer-documentation/index.html) or [Chrome](https://chromewebstore.google.com/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb) to be instantly notified of any Pontoon notifications right in your browser, as well as some helpful tools to help with proofreading, bug reporting, and fixing. 
+**Pontoon Add-on**   
+You can use the Pontoon Add-on for [Firefox](https://addons.mozilla.org/firefox/addon/pontoon-tools/) or [Chrome](https://chromewebstore.google.com/detail/pontoon-add-on/gnbfbnpjncpghhjmmhklfhcglbopagbb) to be instantly notified of any Pontoon notifications right in your browser, as well as some helpful tools to help with proofreading, bug reporting, and fixing. 
 
-**Mozilla community participation guidelines:**  
+**Mozilla community participation guidelines**  
 As an active member of our community, we’d like you to be aware of the [Mozilla community participation guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/) to ensure the wellbeing of all members of the community.
 
-**Email settings:**  
-Finally, if you’re interested in latest updates, announcements about new Pontoon features, invitations to contributor events and more, be sure to enable email communications in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
+**Email settings**  
+Finally, if you’re interested in the latest updates, announcements about new Pontoon features, invitations to contributor events and more, be sure to enable “News and updates“ in your [settings](https://pontoon.mozilla.org/settings/) so you can be the first to get notified.  
 You can also receive Pontoon notifications in a daily or weekly digest — check out the Notification subscriptions section of your settings.
 
 Thanks,  
@@ -275,7 +275,7 @@ Once
 All of the following conditions met:
 
 1. Contributor role   
-2. At least 1 non-ML translation submitted   
+2. At least 1 non-ML translation submitted to non-system projects
 3. No login for 6 months  
 4. Has not received inactive account reminder in the past
 
@@ -311,6 +311,7 @@ All of the following conditions met:
 1. Translator role (global permission)  
 2. User has 0 submissions in last 2 months  
 3. User has 0 reviews in last 2 months
+4. Has not received inactive account reminder in the past
 
 #### Template
 
@@ -324,15 +325,15 @@ As part of our efforts to keep our localization community active and engaged, we
 
 One of the key [expectations](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#translator) for Translators is to ensure the timely review of suggestions and to contribute translations for new source language content. In addition to ensuring users in your language receive a fully localized experience, timely review of submissions avoids new and current Pontoon contributors becoming discouraged from making submissions and ensures continued participation in our localization community.
 
-Please take a moment to take action by:
+Please take a moment to act by:
 
 * Reviewing some outstanding translation submissions.  
 * Submitting translations for projects with missing translations.  
-* Respond to any outstanding feedback from your fellow team members. 
+* Responding to any outstanding feedback from your fellow team members. 
 
 [link to team project page]
 
-You can find more information on role responsibilities and expectations for our localization community roles [here](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#translator).
+You can find more information on responsibilities and expectations for our localization community roles [here](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#translator).
 
 Thank you again for your dedication. Together we can continue to make the internet open and accessible to all.
 
@@ -352,6 +353,7 @@ All of the following conditions met:
 1. Team Manager role  
 2. User has 0 submissions in last 2 months  
 3. User has 0 reviews in last 2 months
+4. Has not received inactive account reminder in the past
 
 #### Template
 
@@ -363,9 +365,9 @@ On behalf of Mozilla, thank you for your commitment and dedication to Mozilla’
 
 As part of our efforts to keep our localization community active and engaged, we periodically review account activity. We’ve noticed that in the past 2 months you have not submitted any translations or reviewed any translation submissions for your locale. We understand that life can get busy, and finding time to contribute to projects isn't always easy. We get it. 
 
-One of the key [expectations](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#locale-manager) for Team Managers is to ensure the timely feedback and review of suggestions to contributors and translators. In addition to ensuring users in your language receive a fully localized experience, timely review of submissions avoids new and current Pontoon contributors becoming discouraged from making submissions and ensures continued participation in our localization community.
+One of the key [expectations](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#locale-manager) for Team Managers is to ensure the timely feedback and review of suggestions to contributors and translators. In addition to ensuring users in your language receive a fully localized experience, timely review of submissions prevents discouragement among new and existing Pontoon contributors, fostering ongoing participation in our localization community.
 
-Please take a moment to take action by:
+Please take a moment to act by:
 
 * Reviewing some outstanding translation submissions.  
 * Submitting translations for projects with missing translations.  
@@ -373,11 +375,11 @@ Please take a moment to take action by:
 
 [link to team project page]
 
-In addition, another Team Manager responsibility is to evaluate candidates for advanced roles within their community. Please review the contributors page for your team and see if there are any motivated and active community members that may be interested in taking on additional responsibilities within your team. [link to the team’s contributors page]
+In addition, another Team Manager responsibility is to evaluate candidates for advanced roles within their community. Please review the [contributors page](#link-to-the-team-contributors-page) for your team and see if there are any motivated and active community members that may be interested in taking on additional responsibilities within your team.
 
-You can find more information on role responsibilities and expectations for our localization community roles [here](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#locale-manager).
+You can find more information on responsibilities and expectations for our localization community roles [here](https://mozilla-l10n.github.io/localizer-documentation/community/l10n_community_roles.html#locale-manager).
 
-Thank you again for your continued dedication. Together we can continue to make the internet open and accessible to all.
+Thank you again for your dedication. Together we can continue to make the internet open and accessible to all.
 
 Thanks,  
 Pontoon Team

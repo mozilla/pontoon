@@ -1,3 +1,4 @@
+from datetime import timedelta
 from hashlib import md5
 from urllib.parse import quote, urlencode
 
@@ -7,7 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -237,16 +238,41 @@ def badges_review_count(self):
     return self.actions.filter(
         Q(action_type="translation:approved") | Q(action_type="translation:rejected"),
         created_at__gte=settings.BADGES_START_DATE,
+        is_implicit_action=False,
     ).count()
 
 
 @property
 def badges_promotion_count(self):
     """Role promotions performed by user that count towards their badges"""
-    return self.changed_permissions_log.filter(
+    added_entries = self.changed_permissions_log.filter(
         action_type="added",
         created_at__gte=settings.BADGES_START_DATE,
-    ).count()
+    )
+
+    # Check if user was demoted from Manager to Translator.
+    # In this case, it doesn't count as a promotion.
+    #
+    # TODO:
+    # This code is the only consumer of the PermissionChangelog model, so we should
+    # refactor to simplify how promotions are retrieved. (see #2195)
+    return (
+        added_entries.exclude(
+            Exists(
+                self.changed_permissions_log.filter(
+                    performed_by=OuterRef("performed_by"),
+                    performed_on=OuterRef("performed_on"),
+                    action_type="removed",
+                    created_at__gt=OuterRef("created_at"),
+                    created_at__lte=OuterRef("created_at") + timedelta(milliseconds=10),
+                )
+            )
+        )
+        .order_by("performed_on", "group")
+        # Only count promotion of each user to the same group once
+        .distinct("performed_on", "group")
+        .count()
+    )
 
 
 @property
@@ -281,12 +307,13 @@ def can_translate(self, locale, project):
     return self.has_perm("base.can_translate_locale", locale)
 
 
-def is_new_contributor(self, locale):
-    """Return True if the user hasn't made contributions to the locale yet."""
+def has_one_contribution(self, locale):
+    """Return True if the user has made just 1 contribution to the locale."""
     return (
-        not self.translation_set.filter(locale=locale)
+        self.translation_set.filter(locale=locale)
         .exclude(entity__resource__project__system_project=True)
-        .exists()
+        .count()
+        == 1
     )
 
 
@@ -499,7 +526,7 @@ User.add_to_class("badges_promotion_count", badges_promotion_count)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
-User.add_to_class("is_new_contributor", is_new_contributor)
+User.add_to_class("has_one_contribution", has_one_contribution)
 User.add_to_class("notification_list", notification_list)
 User.add_to_class("menu_notifications", menu_notifications)
 User.add_to_class("unread_notifications_display", unread_notifications_display)

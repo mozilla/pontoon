@@ -226,6 +226,9 @@ EMAIL_COMMUNICATIONS_HELP_TEXT = os.environ.get("EMAIL_COMMUNICATIONS_HELP_TEXT"
 EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT = os.environ.get(
     "EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT", ""
 )
+EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO = os.environ.get(
+    "EMAIL_MONTHLY_ACTIVITY_SUMMARY_INTRO", ""
+)
 
 # Log emails to console if the SendGrid credentials are missing.
 if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
@@ -659,6 +662,7 @@ PIPELINE_JS = {
         "source_filenames": (
             "js/lib/chart.umd.min.js",
             "js/lib/chartjs-adapter-date-fns.bundle.min.js",
+            "js/lib/confetti.browser.js",
             "js/table.js",
             "js/progress-chart.js",
             "js/double_list_selector.js",
@@ -794,6 +798,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+
 STATICFILES_DIRS = [
     os.path.join(TRANSLATE_DIR, "dist"),
     os.path.join(TRANSLATE_DIR, "public"),
@@ -907,9 +912,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
+# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = ("https:",)
+CSP_WORKER_SRC = ("https:",) + ("blob:",)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
@@ -1115,8 +1121,18 @@ DJANGO_NOTIFICATIONS_CONFIG = {
 NOTIFICATIONS_MAX_COUNT = 7
 
 # Integer representing a day of the week on which the `send_suggestion_notifications`
-# management command will run.
+# management command will run. 0 represents Monday, 6 represents Sunday. The default
+# value is 4 (Friday).
 SUGGESTION_NOTIFICATIONS_DAY = os.environ.get("SUGGESTION_NOTIFICATIONS_DAY", 4)
+
+# Integer representing a day of the week on which the weekly notification digest
+# email will be sent. 0 represents Monday, 6 represents Sunday. The default value
+# is 4 (Friday).
+NOTIFICATION_DIGEST_DAY = os.environ.get("NOTIFICATION_DIGEST_DAY", 4)
+
+# Integer representing a day of the month on which the Monthly activity summary
+# email will be sent.
+MONTHLY_ACTIVITY_SUMMARY_DAY = os.environ.get("MONTHLY_ACTIVITY_SUMMARY_DAY", 1)
 
 # Date from which badge data collection starts
 badges_start_date = os.environ.get("BADGES_START_DATE", "1970-01-01")
@@ -1127,14 +1143,21 @@ try:
 except ValueError as e:
     raise ValueError(f"Error: {e}")
 
-# Used for Review Master and Translation Champion
+# Used for Translation Champion badge
 BADGES_TRANSLATION_THRESHOLDS = list(
     map(
         int,
         os.environ.get("BADGES_TRANSLATION_THRESHOLDS", "5, 50, 250, 1000").split(","),
     )
 )
-# Used for Community Builder
+# Used for Review Master badge
+BADGES_REVIEW_THRESHOLDS = list(
+    map(
+        int,
+        os.environ.get("BADGES_REVIEW_THRESHOLDS", "5, 50, 250, 1000").split(","),
+    )
+)
+# Used for Community Builder badge
 BADGES_PROMOTION_THRESHOLDS = list(
     map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )

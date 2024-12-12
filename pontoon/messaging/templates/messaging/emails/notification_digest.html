@@ -1,164 +1,75 @@
+{% extends 'messaging/emails/base.html' %}
 {% import "contributors/widgets/notifications_menu.html" as Notifications with context %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}{{ subject }}{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+{% block extend_css %}
+.notifications {
+    font-size: 15px;
+    padding: 0;
+    text-align: left;
+}
 
-    <title>{{ subject }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+.notifications ul {
+    border-bottom: 1px solid #ededed;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
 
-    <style>
-        /* General Styles */
-        body {
-            margin: 0;
-            padding: 0;
-        }
+.notifications li {
+    margin: 0;
+}
 
-        table {
-            border-spacing: 0;
-            color: #444444;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 300;
-            margin: 0 auto;
-            width: 100%;
-        }
+.notifications li.horizontal-separator {
+    border-top: 1px solid #ededed;
+}
 
-        a {
-            text-decoration: none;
-        }
+.notifications li .item-content {
+    padding: 10px 0;
+}
 
-        img {
-            max-width: 100px;
-            height: auto;
-        }
+.notifications li .item-content .message {
+    color: #888888;
+    padding: 10px;
+}
 
-        table.inner {
-            max-width: 600px;
-            padding: 70px 0;
-        }
+.notifications li .item-content .message p {
+    margin: 0;
+}
 
-        table.inner a {
-            color: #F36;
-        }
+.notifications li .item-content .description ul {
+    border: none;
+    list-style: inside;
+    padding-top: 10px;
+}
 
-        .logo {
-            padding-bottom: 30px;
-            text-align: right;
-        }
+.notifications li .item-content .description ul li {
+    margin: 0;
+    padding: 2px 4px;
+}
 
-        .title {
-            font-size: 36px;
-            margin: 20px 0;
-            padding-bottom: 10px;
-        }
+.notifications li .item-content .timeago {
+    color: #888888;
+    display: block;
+    font-size: 11px;
+    font-weight: normal;
+    margin-top: 8px;
+    text-align: right;
+    text-transform: uppercase;
+}
+{% endblock %}
 
-        .subtitle {
-            font-size: 15px;
-            margin: 10px 0 20px 0;
-            padding-bottom: 30px;
-        }
+{% block header %}Hello.{% endblock %}
 
-        .footer {
-            font-size: 12px;
-            color: #888888;
-            margin-top: 20px;
-            padding-top: 20px;
-        }
+{% block subheader %}Here's a summary of the Pontoon notifications you've subscribed to.{% endblock %}
 
-        /* Notifications */
-        .notifications {
-            font-size: 15px;
-            padding: 0;
-            text-align: left;
-        }
+{% block content_class %}notifications{% endblock %}
 
-        .notifications ul {
-            border-bottom: 1px solid #ededed;
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
+{% block content %}
+{{ Notifications.list(notifications=notifications) }}
+{% endblock %}
 
-        .notifications li {
-            margin: 0;
-        }
-
-        .notifications li.horizontal-separator {
-            border-top: 1px solid #ededed;
-        }
-
-        .notifications li .item-content {
-            padding: 10px 0;
-        }
-
-        .notifications li .item-content .message {
-            color: #888888;
-            padding: 10px;
-        }
-
-        .notifications li .item-content .message p {
-            margin: 0;
-        }
-
-        .notifications li .item-content .description ul {
-            list-style: inside;
-            padding-top: 10px;
-        }
-
-        .notifications li .item-content .description ul li {
-            margin: 0;
-            padding: 2px 4px;
-        }
-
-        .notifications li .item-content .timeago {
-            color: #888888;
-            display: block;
-            font-size: 11px;
-            font-weight: normal;
-            margin-top: 8px;
-            text-align: right;
-            text-transform: uppercase;
-        }
-    </style>
-</head>
-
-<body>
-    <table class="outer">
-        <tr>
-            <td>
-                <table class="inner">
-                    <tr>
-                        <td class="logo">
-                            <a href="{{ full_url('pontoon.homepage') }}">
-                                <img src="{{ full_static('img/logo.png') }}" alt="Pontoon logo" width="52" height="64">
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="title">Hello.</td>
-                    </tr>
-                    <tr>
-                        <td class="subtitle">Here's a summary of the Pontoon notifications you've subscribed to.</td>
-                    </tr>
-                    <tr>
-                        <td class="notifications">
-                            {{ Notifications.list(notifications=notifications) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="footer">
-                            You can adjust your notifications subscriptions at any time from your
-                            <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-
-</html>
+{% block footer %}
+You can adjust your notifications subscriptions at any time from your <a href="{{ full_url('pontoon.contributors.settings') }}">Settings</a>.
+{% endblock %}

@@ -42,10 +42,12 @@ jobs:
         with:
           python-version: '3.11'
       - name: Set up uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          version: "0.4.13"
+          cache-dependency-glob: |
+            **/requirements/*.txt
+          version: "0.5.7"
       - name: Install requirements
         run: >
           uv pip install

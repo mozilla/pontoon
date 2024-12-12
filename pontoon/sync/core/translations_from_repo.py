@@ -383,6 +383,7 @@ def update_db_translations(
                 action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
                 performed_by=log_user,
                 translation=tx,
+                is_implicit_action=True,
             )
             for tx in rejected
         )

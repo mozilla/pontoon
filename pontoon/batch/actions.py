@@ -188,6 +188,7 @@ def replace_translations(form, user, translations, locale):
             action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
             performed_by=user,
             translation=t,
+            is_implicit_action=True,
         )
         for t in old_translations
     ]

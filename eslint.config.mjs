@@ -59,6 +59,7 @@ export default [
         jQuery: 'readonly',
         Clipboard: 'readonly',
         Chart: 'readonly',
+        confetti: 'readonly',
         NProgress: 'readonly',
         diff_match_patch: 'readonly',
         Highcharts: 'readonly',
