@@ -1508,9 +1508,9 @@ tqdm==4.66.5 \
     # via
     #   openai
     #   sacremoses
-translate-toolkit==3.13.3 \
-    --hash=sha256:5bd73841a0ae99dbb583489879a4fa742860b3faa75ef2bb9d4f06f9e3195d75 \
-    --hash=sha256:efabe2b974243da53cfdc31082d81f536008607a4ad4e65a3098a85b44ae2d6e
+translate-toolkit==3.14.1 \
+    --hash=sha256:2148c437c529d4eaf89c5a3bd5690376eabee97c3c39b7d4824001a7cf333e86 \
+    --hash=sha256:74dd963f770ec1d18e44895d8a9f86d47a0d73b270b22a69a5652f30ae2dca79
     # via -r requirements/default.in
 typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
