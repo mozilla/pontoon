@@ -431,7 +431,7 @@ def _create_or_update_translated_resources(
         resource = _get_resource_for_database_project(project)
 
     for locale in locales:
-        tr, created = TranslatedResource.objects.get_or_create(
+        tr, _ = TranslatedResource.objects.get_or_create(
             locale_id=locale.pk,
             resource=resource,
         )

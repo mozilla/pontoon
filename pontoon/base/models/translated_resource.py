@@ -7,6 +7,7 @@ from django.db.models import Q, Sum
 
 from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.models.entity import Entity
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 class TranslatedResourceQuerySet(models.QuerySet):
     def aggregated_stats(self):
         return self.aggregate(
-            total=Sum("resource__total_strings"),
+            total=Sum("total_strings"),
             approved=Sum("approved_strings"),
             pretranslated=Sum("pretranslated_strings"),
             errors=Sum("strings_with_errors"),
@@ -191,8 +192,18 @@ class TranslatedResource(AggregatedStats):
         if project_locale:
             project_locale.adjust_stats(*args, **kwargs)
 
+    def count_total_strings(self):
+        entities = Entity.objects.filter(resource=self.resource, obsolete=False)
+        total = entities.count()
+        plural_count = entities.exclude(string_plural="").count()
+        if plural_count:
+            total += (self.locale.nplurals - 1) * plural_count
+        return total
+
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
+
+        total = self.count_total_strings()
 
         translations = Translation.objects.filter(
             entity__resource=self.resource,
@@ -242,7 +253,7 @@ class TranslatedResource(AggregatedStats):
         ).count()
 
         if not save:
-            self.total_strings = self.resource.total_strings
+            self.total_strings = total
             self.approved_strings = approved
             self.pretranslated_strings = pretranslated
             self.strings_with_errors = errors
@@ -252,7 +263,7 @@ class TranslatedResource(AggregatedStats):
             return False
 
         # Calculate diffs to reduce DB queries
-        total_strings_diff = self.resource.total_strings - self.total_strings
+        total_strings_diff = total - self.total_strings
         approved_strings_diff = approved - self.approved_strings
         pretranslated_strings_diff = pretranslated - self.pretranslated_strings
         strings_with_errors_diff = errors - self.strings_with_errors

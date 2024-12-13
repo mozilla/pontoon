@@ -503,68 +503,27 @@ class Entity(DirtyFieldsMixin, models.Model):
         :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
             make them easier to pass into adjust_all_stats.
         """
-        translations = list(
-            self.translation_set.filter(locale=locale).prefetch_related(
-                "errors",
-                "warnings",
-            )
-        )
+        approved = 0
+        pretranslated = 0
+        errors = 0
+        warnings = 0
+        unreviewed = 0
 
-        approved_strings_count = len(
-            [
-                t
-                for t in translations
-                if t.approved and not (t.errors.exists() or t.warnings.exists())
-            ]
-        )
-
-        pretranslated_strings_count = len(
-            [
-                t
-                for t in translations
-                if t.pretranslated and not (t.errors.exists() or t.warnings.exists())
-            ]
-        )
-
-        if self.string_plural:
-            approved = int(approved_strings_count == locale.nplurals)
-            pretranslated = int(pretranslated_strings_count == locale.nplurals)
-
-        else:
-            approved = int(approved_strings_count > 0)
-            pretranslated = int(pretranslated_strings_count > 0)
-
-        if not (approved or pretranslated):
-            has_errors = bool(
-                [
-                    t
-                    for t in translations
-                    if (t.approved or t.pretranslated or t.fuzzy) and t.errors.exists()
-                ]
-            )
-            has_warnings = bool(
-                [
-                    t
-                    for t in translations
-                    if (t.approved or t.pretranslated or t.fuzzy)
-                    and t.warnings.exists()
-                ]
-            )
-
-            errors = int(has_errors)
-            warnings = int(has_warnings)
-
-        else:
-            errors = 0
-            warnings = 0
-
-        unreviewed_count = len(
-            [
-                t
-                for t in translations
-                if not (t.approved or t.pretranslated or t.fuzzy or t.rejected)
-            ]
-        )
+        for t in self.translation_set.filter(locale=locale).prefetch_related(
+            "errors", "warnings"
+        ):
+            if t.errors.exists():
+                if t.approved or t.pretranslated or t.fuzzy:
+                    errors += 1
+            elif t.warnings.exists():
+                if t.approved or t.pretranslated or t.fuzzy:
+                    warnings += 1
+            elif t.approved:
+                approved += 1
+            elif t.pretranslated:
+                pretranslated += 1
+            if not (t.approved or t.pretranslated or t.fuzzy or t.rejected):
+                unreviewed += 1
 
         return {
             "total_strings_diff": 0,
@@ -572,21 +531,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             "pretranslated_strings_diff": pretranslated,
             "strings_with_errors_diff": errors,
             "strings_with_warnings_diff": warnings,
-            "unreviewed_strings_diff": unreviewed_count,
-        }
-
-    @classmethod
-    def get_stats_diff(cls, stats_before, stats_after):
-        """
-        Return stat difference between the two states of the entity.
-
-        :arg dict stats_before: dict returned by get_stats() for the initial state.
-        :arg dict stats_after: dict returned by get_stats() for the current state.
-        :return: dictionary with differences between provided stats.
-        """
-        return {
-            stat_name: stats_after[stat_name] - stats_before[stat_name]
-            for stat_name in stats_before
+            "unreviewed_strings_diff": unreviewed,
         }
 
     def has_changed(self, locale):
