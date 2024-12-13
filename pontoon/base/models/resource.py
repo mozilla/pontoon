@@ -2,10 +2,6 @@ from django.db import models
 from django.utils import timezone
 
 
-class ResourceQuerySet(models.QuerySet):
-    pass
-
-
 class Resource(models.Model):
     project = models.ForeignKey("Project", models.CASCADE, related_name="resources")
     path = models.TextField()  # Path to localization file
@@ -50,8 +46,6 @@ class Resource(models.Model):
         Format.INI,
         Format.PROPERTIES,
     }
-
-    objects = ResourceQuerySet.as_manager()
 
     class Meta:
         unique_together = (("project", "path"),)
