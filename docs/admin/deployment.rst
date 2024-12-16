@@ -195,18 +195,18 @@ you create:
    translation engine by Google.
 
 ``INACTIVE_CONTRIBUTOR_PERIOD``
-   Optional. Number of days in which the contributor needs to log in in order not to
-   receive the inactive account email. The default value is 180 (6 months).
+   Optional. Number of months in which the contributor needs to log in in order not to
+   receive the inactive account email. The default value is 6.
 
 ``INACTIVE_TRANSLATOR_PERIOD``
-   Optional. Number of days in which the locale translator needs to submit or review at
-   least one translations in order not to receive the inactive account email.
-   The default value is 60 (2 months).
+   Optional. Number of months in which the locale translator needs to submit or review at
+   least one translation in order not to receive the inactive account email.
+   The default value is 2.
 
 ``INACTIVE_MANAGER_PERIOD``
-   Optional. Number of days in which the locale manager needs to submit or review at
-   least one translations in order not to receive the inactive account email.
-   The default value is 60 (2 months).
+   Optional. Number of months in which the locale manager needs to submit or review at
+   least one translation in order not to receive the inactive account email.
+   The default value is 2.
 
 ``LOG_TO_FILE``
    Optional. Enables logging to a file (default: ``False``).

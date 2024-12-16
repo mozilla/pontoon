@@ -437,6 +437,7 @@ def send_inactive_contributor_emails(users):
     body_html = template.render(
         {
             "content": content,
+            "settings": settings,
             "subject": subject,
         }
     )
@@ -480,6 +481,7 @@ def send_inactive_translator_emails(users, translator_map):
         body_html = template.render(
             {
                 "content": content,
+                "settings": settings,
                 "subject": subject,
             }
         )
@@ -522,6 +524,7 @@ def send_inactive_manager_emails(users, manager_map):
         body_html = template.render(
             {
                 "content": content,
+                "settings": settings,
                 "subject": subject,
             }
         )

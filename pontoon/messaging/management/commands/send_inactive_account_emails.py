@@ -41,7 +41,7 @@ class Command(BaseCommand):
         # Inactive Contributors:
         # - Contributor role
         # - At least 1 non-Machinery translation submitted to non-system projects
-        # - No login for at least INACTIVE_CONTRIBUTOR_PERIOD
+        # - No login for at least INACTIVE_CONTRIBUTOR_PERIOD months
         # - Has not received inactive account reminder in the past
         inactive_contributors = (
             users.exclude(pk__in=managers.keys() | translators.keys())
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 translation__entity__resource__project__system_project=False,
                 translation__machinery_sources=[],
                 last_login__lte=now()
-                - timedelta(days=settings.INACTIVE_CONTRIBUTOR_PERIOD),
+                - timedelta(days=settings.INACTIVE_CONTRIBUTOR_PERIOD * 30),
             )
             .distinct()
         )
@@ -58,14 +58,14 @@ class Command(BaseCommand):
 
         # Inactive Translators:
         # - Translator role
-        # - 0 translations submitted in INACTIVE_TRANSLATOR_PERIOD
-        # - 0 translations reviewed in INACTIVE_TRANSLATOR_PERIOD
+        # - 0 translations submitted in INACTIVE_TRANSLATOR_PERIOD months
+        # - 0 translations reviewed in INACTIVE_TRANSLATOR_PERIOD months
         # - Has not received inactive account reminder in the past
         active_user_ids = (
             ActionLog.objects.filter(
                 action_type__startswith="translation:",
                 created_at__gte=now()
-                - timedelta(days=settings.INACTIVE_TRANSLATOR_PERIOD),
+                - timedelta(days=settings.INACTIVE_TRANSLATOR_PERIOD * 30),
             )
             .values_list("performed_by", flat=True)
             .distinct()
@@ -85,14 +85,14 @@ class Command(BaseCommand):
 
         # Inactive Managers:
         # - Manager role
-        # - 0 translations submitted in INACTIVE_MANAGER_PERIOD
-        # - 0 translations reviewed in INACTIVE_MANAGER_PERIOD
+        # - 0 translations submitted in INACTIVE_MANAGER_PERIOD months
+        # - 0 translations reviewed in INACTIVE_MANAGER_PERIOD months
         # - Has not received inactive account reminder in the past
         active_user_ids = (
             ActionLog.objects.filter(
                 action_type__startswith="translation:",
                 created_at__gte=now()
-                - timedelta(days=settings.INACTIVE_MANAGER_PERIOD),
+                - timedelta(days=settings.INACTIVE_MANAGER_PERIOD * 30),
             )
             .values_list("performed_by", flat=True)
             .distinct()
