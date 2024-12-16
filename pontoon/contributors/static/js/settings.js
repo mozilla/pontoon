@@ -15,7 +15,7 @@ $(function () {
     }
 
     const attribute = self.data('attribute');
-    const value = self.text();
+    const value = self.val();
 
     $.ajax({
       url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
@@ -63,7 +63,7 @@ $(function () {
         self.toggleClass('enabled');
 
         // If notification type disabled, uncheck email checkbox
-        if (!self.is('.enabled')) {
+        if (self.parents('.notifications').length && !self.is('.enabled')) {
           const emailChecbox = self.next('.check-box');
           if (emailChecbox.length) {
             emailChecbox.removeClass('enabled');
