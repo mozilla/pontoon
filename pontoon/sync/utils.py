@@ -9,6 +9,7 @@ from django.core.files import File
 from django.utils import timezone
 
 from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
+from pontoon.base.models.repository import Repository
 from pontoon.sync.core.checkout import checkout_repos
 from pontoon.sync.core.paths import UploadPaths, find_paths
 from pontoon.sync.core.stats import update_stats
@@ -21,37 +22,39 @@ def translations_target_url(
     project: Project, locale: Locale, resource_path: str
 ) -> str | None:
     """The target repository URL for a resource, for direct download."""
-    checkouts = checkout_repos(project, shallow=True)
-    paths = find_paths(project, checkouts)
-    target, _ = paths.target(resource_path)
-    if not target:
-        return None
-    abs_path = paths.format_target_path(target, locale.code)
-    print([abs_path, checkouts.target.path])
-    rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
 
-    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", checkouts.target.url)
+    if project.repositories.count() > 1:
+        # HACK: Let's assume that no config is used, and the target repo root is the right base.
+        target_repo: Repository = project.repositories.get(source_repo=False)
+        rel_path = f"{locale.code}/{resource_path}"
+    else:
+        checkouts = checkout_repos(project, shallow=True)
+        target_repo = checkouts.target.repo
+        paths = find_paths(project, checkouts)
+        target, _ = paths.target(resource_path)
+        if not target:
+            return None
+        abs_path = paths.format_target_path(target, locale.code)
+        rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
+
+    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
     if github:
         org, repo = github.groups()
-        ref = (
-            f"refs/heads/{checkouts.target.repo.branch}"
-            if checkouts.target.repo.branch
-            else "HEAD"
-        )
+        ref = f"refs/heads/{target_repo.branch}" if target_repo.branch else "HEAD"
         return f"https://raw.githubusercontent.com/{org}/{repo}/{ref}/{rel_path}"
 
-    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", checkouts.target.url)
+    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
     if gitlab:
         org, repo = gitlab.groups()
-        ref = checkouts.target.repo.branch or "HEAD"
+        ref = target_repo.branch or "HEAD"
         return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
 
-    if checkouts.target.repo.permalink_prefix:
-        url = checkouts.target.repo.permalink_prefix.format(locale_code=locale.code)
+    if target_repo.permalink_prefix:
+        url = target_repo.permalink_prefix.format(locale_code=locale.code)
         return f"{url}{'' if url.endswith('/') else '/'}{rel_path}"
 
     # Default to bare repo link
-    return re.sub(r"^.*?(://|@)", "https://", checkouts.target.url, count=1)
+    return re.sub(r"^.*?(://|@)", "https://", target_repo.url, count=1)
 
 
 # FIXME Currently not in use, to be refactored for proper download support
