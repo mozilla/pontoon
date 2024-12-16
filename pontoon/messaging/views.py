@@ -5,22 +5,20 @@ import uuid
 from guardian.decorators import permission_required_or_403
 from notifications.signals import notify
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models import Count, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.template.loader import get_template
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from pontoon.base.models import Locale, Project, Translation, UserProfile
 from pontoon.base.utils import require_AJAX, split_ints
-from pontoon.messaging import forms, utils
+from pontoon.messaging import forms
+from pontoon.messaging.emails import send_manual_emails
 from pontoon.messaging.models import Message
 
 
@@ -314,30 +312,7 @@ def send_message(request):
             if recipient.profile.email_communications_enabled
         ]
 
-        template = get_template("messaging/emails/manual.html")
-
-        for recipient in email_recipients:
-            body_html = template.render(
-                {
-                    "subject": subject,
-                    "content": body,
-                    "is_transactional": is_transactional,
-                    "settings": settings,
-                    "user": recipient,
-                }
-            )
-            body_text = utils.html_to_plain_text_with_links(body_html)
-
-            msg = EmailMultiAlternatives(
-                subject=subject,
-                body=body_text,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[recipient.contact_email],
-            )
-            msg.attach_alternative(body_html, "text/html")
-            msg.send()
-
-        log.info(f"Emails sent to {len(email_recipients)} users.")
+        send_manual_emails(email_recipients, subject, body, is_transactional)
 
     if not send_to_myself:
         message = form.save(commit=False)

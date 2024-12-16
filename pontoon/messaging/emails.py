@@ -572,3 +572,33 @@ def send_verification_email(user, link):
     msg.send()
 
     log.info(f"Verification email sent to { user.contact_email }.")
+
+
+def send_manual_emails(users, subject, body, is_transactional):
+    """
+    Sends manual emails composed in the Messaging Center.
+    """
+    template = get_template("messaging/emails/manual.html")
+
+    for user in users:
+        body_html = template.render(
+            {
+                "subject": subject,
+                "content": body,
+                "is_transactional": is_transactional,
+                "settings": settings,
+                "user": user,
+            }
+        )
+        body_text = html_to_plain_text_with_links(body_html)
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body_text,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.contact_email],
+        )
+        msg.attach_alternative(body_html, "text/html")
+        msg.send()
+
+    log.info(f"Emails sent to {len(users)} users.")
