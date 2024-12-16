@@ -18,6 +18,7 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseForbidden,
+    HttpResponseRedirect,
     JsonResponse,
     StreamingHttpResponse,
 )
@@ -756,33 +757,26 @@ def perform_checks(request):
 
 @transaction.atomic
 def download_translations(request):
-    """Download translated resource."""
+    """Download translated resource from its backing repository."""
 
-    # FIXME: Zip downloads and single-file downloads should be separate.
-    from pontoon.sync.utils import download_translations_zip
+    from pontoon.sync.utils import translations_target_url
 
     try:
         slug = request.GET["slug"]
         code = request.GET["code"]
-        # res_path = request.GET["part"]
+        res_path = request.GET["part"]
     except MultiValueDictKeyError:
         raise Http404
 
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
     locale = get_object_or_404(Locale, code=code)
-    content, filename = download_translations_zip(project, locale)
 
-    if content is None:
+    # FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
+    url = translations_target_url(project, locale, res_path)
+    if url and url.startswith("https://"):
+        return HttpResponseRedirect(url)
+    else:
         raise Http404
-
-    content_type = "application/zip" if filename.endswith(".zip") else "text/plain"
-    return HttpResponse(
-        content,
-        headers={
-            "Content-Type": content_type,
-            "Content-Disposition": f"attachment; filename={filename}",
-        },
-    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

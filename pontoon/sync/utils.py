@@ -1,3 +1,5 @@
+import re
+
 from io import BytesIO
 from os.path import basename, exists, join, relpath
 from tempfile import TemporaryDirectory
@@ -14,6 +16,45 @@ from pontoon.sync.core.translations_from_repo import find_db_updates, write_db_u
 from pontoon.sync.core.translations_to_repo import update_changed_resources
 
 
+# FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
+def translations_target_url(
+    project: Project, locale: Locale, resource_path: str
+) -> str | None:
+    """The target repository URL for a resource, for direct download."""
+    checkouts = checkout_repos(project, shallow=True)
+    paths = find_paths(project, checkouts)
+    target, _ = paths.target(resource_path)
+    if not target:
+        return None
+    abs_path = paths.format_target_path(target, locale.code)
+    print([abs_path, checkouts.target.path])
+    rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
+
+    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", checkouts.target.url)
+    if github:
+        org, repo = github.groups()
+        ref = (
+            f"refs/heads/{checkouts.target.repo.branch}"
+            if checkouts.target.repo.branch
+            else "HEAD"
+        )
+        return f"https://raw.githubusercontent.com/{org}/{repo}/{ref}/{rel_path}"
+
+    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", checkouts.target.url)
+    if gitlab:
+        org, repo = gitlab.groups()
+        ref = checkouts.target.repo.branch or "HEAD"
+        return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
+
+    if checkouts.target.repo.permalink_prefix:
+        url = checkouts.target.repo.permalink_prefix.format(locale_code=locale.code)
+        return f"{url}{'' if url.endswith('/') else '/'}{rel_path}"
+
+    # Default to bare repo link
+    return re.sub(r"^.*?(://|@)", "https://", checkouts.target.url, count=1)
+
+
+# FIXME Currently not in use, to be refactored for proper download support
 def download_translations_zip(
     project: Project, locale: Locale
 ) -> tuple[bytes, str] | tuple[None, None]:
