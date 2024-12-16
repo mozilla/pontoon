@@ -2,8 +2,6 @@ import json
 import logging
 import uuid
 
-from urllib.parse import urljoin
-
 from guardian.decorators import permission_required_or_403
 from notifications.signals import notify
 
@@ -16,6 +14,7 @@ from django.db import transaction
 from django.db.models import Count, F
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.template.loader import get_template
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -309,35 +308,36 @@ def send_message(request):
         log.info(f"Notifications sent to {len(recipients)} users.")
 
     if is_email:
-        unsubscribe_url = urljoin(settings.SITE_URL, f"unsubscribe/{uuid}")
-        footer = (
-            f"""<br><br>
-{ settings.EMAIL_COMMUNICATIONS_FOOTER_PRE_TEXT }<br>To no longer receive emails like these, unsubscribe here: <a href="{ unsubscribe_url }">Unsubscribe</a>.
-        """
-            if not is_transactional
-            else ""
-        )
-        html_template = body + footer
-        text_template = utils.html_to_plain_text_with_links(html_template)
+        email_recipients = [
+            recipient
+            for recipient in recipients
+            if recipient.profile.email_communications_enabled
+        ]
 
-        for recipient in recipients:
-            if not recipient.profile.email_communications_enabled:
-                continue
+        template = get_template("messaging/emails/manual.html")
 
-            unique_id = str(recipient.profile.unique_id)
-            text = text_template.replace("{ uuid }", unique_id)
-            html = html_template.replace("{ uuid }", unique_id)
+        for recipient in email_recipients:
+            body_html = template.render(
+                {
+                    "subject": subject,
+                    "content": body,
+                    "is_transactional": is_transactional,
+                    "settings": settings,
+                    "user": recipient,
+                }
+            )
+            body_text = utils.html_to_plain_text_with_links(body_html)
 
             msg = EmailMultiAlternatives(
                 subject=subject,
-                body=text,
+                body=body_text,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[recipient.contact_email],
             )
-            msg.attach_alternative(html, "text/html")
+            msg.attach_alternative(body_html, "text/html")
             msg.send()
 
-        log.info(f"Emails sent to {len(recipients)} users.")
+        log.info(f"Emails sent to {len(email_recipients)} users.")
 
     if not send_to_myself:
         message = form.save(commit=False)
