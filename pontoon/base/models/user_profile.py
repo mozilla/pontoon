@@ -131,6 +131,12 @@ class UserProfile(models.Model):
     # Not started:0, Completed: -1, Finished Step No. otherwise
     tour_status = models.IntegerField(default=0)
 
+    # Used to keep track of the latest onboarding email sent.
+    onboarding_email_status = models.IntegerField(default=0)
+
+    # Used to keep track of the latest inactive reminder email sent.
+    last_inactive_reminder_sent = models.DateTimeField(null=True, blank=True)
+
     # Used to mark users as system users.
     system_user = models.BooleanField(default=False)
 

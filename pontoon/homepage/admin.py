@@ -10,8 +10,5 @@ class HomepageAdmin(admin.ModelAdmin):
     )
     form = forms.HomepageForm
 
-    class Media:
-        css = {"all": ("css/homepage_admin.css",)}
-
 
 admin.site.register(models.Homepage, HomepageAdmin)

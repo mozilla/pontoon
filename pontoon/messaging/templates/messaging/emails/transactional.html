@@ -1,0 +1,17 @@
+{% extends 'messaging/emails/base.html' %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block extend_css %}{% endblock %}
+
+{% block header %}Hello.{% endblock %}
+
+{% block subheader %}{% endblock %}
+
+{% block content_class %}{% endblock %}
+
+{% block content %}
+{{ content|safe }}
+{% endblock %}
+
+{% block footer %}{% endblock %}

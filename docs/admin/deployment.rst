@@ -198,6 +198,20 @@ you create:
    Optional. Set your `Google Cloud AutoML Translation`_ model ID to use custom machine
    translation engine by Google.
 
+``INACTIVE_CONTRIBUTOR_PERIOD``
+   Optional. Number of months in which the contributor needs to log in in order not to
+   receive the inactive account email. The default value is 6.
+
+``INACTIVE_TRANSLATOR_PERIOD``
+   Optional. Number of months in which the locale translator needs to submit or review at
+   least one translation in order not to receive the inactive account email.
+   The default value is 2.
+
+``INACTIVE_MANAGER_PERIOD``
+   Optional. Number of months in which the locale manager needs to submit or review at
+   least one translation in order not to receive the inactive account email.
+   The default value is 2.
+
 ``LOG_TO_FILE``
    Optional. Enables logging to a file (default: ``False``).
    This is useful for retaining log data for later analysis or troubleshooting.
@@ -234,6 +248,14 @@ you create:
    Optional. Integer representing a day of the week on which the weekly notification
    digest email will be sent. 0 represents Monday, 6 represents Sunday. The default
    value is 4 (Friday).
+
+``ONBOARDING_EMAIL_2_DELAY``
+   Optional. The number of days to wait after user registration before sending the
+   2nd onboarding email. The default value is 2.
+
+``ONBOARDING_EMAIL_3_DELAY``
+   Optional. The number of days to wait after user registration before sending the
+   3rd onboarding email. The default value is 7.
 
 ``OPENAI_API_KEY``
    Optional. Set your `OpenAI API` key to add the ability to refine machine
@@ -470,13 +492,53 @@ designed to run on a weekly basis.
 Send Review Notifications
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 This job sends notifications about newly reviewed (approved or rejected)
-suggestions to the authors of those suggestions.
-
-The command is designed to run on a daily basis.
+suggestions to the authors of those suggestions. The command is designed to
+run on a daily basis.
 
 .. code-block:: bash
 
    ./manage.py send_review_notifications
+
+Send Notification Emails
+~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends notifications in daily and weekly email digests. Daily
+notifications are sent every time the command runs, while weekly notifications
+are sent only on the configured day (e.g., Friday).
+
+.. code-block:: bash
+
+   ./manage.py send_notification_emails
+
+Send Monthly Activity Emails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This job sends a summary of monthly activity to users via email. It is designed
+to run on a specific day of the month but can be forced to run at any time
+using the --force argument.
+
+.. code-block:: bash
+
+   ./manage.py send_monthly_activity_emails
+
+Send Onboarding Emails
+~~~~~~~~~~~~~~~~~~~~~~
+Pontoon sends onboarding emails to new users. The first one is sent upon
+registration, while this job sends the 2nd and 3rd email. You can configure
+the number of days to wait before sending the 2nd and 3rd emails. The command
+is designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_oboarding_emails
+
+Send Inactive Account Emails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This command sends reminder emails to inactive users. Users in different roles
+get different emails based on different activity criteria, which can be
+configured in settings. The command is designed to run daily.
+
+.. code-block:: bash
+
+   ./manage.py send_inactive_account_emails
 
 .. _collect-insights:
 
