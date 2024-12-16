@@ -15,7 +15,7 @@ $(function () {
     }
 
     const attribute = self.data('attribute');
-    const value = self.text();
+    const value = self.val();
 
     $.ajax({
       url: '/api/v1/user/' + $('#profile input[name="username"]').val() + '/',
