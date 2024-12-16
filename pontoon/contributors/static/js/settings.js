@@ -63,7 +63,7 @@ $(function () {
         self.toggleClass('enabled');
 
         // If notification type disabled, uncheck email checkbox
-        if (!self.is('.enabled')) {
+        if (self.parents('.notifications').length && !self.is('.enabled')) {
           const emailChecbox = self.next('.check-box');
           if (emailChecbox.length) {
             emailChecbox.removeClass('enabled');
