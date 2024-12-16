@@ -301,6 +301,9 @@ def update_db_translations(
     approve_count = 0
     for tx in suggestions.values():
         _, fuzzy = repo_translations[(tx.entity_id, tx.locale_id)]
+        if fuzzy and tx.fuzzy:
+            # Keep fuzzy suggestions unchanged
+            continue
 
         if tx.rejected:
             tx.rejected = False

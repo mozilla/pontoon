@@ -9,7 +9,12 @@ import pytest
 from django.conf import settings
 from django.utils import timezone
 
-from pontoon.base.models import TranslatedResource, Translation, TranslationMemoryEntry
+from pontoon.base.models import (
+    ChangedEntityLocale,
+    TranslatedResource,
+    Translation,
+    TranslationMemoryEntry,
+)
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
@@ -179,3 +184,104 @@ def test_remove_po_target_resource():
         update_stats(project)
         project.refresh_from_db()
         assert (project.total_strings, project.approved_strings) == (6, 6)
+
+
+@pytest.mark.django_db
+def test_update_fuzzy_po_translation():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test", name="Test French")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-fuzzy-po", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project, path="res.po", format="po", total_strings=3
+        )
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+        for i in range(5):
+            key = f"key-{i}"
+            string = f"Message {i}"
+            fuzzy = i < 3
+            entity = EntityFactory.create(resource=res, string=string, key=key)
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string=string.replace("Message", "Fuzzy" if fuzzy else "Translation"),
+                active=True,
+                approved=not fuzzy,
+                fuzzy=fuzzy,
+            )
+        ChangedEntityLocale.objects.filter(entity__resource=res).delete()
+
+        # Filesystem setup
+        res_po = dedent(
+            """
+            #, fuzzy
+            msgid "key-0"
+            msgstr "Fuzzy 0"
+
+            #, fuzzy
+            msgid "key-1"
+            msgstr "Fuzzy Changed 1"
+
+            msgid "key-2"
+            msgstr "Not Fuzzy 2"
+
+            msgid "key-3"
+            msgstr "Translation 3"
+
+            #, fuzzy
+            msgid "key-4"
+            msgstr "Made Fuzzy 4"
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {"en-US": {"res.pot": ""}, "fr-Test": {"res.po": res_po}},
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("fr-Test", "res.po")],
+            removed=[],
+        )
+        checkouts = Checkouts(mock_checkout, mock_checkout)
+        paths = find_paths(project, checkouts)
+
+        # Test sync
+        sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
+        trans = Translation.objects.filter(
+            entity__resource=res, locale=locale
+        ).values_list("string", flat=True)
+        assert set(trans) == {
+            "Fuzzy 0",
+            "Fuzzy 1",
+            "Fuzzy Changed 1",
+            "Fuzzy 2",
+            "Not Fuzzy 2",
+            "Translation 3",
+            "Translation 4",
+            "Made Fuzzy 4",
+        }
+        assert set(trans.filter(active=True)) == {
+            "Fuzzy 0",
+            "Fuzzy Changed 1",
+            "Not Fuzzy 2",
+            "Translation 3",
+            "Made Fuzzy 4",
+        }
+        assert set(trans.filter(fuzzy=True)) == {
+            "Fuzzy 0",
+            "Fuzzy Changed 1",
+            "Made Fuzzy 4",
+        }
+        assert set(trans.filter(approved=True)) == {
+            "Not Fuzzy 2",
+            "Translation 3",
+        }
