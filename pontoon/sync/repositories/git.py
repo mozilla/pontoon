@@ -1,4 +1,5 @@
 import logging
+import re
 
 from django.conf import settings
 
@@ -10,6 +11,8 @@ log = logging.getLogger(__name__)
 
 def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     log.debug(f"Git: Updating repo {source}")
+    if branch and re.search(r"[^%&()+,\-./0-9;<=>@A-Z_a-z{|}]|^-|\.\.|{@", branch):
+        raise PullFromRepositoryException(f"Git: Unsupported branch name {branch}")
 
     command = ["git", "rev-parse", "--is-shallow-repository"]
     code, output, error = execute(command, target)
@@ -17,46 +20,49 @@ def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     if code == 0:
         command = (
             ["git", "fetch", "origin"]
-            if shallow or output.strip() == "false"
+            if shallow or output.strip() == b"false"
             else ["git", "fetch", "--unshallow", "origin"]
         )
-        execute(command, target)
+        code, output, error = execute(command, target)
+
+    if code == 0:
+        log.debug("Git: Repo updated.")
+
+        if branch:
+            command = ["git", "checkout", branch]
+            code, output, error = execute(command, target)
+            if code != 0:
+                if output:
+                    log.debug(output)
+                raise PullFromRepositoryException(error)
+            log.debug(f"Git: Branch {branch} checked out.")
 
         # Undo any local changes
         remote = f"origin/{branch}" if branch else "origin"
-
         command = ["git", "reset", "--hard", remote]
         code, output, error = execute(command, target)
-
-    if code != 0:
+        if code != 0:
+            if output:
+                log.debug(output)
+            raise PullFromRepositoryException(error)
+    else:
         if error != "No such file or directory":
-            log.debug(output)
+            if output:
+                log.debug(output)
             log.warning(f"Git: {error}")
         log.debug("Git: Cloning repo...")
-        command = (
-            ["git", "clone", "--depth", "1", source, target]
-            if shallow
-            else ["git", "clone", source, target]
-        )
+        command = ["git", "clone"]
+        if branch:
+            command.extend(["--branch", branch])
+        if shallow:
+            command.extend(["--depth", "1"])
+        command.extend([source, target])
         code, output, error = execute(command)
-
         if code != 0:
-            log.debug(output)
+            if output:
+                log.debug(output)
             raise PullFromRepositoryException(error)
-
         log.debug("Git: Repo cloned.")
-    else:
-        log.debug("Git: Repo updated.")
-
-    if branch:
-        command = ["git", "checkout", branch]
-        code, output, error = execute(command, target)
-
-        if code != 0:
-            log.debug(output)
-            raise PullFromRepositoryException(error)
-
-        log.debug(f"Git: Branch {branch} checked out.")
 
 
 def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
