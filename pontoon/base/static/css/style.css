@@ -778,8 +778,8 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .description ul {
-  list-style: inside;
-  padding-top: 10px;
+  list-style: disc;
+  padding: 10px 0 10px 20px;
 }
 
 .notifications .menu li.notification-item .message {
@@ -833,15 +833,16 @@ header .right .select .menu {
 }
 
 .notifications .menu li.notification-item .message p {
-  padding: 5px 0;
+  padding: 10px 0;
 }
 
 .notifications .menu li.notification-item .message ol {
-  margin-left: 1.2em;
+  padding-left: 20px;
 }
 
 .notifications .menu li.notification-item .message ul {
-  list-style: inside;
+  list-style: disc;
+  padding: 10px 0 10px 20px;
 }
 
 /* End message styling */

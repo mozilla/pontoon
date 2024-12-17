@@ -52,9 +52,13 @@
 }
 
 .user-notification .description ul {
-  list-style: inside;
-  margin-left: 0;
-  padding: 12px 0 0 4px;
+  list-style: disc;
+  margin: 0;
+  padding: 10px 0 10px 20px;
+}
+
+.user-notification .description ul li {
+  padding: 2px 4px;
 }
 
 .user-notification .message {
@@ -102,15 +106,21 @@
 }
 
 .user-notification .message p {
-  padding: 5px 0;
+  padding: 10px 0;
 }
 
 .user-notification .message ol {
-  margin-left: 1.2em;
+  margin-left: 20px;
 }
 
 .user-notification .message ul {
-  list-style: inside;
+  list-style: disc;
+  margin: 0;
+  padding: 10px 0 10px 20px;
+}
+
+.user-notification .message ul li {
+  padding: 2px 4px;
 }
 /* End message styling */
 
