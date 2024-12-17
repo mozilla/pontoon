@@ -312,7 +312,7 @@ def send_message(request):
             if recipient.profile.email_communications_enabled
         ]
 
-        send_manual_emails(email_recipients, subject, body, is_transactional)
+        send_manual_emails.delay(email_recipients, subject, body, is_transactional)
 
     if not send_to_myself:
         message = form.save(commit=False)
