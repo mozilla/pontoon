@@ -2,9 +2,9 @@ import calendar
 import datetime
 import logging
 
-from celery import shared_task
 from collections import defaultdict
 
+from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from django_jinja.backend import Jinja2
 from notifications.models import Notification
