@@ -176,8 +176,9 @@ def update_changed_resources(
                 entity__resource__project_id=project.pk,
                 entity__resource__path=path,
                 locale__in=[locale.pk for locale in locales],
+                active=True,
             )
-            .filter(Q(approved=True) | Q(pretranslated=True))
+            .filter(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
             .exclude(approved_date__gt=now)  # includes approved_date = None
             .select_related("entity")
         )

@@ -106,6 +106,7 @@ def test_remove_entity():
                     entity=entity,
                     locale=locale,
                     string=f"key-{i} = Translation {i}\n",
+                    active=True,
                     approved=True,
                 )
 
@@ -183,6 +184,7 @@ def test_add_translation():
                 entity=entity,
                 locale=locale,
                 string=f"key-{i} = Translation {i}\n",
+                active=True,
                 approved=True,
             )
 

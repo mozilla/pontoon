@@ -1,6 +1,7 @@
+import re
+
 from os import makedirs
 from os.path import join
-from re import fullmatch
 from tempfile import TemporaryDirectory
 from textwrap import dedent
 from unittest.mock import patch
@@ -9,14 +10,14 @@ import pytest
 
 from django.conf import settings
 
-from pontoon.base.models import ChangedEntityLocale
-from pontoon.base.models.translated_resource import TranslatedResource
+from pontoon.base.models import ChangedEntityLocale, TranslatedResource, Translation
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
     ProjectFactory,
     RepositoryFactory,
     ResourceFactory,
+    TranslatedResourceFactory,
     TranslationFactory,
 )
 from pontoon.sync.tasks import sync_project_task
@@ -64,6 +65,7 @@ def test_end_to_end():
                     entity=entity,
                     locale=locale,
                     string=f"key-{i} = New translation {locale.code[:2]} {i}\n",
+                    active=True,
                     approved=True,
                 )
 
@@ -138,7 +140,7 @@ def test_end_to_end():
             ),
             ("revision", (tgt_root,)),
         ]
-        assert fullmatch(
+        assert re.fullmatch(
             dedent(
                 r"""
                 Pontoon/test-project: Update Test (German|French) \((de|fr)-Test\), Test (German|French) \((de|fr)-Test\)
@@ -177,6 +179,7 @@ def test_translation_before_source():
             ),
             locale=locale_de,
             string="a0 = Translation 0\n",
+            active=True,
             approved=True,
         )
 
@@ -187,6 +190,7 @@ def test_translation_before_source():
             ),
             locale=locale_de,
             string="b0 = Translation 0\n",
+            active=True,
             approved=True,
         )
 
@@ -231,3 +235,140 @@ def test_translation_before_source():
         # Test -- New a0 translation is picked up, added a1 is dropped
         with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
             assert file.read() == "a0 = New translation 0\n"
+
+
+@pytest.mark.django_db
+def test_fuzzy():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        synclog = SyncLogFactory.create()
+        locale = LocaleFactory.create(code="fr-Test", name="Test French")
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-write-fuzzy", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(project=project, path="res.po", format="po")
+        TranslatedResourceFactory.create(locale=locale, resource=res)
+        for i in range(5):
+            string = f"Message {i}\n"
+            fuzzy = i < 3
+            entity = EntityFactory.create(resource=res, key=f"key-{i}", string=string)
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string=string.replace("Message", "Fuzzy" if fuzzy else "Translation"),
+                active=True,
+                approved=not fuzzy,
+                fuzzy=fuzzy,
+            )
+        ChangedEntityLocale.objects.filter(entity__resource__project=project).delete()
+
+        # Filesystem setup
+        res_src = dedent(
+            """
+            #, fuzzy
+            msgid "key-0"
+            msgstr ""
+
+            #, fuzzy
+            msgid "key-1"
+            msgstr ""
+
+            msgid "key-2"
+            msgstr ""
+
+            msgid "key-3"
+            msgstr ""
+
+            #, fuzzy
+            msgid "key-4"
+            msgstr ""
+            """
+        )
+        res_tgt = dedent(
+            """
+            #, fuzzy
+            msgid "key-0"
+            msgstr "Fuzzy 0"
+
+            #, fuzzy
+            msgid "key-1"
+            msgstr "Fuzzy Changed 1"
+
+            msgid "key-2"
+            msgstr "Not Fuzzy 2"
+
+            msgid "key-3"
+            msgstr "Translation 3"
+
+            #, fuzzy
+            msgid "key-4"
+            msgstr "Made Fuzzy 4"
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {"en-US": {"res.pot": res_src}, "fr-Test": {"res.po": res_tgt}},
+        )
+
+        # Sync
+        mock_vcs = MockVersionControl(
+            changes=([join("en-US", "res.pot"), join("fr-test", "res.po")], [], [])
+        )
+        with (
+            patch("pontoon.sync.core.checkout.get_repo", return_value=mock_vcs),
+            patch(
+                "pontoon.sync.core.translations_to_repo.get_repo",
+                return_value=mock_vcs,
+            ),
+        ):
+            sync_project_task(project.id, synclog.id)
+
+        # Test
+        trans = Translation.objects.filter(
+            entity__resource=res, locale=locale, active=True
+        ).values_list("string", flat=True)
+        assert set(trans) == {
+            "Fuzzy 0",
+            "Fuzzy Changed 1",
+            "Not Fuzzy 2",
+            "Translation 3",
+            "Made Fuzzy 4",
+        }
+        assert set(trans.filter(fuzzy=True)) == {
+            "Fuzzy 0",
+            "Fuzzy Changed 1",
+            "Made Fuzzy 4",
+        }
+        assert set(trans.filter(approved=True)) == {
+            "Not Fuzzy 2",
+            "Translation 3",
+        }
+        with open(join(repo.checkout_path, "fr-Test", "res.po")) as file:
+            assert re.sub(r'^".*"\n', "", file.read(), flags=re.MULTILINE) == dedent(
+                """\
+                #
+                msgid ""
+                msgstr ""
+
+                #, fuzzy
+                msgid "key-0"
+                msgstr "Fuzzy 0"
+
+                #, fuzzy
+                msgid "key-1"
+                msgstr "Fuzzy Changed 1"
+
+                msgid "key-2"
+                msgstr "Not Fuzzy 2"
+
+                msgid "key-3"
+                msgstr "Translation 3"
+
+                #, fuzzy
+                msgid "key-4"
+                msgstr "Made Fuzzy 4"
+                """
+            )

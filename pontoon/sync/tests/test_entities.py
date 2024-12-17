@@ -212,6 +212,7 @@ def test_update_resource():
                     entity=entity,
                     locale=locale,
                     string=f"key-{n}-{i} = Translation {i}\n",
+                    active=True,
                     approved=True,
                 )
 
