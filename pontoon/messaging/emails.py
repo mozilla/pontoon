@@ -4,6 +4,7 @@ import logging
 
 from collections import defaultdict
 
+from celery import shared_task
 from dateutil.relativedelta import relativedelta
 from django_jinja.backend import Jinja2
 from notifications.models import Notification
@@ -574,7 +575,8 @@ def send_verification_email(user, link):
     log.info(f"Verification email sent to { user.contact_email }.")
 
 
-def send_manual_emails(users, subject, body, is_transactional):
+@shared_task(bind=True)
+def send_manual_emails(self, users, subject, body, is_transactional):
     """
     Sends manual emails composed in the Messaging Center.
     """
