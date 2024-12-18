@@ -390,6 +390,7 @@ class Locale(AggregatedStats):
             {
                 "title": "all-resources",
                 "resource__path": [],
+                # FIXME rename as total_strings
                 "resource__total_strings": self.total_strings,
                 "pretranslated_strings": self.pretranslated_strings,
                 "strings_with_errors": self.strings_with_errors,
@@ -409,6 +410,7 @@ class Locale(AggregatedStats):
                 "title",
                 "resource__path",
                 "resource__deadline",
+                # FIXME rename as total_strings
                 "resource__total_strings",
                 "pretranslated_strings",
                 "strings_with_errors",
@@ -421,7 +423,12 @@ class Locale(AggregatedStats):
             resource__project=project, resource__entities__obsolete=False, locale=self
         ).distinct()
         details = list(
-            get_details(translatedresources.annotate(title=F("resource__path")))
+            get_details(
+                translatedresources.annotate(
+                    resource__total_strings=F("total_strings"),
+                    title=F("resource__path"),
+                )
+            )
         )
 
         all_resources = ProjectLocale.objects.get(project=project, locale=self)
@@ -430,6 +437,7 @@ class Locale(AggregatedStats):
                 "title": "all-resources",
                 "resource__path": [],
                 "resource__deadline": [],
+                # FIXME rename as total_strings
                 "resource__total_strings": all_resources.total_strings,
                 "pretranslated_strings": all_resources.pretranslated_strings,
                 "strings_with_errors": all_resources.strings_with_errors,

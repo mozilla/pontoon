@@ -68,11 +68,7 @@ following required fields:
 #. **Locales**: select at least one Localizable locale by clicking on it.
 #. **Repository URL**: enter your repository's SSH URL of the form
    ``git@github.com:user/repo.git``.
-#. **Download prefix or path to TOML file**: a URL prefix for downloading localized files. For
-   GitHub repositories, select any localized file on GitHub, click ``Raw`` and
-   replace locale code and the following bits in the URL with ``{locale_code}``.
-   If you use one, you need to select the `project configuration file`_ instead
-   of a localized file.
+#. **Download prefix or path to TOML file**: a URL prefix for downloading localized files.
 #. Click **SAVE PROJECT** at the bottom of the page.
 #. After the page reloads, click **SYNC** and wait for Pontoon to import
    strings. You can monitor the progress in the Sync log (``/sync/log/``).

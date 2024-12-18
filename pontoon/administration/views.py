@@ -30,9 +30,9 @@ from pontoon.base.models import (
     Translation,
 )
 from pontoon.base.utils import require_AJAX
-from pontoon.pretranslation.tasks import pretranslate
+from pontoon.pretranslation.tasks import pretranslate_task
 from pontoon.sync.models import SyncLog
-from pontoon.sync.tasks import sync_project
+from pontoon.sync.tasks import sync_project_task
 
 
 log = logging.getLogger(__name__)
@@ -431,7 +431,7 @@ def _create_or_update_translated_resources(
         resource = _get_resource_for_database_project(project)
 
     for locale in locales:
-        tr, created = TranslatedResource.objects.get_or_create(
+        tr, _ = TranslatedResource.objects.get_or_create(
             locale_id=locale.pk,
             resource=resource,
         )
@@ -542,9 +542,9 @@ def manually_sync_project(request, slug):
             "Forbidden: You don't have permission for syncing projects"
         )
 
-    sync_log = SyncLog.objects.create(start_time=timezone.now())
     project = Project.objects.get(slug=slug)
-    sync_project.delay(project.pk, sync_log.pk)
+    sync_log = SyncLog.objects.create(start_time=timezone.now())
+    sync_project_task.delay(project.pk, sync_log.pk)
 
     return HttpResponse("ok")
 
@@ -558,6 +558,6 @@ def manually_pretranslate_project(request, slug):
         )
 
     project = Project.objects.get(slug=slug)
-    pretranslate.delay(project.pk)
+    pretranslate_task.delay(project.pk)
 
     return HttpResponse("ok")

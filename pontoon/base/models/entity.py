@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from functools import reduce
 from operator import ior
 from re import escape, findall, match
@@ -14,7 +15,6 @@ from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 from pontoon.base.models.project_locale import ProjectLocale
 from pontoon.base.models.resource import Resource
-from pontoon.sync import KEY_SEPARATOR
 
 
 def get_word_count(string):
@@ -443,50 +443,6 @@ class EntityQuerySet(models.QuerySet):
 
         return entities
 
-    def reset_active_translations(self, locale):
-        """
-        Reset active translation for given set of entities and locale.
-        """
-        from pontoon.base.models.translation import Translation
-
-        translations = Translation.objects.filter(
-            entity__in=self,
-            locale=locale,
-        )
-
-        # First, deactivate all translations
-        translations.update(active=False)
-
-        # Mark all approved, pretranslated and fuzzy translations as active.
-        translations.filter(
-            Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True)
-        ).update(active=True)
-
-        # Mark most recent unreviewed suggestions without active siblings
-        # for any given combination of (locale, entity, plural_form) as active.
-        unreviewed_pks = set()
-        unreviewed = translations.filter(
-            approved=False,
-            pretranslated=False,
-            fuzzy=False,
-            rejected=False,
-        ).values_list("entity", "plural_form")
-
-        for entity, plural_form in unreviewed:
-            siblings = (
-                Translation.objects.filter(
-                    entity=entity,
-                    locale=locale,
-                    plural_form=plural_form,
-                )
-                .exclude(rejected=True)
-                .order_by("-active", "-date")
-            )
-            if siblings and not siblings[0].active:
-                unreviewed_pks.add(siblings[0].pk)
-
-        translations.filter(pk__in=unreviewed_pks).update(active=True)
-
     def get_or_create(self, defaults=None, **kwargs):
         kwargs["word_count"] = get_word_count(kwargs["string"])
         return super().get_or_create(defaults=defaults, **kwargs)
@@ -532,18 +488,6 @@ class Entity(DirtyFieldsMixin, models.Model):
             models.Index(fields=["resource", "obsolete", "string_plural"]),
         ]
 
-    @property
-    def cleaned_key(self):
-        """
-        Get cleaned key, without the source string and Translate Toolkit
-        separator.
-        """
-        key = self.key.split(KEY_SEPARATOR)[0]
-        if key == self.string:
-            key = ""
-
-        return key
-
     def __str__(self):
         return self.string
 
@@ -559,68 +503,27 @@ class Entity(DirtyFieldsMixin, models.Model):
         :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
             make them easier to pass into adjust_all_stats.
         """
-        translations = list(
-            self.translation_set.filter(locale=locale).prefetch_related(
-                "errors",
-                "warnings",
-            )
-        )
+        approved = 0
+        pretranslated = 0
+        errors = 0
+        warnings = 0
+        unreviewed = 0
 
-        approved_strings_count = len(
-            [
-                t
-                for t in translations
-                if t.approved and not (t.errors.exists() or t.warnings.exists())
-            ]
-        )
-
-        pretranslated_strings_count = len(
-            [
-                t
-                for t in translations
-                if t.pretranslated and not (t.errors.exists() or t.warnings.exists())
-            ]
-        )
-
-        if self.string_plural:
-            approved = int(approved_strings_count == locale.nplurals)
-            pretranslated = int(pretranslated_strings_count == locale.nplurals)
-
-        else:
-            approved = int(approved_strings_count > 0)
-            pretranslated = int(pretranslated_strings_count > 0)
-
-        if not (approved or pretranslated):
-            has_errors = bool(
-                [
-                    t
-                    for t in translations
-                    if (t.approved or t.pretranslated or t.fuzzy) and t.errors.exists()
-                ]
-            )
-            has_warnings = bool(
-                [
-                    t
-                    for t in translations
-                    if (t.approved or t.pretranslated or t.fuzzy)
-                    and t.warnings.exists()
-                ]
-            )
-
-            errors = int(has_errors)
-            warnings = int(has_warnings)
-
-        else:
-            errors = 0
-            warnings = 0
-
-        unreviewed_count = len(
-            [
-                t
-                for t in translations
-                if not (t.approved or t.pretranslated or t.fuzzy or t.rejected)
-            ]
-        )
+        for t in self.translation_set.filter(locale=locale).prefetch_related(
+            "errors", "warnings"
+        ):
+            if t.errors.exists():
+                if t.approved or t.pretranslated or t.fuzzy:
+                    errors += 1
+            elif t.warnings.exists():
+                if t.approved or t.pretranslated or t.fuzzy:
+                    warnings += 1
+            elif t.approved:
+                approved += 1
+            elif t.pretranslated:
+                pretranslated += 1
+            if not (t.approved or t.pretranslated or t.fuzzy or t.rejected):
+                unreviewed += 1
 
         return {
             "total_strings_diff": 0,
@@ -628,21 +531,7 @@ class Entity(DirtyFieldsMixin, models.Model):
             "pretranslated_strings_diff": pretranslated,
             "strings_with_errors_diff": errors,
             "strings_with_warnings_diff": warnings,
-            "unreviewed_strings_diff": unreviewed_count,
-        }
-
-    @classmethod
-    def get_stats_diff(cls, stats_before, stats_after):
-        """
-        Return stat difference between the two states of the entity.
-
-        :arg dict stats_before: dict returned by get_stats() for the initial state.
-        :arg dict stats_after: dict returned by get_stats() for the current state.
-        :return: dictionary with differences between provided stats.
-        """
-        return {
-            stat_name: stats_after[stat_name] - stats_before[stat_name]
-            for stat_name in stats_before
+            "unreviewed_strings_diff": unreviewed,
         }
 
     def has_changed(self, locale):
@@ -942,7 +831,9 @@ class Entity(DirtyFieldsMixin, models.Model):
     ):
         entities_array = []
 
-        entities = entities.prefetch_entities_data(locale, preferred_source_locale)
+        entities: Iterable[Entity] = entities.prefetch_entities_data(
+            locale, preferred_source_locale
+        )
 
         # If requested entity not in the current page
         if requested_entity and requested_entity not in [e.pk for e in entities]:
@@ -981,13 +872,18 @@ class Entity(DirtyFieldsMixin, models.Model):
                 if original_plural != "":
                     original_plural = entity.alternative_originals[-1].string
 
+            key_separator = "\x04"
+            cleaned_key = entity.key.split(key_separator)[0]
+            if cleaned_key == entity.string:
+                cleaned_key = ""
+
             entities_array.append(
                 {
                     "pk": entity.pk,
                     "original": original,
                     "original_plural": original_plural,
                     "machinery_original": entity.string,
-                    "key": entity.cleaned_key,
+                    "key": cleaned_key,
                     "context": entity.context,
                     "path": entity.resource.path,
                     "project": entity.resource.project.serialize(),

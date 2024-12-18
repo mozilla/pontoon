@@ -264,13 +264,11 @@ class Translation(DirtyFieldsMixin, models.Model):
     def __str__(self):
         return self.string
 
-    def save(self, update_stats=True, failed_checks=None, *args, **kwargs):
+    def save(self, failed_checks=None, *args, **kwargs):
         from pontoon.base.models.translated_resource import TranslatedResource
         from pontoon.base.models.translation_memory import TranslationMemoryEntry
 
-        # We parametrize update of stats to make testing easier.
-        if update_stats:
-            stats_before = self.entity.get_stats(self.locale)
+        stats_before = self.entity.get_stats(self.locale)
 
         super().save(*args, **kwargs)
 
@@ -332,7 +330,7 @@ class Translation(DirtyFieldsMixin, models.Model):
             self.entity.reset_term_translation(self.locale)
 
         # We use get_or_create() instead of just get() to make it easier to test.
-        translatedresource, _ = TranslatedResource.objects.get_or_create(
+        translatedresource, created = TranslatedResource.objects.get_or_create(
             resource=self.entity.resource, locale=self.locale
         )
 
@@ -343,12 +341,15 @@ class Translation(DirtyFieldsMixin, models.Model):
         if failed_checks is not None:
             save_failed_checks(self, failed_checks)
 
-        # We parametrize update of stats to make testing easier.
-        if update_stats:
-            # Update stats AFTER changing approval status.
-            stats_after = self.entity.get_stats(self.locale)
-            stats_diff = Entity.get_stats_diff(stats_before, stats_after)
-            translatedresource.adjust_all_stats(**stats_diff)
+        # Update stats AFTER changing approval status.
+        stats_after = self.entity.get_stats(self.locale)
+        stats_diff = {
+            stat_name: stats_after[stat_name] - stats_before[stat_name]
+            for stat_name in stats_before
+        }
+        if created:
+            stats_diff["total_strings_diff"] = translatedresource.count_total_strings()
+        translatedresource.adjust_all_stats(**stats_diff)
 
     def update_latest_translation(self):
         """
