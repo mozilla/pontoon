@@ -329,6 +329,7 @@ def update_db_translations(
             actions.append(
                 ActionLog(
                     action_type=ActionLog.ActionType.TRANSLATION_APPROVED,
+                    created_at=now,
                     performed_by=log_user,
                     translation=tx,
                 )
@@ -336,7 +337,7 @@ def update_db_translations(
             approve_count += 1
         translations_to_reject |= Q(
             entity=tx.entity, locale=tx.locale, plural_form=tx.plural_form
-        )
+        ) & ~Q(id=tx.id)
         update_fields.update(tx.get_dirty_fields())
     for entity_id, locale_id, _ in suggestions:
         try:
@@ -384,6 +385,7 @@ def update_db_translations(
         actions.extend(
             ActionLog(
                 action_type=ActionLog.ActionType.TRANSLATION_REJECTED,
+                created_at=now,
                 performed_by=log_user,
                 translation=tx,
                 is_implicit_action=True,

@@ -9,7 +9,13 @@ import pytest
 from django.conf import settings
 from django.utils import timezone
 
-from pontoon.base.models import TranslatedResource, Translation, TranslationMemoryEntry
+from pontoon.actionlog.models import ActionLog
+from pontoon.base.models import (
+    Entity,
+    TranslatedResource,
+    Translation,
+    TranslationMemoryEntry,
+)
 from pontoon.base.tests import (
     EntityFactory,
     LocaleFactory,
@@ -63,6 +69,11 @@ def test_add_ftl_translation():
                         active=True,
                         approved=True,
                     )
+        TranslationFactory.create(
+            entity=Entity.objects.get(resource=res["c"], key="key-c-1"),
+            locale=locale,
+            string="key-c-1 = New translation c 1\n",
+        )
 
         project.refresh_from_db()
         assert project.total_strings == 9
@@ -72,8 +83,8 @@ def test_add_ftl_translation():
         c_ftl = dedent(
             """
             key-c-0 = Translation c 0
-            key-c-1 = Translation c 1
-            key-c-2 = Translation c 2
+            key-c-1 = New translation c 1
+            key-c-2 = New translation c 2
             """
         )
         makedirs(repo.checkout_path)
@@ -108,6 +119,16 @@ def test_add_ftl_translation():
         tr_c2 = next(trans for trans in translations if trans.entity.key == "key-c-2")
         assert not tr_c2.user
 
+        # Test actions
+        assert {
+            (action.translation.string, action.action_type)
+            for action in ActionLog.objects.filter(translation__in=translations)
+        } == {
+            ("key-c-1 = Translation c 1\n", "translation:rejected"),
+            ("key-c-1 = New translation c 1\n", "translation:approved"),
+            ("key-c-2 = New translation c 2\n", "translation:created"),
+        }
+
         # Test stats
         update_stats(project)
         project.refresh_from_db()
@@ -115,8 +136,13 @@ def test_add_ftl_translation():
         assert project.approved_strings == 9
         tm = TranslationMemoryEntry.objects.filter(
             entity__resource=res["c"], translation__isnull=False
-        )
-        assert len(tm) == 3
+        ).values_list("target", flat=True)
+        assert set(tm) == {
+            "Translation c 0",
+            "Translation c 1",
+            "New translation c 1",
+            "New translation c 2",
+        }
 
 
 @pytest.mark.django_db
