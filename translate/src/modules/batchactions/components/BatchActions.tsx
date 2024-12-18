@@ -2,6 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import { Location } from '~/context/Location';
+import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { performAction, resetSelection, selectAll } from '../actions';
@@ -18,6 +19,7 @@ import { ReplaceAll } from './ReplaceAll';
 export function BatchActions(): React.ReactElement<'div'> {
   const batchactions = useAppSelector((state) => state[BATCHACTIONS]);
   const location = useContext(Location);
+  const showBadgeTooltip = useContext(ShowBadgeTooltip);
   const dispatch = useAppDispatch();
 
   const find = useRef<HTMLInputElement>(null);
@@ -43,13 +45,27 @@ export function BatchActions(): React.ReactElement<'div'> {
 
   const approveAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
-      dispatch(performAction(location, 'approve', batchactions.entities));
+      dispatch(
+        performAction(
+          location,
+          'approve',
+          batchactions.entities,
+          showBadgeTooltip,
+        ),
+      );
     }
   }, [location, batchactions]);
 
   const rejectAll = useCallback(() => {
     if (!batchactions.requestInProgress) {
-      dispatch(performAction(location, 'reject', batchactions.entities));
+      dispatch(
+        performAction(
+          location,
+          'reject',
+          batchactions.entities,
+          showBadgeTooltip,
+        ),
+      );
     }
   }, [location, batchactions]);
 
@@ -67,6 +83,7 @@ export function BatchActions(): React.ReactElement<'div'> {
             location,
             'replace',
             batchactions.entities,
+            showBadgeTooltip,
             encodeURIComponent(fv),
             encodeURIComponent(rv),
           ),
