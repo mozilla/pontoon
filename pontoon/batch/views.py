@@ -114,7 +114,11 @@ def batch_edit_translations(request):
     invalid_translation_count = len(action_status.get("invalid_translation_pks", []))
     if action_status["count"] == 0:
         return JsonResponse(
-            {"count": 0, "invalid_translation_count": invalid_translation_count}
+            {
+                "count": 0,
+                "invalid_translation_count": invalid_translation_count,
+                "badge_update": action_status["badge_update"],
+            }
         )
 
     tr_pks = [tr.pk for tr in action_status["translated_resources"]]
@@ -145,5 +149,6 @@ def batch_edit_translations(request):
         {
             "count": action_status["count"],
             "invalid_translation_count": invalid_translation_count,
+            "badge_update": action_status["badge_update"],
         }
     )

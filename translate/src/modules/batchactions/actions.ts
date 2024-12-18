@@ -14,10 +14,16 @@ export const RESET_BATCHACTIONS_RESPONSE = 'batchactions/RESET_RESPONSE';
 export const TOGGLE_BATCHACTIONS = 'batchactions/TOGGLE';
 export const UNCHECK_BATCHACTIONS = 'batchactions/UNCHECK';
 
+export type BatchBadgeUpdate = {
+  name: string | null;
+  level: number | null;
+};
+
 export type ResponseType = {
   action: string;
   changedCount: number | null | undefined;
   invalidCount: number | null | undefined;
+  badgeUpdate: BatchBadgeUpdate | null | undefined;
   error: boolean | null | undefined;
 };
 
@@ -117,6 +123,10 @@ export const performAction =
     location: Location,
     action: 'approve' | 'reject' | 'replace',
     entityIds: number[],
+    showBadgeTooltip: (tooltip: {
+      badgeName: string | null;
+      badgeLevel: number | null;
+    }) => void,
     find?: string,
     replace?: string,
   ) =>
@@ -134,6 +144,10 @@ export const performAction =
     const response: ResponseType = {
       changedCount: 0,
       invalidCount: 0,
+      badgeUpdate: {
+        name: '',
+        level: 0,
+      },
       error: false,
       action,
     };
@@ -141,6 +155,14 @@ export const performAction =
     if ('count' in data) {
       response.changedCount = data.count;
       response.invalidCount = data.invalid_translation_count;
+      response.badgeUpdate = data.badge_update;
+
+      if (response.badgeUpdate?.level && response.badgeUpdate?.level > 0) {
+        showBadgeTooltip({
+          badgeName: response.badgeUpdate.name,
+          badgeLevel: response.badgeUpdate.level,
+        });
+      }
 
       if (data.count > 0) {
         dispatch(updateUI(location, entityIds));
