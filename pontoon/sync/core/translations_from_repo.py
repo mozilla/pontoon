@@ -48,7 +48,7 @@ def sync_translations_from_repo(
     db_changes: BaseManager[ChangedEntityLocale],
     now: datetime,
 ) -> tuple[int, int]:
-    """(removed_count, updated_count)"""
+    """(removed_resource_count, updated_translation_count)"""
     co = checkouts.target
     source_paths: set[str] = set(paths.ref_paths) if checkouts.source == co else set()
     del_count = delete_removed_bilingual_resources(project, co, paths, source_paths)
@@ -67,9 +67,10 @@ def sync_translations_from_repo(
     updates = find_db_updates(
         project, locale_map, changed_target_paths, paths, db_changes
     )
+    update_count = 0 if updates is None else len(updates)
     if updates:
         write_db_updates(project, updates, None, now)
-    return del_count, 0 if updates is None else len(updates)
+    return del_count, update_count
 
 
 def write_db_updates(

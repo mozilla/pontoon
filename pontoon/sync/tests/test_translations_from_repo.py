@@ -107,7 +107,10 @@ def test_add_ftl_translation():
         paths = find_paths(project, checkouts)
 
         # Test sync
-        sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
+        removed_resources, updated_translations = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, [], now
+        )
+        assert (removed_resources, updated_translations) == (0, 2)
         translations = Translation.objects.filter(
             entity__resource=res["c"], locale=locale
         )
@@ -195,7 +198,10 @@ def test_remove_po_target_resource():
         paths = find_paths(project, checkouts)
 
         # Test sync
-        sync_translations_from_repo(project, locale_map, checkouts, paths, [], now)
+        removed_resources, updated_translations = sync_translations_from_repo(
+            project, locale_map, checkouts, paths, [], now
+        )
+        assert (removed_resources, updated_translations) == (1, 0)
         assert not TranslatedResource.objects.filter(locale=locale, resource=res["b"])
         assert not Translation.objects.filter(entity__resource=res["b"], locale=locale)
         tm = TranslationMemoryEntry.objects.filter(
