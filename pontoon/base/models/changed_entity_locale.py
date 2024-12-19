@@ -1,5 +1,11 @@
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.utils import timezone
+
+
+if TYPE_CHECKING:
+    from pontoon.base.models import Entity, Locale
 
 
 class ChangedEntityLocale(models.Model):
@@ -8,8 +14,8 @@ class ChangedEntityLocale(models.Model):
     specific entity since the last sync.
     """
 
-    entity = models.ForeignKey("Entity", models.CASCADE)
-    locale = models.ForeignKey("Locale", models.CASCADE)
+    entity: models.ForeignKey["Entity"] = models.ForeignKey("Entity", models.CASCADE)
+    locale: models.ForeignKey["Locale"] = models.ForeignKey("Locale", models.CASCADE)
     when = models.DateTimeField(default=timezone.now)
 
     class Meta:

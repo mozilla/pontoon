@@ -3,22 +3,20 @@
 from django.db import migrations
 from django.db.models import F, Func, TextField, Value
 
-from pontoon.sync import KEY_SEPARATOR
-
 
 def add_entity_context(apps, schema_editor):
     Entity = apps.get_model("base", "Entity")
 
     split_key_po = Func(
         F("key"),
-        Value(KEY_SEPARATOR),
+        Value("\x04"),
         Value(1),
         function="split_part",
         output_field=TextField(),
     )
     split_key_xliff = Func(
         F("key"),
-        Value(KEY_SEPARATOR),
+        Value("\x04"),
         Value(2),
         function="split_part",
         output_field=TextField(),

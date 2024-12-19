@@ -2,7 +2,6 @@ from textwrap import dedent
 
 from pontoon.base.tests import TestCase, UserFactory, assert_attributes_equal
 from pontoon.base.utils import aware_datetime
-from pontoon.sync import KEY_SEPARATOR
 from pontoon.sync.formats import po
 from pontoon.sync.tests.formats import FormatTestsMixin
 
@@ -61,7 +60,7 @@ msgstr[0] ""
 msgstr[1] "Translated Plural %(count)s strings with missing translations"
 """
 
-HEADER_TEMPLATE = """#\x20
+HEADER_TEMPLATE = """#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\\n"
@@ -135,13 +134,13 @@ class POTests(FormatTestsMixin, TestCase):
         assert_attributes_equal(
             resource.translations[0],
             source_string="Source",
-            key=self.key("Main context" + KEY_SEPARATOR + "Source"),
+            key=self.key("Main context\x04Source"),
         )
 
         assert_attributes_equal(
             resource.translations[1],
             source_string="Source",
-            key=self.key("Other context" + KEY_SEPARATOR + "Source"),
+            key=self.key("Other context\x04Source"),
         )
 
         assert_attributes_equal(

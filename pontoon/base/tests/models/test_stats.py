@@ -5,77 +5,19 @@ Test consistency of calculations between `calculate_stats` and `translation.save
 import pytest
 
 from pontoon.base.models import TranslatedResource
-from pontoon.checks.models import (
-    Error,
-    FailedCheck,
-    Warning,
-)
 
 
-@pytest.fixture
-def translation_with_error(translation_a):
-    Error.objects.create(
-        translation=translation_a, library=FailedCheck.Library.PONTOON, message="error"
-    )
-    return translation_a
-
-
-@pytest.fixture
-def translation_with_warning(translation_a):
-    Warning.objects.create(
-        translation=translation_a,
-        library=FailedCheck.Library.PONTOON,
-        message="warning",
-    )
-    return translation_a
-
-
-def recalculate_stats(translation):
-    """
-    Make the full recalculate stats on a TranslatedResource.
-    """
-    translation.save(update_stats=False)
-    translated_resource = TranslatedResource.objects.get(
+def get_stats(translation):
+    return TranslatedResource.objects.filter(
         resource=translation.entity.resource,
         locale=translation.locale,
-    )
-    translated_resource.calculate_stats()
+    ).aggregated_stats()
 
 
-def diff_stats(t):
-    """
-    Update only necessary stats by calculating difference between stats.
-    """
-    t.save()
-
-
-@pytest.fixture(
-    params=(
-        recalculate_stats,
-        diff_stats,
-    )
-)
-def stats_update(db, request):
-    """
-    Wrapper fixture which allows to test both implementations of stats calculations.
-    """
-    return request.param
-
-
-@pytest.fixture
-def get_stats():
-    def f(translation):
-        return TranslatedResource.objects.filter(
-            resource=translation.entity.resource,
-            locale=translation.locale,
-        ).aggregated_stats()
-
-    return f
-
-
-def test_translation_approved(stats_update, get_stats, translation_a):
+@pytest.mark.django_db
+def test_translation_approved(translation_a):
     translation_a.approved = True
-    stats_update(translation_a)
+    translation_a.save()
 
     assert get_stats(translation_a) == {
         "total": 1,
@@ -87,7 +29,7 @@ def test_translation_approved(stats_update, get_stats, translation_a):
     }
 
     translation_a.approved = False
-    stats_update(translation_a)
+    translation_a.save()
 
     assert get_stats(translation_a) == {
         "total": 1,
@@ -99,9 +41,10 @@ def test_translation_approved(stats_update, get_stats, translation_a):
     }
 
 
-def test_translation_pretranslated(stats_update, get_stats, translation_a):
+@pytest.mark.django_db
+def test_translation_pretranslated(translation_a):
     translation_a.pretranslated = True
-    stats_update(translation_a)
+    translation_a.save()
 
     assert get_stats(translation_a) == {
         "total": 1,
@@ -114,7 +57,7 @@ def test_translation_pretranslated(stats_update, get_stats, translation_a):
 
     translation_a.pretranslated = False
     translation_a.rejected = True
-    stats_update(translation_a)
+    translation_a.save()
 
     assert get_stats(translation_a) == {
         "total": 1,
@@ -126,11 +69,12 @@ def test_translation_pretranslated(stats_update, get_stats, translation_a):
     }
 
 
-def test_translation_with_error(stats_update, get_stats, translation_with_error):
-    translation_with_error.approved = True
-    stats_update(translation_with_error)
+@pytest.mark.django_db
+def test_translation_with_error(translation_a):
+    translation_a.approved = True
+    translation_a.save(failed_checks={"pErrors": ["error"]})
 
-    assert get_stats(translation_with_error) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,
@@ -139,11 +83,11 @@ def test_translation_with_error(stats_update, get_stats, translation_with_error)
         "errors": 1,
     }
 
-    translation_with_error.approved = False
-    translation_with_error.pretranslated = True
-    stats_update(translation_with_error)
+    translation_a.approved = False
+    translation_a.pretranslated = True
+    translation_a.save()
 
-    assert get_stats(translation_with_error) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,
@@ -152,10 +96,10 @@ def test_translation_with_error(stats_update, get_stats, translation_with_error)
         "errors": 1,
     }
 
-    translation_with_error.pretranslated = False
-    stats_update(translation_with_error)
+    translation_a.pretranslated = False
+    translation_a.save()
 
-    assert get_stats(translation_with_error) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,
@@ -165,11 +109,12 @@ def test_translation_with_error(stats_update, get_stats, translation_with_error)
     }
 
 
-def test_translation_with_warning(stats_update, get_stats, translation_with_warning):
-    translation_with_warning.approved = True
-    stats_update(translation_with_warning)
+@pytest.mark.django_db
+def test_translation_with_warning(translation_a):
+    translation_a.approved = True
+    translation_a.save(failed_checks={"pWarnings": ["warning"]})
 
-    assert get_stats(translation_with_warning) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,
@@ -178,11 +123,11 @@ def test_translation_with_warning(stats_update, get_stats, translation_with_warn
         "errors": 0,
     }
 
-    translation_with_warning.approved = False
-    translation_with_warning.pretranslated = True
-    stats_update(translation_with_warning)
+    translation_a.approved = False
+    translation_a.pretranslated = True
+    translation_a.save()
 
-    assert get_stats(translation_with_warning) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,
@@ -191,10 +136,10 @@ def test_translation_with_warning(stats_update, get_stats, translation_with_warn
         "errors": 0,
     }
 
-    translation_with_warning.pretranslated = False
-    stats_update(translation_with_warning)
+    translation_a.pretranslated = False
+    translation_a.save()
 
-    assert get_stats(translation_with_warning) == {
+    assert get_stats(translation_a) == {
         "total": 1,
         "approved": 0,
         "pretranslated": 0,

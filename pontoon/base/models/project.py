@@ -1,18 +1,19 @@
-from collections import defaultdict
-from os.path import basename, join, normpath
-from urllib.parse import urlparse
+from os.path import join
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Prefetch
+from django.db.models.manager import BaseManager
 from django.utils import timezone
-from django.utils.functional import cached_property
 
-from pontoon.base import utils
 from pontoon.base.models.aggregated_stats import AggregatedStats
-from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.locale import Locale
+
+
+if TYPE_CHECKING:
+    from pontoon.base.models import Resource
 
 
 class Priority(models.IntegerChoices):
@@ -102,6 +103,8 @@ class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
+
+    resources: BaseManager["Resource"]
 
     class DataSource(models.TextChoices):
         REPOSITORY = "repository", "Repository"
@@ -263,118 +266,10 @@ class Project(AggregatedStats):
             for locale in self.locales.all():
                 locale.aggregate_stats()
 
-    def changed_resources(self, now):
-        """
-        Returns a map of resource paths and their locales
-        that where changed from the last sync.
-        """
-        resources = defaultdict(set)
-        changes = ChangedEntityLocale.objects.filter(
-            entity__resource__project=self, when__lte=now
-        ).prefetch_related("locale", "entity__resource")
-
-        for change in changes:
-            resources[change.entity.resource.path].add(change.locale)
-
-        return resources
-
-    @cached_property
-    def unsynced_locales(self):
-        """
-        Project Locales that haven't been synchronized yet.
-        """
-        return list(
-            set(self.locales.all())
-            - set(Locale.objects.filter(translatedresources__resource__project=self))
-        )
-
-    @property
-    def needs_sync(self):
-        """
-        True if the project has changed since the last sync such that
-        another sync is required.
-        """
-        changes = ChangedEntityLocale.objects.filter(entity__resource__project=self)
-        return changes.exists() or self.unsynced_locales
-
     @property
     def checkout_path(self):
         """Path where this project's VCS checkouts are located."""
         return join(settings.MEDIA_ROOT, "projects", self.slug)
-
-    # For compatibility with the old sync, these properties refer to the
-    # first repository by ID.
-    def _repo_compat_attr(self, attribute):
-        repo = self.repositories.first()
-        return getattr(repo, attribute) if repo is not None else None
-
-    @property
-    def repository_type(self):
-        return self._repo_compat_attr("type")
-
-    @property
-    def repository_url(self):
-        return self._repo_compat_attr("url")
-
-    @property
-    def repository_path(self):
-        return self._repo_compat_attr("checkout_path")
-
-    def repository_for_path(self, path):
-        """
-        Return the repository instance whose checkout contains the given
-        path. If no matching repo is found, raise a ValueError.
-        """
-        repo = utils.first(
-            self.repositories.all(), lambda r: path.startswith(r.checkout_path)
-        )
-
-        if repo is None:
-            raise ValueError(f"Could not find repo matching path {path}.")
-        else:
-            return repo
-
-    @property
-    def has_multi_locale_repositories(self):
-        for repo in self.repositories.all():
-            if repo.multi_locale:
-                return True
-
-        return False
-
-    @property
-    def has_single_repo(self):
-        return self.repositories.count() == 1
-
-    @cached_property
-    def source_repository(self):
-        """
-        Returns an instance of repository which contains the path to source files.
-        """
-        if not self.has_single_repo:
-            from pontoon.sync.vcs.project import VCSProject
-
-            source_directories = VCSProject.SOURCE_DIR_SCORES.keys()
-
-            for repo in self.repositories.all():
-                last_directory = basename(normpath(urlparse(repo.url).path))
-                if repo.source_repo or last_directory in source_directories:
-                    return repo
-
-        return self.repositories.first()
-
-    def translation_repositories(self):
-        """
-        Returns a list of project repositories containing translations.
-        """
-        from pontoon.base.models.repository import Repository
-
-        pks = [
-            repo.pk
-            for repo in self.repositories.all()
-            if repo.is_translation_repository
-        ]
-        return Repository.objects.filter(pk__in=pks)
 
     def get_latest_activity(self, locale=None):
         from pontoon.base.models.project_locale import ProjectLocale

@@ -1,3 +1,7 @@
+import logging
+
+from typing import Any
+
 from django.db import models
 from django.db.models import Q, Sum
 
@@ -11,10 +15,13 @@ from pontoon.base.models.resource import Resource
 from pontoon.base.models.translation import Translation
 
 
+log = logging.getLogger(__name__)
+
+
 class TranslatedResourceQuerySet(models.QuerySet):
     def aggregated_stats(self):
         return self.aggregate(
-            total=Sum("resource__total_strings"),
+            total=Sum("total_strings"),
             approved=Sum("approved_strings"),
             pretranslated=Sum("pretranslated_strings"),
             errors=Sum("strings_with_errors"),
@@ -73,44 +80,67 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Update stats on a list of TranslatedResource.
         """
+
+        def _log(n: int, thing: str):
+            things = thing if n == 1 else f"{thing}s"
+            log.debug(f"update_stats: {n} {things}")
+
+        fields = [
+            "total_strings",
+            "approved_strings",
+            "pretranslated_strings",
+            "strings_with_errors",
+            "strings_with_warnings",
+            "unreviewed_strings",
+        ]
+
         self = self.prefetch_related("resource__project", "locale")
-
-        locales = Locale.objects.filter(
-            translatedresources__in=self,
-        ).distinct()
-
-        projects = Project.objects.filter(
-            resources__translatedresources__in=self,
-        ).distinct()
-
-        projectlocales = ProjectLocale.objects.filter(
-            project__resources__translatedresources__in=self,
-            locale__translatedresources__in=self,
-        ).distinct()
-
         for translated_resource in self:
             translated_resource.calculate_stats(save=False)
+        TranslatedResource.objects.bulk_update(self, fields=fields)
+        _log(len(self), "translated resource")
 
-        TranslatedResource.objects.bulk_update(
-            list(self),
-            fields=[
-                "total_strings",
-                "approved_strings",
-                "pretranslated_strings",
-                "strings_with_errors",
-                "strings_with_warnings",
-                "unreviewed_strings",
-            ],
-        )
-
-        for project in projects:
-            project.aggregate_stats()
-
-        for locale in locales:
-            locale.aggregate_stats()
-
-        for projectlocale in projectlocales:
+        projectlocale_count = 0
+        for projectlocale in ProjectLocale.objects.filter(
+            project__resources__translatedresources__in=self,
+            locale__translatedresources__in=self,
+        ).distinct():
             projectlocale.aggregate_stats()
+            projectlocale_count += 1
+        _log(projectlocale_count, "projectlocale")
+
+        project_count = 0
+        for project in Project.objects.filter(
+            resources__translatedresources__in=self,
+        ).distinct():
+            stats: dict[str, Any] = ProjectLocale.objects.filter(
+                project=project
+            ).aggregated_stats()
+            project.total_strings = stats["total_strings"] or 0
+            project.approved_strings = stats["approved_strings"] or 0
+            project.pretranslated_strings = stats["pretranslated_strings"] or 0
+            project.strings_with_errors = stats["strings_with_errors"] or 0
+            project.strings_with_warnings = stats["strings_with_warnings"] or 0
+            project.unreviewed_strings = stats["unreviewed_strings"] or 0
+            project.save(update_fields=fields)
+            project_count += 1
+        _log(project_count, "project")
+
+        locales = Locale.objects.filter(translatedresources__in=self).distinct()
+        for locale in locales:
+            stats: dict[str, Any] = ProjectLocale.objects.filter(
+                locale=locale,
+                project__system_project=False,
+                project__visibility=Project.Visibility.PUBLIC,
+            ).aggregated_stats()
+            locale.total_strings = stats["total_strings"] or 0
+            locale.approved_strings = stats["approved_strings"] or 0
+            locale.pretranslated_strings = stats["pretranslated_strings"] or 0
+            locale.strings_with_errors = stats["strings_with_errors"] or 0
+            locale.strings_with_warnings = stats["strings_with_warnings"] or 0
+            locale.unreviewed_strings = stats["unreviewed_strings"] or 0
+        Locale.objects.bulk_update(locales, fields=fields)
+        _log(len(locales), "locale")
 
 
 class TranslatedResource(AggregatedStats):
@@ -162,20 +192,23 @@ class TranslatedResource(AggregatedStats):
         if project_locale:
             project_locale.adjust_stats(*args, **kwargs)
 
+    def count_total_strings(self):
+        entities = Entity.objects.filter(resource=self.resource, obsolete=False)
+        total = entities.count()
+        plural_count = entities.exclude(string_plural="").count()
+        if plural_count:
+            total += (self.locale.nplurals - 1) * plural_count
+        return total
+
     def calculate_stats(self, save=True):
         """Update stats, including denormalized ones."""
-        resource = self.resource
-        locale = self.locale
 
-        entity_ids = Translation.objects.filter(locale=locale).values("entity")
-        translated_entities = Entity.objects.filter(
-            pk__in=entity_ids, resource=resource, obsolete=False
-        )
+        total = self.count_total_strings()
 
-        # Singular
         translations = Translation.objects.filter(
-            entity__in=translated_entities.filter(string_plural=""),
-            locale=locale,
+            entity__resource=self.resource,
+            entity__obsolete=False,
+            locale=self.locale,
         )
 
         approved = translations.filter(
@@ -219,66 +252,8 @@ class TranslatedResource(AggregatedStats):
             fuzzy=False,
         ).count()
 
-        # Plural
-        nplurals = locale.nplurals or 1
-        for e in translated_entities.exclude(string_plural="").values_list("pk"):
-            translations = Translation.objects.filter(
-                entity_id=e,
-                locale=locale,
-            )
-
-            plural_approved_count = translations.filter(
-                approved=True,
-                errors__isnull=True,
-                warnings__isnull=True,
-            ).count()
-
-            plural_pretranslated_count = translations.filter(
-                pretranslated=True,
-                errors__isnull=True,
-                warnings__isnull=True,
-            ).count()
-
-            if plural_approved_count == nplurals:
-                approved += 1
-            elif plural_pretranslated_count == nplurals:
-                pretranslated += 1
-            else:
-                plural_errors_count = (
-                    translations.filter(
-                        Q(
-                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                            & Q(errors__isnull=False)
-                        ),
-                    )
-                    .distinct()
-                    .count()
-                )
-
-                plural_warnings_count = (
-                    translations.filter(
-                        Q(
-                            Q(Q(approved=True) | Q(pretranslated=True) | Q(fuzzy=True))
-                            & Q(warnings__isnull=False)
-                        ),
-                    )
-                    .distinct()
-                    .count()
-                )
-
-                if plural_errors_count:
-                    errors += 1
-                elif plural_warnings_count:
-                    warnings += 1
-
-            plural_unreviewed_count = translations.filter(
-                approved=False, pretranslated=False, fuzzy=False, rejected=False
-            ).count()
-            if plural_unreviewed_count:
-                unreviewed += plural_unreviewed_count
-
         if not save:
-            self.total_strings = resource.total_strings
+            self.total_strings = total
             self.approved_strings = approved
             self.pretranslated_strings = pretranslated
             self.strings_with_errors = errors
@@ -288,7 +263,7 @@ class TranslatedResource(AggregatedStats):
             return False
 
         # Calculate diffs to reduce DB queries
-        total_strings_diff = resource.total_strings - self.total_strings
+        total_strings_diff = total - self.total_strings
         approved_strings_diff = approved - self.approved_strings
         pretranslated_strings_diff = pretranslated - self.pretranslated_strings
         strings_with_errors_diff = errors - self.strings_with_errors

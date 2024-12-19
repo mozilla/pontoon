@@ -1,7 +1,6 @@
 import logging
 
 from os import environ, path
-from typing import Any
 
 from django.conf import settings
 
@@ -11,7 +10,7 @@ from .utils import CommitToRepositoryException, PullFromRepositoryException, exe
 log = logging.getLogger(__name__)
 
 
-def update(source: str, target: str, branch: str | None) -> None:
+def update(source: str, target: str, branch: str | None, shallow: bool) -> None:
     log.debug("Subversion: Checkout or update repository.")
 
     if path.exists(target):
@@ -29,7 +28,7 @@ def update(source: str, target: str, branch: str | None) -> None:
             target,
         ]
 
-    code, _output, error = execute(command, env=get_svn_env())
+    code, _, error = execute(command, env=get_svn_env())
 
     if code != 0:
         raise PullFromRepositoryException(error)
@@ -37,7 +36,7 @@ def update(source: str, target: str, branch: str | None) -> None:
     log.debug(f"Subversion: Repository at {source} {status}.")
 
 
-def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> None:
+def commit(path: str, message: str, author: str, branch: str | None, url: str) -> None:
     log.debug("Subversion: Commit to repository.")
 
     # Commit
@@ -47,7 +46,7 @@ def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> 
         "-m",
         message,
         "--with-revprop",
-        f"author={user.display_name_and_email}",
+        f"author={author}",
         path,
     ]
     code, output, error = execute(commit, env=get_svn_env())
@@ -62,15 +61,17 @@ def commit(path: str, message: str, user: Any, branch: str | None, url: str) -> 
 
 def revision(path: str) -> str | None:
     cmd = ["svnversion", path]
-    code, output, _error = execute(cmd, env=get_svn_env(), log=log)
+    code, output, _ = execute(cmd, env=get_svn_env(), log=log)
     return output.decode().strip() if code == 0 else None
 
 
-def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] | None:
+def changed_files(
+    path: str, from_revision: str
+) -> tuple[list[str], list[str], list[tuple[str, str]]] | None:
     # Remove all non digit characters from the revision number.
     rev = "".join(filter(lambda c: c.isdigit(), from_revision))
     cmd = ["svn", "diff", "-r", f"{rev}:HEAD", "--summarize"]
-    code, output, _error = execute(cmd, path, env=get_svn_env(), log=log)
+    code, output, _ = execute(cmd, path, env=get_svn_env(), log=log)
     if code != 0:
         return None
     changed = []
@@ -80,7 +81,7 @@ def changed_files(path: str, from_revision: str) -> tuple[list[str], list[str]] 
             changed.append(line.split(None, 2)[1])
         elif line.startswith("D"):
             removed.append(line.split(None, 2)[1])
-    return changed, removed
+    return changed, removed, []
 
 
 def get_svn_env():

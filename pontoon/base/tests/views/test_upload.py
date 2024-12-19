@@ -99,7 +99,6 @@ def test_upload_invalid_parameters(
 
 @pytest.mark.django_db
 def test_upload_missing_file(
-    client,
     translator_a,
     project_locale_a,
 ):
@@ -109,10 +108,7 @@ def test_upload_missing_file(
         code=project_locale_a.locale.code,
         part="resource_a.po",
     )
-    assert response.status_code == 303
-
-    redir = client.get(response["Location"])
-    assert redir.status_code == 404
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db
@@ -170,5 +166,6 @@ def test_upload_file(
         assert translation.entity.key == "test_key"
         assert translation.entity.resource.path == "resource_a.po"
         assert translation.approved
+        assert translation.user
         assert not translation.warnings.exists()
         assert not translation.errors.exists()

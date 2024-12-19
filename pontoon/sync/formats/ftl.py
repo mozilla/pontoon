@@ -4,9 +4,9 @@ import logging
 
 from fluent.syntax import FluentParser, FluentSerializer, ast
 
-from pontoon.sync.exceptions import ParseError, SyncError
 from pontoon.sync.formats.base import ParsedResource
-from pontoon.sync.utils import create_parent_directory
+from pontoon.sync.formats.exceptions import ParseError, SyncError
+from pontoon.sync.formats.utils import create_parent_directory
 from pontoon.sync.vcs.translation import VCSTranslation
 
 

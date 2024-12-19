@@ -1,184 +1,109 @@
-import errno
-import os
+import re
 
-from pontoon.base.models import Resource
-from pontoon.base.utils import extension_in, first
+from io import BytesIO
+from os.path import basename, exists, join, relpath
+from tempfile import TemporaryDirectory
+from zipfile import ZipFile
 
+from django.core.files import File
+from django.utils import timezone
 
-def is_hidden(path: str) -> bool:
-    """
-    Return true if path contains hidden directory.
-    """
-    for p in path.split(os.sep):
-        if p.startswith("."):
-            return True
-    return False
-
-
-def is_resource(filename: str) -> bool:
-    """
-    Return True if the filename's extension is a supported Resource
-    format.
-    """
-    return extension_in(filename, Resource.ALLOWED_EXTENSIONS)
+from pontoon.base.models import ChangedEntityLocale, Locale, Project, User
+from pontoon.base.models.repository import Repository
+from pontoon.sync.core.checkout import checkout_repos
+from pontoon.sync.core.paths import UploadPaths, find_paths
+from pontoon.sync.core.stats import update_stats
+from pontoon.sync.core.translations_from_repo import find_db_updates, write_db_updates
+from pontoon.sync.core.translations_to_repo import update_changed_resources
 
 
-def is_source_resource(filename: str) -> bool:
-    """
-    Return True if the filename's extension is a source-only Resource
-    format.
-    """
-    return extension_in(filename, Resource.SOURCE_EXTENSIONS)
+# FIXME This is a temporary hack, to be replaced by 04/2025 with proper downloads.
+def translations_target_url(
+    project: Project, locale: Locale, resource_path: str
+) -> str | None:
+    """The target repository URL for a resource, for direct download."""
+
+    if project.repositories.count() > 1:
+        # HACK: Let's assume that no config is used, and the target repo root is the right base.
+        target_repo: Repository = project.repositories.get(source_repo=False)
+        rel_path = f"{locale.code}/{resource_path}"
+    else:
+        checkouts = checkout_repos(project, shallow=True)
+        target_repo = checkouts.target.repo
+        paths = find_paths(project, checkouts)
+        target, _ = paths.target(resource_path)
+        if not target:
+            return None
+        abs_path = paths.format_target_path(target, locale.code)
+        rel_path = relpath(abs_path, checkouts.target.path).replace("\\", "/")
+
+    github = re.search(r"\bgithub\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
+    if github:
+        org, repo = github.groups()
+        ref = f"refs/heads/{target_repo.branch}" if target_repo.branch else "HEAD"
+        return f"https://raw.githubusercontent.com/{org}/{repo}/{ref}/{rel_path}"
+
+    gitlab = re.search(r"gitlab\.com[:/]([^/]+)/([^/]+)\.git$", target_repo.url)
+    if gitlab:
+        org, repo = gitlab.groups()
+        ref = target_repo.branch or "HEAD"
+        return f"https://gitlab.com/{org}/{repo}/-/raw/{ref}/{rel_path}?inline=false"
+
+    if target_repo.permalink_prefix:
+        url = target_repo.permalink_prefix.format(locale_code=locale.code)
+        return f"{url}{'' if url.endswith('/') else '/'}{rel_path}"
+
+    # Default to bare repo link
+    return re.sub(r"^.*?(://|@)", "https://", target_repo.url, count=1)
 
 
-def is_asymmetric_resource(filename: str) -> bool:
-    """
-    Return True if the filename's extension is an asymmetric Resource
-    format.
-    """
-    return extension_in(filename, Resource.ASYMMETRIC_FORMATS)
+# FIXME Currently not in use, to be refactored for proper download support
+def download_translations_zip(
+    project: Project, locale: Locale
+) -> tuple[bytes, str] | tuple[None, None]:
+    checkouts = checkout_repos(project, shallow=True)
+    paths = find_paths(project, checkouts)
+    db_changes = ChangedEntityLocale.objects.filter(
+        entity__resource__project=project, locale=locale
+    ).select_related("entity__resource", "locale")
+    update_changed_resources(project, paths, {}, [], db_changes, set(), timezone.now())
+
+    bytes_io = BytesIO()
+    zipfile = ZipFile(bytes_io, "w")
+    for _, tgt_path in paths.all():
+        filename = paths.format_target_path(tgt_path, locale.code)
+        if exists(filename):
+            arcname = relpath(filename, checkouts.target.path)
+            zipfile.write(filename, arcname)
+    zipfile.close()
+
+    return bytes_io.getvalue(), f"{project.slug}.zip"
 
 
-def get_parent_directory(path: str) -> str:
-    """
-    Get parent directory of the path
-    """
-    return os.path.abspath(os.path.join(path, os.pardir))
+def import_uploaded_file(
+    project: Project, locale: Locale, res_path: str, upload: File, user: User
+):
+    """Update translations in the database from an uploaded file."""
 
-
-def uses_undercore_as_separator(directory: str) -> bool:
-    """
-    Return True if the names of folders in a directory contain more '_' than '-'.
-    """
-    only_folders = []
-    subdirs = os.listdir(directory)
-
-    for i in subdirs:
-        if os.path.isdir(os.path.join(directory, i)):
-            only_folders.append(i)
-
-    return "".join(only_folders).count("_") > "".join(only_folders).count("-")
-
-
-def directory_contains_resources(directory_path: str, source_only=False) -> bool:
-    """
-    Return True if the given directory contains at least one
-    supported resource file (checked via file extension), or False
-    otherwise.
-
-    :param source_only:
-        If True, only check for source-only formats.
-    """
-    resource_check = is_source_resource if source_only else is_resource
-    for root, dirnames, filenames in os.walk(directory_path):
-        # first() avoids checking past the first matching resource.
-        if first(filenames, resource_check) is not None:
-            return True
-    return False
-
-
-def locale_directory_path(
-    checkout_path: str, locale_code: str, parent_directories: list[str]
-) -> str:
-    """
-    Path to the directory where strings for the given locale are
-    stored.
-    """
-
-    # Check paths that use underscore as locale/country code separator
-    locale_code_variants = [locale_code, locale_code.replace("-", "_")]
-
-    # Optimization for directories with a lot of paths: if parent_directories
-    # is provided, we simply join it with locale_code and check if path exists
-    possible_paths = [
-        path
-        for path in (
-            os.path.join(parent_directory, locale)
-            for locale in locale_code_variants
-            for parent_directory in parent_directories
+    with TemporaryDirectory() as root:
+        file_path = join(root, basename(res_path))
+        with open(file_path, "wb") as file:
+            for chunk in upload.chunks():
+                file.write(chunk)
+        paths = UploadPaths(res_path, locale.code, file_path)
+        updates = find_db_updates(
+            project, {locale.code: locale}, [file_path], paths, []
         )
-        if os.path.exists(path)
-    ] or [
-        os.path.join(root, locale)
-        for locale in locale_code_variants
-        for root, dirnames, filenames in os.walk(checkout_path)
-        if locale in dirnames
-    ]
-
-    for possible_path in possible_paths:
-        if directory_contains_resources(possible_path):
-            return possible_path
-
-    # If locale directory empty (asymmetric formats)
-    if possible_paths:
-        return possible_paths[0]
-
-    raise OSError(f"Directory for locale `{locale_code or 'source'}` not found")
-
-
-def locale_to_source_path(path: str) -> str:
-    """
-    Return source resource path for the given locale resource path.
-    Source files for .po files are actually .pot.
-    """
-    return path + "t" if path.endswith("po") else path
-
-
-def source_to_locale_path(path: str) -> str:
-    """
-    Return locale resource path for the given source resource path.
-    Locale files for .pot files are actually .po.
-    """
-    return path[:-1] if path.endswith("pot") else path
-
-
-def escape_apostrophes(value: str) -> str:
-    """
-    Apostrophes (straight single quotes) have special meaning in Android strings.xml files,
-    so they need to be escaped using a preceding backslash.
-
-    Learn more:
-    https://developer.android.com/guide/topics/resources/string-resource.html#escaping_quotes
-    """
-    return value.replace("'", "\\'")
-
-
-def unescape_apostrophes(value: str) -> str:
-    return value.replace("\\'", "'")
-
-
-def escape_quotes(value: str) -> str:
-    """
-    DTD files can use single or double quotes for identifying strings,
-    so &quot; and &apos; are the safe bet that will work in both cases.
-    """
-    value = value.replace('"', "\\&quot;")
-    value = value.replace("'", "\\&apos;")
-
-    return value
-
-
-def unescape_quotes(value: str) -> str:
-    value = value.replace("\\&quot;", '"')
-    value = value.replace("\\u0022", '"')  # Bug 1390111
-    value = value.replace('\\"', '"')
-
-    value = value.replace("\\&apos;", "'")
-    value = value.replace("\\u0027", "'")  # Bug 1390111
-    value = value.replace("\\'", "'")
-
-    return value
-
-
-def create_parent_directory(path: str) -> None:
-    """
-    Create parent directory of the given path if it doesn't exist yet.
-    """
-    try:
-        os.makedirs(os.path.dirname(path))
-    except OSError as e:
-        # Directory already exists
-        if e.errno == errno.EEXIST:
-            pass
-        else:
-            raise
+    if updates:
+        now = timezone.now()
+        write_db_updates(project, updates, user, now)
+        update_stats(project)
+        ChangedEntityLocale.objects.bulk_create(
+            (
+                ChangedEntityLocale(entity_id=entity_id, locale_id=locale_id, when=now)
+                for entity_id, locale_id in updates
+            ),
+            ignore_conflicts=True,
+        )
+    else:
+        raise Exception("Upload failed.")

@@ -16,6 +16,7 @@ from pontoon.sync.formats import (
     xliff,
     xml,
 )
+from pontoon.sync.formats.base import ParsedResource
 
 
 # To add support for a new resource format, add an entry to this dict
@@ -56,7 +57,7 @@ def are_compatible_files(file_a, file_b):
     return False
 
 
-def parse(path, source_path=None, locale=None):
+def parse(path, source_path=None, locale=None) -> ParsedResource:
     """
     Parse the resource file at the given path and return a
     ParsedResource with its translations.

@@ -9,7 +9,7 @@ from compare_locales.parser.fluent import FluentParser
 from compare_locales.parser.properties import PropertiesEntityMixin
 from compare_locales.paths import File
 
-from pontoon.sync.utils import escape_apostrophes
+from pontoon.sync.formats.utils import escape_apostrophes
 
 
 CommentEntity = namedtuple("Comment", ("all",))

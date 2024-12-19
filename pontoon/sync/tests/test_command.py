@@ -18,14 +18,16 @@ class CommandTests(TestCase):
         super().setUp()
         self.command = sync_projects.Command()
         self.command.verbosity = 0
-        self.command.no_commit = False
-        self.command.no_pull = False
+        self.command.commit = True
+        self.command.pull = True
         self.command.force = False
         self.command.stderr = io.StringIO()
 
         Project.objects.filter(slug="pontoon-intro").delete()
 
-        self.mock_sync_project = self.patch_object(sync_projects, "sync_project")
+        self.mock_sync_project_task = self.patch_object(
+            sync_projects, "sync_project_task"
+        )
 
     def execute_command(self, *args, **kwargs):
         kwargs.setdefault("verbosity", 0)
@@ -48,12 +50,8 @@ class CommandTests(TestCase):
         )
 
         self.execute_command()
-        self.mock_sync_project.delay.assert_called_with(
-            active_project.pk,
-            ANY,
-            no_pull=False,
-            no_commit=False,
-            force=False,
+        self.mock_sync_project_task.delay.assert_called_with(
+            active_project.pk, ANY, pull=True, commit=True, force=False
         )
 
     def test_non_repository_projects(self):
@@ -62,12 +60,8 @@ class CommandTests(TestCase):
         repo_project = ProjectFactory.create(data_source=Project.DataSource.REPOSITORY)
 
         self.execute_command()
-        self.mock_sync_project.delay.assert_called_with(
-            repo_project.pk,
-            ANY,
-            no_pull=False,
-            no_commit=False,
-            force=False,
+        self.mock_sync_project_task.delay.assert_called_with(
+            repo_project.pk, ANY, pull=True, commit=True, force=False
         )
 
     def test_project_slugs(self):
@@ -78,12 +72,8 @@ class CommandTests(TestCase):
         ignore_project, handle_project = ProjectFactory.create_batch(2)
 
         self.execute_command(projects=handle_project.slug)
-        self.mock_sync_project.delay.assert_called_with(
-            handle_project.pk,
-            ANY,
-            no_pull=False,
-            no_commit=False,
-            force=False,
+        self.mock_sync_project_task.delay.assert_called_with(
+            handle_project.pk, ANY, pull=True, commit=True, force=False
         )
 
     def test_no_matching_projects(self):
@@ -102,12 +92,8 @@ class CommandTests(TestCase):
 
         self.execute_command(projects=handle_project.slug + ",aaa,bbb")
 
-        self.mock_sync_project.delay.assert_called_with(
-            handle_project.pk,
-            ANY,
-            no_pull=False,
-            no_commit=False,
-            force=False,
+        self.mock_sync_project_task.delay.assert_called_with(
+            handle_project.pk, ANY, pull=True, commit=True, force=False
         )
 
         assert (
@@ -118,8 +104,8 @@ class CommandTests(TestCase):
     def test_options(self):
         project = ProjectFactory.create()
         self.execute_command(no_pull=True, no_commit=True)
-        self.mock_sync_project.delay.assert_called_with(
-            project.pk, ANY, no_pull=True, no_commit=True, force=False
+        self.mock_sync_project_task.delay.assert_called_with(
+            project.pk, ANY, pull=False, commit=False, force=False
         )
 
     def test_sync_log(self):

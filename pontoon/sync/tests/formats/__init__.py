@@ -3,7 +3,6 @@ from pontoon.base.tests import (
     assert_attributes_equal,
     create_tempfile,
 )
-from pontoon.base.utils import match_attr
 
 
 class FormatTestsMixin:
@@ -366,8 +365,9 @@ class FormatTestsMixin:
             MissingString=Translated Missing String
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
-        missing_translation = match_attr(
-            resource.translations, key=self.key("Missing String")
+        key = self.key("Missing String")
+        missing_translation = next(
+            trans for trans in resource.translations if getattr(trans, "key") == key
         )
         missing_translation.strings = {
             None: expected_translation or "Translated Missing String"
@@ -394,7 +394,11 @@ class FormatTestsMixin:
         """
         path, resource = self.parse_string(input_string, source_string=source_string)
 
-        translation = match_attr(resource.translations, key="String")
+        translation = next(
+            trans
+            for trans in resource.translations
+            if getattr(trans, "key") == "String"
+        )
         translation.strings = {None: expected_translation or "Source String"}
         resource.save(self.locale)
 
