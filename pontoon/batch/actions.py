@@ -88,7 +88,7 @@ def approve_translations(form, user, translations, locale):
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
-        badge_update["name"] = "Review Master Badge"
+        badge_update["name"] = "Review Master"
         send_badge_notification(user, "Review Master Badge", after_level)
 
     # Approve translations.
@@ -154,7 +154,7 @@ def reject_translations(form, user, translations, locale):
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
-        badge_update["name"] = "Review Master Badge"
+        badge_update["name"] = "Review Master"
         send_badge_notification(user, "Review Master Badge", after_level)
 
     # Reject translations.
@@ -257,7 +257,7 @@ def replace_translations(form, user, translations, locale):
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
-        badge_update["name"] = "Translation Champion Badge"
+        badge_update["name"] = "Translation Champion"
         send_badge_notification(user, "Translation Champion Badge", after_level)
 
     changed_translation_pks = [c.pk for c in changed_translations]
