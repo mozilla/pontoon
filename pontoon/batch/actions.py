@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
@@ -8,13 +7,6 @@ from pontoon.base.models import (
 )
 from pontoon.batch import utils
 from pontoon.messaging.notifications import send_badge_notification
-
-
-def _get_badge_level(thresholds, action_count):
-    for level in range(len(thresholds) - 1):
-        if thresholds[level] <= action_count < thresholds[level + 1]:
-            return level + 1
-    return 0
 
 
 def batch_action_template(form, user, translations, locale):
@@ -78,9 +70,7 @@ def approve_translations(form, user, translations, locale):
         locale,
     )
 
-    before_level = _get_badge_level(
-        settings.BADGES_REVIEW_THRESHOLDS, user.badges_review_count
-    )
+    before_level = user.badges_review_level
 
     # Log approving actions
     actions_to_log = [
@@ -94,14 +84,12 @@ def approve_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Review Master Badge notification information
-    after_level = _get_badge_level(
-        settings.BADGES_REVIEW_THRESHOLDS, user.badges_review_count
-    )
+    after_level = user.badges_review_level
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
         badge_update["name"] = "Review Master Badge"
-        send_badge_notification(user, badge_update["name"], badge_update["level"])
+        send_badge_notification(user, "Review Master Badge", after_level)
 
     # Approve translations.
     translations.update(
@@ -148,9 +136,7 @@ def reject_translations(form, user, translations, locale):
     )
     TranslationMemoryEntry.objects.filter(translation__in=suggestions).delete()
 
-    before_level = _get_badge_level(
-        settings.BADGES_REVIEW_THRESHOLDS, user.badges_review_count
-    )
+    before_level = user.badges_review_level
 
     # Log rejecting actions
     actions_to_log = [
@@ -164,14 +150,12 @@ def reject_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Review Master Badge notification information
-    after_level = _get_badge_level(
-        settings.BADGES_REVIEW_THRESHOLDS, user.badges_review_count
-    )
+    after_level = user.badges_review_level
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
         badge_update["name"] = "Review Master Badge"
-        send_badge_notification(user, badge_update["name"], badge_update["level"])
+        send_badge_notification(user, "Review Master Badge", after_level)
 
     # Reject translations.
     suggestions.update(
@@ -255,9 +239,7 @@ def replace_translations(form, user, translations, locale):
         translations_to_create,
     )
 
-    before_level = _get_badge_level(
-        settings.BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
-    )
+    before_level = user.badges_translation_level
 
     # Log creating actions
     actions_to_log = [
@@ -271,14 +253,12 @@ def replace_translations(form, user, translations, locale):
     ActionLog.objects.bulk_create(actions_to_log)
 
     # Send Translation Champion Badge notification information
-    after_level = _get_badge_level(
-        settings.BADGES_TRANSLATION_THRESHOLDS, user.badges_translation_count
-    )
+    after_level = user.badges_translation_level
     badge_update = {}
     if after_level > before_level:
         badge_update["level"] = after_level
         badge_update["name"] = "Translation Champion Badge"
-        send_badge_notification(user, badge_update["name"], badge_update["level"])
+        send_badge_notification(user, "Translation Champion Badge", after_level)
 
     changed_translation_pks = [c.pk for c in changed_translations]
 
