@@ -175,7 +175,7 @@ def create_translation(request):
     # Send Translation Champion Badge notification information
     translation_count = user.badges_translation_count
     if translation_count in settings.BADGES_TRANSLATION_THRESHOLDS:
-        badge_name = "Translation Champion Badge"
+        badge_name = "Translation Champion"
         badge_level = (
             settings.BADGES_TRANSLATION_THRESHOLDS.index(translation_count) + 1
         )
@@ -323,7 +323,7 @@ def approve_translation(request):
     # Send Review Master Badge notification information
     review_count = user.badges_review_count
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
-        badge_name = "Review Master Badge"
+        badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
         _add_badge_data(response_data, user, badge_name, badge_level)
 
@@ -460,7 +460,7 @@ def reject_translation(request):
     # Send Review Master Badge notification information
     review_count = request.user.badges_review_count
     if review_count in settings.BADGES_REVIEW_THRESHOLDS:
-        badge_name = "Review Master Badge"
+        badge_name = "Review Master"
         badge_level = settings.BADGES_REVIEW_THRESHOLDS.index(review_count) + 1
         _add_badge_data(response_data, request.user, badge_name, badge_level)
 
