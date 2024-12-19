@@ -79,7 +79,7 @@ def write_db_updates(
     updated_translations, new_translations = update_db_translations(
         project, updates, user, now
     )
-    add_errors(new_translations)
+    add_failed_checks(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
 
 
@@ -454,12 +454,11 @@ def get_path_locale(path_vars: dict[str, str]) -> str | None:
         return None
 
 
-def add_errors(translations: list[Translation]) -> None:
+def add_failed_checks(translations: list[Translation]) -> None:
     """
     Run checks on all changed translations from supported resources
     """
     if translations:
-        # TODO: Resource format should be retained
         checked_translations = Translation.objects.filter(
             pk__in=[tx.pk for tx in translations],
             entity__resource__format__in=DB_FORMATS,
