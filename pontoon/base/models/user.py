@@ -276,6 +276,24 @@ def badges_promotion_count(self):
 
 
 @property
+def badges_review_level(self):
+    thresholds = settings.BADGES_REVIEW_THRESHOLDS
+    for level in range(len(thresholds) - 1):
+        if thresholds[level] <= self.badges_review_count < thresholds[level + 1]:
+            return level + 1
+    return 0
+
+
+@property
+def badges_translation_level(self):
+    thresholds = settings.BADGES_TRANSLATION_THRESHOLDS
+    for level in range(len(thresholds) - 1):
+        if thresholds[level] <= self.badges_translation_count < thresholds[level + 1]:
+            return level + 1
+    return 0
+
+
+@property
 def top_contributed_locale(self):
     """Locale the user has made the most contributions to."""
     try:
@@ -523,6 +541,8 @@ User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("badges_translation_count", badges_translation_count)
 User.add_to_class("badges_review_count", badges_review_count)
 User.add_to_class("badges_promotion_count", badges_promotion_count)
+User.add_to_class("badges_review_level", badges_review_level)
+User.add_to_class("badges_translation_level", badges_translation_level)
 User.add_to_class("has_approved_translations", has_approved_translations)
 User.add_to_class("top_contributed_locale", top_contributed_locale)
 User.add_to_class("can_translate", can_translate)
