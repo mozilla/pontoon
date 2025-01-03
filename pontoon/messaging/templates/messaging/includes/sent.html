@@ -1,7 +1,7 @@
 <div id="sent">
     {% if sent_messages|length == 0 %}
     <div class="no">
-        <i class="icon fa fa-envelope fa-fw"></i>
+        <i class="icon fas fa-envelope fa-fw"></i>
         <p class="title">No messages sent yet.</p>
     </div>
     {% endif %}
@@ -30,7 +30,7 @@
                 <div class="body"><div class="value">{{ message.body|safe }}</div></div>
             </div>
             <div class="footer">
-                <a href="{{ url('pontoon.messaging.use_as_template', message.pk) }}" class="use-as-template"><i class="fa fa-pencil-alt"></i>Use as template</a>
+                <a href="{{ url('pontoon.messaging.use_as_template', message.pk) }}" class="use-as-template"><i class="fas fa-pencil-alt"></i>Use as template</a>
                 <time>{{ message.sent_at|format_for_inbox }}</time>
             </div>
         </li>

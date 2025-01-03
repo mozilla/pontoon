@@ -211,7 +211,7 @@ export function TimeRangeFilter({
           <Localized
             id='search-TimeRangeFilter--edit-range'
             elems={{
-              glyph: <i className='fa fa-chart-area' />,
+              glyph: <i className='fas fa-chart-area' />,
             }}
           >
             <button onClick={toggleEditingTimeRange} className='edit-range'>
@@ -227,7 +227,7 @@ export function TimeRangeFilter({
         )}
       </li>
       <li className={timeRangeClass} onClick={applyTimeRangeFilter}>
-        <span className='status fa' onClick={toggleTimeRangeFilter}></span>
+        <span className='status fas' onClick={toggleTimeRangeFilter}></span>
 
         <span className='clearfix'>
           <label className='from'>

@@ -106,7 +106,7 @@ export function BatchActions(): React.ReactElement<'div'> {
         <Localized
           id='batchactions-BatchActions--header-select-all'
           attrs={{ title: true }}
-          elems={{ glyph: <i className='fa fa-check fa-lg' /> }}
+          elems={{ glyph: <i className='fas fa-check fa-lg' /> }}
         >
           <button
             className='select-all'
@@ -117,13 +117,13 @@ export function BatchActions(): React.ReactElement<'div'> {
           </button>
         </Localized>
         {batchactions.requestInProgress === 'select-all' ? (
-          <div className='selecting fa fa-sync fa-spin'></div>
+          <div className='selecting fas fa-sync fa-spin'></div>
         ) : (
           <Localized
             id='batchactions-BatchActions--header-selected-count'
             attrs={{ title: true }}
             elems={{
-              glyph: <i className='fa fa-times fa-lg' />,
+              glyph: <i className='fas fa-times fa-lg' />,
               stress: <span className='stress' />,
             }}
             vars={{ count: batchactions.entities.length }}

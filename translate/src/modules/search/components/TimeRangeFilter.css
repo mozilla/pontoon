@@ -16,7 +16,7 @@
   color: var(--status-translated);
 }
 
-.filters-panel .menu li.for-time-range button .fa {
+.filters-panel .menu li.for-time-range button .fas {
   padding-right: 5px;
 }
 

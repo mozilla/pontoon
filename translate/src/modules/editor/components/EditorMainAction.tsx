@@ -73,7 +73,7 @@ export function EditorMainAction(): React.ReactElement<React.ElementType> {
   const label = action.toUpperCase();
 
   if (busy) {
-    const glyph = <i className='fa fa-circle-notch fa-spin' />;
+    const glyph = <i className='fas fa-circle-notch fa-spin' />;
     return (
       <Localized id={id} attrs={{ title: true }} elems={{ glyph }}>
         <button className={className} disabled title={title}>

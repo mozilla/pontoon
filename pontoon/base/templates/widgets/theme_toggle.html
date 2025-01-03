@@ -5,7 +5,7 @@
 {% set system = "Match system" if long_name else "System" %}
 <span class="toggle-button">
     <button type="button" value="dark" class="dark {% if user.profile.theme == 'dark' %}active{% endif %}" title="Use a dark theme"><i class="icon far fa-moon"></i>{{ dark }}</button>
-    <button type="button" value="light" class="light {% if user.profile.theme == 'light' %}active{% endif %}" title="Use a light theme"><i class="icon fa fa-sun"></i>{{ light }}</button>
-    <button type="button" value="system" class="system {% if user.profile.theme == 'system' %}active{% endif %}" title="Use a theme that matches your system settings"><i class="icon fa fa-laptop"></i>{{ system }}</button>
+    <button type="button" value="light" class="light {% if user.profile.theme == 'light' %}active{% endif %}" title="Use a light theme"><i class="icon fas fa-sun"></i>{{ light }}</button>
+    <button type="button" value="system" class="system {% if user.profile.theme == 'system' %}active{% endif %}" title="Use a theme that matches your system settings"><i class="icon fas fa-laptop"></i>{{ system }}</button>
 </span>
 {% endmacro %}

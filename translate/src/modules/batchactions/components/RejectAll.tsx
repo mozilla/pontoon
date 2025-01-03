@@ -32,7 +32,7 @@ export function RejectAll({
         response={response ?? {}}
       />
       {requestInProgress === 'reject' ? (
-        <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+        <i className='fas fa-2x fa-circle-notch fa-spin'></i>
       ) : null}
     </button>
   );

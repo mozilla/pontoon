@@ -52,7 +52,7 @@
 
         <h3 class="controls">
             {{ project_locale.project.name }} <span class="small stress">(override team translators for this project)</span>
-            <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fa fa-trash"></span>Remove</a>
+            <a href="#" class="remove-project button" title="Remove custom project permissions"><span class="fas fa-trash"></span>Remove</a>
         </h3>
         <div class="selector-wrapper double-list-selector clearfix">
             {{ ContributorSelectorList.list(
@@ -76,10 +76,10 @@
     <menu class="controls">
         <button class="button active save">Save</button>
         <div id="project-selector" class="select{% if hide_project_selector %} hidden{% endif %}">
-            <div class="button selector">Add custom permissions for project<span class="icon fa fa-caret-up"></span></div>
+            <div class="button selector">Add custom permissions for project<span class="icon fas fa-caret-up"></span></div>
             <div class="menu">
                 <div class="search-wrapper clearfix">
-                    <div class="icon fa fa-search"></div>
+                    <div class="icon fas fa-search"></div>
                     <input autocomplete="off" autofocus="" type="search">
                 </div>
                 <ul>

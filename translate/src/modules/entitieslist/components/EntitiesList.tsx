@@ -46,7 +46,7 @@ const EntitiesToolbar = ({
       id='entitieslist-EntitiesList--clear-selected'
       attrs={{ title: true }}
       elems={{
-        glyph: <i className='fa fa-times fa-lg' />,
+        glyph: <i className='fas fa-times fa-lg' />,
       }}
     >
       <button
@@ -61,7 +61,7 @@ const EntitiesToolbar = ({
       id='entitieslist-EntitiesList--edit-selected'
       attrs={{ title: true }}
       elems={{
-        glyph: <i className='fa fa-chevron-right fa-lg' />,
+        glyph: <i className='fas fa-chevron-right fa-lg' />,
         stress: <span className='selected-count' />,
       }}
       vars={{ count }}
@@ -271,7 +271,7 @@ export function EntitiesList(): React.ReactElement<'div'> {
     return (
       <div className='entities unselectable' ref={list}>
         <h3 className='no-results'>
-          <div className='fa fa-exclamation-circle'></div>
+          <div className='fas fa-exclamation-circle'></div>
           No results
         </h3>
       </div>

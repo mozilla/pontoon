@@ -71,7 +71,7 @@
 <li class="{{ class }}">
   {% if link %}<a href="{{ link }}">{% endif %}
     {% if class != 'all' %}
-      <span class="fa status"></span>
+      <span class="fas status"></span>
     {% endif %}
     {{ title }}
     <span class="value" data-value="{{ value }}">{{ value|intcomma }}</span>
@@ -123,7 +123,7 @@
     {% if link %}<a href="{{ link + '?status=unreviewed' }}">{% endif %}
       <p class="title">Unreviewed</p>
       <p class="value">
-        <span class="fa status"></span>
+        <span class="fas status"></span>
         <span class="text">{{ obj.unreviewed_strings|intcomma }}</span>
       </p>
     {% if link %}</a>{% endif %}
@@ -134,7 +134,7 @@
 {% macro download_selector(locale, project) %}
 <div class="download-selector select">
   <div class="button selector">
-    <i class="fa fa-cloud-download-alt"></i>
+    <i class="fas fa-cloud-download-alt"></i>
   </div>
   <div class="menu">
       <ul>

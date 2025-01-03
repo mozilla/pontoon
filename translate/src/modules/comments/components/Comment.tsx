@@ -64,7 +64,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
             </Linkify>
             {!comment.pinned ? null : (
               <div className='comment-pin'>
-                <div className='fa fa-thumbtack'></div>
+                <div className='fas fa-thumbtack'></div>
                 <Localized id='comments-Comment--pinned'>
                   <span className='pinned'>PINNED</span>
                 </Localized>

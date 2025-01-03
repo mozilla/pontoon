@@ -166,7 +166,7 @@
   background: var(--status-error);
 }
 
-#permissions-form h3 .remove-project .fa {
+#permissions-form h3 .remove-project .fas {
   float: left;
   font-size: 13px;
   margin-top: 2px;

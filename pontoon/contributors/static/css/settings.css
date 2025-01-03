@@ -168,7 +168,7 @@
       text-align: center;
       width: 100%;
 
-      .fa {
+      .fas {
         margin: 0;
       }
     }
@@ -177,7 +177,7 @@
   .check-box:first-child:not(.enabled) + .check-box {
     pointer-events: none;
 
-    .fa:before {
+    .fas:before {
       color: var(--toggle-color-2);
     }
   }

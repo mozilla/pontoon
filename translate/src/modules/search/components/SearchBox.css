@@ -41,7 +41,7 @@
   top: 16px;
 }
 
-.search-box .status.fa {
+.search-box .status.fas {
   position: absolute;
   left: 16px;
   top: 9px;
@@ -52,7 +52,7 @@
   top: 9px;
 }
 
-.search-box .status.fa::before {
+.search-box .status.fas::before {
   color: var(--light-grey-7);
   content: '';
 }

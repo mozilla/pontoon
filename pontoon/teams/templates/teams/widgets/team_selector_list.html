@@ -12,13 +12,13 @@
 
     <div class="menu permanent">
         <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
+            <div class="icon fas fa-search"></div>
             <input id="{{ id }}" type="search" autocomplete="off">
         </div>
         <ul class="{% if sortable %}sortable{% endif %}">
             {% for locale in locales %}
             <li class="clearfix" data-id="{{ locale.id }}">
-                <span class="arrow fa"></span>
+                <span class="arrow fas"></span>
                 <span class="language {{ locale.code }}">{{ locale.name }}</span>
                 <span class="code">{{ locale.code }}</span>
             </li>

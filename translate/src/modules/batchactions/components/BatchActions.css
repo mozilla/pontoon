@@ -39,7 +39,7 @@
   color: var(--status-translated-alt);
 }
 
-.batch-actions .topbar button .fa {
+.batch-actions .topbar button .fas {
   padding-right: 5px;
 }
 
@@ -96,7 +96,7 @@
   position: relative;
 }
 
-.batch-actions .actions-panel button .fa {
+.batch-actions .actions-panel button .fas {
   position: absolute;
   right: 10px;
   top: 12px;

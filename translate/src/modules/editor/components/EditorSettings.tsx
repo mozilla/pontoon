@@ -40,7 +40,7 @@ export function EditorSettingsDialog({
       <Localized
         id='editor-EditorSettings--toolkit-checks'
         attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-fw' /> }}
+        elems={{ glyph: <i className='fas fa-fw' /> }}
       >
         <li
           className={
@@ -57,7 +57,7 @@ export function EditorSettingsDialog({
         <Localized
           id='editor-EditorSettings--force-suggestions'
           attrs={{ title: true }}
-          elems={{ glyph: <i className='fa fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-fw' /> }}
         >
           <li
             className={
@@ -103,7 +103,7 @@ export function EditorSettings({
   return (
     <div className='editor-settings'>
       <div
-        className='selector fa fa-cog'
+        className='selector fas fa-cog'
         title='Settings'
         onClick={toggleVisible}
       />

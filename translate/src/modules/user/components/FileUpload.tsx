@@ -36,7 +36,7 @@ export function FileUpload({ parameters }: Props): React.ReactElement<'form'> {
         <Localized
           id='user-UserMenu--upload-translations'
           elems={{
-            glyph: <i className='fa fa-cloud-upload-alt fa-fw' />,
+            glyph: <i className='fas fa-cloud-upload-alt fa-fw' />,
           }}
         >
           <span>{'<glyph></glyph>Upload Translations'}</span>

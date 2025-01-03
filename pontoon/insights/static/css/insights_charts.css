@@ -30,13 +30,13 @@
   box-sizing: border-box;
 }
 
-#insights h3 .fa {
+#insights h3 .fas {
   float: right;
   font-size: 14px;
 }
 
-#insights h3 .fa.active,
-#insights h3 .fa:hover {
+#insights h3 .fas.active,
+#insights h3 .fas:hover {
   background: var(--button-background-hover-2);
 }
 

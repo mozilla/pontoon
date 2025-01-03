@@ -51,7 +51,7 @@ export function ProjectMenuDialog({
     setSortAsc(sortActive !== 'progress' || !sortAsc);
   };
 
-  const sort = sortAsc ? 'fa fa-caret-up' : 'fa fa-caret-down';
+  const sort = sortAsc ? 'fas fa-caret-up' : 'fas fa-caret-down';
   const projectClass = sortActive === 'project' ? sort : '';
   const progressClass = sortActive === 'progress' ? sort : '';
 
@@ -67,7 +67,7 @@ export function ProjectMenuDialog({
   return (
     <div ref={ref} className='menu'>
       <div className='search-wrapper'>
-        <div className='icon fa fa-search'></div>
+        <div className='icon fas fa-search'></div>
         <Localized
           id='project-ProjectMenu--search-placeholder'
           attrs={{ placeholder: true }}
@@ -166,7 +166,7 @@ export function ProjectMenu({
         <Localized id='project-ProjectMenu--all-projects'>
           <span>All Projects</span>
         </Localized>
-        <span className='icon fa fa-caret-down'></span>
+        <span className='icon fas fa-caret-down'></span>
       </div>
       {visible && (
         <ProjectMenuDialog

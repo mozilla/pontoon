@@ -34,7 +34,7 @@
     <div class="pagination">
       {% if sync_logs.has_previous() %}
         <a class="previous" href="?page={{ sync_logs.previous_page_number() }}">
-          <span class="fa fa-chevron-left"></span>
+          <span class="fas fa-chevron-left"></span>
           Previous
         </a>
       {% endif %}
@@ -46,7 +46,7 @@
       {% if sync_logs.has_next() %}
         <a class="next" href="?page={{ sync_logs.next_page_number() }}">
           Next
-          <span class="fa fa-chevron-right"></span>
+          <span class="fas fa-chevron-right"></span>
         </a>
       {% endif %}
     </div>

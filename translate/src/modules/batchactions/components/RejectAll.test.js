@@ -30,7 +30,7 @@ describe('<RejectAll>', () => {
     expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(0);
     expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders error button correctly', () => {
@@ -51,7 +51,7 @@ describe('<RejectAll>', () => {
     expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(1);
     expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(0);
     expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders success button correctly', () => {
@@ -72,7 +72,7 @@ describe('<RejectAll>', () => {
     expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(1);
     expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders success with invalid button correctly', () => {
@@ -94,7 +94,7 @@ describe('<RejectAll>', () => {
     expect(wrapper.find('#batchactions-RejectAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-RejectAll--success')).toHaveLength(1);
     expect(wrapper.find('#batchactions-RejectAll--invalid')).toHaveLength(1);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('raise confirmation warning when Reject All button is clicked', () => {

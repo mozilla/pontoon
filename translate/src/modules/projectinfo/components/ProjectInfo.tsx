@@ -40,7 +40,7 @@ export function ProjectInfo(): React.ReactElement<'div'> | null {
   return fetching || !info ? null : (
     <div className='project-info'>
       <div className='button' onClick={toggleVisible}>
-        <span className='fa fa-info'></span>
+        <span className='fas fa-info'></span>
       </div>
       {visible && <ProjectInfoDialog info={info} onDiscard={handleDiscard} />}
     </div>

@@ -39,7 +39,7 @@ export function UserNotificationsMenuDialog({
           })
         ) : (
           <li className='no'>
-            <i className='icon fa fa-bell fa-fw'></i>
+            <i className='icon fas fa-bell fa-fw'></i>
             <Localized id='user-UserNotificationsMenu--no-notifications-title'>
               <p className='title'>No new notifications.</p>
             </Localized>

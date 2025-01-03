@@ -7,15 +7,15 @@
   <table class="table table-sort project-list item-list {% if not visible %}hidden{% endif %}">
     <thead>
       <tr>
-        <th class="name asc">Project<i class="fa"></i></th>
-        <th class="deadline">Target Date<i class="fa"></i></th>
-        <th class="priority inverted">Priority<i class="fa"></i></th>
-        <th class="latest-activity">Latest Activity<i class="fa"></i></th>
-        <th class="progress">Progress<i class="fa"></i></th>
-        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fa fa-lightbulb"></span><i class="fa"></i></th>
+        <th class="name asc">Project<i class="fas"></i></th>
+        <th class="deadline">Target Date<i class="fas"></i></th>
+        <th class="priority inverted">Priority<i class="fas"></i></th>
+        <th class="latest-activity">Latest Activity<i class="fas"></i></th>
+        <th class="progress">Progress<i class="fas"></i></th>
+        <th class="unreviewed-status inverted" title="Unreviewed suggestions"><span class="fas fa-lightbulb"></span><i class="fas"></i></th>
         {% if request %}
-          <th class="all-strings">Number of Strings<i class="fa"></i></th>
-          <th class="check">Request<i class="fa"></i></th>
+          <th class="all-strings">Number of Strings<i class="fas"></i></th>
+          <th class="check">Request<i class="fas"></i></th>
         {% endif %}
       </tr>
     </thead>
@@ -53,7 +53,7 @@
           <span class="not-ready">Not synced yet</span>
         {% endif %}
       </td>
-      <td class="check fa fa-fw"></td>
+      <td class="check fas fa-fw"></td>
     {% endif %}
   </tr>
 {% endmacro %}

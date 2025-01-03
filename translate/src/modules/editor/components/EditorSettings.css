@@ -55,16 +55,16 @@
   padding: 0;
 }
 
-.editor-settings .menu .check-box .fa {
+.editor-settings .menu .check-box .fas {
   margin-right: 6px;
 }
 
-.editor-settings .menu .check-box .fa:before {
+.editor-settings .menu .check-box .fas:before {
   color: var(--status-error);
   content: '';
 }
 
-.editor-settings .menu .check-box.enabled .fa:before {
+.editor-settings .menu .check-box.enabled .fas:before {
   color: var(--status-translated);
   content: '';
 }

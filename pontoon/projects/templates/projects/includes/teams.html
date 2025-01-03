@@ -3,13 +3,13 @@
 <div class="teams items">
   <menu class="controls">
     <div class="search-wrapper small clearfix">
-      <div class="icon fa fa-search"></div>
+      <div class="icon fas fa-search"></div>
       <input class="table-filter" type="search" autocomplete="off" autofocus placeholder="Filter teams" data-filter="td:nth-child(-n+2)">
     </div>
 
     {% if project.can_be_requested and user.is_authenticated %}
     <button class="request-toggle button small request-teams">
-      <span class="fa fa-chevron-right"></span>
+      <span class="fas fa-chevron-right"></span>
     </button>
     {% endif %}
   </menu>

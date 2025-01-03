@@ -15,7 +15,7 @@
   padding: 0;
 }
 
-body.top-contributors #heading .legend li .status.fa {
+body.top-contributors #heading .legend li .status.fas {
   display: none;
 }
 
