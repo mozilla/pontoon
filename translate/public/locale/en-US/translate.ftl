@@ -154,7 +154,7 @@ editor-FtlSwitch--active =
 editor-FailedChecks--close = ×
     .aria-label = Close failed checks popup
 editor-FailedChecks--title = THE FOLLOWING CHECKS HAVE FAILED
-editor-FailedChecks--save-anyway = SAVE ANYWAY 
+editor-FailedChecks--save-anyway = SAVE ANYWAY
 editor-FailedChecks--suggest-anyway = SUGGEST ANYWAY
 editor-FailedChecks--approve-anyway = APPROVE ANYWAY
 
@@ -468,7 +468,7 @@ interactivetour-InteractiveTour--comments-content =
     In the Comments tab you can discuss how to translate content with
     your fellow team members. It’s also the place where you can request
     more context about or report an issue in the source string.
-    
+
 interactivetour-InteractiveTour--machinery-title = Machinery
 interactivetour-InteractiveTour--machinery-content =
     The Machinery tab shows automated translation suggestions from
@@ -682,11 +682,15 @@ search-FiltersPanel--apply-filters =
 
 ## Search Options Panel
 
-search-SearchPanel--option-name-identifiers = Search in string identifiers
+search-SearchPanel--option-name-search_match_case = Match case
+search-SearchPanel--option-name-search_match_whole_word = Match whole word
+search-SearchPanel--option-name-search_identifiers = Search in string identifiers
+search-SearchPanel--option-name-search_rejected_translations = Include rejected translations
+search-SearchPanel--option-name-search_exclude_source_strings = Exclude source strings
 
 search-SearchPanel--heading = SEARCH OPTIONS
 
-search-SearchPanel--apply-options = APPLY SEARCH OPTIONS
+search-SearchPanel--apply-searchOptions = APPLY SEARCH OPTIONS
     .title = Apply Selected Search Options
 
 ## Time Range Filter
@@ -700,7 +704,7 @@ search-TimeRangeFilter--save-range = SAVE RANGE
 ## Term
 ## Shows term entry with its metadata
 
-term-Term--copy = 
+term-Term--copy =
     .title = Copy Into Translation
 
 term-Term--for-example = E.G.
@@ -709,9 +713,9 @@ term-Term--for-example = E.G.
 ## User Avatar
 ## Shows user Avatar with alt text
 
-user-UserAvatar--anon-alt-text = 
+user-UserAvatar--anon-alt-text =
     .alt = Anonymous User
-user-UserAvatar--alt-text = 
+user-UserAvatar--alt-text =
     .alt = User Profile
 
 ## User Menu
