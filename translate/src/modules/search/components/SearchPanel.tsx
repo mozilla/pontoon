@@ -38,7 +38,7 @@ const SearchOption = ({
         onToggle();
       }}
     >
-      <i className='fa fa-w'></i>
+      <i className='fa'></i>
       <Localized id={`search-SearchPanel--option-name-${slug}`}>
         <span className='label'>{name}</span>
       </Localized>
