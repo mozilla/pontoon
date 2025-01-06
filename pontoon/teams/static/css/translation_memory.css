@@ -3,7 +3,7 @@
     float: right;
 
     .button.upload {
-      .fa {
+      .fas {
         padding-right: 2px;
       }
     }
@@ -13,13 +13,13 @@
       background-color: transparent;
       margin-left: 0;
 
-      .fa {
+      .fas {
         margin-right: 0;
       }
     }
 
     .button.cancel:hover {
-      .fa {
+      .fas {
         color: var(--white-1);
       }
     }
@@ -163,7 +163,7 @@
           .button {
             background: var(--button-background-1);
 
-            .fa {
+            .fas {
               margin-right: 2px;
             }
           }
@@ -199,13 +199,13 @@
             background-color: transparent;
             margin-left: 0;
 
-            .fa {
+            .fas {
               margin-right: 0;
             }
           }
 
           .button.cancel:hover {
-            .fa {
+            .fas {
               color: var(--white-1);
             }
           }

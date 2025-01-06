@@ -20,7 +20,7 @@ export function ReplaceAll({
     <button className='replace-all' onClick={replaceAll}>
       <Title {...response} />
       {requestInProgress !== 'replace' ? null : (
-        <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+        <i className='fas fa-2x fa-circle-notch fa-spin'></i>
       )}
     </button>
   );

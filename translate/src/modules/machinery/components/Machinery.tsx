@@ -33,17 +33,17 @@ export function Machinery(): React.ReactElement<'section'> {
       <div className='search-wrapper clearfix'>
         <label htmlFor='machinery-search'>
           {input && input !== query ? (
-            <button className='fa fa-search' onClick={getResults}></button>
+            <button className='fas fa-search' onClick={getResults}></button>
           ) : query ? (
             <button
-              className='fa fa-times'
+              className='fas fa-times'
               onClick={() => {
                 setInput('');
                 getResults();
               }}
             ></button>
           ) : (
-            <div className='fa fa-search'></div>
+            <div className='fas fa-search'></div>
           )}
         </label>
         <form

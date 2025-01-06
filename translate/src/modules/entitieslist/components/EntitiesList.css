@@ -65,7 +65,7 @@
   float: left;
 }
 
-.entities .toolbar .clear-selected .fa {
+.entities .toolbar .clear-selected .fas {
   padding-right: 6px;
 }
 
@@ -74,7 +74,7 @@
   text-align: right;
 }
 
-.entities .toolbar .edit-selected .fa {
+.entities .toolbar .edit-selected .fas {
   padding-left: 6px;
 }
 

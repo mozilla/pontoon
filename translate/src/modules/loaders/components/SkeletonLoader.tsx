@@ -24,7 +24,7 @@ export function SkeletonLoader({
         }`;
         return (
           <li className={classes} key={i}>
-            <span className='status fa' />
+            <span className='status fas' />
             <div>
               <p className='source-string'></p>
               <p className='text-2'></p>

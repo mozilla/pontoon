@@ -37,7 +37,7 @@ $('body')
 
       $element.after(
         '<aside class="tooltip">' +
-          '<span class="quote fa fa-2x fa-quote-right"></span>' +
+          '<span class="quote fas fa-quote-right fa-2x"></span>' +
           '<p class="translation">' +
           translation +
           '</p>' +

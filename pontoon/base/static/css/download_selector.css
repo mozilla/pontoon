@@ -7,7 +7,7 @@
   padding-top: 0;
 }
 
-.download-selector .selector .fa {
+.download-selector .selector .fas {
   float: right;
   background: var(--button-background-2);
   border-radius: 3px;
@@ -20,11 +20,11 @@
   text-align: center;
 }
 
-.download-selector .selector .fa:hover {
+.download-selector .selector .fas:hover {
   background: var(--button-background-hover-2);
 }
 
-.download-selector.opened .selector .fa {
+.download-selector.opened .selector .fas {
   background: var(--button-background-hover-2);
   border-radius: 2px 2px 0 0;
 }

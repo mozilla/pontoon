@@ -92,7 +92,7 @@
   outline: none;
 }
 
-.history .translation .content > header button.fa,
+.history .translation .content > header button.fas,
 .history .translation .content > header button.far {
   font-size: 1.8em;
   height: 22px;

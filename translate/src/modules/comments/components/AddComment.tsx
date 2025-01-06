@@ -284,7 +284,7 @@ export function AddComment({
         <Localized
           id='comments-AddComment--submit-button'
           attrs={{ title: true }}
-          elems={{ glyph: <i className='fa fa-paper-plane' /> }}
+          elems={{ glyph: <i className='fas fa-paper-plane' /> }}
         >
           <button
             className='submit-button'

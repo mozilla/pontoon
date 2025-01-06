@@ -115,7 +115,7 @@
         text-align: left;
       }
 
-      .fa {
+      .fas {
         margin: 2px 10px 0 0;
         float: left;
       }
@@ -324,7 +324,7 @@
             float: left;
             text-transform: uppercase;
 
-            .fa {
+            .fas {
               color: var(--status-translated);
               margin-right: 5px;
             }

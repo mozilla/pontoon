@@ -85,10 +85,10 @@ var Pontoon = (function (my) {
                 html:
                   '<thead>' +
                   '<tr>' +
-                  '<th class="id">ID<i class="fa"></i></th>' +
-                  '<th class="summary">Summary<i class="fa"></i></th>' +
-                  '<th class="last-changed desc">Last Changed<i class="fa"></i></th>' +
-                  '<th class="assigned-to">Assigned To<i class="fa"></i></th>' +
+                  '<th class="id">ID<i class="fas"></i></th>' +
+                  '<th class="summary">Summary<i class="fas"></i></th>' +
+                  '<th class="last-changed desc">Last Changed<i class="fas"></i></th>' +
+                  '<th class="assigned-to">Assigned To<i class="fas"></i></th>' +
                   '</tr>' +
                   '</thead>',
               }).append(tbody);

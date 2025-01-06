@@ -20,7 +20,7 @@ export function ApproveAll({
     <button className='approve-all' onClick={approveAll}>
       <Title {...response} />
       {requestInProgress === 'approve' ? (
-        <i className='fa fa-2x fa-circle-notch fa-spin'></i>
+        <i className='fas fa-2x fa-circle-notch fa-spin'></i>
       ) : null}
     </button>
   );

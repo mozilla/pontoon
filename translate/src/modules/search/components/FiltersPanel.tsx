@@ -71,7 +71,7 @@ const StatusFilter = ({
     onClick={onSelect}
   >
     <span
-      className='status fa'
+      className='status fas'
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
@@ -99,12 +99,16 @@ const TagFilter = ({
     className={classNames('tag', slug, selected && 'selected')}
     onClick={onSelect}
   >
-    <span className='status fa' onClick={onSelect}></span>
+    <span className='status fas' onClick={onSelect}></span>
     <span className='title'>{name}</span>
     <span className='priority'>
       {[1, 2, 3, 4, 5].map((index) => (
         <span
-          className={classNames('fa', 'fa-star', index <= priority && 'active')}
+          className={classNames(
+            'fas',
+            'fa-star',
+            index <= priority && 'active',
+          )}
           key={index}
         ></span>
       ))}
@@ -125,7 +129,7 @@ const ExtraFilter = ({
 }) => (
   <li className={classNames(slug, selected && 'selected')} onClick={onSelect}>
     <span
-      className='status fa'
+      className='status fas'
       onClick={(ev) => {
         ev.stopPropagation();
         onToggle();
@@ -155,7 +159,7 @@ const AuthorFilter = ({
     <figure>
       <span className='sel'>
         <span
-          className='status fa'
+          className='status fas'
           onClick={(ev) => {
             ev.stopPropagation();
             onToggle();
@@ -192,7 +196,7 @@ const FilterToolbar = ({
       id='search-FiltersPanel--clear-selection'
       attrs={{ title: true }}
       elems={{
-        glyph: <i className='fa fa-times fa-lg' />,
+        glyph: <i className='fas fa-times fa-lg' />,
       }}
     >
       <button
@@ -207,7 +211,7 @@ const FilterToolbar = ({
       id='search-FiltersPanel--apply-filters'
       attrs={{ title: true }}
       elems={{
-        glyph: <i className='fa fa-check fa-lg' />,
+        glyph: <i className='fas fa-check fa-lg' />,
         stress: <span className='applied-count' />,
       }}
       vars={{ count }}
@@ -422,7 +426,7 @@ export function FiltersPanel({
         className={`visibility-switch ${filterIcon}`}
         onClick={toggleVisible}
       >
-        <span className='status fa'></span>
+        <span className='status fas'></span>
       </div>
       {visible ? (
         <FiltersPanelDialog

@@ -98,7 +98,7 @@ var Pontoon = (function (my) {
           complete() {
             $('.items td.check').removeClass('enabled');
             $('.items td.radio.enabled').toggleClass(
-              'far fa fa-circle fa-dot-circle enabled',
+              'far fas fa-circle fa-dot-circle enabled',
             );
             Pontoon.requestItem.toggleItem(true, 'locale-projects');
             $('.controls .request-toggle').show();

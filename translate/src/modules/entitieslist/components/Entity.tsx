@@ -115,7 +115,7 @@ export function Entity({
 
   return (
     <li className={cn} onClick={handleSelectEntity}>
-      <span className='status fa' onClick={handleForBatchEditing} />
+      <span className='status fas' onClick={handleForBatchEditing} />
       {selected && !entity.isSibling ? (
         <div>
           {!areSiblingsActive && showSiblingEntitiesButton() && (
@@ -153,7 +153,7 @@ export function Entity({
             search={parameters.search}
           />
         </p>
-        <div className='indicator fa fa-chevron-right'></div>
+        <div className='indicator fas fa-chevron-right'></div>
       </div>
     </li>
   );

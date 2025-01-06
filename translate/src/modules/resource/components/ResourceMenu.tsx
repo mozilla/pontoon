@@ -61,7 +61,7 @@ function ResourceMenuDialog({
     return res.path;
   };
 
-  const sort = sortAsc ? 'fa fa-caret-up' : 'fa fa-caret-down';
+  const sort = sortAsc ? 'fas fa-caret-up' : 'fas fa-caret-down';
   const resourceClass = sortActive === 'resource' ? sort : '';
   const progressClass = sortActive === 'progress' ? sort : '';
 
@@ -72,7 +72,7 @@ function ResourceMenuDialog({
   return (
     <div ref={ref} className='menu'>
       <div className='search-wrapper'>
-        <div className='icon fa fa-search'></div>
+        <div className='icon fas fa-search'></div>
         <Localized
           id='resource-ResourceMenu--search-placeholder'
           attrs={{ placeholder: true }}
@@ -236,7 +236,7 @@ export function ResourceMenu({
         title={resource}
       >
         <span>{resourceName}</span>
-        <span className='icon fa fa-caret-down'></span>
+        <span className='icon fas fa-caret-down'></span>
       </div>
 
       {visible && (

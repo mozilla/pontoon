@@ -21,11 +21,11 @@
   width: 43px;
 }
 
-.filters-panel .visibility-switch .status.fa {
+.filters-panel .visibility-switch .status.fas {
   font-size: 16px;
 }
 
-.filters-panel .visibility-switch.unreviewed .status.fa {
+.filters-panel .visibility-switch.unreviewed .status.fas {
   top: 7px;
 }
 
@@ -78,6 +78,10 @@
   padding: 3px 13px 3px 16px;
   left: 4px;
   top: 4px;
+}
+
+.filters-panel .menu li.unreviewed .status {
+  left: 4.5px;
 }
 
 .filters-panel .menu li.all .status {
@@ -248,7 +252,7 @@
   font-weight: 300;
 }
 
-.filters-panel .toolbar button .fa {
+.filters-panel .toolbar button .fas {
   padding-right: 6px;
 }
 

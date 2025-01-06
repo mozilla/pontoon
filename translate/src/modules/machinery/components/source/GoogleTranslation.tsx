@@ -86,7 +86,7 @@ export function GoogleTranslation({
             <Localized id='machinery-GoogleTranslation--dropdown-title'>
               <span className='dropdown-title'>AI</span>
             </Localized>
-            <i className='fa fa-caret-down'></i>
+            <i className='fas fa-caret-down'></i>
           </button>
         </span>
       </Localized>

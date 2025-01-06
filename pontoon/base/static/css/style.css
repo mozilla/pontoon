@@ -9,35 +9,35 @@
   font-size: 0.9em;
 }
 
-.status.fa {
+.status.fas {
   font-size: 16px;
   left: 20px;
   position: absolute;
   top: 3px;
 }
 
-.status.fa:before {
+.status.fas:before {
   color: var(--status-missing);
   content: '';
 }
 
-.translated .status.fa:before {
+.translated .status.fas:before {
   color: var(--status-translated);
 }
 
-.pretranslated .status.fa:before {
+.pretranslated .status.fas:before {
   color: var(--status-pretranslated);
 }
 
-.warnings .status.fa:before {
+.warnings .status.fas:before {
   color: var(--status-warning);
 }
 
-.errors .status.fa:before {
+.errors .status.fas:before {
   color: var(--status-error);
 }
 
-.unreviewed .status.fa:before {
+.unreviewed .status.fas:before {
   color: var(--status-unreviewed);
   content: '';
 }
@@ -81,7 +81,7 @@ button {
   outline: none;
 }
 
-/* Reset values for Persian (fa) to avoid colision with Font Awesome */
+/* Reset values for Persian (fa) to avoid collision with Font Awesome */
 .language.fa {
   font-family: inherit;
   font-weight: inherit;
@@ -950,7 +950,7 @@ header .right .select .menu {
   line-height: 22px;
 }
 
-#profile .menu li i.fa,
+#profile .menu li i.fas,
 #profile .menu li i.fab {
   margin: 0 8px 0 -2px;
 }
@@ -1077,7 +1077,7 @@ nav .links li {
   color: var(--white-1);
 }
 
-.submenu.tabs .links a .fa {
+.submenu.tabs .links a .fas {
   margin-right: 4px;
 }
 
@@ -1150,17 +1150,17 @@ body > form,
   user-select: none;
 }
 
-.check-box .fa {
+.check-box .fas {
   margin-right: 6px;
 }
 
-.check-box .fa:before {
+.check-box .fas:before {
   color: var(--toggle-color-1);
   content: '';
   font-weight: normal;
 }
 
-.check-box.enabled .fa:before {
+.check-box.enabled .fas:before {
   color: var(--status-translated);
   content: '';
   font-weight: bold;

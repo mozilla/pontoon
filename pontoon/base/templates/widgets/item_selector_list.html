@@ -12,13 +12,13 @@
 
     <div class="menu permanent">
         <div class="search-wrapper clearfix">
-            <div class="icon fa fa-search"></div>
+            <div class="icon fas fa-search"></div>
             <input id="{{ id }}" type="search" autocomplete="off">
         </div>
         <ul class="{% if sortable %}sortable{% endif %}">
             {% for item in items %}
             <li class="clearfix" data-id="{{ item.id }}">
-                <span class="arrow fa"></span>
+                <span class="arrow fas"></span>
                 <span class="item">{{ item.name }}</span>
             </li>
             {% endfor %}

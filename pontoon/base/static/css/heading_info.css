@@ -130,7 +130,7 @@ ul {
   color: var(--status-translated);
 }
 
-#heading .legend li .status.fa {
+#heading .legend li .status.fas {
   left: 0;
   top: 4px;
 }
@@ -176,17 +176,18 @@ ul {
   padding-bottom: 21px;
 }
 
-#heading .non-plottable .unreviewed .status.fa {
+#heading .non-plottable .unreviewed .status.fas {
   left: auto;
   position: relative;
   top: -1px;
+  left: -0.5px;
 }
 
-#heading .non-plottable .unreviewed .status.fa:before {
+#heading .non-plottable .unreviewed .status.fas:before {
   color: var(--icon-background-2);
   font-size: 18px;
 }
 
-#heading .non-plottable .unreviewed.pending .status.fa:before {
+#heading .non-plottable .unreviewed.pending .status.fas:before {
   color: var(--status-unreviewed);
 }

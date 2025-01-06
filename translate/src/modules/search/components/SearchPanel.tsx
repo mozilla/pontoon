@@ -38,10 +38,8 @@ const SearchOption = ({
         onToggle();
       }}
     >
-      <i className='fa'></i>
-      <Localized
-        id={`search-SearchPanel--option-name-${slug.replace(/_/g, '-')}`}
-      >
+      <i className='fas'></i>
+      <Localized id={`search-SearchPanel--option-name-${slug}`}>
         <span className='label'>{name}</span>
       </Localized>
     </li>
@@ -130,7 +128,7 @@ export function SearchPanel({
   return (
     <div className='search-panel'>
       <div className='visibility-switch' onClick={toggleVisible}>
-        <span className='fa fa-search'></span>
+        <span className='fas fa-search'></span>
       </div>
       {visible ? (
         <SearchPanelDialog

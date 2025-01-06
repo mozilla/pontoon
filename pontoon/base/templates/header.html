@@ -49,29 +49,29 @@
               <li class="horizontal-separator"></li>
               {% endif %}
 
-              <li><a href="{{ url('pontoon.terms') }}" rel="noopener noreferrer" target="_blank"><i class="fa fa-gavel fa-fw"></i>Terms of Use</a></li>
+              <li><a href="{{ url('pontoon.terms') }}" rel="noopener noreferrer" target="_blank"><i class="fas fa-gavel fa-fw"></i>Terms of Use</a></li>
               <li><a href="https://github.com/mozilla/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>Hack it on GitHub</a></li>
-              <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fa fa-comment-dots fa-fw"></i>Give Feedback</a></li>
-              <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fa fa-life-ring fa-fw"></i>Help</a></li>
+              <li><a href="https://discourse.mozilla.org/c/pontoon" rel="noopener noreferrer" target="_blank"><i class="fas fa-comment-dots fa-fw"></i>Give Feedback</a></li>
+              <li><a href="https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/" rel="noopener noreferrer" target="_blank"><i class="fas fa-life-ring fa-fw"></i>Help</a></li>
 
               {% if user.is_authenticated %}
               <li class="horizontal-separator"></li>
               {% endif %}
 
               {% if perms.base.can_manage_project %}
-              <li><a href="{{ url('pontoon.admin') }}"><i class="fa fa-wrench fa-fw"></i>Admin</a></li>
+              <li><a href="{{ url('pontoon.admin') }}"><i class="fas fa-wrench fa-fw"></i>Admin</a></li>
                 {% if project %}
-                <li><a href="{{ url('pontoon.admin.project', project.slug) }}"><i class="fa fa-wrench fa-fw"></i>Admin &middot; Current Project</a></li>
+                <li><a href="{{ url('pontoon.admin.project', project.slug) }}"><i class="fas fa-wrench fa-fw"></i>Admin &middot; Current Project</a></li>
                 {% endif %}
               {% endif %}
 
               {% if user.is_authenticated %}
-                <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fa fa-cog fa-fw"></i>Settings</a></li>
+                <li><a href="{{ url('pontoon.contributors.settings') }}"><i class="fas fa-cog fa-fw"></i>Settings</a></li>
 
                 {% if settings.AUTHENTICATION_METHOD == 'django' %}
-                <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                <li id="standalone-sign-out"><a href="{{ url('standalone_logout') }}" title="{{ user.email|nospam }}"><i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% else %}
-                <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fa fa-sign-out-alt fa-fw"></i>Sign out</a></li>
+                <li id="sign-out"><a href="{{ url('account_logout') }}" title="{{ user.email|nospam }}">{{ SignOut.csrf_form() }}<i class="fas fa-sign-out-alt fa-fw"></i>Sign out</a></li>
                 {% endif %}
 
               {% endif %}

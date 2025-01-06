@@ -34,7 +34,7 @@
                 {% endif %}
                 {% if profile_is_disabled %}
                 <div class="status">
-                    <i class="fa fa-exclamation-circle fa-sm"></i>
+                    <i class="fas fa-exclamation-circle fa-sm"></i>
                     <span>Account disabled by an administrator</span>
                 </div>
                 {% endif %}
@@ -68,7 +68,7 @@
                     {% if is_email_visible %}
                     {% set email = contributor.contact_email %}
                     <div class="item-with-icon">
-                        <span class="icon fa fa-envelope"></span>
+                        <span class="icon fas fa-envelope"></span>
                         <a href="mailto:{{ email|nospam }}">{{ email|nospam }}</a>
                     </div>
                     {% endif %}
@@ -77,7 +77,7 @@
 
                     {% if profile.chat %}
                     <div class="item-with-icon" title="Chat Account">
-                        <span class="icon fa fa-comment-dots"></span>
+                        <span class="icon fas fa-comment-dots"></span>
                         <span>{{ profile.chat }}</span>
                     </div>
                     {% endif %}
@@ -91,7 +91,7 @@
 
                     {% if profile.bugzilla %}
                     <div class="item-with-icon" title="Bugzilla Account">
-                        <span class="icon fa fa-bug"></span>
+                        <span class="icon fas fa-bug"></span>
                         <a href="mailto:{{ profile.bugzilla|nospam }}">{{ profile.bugzilla|nospam }}</a>
                     </div>
                     {% endif %}
@@ -110,9 +110,9 @@
                     <form id="account-status-form" action="{{ url('pontoon.contributors.toggle_active_user_status', username=contributor.username) }}" method="POST">
                         {% csrf_token %}
                         {% if contributor.is_active %}
-                        <button class="button" type="submit"><i class="icon fa fa-lock fa-sm"></i>Disable</button>
+                        <button class="button" type="submit"><i class="icon fas fa-lock fa-sm"></i>Disable</button>
                         {% else %}
-                        <button class="button" type="submit"><i class="icon fa fa-unlock fa-sm"></i>Enable</button>
+                        <button class="button" type="submit"><i class="icon fas fa-unlock fa-sm"></i>Enable</button>
                         {% endif %}
                     </form>
                     {% endif %}
@@ -145,7 +145,7 @@
                 <div class="block">
                     <h4 class="subtitle">Latest activity</h4>
                     <div class="item-with-icon">
-                        <span class="icon fa fa-calendar-alt"></span>
+                        <span class="icon fas fa-calendar-alt"></span>
                         {% set action = contributor.latest_action %}
                         {% if action and action.translation %}
                         {% set resource = action.translation.entity.resource %}
@@ -160,7 +160,7 @@
                 <div class="block">
                     <h4 class="subtitle">Last login</h4>
                     <div class="item-with-icon">
-                        <span class="icon fa fa-calendar-alt"></span>
+                        <span class="icon fas fa-calendar-alt"></span>
                         <span>{{ contributor.last_login|format_datetime("date") }}</span>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
                 <div class="block">
                     <h4 class="subtitle">Member since</h4>
                     <div class="item-with-icon">
-                        <span class="icon fa fa-calendar-alt"></span>
+                        <span class="icon fas fa-calendar-alt"></span>
                         <span>{{ contributor.date_joined|format_datetime("date") }}</span>
                     </div>
                 </div>
@@ -184,7 +184,7 @@
                     <h4 class="subtitle">Translator</h4>
                     {% for locale in translator_for_locales %}
                     <div class="item-with-icon">
-                        <span class="icon fa fa-language"></span>
+                        <span class="icon fas fa-language"></span>
                         <span>{{ locale.name }} <span class="stress">{{ locale.code }}</span></span>
                     </div>
                     {% endfor %}
@@ -196,7 +196,7 @@
                     <h4 class="subtitle">Team manager</h4>
                     {% for locale in manager_for_locales %}
                     <div class="item-with-icon">
-                        <span class="icon fa fa-language"></span>
+                        <span class="icon fas fa-language"></span>
                         <a href="{{ url('pontoon.teams.team', locale.code) }}">{{ locale.name }} <span class="stress">{{ locale.code }}</span></a>
                     </div>
                     {% endfor %}
@@ -208,7 +208,7 @@
                     <h4 class="subtitle">Project manager</h4>
                     {% for project in contact_for %}
                     <div class="item-with-icon">
-                        <span class="icon fa fa-language"></span>
+                        <span class="icon fas fa-language"></span>
                         <a href="{{ url('pontoon.projects.project', project.slug) }}">{{ project.name }}</a>
                     </div>
                     {% endfor %}
@@ -328,7 +328,7 @@
                             <div class="value">
                                 <span data-type="all_contributions" title="Submissions, reviews performed and reviews received">All contributions</span>
                             </div>
-                            <span class="icon fa fa-caret-down"></span>
+                            <span class="icon fas fa-caret-down"></span>
                         </div>
                         <div class="menu" style="display: none;">
                             <ul>

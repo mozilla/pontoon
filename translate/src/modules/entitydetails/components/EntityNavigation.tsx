@@ -89,7 +89,7 @@ export function EntityNavigation(): React.ReactElement {
       <Localized
         id='entitydetails-EntityNavigation--string-list'
         attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-chevron-left fa-lg' /> }}
+        elems={{ glyph: <i className='fas fa-chevron-left fa-lg' /> }}
       >
         <button
           className='string-list'
@@ -102,7 +102,7 @@ export function EntityNavigation(): React.ReactElement {
       <Localized
         id='entitydetails-EntityNavigation--link'
         attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-link fa-lg' /> }}
+        elems={{ glyph: <i className='fas fa-link fa-lg' /> }}
       >
         <button
           className='link'
@@ -116,7 +116,7 @@ export function EntityNavigation(): React.ReactElement {
         id='entitydetails-EntityNavigation--next'
         attrs={{ title: true }}
         elems={{
-          glyph: <i className='fa fa-chevron-down fa-lg' />,
+          glyph: <i className='fas fa-chevron-down fa-lg' />,
         }}
       >
         <button
@@ -131,7 +131,7 @@ export function EntityNavigation(): React.ReactElement {
       <Localized
         id='entitydetails-EntityNavigation--previous'
         attrs={{ title: true }}
-        elems={{ glyph: <i className='fa fa-chevron-up fa-lg' /> }}
+        elems={{ glyph: <i className='fas fa-chevron-up fa-lg' /> }}
       >
         <button
           className='previous'

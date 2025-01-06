@@ -108,7 +108,7 @@ export function UserMenuDialog({
                 value='light'
                 text='Light'
                 title='Use a light theme'
-                icon='fa fa-sun'
+                icon='fas fa-sun'
                 user={user}
                 onClick={handleThemeButtonClick}
               />
@@ -116,7 +116,7 @@ export function UserMenuDialog({
                 value='system'
                 text='System'
                 title='Use a theme that matches your system settings'
-                icon='fa fa-laptop'
+                icon='fas fa-laptop'
                 user={user}
                 onClick={handleThemeButtonClick}
               />
@@ -130,7 +130,7 @@ export function UserMenuDialog({
       <li>
         <Localized
           id='user-UserMenu--download-terminology'
-          elems={{ glyph: <i className='fa fa-cloud-download-alt fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-cloud-download-alt fa-fw' /> }}
         >
           <a href={`/terminology/${locale}.tbx`}>
             {'<glyph></glyph>Download Terminology'}
@@ -141,7 +141,7 @@ export function UserMenuDialog({
       <li>
         <Localized
           id='user-UserMenu--download-tm'
-          elems={{ glyph: <i className='fa fa-cloud-download-alt fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-cloud-download-alt fa-fw' /> }}
         >
           <a href={`/translation-memory/${locale}.${project}.tmx`}>
             {'<glyph></glyph>Download Translation Memory'}
@@ -153,7 +153,7 @@ export function UserMenuDialog({
         <li>
           <Localized
             id='user-UserMenu--download-translations'
-            elems={{ glyph: <i className='fa fa-cloud-download-alt fa-fw' /> }}
+            elems={{ glyph: <i className='fas fa-cloud-download-alt fa-fw' /> }}
           >
             <a
               href={`/translations/?code=${locale}&slug=${project}&part=${resource}`}
@@ -175,7 +175,7 @@ export function UserMenuDialog({
       <li>
         <Localized
           id='user-UserMenu--terms'
-          elems={{ glyph: <i className='fa fa-gavel fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-gavel fa-fw' /> }}
         >
           <a href='/terms/' rel='noopener noreferrer' target='_blank'>
             {'<glyph></glyph>Terms of Use'}
@@ -201,7 +201,7 @@ export function UserMenuDialog({
       <li>
         <Localized
           id='user-UserMenu--feedback'
-          elems={{ glyph: <i className='fa fa-comment-dots fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-comment-dots fa-fw' /> }}
         >
           <a
             href='https://discourse.mozilla.org/c/pontoon'
@@ -216,7 +216,7 @@ export function UserMenuDialog({
       <li>
         <Localized
           id='user-UserMenu--help'
-          elems={{ glyph: <i className='fa fa-life-ring fa-fw' /> }}
+          elems={{ glyph: <i className='fas fa-life-ring fa-fw' /> }}
         >
           <a
             href='https://mozilla-l10n.github.io/localizer-documentation/tools/pontoon/'
@@ -235,7 +235,7 @@ export function UserMenuDialog({
           <li>
             <Localized
               id='user-UserMenu--admin'
-              elems={{ glyph: <i className='fa fa-wrench fa-fw' /> }}
+              elems={{ glyph: <i className='fas fa-wrench fa-fw' /> }}
             >
               <a href='/admin/'>{'<glyph></glyph>Admin'}</a>
             </Localized>
@@ -244,7 +244,7 @@ export function UserMenuDialog({
             <li>
               <Localized
                 id='user-UserMenu--admin-project'
-                elems={{ glyph: <i className='fa fa-wrench fa-fw' /> }}
+                elems={{ glyph: <i className='fas fa-wrench fa-fw' /> }}
               >
                 <a href={`/admin/projects/${project}/`}>
                   {'<glyph></glyph>Admin · Current Project'}
@@ -260,7 +260,7 @@ export function UserMenuDialog({
           <li>
             <Localized
               id='user-UserMenu--settings'
-              elems={{ glyph: <i className='fa fa-cog fa-fw' /> }}
+              elems={{ glyph: <i className='fas fa-cog fa-fw' /> }}
             >
               <a href='/settings/'>{'<glyph></glyph>Settings'}</a>
             </Localized>
@@ -268,7 +268,7 @@ export function UserMenuDialog({
           <li>
             <Localized
               id='user-SignOut--sign-out'
-              elems={{ glyph: <i className='fa fa-sign-out-alt fa-fw' /> }}
+              elems={{ glyph: <i className='fas fa-sign-out-alt fa-fw' /> }}
             >
               <SignInOutForm url={user.signOutURL}>
                 {'<glyph></glyph>Sign out'}
@@ -297,7 +297,7 @@ export function UserMenu(props: Props): React.ReactElement<'div'> {
             width='44'
           />
         ) : (
-          <div className='menu-icon fa fa-bars' />
+          <div className='menu-icon fas fa-bars' />
         )}
       </div>
 

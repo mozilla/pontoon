@@ -30,7 +30,7 @@ describe('<ApproveAll>', () => {
     expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
     expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders error button correctly', () => {
@@ -51,7 +51,7 @@ describe('<ApproveAll>', () => {
     expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(0);
     expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders success button correctly', () => {
@@ -72,7 +72,7 @@ describe('<ApproveAll>', () => {
     expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(0);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('renders success with invalid button correctly', () => {
@@ -94,7 +94,7 @@ describe('<ApproveAll>', () => {
     expect(wrapper.find('#batchactions-ApproveAll--error')).toHaveLength(0);
     expect(wrapper.find('#batchactions-ApproveAll--success')).toHaveLength(1);
     expect(wrapper.find('#batchactions-ApproveAll--invalid')).toHaveLength(1);
-    expect(wrapper.find('.fa')).toHaveLength(0);
+    expect(wrapper.find('.fas')).toHaveLength(0);
   });
 
   it('performs approve all action when Approve All button is clicked', () => {

@@ -282,7 +282,7 @@ export function HistoryTranslationBase({
                 }}
               >
                 <span
-                  className='fa machinery-sources'
+                  className='fas machinery-sources'
                   title={'Copied ({ $machinerySources })'}
                 ></span>
               </Localized>
@@ -337,7 +337,7 @@ export function HistoryTranslationBase({
                       attrs={{ title: true }}
                     >
                       <button
-                        className='unapprove fa'
+                        className='unapprove fas'
                         title='Unapprove'
                         name='unapprove'
                         onClick={handleStatusChange}
@@ -350,7 +350,7 @@ export function HistoryTranslationBase({
                       attrs={{ title: true }}
                     >
                       <button
-                        className='unapprove fa'
+                        className='unapprove fas'
                         title='Approved'
                         disabled
                       />
@@ -363,7 +363,7 @@ export function HistoryTranslationBase({
                     attrs={{ title: true }}
                   >
                     <button
-                      className='approve fa'
+                      className='approve fas'
                       title='Approve'
                       name='approve'
                       onClick={handleStatusChange}
@@ -376,7 +376,7 @@ export function HistoryTranslationBase({
                     attrs={{ title: true }}
                   >
                     <button
-                      className='approve fa'
+                      className='approve fas'
                       title='Not approved'
                       disabled
                     />
@@ -390,7 +390,7 @@ export function HistoryTranslationBase({
                       attrs={{ title: true }}
                     >
                       <button
-                        className='unreject fa'
+                        className='unreject fas'
                         title='Unreject'
                         name='unreject'
                         onClick={handleStatusChange}
@@ -403,7 +403,7 @@ export function HistoryTranslationBase({
                       attrs={{ title: true }}
                     >
                       <button
-                        className='unreject fa'
+                        className='unreject fas'
                         title='Rejected'
                         disabled
                       />
@@ -416,7 +416,7 @@ export function HistoryTranslationBase({
                     attrs={{ title: true }}
                   >
                     <button
-                      className='reject fa'
+                      className='reject fas'
                       title='Reject'
                       name='reject'
                       onClick={handleStatusChange}
@@ -429,7 +429,7 @@ export function HistoryTranslationBase({
                     attrs={{ title: true }}
                   >
                     <button
-                      className='reject fa'
+                      className='reject fas'
                       title='Not rejected'
                       disabled
                     />

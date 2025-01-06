@@ -8,7 +8,7 @@
 <div id="action">
     <form action="{{ provider_login_url }}?next={{ request.get_full_path|urlencode }}" method="post">
         {% csrf_token %}
-        <i class="fa fa-sign-in-alt fa-fw"></i>
+        <i class="fas fa-sign-in-alt fa-fw"></i>
         <button type="submit">Try again</button>
       </form>
 </div>
