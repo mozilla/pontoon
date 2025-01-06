@@ -80,6 +80,10 @@
   top: 4px;
 }
 
+.filters-panel .menu li.unreviewed .status {
+  left: 4.5px;
+}
+
 .filters-panel .menu li.all .status {
   left: 3px;
   top: 5px;

@@ -180,6 +180,7 @@ ul {
   left: auto;
   position: relative;
   top: -1px;
+  left: -0.5px;
 }
 
 #heading .non-plottable .unreviewed .status.fas:before {
