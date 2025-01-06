@@ -682,15 +682,15 @@ search-FiltersPanel--apply-filters =
 
 ## Search Options Panel
 
-search-SearchPanel--option-name-search_match_case = Match case
-search-SearchPanel--option-name-search_match_whole_word = Match whole word
-search-SearchPanel--option-name-search_identifiers = Search in string identifiers
-search-SearchPanel--option-name-search_rejected_translations = Include rejected translations
-search-SearchPanel--option-name-search_exclude_source_strings = Exclude source strings
+search-SearchPanel--option-name-search-match-case = Match case
+search-SearchPanel--option-name-search-match-whole-word = Match whole word
+search-SearchPanel--option-name-search-identifiers = Search in string identifiers
+search-SearchPanel--option-name-search-rejected-translations = Include rejected translations
+search-SearchPanel--option-name-search-exclude-source-strings = Exclude source strings
 
 search-SearchPanel--heading = SEARCH OPTIONS
 
-search-SearchPanel--apply-searchOptions = APPLY SEARCH OPTIONS
+search-SearchPanel--apply-search-options = APPLY SEARCH OPTIONS
     .title = Apply Selected Search Options
 
 ## Time Range Filter
