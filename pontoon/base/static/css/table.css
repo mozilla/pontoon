@@ -76,7 +76,7 @@ table.table.project-list.hidden {
 .table .unreviewed-status span {
   position: absolute;
   font-size: 18px;
-  margin: -15px 0 0 -4px;
+  margin: -15px 0 0 -4.5px;
 }
 
 .table .progress {
@@ -276,7 +276,7 @@ table.table.project-list.hidden {
   color: var(--icon-background-1);
   font-size: 18px;
   position: absolute;
-  right: 0;
+  right: 0.5px;
   top: -9px;
 }
 
