@@ -8,6 +8,7 @@ import type {
   EntityTranslation,
   HistoryTranslation,
 } from './translation';
+import type { BatchBadgeUpdate } from '../modules/batchactions/actions';
 
 /**
  * String that needs to be translated, along with its current metadata,
@@ -42,7 +43,11 @@ export type EntitySiblings = {
 };
 
 type BatchEditResponse =
-  | { count: number; invalid_translation_count?: number }
+  | {
+      count: number;
+      invalid_translation_count?: number;
+      badge_update?: BatchBadgeUpdate;
+    }
   | { error: true };
 
 export async function batchEditEntities(

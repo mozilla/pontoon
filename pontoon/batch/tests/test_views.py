@@ -144,6 +144,7 @@ def test_batch_approve_valid_translations(
     assert response.json() == {
         "count": 1,
         "invalid_translation_count": 0,
+        "badge_update": {},
     }
 
     translation_dtd_unapproved.refresh_from_db()
@@ -170,6 +171,7 @@ def test_batch_approve_invalid_translations(
     assert response.json() == {
         "count": 0,
         "invalid_translation_count": 1,
+        "badge_update": {},
     }
 
     translation_dtd_invalid_unapproved.refresh_from_db()
@@ -195,6 +197,7 @@ def test_batch_find_and_replace_valid_translations(
     assert response.json() == {
         "count": 1,
         "invalid_translation_count": 0,
+        "badge_update": {},
     }
 
     translation = translation_dtd_unapproved.entity.translation_set.last()
@@ -224,6 +227,7 @@ def test_batch_find_and_replace_invalid_translations(
     assert response.json() == {
         "count": 0,
         "invalid_translation_count": 1,
+        "badge_update": {},
     }
 
     translation = translation_dtd_unapproved.entity.translation_set.last()

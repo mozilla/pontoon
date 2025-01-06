@@ -93,9 +93,10 @@ export function useUpdateTranslationStatus(
 
         // Check for update in badge level
         const badgeLevel = results.badge_update?.level;
-        if (badgeLevel) {
+        const badgeName = results.badge_update?.name;
+        if (badgeName && badgeLevel) {
           showBadgeTooltip({
-            badgeName: 'Review Master',
+            badgeName: badgeName,
             badgeLevel: badgeLevel,
           });
         }

@@ -87,9 +87,10 @@ export function useSendTranslation(): (ignoreWarnings?: boolean) => void {
       );
 
       const badgeLevel = content.badge_update?.level;
-      if (badgeLevel) {
+      const badgeName = content.badge_update?.name;
+      if (badgeName && badgeLevel) {
         showBadgeTooltip({
-          badgeName: 'Translation Champion',
+          badgeName: badgeName,
           badgeLevel: badgeLevel,
         });
       }
