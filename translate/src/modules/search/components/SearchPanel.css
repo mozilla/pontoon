@@ -95,10 +95,8 @@
     margin-bottom: 5px;
     margin-top: 8px;
 
-    &:hover,
-    .applied-count {
+    &:hover {
       color: var(--status-translated);
-      margin-top: 35px;
     }
   }
 }
