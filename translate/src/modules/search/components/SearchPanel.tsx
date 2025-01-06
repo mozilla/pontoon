@@ -38,8 +38,10 @@ const SearchOption = ({
         onToggle();
       }}
     >
-      <i className='fa fa-w'></i>
-      <Localized id={`search-SearchPanel--option-name-${slug}`}>
+      <i className='fa'></i>
+      <Localized
+        id={`search-SearchPanel--option-name-${slug.replace(/_/g, '-')}`}
+      >
         <span className='label'>{name}</span>
       </Localized>
     </li>
@@ -71,7 +73,7 @@ export function SearchPanelDialog({
         ))}
       </ul>
 
-      <Localized id='search-SearchPanel--apply-searchOptions'>
+      <Localized id='search-SearchPanel--apply-search-options'>
         <button
           title='Apply Selected Search Options'
           onClick={onApplyOptions}
