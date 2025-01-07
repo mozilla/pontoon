@@ -9,14 +9,19 @@
     position: absolute;
     width: 43px;
 
-    &:hover::before {
+    &:hover {
       color: var(--white-1);
     }
 
     .fas {
       font-size: 17px;
-      margin-left: 10px;
+      margin-left: 1px;
       margin-top: 9px;
+    }
+
+    .fa-caret-down {
+      font-size: 13px;
+      transform: translate(35%, -25%);
     }
   }
 

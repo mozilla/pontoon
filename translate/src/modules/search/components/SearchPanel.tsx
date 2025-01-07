@@ -128,7 +128,10 @@ export function SearchPanel({
   return (
     <div className='search-panel'>
       <div className='visibility-switch' onClick={toggleVisible}>
-        <span className='fas fa-search'></span>
+        <span className='fa-stack'>
+          <i className='fas fa-search fa-stack-2x'></i>
+          <i className='fas fa-caret-down fa-stack-1x'></i>
+        </span>
       </div>
       {visible ? (
         <SearchPanelDialog
