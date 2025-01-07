@@ -9,7 +9,7 @@
     position: absolute;
     width: 43px;
 
-    &:hover::before {
+    &:hover {
       color: var(--white-1);
     }
 
