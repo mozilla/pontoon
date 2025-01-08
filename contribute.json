@@ -10,7 +10,7 @@
     "docs": "https://mozilla-pontoon.readthedocs.io/",
     "chat": "https://chat.mozilla.org/#/room/#pontoon:mozilla.org",
     "chat-contacts": ["mathjazz", "eemeli"],
-    "mailing-list": "https://discourse.mozilla.org/c/pontoon"
+    "mailing-list": "https://github.com/mozilla/pontoon/discussions"
   },
   "bugs": {
     "list": "https://github.com/mozilla/pontoon/issues",
