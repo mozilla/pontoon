@@ -44,7 +44,7 @@ If you want to go further, you can:
   - [Staging](https://mozilla-pontoon-staging.herokuapp.com/)
   - [Production](https://pontoon.mozilla.org/)
 - For discussing Pontoon's development, get in touch with us on [chat.mozilla.org](https://chat.mozilla.org/#/room/#pontoon:mozilla.org)
-- For feedback, support, and 3rd party deployments, check out [Discourse](https://discourse.mozilla.org/c/pontoon/)
+- For feedback, support, and 3rd party deployments, check out [GitHub Discussions](https://github.com/mozilla/pontoon/discussions)
 
 ## License
 

@@ -160,10 +160,8 @@ development. The first one is `chat.mozilla.org <https://chat.mozilla.org/>`_,
 used for real-time chat, quick questions, side-track conversations, etc.
 Find us in the `#pontoon channel <https://chat.mozilla.org/#/room/#pontoon:mozilla.org>`_.
 
-The second is discourse, a forum platform that we use for more long-term
-conversations. We use `Mozilla's community
-discourse <https://discourse.mozilla.org/>`_ instance, posting in the
-`pontoon category <https://discourse.mozilla.org/c/pontoon>`_.
+The second is `GitHub Discussions <https://github.com/mozilla/pontoon/discussions>`_,
+a forum platform that we use for more long-term conversations.
 
 These are both places that we strongly encourage you to join, and they
 are where you should introduce yourself, ask questions, show your work,

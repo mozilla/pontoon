@@ -204,7 +204,7 @@ export function UserMenuDialog({
           elems={{ glyph: <i className='fas fa-comment-dots fa-fw' /> }}
         >
           <a
-            href='https://discourse.mozilla.org/c/pontoon'
+            href='https://github.com/mozilla/pontoon/discussions'
             rel='noopener noreferrer'
             target='_blank'
           >
