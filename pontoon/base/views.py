@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 
@@ -805,8 +806,15 @@ def upload(request):
 
         upload = request.FILES["uploadfile"]
         try:
-            import_uploaded_file(project, locale, res_path, upload, request.user)
+            badge_update = import_uploaded_file(
+                project, locale, res_path, upload, request.user
+            )
             messages.success(request, "Translations updated from uploaded file.")
+            if badge_update[0]:
+                message = json.dumps(
+                    {"badgeName": badge_update[0], "badgeLevel": badge_update[1]}
+                )
+                messages.info(request, message)
         except Exception as error:
             messages.error(request, str(error))
     else:

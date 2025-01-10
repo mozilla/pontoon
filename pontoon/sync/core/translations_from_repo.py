@@ -28,6 +28,7 @@ from pontoon.base.models import (
 )
 from pontoon.checks import DB_FORMATS
 from pontoon.checks.utils import bulk_run_checks
+from pontoon.messaging.notifications import send_badge_notification
 from pontoon.sync.core.checkout import Checkout, Checkouts
 from pontoon.sync.core.paths import UploadPaths
 from pontoon.sync.formats import parse
@@ -75,12 +76,13 @@ def sync_translations_from_repo(
 
 def write_db_updates(
     project: Project, updates: Updates, user: User | None, now: datetime
-) -> None:
-    updated_translations, new_translations = update_db_translations(
+) -> tuple[str, int]:
+    badge_update, updated_translations, new_translations = update_db_translations(
         project, updates, user, now
     )
     add_failed_checks(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
+    return badge_update
 
 
 def delete_removed_bilingual_resources(
@@ -433,10 +435,31 @@ def update_db_translations(
             f"[{project.slug}] Created {str_n_translations(created)} from repo changes"
         )
 
+    badge_update = ("", 0)
     if actions:
+        translation_before_level = log_user.badges_translation_level
+        review_before_level = log_user.badges_review_level
+
         ActionLog.objects.bulk_create(actions)
 
-    return created, list(suggestions.values())
+        if (
+            log_user.badges_translation_level > translation_before_level
+            and log_user.username != "pontoon-sync"
+        ):
+            send_badge_notification(
+                log_user, "Translation Champion", log_user.badges_translation_level
+            )
+            badge_update = ("Translation Champion", log_user.badges_translation_level)
+        if (
+            log_user.badges_review_level > review_before_level
+            and log_user.username != "pontoon-sync"
+        ):
+            send_badge_notification(
+                log_user, "Review Master", log_user.badges_review_level
+            )
+            badge_update = ("Review Master", log_user.badges_review_level)
+
+    return badge_update, created, list(suggestions.values())
 
 
 def str_n_translations(n: int | Sized) -> str:
