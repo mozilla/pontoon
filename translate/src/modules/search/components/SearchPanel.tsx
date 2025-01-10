@@ -39,7 +39,9 @@ const SearchOption = ({
       }}
     >
       <i className='fas'></i>
-      <Localized id={`search-SearchPanel--option-name-${slug}`}>
+      <Localized
+        id={`search-SearchPanel--option-name-${slug.replace(/_/g, '-')}`}
+      >
         <span className='label'>{name}</span>
       </Localized>
     </li>
