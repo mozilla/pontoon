@@ -170,6 +170,7 @@ def update_resources(
         "source",
         "group_comment",
         "resource_comment",
+        "context",
     ]
     mod_entities = [
         ent
@@ -318,18 +319,6 @@ def entity_from_source(
         resource_comment="\n".join(resource_comments) if resource_comments else "",
         context=tx.context,
         word_count=get_word_count(tx.source_string),
-    )
-
-
-def entities_same(a: Entity, b: Entity) -> bool:
-    return (
-        a.string == b.string
-        and a.string_plural == b.string_plural
-        and a.comment == b.comment
-        and a.source == b.source
-        and a.group_comment == b.group_comment
-        and a.resource_comment == b.resource_comment
-        and a.context == b.context
     )
 
 
