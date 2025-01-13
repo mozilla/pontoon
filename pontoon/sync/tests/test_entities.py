@@ -259,3 +259,77 @@ def test_update_resource():
         update_stats(project)
         project.refresh_from_db()
         assert (project.total_strings, project.approved_strings) == (8, 7)
+
+
+@pytest.mark.django_db
+def test_change_entities():
+    with TemporaryDirectory() as root:
+        # Database setup
+        settings.MEDIA_ROOT = root
+        locale = LocaleFactory.create(code="fr-Test")
+        locale_map = {locale.code: locale}
+        repo = RepositoryFactory(url="http://example.com/repo")
+        project = ProjectFactory.create(
+            name="test-change", locales=[locale], repositories=[repo]
+        )
+        res = ResourceFactory.create(
+            project=project, path="res.ftl", format="ftl", total_strings=3
+        )
+        for i in (1, 2, 3):
+            entity = EntityFactory.create(
+                resource=res,
+                key=f"key-{i}",
+                string=f"key-{i} = Message {i}\n",
+            )
+            TranslationFactory.create(
+                entity=entity,
+                locale=locale,
+                string=f"key-{i} = Translation {i}\n",
+                active=True,
+                approved=True,
+            )
+
+        # Filesystem setup
+        res_ftl = dedent(
+            """
+            key-1 = Message 1
+            key-2 = Fixed message 2
+            # New comment
+            key-3 = Message 3
+            """
+        )
+        makedirs(repo.checkout_path)
+        build_file_tree(
+            repo.checkout_path,
+            {
+                "en-US": {"res.ftl": res_ftl},
+                "fr-Test": {"res.ftl": ""},
+            },
+        )
+
+        # Paths setup
+        mock_checkout = Mock(
+            Checkout,
+            path=repo.checkout_path,
+            changed=[join("en-US", "res.ftl")],
+            removed=[],
+            renamed=[],
+        )
+        paths = find_paths(project, Checkouts(mock_checkout, mock_checkout))
+
+        # Test sync
+        assert sync_entities_from_repo(
+            project, locale_map, mock_checkout, paths, now
+        ) == (0, {"res.ftl"}, set())
+        assert set(
+            (ent.string, ent.comment) for ent in Entity.objects.filter(resource=res)
+        ) == {
+            ("key-1 = Message 1\n", ""),
+            ("key-2 = Fixed message 2\n", ""),
+            ("key-3 = Message 3\n", "New comment"),
+        }
+
+        # Test stats
+        update_stats(project)
+        project.refresh_from_db()
+        assert (project.total_strings, project.approved_strings) == (3, 3)
