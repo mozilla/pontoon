@@ -326,10 +326,10 @@ def entity_update(
 ) -> Optional[Entity]:
     updated = False
     for field in fields:
-        if getattr(current, field) != getattr(update_from, field):
-            setattr(current, field, getattr(update_from, field))
+        value = getattr(update_from, field)
+        if getattr(current, field) != value:
+            setattr(current, field, value)
             updated = True
-
     return current if updated else None
 
 
