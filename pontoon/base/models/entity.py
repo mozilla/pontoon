@@ -453,7 +453,7 @@ class EntityQuerySet(models.QuerySet):
                 obj.word_count = get_word_count(obj.string)
             if "word_count" not in fields:
                 fields.append("word_count")
-        super().bulk_update(objs, fields=fields, batch_size=batch_size)
+        return super().bulk_update(objs, fields=fields, batch_size=batch_size)
 
 
 class Entity(DirtyFieldsMixin, models.Model):

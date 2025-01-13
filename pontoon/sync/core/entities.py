@@ -178,8 +178,7 @@ def update_resources(
         if key in prev_entities.keys() & next_entities.keys()
         and (ent := entity_update(prev_entities[key], next_ent, mod_fields))
     ]
-    mod_count = len(mod_entities)
-    Entity.objects.bulk_update(mod_entities, mod_fields)
+    mod_count = Entity.objects.bulk_update(mod_entities, mod_fields)
 
     # FIXME: Entity order should be updated on insertion
     # https://github.com/mozilla/pontoon/issues/2115
