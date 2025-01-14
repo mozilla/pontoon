@@ -3,6 +3,7 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 from os.path import exists, isfile, join, relpath, splitext
+from typing import Optional
 
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths
 
@@ -162,23 +163,22 @@ def update_resources(
         obsolete_entities, ["obsolete", "date_obsoleted"]
     )
 
-    mod_count = Entity.objects.bulk_update(
-        (
-            ent
-            for key, ent in next_entities.items()
-            if key in prev_entities.keys() & next_entities.keys()
-            and not entities_same(ent, prev_entities[key])
-        ),
-        [
-            "string",
-            "string_plural",
-            "comment",
-            "source",
-            "group_comment",
-            "resource_comment",
-            "context",
-        ],
-    )
+    mod_fields = [
+        "string",
+        "string_plural",
+        "comment",
+        "source",
+        "group_comment",
+        "resource_comment",
+        "context",
+    ]
+    mod_entities = [
+        ent
+        for key, next_ent in next_entities.items()
+        if key in prev_entities.keys() & next_entities.keys()
+        and (ent := entity_update(prev_entities[key], next_ent, mod_fields))
+    ]
+    mod_count = Entity.objects.bulk_update(mod_entities, mod_fields)
 
     # FIXME: Entity order should be updated on insertion
     # https://github.com/mozilla/pontoon/issues/2115
@@ -321,16 +321,16 @@ def entity_from_source(
     )
 
 
-def entities_same(a: Entity, b: Entity) -> bool:
-    return (
-        a.string == b.string
-        and a.string_plural == b.string_plural
-        and a.comment == b.comment
-        and a.source == b.source
-        and a.group_comment == b.group_comment
-        and a.resource_comment == b.resource_comment
-        and a.context == b.context
-    )
+def entity_update(
+    current: Entity, update_from: Entity, fields: list[str]
+) -> Optional[Entity]:
+    updated = False
+    for field in fields:
+        value = getattr(update_from, field)
+        if getattr(current, field) != value:
+            setattr(current, field, value)
+            updated = True
+    return current if updated else None
 
 
 def get_db_path(paths: L10nConfigPaths | L10nDiscoverPaths, file_path: str) -> str:
