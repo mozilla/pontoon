@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 def repository_url_validator(url):
     # Regular URLs
-    validator = URLValidator(["http", "https", "ftp", "ftps", "ssh", "svn+ssh"])
+    validator = URLValidator(["http", "https", "ftp", "ftps", "ssh"])
 
     # Git SCP-like URL
     pattern = r"git@[\w\.@]+[/:][\w-]+/[\w-]+(.git)?/?"
@@ -37,7 +37,6 @@ class Repository(models.Model):
     class Type(models.TextChoices):
         GIT = "git", "Git"
         HG = "hg", "HG"
-        SVN = "svn", "SVN"
 
     project = models.ForeignKey("Project", models.CASCADE, related_name="repositories")
     type = models.CharField(max_length=255, default=Type.GIT, choices=Type.choices)

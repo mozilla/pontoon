@@ -289,9 +289,6 @@ you create:
       Host hg.mozilla.org
       User pontoon@mozilla.com
 
-      Host svn.mozilla.org
-      User pontoon@mozilla.com
-
 ``SSH_KEY``
    SSH private key to use for authentication when Pontoon connects to VCS
    servers via SSH.
@@ -321,11 +318,6 @@ you create:
    Optional. Integer representing a day of the week on which the
    `send_suggestion_notifications` management command will run. 0 represents
    Monday, 6 represents Sunday. The default value is 4 (Friday).
-
-``SVN_LD_LIBRARY_PATH``
-   Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary
-   on Heroku because the Python buildpack alters the path in a way that breaks
-   the built-in SVN command. Set this to ``/usr/lib/x86_64-linux-gnu/``.
 
 ``SYNC_TASK_TIMEOUT``
    Optional. Multiple sync tasks for the same project cannot run concurrently to
