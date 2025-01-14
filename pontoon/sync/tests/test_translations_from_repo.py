@@ -57,7 +57,7 @@ def test_add_ftl_translation():
             TranslatedResourceFactory.create(
                 locale=locale, resource=res[id], total_strings=3
             )
-            for i in range(3):
+            for i in [0, 1, 2]:
                 key = f"key-{id}-{i}"
                 string = f"{key} = Message {id} {i}\n"
                 entity = EntityFactory.create(resource=res[id], string=string, key=key)
@@ -65,7 +65,7 @@ def test_add_ftl_translation():
                     TranslationFactory.create(
                         entity=entity,
                         locale=locale,
-                        string=string.replace("Message", "Translation"),
+                        string=string.replace(" Message", "Translation"),
                         active=True,
                         approved=True,
                     )
@@ -127,7 +127,7 @@ def test_add_ftl_translation():
             (action.translation.string, action.action_type)
             for action in ActionLog.objects.filter(translation__in=translations)
         } == {
-            ("key-c-1 = Translation c 1\n", "translation:rejected"),
+            ("key-c-1 =Translation c 1\n", "translation:rejected"),
             ("key-c-1 = New translation c 1\n", "translation:approved"),
             ("key-c-2 = New translation c 2\n", "translation:created"),
         }
