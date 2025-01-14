@@ -77,11 +77,11 @@ def update_stats(project: Project, *, update_locales: bool = True) -> None:
                     SELECT
                         trans.locale_id AS "locale_id",
                         ent.resource_id AS "resource_id",
-                        COUNT(*) FILTER (WHERE trans.approved AND err.id IS NULL AND warn.id IS NULL) AS "approved",
-                        COUNT(*) FILTER (WHERE trans.pretranslated AND err.id IS NULL AND warn.id IS NULL) AS "pretranslated",
-                        COUNT(*) FILTER (WHERE (trans.approved OR trans.pretranslated OR trans.fuzzy) AND err.id IS NOT NULL) AS "errors",
-                        COUNT(*) FILTER (WHERE (trans.approved OR trans.pretranslated OR trans.fuzzy) AND warn.id IS NOT NULL) AS "warnings",
-                        COUNT(*) FILTER (WHERE NOT trans.approved AND NOT trans.pretranslated AND NOT trans.rejected AND NOT trans.fuzzy) AS "unreviewed"
+                        COUNT(DISTINCT trans.id) FILTER (WHERE trans.approved AND err.id IS NULL AND warn.id IS NULL) AS "approved",
+                        COUNT(DISTINCT trans.id) FILTER (WHERE trans.pretranslated AND err.id IS NULL AND warn.id IS NULL) AS "pretranslated",
+                        COUNT(DISTINCT trans.id) FILTER (WHERE (trans.approved OR trans.pretranslated OR trans.fuzzy) AND err.id IS NOT NULL) AS "errors",
+                        COUNT(DISTINCT trans.id) FILTER (WHERE (trans.approved OR trans.pretranslated OR trans.fuzzy) AND warn.id IS NOT NULL) AS "warnings",
+                        COUNT(DISTINCT trans.id) FILTER (WHERE NOT trans.approved AND NOT trans.pretranslated AND NOT trans.rejected AND NOT trans.fuzzy) AS "unreviewed"
                     FROM "base_translation" trans
                     LEFT OUTER JOIN "checks_error" err ON (trans.id = err.translation_id)
                     LEFT OUTER JOIN "checks_warning" warn ON (trans.id = warn.translation_id)
