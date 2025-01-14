@@ -6,6 +6,7 @@ from datetime import datetime
 from os.path import join, relpath, splitext
 from typing import cast
 
+from fluent.syntax import FluentParser
 from moz.l10n.paths import L10nConfigPaths, L10nDiscoverPaths, parse_android_locale
 from moz.l10n.resource import bilingual_extensions, l10n_extensions
 
@@ -164,13 +165,15 @@ def find_db_updates(
                 if not project.configuration_file and db_path.endswith(".pot"):
                     db_path = db_path[:-1]
                 resource_paths.add(db_path)
-                translated_resources[db_path].add(locale.id)
+                translated_resources[db_path].add(locale.pk)
                 translations.update(
-                    ((db_path, tx.key, locale.id), (tx.strings, tx.fuzzy))
+                    ((db_path, tx.key, locale.pk), (tx.strings, tx.fuzzy))
                     for tx in cast(list[VCSTranslation], res.translations)
                     if tx.strings
                 )
-        elif splitext(target_path)[1] in l10n_extensions:
+        elif splitext(target_path)[1] in l10n_extensions and not isinstance(
+            paths, UploadPaths
+        ):
             log.debug(
                 f"[{project.slug}:{relpath(target_path, paths.base)}] Not an L10n target path"
             )
@@ -200,6 +203,7 @@ def find_db_updates(
             .order_by("id")
             .values(
                 "entity__resource__path",
+                "entity__resource__format",
                 "entity__key",
                 "entity__string",  # terminology/common and tutorial/playground use string instead of key.
                 "locale_id",
@@ -219,7 +223,13 @@ def find_db_updates(
                 if key in translations:
                     plural_form = trans_values["plural_form"]
                     strings, _ = translations[key]
-                    if strings.get(plural_form, None) == trans_values["string"]:
+                    if translations_equal(
+                        project,
+                        key[0],
+                        trans_values["entity__resource__format"],
+                        strings.get(plural_form, None),
+                        trans_values["string"],
+                    ):
                         if len(strings) > 1:
                             del strings[plural_form]
                         else:
@@ -259,6 +269,23 @@ def find_db_updates(
             res[(entity_id, locale_id)] = tx
     log.debug(f"[{project.slug}] Compiling updates... Found {len(res)}")
     return res
+
+
+def translations_equal(
+    project: Project, db_path: str, format: str, a: object, b: object
+) -> bool:
+    if a == b:
+        return True
+    if format != "ftl" or not isinstance(a, str) or not isinstance(b, str):
+        return False
+    parser = FluentParser(with_spans=False)
+    try:
+        fa = parser.parse(a)
+        fb = parser.parse(b)
+        return fa.equals(fb)
+    except Exception as error:
+        log.debug(f"[{project.slug}:{db_path}] Parse error: {error}")
+        return False
 
 
 def update_db_translations(
