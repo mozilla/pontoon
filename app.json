@@ -131,9 +131,6 @@
       "url": "https://github.com/Osmose/heroku-buildpack-ssh"
     },
     {
-      "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
-    },
-    {
       "url": "heroku/nodejs"
     },
     {
