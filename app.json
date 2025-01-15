@@ -106,10 +106,6 @@
       "required": false,
       "value": ""
     },
-    "SVN_LD_LIBRARY_PATH": {
-      "description": "Path to prepend to ``LD_LIBRARY_PATH`` when running SVN. This is necessary on Heroku because the Python buildpack alters the path in a way that breaks the built-in SVN command.",
-      "value": "/usr/lib/x86_64-linux-gnu/"
-    },
     "TZ": {
       "description": "Timezone for the dynos that will run the app. Pontoon operates in UTC",
       "value": "UTC"
@@ -133,9 +129,6 @@
     },
     {
       "url": "https://github.com/Osmose/heroku-buildpack-ssh"
-    },
-    {
-      "url": "https://github.com/mozilla/heroku-buildpack-apt.git#v0.1"
     },
     {
       "url": "heroku/nodejs"

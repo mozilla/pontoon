@@ -22,14 +22,6 @@ class VCSRevisionTests(TestCase):
         assert get_repo("hg").revision("path/") is None
         mock_log.error.assert_called_with(CONTAINS("stderr", "identify", "path/"))
 
-    @patch("pontoon.sync.repositories.svn.log")
-    @patch("subprocess.Popen")
-    def test_svn_revision(self, mock_popen, mock_log):
-        attrs = {"communicate.return_value": (b"output", b"stderr"), "returncode": 1}
-        mock_popen.return_value = Mock(**attrs)
-        assert get_repo("svn").revision("path/") is None
-        mock_log.error.assert_called_with(CONTAINS("stderr", "svnversion", "path/"))
-
 
 class VCSChangedFilesTests:
     """
@@ -82,17 +74,5 @@ class HgChangedFilesTest(VCSChangedFilesTests, TestCase):
         M changed_file2.properties
         R removed_file1.properties
         R removed_file2.properties
-        """
-    ).encode()
-
-
-class SVNChangedFilesTest(VCSChangedFilesTests, TestCase):
-    repo_type = "svn"
-    shell_output = dedent(
-        """
-        M changed_file1.properties
-        M changed_file2.properties
-        D removed_file1.properties
-        D removed_file2.properties
         """
     ).encode()

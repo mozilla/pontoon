@@ -77,9 +77,6 @@ APP_URL_KEY = "APP_URL"
 
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")
 
-# Custom LD_LIBRARY_PATH environment variable for SVN
-SVN_LD_LIBRARY_PATH = os.environ.get("SVN_LD_LIBRARY_PATH", "")
-
 # URL to the RabbitMQ server
 BROKER_URL = os.environ.get("RABBITMQ_URL", None)
 

@@ -1,4 +1,4 @@
-from . import git, hg, svn
+from . import git, hg
 from .utils import CommitToRepositoryException, PullFromRepositoryException
 
 
@@ -15,7 +15,5 @@ def get_repo(type: str):
         return git
     elif type == "hg":
         return hg
-    elif type == "svn":
-        return svn
     else:
         raise NotImplementedError

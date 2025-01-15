@@ -16,10 +16,9 @@ It can handle any project that uses one of the supported file formats:
 - .xliff
 - .xml (Android)
 
-Pontoon can pull strings it needs to translate from an external source, and write
-them back periodically. Typically these external sources are version control
-repositories that store the strings for an application. Supported external
-sources include **Git**, **Mercurial** and **Subversion**.
+Pontoon pulls strings it needs to translate from an external source and writes them back periodically.
+Typically these external sources are version control repositories that store the strings for an application.
+Supported external sources are **Git** and **Mercurial** repositories.
 
 Other Documentation
 -------------------
