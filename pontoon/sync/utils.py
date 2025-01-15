@@ -96,7 +96,7 @@ def import_uploaded_file(
         )
     if updates:
         now = timezone.now()
-        write_db_updates(project, updates, user, now)
+        badge_name, badge_level = write_db_updates(project, updates, user, now)
         update_stats(project)
         ChangedEntityLocale.objects.bulk_create(
             (
@@ -105,5 +105,6 @@ def import_uploaded_file(
             ),
             ignore_conflicts=True,
         )
+        return badge_name, badge_level
     else:
         raise Exception("Upload failed.")

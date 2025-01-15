@@ -7,8 +7,7 @@ import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { HistoryData } from '~/context/HistoryData';
 import { Location } from '~/context/Location';
-import { ShowNotification } from '~/context/Notification';
-import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
+import { ShowBadgeTooltip, ShowNotification } from '~/context/Notification';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
 import {
