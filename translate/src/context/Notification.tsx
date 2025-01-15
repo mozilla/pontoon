@@ -1,5 +1,5 @@
-import React, { createContext } from 'react';
-import { useNotifications } from '../hooks/useNotification';
+import { createContext } from 'react';
+import { useNotifications } from '~/hooks/useNotifications';
 
 type NotificationType = 'debug' | 'error' | 'info' | 'success' | 'warning';
 
@@ -16,35 +16,17 @@ export const ShowNotification = createContext<
   (message: NotificationMessage | null) => void
 >(() => {});
 
-export type BadgeTooltipMessage = Readonly<{
-  badgeName: string | null;
-  badgeLevel: number | null;
-}>;
-
-export const BadgeTooltipMessage = createContext<BadgeTooltipMessage | null>(
-  null,
-);
-
-export const ShowBadgeTooltip = createContext<
-  (tooltip: BadgeTooltipMessage | null) => void
->(() => {});
-
 export function NotificationProvider({
   children,
 }: {
   children: React.ReactElement;
 }) {
-  const { message, setMessage, badgeMessage, setBadgeMessage } =
-    useNotifications();
+  const { message, setMessage } = useNotifications();
 
   return (
     <NotificationMessage.Provider value={message}>
       <ShowNotification.Provider value={setMessage}>
-        <BadgeTooltipMessage.Provider value={badgeMessage}>
-          <ShowBadgeTooltip.Provider value={setBadgeMessage}>
-            {children}
-          </ShowBadgeTooltip.Provider>
-        </BadgeTooltipMessage.Provider>
+        {children}
       </ShowNotification.Provider>
     </NotificationMessage.Provider>
   );

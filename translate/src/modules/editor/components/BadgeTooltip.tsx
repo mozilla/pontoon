@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useRef } from 'react';
 import { Localized } from '@fluent/react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 
-import { BadgeTooltipMessage, ShowBadgeTooltip } from '~/context/Notification';
+import { BadgeTooltipMessage, ShowBadgeTooltip } from '~/context/BadgeTooltip';
 import { useAppSelector } from '~/hooks';
 import { useOnDiscard } from '~/utils';
 

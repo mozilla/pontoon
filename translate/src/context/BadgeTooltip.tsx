@@ -1,17 +1,29 @@
-import { createContext, useContext } from 'react';
-import { BadgeTooltipMessage, ShowBadgeTooltip } from './Notification';
+import { createContext } from 'react';
+import { useNotifications } from '~/hooks/useNotifications';
+
+export type BadgeTooltipMessage = Readonly<{
+  badgeName: string | null;
+  badgeLevel: number | null;
+}>;
+
+export const BadgeTooltipMessage = createContext<BadgeTooltipMessage | null>(
+  null,
+);
+
+export const ShowBadgeTooltip = createContext<
+  (tooltip: BadgeTooltipMessage | null) => void
+>(() => {});
 
 export function BadgeTooltipProvider({
   children,
 }: {
   children: React.ReactElement;
 }) {
-  const badgeMessage = useContext(BadgeTooltipMessage);
-  const setBadgeMessage = useContext(ShowBadgeTooltip);
+  const { badgeMessage, setBadgeMessage } = useNotifications();
 
   return (
     <BadgeTooltipMessage.Provider value={badgeMessage}>
-      <ShowBadgeTooltip.Provider value={setBadgeMessage}>
+      <ShowBadgeTooltip.Provider value={(tooltip) => setBadgeMessage(tooltip)}>
         {children}
       </ShowBadgeTooltip.Provider>
     </BadgeTooltipMessage.Provider>

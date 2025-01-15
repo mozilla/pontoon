@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  NotificationMessage,
-  BadgeTooltipMessage,
-} from '../context/Notification';
+import { NotificationMessage } from '~/context/Notification';
+import { BadgeTooltipMessage } from '~/context/BadgeTooltip';
 
 export function useNotifications() {
   const [message, setMessage] = useState<NotificationMessage | null>(null);
@@ -10,6 +8,9 @@ export function useNotifications() {
     null,
   );
 
+  // If there's a notification in the DOM set by Django, show it.
+  // Note that we only show it once, and only when the UI has already
+  // been rendered, to make sure users do see it.
   useEffect(() => {
     const rootElt = document.getElementById('root');
     if (rootElt?.dataset.notifications) {
