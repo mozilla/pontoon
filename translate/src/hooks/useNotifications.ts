@@ -14,8 +14,11 @@ export function useNotifications() {
   useEffect(() => {
     const rootElt = document.getElementById('root');
     if (rootElt?.dataset.notifications) {
+      console.log(rootElt?.dataset.notifications);
       const notifications = JSON.parse(rootElt.dataset.notifications);
       if (notifications.length > 0) {
+        // Extra tags from the Django messages framework are combined
+        // with the level tag into a single string as notification.type
         const generalNotification = notifications.find(
           (notification: { type: string }) =>
             notification.type !== 'badge info',
