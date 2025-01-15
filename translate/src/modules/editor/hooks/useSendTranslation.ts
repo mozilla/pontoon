@@ -11,7 +11,6 @@ import { EntityView } from '~/context/EntityView';
 import { FailedChecksData } from '~/context/FailedChecksData';
 import { Locale } from '~/context/Locale';
 import { Location } from '~/context/Location';
-import { ShowNotification } from '~/context/Notification';
 import { UnsavedActions } from '~/context/UnsavedChanges';
 import { updateEntityTranslation } from '~/modules/entities/actions';
 import { usePushNextTranslatable } from '~/modules/entities/hooks';
@@ -23,7 +22,7 @@ import { updateResource } from '~/modules/resource/actions';
 import { updateStats } from '~/modules/stats/actions';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { serializeEntry, getPlainMessage } from '~/utils/message';
-import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
+import { ShowBadgeTooltip, ShowNotification } from '~/context/Notification';
 
 /**
  * Return a function to send a translation to the server.

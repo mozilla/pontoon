@@ -77,12 +77,12 @@ def sync_translations_from_repo(
 def write_db_updates(
     project: Project, updates: Updates, user: User | None, now: datetime
 ) -> tuple[str, int]:
-    badge_update, updated_translations, new_translations = update_db_translations(
-        project, updates, user, now
+    badge_name, badge_level, updated_translations, new_translations = (
+        update_db_translations(project, updates, user, now)
     )
     add_failed_checks(new_translations)
     add_translation_memory_entries(project, new_translations + updated_translations)
-    return badge_update
+    return badge_name, badge_level
 
 
 def delete_removed_bilingual_resources(
@@ -435,31 +435,24 @@ def update_db_translations(
             f"[{project.slug}] Created {str_n_translations(created)} from repo changes"
         )
 
-    badge_update = ("", 0)
+    badge_name = ""
+    badge_level = 0
     if actions:
         translation_before_level = log_user.badges_translation_level
         review_before_level = log_user.badges_review_level
 
         ActionLog.objects.bulk_create(actions)
+        if log_user.username != "pontoon-sync":
+            if log_user.badges_translation_level > translation_before_level:
+                badge_name = "Translation Champion"
+                badge_level = log_user.badges_translation_level
+                send_badge_notification(log_user, badge_name, badge_level)
+            if log_user.badges_review_level > review_before_level:
+                badge_name = "Review Master"
+                badge_level = log_user.badges_review_level
+                send_badge_notification(log_user, badge_name, badge_level)
 
-        if (
-            log_user.badges_translation_level > translation_before_level
-            and log_user.username != "pontoon-sync"
-        ):
-            send_badge_notification(
-                log_user, "Translation Champion", log_user.badges_translation_level
-            )
-            badge_update = ("Translation Champion", log_user.badges_translation_level)
-        if (
-            log_user.badges_review_level > review_before_level
-            and log_user.username != "pontoon-sync"
-        ):
-            send_badge_notification(
-                log_user, "Review Master", log_user.badges_review_level
-            )
-            badge_update = ("Review Master", log_user.badges_review_level)
-
-    return badge_update, created, list(suggestions.values())
+    return badge_name, badge_level, created, list(suggestions.values())
 
 
 def str_n_translations(n: int | Sized) -> str:

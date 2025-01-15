@@ -2,7 +2,7 @@ import { Localized } from '@fluent/react';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import { Location } from '~/context/Location';
-import { ShowBadgeTooltip } from '~/context/BadgeTooltip';
+import { ShowBadgeTooltip } from '~/context/Notification';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 
 import { performAction, resetSelection, selectAll } from '../actions';

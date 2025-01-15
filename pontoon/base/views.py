@@ -806,15 +806,18 @@ def upload(request):
 
         upload = request.FILES["uploadfile"]
         try:
-            badge_update = import_uploaded_file(
+            badge_name, badge_level = import_uploaded_file(
                 project, locale, res_path, upload, request.user
             )
             messages.success(request, "Translations updated from uploaded file.")
-            if badge_update[0]:
+            if badge_name:
                 message = json.dumps(
-                    {"badgeName": badge_update[0], "badgeLevel": badge_update[1]}
+                    {
+                        "name": badge_name,
+                        "level": badge_level,
+                    }
                 )
-                messages.info(request, message)
+                messages.info(request, message, extra_tags="badge")
         except Exception as error:
             messages.error(request, str(error))
     else:
