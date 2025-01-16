@@ -73,8 +73,9 @@ def sync_project(
         removed_paths,
         now,
     )
+    if commit:
+        db_changes.delete()
 
-    db_changes.delete()
     checkouts.source.repo.last_synced_revision = checkouts.source.commit
     if checkouts.target != checkouts.source:
         checkouts.target.repo.last_synced_revision = checkouts.target.commit
