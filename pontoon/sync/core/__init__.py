@@ -23,7 +23,8 @@ def sync_project(
     pull: bool = True,
     commit: bool = True,
     force: bool = False,
-) -> bool:
+) -> tuple[bool, bool]:
+    """`(db_changed, repo_changed)`"""
     # Mark "now" at the start of sync to avoid messing with
     # translations submitted during sync.
     now = timezone.now()
@@ -49,13 +50,19 @@ def sync_project(
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
     ).select_related("entity__resource", "locale")
-    made_changes = bool(db_changes)
     del_trans_count, updated_trans_count = sync_translations_from_repo(
         project, locale_map, checkouts, paths, db_changes, now
     )
+    db_changed = bool(
+        added_entities_count
+        or changed_paths
+        or removed_paths
+        or del_trans_count
+        or updated_trans_count
+    )
     if added_entities_count > 0:
         notify_users(project, added_entities_count)
-    sync_translations_to_repo(
+    repo_changed = sync_translations_to_repo(
         project,
         commit,
         locale_map,
@@ -71,22 +78,15 @@ def sync_project(
     checkouts.source.repo.last_synced_revision = checkouts.source.commit
     if checkouts.target != checkouts.source:
         checkouts.target.repo.last_synced_revision = checkouts.target.commit
-    if (
-        added_entities_count
-        or changed_paths
-        or removed_paths
-        or del_trans_count
-        or updated_trans_count
-    ):
+    if db_changed:
         update_stats(project)
-        made_changes = True
     log.info(f"{log_prefix} Sync done")
 
     if project.pretranslation_enabled and changed_paths:
         # Pretranslate changed and added resources for all locales
         pretranslate(project, changed_paths)
 
-    return made_changes
+    return db_changed, repo_changed
 
 
 def notify_users(project: Project, count: int) -> None:

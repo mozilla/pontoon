@@ -35,10 +35,12 @@ def sync_project_task(
             f"[{project.slug}] Sync aborted: Previous sync still running."
         )
     try:
-        with_changes = sync_project(project, pull=pull, commit=commit, force=force)
-        if not with_changes:
+        db_changed, repo_changed = sync_project(
+            project, pull=pull, commit=commit, force=force
+        )
+        if not db_changed and not repo_changed:
             status = Sync.Status.NO_CHANGES
-        elif not commit:
+        elif not commit and repo_changed:
             status = Sync.Status.NO_COMMIT
         else:
             status = Sync.Status.DONE

@@ -1,13 +1,15 @@
+from datetime import datetime
+
 from django_jinja import library
 
 from pontoon.sync.models import Sync
 
 
 @library.global_function
-def format_sync_duration(sync: Sync) -> str:
-    if not sync.end_time:
+def format_sync_duration(start_time: datetime, end_time: datetime | None) -> str:
+    if not end_time:
         return "…"
-    td = sync.end_time - sync.start_time
+    td = end_time - start_time
     minutes = td.days * 24 * 60 + td.seconds // 60
     seconds = td.seconds % 60
     if minutes > 1:

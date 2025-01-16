@@ -9,7 +9,7 @@ def migrate_sync_events(apps, schema_editor):
     for prev in ProjectSyncLog.objects.all().prefetch_related("repository_sync_logs"):
         sync = Sync(project=prev.project, start_time=prev.start_time)
         if prev.skipped_end_time:
-            sync.status = -1  # Sync.Status.FAIL
+            sync.status = 99  # Can't differentiate between NO_CHANGES and FAIL
             sync.end_time = prev.skipped_end_time
         else:
             repo_logs = prev.repository_sync_logs.all()
