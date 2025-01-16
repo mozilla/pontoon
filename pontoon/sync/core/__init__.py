@@ -12,7 +12,6 @@ from pontoon.sync.core.paths import find_paths
 from pontoon.sync.core.stats import update_stats
 from pontoon.sync.core.translations_from_repo import sync_translations_from_repo
 from pontoon.sync.core.translations_to_repo import sync_translations_to_repo
-from pontoon.sync.models import ProjectSyncLog, RepositorySyncLog, SyncLog
 
 
 log = logging.getLogger(__name__)
@@ -20,28 +19,23 @@ log = logging.getLogger(__name__)
 
 def sync_project(
     project: Project,
-    sync_log: SyncLog,
     *,
     pull: bool = True,
     commit: bool = True,
     force: bool = False,
-):
+) -> bool:
     # Mark "now" at the start of sync to avoid messing with
     # translations submitted during sync.
     now = timezone.now()
 
     log_prefix = f"[{project.slug}]"
     log.info(f"{log_prefix} Sync start")
-    project_sync_log = ProjectSyncLog.objects.create(
-        sync_log=sync_log, project=project, start_time=now
-    )
 
     try:
         checkouts = checkout_repos(project, force=force, pull=pull)
         paths = find_paths(project, checkouts)
     except Exception as e:
         log.error(f"{log_prefix} {e}")
-        project_sync_log.skip()
         raise e
 
     locale_map: dict[str, Locale] = {
@@ -52,15 +46,10 @@ def sync_project(
         project, locale_map, checkouts.source, paths, now
     )
 
-    repo_sync_log = RepositorySyncLog.objects.create(
-        project_sync_log=project_sync_log,
-        repository=checkouts.target.repo,
-        start_time=timezone.now(),
-    )
-
     db_changes = ChangedEntityLocale.objects.filter(
         entity__resource__project=project, when__lte=now
     ).select_related("entity__resource", "locale")
+    made_changes = bool(db_changes)
     del_trans_count, updated_trans_count = sync_translations_from_repo(
         project, locale_map, checkouts, paths, db_changes, now
     )
@@ -90,12 +79,14 @@ def sync_project(
         or updated_trans_count
     ):
         update_stats(project)
-    repo_sync_log.end()
+        made_changes = True
     log.info(f"{log_prefix} Sync done")
 
     if project.pretranslation_enabled and changed_paths:
         # Pretranslate changed and added resources for all locales
         pretranslate(project, changed_paths)
+
+    return made_changes
 
 
 def notify_users(project: Project, count: int) -> None:

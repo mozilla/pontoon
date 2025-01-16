@@ -4,126 +4,41 @@
   width: 100%;
 }
 
-.log-list .log-list-column {
+.log-list th {
   font-weight: bold;
   padding: 0.4em;
   text-transform: uppercase;
 }
 
-.sync-log .start-time,
-.sync-log .start-date,
-.sync-log .duration {
+.sync-log td {
   padding: 0.4em;
   font-size: 14px;
 }
 
-.sync-log .start-time a {
+.sync-log a {
   color: var(--status-translated-alt);
 }
 
-/** @details */
-td {
-  padding: 5px 10px;
+.sync-status-success {
+  color: var(--status-translated);
 }
 
-.sync-details {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  list-style-type: none;
-  margin: 0;
-  padding: 1em;
-  text-align: center;
-}
-
-.sync-details .detail-item {
-  flex: 1;
-  margin: 0 1px;
-}
-
-.sync-details .detail-label {
-  border: none;
-  color: var(--light-grey-7);
-  font-size: 12px;
-  margin: 0.5em 0;
-  text-transform: uppercase;
-}
-
-.sync-details .detail-value {
-  border: none;
-  font-size: 16px;
-}
-
-.command-details {
-  background: var(--dark-grey-1);
-  border-bottom: 1px solid var(--main-border-1);
-  margin-top: -1px;
-}
-
-.command-details .detail-item {
-  border-top: 4px solid;
-  flex: 0 0 325px;
-}
-
-.command-details .start-time {
-  border-color: var(--status-translated);
-}
-
-.command-details .end-time {
-  border-color: var(--status-unreviewed);
-}
-
-.command-details .duration {
-  border-color: var(--status-warning);
-}
-
-.project-details .start-time .detail-label,
-.repository-details .start-time .detail-label {
-  color: var(--status-translated-alt);
-}
-
-.project-details .end-time .detail-label,
-.repository-details .end-time .detail-label {
-  color: var(--status-unreviewed);
-}
-
-.project-details .duration .detail-label,
-.repository-details .duration .detail-label {
+.sync-status-warn {
   color: var(--status-warning);
 }
 
-.project {
-  border: 1px solid var(--main-border-1);
-  border-radius: 5px;
-  margin-bottom: 1em;
-  padding: 1em;
+.sync-status-fail {
+  color: var(--status-error);
 }
 
-.project .project-name {
-  color: var(--light-grey-7);
-  font-size: 36px;
-  text-align: left;
-  text-transform: none;
+.sync-status-other {
+  color: var(--status-missing);
 }
 
-.repository-logs {
-  list-style-type: none;
-  width: 100%;
-}
-
-.repository-logs .repository-logs-column {
-  color: var(--light-grey-7);
-  padding: 1em;
-  text-align: left;
-  text-transform: uppercase;
-}
-
-.repository .repository-url {
-  vertical-align: middle;
-}
-
-.repository:nth-child(even) {
-  background: var(--dark-grey-1);
+.sync-error-message td {
+  color: var(--input-color-2);
+  font-size: 14px;
+  padding: 0 0.4em 0.4em 1.2em;
 }
 
 /** @pagination */
