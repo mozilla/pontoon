@@ -1,5 +1,5 @@
-import { createContext, useEffect, useState } from 'react';
-import { Localized } from '@fluent/react';
+import { createContext } from 'react';
+import { useNotifications } from '~/hooks/useNotifications';
 
 export type BadgeTooltipMessage = Readonly<{
   badgeName: string | null;
@@ -19,11 +19,11 @@ export function BadgeTooltipProvider({
 }: {
   children: React.ReactElement;
 }) {
-  const [message, setMessage] = useState<BadgeTooltipMessage | null>(null);
+  const { badgeMessage, setBadgeMessage } = useNotifications();
 
   return (
-    <BadgeTooltipMessage.Provider value={message}>
-      <ShowBadgeTooltip.Provider value={(tooltip) => setMessage(tooltip)}>
+    <BadgeTooltipMessage.Provider value={badgeMessage}>
+      <ShowBadgeTooltip.Provider value={(tooltip) => setBadgeMessage(tooltip)}>
         {children}
       </ShowBadgeTooltip.Provider>
     </BadgeTooltipMessage.Provider>
