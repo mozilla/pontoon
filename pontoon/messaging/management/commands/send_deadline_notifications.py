@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
 from pontoon.base.models import Project
+from pontoon.base.models.translated_resource import TranslatedResource
 
 
 class Command(BaseCommand):
@@ -36,7 +37,11 @@ class Command(BaseCommand):
             locales = []
 
             for project_locale in project.project_locale.all():
-                if project_locale.approved_strings < project_locale.total_strings:
+                pl_stats = TranslatedResource.objects.filter(
+                    locale=project_locale.locale,
+                    resource__project=project_locale.project,
+                ).string_stats()
+                if pl_stats["approved"] < pl_stats["total"]:
                     locales.append(project_locale.locale)
 
             contributors = (

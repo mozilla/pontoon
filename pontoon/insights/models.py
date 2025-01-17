@@ -3,8 +3,6 @@ from datetime import timedelta
 from django.db import models
 from django.utils import timezone
 
-from pontoon.base.models import AggregatedStats
-
 
 def active_users_default():
     return {
@@ -14,8 +12,16 @@ def active_users_default():
     }
 
 
-class InsightsSnapshot(AggregatedStats, models.Model):
+class InsightsSnapshot(models.Model):
     created_at = models.DateField(default=timezone.now)
+
+    # Aggregated stats
+    total_strings = models.PositiveIntegerField(default=0)
+    approved_strings = models.PositiveIntegerField(default=0)
+    pretranslated_strings = models.PositiveIntegerField(default=0)
+    strings_with_errors = models.PositiveIntegerField(default=0)
+    strings_with_warnings = models.PositiveIntegerField(default=0)
+    unreviewed_strings = models.PositiveIntegerField(default=0)
 
     # Active users
     total_managers = models.PositiveIntegerField(default=0)

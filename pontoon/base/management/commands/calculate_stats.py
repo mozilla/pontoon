@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Count
 
 from pontoon.base.models import Project
-from pontoon.sync.core.stats import update_locale_stats, update_stats
+from pontoon.sync.core.stats import update_stats
 
 
 log = logging.getLogger(__name__)
@@ -34,7 +34,6 @@ class Command(BaseCommand):
 
         log.info(f"Calculating stats for {len(projects)} projects...")
         for project in projects:
-            update_stats(project, update_locales=False)
-        update_locale_stats()
+            update_stats(project)
 
         log.info("Calculating stats complete for all projects.")

@@ -122,7 +122,7 @@ def batch_edit_translations(request):
         )
 
     tr_pks = [tr.pk for tr in action_status["translated_resources"]]
-    TranslatedResource.objects.filter(pk__in=tr_pks).update_stats()
+    TranslatedResource.objects.filter(pk__in=tr_pks).calculate_stats()
 
     # Mark translations as changed
     active_translations.bulk_mark_changed()

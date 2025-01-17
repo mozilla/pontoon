@@ -8,7 +8,7 @@ from django.db.models import Prefetch
 from django.db.models.manager import BaseManager
 from django.utils import timezone
 
-from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
 
 
@@ -86,20 +86,14 @@ class ProjectQuerySet(models.QuerySet):
             )
         )
 
-    def get_stats_sum(self):
-        """
-        Get sum of stats for all items in the queryset.
-        """
-        return AggregatedStats.get_stats_sum(self)
 
-    def get_top_instances(self):
-        """
-        Get top instances in the queryset.
-        """
-        return AggregatedStats.get_top_instances(self)
+class Project(models.Model, AggregatedStats):
+    @property
+    def trans_res_query(self):
+        from pontoon.base.models.translated_resource import TranslatedResource
 
+        return TranslatedResource.objects.filter(resource__project=self)
 
-class Project(AggregatedStats):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(unique=True)
     locales = models.ManyToManyField(Locale, through="ProjectLocale")
@@ -239,32 +233,14 @@ class Project(AggregatedStats):
         }
 
     def save(self, *args, **kwargs):
-        """
-        When project disabled status changes, update denormalized stats
-        for all project locales.
-        """
-        disabled_changed = False
-        visibility_changed = False
-
         if self.pk is not None:
             try:
-                original = Project.objects.get(pk=self.pk)
-                if self.visibility != original.visibility:
-                    visibility_changed = True
-                if self.disabled != original.disabled:
-                    disabled_changed = True
-                    if self.disabled:
-                        self.date_disabled = timezone.now()
-                    else:
-                        self.date_disabled = None
+                if self.disabled != Project.objects.get(pk=self.pk).disabled:
+                    self.date_disabled = timezone.now() if self.disabled else None
             except Project.DoesNotExist:
                 pass
 
         super().save(*args, **kwargs)
-
-        if disabled_changed or visibility_changed:
-            for locale in self.locales.all():
-                locale.aggregate_stats()
 
     @property
     def checkout_path(self):
@@ -280,13 +256,6 @@ class Project(AggregatedStats):
         from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_chart(self, locale)
-
-    def aggregate_stats(self):
-        from pontoon.base.models.translated_resource import TranslatedResource
-
-        TranslatedResource.objects.filter(
-            resource__project=self, resource__entities__obsolete=False
-        ).distinct().aggregate_stats(self)
 
     @property
     def avg_string_count(self):

@@ -169,7 +169,7 @@ def create_translation(request):
     response_data = {
         "status": True,
         "translation": translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Translation Champion Badge notification information
@@ -317,7 +317,7 @@ def approve_translation(request):
 
     response_data = {
         "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Review Master Badge notification information
@@ -388,7 +388,7 @@ def unapprove_translation(request):
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
         }
     )
 
@@ -454,7 +454,7 @@ def reject_translation(request):
 
     response_data = {
         "translation": active_translation.serialize(),
-        "stats": TranslatedResource.objects.stats(project, paths, locale),
+        "stats": TranslatedResource.objects.query_stats(project, paths, locale),
     }
 
     # Send Review Master Badge notification information
@@ -525,6 +525,6 @@ def unreject_translation(request):
     return JsonResponse(
         {
             "translation": active_translation.serialize(),
-            "stats": TranslatedResource.objects.stats(project, paths, locale),
+            "stats": TranslatedResource.objects.query_stats(project, paths, locale),
         }
     )

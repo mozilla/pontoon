@@ -34,10 +34,10 @@ export const getResource =
 
     const resources = results.map((resource) => ({
       path: resource.title,
-      approvedStrings: resource.approved_strings,
-      pretranslatedStrings: resource.pretranslated_strings,
-      stringsWithWarnings: resource.strings_with_warnings,
-      totalStrings: resource.resource__total_strings,
+      approvedStrings: resource.approved,
+      pretranslatedStrings: resource.pretranslated,
+      stringsWithWarnings: resource.warnings,
+      totalStrings: resource.total,
     }));
 
     const allResources = resources.pop();

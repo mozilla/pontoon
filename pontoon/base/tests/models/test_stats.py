@@ -11,7 +11,7 @@ def get_stats(translation):
     return TranslatedResource.objects.filter(
         resource=translation.entity.resource,
         locale=translation.locale,
-    ).aggregated_stats()
+    ).string_stats()
 
 
 @pytest.mark.django_db

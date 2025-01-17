@@ -33,14 +33,13 @@ def test_remove_resource():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-rm-res",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
@@ -82,14 +81,13 @@ def test_remove_entity():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-rm-ent",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")
@@ -161,14 +159,13 @@ def test_add_translation():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        locale = LocaleFactory.create(code="fr-Test", total_strings=100)
+        locale = LocaleFactory.create(code="fr-Test")
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
             name="test-add-trans",
             locales=[locale],
             repositories=[repo],
-            total_strings=10,
         )
         res_a = ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         res_b = ResourceFactory.create(project=project, path="b.po", format="po")

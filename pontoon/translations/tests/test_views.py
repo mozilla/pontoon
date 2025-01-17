@@ -81,8 +81,6 @@ def test_create_translation_force_suggestions(
     translation_a.active = True
     translation_a.save()
     translation_a.locale.translators_group.user_set.add(member.user)
-    project_locale_a.unreviewed_strings = 1
-    project_locale_a.save()
 
     response = request_create_translation(
         member.client,

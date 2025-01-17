@@ -495,13 +495,12 @@ class Entity(DirtyFieldsMixin, models.Model):
         self.word_count = get_word_count(self.string)
         super().save(*args, **kwargs)
 
-    def get_stats(self, locale):
+    def get_stats(self, locale) -> dict[str, int]:
         """
         Get stats for a single (entity, locale) pair.
 
         :arg Locale locale: filter translations for this locale.
-        :return: a dictionary with stats for an Entity, all keys are suffixed with `_diff` to
-            make them easier to pass into adjust_all_stats.
+        :return: a dictionary with stats for the Entity+Locale
         """
         approved = 0
         pretranslated = 0
@@ -526,12 +525,11 @@ class Entity(DirtyFieldsMixin, models.Model):
                 unreviewed += 1
 
         return {
-            "total_strings_diff": 0,
-            "approved_strings_diff": approved,
-            "pretranslated_strings_diff": pretranslated,
-            "strings_with_errors_diff": errors,
-            "strings_with_warnings_diff": warnings,
-            "unreviewed_strings_diff": unreviewed,
+            "approved": approved,
+            "pretranslated": pretranslated,
+            "errors": errors,
+            "warnings": warnings,
+            "unreviewed": unreviewed,
         }
 
     def has_changed(self, locale):

@@ -51,12 +51,12 @@ def test_ajax_resources(mock_render, client, project_a, locale_a):
     assert res.priority is None
     assert res.latest_activity == translation.latest_activity
     assert res.chart == {
-        "pretranslated_strings": 0,
-        "total_strings": 1,
-        "approved_strings": 0,
-        "unreviewed_strings": 0,
-        "strings_with_errors": 0,
-        "strings_with_warnings": 0,
+        "total": 1,
+        "pretranslated": 0,
+        "approved": 0,
+        "unreviewed": 0,
+        "errors": 0,
+        "warnings": 0,
         "approved_share": 0.0,
         "unreviewed_share": 0.0,
         "pretranslated_share": 0.0,

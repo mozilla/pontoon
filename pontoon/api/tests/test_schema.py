@@ -136,7 +136,8 @@ def test_project_localizations(client):
             project(slug: "pontoon-intro") {
                 localizations {
                     locale {
-                        name
+                        name,
+                        stringsWithErrors
                     }
                 }
             }
@@ -147,7 +148,13 @@ def test_project_localizations(client):
 
     assert response.status_code == 200
     assert response.json() == {
-        "data": {"project": {"localizations": [{"locale": {"name": "English"}}]}}
+        "data": {
+            "project": {
+                "localizations": [
+                    {"locale": {"name": "English", "stringsWithErrors": 0}}
+                ]
+            }
+        }
     }
 
 

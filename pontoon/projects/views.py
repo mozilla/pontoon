@@ -6,7 +6,8 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
-from pontoon.base.models import Locale, Project
+from pontoon.base.aggregated_stats import get_top_instances
+from pontoon.base.models import Locale, Project, TranslatedResource
 from pontoon.base.utils import get_project_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_insights
@@ -30,7 +31,13 @@ def projects(request):
     return render(
         request,
         "projects/projects.html",
-        {"projects": projects, "top_instances": projects.get_top_instances()},
+        {
+            "projects": projects,
+            "project_stats": TranslatedResource.objects.all().string_stats(
+                request.user
+            ),
+            "top_instances": get_top_instances(projects),
+        },
     )
 
 
@@ -43,20 +50,20 @@ def project(request, slug):
         return project
 
     project_locales = project.project_locale
-    chart = project
+    project_tr = TranslatedResource.objects.filter(resource__project=project)
 
     # Only include filtered teams if provided
     teams = request.GET.get("teams", "").split(",")
     filtered_locales = Locale.objects.filter(code__in=teams)
     if filtered_locales.exists():
         project_locales = project_locales.filter(locale__in=filtered_locales)
-        chart = project_locales.aggregated_stats()
+        project_tr = project_tr.filter(locale__in=filtered_locales)
 
     return render(
         request,
         "projects/project.html",
         {
-            "chart": chart,
+            "project_stats": project_tr.string_stats(show_hidden=True),
             "count": project_locales.count(),
             "project": project,
             "tags_count": (

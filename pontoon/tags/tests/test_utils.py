@@ -6,12 +6,12 @@ from pontoon.tags.utils import Tags
 @pytest.fixture
 def chart_0():
     return {
-        "total_strings": 0,
-        "approved_strings": 0,
-        "pretranslated_strings": 0,
-        "strings_with_errors": 0,
-        "strings_with_warnings": 0,
-        "unreviewed_strings": 0,
+        "total": 0,
+        "approved": 0,
+        "pretranslated": 0,
+        "errors": 0,
+        "warnings": 0,
+        "unreviewed": 0,
         "approved_share": 0,
         "pretranslated_share": 0,
         "errors_share": 0,
@@ -43,8 +43,8 @@ def test_tags_get(
     assert tag.latest_activity == translation_a.latest_activity
 
     chart = chart_0
-    chart["total_strings"] = 1
-    chart["unreviewed_strings"] = 1
+    chart["total"] = 1
+    chart["unreviewed"] = 1
     chart["unreviewed_share"] = 100.0
     assert tag.chart == chart
 
@@ -68,7 +68,7 @@ def test_tags_get_tag_locales(
         tag.latest_activity
 
     chart = chart_0
-    chart["total_strings"] = 1
+    chart["total"] = 1
     assert tag.chart == chart
 
     locale = tag.locales.first()

@@ -29,7 +29,7 @@
     <ul class="details">
       {{ HeadingInfo.details_item_priority(project.priority) }}
 
-      {{ HeadingInfo.details_item_deadline(project.deadline, project.approved_strings == project.total_strings) }}
+      {{ HeadingInfo.details_item_deadline(project.deadline, project_stats.approved == project_stats.total) }}
 
       {{ HeadingInfo.details_item_url(
         title='Repository',
@@ -50,7 +50,7 @@
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(chart) }}
+    {{ HeadingInfo.progress_chart_legend(project_stats) }}
   </div>
 </section>
 {% endblock %}

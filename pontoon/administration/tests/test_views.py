@@ -6,7 +6,6 @@ from pontoon.administration.forms import ProjectForm
 from pontoon.administration.views import _create_or_update_translated_resources
 from pontoon.base.models import (
     Entity,
-    Locale,
     Project,
     ProjectLocale,
     Resource,
@@ -188,8 +187,8 @@ def test_manage_project_strings_translated_resource(client_superuser):
     assert project.total_strings == strings_count * locales_count
 
     for loc in locales:
-        locale = Locale.objects.get(id=loc.id)
-        assert locale.total_strings == strings_count
+        pl = ProjectLocale.objects.get(locale=loc, project=project)
+        assert pl.total_strings == strings_count
 
 
 @pytest.mark.django_db
