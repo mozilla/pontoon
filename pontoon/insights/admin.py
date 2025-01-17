@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
-    ProjectInsightsSnapshot,
     ProjectLocaleInsightsSnapshot,
 )
 
@@ -16,21 +15,6 @@ class LocaleInsightsSnapshotAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "locale",
-        "created_at",
-        "completion",
-        "unreviewed_strings",
-    )
-
-
-class ProjectInsightsSnapshotAdmin(admin.ModelAdmin):
-    search_fields = [
-        "pk",
-        "project__slug",
-        "project__name",
-    ]
-    list_display = (
-        "pk",
-        "project",
         "created_at",
         "completion",
         "unreviewed_strings",
@@ -56,5 +40,4 @@ class ProjectLocaleInsightsSnapshotAdmin(admin.ModelAdmin):
 
 
 admin.site.register(LocaleInsightsSnapshot, LocaleInsightsSnapshotAdmin)
-admin.site.register(ProjectInsightsSnapshot, ProjectInsightsSnapshotAdmin)
 admin.site.register(ProjectLocaleInsightsSnapshot, ProjectLocaleInsightsSnapshotAdmin)
