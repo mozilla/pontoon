@@ -65,9 +65,5 @@ class LocaleInsightsSnapshot(InsightsSnapshot):
     locale = models.ForeignKey("base.Locale", models.CASCADE)
 
 
-class ProjectInsightsSnapshot(InsightsSnapshot):
-    project = models.ForeignKey("base.Project", models.CASCADE)
-
-
 class ProjectLocaleInsightsSnapshot(InsightsSnapshot):
     project_locale = models.ForeignKey("base.ProjectLocale", models.CASCADE)
