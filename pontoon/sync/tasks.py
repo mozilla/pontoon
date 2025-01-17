@@ -50,6 +50,7 @@ def sync_project_task(
             status=Sync.Status.INCOMPLETE
         )
     except Exception as err:
+        log.error(f"[{project.slug}] Sync failed: {err}")
         sync.fail(str(err))
     finally:
         # release the lock
