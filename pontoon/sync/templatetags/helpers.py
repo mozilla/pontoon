@@ -12,14 +12,14 @@ def format_sync_duration(start_time: datetime, end_time: datetime | None) -> str
     td = end_time - start_time
     minutes = td.days * 24 * 60 + td.seconds // 60
     seconds = td.seconds % 60
-    if minutes > 1:
-        min_str = f"{minutes} minutes, "
-    elif minutes == 1:
-        min_str = "1 minute, "
+    if minutes:
+        min_str = "1 minute" if minutes == 1 else f"{minutes} minutes"
+        sec_str = "1 second" if seconds == 1 else f"{seconds} seconds"
+        return f"{min_str}, {sec_str}"
+    elif seconds > 9:
+        return f"{seconds} seconds"
     else:
-        min_str = ""
-    sec_str = "1 second" if seconds == 1 else f"{seconds} seconds"
-    return min_str + sec_str
+        return f"{td.microseconds // 1000 + seconds * 1000} ms"
 
 
 @library.global_function
