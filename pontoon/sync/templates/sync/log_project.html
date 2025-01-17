@@ -22,9 +22,9 @@
             {{ format_sync_status_label(sync.status) }}
           </td>
           <td>
-            {{ sync.start_time|date("Y-m-d H:m:s") }}
+            {{ sync.start_time|date("Y-m-d H:i:s") }}
           </td>
-          <td title="End: {{ sync.end_time|date('Y-m-d H:m:s') }}">
+          <td title="End: {{ sync.end_time|date('Y-m-d H:i:s') }}">
             {{ format_sync_duration(sync.start_time, sync.end_time) }}
           </td>
         </tr>

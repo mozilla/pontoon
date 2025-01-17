@@ -25,7 +25,7 @@ def format_sync_duration(start_time: datetime, end_time: datetime | None) -> str
 @library.global_function
 def format_sync_status_class(status: Sync.Status | None) -> str:
     match status:
-        case Sync.Status.FAIL:
+        case Sync.Status.FAIL | Sync.Status.INCOMPLETE:
             return "sync-status-fail"
         case Sync.Status.DONE:
             return "sync-status-success"

@@ -12,6 +12,7 @@ class Sync(models.Model):
         NO_COMMIT = 10
         PREV_BUSY = 20
         FAIL = -1
+        INCOMPLETE = -2
 
     project = models.ForeignKey(Project, models.CASCADE)
     status = models.IntegerField(choices=Status.choices, default=Status.IN_PROGRESS)

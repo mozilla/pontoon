@@ -45,6 +45,10 @@ def sync_project_task(
         else:
             status = Sync.Status.DONE
         sync.done(status)
+        # Set status on any previously started and never completed syncs
+        Sync.objects.filter(project=project, status=Sync.Status.IN_PROGRESS).update(
+            status=Sync.Status.INCOMPLETE
+        )
     except Exception as err:
         sync.fail(str(err))
     finally:

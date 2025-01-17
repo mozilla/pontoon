@@ -30,9 +30,9 @@
             {{ format_sync_status_label(project.sync_status) }}
           </td>
           <td>
-            {{ project.sync_start_time|date("Y-m-d H:m") }}
+            {{ project.sync_start_time|date("Y-m-d H:i") }}
           </td>
-          <td title="End: {{ project.sync_end_time|date('Y-m-d H:m:s') }}">
+          <td title="End: {{ project.sync_end_time|date('Y-m-d H:i:s') }}">
             {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
           </td>
         </tr>

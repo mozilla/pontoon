@@ -9,13 +9,15 @@ def migrate_sync_events(apps, schema_editor):
     for prev in ProjectSyncLog.objects.all().prefetch_related("repository_sync_logs"):
         sync = Sync(project=prev.project, start_time=prev.start_time)
         if prev.skipped_end_time:
-            sync.status = 99  # Can't differentiate between NO_CHANGES and FAIL
+            sync.status = 2  # Sync.Status.NO_CHANGE, though some may have been FAIL
             sync.end_time = prev.skipped_end_time
         else:
             repo_logs = prev.repository_sync_logs.all()
             if repo_logs and all(log.end_time is not None for log in repo_logs):
                 sync.status = 1  # Sync.Status.DONE
                 sync.end_time = max(log.end_time for log in repo_logs)
+            else:
+                sync.status = -2  # Sync.Status.INCOMPLETE
         sync_events.append(sync)
 
     Sync.objects.bulk_create(sync_events, batch_size=10000)

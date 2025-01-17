@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
                             (10, "No Commit"),
                             (20, "Prev Busy"),
                             (-1, "Fail"),
+                            (-2, "Incomplete"),
                         ],
                         default=0,
                     ),
