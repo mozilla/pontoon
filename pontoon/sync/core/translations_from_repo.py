@@ -257,7 +257,7 @@ def find_db_updates(
         return None
 
     log.debug(f"[{project.slug}] Compiling updates...")
-    trans_res = {resources[db_path] for db_path, _, _ in translations}
+    trans_res = {resources[db_path] for db_path, _, _ in translations if db_path in resources}
     entities: dict[tuple[str, str], int] = {
         (e["resource__path"], e["key"] or e["string"]): e["id"]
         for e in Entity.objects.filter(resource__in=trans_res, obsolete=False)
