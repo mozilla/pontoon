@@ -909,16 +909,23 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = not (DEBUG or os.environ.get("CI", False))
 
 # Content-Security-Policy headers
-# 'blob:' is needed for confetti.browser.js
 CSP_DEFAULT_SRC = ("'none'",)
 CSP_FRAME_SRC = ("https:",)
-CSP_WORKER_SRC = ("https:",) + ("blob:",)
+CSP_WORKER_SRC = (
+    "https:",
+    # Needed for confetti.browser.js
+    "blob:",
+)
 CSP_CONNECT_SRC = (
     "'self'",
     "https://bugzilla.mozilla.org/rest/bug",
     "https://region1.google-analytics.com/g/collect",
 )
-CSP_FONT_SRC = ("'self'",)
+CSP_FONT_SRC = (
+    "'self'",
+    # Needed for GraphiQL
+    "data:",
+)
 CSP_IMG_SRC = (
     "'self'",
     "https:",
@@ -932,13 +939,18 @@ CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",
     "'sha256-fDsgbzHC0sNuBdM4W91nXVccgFLwIDkl197QEca/Cl4='",
-    # Rules related to Google Analytics
+    # Needed for Google Analytics
     "'sha256-MAn2iEyXLmB7sfv/20ImVRdQs8NCZ0A5SShdZsZdv20='",
     "https://www.googletagmanager.com/gtag/js",
+    # Needed for GraphiQL
+    "'sha256-HHh/PGb5Jp8ck+QB/v7zeWzuHf3vYssM0CBPvYgEHR4='",
+    "https://cdn.jsdelivr.net",
 )
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
+    # Needed for GraphiQL
+    "https://cdn.jsdelivr.net",
 )
 
 # Needed if site not hosted on HTTPS domains (like local setup)
