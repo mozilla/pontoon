@@ -17,6 +17,7 @@ permission_denied_view = TemplateView.as_view(template_name="403.html")
 page_not_found_view = TemplateView.as_view(template_name="404.html")
 too_many_requests_view = TemplateView.as_view(template_name="429.html")
 server_error_view = TemplateView.as_view(template_name="500.html")
+account_disabled_view = TemplateView.as_view(template_name="account_disabled.html")
 
 urlpatterns = [
     # Accounts
@@ -34,6 +35,7 @@ urlpatterns = [
     path("404/", page_not_found_view),
     path("429/", too_many_requests_view),
     path("500/", server_error_view),
+    path("account_disabled/", account_disabled_view),
     # Robots.txt
     path(
         "robots.txt",

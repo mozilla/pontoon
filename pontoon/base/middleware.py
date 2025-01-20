@@ -149,3 +149,22 @@ class ThrottleIpMiddleware:
             cache.set(observed_key, (1, now), self.observation_period)
 
         return response
+
+
+class AccountDisabledMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        user = request.user
+        if user.is_authenticated and not user.is_active:
+            response = render(
+                request,
+                "account_disabled.html",
+                {"DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL},
+                status=403,
+            )
+            return response
+
+        response = self.get_response(request)
+        return response
