@@ -1,11 +1,9 @@
-from datetime import timedelta
 from unittest.mock import patch
 
 import pytest
 
 from pontoon.base.templatetags.helpers import (
     format_datetime,
-    format_timedelta,
     full_static,
     full_url,
     metric_prefix,
@@ -69,28 +67,6 @@ def test_helper_base_format_dt_builtin(settings):
     settings.TIME_ZONE = "UTC"
     datetime = aware_datetime(2015, 1, 1, 5, 7)
     assert format_datetime(datetime, "time") == "05:07 UTC"
-
-
-def test_helper_base_format_timedelta_none(settings):
-    assert format_timedelta(None) == "---"
-
-
-def test_helper_base_format_timedelta_seconds(settings):
-    assert format_timedelta(timedelta(seconds=5)) == "5 seconds"
-
-
-def test_helper_base_format_timedelta_minutes(settings):
-    duration = timedelta(minutes=1, seconds=7)
-    assert format_timedelta(duration) == "1 minutes, 7 seconds"
-
-
-def test_helper_base_format_timedelta_days(settings):
-    duration = timedelta(days=2, minutes=1, seconds=8)
-    assert format_timedelta(duration) == "2 days, 1 minutes, 8 seconds"
-
-
-def test_helper_base_format_timedelta_0(settings):
-    assert format_timedelta(timedelta(seconds=0)) == "0 seconds"
 
 
 def test_helper_base_nospam_unicode(settings):

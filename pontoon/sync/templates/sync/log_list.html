@@ -11,43 +11,39 @@
 <section id="main">
   <div class="container">
     <table class="log-list">
-      <tr class="log-list-header">
-        <th class="log-list-column">Start Time</th>
-        <th class="log-list-column">Start Date</th>
-        <th class="log-list-column">Duration</th>
+      <tr>
+        <th width="40%">Project</th>
+        <th width="20%">Last Status</th>
+        <th width="20%">Last Start</th>
+        <th width="20%">Duration</th>
       </tr>
-      {% for log in sync_logs %}
+      {% for project in projects %}
         <tr class="sync-log">
-          <td class="start-time">
-            <a href="{{ log.get_absolute_url() }}">
-              {{ log.start_time|format_datetime('time') }}
-            </a>
+          <td>
+            {% if is_manager %}
+              <a href="{{ project.sync_url }}">{{ project.name }}</a>
+            {% else %}
+              {{ project.name }}
+            {% endif %}
           </td>
-          <td class="start-date">
-            {{ log.start_time|format_datetime('date') }}
+          <td class="{{ format_sync_status_class(project.sync_status) }}">
+            {{ format_sync_status_label(project.sync_status) }}
           </td>
-          <td class="duration">{{ log.duration|format_timedelta }}</td>
+          <td>
+            {{ project.sync_start_time|date("Y-m-d H:i") }}
+          </td>
+          <td title="End: {{ project.sync_end_time|date('Y-m-d H:i:s') }}">
+            {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
+          </td>
         </tr>
       {% endfor %}
     </table>
 
-    <div class="pagination">
-      {% if sync_logs.has_previous() %}
-        <a class="previous" href="?page={{ sync_logs.previous_page_number() }}">
-          <span class="fas fa-chevron-left"></span>
-          Previous
-        </a>
-      {% endif %}
-
-      <span class="current">
-        Page {{ sync_logs.number }} of {{ sync_logs.paginator.num_pages }}
-      </span>
-
-      {% if sync_logs.has_next() %}
-        <a class="next" href="?page={{ sync_logs.next_page_number() }}">
-          Next
-          <span class="fas fa-chevron-right"></span>
-        </a>
+    <div class="controls">
+      {% if show_no_changes %}
+        <a class="button" href="?no_changes=0">Hide syncs with no changes</a>
+      {% else %}
+        <a class="button" href="?no_changes=1">Show syncs with no changes</a>
       {% endif %}
     </div>
   </div>

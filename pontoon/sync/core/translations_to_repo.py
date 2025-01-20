@@ -33,7 +33,8 @@ def sync_translations_to_repo(
     changed_source_paths: set[str],
     removed_source_paths: set[str],
     now: datetime,
-) -> None:
+) -> bool:
+    """Returns `True` if the sync includes changes to the repo."""
     readonly_locales = project.locales.filter(project_locale__readonly=True)
     removed = delete_removed_resources(
         project, paths, locale_map, readonly_locales, removed_source_paths
@@ -48,11 +49,11 @@ def sync_translations_to_repo(
         now,
     )
     if not removed and not updated:
-        return
+        return False
 
     if not commit:
         log.info(f"[{project.slug}] Skipping commit & push")
-        return
+        return True
 
     if removed:
         lc_str = "all localizations"
@@ -80,6 +81,8 @@ def sync_translations_to_repo(
     except CommitToRepositoryException as error:
         log.warning(f"[{project.slug}] {co.repo.type} commit failed: {error}")
         raise error
+
+    return True
 
 
 def delete_removed_resources(

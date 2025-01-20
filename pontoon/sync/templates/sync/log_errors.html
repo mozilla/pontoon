@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% import 'heading.html' as Heading %}
+
+{% block title %}Sync Logs{% endblock %}
+
+{% block heading %}
+  {{ Heading.heading(title='Sync Log Anomalies') }}
+{% endblock %}
+
+{% block bottom %}
+<section id="main">
+  <div class="container">
+    <table class="log-list">
+      <tr>
+        <th width="20%">Start</th>
+        <th width="40%">Project</th>
+        <th width="20%">Status</th>
+        <th width="20%">Duration</th>
+      </tr>
+      {% for sync in sync_page %}
+        <tr class="sync-log">
+          <td>
+            {{ sync.start_time|date("Y-m-d H:i:s") }}
+          </td>
+          <td>
+            <a href="{{ sync.project_sync_url }}">{{ sync.project.name }}</a>
+          </td>
+          <td class="{{ format_sync_status_class(sync.status) }}">
+            {{ format_sync_status_label(sync.status) }}
+          </td>
+          <td title="End: {{ sync.end_time|date('Y-m-d H:i:s') }}">
+            {{ format_sync_duration(sync.start_time, sync.end_time) }}
+          </td>
+        </tr>
+        {% if sync.error %}
+          <tr class="sync-error-message"><td colspan="4">{{ sync.error }}</td></tr>
+        {% endif %}
+      {% endfor %}
+    </table>
+
+    <div class="pagination">
+      {% if sync_page.has_previous() %}
+        <a class="previous" href="?page={{ sync_page.previous_page_number() }}">
+          <span class="fas fa-chevron-left"></span>
+          Previous
+        </a>
+      {% endif %}
+
+      <span class="current">
+        Page {{ sync_page.number }} of {{ sync_page.paginator.num_pages }}
+      </span>
+
+      {% if sync_page.has_next() %}
+        <a class="next" href="?page={{ sync_page.next_page_number() }}">
+          Next
+          <span class="fas fa-chevron-right"></span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extend_css %}
+  {% stylesheet 'sync_logs' %}
+{% endblock %}
