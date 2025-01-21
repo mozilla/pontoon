@@ -2,7 +2,7 @@
   float: right;
 }
 
-.controls .errors {
+.controls .view-toggle {
   float: right;
   margin-left: 20px;
 }
@@ -23,6 +23,11 @@
 .log-list .status,
 .log-list .last-status {
   width: 160px;
+}
+
+.log-list.project-sync-log tbody .status {
+  line-height: 47px;
+  text-align: left;
 }
 
 .log-list .start,

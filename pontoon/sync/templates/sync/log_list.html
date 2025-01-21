@@ -22,7 +22,7 @@
           {% set no_changes = 1 %}
           {% set button_title = "Show syncs with no changes" %}
         {% endif %}
-        <a class="button small errors" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors <span class="fas fa-chevron-right"></span></a>
+        <a class="button small view-toggle" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors <span class="fas fa-chevron-right"></span></a>
         <a class="button small no-changes-toggle" href="?no_changes={{ no_changes }}">{{ button_title }}</a>
     </menu>
 

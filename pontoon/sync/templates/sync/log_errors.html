@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import 'heading.html' as Heading %}
+{% import 'sync/widgets/pagination.html' as Pagination %}
 
 {% block title %}Sync Log Errors{% endblock %}
 
@@ -11,7 +12,7 @@
 <section id="main">
   <div class="container">
     <menu class="controls clearfix">
-      <a class="button small errors" href="{{ url('pontoon.sync.log') }}"><span class="fas fa-chevron-left"></span> Sync Log</a>
+      <a class="button small view-toggle" href="{{ url('pontoon.sync.log') }}"><span class="fas fa-chevron-left"></span> Sync Log</a>
     </menu>
 
     <table class="table table-sort log-list item-list">
@@ -20,7 +21,7 @@
             <th class="start asc">Start<i class="fas"></i></th>
             <th class="project">Project<i class="fas"></i></th>
             <th class="status">Status<i class="fas"></i></th>
-            <th class="duration">Duration<i class="fas"></i></th>
+            <th class="duration" data-sort="">Duration<i class="fas"></i></th>
           </tr>
         </thead>
         <tbody>
@@ -52,33 +53,8 @@
         </tbody>
     </table>
 
-    <div class="pagination controls">
-        {% if sync_page.has_previous() %}
-          <a class="first button" href="?page=1">
-            First
-          </a>
-
-          <a class="previous button" href="?page={{ sync_page.previous_page_number() }}">
-            <span class="fas fa-chevron-left"></span>
-            Previous
-          </a>
-        {% endif %}
-
-        <span class="page">
-          Page <span class="current">{{ sync_page.number }}</span> of {{ sync_page.paginator.num_pages }}
-        </span>
-
-        {% if sync_page.has_next() %}
-          <a class="last button" href="?page={{ sync_page.paginator.num_pages }}">
-            Last
-          </a>
-          <a class="next button" href="?page={{ sync_page.next_page_number() }}">
-            Next
-            <span class="fas fa-chevron-right"></span>
-          </a>
-        {% endif %}
-    </div>
-</div>
+    {{ Pagination.pagination(sync_page) }}
+  </div>
 </section>
 {% endblock %}
 
