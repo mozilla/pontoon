@@ -4,7 +4,7 @@
 {% block title %}Sync Log{% endblock %}
 
 {% block heading %}
-  {{ Heading.heading(title='Sync Log') }}
+  {{ Heading.heading(title='Sync Log', subtitle='Synchronization history and details') }}
 {% endblock %}
 
 {% block bottom %}
@@ -22,14 +22,14 @@
           {% set no_changes = 1 %}
           {% set button_title = "Show syncs with no changes" %}
         {% endif %}
+        <a class="button small errors" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors <span class="fas fa-chevron-right"></span></a>
         <a class="button small no-changes-toggle" href="?no_changes={{ no_changes }}">{{ button_title }}</a>
-        <a class="button small errors" href="{{ url('pontoon.sync.log.errors') }}">Sync Log Errors</a>
     </menu>
 
     <table class="table table-sort log-list item-list">
         <thead>
           <tr>
-            <th class="name asc">Project<i class="fas"></i></th>
+            <th class="project asc">Project<i class="fas"></i></th>
             <th class="last-status">Last Status<i class="fas"></i></th>
             <th class="last-start">Last Start<i class="fas"></i></th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
@@ -38,7 +38,7 @@
         <tbody>
             {% for project in projects %}
             <tr class="limited">
-              <td class="name">
+              <td class="project">
                 <h4>
                 {% if is_manager %}
                   <a href="{{ project.sync_url }}">{{ project.name }}</a>
@@ -53,7 +53,7 @@
               <td class="last-start">
                 {{ project.sync_start_time|format_datetime(format="long", default="―") }}
               </td>
-              <td class="duration" title='{% if project.sync_end_time %}End time: {{ project.sync_end_time|format_datetime(format="long", default="―") }}{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
+              <td class="duration" title='{% if project.sync_end_time %}Last end: {{ project.sync_end_time|format_datetime(format="long", default="―") }}{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
             </tr>

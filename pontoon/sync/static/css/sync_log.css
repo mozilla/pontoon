@@ -1,23 +1,31 @@
 .controls .no-changes-toggle {
   float: right;
-  margin-left: 20px;
 }
 
 .controls .errors {
   float: right;
+  margin-left: 20px;
 }
 
-.log-list .name h4 {
+.log-list .project {
+  text-align: left;
+  width: 220px;
+}
+
+.log-list .project h4 {
   line-height: 47px;
   font-size: 15px;
   font-weight: 100;
   color: var(--white-1);
+  width: 219px;
 }
 
+.log-list .status,
 .log-list .last-status {
   width: 160px;
 }
 
+.log-list .start,
 .log-list .last-start {
   width: 260px;
 }
@@ -25,6 +33,10 @@
 .log-list .duration {
   text-align: right;
   width: 260px;
+}
+
+.log-list .start {
+  text-align: left;
 }
 
 .sync-status-success {
@@ -52,10 +64,29 @@
   text-transform: uppercase;
 }
 
+.pagination .first,
 .pagination .previous {
   float: left;
 }
 
+.pagination .first {
+  margin-right: 10px;
+}
+
+.pagination .last,
 .pagination .next {
   float: right;
+}
+
+.pagination .last {
+  margin-left: 10px;
+}
+
+.pagination .page {
+  color: var(--light-grey-2);
+  line-height: 28px;
+}
+
+.pagination .page .current {
+  color: var(--status-translated);
 }

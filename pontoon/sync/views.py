@@ -92,4 +92,11 @@ def sync_log_errors(request: HttpRequest):
             ),
         )
 
-    return render(request, "sync/log_errors.html", {"sync_page": sync_page})
+    return render(
+        request,
+        "sync/log_errors.html",
+        {
+            "is_manager": request.user.has_perm("base.can_manage_project"),
+            "sync_page": sync_page,
+        },
+    )
