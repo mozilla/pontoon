@@ -26,7 +26,7 @@ def sync_log_list(request: HttpRequest):
     )
     for project in projects:
         project["sync_url"] = reverse(
-            "pontoon.sync.logs.project", kwargs={"project_slug": project["slug"]}
+            "pontoon.sync.log.project", kwargs={"project_slug": project["slug"]}
         )
     return render(
         request,
@@ -88,7 +88,7 @@ def sync_log_errors(request: HttpRequest):
             sync,
             "project_sync_url",
             reverse(
-                "pontoon.sync.logs.project", kwargs={"project_slug": sync.project.slug}
+                "pontoon.sync.log.project", kwargs={"project_slug": sync.project.slug}
             ),
         )
 
