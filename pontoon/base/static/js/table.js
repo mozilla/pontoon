@@ -166,6 +166,10 @@ var Pontoon = (function (my) {
             return parseInt($(el).find('span').text().replace(/,/g, ''));
           }
 
+          function getSort(el) {
+            return parseInt($(el).find('[data-sort]').data('sort'), 10) || 0;
+          }
+
           function getString(el) {
             return $(el)
               .find('td:eq(' + index + ')')
@@ -241,6 +245,10 @@ var Pontoon = (function (my) {
               // Sort by number of speakers
             } else if (node.is('.population')) {
               return (getNumber(a) - getNumber(b)) * dir;
+
+              // Sort by the data-sort attribute
+            } else if (node.attr('data-sort') !== undefined) {
+              return (getSort(a) - getSort(b)) * dir;
 
               // Sort by alphabetical order
             } else {

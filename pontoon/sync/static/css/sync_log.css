@@ -1,0 +1,61 @@
+.controls .no-changes-toggle {
+  float: right;
+  margin-left: 20px;
+}
+
+.controls .errors {
+  float: right;
+}
+
+.log-list .name h4 {
+  line-height: 47px;
+  font-size: 15px;
+  font-weight: 100;
+  color: var(--white-1);
+}
+
+.log-list .last-status {
+  width: 160px;
+}
+
+.log-list .last-start {
+  width: 260px;
+}
+
+.log-list .duration {
+  text-align: right;
+  width: 260px;
+}
+
+.sync-status-success {
+  color: var(--status-translated);
+}
+
+.sync-status-warn {
+  color: var(--status-warning);
+}
+
+.sync-status-fail {
+  color: var(--status-error);
+}
+
+.sync-error-message td {
+  color: var(--input-color-2);
+  font-size: 14px;
+  padding: 0 0.4em 0.4em 1.2em;
+}
+
+.pagination {
+  font-size: 14px;
+  padding: 3em 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pagination .previous {
+  float: left;
+}
+
+.pagination .next {
+  float: right;
+}

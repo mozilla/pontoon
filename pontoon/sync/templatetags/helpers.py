@@ -6,10 +6,14 @@ from pontoon.sync.models import Sync
 
 
 @library.global_function
-def format_sync_duration(start_time: datetime, end_time: datetime | None) -> str:
+def format_sync_duration(
+    start_time: datetime, end_time: datetime | None, ms: bool = False
+) -> str:
     if not end_time:
-        return "…"
+        return "―"
     td = end_time - start_time
+    if ms:
+        return round(td.total_seconds() * 1000)
     minutes = td.days * 24 * 60 + td.seconds // 60
     seconds = td.seconds % 60
     if minutes:
@@ -29,8 +33,10 @@ def format_sync_status_class(status: Sync.Status | None) -> str:
             return "sync-status-fail"
         case Sync.Status.DONE:
             return "sync-status-success"
-        case Sync.Status.NO_CHANGES | None:
+        case Sync.Status.NO_CHANGES:
             return "sync-status-other"
+        case None:
+            return "sync-status-none"
         case _:
             return "sync-status-warn"
 
@@ -38,6 +44,6 @@ def format_sync_status_class(status: Sync.Status | None) -> str:
 @library.global_function
 def format_sync_status_label(status: Sync.Status | None) -> str:
     try:
-        return "–" if status is None else Sync.Status(status).label
+        return "―" if status is None else Sync.Status(status).label
     except Exception:
         return f"??? ({status})"
