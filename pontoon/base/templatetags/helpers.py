@@ -165,8 +165,6 @@ def format_datetime(value, format="full", default="---"):
     if value is not None:
         if format == "full":
             format = "%A, %B %d, %Y at %H:%M %Z"
-        elif format == "long":
-            format = "%B %-d, %Y at %H:%M"
         elif format == "date":
             format = "%B %-d, %Y"
         elif format == "short_date":

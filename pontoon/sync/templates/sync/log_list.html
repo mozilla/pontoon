@@ -53,7 +53,7 @@
               <td class="last-start">
                 {{ project.sync_start_time|date("Y-m-d H:i:s") or "―" }}
               </td>
-              <td class="duration" title='{% if project.sync_end_time %}Last end: {{ project.sync_end_time|format_datetime(format="long", default="―") }}{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
+              <td class="duration" title='{% if project.sync_end_time %}Last end: {{ project.sync_end_time|date("Y-m-d H:i:s") }}{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
             </tr>
