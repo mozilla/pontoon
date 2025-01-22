@@ -28,7 +28,7 @@ export function UserAvatar(props: Props): React.ReactElement<'div'> {
             <img src={imageUrl} alt='User Profile' height='44' width='44' />
           </Localized>
           {status && (
-            <span className={`user-status-banner ${status}`} title={tooltip}>
+            <span className={`user-banner ${status}`} title={tooltip}>
               {status}
             </span>
           )}

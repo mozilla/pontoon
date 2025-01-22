@@ -18,7 +18,7 @@
   display: inline-block;
 }
 
-.user-avatar .avatar-container .user-status-banner {
+.user-avatar .avatar-container .user-banner {
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -34,26 +34,26 @@
   white-space: nowrap;
 }
 
-.comment .user-avatar .avatar-container .user-status-banner {
+.comment .user-avatar .avatar-container .user-banner {
   font-size: 7px;
 }
 
-.user-avatar .avatar-container .user-status-banner.ADMIN {
+.user-avatar .avatar-container .user-banner.ADMIN {
   color: var(--user-admin);
 }
 
-.user-avatar .avatar-container .user-status-banner.PM {
+.user-avatar .avatar-container .user-banner.PM {
   color: var(--user-pm);
 }
 
-.user-avatar .avatar-container .user-status-banner.MNGR {
+.user-avatar .avatar-container .user-banner.MNGR {
   color: var(--user-manager);
 }
 
-.user-avatar .avatar-container .user-status-banner.TRNSL {
+.user-avatar .avatar-container .user-banner.TRNSL {
   color: var(--user-translator);
 }
 
-.user-avatar .avatar-container .user-status-banner.NEW {
+.user-avatar .avatar-container .user-banner.NEW {
   color: var(--user-new);
 }
