@@ -195,7 +195,7 @@ def test_update_resource():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-up", locales=[locale], repositories=[repo]
+            name="test-up", locales=[locale], repositories=[repo], visibility="public"
         )
         res = {}
         for n in ("a", "b", "c"):
@@ -270,7 +270,10 @@ def test_change_entities():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-change", locales=[locale], repositories=[repo]
+            name="test-change",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
         )
         res = ResourceFactory.create(
             project=project, path="res.ftl", format="ftl", total_strings=3

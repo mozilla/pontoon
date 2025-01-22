@@ -44,7 +44,10 @@ def test_add_ftl_translation():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-add-ftl", locales=[locale], repositories=[repo]
+            name="test-add-ftl",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:
@@ -154,7 +157,10 @@ def test_remove_po_target_resource():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm-po", locales=[locale], repositories=[repo]
+            name="test-rm-po",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:

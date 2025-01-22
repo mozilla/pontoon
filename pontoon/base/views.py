@@ -139,7 +139,7 @@ def locale_project_parts(request, locale, slug):
                 "approved",
             )
         )
-        all_res_stats = tr.string_stats(request.user)
+        all_res_stats = tr.string_stats(request.user, show_disabled=True)
         all_res_stats["title"] = "all-resources"
         details.append(all_res_stats)
         return JsonResponse(details, safe=False)

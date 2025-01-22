@@ -16,17 +16,18 @@ log = logging.getLogger(__name__)
 
 class TranslatedResourceQuerySet(models.QuerySet):
     def string_stats(
-        self, user: User | None = None, *, show_hidden: bool = True
+        self, user: User | None = None, *, show_disabled: bool = False
     ) -> dict[str, int]:
-        if show_hidden:
-            query = self
-        else:
-            query = self.filter(
+        query = (
+            self
+            if show_disabled
+            else self.filter(
                 resource__project__disabled=False,
                 resource__project__system_project=False,
             )
-            if user is None or not user.is_superuser:
-                query = query.filter(resource__project__visibility="public")
+        )
+        if user is None or not user.is_superuser:
+            query = query.filter(resource__project__visibility="public")
         return query.aggregate(
             total=Sum("total_strings", default=0),
             approved=Sum("approved_strings", default=0),
@@ -50,7 +51,7 @@ class TranslatedResourceQuerySet(models.QuerySet):
             query = query.filter(resource__project=project)
             if paths:
                 query = query.filter(resource__path__in=paths)
-        return query.string_stats()
+        return query.string_stats(show_disabled=True)
 
     def calculate_stats(self):
         self = self.prefetch_related("resource__project", "locale")
