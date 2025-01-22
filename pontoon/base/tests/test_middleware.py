@@ -71,10 +71,8 @@ def test_throttle(client, settings):
 
 @pytest.mark.django_db
 def test_AccountDisabledMiddleware(client, member, settings):
-    # Ensure the user is authenticated but not active
     member.user.is_authenticated = False
     member.user.is_active = False
-    member.user.save()
 
     response = member.client.get("/")
     assert response.status_code == 403
