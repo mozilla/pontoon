@@ -157,7 +157,7 @@ class AccountDisabledMiddleware:
 
     def __call__(self, request):
         user = request.user
-        if not user.is_active:
+        if user.is_authenticated and not user.is_active:
             response = render(
                 request,
                 "account_disabled.html",
