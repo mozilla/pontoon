@@ -89,7 +89,7 @@ class ProjectQuerySet(models.QuerySet):
 
 class Project(models.Model, AggregatedStats):
     @property
-    def trans_res_query(self):
+    def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
         return TranslatedResource.objects.filter(resource__project=self)

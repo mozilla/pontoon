@@ -4,11 +4,18 @@ from functools import cached_property
 
 
 class AggregatedStats:
-    trans_res_query: object
+    aggregated_stats_query: object
+    """
+    Must be set by the child class as a QuerySet of TranslatedResource objects.
+
+    Should include any filters leaving out disabled or system projects.
+    """
 
     @cached_property
     def _stats(self) -> dict[str, int]:
-        return self.trans_res_query.string_stats()
+        return self.aggregated_stats_query.string_stats(
+            count_disabled=True, count_system_projects=True
+        )
 
     @property
     def total_strings(self) -> int:

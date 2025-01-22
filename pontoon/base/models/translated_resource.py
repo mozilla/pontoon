@@ -3,12 +3,12 @@ import logging
 from django.db import models
 from django.db.models import F, Q, Sum
 
-from pontoon.base.models.entity import Entity
-from pontoon.base.models.locale import Locale
-from pontoon.base.models.project import Project
-from pontoon.base.models.resource import Resource
-from pontoon.base.models.translation import Translation
-from pontoon.base.models.user import User
+from .entity import Entity
+from .locale import Locale
+from .project import Project
+from .resource import Resource
+from .translation import Translation
+from .user import User
 
 
 log = logging.getLogger(__name__)
@@ -16,16 +16,17 @@ log = logging.getLogger(__name__)
 
 class TranslatedResourceQuerySet(models.QuerySet):
     def string_stats(
-        self, user: User | None = None, *, show_disabled: bool = False
+        self,
+        user: User | None = None,
+        *,
+        count_disabled: bool = False,
+        count_system_projects: bool = False,
     ) -> dict[str, int]:
-        query = (
-            self
-            if show_disabled
-            else self.filter(
-                resource__project__disabled=False,
-                resource__project__system_project=False,
-            )
-        )
+        query = self
+        if not count_disabled:
+            query = query.filter(resource__project__disabled=False)
+        if not count_system_projects:
+            query = query.filter(resource__project__system_project=False)
         if user is None or not user.is_superuser:
             query = query.filter(resource__project__visibility="public")
         return query.aggregate(
@@ -41,17 +42,14 @@ class TranslatedResourceQuerySet(models.QuerySet):
         """
         Returns statistics for the given project, paths and locale.
         """
-        query = self.filter(locale=locale, resource__project__disabled=False)
+        query = self.filter(locale=locale)
         if project.slug == "all-projects":
-            query = query.filter(
-                resource__project__system_project=False,
-                resource__project__visibility=Project.Visibility.PUBLIC,
-            )
+            return query.string_stats()
         else:
             query = query.filter(resource__project=project)
             if paths:
                 query = query.filter(resource__path__in=paths)
-        return query.string_stats(show_disabled=True)
+            return query.string_stats(count_system_projects=True)
 
     def calculate_stats(self):
         self = self.prefetch_related("resource__project", "locale")

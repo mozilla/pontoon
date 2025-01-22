@@ -82,10 +82,15 @@ class LocaleQuerySet(models.QuerySet):
 
 class Locale(models.Model, AggregatedStats):
     @property
-    def trans_res_query(self):
+    def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
-        return TranslatedResource.objects.filter(locale=self)
+        return TranslatedResource.objects.filter(
+            locale=self,
+            resource__project__disabled=False,
+            resource__project__system_project=False,
+            resource__project__visibility="public",
+        )
 
     code = models.CharField(max_length=20, unique=True)
 

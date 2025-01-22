@@ -116,7 +116,7 @@ def locale_project_parts(request, locale, slug):
         locale = Locale.objects.get(code=locale)
         project = Project.objects.visible_for(request.user).get(slug=slug)
         tr = TranslatedResource.objects.filter(
-            resource__project=project, resource__entities__obsolete=False, locale=locale
+            locale=locale, resource__project=project
         ).distinct()
         details = list(
             tr.annotate(
@@ -139,7 +139,7 @@ def locale_project_parts(request, locale, slug):
                 "approved",
             )
         )
-        all_res_stats = tr.string_stats(request.user, show_disabled=True)
+        all_res_stats = tr.string_stats(request.user, count_system_projects=True)
         all_res_stats["title"] = "all-resources"
         details.append(all_res_stats)
         return JsonResponse(details, safe=False)

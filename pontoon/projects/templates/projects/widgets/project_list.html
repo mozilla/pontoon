@@ -47,7 +47,7 @@
     </td>
     {% if request %}
       <td class="all-strings">
-        {% if project.total_strings %}
+        {% if chart.total %}
           <span>{{ project.avg_string_count|intcomma }}</span>
         {% else %}
           <span class="not-ready">Not synced yet</span>

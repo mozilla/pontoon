@@ -34,7 +34,7 @@ class ProjectLocale(models.Model, AggregatedStats):
     """Link between a project and a locale that is active for it."""
 
     @property
-    def trans_res_query(self):
+    def aggregated_stats_query(self):
         from pontoon.base.models.translated_resource import TranslatedResource
 
         return TranslatedResource.objects.filter(

@@ -49,7 +49,7 @@ def localization(request, code, slug):
         {
             "locale": locale,
             "project": project,
-            "project_locale_stats": trans_res.string_stats(show_disabled=True),
+            "project_locale_stats": trans_res.string_stats(count_system_projects=True),
             "resource_count": trans_res.filter(resource__entities__obsolete=False)
             .distinct()
             .count(),
