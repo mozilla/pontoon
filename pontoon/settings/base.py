@@ -329,13 +329,13 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "pontoon.base.middleware.AccountDisabledMiddleware",
     "pontoon.base.middleware.ThrottleIpMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
     "pontoon.base.middleware.EmailConsentMiddleware",
+    "pontoon.base.middleware.AccountDisabledMiddleware",
 )
 
 CONTEXT_PROCESSORS = (
