@@ -5,6 +5,7 @@ from itertools import product
 import pytest
 
 from pontoon.base.models import Project, ProjectLocale
+from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import ProjectFactory
 
 
@@ -22,6 +23,27 @@ def setup_excepthook():
     sys.excepthook = lambda *x: None
     yield
     sys.excepthook = excepthook_orig
+
+
+@pytest.fixture
+def terms(locale_a):
+    term1 = Term.objects.create(
+        text="open",
+        part_of_speech="verb",
+        definition="Allow access",
+        usage="Open the door.",
+    )
+    term2 = Term.objects.create(
+        text="close",
+        part_of_speech="verb",
+        definition="Shut or block access",
+        usage="Close the door.",
+    )
+
+    TermTranslation.objects.create(term=term1, locale=locale_a, text="odpreti")
+    TermTranslation.objects.create(term=term2, locale=locale_a, text="zapreti")
+
+    return [term1, term2]
 
 
 @pytest.mark.django_db
@@ -316,3 +338,119 @@ def test_locale_localizations_cyclic(client):
 
     assert response.status_code == 200
     assert b"Cyclic queries are forbidden" in response.content
+
+
+@pytest.mark.django_db
+def test_term_search_by_text(client, terms):
+    """Test searching terms by their text field."""
+    body = {
+        "query": """{
+            termSearch(search: "open", locale: "kg") {
+                text
+                translationText
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "termSearch": [
+                {
+                    "text": "open",
+                    "translationText": "odpreti",
+                }
+            ]
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_term_search_by_translation(client, terms):
+    """Test searching terms by their translations."""
+    body = {
+        "query": """{
+            termSearch(search: "odpreti", locale: "kg") {
+                text
+                translationText
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "termSearch": [
+                {
+                    "text": "open",
+                    "translationText": "odpreti",
+                }
+            ]
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_term_search_no_match(client, terms):
+    """Test searching with a term that doesn't match any text or translations."""
+    body = {
+        "query": """{
+            termSearch(search: "nonexistent", locale: "kg") {
+                text
+                translationText
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {"data": {"termSearch": []}}
+
+
+@pytest.mark.django_db
+def test_term_search_multiple_matches(client, terms):
+    """Test searching with a term that matches multiple results."""
+    body = {
+        "query": """{
+            termSearch(search: "o", locale: "kg") {
+                text
+                translationText
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+
+    # Sort the response data to ensure order doesn't affect test results
+    actual_data = response.json()["data"]["termSearch"]
+    expected_data = [
+        {"text": "close", "translationText": "zapreti"},
+        {"text": "open", "translationText": "odpreti"},
+    ]
+    assert sorted(actual_data, key=lambda x: x["text"]) == sorted(
+        expected_data, key=lambda x: x["text"]
+    )
+
+
+@pytest.mark.django_db
+def test_term_search_no_translations(client, terms):
+    """Test searching terms for a locale with no translations."""
+    body = {
+        "query": """{
+            termSearch(search: "open", locale: "en") {
+                text
+                translationText
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "termSearch": [
+                {
+                    "text": "open",
+                    "translationText": None,
+                }
+            ]
+        }
+    }
