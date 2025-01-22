@@ -84,6 +84,7 @@
 
                   {% if perms.base.can_manage_project %}
                   <li><a href="{% url 'pontoon.admin' %}">Admin</a></li>
+                  <li><a href="{% url 'pontoon.sync.log' %}">Sync Log</a></li>
                   {% endif %}
 
                   {% if settings.AUTHENTICATION_METHOD == 'django' %}
