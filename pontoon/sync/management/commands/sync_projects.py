@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import timezone
 
 from pontoon.base.models import Project
-from pontoon.sync.models import SyncLog
 from pontoon.sync.tasks import sync_project_task
 
 
@@ -47,7 +45,6 @@ class Command(BaseCommand):
         Collect the projects we want to sync and trigger worker jobs to
         sync each one.
         """
-        sync_log = SyncLog.objects.create(start_time=timezone.now())
 
         if options["force"]:
             projects = Project.objects.force_syncable()
@@ -79,7 +76,6 @@ class Command(BaseCommand):
             self.stdout.write(f"Scheduling sync for project {project.name}.")
             sync_project_task.delay(
                 project.pk,
-                sync_log.pk,
                 pull=not options["no_pull"],
                 commit=not options["no_commit"],
                 force=options["force"],

@@ -177,27 +177,6 @@ def format_datetime(value, format="full", default="---"):
 
 
 @library.filter
-def format_timedelta(value):
-    if value is not None:
-        parts = []
-        if value.days > 0:
-            parts.append(f"{value.days} days")
-        minutes = value.seconds // 60
-        seconds = value.seconds % 60
-        if minutes > 0:
-            parts.append(f"{minutes} minutes")
-        if seconds > 0:
-            parts.append(f"{seconds} seconds")
-
-        if parts:
-            return ", ".join(parts)
-        else:
-            return "0 seconds"
-    else:
-        return "---"
-
-
-@library.filter
 def format_for_inbox(date):
     # Localize the date to the current timezone
     date = timezone.localtime(date)

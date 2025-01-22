@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from pontoon.sync.models import SyncLog
+from pontoon.sync.models import Sync
 
 
 class Command(BaseCommand):
@@ -12,4 +12,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         delete_date = timezone.now() - timedelta(days=settings.SYNC_LOG_RETENTION)
-        (SyncLog.objects.filter(start_time__lte=delete_date).delete())
+        (Sync.objects.filter(start_time__lte=delete_date).delete())

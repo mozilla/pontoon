@@ -5,15 +5,16 @@ from pontoon.sync import views
 
 
 urlpatterns = [
-    # Redirect until we use it for something more meaningful
+    path("sync/", views.sync_log_list, name="pontoon.sync.log"),
+    path("sync/errors/", views.sync_log_errors, name="pontoon.sync.log.errors"),
     path(
-        "sync/",
-        RedirectView.as_view(pattern_name="pontoon.sync.logs.list", permanent=True),
+        "sync/projects/<slug:project_slug>/",
+        views.sync_log_project,
+        name="pontoon.sync.log.project",
     ),
-    path("sync/log/", views.sync_log_list, name="pontoon.sync.logs.list"),
+    # Redirect to not break any links
     path(
-        "sync/log/<int:sync_log_pk>/",
-        views.sync_log_details,
-        name="pontoon.sync.logs.details",
+        "sync/log/",
+        RedirectView.as_view(pattern_name="pontoon.sync.log", permanent=True),
     ),
 ]

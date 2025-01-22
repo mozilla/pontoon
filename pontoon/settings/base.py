@@ -510,9 +510,12 @@ PIPELINE_CSS = {
         ),
         "output_filename": "css/teams.min.css",
     },
-    "sync_logs": {
-        "source_filenames": ("css/sync_logs.css",),
-        "output_filename": "css/sync_logs.min.css",
+    "sync_log": {
+        "source_filenames": (
+            "css/table.css",
+            "css/sync_log.css",
+        ),
+        "output_filename": "css/sync_log.min.css",
     },
     "profile": {
         "source_filenames": (
@@ -681,6 +684,10 @@ PIPELINE_JS = {
             "js/request.js",
         ),
         "output_filename": "js/teams.min.js",
+    },
+    "sync_log": {
+        "source_filenames": ("js/table.js",),
+        "output_filename": "css/sync_log.min.js",
     },
     "profile": {
         "source_filenames": (

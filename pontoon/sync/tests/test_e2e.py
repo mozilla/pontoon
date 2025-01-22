@@ -20,8 +20,8 @@ from pontoon.base.tests import (
     TranslatedResourceFactory,
     TranslationFactory,
 )
+from pontoon.sync.models import Sync
 from pontoon.sync.tasks import sync_project_task
-from pontoon.sync.tests import SyncLogFactory
 from pontoon.sync.tests.test_checkouts import MockVersionControl
 from pontoon.sync.tests.utils import build_file_tree
 
@@ -36,7 +36,6 @@ def test_end_to_end():
     ):
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
         locale_de = LocaleFactory.create(code="de-Test", name="Test German")
         locale_fr = LocaleFactory.create(code="fr-Test", name="Test French")
         repo_src = RepositoryFactory(
@@ -105,7 +104,7 @@ def test_end_to_end():
 
         # Test
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 6
-        sync_project_task(project.id, synclog.id)
+        sync_project_task(project.pk)
         assert len(ChangedEntityLocale.objects.filter(entity__resource=res_c)) == 0
         with open(join(repo_tgt.checkout_path, "de-Test", "c.ftl")) as file:
             assert (
@@ -149,6 +148,7 @@ def test_end_to_end():
             commit_msg,
         )
         assert TranslatedResource.objects.filter(resource__project=project).count() == 6
+        assert Sync.objects.get(project=project).status == Sync.Status.DONE
 
 
 @pytest.mark.django_db
@@ -156,7 +156,6 @@ def test_translation_before_source():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
         locale_de = LocaleFactory.create(code="de-Test", name="Test German")
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
@@ -225,7 +224,7 @@ def test_translation_before_source():
                 return_value=mock_vcs,
             ),
         ):
-            sync_project_task(project.id, synclog.id)
+            sync_project_task(project.pk)
 
         # Test -- New a0 translation is picked up, added a1 is dropped
         with open(join(repo_tgt.checkout_path, "de-Test", "a.ftl")) as file:
@@ -237,7 +236,6 @@ def test_fuzzy():
     with TemporaryDirectory() as root:
         # Database setup
         settings.MEDIA_ROOT = root
-        synclog = SyncLogFactory.create()
         locale = LocaleFactory.create(code="fr-Test", name="Test French")
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
@@ -319,7 +317,7 @@ def test_fuzzy():
                 return_value=mock_vcs,
             ),
         ):
-            sync_project_task(project.id, synclog.id)
+            sync_project_task(project.pk)
 
         # Test
         trans = Translation.objects.filter(
