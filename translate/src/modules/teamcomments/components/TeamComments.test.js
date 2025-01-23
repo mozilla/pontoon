@@ -23,9 +23,9 @@ describe('<TeamComments>', () => {
       teamComments: {
         entity: 267,
         comments: [
-          { id: 1, content: '11', userStatus: '' },
-          { id: 2, content: '22', userStatus: '' },
-          { id: 3, content: '33', userStatus: '' },
+          { id: 1, content: '11', userBanner: '' },
+          { id: 2, content: '22', userBanner: '' },
+          { id: 3, content: '33', userBanner: '' },
         ],
       },
       user: DEFAULT_USER,

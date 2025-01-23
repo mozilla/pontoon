@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { USER } from '~/modules/user';
 import * as Hooks from '~/hooks';
 
-import { useUserStatus } from './useUserStatus';
+import { useUserBanner } from './useUserBanner';
 
 beforeAll(() => {
   sinon.stub(Hooks, 'useAppSelector');
@@ -22,10 +22,10 @@ const fakeSelector = (user) => (sel) =>
     [USER]: user,
   });
 
-describe('useUserStatus', () => {
+describe('useUserBanner', () => {
   it('returns empty parameters for non-authenticated users', () => {
     Hooks.useAppSelector.callsFake(fakeSelector({ isAuthenticated: false })),
-      expect(useUserStatus()).toStrictEqual(['', '']);
+      expect(useUserBanner()).toStrictEqual(['', '']);
   });
 
   it('returns [ADMIN, Admin] if user has admin permissions', () => {
@@ -38,7 +38,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['ADMIN', 'Admin']);
+    expect(useUserBanner()).toStrictEqual(['ADMIN', 'Admin']);
   });
 
   it('returns [PM, Project Manager] if user is a project manager for the project', () => {
@@ -50,7 +50,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['PM', 'Project Manager']);
+    expect(useUserBanner()).toStrictEqual(['PM', 'Project Manager']);
   });
 
   it('returns [PM, Project Manager] if user is a project manager for the project, even if user is an Admin', () => {
@@ -63,7 +63,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['PM', 'Project Manager']);
+    expect(useUserBanner()).toStrictEqual(['PM', 'Project Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale', () => {
@@ -75,7 +75,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
+    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale, even if user is an Admin', () => {
@@ -88,7 +88,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
+    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [MNGR, Manager] if user is a manager of the locale, even if user is a Project Manager', () => {
@@ -100,7 +100,7 @@ describe('useUserStatus', () => {
         translatorForLocales: [],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['MNGR', 'Team Manager']);
+    expect(useUserBanner()).toStrictEqual(['MNGR', 'Team Manager']);
   });
 
   it('returns [TRNSL, Translator] if user is a translator for the locale', () => {
@@ -112,7 +112,7 @@ describe('useUserStatus', () => {
         translatorForLocales: ['mylocale'],
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['TRNSL', 'Translator']);
+    expect(useUserBanner()).toStrictEqual(['TRNSL', 'Translator']);
   });
 
   it('returns [NEW, New User] if user created their account within the last 3 months', () => {
@@ -127,7 +127,7 @@ describe('useUserStatus', () => {
         dateJoined: dateJoined,
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['NEW', 'New User']);
+    expect(useUserBanner()).toStrictEqual(['NEW', 'New User']);
 
     // Set join date to be 6 months ago (no longer a new user)
     dateJoined.setMonth(dateJoined.getMonth() - 6);
@@ -140,6 +140,6 @@ describe('useUserStatus', () => {
         dateJoined: dateJoined,
       }),
     );
-    expect(useUserStatus()).toStrictEqual(['', '']);
+    expect(useUserBanner()).toStrictEqual(['', '']);
   });
 });

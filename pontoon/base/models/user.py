@@ -195,7 +195,7 @@ def user_locale_role(self, locale):
         return "Contributor"
 
 
-def user_status(self, locale, project_contact):
+def user_banner(self, locale, project_contact):
     if self.pk is None or self.profile.system_user:
         return ("", "")
     if self in locale.managers_group.user_set.all():
@@ -536,7 +536,7 @@ User.add_to_class("can_manage_locales", user_can_manage_locales)
 User.add_to_class("translated_projects", user_translated_projects)
 User.add_to_class("role", user_role)
 User.add_to_class("locale_role", user_locale_role)
-User.add_to_class("status", user_status)
+User.add_to_class("banner", user_banner)
 User.add_to_class("contributed_translations", contributed_translations)
 User.add_to_class("badges_translation_count", badges_translation_count)
 User.add_to_class("badges_review_count", badges_review_count)

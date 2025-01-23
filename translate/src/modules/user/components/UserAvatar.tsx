@@ -7,12 +7,12 @@ type Props = {
   username: string;
   title?: string;
   imageUrl: string;
-  userStatus: string[];
+  userBanner: string[];
 };
 
 export function UserAvatar(props: Props): React.ReactElement<'div'> {
-  const { username, title, imageUrl, userStatus } = props;
-  const [status, tooltip] = userStatus;
+  const { username, title, imageUrl, userBanner } = props;
+  const [status, tooltip] = userBanner;
 
   return (
     <div className='user-avatar'>

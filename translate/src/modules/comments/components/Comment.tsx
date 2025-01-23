@@ -35,7 +35,7 @@ export function Comment(props: Props): null | React.ReactElement<'li'> {
       <UserAvatar
         username={comment.username}
         imageUrl={comment.userGravatarUrlSmall}
-        userStatus={comment.userStatus}
+        userBanner={comment.userBanner}
       />
       <div className='container'>
         <div className='content'>
