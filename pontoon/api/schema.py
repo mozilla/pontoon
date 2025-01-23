@@ -10,6 +10,7 @@ from pontoon.base.models import (
     Locale as LocaleModel,
     Project as ProjectModel,
     ProjectLocale as ProjectLocaleModel,
+    TranslationMemoryEntry as TranslationMemoryEntryModel,
 )
 from pontoon.tags.models import Tag as TagModel
 from pontoon.terminology.models import (
@@ -179,6 +180,17 @@ class Term(DjangoObjectType):
         return None
 
 
+class TranslationMemoryEntry(DjangoObjectType):
+    class Meta:
+        model = TranslationMemoryEntryModel
+        fields = (
+            "source",
+            "target",
+            "locale",
+            "project",
+        )
+
+
 class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
@@ -194,9 +206,14 @@ class Query(graphene.ObjectType):
     locales = graphene.List(Locale)
     locale = graphene.Field(Locale, code=graphene.String())
 
-    # New query for searching terms
     term_search = graphene.List(
         Term,
+        search=graphene.String(required=True),
+        locale=graphene.String(required=True),
+    )
+
+    tm_search = graphene.List(
+        TranslationMemoryEntry,
         search=graphene.String(required=True),
         locale=graphene.String(required=True),
     )
@@ -278,6 +295,16 @@ class Query(graphene.ObjectType):
         return (
             TermModel.objects.filter(term_query | translation_query)
             .prefetch_related(prefetch_translations)
+            .distinct()
+        )
+
+    def resolve_tm_search(self, info, search, locale):
+        return (
+            TranslationMemoryEntryModel.objects.filter(
+                Q(Q(source__icontains=search) | Q(target__icontains=search)),
+                locale__code=locale,
+            )
+            .prefetch_related("project")
             .distinct()
         )
 
