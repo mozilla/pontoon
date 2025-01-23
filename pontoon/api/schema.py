@@ -35,6 +35,13 @@ class Tag(DjangoObjectType):
 
 
 class ProjectLocale(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         model = ProjectLocaleModel
         fields = (
@@ -50,6 +57,13 @@ class ProjectLocale(DjangoObjectType, Stats):
 
 
 class Project(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         convert_choices_to_enum = False
         model = ProjectModel
@@ -84,6 +98,13 @@ class Project(DjangoObjectType, Stats):
 
 
 class Locale(DjangoObjectType, Stats):
+    total_strings = graphene.Int()
+    approved_strings = graphene.Int()
+    pretranslated_strings = graphene.Int()
+    strings_with_errors = graphene.Int()
+    strings_with_warnings = graphene.Int()
+    unreviewed_strings = graphene.Int()
+
     class Meta:
         model = LocaleModel
         fields = (

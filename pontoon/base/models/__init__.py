@@ -1,4 +1,3 @@
-from pontoon.base.models.aggregated_stats import AggregatedStats
 from pontoon.base.models.changed_entity_locale import ChangedEntityLocale
 from pontoon.base.models.comment import Comment
 from pontoon.base.models.entity import Entity, get_word_count
@@ -18,7 +17,6 @@ from pontoon.db import IContainsCollate  # noqa
 
 
 __all__ = [
-    "AggregatedStats",
     "ChangedEntityLocale",
     "Comment",
     "Entity",

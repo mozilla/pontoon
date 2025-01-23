@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, Paginator
 from django.db import transaction
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from django.http import (
     Http404,
     HttpResponse,
@@ -103,30 +103,51 @@ def locale_projects(request, locale):
 def locale_stats(request, locale):
     """Get locale stats used in All Resources part."""
     locale = get_object_or_404(Locale, code=locale)
-    return JsonResponse(locale.stats(), safe=False)
+    stats = TranslatedResource.objects.filter(locale=locale).string_stats(request.user)
+    stats["title"] = "all-resources"
+    return JsonResponse([stats], safe=False)
 
 
 @utils.require_AJAX
 def locale_project_parts(request, locale, slug):
     """Get locale-project pages/paths with stats."""
+
     try:
         locale = Locale.objects.get(code=locale)
-    except Locale.DoesNotExist as e:
-        return JsonResponse(
-            {"status": False, "message": f"Not Found: {e}"},
-            status=404,
-        )
-
-    try:
         project = Project.objects.visible_for(request.user).get(slug=slug)
-    except Project.DoesNotExist as e:
+        tr = TranslatedResource.objects.filter(
+            locale=locale, resource__project=project
+        ).distinct()
+        details = list(
+            tr.annotate(
+                title=F("resource__path"),
+                total=F("total_strings"),
+                pretranslated=F("pretranslated_strings"),
+                errors=F("strings_with_errors"),
+                warnings=F("strings_with_warnings"),
+                unreviewed=F("unreviewed_strings"),
+                approved=F("approved_strings"),
+            )
+            .order_by("title")
+            .values(
+                "title",
+                "total",
+                "pretranslated",
+                "errors",
+                "warnings",
+                "unreviewed",
+                "approved",
+            )
+        )
+        all_res_stats = tr.string_stats(request.user, count_system_projects=True)
+        all_res_stats["title"] = "all-resources"
+        details.append(all_res_stats)
+        return JsonResponse(details, safe=False)
+    except (Locale.DoesNotExist, Project.DoesNotExist) as e:
         return JsonResponse(
             {"status": False, "message": f"Not Found: {e}"},
             status=404,
         )
-
-    try:
-        return JsonResponse(locale.parts_stats(project), safe=False)
     except ProjectLocale.DoesNotExist:
         return JsonResponse(
             {"status": False, "message": "Locale not enabled for selected project."},
@@ -167,7 +188,7 @@ def _get_entities_list(locale, preferred_source_locale, project, form):
     return JsonResponse(
         {
             "entities": Entity.map_entities(locale, preferred_source_locale, entities),
-            "stats": TranslatedResource.objects.stats(
+            "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },
@@ -200,7 +221,7 @@ def _get_paginated_entities(locale, preferred_source_locale, project, form, enti
                 requested_entity=requested_entity,
             ),
             "has_next": entities_page.has_next(),
-            "stats": TranslatedResource.objects.stats(
+            "stats": TranslatedResource.objects.query_stats(
                 project, form.cleaned_data["paths"], locale
             ),
         },

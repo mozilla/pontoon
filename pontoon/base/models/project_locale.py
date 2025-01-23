@@ -1,24 +1,13 @@
 from django.contrib.auth.models import Group
 from django.db import models
-from django.db.models import Sum
 
 from pontoon.base import utils
-from pontoon.base.models.aggregated_stats import AggregatedStats
+from pontoon.base.aggregated_stats import AggregatedStats, get_chart_dict
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 
 
 class ProjectLocaleQuerySet(models.QuerySet):
-    def aggregated_stats(self):
-        return self.aggregate(
-            total_strings=Sum("total_strings"),
-            approved_strings=Sum("approved_strings"),
-            pretranslated_strings=Sum("pretranslated_strings"),
-            strings_with_errors=Sum("strings_with_errors"),
-            strings_with_warnings=Sum("strings_with_warnings"),
-            unreviewed_strings=Sum("unreviewed_strings"),
-        )
-
     def visible_for(self, user):
         """
         Filter project locales by the visibility of their projects.
@@ -41,8 +30,16 @@ class ProjectLocaleQuerySet(models.QuerySet):
         ).distinct()
 
 
-class ProjectLocale(AggregatedStats):
+class ProjectLocale(models.Model, AggregatedStats):
     """Link between a project and a locale that is active for it."""
+
+    @property
+    def aggregated_stats_query(self):
+        from pontoon.base.models.translated_resource import TranslatedResource
+
+        return TranslatedResource.objects.filter(
+            locale=self.locale, resource__project=self.project
+        )
 
     project = models.ForeignKey(Project, models.CASCADE, related_name="project_locale")
     locale = models.ForeignKey(Locale, models.CASCADE, related_name="project_locale")
@@ -129,10 +126,10 @@ class ProjectLocale(AggregatedStats):
 
         if getattr(self, "fetched_project_locale", None):
             if self.fetched_project_locale:
-                chart = cls.get_chart_dict(self.fetched_project_locale[0])
+                chart = get_chart_dict(self.fetched_project_locale[0])
 
         elif extra is None:
-            chart = cls.get_chart_dict(self)
+            chart = get_chart_dict(self)
 
         else:
             project = self if isinstance(self, Project) else extra
@@ -142,16 +139,6 @@ class ProjectLocale(AggregatedStats):
             )
 
             if project_locale is not None:
-                chart = cls.get_chart_dict(project_locale)
+                chart = get_chart_dict(project_locale)
 
         return chart
-
-    def aggregate_stats(self):
-        from pontoon.base.models.translated_resource import TranslatedResource
-
-        TranslatedResource.objects.filter(
-            resource__project=self.project,
-            resource__project__disabled=False,
-            resource__entities__obsolete=False,
-            locale=self.locale,
-        ).distinct().aggregate_stats(self)

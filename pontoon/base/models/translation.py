@@ -343,13 +343,7 @@ class Translation(DirtyFieldsMixin, models.Model):
 
         # Update stats AFTER changing approval status.
         stats_after = self.entity.get_stats(self.locale)
-        stats_diff = {
-            stat_name: stats_after[stat_name] - stats_before[stat_name]
-            for stat_name in stats_before
-        }
-        if created:
-            stats_diff["total_strings_diff"] = translatedresource.count_total_strings()
-        translatedresource.adjust_all_stats(**stats_diff)
+        translatedresource.adjust_stats(stats_before, stats_after, created)
 
     def update_latest_translation(self):
         """

@@ -90,9 +90,7 @@ class ProjectFactory(DjangoModelFactory):
 
         if extracted:
             for locale in extracted:
-                ProjectLocaleFactory.create(
-                    project=self, locale=locale, total_strings=self.total_strings
-                )
+                ProjectLocaleFactory.create(project=self, locale=locale)
 
     @factory.post_generation
     def repositories(self, create, extracted, **kwargs):

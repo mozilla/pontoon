@@ -12,7 +12,14 @@ from django.db.models import Count, F
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.models import Entity, Locale, ProjectLocale, Translation
+from pontoon.base.aggregated_stats import get_completed_percent
+from pontoon.base.models import (
+    Entity,
+    Locale,
+    ProjectLocale,
+    TranslatedResource,
+    Translation,
+)
 from pontoon.base.utils import group_dict_by
 from pontoon.insights.models import (
     LocaleInsightsSnapshot,
@@ -209,6 +216,8 @@ def get_locale_insights_snapshot(
     entities_count,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
+    locale_stats = TranslatedResource.objects.filter(locale=locale).string_stats()
+
     all_managers, all_reviewers = get_privileged_users_data(privileged_users)
     all_contributors = {c["user"] for c in contributors}
 
@@ -276,13 +285,13 @@ def get_locale_insights_snapshot(
     return LocaleInsightsSnapshot(
         locale=locale,
         created_at=start_of_today,
-        # AggregatedStats
-        total_strings=locale.total_strings,
-        approved_strings=locale.approved_strings,
-        pretranslated_strings=locale.pretranslated_strings,
-        strings_with_errors=locale.strings_with_errors,
-        strings_with_warnings=locale.strings_with_warnings,
-        unreviewed_strings=locale.unreviewed_strings,
+        # Aggregated stats
+        total_strings=locale_stats["total"],
+        approved_strings=locale_stats["approved"],
+        pretranslated_strings=locale_stats["pretranslated"],
+        strings_with_errors=locale_stats["errors"],
+        strings_with_warnings=locale_stats["warnings"],
+        unreviewed_strings=locale_stats["unreviewed"],
         # Active users
         total_managers=total_managers,
         total_reviewers=total_reviewers,
@@ -298,7 +307,7 @@ def get_locale_insights_snapshot(
         # Time to review pretranslations
         time_to_review_pretranslations=time_to_review_pretranslations,
         # Translation activity
-        completion=round(locale.completed_percent, 2),
+        completion=round(get_completed_percent(locale), 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,
@@ -322,6 +331,10 @@ def get_project_locale_insights_snapshot(
     entities_count,
 ):
     """Create ProjectLocaleInsightsSnapshot instance for the given locale, project, and day using given data."""
+    pl_stats = TranslatedResource.objects.filter(
+        locale=project_locale.locale, resource__project=project_locale.project
+    ).string_stats()
+
     (
         human_translations,
         machinery_translations,
@@ -334,21 +347,21 @@ def get_project_locale_insights_snapshot(
         pretranslations_rejected,
         pretranslations_new,
     ) = get_activity_charts_data(
-        activities, locale=project_locale.locale.id, project=project_locale.project.id
+        activities, locale=project_locale.locale, project=project_locale.project
     )
 
     return ProjectLocaleInsightsSnapshot(
         project_locale=project_locale,
         created_at=start_of_today,
-        # AggregatedStats
-        total_strings=project_locale.total_strings,
-        approved_strings=project_locale.approved_strings,
-        pretranslated_strings=project_locale.pretranslated_strings,
-        strings_with_errors=project_locale.strings_with_errors,
-        strings_with_warnings=project_locale.strings_with_warnings,
-        unreviewed_strings=project_locale.unreviewed_strings,
+        # Aggregateds stats
+        total_strings=pl_stats["total"],
+        approved_strings=pl_stats["approved"],
+        pretranslated_strings=pl_stats["pretranslated"],
+        strings_with_errors=pl_stats["errors"],
+        strings_with_warnings=pl_stats["warnings"],
+        unreviewed_strings=pl_stats["unreviewed"],
         # Translation activity
-        completion=round(project_locale.completed_percent, 2),
+        completion=round(get_completed_percent(project_locale), 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,

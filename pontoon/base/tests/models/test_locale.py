@@ -3,20 +3,6 @@ from unittest.mock import patch
 import pytest
 
 from pontoon.base.models import ProjectLocale
-from pontoon.test.factories import (
-    EntityFactory,
-    LocaleFactory,
-    ResourceFactory,
-    TranslatedResourceFactory,
-)
-
-
-@pytest.fixture
-def locale_c():
-    return LocaleFactory(
-        code="nv",
-        name="Na'vi",
-    )
 
 
 @pytest.mark.django_db
@@ -98,53 +84,3 @@ def test_locale_managers_group(locale_a, locale_b, user_a):
     assert user_a.has_perm("base.can_manage_locale") is False
     assert user_a.has_perm("base.can_manage_locale", locale_a) is True
     assert user_a.has_perm("base.can_manage_locale", locale_b) is True
-
-
-@pytest.mark.django_db
-def test_locale_parts_stats_no_page_one_resource(locale_parts):
-    """
-    Return resource paths and stats if one resource defined.
-    """
-    locale_c, locale_b, entityX = locale_parts
-    project = entityX.resource.project
-    details = locale_c.parts_stats(project)
-    assert len(details) == 2
-    assert details[0]["title"] == entityX.resource.path
-    assert details[0]["unreviewed_strings"] == 0
-
-
-@pytest.mark.django_db
-def test_locale_parts_stats_no_page_multiple_resources(locale_parts):
-    """
-    Return resource paths and stats for locales resources are available for.
-    """
-    locale_c, locale_b, entityX = locale_parts
-    project = entityX.resource.project
-    resourceY = ResourceFactory.create(
-        total_strings=1,
-        project=project,
-        path="/other/path.po",
-    )
-    EntityFactory.create(resource=resourceY, string="Entity Y")
-    TranslatedResourceFactory.create(
-        resource=resourceY,
-        locale=locale_c,
-    )
-    TranslatedResourceFactory.create(
-        resource=resourceY,
-        locale=locale_b,
-    )
-
-    # results are sorted by title
-
-    detailsX = locale_c.parts_stats(project)
-    assert [detail["title"] for detail in detailsX][:2] == sorted(
-        [entityX.resource.path, "/other/path.po"]
-    )
-    assert detailsX[0]["unreviewed_strings"] == 0
-    assert detailsX[1]["unreviewed_strings"] == 0
-
-    detailsY = locale_b.parts_stats(project)
-    assert len(detailsY) == 2
-    assert detailsY[0]["title"] == "/other/path.po"
-    assert detailsY[0]["unreviewed_strings"] == 0

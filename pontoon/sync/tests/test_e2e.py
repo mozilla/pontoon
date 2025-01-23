@@ -36,12 +36,8 @@ def test_end_to_end():
     ):
         # Database setup
         settings.MEDIA_ROOT = root
-        locale_de = LocaleFactory.create(
-            code="de-Test", name="Test German", total_strings=100
-        )
-        locale_fr = LocaleFactory.create(
-            code="fr-Test", name="Test French", total_strings=100
-        )
+        locale_de = LocaleFactory.create(code="de-Test", name="Test German")
+        locale_fr = LocaleFactory.create(code="fr-Test", name="Test French")
         repo_src = RepositoryFactory(
             url="http://example.com/src-repo", source_repo=True
         )
@@ -50,7 +46,6 @@ def test_end_to_end():
             name="test-project",
             locales=[locale_de, locale_fr],
             repositories=[repo_src, repo_tgt],
-            total_strings=10,
         )
         ResourceFactory.create(project=project, path="a.ftl", format="ftl")
         ResourceFactory.create(project=project, path="b.po", format="po")

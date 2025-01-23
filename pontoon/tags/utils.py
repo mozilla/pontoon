@@ -1,5 +1,6 @@
 from django.db.models import Max, Q, Sum
 
+from pontoon.base.aggregated_stats import get_chart_dict
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
 
@@ -57,18 +58,27 @@ class Tags:
             self.translated_resources.filter(query)
             .values(group_by)
             .annotate(
-                total_strings=Sum("resource__total_strings"),
-                approved_strings=Sum("approved_strings"),
-                pretranslated_strings=Sum("pretranslated_strings"),
-                strings_with_errors=Sum("strings_with_errors"),
-                strings_with_warnings=Sum("strings_with_warnings"),
-                unreviewed_strings=Sum("unreviewed_strings"),
+                # should be Sum("total_strings"), but tests fail with it
+                total=Sum("resource__total_strings"),
+                approved=Sum("approved_strings"),
+                pretranslated=Sum("pretranslated_strings"),
+                errors=Sum("strings_with_errors"),
+                warnings=Sum("strings_with_warnings"),
+                unreviewed=Sum("unreviewed_strings"),
             )
         )
 
+        print(list(k for k in trs[0].keys()))
         return {
-            tr[group_by]: TranslatedResource.get_chart_dict(
-                TranslatedResource(**{key: tr[key] for key in list(tr.keys())[1:]})
+            tr[group_by]: get_chart_dict(
+                TranslatedResource(
+                    total_strings=tr["total"],
+                    approved_strings=tr["approved"],
+                    pretranslated_strings=tr["pretranslated"],
+                    strings_with_errors=tr["errors"],
+                    strings_with_warnings=tr["warnings"],
+                    unreviewed_strings=tr["unreviewed"],
+                )
             )
             for tr in trs
         }

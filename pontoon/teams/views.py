@@ -33,7 +33,14 @@ from django.views.generic.detail import DetailView
 from pontoon.actionlog.models import ActionLog
 from pontoon.actionlog.utils import log_action
 from pontoon.base import forms
-from pontoon.base.models import Locale, Project, TranslationMemoryEntry, User
+from pontoon.base.aggregated_stats import get_top_instances
+from pontoon.base.models import (
+    Locale,
+    Project,
+    TranslatedResource,
+    TranslationMemoryEntry,
+    User,
+)
 from pontoon.base.utils import get_locale_or_redirect, require_AJAX
 from pontoon.contributors.views import ContributorsMixin
 from pontoon.insights.utils import get_locale_insights
@@ -59,8 +66,9 @@ def teams(request):
         "teams/teams.html",
         {
             "locales": locales,
+            "locale_stats": TranslatedResource.objects.all().string_stats(request.user),
             "form": form,
-            "top_instances": locales.get_top_instances(),
+            "top_instances": get_top_instances(locales),
         },
     )
 
@@ -76,8 +84,14 @@ def team(request, locale):
     if not available_count:
         raise Http404
 
+    locale_stats = TranslatedResource.objects.filter(locale=locale).string_stats(
+        request.user
+    )
+
     return render(
-        request, "teams/team.html", {"count": visible_count, "locale": locale}
+        request,
+        "teams/team.html",
+        {"count": visible_count, "locale": locale, "locale_stats": locale_stats},
     )
 
 

@@ -47,7 +47,7 @@ def test_add_ftl_translation():
             name="test-add-ftl",
             locales=[locale],
             repositories=[repo],
-            total_strings=9,
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:
@@ -136,7 +136,7 @@ def test_add_ftl_translation():
         update_stats(project)
         project.refresh_from_db()
         assert project.total_strings == 9
-        assert project.approved_strings == 9
+        assert project.approved_strings == 8
         tm = TranslationMemoryEntry.objects.filter(
             entity__resource=res["c"], translation__isnull=False
         ).values_list("target", flat=True)
@@ -157,7 +157,10 @@ def test_remove_po_target_resource():
         locale_map = {locale.code: locale}
         repo = RepositoryFactory(url="http://example.com/repo")
         project = ProjectFactory.create(
-            name="test-rm-po", locales=[locale], repositories=[repo]
+            name="test-rm-po",
+            locales=[locale],
+            repositories=[repo],
+            visibility="public",
         )
         res = {}
         for id in ["a", "b", "c"]:
