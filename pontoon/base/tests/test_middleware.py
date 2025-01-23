@@ -69,19 +69,18 @@ def test_throttle(client, settings):
     assert response.status_code == 200
 
 
-# @pytest.mark.django_db
-# def test_AccountDisabledMiddleware(client, member, settings):
-#     member.user.is_authenticated = False
-#     member.user.is_active = False
+@pytest.mark.django_db
+def test_AccountDisabledMiddleware(client, member, settings):
+    member.user.is_active = False
+    member.user.save()
 
-#     response = member.client.get("/")
-#     assert response.status_code == 403
-#     assert "account_disabled.html" in [t.name for t in response.templates]
+    response = member.client.get("/")
+    assert response.status_code == 403
+    assert "account_disabled.html" in [t.name for t in response.templates]
 
-#     # Ensure the user is authenticated and active
-#     member.user.is_active = True
-#     member.user.is_authenticated = True
-#     member.user.save()
+    # Ensure the user is authenticated and active
+    member.user.is_active = True
+    member.user.save()
 
-#     response = member.client.get("/")
-#     assert response.status_code == 200
+    response = member.client.get("/")
+    assert response.status_code == 200
