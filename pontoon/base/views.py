@@ -478,6 +478,8 @@ def get_team_comments(request):
 
 def _send_add_comment_notifications(user, comment, entity, locale, translation):
     # On translation comment, notify:
+    #   - project-locale translators or locale translators
+    #   - locale managers
     #   - authors of other translation comments in the thread
     #   - translation author
     #   - translation reviewers
@@ -504,26 +506,7 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
     #   - translation reviewers
     else:
         recipients = set()
-        project_locale = ProjectLocale.objects.get(
-            project=entity.resource.project,
-            locale=locale,
-        )
         translations = Translation.objects.filter(entity=entity, locale=locale)
-
-        translators = []
-        # Some projects (e.g. system projects) don't have translators group
-        if project_locale.translators_group:
-            # Only notify translators of the project if defined
-            translators = project_locale.translators_group.user_set.values_list(
-                "pk", flat=True
-            )
-        if not translators:
-            translators = locale.translators_group.user_set.values_list("pk", flat=True)
-
-        recipients = recipients.union(translators)
-        recipients = recipients.union(
-            locale.managers_group.user_set.values_list("pk", flat=True)
-        )
 
         recipients = recipients.union(
             Comment.objects.filter(entity=entity, locale=locale).values_list(
@@ -550,6 +533,26 @@ def _send_add_comment_notifications(user, comment, entity, locale, translation):
         recipients = recipients.union(
             translations.values_list("unrejected_user__pk", flat=True)
         )
+
+    # In both cases, notify locale managers and translators
+    project_locale = ProjectLocale.objects.get(
+        project=entity.resource.project,
+        locale=locale,
+    )
+    translators = []
+    # Some projects (e.g. system projects) don't have translators group
+    if project_locale.translators_group:
+        # Only notify translators of the project if defined
+        translators = project_locale.translators_group.user_set.values_list(
+            "pk", flat=True
+        )
+    if not translators:
+        translators = locale.translators_group.user_set.values_list("pk", flat=True)
+
+    recipients = recipients.union(translators)
+    recipients = recipients.union(
+        locale.managers_group.user_set.values_list("pk", flat=True)
+    )
 
     # Notify users, mentioned in a comment
     usernames = re.findall(r"<a href=\"\/contributors/([\w.@+-]+)/\">.+</a>", comment)
