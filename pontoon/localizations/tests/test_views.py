@@ -57,10 +57,4 @@ def test_ajax_resources(mock_render, client, project_a, locale_a):
         "unreviewed": 0,
         "errors": 0,
         "warnings": 0,
-        "approved_share": 0.0,
-        "unreviewed_share": 0.0,
-        "pretranslated_share": 0.0,
-        "warnings_share": 0.0,
-        "errors_share": 0.0,
-        "completion_percent": 0,
     }

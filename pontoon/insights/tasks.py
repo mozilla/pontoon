@@ -12,7 +12,6 @@ from django.db.models import Count, F
 from django.utils import timezone
 
 from pontoon.actionlog.models import ActionLog
-from pontoon.base.aggregated_stats import get_completed_percent
 from pontoon.base.models import (
     Entity,
     Locale,
@@ -216,7 +215,14 @@ def get_locale_insights_snapshot(
     entities_count,
 ):
     """Create LocaleInsightsSnapshot instance for the given locale and day using given data."""
-    locale_stats = TranslatedResource.objects.filter(locale=locale).string_stats()
+    lc_stats = TranslatedResource.objects.filter(locale=locale).string_stats()
+    lc_completion = (
+        100
+        * (lc_stats["approved"] + lc_stats["pretranslated"] + lc_stats["warnings"])
+        / lc_stats["total"]
+        if lc_stats["total"] > 0
+        else 0
+    )
 
     all_managers, all_reviewers = get_privileged_users_data(privileged_users)
     all_contributors = {c["user"] for c in contributors}
@@ -286,12 +292,12 @@ def get_locale_insights_snapshot(
         locale=locale,
         created_at=start_of_today,
         # Aggregated stats
-        total_strings=locale_stats["total"],
-        approved_strings=locale_stats["approved"],
-        pretranslated_strings=locale_stats["pretranslated"],
-        strings_with_errors=locale_stats["errors"],
-        strings_with_warnings=locale_stats["warnings"],
-        unreviewed_strings=locale_stats["unreviewed"],
+        total_strings=lc_stats["total"],
+        approved_strings=lc_stats["approved"],
+        pretranslated_strings=lc_stats["pretranslated"],
+        strings_with_errors=lc_stats["errors"],
+        strings_with_warnings=lc_stats["warnings"],
+        unreviewed_strings=lc_stats["unreviewed"],
         # Active users
         total_managers=total_managers,
         total_reviewers=total_reviewers,
@@ -307,7 +313,7 @@ def get_locale_insights_snapshot(
         # Time to review pretranslations
         time_to_review_pretranslations=time_to_review_pretranslations,
         # Translation activity
-        completion=round(get_completed_percent(locale), 2),
+        completion=round(lc_completion, 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,
@@ -334,6 +340,13 @@ def get_project_locale_insights_snapshot(
     pl_stats = TranslatedResource.objects.filter(
         locale=project_locale.locale, resource__project=project_locale.project
     ).string_stats()
+    pl_completion = (
+        100
+        * (pl_stats["approved"] + pl_stats["pretranslated"] + pl_stats["warnings"])
+        / pl_stats["total"]
+        if pl_stats["total"] > 0
+        else 0
+    )
 
     (
         human_translations,
@@ -361,7 +374,7 @@ def get_project_locale_insights_snapshot(
         strings_with_warnings=pl_stats["warnings"],
         unreviewed_strings=pl_stats["unreviewed"],
         # Translation activity
-        completion=round(get_completed_percent(project_locale), 2),
+        completion=round(pl_completion, 2),
         human_translations=human_translations,
         machinery_translations=machinery_translations,
         new_source_strings=entities_count,

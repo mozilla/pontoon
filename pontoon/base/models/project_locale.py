@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from django.db import models
 
 from pontoon.base import utils
-from pontoon.base.aggregated_stats import AggregatedStats, get_chart_dict
+from pontoon.base.aggregated_stats import AggregatedStats
 from pontoon.base.models.locale import Locale
 from pontoon.base.models.project import Project
 
@@ -111,34 +111,3 @@ class ProjectLocale(models.Model, AggregatedStats):
                 latest_translation = project_locale.latest_translation
 
         return latest_translation.latest_activity if latest_translation else None
-
-    @classmethod
-    def get_chart(cls, self, extra=None):
-        """
-        Get chart for project, locale or combination of both.
-
-        :param self: object to get data for,
-            instance of Project or Locale
-        :param extra: extra filter to be used,
-            instance of Project or Locale
-        """
-        chart = None
-
-        if getattr(self, "fetched_project_locale", None):
-            if self.fetched_project_locale:
-                chart = get_chart_dict(self.fetched_project_locale[0])
-
-        elif extra is None:
-            chart = get_chart_dict(self)
-
-        else:
-            project = self if isinstance(self, Project) else extra
-            locale = self if isinstance(self, Locale) else extra
-            project_locale = utils.get_object_or_none(
-                ProjectLocale, project=project, locale=locale
-            )
-
-            if project_locale is not None:
-                chart = get_chart_dict(project_locale)
-
-        return chart

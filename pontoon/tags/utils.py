@@ -1,6 +1,5 @@
 from django.db.models import Max, Q, Sum
 
-from pontoon.base.aggregated_stats import get_chart_dict
 from pontoon.base.models import TranslatedResource, Translation
 from pontoon.tags.models import Tag
 
@@ -67,21 +66,7 @@ class Tags:
                 unreviewed=Sum("unreviewed_strings"),
             )
         )
-
-        print(list(k for k in trs[0].keys()))
-        return {
-            tr[group_by]: get_chart_dict(
-                TranslatedResource(
-                    total_strings=tr["total"],
-                    approved_strings=tr["approved"],
-                    pretranslated_strings=tr["pretranslated"],
-                    strings_with_errors=tr["errors"],
-                    strings_with_warnings=tr["warnings"],
-                    unreviewed_strings=tr["unreviewed"],
-                )
-            )
-            for tr in trs
-        }
+        return {tr[group_by]: tr for tr in trs}
 
     def latest_activity(self, query, group_by):
         latest_activity = {}

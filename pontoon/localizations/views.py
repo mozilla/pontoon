@@ -6,7 +6,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
-from pontoon.base.aggregated_stats import get_chart_dict
 from pontoon.base.models import (
     Locale,
     Project,
@@ -100,7 +99,7 @@ def ajax_resources(request, code, slug):
         tr.latest_activity = (
             tr.latest_translation.latest_activity if tr.latest_translation else None
         )
-        tr.chart = get_chart_dict(tr)
+        tr.chart = tr.stats_data()
 
     return render(
         request,

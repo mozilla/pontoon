@@ -1,13 +1,13 @@
 {% macro span(chart, link, link_parameter=False, has_params=False) %}
 {% if chart != None %}
   <div class="chart-wrapper">
-    <span class="percent">{{ chart.completion_percent }}%</span>
+    <span class="percent">{{ (100 * (chart.approved + chart.pretranslated + chart.warnings) / chart.total) | round(0, 'floor') | int }}%</span>
     <span class="chart">
-      <span class="translated" style="width:{{ chart.approved_share }}%;"></span>
-      <span class="pretranslated" style="width:{{ chart.pretranslated_share }}%;"></span>
-      <span class="warnings" style="width:{{ chart.warnings_share }}%;"></span>
-      <span class="errors" style="width:{{ chart.errors_share }}%;"></span>
-      <span class="missing" style="width:{{ 100 - chart.approved_share - chart.pretranslated_share - chart.warnings_share - chart.errors_share }}%;"></span>
+      <span class="translated" style="width:{{ (100 * chart.approved / chart.total) | round(1) }}%"></span>
+      <span class="pretranslated" style="width:{{ (100 * chart.pretranslated / chart.total) | round(1) }}%"></span>
+      <span class="warnings" style="width:{{ (100 * chart.warnings / chart.total) | round(1) }}%"></span>
+      <span class="errors" style="width:{{ (100 * chart.errors / chart.total) | round(1) }}%"></span>
+      <span class="missing" style="width:{{ (100 * (chart.total - chart.approved - chart.pretranslated - chart.warnings - chart.errors) / chart.total) | round(1) }}%"></span>
     </span>
     <span class="unreviewed-status fas fa-lightbulb{% if chart.unreviewed > 0 %} pending{% endif %}"></span>
   </div>

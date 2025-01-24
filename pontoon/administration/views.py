@@ -49,7 +49,15 @@ def admin(request):
         .order_by("name")
     )
 
-    return render(request, "admin.html", {"admin": True, "projects": projects})
+    return render(
+        request,
+        "admin.html",
+        {
+            "admin": True,
+            "projects": projects,
+            "project_stats": projects.stats_data(),
+        },
+    )
 
 
 @login_required(redirect_field_name="", login_url="/403")

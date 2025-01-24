@@ -90,9 +90,6 @@ class Project(DjangoObjectType, Stats):
     localizations = graphene.List(ProjectLocale)
     tags = graphene.List(Tag)
 
-    def resolve_localizations(obj, info):
-        return obj.project_locale.all()
-
     def resolve_tags(obj, info):
         return obj.tag_set.all()
 

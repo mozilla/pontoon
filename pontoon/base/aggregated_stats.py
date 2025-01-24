@@ -1,5 +1,3 @@
-import math
-
 from functools import cached_property
 
 
@@ -42,7 +40,7 @@ class AggregatedStats:
         return self._stats["unreviewed"]
 
     @property
-    def missing_strings(self):
+    def missing_strings(self) -> int:
         return (
             self.total_strings
             - self.approved_strings
@@ -51,42 +49,42 @@ class AggregatedStats:
             - self.strings_with_warnings
         )
 
-
-def get_completed_percent(obj):
-    if not obj.total_strings:
-        return 0
-    completed_strings = (
-        obj.approved_strings + obj.pretranslated_strings + obj.strings_with_warnings
-    )
-    return completed_strings / obj.total_strings * 100
-
-
-def get_chart_dict(obj: "AggregatedStats"):
-    """Get chart data dictionary"""
-    if ts := obj.total_strings:
-        return {
-            "total": ts,
-            "approved": obj.approved_strings,
-            "pretranslated": obj.pretranslated_strings,
-            "errors": obj.strings_with_errors,
-            "warnings": obj.strings_with_warnings,
-            "unreviewed": obj.unreviewed_strings,
-            "approved_share": round(obj.approved_strings / ts * 100),
-            "pretranslated_share": round(obj.pretranslated_strings / ts * 100),
-            "errors_share": round(obj.strings_with_errors / ts * 100),
-            "warnings_share": round(obj.strings_with_warnings / ts * 100),
-            "unreviewed_share": round(obj.unreviewed_strings / ts * 100),
-            "completion_percent": int(math.floor(get_completed_percent(obj))),
-        }
+    @property
+    def complete(self) -> bool:
+        return (
+            self.total_strings
+            == self.approved_strings
+            + self.pretranslated_strings
+            + self.strings_with_warnings
+        )
 
 
-def get_top_instances(qs):
+def get_top_instances(qs, stats: dict[int, dict[str, int]]) -> dict[str, object] | None:
     """
     Get top instances in the queryset.
     """
+
+    if not stats:
+        return None
+
+    def _missing(x: tuple[int, dict[str, int]]) -> int:
+        _, d = x
+        return (
+            d["total"]
+            - d["approved"]
+            - d["pretranslated"]
+            - d["errors"]
+            - d["warnings"]
+        )
+
+    max_total_id = max(stats.items(), key=lambda x: x[1]["total"])[0]
+    max_approved_id = max(stats.items(), key=lambda x: x[1]["approved"])[0]
+    max_suggestions_id = max(stats.items(), key=lambda x: x[1]["unreviewed"])[0]
+    max_missing_id = max(stats.items(), key=_missing)[0]
+
     return {
-        "most_strings": sorted(qs, key=lambda x: x.total_strings)[-1],
-        "most_translations": sorted(qs, key=lambda x: x.approved_strings)[-1],
-        "most_suggestions": sorted(qs, key=lambda x: x.unreviewed_strings)[-1],
-        "most_missing": sorted(qs, key=lambda x: x.missing_strings)[-1],
+        "most_strings": next(row for row in qs if row.id == max_total_id),
+        "most_translations": next(row for row in qs if row.id == max_approved_id),
+        "most_suggestions": next(row for row in qs if row.id == max_suggestions_id),
+        "most_missing": next(row for row in qs if row.id == max_missing_id),
     }
