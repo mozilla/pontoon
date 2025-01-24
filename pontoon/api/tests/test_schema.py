@@ -4,7 +4,7 @@ from itertools import product
 
 import pytest
 
-from pontoon.base.models import Project, ProjectLocale
+from pontoon.base.models import Project, ProjectLocale, TranslationMemoryEntry
 from pontoon.terminology.models import Term, TermTranslation
 from pontoon.test.factories import ProjectFactory
 
@@ -44,6 +44,29 @@ def terms(locale_a):
     TermTranslation.objects.create(term=term2, locale=locale_a, text="zapreti")
 
     return [term1, term2]
+
+
+@pytest.fixture
+def tm_entries(locale_a, locale_b, project_a, project_b):
+    entry1 = TranslationMemoryEntry.objects.create(
+        source="Hello",
+        target="Hola",
+        locale=locale_a,
+        project=project_a,
+    )
+    entry2 = TranslationMemoryEntry.objects.create(
+        source="Goodbye",
+        target="Adiós",
+        locale=locale_a,
+        project=project_b,
+    )
+    entry3 = TranslationMemoryEntry.objects.create(
+        source="Hello",
+        target="Bonjour",
+        locale=locale_b,
+        project=project_b,
+    )
+    return [entry1, entry2, entry3]
 
 
 @pytest.mark.django_db
@@ -458,6 +481,110 @@ def test_term_search_no_translations(client, terms):
                     "text": "open",
                     "translationText": None,
                 }
+            ]
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_tm_search_by_source(client, tm_entries):
+    """Test searching TM entries by source text."""
+    body = {
+        "query": """{
+            tmSearch(search: "Hello", locale: "kg") {
+                source
+                target
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "tmSearch": [
+                {
+                    "source": "Hello",
+                    "target": "Hola",
+                }
+            ]
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_tm_search_by_target(client, tm_entries):
+    """Test searching TM entries by target text."""
+    body = {
+        "query": """{
+            tmSearch(search: "Hola", locale: "kg") {
+                source
+                target
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "tmSearch": [
+                {
+                    "source": "Hello",
+                    "target": "Hola",
+                }
+            ]
+        }
+    }
+
+
+@pytest.mark.django_db
+def test_tm_search_no_match(client, tm_entries):
+    """Test TM search with a query that doesn't match any entry."""
+    body = {
+        "query": """{
+            tmSearch(search: "Nonexistent", locale: "kg") {
+                source
+                target
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {"data": {"tmSearch": []}}
+
+
+@pytest.mark.django_db
+def test_tm_search_multiple_matches(client, tm_entries):
+    """Test TM search with a query that matches multiple entries."""
+    body = {
+        "query": """{
+            tmSearch(search: "o", locale: "kg") {
+                source
+                target
+                project {
+                    slug
+                }
+            }
+        }"""
+    }
+    response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": {
+            "tmSearch": [
+                {
+                    "source": "Hello",
+                    "target": "Hola",
+                    "project": {
+                        "slug": "project_a",
+                    },
+                },
+                {
+                    "source": "Goodbye",
+                    "target": "Adiós",
+                    "project": {
+                        "slug": "project_b",
+                    },
+                },
             ]
         }
     }
