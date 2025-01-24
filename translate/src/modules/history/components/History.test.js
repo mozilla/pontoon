@@ -25,9 +25,9 @@ function mountHistory(fetching, translations) {
 describe('<History>', () => {
   it('shows the correct number of translations', () => {
     const wrapper = mountHistory(false, [
-      { pk: 1, userStatus: '' },
-      { pk: 2, userStatus: '' },
-      { pk: 3, userStatus: '' },
+      { pk: 1, userBanner: '' },
+      { pk: 2, userBanner: '' },
+      { pk: 3, userBanner: '' },
     ]);
 
     expect(wrapper.find('ul > *')).toHaveLength(3);

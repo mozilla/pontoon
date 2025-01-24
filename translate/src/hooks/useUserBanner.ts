@@ -6,9 +6,9 @@ import { USER } from '~/modules/user';
 import { useAppSelector } from '~/hooks';
 
 /**
- * Return the user's status within the given locale, to display on the user banner
+ * Return the user's status banner within the given locale, to display on the user banner
  */
-export function useUserStatus(): Array<string> {
+export function useUserBanner(): Array<string> {
   const { code } = useContext(Locale);
   const { project } = useContext(Location);
   const {
