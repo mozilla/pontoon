@@ -754,10 +754,7 @@ PIPELINE = {
 # cache.
 if os.environ.get("MEMCACHE_SERVERS") is not None:
     CACHES = {
-        "default": {
-            "BACKEND": "django_bmemcached.memcached.BMemcached",
-            "OPTIONS": {},
-        }
+        "default": {"BACKEND": "django_bmemcached.memcached.BMemcached", "OPTIONS": {}}
     }
 else:
     CACHES = {
@@ -1172,10 +1169,7 @@ BADGES_REVIEW_THRESHOLDS = list(
 )
 # Used for Community Builder badge
 BADGES_PROMOTION_THRESHOLDS = list(
-    map(
-        int,
-        os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","),
-    )
+    map(int, os.environ.get("BADGES_PROMOTION_THRESHOLDS", "1, 2, 5").split(","))
 )
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
