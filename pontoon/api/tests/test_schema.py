@@ -568,23 +568,25 @@ def test_tm_search_multiple_matches(client, tm_entries):
     }
     response = client.get("/graphql/", body, HTTP_ACCEPT="application/json")
     assert response.status_code == 200
-    assert response.json() == {
-        "data": {
-            "tmSearch": [
-                {
-                    "source": "Hello",
-                    "target": "Hola",
-                    "project": {
-                        "slug": "project_a",
-                    },
-                },
-                {
-                    "source": "Goodbye",
-                    "target": "Adiós",
-                    "project": {
-                        "slug": "project_b",
-                    },
-                },
-            ]
-        }
-    }
+
+    # Sort the response data to ensure order doesn't affect test results
+    actual_data = response.json()["data"]["tmSearch"]
+    expected_data = [
+        {
+            "source": "Hello",
+            "target": "Hola",
+            "project": {
+                "slug": "project_a",
+            },
+        },
+        {
+            "source": "Goodbye",
+            "target": "Adiós",
+            "project": {
+                "slug": "project_b",
+            },
+        },
+    ]
+    assert sorted(actual_data, key=lambda x: x["source"]) == sorted(
+        expected_data, key=lambda x: x["source"]
+    )
