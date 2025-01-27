@@ -168,7 +168,6 @@ class AccountDisabledMiddleware:
                 return render(
                     request,
                     "account_disabled.html",
-                    {"DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL},
                     status=403,
                 )
         else:
