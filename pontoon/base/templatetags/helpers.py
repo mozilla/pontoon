@@ -54,16 +54,16 @@ def return_url(request):
 
 @library.global_function
 def user_theme(user):
-    """Get user's theme or return 'dark' if user is not authenticated."""
+    """Get user's theme or return 'system' if user is not authenticated."""
     if user.is_authenticated:
         return user.profile.theme
-    return "dark"
+    return "system"
 
 
 @library.global_function
 def theme_class(request):
     """Get theme class name based on user preferences and system settings."""
-    theme = "dark"
+    theme = "system"
     user = request.user
 
     if user.is_authenticated:
