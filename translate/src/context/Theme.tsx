@@ -7,7 +7,7 @@ export const ThemeContext = createContext({
 
 export function ThemeProvider({ children }: { children: React.ReactElement }) {
   const [theme] = useState(
-    () => document.body.getAttribute('data-theme') || 'dark',
+    () => document.body.getAttribute('data-theme') || 'system',
   );
 
   const applyTheme = useTheme();
