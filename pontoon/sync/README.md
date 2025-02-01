@@ -11,7 +11,7 @@ This document describes that sync process in detail.
 
 ## Triggering a Sync
 
-Pontoon is assumed to run a sync once an hour, although this is configurable.
+Pontoon is assumed to run a sync regularly, at a configurable interval.
 When a sync is triggered, Pontoon finds all projects that are not marked as
 disabled within the admin interface and schedules a sync task for each one.
 Sync tasks are executed in parallel, using [Celery](http://www.celeryproject.org/)
@@ -19,81 +19,25 @@ to manage the worker queue.
 
 ## Syncing a Project
 
-Syncing an individual project is split into two tasks. The first one is syncing
-source strings:
+Syncing an individual project is split into multiple steps:
 
-- Pull latest changes of the source string repository from version control.
-- Check for changes in VCS and in Pontoon, and if there are no changes in VCS
-  and Pontoon and the project only uses one repository, skip syncing the
-  project completely.
-- If source repository has changed since the last sync, reflect any added,
-  changed or removed files in Pontoon.
+1. Pull latest changes of all project repository or repositories from version control.
 
-The second step is syncing translations:
+2. Identify the source resources that have changed or been added to the version control repository,
+   and synchornize their changes into the database.
 
-- Pull latest changes of all project repositories from version control.
-- Check for changes in VCS and in Pontoon, and if there are no changes in VCS
-  and Pontoon, quit early.
-- If there are changes, identify which files have changed and find all their
-  entities, searching both the Pontoon database and VCS.
-- For each entity found, compare the VCS version to the Pontoon version (also
-  known as the database version) and decide how to sync it. These changes are
-  collected in a "Changeset" object.
-- Once all the entities are compared, execute the changes in the Changeset.
-- Commit any changes made in the filesystem back to the VCS. If there are no
-  changes, no commit is made.
-- Clean up leftover information in the database.
+3. Identify the target resources that have changed or been added to the version control repository,
+   and synchornize their changes into the database.
+   If a translation has simultaneously changed in Pontoon as well as version control,
+   the version in Pontoon is retained.
 
-## Comparing Entities
+4. Identify the translations that have changed in Pontoon,
+   and synchornize their changes into version control.
 
-The heart of the syncing process is comparing an entity stored in Pontoon's
-database with its matching entity in the resource file in VCS and modifying both
-the database and the VCS file so that the two are in sync. It's this process
-that determines when to update VCS with a submitted translation from Pontoon vs.
-when to update Pontoon with a translation from VCS, as well as other possible
-actions.
+## Sync Options
 
-The comparison takes into account:
+The `manage.py` command `sync_projects` provides the following options for customizing the sync:
 
-- Whether an entity exists in the Pontoon database or VCS. VCS may be missing an
-  entity due to a developer removing the source string, or Pontoon may be
-  missing an entity due to a new string being added to VCS.
-- Whether a specific locale in VCS has an entity that Pontoon can update.
-- Whether an entity has changed in the Pontoon database since the last sync.
-  This tracks if translations for an entity have been updated or deleted since
-  the last time Pontoon synced.
-
-The actual comparison logic goes something like this:
-
-![](./sync-process-diagram.png)
-
-## Executing Changes
-
-Entity comparison produces a Changeset, which is used to make the necessary
-changes to the database and resource files.
-
-Changesets can perform 4 different operations on an entity:
-
-**Update Pontoon from VCS**
-
-&emsp;Add a translation from VCS to Pontoon if necessary. Existing translations
-that match the VCS translation are re-used, and all non-matching translations
-are marked as unapproved.
-
-**Update VCS from Pontoon**
-
-&emsp;Add a translation from Pontoon to VCS, overwriting the existing translation
-if it exists.
-
-**Create New Entity in Pontoon**
-
-&emsp;Create a new entity in the Pontoon database, including the VCS translation if
-it is present.
-
-**Obsolete Pontoon Entity**
-
-&emsp;Mark an entity in the database as obsolete, due to it not existing in VCS.
-The entity will no longer appear on the website.
-
-When possible, Changesets perform database operations in bulk in order to speed
-up the syncing process.
+* `--force` -- Consider all version control repository files to have changed.
+* `--no-pull` -- Do not pull new changes for version control repositories.
+* `--no-commit` -- Do not commit and push any new changes to version control.
