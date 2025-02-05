@@ -33,11 +33,3 @@ Syncing an individual project is split into multiple steps:
 
 4. Identify the translations that have changed in Pontoon,
    and synchornize their changes into version control.
-
-## Sync Options
-
-The `manage.py` command `sync_projects` provides the following options for customizing the sync:
-
-* `--force` -- Consider all version control repository files to have changed.
-* `--no-pull` -- Do not pull new changes for version control repositories.
-* `--no-commit` -- Do not commit and push any new changes to version control.
