@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Sum
 
 from pontoon.base.aggregated_stats import AggregatedStats
 
@@ -78,6 +78,34 @@ class LocaleQuerySet(models.QuerySet):
                 to_attr="fetched_project_locale",
             )
         )
+
+    def stats_data(self, project=None) -> dict[int, dict[str, int]]:
+        """Mapping of locale `id` to dict with counts."""
+        if project is not None:
+            query = self.filter(translatedresources__resource__project=project)
+        else:
+            query = self.filter(
+                translatedresources__resource__project__disabled=False,
+                translatedresources__resource__project__system_project=False,
+                translatedresources__resource__project__visibility="public",
+            )
+        data = query.annotate(
+            total=Sum("translatedresources__total_strings", default=0),
+            approved=Sum("translatedresources__approved_strings", default=0),
+            pretranslated=Sum("translatedresources__pretranslated_strings", default=0),
+            errors=Sum("translatedresources__strings_with_errors", default=0),
+            warnings=Sum("translatedresources__strings_with_warnings", default=0),
+            unreviewed=Sum("translatedresources__unreviewed_strings", default=0),
+        ).values(
+            "id",
+            "total",
+            "approved",
+            "pretranslated",
+            "errors",
+            "warnings",
+            "unreviewed",
+        )
+        return {row["id"]: row for row in data if row["total"]}
 
 
 class Locale(models.Model, AggregatedStats):
@@ -365,11 +393,6 @@ class Locale(models.Model, AggregatedStats):
         from pontoon.base.models.project_locale import ProjectLocale
 
         return ProjectLocale.get_latest_activity(self, project)
-
-    def get_chart(self, project=None):
-        from pontoon.base.models.project_locale import ProjectLocale
-
-        return ProjectLocale.get_chart(self, project)
 
     def save(self, *args, **kwargs):
         old = Locale.objects.get(pk=self.pk) if self.pk else None

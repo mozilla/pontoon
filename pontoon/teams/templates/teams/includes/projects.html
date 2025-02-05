@@ -26,7 +26,7 @@
     {% set main_link = url('pontoon.projects.project', project.slug) %}
     {% set chart_link = url('pontoon.translate', locale.code, project.slug, 'all-resources') %}
     {% set latest_activity = project.get_latest_activity(locale) %}
-    {% set chart = project.get_chart(locale) %}
+    {% set chart = project_stats.get(project.id, {'total': 0}) %}
     {% if project in enabled_projects %}
       {% set class = 'limited' %}
       {% if project in pretranslated_projects %}

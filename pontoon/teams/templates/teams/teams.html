@@ -22,34 +22,36 @@
         class='teams-count',
         value=locales|length)
       }}
-      {{ HeadingInfo.details_item(
-        title='Most translations',
-        class='most-translations',
-        value=top_instances['most_translations'],
-        value_link=url('pontoon.teams.team', top_instances['most_translations'].code))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most unreviewed',
-        class='most-suggestions',
-        value=top_instances['most_suggestions'],
-        value_link=url('pontoon.teams.team', top_instances['most_suggestions'].code))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most missing strings',
-        class='missing-strings',
-        value=top_instances['most_missing'],
-        value_link=url('pontoon.teams.team', top_instances['most_missing'].code))
-      }}
-      {{ HeadingInfo.details_item(
-        title='Most enabled strings',
-        class='most-strings',
-        value=top_instances['most_strings'],
-        value_link=url('pontoon.teams.team', top_instances['most_strings'].code))
-      }}
+      {% if top_instances %}
+        {{ HeadingInfo.details_item(
+          title='Most translations',
+          class='most-translations',
+          value=top_instances['most_translations'],
+          value_link=url('pontoon.teams.team', top_instances['most_translations'].code))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most unreviewed',
+          class='most-suggestions',
+          value=top_instances['most_suggestions'],
+          value_link=url('pontoon.teams.team', top_instances['most_suggestions'].code))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most missing strings',
+          class='missing-strings',
+          value=top_instances['most_missing'],
+          value_link=url('pontoon.teams.team', top_instances['most_missing'].code))
+        }}
+        {{ HeadingInfo.details_item(
+          title='Most enabled strings',
+          class='most-strings',
+          value=top_instances['most_strings'],
+          value_link=url('pontoon.teams.team', top_instances['most_strings'].code))
+        }}
+      {% endif %}
     </ul>
 
     {{ HeadingInfo.progress_chart() }}
-    {{ HeadingInfo.progress_chart_legend(locale_stats) }}
+    {{ HeadingInfo.progress_chart_legend(all_locales_stats) }}
   </div>
 </section>
 {% endblock %}
@@ -76,7 +78,7 @@
       {% set main_link = url('pontoon.teams.team', locale.code) %}
       {% set chart_link = url('pontoon.translate', locale.code, 'all-projects', 'all-resources') %}
       {% set latest_activity = locale.get_latest_activity() %}
-      {% set chart = locale.get_chart() %}
+      {% set chart = locale_stats.get(locale.id, {'total': 0}) %}
 
       {{ TeamList.item(locale, main_link, chart_link, latest_activity, chart, link_parameter=True, not_ready_message='No projects enabled yet') }}
     {% endfor %}

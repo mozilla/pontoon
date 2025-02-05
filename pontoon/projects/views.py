@@ -28,15 +28,17 @@ def projects(request):
     if not projects:
         return render(request, "no_projects.html", {"title": "Projects"})
 
+    project_stats = projects.stats_data()
     return render(
         request,
         "projects/projects.html",
         {
             "projects": projects,
-            "project_stats": TranslatedResource.objects.all().string_stats(
+            "all_projects_stats": TranslatedResource.objects.all().string_stats(
                 request.user
             ),
-            "top_instances": get_top_instances(projects),
+            "project_stats": project_stats,
+            "top_instances": get_top_instances(projects, project_stats),
         },
     )
 
@@ -77,7 +79,7 @@ def project(request, slug):
 
 @require_AJAX
 def ajax_teams(request, slug):
-    """Teams tab."""
+    """Project Teams tab."""
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )
@@ -95,13 +97,17 @@ def ajax_teams(request, slug):
     return render(
         request,
         "projects/includes/teams.html",
-        {"project": project, "locales": locales},
+        {
+            "project": project,
+            "locales": locales,
+            "locale_stats": locales.stats_data(project),
+        },
     )
 
 
 @require_AJAX
 def ajax_tags(request, slug):
-    """Tags tab."""
+    """Project Tags tab."""
     project = get_object_or_404(Project.objects.visible_for(request.user), slug=slug)
 
     if not project.tags_enabled:
@@ -118,7 +124,7 @@ def ajax_tags(request, slug):
 
 @require_AJAX
 def ajax_insights(request, slug):
-    """Insights tab."""
+    """Project Insights tab."""
     if not settings.ENABLE_INSIGHTS:
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
@@ -139,7 +145,7 @@ def ajax_insights(request, slug):
 
 @require_AJAX
 def ajax_info(request, slug):
-    """Info tab."""
+    """Project Info tab."""
     project = get_object_or_404(
         Project.objects.visible_for(request.user).available(), slug=slug
     )

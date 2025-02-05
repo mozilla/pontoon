@@ -113,6 +113,16 @@ class TranslatedResource(models.Model):
             total += (self.locale.nplurals - 1) * plural_count
         return total
 
+    def stats_data(self) -> dict[str, int]:
+        return {
+            "total": self.total_strings,
+            "approved": self.approved_strings,
+            "pretranslated": self.pretranslated_strings,
+            "errors": self.strings_with_errors,
+            "warnings": self.strings_with_warnings,
+            "unreviewed": self.unreviewed_strings,
+        }
+
     def adjust_stats(
         self, before: dict[str, int], after: dict[str, int], tr_created: bool
     ):

@@ -61,14 +61,16 @@ def teams(request):
     if not locales:
         return render(request, "no_projects.html", {"title": "Teams"})
 
+    locale_stats = locales.stats_data()
     return render(
         request,
         "teams/teams.html",
         {
             "locales": locales,
-            "locale_stats": TranslatedResource.objects.all().string_stats(request.user),
+            "all_locales_stats": TranslatedResource.objects.all().string_stats(),
+            "locale_stats": locale_stats,
             "form": form,
-            "top_instances": get_top_instances(locales),
+            "top_instances": get_top_instances(locales, locale_stats),
         },
     )
 
@@ -97,7 +99,7 @@ def team(request, locale):
 
 @require_AJAX
 def ajax_projects(request, locale):
-    """Projects tab."""
+    """Team Projects tab."""
     locale = get_object_or_404(Locale, code=locale)
 
     projects = (
@@ -136,6 +138,7 @@ def ajax_projects(request, locale):
         {
             "locale": locale,
             "projects": projects,
+            "project_stats": Project.objects.visible().stats_data(locale),
             "enabled_projects": enabled_projects,
             "no_visible_projects": no_visible_projects,
             "project_request_enabled": project_request_enabled,
@@ -147,7 +150,7 @@ def ajax_projects(request, locale):
 
 @require_AJAX
 def ajax_insights(request, locale):
-    """Insights tab."""
+    """Team Insights tab."""
     if not settings.ENABLE_INSIGHTS:
         raise ImproperlyConfigured("ENABLE_INSIGHTS variable not set in settings.")
 
@@ -166,7 +169,7 @@ def ajax_insights(request, locale):
 
 @require_AJAX
 def ajax_info(request, locale):
-    """Info tab."""
+    """Team Info tab."""
     locale = get_object_or_404(Locale, code=locale)
 
     return render(request, "teams/includes/info.html", {"locale": locale})
