@@ -454,6 +454,12 @@ It's recommended to run this job at least once an hour. It commits any string
 changes in the database to the remote VCS servers associated with each project,
 and pulls down the latest changes to keep the database in sync.
 
+The command supports the following options:
+
+- ``--force`` -- Consider all version control repository files to have changed.
+- ``--no-pull`` -- Do not pull new changes for version control repositories.
+- ``--no-commit`` -- Do not commit and push any new changes to version control.
+
 Send Deadline Notifications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Pontoon allows you to set deadlines for projects. This job sends deadline
