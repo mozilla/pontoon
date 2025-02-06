@@ -138,7 +138,7 @@ def ajax_projects(request, locale):
         {
             "locale": locale,
             "projects": projects,
-            "project_stats": Project.objects.visible().stats_data(locale),
+            "project_stats": Project.objects.all().stats_data(locale),
             "enabled_projects": enabled_projects,
             "no_visible_projects": no_visible_projects,
             "project_request_enabled": project_request_enabled,
