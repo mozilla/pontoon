@@ -33,7 +33,7 @@
             <td class="start">
               <time {% if sync.start_time %}datetime="{{ sync.start_time.isoformat() }}" title='{{ sync.start_time|date("Y-m-d H:i:s") }} UTC'{% endif %}>{{ sync.start_time|naturaltime or "―" }}</time>
             </td>
-            <td class="duration" title='{% if sync.end_time %}End: {{ sync.end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(sync.start_time, sync.end_time) }}">
+            <td class="duration" title='{% if sync.end_time %}End: {{ sync.end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(sync.start_time, sync.end_time, ms=True) }}">
               {{ format_sync_duration(sync.start_time, sync.end_time) }}
             </td>
         </tr>
