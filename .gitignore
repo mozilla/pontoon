@@ -1,4 +1,5 @@
 .*
+!.python-version
 
 *-all.js
 *-min.css
