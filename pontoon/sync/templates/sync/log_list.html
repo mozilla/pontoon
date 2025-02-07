@@ -30,8 +30,8 @@
         <thead>
           <tr>
             <th class="project asc">Project<i class="fas"></i></th>
-            <th class="last-status">Last Status<i class="fas"></i></th>
-            <th class="last-start">Last Start<i class="fas"></i></th>
+            <th class="latest-status">Latest Status<i class="fas"></i></th>
+            <th class="latest-start relative-time">Latest Start<i class="fas"></i></th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
           </tr>
         </thead>
@@ -47,13 +47,13 @@
                 {% endif %}
                 </h4>
               </td>
-              <td class="last-status {{ format_sync_status_class(project.sync_status) }}">
+              <td class="latest-status {{ format_sync_status_class(project.sync_status) }}">
                 {{ format_sync_status_label(project.sync_status) }}
               </td>
-              <td class="last-start">
-                {{ project.sync_start_time|date("Y-m-d H:i:s") or "―" }}
+              <td class="latest-start">
+                <time {% if project.sync_start_time %}datetime="{{ project.sync_start_time.isoformat() }}" title='{{ project.sync_start_time|date("Y-m-d H:i:s") }} UTC'{% endif %}>{{ project.sync_start_time|naturaltime or "―" }}</time>
               </td>
-              <td class="duration" title='{% if project.sync_end_time %}Last end: {{ project.sync_end_time|date("Y-m-d H:i:s") }}{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
+              <td class="duration" title='{% if project.sync_end_time %}Latest End: {{ project.sync_end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(project.sync_start_time, project.sync_end_time, ms=True) }}">
                 {{ format_sync_duration(project.sync_start_time, project.sync_end_time) }}
               </td>
             </tr>

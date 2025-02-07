@@ -18,7 +18,7 @@
     <table class="table table-sort log-list item-list">
         <thead>
           <tr>
-            <th class="start asc">Start<i class="fas"></i></th>
+            <th class="start relative-time asc">Start<i class="fas"></i></th>
             <th class="project">Project<i class="fas"></i></th>
             <th class="status">Status<i class="fas"></i></th>
             <th class="duration" data-sort="">Duration<i class="fas"></i></th>
@@ -28,7 +28,7 @@
             {% for sync in sync_page %}
             <tr class="sync-log limited">
               <td class="start">
-                {{ sync.start_time|date("Y-m-d H:i:s") }}
+                <time {% if sync.start_time %}datetime="{{ sync.start_time.isoformat() }}" title='{{ sync.start_time|date("Y-m-d H:i:s") }} UTC'{% endif %}>{{ sync.start_time|naturaltime or "―" }}</time>
               </td>
               <td class="project">
                 <h4>
@@ -42,7 +42,7 @@
               <td class="status {{ format_sync_status_class(sync.status) }}">
                 {{ format_sync_status_label(sync.status) }}
               </td>
-              <td class="duration" title='{% if sync.end_time %}End: {{ sync.end_time|date("Y-m-d H:i:s") }}{% endif %}' data-sort="{{ format_sync_duration(sync.start_time, sync.end_time) }}">
+              <td class="duration" title='{% if sync.end_time %}End: {{ sync.end_time|date("Y-m-d H:i:s") }} UTC{% endif %}' data-sort="{{ format_sync_duration(sync.start_time, sync.end_time, ms=True) }}">
                 {{ format_sync_duration(sync.start_time, sync.end_time) }}
               </td>
             </tr>

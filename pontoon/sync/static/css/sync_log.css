@@ -21,7 +21,7 @@
 }
 
 .log-list .status,
-.log-list .last-status {
+.log-list .latest-status {
   width: 160px;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .log-list .start,
-.log-list .last-start {
+.log-list .latest-start {
   width: 260px;
 }
 

@@ -230,8 +230,11 @@ var Pontoon = (function (my) {
               }
               return (timeA - timeB) * dir;
 
-              // Sort by last activity
-            } else if (node.is('.latest-activity')) {
+              // Sort by relative time
+            } else if (
+              node.is('.latest-activity') ||
+              node.is('.relative-time')
+            ) {
               return (getTime(b) - getTime(a)) * dir;
 
               // Sort by priority
