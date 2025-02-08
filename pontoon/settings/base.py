@@ -686,7 +686,10 @@ PIPELINE_JS = {
         "output_filename": "js/teams.min.js",
     },
     "sync_log": {
-        "source_filenames": ("js/table.js",),
+        "source_filenames": (
+            "js/sync_log.js",
+            "js/table.js",
+        ),
         "output_filename": "css/sync_log.min.js",
     },
     "profile": {
