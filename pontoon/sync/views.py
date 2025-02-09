@@ -22,7 +22,14 @@ def sync_log_list(request: HttpRequest):
             sync_end_time=Subquery(sync_events.values("end_time")[:1]),
             sync_status=Subquery(sync_events.values("status")[:1]),
         )
-        .values("name", "slug", "sync_start_time", "sync_end_time", "sync_status")
+        .values(
+            "name",
+            "slug",
+            "sync_start_time",
+            "sync_end_time",
+            "sync_status",
+            "system_project",
+        )
     )
     for project in projects:
         project["sync_url"] = reverse(
