@@ -39,6 +39,6 @@ jobs:
         env:
           UV_SYSTEM_PYTHON: 1
       - name: ruff lint
-        run: ruff check pontoon
+        run: ruff check
       - name: ruff format
-        run: ruff format --check pontoon
+        run: ruff format --check
