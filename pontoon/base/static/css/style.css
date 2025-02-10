@@ -197,13 +197,13 @@ th {
   color: var(--white-1);
 }
 
-.table-sort th.no-sort:hover {
-  color: var(--light-grey-7);
-  cursor: default;
+.table-sort th {
+  pointer-events: none;
 }
 
 .table-sort th i {
-  pointer-events: none;
+  margin-left: 5px;
+  position: absolute;
 }
 
 .table-sort th.asc i:after,

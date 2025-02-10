@@ -120,11 +120,6 @@ var Pontoon = (function (my) {
        */
       sort: (function () {
         $('body').on('click', 'table.table-sort th', function () {
-          // Ignore columns with the 'no-sort' class
-          if ($(this).hasClass('no-sort')) {
-            return;
-          }
-
           function getProgress(el) {
             const legend = $(el).find('.progress .legend'),
               all = legend.find('.all .value').data('value') || 0,
