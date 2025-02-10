@@ -278,10 +278,6 @@ class Project(models.Model, AggregatedStats):
 
         return ProjectLocale.get_latest_activity(self, locale)
 
-    @property
-    def avg_string_count(self):
-        return int(self.total_strings / self.enabled_locales)
-
     def resource_priority_map(self):
         """
         Returns a map of resource paths and highest priorities of resource tags.
